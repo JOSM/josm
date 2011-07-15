@@ -46,8 +46,8 @@ abstract public class AbstractCredentialsAgent implements CredentialsAgent {
         } else if (noSuccessWithLastResponse || username.equals("") || password.equals("")) {
             CredentialDialog dialog = null;
             switch(requestorType) {
-            case SERVER: dialog = CredentialDialog.getOsmApiCredentialDialog(username, password); break;
-            case PROXY: dialog = CredentialDialog.getHttpProxyCredentialDialog(username, password); break;
+            case SERVER: dialog = CredentialDialog.getOsmApiCredentialDialog(username, password, getSaveUsernameAndPasswordCheckboxText()); break;
+            case PROXY: dialog = CredentialDialog.getHttpProxyCredentialDialog(username, password, getSaveUsernameAndPasswordCheckboxText()); break;
             }
             dialog.setVisible(true);
             response.setCanceled(dialog.isCanceled());
@@ -79,4 +79,9 @@ abstract public class AbstractCredentialsAgent implements CredentialsAgent {
         return response;
     }
 
+    /**
+     * Provide the text for a checkbox that offers to save the
+     * username and password that has been entered by the user.
+     */
+    public abstract String getSaveUsernameAndPasswordCheckboxText();
 }

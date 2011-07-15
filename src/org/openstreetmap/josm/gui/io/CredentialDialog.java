@@ -40,15 +40,15 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class CredentialDialog extends JDialog {
 
-    static public CredentialDialog getOsmApiCredentialDialog(String username, String password) {
-        CredentialDialog dialog = new CredentialDialog();
+    static public CredentialDialog getOsmApiCredentialDialog(String username, String password, String saveUsernameAndPasswordCheckboxText) {
+        CredentialDialog dialog = new CredentialDialog(saveUsernameAndPasswordCheckboxText);
         dialog.prepareForOsmApiCredentials(username, password);
         dialog.pack();
         return dialog;
     }
 
-    static public CredentialDialog getHttpProxyCredentialDialog(String username, String password) {
-        CredentialDialog dialog = new CredentialDialog();
+    static public CredentialDialog getHttpProxyCredentialDialog(String username, String password, String saveUsernameAndPasswordCheckboxText) {
+        CredentialDialog dialog = new CredentialDialog(saveUsernameAndPasswordCheckboxText);
         dialog.prepareForProxyCredentials(username, password);
         dialog.pack();
         return dialog;
@@ -56,6 +56,7 @@ public class CredentialDialog extends JDialog {
 
     private boolean canceled;
     private CredentialPanel pnlCredentials;
+    String saveUsernameAndPasswordCheckboxText;
 
     public boolean isCanceled() {
         return canceled;
@@ -92,7 +93,8 @@ public class CredentialDialog extends JDialog {
         getRootPane().setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     }
 
-    public CredentialDialog() {
+    public CredentialDialog(String saveUsernameAndPasswordCheckboxText) {
+        this.saveUsernameAndPasswordCheckboxText = saveUsernameAndPasswordCheckboxText;
         setModalityType(ModalityType.DOCUMENT_MODAL);
         try {
             setAlwaysOnTop(true);
@@ -146,7 +148,7 @@ public class CredentialDialog extends JDialog {
             tfPassword.addFocusListener(new SelectAllOnFocusHandler());
             tfUserName.addKeyListener(new TFKeyListener(owner, tfUserName, tfPassword));
             tfPassword.addKeyListener(new TFKeyListener(owner, tfPassword, tfUserName));
-            cbSaveCredentials =  new JCheckBox(tr("Save user and password (unencrypted)"));
+            cbSaveCredentials =  new JCheckBox(owner.saveUsernameAndPasswordCheckboxText);
 
             setLayout(new GridBagLayout());
             GridBagConstraints gc = new GridBagConstraints();
@@ -300,6 +302,7 @@ public class CredentialDialog extends JDialog {
             this.nextTF = nextTF;
         }
 
+        @Override
         public void keyPressed(KeyEvent e) {
             if(e.getKeyChar() == KeyEvent.VK_ENTER) {
                 if (currentTF.getText().trim().isEmpty()) {
@@ -316,9 +319,11 @@ public class CredentialDialog extends JDialog {
             }
         }
 
+        @Override
         public void keyReleased ( KeyEvent e ){
         }
 
+        @Override
         public void keyTyped ( KeyEvent e ){
         }
     }
@@ -330,6 +335,7 @@ public class CredentialDialog extends JDialog {
             putValue(SMALL_ICON, ImageProvider.get("ok"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             setCanceled(false);
             setVisible(false);
@@ -348,6 +354,7 @@ public class CredentialDialog extends JDialog {
             setVisible(false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             cancel();
         }
