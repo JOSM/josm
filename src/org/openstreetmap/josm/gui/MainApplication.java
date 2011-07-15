@@ -187,7 +187,7 @@ public class MainApplication extends Main {
         }
         Main.pref.updateSystemProperties();
 
-        DefaultAuthenticator.createInstance(CredentialsManager.getInstance());
+        DefaultAuthenticator.createInstance();
         Authenticator.setDefault(DefaultAuthenticator.getInstance());
         ProxySelector.setDefault(new DefaultProxySelector(ProxySelector.getDefault()));
         OAuthAccessTokenHolder.getInstance().init(Main.pref, CredentialsManager.getInstance());

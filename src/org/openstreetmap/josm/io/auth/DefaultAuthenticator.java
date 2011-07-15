@@ -21,20 +21,14 @@ public  class DefaultAuthenticator extends Authenticator {
         return instance;
     }
 
-    public static void createInstance(CredentialsAgent credentialManager) {
-        instance = new DefaultAuthenticator(credentialManager);
+    public static void createInstance() {
+        instance = new DefaultAuthenticator();
     }
 
-    private CredentialsAgent credentialsAgent;
     private final Map<RequestorType, Boolean> credentialsTried = new HashMap<RequestorType, Boolean>();
     private boolean enabled = true;
 
-    /**
-     *
-     * @param credentialsAgent the credential manager
-     */
-    private DefaultAuthenticator(CredentialsAgent credentialsAgent) {
-        this.credentialsAgent = credentialsAgent;
+    private DefaultAuthenticator() {
     }
 
     /**
@@ -54,7 +48,7 @@ public  class DefaultAuthenticator extends Authenticator {
                     return null;
             }
             boolean tried = credentialsTried.get(getRequestorType()) != null;
-            CredentialsAgentResponse response = credentialsAgent.getCredentials(getRequestorType(), tried);
+            CredentialsAgentResponse response = CredentialsManager.getInstance().getCredentials(getRequestorType(), tried);
             if (response == null || response.isCanceled())
                 return null;
             credentialsTried.put(getRequestorType(), true);

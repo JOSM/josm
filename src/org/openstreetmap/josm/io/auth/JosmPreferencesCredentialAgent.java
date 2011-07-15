@@ -1,12 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.auth;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.Component;
 import java.net.PasswordAuthentication;
 import java.net.Authenticator.RequestorType;
+
+import javax.swing.text.html.HTMLEditorKit;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
+import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 
 /**
  * This is the default credentials agent in JOSM. It keeps username and password for both
@@ -100,4 +106,29 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
             Main.pref.put("oauth.access-token.secret", accessToken.getSecret());
         }
     }
+
+    @Override
+    public Component getPreferencesDecorationPanel() {
+        HtmlPanel pnlMessage = new HtmlPanel();
+        HTMLEditorKit kit = (HTMLEditorKit)pnlMessage.getEditorPane().getEditorKit();
+        kit.getStyleSheet().addRule(".warning-body {background-color:rgb(253,255,221);padding: 10pt; border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
+        pnlMessage.setText(
+                tr(
+                        "<html><body>"
+                        + "<p class=\"warning-body\">"
+                        + "<strong>Warning:</strong> The password is stored in plain text in the JOSM preferences file. "
+                        + "Furthermore, it is transferred <strong>unencrypted</strong> in every request sent to the OSM server. "
+                        + "<strong>Do not use a valuable password.</strong>"
+                        + "</p>"
+                        + "</body></html>"
+                )
+        );
+        return pnlMessage;
+    }
+    
+    @Override
+    public String getSaveUsernameAndPasswordCheckboxText() {
+        return tr("Save user and password (unencrypted)");
+    }
+    
 }

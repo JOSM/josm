@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.auth;
 
+import java.awt.Component;
 import java.net.PasswordAuthentication;
 import java.net.Authenticator.RequestorType;
 
@@ -27,7 +28,7 @@ public interface CredentialsAgent {
      * @return the credentials
      * @throws CredentialsAgentException thrown if a problem occurs in a implementation of this interface
      */
-    public PasswordAuthentication lookup(RequestorType requestorType) throws CredentialsAgentException;
+    PasswordAuthentication lookup(RequestorType requestorType) throws CredentialsAgentException;
 
     /**
      * Saves the credentials in <code>credentials</code> for the given service type.
@@ -37,7 +38,7 @@ public interface CredentialsAgent {
      * @param credentials the credentials
      * @throws CredentialsManagerException thrown if a problem occurs in a implementation of this interface
      */
-    public void store(RequestorType requestorType, PasswordAuthentication credentials) throws CredentialsAgentException;
+    void store(RequestorType requestorType, PasswordAuthentication credentials) throws CredentialsAgentException;
 
     /**
      *
@@ -48,7 +49,7 @@ public interface CredentialsAgent {
      * @throws CredentialsAgentException thrown if a problem occurs in a implementation of this interface
 
      */
-    public CredentialsAgentResponse getCredentials(RequestorType requestorType, boolean noSuccessWithLastResponse) throws CredentialsAgentException;
+    CredentialsAgentResponse getCredentials(RequestorType requestorType, boolean noSuccessWithLastResponse) throws CredentialsAgentException;
 
     /**
      * Lookup the current OAuth Access Token to access the OSM server. Replies null, if no
@@ -57,7 +58,7 @@ public interface CredentialsAgent {
      * @return the current OAuth Access Token to access the OSM server.
      * @throws CredentialsAgentException thrown if something goes wrong
      */
-    public OAuthToken lookupOAuthAccessToken() throws CredentialsAgentException;
+    OAuthToken lookupOAuthAccessToken() throws CredentialsAgentException;
 
     /**
      * Stores the OAuth Access Token <code>accessToken</code>.
@@ -65,5 +66,13 @@ public interface CredentialsAgent {
      * @param accessToken the access Token. null, to remove the Access Token.
      * @throws CredentialsAgentException thrown if something goes wrong
      */
-    public void storeOAuthAccessToken(OAuthToken accessToken) throws CredentialsAgentException;
+    void storeOAuthAccessToken(OAuthToken accessToken) throws CredentialsAgentException;
+
+
+    /**
+     * Provide a Panel that is shown below the API password / username fields
+     * in the JOSM Preferences. (E.g. a warning that password is saved unencrypted.)
+     */
+    Component getPreferencesDecorationPanel();
+
 }

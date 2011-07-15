@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.auth;
 
+import java.awt.Component;
 import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
 
@@ -43,6 +44,8 @@ public class CredentialsManager implements CredentialsAgent {
     /**
      * Plugins can register a CredentialsAgentFactory, thereby overriding
      * JOSM's default credentials agent.
+     * @param agentFactory The Factory that provides the custom CredentialsAgent.
+     * Can be null to clear the factory and switch back to default behavior.
      */
     public static void registerCredentialsAgentFactory(CredentialsAgentFactory agentFactory) {
         CredentialsManager.agentFactory = agentFactory;
@@ -82,5 +85,10 @@ public class CredentialsManager implements CredentialsAgent {
     @Override
     public void storeOAuthAccessToken(OAuthToken accessToken) throws CredentialsAgentException {
         delegate.storeOAuthAccessToken(accessToken);
+    }
+
+    @Override
+    public Component getPreferencesDecorationPanel() {
+        return delegate.getPreferencesDecorationPanel();
     }
 }

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences.server;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -14,10 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.text.html.HTMLEditorKit;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.io.auth.CredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
@@ -36,7 +35,8 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
     private UserNameValidator valUserName;
     /** the OSM password */
     private JPasswordField tfOsmPassword;
-
+    /** a panel with further information, e.g. some warnings */
+    private JPanel decorationPanel;
 
     /**
      * builds the UI
@@ -80,21 +80,8 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
         gc.weighty = 1.0;
         gc.insets = new Insets(5,0,0,0);
         gc.fill = GridBagConstraints.BOTH;
-        HtmlPanel pnlMessage = new HtmlPanel();
-        HTMLEditorKit kit = (HTMLEditorKit)pnlMessage.getEditorPane().getEditorKit();
-        kit.getStyleSheet().addRule(".warning-body {background-color:rgb(253,255,221);padding: 10pt; border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
-        pnlMessage.setText(
-                tr(
-                        "<html><body>"
-                        + "<p class=\"warning-body\">"
-                        + "<strong>Warning:</strong> The password is stored in plain text in the JOSM preferences file. "
-                        + "Furthermore, it is transferred <strong>unencrypted</strong> in every request sent to the OSM server. "
-                        + "<strong>Do not use a valuable password.</strong>"
-                        + "</p>"
-                        + "</body></html>"
-                )
-        );
-        add(pnlMessage, gc);
+        decorationPanel = new JPanel(new BorderLayout());
+        add(decorationPanel, gc);
     }
 
     public BasicAuthenticationPreferencesPanel() {
@@ -104,6 +91,8 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
     public void initFromPreferences() {
         CredentialsAgent cm = CredentialsManager.getInstance();
         try {
+            decorationPanel.removeAll();
+            decorationPanel.add(cm.getPreferencesDecorationPanel(), BorderLayout.CENTER);
             PasswordAuthentication pa = cm.lookup(RequestorType.SERVER);
             if (pa == null) {
                 tfOsmUserName.setText("");
