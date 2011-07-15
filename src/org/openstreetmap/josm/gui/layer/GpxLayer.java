@@ -91,6 +91,7 @@ public class GpxLayer extends Layer {
     private boolean computeCacheInSync;
     private int computeCacheMaxLineLengthUsed;
     private Color computeCacheColorUsed;
+    private boolean computeCacheColorDynamic;
     private colorModes computeCacheColored;
     private int computeCacheColorTracksTune;
     private boolean isLocalFile;
@@ -420,6 +421,8 @@ public class GpxLayer extends Layer {
         int delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", "layer "+getName(), 40);
         // allows to tweak line coloring for different speed levels.
         int colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", "layer "+getName(), 45);
+        boolean colorModeDynamic = Main.pref.getBoolean("draw.rawgps.colors.dynamic", "layer "+getName(), false);
+        int hdopfactor = Main.pref.getInteger("hdop.factor", 25);
 
         if(lineWidth != 0)
         {
@@ -430,23 +433,58 @@ public class GpxLayer extends Layer {
          ********** STEP 2a - CHECK CACHE VALIDITY **********************
          ****************************************************************/
         if ((computeCacheMaxLineLengthUsed != maxLineLength) || (!neutralColor.equals(computeCacheColorUsed))
-                || (computeCacheColored != colored) || (computeCacheColorTracksTune != colorTracksTune)) {
-            // System.out.println("(re-)computing gpx line styles, reason: CCIS=" +
-            // computeCacheInSync + " CCMLLU=" + (computeCacheMaxLineLengthUsed != maxLineLength) +
-            // " CCCU=" + (!neutralColor.equals(computeCacheColorUsed)) + " CCC=" +
-            // (computeCacheColored != colored));
+                || (computeCacheColored != colored) || (computeCacheColorTracksTune != colorTracksTune)
+                || (computeCacheColorDynamic != colorModeDynamic)) {
             computeCacheMaxLineLengthUsed = maxLineLength;
             computeCacheInSync = false;
             computeCacheColorUsed = neutralColor;
             computeCacheColored = colored;
             computeCacheColorTracksTune = colorTracksTune;
+            computeCacheColorDynamic = colorModeDynamic;
         }
 
         /****************************************************************
          ********** STEP 2b - RE-COMPUTE CACHE DATA *********************
          ****************************************************************/
         if (!computeCacheInSync) { // don't compute if the cache is good
+            Float minval = null;
+            Float maxval = null;
             WayPoint oldWp = null;
+            if (colorModeDynamic) {
+                if (colored == colorModes.velocity) {
+                    for (GpxTrack trk : data.tracks) {
+                        for (GpxTrackSegment segment : trk.getSegments()) {
+                            if(!forceLines) oldWp = null;
+                            for (WayPoint trkPnt : segment.getWayPoints()) {
+                                LatLon c = trkPnt.getCoor();
+                                if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
+                                    continue;
+                                }
+                                if (oldWp != null && trkPnt.time > oldWp.time) {
+                                    Float vel = new Float(c.greatCircleDistance(oldWp.getCoor()) / (trkPnt.time - oldWp.time));
+                                    if(maxval == null || vel > maxval) maxval = vel;
+                                    if(minval == null || vel < minval) minval = vel;
+                                }
+                                oldWp = trkPnt;
+                            }
+                        }
+                    }
+                } else if (colored == colorModes.dilution) {
+                    for (GpxTrack trk : data.tracks) {
+                        for (GpxTrackSegment segment : trk.getSegments()) {
+                            for (WayPoint trkPnt : segment.getWayPoints()) {
+                                Object val = trkPnt.attr.get("hdop");
+                                if (val != null) {
+                                    Float hdop = (Float) val;
+                                    if(maxval == null || hdop > maxval) maxval = hdop;
+                                    if(minval == null || hdop < minval) minval = hdop;
+                                }
+                            }
+                        }
+                    }
+                }
+                oldWp = null;
+            }
             for (GpxTrack trk : data.tracks) {
                 for (GpxTrackSegment segment : trk.getSegments()) {
                     if (!forceLines) { // don't draw lines between segments, unless forced to
@@ -458,22 +496,30 @@ public class GpxLayer extends Layer {
                             continue;
                         }
                         trkPnt.customColoring = neutralColor;
+                        if(colored == colorModes.dilution && trkPnt.attr.get("hdop") != null) {
+                            float hdop = ((Float) trkPnt.attr.get("hdop")).floatValue();
+                            int hdoplvl = Math.round(colorModeDynamic ? ((hdop-minval)*255/(maxval-minval))
+                            : (hdop <= 0 ? 0 : hdop * hdopfactor));
+                            // High hdop is bad, but high values in colors are green.
+                            // Therefore inverse the logic
+                            int hdopcolor = 255 - (hdoplvl > 255 ? 255 : hdoplvl);
+                            trkPnt.customColoring = colors[hdopcolor];
+                        }
                         if (oldWp != null) {
                             double dist = c.greatCircleDistance(oldWp.getCoor());
 
                             switch (colored) {
                             case velocity:
                                 double dtime = trkPnt.time - oldWp.time;
-                                double vel = dist / dtime;
-                                double velColor = vel / colorTracksTune * 255;
-                                // Bad case first
-                                if (dtime <= 0 || vel < 0 || velColor > 255) {
-                                    trkPnt.customColoring = colors[255];
+                                if(dtime > 0) {
+                                    float vel = (float) (dist / dtime);
+                                    int velColor = Math.round(colorModeDynamic ? ((vel-minval)*255/(maxval-minval))
+                                    : (vel <= 0 ? 0 : vel / colorTracksTune * 255));
+                                    trkPnt.customColoring = colors[velColor > 255 ? 255 : velColor];
                                 } else {
-                                    trkPnt.customColoring = colors[(int) (velColor)];
+                                    trkPnt.customColoring = colors[255];
                                 }
                                 break;
-
                             case direction:
                                 double dirColor = oldWp.getCoor().heading(trkPnt.getCoor()) / (2.0 * Math.PI) * 256;
                                 // Bad case first
@@ -481,19 +527,6 @@ public class GpxLayer extends Layer {
                                     trkPnt.customColoring = colors_cyclic[0];
                                 } else {
                                     trkPnt.customColoring = colors_cyclic[(int) (dirColor)];
-                                }
-                                break;
-                            case dilution:
-                                if (trkPnt.attr.get("hdop") != null) {
-                                    float hdop = ((Float) trkPnt.attr.get("hdop")).floatValue();
-                                    if (hdop < 0) {
-                                        hdop = 0;
-                                    }
-                                    int hdoplvl = Math.round(hdop * Main.pref.getInteger("hdop.factor", 25));
-                                    // High hdop is bad, but high values in colors are green.
-                                    // Therefore inverse the logic
-                                    int hdopcolor = 255 - (hdoplvl > 255 ? 255 : hdoplvl);
-                                    trkPnt.customColoring = colors[hdopcolor];
                                 }
                                 break;
                             }
