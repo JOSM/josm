@@ -17,8 +17,8 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-
 import java.util.Set;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -197,7 +197,7 @@ public class OpenFileAction extends DiskAccessAction {
             getProgressMonitor().setTicksCount(files.size());
 
             if (chosenImporter != null) {
-                // The importer was expicitely chosen, so use it.
+                // The importer was explicitly chosen, so use it.
                 List<File> filesNotMatchingWithImporter = new LinkedList<File>();
                 List<File> filesMatchingWithImporter = new LinkedList<File>();
                 for (final File f : files) {
@@ -261,10 +261,10 @@ public class OpenFileAction extends DiskAccessAction {
                         // remove the files which didn't fail to load from the failed list
                         failedFiles.removeAll(successfullyOpenedFiles);
                         for (File f : successfullyOpenedFiles) {
-                            fileHistory.add(f.getPath());
+                            fileHistory.add(f.getCanonicalPath());
                         }
                         for (File f : failedFiles) {
-                            failedAll.add(f.getPath());
+                            failedAll.add(f.getCanonicalPath());
                         }
                     }
                 }
