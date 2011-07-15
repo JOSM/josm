@@ -61,6 +61,7 @@ public class DrawingPreference implements PreferenceSetting {
     private JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
     private JCheckBox makeAutoMarkers = new JCheckBox(tr("Create markers when reading GPX."));
     private JCheckBox outlineOnly = new JCheckBox(tr("Draw only outlines of areas"));
+    private JCheckBox colorDynamic = new JCheckBox(tr("Dynamic color range based on data limits"));
     private JComboBox waypointLabel = new JComboBox(new String[] {tr("Auto"), /* gpx data field name */ trc("gpx_field", "Name"),
             /* gpx data field name */ trc("gpx_field", "Desc(ription)"), tr("Both"), tr("None")});
 
@@ -176,6 +177,12 @@ public class DrawingPreference implements PreferenceSetting {
         colorTypeVelocity.addChangeListener(new ChangeListener(){
             public void stateChanged(ChangeEvent e) {
                 colorTypeVelocityTune.setEnabled(colorTypeVelocity.isSelected());
+                colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
+            }
+        });
+        colorTypeDilution.addChangeListener(new ChangeListener(){
+            public void stateChanged(ChangeEvent e) {
+                colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
             }
         });
 
@@ -213,6 +220,10 @@ public class DrawingPreference implements PreferenceSetting {
         panel.add(colorTypeVelocityTune, GBC.eop().insets(5,0,0,5));
         panel.add(colorTypeDirection, GBC.eol().insets(40,0,0,0));
         panel.add(colorTypeDilution, GBC.eol().insets(40,0,0,0));
+        colorDynamic.setToolTipText(tr("Draw direction arrows for lines, connecting GPS points."));
+        colorDynamic.setSelected(Main.pref.getBoolean("draw.rawgps.colors.dynamic", false));
+        colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
+        panel.add(colorDynamic, GBC.eop().insets(40,0,0,0));
 
         // waypointLabel
         panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
@@ -301,6 +312,7 @@ public class DrawingPreference implements PreferenceSetting {
         Main.pref.put("draw.rawgps.direction", drawGpsArrows.isSelected());
         Main.pref.put("draw.rawgps.alternatedirection", drawGpsArrowsFast.isSelected());
         Main.pref.put("draw.rawgps.min-arrow-distance", drawGpsArrowsMinDist.getText());
+        Main.pref.put("draw.rawgps.colors.dynamic", colorDynamic.isSelected());
         if(colorTypeVelocity.isSelected()) {
             Main.pref.putInteger("draw.rawgps.colors", 1);
         } else if(colorTypeDilution.isSelected()) {
