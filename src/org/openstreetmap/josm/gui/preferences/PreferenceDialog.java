@@ -8,6 +8,8 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -60,6 +62,10 @@ public class PreferenceDialog extends JDialog {
     public PreferenceDialog(Component parent) {
         super(JOptionPane.getFrameForComponent(parent), tr("Preferences"), ModalityType.DOCUMENT_MODAL);
         build();
+        this.setMinimumSize(new Dimension(600, 350));
+        // set the maximum width to the current screen. If the dialog is opened on a
+        // smaller screen than before, this will reset the stored preference.
+        this.setMaximumSize( Toolkit.getDefaultToolkit().getScreenSize());
     }
 
     public boolean isCanceled() {
@@ -73,11 +79,18 @@ public class PreferenceDialog extends JDialog {
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
+            // Make the pref window at most as large as the parent JOSM window
+            // Have to take window decorations into account or the windows will
+            // be too large
+            Insets i = this.getParent().getInsets();
+            Dimension p = this.getParent().getSize();
+            p = new Dimension(Math.min(p.width-i.left-i.right, 700),
+                    Math.min(p.height-i.top-i.bottom, 800));
             new WindowGeometry(
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
                             getParent(),
-                            new Dimension(700,800)
+                            p
                     )
             ).applySafe(this);
         } else if (!visible && isShowing()){
