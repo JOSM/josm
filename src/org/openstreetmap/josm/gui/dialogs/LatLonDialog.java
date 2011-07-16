@@ -114,7 +114,7 @@ public class LatLonDialog extends JDialog {
                         "<li>N 49 29.918 E 19 15.88</li>" +
                         "<li>49 29.4 19 24.5</li>" +
                         "<li>-49 29.4 N -19 24.5 W</li></ul>" +
-                        "<li>48 deg 42' 52.13\" N, 21 deg 11' 47.60\" E</li></ul>"
+                        "<li>48 deg 42&#39; 52.13\" N, 21 deg 11&#39; 47.60\" E</li></ul>"
                 		)),
                 GBC.eol().fill().weight(1.0, 1.0));
 

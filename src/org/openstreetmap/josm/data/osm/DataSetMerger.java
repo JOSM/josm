@@ -179,7 +179,7 @@ public class DataSetMerger {
                 OsmPrimitive target = it.next();
                 OsmPrimitive source = sourceDataSet.getPrimitiveById(target.getPrimitiveId());
                 if (source == null)
-                    throw new RuntimeException(tr("Object of type {0} with id {1} was marked to be deleted, but it's missing in the source dataset",
+                    throw new RuntimeException(tr("Object of type {0} with id {1} was marked to be deleted, but it''s missing in the source dataset",
                             target.getType(), target.getUniqueId()));
 
                 List<OsmPrimitive> referrers = target.getReferrers();
@@ -313,7 +313,7 @@ public class DataSetMerger {
             // It indicates a serious problem in datasets.
             // For example, datasets can be fetched from different OSM servers or badly hand-modified.
             // We shouldn't merge that datasets.
-            throw new DataIntegrityProblemException(tr("Conflict in 'visible' attribute for object of type {0} with id {1}",
+            throw new DataIntegrityProblemException(tr("Conflict in ''visible'' attribute for object of type {0} with id {1}",
                     target.getType(), target.getId()));
         else if (target.isDeleted() && ! source.isDeleted() && target.getVersion() == source.getVersion()) {
             // same version, but target is deleted. Assume target takes precedence
