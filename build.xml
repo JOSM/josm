@@ -10,9 +10,11 @@
 **
 -->
 <project xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" name="josm" default="dist" basedir=".">
-    <property name="test.dir" value="test"/>
-    <property name="src.dir" value="src"/>
-    <property name="build.dir" value="build"/>
+    <property name="test.dir" location="test"/>
+    <property name="src.dir" location="src"/>
+    <property name="build.dir" location="build"/>
+    <property name="javacc.home" location="tools"/>
+    <property name="mapcss.dir" location="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss"/>
     <!-- build parameter: compression level (ant -Dclevel=N)
              N ranges from 0 (no compression) to 9 (maximum compression)
              default: 9 -->
@@ -20,11 +22,12 @@
         <isset property="clevel"/>
     </condition>
     <!-- Java classpath addition (all jar files to compile tests with this) -->
-    <!-- <path id="classpath">
+    <path id="classpath">
         <fileset dir="lib">
             <include name="**/*.jar"/>
         </fileset>
-    </path> -->
+    </path>
+
     <!--
 	  ** Used by Eclipse ant builder for updating
 	  ** the REVISION file used by JOSM
@@ -104,9 +107,13 @@ Build-Date: ${build.tstamp}
             <zipfileset dir="macosx" includes="JOSM.app/Contents/MacOS/JOSM" filemode="755"/>
         </zip>
     </target>
-    <target name="compile" depends="init">
-        <javac srcdir="src" includes="com/drew/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.5" source="1.5" debug="on" encoding="iso-8859-1"/>
-        <javac srcdir="src" excludes="com/drew/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.5" source="1.5" debug="on" encoding="UTF-8">
+    <target name="javacc">
+        <mkdir dir="${mapcss.dir}/parsergen"/>
+        <javacc target="${mapcss.dir}/MapCSSParser.jj" javacchome="${javacc.home}" outputdirectory="${mapcss.dir}/parsergen"/>
+    </target>
+    <target name="compile" depends="javacc,init">
+        <javac srcdir="src" includes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.5" source="1.5" debug="on" encoding="iso-8859-1"/>
+        <javac srcdir="src" excludes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.5" source="1.5" debug="on" encoding="UTF-8">
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>
@@ -118,15 +125,7 @@ Build-Date: ${build.tstamp}
     <target name="clean">
         <delete dir="build"/>
         <delete dir="dist"/>
-    </target>
-    <target name="javacc">
-        <exec executable="javacc">
-            <arg value="-debug_parser=false"/>
-            <arg value="-debug_lookahead=false"/>
-            <arg value="-debug_token_manager=false"/>
-            <arg value="-output_directory=${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss/parser"/>
-            <arg value="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss/parser/MapCSSParser.jj"/>
-        </exec>
+        <delete dir="${mapcss.dir}/parsergen"/>
     </target>
     <path id="test.classpath">
         <fileset dir="${test.dir}/lib">
