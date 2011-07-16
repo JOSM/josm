@@ -8,6 +8,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -288,6 +289,8 @@ public class SplitWayAction extends JosmAction {
         newSelection.addAll(selection);
 
         Iterator<List<Node>> chunkIt = wayChunks.iterator();
+        Collection<String> nowarnroles = Main.pref.getCollection("way.split.roles.nowarn",
+        Arrays.asList(new String[]{"outer", "inner", "forward", "backward"}));
 
         // First, change the original way
         Way changedWay = new Way(way);
@@ -389,7 +392,7 @@ public class SplitWayAction extends JosmAction {
 
                     if(insert)
                     {
-                        if (rm.hasRole() && !("multipolygon".equals(type))) {
+                        if (rm.hasRole() && !nowarnroles.contains(rm.getRole())) {
                             warnmerole = true;
                         }
 
