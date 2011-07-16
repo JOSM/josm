@@ -404,7 +404,11 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         EastNorth nearestPointOnRefLine = Geometry.closestPointToLine(referenceSegment.getFirstNode().getEastNorth(),
                 referenceSegment.getSecondNode().getEastNorth(), enp);
 
+        // Note: d is the distance in _projected units_
         double d = enp.distance(nearestPointOnRefLine);
+        double realD = mv.getProjection().eastNorth2latlon(enp).greatCircleDistance(mv.getProjection().eastNorth2latlon(nearestPointOnRefLine));
+        double snappedRealD = realD;
+        
         // TODO: abuse of isToTheRightSideOfLine function.
         boolean toTheRight = Geometry.isToTheRightSideOfLine(referenceSegment.getFirstNode(),
                 referenceSegment.getFirstNode(), referenceSegment.getSecondNode(), new Node(enp));
@@ -412,21 +416,22 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         if (snap) {
             // TODO: Very simple snapping
             // - Snap steps and/or threshold relative to the distance?
-            long closestWholeUnit = Math.round(d);
-            if (Math.abs(closestWholeUnit - d) < snapThreshold) {
-                d = closestWholeUnit;
+            long closestWholeUnit = Math.round(realD);
+            if (Math.abs(closestWholeUnit - realD) < snapThreshold) {
+                snappedRealD = closestWholeUnit;
             } else {
-                d = closestWholeUnit + Math.signum(closestWholeUnit - d) * -0.5;
+                snappedRealD = closestWholeUnit + Math.signum(closestWholeUnit - realD) * -0.5;
             }
         }
+        d = snappedRealD * (d/realD); // convert back to projected distance. (probably ok on small scales)
         helperLineStart = nearestPointOnRefLine;
         helperLineEnd = enp;
         if (toTheRight) {
             d = -d;
         }
         pWays.changeOffset(d);
-
-        Main.map.statusLine.setDist(Math.abs(d));
+        
+        Main.map.statusLine.setDist(Math.abs(snappedRealD));
         Main.map.statusLine.repaint();
         mv.repaint();
     }
