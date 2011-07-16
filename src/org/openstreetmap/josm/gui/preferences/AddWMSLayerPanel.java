@@ -140,7 +140,7 @@ public class AddWMSLayerPanel extends JPanel {
                         if(!detail.isSupported()) {
                             layerTree.removeSelectionPath(i);
                             if(!previouslyShownUnsupportedCrsError) {
-                                JOptionPane.showMessageDialog(null, tr("That layer does not support any of JOSM's projections,\n" +
+                                JOptionPane.showMessageDialog(null, tr("That layer does not support any of JOSM''s projections,\n" +
                                 "so you can not use it. This message will not show again."),
                                 tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
                                 previouslyShownUnsupportedCrsError = true;

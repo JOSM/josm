@@ -144,7 +144,7 @@ public class WMSGrabber extends Grabber {
                     + srs
                     + "&width=" + wi + "&height=" + ht;
             if (!(baseURL.endsWith("&") || baseURL.endsWith("?"))) {
-                System.out.println(tr("Warning: The base URL ''{0}'' for a WMS service doesn't have a trailing '&' or a trailing '?'.", baseURL));
+                System.out.println(tr("Warning: The base URL ''{0}'' for a WMS service doesn''t have a trailing ''&'' or a trailing ''?''.", baseURL));
                 System.out.println(tr("Warning: Fetching WMS tiles is likely to fail. Please check you preference settings."));
                 System.out.println(tr("Warning: The complete URL is ''{0}''.", str));
             }
