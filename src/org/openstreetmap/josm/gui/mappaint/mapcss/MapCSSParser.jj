@@ -4,7 +4,7 @@ options {
 }
 
 PARSER_BEGIN(MapCSSParser)
-package org.openstreetmap.josm.gui.mappaint.mapcss.parser;
+package org.openstreetmap.josm.gui.mappaint.mapcss.parsergen;
 
 import java.awt.Color;
 import java.util.ArrayList;
