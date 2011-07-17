@@ -133,18 +133,7 @@ public class ImageProvider {
         if (name == null)
             return null;
         if (name.startsWith("http://")) {
-            ImageWrapper iw = cache.get(name);
-            if (iw == null) {
-                try {
-                    MirroredInputStream is = new MirroredInputStream(name, new File(Main.pref.getPreferencesDir(),
-                    "images").toString());
-                    Image img = Toolkit.getDefaultToolkit().createImage(is.getFile().toURI().toURL());
-                    iw = new ImageWrapper(img, false);
-                    cache.put(name, iw);
-                } catch (IOException e) {
-                }
-            }
-            return iw;
+            return getIfAvailableHttp(name);
         }
         if (subdir == null) {
             subdir = "";
@@ -164,53 +153,15 @@ public class ImageProvider {
 
         ImageWrapper iw = cache.get(cache_name);
         if (iw == null) {
-            if(archive != null)
-            {
-                ZipFile zipFile = null;
-                try
-                {
-                    zipFile = new ZipFile(archive);
-                    ZipEntry entry = zipFile.getEntry(full_name);
-                    if(entry != null)
-                    {
-                        int size = (int)entry.getSize();
-                        int offs = 0;
-                        byte[] buf = new byte[size];
-                        InputStream is = null;
-                        try {
-                            is = zipFile.getInputStream(entry);
-                            while(size > 0)
-                            {
-                                int l = is.read(buf, offs, size);
-                                offs += l;
-                                size -= l;
-                            }
-                            Image img = Toolkit.getDefaultToolkit().createImage(buf);
-                            iw = new ImageWrapper(img, false);
-                        } finally {
-                            if (is != null) {
-                                is.close();
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    System.err.println(tr("Warning: failed to handle zip file ''{0}''. Exception was: {1}", archive.getName(), e.toString()));
-                } finally {
-                    if (zipFile != null) {
-                        try {
-                            zipFile.close();
-                        } catch (IOException ex) {
-                        }
-                    }
-                }
+            if (archive != null) {
+                iw = getIfAvailableZip(full_name, archive);
             }
             // getImageUrl() does a ton of "stat()" calls and gets expensive
             // and redundant when you have a whole ton of objects. So,
             // index the cache by the name of the icon we're looking for
             // and don't bother to create a URL unless we're actually
             // creating the image.
-            if(iw == null)
-            {
+            if (iw == null) {
                 URL path = getImageUrl(full_name, dirs);
                 if (path == null)
                     return null;
@@ -221,6 +172,62 @@ public class ImageProvider {
         }
 
         return iw;
+    }
+
+    private static ImageWrapper getIfAvailableHttp(String url) {
+        ImageWrapper iw = cache.get(url);
+        if (iw == null) {
+            try {
+                MirroredInputStream is = new MirroredInputStream(url, new File(Main.pref.getPreferencesDir(),
+                "images").toString());
+                Image img = Toolkit.getDefaultToolkit().createImage(is.getFile().toURI().toURL());
+                iw = new ImageWrapper(img, false);
+                cache.put(url, iw);
+            } catch (IOException e) {
+            }
+        }
+        return iw;
+    }
+
+    private static ImageWrapper getIfAvailableZip(String full_name, File archive) {
+        ZipFile zipFile = null;
+        Image img = null;
+        try
+        {
+            zipFile = new ZipFile(archive);
+            ZipEntry entry = zipFile.getEntry(full_name);
+            if(entry != null)
+            {
+                int size = (int)entry.getSize();
+                int offs = 0;
+                byte[] buf = new byte[size];
+                InputStream is = null;
+                try {
+                    is = zipFile.getInputStream(entry);
+                    while(size > 0)
+                    {
+                        int l = is.read(buf, offs, size);
+                        offs += l;
+                        size -= l;
+                    }
+                    img = Toolkit.getDefaultToolkit().createImage(buf);
+                } finally {
+                    if (is != null) {
+                        is.close();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println(tr("Warning: failed to handle zip file ''{0}''. Exception was: {1}", archive.getName(), e.toString()));
+        } finally {
+            if (zipFile != null) {
+                try {
+                    zipFile.close();
+                } catch (IOException ex) {
+                }
+            }
+        }
+        return img == null ? null : new ImageWrapper(img, false);
     }
 
     private static URL getImageUrl(String path, String name) {
