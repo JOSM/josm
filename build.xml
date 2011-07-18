@@ -109,7 +109,14 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="javacc">
         <mkdir dir="${mapcss.dir}/parsergen"/>
-        <javacc target="${mapcss.dir}/MapCSSParser.jj" javacchome="${javacc.home}" outputdirectory="${mapcss.dir}/parsergen"/>
+        <exec append="false" executable="java" failifexecutionfails="true">
+            <arg value="-cp"/>
+            <arg value="${javacc.home}/javacc.jar"/>
+            <arg value="javacc"/>
+            <arg value="-OUTPUT_DIRECTORY=${mapcss.dir}/parsergen"/>
+            <arg value="${mapcss.dir}/MapCSSParser.jj"/>
+        </exec>
+<!--        <javacc target="${mapcss.dir}/MapCSSParser.jj" javacchome="${javacc.home}" outputdirectory="${mapcss.dir}/parsergen"/>-->
     </target>
     <target name="compile" depends="javacc,init">
         <javac srcdir="src" includes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.5" source="1.5" debug="on" encoding="iso-8859-1"/>
