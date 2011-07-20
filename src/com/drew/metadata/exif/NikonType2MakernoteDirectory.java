@@ -8,7 +8,7 @@
  * wider community, please send me a copy and I'll post it on my site.
  *
  * If you make use of this code, I'd appreciate hearing about it.
- *   drew@drewnoakes.com
+ *   metadata_extractor [at] drewnoakes [dot] com
  * Latest version of this software kept at
  *   http://drewnoakes.com/
  *
@@ -23,7 +23,7 @@ import com.drew.metadata.MetadataException;
 import java.util.HashMap;
 
 /**
- * Contains values specific to Nikon cameras.  Type-2 applies to the E990 and D-series cameras such as the E990, D1,
+ * Describes tags specific to Nikon (type 2) cameras.  Type-2 applies to the E990 and D-series cameras such as the E990, D1,
  * D70 and D100.
  *
  * Thanks to Fabrizio Giudici for publishing his reverse-engineering of the D100 makernote data.
@@ -149,7 +149,6 @@ public class NikonType2MakernoteDirectory extends Directory
 
     /**
      * Values observed
-     * - î
      * - 0,1,c,0 (hex)
      */
     public static final int TAG_NIKON_TYPE2_UNKNOWN_2 = 0x000E;
@@ -295,7 +294,7 @@ public class NikonType2MakernoteDirectory extends Directory
     /**
      * Values observed
      * - 48,1,c,0 (hex) (D100)
-     * - @
+     * - @ <hex>
      */
     public static final int TAG_NIKON_TYPE2_UNKNOWN_8 = 0x008B;
 
@@ -326,7 +325,7 @@ public class NikonType2MakernoteDirectory extends Directory
 
     /**
      * Values observed
-     * - 0100)
+     * - 0100 <hex>
      * - 0103 (D70)
      * - 0100 (D1X)
      */
@@ -348,16 +347,16 @@ public class NikonType2MakernoteDirectory extends Directory
 
     /**
      * Values observed
-     * - 0100'~e3
-     * - 0103
+     * - 0100 <hex>
+     * - 0103 <hex>
      */
     public static final int TAG_NIKON_TYPE2_UNKNOWN_12 = 0x0097;
 
     /**
      * Values observed
-     * - 0100fht@7b,4x,D"Y
-     * - 01015
-     * - 0100w\cH+D$$h$î5Q (D1X)
+     * - 0100 <hex>
+     * - 0101 <hex>
+     * - 0100 <hex> (D1X)
      * - 30,31,30,30,0,0,b,48,7c,7c,24,24,5,15,24,0,0,0,0,0 (hex) (D100)
      */
     public static final int TAG_NIKON_TYPE2_UNKNOWN_13 = 0x0098;
