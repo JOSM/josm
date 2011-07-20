@@ -65,7 +65,7 @@ public class Version {
     }
 
     private int version;
-    private String revision;
+    private String releaseDescription;
     private String time;
     private boolean isLocalBuild;
 
@@ -95,7 +95,7 @@ public class Version {
      */
     protected void initFromRevisionInfo(String revisionInfo) {
         if (revisionInfo == null) {
-            this.revision = tr("UNKNOWN");
+            this.releaseDescription = tr("UNKNOWN");
             this.version = JOSM_UNKNOWN_VERSION;
             this.time = null;
             return;
@@ -136,7 +136,7 @@ public class Version {
         for(Entry<String,String> property: properties.entrySet()) {
             sb.append(property.getKey()).append(":").append(property.getValue()).append("\n");
         }
-        revision = sb.toString();
+        releaseDescription = sb.toString();
     }
 
     public void init() {
@@ -144,11 +144,10 @@ public class Version {
         if (u == null) {
             System.err.println(tr("Warning: the revision file ''/REVISION'' is missing."));
             version = 0;
-            revision = "";
+            releaseDescription = "";
             return;
         }
         initFromRevisionInfo(loadResourceFile(u));
-        System.out.println(revision);
     }
 
     /**
@@ -167,7 +166,7 @@ public class Version {
      * @return a text with the release attributes
      */
     public String getReleaseAttributes() {
-        return revision;
+        return releaseDescription;
     }
 
     /**
