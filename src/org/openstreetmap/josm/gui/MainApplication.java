@@ -28,6 +28,7 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.DefaultProxySelector;
@@ -121,6 +122,8 @@ public class MainApplication extends Main {
         for (String arg : args) {
             if ("-h".equals(arg) || "-?".equals(arg)) {
                 arg = "--help";
+            } else if ("-v".equals(arg)) {
+                arg = "--version";
             }
             // handle simple arguments like file names, URLs, bounds
             if (!arg.startsWith("--")) {
@@ -171,11 +174,18 @@ public class MainApplication extends Main {
 
         // initialize the platform hook, and
         Main.determinePlatformHook();
-        // call the really early hook before we anything else
+        // call the really early hook before we do anything else
         Main.platform.preStartupHook();
 
         // construct argument table
         final Map<String, Collection<String>> args = buildCommandLineArgumentMap(argArray);
+
+        if (args.containsKey("version")) {
+            System.out.println(Version.getInstance().getAgentString());
+            System.exit(0);
+        } else {
+            System.out.println(Version.getInstance().getReleaseAttributes());
+        }
 
         Main.pref.init(args.containsKey("reset-preferences"));
 
