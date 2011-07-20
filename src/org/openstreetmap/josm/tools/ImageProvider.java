@@ -57,7 +57,9 @@ public class ImageProvider {
     }
 
     public static enum ImageType {
-        PNG, SVG
+        SVG,    // scalable vector graphics
+        OTHER   // everything else, e.g. png, gif
+                // must be supported by Java
     }
 
     /**
@@ -88,7 +90,7 @@ public class ImageProvider {
     public static ImageIcon get(String subdir, String name) {
         ImageIcon icon = getIfAvailable(subdir, name);
         if (icon == null) {
-            String ext = name.indexOf('.') != -1 ? "" : ".png";
+            String ext = name.indexOf('.') != -1 ? "" : ".???";
             throw new NullPointerException(tr(
             "Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.",
             name+ext));
@@ -151,7 +153,7 @@ public class ImageProvider {
     private static ImageWrapper getIfAvailableImpl(Collection<String> dirs, String id, String subdir, String name, File archive) {
         if (name == null)
             return null;
-        ImageType type = name.toLowerCase().endsWith("svg") ? ImageType.SVG : ImageType.PNG;
+        ImageType type = name.toLowerCase().endsWith(".svg") ? ImageType.SVG : ImageType.OTHER;
 
         if (name.startsWith("http://")) {
             String url = name;
@@ -170,51 +172,60 @@ public class ImageProvider {
             subdir += "/";
         }
         String[] extensions;
-        if (name.toLowerCase().endsWith(".png") | name.toLowerCase().endsWith(".svg")) {
+        if (name.indexOf('.') != -1) {
             extensions = new String[] { "" };
         } else {
             extensions = new String[] { ".png", ".svg"};
         }
-        for (String ext : extensions) {
-            if (".svg".equals(ext)) {
-                type = ImageType.SVG;
-            } else if (".png".equals(ext)) {
-                type = ImageType.PNG;
-            }
-            
-            String full_name = subdir + name + ext;
-            String cache_name = full_name;
-            /* cache separately */
-            if (dirs != null && dirs.size() > 0) {
-                cache_name = "id:" + id + ":" + full_name;
-                if(archive != null) {
-                    cache_name += ":" + archive.getName();
+        final int ARCHIVE = 0, LOCAL = 1;
+        for (int place : new Integer[] { ARCHIVE, LOCAL }) {
+            for (String ext : extensions) {
+
+                if (".svg".equals(ext)) {
+                    type = ImageType.SVG;
+                } else if (".png".equals(ext)) {
+                    type = ImageType.OTHER;
                 }
-            }
 
-            ImageWrapper iw = cache.get(cache_name);
-            if (iw != null) return iw;
-
-            if (archive != null) {
-                iw = getIfAvailableZip(full_name, archive, type);
-                if (iw != null) {
-                    cache.put(cache_name, iw);
-                    return iw;
+                String full_name = subdir + name + ext;
+                String cache_name = full_name;
+                /* cache separately */
+                if (dirs != null && dirs.size() > 0) {
+                    cache_name = "id:" + id + ":" + full_name;
+                    if(archive != null) {
+                        cache_name += ":" + archive.getName();
+                    }
                 }
-            }
 
-            // getImageUrl() does a ton of "stat()" calls and gets expensive
-            // and redundant when you have a whole ton of objects. So,
-            // index the cache by the name of the icon we're looking for
-            // and don't bother to create a URL unless we're actually
-            // creating the image.
-            URL path = getImageUrl(full_name, dirs);
-            if (path == null)
-                continue;
-            iw = getIfAvailableLocalURL(path, type);
-            if (iw != null) {
-                cache.put(cache_name, iw);
-                return iw;
+                ImageWrapper iw = cache.get(cache_name);
+                if (iw != null) return iw;
+
+                switch (place) {
+                    case ARCHIVE:
+                        if (archive != null) {
+                            iw = getIfAvailableZip(full_name, archive, type);
+                            if (iw != null) {
+                                cache.put(cache_name, iw);
+                                return iw;
+                            }
+                        }
+                        break;
+                    case LOCAL:
+                        // getImageUrl() does a ton of "stat()" calls and gets expensive
+                        // and redundant when you have a whole ton of objects. So,
+                        // index the cache by the name of the icon we're looking for
+                        // and don't bother to create a URL unless we're actually
+                        // creating the image.
+                        URL path = getImageUrl(full_name, dirs);
+                        if (path == null)
+                            continue;
+                        iw = getIfAvailableLocalURL(path, type);
+                        if (iw != null) {
+                            cache.put(cache_name, iw);
+                            return iw;
+                        }
+                        break;
+                }
             }
         }
         return null;
@@ -226,12 +237,12 @@ public class ImageProvider {
             MirroredInputStream is = new MirroredInputStream(url,
                     new File(Main.pref.getPreferencesDir(), "images").toString());
             switch (type) {
-                case PNG:
-                    img = Toolkit.getDefaultToolkit().createImage(is.getFile().toURI().toURL());
-                    break;
                 case SVG:
                     URI uri = getSvgUniverse().loadSVG(is, is.getFile().toURI().toURL().toString());
                     img = createImageFromSvgUri(uri);
+                    break;
+                case OTHER:
+                    img = Toolkit.getDefaultToolkit().createImage(is.getFile().toURI().toURL());
                     break;
             }
         } catch (IOException e) {
@@ -255,7 +266,11 @@ public class ImageProvider {
                 try {
                     is = zipFile.getInputStream(entry);
                     switch (type) {
-                        case PNG:
+                        case SVG:
+                            URI uri = getSvgUniverse().loadSVG(is, full_name);
+                            img = createImageFromSvgUri(uri);
+                            break;
+                        case OTHER:
                             while(size > 0)
                             {
                                 int l = is.read(buf, offs, size);
@@ -263,10 +278,6 @@ public class ImageProvider {
                                 size -= l;
                             }
                             img = Toolkit.getDefaultToolkit().createImage(buf);
-                            break;
-                        case SVG:
-                            URI uri = getSvgUniverse().loadSVG(is, full_name);
-                            img = createImageFromSvgUri(uri);
                             break;
                     }
                 } finally {
@@ -291,12 +302,12 @@ public class ImageProvider {
     private static ImageWrapper getIfAvailableLocalURL(URL path, ImageType type) {
         Image img = null;
         switch (type) {
-            case PNG:
-                img = Toolkit.getDefaultToolkit().createImage(path);
-                break;
             case SVG:
                 URI uri = getSvgUniverse().loadSVG(path);
                 img = createImageFromSvgUri(uri);
+                break;
+            case OTHER:
+                img = Toolkit.getDefaultToolkit().createImage(path);
                 break;
         }
         return img == null ? null : new ImageWrapper(img, false);
