@@ -21,6 +21,7 @@ import org.openstreetmap.josm.actions.AbstractInfoAction;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.UrlLabel;
 
@@ -146,7 +147,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
             String username = getPrimitive().getUser();
             lblUser.setDescription(username);
         } else {
-            String user = Main.pref.get("osm-server.username");
+            String user = CredentialsManager.getInstance().getUsername();
             if (user == null) {
                 lblUser.setDescription(tr("anonymous"));
             } else {

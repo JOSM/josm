@@ -6,6 +6,8 @@ import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
 
 import org.openstreetmap.josm.data.oauth.OAuthToken;
+import org.openstreetmap.josm.gui.JosmUserIdentityManager;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * CredentialManager is a factory for the single credential agent used.
@@ -62,6 +64,21 @@ public class CredentialsManager implements CredentialsAgent {
         this.delegate = delegate;
     }
 
+    public String getUsername() {
+        String username = null;
+        try {
+            PasswordAuthentication auth = lookup(RequestorType.SERVER);
+            if (auth != null) {
+                username = auth.getUserName();
+            }
+        } catch (CredentialsAgentException ex) {
+            return null;
+        }
+        if (username == null) return null;
+        username = username.trim();
+        return Utils.equal(username, "") ? null : username;
+    }
+
     @Override
     public PasswordAuthentication lookup(RequestorType requestorType) throws CredentialsAgentException {
         return delegate.lookup(requestorType);
@@ -69,6 +86,9 @@ public class CredentialsManager implements CredentialsAgent {
 
     @Override
     public void store(RequestorType requestorType, PasswordAuthentication credentials) throws CredentialsAgentException {
+        if (requestorType == RequestorType.SERVER && credentials.getUserName() != null) {
+            JosmUserIdentityManager.getInstance().setPartiallyIdentified(credentials.getUserName());
+        }
         delegate.store(requestorType, credentials);
     }
 

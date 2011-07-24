@@ -118,11 +118,6 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
                     tfOsmPassword.getPassword()
             );
             cm.store(RequestorType.SERVER, pa);
-            // always save the username to the preferences if it isn't already saved there
-            // by the credential manager
-            if (! (cm instanceof JosmPreferencesCredentialAgent)) {
-                Main.pref.put("osm-server.username", tfOsmUserName.getText().trim());
-            }
         } catch(CredentialsAgentException e) {
             e.printStackTrace();
             System.err.println(tr("Warning: failed to save OSM credentials to credential manager."));

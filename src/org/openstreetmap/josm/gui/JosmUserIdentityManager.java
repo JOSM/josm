@@ -9,6 +9,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.osm.UserInfo;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -167,7 +168,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
      * Initializes the user identity manager from values in the {@see org.openstreetmap.josm.data.Preferences}
      */
     public void initFromPreferences() {
-        String userName = Main.pref.get("osm-server.username");
+        String userName = CredentialsManager.getInstance().getUsername();
         if (isAnonymous()) {
             if (userName != null && ! userName.trim().equals("")) {
                 setPartiallyIdentified(userName);
