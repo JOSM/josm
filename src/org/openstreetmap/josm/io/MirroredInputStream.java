@@ -10,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
@@ -28,7 +30,7 @@ import org.openstreetmap.josm.Main;
 public class MirroredInputStream extends InputStream {
     InputStream fs = null;
     File file = null;
-    
+
     public final static long DEFAULT_MAXTIME = -1l;
 
     public MirroredInputStream(String name) throws IOException {
@@ -185,23 +187,22 @@ public class MirroredInputStream extends InputStream {
     private File checkLocal(URL url, String destDir, long maxTime) throws IOException {
         String prefKey = getPrefKey(url, destDir);
         long age = 0L;
-        File file = null;
-        // FIXME: replace with normal getCollection after july 2011
-        Collection<String> localPathEntry = Main.pref.getCollectionOld(prefKey, ";");
+        File localFile = null;
+        Collection<String> localPathEntry = Main.pref.getCollection(prefKey);
         if(localPathEntry.size() == 2) {
             String[] lp = (String[]) localPathEntry.toArray();
-            file = new File(lp[1]);
-            if(!file.exists())
-                file = null;
+            localFile = new File(lp[1]);
+            if(!localFile.exists())
+                localFile = null;
             else {
-                if ( maxTime == DEFAULT_MAXTIME 
+                if ( maxTime == DEFAULT_MAXTIME
                         || maxTime <= 0 // arbitrary value <= 0 is deprecated
                 ) {
                     maxTime = Main.pref.getInteger("mirror.maxtime", 7*24*60*60);
                 }
                 age = System.currentTimeMillis() - Long.parseLong(lp[0]);
                 if (age < maxTime*1000) {
-                    return file;
+                    return localFile;
                 }
             }
         }
@@ -220,10 +221,8 @@ public class MirroredInputStream extends InputStream {
         BufferedOutputStream bos = null;
         BufferedInputStream bis = null;
         try {
-            URLConnection conn = url.openConnection();
-            conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
-            conn.setReadTimeout(Main.pref.getInteger("socket.timeout.read",30)*1000);
-            bis = new BufferedInputStream(conn.getInputStream());
+            HttpURLConnection con = connectFollowingRedirect(url);
+            bis = new BufferedInputStream(con.getInputStream());
             FileOutputStream fos = new FileOutputStream(destDirFile);
             bos = new BufferedOutputStream(fos);
             byte[] buffer = new byte[4096];
@@ -236,19 +235,19 @@ public class MirroredInputStream extends InputStream {
             /* close fos as well to be sure! */
             fos.close();
             fos = null;
-            file = new File(destDir, localPath);
-            if(Main.platform.rename(destDirFile, file)) {
+            localFile = new File(destDir, localPath);
+            if(Main.platform.rename(destDirFile, localFile)) {
                 Main.pref.putCollection(prefKey, Arrays.asList(new String[]
-                {Long.toString(System.currentTimeMillis()), file.toString()}));
+                {Long.toString(System.currentTimeMillis()), localFile.toString()}));
             } else {
                 System.out.println(tr("Failed to rename file {0} to {1}.",
-                destDirFile.getPath(), file.getPath()));
+                destDirFile.getPath(), localFile.getPath()));
             }
         } catch (IOException e) {
             if (age >= maxTime*1000 && age < maxTime*1000*2) {
                 System.out.println(tr("Failed to load {0}, use cached file and retry next time: {1}",
                 url, e));
-                return file;
+                return localFile;
             } else {
                 throw e;
             }
@@ -269,8 +268,55 @@ public class MirroredInputStream extends InputStream {
             }
         }
 
-        return file;
+        return localFile;
     }
+
+    /**
+     * Opens a connection for downloading a resource.
+     * <p>
+     * Manually follows redirects because
+     * {@link HttpURLConnection#setFollowRedirects(boolean)} fails if the redirect
+     * is going from a http to a https URL, see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4620571">bug report</a>.
+     * <p>
+     * This can causes problems when downloading from certain GitHub URLs.
+     */
+    protected HttpURLConnection connectFollowingRedirect(URL downloadUrl) throws MalformedURLException, IOException {
+        HttpURLConnection con = null;
+        int numRedirects = 0;
+        while(true) {
+            con = (HttpURLConnection)downloadUrl.openConnection();
+            con.setInstanceFollowRedirects(false);
+            con.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
+            con.setReadTimeout(Main.pref.getInteger("socket.timeout.read",30)*1000);
+            con.connect();
+            switch(con.getResponseCode()) {
+            case HttpURLConnection.HTTP_OK:
+                return con;
+            case HttpURLConnection.HTTP_MOVED_PERM:
+            case HttpURLConnection.HTTP_MOVED_TEMP:
+            case HttpURLConnection.HTTP_SEE_OTHER:
+                String redirectLocation = con.getHeaderField("Location");
+                if (downloadUrl == null) {
+                    String msg = tr("Fatal: unexpected response from HTTP server. Got {0} response without 'Location' header. Can''t redirect. Aborting.", con.getResponseCode());
+                    throw new IOException(msg);
+                }
+                downloadUrl = new URL(redirectLocation);
+                // keep track of redirect attempts to break a redirect loops if it happens
+                // to occur for whatever reason
+                numRedirects++;
+                if (numRedirects >= Main.pref.getInteger("socket.maxredirects", 5)) {
+                    String msg = tr("Fatal: too many redirects to the download URL detected. Aborting.");
+                    throw new IOException(msg);
+                }
+                System.out.println(tr("Download redirected to ''{0}''", downloadUrl));
+                break;
+            default:
+                String msg = tr("Error: failed to read from ''{0}''. Server responded with status code {1}.", downloadUrl, con.getResponseCode());
+                throw new IOException(msg);
+            }
+        }
+    }
+
     @Override
     public int available() throws IOException
     { return fs.available(); }
