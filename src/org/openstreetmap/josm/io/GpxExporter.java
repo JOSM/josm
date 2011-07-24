@@ -33,6 +33,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -83,7 +84,8 @@ public class GpxExporter extends FileExporter {
         p.add(authorName, GBC.eol().fill(GBC.HORIZONTAL));
         JLabel emailLabel = new JLabel(tr("E-Mail"));
         p.add(emailLabel, GBC.std().insets(10, 0, 5, 0));
-        JTextField email = new JTextField(Main.pref.get("osm-server.username"));
+        String user = CredentialsManager.getInstance().getUsername();
+        JTextField email = new JTextField(user == null ? "" : user);
         p.add(email, GBC.eol().fill(GBC.HORIZONTAL));
         JLabel copyrightLabel = new JLabel(tr("Copyright (URL)"));
         p.add(copyrightLabel, GBC.std().insets(10, 0, 5, 0));
@@ -231,7 +233,8 @@ public class GpxExporter extends FileExporter {
                 nameLabel.setEnabled(b);
                 emailLabel.setEnabled(b);
                 authorName.setText(b ? Main.pref.get("lastAuthorName") : "");
-                email.setText(b ? Main.pref.get("osm-server.username") : "");
+                String user = CredentialsManager.getInstance().getUsername();
+                email.setText(b ? (user == null ? "" : user) : "");
 
                 boolean authorSet = authorName.getText().length() != 0;
                 GpxExporter.enableCopyright(copyright, predefined, copyrightYear, copyrightLabel, copyrightYearLabel, warning, b && authorSet);

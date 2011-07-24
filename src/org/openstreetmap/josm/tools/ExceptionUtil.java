@@ -26,6 +26,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
 
 public class ExceptionUtil {
     private ExceptionUtil() {
@@ -114,7 +115,7 @@ public class ExceptionUtil {
                 + "Authentication at the OSM server with the username ''{0}'' failed.<br>"
                 + "Please check the username and the password in the JOSM preferences."
                 + "</html>",
-                Main.pref.get("osm-server.username")
+                CredentialsManager.getInstance().getUsername()
         );
     }
 
