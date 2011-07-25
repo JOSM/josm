@@ -86,7 +86,7 @@ public class CredentialsManager implements CredentialsAgent {
 
     @Override
     public void store(RequestorType requestorType, PasswordAuthentication credentials) throws CredentialsAgentException {
-        if (requestorType == RequestorType.SERVER && credentials.getUserName() != null) {
+        if (requestorType == RequestorType.SERVER && credentials.getUserName() != null && !credentials.getUserName().trim().isEmpty()) {
             JosmUserIdentityManager.getInstance().setPartiallyIdentified(credentials.getUserName());
         }
         delegate.store(requestorType, credentials);
