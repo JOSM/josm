@@ -235,7 +235,7 @@ public class LayerListDialog extends ToggleDialog {
                         layerList.repaint();
                     }
                 }
-        );
+                );
 
         add(createButtonPanel(), BorderLayout.SOUTH);
     }
@@ -277,7 +277,7 @@ public class LayerListDialog extends ToggleDialog {
                         listener.updateEnabledState();
                     }
                 }
-        );
+                );
     }
 
     /**
@@ -297,7 +297,7 @@ public class LayerListDialog extends ToggleDialog {
                         listener.updateEnabledState();
                     }
                 }
-        );
+                );
     }
 
     @Override
@@ -653,8 +653,12 @@ public class LayerListDialog extends ToggleDialog {
             if (layer != null) {
                 new MergeLayerAction().merge(layer);
             } else {
-                Layer selectedLayer = getModel().getSelectedLayers().get(0);
-                new MergeLayerAction().merge(selectedLayer);
+                if (getModel().getSelectedLayers().size() == 1) {
+                    Layer selectedLayer = getModel().getSelectedLayers().get(0);
+                    new MergeLayerAction().merge(selectedLayer);
+                } else {
+                    new MergeLayerAction().merge(getModel().getSelectedLayers());
+                }
             }
         }
 
@@ -667,13 +671,22 @@ public class LayerListDialog extends ToggleDialog {
         @Override
         public void updateEnabledState() {
             if (layer == null) {
-                if (getModel().getSelectedLayers().size() != 1) {
+                if (getModel().getSelectedLayers().isEmpty()) {
                     setEnabled(false);
-                    return;
+                } else  if (getModel().getSelectedLayers().size() > 1) {
+                    Layer firstLayer = getModel().getSelectedLayers().get(0);
+                    for (Layer l: getModel().getSelectedLayers()) {
+                        if (l != firstLayer && !l.isMergable(firstLayer)) {
+                            setEnabled(false);
+                            return;
+                        }
+                    }
+                    setEnabled(true);
+                } else {
+                    Layer selectedLayer = getModel().getSelectedLayers().get(0);
+                    List<Layer> targets = getModel().getPossibleMergeTargets(selectedLayer);
+                    setEnabled(!targets.isEmpty());
                 }
-                Layer selectedLayer = getModel().getSelectedLayers().get(0);
-                List<Layer> targets = getModel().getPossibleMergeTargets(selectedLayer);
-                setEnabled(!targets.isEmpty());
             } else {
                 List<Layer> targets = getModel().getPossibleMergeTargets(layer);
                 setEnabled(!targets.isEmpty());
@@ -846,14 +859,17 @@ public class LayerListDialog extends ToggleDialog {
                     for(Layer l : model.getLayers()) {
                         oc = l.getColor(false);
                         if(oc != null) {
-                            if(oc.equals(c))
+                            if(oc.equals(c)) {
                                 oc = null;
-                            else
+                            } else {
                                 break;
+                            }
                         }
                     }
-                    if(oc == null) /* not more than one color, don't use coloring */
+                    /* not more than one color, don't use coloring */
+                    if(oc == null) {
                         c = null;
+                    }
                 }
                 /* Setting foreground properly handles null as default! */
                 label.setForeground(c);
