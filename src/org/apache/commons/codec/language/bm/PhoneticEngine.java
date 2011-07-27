@@ -240,12 +240,18 @@ public class PhoneticEngine {
         return result;
     }
 
-    private String normalizeLanguageAttributes(String text, final boolean strip) {
-        // this is applied to a single alternative at a time -- not to a parenthisized list
-        // it removes all embedded bracketed attributes, logically-ands them together, and places them at the end.
-
-        // however if strip is true, this can indeed remove embedded bracketed attributes from a parenthesized list
-
+    /**
+     * Applied to a single alternative at a time -- not to a parenthisized list it removes all embedded bracketed attributes,
+     * logically-ands them together, and places them at the end.
+     * 
+     * However if strip is true, this can indeed remove embedded bracketed attributes from a parenthesized list
+     * 
+     * @param input
+     * @param strip
+     * @return
+     */
+    private String normalizeLanguageAttributes(final String input, final boolean strip) {
+        String text = input;
         Set<String> langs = new HashSet<String>();
 
         int bracketStart;
@@ -265,7 +271,7 @@ public class PhoneticEngine {
         } else if (langs.contains(Languages.ANY)) {
             return "[" + Languages.ANY + "]";
         } else {
-            return text + "[" + (join(langs, "+")) + "]";
+            return text + "[" + join(langs, "+") + "]";
         }
     }
 
@@ -358,13 +364,17 @@ public class PhoneticEngine {
         return result;
     }
 
+    /**
+     * Tests for compatible language rules to do so, apply the rule, expand the results, and detect alternatives with incompatible
+     * attributes then drop each alternative that has incompatible attributes and keep those that are compatible if there are no compatible
+     * alternatives left, return false otherwise return the compatible alternatives
+     * 
+     * @param phonetic
+     * @param target
+     * @param languageArg
+     * @return a String or null.
+     */
     private String applyRuleIfCompatible(String phonetic, String target, Set<String> languageArg) {
-        // tests for compatible language rules
-        // to do so, apply the rule, expand the results, and detect alternatives with incompatible attributes
-        // then drop each alternative that has incompatible attributes and keep those that are compatible
-        // if there are no compatible alternatives left, return false
-        // otherwise return the compatible alternatives
-
         String candidate = phonetic + target;
         if (!candidate.contains("[")) {
             return candidate;
