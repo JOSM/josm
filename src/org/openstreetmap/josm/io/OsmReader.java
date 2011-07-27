@@ -119,9 +119,9 @@ public class OsmReader {
         @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 
             try {
-                if (qName.equals("osm")) {
+                if (qName.equals("osm") || qName.equals("osmChange")) {
                     if (atts == null) {
-                        throwException(tr("Missing mandatory attribute ''{0}'' of XML element {1}.", "version", "osm"));
+                        throwException(tr("Missing mandatory attribute ''{0}'' of XML element {1}.", "version", qName));
                     }
                     String v = atts.getValue("version");
                     if (v == null) {
