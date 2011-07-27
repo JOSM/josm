@@ -62,7 +62,8 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JColorChooser c = new JColorChooser(layers.get(0).getColor(false));
+        Color cl=layers.get(0).getColor(false); if (cl==null) cl=Color.gray;
+        JColorChooser c = new JColorChooser(cl);
         Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
         int answer = JOptionPane.showOptionDialog(
                 Main.parent,
