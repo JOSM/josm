@@ -27,7 +27,7 @@ public class LinePatternElemStyle extends ElemStyle {
         IconReference iconRef = c.get("pattern-image", null, IconReference.class);
         if (iconRef == null)
             return null;
-        ImageIcon icon = MapPaintStyles.getIcon(iconRef, false);
+        ImageIcon icon = MapPaintStyles.getIcon(iconRef, -1, -1, false);
         if (icon == null)
             return null;
         return new LinePatternElemStyle(c, icon);

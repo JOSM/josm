@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.mappaint;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -62,6 +63,13 @@ public class MapPaintStyles {
         }
     }
 
+    /**
+     * IconReference is used to remember the associated style source for
+     * each icon URL. 
+     * This is necessary because image URLs can be paths relative
+     * to the source file and we have cascading of properties from different 
+     * source files.
+     */
     public static class IconReference {
 
         public final String iconName;
@@ -78,9 +86,9 @@ public class MapPaintStyles {
         }
     }
 
-    public static ImageIcon getIcon(IconReference ref, boolean sanitize) {
-        String namespace = ref.source.getPrefName();
-        ImageIcon i = ImageProvider.getIfAvailable(getIconSourceDirs(ref.source), "mappaint."+namespace, null, ref.iconName, ref.source.zipIcons, sanitize);
+    public static ImageIcon getIcon(IconReference ref, int width, int height, boolean sanitize) {
+        final String namespace = ref.source.getPrefName();
+        ImageIcon i = ImageProvider.getIfAvailable(getIconSourceDirs(ref.source), "mappaint."+namespace, null, ref.iconName, ref.source.zipIcons, width == -1 && height == -1 ? null : new Dimension(width, height), sanitize);
         if(i == null)
         {
             System.out.println("Mappaint style \""+namespace+"\" ("+ref.source.getDisplayString()+") icon \"" + ref.iconName + "\" not found.");

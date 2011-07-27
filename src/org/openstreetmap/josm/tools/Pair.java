@@ -47,5 +47,8 @@ public final class Pair<A,B> {
         return "<"+a+","+b+">";
     }
 
-
+    /* convenience constructor method */
+    public static <U,V> Pair<U,V> create(U u, V v) {
+        return new Pair<U,V>(u,v);
+    }
 }
