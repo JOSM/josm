@@ -33,25 +33,8 @@ public class DrawingPreference implements PreferenceSetting {
         }
     }
 
-    private JRadioButton drawRawGpsLinesAll = new JRadioButton(tr("All"));
-    private JRadioButton drawRawGpsLinesLocal = new JRadioButton(tr("Local files"));
-    private JRadioButton drawRawGpsLinesNone = new JRadioButton(tr("None"));
-    private ActionListener drawRawGpsLinesActionListener;
-    private JTextField drawRawGpsMaxLineLength = new JTextField(8);
-    private JTextField drawRawGpsMaxLineLengthLocal = new JTextField(8);
-    private JCheckBox forceRawGpsLines = new JCheckBox(tr("Force lines if no segments imported."));
-    private JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points."));
-    private JCheckBox hdopCircleGpsPoints = new JCheckBox(tr("Draw a circle form HDOP value."));
-    private ButtonGroup colorGroup;
-    private JRadioButton colorTypeVelocity = new JRadioButton(tr("Velocity (red = slow, green = fast)"));
-    private JRadioButton colorTypeDirection = new JRadioButton(tr("Direction (red = west, yellow = north, green = east, blue = south)"));
-    private JRadioButton colorTypeDilution = new JRadioButton(tr("Dilution of Position (red = high, green = low, if available)"));
-    private JRadioButton colorTypeNone = new JRadioButton(tr("Single Color (can be customized for named layers)"));
-    private JComboBox colorTypeVelocityTune = new JComboBox(new String[] {tr("Car"), tr("Bicycle"), tr("Foot")});
+    private GPXSettingsPanel gpxPanel;
     private JCheckBox directionHint = new JCheckBox(tr("Draw Direction Arrows"));
-    private JCheckBox drawGpsArrows = new JCheckBox(tr("Draw Direction Arrows"));
-    private JCheckBox drawGpsArrowsFast = new JCheckBox(tr("Fast drawing (looks uglier)"));
-    private JTextField drawGpsArrowsMinDist = new JTextField(8);
     private JCheckBox headArrow = new JCheckBox(tr("Only on the head of a way."));
     private JCheckBox onewayArrow = new JCheckBox(tr("Draw oneway arrows."));
     private JCheckBox segmentOrderNumber = new JCheckBox(tr("Draw segment order numbers"));
@@ -59,180 +42,13 @@ public class DrawingPreference implements PreferenceSetting {
     private JCheckBox virtualNodes = new JCheckBox(tr("Draw virtual nodes in select mode"));
     private JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
     private JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
-    private JCheckBox makeAutoMarkers = new JCheckBox(tr("Create markers when reading GPX."));
     private JCheckBox outlineOnly = new JCheckBox(tr("Draw only outlines of areas"));
-    private JCheckBox colorDynamic = new JCheckBox(tr("Dynamic color range based on data limits"));
-    private JComboBox waypointLabel = new JComboBox(new String[] {tr("Auto"), /* gpx data field name */ trc("gpx_field", "Name"),
-            /* gpx data field name */ trc("gpx_field", "Desc(ription)"), tr("Both"), tr("None")});
 
     public void addGui(PreferenceTabbedPane gui) {
         gui.display.setPreferredSize(new Dimension(400,600));
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-
-        // makeAutoMarkers
-        makeAutoMarkers.setSelected(Main.pref.getBoolean("marker.makeautomarkers", true));
-        makeAutoMarkers.setToolTipText(tr("Automatically make a marker layer from any waypoints when opening a GPX layer."));
-        panel.add(makeAutoMarkers, GBC.eol().insets(20,0,0,5));
-
-        // drawRawGpsLines
-        ButtonGroup gpsLinesGroup = new ButtonGroup();
-        gpsLinesGroup.add(drawRawGpsLinesNone);
-        gpsLinesGroup.add(drawRawGpsLinesLocal);
-        gpsLinesGroup.add(drawRawGpsLinesAll);
-
-
-        /* ensure that default is in data base */
-        Boolean lf = Main.pref.getBoolean("draw.rawgps.lines.local", true);
-        if(Main.pref.getBoolean("draw.rawgps.lines", true)) {
-            drawRawGpsLinesAll.setSelected(true);
-        } else if (lf) {
-            drawRawGpsLinesLocal.setSelected(true);
-        } else {
-            drawRawGpsLinesNone.setSelected(true);
-        }
-
-        panel.add(new JLabel(tr("Draw lines between raw GPS points")), GBC.eol().insets(20,0,0,0));
-        panel.add(drawRawGpsLinesNone, GBC.eol().insets(40,0,0,0));
-        panel.add(drawRawGpsLinesLocal, GBC.eol().insets(40,0,0,0));
-        panel.add(drawRawGpsLinesAll, GBC.eol().insets(40,0,0,0));
-
-        drawRawGpsLinesActionListener = new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                forceRawGpsLines.setEnabled(!drawRawGpsLinesNone.isSelected());
-                drawRawGpsMaxLineLength.setEnabled(!(drawRawGpsLinesNone.isSelected() || drawRawGpsLinesLocal.isSelected()));
-                drawRawGpsMaxLineLengthLocal.setEnabled(!drawRawGpsLinesNone.isSelected());
-                drawGpsArrows.setEnabled(!drawRawGpsLinesNone.isSelected() );
-                drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
-                drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
-            }
-        };
-
-        drawRawGpsLinesNone.addActionListener(drawRawGpsLinesActionListener);
-        drawRawGpsLinesLocal.addActionListener(drawRawGpsLinesActionListener);
-        drawRawGpsLinesAll.addActionListener(drawRawGpsLinesActionListener);
-
-        // drawRawGpsMaxLineLengthLocal
-        drawRawGpsMaxLineLengthLocal.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.max-line-length.local", -1)));
-        drawRawGpsMaxLineLengthLocal.setToolTipText(tr("Maximum length (in meters) to draw lines for local files. Set to ''-1'' to draw all lines."));
-        drawRawGpsMaxLineLengthLocal.setEnabled(!drawRawGpsLinesNone.isSelected());
-        panel.add(new JLabel(tr("Maximum length for local files (meters)")), GBC.std().insets(40,0,0,0));
-        panel.add(drawRawGpsMaxLineLengthLocal, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
-
-        // drawRawGpsMaxLineLength
-        drawRawGpsMaxLineLength.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.max-line-length", 200)));
-        drawRawGpsMaxLineLength.setToolTipText(tr("Maximum length (in meters) to draw lines. Set to ''-1'' to draw all lines."));
-        drawRawGpsMaxLineLength.setEnabled(!drawRawGpsLinesNone.isSelected());
-        panel.add(new JLabel(tr("Maximum length (meters)")), GBC.std().insets(40,0,0,0));
-        panel.add(drawRawGpsMaxLineLength, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
-
-        // forceRawGpsLines
-        forceRawGpsLines.setToolTipText(tr("Force drawing of lines if the imported data contain no line information."));
-        forceRawGpsLines.setSelected(Main.pref.getBoolean("draw.rawgps.lines.force", false));
-        forceRawGpsLines.setEnabled(!drawRawGpsLinesNone.isSelected());
-        panel.add(forceRawGpsLines, GBC.eop().insets(40,0,0,0));
-
-        // drawGpsArrows
-        drawGpsArrows.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
-                drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
-            }
-        });
-        drawGpsArrows.setToolTipText(tr("Draw direction arrows for lines, connecting GPS points."));
-        drawGpsArrows.setSelected(Main.pref.getBoolean("draw.rawgps.direction", false));
-        drawGpsArrows.setEnabled(!drawRawGpsLinesNone.isSelected());
-        panel.add(drawGpsArrows, GBC.eop().insets(40,0,0,0));
-
-        // drawGpsArrowsFast
-        drawGpsArrowsFast.setToolTipText(tr("Draw the direction arrows using table lookups instead of complex math."));
-        drawGpsArrowsFast.setSelected(Main.pref.getBoolean("draw.rawgps.alternatedirection", false));
-        drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
-        panel.add(drawGpsArrowsFast, GBC.eop().insets(60,0,0,0));
-
-        // drawGpsArrowsMinDist
-        drawGpsArrowsMinDist.setToolTipText(tr("Do not draw arrows if they are not at least this distance away from the last one."));
-        drawGpsArrowsMinDist.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.min-arrow-distance", 40)));
-        drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
-        panel.add(new JLabel(tr("Minimum distance (pixels)")), GBC.std().insets(60,0,0,0));
-        panel.add(drawGpsArrowsMinDist, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
-
-        // hdopCircleGpsPoints
-        hdopCircleGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.hdopcircle", false));
-        hdopCircleGpsPoints.setToolTipText(tr("Draw a circle form HDOP value."));
-        panel.add(hdopCircleGpsPoints, GBC.eop().insets(20,0,0,0));
-
-        // largeGpsPoints
-        largeGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.large", false));
-        largeGpsPoints.setToolTipText(tr("Draw larger dots for the GPS points."));
-        panel.add(largeGpsPoints, GBC.eop().insets(20,0,0,0));
-
-        // colorTracks
-        colorGroup = new ButtonGroup();
-        colorGroup.add(colorTypeNone);
-        colorGroup.add(colorTypeVelocity);
-        colorGroup.add(colorTypeDirection);
-        colorGroup.add(colorTypeDilution);
-
-        colorTypeVelocity.addChangeListener(new ChangeListener(){
-            public void stateChanged(ChangeEvent e) {
-                colorTypeVelocityTune.setEnabled(colorTypeVelocity.isSelected());
-                colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
-            }
-        });
-        colorTypeDilution.addChangeListener(new ChangeListener(){
-            public void stateChanged(ChangeEvent e) {
-                colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
-            }
-        });
-
-        switch(Main.pref.getInteger("draw.rawgps.colors", 0)) {
-        case 0:
-            colorTypeNone.setSelected(true);
-            break;
-        case 1:
-            colorTypeVelocity.setSelected(true);
-            break;
-        case 2:
-            colorTypeDilution.setSelected(true);
-            break;
-        case 3:
-            colorTypeDirection.setSelected(true);
-            break;
-        }
-
-        colorTypeNone.setToolTipText(tr("All points and track segments will have the same color. Can be customized in Layer Manager."));
-        colorTypeVelocity.setToolTipText(tr("Colors points and track segments by velocity."));
-        colorTypeDirection.setToolTipText(tr("Colors points and track segments by direction."));
-        colorTypeDilution.setToolTipText(tr("Colors points and track segments by dilution of position (HDOP). Your capture device needs to log that information."));
-
-        // color Tracks by Velocity Tune
-        int ccts = Main.pref.getInteger("draw.rawgps.colorTracksTune", 45);
-        colorTypeVelocityTune.setSelectedIndex(ccts==10 ? 2 : (ccts==20 ? 1 : 0));
-        colorTypeVelocityTune.setToolTipText(tr("Allows to tune the track coloring for different average speeds."));
-        colorTypeVelocityTune.setEnabled(colorTypeVelocity.isSelected() && colorTypeVelocity.isEnabled());
-
-        panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
-
-        panel.add(new JLabel(tr("Track and Point Coloring")), GBC.eol().insets(20,0,0,0));
-        panel.add(colorTypeNone, GBC.eol().insets(40,0,0,0));
-        panel.add(colorTypeVelocity, GBC.std().insets(40,0,0,0));
-        panel.add(colorTypeVelocityTune, GBC.eop().insets(5,0,0,5));
-        panel.add(colorTypeDirection, GBC.eol().insets(40,0,0,0));
-        panel.add(colorTypeDilution, GBC.eol().insets(40,0,0,0));
-        colorDynamic.setToolTipText(tr("Colors points and track segments by data limits."));
-        colorDynamic.setSelected(Main.pref.getBoolean("draw.rawgps.colors.dynamic", false));
-        colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
-        panel.add(colorDynamic, GBC.eop().insets(40,0,0,0));
-
-        // waypointLabel
-        panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
-
-        waypointLabel.setSelectedIndex(Main.pref.getInteger("draw.rawgps.layer.wpt", 0 ));
-        panel.add(new JLabel(tr("Waypoint labelling")), GBC.std().insets(20,0,0,0));
-        panel.add(waypointLabel, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
-
-        panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
+        gpxPanel = new GPXSettingsPanel();
+        JPanel panel = gpxPanel;
+        
         JScrollPane scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
         gui.displaycontent.addTab(tr("GPS Points"), scrollpane);
@@ -302,30 +118,8 @@ public class DrawingPreference implements PreferenceSetting {
     }
 
     public boolean ok() {
-        Main.pref.put("marker.makeautomarkers", makeAutoMarkers.isSelected());
+        gpxPanel.savePreferences();
         Main.pref.put("draw.data.area_outline_only", outlineOnly.isSelected());
-        Main.pref.put("draw.rawgps.lines", drawRawGpsLinesAll.isSelected());
-        Main.pref.put("draw.rawgps.lines.local", drawRawGpsLinesAll.isSelected() || drawRawGpsLinesLocal.isSelected());
-        Main.pref.put("draw.rawgps.max-line-length", drawRawGpsMaxLineLength.getText());
-        Main.pref.put("draw.rawgps.max-line-length.local", drawRawGpsMaxLineLengthLocal.getText());
-        Main.pref.put("draw.rawgps.lines.force", forceRawGpsLines.isSelected());
-        Main.pref.put("draw.rawgps.direction", drawGpsArrows.isSelected());
-        Main.pref.put("draw.rawgps.alternatedirection", drawGpsArrowsFast.isSelected());
-        Main.pref.put("draw.rawgps.min-arrow-distance", drawGpsArrowsMinDist.getText());
-        Main.pref.put("draw.rawgps.colors.dynamic", colorDynamic.isSelected());
-        if(colorTypeVelocity.isSelected()) {
-            Main.pref.putInteger("draw.rawgps.colors", 1);
-        } else if(colorTypeDilution.isSelected()) {
-            Main.pref.putInteger("draw.rawgps.colors", 2);
-        } else if(colorTypeDirection.isSelected()) {
-            Main.pref.putInteger("draw.rawgps.colors", 3);
-        } else {
-            Main.pref.putInteger("draw.rawgps.colors", 0);
-        }
-        int ccti=colorTypeVelocityTune.getSelectedIndex();
-        Main.pref.putInteger("draw.rawgps.colorTracksTune", ccti==2 ? 10 : (ccti==1 ? 20 : 45));
-        Main.pref.put("draw.rawgps.hdopcircle", hdopCircleGpsPoints.isSelected());
-        Main.pref.put("draw.rawgps.large", largeGpsPoints.isSelected());
         Main.pref.put("draw.segment.direction", directionHint.isSelected());
         Main.pref.put("draw.segment.head_only", headArrow.isSelected());
         Main.pref.put("draw.oneway", onewayArrow.isSelected());
@@ -343,7 +137,6 @@ public class DrawingPreference implements PreferenceSetting {
             vn = 0;
         }
         Main.pref.putInteger("mappaint.node.virtual-size", vn);
-        Main.pref.putInteger("draw.rawgps.layer.wpt", waypointLabel.getSelectedIndex());
         return false;
     }
 }

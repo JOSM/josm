@@ -25,14 +25,18 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
 import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -69,6 +73,7 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.gui.preferences.GPXSettingsPanel;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -229,7 +234,8 @@ public class GpxLayer extends Layer {
 
     public colorModes getColorMode() {
         try {
-            return colorModes.values()[Main.pref.getInteger("draw.rawgps.colors", "layer "+getName(), 0)];
+            int i=Main.pref.getInteger("draw.rawgps.colors", "layer " + getName(), 0);
+            return colorModes.values()[i];
         } catch (Exception e) {
         }
         return colorModes.none;
@@ -248,7 +254,7 @@ public class GpxLayer extends Layer {
                 LayerListDialog.getInstance().createDeleteLayerAction(),
                 SeparatorLayerAction.INSTANCE,
                 new CustomizeColor(this),
-                new CustomizeLineDrawing(this),
+                new CustomizeDrawing(this),
                 new ConvertToDataLayerAction(),
                 SeparatorLayerAction.INSTANCE,
                 new RenameLayerAction(getAssociatedFile(), this),
@@ -261,7 +267,7 @@ public class GpxLayer extends Layer {
                 new LayerSaveAction(this),
                 new LayerSaveAsAction(this),
                 new CustomizeColor(this),
-                new CustomizeLineDrawing(this),
+                new CustomizeDrawing(this),
                 new ImportImages(),
                 new ImportAudio(),
                 new MarkersFromNamedPoins(),
@@ -375,7 +381,7 @@ public class GpxLayer extends Layer {
 
     // the different color modes
     enum colorModes {
-        none, velocity, dilution, direction
+        none, velocity, dilution, direction, time
     }
 
     @Override
@@ -393,35 +399,37 @@ public class GpxLayer extends Layer {
          ****************************************************************/
         // Long startTime = System.currentTimeMillis();
         Color neutralColor = getColor(true);
+        String spec="layer "+getName();
+
         // also draw lines between points belonging to different segments
-        boolean forceLines = Main.pref.getBoolean("draw.rawgps.lines.force", "layer "+getName(), false);
+        boolean forceLines = Main.pref.getBoolean("draw.rawgps.lines.force", spec, false);
         // draw direction arrows on the lines
-        boolean direction = Main.pref.getBoolean("draw.rawgps.direction", "layer "+getName(), false);
+        boolean direction = Main.pref.getBoolean("draw.rawgps.direction", spec, false);
         // don't draw lines if longer than x meters
-        int lineWidth = Main.pref.getInteger("draw.rawgps.linewidth", "layer "+getName(), 0);
+        int lineWidth = Main.pref.getInteger("draw.rawgps.linewidth", spec, 0);
 
         int maxLineLength;
         boolean lines;
         if (this.isLocalFile) {
-            maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length.local", "layer "+getName(), -1);
-            lines = Main.pref.getBoolean("draw.rawgps.lines.local", "layer "+getName(), true);
+            maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length.local", spec, -1);
+            lines = Main.pref.getBoolean("draw.rawgps.lines.local", spec, true);
         } else {
-            maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length", "layer "+getName(), 200);
-            lines = Main.pref.getBoolean("draw.rawgps.lines", "layer "+getName(), true);
+            maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length", spec, 200);
+            lines = Main.pref.getBoolean("draw.rawgps.lines", spec, true);
         }
         // paint large dots for points
-        boolean large = Main.pref.getBoolean("draw.rawgps.large", "layer "+getName(), false);
-        int largesize = Main.pref.getInteger("draw.rawgps.large.size", "layer "+getName(), 3);
-        boolean hdopcircle = Main.pref.getBoolean("draw.rawgps.hdopcircle", "layer "+getName(), false);
+        boolean large = Main.pref.getBoolean("draw.rawgps.large", spec, false);
+        int largesize = Main.pref.getInteger("draw.rawgps.large.size", spec, 3);
+        boolean hdopcircle = Main.pref.getBoolean("draw.rawgps.hdopcircle", spec, false);
         // color the lines
         colorModes colored = getColorMode();
         // paint direction arrow with alternate math. may be faster
-        boolean alternatedirection = Main.pref.getBoolean("draw.rawgps.alternatedirection", "layer "+getName(), false);
+        boolean alternatedirection = Main.pref.getBoolean("draw.rawgps.alternatedirection", spec, false);
         // don't draw arrows nearer to each other than this
-        int delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", "layer "+getName(), 40);
+        int delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", spec, 40);
         // allows to tweak line coloring for different speed levels.
-        int colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", "layer "+getName(), 45);
-        boolean colorModeDynamic = Main.pref.getBoolean("draw.rawgps.colors.dynamic", "layer "+getName(), false);
+        int colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", spec, 45);
+        boolean colorModeDynamic = Main.pref.getBoolean("draw.rawgps.colors.dynamic", spec, false);
         int hdopfactor = Main.pref.getInteger("hdop.factor", 25);
 
         if(lineWidth != 0)
@@ -447,8 +455,8 @@ public class GpxLayer extends Layer {
          ********** STEP 2b - RE-COMPUTE CACHE DATA *********************
          ****************************************************************/
         if (!computeCacheInSync) { // don't compute if the cache is good
-            Float minval = null;
-            Float maxval = null;
+            double minval = +1e10;
+            double maxval = -1e10;
             WayPoint oldWp = null;
             if (colorModeDynamic) {
                 if (colored == colorModes.velocity) {
@@ -461,9 +469,10 @@ public class GpxLayer extends Layer {
                                     continue;
                                 }
                                 if (oldWp != null && trkPnt.time > oldWp.time) {
-                                    Float vel = new Float(c.greatCircleDistance(oldWp.getCoor()) / (trkPnt.time - oldWp.time));
-                                    if(maxval == null || vel > maxval) maxval = vel;
-                                    if(minval == null || vel < minval) minval = vel;
+                                    double vel = c.greatCircleDistance(oldWp.getCoor())
+                                            / (trkPnt.time - oldWp.time);
+                                    if(vel > maxval) maxval = vel;
+                                    if(vel < minval) minval = vel;
                                 }
                                 oldWp = trkPnt;
                             }
@@ -475,9 +484,9 @@ public class GpxLayer extends Layer {
                             for (WayPoint trkPnt : segment.getWayPoints()) {
                                 Object val = trkPnt.attr.get("hdop");
                                 if (val != null) {
-                                    Float hdop = (Float) val;
-                                    if(maxval == null || hdop > maxval) maxval = hdop;
-                                    if(minval == null || hdop < minval) minval = hdop;
+                                    double hdop = ((Float) val).doubleValue();
+                                    if(hdop > maxval) maxval = hdop;
+                                    if(hdop < minval) minval = hdop;
                                 }
                             }
                         }
@@ -485,6 +494,19 @@ public class GpxLayer extends Layer {
                 }
                 oldWp = null;
             }
+            if (colored == colorModes.time) {
+                    for (GpxTrack trk : data.tracks) {
+                        for (GpxTrackSegment segment : trk.getSegments()) {
+                            for (WayPoint trkPnt : segment.getWayPoints()) {
+                               double t=trkPnt.time;
+                               if (t==0) continue; // skip non-dated trackpoints
+                               if(t > maxval) maxval = t;
+                               if(t < minval) minval = t;
+                            }
+                        }
+                    }
+                }
+            
             for (GpxTrack trk : data.tracks) {
                 for (GpxTrackSegment segment : trk.getSegments()) {
                     if (!forceLines) { // don't draw lines between segments, unless forced to
@@ -498,7 +520,7 @@ public class GpxLayer extends Layer {
                         trkPnt.customColoring = neutralColor;
                         if(colored == colorModes.dilution && trkPnt.attr.get("hdop") != null) {
                             float hdop = ((Float) trkPnt.attr.get("hdop")).floatValue();
-                            int hdoplvl = Math.round(colorModeDynamic ? ((hdop-minval)*255/(maxval-minval))
+                            int hdoplvl =(int) Math.round(colorModeDynamic ? ((hdop-minval)*255/(maxval-minval))
                             : (hdop <= 0 ? 0 : hdop * hdopfactor));
                             // High hdop is bad, but high values in colors are green.
                             // Therefore inverse the logic
@@ -507,13 +529,13 @@ public class GpxLayer extends Layer {
                         }
                         if (oldWp != null) {
                             double dist = c.greatCircleDistance(oldWp.getCoor());
-
+                            boolean noDraw=false;
                             switch (colored) {
                             case velocity:
                                 double dtime = trkPnt.time - oldWp.time;
                                 if(dtime > 0) {
                                     float vel = (float) (dist / dtime);
-                                    int velColor = Math.round(colorModeDynamic ? ((vel-minval)*255/(maxval-minval))
+                                    int velColor =(int) Math.round(colorModeDynamic ? ((vel-minval)*255/(maxval-minval))
                                     : (vel <= 0 ? 0 : vel / colorTracksTune * 255));
                                     trkPnt.customColoring = colors[velColor > 255 ? 255 : velColor];
                                 } else {
@@ -529,9 +551,17 @@ public class GpxLayer extends Layer {
                                     trkPnt.customColoring = colors_cyclic[(int) (dirColor)];
                                 }
                                 break;
+                            case time:
+                                if (trkPnt.time>0){
+                                    int tColor = (int) Math.round((trkPnt.time-minval)*255/(maxval-minval));
+                                    trkPnt.customColoring = colors[tColor];
+                                } else {
+                                    trkPnt.customColoring = neutralColor;
+                                }
+                                break;
                             }
-
-                            if (maxLineLength == -1 || dist <= maxLineLength) {
+                            
+                            if (!noDraw && (maxLineLength == -1 || dist <= maxLineLength)) {
                                 trkPnt.drawLine = true;
                                 trkPnt.dir = (int) oldWp.getCoor().heading(trkPnt.getCoor());
                             } else {
@@ -1337,22 +1367,22 @@ public class GpxLayer extends Layer {
         return best;
     }
 
-    private class CustomizeLineDrawing extends AbstractAction implements LayerAction, MultiLayerAction {
+    private class CustomizeDrawing extends AbstractAction implements LayerAction, MultiLayerAction {
         List<Layer> layers;
 
-        public CustomizeLineDrawing(List<Layer> l) {
+        public CustomizeDrawing(List<Layer> l) {
             this();
             layers = l;
         }
 
-        public CustomizeLineDrawing(Layer l) {
+        public CustomizeDrawing(Layer l) {
             this();
             layers = new LinkedList<Layer>();
             layers.add(l); 
         }
 
-        private CustomizeLineDrawing() {
-            super(tr("Customize line drawing"), ImageProvider.get("mapmode/addsegment"));
+        private CustomizeDrawing() {
+            super(tr("Customize track drawing"), ImageProvider.get("mapmode/addsegment"));
         }
 
         @Override
@@ -1371,53 +1401,24 @@ public class GpxLayer extends Layer {
 
         @Override
         public Action getMultiLayerAction(List<Layer> layers) {
-            return new CustomizeLineDrawing(layers);
+            return new CustomizeDrawing(layers);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            /* FIXME: Add all the other GPX settings here as well. Unify with DrawingPreferences
-               Each option should be able to "use global settings". Attention with the handling
-               of local layer for the two local layer options! */
-            JRadioButton[] r = new JRadioButton[3];
-            r[0] = new JRadioButton(tr("Use global settings."));
-            r[1] = new JRadioButton(tr("Draw lines between points for this layer."));
-            r[2] = new JRadioButton(tr("Do not draw lines between points for this layer."));
-            ButtonGroup group = new ButtonGroup();
-            Box panel = Box.createVerticalBox();
-            for (JRadioButton b : r) {
-                group.add(b);
-                panel.add(b);
-            }
-            String propbase = isLocalFile ? "draw.rawgps.lines.local" : "draw.rawgps.lines";
-            String propName = propbase + ".layer " + layers.get(0).getName();
-            if (Main.pref.hasKey(propName)) {
-                group.setSelected(r[Main.pref.getBoolean(propName) ? 1 : 2].getModel(), true);
-            } else {
-                group.setSelected(r[0].getModel(), true);
-            }
+            GPXSettingsPanel panel=new GPXSettingsPanel(getName());
             int answer = JOptionPane.showConfirmDialog(Main.parent, panel,
-                    tr("Select line drawing options"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-            switch (answer) {
-            case JOptionPane.CANCEL_OPTION:
-            case JOptionPane.CLOSED_OPTION:
-                return;
-            default:
-                // continue
-            }
+                    tr("Customize track drawing"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (answer == JOptionPane.CANCEL_OPTION || answer == JOptionPane.CLOSED_OPTION) return;
             for(Layer layer : layers) {
-                propName = propbase + ".layer " + layer.getName();
-                if (group.getSelection() == r[0].getModel()) {
-                    Main.pref.put(propName, null);
-                } else {
-                    Main.pref.put(propName, group.getSelection() == r[1].getModel());
-                }
+                // save preferences for all layers
+                panel.savePreferences(layer.getName());
             }
             Main.map.repaint();
         }
     }
 
-    private class MarkersFromNamedPoins extends AbstractAction {
+      private class MarkersFromNamedPoins extends AbstractAction {
 
         public MarkersFromNamedPoins() {
             super(tr("Markers From Named Points"), ImageProvider.get("addmarkers"));
