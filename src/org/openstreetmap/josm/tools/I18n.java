@@ -322,7 +322,7 @@ public class I18n {
         languages.put("fr", PluralMode.MODE_GREATERONE);
         languages.put("gl", PluralMode.MODE_NOTONE);
         languages.put("he", PluralMode.MODE_NOTONE);
-        //languages.put("id", PluralMode.MODE_NONE);
+        languages.put("id", PluralMode.MODE_NONE);
         languages.put("is", PluralMode.MODE_NOTONE);
         languages.put("it", PluralMode.MODE_NOTONE);
         languages.put("ja", PluralMode.MODE_NONE);
