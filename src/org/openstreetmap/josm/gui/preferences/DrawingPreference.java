@@ -220,7 +220,7 @@ public class DrawingPreference implements PreferenceSetting {
         panel.add(colorTypeVelocityTune, GBC.eop().insets(5,0,0,5));
         panel.add(colorTypeDirection, GBC.eol().insets(40,0,0,0));
         panel.add(colorTypeDilution, GBC.eol().insets(40,0,0,0));
-        colorDynamic.setToolTipText(tr("Draw direction arrows for lines, connecting GPS points."));
+        colorDynamic.setToolTipText(tr("Colors points and track segments by data limits."));
         colorDynamic.setSelected(Main.pref.getBoolean("draw.rawgps.colors.dynamic", false));
         colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
         panel.add(colorDynamic, GBC.eop().insets(40,0,0,0));
