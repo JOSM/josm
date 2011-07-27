@@ -9,6 +9,7 @@ import com.kitfox.svg.SVGUniverse;
 
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -41,7 +42,7 @@ import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.plugins.PluginHandler;
 
 /**
- * Helperclass to support the application with images.
+ * Helper class to support the application with images.
  * @author imi
  */
 public class ImageProvider {
@@ -58,27 +59,13 @@ public class ImageProvider {
 
     public static enum ImageType {
         SVG,    // scalable vector graphics
-        OTHER   // everything else, e.g. png, gif
-                // must be supported by Java
-    }
-
-    /**
-     * remember whether the image has been sanitized
-     */
-    private static class ImageWrapper {
-        Image img;
-        boolean sanitized;
-
-        public ImageWrapper(Image img, boolean sanitized) {
-            this.img = img;
-            this.sanitized = sanitized;
-        }
+        OTHER   // everything else, e.g. png, gif (must be supported by Java)
     }
 
     /**
      * The icon cache
      */
-    private static Map<String, ImageWrapper> cache = new HashMap<String, ImageWrapper>();
+    private static Map<String, ImageResource> cache = new HashMap<String, ImageResource>();
 
     /**
      * Return an image from the specified location.
@@ -126,6 +113,10 @@ public class ImageProvider {
         return getIfAvailable(dirs, id, subdir, name, archive, false);
     }
 
+    public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive, boolean sanitize) {
+        return getIfAvailable(dirs, id, subdir, name, archive, null, sanitize);
+    }
+    
     /**
      * The full path of the image is either a url (starting with http://)
      * or something like
@@ -136,34 +127,34 @@ public class ImageProvider {
      * @param name      The name of the image. If it does not end with '.png' or '.svg',
      *                  it will try both extensions.
      * @param archive   A zip file where the image is located (may be null).
+     * @param dim       The dimensions of the image if it should be scaled. null if the
+     *                  original size of the image should be returned. The width 
+     *                  part of the dimension can be -1. Then it will scale the width
+     *                  in the same way as the height. (And the other way around.)
      * @param sanitize  If the image should be repainted to a new BufferedImage to work
      *                  around certain issues.
      */
-    public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive, boolean sanitize) {
-        ImageWrapper iw = getIfAvailableImpl(dirs, id, subdir, name, archive);
-        if (iw == null)
+    public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive, Dimension dim, boolean sanitize) {
+        ImageResource ir = getIfAvailableImpl(dirs, id, subdir, name, archive);
+        if (ir == null)
             return null;
-        if (sanitize && !iw.sanitized) {
-            iw.img = sanitize(iw.img);
-            iw.sanitized = true;
-        }
-        return new ImageIcon(iw.img);
+        return ir.getImageIcon(dim == null ? ImageResource.DEFAULT_DIMENSION : dim, sanitize);
     }
 
-    private static ImageWrapper getIfAvailableImpl(Collection<String> dirs, String id, String subdir, String name, File archive) {
+    private static ImageResource getIfAvailableImpl(Collection<String> dirs, String id, String subdir, String name, File archive) {
         if (name == null)
             return null;
         ImageType type = name.toLowerCase().endsWith(".svg") ? ImageType.SVG : ImageType.OTHER;
 
         if (name.startsWith("http://")) {
             String url = name;
-            ImageWrapper iw = cache.get(url);
-            if (iw != null) return iw;
-            iw = getIfAvailableHttp(url, type);
-            if (iw != null) {
-                cache.put(url, iw);
+            ImageResource ir = cache.get(url);
+            if (ir != null) return ir;
+            ir = getIfAvailableHttp(url, type);
+            if (ir != null) {
+                cache.put(url, ir);
             }
-            return iw;
+            return ir;
         }
 
         if (subdir == null) {
@@ -197,16 +188,16 @@ public class ImageProvider {
                     }
                 }
 
-                ImageWrapper iw = cache.get(cache_name);
-                if (iw != null) return iw;
+                ImageResource ir = cache.get(cache_name);
+                if (ir != null) return ir;
 
                 switch (place) {
                     case ARCHIVE:
                         if (archive != null) {
-                            iw = getIfAvailableZip(full_name, archive, type);
-                            if (iw != null) {
-                                cache.put(cache_name, iw);
-                                return iw;
+                            ir = getIfAvailableZip(full_name, archive, type);
+                            if (ir != null) {
+                                cache.put(cache_name, ir);
+                                return ir;
                             }
                         }
                         break;
@@ -219,10 +210,10 @@ public class ImageProvider {
                         URL path = getImageUrl(full_name, dirs);
                         if (path == null)
                             continue;
-                        iw = getIfAvailableLocalURL(path, type);
-                        if (iw != null) {
-                            cache.put(cache_name, iw);
-                            return iw;
+                        ir = getIfAvailableLocalURL(path, type);
+                        if (ir != null) {
+                            cache.put(cache_name, ir);
+                            return ir;
                         }
                         break;
                 }
@@ -231,28 +222,28 @@ public class ImageProvider {
         return null;
     }
 
-    private static ImageWrapper getIfAvailableHttp(String url, ImageType type) {
-        Image img = null;
+    private static ImageResource getIfAvailableHttp(String url, ImageType type) {
         try {
             MirroredInputStream is = new MirroredInputStream(url,
                     new File(Main.pref.getPreferencesDir(), "images").toString());
             switch (type) {
                 case SVG:
                     URI uri = getSvgUniverse().loadSVG(is, is.getFile().toURI().toURL().toString());
-                    img = createImageFromSvgUri(uri);
-                    break;
+                    SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+                    return svg == null ? null : new ImageResource(svg);
                 case OTHER:
-                    img = Toolkit.getDefaultToolkit().createImage(is.getFile().toURI().toURL());
-                    break;
+                    Image img = Toolkit.getDefaultToolkit().createImage(is.getFile().toURI().toURL());
+                    return img == null ? null : new ImageResource(img, false);
+                default:
+                    throw new AssertionError();
             }
         } catch (IOException e) {
+            return null;
         }
-        return img == null ? null : new ImageWrapper(img, false);
     }
 
-    private static ImageWrapper getIfAvailableZip(String full_name, File archive, ImageType type) {
+    private static ImageResource getIfAvailableZip(String full_name, File archive, ImageType type) {
         ZipFile zipFile = null;
-        Image img = null;
         try
         {
             zipFile = new ZipFile(archive);
@@ -268,8 +259,8 @@ public class ImageProvider {
                     switch (type) {
                         case SVG:
                             URI uri = getSvgUniverse().loadSVG(is, full_name);
-                            img = createImageFromSvgUri(uri);
-                            break;
+                            SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+                            return svg == null ? null : new ImageResource(svg);
                         case OTHER:
                             while(size > 0)
                             {
@@ -277,8 +268,10 @@ public class ImageProvider {
                                 offs += l;
                                 size -= l;
                             }
-                            img = Toolkit.getDefaultToolkit().createImage(buf);
-                            break;
+                            Image img = Toolkit.getDefaultToolkit().createImage(buf);
+                            return img == null ? null : new ImageResource(img, false);
+                        default:
+                            throw new AssertionError();
                     }
                 } finally {
                     if (is != null) {
@@ -296,21 +289,21 @@ public class ImageProvider {
                 }
             }
         }
-        return img == null ? null : new ImageWrapper(img, false);
+        return null;
     }
 
-    private static ImageWrapper getIfAvailableLocalURL(URL path, ImageType type) {
-        Image img = null;
+    private static ImageResource getIfAvailableLocalURL(URL path, ImageType type) {
         switch (type) {
             case SVG:
                 URI uri = getSvgUniverse().loadSVG(path);
-                img = createImageFromSvgUri(uri);
-                break;
+                SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+                return svg == null ? null : new ImageResource(svg);
             case OTHER:
-                img = Toolkit.getDefaultToolkit().createImage(path);
-                break;
+                Image img = Toolkit.getDefaultToolkit().createImage(path);
+                return img == null ? null : new ImageResource(img, false);
+            default:
+                throw new AssertionError();
         }
-        return img == null ? null : new ImageWrapper(img, false);
     }
 
     private static URL getImageUrl(String path, String name) {
@@ -520,16 +513,36 @@ public class ImageProvider {
         return result;
     }
 
-    private static Image createImageFromSvgUri(URI uri) {
-        SVGDiagram dia = getSvgUniverse().getDiagram(uri);
-        int w = (int)dia.getWidth();
-        int h = (int)dia.getHeight();
-        Image img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+    public static Image createImageFromSvg(SVGDiagram svg, Dimension dim) {
+        float realWidth = svg.getWidth();
+        float realHeight = svg.getHeight();
+        int width = Math.round(realWidth);
+        int height = Math.round(realHeight);
+        Double scaleX = null, scaleY = null;
+        if (dim.width != -1) {
+            width = dim.width;
+            scaleX = (double) width / realWidth;
+            if (dim.height == -1) {
+                scaleY = scaleX;
+                height = (int) Math.round(realHeight * scaleY);
+            } else {
+                height = dim.height;
+                scaleY = (double) height / realHeight;
+            }
+        } else if (dim.height != -1) {
+            height = dim.height;
+            scaleX = scaleY = (double) height / realHeight;
+            width = (int) Math.round(realWidth * scaleX);
+        }
+        Image img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = ((BufferedImage) img).createGraphics();
-        g.setClip(0, 0, w, h);
+        g.setClip(0, 0, width, height);
+        if (scaleX != null) {
+            g.scale(scaleX, scaleY);
+        }
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
-            dia.render(g);
+            svg.render(g);
         } catch (SVGException ex) {
             return null;
         }
