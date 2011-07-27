@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Stroke;
 
@@ -220,44 +221,31 @@ public class NodeElemStyle extends ElemStyle {
         if (iconRef == null)
             return null;
 
-        ImageIcon icon = null;
-        int iconAlpha = 0;
+        Float widthOnDefault = c_def.get("icon-width", null, Float.class);
+        if (widthOnDefault != null && widthOnDefault <= 0) {
+            widthOnDefault = null;
+        }
+        Float widthF = getWidth(c, "icon-width", widthOnDefault);
 
-        icon = MapPaintStyles.getIcon(iconRef, false);
+        Float heightOnDefault = c_def.get("icon-height", null, Float.class);
+        if (heightOnDefault != null && heightOnDefault <= 0) {
+            heightOnDefault = null;
+        }
+        Float heightF = getWidth(c, "icon-height", heightOnDefault);
+
+        int width = widthF == null ? -1 : Math.round(widthF);
+        int height = heightF == null ? -1 : Math.round(heightF);
+
+        ImageIcon icon = MapPaintStyles.getIcon(iconRef, width, height, false);
         if (icon == null)
             return new Pair<ImageIcon, Integer>(MapPaintStyles.getNoIcon_Icon(iconRef.source, false), 255);
-        else {
-            Float sizeOnDefault = c_def.get("icon-size", null, Float.class);
-            if (sizeOnDefault != null && sizeOnDefault <= 0) {
-                sizeOnDefault = null;
-            }
-            Float sizeF = getWidth(c, "icon-size", sizeOnDefault);
-
-            if (sizeF != null) {
-                if (sizeF <= 0)
-                    return null;
-                int size = Math.round(sizeF);
-                int width = icon.getIconWidth();
-                int height = icon.getIconHeight();
-                if (Math.max(width, height) != size) {
-                    if (width >= height) {
-                        width = size;
-                        height = -1;
-                    } else {
-                        width = -1;
-                        height = size;
-                    }
-                    icon.setImage(icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH));
-                }
-            }
-            iconAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.icon-image-alpha", 255))));
-            Integer pAlpha = Utils.color_float2int(c.get("icon-opacity", null, float.class));
-            if (pAlpha != null) {
-                iconAlpha = pAlpha;
-            }
-
-            return new Pair<ImageIcon, Integer>(icon, iconAlpha);
+        int iconAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.icon-image-alpha", 255))));
+        Integer pAlpha = Utils.color_float2int(c.get("icon-opacity", null, float.class));
+        if (pAlpha != null) {
+            iconAlpha = pAlpha;
         }
+
+        return new Pair<ImageIcon, Integer>(icon, iconAlpha);
     }
 
     private static Symbol createSymbol(Environment env) {

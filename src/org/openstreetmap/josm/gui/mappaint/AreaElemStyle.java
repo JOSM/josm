@@ -44,10 +44,10 @@ public class AreaElemStyle extends ElemStyle
 
         IconReference iconRef = c.get("fill-image", null, IconReference.class);
         if (iconRef != null) {
-            ImageIcon icon = MapPaintStyles.getIcon(iconRef, false);
+            ImageIcon icon = MapPaintStyles.getIcon(iconRef, -1, -1, false);
             if (icon != null) {
                 if (!(icon.getImage() instanceof BufferedImage)) {
-                    icon = MapPaintStyles.getIcon(iconRef, true);
+                    icon = MapPaintStyles.getIcon(iconRef, -1, -1, true);
                 }
                 if (!(icon.getImage() instanceof BufferedImage))
                     throw new RuntimeException();

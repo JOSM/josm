@@ -257,4 +257,10 @@ public class Utils {
             // ignore
         }
     }
+
+    private final static double EPSILION = 1e-11;
+
+    public static boolean equalsEpsilon(double a, double b) {
+        return Math.abs(a - b) <= EPSILION;
+    }
 }

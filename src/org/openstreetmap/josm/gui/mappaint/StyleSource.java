@@ -73,7 +73,7 @@ abstract public class StyleSource extends SourceEntry {
     protected ImageIcon getSourceIcon() {
         if (imageIcon == null) {
             if (icon != null) {
-                imageIcon = MapPaintStyles.getIcon(new IconReference(icon, this), false);
+                imageIcon = MapPaintStyles.getIcon(new IconReference(icon, this), -1, -1, false);
             }
             if (imageIcon == null) {
                 imageIcon = getDefaultIcon();
