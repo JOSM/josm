@@ -47,13 +47,11 @@ public class GPXSettingsPanel extends JPanel {
     private JCheckBox colorDynamic = new JCheckBox(tr("Dynamic color range based on data limits"));
     private JComboBox waypointLabel = new JComboBox(new String[] {tr("Auto"), /* gpx data field name */ trc("gpx_field", "Name"),
             /* gpx data field name */ trc("gpx_field", "Desc(ription)"), tr("Both"), tr("None")});
-    private String spec;
-    private String specSp = "";
+    private String layerName;
 
     public GPXSettingsPanel(String layerName) {
         super(new GridBagLayout());
-        this.spec="layer "+layerName;
-        specSp = ".layer "+spec;
+        this.layerName = "layer "+layerName;
         initComponents();
         loadPreferences();
     }
@@ -72,7 +70,7 @@ public class GPXSettingsPanel extends JPanel {
 
         // drawRawGpsLines
         ButtonGroup gpsLinesGroup = new ButtonGroup();
-        if (spec!=null) gpsLinesGroup.add(drawRawGpsLinesGlobal);
+        if (layerName!=null) gpsLinesGroup.add(drawRawGpsLinesGlobal);
         gpsLinesGroup.add(drawRawGpsLinesNone);
         gpsLinesGroup.add(drawRawGpsLinesLocal);
         gpsLinesGroup.add(drawRawGpsLinesAll);
@@ -80,7 +78,7 @@ public class GPXSettingsPanel extends JPanel {
         /* ensure that default is in data base */
 
         add(new JLabel(tr("Draw lines between raw GPS points")), GBC.eol().insets(20,0,0,0));
-        if (spec!=null) add(drawRawGpsLinesGlobal, GBC.eol().insets(40,0,0,0));
+        if (layerName!=null) add(drawRawGpsLinesGlobal, GBC.eol().insets(40,0,0,0));
         add(drawRawGpsLinesNone, GBC.eol().insets(40,0,0,0));
         add(drawRawGpsLinesLocal, GBC.eol().insets(40,0,0,0));
         add(drawRawGpsLinesAll, GBC.eol().insets(40,0,0,0));
@@ -145,7 +143,7 @@ public class GPXSettingsPanel extends JPanel {
 
         // colorTracks
         colorGroup = new ButtonGroup();
-        if (spec!=null) colorGroup.add(colorTypeGlobal);
+        if (layerName!=null) colorGroup.add(colorTypeGlobal);
         colorGroup.add(colorTypeNone);
         colorGroup.add(colorTypeVelocity);
         colorGroup.add(colorTypeDirection);
@@ -176,7 +174,7 @@ public class GPXSettingsPanel extends JPanel {
         add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
 
         add(new JLabel(tr("Track and Point Coloring")), GBC.eol().insets(20,0,0,0));
-        if (spec!=null) add(colorTypeGlobal, GBC.eol().insets(40,0,0,0));
+        if (layerName!=null) add(colorTypeGlobal, GBC.eol().insets(40,0,0,0));
         add(colorTypeNone, GBC.eol().insets(40,0,0,0));
         add(colorTypeVelocity, GBC.std().insets(40,0,0,0));
         add(colorTypeVelocityTune, GBC.eop().insets(5,0,0,5));
@@ -190,7 +188,7 @@ public class GPXSettingsPanel extends JPanel {
         // waypointLabel
         add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
         add(new JLabel(tr("Waypoint labelling")), GBC.std().insets(20,0,0,0));
-        if(spec!= null)
+        if(layerName!= null)
             waypointLabel.addItem(tr("Global settings"));
         add(waypointLabel, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
         add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
@@ -201,13 +199,13 @@ public class GPXSettingsPanel extends JPanel {
      */
     public void loadPreferences () {
         makeAutoMarkers.setSelected(Main.pref.getBoolean("marker.makeautomarkers", true));
-        if(spec!=null && !Main.pref.hasKey("draw.rawgps.lines."+spec)
-                && !Main.pref.hasKey("draw.rawgps.lines.local"+spec)){
+        if(layerName!=null && !Main.pref.hasKey("draw.rawgps.lines."+layerName)
+                && !Main.pref.hasKey("draw.rawgps.lines.local"+layerName)){
             // no line preferences for layer is found
             drawRawGpsLinesGlobal.setSelected(true);
         } else {
-            Boolean lf = Main.pref.getBoolean("draw.rawgps.lines.local",spec, true);
-            if(Main.pref.getBoolean("draw.rawgps.lines",spec, true)) {
+            Boolean lf = Main.pref.getBoolean("draw.rawgps.lines.local",layerName, true);
+            if(Main.pref.getBoolean("draw.rawgps.lines",layerName, true)) {
                 drawRawGpsLinesAll.setSelected(true);
             } else if (lf) {
                 drawRawGpsLinesLocal.setSelected(true);
@@ -216,91 +214,92 @@ public class GPXSettingsPanel extends JPanel {
             }
         }
 
-        drawRawGpsMaxLineLengthLocal.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.max-line-length.local",spec, -1)));
-        drawRawGpsMaxLineLength.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.max-line-length",spec, 200)));
-        forceRawGpsLines.setSelected(Main.pref.getBoolean("draw.rawgps.lines.force",spec, false));
-        drawGpsArrows.setSelected(Main.pref.getBoolean("draw.rawgps.direction",spec, false));
-        drawGpsArrowsFast.setSelected(Main.pref.getBoolean("draw.rawgps.alternatedirection",spec, false));
-        drawGpsArrowsMinDist.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.min-arrow-distance",spec, 40)));
-        hdopCircleGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.hdopcircle",spec, false));
-        largeGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.large",spec, false));
+        drawRawGpsMaxLineLengthLocal.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.max-line-length.local",layerName, -1)));
+        drawRawGpsMaxLineLength.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.max-line-length",layerName, 200)));
+        forceRawGpsLines.setSelected(Main.pref.getBoolean("draw.rawgps.lines.force",layerName, false));
+        drawGpsArrows.setSelected(Main.pref.getBoolean("draw.rawgps.direction",layerName, false));
+        drawGpsArrowsFast.setSelected(Main.pref.getBoolean("draw.rawgps.alternatedirection",layerName, false));
+        drawGpsArrowsMinDist.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.min-arrow-distance",layerName, 40)));
+        hdopCircleGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.hdopcircle",layerName, false));
+        largeGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.large",layerName, false));
         drawRawGpsLinesActionListener.actionPerformed(null);
 
-        if(spec!=null && !Main.pref.hasKey("draw.rawgps.colors."+spec)) {
+        if(layerName!=null && !Main.pref.hasKey("draw.rawgps.colors."+layerName)) {
             colorTypeGlobal.setSelected(true);
             colorDynamic.setSelected(false);
             colorDynamic.setEnabled(false);
         } else {
-         switch(Main.pref.getInteger("draw.rawgps.colors",spec, 0)) {
+         switch(Main.pref.getInteger("draw.rawgps.colors",layerName, 0)) {
             case 0: colorTypeNone.setSelected(true);   break;
             case 1: colorTypeVelocity.setSelected(true);  break;
             case 2: colorTypeDilution.setSelected(true);  break;
             case 3: colorTypeDirection.setSelected(true); break;
             case 4: colorTypeTime.setSelected(true);  break;
             }
-            int ccts = Main.pref.getInteger("draw.rawgps.colorTracksTune",spec, 45);
+            int ccts = Main.pref.getInteger("draw.rawgps.colorTracksTune",layerName, 45);
             colorTypeVelocityTune.setSelectedIndex(ccts==10 ? 2 : (ccts==20 ? 1 : 0));
             colorTypeVelocityTune.setEnabled(colorTypeVelocity.isSelected() && colorTypeVelocity.isEnabled());
-            colorDynamic.setSelected(Main.pref.getBoolean("draw.rawgps.colors.dynamic",spec, false));
+            colorDynamic.setSelected(Main.pref.getBoolean("draw.rawgps.colors.dynamic",layerName, false));
             colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
         }
-        if(spec != null)
-          waypointLabel.setSelectedIndex(Main.pref.getInteger("draw.rawgps.layer.wpt"+specSp, 5));
+        if(layerName != null)
+          waypointLabel.setSelectedIndex(Main.pref.getInteger("draw.rawgps.layer.wpt."+layerName, 5));
         else
           waypointLabel.setSelectedIndex(Main.pref.getInteger("draw.rawgps.layer.wpt", 0));
     }
 
 
     /**
-     * Save preferences from UI controls for specified layer
-     * if spec==null, global preferences are written
+     * Save preferences from UI controls for layerNameified layer
+     * if layerName==null, global preferences are written
      */
-    public boolean savePreferences (String spec) {
-        Main.pref.put("marker.makeautomarkers"+specSp, makeAutoMarkers.isSelected());
+    public boolean savePreferences (String layerName) {
+        String layerNameDot = ".layer "+layerName;
+        Main.pref.put("marker.makeautomarkers"+layerNameDot, makeAutoMarkers.isSelected());
         if (drawRawGpsLinesGlobal.isSelected()) {
-            Main.pref.put("draw.rawgps.lines"+specSp, null);
-            Main.pref.put("draw.rawgps.lines.local"+specSp, null);
-            Main.pref.put("draw.rawgps.max-line-length"+specSp, null);
-            Main.pref.put("draw.rawgps.max-line-length.local"+specSp, null);
-            Main.pref.put("draw.rawgps.lines.force"+specSp, null);
-            Main.pref.put("draw.rawgps.direction"+specSp, null);
-            Main.pref.put("draw.rawgps.alternatedirection"+specSp, null);
-            Main.pref.put("draw.rawgps.min-arrow-distance"+specSp, null);
+            Main.pref.put("draw.rawgps.lines"+layerNameDot, null);
+            Main.pref.put("draw.rawgps.lines.local"+layerNameDot, null);
+            Main.pref.put("draw.rawgps.max-line-length"+layerNameDot, null);
+            Main.pref.put("draw.rawgps.max-line-length.local"+layerNameDot, null);
+            Main.pref.put("draw.rawgps.lines.force"+layerNameDot, null);
+            Main.pref.put("draw.rawgps.direction"+layerNameDot, null);
+            Main.pref.put("draw.rawgps.alternatedirection"+layerNameDot, null);
+            Main.pref.put("draw.rawgps.min-arrow-distance"+layerNameDot, null);
         } else {
-            Main.pref.put("draw.rawgps.lines"+specSp, drawRawGpsLinesAll.isSelected());
-            Main.pref.put("draw.rawgps.lines.local"+specSp, drawRawGpsLinesAll.isSelected() || drawRawGpsLinesLocal.isSelected());
-            Main.pref.put("draw.rawgps.max-line-length"+specSp, drawRawGpsMaxLineLength.getText());
-            Main.pref.put("draw.rawgps.max-line-length.local"+specSp, drawRawGpsMaxLineLengthLocal.getText());
-            Main.pref.put("draw.rawgps.lines.force"+specSp, forceRawGpsLines.isSelected());
-            Main.pref.put("draw.rawgps.direction"+specSp, drawGpsArrows.isSelected());
-            Main.pref.put("draw.rawgps.alternatedirection"+specSp, drawGpsArrowsFast.isSelected());
-            Main.pref.put("draw.rawgps.min-arrow-distance"+specSp, drawGpsArrowsMinDist.getText());
+            Main.pref.put("draw.rawgps.lines"+layerNameDot, drawRawGpsLinesAll.isSelected());
+            Main.pref.put("draw.rawgps.lines.local"+layerNameDot, drawRawGpsLinesAll.isSelected() || drawRawGpsLinesLocal.isSelected());
+            Main.pref.put("draw.rawgps.max-line-length"+layerNameDot, drawRawGpsMaxLineLength.getText());
+            Main.pref.put("draw.rawgps.max-line-length.local"+layerNameDot, drawRawGpsMaxLineLengthLocal.getText());
+            Main.pref.put("draw.rawgps.lines.force"+layerNameDot, forceRawGpsLines.isSelected());
+            Main.pref.put("draw.rawgps.direction"+layerNameDot, drawGpsArrows.isSelected());
+            Main.pref.put("draw.rawgps.alternatedirection"+layerNameDot, drawGpsArrowsFast.isSelected());
+            Main.pref.put("draw.rawgps.min-arrow-distance"+layerNameDot, drawGpsArrowsMinDist.getText());
         }
 
-        Main.pref.put("draw.rawgps.hdopcircle"+specSp, hdopCircleGpsPoints.isSelected());
-        Main.pref.put("draw.rawgps.large"+specSp, largeGpsPoints.isSelected());
-        if (waypointLabel.getSelectedIndex()==5) Main.pref.put("draw.rawgps.layer.wpt"+specSp,null);
-        else Main.pref.putInteger("draw.rawgps.layer.wpt"+specSp, waypointLabel.getSelectedIndex());
+        Main.pref.put("draw.rawgps.hdopcircle"+layerNameDot, hdopCircleGpsPoints.isSelected());
+        Main.pref.put("draw.rawgps.large"+layerNameDot, largeGpsPoints.isSelected());
+        if (waypointLabel.getSelectedIndex()==5) Main.pref.put("draw.rawgps.layer.wpt"+layerNameDot,null);
+        else Main.pref.putInteger("draw.rawgps.layer.wpt"+layerNameDot, waypointLabel.getSelectedIndex());
 
         if(colorTypeGlobal.isSelected()) {
-            Main.pref.put("draw.rawgps.colors"+specSp, null);
-            Main.pref.put("draw.rawgps.colors.dynamic"+specSp, null);
-            Main.pref.put("draw.rawgps.colorTracksTunec"+specSp, null);
+            Main.pref.put("draw.rawgps.colors"+layerNameDot, null);
+            Main.pref.put("draw.rawgps.colors.dynamic"+layerNameDot, null);
+            Main.pref.put("draw.rawgps.colorTracksTunec"+layerNameDot, null);
             return false;
         } else if(colorTypeVelocity.isSelected()) {
-            Main.pref.putInteger("draw.rawgps.colors"+specSp, 1);
+            Main.pref.putInteger("draw.rawgps.colors"+layerNameDot, 1);
         } else if(colorTypeDilution.isSelected()) {
-            Main.pref.putInteger("draw.rawgps.colors"+specSp, 2);
+            Main.pref.putInteger("draw.rawgps.colors"+layerNameDot, 2);
         } else if(colorTypeDirection.isSelected()) {
-            Main.pref.putInteger("draw.rawgps.colors"+specSp, 3);
+            Main.pref.putInteger("draw.rawgps.colors"+layerNameDot, 3);
         } else if(colorTypeTime.isSelected()) {
-            Main.pref.putInteger("draw.rawgps.colors"+specSp, 4);
+            Main.pref.putInteger("draw.rawgps.colors"+layerNameDot, 4);
         } else {
-            Main.pref.putInteger("draw.rawgps.colors"+specSp, 0);
+            Main.pref.putInteger("draw.rawgps.colors"+layerNameDot, 0);
         }
-        Main.pref.put("draw.rawgps.colors.dynamic"+specSp, colorDynamic.isSelected());
+        Main.pref.put("draw.rawgps.colors.dynamic"+layerNameDot, colorDynamic.isSelected());
         int ccti=colorTypeVelocityTune.getSelectedIndex();
-        Main.pref.putInteger("draw.rawgps.colorTracksTune"+specSp, ccti==2 ? 10 : (ccti==1 ? 20 : 45));
+        Main.pref.putInteger("draw.rawgps.colorTracksTune"+layerNameDot, ccti==2 ? 10 : (ccti==1 ? 20 : 45));
         return false;
     }
 
