@@ -250,7 +250,7 @@ public class GPXSettingsPanel extends JPanel {
 
 
     /**
-     * Save preferences from UI controls for layerNameified layer
+     * Save preferences from UI controls for specified layer
      * if layerName==null, global preferences are written
      */
     public boolean savePreferences (String layerName) {
