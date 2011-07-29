@@ -48,9 +48,12 @@ public class GPXSettingsPanel extends JPanel {
     private JComboBox waypointLabel = new JComboBox(new String[] {tr("Auto"), /* gpx data field name */ trc("gpx_field", "Name"),
             /* gpx data field name */ trc("gpx_field", "Desc(ription)"), tr("Both"), tr("None")});
     private String layerName;
+    private boolean local; // flag to display LocalOnly checkbox 
+    private boolean nonlocal; // flag to display AllLines checkbox 
 
-    public GPXSettingsPanel(String layerName) {
+    public GPXSettingsPanel(String layerName, boolean local, boolean nonlocal) {
         super(new GridBagLayout());
+        this.local=local; this.nonlocal=nonlocal;
         this.layerName = "layer "+layerName;
         initComponents();
         loadPreferences();
@@ -59,8 +62,10 @@ public class GPXSettingsPanel extends JPanel {
     public GPXSettingsPanel() {
         super(new GridBagLayout());
         initComponents();
+        local=false; nonlocal=false;
         loadPreferences(); // preferences -> controls
     }
+
     private void initComponents() {
         setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
@@ -80,8 +85,8 @@ public class GPXSettingsPanel extends JPanel {
         add(new JLabel(tr("Draw lines between raw GPS points")), GBC.eol().insets(20,0,0,0));
         if (layerName!=null) add(drawRawGpsLinesGlobal, GBC.eol().insets(40,0,0,0));
         add(drawRawGpsLinesNone, GBC.eol().insets(40,0,0,0));
-        add(drawRawGpsLinesLocal, GBC.eol().insets(40,0,0,0));
-        add(drawRawGpsLinesAll, GBC.eol().insets(40,0,0,0));
+        if (layerName==null || local) add(drawRawGpsLinesLocal, GBC.eol().insets(40,0,0,0)); 
+        if (layerName==null || nonlocal) add(drawRawGpsLinesAll, GBC.eol().insets(40,0,0,0)); 
 
         drawRawGpsLinesActionListener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -200,7 +205,7 @@ public class GPXSettingsPanel extends JPanel {
     public void loadPreferences () {
         makeAutoMarkers.setSelected(Main.pref.getBoolean("marker.makeautomarkers", true));
         if(layerName!=null && !Main.pref.hasKey("draw.rawgps.lines."+layerName)
-                && !Main.pref.hasKey("draw.rawgps.lines.local"+layerName)){
+                && !Main.pref.hasKey("draw.rawgps.lines.local."+layerName)){
             // no line preferences for layer is found
             drawRawGpsLinesGlobal.setSelected(true);
         } else {
@@ -253,23 +258,28 @@ public class GPXSettingsPanel extends JPanel {
      * Save preferences from UI controls for specified layer
      * if layerName==null, global preferences are written
      */
-    public boolean savePreferences (String layerName) {
+    public boolean savePreferences (String layerName, boolean locLayer) {
         String layerNameDot = ".layer "+layerName;
+        if (layerName==null) layerNameDot="";
         Main.pref.put("marker.makeautomarkers"+layerNameDot, makeAutoMarkers.isSelected());
         if (drawRawGpsLinesGlobal.isSelected()) {
-            Main.pref.put("draw.rawgps.lines"+layerNameDot, null);
-            Main.pref.put("draw.rawgps.lines.local"+layerNameDot, null);
-            Main.pref.put("draw.rawgps.max-line-length"+layerNameDot, null);
-            Main.pref.put("draw.rawgps.max-line-length.local"+layerNameDot, null);
+            Main.pref.put("draw.rawgps.lines" + layerNameDot, null);
+            Main.pref.put("draw.rawgps.max-line-length" + layerNameDot, null);
+            Main.pref.put("draw.rawgps.lines.local" + layerNameDot, null);
+            Main.pref.put("draw.rawgps.max-line-length.local" + layerNameDot, null);
             Main.pref.put("draw.rawgps.lines.force"+layerNameDot, null);
             Main.pref.put("draw.rawgps.direction"+layerNameDot, null);
             Main.pref.put("draw.rawgps.alternatedirection"+layerNameDot, null);
             Main.pref.put("draw.rawgps.min-arrow-distance"+layerNameDot, null);
         } else {
-            Main.pref.put("draw.rawgps.lines"+layerNameDot, drawRawGpsLinesAll.isSelected());
-            Main.pref.put("draw.rawgps.lines.local"+layerNameDot, drawRawGpsLinesAll.isSelected() || drawRawGpsLinesLocal.isSelected());
-            Main.pref.put("draw.rawgps.max-line-length"+layerNameDot, drawRawGpsMaxLineLength.getText());
-            Main.pref.put("draw.rawgps.max-line-length.local"+layerNameDot, drawRawGpsMaxLineLengthLocal.getText());
+            if (layerName==null || !locLayer) {
+                Main.pref.put("draw.rawgps.lines" +  layerNameDot, drawRawGpsLinesAll.isSelected());
+                Main.pref.put("draw.rawgps.max-line-length" + layerNameDot, drawRawGpsMaxLineLength.getText());
+            }
+            if (layerName==null || locLayer) {
+                Main.pref.put("draw.rawgps.lines.local" + layerNameDot, drawRawGpsLinesAll.isSelected() || drawRawGpsLinesLocal.isSelected());
+                Main.pref.put("draw.rawgps.max-line-length.local" + layerNameDot, drawRawGpsMaxLineLengthLocal.getText());
+            }
             Main.pref.put("draw.rawgps.lines.force"+layerNameDot, forceRawGpsLines.isSelected());
             Main.pref.put("draw.rawgps.direction"+layerNameDot, drawGpsArrows.isSelected());
             Main.pref.put("draw.rawgps.alternatedirection"+layerNameDot, drawGpsArrowsFast.isSelected());
@@ -307,6 +317,6 @@ public class GPXSettingsPanel extends JPanel {
      * Save preferences from UI controls for initial layer or globally
      */
     public void savePreferences() {
-        savePreferences(null);
+        savePreferences(null, false);
     }
 }
