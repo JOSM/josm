@@ -1406,19 +1406,29 @@ public class GpxLayer extends Layer {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            GPXSettingsPanel panel=new GPXSettingsPanel(getName());
+            boolean hasLocal = false, hasNonlocal = false;
+            for (Layer layer : layers) {
+                if (layer instanceof GpxLayer) {
+                    if (((GpxLayer) layer).isLocalFile) hasLocal = true;
+                    else hasNonlocal = true;
+                }
+            }
+            GPXSettingsPanel panel=new GPXSettingsPanel(getName(), hasLocal, hasNonlocal); 
+
             int answer = JOptionPane.showConfirmDialog(Main.parent, panel,
                     tr("Customize track drawing"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (answer == JOptionPane.CANCEL_OPTION || answer == JOptionPane.CLOSED_OPTION) return;
             for(Layer layer : layers) {
                 // save preferences for all layers
-                panel.savePreferences(layer.getName());
+                boolean f=false; 
+                if (layer instanceof GpxLayer) f=((GpxLayer)layer).isLocalFile;
+                    panel.savePreferences(layer.getName(),f);
             }
             Main.map.repaint();
         }
     }
 
-      private class MarkersFromNamedPoins extends AbstractAction {
+    private class MarkersFromNamedPoins extends AbstractAction {
 
         public MarkersFromNamedPoins() {
             super(tr("Markers From Named Points"), ImageProvider.get("addmarkers"));
