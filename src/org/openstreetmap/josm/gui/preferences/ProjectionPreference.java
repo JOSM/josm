@@ -202,12 +202,12 @@ public class ProjectionPreference implements PreferenceSetting {
         }
         PROP_SUB_PROJECTION.put(coll);
         PROP_PROJECTION_SUBPROJECTION.put(coll, name);
-        if(proj instanceof ProjectionSubPrefs) {
+        if (proj instanceof ProjectionSubPrefs) {
             ((ProjectionSubPrefs) proj).setPreferences(coll);
         }
         Projection oldProj = Main.getProjection();
         Main.setProjection(proj);
-        if(b != null && (!proj.getClass().getName().equals(oldProj.getClass().getName()) || proj.hashCode() != oldProj.hashCode()))
+        if (b != null && (!proj.getClass().getName().equals(oldProj.getClass().getName()) || proj.hashCode() != oldProj.hashCode()))
         {
             Main.map.mapView.zoomTo(b);
             /* TODO - remove layers with fixed projection */

@@ -202,7 +202,7 @@ public class UTM extends TransverseMercator implements ProjectionSubPrefs {
     {
         zone = DEFAULT_ZONE;
         hemisphere = DEFAULT_HEMISPHERE;
-        offset = true; //Default in previous versions
+        offset = false;
 
         if(args != null)
         {
