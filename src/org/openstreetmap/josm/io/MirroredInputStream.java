@@ -297,7 +297,7 @@ public class MirroredInputStream extends InputStream {
             case HttpURLConnection.HTTP_SEE_OTHER:
                 String redirectLocation = con.getHeaderField("Location");
                 if (downloadUrl == null) {
-                    String msg = tr("Fatal: unexpected response from HTTP server. Got {0} response without 'Location' header. Can''t redirect. Aborting.", con.getResponseCode());
+                    /* I18n: argument is HTTP response code */ String msg = tr("Unexpected response from HTTP server. Got {0} response without ''Location'' header. Can''t redirect. Aborting.", con.getResponseCode());
                     throw new IOException(msg);
                 }
                 downloadUrl = new URL(redirectLocation);
@@ -305,13 +305,13 @@ public class MirroredInputStream extends InputStream {
                 // to occur for whatever reason
                 numRedirects++;
                 if (numRedirects >= Main.pref.getInteger("socket.maxredirects", 5)) {
-                    String msg = tr("Fatal: too many redirects to the download URL detected. Aborting.");
+                    String msg = tr("Too many redirects to the download URL detected. Aborting.");
                     throw new IOException(msg);
                 }
                 System.out.println(tr("Download redirected to ''{0}''", downloadUrl));
                 break;
             default:
-                String msg = tr("Error: failed to read from ''{0}''. Server responded with status code {1}.", downloadUrl, con.getResponseCode());
+                String msg = tr("Failed to read from ''{0}''. Server responded with status code {1}.", downloadUrl, con.getResponseCode());
                 throw new IOException(msg);
             }
         }
