@@ -301,7 +301,10 @@ Pair<Integer, Integer> zoom() :
     (
             <MINUS> max=uint()
         |
-            min=uint() ( <MINUS> ( max=uint() )? )?
+        LOOKAHEAD(2)
+            min=uint() <MINUS> ( max=uint() )?
+        |
+            min=uint() { max = min; }
     )
     { return new Pair<Integer, Integer>(min, max); }
 }
