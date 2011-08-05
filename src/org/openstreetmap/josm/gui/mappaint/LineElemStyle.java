@@ -279,6 +279,26 @@ public class LineElemStyle extends ElemStyle {
             " realWidth=" + realWidth + " color=" + Utils.toString(color) +
             " dashed=" + Arrays.toString(line.getDashArray()) +
             (line.getDashPhase() == 0f ? "" : " dashesOffses=" + line.getDashPhase()) +
-            " dashedColor=" + Utils.toString(dashesBackground) + '}';
+            " dashedColor=" + Utils.toString(dashesBackground) +
+            " linejoin=" + linejoinToString(line.getLineJoin()) +
+            " linecap=" + linecapToString(line.getEndCap()) +
+            '}';
+    }
+    
+    public String linejoinToString(int linejoin) {
+        switch (linejoin) {
+            case BasicStroke.JOIN_BEVEL: return "bevel";
+            case BasicStroke.JOIN_ROUND: return "round";
+            case BasicStroke.JOIN_MITER: return "miter";
+            default: return null;
+        }
+    }
+    public String linecapToString(int linecap) {
+        switch (linecap) {
+            case BasicStroke.CAP_BUTT: return "none";
+            case BasicStroke.CAP_ROUND: return "round";
+            case BasicStroke.CAP_SQUARE: return "square";
+            default: return null;
+        }
     }
 }

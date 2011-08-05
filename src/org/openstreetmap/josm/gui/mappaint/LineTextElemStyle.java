@@ -24,6 +24,8 @@ public class LineTextElemStyle extends ElemStyle {
             return null;
 
         TextElement text = TextElement.create(c, PaintColors.TEXT.get(), false);
+        if (text == null)
+            return null;
         return new LineTextElemStyle(c, text);
     }
 

@@ -121,6 +121,7 @@ public class TextElement {
         CheckParameterUtil.ensureParameterNotNull(defaultTextColor);
 
         LabelCompositionStrategy strategy = buildLabelCompositionStrategy(c, defaultAnnotate);
+        if (strategy == null) return null;
         Font font = ElemStyle.getFont(c);
 
         float xOffset = 0;
