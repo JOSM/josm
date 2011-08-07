@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -707,8 +708,12 @@ public class TagCollection implements Iterable<Tag> {
      * @return the concatenation of all tag values
      */
     public String getJoinedValues(String key) {
-        StringBuffer buffer = new StringBuffer();
-        List<String> values = new ArrayList<String>(getValues(key));
+        StringBuilder buffer = new StringBuilder();
+        HashSet<String> valSet = new HashSet<String>();
+        for (String vs : getValues(key)) {
+            valSet.addAll(Arrays.asList(vs.split(";")));
+        }
+        List<String> values = new ArrayList<String>(valSet);
         values.remove("");
         Collections.sort(values);
         Iterator<String> iter = values.iterator();
