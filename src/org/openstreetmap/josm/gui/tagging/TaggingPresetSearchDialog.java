@@ -53,12 +53,13 @@ import org.openstreetmap.josm.gui.tagging.TaggingPreset.Text;
 
 public class TaggingPresetSearchDialog extends ExtendedDialog {
 
-    private int CLASSIFICATION_NAME_MATCH = 300;
-    private int CLASSIFICATION_GROUP_MATCH = 200;
-    private int CLASSIFICATION_TAGS_MATCH = 100;
+    private static final int CLASSIFICATION_IN_FAVORITES = 300;
+    private static final int CLASSIFICATION_NAME_MATCH = 300;
+    private static final int CLASSIFICATION_GROUP_MATCH = 200;
+    private static final int CLASSIFICATION_TAGS_MATCH = 100;
 
-    private final BooleanProperty SEARCH_IN_TAGS = new BooleanProperty("taggingpreset.dialog.search-in-tags", true);
-    private final BooleanProperty ONLY_APPLICABLE  = new BooleanProperty("taggingpreset.dialog.only-applicable-to-selection", true);
+    private static final BooleanProperty SEARCH_IN_TAGS = new BooleanProperty("taggingpreset.dialog.search-in-tags", true);
+    private static final BooleanProperty ONLY_APPLICABLE  = new BooleanProperty("taggingpreset.dialog.only-applicable-to-selection", true);
 
     private static class ResultListCellRenderer extends DefaultListCellRenderer {
         @Override
@@ -100,6 +101,7 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
     private static class PresetClasification implements Comparable<PresetClasification> {
         public final TaggingPreset preset;
         public int classification;
+        public int favoriteIndex;
         private final Collection<String> groups = new HashSet<String>();
         private final Collection<String> names = new HashSet<String>();
         private final Collection<String> tags = new HashSet<String>();
@@ -189,6 +191,13 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
         }
     }
 
+    private static TaggingPresetSearchDialog instance;
+    public static TaggingPresetSearchDialog getInstance() {
+        if (instance == null) {
+            instance = new TaggingPresetSearchDialog();
+        }
+        return instance;
+    }
 
     private JTextField edSearchText;
     private JList lsResult;
@@ -198,8 +207,8 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
     private final List<PresetClasification> classifications = new ArrayList<PresetClasification>();
     private ResultListModel lsResultModel = new ResultListModel();
 
-    public TaggingPresetSearchDialog(Component parent) {
-        super(parent, tr("Presets"), new String[] {tr("Select"), tr("Cancel")});
+    private TaggingPresetSearchDialog() {
+        super(Main.parent, tr("Presets"), new String[] {tr("Select"), tr("Cancel")});
         getTypesInSelection();
 
         for (TaggingPreset preset: TaggingPresetPreference.taggingPresets) {
@@ -212,6 +221,14 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
 
         build();
         filterPresets("");
+    }
+
+    @Override
+    public ExtendedDialog showDialog() {
+        super.showDialog();
+        edSearchText.setText("");
+        lsResult.getSelectionModel().clearSelection();
+        return this;
     }
 
     private void build() {
@@ -335,7 +352,7 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
      * @param text
      */
     private void filterPresets(String text) {
-        //TODO Favorites
+        //TODO Save favorites to file
         text = text.toLowerCase();
 
         String[] groupWords;
@@ -397,6 +414,7 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
                 }
 
                 if (presetClasification.classification > 0) {
+                    presetClasification.classification += presetClasification.favoriteIndex;
                     result.add(presetClasification);
                 }
             }
@@ -432,7 +450,15 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
             if (selectPreset == -1) {
                 selectPreset = 0;
             }
-            lsResultModel.getPresets().get(selectPreset).preset.actionPerformed(null);
+            TaggingPreset preset = lsResultModel.getPresets().get(selectPreset).preset;
+            for (PresetClasification pc: classifications) {
+                if (pc.preset == preset) {
+                    pc.favoriteIndex = CLASSIFICATION_IN_FAVORITES;
+                } else if (pc.favoriteIndex > 0) {
+                    pc.favoriteIndex--;
+                }
+            }
+            preset.actionPerformed(null);
         }
 
         SEARCH_IN_TAGS.put(ckSearchInTags.isSelected());
