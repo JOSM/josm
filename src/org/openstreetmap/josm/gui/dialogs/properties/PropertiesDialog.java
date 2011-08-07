@@ -22,6 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -248,7 +249,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         });
         values.setEditable(true);
 
-        List<AutoCompletionListItem> valueList = autocomplete.getValues(key);
+        List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
         Collections.sort(valueList, defaultACItemComparator);
 
         values.setPossibleACItems(valueList);
@@ -368,6 +369,20 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     }
 
     /**
+     * For a given key k, return a list of keys which are used as keys for 
+     * auto-completing values to increase the search space.
+     * @param key the key k
+     * @return a list of keys
+     */
+    static List<String> getAutocompletionKeys(String key) {
+        if ("name".equals(key) || "addr:street".equals(key)) {
+            return Arrays.asList("addr:street", "name");
+        } else {
+            return Arrays.asList(key);
+        }
+    }
+
+    /**
      * This simply fires up an relation editor for the relation shown; everything else
      * is the editor's business.
      *
@@ -477,7 +492,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             @Override public void focusGained(FocusEvent e) {
                 String key = keys.getEditor().getItem().toString();
 
-                List<AutoCompletionListItem> valueList = autocomplete.getValues(key);
+                List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
                 Collections.sort(valueList, defaultACItemComparator);
 
                 values.setPossibleACItems(valueList);
