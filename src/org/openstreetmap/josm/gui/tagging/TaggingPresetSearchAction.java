@@ -25,7 +25,7 @@ public class TaggingPresetSearchAction extends JosmAction {
         if (!Main.main.hasEditLayer())
             return;
 
-        TaggingPresetSearchDialog dialog = new TaggingPresetSearchDialog(Main.parent);
+        TaggingPresetSearchDialog dialog = TaggingPresetSearchDialog.getInstance();
         dialog.showDialog();
     }
 
