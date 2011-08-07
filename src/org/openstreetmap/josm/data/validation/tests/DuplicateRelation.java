@@ -175,7 +175,7 @@ public class DuplicateRelation extends Test
     @Override
     public void visit(Relation r)
     {
-        if( !r.isUsable() )
+        if (!r.isUsable() || r.hasIncompleteMembers())
             return;
         List<RelationMember> rMembers=r.getMembers();
         Map<String, String> rkeys=r.getKeys();

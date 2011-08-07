@@ -299,7 +299,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             name += trn("{0} member", "{0} members", mbno, mbno);
 
             if (relation instanceof Relation) {
-                if (relationHasIncompleteMember((Relation) relation)) {
+                if (((Relation) relation).hasIncompleteMembers()) {
                     name += ", "+tr("incomplete");
                 }
             }
@@ -363,7 +363,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             if (r1.getMembersCount() != r2.getMembersCount())
                 return (r1.getMembersCount() > r2.getMembersCount())?1:-1;
 
-            comp = Boolean.valueOf(relationHasIncompleteMember(r1)).compareTo(Boolean.valueOf(relationHasIncompleteMember(r2)));
+            comp = Boolean.valueOf(r1.hasIncompleteMembers()).compareTo(Boolean.valueOf(r2.hasIncompleteMembers()));
             if (comp != 0)
                 return comp;
 
@@ -442,14 +442,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 return nameTag;
         }
         return null;
-    }
-
-    private boolean relationHasIncompleteMember(Relation relation) {
-        for (RelationMember m : relation.getMembers()) {
-            if (m.getMember().isIncomplete())
-                return true;
-        }
-        return false;
     }
 
     /**
