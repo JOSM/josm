@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +13,14 @@ public class OsmUrlToBounds {
     private static final String SHORTLINK_PREFIX = "http://osm.org/go/";
 
     public static Bounds parse(String url) {
+        try {
+            // a percent sign indicates an encoded URL (RFC 1738).
+            if (url.contains("%")) {
+                url = URLDecoder.decode(url, "UTF-8");
+            }
+        } catch (UnsupportedEncodingException x) {
+        } catch (IllegalArgumentException x) {
+        }
         Bounds b = parseShortLink(url);
         if (b != null)
             return b;
@@ -49,6 +59,7 @@ public class OsmUrlToBounds {
             }
         } catch (NumberFormatException x) {
         } catch (NullPointerException x) {
+        } catch (ArrayIndexOutOfBoundsException x) {
         }
         return b;
     }
