@@ -37,7 +37,11 @@ public interface Projection {
     String toString();
 
     /**
-     * Return projection code.
+     * Return projection code. This should be a unique identifier.
+     * If projection supports parameters, return a different code
+     * for each set of parameters.
+     * 
+     * The EPSG code can be used (if defined for the projection).
      */
     String toCode();
 

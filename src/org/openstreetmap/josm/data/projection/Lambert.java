@@ -85,7 +85,7 @@ public class Lambert extends AbstractProjection implements ProjectionSubPrefs {
                 String gridFileName = "ntf_r93_b.gsb";
                 InputStream is = Main.class.getResourceAsStream("/data/"+gridFileName);
                 if (is == null) {
-                    throw new RuntimeException(tr("Warning: failed to open input stream for resource ''/data/{0}''. Cannot load NTF<->RGF93 grid", gridFileName));
+                    throw new RuntimeException(tr("Error: failed to open input stream for resource ''/data/{0}''. Cannot load NTF<->RGF93 grid", gridFileName));
                 }
                 ntf_rgf93Grid = new NTV2GridShiftFile();
                 ntf_rgf93Grid.loadGridShiftFile(is, false);

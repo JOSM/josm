@@ -84,6 +84,7 @@ import org.openstreetmap.josm.tools.PlatformHookOsx;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 abstract public class Main {
 
@@ -822,7 +823,7 @@ abstract public class Main {
 
     private static void fireProjectionChanged(Projection oldValue, Projection newValue) {
         if (newValue == null ^ oldValue == null
-                || (newValue != null && oldValue != null && !newValue.getClass().getName().equals(oldValue.getClass().getName()))) {
+                || (newValue != null && oldValue != null && !Utils.equal(newValue.toCode(), oldValue.toCode()))) {
 
             synchronized(Main.class) {
                 Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
