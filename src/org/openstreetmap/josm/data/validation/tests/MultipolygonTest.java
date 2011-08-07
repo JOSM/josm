@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +26,6 @@ import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.xml.AreaPrototype;
 
 public class MultipolygonTest extends Test {
 
@@ -117,7 +117,9 @@ public class MultipolygonTest extends Test {
         if (styles != null && !w.isClosed()) {
             for (ElemStyle s : styles.generateStyles(w, SCALE, null, false).a) {
                 if (s instanceof AreaElemStyle) {
-                    errors.add( new TestError(this, Severity.WARNING, tr("Area style way is not closed"), NOT_CLOSED,  w));
+                    List<Node> nodes = w.getNodes();
+                    errors.add(new TestError(this, Severity.WARNING, tr("Area style way is not closed"), NOT_CLOSED, 
+                            Collections.singletonList(w), Arrays.asList(nodes.get(0), nodes.get(nodes.size() - 1))));
                     break;
                 }
             }
@@ -215,8 +217,9 @@ public class MultipolygonTest extends Test {
                 }
             }
 
-            if (!nonClosedWays.isEmpty()) {
-                errors.add(new TestError(this, Severity.WARNING, tr("Multipolygon is not closed"), NON_CLOSED_WAY,  Collections.singletonList(r), nonClosedWays));
+            for (List<Node> w : nonClosedWays) {
+                errors.add(new TestError(this, Severity.WARNING, tr("Multipolygon is not closed"), NON_CLOSED_WAY, 
+                        w, Arrays.asList(w.get(0), w.get(w.size() - 1))));
             }
 
             // For painting is used Polygon class which works with ints only. For validation we need more precision
