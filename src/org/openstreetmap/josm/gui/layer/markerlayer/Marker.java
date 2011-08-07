@@ -247,6 +247,8 @@ public class Marker implements TemplateEngineDataProvider {
 
 
     private final TemplateEngineDataProvider dataProvider;
+    private final String text;
+
     public final Icon symbol;
     public final MarkerLayer parentLayer;
     public double time; /* absolute time of marker since epoch */
@@ -268,6 +270,21 @@ public class Marker implements TemplateEngineDataProvider {
         this.parentLayer = parentLayer;
 
         this.dataProvider = dataProvider;
+        this.text = null;
+    }
+
+    public Marker(LatLon ll, String text, String iconName, MarkerLayer parentLayer, double time, double offset) {
+        setCoor(ll);
+
+        this.offset = offset;
+        this.time = time;
+        // /* ICON(markers/) */"Bridge"
+        // /* ICON(markers/) */"Crossing"
+        this.symbol = ImageProvider.getIfAvailable("markers",iconName);
+        this.parentLayer = parentLayer;
+
+        this.dataProvider = null;
+        this.text = text;
     }
 
     public final void setCoor(LatLon coor) {
@@ -343,16 +360,20 @@ public class Marker implements TemplateEngineDataProvider {
      * @return Text
      */
     public String getText() {
-        TemplateEntryProperty property = getTextTemplate();
-        if (property.getUpdateCount() != textVersion) {
-            TemplateEntry templateEntry = property.get();
-            StringBuilder sb = new StringBuilder();
-            templateEntry.appendText(sb, this);
+        if (text != null)
+            return text;
+        else {
+            TemplateEntryProperty property = getTextTemplate();
+            if (property.getUpdateCount() != textVersion) {
+                TemplateEntry templateEntry = property.get();
+                StringBuilder sb = new StringBuilder();
+                templateEntry.appendText(sb, this);
 
-            cachedText = sb.toString();
-            textVersion = property.getUpdateCount();
+                cachedText = sb.toString();
+                textVersion = property.getUpdateCount();
+            }
+            return cachedText;
         }
-        return cachedText;
     }
 
     @Override
