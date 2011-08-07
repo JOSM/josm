@@ -257,7 +257,11 @@ public class AutoCompletionList extends AbstractTableModel {
         return filtered.get(idx);
     }
 
-    List<AutoCompletionListItem> getList() {
+    ArrayList<AutoCompletionListItem> getList() {
+        return list;
+    }
+
+    List<AutoCompletionListItem> getUnmodifiableList() {
         return Collections.unmodifiableList(list);
     }
 

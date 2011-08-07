@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.tagging.ac;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -242,8 +243,6 @@ public class AutoCompletionManager implements DataSetListener {
      * tag keys
      *
      * @param list the list to populate
-     * @param append true to add the keys to the list; false, to replace the keys
-     * in the list by the keys in the cache
      */
     public void populateWithKeys(AutoCompletionList list) {
         list.add(getPresetKeys(), AutoCompletionItemPritority.IS_IN_STANDARD);
@@ -256,24 +255,53 @@ public class AutoCompletionManager implements DataSetListener {
      *
      * @param list the list to populate
      * @param key the tag key
-     * @param append true to add the values to the list; false, to replace the values
-     * in the list by the tag values
      */
     public void populateWithTagValues(AutoCompletionList list, String key) {
-        list.add(getPresetValues(key), AutoCompletionItemPritority.IS_IN_STANDARD);
-        list.add(getDataValues(key), AutoCompletionItemPritority.IS_IN_DATASET);
+        populateWithTagValues(list, Arrays.asList(key));
     }
 
+    /**
+     * Populates the an {@see AutoCompletionList} with the currently cached
+     * values for some given tags
+     *
+     * @param list the list to populate
+     * @param key the tag keys
+     */
+    public void populateWithTagValues(AutoCompletionList list, List<String> keys) {
+        for (String key : keys) {
+            list.add(getPresetValues(key), AutoCompletionItemPritority.IS_IN_STANDARD);
+            list.add(getDataValues(key), AutoCompletionItemPritority.IS_IN_DATASET);
+        }
+    }
+
+    /**
+     * Returns the currently cached tag keys.
+     * @return a list of tag keys
+     */
     public List<AutoCompletionListItem> getKeys() {
         AutoCompletionList list = new AutoCompletionList();
         populateWithKeys(list);
-        return new ArrayList<AutoCompletionListItem>(list.getList());
+        return list.getList();
     }
 
+    /**
+     * Returns the currently cached tag values for a given tag key.
+     * @param key the tag key
+     * @return a list of tag values
+     */
     public List<AutoCompletionListItem> getValues(String key) {
+        return getValues(Arrays.asList(key));
+    }
+
+    /**
+     * Returns the currently cached tag values for a given list of tag keys.
+     * @param keys the tag keys
+     * @return a list of tag values
+     */
+    public List<AutoCompletionListItem> getValues(List<String> keys) {
         AutoCompletionList list = new AutoCompletionList();
-        populateWithTagValues(list, key);
-        return new ArrayList<AutoCompletionListItem>(list.getList());
+        populateWithTagValues(list, keys);
+        return list.getList();
     }
 
     /*********************************************************

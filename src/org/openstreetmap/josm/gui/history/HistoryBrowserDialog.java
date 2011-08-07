@@ -8,13 +8,16 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
@@ -72,6 +75,10 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         pnl.add(btn);
 
         btn = new SideButton(closeAction = new CloseAction());
+        final String closeHistoryBrowserDialogKey = "CloseHistoryBrowserDialog";
+        KeyStroke escapeKey = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+        getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeKey, closeHistoryBrowserDialogKey);
+        getRootPane().getActionMap().put(closeHistoryBrowserDialogKey, closeAction);
         btn.setName("btn.close");
         pnl.add(btn);
 
