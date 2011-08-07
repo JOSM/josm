@@ -268,7 +268,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 values.getEditor().selectAll();
             }
         };
-        final JDialog dlg = optionPane.createDialog(Main.parent, tr("Change values?"));
+        final JDialog dlg = optionPane.createDialog(Main.parent, trn("Change value?", "Change values?", m.size()));
         dlg.setModalityType(ModalityType.DOCUMENT_MODAL);
         Dimension dlgSize = dlg.getSize();
         if(dlgSize.width > Main.parent.getSize().width) {
@@ -462,7 +462,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 keys.getEditor().selectAll();
             }
         };
-        JDialog dialog = pane.createDialog(Main.parent, tr("Change values?"));
+        JDialog dialog = pane.createDialog(Main.parent, tr("Add value?"));
         dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
         dialog.setVisible(true);
 
