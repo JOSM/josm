@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -44,8 +45,8 @@ public class ChangePropertyCommand extends Command {
         super();
         this.objects = new LinkedList<OsmPrimitive>();
         this.key = key;
-        this.value = value;
-        if (value == null) {
+        this.value = (value == null || value.isEmpty()) ? null : value;
+        if (this.value == null) {
             for (OsmPrimitive osm : objects) {
                 if(osm.get(key) != null) {
                     this.objects.add(osm);
@@ -54,7 +55,7 @@ public class ChangePropertyCommand extends Command {
         } else {
             for (OsmPrimitive osm : objects) {
                 String val = osm.get(key);
-                if (val == null || !value.equals(val)) {
+                if (val == null || !this.value.equals(val)) {
                     this.objects.add(osm);
                 }
             }
@@ -62,14 +63,7 @@ public class ChangePropertyCommand extends Command {
     }
 
     public ChangePropertyCommand(OsmPrimitive object, String key, String value) {
-        this.objects = new LinkedList<OsmPrimitive>();
-        this.key = key;
-        this.value = value;
-        String val = object.get(key);
-        if ((value == null && val != null)
-                || (value != null && (val == null || !value.equals(val)))) {
-            this.objects.add(object);
-        }
+        this(Arrays.asList(object), key, value);
     }
 
     @Override public boolean executeCommand() {
