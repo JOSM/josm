@@ -18,27 +18,48 @@ import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
  *
  * @author Dirk Stöcker
  * code based on JavaScript from Chuck Taylor
+ *
  */
-public class UTM extends TransverseMercator implements ProjectionSubPrefs {
+public class UTM extends AbstractProjection implements ProjectionSubPrefs {
 
     private static final int DEFAULT_ZONE = 30;
-    private int zone = DEFAULT_ZONE;
+    private int zone;
 
-    public enum Hemisphere {North, South}
+    public enum Hemisphere { North, South }
     private static final Hemisphere DEFAULT_HEMISPHERE = Hemisphere.North;
-    private Hemisphere hemisphere = DEFAULT_HEMISPHERE;
+    private Hemisphere hemisphere;
 
-    private boolean offset = false;
+    /**
+     * Applies an additional false easting of 3000000 m if true.
+     */
+    private boolean offset;
 
-    public UTM()
-    {
-        updateParameters();
+    public UTM() {
+        this(DEFAULT_ZONE, DEFAULT_HEMISPHERE, false);
+    }
+
+    public UTM(int zone, Hemisphere hemisphere, boolean offset) {
+        ellps = Ellipsoid.GRS80;
+        proj = new org.openstreetmap.josm.data.projection.proj.TransverseMercator(ellps);
+        datum = GRS80Datum.INSTANCE;
+        updateParameters(zone, hemisphere, offset);
+    }
+
+    public void updateParameters(int zone, Hemisphere hemisphere, boolean offset) {
+        this.zone = zone;
+        this.hemisphere = hemisphere;
+        this.offset = offset;
+        x_0 = 500000 + (offset ? 3000000 : 0);
+        y_0 = hemisphere == Hemisphere.North ? 0 : 10000000;
+        lon_0 = getUtmCentralMeridianDeg(zone);
+        k_0 = 0.9996;
     }
 
     /*
@@ -55,41 +76,23 @@ public class UTM extends TransverseMercator implements ProjectionSubPrefs {
      *   Range of the central meridian is the radian equivalent of [-177,+177].
      *
      */
-    private double UTMCentralMeridianDeg(int zone)
+    private double getUtmCentralMeridianDeg(int zone)
     {
         return -183.0 + (zone * 6.0);
     }
 
-    @Override public String toString() {
-        return tr("UTM");
-    }
-
-    private void updateParameters() {
-        setProjectionParameters(this.UTMCentralMeridianDeg(getzone()), getEastOffset(), getNorthOffset());
-    }
-
-    public int getzone()
-    {
+    public int getzone() {
         return zone;
     }
 
-    private double getEastOffset() {
-        return 500000 + (offset?3000000:0);
+    @Override
+    public String toString() {
+        return tr("UTM");
     }
 
-    private double getNorthOffset() {
-        if (hemisphere == Hemisphere.North)
-            return 0;
-        else
-            return 10000000;
-    }
-
-    private int epsgCode() {
+    @Override
+    public Integer getEpsgCode() {
         return ((offset?325800:32600) + getzone() + (hemisphere == Hemisphere.South?100:0));
-    }
-
-    public String toCode() {
-        return "EPSG:"+ epsgCode();
     }
 
     @Override
@@ -97,20 +100,22 @@ public class UTM extends TransverseMercator implements ProjectionSubPrefs {
         return toCode().hashCode();
     }
 
+    @Override
     public String getCacheDirectoryName() {
-        return "epsg"+ epsgCode();
+        return "epsg"+ getEpsgCode();
     }
 
+    @Override
     public Bounds getWorldBoundsLatLon()
     {
         if (hemisphere == Hemisphere.North)
             return new Bounds(
-                    new LatLon(-5.0, UTMCentralMeridianDeg(getzone())-5.0),
-                    new LatLon(85.0, UTMCentralMeridianDeg(getzone())+5.0));
+                    new LatLon(-5.0, getUtmCentralMeridianDeg(getzone())-5.0),
+                    new LatLon(85.0, getUtmCentralMeridianDeg(getzone())+5.0));
         else
             return new Bounds(
-                    new LatLon(-85.0, UTMCentralMeridianDeg(getzone())-5.0),
-                    new LatLon(5.0, UTMCentralMeridianDeg(getzone())+5.0));
+                    new LatLon(-85.0, getUtmCentralMeridianDeg(getzone())-5.0),
+                    new LatLon(5.0, getUtmCentralMeridianDeg(getzone())+5.0));
     }
 
     @Override
@@ -172,6 +177,7 @@ public class UTM extends TransverseMercator implements ProjectionSubPrefs {
         }
     }
 
+    @Override
     public Collection<String> getPreferences(JPanel p) {
         int zone = DEFAULT_ZONE;
         Hemisphere hemisphere = DEFAULT_HEMISPHERE;
@@ -198,11 +204,11 @@ public class UTM extends TransverseMercator implements ProjectionSubPrefs {
         return Arrays.asList(Integer.toString(zone), hemisphere.toString(), (offset?"offset":"standard"));
     }
 
-    public void setPreferences(Collection<String> args)
-    {
-        zone = DEFAULT_ZONE;
-        hemisphere = DEFAULT_HEMISPHERE;
-        offset = false;
+    @Override
+    public void setPreferences(Collection<String> args) {
+        int zone = DEFAULT_ZONE;
+        Hemisphere hemisphere = DEFAULT_HEMISPHERE;
+        boolean offset = false;
 
         if(args != null)
         {
@@ -222,9 +228,10 @@ public class UTM extends TransverseMercator implements ProjectionSubPrefs {
                 offset = array[2].equals("offset");
             }
         }
-        updateParameters();
+        updateParameters(zone, hemisphere, offset);
     }
 
+    @Override
     public String[] allCodes() {
         ArrayList<String> projections = new ArrayList<String>(60*4);
         for (int zone = 1;zone <= 60; zone++) {
@@ -235,11 +242,11 @@ public class UTM extends TransverseMercator implements ProjectionSubPrefs {
             }
         }
         return projections.toArray(new String[0]);
-
     }
 
-    public Collection<String> getPreferencesFromCode(String code)
-    {
+    @Override
+    public Collection<String> getPreferencesFromCode(String code) {
+
         boolean offset = code.startsWith("EPSG:3258") || code.startsWith("EPSG:3259");
 
         if(code.startsWith("EPSG:326") || code.startsWith("EPSG:327") || offset)

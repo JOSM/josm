@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
 
 /**
  * LKS-92/ Latvia TM projection. Based on data from spatialreference.org.
@@ -12,24 +13,26 @@ import org.openstreetmap.josm.data.coor.LatLon;
  *
  * @author Viesturs Zarins
  */
-public class TransverseMercatorLV extends TransverseMercator {
+public class TransverseMercatorLV extends AbstractProjection {
 
-    public TransverseMercatorLV()
-    {
-        setProjectionParameters(24, 500000, -6000000);
+    public TransverseMercatorLV() {
+        ellps = Ellipsoid.GRS80;
+        proj = new org.openstreetmap.josm.data.projection.proj.TransverseMercator(ellps);
+        datum = GRS80Datum.INSTANCE;
+        lon_0 = 24;
+        x_0 = 500000;
+        y_0 = -6000000;
+        k_0 = 0.9996;
     }
-
-    @Override public String toString() {
+    
+    @Override 
+    public String toString() {
         return tr("LKS-92 (Latvia TM)");
     }
 
-    private int epsgCode() {
-        return 3059;
-    }
-
     @Override
-    public String toCode() {
-        return "EPSG:"+ epsgCode();
+    public Integer getEpsgCode() {
+        return 3059;
     }
 
     @Override
@@ -37,8 +40,9 @@ public class TransverseMercatorLV extends TransverseMercator {
         return toCode().hashCode();
     }
 
+    @Override
     public String getCacheDirectoryName() {
-        return "epsg"+ epsgCode();
+        return "epsg"+ getEpsgCode();
     }
 
     @Override

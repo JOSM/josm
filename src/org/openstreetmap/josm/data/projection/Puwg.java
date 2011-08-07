@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
-import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -15,8 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -25,11 +24,13 @@ import org.openstreetmap.josm.tools.GBC;
  *
  * @author steelman
  */
-public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
+public class Puwg extends AbstractProjection implements ProjectionSubPrefs {
+    
     public static final int DEFAULT_ZONE = 0;
-    private int zone = DEFAULT_ZONE;
+    
+    private int zone;
 
-    static PuwgData[] Zones = new PuwgData[]{
+    static PuwgData[] Zones = new PuwgData[] {
         new Epsg2180(),
         new Epsg2176(),
         new Epsg2177(),
@@ -37,36 +38,34 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
         new Epsg2179()
     };
 
-    private static DecimalFormat decFormatter = new DecimalFormat("###0");
-
-    @Override
-    public EastNorth latlon2eastNorth(LatLon p) {
-        PuwgData z = Zones[zone];
-        double easting = z.getPuwgFalseEasting();
-        double northing = z.getPuwgFalseNorthing();
-        double scale = z.getPuwgScaleFactor();
-        double center = z.getPuwgCentralMeridian(); /* in radians */
-        EastNorth a = mapLatLonToXY(Math.toRadians(p.lat()), Math.toRadians(p.lon()), center);
-        return new EastNorth(a.east() * scale + easting, a.north() * scale + northing);
+    public Puwg() {
+        this(DEFAULT_ZONE);
     }
 
-    @Override
-    public LatLon eastNorth2latlon(EastNorth p) {
+    public Puwg(int zone) {
+        ellps = Ellipsoid.GRS80;
+        proj = new org.openstreetmap.josm.data.projection.proj.TransverseMercator(ellps);
+        datum = GRS80Datum.INSTANCE;
+        updateParameters(zone);
+    }
+    
+    public void updateParameters(int zone) {
+        this.zone = zone;
         PuwgData z = Zones[zone];
-        double easting = z.getPuwgFalseEasting();
-        double northing = z.getPuwgFalseNorthing();
-        double scale = z.getPuwgScaleFactor();
-        double center = z.getPuwgCentralMeridian(); /* in radians */
-        return mapXYToLatLon((p.east() - easting)/scale, (p.north() - northing)/scale, center);
+        x_0 = z.getPuwgFalseEasting();
+        y_0 = z.getPuwgFalseNorthing();
+        lon_0 = z.getPuwgCentralMeridianDeg();
+        k_0 = z.getPuwgScaleFactor();
     }
 
-    @Override public String toString() {
+    @Override 
+    public String toString() {
         return tr("PUWG (Poland)");
     }
 
     @Override
-    public String toCode() {
-        return Zones[zone].toCode();
+    public Integer getEpsgCode() {
+        return Zones[zone].getEpsgCode();
     }
 
     @Override
@@ -82,20 +81,6 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
     @Override
     public Bounds getWorldBoundsLatLon() {
         return Zones[zone].getWorldBoundsLatLon();
-    }
-
-    @Override
-    public double getDefaultZoomInPPD() {
-        // This will set the scale bar to about 100 km
-        return 0.009;
-    }
-
-    public String eastToString(EastNorth p) {
-        return decFormatter.format(p.east());
-    }
-
-    public String northToString(EastNorth p) {
-        return decFormatter.format(p.north());
     }
 
     @Override
@@ -134,33 +119,30 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
     }
 
     @Override
-    public Collection<String> getPreferencesFromCode(String code)
-    {
-        for (PuwgData p : Puwg.Zones)
-        {
-            if(code.equals(p.toCode()))
+    public Collection<String> getPreferencesFromCode(String code) {
+        for (PuwgData p : Puwg.Zones) {
+            if (code.equals(p.toCode()))
                 return Collections.singleton(code);
         }
         return null;
     }
 
     @Override
-    public void setPreferences(Collection<String> args)
-    {
-        zone = DEFAULT_ZONE;
-        if(args != null)
-        {
+    public void setPreferences(Collection<String> args) {
+        int z = DEFAULT_ZONE;
+        if (args != null) {
             try {
-                for(String s : args)
-                {
-                    for (int i=0; i < Puwg.Zones.length; ++i)
-                        if(s.equals(Zones[i].toCode())) {
-                            zone = i;
+                for (String s : args) {
+                    for (int i=0; i < Zones.length; ++i)
+                        if (s.equals(Zones[i].toCode())) {
+                            z = i;
+                            break;
                         }
                     break;
                 }
             } catch (NullPointerException e) {}
         }
+        updateParameters(z);
     }
 }
 
@@ -172,6 +154,7 @@ interface PuwgData {
     double getPuwgScaleFactor();
 
     // Projection methods
+    Integer getEpsgCode();
     String toCode();
     String getCacheDirectoryName();
     Bounds getWorldBoundsLatLon();
@@ -188,14 +171,22 @@ class Epsg2180 implements PuwgData {
         return tr("PUWG 1992 (Poland)");
     }
 
+    @Override
+    public Integer getEpsgCode() {
+        return 2180;
+    }
+    
+    @Override
     public String toCode() {
-        return "EPSG:2180";
+        return "EPSG:" + getEpsgCode();
     }
 
+    @Override
     public String getCacheDirectoryName() {
         return "epsg2180";
     }
 
+    @Override
     public Bounds getWorldBoundsLatLon()
     {
         return new Bounds(
@@ -203,11 +194,11 @@ class Epsg2180 implements PuwgData {
                 new LatLon(54.84, 24.15));
     }
 
-    public double getPuwgCentralMeridianDeg() { return Epsg2180CentralMeridian; }
-    public double getPuwgCentralMeridian() { return Math.toRadians(Epsg2180CentralMeridian); }
-    public double getPuwgFalseEasting() { return Epsg2180FalseEasting; }
-    public double getPuwgFalseNorthing() { return Epsg2180FalseNorthing; }
-    public double getPuwgScaleFactor() { return Epsg2180ScaleFactor; }
+    @Override public double getPuwgCentralMeridianDeg() { return Epsg2180CentralMeridian; }
+    @Override public double getPuwgCentralMeridian() { return Math.toRadians(Epsg2180CentralMeridian); }
+    @Override public double getPuwgFalseEasting() { return Epsg2180FalseEasting; }
+    @Override public double getPuwgFalseNorthing() { return Epsg2180FalseNorthing; }
+    @Override public double getPuwgScaleFactor() { return Epsg2180ScaleFactor; }
 }
 
 abstract class Puwg2000 implements PuwgData {
@@ -216,21 +207,29 @@ abstract class Puwg2000 implements PuwgData {
     private static final double PuwgFalseNorthing = 0;
     private static final double PuwgScaleFactor = 0.999923;
     //final private double[] Puwg2000CentralMeridian = {15.0, 18.0, 21.0, 24.0};
-    final private String[] Puwg2000Code = { "EPSG:2176",  "EPSG:2177", "EPSG:2178", "EPSG:2179"};
-    final private String[] Puwg2000CDName = { "epsg2176",  "epsg2177", "epsg2178", "epsg2179"};
+    final private Integer[] Puwg2000Code = { 2176,  2177, 2178, 2179 };
+    final private String[] Puwg2000CDName = { "epsg2176",  "epsg2177", "epsg2178", "epsg2179" };
 
     @Override public String toString() {
         return tr("PUWG 2000 Zone {0} (Poland)", Integer.toString(getZone()));
     }
 
-    public String toCode() {
+    @Override
+    public Integer getEpsgCode() {
         return Puwg2000Code[getZoneIndex()];
     }
 
+    @Override
+    public String toCode() {
+        return "EPSG:" + getEpsgCode();
+    }
+
+    @Override
     public String getCacheDirectoryName() {
         return Puwg2000CDName[getZoneIndex()];
     }
 
+    @Override
     public Bounds getWorldBoundsLatLon()
     {
         return new Bounds(
@@ -238,11 +237,11 @@ abstract class Puwg2000 implements PuwgData {
                 new LatLon(54.84, (3 * getZone()) + 1.5));
     }
 
-    public double getPuwgCentralMeridianDeg() { return getZone() * 3.0; }
-    public double getPuwgCentralMeridian() { return Math.toRadians(getZone() * 3.0); }
-    public double getPuwgFalseNorthing() { return PuwgFalseNorthing;}
-    public double getPuwgFalseEasting() { return 1e6 * getZone() + PuwgFalseEasting; }
-    public double getPuwgScaleFactor() { return PuwgScaleFactor; }
+    @Override public double getPuwgCentralMeridianDeg() { return getZone() * 3.0; }
+    @Override public double getPuwgCentralMeridian() { return Math.toRadians(getZone() * 3.0); }
+    @Override public double getPuwgFalseNorthing() { return PuwgFalseNorthing;}
+    @Override public double getPuwgFalseEasting() { return 1e6 * getZone() + PuwgFalseEasting; }
+    @Override public double getPuwgScaleFactor() { return PuwgScaleFactor; }
     public abstract int getZone();
 
     public int getZoneIndex() { return getZone() - 5; }
