@@ -26,7 +26,7 @@ public class ButtonMarker extends Marker {
     private Rectangle buttonRectangle;
 
     public ButtonMarker(LatLon ll, String buttonImage, MarkerLayer parentLayer, double time, double offset) {
-        super(ll, null, buttonImage, parentLayer, time, offset);
+        super(ll, "", buttonImage, parentLayer, time, offset);
         buttonRectangle = new Rectangle(0, 0, symbol.getIconWidth(), symbol.getIconHeight());
     }
 
