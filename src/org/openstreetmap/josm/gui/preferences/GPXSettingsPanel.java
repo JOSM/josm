@@ -13,6 +13,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -22,9 +23,12 @@ import javax.swing.event.ChangeListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker.TemplateEntryProperty;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.template_engine.ParseError;
+import org.openstreetmap.josm.tools.template_engine.TemplateParser;
 
-public class GPXSettingsPanel extends JPanel {
+public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
     private static final int WAYPOINT_LABEL_CUSTOM = 6;
     private static final String[] LABEL_PATTERN_TEMPLATE = new String[] {Marker.LABEL_PATTERN_AUTO, Marker.LABEL_PATTERN_NAME,
@@ -394,6 +398,27 @@ public class GPXSettingsPanel extends JPanel {
             tf.setEnabled(false);
             tf.setText(LABEL_PATTERN_TEMPLATE[cb.getSelectedIndex()]);
         }
+    }
+
+    @Override
+    public boolean validatePreferences() {
+        TemplateParser parser = new TemplateParser(waypointLabelPattern.getText());
+        try {
+            parser.parse();
+        } catch (ParseError e) {
+            JOptionPane.showMessageDialog(Main.parent, tr("Incorrect waypoint label pattern: {0}", e.getMessage()), tr("Incorrect pattern"), JOptionPane.ERROR_MESSAGE);
+            waypointLabelPattern.requestFocus();
+            return false;
+        }
+        parser = new TemplateParser(audioWaypointLabelPattern.getText());
+        try {
+            parser.parse();
+        } catch (ParseError e) {
+            JOptionPane.showMessageDialog(Main.parent, tr("Incorrect audio waypoint label pattern: {0}", e.getMessage()), tr("Incorrect pattern"), JOptionPane.ERROR_MESSAGE);
+            audioWaypointLabelPattern.requestFocus();
+            return false;
+        }
+        return true;
     }
 
 }

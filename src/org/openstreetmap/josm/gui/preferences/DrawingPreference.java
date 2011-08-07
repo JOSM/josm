@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -11,16 +10,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
@@ -47,8 +39,9 @@ public class DrawingPreference implements PreferenceSetting {
     public void addGui(PreferenceTabbedPane gui) {
         gui.display.setPreferredSize(new Dimension(400,600));
         gpxPanel = new GPXSettingsPanel();
+        gui.addValidationListener(gpxPanel);
         JPanel panel = gpxPanel;
-        
+
         JScrollPane scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
         gui.displaycontent.addTab(tr("GPS Points"), scrollpane);
