@@ -59,7 +59,7 @@ public class AudioPreference implements PreferenceSetting {
         gui.audio.add(markerAudioTraceVisible, GBC.eol().insets(0,0,0,0));
 
         // buttonLabels
-        markerButtonLabels.setSelected(Main.pref.getBoolean("marker.buttonlabels"));
+        markerButtonLabels.setSelected(Main.pref.getBoolean("marker.buttonlabels", true));
         markerButtonLabels.setToolTipText(tr("Put text labels against audio (and image and web) markers as well as their button icons."));
         gui.audio.add(markerButtonLabels, GBC.eol().insets(0,0,0,0));
 

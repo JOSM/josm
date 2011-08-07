@@ -19,24 +19,20 @@ import java.awt.event.ActionEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
-import javax.swing.ButtonModel;
 import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -44,7 +40,6 @@ import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
@@ -357,19 +352,18 @@ public class GpxLayer extends Layer {
     }
 
     /**
-     * transition function: 
+     * transition function:
      *  w(0)=1, w(1)=0, 0<=w(x)<=1
      * @param x number: 0<=x<=1
      * @return the weighted value
      */
     private static float w(float x) {
-        if (x < 0.5) {
+        if (x < 0.5)
             return 1 - 2*x*x;
-        } else {
-        return 2*(1-x)*(1-x);
-        }
+        else
+            return 2*(1-x)*(1-x);
     }
-    
+
     // lookup array to draw arrows without doing any math
     private final static int ll0 = 9;
     private final static int sl4 = 5;
@@ -462,7 +456,9 @@ public class GpxLayer extends Layer {
                 if (colored == colorModes.velocity) {
                     for (GpxTrack trk : data.tracks) {
                         for (GpxTrackSegment segment : trk.getSegments()) {
-                            if(!forceLines) oldWp = null;
+                            if(!forceLines) {
+                                oldWp = null;
+                            }
                             for (WayPoint trkPnt : segment.getWayPoints()) {
                                 LatLon c = trkPnt.getCoor();
                                 if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
@@ -471,8 +467,12 @@ public class GpxLayer extends Layer {
                                 if (oldWp != null && trkPnt.time > oldWp.time) {
                                     double vel = c.greatCircleDistance(oldWp.getCoor())
                                             / (trkPnt.time - oldWp.time);
-                                    if(vel > maxval) maxval = vel;
-                                    if(vel < minval) minval = vel;
+                                    if(vel > maxval) {
+                                        maxval = vel;
+                                    }
+                                    if(vel < minval) {
+                                        minval = vel;
+                                    }
                                 }
                                 oldWp = trkPnt;
                             }
@@ -485,8 +485,12 @@ public class GpxLayer extends Layer {
                                 Object val = trkPnt.attr.get("hdop");
                                 if (val != null) {
                                     double hdop = ((Float) val).doubleValue();
-                                    if(hdop > maxval) maxval = hdop;
-                                    if(hdop < minval) minval = hdop;
+                                    if(hdop > maxval) {
+                                        maxval = hdop;
+                                    }
+                                    if(hdop < minval) {
+                                        minval = hdop;
+                                    }
                                 }
                             }
                         }
@@ -495,18 +499,24 @@ public class GpxLayer extends Layer {
                 oldWp = null;
             }
             if (colored == colorModes.time) {
-                    for (GpxTrack trk : data.tracks) {
-                        for (GpxTrackSegment segment : trk.getSegments()) {
-                            for (WayPoint trkPnt : segment.getWayPoints()) {
-                               double t=trkPnt.time;
-                               if (t==0) continue; // skip non-dated trackpoints
-                               if(t > maxval) maxval = t;
-                               if(t < minval) minval = t;
+                for (GpxTrack trk : data.tracks) {
+                    for (GpxTrackSegment segment : trk.getSegments()) {
+                        for (WayPoint trkPnt : segment.getWayPoints()) {
+                            double t=trkPnt.time;
+                            if (t==0) {
+                                continue; // skip non-dated trackpoints
+                            }
+                            if(t > maxval) {
+                                maxval = t;
+                            }
+                            if(t < minval) {
+                                minval = t;
                             }
                         }
                     }
                 }
-            
+            }
+
             for (GpxTrack trk : data.tracks) {
                 for (GpxTrackSegment segment : trk.getSegments()) {
                     if (!forceLines) { // don't draw lines between segments, unless forced to
@@ -521,7 +531,7 @@ public class GpxLayer extends Layer {
                         if(colored == colorModes.dilution && trkPnt.attr.get("hdop") != null) {
                             float hdop = ((Float) trkPnt.attr.get("hdop")).floatValue();
                             int hdoplvl =(int) Math.round(colorModeDynamic ? ((hdop-minval)*255/(maxval-minval))
-                            : (hdop <= 0 ? 0 : hdop * hdopfactor));
+                                    : (hdop <= 0 ? 0 : hdop * hdopfactor));
                             // High hdop is bad, but high values in colors are green.
                             // Therefore inverse the logic
                             int hdopcolor = 255 - (hdoplvl > 255 ? 255 : hdoplvl);
@@ -536,7 +546,7 @@ public class GpxLayer extends Layer {
                                 if(dtime > 0) {
                                     float vel = (float) (dist / dtime);
                                     int velColor =(int) Math.round(colorModeDynamic ? ((vel-minval)*255/(maxval-minval))
-                                    : (vel <= 0 ? 0 : vel / colorTracksTune * 255));
+                                            : (vel <= 0 ? 0 : vel / colorTracksTune * 255));
                                     trkPnt.customColoring = colors[velColor > 255 ? 255 : velColor];
                                 } else {
                                     trkPnt.customColoring = colors[255];
@@ -560,7 +570,7 @@ public class GpxLayer extends Layer {
                                 }
                                 break;
                             }
-                            
+
                             if (!noDraw && (maxLineLength == -1 || dist <= maxLineLength)) {
                                 trkPnt.drawLine = true;
                                 trkPnt.dir = (int) oldWp.getCoor().heading(trkPnt.getCoor());
@@ -584,12 +594,14 @@ public class GpxLayer extends Layer {
                 for(WayPoint pt : trkSeg.getWayPoints())
                 {
                     Bounds b = new Bounds(pt.getCoor());
-                    if(pt.drawLine) // last should never be null when this is true!
+                    // last should never be null when this is true!
+                    if(pt.drawLine) {
                         b.extend(last.getCoor());
+                    }
                     if(b.intersects(box))
                     {
                         if(last != null && (visibleSegments.isEmpty()
-                        || visibleSegments.getLast() != last)) {
+                                || visibleSegments.getLast() != last)) {
                             if(last.drawLine) {
                                 WayPoint l = new WayPoint(last);
                                 l.drawLine = false;
@@ -645,7 +657,7 @@ public class GpxLayer extends Layer {
                     // skip points that are on the same screenposition
                     if (old != null
                             && (oldA == null || screen.x < oldA.x - delta || screen.x > oldA.x + delta
-                                    || screen.y < oldA.y - delta || screen.y > oldA.y + delta)) {
+                            || screen.y < oldA.y - delta || screen.y > oldA.y + delta)) {
                         g.setColor(trkPnt.customColoring);
                         double t = Math.atan2(screen.y - old.y, screen.x - old.x) + Math.PI;
                         g.drawLine(screen.x, screen.y, (int) (screen.x + 10 * Math.cos(t - PHI)),
@@ -675,7 +687,7 @@ public class GpxLayer extends Layer {
                     // skip points that are on the same screenposition
                     if (old != null
                             && (oldA == null || screen.x < oldA.x - delta || screen.x > oldA.x + delta
-                                    || screen.y < oldA.y - delta || screen.y > oldA.y + delta)) {
+                            || screen.y < oldA.y - delta || screen.y > oldA.y + delta)) {
                         g.setColor(trkPnt.customColoring);
                         g.drawLine(screen.x, screen.y, screen.x + dir[trkPnt.dir][0], screen.y
                                 + dir[trkPnt.dir][1]);
@@ -858,7 +870,7 @@ public class GpxLayer extends Layer {
                     tr("Download from OSM along this track"),
                     JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE
-            );
+                    );
             switch(ret) {
             case JOptionPane.CANCEL_OPTION:
             case JOptionPane.CLOSED_OPTION:
@@ -981,7 +993,7 @@ public class GpxLayer extends Layer {
                         tr("Download from OSM along this track"),
                         JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.PLAIN_MESSAGE
-                );
+                        );
                 switch(ret) {
                 case JOptionPane.CANCEL_OPTION:
                 case JOptionPane.CLOSED_OPTION:
@@ -1005,7 +1017,7 @@ public class GpxLayer extends Layer {
                             monitor.close();
                         }
                     }
-            );
+                    );
         }
     }
 
@@ -1048,7 +1060,12 @@ public class GpxLayer extends Layer {
      * @param markers : keeps track of warning messages to avoid repeated warnings
      */
     private void importAudio(File wavFile, MarkerLayer ml, double firstStartTime, Markers markers) {
-        String uri = "file:".concat(wavFile.getAbsolutePath());
+        URL url = null;
+        try {
+            url = wavFile.toURI().toURL();
+        } catch (MalformedURLException e) {
+            System.err.println("Unable to convert filename " + wavFile.getAbsolutePath() + " to URL");
+        }
         Collection<WayPoint> waypoints = new ArrayList<WayPoint>();
         boolean timedMarkersOmitted = false;
         boolean untimedMarkersOmitted = false;
@@ -1083,7 +1100,7 @@ public class GpxLayer extends Layer {
                     tr("No GPX track available in layer to associate audio with."),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
-            );
+                    );
             return;
         }
 
@@ -1142,7 +1159,7 @@ public class GpxLayer extends Layer {
             double duration = AudioUtil.getCalibratedDuration(wavFile);
             double startTime = lastModified - duration;
             startTime = firstStartTime + (startTime - firstStartTime)
-            / Main.pref.getDouble("audio.calibration", "1.0" /* default, ratio */);
+                    / Main.pref.getDouble("audio.calibration", "1.0" /* default, ratio */);
             WayPoint w1 = null;
             WayPoint w2 = null;
 
@@ -1218,15 +1235,7 @@ public class GpxLayer extends Layer {
                 firstTime = w.time;
             }
             double offset = w.time - firstTime;
-            String name;
-            if (w.attr.containsKey("name")) {
-                name = w.getString("name");
-            } else if (w.attr.containsKey("desc")) {
-                name = w.getString("desc");
-            } else {
-                name = AudioMarker.inventName(offset);
-            }
-            AudioMarker am = AudioMarker.create(w.getCoor(), name, uri, ml, w.time, offset);
+            AudioMarker am = new AudioMarker(w.getCoor(), w, url, ml, w.time, offset);
             /*
              * timeFromAudio intended for future use to shift markers of this type on
              * synchronization
@@ -1378,7 +1387,7 @@ public class GpxLayer extends Layer {
         public CustomizeDrawing(Layer l) {
             this();
             layers = new LinkedList<Layer>();
-            layers.add(l); 
+            layers.add(l);
         }
 
         private CustomizeDrawing() {
@@ -1409,20 +1418,25 @@ public class GpxLayer extends Layer {
             boolean hasLocal = false, hasNonlocal = false;
             for (Layer layer : layers) {
                 if (layer instanceof GpxLayer) {
-                    if (((GpxLayer) layer).isLocalFile) hasLocal = true;
-                    else hasNonlocal = true;
+                    if (((GpxLayer) layer).isLocalFile) {
+                        hasLocal = true;
+                    } else {
+                        hasNonlocal = true;
+                    }
                 }
             }
-            GPXSettingsPanel panel=new GPXSettingsPanel(getName(), hasLocal, hasNonlocal); 
+            GPXSettingsPanel panel=new GPXSettingsPanel(getName(), hasLocal, hasNonlocal);
 
             int answer = JOptionPane.showConfirmDialog(Main.parent, panel,
                     tr("Customize track drawing"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (answer == JOptionPane.CANCEL_OPTION || answer == JOptionPane.CLOSED_OPTION) return;
             for(Layer layer : layers) {
                 // save preferences for all layers
-                boolean f=false; 
-                if (layer instanceof GpxLayer) f=((GpxLayer)layer).isLocalFile;
-                    panel.savePreferences(layer.getName(),f);
+                boolean f=false;
+                if (layer instanceof GpxLayer) {
+                    f=((GpxLayer)layer).isLocalFile;
+                }
+                panel.savePreferences(layer.getName(),f);
             }
             Main.map.repaint();
         }
@@ -1467,14 +1481,14 @@ public class GpxLayer extends Layer {
             String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>"
                     + "Because its way points do not include a timestamp we cannot correlate them with audio data.</html>",
                     layer.getName()
-            );
+                    );
             HelpAwareOptionPane.showOptionDialog(
                     Main.parent,
                     msg,
                     tr("Import not possible"),
                     JOptionPane.WARNING_MESSAGE,
                     ht("/Action/ImportAudio#CantImportIntoGpxLayerFromServer")
-            );
+                    );
         }
 
         @Override
@@ -1533,7 +1547,7 @@ public class GpxLayer extends Layer {
                 MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", getName()) + names,
                         getAssociatedFile(), GpxLayer.this);
                 double firstStartTime = sel[0].lastModified() / 1000.0 /* ms -> seconds */
-                - AudioUtil.getCalibratedDuration(sel[0]);
+                        - AudioUtil.getCalibratedDuration(sel[0]);
 
                 Markers m = new Markers();
                 for (int i = 0; i < sel.length; i++) {
@@ -1557,14 +1571,14 @@ public class GpxLayer extends Layer {
             String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>"
                     + "Because its way points do not include a timestamp we cannot correlate them with images.</html>",
                     layer.getName()
-            );
+                    );
             HelpAwareOptionPane.showOptionDialog(
                     Main.parent,
                     msg,
                     tr("Import not possible"),
                     JOptionPane.WARNING_MESSAGE,
                     ht("/Action/ImportImages#CantImportIntoGpxLayerFromServer")
-            );
+                    );
         }
 
         private void addRecursiveFiles(LinkedList<File> files, File[] sel) {

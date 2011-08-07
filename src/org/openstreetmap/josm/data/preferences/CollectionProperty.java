@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import org.openstreetmap.josm.Main;
 
-public class CollectionProperty extends AbstractProperty {
+public class CollectionProperty extends AbstractProperty<Collection<String>> {
     protected final Collection<String> defaultValue;
 
     public CollectionProperty(String key, Collection<String> defaultValue) {
@@ -21,6 +21,7 @@ public class CollectionProperty extends AbstractProperty {
         return Main.pref.putCollection(getKey(), value);
     }
 
+    @Override
     public Collection<String> getDefaultValue() {
         return defaultValue;
     }

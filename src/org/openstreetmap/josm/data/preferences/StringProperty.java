@@ -3,7 +3,7 @@ package org.openstreetmap.josm.data.preferences;
 
 import org.openstreetmap.josm.Main;
 
-public class StringProperty extends AbstractProperty {
+public class StringProperty extends AbstractProperty<String> {
 
     protected final String defaultValue;
 
@@ -20,6 +20,7 @@ public class StringProperty extends AbstractProperty {
         return Main.pref.put(getKey(), value);
     }
 
+    @Override
     public String getDefaultValue() {
         return defaultValue;
     }

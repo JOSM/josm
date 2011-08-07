@@ -3,7 +3,7 @@ package org.openstreetmap.josm.data.preferences;
 
 import org.openstreetmap.josm.Main;
 
-public class IntegerProperty extends AbstractProperty {
+public class IntegerProperty extends AbstractProperty<Integer> {
 
     protected final int defaultValue;
 
@@ -36,7 +36,8 @@ public class IntegerProperty extends AbstractProperty {
         return put(intVal);
     }
 
-    public int getDefaultValue() {
+    @Override
+    public Integer getDefaultValue() {
         return defaultValue;
     }
 

@@ -4,15 +4,19 @@
 package org.openstreetmap.josm.data.gpx;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.tools.PrimaryDateParser;
+import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
-public class WayPoint extends WithAttributes implements Comparable<WayPoint> {
+public class WayPoint extends WithAttributes implements Comparable<WayPoint>, TemplateEngineDataProvider {
 
     private static ThreadLocal<PrimaryDateParser> dateParser = new ThreadLocal<PrimaryDateParser>() {
         @Override protected PrimaryDateParser initialValue() {
@@ -115,5 +119,20 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint> {
 
     public Date getTime() {
         return new Date((long) (time * 1000));
+    }
+
+    @Override
+    public Object getTemplateValue(String name) {
+        return attr.get(name);
+    }
+
+    @Override
+    public boolean evaluateCondition(Match condition) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<String> getTemplateKeys() {
+        return new ArrayList<String>(attr.keySet());
     }
 }
