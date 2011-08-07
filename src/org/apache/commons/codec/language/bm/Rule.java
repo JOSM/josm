@@ -210,14 +210,14 @@ public class Rule {
      * A minimal wrapper around the functionality of Matcher that we use, to allow for alternate implementations.
      */
     public static interface RMatcher {
-        public boolean find();
+        boolean find();
     }
 
     /**
      * A minimal wrapper around the functionality of Pattern that we use, to allow for alternate implementations.
      */
     public static interface RPattern {
-        public RMatcher matcher(CharSequence input);
+        RMatcher matcher(CharSequence input);
     }
 
     public static final String ALL = "ALL";
@@ -456,7 +456,7 @@ public class Rule {
     }
 
     /**
-     * Attempt to compile the regex into direct string ops, falling back to Pattern and Matcher in the worst case.
+     * Attempts to compile the regex into direct string ops, falling back to Pattern and Matcher in the worst case.
      * 
      * @param regex
      *            the regular expression to compile
@@ -692,9 +692,10 @@ public class Rule {
      * @return true if the pattern and left/right context match, false otherwise
      */
     public boolean patternAndContextMatches(CharSequence input, int i) {
-        if (i < 0)
+        if (i < 0) {
             throw new IndexOutOfBoundsException("Can not match pattern at negative indexes");
-
+        }
+        
         int patternLength = this.pattern.length();
         int ipl = i + patternLength;
 
