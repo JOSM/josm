@@ -92,7 +92,7 @@ public class UnclosedWays extends Test {
             set(1106, marktr("shop type {0}"), test);
         }
         test = w.get("leisure");
-        if (test != null) {
+        if (test != null && !"track".contains(test)) {
             set(1107, marktr("leisure type {0}"), test);
         }
         test = w.get("waterway");

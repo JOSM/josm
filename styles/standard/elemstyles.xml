@@ -1355,7 +1355,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="man_made" v="groyne"/>
 		<icon annotate="true" src="nautical/groyne.png"/>
-		<area colour="manmade#d8d8d8"/>
+		<area colour="manmade#d8d8d8" closed="true"/>
 	</rule>
 
 	<rule>
@@ -1489,7 +1489,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="leisure" v="track"/>
 		<icon annotate="true" src="sport/track.png"/>
-		<area colour="leisure#c7f1a3"/>
+		<area colour="leisure#c7f1a3" closed="true"/>
 	</rule>
 
 	<rule>
