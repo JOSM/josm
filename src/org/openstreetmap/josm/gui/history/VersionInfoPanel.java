@@ -48,9 +48,9 @@ public class VersionInfoPanel extends JPanel implements Observer{
         pnlUserAndChangeset = new JPanel();
         pnlUserAndChangeset.setLayout(new FlowLayout(FlowLayout.LEFT));
         lblUser = new UrlLabel();
-        pnlUserAndChangeset.add(new JLabel(tr("User")));
+        pnlUserAndChangeset.add(new JLabel(tr("User:")));
         pnlUserAndChangeset.add(lblUser);
-        pnlUserAndChangeset.add(new JLabel(tr("Changeset")));
+        pnlUserAndChangeset.add(new JLabel(tr("Changeset:")));
         lblChangeset = new UrlLabel();
         pnlUserAndChangeset.add(lblChangeset);
 
@@ -89,13 +89,13 @@ public class VersionInfoPanel extends JPanel implements Observer{
             text = tr("<html>Version <strong>{0}</strong> currently edited in layer ''{1}''</html>",
                     Long.toString(primitive.getVersion()),
                     getEditLayer() == null ? tr("unknown") : getEditLayer().getName()
-            );
+                    );
         } else {
             text = tr(
                     "<html>Version <strong>{0}</strong> created on <strong>{1}</strong></html>",
                     Long.toString(primitive.getVersion()),
                     new SimpleDateFormat().format(primitive.getTimestamp())
-            );
+                    );
         }
         return text;
     }
