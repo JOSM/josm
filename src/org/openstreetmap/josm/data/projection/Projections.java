@@ -23,9 +23,10 @@ public class Projections {
                 new Mercator(),
                 new UTM(),
                 // regional - alphabetical order by country name
-                new LambertEST(), // Still needs proper default zoom
-                new Lambert(),    // Still needs proper default zoom
-                new LambertCC9Zones(),    // Still needs proper default zoom
+                new GaussKrueger(),
+                new LambertEST(),
+                new Lambert(),
+                new LambertCC9Zones(),
                 new UTM_France_DOM(),
                 new TransverseMercatorLV(),
                 new Puwg(),
