@@ -18,7 +18,8 @@ public class Ellipsoid {
      */
     public static final Ellipsoid clarke = new Ellipsoid(6378249.2, 6356515.0);
     /**
-     * Hayford's ellipsoid (ED50 system)
+     * Hayford's ellipsoid 1909 (ED50 system)
+     * Proj.4 code: intl
      */
     public static final Ellipsoid hayford =
         new Ellipsoid(6378388.0, 6356911.9461);
