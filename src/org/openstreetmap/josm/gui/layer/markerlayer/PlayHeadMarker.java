@@ -58,7 +58,7 @@ public class PlayHeadMarker extends Marker {
     }
 
     private PlayHeadMarker() {
-        super(new LatLon(0.0,0.0), "",
+        super(new LatLon(0.0,0.0), null,
                 Main.pref.get("marker.audiotracericon", "audio-tracer"),
                 null, -1.0, 0.0);
         enabled = Main.pref.getBoolean("marker.traceaudio", true);
@@ -170,7 +170,7 @@ public class PlayHeadMarker extends Marker {
                     tr("You need to drag the play head near to the GPX track whose associated sound track you were playing (after the first marker)."),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE
-            );
+                    );
             endDrag(true);
         } else {
             setCoor(cw.getCoor());
@@ -225,7 +225,7 @@ public class PlayHeadMarker extends Marker {
                         tr("You need to SHIFT-drag the play head onto an audio marker or onto the track point where you want to synchronize."),
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE
-                );
+                        );
                 endDrag(true);
                 return;
             }
@@ -240,16 +240,16 @@ public class PlayHeadMarker extends Marker {
                     tr("Unable to create new audio marker."),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
-            );
+                    );
             endDrag(true);
         }
         else if (recent.parentLayer.synchronizeAudioMarkers(ca)) {
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("Audio synchronized at point {0}.", ca.text),
+                    tr("Audio synchronized at point {0}.", ca.getText()),
                     tr("Information"),
                     JOptionPane.INFORMATION_MESSAGE
-            );
+                    );
             setCoor(ca.getCoor());
             endDrag(false);
         } else {
@@ -258,7 +258,7 @@ public class PlayHeadMarker extends Marker {
                     tr("Unable to synchronize in layer being played."),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
-            );
+                    );
             endDrag(true);
         }
     }
@@ -293,9 +293,9 @@ public class PlayHeadMarker extends Marker {
         if (recentlyPlayedMarker == null)
             return;
         double audioTime = recentlyPlayedMarker.time +
-        AudioPlayer.position() -
-        recentlyPlayedMarker.offset -
-        recentlyPlayedMarker.syncOffset;
+                AudioPlayer.position() -
+                recentlyPlayedMarker.offset -
+                recentlyPlayedMarker.syncOffset;
         if (Math.abs(audioTime - time) < animationInterval)
             return;
         if (recentlyPlayedMarker.parentLayer == null) return;

@@ -4,26 +4,34 @@ package org.openstreetmap.josm.gui.layer.markerlayer;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.Icon;
 
+import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.preferences.CachedProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.template_engine.ParseError;
+import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
+import org.openstreetmap.josm.tools.template_engine.TemplateEntry;
+import org.openstreetmap.josm.tools.template_engine.TemplateParser;
 
 /**
  * Basic marker class. Requires a position, and supports
@@ -60,46 +68,105 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author Frederik Ramm <frederik@remote.org>
  */
-public class Marker implements ActionListener {
-    public final String text;
-    public final Map<String,String> textMap = new HashMap<String,String>();
-    public final Icon symbol;
-    public final MarkerLayer parentLayer;
-    public double time; /* absolute time of marker since epoch */
-    public double offset; /* time offset in seconds from the gpx point from which it was derived,
-                             may be adjusted later to sync with other data, so not final */
+public class Marker implements TemplateEngineDataProvider {
 
-    private CachedLatLon coor;
+    public static class TemplateEntryProperty extends CachedProperty<TemplateEntry> {
+        // This class is a bit complicated because it supports both global and per layer settings. I've added per layer settings because
+        // GPXSettingsPanel had possibility to set waypoint label but then I've realized that markers use different layer then gpx data
+        // so per layer settings is useless. Anyway it's possible to specify marker layer pattern in Einstein preferences and maybe somebody
+        // will make gui for it so I'm keeping it here
 
-    public final void setCoor(LatLon coor) {
-        if(this.coor == null) {
-            this.coor = new CachedLatLon(coor);
-        } else {
-            this.coor.setCoor(coor);
+        private final static Map<String, TemplateEntryProperty> cache = new HashMap<String, Marker.TemplateEntryProperty>();
+
+        // Legacy code - convert label from int to template engine expression
+        private static final IntegerProperty PROP_LABEL = new IntegerProperty("draw.rawgps.layer.wpt", 0 );
+        private static String getDefaultLabelPattern() {
+            switch (PROP_LABEL.get()) {
+            case 1:
+                return LABEL_PATTERN_NAME;
+            case 2:
+                return LABEL_PATTERN_DESC;
+            case 0:
+            case 3:
+                return LABEL_PATTERN_AUTO;
+            default:
+                return "";
+            }
+        }
+
+        public static TemplateEntryProperty forMarker(String layerName) {
+            String key = "draw.rawgps.layer.wpt.pattern";
+            if (layerName != null) {
+                key += "." + layerName;
+            }
+            TemplateEntryProperty result = cache.get(key);
+            if (result == null) {
+                String defaultValue = layerName == null?getDefaultLabelPattern():"";
+                TemplateEntryProperty parent = layerName == null?null:forMarker(null);
+                result = new TemplateEntryProperty(key, defaultValue, parent);
+                cache.put(key, result);
+            }
+            return result;
+        }
+
+        public static TemplateEntryProperty forAudioMarker(String layerName) {
+            String key = "draw.rawgps.layer.audiowpt.pattern";
+            if (layerName != null) {
+                key += "." + layerName;
+            }
+            TemplateEntryProperty result = cache.get(key);
+            if (result == null) {
+                String defaultValue = layerName == null?"?{ '{name}' | '{desc}' | '{" + Marker.MARKER_FORMATTED_OFFSET + "}' }":"";
+                TemplateEntryProperty parent = layerName == null?null:forAudioMarker(null);
+                result = new TemplateEntryProperty(key, defaultValue, parent);
+                cache.put(key, result);
+            }
+            return result;
+        }
+
+        private TemplateEntryProperty parent;
+
+
+        private TemplateEntryProperty(String key, String defaultValue, TemplateEntryProperty parent) {
+            super(key, defaultValue);
+            this.parent = parent;
+            updateValue(); // Needs to be called because parent wasn't know in super constructor
+        }
+
+        @Override
+        protected TemplateEntry fromString(String s) {
+            try {
+                return new TemplateParser(s).parse();
+            } catch (ParseError e) {
+                System.out.println(String.format("Unable to parse template engine pattern '%s' for property %s. Using default ('%s') instead",
+                        s, getKey(), defaultValue));
+                return getDefaultValue();
+            }
+        }
+
+        @Override
+        public String getDefaultValueAsString() {
+            if (parent == null)
+                return super.getDefaultValueAsString();
+            else
+                return parent.getAsString();
+        }
+
+        @Override
+        public void preferenceChanged(PreferenceChangeEvent e) {
+            if (e.getKey().equals(key) || (parent != null && e.getKey().equals(parent.getKey()))) {
+                updateValue();
+            }
         }
     }
 
-    public final LatLon getCoor() {
-        return coor;
-    }
-
-    public final void setEastNorth(EastNorth eastNorth) {
-        coor.setEastNorth(eastNorth);
-    }
-
-    public final EastNorth getEastNorth() {
-        return coor.getEastNorth();
-    }
 
     /**
      * Plugins can add their Marker creation stuff at the bottom or top of this list
      * (depending on whether they want to override default behaviour or just add new
      * stuff).
      */
-    public static LinkedList<MarkerProducers> markerProducers = new LinkedList<MarkerProducers>();
-
-    private static final IntegerProperty PROP_LABEL = new IntegerProperty("draw.rawgps.layer.wpt", 0 );
-    private static final String[] labelAttributes = new String[] {"name", "desc"};
+    public static List<MarkerProducers> markerProducers = new LinkedList<MarkerProducers>();
 
     // Add one Maker specifying the default behaviour.
     static {
@@ -109,120 +176,46 @@ public class Marker implements ActionListener {
                 String uri = null;
                 // cheapest way to check whether "link" object exists and is a non-empty
                 // collection of GpxLink objects...
-                try {
-                    for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get(GpxData.META_LINKS)) {
+                Collection<GpxLink> links = (Collection<GpxLink>)wpt.attr.get(GpxData.META_LINKS);
+                if (links != null) {
+                    for (GpxLink oneLink : links ) {
                         uri = oneLink.uri;
                         break;
                     }
-                } catch (Exception ex) {}
-
-                // Try a relative file:// url, if the link is not in an URL-compatible form
-                if (relativePath != null && uri != null && !isWellFormedAddress(uri)) {
-                    uri = new File(relativePath.getParentFile(), uri).toURI().toString();
                 }
 
-                Map<String,String> nameDesc = new HashMap<String,String>();
-                for(String attribute : labelAttributes) {
-                    if (wpt.attr.containsKey(attribute)) {
-                        nameDesc.put(attribute, wpt.getString(attribute));
+                URL url = null;
+                if (uri != null) {
+                    try {
+                        url = new URL(uri);
+                    } catch (MalformedURLException e) {
+                        // Try a relative file:// url, if the link is not in an URL-compatible form
+                        if (relativePath != null) {
+                            try {
+                                url = new File(relativePath.getParentFile(), uri).toURI().toURL();
+                            } catch (MalformedURLException e1) {
+                                System.err.println("Unable to convert uri " + uri + " to URL: "  + e1.getMessage());
+                            }
+                        }
                     }
                 }
 
-                if (uri == null) {
+
+                if (url == null) {
                     String symbolName = wpt.getString("symbol");
                     if (symbolName == null) {
                         symbolName = wpt.getString("sym");
                     }
-                    return new Marker(wpt.getCoor(), nameDesc, symbolName, parentLayer, time, offset);
+                    return new Marker(wpt.getCoor(), wpt, symbolName, parentLayer, time, offset);
                 }
-                else if (uri.endsWith(".wav"))
-                    return AudioMarker.create(wpt.getCoor(), getText(nameDesc), uri, parentLayer, time, offset);
-                else if (uri.endsWith(".png") || uri.endsWith(".jpg") || uri.endsWith(".jpeg") || uri.endsWith(".gif"))
-                    return ImageMarker.create(wpt.getCoor(), uri, parentLayer, time, offset);
+                else if (url.toString().endsWith(".wav"))
+                    return new AudioMarker(wpt.getCoor(), wpt, url, parentLayer, time, offset);
+                else if (url.toString().endsWith(".png") || url.toString().endsWith(".jpg") || url.toString().endsWith(".jpeg") || url.toString().endsWith(".gif"))
+                    return new ImageMarker(wpt.getCoor(), url, parentLayer, time, offset);
                 else
-                    return WebMarker.create(wpt.getCoor(), uri, parentLayer, time, offset);
-            }
-
-            private boolean isWellFormedAddress(String link) {
-                try {
-                    new URL(link);
-                    return true;
-                } catch (MalformedURLException x) {
-                    return false;
-                }
+                    return new WebMarker(wpt.getCoor(), url, parentLayer, time, offset);
             }
         });
-    }
-
-    public Marker(LatLon ll, String text, String iconName, MarkerLayer parentLayer, double time, double offset) {
-        setCoor(ll);
-        if (text == null || text.length() == 0) {
-            this.text = null;
-        }
-        else {
-            this.text = text;
-        }
-        this.offset = offset;
-        this.time = time;
-        this.symbol = ImageProvider.getIfAvailable("markers",iconName);
-        this.parentLayer = parentLayer;
-    }
-
-    public Marker(LatLon ll, Map<String,String> textMap, String iconName, MarkerLayer parentLayer, double time, double offset) {
-        setCoor(ll);
-        if (textMap != null) {
-            this.textMap.clear();
-            this.textMap.putAll(textMap);
-        }
-
-        this.text = null;
-        this.offset = offset;
-        this.time = time;
-        // /* ICON(markers/) */"Bridge"
-        // /* ICON(markers/) */"Crossing"
-        this.symbol = ImageProvider.getIfAvailable("markers",iconName);
-        this.parentLayer = parentLayer;
-    }
-
-    /**
-     * Checks whether the marker display area contains the given point.
-     * Markers not interested in mouse clicks may always return false.
-     *
-     * @param p The point to check
-     * @return <code>true</code> if the marker "hotspot" contains the point.
-     */
-    public boolean containsPoint(Point p) {
-        return false;
-    }
-
-    /**
-     * Called when the mouse is clicked in the marker's hotspot. Never
-     * called for markers which always return false from containsPoint.
-     *
-     * @param ev A dummy ActionEvent
-     */
-    public void actionPerformed(ActionEvent ev) {
-    }
-
-    /**
-     * Paints the marker.
-     * @param g graphics context
-     * @param mv map view
-     * @param mousePressed true if the left mouse button is pressed
-     */
-    public void paint(Graphics g, MapView mv, boolean mousePressed, boolean showTextOrIcon) {
-        Point screen = mv.getPoint(getEastNorth());
-        if (symbol != null && showTextOrIcon) {
-            symbol.paintIcon(mv, g, screen.x-symbol.getIconWidth()/2, screen.y-symbol.getIconHeight()/2);
-        } else {
-            g.drawLine(screen.x-2, screen.y-2, screen.x+2, screen.y+2);
-            g.drawLine(screen.x+2, screen.y-2, screen.x-2, screen.y+2);
-        }
-
-        String labelText = getText();
-        if ((labelText != null) && showTextOrIcon) {
-            g.drawString(labelText, screen.x+4, screen.y+2);
-        }
     }
 
     /**
@@ -245,19 +238,104 @@ public class Marker implements ActionListener {
         return null;
     }
 
-    /**
-     * Returns an AudioMarker derived from this Marker and the provided uri
-     * Subclasses of specific marker types override this to return null as they can't
-     * be turned into AudioMarkers. This includes AudioMarkers themselves, as they
-     * already have audio.
-     *
-     * @param uri uri of wave file
-     * @return AudioMarker
-     */
+    public static final String MARKER_OFFSET = "waypointOffset";
+    public static final String MARKER_FORMATTED_OFFSET = "formattedWaypointOffset";
 
-    public AudioMarker audioMarkerFromMarker(String uri) {
-        AudioMarker audioMarker = AudioMarker.create(getCoor(), this.getText(), uri, this.parentLayer, this.time, this.offset);
-        return audioMarker;
+    public static final String LABEL_PATTERN_AUTO = "?{ '{name} - {desc}' | '{name}' | '{desc}' }";
+    public static final String LABEL_PATTERN_NAME = "{name}";
+    public static final String LABEL_PATTERN_DESC = "{desc}";
+
+
+    private final TemplateEngineDataProvider dataProvider;
+    public final Icon symbol;
+    public final MarkerLayer parentLayer;
+    public double time; /* absolute time of marker since epoch */
+    public double offset; /* time offset in seconds from the gpx point from which it was derived,
+                             may be adjusted later to sync with other data, so not final */
+
+    private String cachedText;
+    private int textVersion = -1;
+    private CachedLatLon coor;
+
+    public Marker(LatLon ll, TemplateEngineDataProvider dataProvider, String iconName, MarkerLayer parentLayer, double time, double offset) {
+        setCoor(ll);
+
+        this.offset = offset;
+        this.time = time;
+        // /* ICON(markers/) */"Bridge"
+        // /* ICON(markers/) */"Crossing"
+        this.symbol = ImageProvider.getIfAvailable("markers",iconName);
+        this.parentLayer = parentLayer;
+
+        this.dataProvider = dataProvider;
+    }
+
+    public final void setCoor(LatLon coor) {
+        if(this.coor == null) {
+            this.coor = new CachedLatLon(coor);
+        } else {
+            this.coor.setCoor(coor);
+        }
+    }
+
+    public final LatLon getCoor() {
+        return coor;
+    }
+
+    public final void setEastNorth(EastNorth eastNorth) {
+        coor.setEastNorth(eastNorth);
+    }
+
+    public final EastNorth getEastNorth() {
+        return coor.getEastNorth();
+    }
+
+
+    /**
+     * Checks whether the marker display area contains the given point.
+     * Markers not interested in mouse clicks may always return false.
+     *
+     * @param p The point to check
+     * @return <code>true</code> if the marker "hotspot" contains the point.
+     */
+    public boolean containsPoint(Point p) {
+        return false;
+    }
+
+    /**
+     * Called when the mouse is clicked in the marker's hotspot. Never
+     * called for markers which always return false from containsPoint.
+     *
+     * @param ev A dummy ActionEvent
+     */
+    public void actionPerformed(ActionEvent ev) {
+    }
+
+
+    /**
+     * Paints the marker.
+     * @param g graphics context
+     * @param mv map view
+     * @param mousePressed true if the left mouse button is pressed
+     */
+    public void paint(Graphics g, MapView mv, boolean mousePressed, boolean showTextOrIcon) {
+        Point screen = mv.getPoint(getEastNorth());
+        if (symbol != null && showTextOrIcon) {
+            symbol.paintIcon(mv, g, screen.x-symbol.getIconWidth()/2, screen.y-symbol.getIconHeight()/2);
+        } else {
+            g.drawLine(screen.x-2, screen.y-2, screen.x+2, screen.y+2);
+            g.drawLine(screen.x+2, screen.y-2, screen.x-2, screen.y+2);
+        }
+
+        String labelText = getText();
+        if ((labelText != null) && showTextOrIcon) {
+            g.drawString(labelText, screen.x+4, screen.y+2);
+        }
+    }
+
+
+    protected TemplateEntryProperty getTextTemplate() {
+        return TemplateEntryProperty.forMarker(parentLayer.getName());
     }
 
     /**
@@ -265,73 +343,55 @@ public class Marker implements ActionListener {
      * @return Text
      */
     public String getText() {
-        if (this.text != null )
-            return this.text;
-        else
-            return getText(this.textMap);
+        TemplateEntryProperty property = getTextTemplate();
+        if (property.getUpdateCount() != textVersion) {
+            TemplateEntry templateEntry = property.get();
+            StringBuilder sb = new StringBuilder();
+            templateEntry.appendText(sb, this);
+
+            cachedText = sb.toString();
+            textVersion = property.getUpdateCount();
+        }
+        return cachedText;
     }
 
-    /**
-     * Returns the Text which should be displayed, depending on chosen preference.
-     * The possible attributes are read from textMap.
-     *
-     * @param textMap A map with available texts/attributes
-     * @return Text
-     */
-    private static String getText(Map<String,String> textMap) {
-        String text = "";
-
-        if (textMap != null && !textMap.isEmpty()) {
-            switch(PROP_LABEL.get())
-            {
-                // name
-                case 1:
-                {
-                    if (textMap.containsKey("name")) {
-                        text = textMap.get("name");
-                    }
-                    break;
-                }
-
-                // desc
-                case 2:
-                {
-                    if (textMap.containsKey("desc")) {
-                        text = textMap.get("desc");
-                    }
-                    break;
-                }
-
-                // auto
-                case 0:
-                // both
-                case 3:
-                {
-                    if (textMap.containsKey("name")) {
-                        text = textMap.get("name");
-
-                        if (textMap.containsKey("desc")) {
-                            if (PROP_LABEL.get() != 0 || !text.equals(textMap.get("desc"))) {
-                                text += " - " + textMap.get("desc");
-                            }
-                        }
-                    }
-                    else if (textMap.containsKey("desc")) {
-                        text = textMap.get("desc");
-                    }
-                    break;
-                }
-
-                // none
-                case 4:
-                default:
-                {
-                    text = "";
-                    break;
-                }
-            }
+    @Override
+    public List<String> getTemplateKeys() {
+        List<String> result;
+        if (dataProvider != null) {
+            result = dataProvider.getTemplateKeys();
+        } else {
+            result = new ArrayList<String>();
         }
+        result.add(MARKER_FORMATTED_OFFSET);
+        result.add(MARKER_OFFSET);
+        return result;
+    }
 
-        return text;
+    private String formatOffset () {
+        int wholeSeconds = (int)(offset + 0.5);
+        if (wholeSeconds < 60)
+            return Integer.toString(wholeSeconds);
+        else if (wholeSeconds < 3600)
+            return String.format("%d:%02d", wholeSeconds / 60, wholeSeconds % 60);
+        else
+            return String.format("%d:%02d:%02d", wholeSeconds / 3600, (wholeSeconds % 3600)/60, wholeSeconds % 60);
+    }
+
+    @Override
+    public Object getTemplateValue(String name) {
+        if (MARKER_FORMATTED_OFFSET.equals(name))
+            return formatOffset();
+        else if (MARKER_OFFSET.equals(name))
+            return offset;
+        else if (dataProvider != null)
+            return dataProvider.getTemplateValue(name);
+        else
+            return null;
+    }
+
+    @Override
+    public boolean evaluateCondition(Match condition) {
+        throw new UnsupportedOperationException();
     }
 }

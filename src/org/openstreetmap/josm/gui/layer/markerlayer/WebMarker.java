@@ -20,17 +20,9 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  */
 public class WebMarker extends ButtonMarker {
 
-    public URL webUrl;
+    public final URL webUrl;
 
-    public static WebMarker create (LatLon ll, String url, MarkerLayer parentLayer, double time, double offset) {
-        try {
-            return new WebMarker(ll, new URL(url), parentLayer, time, offset);
-        } catch (Exception ex) {
-            return null;
-        }
-    }
-
-    private WebMarker(LatLon ll, URL webUrl, MarkerLayer parentLayer, double time, double offset) {
+    public WebMarker(LatLon ll, URL webUrl, MarkerLayer parentLayer, double time, double offset) {
         super(ll, "web.png", parentLayer, time, offset);
         this.webUrl = webUrl;
     }
@@ -40,9 +32,9 @@ public class WebMarker extends ButtonMarker {
         if (error != null) {
             JOptionPane.showMessageDialog(Main.parent,
                     "<html><b>" +
-                    tr("There was an error while trying to display the URL for this marker") +
-                    "</b><br>" + tr("(URL was: ") + webUrl.toString() + ")" + "<br>" + error,
-                    tr("Error displaying URL"), JOptionPane.ERROR_MESSAGE);
+                            tr("There was an error while trying to display the URL for this marker") +
+                            "</b><br>" + tr("(URL was: ") + webUrl.toString() + ")" + "<br>" + error,
+                            tr("Error displaying URL"), JOptionPane.ERROR_MESSAGE);
         }
     }
 }

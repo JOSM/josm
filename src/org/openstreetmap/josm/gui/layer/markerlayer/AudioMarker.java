@@ -7,6 +7,7 @@ import java.net.URL;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.AudioPlayer;
+import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
 /**
  * Marker class with audio playback capability.
@@ -21,20 +22,8 @@ public class AudioMarker extends ButtonMarker {
     public double syncOffset;
     public boolean timeFromAudio = false; // as opposed to from the GPX track
 
-    /**
-     * Verifies the parameter whether a new AudioMarker can be created and return
-     * one or return <code>null</code>.
-     */
-    public static AudioMarker create(LatLon ll, String text, String url, MarkerLayer parentLayer, double time, double offset) {
-        try {
-            return new AudioMarker(ll, text, new URL(url), parentLayer, time, offset);
-        } catch (Exception ex) {
-            return null;
-        }
-    }
-
-    private AudioMarker(LatLon ll, String text, URL audioUrl, MarkerLayer parentLayer, double time, double offset) {
-        super(ll, text, "speech.png", parentLayer, time, offset);
+    public AudioMarker(LatLon ll, TemplateEngineDataProvider dataProvider, URL audioUrl, MarkerLayer parentLayer, double time, double offset) {
+        super(ll, dataProvider, "speech.png", parentLayer, time, offset);
         this.audioUrl = audioUrl;
         this.syncOffset = 0.0;
         this.timeFromAudio = false;
@@ -83,13 +72,8 @@ public class AudioMarker extends ButtonMarker {
         return syncOffset;
     }
 
-    public static String inventName (double offset) {
-        int wholeSeconds = (int)(offset + 0.5);
-        if (wholeSeconds < 60)
-            return Integer.toString(wholeSeconds);
-        else if (wholeSeconds < 3600)
-            return String.format("%d:%02d", wholeSeconds / 60, wholeSeconds % 60);
-        else
-            return String.format("%d:%02d:%02d", wholeSeconds / 3600, (wholeSeconds % 3600)/60, wholeSeconds % 60);
+    @Override
+    protected TemplateEntryProperty getTextTemplate() {
+        return TemplateEntryProperty.forAudioMarker(parentLayer.getName());
     }
 }

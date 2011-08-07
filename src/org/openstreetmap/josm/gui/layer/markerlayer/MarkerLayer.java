@@ -31,7 +31,6 @@ import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
@@ -71,27 +70,11 @@ public class MarkerLayer extends Layer {
         this.data = new ArrayList<Marker>();
         this.fromLayer = fromLayer;
         double firstTime = -1.0;
-        String lastLinkedFile = "";
 
         for (WayPoint wpt : indata.waypoints) {
-            /* calculate time differences in waypoints */
             double time = wpt.time;
-            boolean wpt_has_link = wpt.attr.containsKey(GpxData.META_LINKS);
-            if (firstTime < 0 && wpt_has_link) {
+            if (firstTime < 0) {
                 firstTime = time;
-                for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get(GpxData.META_LINKS)) {
-                    lastLinkedFile = oneLink.uri;
-                    break;
-                }
-            }
-            if (wpt_has_link) {
-                for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get(GpxData.META_LINKS)) {
-                    if (!oneLink.uri.equals(lastLinkedFile)) {
-                        firstTime = time;
-                    }
-                    lastLinkedFile = oneLink.uri;
-                    break;
-                }
             }
             Marker m = Marker.createMarker(wpt, indata.storageFile, this, time, time - firstTime);
             if (m != null) {
@@ -273,13 +256,13 @@ public class MarkerLayer extends Layer {
                     tr("No existing audio markers in this layer to offset from."),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
-            );
+                    );
             return null;
         }
 
         // make our new marker
-        AudioMarker newAudioMarker = AudioMarker.create(coor,
-                AudioMarker.inventName(offset), AudioPlayer.url().toString(), this, time, offset);
+        AudioMarker newAudioMarker = new AudioMarker(coor,
+                null, AudioPlayer.url(), this, time, offset);
 
         // insert it at the right place in a copy the collection
         Collection<Marker> newData = new ArrayList<Marker>();
@@ -424,24 +407,24 @@ public class MarkerLayer extends Layer {
                         tr("You need to pause audio at the moment when you hear your synchronization cue."),
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE
-                );
+                        );
                 return;
             }
             AudioMarker recent = AudioMarker.recentlyPlayedMarker();
             if (synchronizeAudioMarkers(recent)) {
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        tr("Audio synchronized at point {0}.", recent.text),
+                        tr("Audio synchronized at point {0}.", recent.getText()),
                         tr("Information"),
                         JOptionPane.INFORMATION_MESSAGE
-                );
+                        );
             } else {
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Unable to synchronize in layer being played."),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
-                );
+                        );
             }
         }
     }
@@ -461,7 +444,7 @@ public class MarkerLayer extends Layer {
                         tr("You need to have paused audio at the point on the track where you want the marker."),
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE
-                );
+                        );
                 return;
             }
             PlayHeadMarker playHeadMarker = Main.map.mapView.playHeadMarker;
