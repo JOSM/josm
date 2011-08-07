@@ -89,6 +89,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     public static final BooleanProperty PROP_DEFAULT_AUTOZOOM = new BooleanProperty(PREFERENCE_PREFIX + ".default_autozoom", true);
     public static final BooleanProperty PROP_DEFAULT_AUTOLOAD = new BooleanProperty(PREFERENCE_PREFIX + ".default_autoload", true);
+    public static final BooleanProperty PROP_DEFAULT_SHOWERRORS = new BooleanProperty(PREFERENCE_PREFIX + ".default_showerrors", true);
     public static final IntegerProperty PROP_MIN_ZOOM_LVL = new IntegerProperty(PREFERENCE_PREFIX + ".min_zoom_lvl", DEFAULT_MIN_ZOOM);
     public static final IntegerProperty PROP_MAX_ZOOM_LVL = new IntegerProperty(PREFERENCE_PREFIX + ".max_zoom_lvl", DEFAULT_MAX_ZOOM);
     //public static final BooleanProperty PROP_DRAW_DEBUG = new BooleanProperty(PREFERENCE_PREFIX + ".draw_debug", false);
@@ -155,6 +156,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     private JPopupMenu tileOptionMenu;
     JCheckBoxMenuItem autoZoomPopup;
     JCheckBoxMenuItem autoLoadPopup;
+    JCheckBoxMenuItem showErrorsPopup;
     Tile showMetadataTile;
     private Image attrImage;
     private String attrTermsUrl;
@@ -170,6 +172,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     protected boolean autoZoom;
     protected boolean autoLoad;
+    protected boolean showErrors;
 
     void redraw()
     {
@@ -320,12 +323,12 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         super(info);
 
         if(!isProjectionSupported(Main.getProjection())) {
-              JOptionPane.showMessageDialog(Main.parent,
-                  tr("TMS layers do not support the projection {0}.\n{1}\n"
-                  + "Change the projection or remove the layer.",
-                      Main.getProjection().toCode(), nameSupportedProjections()),
-                      tr("Warning"),
-                      JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(Main.parent,
+                tr("TMS layers do not support the projection {0}.\n{1}\n"
+                + "Change the projection or remove the layer.",
+                Main.getProjection().toCode(), nameSupportedProjections()),
+                tr("Warning"),
+                JOptionPane.WARNING_MESSAGE);
         }
 
         setBackgroundLayer(true);
@@ -359,6 +362,17 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         });
         autoLoadPopup.setSelected(autoLoad);
         tileOptionMenu.add(autoLoadPopup);
+
+        showErrors = PROP_DEFAULT_SHOWERRORS.get();
+        showErrorsPopup = new JCheckBoxMenuItem();
+        showErrorsPopup.setAction(new AbstractAction(tr("Show Errors")) {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                showErrors = !showErrors;
+            }
+        });
+        showErrorsPopup.setSelected(showErrors);
+        tileOptionMenu.add(showErrorsPopup);
 
         tileOptionMenu.add(new JMenuItem(new AbstractAction(tr("Load Tile")) {
             @Override
@@ -853,7 +867,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             texty += 1 + fontHeight;
         }*/
 
-        if (tile.hasError()) {
+        if (tile.hasError() && showErrors) {
             myDrawString(g, tr("Error") + ": " + tr(tile.getErrorMessage()), p.x + 2, texty);
             texty += 1 + fontHeight;
         }
