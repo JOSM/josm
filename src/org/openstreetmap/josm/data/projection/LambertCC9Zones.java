@@ -144,8 +144,7 @@ public class LambertCC9Zones extends AbstractProjection implements ProjectionSub
     }
 
     @Override
-    public void setPreferences(Collection<String> args)
-    {
+    public void setPreferences(Collection<String> args) {
         int layoutZone = DEFAULT_ZONE;
         if (args != null) {
             try {
