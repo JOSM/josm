@@ -137,7 +137,7 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
     public String[] allCodes() {
         String[] zones = new String[4];
         for (int zone = 2; zone <= 5; zone++) {
-            zones[zone] = "EPSG:" + (31464 + zone);
+            zones[zone-2] = "EPSG:" + (31464 + zone);
         }
         return zones;
     }
