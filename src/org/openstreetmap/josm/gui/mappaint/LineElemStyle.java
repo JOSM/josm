@@ -52,7 +52,7 @@ public class LineElemStyle extends ElemStyle {
     public static LineElemStyle createCasing(Environment env) {
         LineElemStyle casing =  createImpl(env, true);
         if (casing != null) {
-            casing.z_index = -100;
+            casing.z_index += -100;
             casing.isModifier = true;
         }
         return casing;
