@@ -43,8 +43,10 @@ public class OsmTileLoader implements TileLoader {
                 Tile tile;
                 synchronized (cache) {
                     tile = cache.getTile(source, tilex, tiley, zoom);
-                    if (tile == null || tile.isLoaded() || tile.loading)
+                    if (tile == null || (tile.isLoaded() && !tile.hasError()) || tile.loading)
                         return;
+                    tile.loaded = false;
+                    tile.error = false;
                     tile.loading = true;
                 }
                 try {

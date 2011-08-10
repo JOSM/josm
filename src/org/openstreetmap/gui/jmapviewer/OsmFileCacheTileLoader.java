@@ -14,11 +14,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.Thread;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -131,8 +133,10 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
             TileCache cache = listener.getTileCache();
             synchronized (cache) {
                 tile = cache.getTile(source, tilex, tiley, zoom);
-                if (tile == null || tile.isLoaded() || tile.loading)
+                if (tile == null || (tile.isLoaded() && !tile.hasError()) || tile.loading)
                     return;
+                tile.loaded = false;
+                tile.error = false;
                 tile.loading = true;
             }
             tileCacheDir = new File(cacheDirBase, source.getName().replaceAll("[\\\\/:*?\"<>|]", "_"));
@@ -155,7 +159,6 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
         }
 
         protected void loadOrUpdateTile() {
-
             try {
                 // log.finest("Loading tile from OSM: " + tile);
                 URLConnection urlConn = loadTileFromOsm(tile);
@@ -209,12 +212,19 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
                     tile.setError("No tile at this zoom level");
                     listener.tileLoadingFinished(tile, true);
                 } else {
-                    byte[] buffer = loadTileInBuffer(urlConn);
-                    if (buffer != null) {
-                        tile.loadImage(new ByteArrayInputStream(buffer));
-                        tile.setLoaded(true);
-                        listener.tileLoadingFinished(tile, true);
-                        saveTileToFile(buffer);
+                    for(int i = 0; i < 5; ++i) {
+                        if (urlConn instanceof HttpURLConnection && ((HttpURLConnection)urlConn).getResponseCode() == 503) {
+                            Thread.sleep(5000+(new Random()).nextInt(5000));
+                            continue;
+                        }
+                        byte[] buffer = loadTileInBuffer(urlConn);
+                        if (buffer != null) {
+                            tile.loadImage(new ByteArrayInputStream(buffer));
+                            tile.setLoaded(true);
+                            listener.tileLoadingFinished(tile, true);
+                            saveTileToFile(buffer);
+                            break;
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -251,7 +261,6 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 
                 fileAge = tileFile.lastModified();
                 boolean oldTile = System.currentTimeMillis() - fileAge > maxCacheFileAge;
-                // System.out.println("Loaded from file: " + tile);
                 if (!oldTile) {
                     tile.setLoaded(true);
                     listener.tileLoadingFinished(tile, true);
