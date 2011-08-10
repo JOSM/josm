@@ -801,7 +801,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     } else {
                         String toolbar = (String) tb;
                         Action r = actions.get(toolbar);
-                        if(r != null &&  r != action) {
+                        if(r != null && r != action && !toolbar.startsWith("imagery_")) {
                             System.out.println(tr("Toolbar action {0} overwritten: {1} gets {2}",
                             toolbar, r.getClass().getName(), action.getClass().getName()));
                         }

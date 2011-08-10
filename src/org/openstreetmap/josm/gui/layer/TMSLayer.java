@@ -336,7 +336,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
         TileSource source = getTileSource(info);
         if (source == null)
-            throw new IllegalStateException("cannot create TMSLayer with non-TMS ImageryInfo");
+            throw new IllegalStateException("Cannot create TMSLayer with non-TMS ImageryInfo");
         initTileSource(source);
 
         tileOptionMenu = new JPopupMenu();
@@ -378,7 +378,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             @Override
             public void actionPerformed(ActionEvent ae) {
                 if (clickedTile != null) {
-                    loadTile(clickedTile);
+                    loadTile(clickedTile, true);
                     redraw();
                 }
             }
@@ -412,6 +412,15 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             @Override
             public void actionPerformed(ActionEvent ae) {
                 loadAllTiles(true);
+                redraw();
+            }
+        }));
+
+        tileOptionMenu.add(new JMenuItem(new AbstractAction(
+                tr("Load All Error Tiles")) {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                loadAllErrorTiles(true);
                 redraw();
             }
         }));
@@ -643,13 +652,11 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         return tile;
     }
 
-    synchronized boolean loadTile(Tile tile)
+    synchronized boolean loadTile(Tile tile, boolean force)
     {
         if (tile == null)
             return false;
-        if (tile.hasError())
-            return false;
-        if (tile.isLoaded())
+        if (!force && (tile.hasError() || tile.isLoaded()))
             return false;
         if (tile.isLoading())
             return false;
@@ -671,10 +678,20 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         // if there is more than 18 tiles on screen in any direction, do not
         // load all tiles!
         if (ts.tooLarge()) {
-            System.out.println("Not downloading all tiles because there is more than 18 tiles on an axis!");
+            Main.warn("Not downloading all tiles because there is more than 18 tiles on an axis!");
             return;
         }
         ts.loadAllTiles(force);
+    }
+
+    void loadAllErrorTiles(boolean force) {
+        MapView mv = Main.map.mapView;
+        EastNorth topLeft = mv.getEastNorth(0, 0);
+        EastNorth botRight = mv.getEastNorth(mv.getWidth(), mv.getHeight());
+
+        TileSet ts = new TileSet(topLeft, botRight, currentZoomLevel);
+
+        ts.loadAllErrorTiles(force);
     }
 
     /*
@@ -1013,19 +1030,22 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
         void loadAllTiles(boolean force)
         {
-            List<Tile> tiles = this.allTiles(true);
             if (!autoLoad && !force)
                 return;
-            int nr_queued = 0;
-            for (Tile t : tiles) {
-                if (loadTile(t)) {
-                    nr_queued++;
+            for (Tile t : this.allTiles(true)) {
+                loadTile(t, false);
+            }
+        }
+
+        void loadAllErrorTiles(boolean force)
+        {
+            if (!autoLoad && !force)
+                return;
+            for (Tile t : this.allTiles(true)) {
+                if (t.hasError()) {
+                    loadTile(t, true);
                 }
             }
-            /*if (debug)
-                if (nr_queued > 0) {
-                    Main.debug("queued to load: " + nr_queued + "/" + tiles.size() + " tiles at zoom: " + zoom);
-                }*/
         }
     }
 
