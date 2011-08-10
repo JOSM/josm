@@ -121,7 +121,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
             while(true) {
                 try {
                     ProgressMonitor m = monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
-                    if (isCancelled()) return;
+                    if (isCanceled()) return;
                     writer.uploadOsm(strategy, toUpload, changeset, m);
                     processedPrimitives.addAll((Collection) writer.getProcessedPrimitives()); // OsmPrimitive in => OsmPrimitive out
                     break;
@@ -135,14 +135,14 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
                 }
             }
         } catch (Exception sxe) {
-            if (isCancelled()) {
-                System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());
+            if (isCanceled()) {
+                System.out.println("Ignoring exception caught because upload is canceled. Exception is: " + sxe.toString());
                 return;
             }
             setLastException(sxe);
         }
 
-        if (isCancelled())
+        if (isCanceled())
             return;
         layer.cleanupAfterUpload(processedPrimitives);
         layer.onPostUploadToServer();
@@ -153,7 +153,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
 
     @Override
     public void cancel() {
-        setCancelled(true);
+        setCanceled(true);
         if (writer != null) {
             writer.cancel();
         }

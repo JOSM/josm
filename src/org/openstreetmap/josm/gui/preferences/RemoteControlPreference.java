@@ -85,7 +85,7 @@ public class RemoteControlPreference implements PreferenceSetting
 
         wrapper.add(alwaysAskUserConfirm, GBC.eol().fill(GBC.HORIZONTAL));
 
-        final JLabel portLabel = new JLabel("<html>"+tr("JOSM will always listen at port 8111 on localhost." +
+        final JLabel portLabel = new JLabel("<html>"+tr("JOSM will always listen at port 8111 on localhost. " +
                 "This port is not configurable because it is referenced by external applications talking to JOSM.") + "</html>");
         portLabel.setFont(portLabel.getFont().deriveFont(Font.PLAIN));
 

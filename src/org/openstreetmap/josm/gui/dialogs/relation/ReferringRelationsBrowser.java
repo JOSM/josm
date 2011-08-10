@@ -108,7 +108,7 @@ public class ReferringRelationsBrowser extends JPanel {
             task.setContinuation(
                     new Runnable() {
                         public void run() {
-                            if (task.isCancelled() || task.hasError())
+                            if (task.isCanceled() || task.hasError())
                                 return;
                             model.populate(task.getParents());
                         }

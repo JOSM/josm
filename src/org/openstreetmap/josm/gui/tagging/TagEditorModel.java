@@ -440,9 +440,9 @@ public class TagEditorModel extends AbstractTableModel {
     }
 
     /**
-     * Replies the the tags in this tag editor model as {@see TagCollection}.
+     * Replies the tags in this tag editor model as {@see TagCollection}.
      *
-     * @return the the tags in this tag editor model as {@see TagCollection}
+     * @return the tags in this tag editor model as {@see TagCollection}
      */
     public TagCollection getTagCollection() {
         return TagCollection.from(getTags());

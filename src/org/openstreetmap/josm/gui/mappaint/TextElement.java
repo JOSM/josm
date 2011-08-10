@@ -161,7 +161,7 @@ public class TextElement {
     /**
      * Replies the label to be rendered for the primitive {@code osm}.
      * 
-     * @param osm the the OSM object
+     * @param osm the OSM object
      * @return the label, or null, if {@code osm} is null or if no label can be
      * derived for {@code osm}
      */

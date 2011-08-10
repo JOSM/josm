@@ -177,7 +177,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     }
 
     /**
-     * Replies true if the task was cancelled by the user
+     * Replies true if the task was canceled by the user
      *
      * @return
      */

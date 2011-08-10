@@ -114,7 +114,7 @@ public interface ProgressMonitor {
      */
     ProgressMonitor createSubTaskMonitor(int ticks, boolean internal);
 
-    boolean isCancelled();
+    boolean isCanceled();
     void cancel();
     void addCancelListener(CancelListener listener);
     void removeCancelListener(CancelListener listener);

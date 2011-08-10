@@ -101,7 +101,7 @@ public class RelationTree extends JTree {
      *
      */
     class RelationLoader extends PleaseWaitRunnable {
-        private boolean cancelled;
+        private boolean canceled;
         private Exception lastException;
         private Relation relation;
         private DataSet ds;
@@ -121,12 +121,12 @@ public class RelationTree extends JTree {
         @Override
         protected void cancel() {
             OsmApi.getOsmApi().cancel();
-            this.cancelled = true;
+            this.canceled = true;
         }
 
         @Override
         protected void finish() {
-            if (cancelled)
+            if (canceled)
                 return;
             if (lastException != null) {
                 lastException.printStackTrace();
@@ -154,8 +154,8 @@ public class RelationTree extends JTree {
                 ds = reader.parseOsm(progressMonitor
                         .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             } catch(Exception e) {
-                if (cancelled) {
-                    System.out.println(tr("Warning: Ignoring exception because task was cancelled. Exception: {0}", e.toString()));
+                if (canceled) {
+                    System.out.println(tr("Warning: Ignoring exception because task was canceled. Exception: {0}", e.toString()));
                     return;
                 }
                 this.lastException = e;

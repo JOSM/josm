@@ -89,7 +89,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
      */
     private static final class Loader extends PleaseWaitRunnable {
 
-        private boolean cancelled = false;
+        private boolean canceled = false;
         private GeoImageLayer layer;
         private Collection<File> selection;
         private HashSet<String> loadedDirectories = new HashSet<String>();
@@ -117,7 +117,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 rememberError(tr("One of the selected files was null"));
             }
 
-            if (cancelled)
+            if (canceled)
                 return;
             progressMonitor.subTask(tr("Read photos..."));
             progressMonitor.setTicksCount(files.size());
@@ -130,7 +130,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
             for (File f : files) {
 
-                if (cancelled) {
+                if (canceled) {
                     break;
                 }
 
@@ -160,7 +160,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
             for (File f : sel) {
 
-                if(cancelled) {
+                if(canceled) {
                     break;
                 }
 
@@ -240,7 +240,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                     Main.map.addToggleDialog(ImageViewerDialog.getInstance());
                 }
 
-                if (! cancelled && layer.data.size() > 0) {
+                if (! canceled && layer.data.size() > 0) {
                     boolean noGeotagFound = true;
                     for (ImageEntry e : layer.data) {
                         if (e.getPos() != null) {
@@ -255,7 +255,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         }
 
         @Override protected void cancel() {
-            cancelled = true;
+            canceled = true;
         }
     }
 

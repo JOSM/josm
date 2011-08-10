@@ -180,7 +180,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
         cancelHandler.cancel();
     }
 
-    public boolean isCancelled() {
+    public boolean isCanceled() {
         return cancelHandler.isCanceled();
     }
 

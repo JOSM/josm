@@ -41,7 +41,7 @@ public class CloseChangesetDialog extends JDialog {
 
     /** the list */
     private JList lstOpenChangesets;
-    /** true if the user cancelled the dialog */
+    /** true if the user canceled the dialog */
     private boolean canceled;
     /** the list model */
     private DefaultListModel model;

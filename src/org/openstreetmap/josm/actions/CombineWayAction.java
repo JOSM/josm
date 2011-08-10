@@ -225,7 +225,7 @@ public class CombineWayAction extends JosmAction {
         //
         if (!completeWayTags.isApplicableToPrimitive() || !parentRelations.isEmpty()) {
             dialog.setVisible(true);
-            if (dialog.isCancelled())
+            if (dialog.isCanceled())
                 throw new UserCancelException();
         }
 

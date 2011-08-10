@@ -65,7 +65,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * You should also set the target primitive which other primitives (ways or nodes) are
  * merged to, see {@see #setTargetPrimitive(OsmPrimitive)}.
  *
- * After the dialog is closed use {@see #isCancelled()} to check whether the user canceled
+ * After the dialog is closed use {@see #isCanceled()} to check whether the user canceled
  * the dialog. If it wasn't canceled you may build a collection of {@see Command} objects
  * which reflect the conflict resolution decisions the user made in the dialog:
  * see {@see #buildResolutionCommands()}
@@ -92,7 +92,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     private AutoAdjustingSplitPane spTagConflictTypes;
     private TagConflictResolver pnlTagConflictResolver;
     private RelationMemberConflictResolver pnlRelationMemberConflictResolver;
-    private boolean cancelled;
+    private boolean canceled;
     private JPanel pnlButtons;
     private OsmPrimitive targetPrimitive;
 
@@ -317,12 +317,12 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         pnlRelationMemberConflictResolver.prepareForEditing();
     }
 
-    protected void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
+    protected void setCanceled(boolean canceled) {
+        this.canceled = canceled;
     }
 
-    public boolean isCancelled() {
-        return cancelled;
+    public boolean isCanceled() {
+        return canceled;
     }
 
     @Override
@@ -331,7 +331,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             prepareGUIBeforeConflictResolutionStarts();
             new WindowGeometry(getClass().getName() + ".geometry", WindowGeometry.centerInWindow(Main.parent,
                     new Dimension(600, 400))).applySafe(this);
-            setCancelled(false);
+            setCanceled(false);
             btnApply.requestFocusInWindow();
         } else {
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
@@ -349,7 +349,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         }
 
         public void actionPerformed(ActionEvent arg0) {
-            setCancelled(true);
+            setCanceled(true);
             setVisible(false);
         }
     }

@@ -38,7 +38,7 @@ import org.xml.sax.SAXException;
  *   task.setContinuation(
  *       new Runnable() {
  *          public void run() {
- *              if (task.isCancelled() || task.hasError())
+ *              if (task.isCanceled() || task.hasError())
  *                  return;
  *              List<Relation> parents = task.getParents();
  *              // do something with the parent relations
@@ -51,7 +51,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class ParentRelationLoadingTask extends PleaseWaitRunnable{
-    private boolean cancelled;
+    private boolean canceled;
     private Exception lastException;
     private DataSet referrers;
     private boolean full;
@@ -92,12 +92,12 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
     }
 
     /**
-     * Replies true if this has been cancelled by the user.
+     * Replies true if this has been canceled by the user.
      *
-     * @return true if this has been cancelled by the user.
+     * @return true if this has been canceled by the user.
      */
-    public boolean isCancelled() {
-        return cancelled;
+    public boolean isCanceled() {
+        return canceled;
     }
 
     /**
@@ -119,7 +119,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
 
     @Override
     protected void cancel() {
-        cancelled = true;
+        canceled = true;
         OsmApi.getOsmApi().cancel();
     }
 
@@ -138,7 +138,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
 
     @Override
     protected void finish() {
-        if (cancelled) return;
+        if (canceled) return;
         if (lastException != null) {
             showLastException();
             return;
@@ -190,8 +190,8 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
                 );
             }
         } catch(Exception e) {
-            if (cancelled) {
-                System.out.println(tr("Warning: Ignoring exception because task was cancelled. Exception: {0}", e.toString()));
+            if (canceled) {
+                System.out.println(tr("Warning: Ignoring exception because task was canceled. Exception: {0}", e.toString()));
                 return;
             }
             lastException = e;

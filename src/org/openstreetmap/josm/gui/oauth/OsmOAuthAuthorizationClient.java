@@ -31,7 +31,7 @@ import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.data.oauth.OsmPrivileges;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.io.OsmTransferCancelledException;
+import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class OsmOAuthAuthorizationClient {
@@ -118,7 +118,7 @@ public class OsmOAuthAuthorizationClient {
      * @return the OAuth Request Token
      * @throws OsmOAuthAuthorizationException thrown if something goes wrong when retrieving the request token
      */
-    public OAuthToken getRequestToken(ProgressMonitor monitor) throws OsmOAuthAuthorizationException, OsmTransferCancelledException {
+    public OAuthToken getRequestToken(ProgressMonitor monitor) throws OsmOAuthAuthorizationException, OsmTransferCanceledException {
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -129,11 +129,11 @@ public class OsmOAuthAuthorizationClient {
             return OAuthToken.createToken(consumer);
         } catch(OAuthCommunicationException e){
             if (canceled)
-                throw new OsmTransferCancelledException();
+                throw new OsmTransferCanceledException();
             throw new OsmOAuthAuthorizationException(e);
         } catch(OAuthException e){
             if (canceled)
-                throw new OsmTransferCancelledException();
+                throw new OsmTransferCanceledException();
             throw new OsmOAuthAuthorizationException(e);
         } finally {
             monitor.finishTask();
@@ -151,7 +151,7 @@ public class OsmOAuthAuthorizationClient {
      * @throws OsmOAuthAuthorizationException thrown if something goes wrong when retrieving the request token
      * @see #getRequestToken(ProgressMonitor)
      */
-    public OAuthToken getAccessToken(ProgressMonitor monitor) throws OsmOAuthAuthorizationException, OsmTransferCancelledException {
+    public OAuthToken getAccessToken(ProgressMonitor monitor) throws OsmOAuthAuthorizationException, OsmTransferCanceledException {
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -162,11 +162,11 @@ public class OsmOAuthAuthorizationClient {
             return OAuthToken.createToken(consumer);
         } catch(OAuthCommunicationException e){
             if (canceled)
-                throw new OsmTransferCancelledException();
+                throw new OsmTransferCanceledException();
             throw new OsmOAuthAuthorizationException(e);
         } catch(OAuthException e){
             if (canceled)
-                throw new OsmTransferCancelledException();
+                throw new OsmTransferCanceledException();
             throw new OsmOAuthAuthorizationException(e);
         } finally {
             monitor.finishTask();
@@ -464,9 +464,9 @@ public class OsmOAuthAuthorizationClient {
      * @throws IllegalArgumentException thrown if osmPassword is null
      * @throws IllegalArgumentException thrown if privileges is null
      * @throws OsmOAuthAuthorizationException thrown if the authorisation fails
-     * @throws OsmTransferCancelledException thrown if the task is cancelled by the user
+     * @throws OsmTransferCanceledException thrown if the task is canceled by the user
      */
-    public void authorise(OAuthToken requestToken, String osmUserName, String osmPassword, OsmPrivileges privileges, ProgressMonitor monitor) throws IllegalArgumentException, OsmOAuthAuthorizationException, OsmTransferCancelledException{
+    public void authorise(OAuthToken requestToken, String osmUserName, String osmPassword, OsmPrivileges privileges, ProgressMonitor monitor) throws IllegalArgumentException, OsmOAuthAuthorizationException, OsmTransferCanceledException{
         CheckParameterUtil.ensureParameterNotNull(requestToken, "requestToken");
         CheckParameterUtil.ensureParameterNotNull(osmUserName, "osmUserName");
         CheckParameterUtil.ensureParameterNotNull(osmPassword, "osmPassword");
@@ -481,29 +481,29 @@ public class OsmOAuthAuthorizationClient {
             monitor.indeterminateSubTask(tr("Initializing a session at the OSM website..."));
             String sessionId = fetchOsmWebsiteSessionId();
             if (canceled)
-                throw new OsmTransferCancelledException();
+                throw new OsmTransferCanceledException();
             monitor.worked(1);
 
             monitor.indeterminateSubTask(tr("Authenticating the session for user ''{0}''...", osmUserName));
             authenticateOsmSession(sessionId, osmUserName, osmPassword);
             if (canceled)
-                throw new OsmTransferCancelledException();
+                throw new OsmTransferCanceledException();
             monitor.worked(1);
 
             monitor.indeterminateSubTask(tr("Authorizing request token ''{0}''...", requestToken.getKey()));
             sendAuthorisationRequest(sessionId, requestToken, privileges);
             if (canceled)
-                throw new OsmTransferCancelledException();
+                throw new OsmTransferCanceledException();
             monitor.worked(1);
 
             monitor.indeterminateSubTask(tr("Logging out session ''{0}''...", sessionId));
             logoutOsmSession(sessionId);
             if (canceled)
-                throw new OsmTransferCancelledException();
+                throw new OsmTransferCanceledException();
             monitor.worked(1);
         } catch(OsmOAuthAuthorizationException e) {
             if (canceled)
-                throw new OsmTransferCancelledException();
+                throw new OsmTransferCanceledException();
             throw e;
         } finally {
             monitor.finishTask();

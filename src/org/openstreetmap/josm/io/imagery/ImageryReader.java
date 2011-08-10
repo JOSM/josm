@@ -100,7 +100,7 @@ public class ImageryReader {
         } finally {
             Utils.close(in);
         }
-        System.err.println("Warning: Could not detect type of imagery source '"+source+"'. Using default (xml).");
+        Main.warn(tr("Warning: Could not detect type of imagery source '{0}'. Using default (xml).", source));
         return true;
     }
 
@@ -260,7 +260,7 @@ public class ImageryReader {
                     break;
             }
             /**
-             * Did not recognize the element, so the new state is UNKOWN.
+             * Did not recognize the element, so the new state is UNKNOWN.
              * This includes the case where we are already inside an unknown
              * element, i.e. we do not try to understand the inner content
              * of an unknown element, but wait till it's over.

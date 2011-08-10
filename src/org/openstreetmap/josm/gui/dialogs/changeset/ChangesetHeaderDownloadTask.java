@@ -181,7 +181,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
             downloadedChangesets.addAll(reader.readChangesets(idsToDownload, getProgressMonitor().createSubTaskMonitor(0, false)));
         } catch(OsmTransferException e) {
             if (canceled)
-                // ignore exception if cancelled
+                // ignore exception if canceled
                 return;
             // remember other exceptions
             lastException = e;

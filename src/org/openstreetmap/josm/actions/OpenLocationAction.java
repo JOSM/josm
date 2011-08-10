@@ -76,11 +76,11 @@ public class OpenLocationAction extends JosmAction {
         gc.weightx = 1.0;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         all.add(new JLabel(tr("Enter URL to download:")), gc);
-        HistoryComboBox uploadAdresses = new HistoryComboBox();
-        uploadAdresses.setToolTipText(tr("Enter an URL from where data should be downloaded"));
-        restoreUploadAddressHistory(uploadAdresses);
+        HistoryComboBox uploadAddresses = new HistoryComboBox();
+        uploadAddresses.setToolTipText(tr("Enter an URL from where data should be downloaded"));
+        restoreUploadAddressHistory(uploadAddresses);
         gc.gridy = 1;
-        all.add(uploadAdresses, gc);
+        all.add(uploadAddresses, gc);
         gc.gridy = 2;
         gc.fill = GridBagConstraints.BOTH;
         gc.weighty = 1.0;
@@ -98,8 +98,8 @@ public class OpenLocationAction extends JosmAction {
         dialog.configureContextsensitiveHelp("/Action/OpenLocation", true /* show help button */);
         dialog.showDialog();
         if (dialog.getValue() != 1) return;
-        remindUploadAddressHistory(uploadAdresses);
-        openUrl(layer.isSelected(), uploadAdresses.getText());
+        remindUploadAddressHistory(uploadAddresses);
+        openUrl(layer.isSelected(), uploadAddresses.getText());
     }
 
     /**

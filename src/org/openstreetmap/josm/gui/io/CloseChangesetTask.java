@@ -22,7 +22,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class CloseChangesetTask extends PleaseWaitRunnable {
-    private boolean cancelled;
+    private boolean canceled;
     private Exception lastException;
     private Collection<Changeset> changesets;
     private ArrayList<Changeset> closedChangesets;
@@ -45,13 +45,13 @@ public class CloseChangesetTask extends PleaseWaitRunnable {
 
     @Override
     protected void cancel() {
-        this.cancelled = true;
+        this.canceled = true;
         OsmApi.getOsmApi().cancel();
     }
 
     @Override
     protected void finish() {
-        if (cancelled)
+        if (canceled)
             return;
         if (lastException != null) {
             ExceptionDialogUtil.explainException(lastException);
@@ -69,7 +69,7 @@ public class CloseChangesetTask extends PleaseWaitRunnable {
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         try {
             for (Changeset cs: changesets) {
-                if (cancelled) return;
+                if (canceled) return;
                 if (cs == null || cs.getId() <= 0 || ! cs.isOpen()) {
                     continue;
                 }
@@ -78,7 +78,7 @@ public class CloseChangesetTask extends PleaseWaitRunnable {
                 closedChangesets.add(cs);
             }
         } catch(Exception e) {
-            if (cancelled)
+            if (canceled)
                 return;
             lastException = e;
         }

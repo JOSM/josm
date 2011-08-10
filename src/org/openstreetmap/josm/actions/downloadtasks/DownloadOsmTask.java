@@ -20,7 +20,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
-import org.openstreetmap.josm.io.OsmTransferCancelledException;
+import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
 
@@ -88,10 +88,10 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 dataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             } catch(Exception e) {
                 if (isCanceled()) {
-                    System.out.println(tr("Ignoring exception because download has been cancelled. Exception was: {0}", e.toString()));
+                    System.out.println(tr("Ignoring exception because download has been canceled. Exception was: {0}", e.toString()));
                     return;
                 }
-                if (e instanceof OsmTransferCancelledException) {
+                if (e instanceof OsmTransferCanceledException) {
                     setCanceled(true);
                     return;
                 } else if (e instanceof OsmTransferException) {

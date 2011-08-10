@@ -353,7 +353,7 @@ public class PluginHandler {
     /**
      * Alerts the user if a plugin required by another plugin is missing
      *
-     * @param plugin the the plugin
+     * @param plugin the plugin
      * @param missingRequiredPlugin the missing required plugin
      */
     private static void alertMissingRequiredPlugin(Window parent, String plugin, Set<String> missingRequiredPlugin) {

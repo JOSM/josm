@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * This is the model for resolving conflicts in the properties of the
- * {@see OsmPrimitive}s. In particular, it represents conflicts in the coordiates of {@see Node}s and
+ * {@see OsmPrimitive}s. In particular, it represents conflicts in the coordinates of {@see Node}s and
  * the deleted or visible state of {@see OsmPrimitive}s.
  *
  * This model is an {@see Observable}. It notifies registered {@see Observer}s whenever the

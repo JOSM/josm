@@ -393,7 +393,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     class KeepMyCoordinatesAction extends AbstractAction implements Observer {
         public KeepMyCoordinatesAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagkeepmine"));
-            putValue(Action.SHORT_DESCRIPTION, tr("Keep my coordiates"));
+            putValue(Action.SHORT_DESCRIPTION, tr("Keep my coordinates"));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -408,7 +408,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     class KeepTheirCoordinatesAction extends AbstractAction implements Observer {
         public KeepTheirCoordinatesAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagkeeptheir"));
-            putValue(Action.SHORT_DESCRIPTION, tr("Keep their coordiates"));
+            putValue(Action.SHORT_DESCRIPTION, tr("Keep their coordinates"));
         }
 
         public void actionPerformed(ActionEvent e) {

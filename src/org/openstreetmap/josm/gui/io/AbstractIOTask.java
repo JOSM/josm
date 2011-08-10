@@ -7,35 +7,35 @@ package org.openstreetmap.josm.gui.io;
  */
 public abstract class AbstractIOTask implements Runnable {
 
-    /** indicates whether the task has been cancelled */
-    private boolean cancelled;
+    /** indicates whether the task has been canceled */
+    private boolean canceled;
     /** indicates whether the task has been failed */
     private boolean failed;
     /** the last exception caught */
     private Exception lastException;
 
     public AbstractIOTask() {
-        cancelled = false;
+        canceled = false;
         failed = false;
         lastException = null;
     }
 
     /**
-     * Replies true if the task has been cancelled
+     * Replies true if the task has been canceled
      *
-     * @return true if the task has been cancelled
+     * @return true if the task has been canceled
      */
-    public boolean isCancelled() {
-        return cancelled;
+    public boolean isCanceled() {
+        return canceled;
     }
 
     /**
-     * Set whether this task has been cancelled
+     * Set whether this task has been canceled
      *
-     * @param cancelled true, if the task has been cancelled; false otherwise
+     * @param canceled true, if the task has been canceled; false otherwise
      */
-    protected void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
+    protected void setCanceled(boolean canceled) {
+        this.canceled = canceled;
     }
 
     /**
@@ -76,12 +76,12 @@ public abstract class AbstractIOTask implements Runnable {
 
     /**
      * Replies true if this  task was successful, i.e. if it wasn't
-     * cancelled and didn't fail
+     * canceled and didn't fail
      *
      * @return true if this  task was successful
      */
     public boolean isSuccessful() {
-        return !isCancelled() && !isFailed();
+        return !isCanceled() && !isFailed();
     }
 
     /**

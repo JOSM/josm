@@ -196,8 +196,8 @@ public class SaveLayersModel extends DefaultTableModel {
     public int getNumCancel() {
         int ret = 0;
         for (SaveLayerInfo info: layerInfo) {
-            if (UploadOrSaveState.CANCELLED.equals(info.getSaveState())
-                    || UploadOrSaveState.CANCELLED.equals(info.getUploadState())) {
+            if (UploadOrSaveState.CANCELED.equals(info.getSaveState())
+                    || UploadOrSaveState.CANCELED.equals(info.getUploadState())) {
                 ret++;
             }
         }

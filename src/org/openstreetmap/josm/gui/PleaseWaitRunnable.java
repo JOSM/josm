@@ -22,7 +22,7 @@ import org.xml.sax.SAXException;
  * @author Imi
  */
 public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
-    private boolean cancelled = false;
+    private boolean canceled = false;
     private boolean ignoreException;
     private final String title;
 
@@ -112,7 +112,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
     }
 
     public final void run() {
-        if (cancelled)
+        if (canceled)
             return; // since realRun isn't executed, do not call to finish
 
         if (EventQueue.isDispatchThread()) {

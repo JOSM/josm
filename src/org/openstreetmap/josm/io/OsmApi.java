@@ -145,7 +145,7 @@ public class OsmApi extends OsmConnection {
         return version;
     }
 
-    public void initialize(ProgressMonitor monitor) throws OsmApiInitializationException, OsmTransferCancelledException {
+    public void initialize(ProgressMonitor monitor) throws OsmApiInitializationException, OsmTransferCanceledException {
         initialize(monitor, false);
     }
     /**
@@ -155,7 +155,7 @@ public class OsmApi extends OsmConnection {
      * @param fastFail true to request quick initialisation with a small timeout (more likely to throw exception)
      * @exception OsmApiInitializationException thrown, if an exception occurs
      */
-    public void initialize(ProgressMonitor monitor, boolean fastFail) throws OsmApiInitializationException, OsmTransferCancelledException {
+    public void initialize(ProgressMonitor monitor, boolean fastFail) throws OsmApiInitializationException, OsmTransferCanceledException {
         if (initialized)
             return;
         cancel = false;
@@ -212,7 +212,7 @@ public class OsmApi extends OsmConnection {
         } catch(ParserConfigurationException e) {
             initialized = false;
             throw new OsmApiInitializationException(e);
-        } catch(OsmTransferCancelledException e){
+        } catch(OsmTransferCanceledException e){
             throw e;
         } catch(OsmTransferException e) {
             initialized = false;
@@ -476,14 +476,14 @@ public class OsmApi extends OsmConnection {
         }
     }
 
-    private void sleepAndListen(int retry, ProgressMonitor monitor) throws OsmTransferCancelledException {
+    private void sleepAndListen(int retry, ProgressMonitor monitor) throws OsmTransferCanceledException {
         System.out.print(tr("Waiting 10 seconds ... "));
         for(int i=0; i < 10; i++) {
             if (monitor != null) {
                 monitor.setCustomText(tr("Starting retry {0} of {1} in {2} seconds ...", getMaxRetries() - retry,getMaxRetries(), 10-i));
             }
             if (cancel)
-                throw new OsmTransferCancelledException();
+                throw new OsmTransferCanceledException();
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {}
@@ -645,7 +645,7 @@ public class OsmApi extends OsmConnection {
                 throw new OsmTransferException(e);
             } catch(IOException e){
                 throw new OsmTransferException(e);
-            } catch(OsmTransferCancelledException e){
+            } catch(OsmTransferCanceledException e){
                 throw e;
             } catch(OsmTransferException e) {
                 throw e;

@@ -46,7 +46,7 @@ import org.xml.sax.SAXException;
  */
 public class HistoryLoadTask extends PleaseWaitRunnable {
 
-    private boolean cancelled = false;
+    private boolean canceled = false;
     private Exception lastException  = null;
     private HashSet<PrimitiveId> toLoad;
     private HistoryDataSet loadedData;
@@ -159,12 +159,12 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     @Override
     protected void cancel() {
         OsmApi.getOsmApi().cancel();
-        cancelled = true;
+        canceled = true;
     }
 
     @Override
     protected void finish() {
-        if (isCancelled())
+        if (isCanceled())
             return;
         if (lastException != null) {
             ExceptionDialogUtil.explainException(lastException);
@@ -178,7 +178,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
         loadedData = new HistoryDataSet();
         try {
             for(PrimitiveId pid: toLoad) {
-                if (cancelled) {
+                if (canceled) {
                     break;
                 }
                 String msg = "";
@@ -195,7 +195,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
                     reader = new OsmServerHistoryReader(pid.getType(), pid.getUniqueId());
                     ds = reader.parseHistory(progressMonitor.createSubTaskMonitor(1, false));
                 } catch(OsmTransferException e) {
-                    if (cancelled)
+                    if (canceled)
                         return;
                     throw e;
                 }
@@ -207,8 +207,8 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
         }
     }
 
-    public boolean isCancelled() {
-        return cancelled;
+    public boolean isCanceled() {
+        return canceled;
     }
 
     public Exception getLastException() {

@@ -216,7 +216,7 @@ public class Test extends AbstractVisitor
         return name;
     }
 
-    public boolean isCancelled() {
-        return progressMonitor.isCancelled();
+    public boolean isCanceled() {
+        return progressMonitor.isCanceled();
     }
 }

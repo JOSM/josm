@@ -109,7 +109,7 @@ public class Version {
                 version = Integer.parseInt(value);
             } catch(NumberFormatException e) {
                 version = 0;
-                System.err.println(tr("Warning: unexpected JOSM version number in revison file, value is ''{0}''", value));
+                System.err.println(tr("Warning: unexpected JOSM version number in revision file, value is ''{0}''", value));
             }
         } else {
             version = JOSM_UNKNOWN_VERSION;

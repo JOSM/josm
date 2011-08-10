@@ -86,7 +86,7 @@ public class OpenFileAction extends DiskAccessAction {
         private List<File> files;
         private List<File> successfullyOpenedFiles = new ArrayList<File>();
         private FileFilter fileFilter;
-        private boolean cancelled;
+        private boolean canceled;
         private boolean recordHistory = false;
 
         public OpenFileTask(List<File> files, FileFilter fileFilter, String title) {
@@ -113,7 +113,7 @@ public class OpenFileAction extends DiskAccessAction {
 
         @Override
         protected void cancel() {
-            this.cancelled = true;
+            this.canceled = true;
         }
 
         @Override
@@ -290,7 +290,7 @@ public class OpenFileAction extends DiskAccessAction {
 
         public void importData(FileImporter importer, List<File> files) {
             if (importer.isBatchImporter()) {
-                if (cancelled) return;
+                if (canceled) return;
                 String msg;
                 if (files.size() == 1) {
                     msg = tr("Opening 1 file...");
@@ -304,7 +304,7 @@ public class OpenFileAction extends DiskAccessAction {
                 }
             } else {
                 for (File f : files) {
-                    if (cancelled) return;
+                    if (canceled) return;
                     getProgressMonitor().indeterminateSubTask(tr("Opening file ''{0}'' ...", f.getAbsolutePath()));
                     if (importer.importDataHandleExceptions(f, getProgressMonitor().createSubTaskMonitor(1, false))) {
                         successfullyOpenedFiles.add(f);

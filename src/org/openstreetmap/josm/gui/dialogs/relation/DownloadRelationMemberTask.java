@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class DownloadRelationMemberTask extends PleaseWaitRunnable {
-    private boolean cancelled;
+    private boolean canceled;
     private Exception lastException;
     private final Set<Relation> parents = new HashSet<Relation>();
     private Collection<OsmPrimitive> children;
@@ -71,7 +71,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
 
     @Override
     protected void cancel() {
-        cancelled = true;
+        canceled = true;
         synchronized(this) {
             if (objectReader != null) {
                 objectReader.cancel();
@@ -82,7 +82,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
     @Override
     protected void finish() {
         Main.map.repaint();
-        if (cancelled)
+        if (canceled)
             return;
         if (lastException != null) {
             ExceptionDialogUtil.explainException(lastException);
@@ -104,7 +104,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
                     parent.getDisplayName(DefaultNameFormatter.getInstance()));
         } else {
             return trn("Downloading {0} incomplete child of {1} parent relations",
-                    "Downloading {0} incomplete children of  {1} parent relations",
+                    "Downloading {0} incomplete children of {1} parent relations",
                     children.size(),
                     children.size(),
                     parents.size());
@@ -115,7 +115,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         try {
             synchronized (this) {
-                if (cancelled) return;
+                if (canceled) return;
                 objectReader = new MultiFetchServerObjectReader();
             }
             objectReader.append(children);
@@ -128,7 +128,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
                 return;
             dataSet.deleteInvisible();
             synchronized (this) {
-                if (cancelled) return;
+                if (canceled) return;
                 objectReader = null;
             }
 
@@ -142,8 +142,8 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
             );
 
         } catch (Exception e) {
-            if (cancelled) {
-                System.out.println(tr("Warning: Ignoring exception because task was cancelled. Exception: {0}", e
+            if (canceled) {
+                System.out.println(tr("Warning: Ignoring exception because task was canceled. Exception: {0}", e
                         .toString()));
                 return;
             }

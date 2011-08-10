@@ -69,7 +69,7 @@ public class PluginInformation {
 
     /**
      * Creates a plugin information object for the plugin with name {@code name}.
-     * Information about the plugin is extracted from the maifest file in the the plugin jar
+     * Information about the plugin is extracted from the maifest file in the plugin jar
      * {@code file}.
      * @param file the plugin jar
      * @param name the plugin name
