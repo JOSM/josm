@@ -73,7 +73,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
         rbVersionBasedUpatePolicy.put(Policy.ASK, btn);
         bgVersionBasedUpdatePolicy.add(btn);
 
-        btn = new JRadioButton(tr("Always update withouth asking"));
+        btn = new JRadioButton(tr("Always update without asking"));
         rbVersionBasedUpatePolicy.put(Policy.ALWAYS, btn);
         bgVersionBasedUpdatePolicy.add(btn);
 
@@ -115,7 +115,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
         rbTimeBasedUpatePolicy.put(Policy.ASK, btn);
         bgTimeBasedUpdatePolicy.add(btn);
 
-        btn = new JRadioButton(tr("Always update withouth asking"));
+        btn = new JRadioButton(tr("Always update without asking"));
         btn.addChangeListener(changeListener);
         rbTimeBasedUpatePolicy.put(Policy.ALWAYS, btn);
         bgTimeBasedUpdatePolicy.add(btn);

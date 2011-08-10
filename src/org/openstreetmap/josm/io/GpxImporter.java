@@ -55,7 +55,7 @@ public class GpxImporter extends FileImporter {
                         }
                     }
                     if (!parsedProperly) {
-                        JOptionPane.showMessageDialog(null, tr("Error occured while parsing gpx file {0}. Only part of the file will be available", file.getName()));
+                        JOptionPane.showMessageDialog(null, tr("Error occurred while parsing gpx file {0}. Only a part of the file will be available.", file.getName()));
                     }
                 }
             };

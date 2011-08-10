@@ -19,7 +19,7 @@ import org.openstreetmap.josm.data.osm.ChangesetDataSet;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.io.OsmServerChangesetReader;
-import org.openstreetmap.josm.io.OsmTransferCancelledException;
+import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
 
@@ -185,8 +185,8 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
                 downloadedChangesets.add(cs);
                 getProgressMonitor().worked(1);
             }
-        } catch(OsmTransferCancelledException e) {
-            // the download was cancelled by the user. This exception is caught if the
+        } catch(OsmTransferCanceledException e) {
+            // the download was canceled by the user. This exception is caught if the
             // user canceled the authentication dialog.
             //
             canceled = true;

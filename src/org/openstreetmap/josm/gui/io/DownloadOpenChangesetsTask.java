@@ -29,7 +29,7 @@ import org.xml.sax.SAXException;
  */
 public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
 
-    private boolean cancelled;
+    private boolean canceled;
     private OsmServerChangesetReader reader;
     private List<Changeset> changesets;
     private Exception lastException;
@@ -47,7 +47,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
 
     @Override
     protected void cancel() {
-        this.cancelled = true;
+        this.canceled = true;
         synchronized(this) {
             if (reader != null) {
                 reader.cancel();
@@ -70,7 +70,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
             );
             return;
         }
-        if (cancelled)return;
+        if (canceled)return;
         if (lastException != null) {
             ExceptionDialogUtil.explainException(lastException);
             return;
@@ -132,7 +132,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
             } else if (im.isPartiallyIdentified()) {
                 refreshUserIdentity();
             }
-            if (cancelled)return;
+            if (canceled)return;
             synchronized(this) {
                 reader = new OsmServerChangesetReader();
             }
@@ -154,13 +154,13 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
                     getProgressMonitor().createSubTaskMonitor(1, false /* not internal */)
             );
         } catch(Exception e) {
-            if (cancelled)
+            if (canceled)
                 return;
             lastException = e;
         }
     }
 
-    public boolean isCancelled() {
-        return cancelled;
+    public boolean isCanceled() {
+        return canceled;
     }
 }

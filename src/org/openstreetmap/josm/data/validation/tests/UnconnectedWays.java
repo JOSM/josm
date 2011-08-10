@@ -101,7 +101,7 @@ public class UnconnectedWays extends Test {
                     // the ways to which 'en' belongs are not connected to 's.w'.
                     map.put(en, s.w);
                 }
-                if(isCancelled())
+                if(isCanceled())
                     return;
             }
         }
@@ -113,7 +113,7 @@ public class UnconnectedWays extends Test {
         }
         map.clear();
         for (MyWaySegment s : ways) {
-            if(isCancelled())
+            if(isCanceled())
                 return;
             for (Node en : s.nearbyNodes(mindist)) {
                 if (endnodes_highway.contains(en) && !s.highway && !s.isArea()) {
@@ -133,7 +133,7 @@ public class UnconnectedWays extends Test {
         if (minmiddledist > 0.0) {
             map.clear();
             for (MyWaySegment s : ways) {
-                if(isCancelled())
+                if(isCanceled())
                     return;
                 for (Node en : s.nearbyNodes(minmiddledist)) {
                     if (!middlenodes.contains(en)) {
@@ -153,7 +153,7 @@ public class UnconnectedWays extends Test {
             map.clear();
             for (MyWaySegment s : ways) {
                 for (Node en : s.nearbyNodes(minmiddledist)) {
-                    if(isCancelled())
+                    if(isCanceled())
                         return;
                     if (!othernodes.contains(en)) {
                         continue;

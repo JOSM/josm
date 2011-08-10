@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class MapRendererFactory {
 
-    /** preference key for the the renderer class name. Default: class name for {@link StyledMapRenderer}
+    /** preference key for the renderer class name. Default: class name for {@link StyledMapRenderer}
      * 
      */
     static public final String PREF_KEY_RENDERER_CLASS_NAME = "mappaint.renderer-class-name";

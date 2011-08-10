@@ -90,7 +90,7 @@ public class OsmChangeBuilder {
     public void append(Collection<? extends IPrimitive> primitives) throws IllegalStateException{
         if (primitives == null) return;
         if (!prologWritten)
-            throw new IllegalStateException(tr("Prolog of OsmChange document not written yet. Please write frst."));
+            throw new IllegalStateException(tr("Prolog of OsmChange document not written yet. Please write first."));
         for (IPrimitive p : primitives) {
             write(p);
         }
@@ -108,7 +108,7 @@ public class OsmChangeBuilder {
     public void append(IPrimitive p) {
         if (p == null) return;
         if (!prologWritten)
-            throw new IllegalStateException(tr("Prolog of OsmChange document not written yet. Please write frst."));
+            throw new IllegalStateException(tr("Prolog of OsmChange document not written yet. Please write first."));
         write(p);
     }
 
@@ -119,7 +119,7 @@ public class OsmChangeBuilder {
      */
     public void finish() throws IllegalStateException {
         if (!prologWritten)
-            throw new IllegalStateException(tr("Prolog of OsmChange document not written yet. Please write frst."));
+            throw new IllegalStateException(tr("Prolog of OsmChange document not written yet. Please write first."));
         if (currentMode != null) {
             writer.print("</");
             writer.print(currentMode);

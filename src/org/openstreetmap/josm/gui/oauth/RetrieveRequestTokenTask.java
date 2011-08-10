@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.io.OsmTransferCancelledException;
+import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.xml.sax.SAXException;
@@ -77,7 +77,7 @@ public class RetrieveRequestTokenTask extends PleaseWaitRunnable {
                 client = new OsmOAuthAuthorizationClient(parameters);
             }
             requestToken = client.getRequestToken(getProgressMonitor().createSubTaskMonitor(0, false));
-        } catch(OsmTransferCancelledException e) {
+        } catch(OsmTransferCanceledException e) {
             return;
         } catch (OsmOAuthAuthorizationException e) {
             e.printStackTrace();

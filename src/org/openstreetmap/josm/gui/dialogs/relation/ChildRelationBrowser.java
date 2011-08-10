@@ -277,7 +277,7 @@ public class ChildRelationBrowser extends JPanel {
      *
      */
     class DownloadAllChildrenTask extends PleaseWaitRunnable {
-        private boolean cancelled;
+        private boolean canceled;
         private int conflictsCount;
         private Exception lastException;
         private Relation relation;
@@ -298,7 +298,7 @@ public class ChildRelationBrowser extends JPanel {
 
         @Override
         protected void cancel() {
-            cancelled = true;
+            canceled = true;
             OsmApi.getOsmApi().cancel();
         }
 
@@ -313,7 +313,7 @@ public class ChildRelationBrowser extends JPanel {
 
         @Override
         protected void finish() {
-            if (cancelled)
+            if (canceled)
                 return;
             if (lastException != null) {
                 ExceptionDialogUtil.explainException(lastException);
@@ -390,7 +390,7 @@ public class ChildRelationBrowser extends JPanel {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                while(! relationsToDownload.isEmpty() && !cancelled) {
+                while(! relationsToDownload.isEmpty() && !canceled) {
                     Relation r = relationsToDownload.pop();
                     if (r.isNew()) {
                         continue;
@@ -414,8 +414,8 @@ public class ChildRelationBrowser extends JPanel {
                     refreshView(r);
                 }
             } catch (Exception e) {
-                if (cancelled) {
-                    System.out.println(tr("Warning: Ignoring exception because task was cancelled. Exception: {0}", e
+                if (canceled) {
+                    System.out.println(tr("Warning: Ignoring exception because task was canceled. Exception: {0}", e
                             .toString()));
                     return;
                 }
@@ -428,7 +428,7 @@ public class ChildRelationBrowser extends JPanel {
      * The asynchronous task for downloading a set of relations
      */
     class DownloadRelationSetTask extends PleaseWaitRunnable {
-        private boolean cancelled;
+        private boolean canceled;
         private int conflictsCount;
         private Exception lastException;
         private Set<Relation> relations;
@@ -444,7 +444,7 @@ public class ChildRelationBrowser extends JPanel {
 
         @Override
         protected void cancel() {
-            cancelled = true;
+            canceled = true;
             OsmApi.getOsmApi().cancel();
         }
 
@@ -459,7 +459,7 @@ public class ChildRelationBrowser extends JPanel {
 
         @Override
         protected void finish() {
-            if (cancelled)
+            if (canceled)
                 return;
             if (lastException != null) {
                 ExceptionDialogUtil.explainException(lastException);
@@ -493,7 +493,7 @@ public class ChildRelationBrowser extends JPanel {
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
                 Iterator<Relation> it = relations.iterator();
-                while(it.hasNext() && !cancelled) {
+                while(it.hasNext() && !canceled) {
                     Relation r = it.next();
                     if (r.isNew()) {
                         continue;
@@ -507,8 +507,8 @@ public class ChildRelationBrowser extends JPanel {
                     refreshView(r);
                 }
             } catch (Exception e) {
-                if (cancelled) {
-                    System.out.println(tr("Warning: Ignoring exception because task was cancelled. Exception: {0}", e
+                if (canceled) {
+                    System.out.println(tr("Warning: Ignoring exception because task was canceled. Exception: {0}", e
                             .toString()));
                     return;
                 }

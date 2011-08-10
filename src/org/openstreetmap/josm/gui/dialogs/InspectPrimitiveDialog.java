@@ -328,7 +328,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             return tr("xml");
         if (s instanceof MapCSSStyleSource)
             return tr("mapcss");
-        return tr("unkown");
+        return tr("unknown");
     }
 
 }

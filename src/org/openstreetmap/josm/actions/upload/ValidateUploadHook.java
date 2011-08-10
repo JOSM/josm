@@ -132,7 +132,7 @@ public class ValidateUploadHook implements UploadHook
         p.add(new JScrollPane(errorPanel), GBC.eol().fill(GBC.BOTH));
 
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
-                tr("Supicious data found. Upload anyway?"),
+                tr("Suspicious data found. Upload anyway?"),
                 new String[] {tr("Continue upload"), tr("Cancel")});
         ed.setButtonIcons(new String[] {"ok.png", "cancel.png"});
         ed.setContent(p);

@@ -42,7 +42,7 @@ public class NullProgressMonitor implements ProgressMonitor {
     public void invalidate() {
     }
 
-    public boolean isCancelled() {
+    public boolean isCanceled() {
         return false;
     }
 

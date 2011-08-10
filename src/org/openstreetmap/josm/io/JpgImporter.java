@@ -41,7 +41,7 @@ public class JpgImporter extends FileImporter {
             Set<String> visitedDirs = new HashSet<String>();
             addRecursiveFiles(files, visitedDirs, sel, progressMonitor.createSubTaskMonitor(1, true));
 
-            if (progressMonitor.isCancelled())
+            if (progressMonitor.isCanceled())
                 return;
 
             if (files.isEmpty())
@@ -55,7 +55,7 @@ public class JpgImporter extends FileImporter {
 
     private void addRecursiveFiles(List<File> files, Set<String> visitedDirs, List<File> sel, ProgressMonitor progressMonitor) throws IOException {
 
-        if (progressMonitor.isCancelled())
+        if (progressMonitor.isCanceled())
             return;
 
         progressMonitor.beginTask(null, sel.size());

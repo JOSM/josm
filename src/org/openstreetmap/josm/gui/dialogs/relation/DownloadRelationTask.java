@@ -27,7 +27,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class DownloadRelationTask extends PleaseWaitRunnable {
-    private boolean cancelled;
+    private boolean canceled;
     private Exception lastException;
     private Collection<Relation> relations;
     private OsmDataLayer layer;
@@ -51,7 +51,7 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
 
     @Override
     protected void cancel() {
-        cancelled = true;
+        canceled = true;
         synchronized(this) {
             if (objectReader != null) {
                 objectReader.cancel();
@@ -61,7 +61,7 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
 
     @Override
     protected void finish() {
-        if (cancelled)
+        if (canceled)
             return;
         if (lastException != null) {
             ExceptionDialogUtil.explainException(lastException);
@@ -78,7 +78,7 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
                 i++;
                 getProgressMonitor().setCustomText(tr("({0}/{1}): Downloading relation ''{2}''...", i,relations.size(),relation.getDisplayName(DefaultNameFormatter.getInstance())));
                 synchronized (this) {
-                    if (cancelled) return;
+                    if (canceled) return;
                     objectReader = new OsmServerObjectReader(relation.getPrimitiveId(), true /* full download */);
                 }
                 DataSet dataSet = objectReader.parseOsm(
@@ -87,7 +87,7 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
                 if (dataSet == null)
                     return;
                 synchronized (this) {
-                    if (cancelled) return;
+                    if (canceled) return;
                     objectReader = null;
                 }
                 DataSetMerger merger = new DataSetMerger(allDownloads, dataSet);
@@ -105,8 +105,8 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
                     }
             );
         } catch (Exception e) {
-            if (cancelled) {
-                System.out.println(tr("Warning: Ignoring exception because task was cancelled. Exception: {0}", e
+            if (canceled) {
+                System.out.println(tr("Warning: Ignoring exception because task was canceled. Exception: {0}", e
                         .toString()));
                 return;
             }

@@ -28,7 +28,7 @@ import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiPrimitiveGoneException;
 import org.openstreetmap.josm.io.OsmServerWriter;
-import org.openstreetmap.josm.io.OsmTransferCancelledException;
+import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.SAXException;
@@ -38,7 +38,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class UploadPrimitivesTask extends  AbstractUploadTask {
-    private boolean uploadCancelled = false;
+    private boolean uploadCanceled = false;
     private Exception lastException = null;
     private APIDataSet toUpload;
     private OsmServerWriter writer;
@@ -235,9 +235,9 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                     // if we get here we've successfully uploaded the data. Exit the loop.
                     //
                     break;
-                } catch(OsmTransferCancelledException e) {
+                } catch(OsmTransferCanceledException e) {
                     e.printStackTrace();
-                    uploadCancelled = true;
+                    uploadCanceled = true;
                     break uploadloop;
                 } catch(OsmApiPrimitiveGoneException e) {
                     // try to recover from  410 Gone
@@ -282,18 +282,18 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
             OsmApi.getOsmApi().closeChangeset(changeset, progressMonitor.createSubTaskMonitor(0, false));
         }
         } catch (Exception e) {
-            if (uploadCancelled) {
+            if (uploadCanceled) {
                 System.out.println(tr("Ignoring caught exception because upload is canceled. Exception is: {0}", e.toString()));
             } else {
                 lastException = e;
             }
         }
-        if (uploadCancelled && processedPrimitives.isEmpty()) return;
+        if (uploadCanceled && processedPrimitives.isEmpty()) return;
         cleanupAfterUpload();
     }
 
     @Override protected void finish() {
-        if (uploadCancelled)
+        if (uploadCanceled)
             return;
 
         // depending on the success of the upload operation and on the policy for
@@ -352,7 +352,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
     }
 
     @Override protected void cancel() {
-        uploadCancelled = true;
+        uploadCanceled = true;
         synchronized(this) {
             if (writer != null) {
                 writer.cancel();

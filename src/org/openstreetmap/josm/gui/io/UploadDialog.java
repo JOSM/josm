@@ -182,7 +182,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         addWindowListener(new WindowEventHandler());
 
 
-        // make sure the the configuration panels listen to each other
+        // make sure the configuration panels listen to each other
         // changes
         //
         pnlChangesetManagement.addPropertyChangeListener(

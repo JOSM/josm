@@ -50,7 +50,7 @@ public class TagTable extends JTable  {
     /** the table cell editor used by this table */
     private TagCellEditor editor = null;
 
-    /** a list of components to which focus can be transferred withouth stopping
+    /** a list of components to which focus can be transferred without stopping
      * cell editing this table.
      */
     private final CopyOnWriteArrayList<Component> doNotStopCellEditingWhenFocused = new CopyOnWriteArrayList<Component>();

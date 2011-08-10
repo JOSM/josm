@@ -74,7 +74,7 @@ public class CloseChangesetAction extends JosmAction{
 
     private class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
 
-        private boolean cancelled;
+        private boolean canceled;
         private OsmServerChangesetReader reader;
         private List<Changeset> changesets;
         private Exception lastException;
@@ -91,7 +91,7 @@ public class CloseChangesetAction extends JosmAction{
 
         @Override
         protected void cancel() {
-            this.cancelled = true;
+            this.canceled = true;
             reader.cancel();
         }
 
@@ -104,7 +104,7 @@ public class CloseChangesetAction extends JosmAction{
                                 ExceptionDialogUtil.explainException(lastException);
                             }
                             ChangesetCache.getInstance().update(changesets);
-                            if (!cancelled && lastException == null) {
+                            if (!canceled && lastException == null) {
                                 onPostDownloadOpenChangesets();
                             }
                         }
@@ -128,7 +128,7 @@ public class CloseChangesetAction extends JosmAction{
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
                 userInfo = fetchUserInfo();
-                if (cancelled)
+                if (canceled)
                     return;
                 reader = new OsmServerChangesetReader();
                 ChangesetQuery query = new ChangesetQuery().forUser(userInfo.getId()).beingOpen(true);
@@ -137,14 +137,14 @@ public class CloseChangesetAction extends JosmAction{
                         getProgressMonitor().createSubTaskMonitor(1, false /* not internal */)
                 );
             } catch(Exception e) {
-                if (cancelled)
+                if (canceled)
                     return;
                 lastException = e;
             }
         }
 
-        public boolean isCancelled() {
-            return cancelled;
+        public boolean isCanceled() {
+            return canceled;
         }
 
         public Exception getLastException() {

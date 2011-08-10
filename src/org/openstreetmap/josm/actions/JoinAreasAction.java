@@ -365,7 +365,7 @@ public class JoinAreasAction extends JosmAction {
 
         if (!resolveTagConflicts(areas))
             return;
-        //user cancelled, do nothing.
+        //user canceled, do nothing.
 
         try {
             JoinAreasResult result = joinAreas(areas);
@@ -569,7 +569,7 @@ public class JoinAreasAction extends JosmAction {
         //
         if (!completeWayTags.isApplicableToPrimitive() || !parentRelations.isEmpty()) {
             dialog.setVisible(true);
-            if (dialog.isCancelled())
+            if (dialog.isCanceled())
                 return false;
         }
 

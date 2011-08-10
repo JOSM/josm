@@ -247,7 +247,7 @@ public class MergeNodesAction extends JosmAction {
         //
         if (! nodeTags.isApplicableToPrimitive() || relationToNodeReferences.size() > 1) {
             dialog.setVisible(true);
-            if (dialog.isCancelled())
+            if (dialog.isCanceled())
                 return null;
         }
         LinkedList<Command> cmds = new LinkedList<Command>();

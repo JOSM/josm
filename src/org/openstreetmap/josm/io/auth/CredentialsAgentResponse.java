@@ -28,7 +28,7 @@ public class CredentialsAgentResponse {
     public boolean isCanceled() {
         return canceled;
     }
-    public void setCanceled(boolean cancelled) {
-        this.canceled = cancelled;
+    public void setCanceled(boolean canceled) {
+        this.canceled = canceled;
     }
 }

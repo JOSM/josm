@@ -241,9 +241,9 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     }
 
     /**
-     * Replies true if the task was cancelled by the user
+     * Replies true if the task was canceled by the user
      *
-     * @return true if the task was cancelled by the user
+     * @return true if the task was canceled by the user
      */
     public boolean isCanceled() {
         return canceled;

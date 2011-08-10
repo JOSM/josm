@@ -528,7 +528,7 @@ public class Preferences {
                 save();
             } catch(IOException e1) {
                 e1.printStackTrace();
-                System.err.println(tr("Warning: Failed to initialize preferences.Failed to reset preference file to default: {0}", getPreferenceFile()));
+                System.err.println(tr("Warning: Failed to initialize preferences. Failed to reset preference file to default: {0}", getPreferenceFile()));
             }
         }
     }

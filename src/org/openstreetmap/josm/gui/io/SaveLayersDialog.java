@@ -49,7 +49,7 @@ public class SaveLayersDialog extends JDialog {
          */
         PROCEED,
         /**
-         * save/upload of layers was not successful or user cancelled
+         * save/upload of layers was not successful or user canceled
          * operation
          */
         CANCEL
@@ -391,7 +391,7 @@ public class SaveLayersDialog extends JDialog {
         private SaveLayersModel model;
         private ProgressMonitor monitor;
         private ExecutorService worker;
-        private boolean cancelled;
+        private boolean canceled;
         private Future<?> currentFuture;
         private AbstractIOTask currentTask;
 
@@ -403,8 +403,8 @@ public class SaveLayersDialog extends JDialog {
 
         protected void uploadLayers(List<SaveLayerInfo> toUpload) {
             for (final SaveLayerInfo layerInfo: toUpload) {
-                if (cancelled) {
-                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.CANCELLED);
+                if (canceled) {
+                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
                     continue;
                 }
                 monitor.subTask(tr("Preparing layer ''{0}'' for upload ...", layerInfo.getName()));
@@ -417,7 +417,7 @@ public class SaveLayersDialog extends JDialog {
                 dialog.setUploadedPrimitives(new APIDataSet(layerInfo.getLayer().data));
                 dialog.setVisible(true);
                 if (dialog.isCanceled()) {
-                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.CANCELLED);
+                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
                     continue;
                 }
                 dialog.rememberUserInput();
@@ -434,14 +434,14 @@ public class SaveLayersDialog extends JDialog {
                     //
                     currentFuture.get();
                 } catch(CancellationException e) {
-                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.CANCELLED);
+                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
                 } catch(Exception e) {
                     e.printStackTrace();
                     model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.FAILED);
                     ExceptionDialogUtil.explainException(e);
                 }
-                if (currentTask.isCancelled()) {
-                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.CANCELLED);
+                if (currentTask.isCanceled()) {
+                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
                 } else if (currentTask.isFailed()) {
                     currentTask.getLastException().printStackTrace();
                     ExceptionDialogUtil.explainException(currentTask.getLastException());
@@ -456,8 +456,8 @@ public class SaveLayersDialog extends JDialog {
 
         protected void saveLayers(List<SaveLayerInfo> toSave) {
             for (final SaveLayerInfo layerInfo: toSave) {
-                if (cancelled) {
-                    model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.CANCELLED);
+                if (canceled) {
+                    model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
                     continue;
                 }
                 currentTask= new SaveLayerTask(layerInfo, monitor);
@@ -468,14 +468,14 @@ public class SaveLayersDialog extends JDialog {
                     //
                     currentFuture.get();
                 } catch(CancellationException e) {
-                    model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.CANCELLED);
+                    model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
                 } catch(Exception e) {
                     e.printStackTrace();
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.FAILED);
                     ExceptionDialogUtil.explainException(e);
                 }
-                if (currentTask.isCancelled()) {
-                    model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.CANCELLED);
+                if (currentTask.isCanceled()) {
+                    model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
                 } else if (currentTask.isFailed()) {
                     if (currentTask.getLastException() != null) {
                         currentTask.getLastException().printStackTrace();
@@ -495,9 +495,9 @@ public class SaveLayersDialog extends JDialog {
             if (numProblems == 0) return;
             String msg = trn(
                     "<html>An upload and/or save operation of one layer with modifications<br>"
-                    + "was cancelled or has failed.</html>",
+                    + "was canceled or has failed.</html>",
                     "<html>Upload and/or save operations of {0} layers with modifications<br>"
-                    + "were cancelled or have failed.</html>",
+                    + "were canceled or have failed.</html>",
                     numProblems,
                     numProblems
             );
@@ -523,7 +523,7 @@ public class SaveLayersDialog extends JDialog {
             if (model.hasUnsavedData()) {
                 warnBecauseOfUnsavedData();
                 model.setMode(Mode.EDITING_DATA);
-                if (cancelled) {
+                if (canceled) {
                     setUserAction(UserAction.CANCEL);
                     closeDialog();
                 }
@@ -537,7 +537,7 @@ public class SaveLayersDialog extends JDialog {
             if (currentTask != null) {
                 currentTask.cancel();
             }
-            cancelled = true;
+            canceled = true;
         }
     }
 }

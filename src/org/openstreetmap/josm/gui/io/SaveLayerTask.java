@@ -51,7 +51,7 @@ class SaveLayerTask extends AbstractIOTask {
                 setFailed(true);
                 return;
             }
-            if (!isCancelled()) {
+            if (!isCanceled()) {
                 layerInfo.getLayer().onPostSaveToFile();
             }
         } catch(Exception e) {
@@ -62,6 +62,6 @@ class SaveLayerTask extends AbstractIOTask {
 
     @Override
     public void cancel() {
-        setCancelled(true);
+        setCanceled(true);
     }
 }

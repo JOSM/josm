@@ -250,9 +250,9 @@ public class OAuthAuthorizationWizard extends JDialog {
     }
 
     /**
-     * Replies true if the dialog was cancelled
+     * Replies true if the dialog was canceled
      *
-     * @return true if the dialog was cancelled
+     * @return true if the dialog was canceled
      */
     public boolean isCanceled() {
         return canceled;

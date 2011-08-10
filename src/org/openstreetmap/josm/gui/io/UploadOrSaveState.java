@@ -11,7 +11,7 @@ public enum UploadOrSaveState {
      */
     FAILED,
     /**
-     * uploading or saving a data layer was cancelled
+     * uploading or saving a data layer was canceled
      */
-    CANCELLED
+    CANCELED
 }

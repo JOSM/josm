@@ -142,7 +142,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
      * Replies the upload state of {@see #getLayer()}.
      * <ul>
      *   <li>{@see UploadOrSaveState#OK} if {@see #getLayer() was successfully uploaded</li>
-     *   <li>{@see UploadOrSaveState#CANCELLED} if uploading {@see #getLayer() was cancelled</li>
+     *   <li>{@see UploadOrSaveState#canceled} if uploading {@see #getLayer() was canceled</li>
      *   <li>{@see UploadOrSaveState#FAILED} if uploading {@see #getLayer() has failed</li>
      * </ul>
      *
@@ -165,7 +165,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
      * Replies the save state of {@see #getLayer()}.
      * <ul>
      *   <li>{@see UploadOrSaveState#OK} if {@see #getLayer() was successfully saved to file</li>
-     *   <li>{@see UploadOrSaveState#CANCELLED} if saving {@see #getLayer() was cancelled</li>
+     *   <li>{@see UploadOrSaveState#canceled} if saving {@see #getLayer() was canceled</li>
      *   <li>{@see UploadOrSaveState#FAILED} if saving {@see #getLayer() has failed</li>
      * </ul>
      *
