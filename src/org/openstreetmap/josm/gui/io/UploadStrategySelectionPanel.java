@@ -331,7 +331,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
             rbStrategy.get(UploadStrategy.CHUNKED_DATASET_STRATEGY).setSelected(true);
             lblNumRequests.get(UploadStrategy.SINGLE_REQUEST_STRATEGY).setVisible(false);
 
-            lblMultiChangesetPoliciesHeader.setText(tr("<html>There are <strong>multiple changesets</strong> necessary in order to upload {0} objects. What strategy do you want to use?</html>", numUploadedObjects));
+            lblMultiChangesetPoliciesHeader.setText(tr("<html>There are <strong>multiple changesets</strong> necessary in order to upload {0} objects. Which strategy do you want to use?</html>", numUploadedObjects));
             if (!rbFillOneChangeset.isSelected() && ! rbUseMultipleChangesets.isSelected()) {
                 rbUseMultipleChangesets.setSelected(true);
             }
