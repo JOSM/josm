@@ -106,7 +106,7 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
             );
         } catch (Exception e) {
             if (cancelled) {
-                System.out.println(tr("Warning: ignoring exception because task is cancelled. Exception: {0}", e
+                System.out.println(tr("Warning: Ignoring exception because task was cancelled. Exception: {0}", e
                         .toString()));
                 return;
             }
