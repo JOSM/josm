@@ -492,13 +492,13 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
         public void startUserInput() {
             if (JosmUserIdentityManager.getInstance().isAnonymous()) {
-                lblRestrictedToMyself.setText("Only changesets owned by myself (disabled. JOSM is currently run by an anonymous user)");
+                lblRestrictedToMyself.setText(tr("Only changesets owned by myself (disabled. JOSM is currently run by an anonymous user)"));
                 rbRestrictToMyself.setEnabled(false);
                 if (rbRestrictToMyself.isSelected()) {
                     rbRestrictToUid.setSelected(true);
                 }
             } else {
-                lblRestrictedToMyself.setText("Only changesets owned by myself");
+                lblRestrictedToMyself.setText(tr("Only changesets owned by myself"));
                 rbRestrictToMyself.setEnabled(true);
                 rbRestrictToMyself.setSelected(true);
             }
