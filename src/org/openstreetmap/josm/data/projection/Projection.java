@@ -13,7 +13,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
  */
 public interface Projection {
     /**
-     * Returns the default zoom scale in pixel per degree ({@see #NavigatableComponent#scale}))
+     * The default scale factor in east/north units per pixel ({@see #NavigatableComponent#scale}))
+     * FIXME: misnomer
      */
     double getDefaultZoomInPPD();
 
