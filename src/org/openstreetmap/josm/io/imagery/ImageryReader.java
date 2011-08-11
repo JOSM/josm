@@ -100,7 +100,7 @@ public class ImageryReader {
         } finally {
             Utils.close(in);
         }
-        Main.warn(tr("Warning: Could not detect type of imagery source '{0}'. Using default (xml).", source));
+        Main.warn(tr("Warning: Could not detect type of imagery source ''{0}''. Using default (xml).", source));
         return true;
     }
 
