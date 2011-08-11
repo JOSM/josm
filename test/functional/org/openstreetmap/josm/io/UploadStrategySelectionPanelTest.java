@@ -53,7 +53,7 @@ public class UploadStrategySelectionPanelTest extends JFrame {
         uploadStrategySelectionPanel.setNumUploadedObjects(51000);
     }
 
-    public static void main(String args[]) throws OsmApiInitializationException, OsmTransferCancelledException{
+    public static void main(String args[]) throws OsmApiInitializationException, OsmTransferCanceledException{
         OsmApi.getOsmApi().initialize(NullProgressMonitor.INSTANCE);
         new UploadStrategySelectionPanelTest().setVisible(true);
     }
