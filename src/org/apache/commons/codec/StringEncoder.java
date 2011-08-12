@@ -21,7 +21,7 @@ package org.apache.commons.codec;
  * Defines common encoding methods for String encoders.
  *
  * @author Apache Software Foundation
- * @version $Id: StringEncoder.java 1080701 2011-03-11 17:52:27Z ggregory $
+ * @version $Id: StringEncoder.java 1157192 2011-08-12 17:27:38Z ggregory $
  */
 public interface StringEncoder extends Encoder {
     

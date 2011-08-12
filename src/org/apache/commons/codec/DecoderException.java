@@ -22,7 +22,7 @@ package org.apache.commons.codec;
  * encounters a decoding specific exception such as invalid data, or characters outside of the expected range.
  * 
  * @author Apache Software Foundation
- * @version $Id: DecoderException.java 1080701 2011-03-11 17:52:27Z ggregory $
+ * @version $Id: DecoderException.java 1157192 2011-08-12 17:27:38Z ggregory $
  */
 public class DecoderException extends Exception {
 

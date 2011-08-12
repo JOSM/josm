@@ -42,7 +42,7 @@ import org.apache.commons.codec.binary.StringUtils;
  * 
  * @author Apache Software Foundation
  * @since 1.3
- * @version $Id: RFC1522Codec.java 1087590 2011-04-01 05:48:27Z ggregory $
+ * @version $Id: RFC1522Codec.java 1157192 2011-08-12 17:27:38Z ggregory $
  */
 abstract class RFC1522Codec {
     

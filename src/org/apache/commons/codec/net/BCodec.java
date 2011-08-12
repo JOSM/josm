@@ -43,7 +43,7 @@ import org.apache.commons.codec.binary.Base64;
  * 
  * @author Apache Software Foundation
  * @since 1.3
- * @version $Id: BCodec.java 1087901 2011-04-01 21:17:22Z ggregory $
+ * @version $Id: BCodec.java 1157192 2011-08-12 17:27:38Z ggregory $
  */
 public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder {
     /**

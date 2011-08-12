@@ -28,7 +28,7 @@ import org.apache.commons.codec.CharEncoding;
  * @see CharEncoding
  * @see <a href="http://download.oracle.com/javase/1.5.0/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
  * @author <a href="mailto:ggregory@seagullsw.com">Gary Gregory</a>
- * @version $Id: StringUtils.java 1087590 2011-04-01 05:48:27Z ggregory $
+ * @version $Id: StringUtils.java 1157192 2011-08-12 17:27:38Z ggregory $
  * @since 1.4
  */
 public class StringUtils {

@@ -50,7 +50,7 @@ package org.apache.commons.codec;
  * @see <a href="http://download.oracle.com/javase/1.5.0/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
  * @author Apache Software Foundation
  * @since 1.4
- * @version $Id: CharEncoding.java 1087590 2011-04-01 05:48:27Z ggregory $
+ * @version $Id: CharEncoding.java 1157192 2011-08-12 17:27:38Z ggregory $
  */
 public class CharEncoding {
     /**

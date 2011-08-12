@@ -29,7 +29,7 @@ import org.apache.commons.codec.binary.StringUtils;
  * Operations to simplify common {@link java.security.MessageDigest} tasks. This class is thread safe.
  * 
  * @author Apache Software Foundation
- * @version $Id: DigestUtils.java 1064793 2011-01-28 17:42:55Z ggregory $
+ * @version $Id: DigestUtils.java 1157192 2011-08-12 17:27:38Z ggregory $
  */
 public class DigestUtils {
 

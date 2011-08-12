@@ -44,7 +44,7 @@ import org.apache.commons.codec.StringEncoder;
  * 
  * @author Apache Software Foundation
  * @since 1.3
- * @version $Id: QCodec.java 1145000 2011-07-11 01:10:36Z ggregory $
+ * @version $Id: QCodec.java 1157192 2011-08-12 17:27:38Z ggregory $
  */
 public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder {
     /**

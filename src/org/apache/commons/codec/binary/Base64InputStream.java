@@ -37,7 +37,7 @@ import java.io.InputStream;
  * </p>
  * 
  * @author Apache Software Foundation 
- * @version $Id: Base64InputStream.java 1064424 2011-01-28 02:02:46Z sebb $
+ * @version $Id: Base64InputStream.java 1157192 2011-08-12 17:27:38Z ggregory $
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
  * @since 1.4
  */

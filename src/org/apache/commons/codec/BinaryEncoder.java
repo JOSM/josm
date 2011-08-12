@@ -21,7 +21,7 @@ package org.apache.commons.codec;
  * Defines common encoding methods for byte array encoders.
  * 
  * @author Apache Software Foundation
- * @version $Id: BinaryEncoder.java 1075406 2011-02-28 16:18:26Z ggregory $
+ * @version $Id: BinaryEncoder.java 1157192 2011-08-12 17:27:38Z ggregory $
  */
 public interface BinaryEncoder extends Encoder {
     
