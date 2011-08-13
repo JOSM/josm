@@ -201,7 +201,7 @@ public class StyledMapRenderer extends AbstractMapRenderer{
 
     @Override
     public void render(final DataSet data, boolean renderVirtualNodes, Bounds bounds) {
-        long start = System.currentTimeMillis();
+        //long start = System.currentTimeMillis();
         BBox bbox = new BBox(bounds);
 
         styles = MapPaintStyles.getStyles();
@@ -225,12 +225,12 @@ public class StyledMapRenderer extends AbstractMapRenderer{
         collectNodeStyles(data, sc, bbox);
         collectWayStyles(data, sc, bbox);
         collectRelationStyles(data, sc, bbox);
-        long phase1 = System.currentTimeMillis();
+        //long phase1 = System.currentTimeMillis();
         sc.drawAll();
         sc = null;
         painter.drawVirtualNodes(data.searchWays(bbox));
 
-        long now = System.currentTimeMillis();
-        System.err.println(String.format("PAINTING TOOK %d [PHASE1 took %d] (at scale %s)", now - start, phase1 - start, circum));
+        //long now = System.currentTimeMillis();
+        //System.err.println(String.format("PAINTING TOOK %d [PHASE1 took %d] (at scale %s)", now - start, phase1 - start, circum));
     }
 }
