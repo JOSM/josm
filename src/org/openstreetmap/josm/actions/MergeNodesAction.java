@@ -1,9 +1,6 @@
 //License: GPL. Copyright 2007 by Immanuel Scholz and others. See LICENSE file for details.
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.combineTigerTags;
-import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.completeTagCollectionForEditing;
-import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.normalizeTagCollectionBeforeEditing;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -24,6 +21,7 @@ import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -34,10 +32,12 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
+import org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
+
 /**
  * Merges a collection of nodes into one node.
  *
@@ -93,21 +93,55 @@ public class MergeNodesAction extends JosmAction {
      * @return the coordinates of this node are later used for the target node
      */
     public static Node selectTargetLocationNode(List<Node> candidates) {
-        if (! Main.pref.getBoolean("merge-nodes.average-location", false)) {
-            Node targetNode = null;
+        int size = candidates.size();
+        if (size == 0)
+            throw new IllegalArgumentException("empty list");
+
+        switch (Main.pref.getInteger("merge-nodes.mode", 0)) {
+        case 0: {
+            Node targetNode = candidates.get(size - 1);
             for (final Node n : candidates) { // pick last one
                 targetNode = n;
             }
             return targetNode;
         }
+        case 1: {
+            double east = 0, north = 0;
+            for (final Node n : candidates) {
+                east += n.getEastNorth().east();
+                north += n.getEastNorth().north();
+            }
 
-        double lat = 0, lon = 0;
-        for (final Node n : candidates) {
-            lat += n.getCoor().lat();
-            lon += n.getCoor().lon();
+            return new Node(new EastNorth(east / size, north / size));
+        }
+        case 2: {
+            final double[] weights = new double[size];
+
+            for (int i = 0; i < size; i++) {
+                final LatLon c1 = candidates.get(i).getCoor();
+                for (int j = i + 1; j < size; j++) {
+                    final LatLon c2 = candidates.get(j).getCoor();
+                    final double d = c1.distance(c2);
+                    weights[i] += d;
+                    weights[j] += d;
+                }
+            }
+
+            double east = 0, north = 0, weight = 0;
+            for (int i = 0; i < size; i++) {
+                final EastNorth en = candidates.get(i).getEastNorth();
+                final double w = weights[i];
+                east += en.east() * w;
+                north += en.north() * w;
+                weight += w;
+            }
+
+            return new Node(new EastNorth(east / weight, north / weight));
+        }
+        default:
+            throw new RuntimeException("unacceptable merge-nodes.mode");
         }
 
-        return new Node(new LatLon(lat / candidates.size(), lon / candidates.size()));
     }
 
     /**
@@ -230,10 +264,10 @@ public class MergeNodesAction extends JosmAction {
         // build the tag collection
         //
         TagCollection nodeTags = TagCollection.unionOfAllPrimitives(nodes);
-        combineTigerTags(nodeTags);
-        normalizeTagCollectionBeforeEditing(nodeTags, nodes);
+        TagConflictResolutionUtil.combineTigerTags(nodeTags);
+        TagConflictResolutionUtil.normalizeTagCollectionBeforeEditing(nodeTags, nodes);
         TagCollection nodeTagsToEdit = new TagCollection(nodeTags);
-        completeTagCollectionForEditing(nodeTagsToEdit);
+        TagConflictResolutionUtil.completeTagCollectionForEditing(nodeTagsToEdit);
 
         // launch a conflict resolution dialog, if necessary
         //
