@@ -3,15 +3,12 @@ package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.NumberFormat;
@@ -24,38 +21,34 @@ import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
-import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
-public class LatLonDialog extends JDialog {
+public class LatLonDialog extends ExtendedDialog {
     private static final Color BG_COLOR_ERROR = new Color(255,224,224);
 
-    private JTextField tfLatLon;
-    private String help;
-    private boolean canceled = false;
-    private LatLon coordinates;
-    private OKAction actOK;
-    private CancelAction actCancel;
+    public JTabbedPane tabs;
+    private JTextField tfLatLon, tfEastNorth;
+    private LatLon latLonCoordinates;
+    private EastNorth eastNorthCoordinates;
 
     private static final double ZERO = 0.0;
     private static final String DEG = "\u00B0";
@@ -78,7 +71,7 @@ public class LatLonDialog extends JDialog {
             + "\\s+|"
             + "(.+)");
 
-    protected JPanel buildInputForm() {
+    protected JPanel buildLatLon() {
         JPanel pnl = new JPanel(new GridBagLayout());
         pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
@@ -130,60 +123,88 @@ public class LatLonDialog extends JDialog {
         return pnl;
     }
 
-    protected JPanel buildButtonRow() {
-        JPanel pnl = new JPanel(new FlowLayout());
+    private JPanel buildEastNorth() {
+        JPanel pnl = new JPanel(new GridBagLayout());
+        pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
-        SideButton btn;
-        pnl.add(btn = new SideButton(actOK = new OKAction()));
-        makeButtonRespondToEnter(btn);
-        pnl.add(btn = new SideButton(actCancel = new CancelAction()));
-        makeButtonRespondToEnter(btn);
-        pnl.add(new SideButton(new ContextSensitiveHelpAction(help)));
+        pnl.add(new JLabel(tr("Projected coordinates:")), GBC.std().insets(0,10,5,0));
+        tfEastNorth = new JTextField(24);
+
+        pnl.add(tfEastNorth, GBC.eol().insets(0,10,0,0).fill(GBC.HORIZONTAL).weight(1.0, 0.0));
+
+        pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0,5,0,5));
+
+        pnl.add(new HtmlPanel(
+                tr("Enter easting and northing (x and y) separated by space, comma or semicolon.")),
+                GBC.eol().fill(GBC.HORIZONTAL));
+
+        pnl.add(GBC.glue(1, 1), GBC.eol().fill().weight(1.0, 1.0));
+
+        EastNorthInputVerifier inputVerifier = new EastNorthInputVerifier();
+        tfEastNorth.getDocument().addDocumentListener(inputVerifier);
+
+        TextFieldFocusHandler focusHandler = new TextFieldFocusHandler();
+        tfEastNorth.addFocusListener(focusHandler);
+
         return pnl;
     }
 
-    protected void makeButtonRespondToEnter(SideButton btn) {
-        btn.setFocusable(true);
-        btn.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "enter");
-        btn.getActionMap().put("enter", btn.getAction());
-    }
-
     protected void build() {
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(buildInputForm(), BorderLayout.CENTER);
-        getContentPane().add(buildButtonRow(), BorderLayout.SOUTH);
-        pack();
-
-        // make dialog respond to ESCAPE
-        //
-        getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "escape");
-        getRootPane().getActionMap().put("escape", actCancel);
-
-        // make dialog respond to F1
-        //
-        HelpUtil.setHelpContext(getRootPane(), help);
+        tabs = new JTabbedPane();
+        tabs.addTab(tr("Lat/Lon"), buildLatLon());
+        tabs.addTab(tr("East/North"), buildEastNorth());
+        tabs.getModel().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                switch (tabs.getModel().getSelectedIndex()) {
+                    case 0: parseLatLonUserInput(); break;
+                    case 1: parseEastNorthUserInput(); break;
+                    default: throw new AssertionError();
+                }
+            }
+        });
+        setContent(tabs, false);
     }
 
     public LatLonDialog(Component parent, String title, String help) {
-        super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
-        this.help = help;
-        setTitle(title);
+        super(Main.parent, tr("Add Node..."), new String[] { tr("Ok"), tr("Cancel") });
+        setButtonIcons(new String[] { "ok", "cancel" });
+        configureContextsensitiveHelp("/Action/AddNode", true);
+
         build();
-        addWindowListener(new WindowEventHandler());
         setCoordinates(null);
     }
 
-    public void setCoordinates(LatLon coordinates) {
-        if (coordinates == null) {
-            coordinates = new LatLon(0,0);
+    public boolean isLatLon() {
+        return tabs.getModel().getSelectedIndex() == 0;
+    }
+
+    public void setCoordinates(LatLon ll) {
+        if (ll == null) {
+            ll = new LatLon(0,0);
         }
-        this.coordinates = coordinates;
-        tfLatLon.setText(coordinates.latToString(CoordinateFormat.getDefaultFormat()) + " " + coordinates.lonToString(CoordinateFormat.getDefaultFormat()));
-        actOK.setEnabled(true);
+        this.latLonCoordinates = ll;
+        tfLatLon.setText(ll.latToString(CoordinateFormat.getDefaultFormat()) + " " + ll.lonToString(CoordinateFormat.getDefaultFormat()));
+        EastNorth en = Main.getProjection().latlon2eastNorth(ll);
+        tfEastNorth.setText(en.east()+" "+en.north());
+        setOkEnabled(true);
     }
 
     public LatLon getCoordinates() {
-        return coordinates;
+        if (isLatLon()) {
+            return latLonCoordinates;
+        } else {
+            if (eastNorthCoordinates == null) return null;
+            return Main.getProjection().eastNorth2latlon(eastNorthCoordinates);
+        }
+    }
+
+    public LatLon getLatLonCoordinates() {
+        return latLonCoordinates;
+    }
+
+    public EastNorth getEastNorthCoordinates() {
+        return eastNorthCoordinates;
     }
 
     protected void setErrorFeedback(JTextField tf, String message) {
@@ -223,10 +244,10 @@ public class LatLonDialog extends JDialog {
         return n== null ? null : n.doubleValue();
     }
 
-    protected void parseUserInput() {
+    protected void parseLatLonUserInput() {
         LatLon latLon;
         try {
-            latLon = parse(tfLatLon.getText());
+            latLon = parseLatLon(tfLatLon.getText());
             if (!LatLon.isValidLat(latLon.lat()) || !LatLon.isValidLon(latLon.lon())) {
                 latLon = null;
             }
@@ -235,69 +256,72 @@ public class LatLonDialog extends JDialog {
         }
         if (latLon == null) {
             setErrorFeedback(tfLatLon, tr("Please enter a GPS coordinates"));
-            coordinates = null;
-            actOK.setEnabled(false);
+            latLonCoordinates = null;
+            setOkEnabled(false);
         } else {
             clearErrorFeedback(tfLatLon,tr("Please enter a GPS coordinates"));
-            coordinates = latLon;
-            actOK.setEnabled(true);
+            latLonCoordinates = latLon;
+            setOkEnabled(true);
         }
     }
 
-    public boolean isCanceled() {
-        return canceled;
+    protected void parseEastNorthUserInput() {
+        EastNorth en;
+        try {
+            en = parseEastNorth(tfEastNorth.getText());
+        } catch (IllegalArgumentException e) {
+            en = null;
+        }
+        if (en == null) {
+            setErrorFeedback(tfEastNorth, tr("Please enter a Easting and Northing"));
+            latLonCoordinates = null;
+            setOkEnabled(false);
+        } else {
+            clearErrorFeedback(tfEastNorth,tr("Please enter a Easting and Northing"));
+            eastNorthCoordinates = en;
+            setOkEnabled(true);
+        }
     }
 
-    protected void setCanceled(boolean canceled) {
-        this.canceled = canceled;
+    private void setOkEnabled(boolean b) {
+        if (buttons != null && buttons.size() > 0) {
+            buttons.get(0).setEnabled(b);
+        }
     }
 
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
-            setCanceled(false);
             WindowGeometry.centerInWindow(Main.parent, getSize()).applySafe(this);
         }
         super.setVisible(visible);
     }
 
-    class OKAction extends AbstractAction {
-        public OKAction() {
-            putValue(NAME, tr("OK"));
-            putValue(SHORT_DESCRIPTION, tr("Close the dialog and create a new node"));
-            putValue(SMALL_ICON, ImageProvider.get("ok"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            setCanceled(false);
-            setVisible(false);
-        }
-    }
-
-    class CancelAction extends AbstractAction {
-        public CancelAction() {
-            putValue(NAME, tr("Cancel"));
-            putValue(SHORT_DESCRIPTION, tr("Close the dialog, do not create a new node"));
-            putValue(SMALL_ICON, ImageProvider.get("cancel"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            setCanceled(true);
-            setVisible(false);
-        }
-    }
-
     class LatLonInputVerifier implements DocumentListener {
         public void changedUpdate(DocumentEvent e) {
-            parseUserInput();
+            parseLatLonUserInput();
         }
 
         public void insertUpdate(DocumentEvent e) {
-            parseUserInput();
+            parseLatLonUserInput();
         }
 
         public void removeUpdate(DocumentEvent e) {
-            parseUserInput();
+            parseLatLonUserInput();
+        }
+    }
+
+    class EastNorthInputVerifier implements DocumentListener {
+        public void changedUpdate(DocumentEvent e) {
+            parseEastNorthUserInput();
+        }
+
+        public void insertUpdate(DocumentEvent e) {
+            parseEastNorthUserInput();
+        }
+
+        public void removeUpdate(DocumentEvent e) {
+            parseEastNorthUserInput();
         }
     }
 
@@ -312,20 +336,7 @@ public class LatLonDialog extends JDialog {
         public void focusLost(FocusEvent e) {}
     }
 
-    class WindowEventHandler extends WindowAdapter {
-        @Override
-        public void windowClosing(WindowEvent e) {
-            setCanceled(true);
-            setVisible(false);
-        }
-
-        @Override
-        public void windowOpened(WindowEvent e) {
-            tfLatLon.requestFocusInWindow();
-        }
-    }
-
-    private static LatLon parse(final String coord) {
+    private static LatLon parseLatLon(final String coord) {
         final Matcher m = p.matcher(coord);
 
         final StringBuilder sb = new StringBuilder();
@@ -408,6 +419,18 @@ public class LatLonDialog extends JDialog {
         return new LatLon(latLon.lat, latLon.lon);
     }
 
+    private static EastNorth parseEastNorth(String s) {
+        String[] en = s.split("[;, ]+");
+        if (en.length != 2) return null;
+        try {
+            double east = Double.parseDouble(en[0]);
+            double north = Double.parseDouble(en[1]);
+            return new EastNorth(east, north);
+        } catch (NumberFormatException nfe) {
+            return null;
+        }
+    }
+
     private static class LatLonHolder {
         double lat, lon;
     }
@@ -443,11 +466,20 @@ public class LatLonDialog extends JDialog {
         }
     }
 
-    public String getText() {
+    public String getLatLonText() {
         return tfLatLon.getText();
     }
 
-    public void setText(String text) {
+    public void setLatLonText(String text) {
         tfLatLon.setText(text);
     }
+
+    public String getEastNorthText() {
+        return tfEastNorth.getText();
+    }
+
+    public void setEastNorthText(String text) {
+        tfEastNorth.setText(text);
+    }
+
 }
