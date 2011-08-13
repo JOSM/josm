@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.dialogs.LatLonDialog;
@@ -20,10 +21,10 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public final class AddNodeAction extends JosmAction {
     // remember input from last time
-    private String text;
+    private String textLatLon, textEastNorth;
 
     public AddNodeAction() {
-        super(tr("Add Node..."), "addnode", tr("Add a node by entering latitude and longitude."),
+        super(tr("Add Node..."), "addnode", tr("Add a node by entering latitude / longitude or easting / northing."),
                 Shortcut.registerShortcut("addnode", tr("Edit: {0}", tr("Add Node...")), KeyEvent.VK_D, Shortcut.GROUP_EDIT,
                         Shortcut.SHIFT_DEFAULT), true);
         putValue("help", ht("/Action/AddNode"));
@@ -35,19 +36,24 @@ public final class AddNodeAction extends JosmAction {
 
         LatLonDialog dialog = new LatLonDialog(Main.parent, tr("Add Node..."), ht("/Action/AddNode"));
 
-        if (text != null) {
-            dialog.setText(text);
+        if (textLatLon != null) {
+            dialog.setLatLonText(textLatLon);
+        }
+        if (textEastNorth != null) {
+            dialog.setEastNorthText(textEastNorth);
         }
 
-        dialog.setVisible(true);
-        if (dialog.isCanceled())
+        dialog.showDialog();
+        
+        if (dialog.getValue() != 1)
             return;
 
         LatLon coordinates = dialog.getCoordinates();
         if (coordinates == null)
             return;
 
-        text = dialog.getText();
+        textLatLon = dialog.getLatLonText();
+        textEastNorth = dialog.getEastNorthText();
 
         Node nnew = new Node(coordinates);
 
