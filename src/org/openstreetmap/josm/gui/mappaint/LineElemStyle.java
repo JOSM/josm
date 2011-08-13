@@ -32,16 +32,18 @@ public class LineElemStyle extends ElemStyle {
     private BasicStroke line;
     public Color color;
     public Color dashesBackground;
+    public int offset;
     public float realWidth; // the real width of this line in meter
 
     private BasicStroke dashesLine;
 
-    protected LineElemStyle(Cascade c, BasicStroke line, Color color, BasicStroke dashesLine, Color dashesBackground, float realWidth) {
+    protected LineElemStyle(Cascade c, BasicStroke line, Color color, BasicStroke dashesLine, Color dashesBackground, int offset, float realWidth) {
         super(c, 0f);
         this.line = line;
         this.color = color;
         this.dashesLine = dashesLine;
         this.dashesBackground = dashesBackground;
+        this.offset = offset;
         this.realWidth = realWidth;
     }
 
@@ -174,6 +176,8 @@ public class LineElemStyle extends ElemStyle {
         BasicStroke line = new BasicStroke(width, cap, join, miterlimit, dashes, dashesOffset);
         BasicStroke dashesLine = null;
 
+        float offset = c.get("offset", 0f, Float.class);
+
         if (dashes != null && dashesBackground != null) {
             float[] dashes2 = new float[dashes.length];
             System.arraycopy(dashes, 0, dashes2, 1, dashes.length - 1);
@@ -181,7 +185,7 @@ public class LineElemStyle extends ElemStyle {
             dashesLine = new BasicStroke(width, cap, join, miterlimit, dashes2, dashes2[0] + dashesOffset);
         }
 
-        return new LineElemStyle(c, line, color, dashesLine, dashesBackground, realWidth);
+        return new LineElemStyle(c, line, color, dashesLine, dashesBackground, (int) offset, realWidth);
     }
 
     @Override
@@ -227,7 +231,7 @@ public class LineElemStyle extends ElemStyle {
             myDashedColor = paintSettings.getInactiveColor();
         }
 
-        painter.drawWay(w, myColor, myLine, myDashLine, myDashedColor, showOrientation,
+        painter.drawWay(w, myColor, myLine, myDashLine, myDashedColor, offset, showOrientation,
                 showOnlyHeadArrowOnly, showOneway, onewayReversed);
 
         if(paintSettings.isShowOrderNumber()) {
@@ -259,6 +263,7 @@ public class LineElemStyle extends ElemStyle {
             equal(color, other.color) &&
             equal(dashesLine, other.dashesLine) &&
             equal(dashesBackground, other.dashesBackground) &&
+            offset == other.offset &&
             realWidth == other.realWidth;
     }
 
@@ -269,6 +274,7 @@ public class LineElemStyle extends ElemStyle {
         hash = 29 * hash + color.hashCode();
         hash = 29 * hash + (dashesLine != null ? dashesLine.hashCode() : 0);
         hash = 29 * hash + (dashesBackground != null ? dashesBackground.hashCode() : 0);
+        hash = 29 * hash + offset;
         hash = 29 * hash + Float.floatToIntBits(realWidth);
         return hash;
     }
@@ -282,6 +288,7 @@ public class LineElemStyle extends ElemStyle {
             " dashedColor=" + Utils.toString(dashesBackground) +
             " linejoin=" + linejoinToString(line.getLineJoin()) +
             " linecap=" + linecapToString(line.getEndCap()) +
+            (offset == 0 ? "" : " offset=" + offset) +
             '}';
     }
     
