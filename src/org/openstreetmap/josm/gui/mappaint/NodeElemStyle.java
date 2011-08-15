@@ -163,7 +163,7 @@ public class NodeElemStyle extends ElemStyle {
         DEFAULT_TEXT_COLOR = PaintColors.TEXT.get();
     }
 
-    private static NodeElemStyle create(Environment env, boolean allowOnlyText) {
+    private static NodeElemStyle create(Environment env, boolean allowDefault) {
         initDefaultParameters();
         Cascade c = env.mc.getCascade(env.layer);
 
@@ -174,7 +174,7 @@ public class NodeElemStyle extends ElemStyle {
         }
 
         NodeTextElement text = null;
-        TextElement te = TextElement.create(c, DEFAULT_TEXT_COLOR, symbol == null && icon == null);
+        TextElement te = TextElement.create(c, DEFAULT_TEXT_COLOR, symbol == null && icon == null && allowDefault);
         // optimization: if we neither have a symbol, nor an icon, nor a text element
         // we don't have to check for the remaining style properties and we don't
         // have to allocate a node element style.

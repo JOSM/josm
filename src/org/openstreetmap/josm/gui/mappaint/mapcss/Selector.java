@@ -264,16 +264,19 @@ public interface Selector {
         }
 
         public boolean matchesBase(Environment e){
-            if (base.equals("*"))
-                return true;
-            if (base.equals("area")) {
-                if (e.osm instanceof Way)
+            if (e.osm instanceof Node) {
+                return base.equals("node") || base.equals("*");
+            } else if (e.osm instanceof Way) {
+                return base.equals("way") || base.equals("area") || base.equals("*");
+            } else if (e.osm instanceof Relation) {
+                if (base.equals("area")) {
+                    return ((Relation) e.osm).isMultipolygon();
+                } else if (base.equals("relation")) {
                     return true;
-                if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon())
-                    return true;
+                } else if (base.equals("canvas")) {
+                    return e.osm.get("#canvas") != null;
+                }
             }
-            if (base.equals(OsmPrimitiveType.from(e.osm).getAPIName()))
-                return true;
             return false;
         }
 

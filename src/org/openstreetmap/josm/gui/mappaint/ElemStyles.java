@@ -23,7 +23,10 @@ public class ElemStyles {
     private List<StyleSource> styleSources;
     private boolean drawMultipolygon;
 
-    private int cacheIdx;
+    private int cacheIdx = 1;
+
+    private boolean defaultNodes, defaultLines;
+    private int defaultNodesIdx, defaultLinesIdx;
 
     public ElemStyles()
     {
@@ -38,10 +41,24 @@ public class ElemStyles {
         return Collections.<StyleSource>unmodifiableList(styleSources);
     }
 
+    /**
+     * Create the list of styles for one primitive.
+     *
+     * @param osm the primitive
+     * @param scale the scale (in meters per 100 pixel)
+     * @param nc
+     * @return
+     */
     public StyleList get(OsmPrimitive osm, double scale, NavigatableComponent nc) {
         return getStyleCacheWithRange(osm, scale, nc).a;
     }
 
+    /**
+     * Create the list of styles and its valid scale range for one primitive.
+     *
+     * Automatically adds default styles in case no proper style was found.
+     * Uses the cache, if possible, and saves the results to the cache.
+     */
     public Pair<StyleList, Range> getStyleCacheWithRange(OsmPrimitive osm, double scale, NavigatableComponent nc) {
         if (osm.mappaintStyle == null || osm.mappaintCacheIdx != cacheIdx) {
             osm.mappaintStyle = StyleCache.EMPTY_STYLECACHE;
@@ -51,7 +68,7 @@ public class ElemStyles {
                 return lst;
         }
         Pair<StyleList, Range> p = getImpl(osm, scale, nc);
-        if (osm instanceof Node) {
+        if (osm instanceof Node && isDefaultNodes()) {
             boolean hasNonModifier = false;
             for (ElemStyle s : p.a) {
                 if (!s.isModifier) {
@@ -62,7 +79,7 @@ public class ElemStyles {
             if (!hasNonModifier) {
                 p.a = new StyleList(p.a, NodeElemStyle.SIMPLE_NODE_ELEMSTYLE);
             }
-        } else if (osm instanceof Way) {
+        } else if (osm instanceof Way && isDefaultLines()) {
             boolean hasProperLineStyle = false;
             for (ElemStyle s : p.a) {
                 if (s.isProperLineStyle()) {
@@ -72,7 +89,8 @@ public class ElemStyles {
             }
             if (!hasProperLineStyle) {
                 AreaElemStyle area = Utils.find(p.a, AreaElemStyle.class);
-                LineElemStyle line = (area == null ? LineElemStyle.UNTAGGED_WAY : LineElemStyle.createSimpleLineStyle(area.color, true));
+                LineElemStyle line = null;
+                line = (area == null ? LineElemStyle.UNTAGGED_WAY : LineElemStyle.createSimpleLineStyle(area.color, true));
                 p.a = new StyleList(p.a, line);
             }
         }
@@ -81,6 +99,35 @@ public class ElemStyles {
         return p;
     }
 
+    /**
+     * Create the list of styles and its valid scale range for one primitive.
+     *
+     * This method does multipolygon handling.
+     *
+     *
+     * There are different tagging styles for multipolygons, that have to be respected:
+     * - tags on the relation
+     * - tags on the outer way
+     * - tags on both, the outer and the inner way (very old style)
+     *
+     * If the primitive is a way, look for multipolygon parents. In case it
+     * is indeed member of some multipolygon as role "outer", all area styles
+     * are removed. (They apply to the multipolygon area.)
+     * Outer ways can have their own independent line styles, e.g. a road as
+     * boundary of a forest. Otherwise, in case, the way does not have an
+     * independent line style, take a line style from the multipolygon.
+     * If the multipolygon does not have a line style either, at least create a
+     * default line style from the color of the area.
+     *
+     * Now consider the case that the way is not an outer way of any multipolygon,
+     * but is member of a multipolygon as "inner".
+     * First, the style list is regenerated, considering only tags of this way
+     * minus the tags of outer way of the multipolygon (to care for the "very
+     * old style").
+     * Then check, if the way describes something in its own right. (linear feature
+     * or area) If not, add a default line style from the area color of the multipolygon.
+     *
+     */
     private Pair<StyleList, Range> getImpl(OsmPrimitive osm, double scale, NavigatableComponent nc) {
         if (osm instanceof Node)
             return generateStyles(osm, scale, null, false);
@@ -130,7 +177,7 @@ public class ElemStyles {
                             p.a = new StyleList(p.a, mpLine);
                             p.b = Range.cut(p.b, mpElemStyles.b);
                             break;
-                        } else if (wayColor == null) {
+                        } else if (wayColor == null && isDefaultLines()) {
                             AreaElemStyle mpArea = Utils.find(mpElemStyles.a, AreaElemStyle.class);
                             if (mpArea != null) {
                                 p.b = Range.cut(p.b, mpElemStyles.b);
@@ -141,18 +188,22 @@ public class ElemStyles {
                 }
             }
             if (isOuterWayOfSomeMP) {
-                boolean hasLineStyle = false;
-                for (ElemStyle s : p.a) {
-                    if (s.isProperLineStyle()) {
-                        hasLineStyle = true;
-                        break;
+                if (isDefaultLines()) {
+                    boolean hasLineStyle = false;
+                    for (ElemStyle s : p.a) {
+                        if (s.isProperLineStyle()) {
+                            hasLineStyle = true;
+                            break;
+                        }
                     }
-                }
-                if (!hasLineStyle) {
-                    p.a = new StyleList(p.a, LineElemStyle.createSimpleLineStyle(wayColor, true));
+                    if (!hasLineStyle) {
+                        p.a = new StyleList(p.a, LineElemStyle.createSimpleLineStyle(wayColor, true));
+                    }
                 }
                 return p;
             }
+
+            if (!isDefaultLines()) return p;
 
             for (OsmPrimitive referrer : osm.getReferrers()) {
                 Relation ref = (Relation) referrer;
@@ -212,6 +263,11 @@ public class ElemStyles {
     }
 
     /**
+     * Create the list of styles and its valid scale range for one primitive.
+     *
+     * Loops over the list of style sources, to generate the map of properties.
+     * From these properties, it generates the different types of styles.
+     *
      * @param multipolyOuterWay support for a very old multipolygon tagging style
      * where you add the tags both to the outer and the inner way.
      * However, independent inner way style is also possible.
@@ -265,6 +321,44 @@ public class ElemStyles {
         if (obj != null) {
             list.add(obj);
         }
+    }
+
+    /**
+     * Draw a default node symbol for nodes that have no style?
+     */
+    private boolean isDefaultNodes() {
+        if (defaultNodesIdx == cacheIdx) {
+            return defaultNodes;
+        }
+        defaultNodes = fromCanvas("default-points", true, Boolean.class);
+        defaultNodesIdx = cacheIdx;
+        return defaultNodes;
+    }
+
+    /**
+     * Draw a default line for ways that do not have an own line style?
+     */
+    private boolean isDefaultLines() {
+        if (defaultLinesIdx == cacheIdx) {
+            return defaultLines;
+        }
+        defaultLines = fromCanvas("default-lines", true, Boolean.class);
+        defaultLinesIdx = cacheIdx;
+        return defaultLines;
+    }
+
+    private <T> T fromCanvas(String key, T def, Class<T> c) {
+        MultiCascade mc = new MultiCascade();
+        Relation r = new Relation();
+        r.put("#canvas", "query");
+
+        for (StyleSource s : styleSources) {
+            if (s.active) {
+                s.apply(mc, r, 1, null, false);
+            }
+        }
+        T res = mc.getCascade("default").get(key, def, c);
+        return res;
     }
 
     public boolean isDrawMultipolygon() {
