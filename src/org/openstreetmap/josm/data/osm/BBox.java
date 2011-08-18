@@ -135,7 +135,7 @@ public class BBox {
 
     /**
      * Tests, weather two BBoxes intersect as an area.
-     * I.e. weather there exists a point that lies in both of them.
+     * I.e. whether there exists a point that lies in both of them.
      */
     public boolean intersects(BBox b) {
         if (xmin > b.xmax)
