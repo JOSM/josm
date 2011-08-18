@@ -387,9 +387,6 @@ public class DeleteCommand extends Command {
     }
 
     public static Command deleteWaySegment(OsmDataLayer layer, WaySegment ws) {
-        if (ws.way.getNodesCount() < 3)
-            return delete(layer, Collections.singleton(ws.way));
-
         if (ws.way.firstNode() == ws.way.lastNode()) {
             // If the way is circular (first and last nodes are the same),
             // the way shouldn't be splitted
