@@ -78,6 +78,9 @@ public class ElemStyles {
             }
             if (!hasNonModifier) {
                 p.a = new StyleList(p.a, NodeElemStyle.SIMPLE_NODE_ELEMSTYLE);
+                if (BoxTextElemStyle.SIMPLE_NODE_TEXT_ELEMSTYLE.text.labelCompositionStrategy.compose(osm) != null) {
+                    p.a = new StyleList(p.a, BoxTextElemStyle.SIMPLE_NODE_TEXT_ELEMSTYLE);
+                }
             }
         } else if (osm instanceof Way && isDefaultLines()) {
             boolean hasProperLineStyle = false;
@@ -300,7 +303,11 @@ public class ElemStyles {
                 addIfNotNull(sl, LineElemStyle.createCasing(env));
                 addIfNotNull(sl, LineTextElemStyle.create(env));
             } else if (osm instanceof Node) {
-                addIfNotNull(sl, NodeElemStyle.create(env));
+                NodeElemStyle nodeStyle = NodeElemStyle.create(env);
+                if (nodeStyle != null) {
+                    sl.add(nodeStyle);
+                    addIfNotNull(sl, BoxTextElemStyle.create(env, nodeStyle.getBox()));
+                }
             } else if (osm instanceof Relation) {
                 if (((Relation)osm).isMultipolygon()) {
                     addIfNotNull(sl, AreaElemStyle.create(c));

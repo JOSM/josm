@@ -5,8 +5,7 @@ import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.Stroke;
 
 import javax.swing.GrayFilter;
@@ -18,9 +17,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
-import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -31,13 +28,10 @@ public class NodeElemStyle extends ElemStyle {
     public ImageIcon icon;
     public int iconAlpha;
     public Symbol symbol;
-    public NodeTextElement text;
 
     private ImageIcon disabledIcon;
 
     public enum SymbolShape { SQUARE, CIRCLE, TRIANGLE, PENTAGON, HEXAGON, HEPTAGON, OCTAGON, NONAGON, DECAGON }
-    public enum HorizontalTextAlignment { LEFT, CENTER, RIGHT }
-    public enum VerticalTextAlignment { ABOVE, TOP, CENTER, BOTTOM, BELOW }
 
     public static class Symbol {
         public SymbolShape symbol;
@@ -89,82 +83,26 @@ public class NodeElemStyle extends ElemStyle {
         }
     }
 
-    public static class NodeTextElement extends TextElement {
-        public HorizontalTextAlignment hAlign;
-        public VerticalTextAlignment vAlign;
-
-        public NodeTextElement(TextElement text, HorizontalTextAlignment hAlign, VerticalTextAlignment vAlign) {
-            super(text);
-            CheckParameterUtil.ensureParameterNotNull(hAlign);
-            CheckParameterUtil.ensureParameterNotNull(vAlign);
-            this.hAlign = hAlign;
-            this.vAlign = vAlign;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (!super.equals(obj))
-                return false;
-            if (obj == null || getClass() != obj.getClass())
-                return false;
-            final NodeTextElement other = (NodeTextElement) obj;
-            return hAlign == other.hAlign &&
-                    vAlign == other.vAlign;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = super.hashCode();
-            hash = 97 * hash + hAlign.hashCode();
-            hash = 97 * hash + vAlign.hashCode();
-            return hash;
-        }
-
-        @Override
-        public String toString() {
-            return "NodeTextElement{" + toStringImpl() + '}';
-        }
-
-        @Override
-        protected String toStringImpl() {
-            return super.toStringImpl() + " hAlign=" + hAlign + " vAlign=" + vAlign;
-        }
-    }
-
     public static final NodeElemStyle SIMPLE_NODE_ELEMSTYLE;
     static {
         MultiCascade mc = new MultiCascade();
         Cascade c = mc.getOrCreateCascade("default");
-        c.put("text", Keyword.AUTO);
         SIMPLE_NODE_ELEMSTYLE = create(new Environment(null, mc, "default", null), true);
+        if (SIMPLE_NODE_ELEMSTYLE == null) throw new AssertionError();
     }
 
-    protected NodeElemStyle(Cascade c, ImageIcon icon, Integer iconAlpha, Symbol symbol, NodeTextElement text) {
+    protected NodeElemStyle(Cascade c, ImageIcon icon, Integer iconAlpha, Symbol symbol) {
         super(c, 1000f);
         this.icon = icon;
         this.iconAlpha = iconAlpha == null ? 0 : iconAlpha;
         this.symbol = symbol;
-        this.text = text;
     }
 
     public static NodeElemStyle create(Environment env) {
         return create(env, false);
     }
 
-    /*
-     * Caches the default text color from the preferences.
-     *
-     * FIXME: the cache isn't updated if the user changes the preference during a JOSM
-     * session. There should be preference listener updating this cache.
-     */
-    static private Color DEFAULT_TEXT_COLOR = null;
-    static private void initDefaultParameters() {
-        if (DEFAULT_TEXT_COLOR != null) return;
-        DEFAULT_TEXT_COLOR = PaintColors.TEXT.get();
-    }
-
     private static NodeElemStyle create(Environment env, boolean allowDefault) {
-        initDefaultParameters();
         Cascade c = env.mc.getCascade(env.layer);
 
         Pair<ImageIcon, Integer> icon = createIcon(env);
@@ -172,45 +110,16 @@ public class NodeElemStyle extends ElemStyle {
         if (icon == null) {
             symbol = createSymbol(env);
         }
-
-        NodeTextElement text = null;
-        TextElement te = TextElement.create(c, DEFAULT_TEXT_COLOR, symbol == null && icon == null && allowDefault);
-        // optimization: if we neither have a symbol, nor an icon, nor a text element
+        
+        // optimization: if we neither have a symbol, nor an icon
         // we don't have to check for the remaining style properties and we don't
         // have to allocate a node element style.
-        if (symbol == null && icon == null && te == null) return null;
-
-        if (te != null) {
-            HorizontalTextAlignment hAlign = HorizontalTextAlignment.RIGHT;
-            Keyword hAlignKW = c.get("text-anchor-horizontal", Keyword.RIGHT, Keyword.class);
-            if (equal(hAlignKW.val, "left")) {
-                hAlign = HorizontalTextAlignment.LEFT;
-            } else if (equal(hAlignKW.val, "center")) {
-                hAlign = HorizontalTextAlignment.CENTER;
-            } else if (equal(hAlignKW.val, "right")) {
-                hAlign = HorizontalTextAlignment.RIGHT;
-            }
-            VerticalTextAlignment vAlign = VerticalTextAlignment.BOTTOM;
-            String vAlignStr = c.get("text-anchor-vertical", Keyword.BOTTOM, Keyword.class).val;
-            if (equal(vAlignStr, "above")) {
-                vAlign = VerticalTextAlignment.ABOVE;
-            } else if (equal(vAlignStr, "top")) {
-                vAlign = VerticalTextAlignment.TOP;
-            } else if (equal(vAlignStr, "center")) {
-                vAlign = VerticalTextAlignment.CENTER;
-            } else if (equal(vAlignStr, "bottom")) {
-                vAlign = VerticalTextAlignment.BOTTOM;
-            } else if (equal(vAlignStr, "below")) {
-                vAlign = VerticalTextAlignment.BELOW;
-            }
-            text = new NodeTextElement(te, hAlign, vAlign);
-        }
+        if (!allowDefault && symbol == null && icon == null) return null;
 
         return new NodeElemStyle(c,
                 icon == null ? null : icon.a,
                 icon == null ? null : icon.b,
-                symbol,
-                text);
+                symbol);
     }
 
     private static Pair<ImageIcon, Integer> createIcon(Environment env) {
@@ -329,7 +238,7 @@ public class NodeElemStyle extends ElemStyle {
             Node n = (Node) primitive;
             if (icon != null && painter.isShowIcons()) {
                 painter.drawNodeIcon(n, (painter.isInactiveMode() || n.isDisabled()) ? getDisabledIcon() : icon,
-                        Utils.color_int2float(iconAlpha), selected, member, text);
+                        Utils.color_int2float(iconAlpha), selected, member);
             } else if (symbol != null) {
                 Color fillColor = symbol.fillColor;
                 if (fillColor != null) {
@@ -359,10 +268,10 @@ public class NodeElemStyle extends ElemStyle {
                         }
                     }
                 }
-                painter.drawNodeSymbol(n, symbol, fillColor, strokeColor, text);
+                painter.drawNodeSymbol(n, symbol, fillColor, strokeColor);
             } else {
                 if (n.isHighlighted()) {
-                    painter.drawNode(n, settings.getHighlightColor(), settings.getSelectedNodeSize(), settings.isFillSelectedNode(), text);
+                    painter.drawNode(n, settings.getHighlightColor(), settings.getSelectedNodeSize(), settings.isFillSelectedNode());
                 } else {
                     Color color;
                     boolean isConnection = n.isConnectionNode();
@@ -397,7 +306,7 @@ public class NodeElemStyle extends ElemStyle {
                             (isConnection && settings.isFillConnectionNode()) ||
                             settings.isFillUnselectedNode();
 
-                    painter.drawNode(n, color, size, fill, text);
+                    painter.drawNode(n, color, size, fill);
                 }
             }
         } else if (primitive instanceof Relation && icon != null) {
@@ -412,6 +321,25 @@ public class NodeElemStyle extends ElemStyle {
             return null;
         return disabledIcon = new ImageIcon(GrayFilter.createDisabledImage(icon.getImage()));
     }
+    
+    public Rectangle getBox() {
+        if (icon != null) {
+            int w = icon.getIconWidth(), h=icon.getIconHeight();
+            return new Rectangle(-w/2, -h/2, w, h);
+        } else if (symbol != null) {
+            return new Rectangle(-symbol.size/2, -symbol.size/2, symbol.size, symbol.size);
+        } else {
+            // This is only executed once, so no performance concerns.
+            // However, it would be better, if the settings could be changed at runtime.
+            int size = Utils.max(
+                    Main.pref.getInteger("mappaint.node.selected-size", 5),
+                    Main.pref.getInteger("mappaint.node.unselected-size", 3),
+                    Main.pref.getInteger("mappaint.node.connection-size", 5),
+                    Main.pref.getInteger("mappaint.node.tagged-size", 3)
+            );
+            return new Rectangle(-size/2, -size/2, size, size);
+        }
+    }
 
     @Override
     public int hashCode() {
@@ -419,7 +347,6 @@ public class NodeElemStyle extends ElemStyle {
         hash = 17 * hash + (icon != null ? icon.getImage().hashCode() : 0);
         hash = 17 * hash + iconAlpha;
         hash = 17 * hash + (symbol != null ? symbol.hashCode() : 0);
-        hash = 17 * hash + (text != null ? text.hashCode() : 0);
         return hash;
     }
 
@@ -438,8 +365,6 @@ public class NodeElemStyle extends ElemStyle {
             return false;
         if (!equal(symbol, other.symbol))
             return false;
-        if (!equal(text, other.text))
-            return false;
         return true;
     }
 
@@ -453,9 +378,6 @@ public class NodeElemStyle extends ElemStyle {
         }
         if (symbol != null) {
             s.append(" symbol=[" + symbol + "]");
-        }
-        if (text != null) {
-            s.append(" text=[" + text.toStringImpl() + "]");
         }
         s.append('}');
         return s.toString();

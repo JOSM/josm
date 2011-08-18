@@ -3,16 +3,16 @@ package org.openstreetmap.josm.data.coor;
 
 public class QuadTiling
 {
-    public static int NR_LEVELS = 24;
-    public static double WORLD_PARTS = (1 << NR_LEVELS);
+    public static final int NR_LEVELS = 24;
+    public static final double WORLD_PARTS = (1 << NR_LEVELS);
 
-    public static int TILES_PER_LEVEL_SHIFT = 2; // Has to be 2. Other parts of QuadBuckets code rely on it
-    public static int TILES_PER_LEVEL = 1<<TILES_PER_LEVEL_SHIFT;
-    static public int X_PARTS = 360;
-    static public int X_BIAS = -180;
+    public static final int TILES_PER_LEVEL_SHIFT = 2; // Has to be 2. Other parts of QuadBuckets code rely on it
+    public static final int TILES_PER_LEVEL = 1<<TILES_PER_LEVEL_SHIFT;
+    static public final int X_PARTS = 360;
+    static public final int X_BIAS = -180;
 
-    static public int Y_PARTS = 180;
-    static public int Y_BIAS = -90;
+    static public final int Y_PARTS = 180;
+    static public final int Y_BIAS = -90;
 
     public static LatLon tile2LatLon(long quad)
     {

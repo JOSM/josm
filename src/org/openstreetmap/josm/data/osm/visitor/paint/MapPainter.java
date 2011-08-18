@@ -37,11 +37,11 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle;
+import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.HorizontalTextAlignment;
+import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.VerticalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
-import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.HorizontalTextAlignment;
-import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.NodeTextElement;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
-import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.VerticalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.TextElement;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
@@ -495,7 +495,7 @@ public class MapPainter {
         }
     }
 
-    public void drawNodeIcon(Node n, ImageIcon icon, float iconAlpha, boolean selected, boolean member, NodeTextElement text) {
+    public void drawNodeIcon(Node n, ImageIcon icon, float iconAlpha, boolean selected, boolean member) {
         Point p = nc.getPoint(n);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 
@@ -505,7 +505,6 @@ public class MapPainter {
         }
         icon.paintIcon ( nc, g, p.x-w/2, p.y-h/2 );
         g.setPaintMode();
-        drawNodeText(n, text, p, w/2, h/2);
         if (selected || member)
         {
             g.setColor(selected? selectedColor : relationSelectedColor);
@@ -528,7 +527,7 @@ public class MapPainter {
         return buildPolygon(center, radius, sides, 0.0);
     }
 
-    public void drawNodeSymbol(Node n, Symbol s, Color fillColor, Color strokeColor, NodeTextElement text) {
+    public void drawNodeSymbol(Node n, Symbol s, Color fillColor, Color strokeColor) {
         Point p = nc.getPoint(n);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
         int radius = s.size / 2;
@@ -603,7 +602,6 @@ public class MapPainter {
             }
             g.setStroke(new BasicStroke());
         }
-        drawNodeText(n, text, p, radius, radius);
     }
 
     /**
@@ -612,7 +610,7 @@ public class MapPainter {
      * @param n  The node to draw.
      * @param color The color of the node.
      */
-    public void drawNode(Node n, Color color, int size, boolean fill, NodeTextElement text) {
+    public void drawNode(Node n, Color color, int size, boolean fill) {
         if (size > 1) {
             Point p = nc.getPoint(n);
             if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
@@ -628,19 +626,15 @@ public class MapPainter {
             } else {
                 g.drawRect(p.x - radius, p.y - radius, size, size);
             }
-
-            drawNodeText(n, text, p, radius, radius + 4);
         }
     }
 
-    private void drawNodeText(Node n, NodeTextElement text, Point p, int w_half, int h_half) {
-        if (!isShowNames() || text == null)
+    public void drawBoxText(Node n, BoxTextElemStyle bs) {
+        if (!isShowNames() || bs == null)
             return;
-
-        /*
-         * abort if we can't compose the label to be rendered
-         */
-        if (text.labelCompositionStrategy == null) return;
+        
+        Point p = nc.getPoint((Node) n);
+        TextElement text = bs.text;
         String s = text.labelCompositionStrategy.compose(n);
         if (s == null) return;
 
@@ -660,32 +654,32 @@ public class MapPainter {
          *       left-below   center-below    right-below
          *
          */
-        if (text.hAlign == HorizontalTextAlignment.RIGHT) {
-            x += w_half + 2;
+        if (bs.hAlign == HorizontalTextAlignment.RIGHT) {
+            x += bs.box.x + bs.box.width + 2;
         } else {
             FontRenderContext frc = g.getFontRenderContext();
             Rectangle2D bounds = text.font.getStringBounds(s, frc);
             int textWidth = (int) bounds.getWidth();
-            if (text.hAlign == HorizontalTextAlignment.CENTER) {
+            if (bs.hAlign == HorizontalTextAlignment.CENTER) {
                 x -= textWidth / 2;
-            } else if (text.hAlign == HorizontalTextAlignment.LEFT) {
-                x -= w_half + 4 + textWidth;
+            } else if (bs.hAlign == HorizontalTextAlignment.LEFT) {
+                x -= - bs.box.x + 4 + textWidth;
             } else throw new AssertionError();
         }
 
-        if (text.vAlign == VerticalTextAlignment.BOTTOM) {
-            y += h_half - 2;
+        if (bs.vAlign == VerticalTextAlignment.BOTTOM) {
+            y += bs.box.y + bs.box.height;
         } else {
             FontRenderContext frc = g.getFontRenderContext();
             LineMetrics metrics = text.font.getLineMetrics(s, frc);
-            if (text.vAlign == VerticalTextAlignment.ABOVE) {
-                y -= h_half + metrics.getDescent();
-            } else if (text.vAlign == VerticalTextAlignment.TOP) {
-                y -= h_half - metrics.getAscent();
-            } else if (text.vAlign == VerticalTextAlignment.CENTER) {
+            if (bs.vAlign == VerticalTextAlignment.ABOVE) {
+                y -= - bs.box.y + metrics.getDescent();
+            } else if (bs.vAlign == VerticalTextAlignment.TOP) {
+                y -= - bs.box.y - metrics.getAscent();
+            } else if (bs.vAlign == VerticalTextAlignment.CENTER) {
                 y += (metrics.getAscent() - metrics.getDescent()) / 2;
-            } else if (text.vAlign == VerticalTextAlignment.BELOW) {
-                y += h_half + metrics.getAscent() + 2;
+            } else if (bs.vAlign == VerticalTextAlignment.BELOW) {
+                y += bs.box.y + bs.box.height + metrics.getAscent() + 2;
             } else throw new AssertionError();
         }
         if (inactive || n.isDisabled()) {
