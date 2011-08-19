@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
@@ -538,8 +539,12 @@ public final class Way extends OsmPrimitive implements IWay {
         double length = 0;
         Node lastN = null;
         for (Node n:nodes) {
-            if(lastN != null)
-                length += n.getCoor().greatCircleDistance(lastN.getCoor());
+            if (lastN != null) {
+                LatLon coor = n.getCoor();
+                if (coor != null) {
+                    length += coor.greatCircleDistance(lastN.getCoor());
+                }
+            }
             lastN = n;
         }
         return length;
