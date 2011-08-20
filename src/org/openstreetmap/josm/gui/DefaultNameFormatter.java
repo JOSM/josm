@@ -165,7 +165,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             if (name == null) {
                 name = node.isNew() ? tr("node") : ""+ node.getId();
             }
-            name += " (" + node.getCoor().latToString(CoordinateFormat.getDefaultFormat()) + ", " + node.getCoor().lonToString(CoordinateFormat.getDefaultFormat()) + ")";
+            name += " \u200E(" + node.getCoor().latToString(CoordinateFormat.getDefaultFormat()) + ", " + node.getCoor().lonToString(CoordinateFormat.getDefaultFormat()) + ")";
         }
         name = decorateNameWithId(name, node);
 
