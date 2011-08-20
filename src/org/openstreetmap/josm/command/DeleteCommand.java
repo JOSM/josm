@@ -233,7 +233,7 @@ public class DeleteCommand extends Command {
 
         if (parents.isEmpty())
             return null;
-        if (!checkAndConfirmOutlyingDeletes(layer,parents) && !silent)
+        if (!silent && !checkAndConfirmOutlyingDeletes(layer,parents))
             return null;
         return new DeleteCommand(layer,parents);
     }
