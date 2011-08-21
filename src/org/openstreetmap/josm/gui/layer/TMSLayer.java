@@ -1165,9 +1165,11 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 noTilesAtZoom = true;
             }
             // Find highest zoom level with at least one visible tile
-            while (displayZoomLevel > dts.minZoom &&
-                    !dts.getTileSetInfo(displayZoomLevel).hasVisibleTiles) {
-                displayZoomLevel--;
+            for (int tmpZoom = zoom; tmpZoom > dts.minZoom; tmpZoom--) {
+                if (dts.getTileSetInfo(tmpZoom).hasVisibleTiles) {
+                    displayZoomLevel = tmpZoom;
+                    break;
+                }
             }
             // Do binary search between currentZoomLevel and displayZoomLevel
             while (zoom > displayZoomLevel && !tsi.hasVisibleTiles && tsi.hasOverzoomedTiles){
