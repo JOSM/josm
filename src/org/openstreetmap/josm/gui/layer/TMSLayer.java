@@ -105,7 +105,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         PROP_TILECACHE_DIR = new StringProperty(PREFERENCE_PREFIX + ".tilecache_path", defPath);
     }
 
-    /*boolean debug = false;*/
+    /*boolean debug = true;*/
 
     protected MemoryTileCache tileCache;
     protected TileSource tileSource;
@@ -310,7 +310,11 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     private int getBestZoom() {
         double factor = getScaleFactor(1);
         double result = Math.log(factor)/Math.log(2)/2+1;
-        int intResult = (int)Math.round(result);
+        // In general, smaller zoom levels are more readable.  We prefer big,
+        // block, pixelated (but readable) map text to small, smeared,
+        // unreadable underzoomed text.  So, use .floor() instead of rounding
+        // to skew things a bit toward the lower zooms.
+        int intResult = (int)Math.floor(result);
         if (intResult > getMaxZoomLvl())
             return getMaxZoomLvl();
         if (intResult < getMinZoomLvl())
@@ -821,7 +825,12 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             borderRect = tileToRect(border);
         }
         List<Tile> missedTiles = new LinkedList<Tile>();
-        for (Tile tile : ts.allTiles()) {
+        // The callers of this code *require* that we return any tiles
+        // that we do not draw in missedTiles.  ts.allTiles() by default
+        // will only return already-existing tiles.  However, we need
+        // to return *all* tiles to the callers, so force creation here.
+        boolean forceTileCreation = true;
+        for (Tile tile : ts.allTiles(forceTileCreation)) {
             Image img = getLoadedTileImage(tile);
             if (img == null || tile.hasError()) {
                 /*if (debug) {
@@ -1027,6 +1036,15 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             }
             return ret;
         }
+        private List<Tile> allLoadedTiles()
+        {
+            List<Tile> ret = new ArrayList<Tile>();
+            for (Tile t : this.allTiles()) {
+                if (t.isLoaded())
+                    ret.add(t);
+            }
+            return ret;
+        }
 
         void loadAllTiles(boolean force)
         {
@@ -1129,7 +1147,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         int zoom = currentZoomLevel;
         if (autoZoom) {
             double pixelScaling = getScaleFactor(zoom);
-            if (pixelScaling > 3 || pixelScaling < 0.45) {
+            if (pixelScaling > 3 || pixelScaling < 0.7) {
                 zoom = getBestZoom();
             }
         }
@@ -1191,13 +1209,11 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         List<Tile> missedTiles = this.paintTileImages(g, ts, displayZoomLevel, null);
         int otherZooms[] = { -1, 1, -2, 2, -3, -4, -5};
         for (int zoomOffset : otherZooms) {
-            if (!autoZoom) {
+            if (!autoZoom)
                 break;
-            }
-            if (!autoLoad) {
-                break;
-            }
             int newzoom = displayZoomLevel + zoomOffset;
+            if (newzoom < MIN_ZOOM)
+                continue;
             if (missedTiles.size() <= 0) {
                 break;
             }
@@ -1212,6 +1228,12 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 LatLon topLeft2  = tileLatLon(missed);
                 LatLon botRight2 = tileLatLon(t2);
                 TileSet ts2 = new TileSet(topLeft2, botRight2, newzoom);
+                // Instantiating large TileSets is expensive.  If there
+                // are no loaded tiles, don't bother even trying.
+                if (ts2.allLoadedTiles().size() == 0) {
+                    newlyMissedTiles.add(missed);
+                    continue;
+                }
                 if (ts2.tooLarge()) {
                     continue;
                 }
