@@ -826,11 +826,12 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         }
         List<Tile> missedTiles = new LinkedList<Tile>();
         // The callers of this code *require* that we return any tiles
-        // that we do not draw in missedTiles.  ts.allTiles() by default
-        // will only return already-existing tiles.  However, we need
-        // to return *all* tiles to the callers, so force creation here.
+        // that we do not draw in missedTiles.  ts.allExistingTiles() by
+        // default will only return already-existing tiles.  However, we
+        // need to return *all* tiles to the callers, so force creation
+        // here.
         boolean forceTileCreation = true;
-        for (Tile tile : ts.allTiles(forceTileCreation)) {
+        for (Tile tile : ts.allTilesCreate()) {
             Image img = getLoadedTileImage(tile);
             if (img == null || tile.hasError()) {
                 /*if (debug) {
@@ -1011,11 +1012,15 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
          * Get all tiles represented by this TileSet that are
          * already in the tileCache.
          */
-        List<Tile> allTiles()
+        List<Tile> allExistingTiles()
         {
-            return this.allTiles(false);
+            return this.__allTiles(false);
         }
-        private List<Tile> allTiles(boolean create)
+        List<Tile> allTilesCreate()
+        {
+            return this.__allTiles(true);
+        }
+        private List<Tile> __allTiles(boolean create)
         {
             // Tileset is either empty or too large
             if (zoom == 0 || this.insane())
@@ -1039,7 +1044,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         private List<Tile> allLoadedTiles()
         {
             List<Tile> ret = new ArrayList<Tile>();
-            for (Tile t : this.allTiles()) {
+            for (Tile t : this.allExistingTiles()) {
                 if (t.isLoaded())
                     ret.add(t);
             }
@@ -1050,7 +1055,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         {
             if (!autoLoad && !force)
                 return;
-            for (Tile t : this.allTiles(true)) {
+            for (Tile t : this.allTilesCreate()) {
                 loadTile(t, false);
             }
         }
@@ -1059,7 +1064,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         {
             if (!autoLoad && !force)
                 return;
-            for (Tile t : this.allTiles(true)) {
+            for (Tile t : this.allTilesCreate()) {
                 if (t.hasError()) {
                     loadTile(t, true);
                 }
@@ -1075,7 +1080,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
 
     private static TileSetInfo getTileSetInfo(TileSet ts) {
-        List<Tile> allTiles = ts.allTiles();
+        List<Tile> allTiles = ts.allExistingTiles();
         TileSetInfo result = new TileSetInfo();
         result.hasLoadingTiles = allTiles.size() < ts.size();
         for (Tile t : allTiles) {
@@ -1251,7 +1256,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
         // The current zoom tileset is guaranteed to have all of
         // its tiles
-        for (Tile t : ts.allTiles()) {
+        for (Tile t : ts.allExistingTiles()) {
             this.paintTileText(ts, t, g, mv, displayZoomLevel, t);
         }
 
@@ -1339,7 +1344,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             ts.loadAllTiles(false); // make sure there are tile objects for all tiles
         }
         Tile clickedTile = null;
-        for (Tile t1 : ts.allTiles()) {
+        for (Tile t1 : ts.allExistingTiles()) {
             Tile t2 = tempCornerTile(t1);
             Rectangle r = new Rectangle(pixelPos(t1));
             r.add(pixelPos(t2));
