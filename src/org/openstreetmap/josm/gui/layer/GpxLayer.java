@@ -16,6 +16,9 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
@@ -29,11 +32,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -41,8 +46,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
@@ -61,6 +71,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -79,8 +90,10 @@ import org.openstreetmap.josm.tools.AudioUtil;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.UrlLabel;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class GpxLayer extends Layer {
 
@@ -97,6 +110,8 @@ public class GpxLayer extends Layer {
     private colorModes computeCacheColored;
     private int computeCacheColorTracksTune;
     private boolean isLocalFile;
+    // used by ChooseTrackVisibilityAction to determine which tracks to show/hide
+    private boolean[] trackVisibility;
 
     private final List<GpxTrack> lastTracks = new ArrayList<GpxTrack>(); // List of tracks at last paint
     private int lastUpdateCount;
@@ -110,6 +125,10 @@ public class GpxLayer extends Layer {
         super((String) d.attr.get("name"));
         data = d;
         computeCacheInSync = false;
+        trackVisibility = new boolean[d.tracks.size()];
+        for(int i=0; i < d.tracks.size(); i++) {
+            trackVisibility[i] = true;
+        }
     }
 
     public GpxLayer(GpxData d, String name) {
@@ -121,6 +140,48 @@ public class GpxLayer extends Layer {
         this(d);
         this.setName(name);
         this.isLocalFile = isLocal;
+    }
+
+    /**
+     * returns a human readable string that shows the timespan of the given track
+     */
+    private static String getTimespanForTrack(GpxTrack trk) {
+        WayPoint earliest = null, latest = null;
+
+        for (GpxTrackSegment seg : trk.getSegments()) {
+            for (WayPoint pnt : seg.getWayPoints()) {
+                if (latest == null) {
+                    latest = earliest = pnt;
+                } else {
+                    if (pnt.compareTo(earliest) < 0) {
+                        earliest = pnt;
+                    } else {
+                        latest = pnt;
+                    }
+                }
+            }
+        }
+
+        String ts = "";
+
+        if (earliest != null && latest != null) {
+            DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+            String earliestDate = df.format(earliest.getTime());
+            String latestDate = df.format(latest.getTime());
+
+            if (earliestDate.equals(latestDate)) {
+                DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT);
+                ts += earliestDate + " ";
+                ts += tf.format(earliest.getTime()) + " - " + tf.format(latest.getTime());
+            } else {
+                DateFormat dtf = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+                ts += dtf.format(earliest.getTime()) + " - " + dtf.format(latest.getTime());
+            }
+
+            int diff = (int) (latest.time - earliest.time);
+            ts += String.format(" (%d:%02d)", diff / 3600, (diff % 3600) / 60);
+        }
+        return ts;
     }
 
     @Override
@@ -149,8 +210,6 @@ public class GpxLayer extends Layer {
                     + "</td></tr></thead>");
 
             for (GpxTrack trk : data.tracks) {
-                WayPoint earliest = null, latest = null;
-
                 info.append("<tr><td>");
                 if (trk.getAttributes().containsKey("name")) {
                     info.append(trk.getAttributes().get("name"));
@@ -160,39 +219,7 @@ public class GpxLayer extends Layer {
                     info.append(" ").append(trk.getAttributes().get("desc"));
                 }
                 info.append("</td><td>");
-
-                for (GpxTrackSegment seg : trk.getSegments()) {
-                    for (WayPoint pnt : seg.getWayPoints()) {
-                        if (latest == null) {
-                            latest = earliest = pnt;
-                        } else {
-                            if (pnt.compareTo(earliest) < 0) {
-                                earliest = pnt;
-                            } else {
-                                latest = pnt;
-                            }
-                        }
-                    }
-                }
-
-                if (earliest != null && latest != null) {
-                    DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
-                    String earliestDate = df.format(earliest.getTime());
-                    String latestDate = df.format(latest.getTime());
-
-                    if (earliestDate.equals(latestDate)) {
-                        DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT);
-                        info.append(earliestDate).append(" ");
-                        info.append(tf.format(earliest.getTime())).append(" - ").append(tf.format(latest.getTime()));
-                    } else {
-                        DateFormat dtf = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-                        info.append(dtf.format(earliest.getTime())).append(" - ").append(dtf.format(latest.getTime()));
-                    }
-
-                    int diff = (int) (latest.time - earliest.time);
-                    info.append(String.format(" (%d:%02d)", diff / 3600, (diff % 3600) / 60));
-                }
-
+                info.append(getTimespanForTrack(trk));
                 info.append("</td><td>");
                 info.append(NavigatableComponent.getSystemOfMeasurement().getDistText(trk.length()));
                 info.append("</td><td>");
@@ -254,6 +281,7 @@ public class GpxLayer extends Layer {
                 new CustomizeDrawing(this),
                 new ConvertToDataLayerAction(),
                 SeparatorLayerAction.INSTANCE,
+                new ChooseTrackVisibilityAction(),
                 new RenameLayerAction(getAssociatedFile(), this),
                 SeparatorLayerAction.INSTANCE,
                 new LayerListPopup.InfoAction(this) };
@@ -271,6 +299,7 @@ public class GpxLayer extends Layer {
                 new ConvertToDataLayerAction(),
                 new DownloadAlongTrackAction(),
                 SeparatorLayerAction.INSTANCE,
+                new ChooseTrackVisibilityAction(),
                 new RenameLayerAction(getAssociatedFile(), this),
                 SeparatorLayerAction.INSTANCE,
                 new LayerListPopup.InfoAction(this) };
@@ -591,7 +620,13 @@ public class GpxLayer extends Layer {
 
         LinkedList<WayPoint> visibleSegments = new LinkedList<WayPoint>();
         WayPoint last = null;
+        int i = 0;
         for (GpxTrack trk: data.tracks) {
+            // hide tracks that were de-selected in ChooseTrackVisibilityAction
+            if(!trackVisibility[i++]) {
+                continue;
+            }
+
             for (GpxTrackSegment trkSeg: trk.getSegments()) {
                 for(WayPoint pt : trkSeg.getWayPoints())
                 {
@@ -821,6 +856,168 @@ public class GpxLayer extends Layer {
     @Override
     public void setAssociatedFile(File file) {
         data.storageFile = file;
+    }
+
+    /**
+     * allows the user to choose which of the downloaded tracks should be displayed.
+     * they can be chosen from the gpx layer context menu.
+     */
+    public class ChooseTrackVisibilityAction extends AbstractAction {
+        public ChooseTrackVisibilityAction() {
+            super(tr("Choose visible tracks"), ImageProvider.get("dialogs/filter"));
+        }
+
+        /**
+         * gathers all available data for the tracks and returns them as array of arrays
+         * in the expected column order  */
+        private Object[][] buildTableContents() {
+            Object[][] tracks = new Object[data.tracks.size()][5];
+            int i = 0;
+            for (GpxTrack trk : data.tracks) {
+                Map<String, Object> attr = trk.getAttributes();
+                String name = (String) (attr.containsKey("name") ? attr.get("name") : "");
+                String desc = (String) (attr.containsKey("desc") ? attr.get("desc") : "");
+                String time = getTimespanForTrack(trk);
+                String length = NavigatableComponent.getSystemOfMeasurement().getDistText(trk.length());
+                String url = (String) (attr.containsKey("url") ? attr.get("url") : "");
+                tracks[i] = new String[] {name, desc, time, length, url};
+                i++;
+            }
+            return tracks;
+        }
+
+        /**
+         * Builds an non-editable table whose 5th column will open a browser when double clicked.
+         * The table will fill its parent. */
+        private JTable buildTable(String[] headers, Object[][] content) {
+            final JTable t = new JTable(content, headers) {
+                @Override
+                public Component prepareRenderer(TableCellRenderer renderer, int row, int col) {
+                    Component c = super.prepareRenderer(renderer, row, col);
+                    if (c instanceof JComponent) {
+                        JComponent jc = (JComponent)c;
+                        jc.setToolTipText((String)getValueAt(row, col));
+                    }
+                    return c;
+                }
+
+                @Override
+                public boolean isCellEditable(int rowIndex, int colIndex) {
+                    return false;
+                }
+            };
+            // default column widths
+            t.getColumnModel().getColumn(0).setPreferredWidth(220);
+            t.getColumnModel().getColumn(1).setPreferredWidth(300);
+            t.getColumnModel().getColumn(2).setPreferredWidth(200);
+            t.getColumnModel().getColumn(3).setPreferredWidth(50);
+            t.getColumnModel().getColumn(4).setPreferredWidth(100);
+            // make the link clickable
+            final MouseListener urlOpener = new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() != 2)
+                        return;
+                    JTable t = (JTable)e.getSource();
+                    int col = t.convertColumnIndexToModel(t.columnAtPoint(e.getPoint()));
+                    if(col != 4) // only accept clicks on the URL column
+                        return;
+                    int row = t.rowAtPoint(e.getPoint());
+                    String url = (String) t.getValueAt(row, col);
+                    if(url == "")
+                        return;
+                    OpenBrowser.displayUrl(url);
+                }
+            };
+            t.addMouseListener(urlOpener);
+            t.setFillsViewportHeight(true);
+            return t;
+        }
+
+        /** selects all rows (=tracks) in the table that are currently visible */
+        private void selectVisibleTracksInTable(JTable table) {
+            // don't select any tracks if the layer is not visible
+            if(!isVisible())
+                return;
+            ListSelectionModel s = table.getSelectionModel();
+            s.clearSelection();
+            for(int i=0; i < trackVisibility.length; i++)
+                if(trackVisibility[i]) {
+                    s.addSelectionInterval(i, i);
+                }
+        }
+
+        /** listens to selection changes in the table and redraws the map */
+        private void listenToSelectionChanges(JTable table) {
+            table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+                public void valueChanged(ListSelectionEvent e) {
+                    if(!(e.getSource() instanceof ListSelectionModel))
+                        return;
+
+                    ListSelectionModel s =  (ListSelectionModel) e.getSource();
+                    for(int i = 0; i < data.tracks.size(); i++) {
+                        trackVisibility[i] = s.isSelectedIndex(i);
+                    }
+                    Main.map.mapView.preferenceChanged(null);
+                    Main.map.repaint(100);
+                }
+            });
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            final JPanel msg = new JPanel(new GridBagLayout());
+            msg.add(new JLabel(tr("<html>Select all tracks that you want to be displayed. You can drag select a "
+                    + "range of tracks or use CTRL+Click to select specific ones. The map is updated live in the "
+                    + "background. Open the URLs by double clicking them.</html>")),
+                    GBC.eol().fill(GBC.HORIZONTAL));
+
+            // build table
+            final boolean[] trackVisibilityBackup = trackVisibility.clone();
+            final String[] headers = {tr("Name"), tr("Description"), tr("Timespan"), tr("Length"), tr("URL")};
+            final JTable table = buildTable(headers, buildTableContents());
+            selectVisibleTracksInTable(table);
+            listenToSelectionChanges(table);
+
+            // make the table scrollable
+            JScrollPane scrollPane = new JScrollPane(table);
+            msg.add(scrollPane, GBC.eol().fill(GBC.BOTH));
+
+            // build dialog
+            ExtendedDialog ed = new ExtendedDialog(
+                    Main.parent, tr("Set track visibility for {0}", getName()),
+                    new String[] {tr("Show all"), tr("Show selected only"), tr("Cancel")});
+            ed.setButtonIcons(new String[] {"dialogs/layerlist/eye", "dialogs/filter", "cancel"});
+            ed.setContent(msg, false);
+            ed.setDefaultButton(2);
+            ed.setCancelButton(3);
+            ed.configureContextsensitiveHelp("/Action/ChooseTrackVisibility", true);
+            ed.setRememberWindowGeometry(
+                    getClass().getName() + ".geometry",
+                    WindowGeometry.centerInWindow(Main.parent, new Dimension(1000, 500))
+            );
+            ed.showDialog();
+            int v = ed.getValue();
+            // cancel for unknown buttons and copy back original settings
+            if(v != 1 && v != 2) {
+                for(int i = 0; i < data.tracks.size(); i++) {
+                    trackVisibility[i] = trackVisibilityBackup[i];
+                }
+                Main.map.repaint();
+                return;
+            }
+
+            // set visibility (1 = show all, 2 = filter). If no tracks are selected
+            // set all of them visible and...
+            ListSelectionModel s = table.getSelectionModel();
+            final boolean all = v == 1 || s.isSelectionEmpty();
+            for(int i = 0; i < data.tracks.size(); i++) {
+                trackVisibility[i] = all || s.isSelectedIndex(i);
+            }
+            // ...sync with layer visibility instead to avoid having two ways to hide everything
+            setVisible(v == 1 || !s.isSelectionEmpty());
+            Main.map.repaint();
+        }
     }
 
     /**
