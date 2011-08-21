@@ -1254,8 +1254,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         g.setColor(Color.red);
         g.setFont(InfoFont);
 
-        // The current zoom tileset is guaranteed to have all of
-        // its tiles
+        // The current zoom tileset should have all of its tiles
+        // due to the loadAllTiles(), unless it to tooLarge()
         for (Tile t : ts.allExistingTiles()) {
             this.paintTileText(ts, t, g, mv, displayZoomLevel, t);
         }
