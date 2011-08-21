@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
@@ -219,7 +221,9 @@ public class StyledMapRenderer extends AbstractMapRenderer{
                 Main.pref.getBoolean("mappaint.use-antialiasing", true) ?
                         RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
-        this.painter = new MapPainter(paintSettings, g, isInactiveMode, nc, renderVirtualNodes, circum, leftHandTraffic);
+        Collection<WaySegment> hws = data.getHighlightedWaySegments();
+
+        this.painter = new MapPainter(paintSettings, g, isInactiveMode, nc, renderVirtualNodes, circum, leftHandTraffic, hws);
 
         StyleCollector sc = new StyleCollector(drawArea, drawMultipolygon, drawRestriction);
         collectNodeStyles(data, sc, bbox);
@@ -228,7 +232,7 @@ public class StyledMapRenderer extends AbstractMapRenderer{
         //long phase1 = System.currentTimeMillis();
         sc.drawAll();
         sc = null;
-        painter.drawVirtualNodes(data.searchWays(bbox));
+        painter.drawVirtualNodes(data.searchWays(bbox), data.getHighlightedVirtualNodes());
 
         //long now = System.currentTimeMillis();
         //System.err.println(String.format("PAINTING TOOK %d [PHASE1 took %d] (at scale %s)", now - start, phase1 - start, circum));

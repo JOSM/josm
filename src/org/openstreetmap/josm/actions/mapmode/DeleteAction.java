@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AWTEvent;
 import java.awt.Cursor;
-import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
@@ -13,10 +12,13 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -44,17 +46,19 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-
-/**
- * This class contains stubs for highlighting affected primitives when affected.
- * However, way segments can be deleted as well, but cannot be highlighted
- * alone. If the highlight feature for this delete action is to be implemented
- * properly, highlighting way segments must be possible first. --xeen, 2009-09-02
- */
 public class DeleteAction extends MapMode implements AWTEventListener {
     // Cache previous mouse event (needed when only the modifier keys are
     // pressed but the mouse isn't moved)
     private MouseEvent oldEvent = null;
+
+    /**
+     * elements that have been highlighted in the previous iteration. Used
+     * to remove the highlight from them again as otherwise the whole data
+     * set would have to be checked.
+     */
+    private Set<OsmPrimitive> oldHighlights = new HashSet<OsmPrimitive>();
+
+    private boolean drawTargetHighlight;
 
     private enum DeleteMode {
         none("delete"),
@@ -100,6 +104,8 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         if (!isEnabled())
             return;
 
+        drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
+
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
         // This is required to update the cursors when ctrl/shift/alt is pressed
@@ -119,6 +125,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         } catch (SecurityException ex) {
             System.out.println(ex);
         }
+        removeHighlighting();
     }
 
     @Override public void actionPerformed(ActionEvent e) {
@@ -156,19 +163,66 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      */
     @Override public void mouseMoved(MouseEvent e) {
         oldEvent = e;
-        updateCursor(e, e.getModifiers());
+        giveUserFeedback(e);
+    }
+
+    /**
+     * removes any highlighting that may have been set beforehand.
+     */
+    private void removeHighlighting() {
+        for(OsmPrimitive prim : oldHighlights) {
+            prim.setHighlighted(false);
+        }
+        oldHighlights = new HashSet<OsmPrimitive>();
+        DataSet ds = getCurrentDataSet();
+        if(ds != null) {
+            ds.clearHighlightedWaySegments();
+        }
+    }
+
+    /**
+     * handles everything related to highlighting primitives and way
+     * segments for the given pointer position (via MouseEvent) and
+     * modifiers.
+     * @param e
+     * @param modifiers
+     */
+    private void addHighlighting(MouseEvent e, int modifiers) {
+        if(!drawTargetHighlight)
+            return;
+        removeHighlighting();
+
+        DeleteParameters parameters = getDeleteParameters(e, modifiers);
+
+        if(parameters.mode == DeleteMode.segment) {
+            // deleting segments is the only action not working on OsmPrimitives
+            // so we have to handle them separately.
+            DataSet ds = getCurrentDataSet();
+            if(ds != null) {
+                ds.setHighlightedWaySegments(Collections.singleton(parameters.nearestSegment));
+            }
+        } else {
+            // don't call buildDeleteCommands for DeleteMode.segment because it doesn't support
+            // silent operation and SplitWayAction will show dialogs. A lot.
+            Command delCmd = buildDeleteCommands(e, modifiers, true);
+            if(delCmd == null) {
+                Main.map.mapView.repaint();
+                return;
+            }
+
+            // all other cases delete OsmPrimitives directly, so we can
+            // safely do the following
+            for(OsmPrimitive osm : delCmd.getParticipatingPrimitives()) {
+                osm.setHighlighted(true);
+                oldHighlights.add(osm);
+            }
+        }
+        Main.map.mapView.repaint();
     }
 
     /**
      * This function handles all work related to updating the cursor and
-     * highlights. For now, only the cursor is enabled because highlighting
-     * requires WaySegment to be highlightable.
-     *
-     * Normally the mouse event also contains the modifiers. However, when the
-     * mouse is not moved and only modifier keys are pressed, no mouse event
-     * occurs. We can use AWTEvent to catch those but still lack a proper
-     * mouseevent. Instead we copy the previous event and only update the
-     * modifiers.
+     * highlights
      *
      * @param MouseEvent
      * @param int modifiers
@@ -181,6 +235,30 @@ public class DeleteAction extends MapMode implements AWTEventListener {
 
         DeleteParameters parameters = getDeleteParameters(e, modifiers);
         Main.map.mapView.setNewCursor(parameters.mode.cursor(), this);
+    }
+    /**
+     * Gives the user feedback for the action he/she is about to do. Currently
+     * calls the cursor and target highlighting routines. Allows for modifiers
+     * not taken from the given mouse event.
+     * 
+     * Normally the mouse event also contains the modifiers. However, when the
+     * mouse is not moved and only modifier keys are pressed, no mouse event
+     * occurs. We can use AWTEvent to catch those but still lack a proper
+     * mouseevent. Instead we copy the previous event and only update the
+     * modifiers.
+     */
+    private void giveUserFeedback(MouseEvent e, int modifiers) {
+        updateCursor(e, modifiers);
+        addHighlighting(e, modifiers);
+    }
+
+    /**
+     * Gives the user feedback for the action he/she is about to do. Currently
+     * calls the cursor and target highlighting routines. Extracts modifiers
+     * from mouse event.
+     */
+    private void giveUserFeedback(MouseEvent e) {
+        giveUserFeedback(e, e.getModifiers());
     }
 
     /**
@@ -203,6 +281,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         }
 
         getCurrentDataSet().setSelected();
+        giveUserFeedback(e);
         Main.map.mapView.repaint();
     }
 
@@ -241,11 +320,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
     }
 
     private DeleteParameters getDeleteParameters(MouseEvent e, int modifiers) {
-        // Note: CTRL is the only modifier that is checked in MouseMove, don't
-        // forget updating it there
-        boolean ctrl = (modifiers & ActionEvent.CTRL_MASK) != 0;
-        boolean shift = (modifiers & ActionEvent.SHIFT_MASK) != 0;
-        boolean alt = (modifiers & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
+        updateKeyModifiers(modifiers);
 
         DeleteParameters result = new DeleteParameters();
 
@@ -287,7 +362,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         case node:
             return DeleteCommand.delete(getEditLayer(),Collections.singleton(parameters.nearestNode), false, silent);
         case node_with_references:
-            return DeleteCommand.deleteWithReferences(getEditLayer(),Collections.singleton(parameters.nearestNode));
+            return DeleteCommand.deleteWithReferences(getEditLayer(),Collections.singleton(parameters.nearestNode), silent);
         case segment:
             return DeleteCommand.deleteWaySegment(getEditLayer(), parameters.nearestSegment);
         case way:
@@ -295,7 +370,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         case way_with_nodes:
             return DeleteCommand.delete(getEditLayer(), Collections.singleton(parameters.nearestSegment.way), true, silent);
         case way_with_references:
-            return DeleteCommand.deleteWithReferences(getEditLayer(),Collections.singleton(parameters.nearestSegment.way),true);
+            return DeleteCommand.deleteWithReferences(getEditLayer(), Collections.singleton(parameters.nearestSegment.way), true);
         default:
             return null;
         }
@@ -305,8 +380,10 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * This is required to update the cursors when ctrl/shift/alt is pressed
      */
     public void eventDispatched(AWTEvent e) {
+        if(e == null)
+            return;
         // We don't have a mouse event, so we pass the old mouse event but the
         // new modifiers.
-        updateCursor(oldEvent, ((InputEvent)e).getModifiers());
+        giveUserFeedback(oldEvent, ((InputEvent) e).getModifiers());
     }
 }

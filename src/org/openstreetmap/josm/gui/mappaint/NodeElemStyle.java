@@ -110,7 +110,7 @@ public class NodeElemStyle extends ElemStyle {
         if (icon == null) {
             symbol = createSymbol(env);
         }
-        
+
         // optimization: if we neither have a symbol, nor an icon
         // we don't have to check for the remaining style properties and we don't
         // have to allocate a node element style.
@@ -242,72 +242,61 @@ public class NodeElemStyle extends ElemStyle {
             } else if (symbol != null) {
                 Color fillColor = symbol.fillColor;
                 if (fillColor != null) {
-                    if (n.isHighlighted()) {
-                        fillColor = settings.getHighlightColor();
-                    } else {
-                        if (painter.isInactiveMode() || n.isDisabled()) {
-                            fillColor = settings.getInactiveColor();
-                        } else if (selected) {
-                            fillColor = settings.getSelectedColor(fillColor.getAlpha());
-                        } else if (member) {
-                            fillColor = settings.getRelationSelectedColor(fillColor.getAlpha());
-                        }
+                    if (painter.isInactiveMode() || n.isDisabled()) {
+                        fillColor = settings.getInactiveColor();
+                    } else if (selected) {
+                        fillColor = settings.getSelectedColor(fillColor.getAlpha());
+                    } else if (member) {
+                        fillColor = settings.getRelationSelectedColor(fillColor.getAlpha());
                     }
                 }
                 Color strokeColor = symbol.strokeColor;
                 if (strokeColor != null) {
-                    if (n.isHighlighted()) {
-                        strokeColor = settings.getHighlightColor();
-                    } else {
-                        if (painter.isInactiveMode() || n.isDisabled()) {
-                            strokeColor = settings.getInactiveColor();
-                        } else if (selected) {
-                            strokeColor = settings.getSelectedColor(strokeColor.getAlpha());
-                        } else if (member) {
-                            strokeColor = settings.getRelationSelectedColor(strokeColor.getAlpha());
-                        }
+                    if (painter.isInactiveMode() || n.isDisabled()) {
+                        strokeColor = settings.getInactiveColor();
+                    } else if (selected) {
+                        strokeColor = settings.getSelectedColor(strokeColor.getAlpha());
+                    } else if (member) {
+                        strokeColor = settings.getRelationSelectedColor(strokeColor.getAlpha());
                     }
                 }
                 painter.drawNodeSymbol(n, symbol, fillColor, strokeColor);
             } else {
-                if (n.isHighlighted()) {
-                    painter.drawNode(n, settings.getHighlightColor(), settings.getSelectedNodeSize(), settings.isFillSelectedNode());
-                } else {
-                    Color color;
-                    boolean isConnection = n.isConnectionNode();
+                Color color;
+                boolean isConnection = n.isConnectionNode();
 
-                    if (painter.isInactiveMode() || n.isDisabled()) {
-                        color = settings.getInactiveColor();
-                    } else if (selected) {
-                        color = settings.getSelectedColor();
-                    } else if (member) {
-                        color = settings.getRelationSelectedColor();
-                    } else if (isConnection) {
-                        if (n.isTagged()) {
-                            color = settings.getTaggedConnectionColor();
-                        } else {
-                            color = settings.getConnectionColor();
-                        }
+                if (painter.isInactiveMode() || n.isDisabled()) {
+                    color = settings.getInactiveColor();
+                } else if (selected) {
+                    color = settings.getSelectedColor();
+                } else if (member) {
+                    color = settings.getRelationSelectedColor();
+                } else if (isConnection) {
+                    if (n.isTagged()) {
+                        color = settings.getTaggedConnectionColor();
                     } else {
-                        if (n.isTagged()) {
-                            color = settings.getTaggedColor();
-                        } else {
-                            color = settings.getNodeColor();
-                        }
+                        color = settings.getConnectionColor();
                     }
-
-                    final int size = Utils.max((selected ? settings.getSelectedNodeSize() : 0),
-                            (n.isTagged() ? settings.getTaggedNodeSize() : 0),
-                            (isConnection ? settings.getConnectionNodeSize() : 0),
-                            settings.getUnselectedNodeSize());
-
-                    final boolean fill = (selected && settings.isFillSelectedNode()) ||
-                            (n.isTagged() && settings.isFillTaggedNode()) ||
-                            (isConnection && settings.isFillConnectionNode()) ||
-                            settings.isFillUnselectedNode();
-
-                    painter.drawNode(n, color, size, fill);
+                } else {
+                    if (n.isTagged()) {
+                        color = settings.getTaggedColor();
+                    } else {
+                        color = settings.getNodeColor();
+                    }
                 }
+
+                final int size = Utils.max((selected ? settings.getSelectedNodeSize() : 0),
+                        (n.isTagged() ? settings.getTaggedNodeSize() : 0),
+                        (isConnection ? settings.getConnectionNodeSize() : 0),
+                        settings.getUnselectedNodeSize());
+
+                final boolean fill = (selected && settings.isFillSelectedNode()) ||
+                (n.isTagged() && settings.isFillTaggedNode()) ||
+                (isConnection && settings.isFillConnectionNode()) ||
+                settings.isFillUnselectedNode();
+
+                painter.drawNode(n, color, size, fill);
+
             }
         } else if (primitive instanceof Relation && icon != null) {
             painter.drawRestriction((Relation) primitive, this);
@@ -321,7 +310,7 @@ public class NodeElemStyle extends ElemStyle {
             return null;
         return disabledIcon = new ImageIcon(GrayFilter.createDisabledImage(icon.getImage()));
     }
-    
+
     public Rectangle getBox() {
         if (icon != null) {
             int w = icon.getIconWidth(), h=icon.getIconHeight();

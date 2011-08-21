@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Cursor;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
 import org.openstreetmap.josm.Main;
@@ -27,7 +26,7 @@ public class PlayHeadDragMode extends MapMode {
 
     public PlayHeadDragMode(PlayHeadMarker m) {
         super(tr("Drag play head"), "playheaddrag", tr("Drag play head"), null,
-        Main.map, Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+                Main.map, Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
         playHeadMarker = m;
     }
 
@@ -67,7 +66,9 @@ public class PlayHeadDragMode extends MapMode {
         mouseStart = null;
         if (ev.getButton() != MouseEvent.BUTTON1 || p == null || ! dragging)
             return;
-        boolean shift = (ev.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+
+        updateKeyModifiers(ev);
+
         EastNorth en = Main.map.mapView.getEastNorth(ev.getX(), ev.getY());
         if (! shift) {
             playHeadMarker.reposition(en);

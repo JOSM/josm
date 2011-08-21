@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 
@@ -167,7 +168,16 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
                 osm.visit(this);
             }
         }
-        drawVirtualNodes(data.searchWays(bbox));
+        drawVirtualNodes(data.searchWays(bbox), data.getHighlightedVirtualNodes());
+
+        // draw highlighted way segments over the already drawn ways. Otherwise each
+        // way would have to be checked if it contains a way segment to highlight when
+        // in most of the cases there won't be more than one segment. Since the wireframe
+        // renderer does not feature any transparency there should be no visual difference.
+        for(final WaySegment wseg : data.getHighlightedWaySegments()) {
+            drawSegment(nc.getPoint(wseg.getFirstNode()), nc.getPoint(wseg.getSecondNode()), highlightColor, false);
+        }
+        displaySegments();
     }
 
     private static final int max(int a, int b, int c, int d) {
@@ -227,18 +237,29 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         return (xd+yd > space);
     }
 
-    public void drawVirtualNodes(Collection<Way> ways) {
-
-        if (virtualNodeSize != 0) {
-            GeneralPath path = new GeneralPath();
-            for (Way osm: ways){
-                if (osm.isUsable() && !osm.isDisabledAndHidden() && !osm.isDisabled()) {
-                    visitVirtual(path, osm);
-                }
+    public void drawVirtualNodes(Collection<Way> ways, Collection<WaySegment> highlightVirtualNodes) {
+        if (virtualNodeSize == 0)
+            return;
+        // print normal virtual nodes
+        GeneralPath path = new GeneralPath();
+        for (Way osm : ways) {
+            if (osm.isUsable() && !osm.isDisabledAndHidden() && !osm.isDisabled()) {
+                visitVirtual(path, osm);
             }
-            g.setColor(nodeColor);
-            g.draw(path);
         }
+        g.setColor(nodeColor);
+        g.draw(path);
+        // print highlighted virtual nodes. Since only the color changes, simply
+        // drawing them over the existing ones works fine (at least in their current
+        // simple style)
+        path = new GeneralPath();
+        for (WaySegment wseg: highlightVirtualNodes){
+            if (wseg.way.isUsable() && !wseg.way.isDisabled()) {
+                visitVirtual(path, wseg.toWay());
+            }
+        }
+        g.setColor(highlightColor);
+        g.draw(path);
     }
 
     public void visitVirtual(GeneralPath path, Way w) {

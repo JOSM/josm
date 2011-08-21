@@ -34,15 +34,16 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle;
+import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
+import org.openstreetmap.josm.gui.mappaint.TextElement;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.HorizontalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.VerticalTextAlignment;
-import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
-import org.openstreetmap.josm.gui.mappaint.TextElement;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
 
@@ -52,6 +53,7 @@ public class MapPainter {
     private final NavigatableComponent nc;
     private final boolean inactive;
     private final MapPaintSettings settings;
+    private final Collection<WaySegment> highlightWaySegments;
 
     private final boolean useStrokes;
     private final boolean showNames;
@@ -63,6 +65,8 @@ public class MapPainter {
     private final Color selectedColor;
     private final Color relationSelectedColor;
     private final Color nodeColor;
+    private final Color highlightColor;
+    private final Color highlightColorTransparent;
     private final Color backgroundColor;
 
     private final Font orderFont;
@@ -80,11 +84,13 @@ public class MapPainter {
 
     public MapPainter(MapPaintSettings settings, Graphics2D g,
             boolean inactive, NavigatableComponent nc, boolean virtual,
-            double circum, boolean leftHandTraffic){
+            double circum, boolean leftHandTraffic,
+            Collection<WaySegment> highlightWaySegments){
         this.settings = settings;
         this.g = g;
         this.inactive = inactive;
         this.nc = nc;
+        this.highlightWaySegments = highlightWaySegments;
         this.useStrokes = settings.getUseStrokesDistance() > circum;
         this.showNames = settings.getShowNamesDistance() > circum;
         this.showIcons = settings.getShowIconsDistance() > circum;
@@ -95,6 +101,8 @@ public class MapPainter {
         this.selectedColor = PaintColors.SELECTED.get();
         this.relationSelectedColor = PaintColors.RELATIONSELECTED.get();
         this.nodeColor = PaintColors.NODE.get();
+        this.highlightColor = PaintColors.HIGHLIGHT.get();
+        this.highlightColorTransparent = new Color(highlightColor.getRed(), highlightColor.getGreen(), highlightColor.getBlue(), 100);
         this.backgroundColor = PaintColors.getBackgroundColor();
 
         this.orderFont = new Font(Main.pref.get("mappaint.font", "Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
@@ -130,8 +138,29 @@ public class MapPainter {
         boolean initialMoveToNeeded = true;
         List<Node> wayNodes = way.getNodes();
         if (wayNodes.size() < 2) return;
-        
-        Iterator<Point> it = new OffsetIterator(way.getNodes(), offset);
+
+        // only highlight the segment if the way itself is not highlighted
+        if(!way.isHighlighted()) {
+            GeneralPath highlightSegs = null;
+            for(WaySegment ws : highlightWaySegments) {
+                if(ws.way != way || ws.lowerIndex < offset) {
+                    continue;
+                }
+                if(highlightSegs == null) {
+                    highlightSegs = new GeneralPath();
+                }
+
+                Point p1 = nc.getPoint(ws.getFirstNode());
+                Point p2 = nc.getPoint(ws.getSecondNode());
+                highlightSegs.moveTo(p1.x, p1.y);
+                highlightSegs.lineTo(p2.x, p2.y);
+            }
+
+            drawPathHighlight(highlightSegs, line);
+        }
+
+
+        Iterator<Point> it = new OffsetIterator(wayNodes, offset);
         while (it.hasNext()) {
             Point p = it.next();
             if (lastPoint != null) {
@@ -208,6 +237,9 @@ public class MapPainter {
             }
             lastPoint = p;
         }
+        if(way.isHighlighted()) {
+            drawPathHighlight(path, line);
+        }
         displaySegments(path, orientationArrows, onewayArrows, onewayArrowsCasing, color, line, dashes, dashedColor);
     }
 
@@ -220,11 +252,11 @@ public class MapPainter {
      * perfect way, but it is should not throw an exception.
      */
     public class OffsetIterator implements Iterator<Point> {
-        
+
         private List<Node> nodes;
         private int offset;
         private int idx;
-        
+
         private Point prev = null;
         /* 'prev0' is a point that has distance 'offset' from 'prev' and the
          * line from 'prev' to 'prev0' is perpendicular to the way segment from
@@ -237,7 +269,7 @@ public class MapPainter {
             this.offset = offset;
             idx = 0;
         }
-        
+
         @Override
         public boolean hasNext() {
             return idx < nodes.size();
@@ -246,9 +278,9 @@ public class MapPainter {
         @Override
         public Point next() {
             if (offset == 0) return nc.getPoint(nodes.get(idx++));
-            
+
             Point current = nc.getPoint(nodes.get(idx));
-            
+
             if (idx == nodes.size() - 1) {
                 ++idx;
                 return new Point(x_prev0 + current.x - prev.x, y_prev0 + current.y - prev.y);
@@ -276,11 +308,11 @@ public class MapPainter {
             } else {
                 int dx_prev = current.x - prev.x;
                 int dy_prev = current.y - prev.y;
-                
+
                 // determine intersection of the lines parallel to the two
                 // segments
                 int det = dx_next*dy_prev - dx_prev*dy_next;
-                
+
                 if (det == 0) {
                     ++idx;
                     prev = current;
@@ -291,8 +323,8 @@ public class MapPainter {
 
                 int m = dx_next*(y_current0 - y_prev0) - dy_next*(x_current0 - x_prev0);
 
-                int cx_ = x_prev0 + (int) Math.round(m * dx_prev / det);
-                int cy_ = y_prev0 + (int) Math.round(m * dy_prev / det);
+                int cx_ = x_prev0 + Math.round(m * dx_prev / det);
+                int cy_ = y_prev0 + Math.round(m * dy_prev / det);
                 ++idx;
                 prev = current;
                 x_prev0 = x_current0;
@@ -306,7 +338,7 @@ public class MapPainter {
             throw new UnsupportedOperationException();
         }
     }
-    
+
     private void displaySegments(GeneralPath path, GeneralPath orientationArrows, GeneralPath onewayArrows, GeneralPath onewayArrowsCasing,
             Color color, BasicStroke line, BasicStroke dashes, Color dashedColor) {
         g.setColor(inactive ? inactiveColor : color);
@@ -336,6 +368,24 @@ public class MapPainter {
 
         if(useStrokes) {
             g.setStroke(new BasicStroke());
+        }
+    }
+
+    /**
+     * highlights a given GeneralPath using the settings from BasicStroke to match the line's
+     * style. Width of the highlight is hard coded.
+     * @param path
+     * @param line
+     */
+    private void drawPathHighlight(GeneralPath path, BasicStroke line) {
+        if(path == null)
+            return;
+        g.setColor(highlightColorTransparent);
+        float w = (line.getLineWidth() + 4);
+        while(w >= line.getLineWidth()) {
+            g.setStroke(new BasicStroke(w, line.getEndCap(), line.getLineJoin(), line.getMiterLimit()));
+            g.draw(path);
+            w -= 4;
         }
     }
 
@@ -497,9 +547,12 @@ public class MapPainter {
 
     public void drawNodeIcon(Node n, ImageIcon icon, float iconAlpha, boolean selected, boolean member) {
         Point p = nc.getPoint(n);
-        if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 
-        int w = icon.getIconWidth(), h=icon.getIconHeight();
+        final int w = icon.getIconWidth(), h=icon.getIconHeight();
+        if(n.isHighlighted()) {
+            drawPointHighlight(p, Math.max(w, h));
+        }
+
         if (iconAlpha != 1f) {
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, iconAlpha));
         }
@@ -529,8 +582,11 @@ public class MapPainter {
 
     public void drawNodeSymbol(Node n, Symbol s, Color fillColor, Color strokeColor) {
         Point p = nc.getPoint(n);
-        if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
         int radius = s.size / 2;
+
+        if(n.isHighlighted()) {
+            drawPointHighlight(p, s.size);
+        }
 
         if (fillColor != null) {
             g.setColor(fillColor);
@@ -611,8 +667,16 @@ public class MapPainter {
      * @param color The color of the node.
      */
     public void drawNode(Node n, Color color, int size, boolean fill) {
+        if(size <= 0 && !n.isHighlighted())
+            return;
+
+        Point p = nc.getPoint(n);
+
+        if(n.isHighlighted()) {
+            drawPointHighlight(p, size);
+        }
+
         if (size > 1) {
-            Point p = nc.getPoint(n);
             if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
             int radius = size / 2;
 
@@ -622,18 +686,32 @@ public class MapPainter {
                 g.setColor(color);
             }
             if (fill) {
-                g.fillRect(p.x - radius, p.y - radius, size + 1, size + 1);
+                g.fillRect(p.x-radius-1, p.y-radius-1, size + 1, size + 1);
             } else {
-                g.drawRect(p.x - radius, p.y - radius, size, size);
+                g.drawRect(p.x-radius-1, p.y-radius-1, size, size);
             }
+        }
+    }
+
+    /**
+     * highlights a given point by drawing a rounded rectangle around it. Give the
+     * size of the object you want to be highlighted, width is added automatically.
+     */
+    private void drawPointHighlight(Point p, int size) {
+        g.setColor(highlightColorTransparent);
+        int s = size + 7;
+        while(s >= size) {
+            int r = (int) Math.floor(s/2);
+            g.fillRoundRect(p.x-r, p.y-r, s, s, r, r);
+            s -= 4;
         }
     }
 
     public void drawBoxText(Node n, BoxTextElemStyle bs) {
         if (!isShowNames() || bs == null)
             return;
-        
-        Point p = nc.getPoint((Node) n);
+
+        Point p = nc.getPoint(n);
         TextElement text = bs.text;
         String s = text.labelCompositionStrategy.compose(n);
         if (s == null) return;
@@ -822,7 +900,6 @@ public class MapPainter {
     }
 
     public void drawRestriction(Relation r, NodeElemStyle icon) {
-
         Way fromWay = null;
         Way toWay = null;
         OsmPrimitive via = null;
@@ -997,18 +1074,29 @@ public class MapPainter {
                 pVia, vx, vx2, vy, vy2, iconAngle, r.isSelected());
     }
 
-    public void drawVirtualNodes(Collection<Way> ways) {
-
-        if (virtualNodeSize != 0) {
-            GeneralPath path = new GeneralPath();
-            for (Way osm: ways){
-                if (osm.isUsable() && !osm.isDisabled()) {
-                    visitVirtual(path, osm);
-                }
+    public void drawVirtualNodes(Collection<Way> ways, Collection<WaySegment> highlightVirtualNodes) {
+        if (virtualNodeSize == 0)
+            return;
+        // print normal virtual nodes
+        GeneralPath path = new GeneralPath();
+        for (Way osm: ways){
+            if (osm.isUsable() && !osm.isDisabled()) {
+                visitVirtual(path, osm);
             }
-            g.setColor(nodeColor);
-            g.draw(path);
         }
+        g.setColor(nodeColor);
+        g.draw(path);
+        // print highlighted virtual nodes. Since only the color changes, simply
+        // drawing them over the existing ones works fine (at least in their current
+        // simple style)
+        path = new GeneralPath();
+        for (WaySegment wseg: highlightVirtualNodes){
+            if (wseg.way.isUsable() && !wseg.way.isDisabled()) {
+                visitVirtual(path, wseg.toWay());
+            }
+        }
+        g.setColor(highlightColor);
+        g.draw(path);
     }
 
     public void visitVirtual(GeneralPath path, Way w) {

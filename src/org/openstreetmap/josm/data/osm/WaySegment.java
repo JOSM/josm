@@ -29,6 +29,17 @@ public final class WaySegment {
         return way.getNode(lowerIndex + 1);
     }
 
+    /**
+     * returns this way segment as complete way.
+     * @return
+     */
+    public Way toWay() {
+        Way w = new Way();
+        w.addNode(getFirstNode());
+        w.addNode(getSecondNode());
+        return w;
+    }
+
     @Override public boolean equals(Object o) {
         return o != null && o instanceof WaySegment
             && ((WaySegment) o).way == way

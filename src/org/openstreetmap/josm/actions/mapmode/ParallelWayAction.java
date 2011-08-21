@@ -13,7 +13,6 @@ import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
-import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -107,10 +106,6 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
     private int initialMoveDelay;
 
     private final MapView mv;
-
-    private boolean ctrl;
-    private boolean alt;
-    private boolean shift;
 
     // Mouse tracking state
     private Point mousePressedPos;
@@ -232,9 +227,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
 
     private boolean updateModifiersState(InputEvent e) {
         boolean oldAlt = alt, oldShift = shift, oldCtrl = ctrl;
-        alt = (e.getModifiers() & (ActionEvent.ALT_MASK | InputEvent.ALT_GRAPH_MASK)) != 0;
-        ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+        updateKeyModifiers(e);
         boolean changed = (oldAlt != alt || oldShift != shift || oldCtrl != ctrl);
         return changed;
     }
@@ -393,9 +386,8 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
             // event can come quite late
             if (!isModifiersValidForDragMode())
                 return;
-            if (!initParallelWays(mousePressedPos, copyTags)) {
+            if (!initParallelWays(mousePressedPos, copyTags))
                 return;
-            }
             setMode(Mode.dragging);
         }
 
@@ -408,7 +400,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         double d = enp.distance(nearestPointOnRefLine);
         double realD = mv.getProjection().eastNorth2latlon(enp).greatCircleDistance(mv.getProjection().eastNorth2latlon(nearestPointOnRefLine));
         double snappedRealD = realD;
-        
+
         // TODO: abuse of isToTheRightSideOfLine function.
         boolean toTheRight = Geometry.isToTheRightSideOfLine(referenceSegment.getFirstNode(),
                 referenceSegment.getFirstNode(), referenceSegment.getSecondNode(), new Node(enp));
@@ -430,7 +422,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
             d = -d;
         }
         pWays.changeOffset(d);
-        
+
         Main.map.statusLine.setDist(Math.abs(snappedRealD));
         Main.map.statusLine.repaint();
         mv.repaint();

@@ -184,6 +184,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
 
+        updateKeyModifiers(e);
+
         selectedSegment = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive.isSelectablePredicate);
 
         if (selectedSegment == null) {
@@ -191,9 +193,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         } else {
             // Otherwise switch to another mode
 
-            if ((e.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
+            if (ctrl) {
                 mode = Mode.translate;
-            } else if ((e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0) {
+            } else if (alt) {
                 mode = Mode.create_new;
                 // create a new segment and then select and extrude the new segment
                 getCurrentDataSet().setSelected(selectedSegment.way);
@@ -201,7 +203,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             } else {
                 mode = Mode.extrude;
                 getCurrentDataSet().setSelected(selectedSegment.way);
-                alwaysCreateNodes = ((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0);
+                alwaysCreateNodes = shift;
             }
 
             // remember initial positions for segment nodes.

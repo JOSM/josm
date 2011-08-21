@@ -8,12 +8,10 @@ import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.EventQueue;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
-import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -65,9 +63,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private Node lastUsedNode = null;
     private double PHI=Math.toRadians(90);
 
-    private boolean ctrl;
-    private boolean alt;
-    private boolean shift;
     private Node mouseOnExistingNode;
     private Set<Way> mouseOnExistingWays = new HashSet<Way>();
     private Set<OsmPrimitive> oldHighlights = new HashSet<OsmPrimitive>();
@@ -512,8 +507,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         getCurrentDataSet().setSelected(newSelection);
 
-        // "viewport following" mode for tracing long features 
-        // from aerial imagery or GPS tracks. 
+        // "viewport following" mode for tracing long features
+        // from aerial imagery or GPS tracks.
         if (n != null && Main.map.mapView.viewportFollowing) {
             Main.map.mapView.smoothScrollTo(n.getEastNorth());
         };
@@ -599,18 +594,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         computeHelperLine();
         addHighlighting();
         redrawIfRequired();
-    }
-
-    private void updateKeyModifiers(InputEvent e) {
-        ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        alt = (e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
-        shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
-    }
-
-    private void updateKeyModifiers(MouseEvent e) {
-        ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        alt = (e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
-        shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
     }
 
     /**

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions.mapmode;
 
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -24,6 +25,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 abstract public class MapMode extends JosmAction implements MouseListener, MouseMotionListener {
     protected final Cursor cursor;
+    protected boolean ctrl;
+    protected boolean alt;
+    protected boolean shift;
 
     /**
      * Constructor for mapmodes without an menu
@@ -74,6 +78,20 @@ abstract public class MapMode extends JosmAction implements MouseListener, Mouse
     // a special type of layer
     public boolean layerIsSupported(Layer l) {
         return true;
+    }
+
+    protected void updateKeyModifiers(InputEvent e) {
+        updateKeyModifiers(e.getModifiers());
+    }
+
+    protected void updateKeyModifiers(MouseEvent e) {
+        updateKeyModifiers(e.getModifiers());
+    }
+
+    protected void updateKeyModifiers(int modifiers) {
+        ctrl = (modifiers & ActionEvent.CTRL_MASK) != 0;
+        alt = (modifiers & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
+        shift = (modifiers & ActionEvent.SHIFT_MASK) != 0;
     }
 
     public void mouseReleased(MouseEvent e) {}
