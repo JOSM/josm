@@ -9,8 +9,8 @@ import java.util.List;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.ColorKey;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
 
 public enum PaintColors implements ColorKey {
 
@@ -25,7 +25,7 @@ public enum PaintColors implements ColorKey {
     UNTAGGED_WAY(marktr("untagged way"), new Color(0,128,0)), // dark green
     INCOMPLETE_WAY(marktr("incomplete way"), new Color(0,0,96)), // darker blue
     BACKGROUND(marktr("background"), Color.BLACK),
-    HIGHLIGHT(marktr("highlight"), new Color(0, 255, 186)), // lighteal
+    HIGHLIGHT(marktr("highlight"), SELECTED.get()),
 
     UNTAGGED(marktr("untagged"),Color.GRAY),
     TEXT(marktr("text"), Color.WHITE),

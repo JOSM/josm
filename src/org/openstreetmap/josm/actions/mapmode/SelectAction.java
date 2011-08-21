@@ -5,9 +5,12 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.AWTEvent;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -15,8 +18,10 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -59,12 +64,44 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class SelectAction extends MapMode implements SelectionEnded {
+public class SelectAction extends MapMode implements AWTEventListener, SelectionEnded {
+    // "select" means the selection rectangle and "move" means either dragging
+    // or select if no mouse movement occurs (i.e. just clicking)
     enum Mode { move, rotate, scale, select }
-    
+
+    // contains all possible cases the cursor can be in the SelectAction except the
+    // the move pointer (latter is a system one and not an image)
+    private enum SelectActionCursor {
+        rect("normal", "selection"),
+        rect_add("normal", "select_add"),
+        rect_rm("normal", "select_remove"),
+        way("normal", "select_way"),
+        way_add("normal", "select_way_add"),
+        way_rm("normal", "select_way_remove"),
+        node("normal", "select_node"),
+        node_add("normal", "select_node_add"),
+        node_rm("normal", "select_node_remove"),
+        virtual_node("normal", "addnode"),
+        scale("scale", null),
+        rotate("rotate", null);
+
+        private final Cursor c;
+        private SelectActionCursor(String main, String sub) {
+            c = ImageProvider.getCursor(main, sub);
+        }
+        public Cursor cursor() {
+            return c;
+        }
+    }
+
+    // Cache previous mouse event (needed when only the modifier keys are
+    // pressed but the mouse isn't moved)
+    private MouseEvent oldEvent = null;
+
     private Mode mode = null;
     private SelectionManager selectionManager;
     private boolean cancelDrawMode = false;
+    private boolean drawTargetHighlight;
     private boolean didMouseDrag = false;
     /**
      * The component this SelectAction is associated with.
@@ -95,6 +132,13 @@ public class SelectAction extends MapMode implements SelectionEnded {
     private boolean initialMoveThresholdExceeded = false;
 
     /**
+     * elements that have been highlighted in the previous iteration. Used
+     * to remove the highlight from them again as otherwise the whole data
+     * set would have to be checked.
+     */
+    private Set<OsmPrimitive> oldHighlights = new HashSet<OsmPrimitive>();
+
+    /**
      * Create a new SelectAction
      * @param mapFrame The MapFrame this action belongs to.
      */
@@ -108,6 +152,13 @@ public class SelectAction extends MapMode implements SelectionEnded {
         selectionManager = new SelectionManager(this, false, mv);
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay", 200);
         initialMoveThreshold = Main.pref.getInteger("edit.initial-move-threshold", 5);
+        drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
+        // This is required to update the cursors when ctrl/shift/alt is pressed
+        try {
+            Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
+        } catch (SecurityException ex) {
+            System.out.println(ex);
+        }
     }
 
     @Override
@@ -126,6 +177,139 @@ public class SelectAction extends MapMode implements SelectionEnded {
         mv.removeMouseListener(this);
         mv.removeMouseMotionListener(this);
         mv.setVirtualNodesEnabled(false);
+        removeHighlighting();
+    }
+
+    /**
+     * works out which cursor should be displayed for most of SelectAction's
+     * features. The only exception is the "move" cursor when actually dragging
+     * primitives.
+     * @param nearbyStuff  primitives near the cursor
+     * @return the cursor that should be displayed
+     */
+    private Cursor getCursor(Collection<OsmPrimitive> nearbyStuff) {
+        String c = "rect";
+        switch(mode) {
+        case move:
+            if(virtualNode != null) {
+                c = "virtual_node";
+                break;
+            }
+
+            // nearbyStuff cannot be empty as otherwise we would be in
+            // Move.select and not Move.move
+            OsmPrimitive osm = nearbyStuff.iterator().next();
+
+            c = (osm instanceof Node) ? "node" : c;
+            c = (osm instanceof Way) ? "way" : c;
+
+            if(shift) {
+                c += "_add";
+            } else if(ctrl) {
+                c += osm.isSelected() ? "_rm" : "_add";
+            }
+            break;
+        case rotate:
+            c = "rotate";
+            break;
+        case scale:
+            c = "scale";
+            break;
+        case select:
+            c = "rect" + (shift ? "_add" : (ctrl ? "_rm" : ""));
+            break;
+        }
+        return SelectActionCursor.valueOf(c).cursor();
+    }
+
+    /**
+     * Removes all existing highlights.
+     * @return true if a repaint is required
+     */
+    private boolean removeHighlighting() {
+        boolean needsRepaint = false;
+        DataSet ds = getCurrentDataSet();
+        if(ds != null && !ds.getHighlightedVirtualNodes().isEmpty()) {
+            needsRepaint = true;
+            ds.clearHighlightedVirtualNodes();
+        }
+        if(oldHighlights.isEmpty())
+            return needsRepaint;
+
+        for(OsmPrimitive prim : oldHighlights) {
+            prim.setHighlighted(false);
+        }
+        oldHighlights = new HashSet<OsmPrimitive>();
+        return true;
+    }
+
+    /**
+     * handles adding highlights and updating the cursor for the given mouse event.
+     * @param MouseEvent which should be used as base for the feedback
+     * @return true if repaint is required
+     */
+    private boolean giveUserFeedback(MouseEvent e) {
+        return giveUserFeedback(e, e.getModifiers());
+    }
+
+    /**
+     * handles adding highlights and updating the cursor for the given mouse event.
+     * @param MouseEvent which should be used as base for the feedback
+     * @param define custom keyboard modifiers if the ones from MouseEvent are outdated or similar
+     * @return true if repaint is required
+     */
+    private boolean giveUserFeedback(MouseEvent e, int modifiers) {
+        boolean needsRepaint = false;
+
+        Collection<OsmPrimitive> c = MapView.asColl(
+                mv.getNearestNodeOrWay(e.getPoint(), OsmPrimitive.isSelectablePredicate, true));
+
+        updateKeyModifiers(modifiers);
+        determineMapMode(!c.isEmpty());
+
+        if(drawTargetHighlight) {
+            needsRepaint = removeHighlighting();
+        }
+
+        virtualWays.clear();
+        virtualNode = null;
+        if(mode == Mode.move && setupVirtual(e)) {
+            DataSet ds = getCurrentDataSet();
+            if (ds != null) {
+                ds.setHighlightedVirtualNodes(virtualWays);
+            }
+            mv.setNewCursor(SelectActionCursor.virtual_node.cursor(), this);
+            // don't highlight anything else if a virtual node will be
+            return true;
+        }
+
+        mv.setNewCursor(getCursor(c), this);
+
+        // return early if there can't be any highlights
+        if(!drawTargetHighlight || mode != Mode.move || c.isEmpty())
+            return needsRepaint;
+
+        for(OsmPrimitive x : c) {
+            // only highlight primitives that will change the selection
+            // when clicked. I.e. don't highlight selected elements unless
+            // we are in toggle mode.
+            if(ctrl || !x.isSelected()) {
+                x.setHighlighted(true);
+                oldHighlights.add(x);
+            }
+        }
+        return needsRepaint || !oldHighlights.isEmpty();
+    }
+
+    /**
+     * This is called whenever the keyboard modifier status changes
+     */
+    public void eventDispatched(AWTEvent e) {
+        if(oldEvent == null)
+            return;
+        // We don't have a mouse event, so we pass the old mouse event but the
+        // new modifiers.
+        giveUserFeedback(oldEvent, ((InputEvent) e).getModifiers());
     }
 
     /**
@@ -263,11 +447,23 @@ public class SelectAction extends MapMode implements SelectionEnded {
     @Override
     public void mouseMoved(MouseEvent e) {
         // Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
-        //
         if ((Main.platform instanceof PlatformHookOsx) && (mode == Mode.rotate || mode == Mode.scale)) {
             mouseDragged(e);
+            return;
+        }
+        oldEvent = e;
+        if(giveUserFeedback(e)) {
+            mv.repaint();
         }
     }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        if(removeHighlighting()) {
+            mv.repaint();
+        }
+    }
+
     private Node virtualNode = null;
     private Collection<WaySegment> virtualWays = new LinkedList<WaySegment>();
 
@@ -338,8 +534,8 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
             Point p = e.getPoint();
             boolean waitForMouseUp = Main.pref.getBoolean("mappaint.select.waits-for-mouse-up", false);
-            boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-            boolean alt = ((e.getModifiers() & (ActionEvent.ALT_MASK | InputEvent.ALT_GRAPH_MASK)) != 0 || Main.pref.getBoolean("selectaction.cycles.multiple.matches", false));
+            updateKeyModifiers(e);
+            alt = alt || Main.pref.getBoolean("selectaction.cycles.multiple.matches", false);
 
             if (!alt) {
                 cycleList = MapView.asColl(osm);
@@ -388,6 +584,24 @@ public class SelectAction extends MapMode implements SelectionEnded {
     }
 
     /**
+     * sets the mapmode according to key modifiers and if there are any
+     * selectables nearby. Everything has to be pre-determined for this
+     * function; its main purpose is to centralize what the modifiers do.
+     * @param nearSelectables
+     */
+    private void determineMapMode(boolean hasSelectionNearby) {
+        if (shift && ctrl) {
+            mode = Mode.rotate;
+        } else if (alt && ctrl) {
+            mode = Mode.scale;
+        } else if (hasSelectionNearby) {
+            mode = Mode.move;
+        } else {
+            mode = Mode.select;
+        }
+    }
+
+    /**
      * Look, whether any object is selected. If not, select the nearest node.
      * If there are no nodes in the dataset, do nothing.
      *
@@ -399,16 +613,14 @@ public class SelectAction extends MapMode implements SelectionEnded {
     @Override
     public void mousePressed(MouseEvent e) {
         // return early
-        if (!mv.isActiveLayerVisible() || !(Boolean) this.getValue("active") || e.getButton() != MouseEvent.BUTTON1) {
+        if (!mv.isActiveLayerVisible() || !(Boolean) this.getValue("active") || e.getButton() != MouseEvent.BUTTON1)
             return;
-        }
 
         // request focus in order to enable the expected keyboard shortcuts
         mv.requestFocus();
 
-        boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
-        boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+        // update which modifiers are pressed (shift, alt, ctrl)
+        updateKeyModifiers(e);
 
         // We don't want to change to draw tool if the user tries to (de)select
         // stuff but accidentally clicks in an empty area when selection is empty
@@ -421,9 +633,10 @@ public class SelectAction extends MapMode implements SelectionEnded {
         Collection<OsmPrimitive> c = MapView.asColl(
                 mv.getNearestNodeOrWay(e.getPoint(), OsmPrimitive.isSelectablePredicate, true));
 
-        if (shift && ctrl) {
-            mode = Mode.rotate;
-
+        determineMapMode(!c.isEmpty());
+        switch(mode) {
+        case rotate:
+        case scale:
             if (getCurrentDataSet().getSelected().isEmpty()) {
                 getCurrentDataSet().setSelected(c);
             }
@@ -431,47 +644,33 @@ public class SelectAction extends MapMode implements SelectionEnded {
             // Mode.select redraws when selectPrims is called
             // Mode.move   redraws when mouseDragged is called
             // Mode.rotate redraws here
-            mv.setNewCursor(ImageProvider.getCursor("rotate", null), this);
-            mv.repaint();
-        } else if (alt && ctrl) {
-            mode = Mode.scale;
-
-            if (getCurrentDataSet().getSelected().isEmpty()) {
-                getCurrentDataSet().setSelected(c);
-            }
-
-            // Mode.select redraws when selectPrims is called
-            // Mode.move   redraws when mouseDragged is called
             // Mode.scale redraws here
-            mv.setNewCursor(ImageProvider.getCursor("scale", null), this);
-            mv.repaint();
-        } else if (!c.isEmpty()) {
-            mode = Mode.move;
-
+            break;
+        case move:
             if (!cancelDrawMode && c.iterator().next() instanceof Way) {
                 setupVirtual(e);
             }
 
             selectPrims(cycleSetup(c, e), e, false, false);
-        } else {
-            mode = Mode.select;
-
+            break;
+        case select:
+        default:
             selectionManager.register(mv);
             selectionManager.mousePressed(e);
+            break;
         }
-
+        giveUserFeedback(e);
+        mv.repaint();
         updateStatusLine();
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (!mv.isActiveLayerVisible()) {
+        if (!mv.isActiveLayerVisible())
             return;
-        }
 
         startingDraggingPos = null;
 
-        mv.setNewCursor(cursor, this);
         if (mode == Mode.select) {
             selectionManager.unregister(mv);
 
@@ -488,9 +687,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
                 virtualWays.clear();
                 virtualNode = null;
 
-                // do nothing if the click was to short to be recognized as a drag,
+                // do nothing if the click was to short too be recognized as a drag,
                 // but the release position is farther than 10px away from the press position
-                if (lastMousePos.distanceSq(e.getPoint()) < 100) {
+                if (lastMousePos == null || lastMousePos.distanceSq(e.getPoint()) < 100) {
                     selectPrims(cyclePrims(cycleList, e), e, true, false);
 
                     // If the user double-clicked a node, change to draw mode
@@ -499,7 +698,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
                         // We need to do it like this as otherwise drawAction will see a double
                         // click and switch back to SelectMode
                         Main.worker.execute(new Runnable() {
-
                             public void run() {
                                 Main.map.selectDrawTool(true);
                             }
@@ -538,14 +736,13 @@ public class SelectAction extends MapMode implements SelectionEnded {
             }
         }
 
-        // I don't see why we need this.
-        //updateStatusLine();
         mode = null;
+        giveUserFeedback(e);
         updateStatusLine();
     }
 
     public void selectionEnded(Rectangle r, MouseEvent e) {
-        boolean alt = (e.getModifiersEx() & (MouseEvent.ALT_DOWN_MASK | MouseEvent.ALT_GRAPH_DOWN_MASK)) != 0;
+        updateKeyModifiers(e);
         selectPrims(selectionManager.getObjectsInRectangle(r, alt), e, true, true);
     }
 
@@ -553,16 +750,14 @@ public class SelectAction extends MapMode implements SelectionEnded {
      * Modifies current selection state and returns the next element in a
      * selection cycle given by <code>prims</code>.
      * @param prims the primitives that form the selection cycle
-     * @param shift whether shift is pressed
-     * @param ctrl whether ctrl is pressed
+     * @param mouse event
      * @return the next element of cycle list <code>prims</code>.
      */
     private Collection<OsmPrimitive> cyclePrims(Collection<OsmPrimitive> prims, MouseEvent e) {
         OsmPrimitive nxt = null;
 
         if (prims.size() > 1) {
-            boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-            boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+            updateKeyModifiers(e);
 
             DataSet ds = getCurrentDataSet();
             OsmPrimitive first = prims.iterator().next(), foundInDS = null;
@@ -629,14 +824,12 @@ public class SelectAction extends MapMode implements SelectionEnded {
     }
 
     private void selectPrims(Collection<OsmPrimitive> prims, MouseEvent e, boolean released, boolean area) {
-        boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+        updateKeyModifiers(e);
         DataSet ds = getCurrentDataSet();
 
         // not allowed together: do not change dataset selection, return early
-        if ((shift && ctrl) || (ctrl && !released) || (!virtualWays.isEmpty())) {
+        if ((shift && ctrl) || (ctrl && !released) || (!virtualWays.isEmpty()))
             return;
-        }
 
         if (!released) {
             // Don't replace the selection if the user clicked on a
@@ -665,17 +858,16 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
     @Override
     public String getModeHelpText() {
-        if (mode == Mode.select) {
+        if (mode == Mode.select)
             return tr("Release the mouse button to select the objects in the rectangle.");
-        } else if (mode == Mode.move) {
+        else if (mode == Mode.move)
             return tr("Release the mouse button to stop moving. Ctrl to merge with nearest node.");
-        } else if (mode == Mode.rotate) {
+        else if (mode == Mode.rotate)
             return tr("Release the mouse button to stop rotating.");
-        } else if (mode == Mode.scale) {
+        else if (mode == Mode.scale)
             return tr("Release the mouse button to stop scaling.");
-        } else {
+        else
             return tr("Move objects by dragging; Shift to add to selection (Ctrl to toggle); Shift-Ctrl to rotate selected; Alt-Ctrl to scale selected; or change selection");
-        }
     }
 
     @Override

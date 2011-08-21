@@ -220,9 +220,7 @@ public class LineElemStyle extends ElemStyle {
         }
 
         Color myColor = color;
-        if(w.isHighlighted()) {
-            myColor = paintSettings.getHighlightColor();
-        } else if (selected) {
+        if (selected) {
             myColor = paintSettings.getSelectedColor(color.getAlpha());
         } else if (member) {
             myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
@@ -291,7 +289,7 @@ public class LineElemStyle extends ElemStyle {
             (offset == 0 ? "" : " offset=" + offset) +
             '}';
     }
-    
+
     public String linejoinToString(int linejoin) {
         switch (linejoin) {
             case BasicStroke.JOIN_BEVEL: return "bevel";

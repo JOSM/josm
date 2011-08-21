@@ -114,6 +114,10 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
     private Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new IdHash());
     private CopyOnWriteArrayList<DataSetListener> listeners = new CopyOnWriteArrayList<DataSetListener>();
 
+    // provide means to highlight map elements that are not osm primitives
+    private Collection<WaySegment> highlightedVirtualNodes = new LinkedList<WaySegment>();
+    private Collection<WaySegment> highlightedWaySegments = new LinkedList<WaySegment>();
+
     // Number of open calls to beginUpdate
     private int updateCount;
     // Events that occurred while dataset was locked but should be fired after write lock is released
@@ -430,6 +434,27 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /**
+     * returns an unmodifiable collection of *WaySegments* whose virtual
+     * nodes should be highlighted. WaySegments are used to avoid having
+     * to create a VirtualNode class that wouldn't have much purpose otherwise.
+     * 
+     * @return unmodifiable collection of WaySegments
+     */
+    public Collection<WaySegment> getHighlightedVirtualNodes() {
+        return Collections.unmodifiableCollection(highlightedVirtualNodes);
+    }
+
+    /**
+     * returns an unmodifiable collection of WaySegments that should be
+     * highlighted.
+     * 
+     * @return unmodifiable collection of WaySegments
+     */
+    public Collection<WaySegment> getHighlightedWaySegments() {
+        return Collections.unmodifiableCollection(highlightedWaySegments);
+    }
+
+    /**
      * Replies an unmodifiable collection of primitives currently selected
      * in this dataset. May be empty, but not null.
      *
@@ -504,6 +529,34 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
         }
         selectionSnapshot = null;
         return true;
+    }
+
+    /**
+     * set what virtual nodes should be highlighted. Requires a Collection of
+     * *WaySegments* to avoid a VirtualNode class that wouldn't have much use
+     * otherwise.
+     * @param Collection of waySegments
+     */
+    public void setHighlightedVirtualNodes(Collection<WaySegment> waySegments) {
+        if(highlightedVirtualNodes.isEmpty() && waySegments.isEmpty())
+            return;
+
+        highlightedVirtualNodes = waySegments;
+        // can't use fireHighlightingChanged because it requires an OsmPrimitive
+        highlightUpdateCount++;
+    }
+
+    /**
+     * set what virtual ways should be highlighted.
+     * @param Collection of waySegments
+     */
+    public void setHighlightedWaySegments(Collection<WaySegment> waySegments) {
+        if(highlightedWaySegments.isEmpty() && waySegments.isEmpty())
+            return;
+
+        highlightedWaySegments = waySegments;
+        // can't use fireHighlightingChanged because it requires an OsmPrimitive
+        highlightUpdateCount++;
     }
 
     /**
@@ -589,6 +642,20 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
             fireSelectionChanged();
         }
         return changed;
+    }
+
+    /**
+     * clear all highlights of virtual nodes
+     */
+    public void clearHighlightedVirtualNodes() {
+        setHighlightedVirtualNodes(new ArrayList<WaySegment>());
+    }
+
+    /**
+     * clear all highlights of way segments
+     */
+    public void clearHighlightedWaySegments() {
+        setHighlightedWaySegments(new ArrayList<WaySegment>());
     }
 
     /**
