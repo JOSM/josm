@@ -80,6 +80,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
                 Main.main.addLayer(layer);
             } else {
                 x.mergeFrom(layer);
+                Main.map.repaint();
             }
         }
 

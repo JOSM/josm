@@ -111,7 +111,7 @@ public class GpxLayer extends Layer {
     private int computeCacheColorTracksTune;
     private boolean isLocalFile;
     // used by ChooseTrackVisibilityAction to determine which tracks to show/hide
-    private boolean[] trackVisibility;
+    private boolean[] trackVisibility = new boolean[0];
 
     private final List<GpxTrack> lastTracks = new ArrayList<GpxTrack>(); // List of tracks at last paint
     private int lastUpdateCount;
@@ -125,10 +125,7 @@ public class GpxLayer extends Layer {
         super((String) d.attr.get("name"));
         data = d;
         computeCacheInSync = false;
-        trackVisibility = new boolean[d.tracks.size()];
-        for(int i=0; i < d.tracks.size(); i++) {
-            trackVisibility[i] = true;
-        }
+        ensureTrackVisibilityLength();
     }
 
     public GpxLayer(GpxData d, String name) {
@@ -578,7 +575,7 @@ public class GpxLayer extends Layer {
                                     float vel = (float) (dist / dtime);
                                     int velColor =(int) Math.round(colorModeDynamic ? ((vel-minval)*255/(maxval-minval))
                                             : (vel <= 0 ? 0 : vel / colorTracksTune * 255));
-                                    trkPnt.customColoring = colors[velColor > 255 ? 255 : velColor];
+                                    trkPnt.customColoring = colors[Math.max(0, Math.min(velColor, 255))];
                                 } else {
                                     trkPnt.customColoring = colors[255];
                                 }
@@ -621,6 +618,7 @@ public class GpxLayer extends Layer {
         LinkedList<WayPoint> visibleSegments = new LinkedList<WayPoint>();
         WayPoint last = null;
         int i = 0;
+        ensureTrackVisibilityLength();
         for (GpxTrack trk: data.tracks) {
             // hide tracks that were de-selected in ChooseTrackVisibilityAction
             if(!trackVisibility[i++]) {
@@ -856,6 +854,24 @@ public class GpxLayer extends Layer {
     @Override
     public void setAssociatedFile(File file) {
         data.storageFile = file;
+    }
+
+    /** ensures the trackVisibility array has the correct length without losing data.
+     * additional entries are initialized to true;
+     */
+    final private void ensureTrackVisibilityLength() {
+        final int l = data.tracks.size();
+        if(l == trackVisibility.length)
+            return;
+        final boolean[] back = trackVisibility.clone();
+        final int m = Math.min(l, back.length);
+        trackVisibility = new boolean[l];
+        for(int i=0; i < m; i++) {
+            trackVisibility[i] = back[i];
+        }
+        for(int i=m; i < l; i++) {
+            trackVisibility[i] = true;
+        }
     }
 
     /**
