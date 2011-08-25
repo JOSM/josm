@@ -4,6 +4,10 @@ package org.openstreetmap.josm.gui.download;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Toolkit;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -23,6 +27,8 @@ public class SlippyMapChooser extends JPanel implements DownloadSelection, Prope
 
     private DownloadDialog iGui;
     private SlippyMapBBoxChooser pnlSlippyMapBBoxChooser;
+    // standard dimension
+    private Dimension iDownloadDialogDimension;
 
     /**
      * Create the chooser component.
@@ -34,12 +40,12 @@ public class SlippyMapChooser extends JPanel implements DownloadSelection, Prope
 
     public void addGui(final DownloadDialog gui) {
         iGui = gui;
-        pnlSlippyMapBBoxChooser.setGui(iGui);
         iGui.addDownloadAreaSelector(pnlSlippyMapBBoxChooser, tr("Slippy map"));
     }
 
     public void setDownloadArea(Bounds area) {
         pnlSlippyMapBBoxChooser.setBoundingBox(area);
+        repaint();
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
@@ -47,6 +53,30 @@ public class SlippyMapChooser extends JPanel implements DownloadSelection, Prope
             if (iGui != null) {
                 iGui.boundingBoxChanged((Bounds)evt.getNewValue(), this);
             }
+        } else if(evt.getPropertyName().equals(SlippyMapBBoxChooser.RESIZE_PROP)) {
+            int w, h;
+
+            // retrieve the size of the display
+            Dimension iScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+            // enlarge
+            if(iDownloadDialogDimension == null) {
+                // make the each dimension 90% of the absolute display size
+                w = iScreenSize.width * 90 / 100;
+                h = iScreenSize.height * 90 / 100;
+                iDownloadDialogDimension = iGui.getSize(); 
+            }
+            // shrink
+            else {
+                // set the size back to the initial dimensions
+                w = iDownloadDialogDimension.width;
+                h = iDownloadDialogDimension.height;
+                iDownloadDialogDimension = null;
+            }
+
+            // resize and center the DownloadDialog 
+            iGui.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h); 
+            repaint();
         }
     }
 }

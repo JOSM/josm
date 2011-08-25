@@ -9,7 +9,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -39,7 +38,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.preferences.StringProperty;
-import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 
 public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
@@ -152,9 +150,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
     }
 
     private static final StringProperty PROP_MAPSTYLE = new StringProperty("slippy_map_chooser.mapstyle", "Mapnik");
-
-    // standard dimension
-    private Dimension iDownloadDialogDimension;
+    public static final String RESIZE_PROP = SlippyMapBBoxChooser.class.getName() + ".resize";
 
     private TileLoader cachedLoader;
     private TileLoader uncachedLoader;
@@ -340,14 +336,8 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         );
         Bounds oldValue = this.bbox;
         this.bbox = b;
-        firePropertyChange(BBOX_PROP, oldValue, this.bbox);
         repaint();
-    }
-
-    private DownloadDialog iGui;
-
-    public void setGui(final DownloadDialog gui) {
-        iGui = gui;
+        firePropertyChange(BBOX_PROP, oldValue, this.bbox);
     }
 
     /**
@@ -355,29 +345,8 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
      * map.
      */
     public void resizeSlippyMap() {
-        int w, h;
-
-        // retrieve the size of the display
-        Dimension iScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // enlarge
-        if(iDownloadDialogDimension == null) {
-            // make the each dimension 90% of the absolute display size
-            w = iScreenSize.width * 90 / 100;
-            h = iScreenSize.height * 90 / 100;
-            iDownloadDialogDimension = iGui.getSize(); 
-        }
-        // shrink
-        else {
-            // set the size back to the initial dimensions
-            w = iDownloadDialogDimension.width;
-            h = iDownloadDialogDimension.height;
-            iDownloadDialogDimension = null;
-        }
-
-        // resize and center the DownloadDialog 
-        iGui.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h); 
-        repaint();
+        boolean large = iSizeButton.isEnlarged();
+        firePropertyChange(RESIZE_PROP, !large, large);
     }
 
     public void toggleMapSource(TileSource tileSource) {
@@ -397,15 +366,16 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
      * @param bbox the bounding box. null to reset the bounding box
      */
     public void setBoundingBox(Bounds bbox) {
-        if (bbox == null) {
+        if (bbox == null || (bbox.getMin().lat() == 0.0 && bbox.getMin().lon() == 0.0
+        && bbox.getMax().lat() == 0.0 && bbox.getMax().lon() == 0.0)) {
             this.bbox = null;
+            iSelectionRectStart = null;
+            iSelectionRectEnd = null;
+            repaint();
             return;
         }
-        // test if a bounding box has been set
-        if (bbox.getMin().lat() == 0.0 && bbox.getMin().lon() == 0.0 && bbox.getMax().lat() == 0.0 && bbox.getMax().lon() == 0.0) {
-            this.bbox = null;
-        }
 
+        this.bbox = bbox;
         int y1 = OsmMercator.LatToY(bbox.getMin().lat(), MAX_ZOOM);
         int y2 = OsmMercator.LatToY(bbox.getMax().lat(), MAX_ZOOM);
         int x1 = OsmMercator.LonToX(bbox.getMin().lon(), MAX_ZOOM);
@@ -424,6 +394,5 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         setMapMarkerList(marker);
         setDisplayToFitMapMarkers();
         zoomOut();
-        this.bbox = bbox;
     }
 }

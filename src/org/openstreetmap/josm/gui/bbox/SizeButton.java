@@ -25,23 +25,27 @@ public class SizeButton{
         shrinkImage = ImageProvider.get("view-fullscreen-revert.png");
     }
 
-    public void paint(Graphics g){
-        if(isEnlarged){
+    public void paint(Graphics g) {
+        if(isEnlarged) {
             if(shrinkImage != null)
                 g.drawImage(shrinkImage.getImage(),x,y, null);
-        }else{
+        } else {
             if(enlargeImage != null)
                 g.drawImage(enlargeImage.getImage(),x,y, null);
         }
     }
 
-    public void toggle(){
+    public void toggle() {
         isEnlarged = !isEnlarged;
     }
 
-    public boolean hit(Point point){
-        if(x < point.x && point.x < x + enlargeImage.getIconWidth()){
-            if(y < point.y && point.y < y + enlargeImage.getIconHeight() ){
+    public boolean isEnlarged() {
+        return isEnlarged;
+    }
+
+    public boolean hit(Point point) {
+        if(x < point.x && point.x < x + enlargeImage.getIconWidth()) {
+            if(y < point.y && point.y < y + enlargeImage.getIconHeight()) {
                 return true;
             }
         }
