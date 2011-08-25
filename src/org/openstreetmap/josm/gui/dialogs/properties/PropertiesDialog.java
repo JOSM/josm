@@ -568,6 +568,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     int cur = position.get(i);
                     if(cur == last+1) {
                         ++cnt;
+                    } else if (cnt == 0) {
+                        positionString += ","+String.valueOf(cur);
                     } else {
                         if(cnt == 1) {
                             positionString += ","+String.valueOf(last);
