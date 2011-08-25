@@ -504,9 +504,10 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         //
         Set<Integer> selectedIndices = new HashSet<Integer>();
         for (RelationMember member : selectedMembers) {
-            int idx = members.indexOf(member);
-            if ( idx >= 0) {
-                selectedIndices.add(idx);
+            for (int idx = 0; idx < members.size(); ++idx) {
+                if (member.equals(members.get(idx))) {
+                    selectedIndices.add(idx);
+                }
             }
         }
         setSelectedMembersIdx(selectedIndices);
