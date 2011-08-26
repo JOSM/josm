@@ -144,10 +144,17 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     }
     protected boolean canShowAsLatest(OsmPrimitive primitive) {
         if (primitive == null) return false;
-        if (primitive.isNew()) return false;
+        if (primitive.isNew() || !primitive.isUsable()) return false;
+        
+        //try creating a history primitive. if that fails, the primitive cannot be used.
+        try {
+            HistoryOsmPrimitive.forOsmPrimitive(primitive);
+        } catch (Exception ign) {
+            return false;
+        }
+
         if (history == null) return false;
-        // only show latest of the same version if it is
-        // modified
+        // only show latest of the same version if it is modified
         if (history.getByVersion(primitive.getVersion()) != null)
             return primitive.isModified();
 

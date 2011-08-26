@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.Way;
 /**
  * Represents an immutable OSM way in the context of a historical view on
  * OSM data.
@@ -16,16 +17,19 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
  */
 public class HistoryWay extends HistoryOsmPrimitive {
 
-    private ArrayList<Long> nodeIds;
+    private ArrayList<Long> nodeIds = new ArrayList<Long>();
 
     public HistoryWay(long id, long version, boolean visible, String user, long uid, long changesetId, Date timestamp) {
         super(id, version, visible, user, uid, changesetId, timestamp);
-        nodeIds = new ArrayList<Long>();
     }
 
     public HistoryWay(long id, long version, boolean visible, String user, long uid, long changesetId, Date timestamp, ArrayList<Long> nodeIdList) {
         this(id, version, visible, user, uid, changesetId, timestamp);
         this.nodeIds.addAll(nodeIdList);
+    }
+
+    public HistoryWay(Way p) {
+        super(p);
     }
 
     /**
