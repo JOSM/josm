@@ -117,17 +117,24 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     private static final BooleanProperty PROP_FILL_DEFAULT = new BooleanProperty("taggingpreset.fill-default-for-tagged-primitives", false);
 
     public static abstract class Item {
+
         protected void initAutoCompletionField(AutoCompletingTextField field, String key) {
             OsmDataLayer layer = Main.main.getEditLayer();
-            if (layer == null) return;
-            AutoCompletionList list  = new AutoCompletionList();
+            if (layer == null) {
+                return;
+            }
+            AutoCompletionList list = new AutoCompletionList();
             Main.main.getEditLayer().data.getAutoCompletionManager().populateWithTagValues(list, key);
             field.setAutoCompletionList(list);
         }
 
         abstract boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel);
+
         abstract void addCommands(List<Tag> changedTags);
-        boolean requestFocusInWindow() {return false;}
+
+        boolean requestFocusInWindow() {
+            return false;
+        }
     }
 
     public static class Usage {
@@ -139,7 +146,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
 
         public boolean unused() {
-            return values.size() == 0;
+            return values.isEmpty();
         }
         public String getFirst() {
             return values.first();
@@ -289,24 +296,32 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             return true;
         }
 
-        @Override public void addCommands(List<Tag> changedTags) {
+        @Override
+        public void addCommands(List<Tag> changedTags) {
 
             // return if unchanged
-            String v = (value instanceof JComboBox) ?
-                    ((JComboBox)value).getEditor().getItem().toString() :
-                        ((JTextField)value).getText();
+            String v = (value instanceof JComboBox)
+                    ? ((JComboBox) value).getEditor().getItem().toString()
+                    : ((JTextField) value).getText();
+            v = v.trim();
 
-                    if (!"false".equals(use_last_as_default)) {
-                        lastValue.put(key, v);
-                    }
-                    if (v.equals(originalValue) || (originalValue == null && v.length() == 0)) return;
+            if (!"false".equals(use_last_as_default)) {
+                lastValue.put(key, v);
+            }
+            if (v.equals(originalValue) || (originalValue == null && v.length() == 0)) {
+                return;
+            }
 
-                    if (delete_if_empty && v.length() == 0) {
-                        v = null;
-                    }
-                    changedTags.add(new Tag(key, v));
+            if (delete_if_empty && v.length() == 0) {
+                v = null;
+            }
+            changedTags.add(new Tag(key, v));
         }
-        @Override boolean requestFocusInWindow() {return value.requestFocusInWindow();}
+
+        @Override
+        boolean requestFocusInWindow() {
+            return value.requestFocusInWindow();
+        }
     }
 
     public static class Check extends Item {
@@ -394,7 +409,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         @Override boolean requestFocusInWindow() {return check.requestFocusInWindow();}
     }
 
-    public static class Combo extends Item {
+    public static abstract class ComboMultiSelect extends Item {
 
         public String key;
         public String text;
@@ -407,39 +422,48 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String short_descriptions;
         public String locale_short_descriptions;
         public String default_;
+        public String delimiter = ";";
         public boolean delete_if_empty = false;
-        public boolean editable = true;
         public String use_last_as_default = "false";
         public boolean required = false;
 
-        private List<String> short_description_list;
-        private JComboBox combo;
-        private Map<String, PresetListEntry> lhm;
-        private Usage usage;
-        private PresetListEntry originalValue;
+        protected List<String> short_description_list;
+        protected JComponent component;
+        protected Map<String, PresetListEntry> lhm;
+        protected Usage usage;
+        protected Object originalValue;
 
-        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        protected abstract Object getSelectedItem();
+        protected abstract void addToPanelAnchor(JPanel p, String def, String[] display_array);
+
+        @Override
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
 
             // find out if our key is already used in the selection.
             usage = determineTextUsage(sel, key);
             String def = default_;
 
-            String[] value_array = splitEscaped(',', values);
+            char delChar = ';';
+            if (!delimiter.isEmpty()) {
+                delChar = delimiter.charAt(0);
+            }
+
+            String[] value_array = splitEscaped(delChar, values);
             String[] display_array;
             String[] short_descriptions_array = null;
 
-            if(locale_display_values != null) {
-                display_array = splitEscaped(',', locale_display_values);
+            if (locale_display_values != null) {
+                display_array = splitEscaped(delChar, locale_display_values);
             } else if (display_values != null) {
-                display_array = splitEscaped(',', display_values);
+                display_array = splitEscaped(delChar, display_values);
             } else {
                 display_array = value_array;
             }
 
             if (locale_short_descriptions != null) {
-                short_descriptions_array = splitEscaped(',', locale_short_descriptions);
+                short_descriptions_array = splitEscaped(delChar, locale_short_descriptions);
             } else if (short_descriptions != null) {
-                short_descriptions_array = splitEscaped(',', short_descriptions);
+                short_descriptions_array = splitEscaped(delChar, short_descriptions);
             } else if (short_description_list != null) {
                 short_descriptions_array = short_description_list.toArray(new String[0]);
             }
@@ -462,10 +486,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             if (!usage.hasUniqueValue() && !usage.unused()) {
                 lhm.put(DIFFERENT, new PresetListEntry(DIFFERENT));
             }
-            for (int i=0; i<value_array.length; i++) {
+            for (int i = 0; i < value_array.length; i++) {
                 PresetListEntry e = new PresetListEntry(value_array[i]);
                 e.display_value = (locale_display_values == null)
-                ? (values_context == null ? tr(fixPresetString(display_array[i]))
+                        ? (values_context == null ? tr(fixPresetString(display_array[i]))
                         : trc(values_context, fixPresetString(display_array[i]))) : display_array[i];
                 if (short_descriptions_array != null) {
                     e.short_description = locale_short_descriptions == null ? tr(fixPresetString(short_descriptions_array[i]))
@@ -473,132 +497,58 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 }
                 lhm.put(value_array[i], e);
             }
-            if(!usage.unused()){
-                for (String s : usage.values) {
-                    if (!lhm.containsKey(s)) {
-                        lhm.put(s, new PresetListEntry(s));
-                    }
-                }
-            }
-            if (def != null && !lhm.containsKey(def)) {
-                lhm.put(def, new PresetListEntry(def));
-            }
-            lhm.put("", new PresetListEntry(""));
 
-            combo = new JComboBox(lhm.values().toArray());
-            combo.setRenderer(new PresetComboListCellRenderer());
-            combo.setEditable(editable);
-            combo.setMaximumRowCount(13);
-            AutoCompletingTextField tf = new AutoCompletingTextField();
-            initAutoCompletionField(tf, key);
-            tf.getAutoCompletionList().add(Arrays.asList(display_array), AutoCompletionItemPritority.IS_IN_STANDARD);
-            combo.setEditor(tf);
-
-            if (usage.hasUniqueValue()) {
-                // all items have the same value (and there were no unset items)
-                originalValue=lhm.get(usage.getFirst());
-                combo.setSelectedItem(originalValue);
-            }
-            else if (def != null && usage.unused()) {
-                // default is set and all items were unset
-                if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
-                    // selected osm primitives are untagged or filling default feature is enabled
-                    combo.setSelectedItem(def);
-                } else {
-                    // selected osm primitives are tagged and filling default feature is disabled
-                    combo.setSelectedItem("");
-                }
-                originalValue=lhm.get(DIFFERENT);
-            }
-            else if (usage.unused()) {
-                // all items were unset (and so is default)
-                originalValue=lhm.get("");
-                combo.setSelectedItem(originalValue);
-            }
-            else {
-                originalValue=lhm.get(DIFFERENT);
-                combo.setSelectedItem(originalValue);
-            }
-
-            if(locale_text == null) {
-                if(text_context != null) {
+            if (locale_text == null) {
+                if (text_context != null) {
                     locale_text = trc(text_context, fixPresetString(text));
                 } else {
                     locale_text = tr(fixPresetString(text));
                 }
             }
-            p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
-            p.add(combo, GBC.eol().fill(GBC.HORIZONTAL));
+            p.add(new JLabel(locale_text + ":"), GBC.std().insets(0, 0, 10, 0));
+
+            addToPanelAnchor(p, def, display_array);
+
             return true;
+
         }
 
-
-        private static class PresetComboListCellRenderer implements ListCellRenderer {
-
-            HtmlPanel lbl;
-            JComponent dummy = new JComponent() {};
-
-            public PresetComboListCellRenderer() {
-                lbl = new HtmlPanel();
-            }
-
-            public Component getListCellRendererComponent(
-                    JList list,
-                    Object value,
-                    int index,
-                    boolean isSelected,
-                    boolean cellHasFocus)
-            {
-                if (isSelected) {
-                    lbl.setBackground(list.getSelectionBackground());
-                    lbl.setForeground(list.getSelectionForeground());
-                } else {
-                    lbl.setBackground(list.getBackground());
-                    lbl.setForeground(list.getForeground());
-                }
-
-                PresetListEntry item = (PresetListEntry) value;
-                String s = item.getListDisplay();
-                lbl.setText(s);
-                // We do not want the editor to have the maximum height of all
-                // entries. Return a dummy with bogus height.
-                if (index == -1) {
-                    dummy.setPreferredSize(new Dimension(lbl.getPreferredSize().width, 10));
-                    return dummy;
-                }
-                return lbl;
-            }
+        protected String getDisplayIfNull(String display) {
+            return display;
         }
 
-        @Override public void addCommands(List<Tag> changedTags) {
-            Object obj = combo.getSelectedItem();
+        @Override
+        public void addCommands(List<Tag> changedTags) {
+            Object obj = getSelectedItem();
             String display = (obj == null) ? null : obj.toString();
             String value = null;
-            if(display == null && combo.isEditable()) {
-                display = combo.getEditor().getItem().toString();
+            if (display == null) {
+                display = getDisplayIfNull(display);
             }
 
-            if (display != null)
-            {
+            if (display != null) {
                 for (String key : lhm.keySet()) {
                     String k = lhm.get(key).toString();
                     if (k != null && k.equals(display)) {
-                        value=key;
+                        value = key;
                     }
                 }
-                if(value == null) {
+                if (value == null) {
                     value = display;
                 }
             } else {
                 value = "";
             }
+            value = value.trim();
 
             // no change if same as before
             if (originalValue == null) {
-                if (value.length() == 0)
+                if (value.length() == 0) {
                     return;
-            } else if (value.equals(originalValue.toString()))
+                }
+            } else if (value.equals(originalValue.toString())) {
                 return;
+            }
 
             if (delete_if_empty && value.length() == 0) {
                 value = null;
@@ -616,11 +566,126 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             short_description_list.add(tr(s));
         }
 
-        @Override boolean requestFocusInWindow() {return combo.requestFocusInWindow();}
+        @Override
+        boolean requestFocusInWindow() {
+            return component.requestFocusInWindow();
+        }
+
+        protected ListCellRenderer getListCellRenderer() {
+            return new ListCellRenderer() {
+
+                HtmlPanel lbl = new HtmlPanel();
+                JComponent dummy = new JComponent() {
+                };
+
+                public Component getListCellRendererComponent(
+                        JList list,
+                        Object value,
+                        int index,
+                        boolean isSelected,
+                        boolean cellHasFocus) {
+                    if (isSelected) {
+                        lbl.setBackground(list.getSelectionBackground());
+                        lbl.setForeground(list.getSelectionForeground());
+                    } else {
+                        lbl.setBackground(list.getBackground());
+                        lbl.setForeground(list.getForeground());
+                    }
+
+                    PresetListEntry item = (PresetListEntry) value;
+                    String s = item.getListDisplay();
+                    lbl.setText(s);
+                    lbl.setEnabled(list.isEnabled());
+                    // We do not want the editor to have the maximum height of all
+                    // entries. Return a dummy with bogus height.
+                    if (index == -1) {
+                        dummy.setPreferredSize(new Dimension(lbl.getPreferredSize().width, 10));
+                        return dummy;
+                    }
+                    return lbl;
+                }
+            };
+        }
+    }
+
+    public static class Combo extends ComboMultiSelect {
+
+        public boolean editable = true;
+        protected JComboBox combo;
+
+        public Combo() {
+            delimiter = ",";
+        }
+
+        @Override
+        protected void addToPanelAnchor(JPanel p, String def, String[] display_array) {
+            if (!usage.unused()) {
+                for (String s : usage.values) {
+                    if (!lhm.containsKey(s)) {
+                        lhm.put(s, new PresetListEntry(s));
+                    }
+                }
+            }
+            if (def != null && !lhm.containsKey(def)) {
+                lhm.put(def, new PresetListEntry(def));
+            }
+            lhm.put("", new PresetListEntry(""));
+
+            combo = new JComboBox(lhm.values().toArray());
+            component = combo;
+            combo.setRenderer(getListCellRenderer());
+            combo.setEditable(editable);
+            combo.setMaximumRowCount(13);
+            AutoCompletingTextField tf = new AutoCompletingTextField();
+            initAutoCompletionField(tf, key);
+            tf.getAutoCompletionList().add(Arrays.asList(display_array), AutoCompletionItemPritority.IS_IN_STANDARD);
+            combo.setEditor(tf);
+
+            if (usage.hasUniqueValue()) {
+                // all items have the same value (and there were no unset items)
+                originalValue = lhm.get(usage.getFirst());
+                combo.setSelectedItem(originalValue);
+            } else if (def != null && usage.unused()) {
+                // default is set and all items were unset
+                if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
+                    // selected osm primitives are untagged or filling default feature is enabled
+                    combo.setSelectedItem(def);
+                } else {
+                    // selected osm primitives are tagged and filling default feature is disabled
+                    combo.setSelectedItem("");
+                }
+                originalValue = lhm.get(DIFFERENT);
+            } else if (usage.unused()) {
+                // all items were unset (and so is default)
+                originalValue = lhm.get("");
+                combo.setSelectedItem(originalValue);
+            } else {
+                originalValue = lhm.get(DIFFERENT);
+                combo.setSelectedItem(originalValue);
+            }
+            p.add(combo, GBC.eol().fill(GBC.HORIZONTAL));
+
+        }
+
+        @Override
+        protected Object getSelectedItem() {
+            return combo.getSelectedItem();
+
+        }
+
+        @Override
+        protected String getDisplayIfNull(String display) {
+            if (combo.isEditable()) {
+                return combo.getEditor().getItem().toString();
+            } else {
+                return display;
+            }
+
+        }
     }
 
     /**
-     * Class that allows list values to be assigned and retrived as a comma-delimited
+     * Class that allows list values to be assigned and retrieved as a comma-delimited
      * string.
      */
     public static class ConcatenatingJList extends JList {
@@ -664,216 +729,49 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
     }
 
-    public static class MultiSelect extends Item {
+    public static class MultiSelect extends ComboMultiSelect {
 
-        public String key;
-        public String text;
-        public String text_context;
-        public String locale_text;
-        public String values;
-        public String values_context;
-        public String display_values;
-        public String locale_display_values;
-        public String short_descriptions;
-        public String locale_short_descriptions;
-        public String default_;
-        public String delimiter = ";";
-        public boolean delete_if_empty = false;
-        public String use_last_as_default = "false";
-        public boolean required = false;
         public long rows = -1;
+        protected ConcatenatingJList list;
 
-        private List<String> short_description_list;
-        private ConcatenatingJList list;
-        private Map<String, PresetListEntry> lhm;
-        private Usage usage;
-        private String originalValue;
-
-        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
-
-            // find out if our key is already used in the selection.
-            usage = determineTextUsage(sel, key);
-            String def = default_;
-
-            char delChar = ';';
-            if (delimiter.length() > 0) {
-                delChar = delimiter.charAt(0);
-            }
-
-            String[] value_array = splitEscaped(delChar, values);
-            String[] display_array;
-            String[] short_descriptions_array = null;
-
-            if (locale_display_values != null) {
-                display_array = splitEscaped(delChar, locale_display_values);
-            } else if (display_values != null) {
-                display_array = splitEscaped(delChar, display_values);
-            } else {
-                display_array = value_array;
-            }
-
-            if (locale_short_descriptions != null) {
-                short_descriptions_array = splitEscaped(delChar, locale_short_descriptions);
-            } else if (short_descriptions != null) {
-                short_descriptions_array = splitEscaped(delChar, short_descriptions);
-            } else if (short_description_list != null) {
-                short_descriptions_array = short_description_list.toArray(new String[0]);
-            }
-
-            if (!"false".equals(use_last_as_default) && def == null && lastValue.containsKey(key)) {
-                def = lastValue.get(key);
-            }
-
-            if (display_array.length != value_array.length) {
-                System.err.println(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''display_values'' must be the same as in ''values''", key, text));
-                display_array = value_array;
-            }
-
-            if (short_descriptions_array != null && short_descriptions_array.length != value_array.length) {
-                System.err.println(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''short_descriptions'' must be the same as in ''values''", key, text));
-                short_descriptions_array = null;
-            }
-
-            lhm = new LinkedHashMap<String, PresetListEntry>();
-            if (!usage.hasUniqueValue() && !usage.unused()) {
-                lhm.put(DIFFERENT, new PresetListEntry(DIFFERENT));
-            }
-            for (int i=0; i<value_array.length; i++) {
-                PresetListEntry e = new PresetListEntry(value_array[i]);
-                e.display_value = (locale_display_values == null)
-                ? (values_context == null ? tr(fixPresetString(display_array[i]))
-                        : trc(values_context, fixPresetString(display_array[i]))) : display_array[i];
-                if (short_descriptions_array != null) {
-                    e.short_description = locale_short_descriptions == null ? tr(fixPresetString(short_descriptions_array[i]))
-                            : short_descriptions_array[i];
-                }
-                lhm.put(value_array[i], e);
-            }
-
+        @Override
+        protected void addToPanelAnchor(JPanel p, String def, String[] display_array) {
             list = new ConcatenatingJList(delimiter, lhm.values().toArray());
-            PresetListCellRenderer renderer = new PresetListCellRenderer();
+            component = list;
+            ListCellRenderer renderer = getListCellRenderer();
             list.setCellRenderer(renderer);
 
             if (usage.hasUniqueValue() && !usage.unused()) {
-                originalValue=usage.getFirst();
+                originalValue = usage.getFirst();
                 list.setSelectedItem(originalValue);
-            }
-            else if (def != null && !usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
-                originalValue=DIFFERENT;
+            } else if (def != null && !usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
+                originalValue = DIFFERENT;
                 list.setSelectedItem(def);
-            }
-            else if (usage.unused()) {
-                originalValue=null;
+            } else if (usage.unused()) {
+                originalValue = null;
                 list.setSelectedItem(originalValue);
-            }
-            else {
-                originalValue=DIFFERENT;
+            } else {
+                originalValue = DIFFERENT;
                 list.setSelectedItem(originalValue);
             }
 
-            if (locale_text == null) {
-                if(text_context != null) {
-                    locale_text = trc(text_context, fixPresetString(text));
-                } else {
-                    locale_text = tr(fixPresetString(text));
-                }
-            }
-            p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
             JScrollPane sp = new JScrollPane(list);
             // if a number of rows has been specified in the preset,
             // modify preferred height of scroll pane to match that row count.
-            if (rows != -1)
-            {
+            if (rows != -1) {
                 double height = renderer.getListCellRendererComponent(list,
                         new PresetListEntry("x"), 0, false, false).getPreferredSize().getHeight() * rows;
                 sp.setPreferredSize(new Dimension((int) sp.getPreferredSize().getWidth(), (int) height));
             }
             p.add(sp, GBC.eol().fill(GBC.HORIZONTAL));
-            return true;
+
+
         }
 
-        private static class PresetListCellRenderer implements ListCellRenderer {
-
-            HtmlPanel lbl;
-            JComponent dummy = new JComponent() {};
-
-            public PresetListCellRenderer() {
-                lbl = new HtmlPanel();
-            }
-
-            public Component getListCellRendererComponent(
-                    JList list,
-                    Object value,
-                    int index,
-                    boolean isSelected,
-                    boolean cellHasFocus)
-            {
-                if (isSelected) {
-                    lbl.setBackground(list.getSelectionBackground());
-                    lbl.setForeground(list.getSelectionForeground());
-                } else {
-                    lbl.setBackground(list.getBackground());
-                    lbl.setForeground(list.getForeground());
-                }
-
-                PresetListEntry item = (PresetListEntry) value;
-                String s = item.getListDisplay();
-                lbl.setText(s);
-                lbl.setEnabled(list.isEnabled());
-                // We do not want the editor to have the maximum height of all
-                // entries. Return a dummy with bogus height.
-                if (index == -1) {
-                    dummy.setPreferredSize(new Dimension(lbl.getPreferredSize().width, 10));
-                    return dummy;
-                }
-                return lbl;
-            }
+        @Override
+        protected Object getSelectedItem() {
+            return list.getSelectedItem();
         }
-
-        @Override public void addCommands(List<Tag> changedTags) {
-            Object obj = list.getSelectedItem();
-            String display = (obj == null) ? null : obj.toString();
-            String value = null;
-
-            if (display != null)
-            {
-                for (String key : lhm.keySet()) {
-                    String k = lhm.get(key).toString();
-                    if (k != null && k.equals(display)) {
-                        value=key;
-                    }
-                }
-                if (value == null) {
-                    value = display;
-                }
-            } else {
-                value = "";
-            }
-
-            // no change if same as before
-            if (originalValue == null) {
-                if (value.length() == 0)
-                    return;
-            } else if (value.equals(originalValue.toString()))
-                return;
-
-            if (delete_if_empty && value.length() == 0) {
-                value = null;
-            }
-            if (!"false".equals(use_last_as_default)) {
-                lastValue.put(key, value);
-            }
-            changedTags.add(new Tag(key, value));
-        }
-
-        public void setShort_description(String s) {
-            if (short_description_list == null) {
-                short_description_list = new ArrayList<String>();
-            }
-            short_description_list.add(tr(s));
-        }
-
-        @Override boolean requestFocusInWindow() {return list.requestFocusInWindow();}
     }
 
     /**
@@ -908,13 +806,15 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     }
 
     public static class Label extends Item {
+
         public String text;
         public String text_context;
         public String locale_text;
 
-        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
-            if(locale_text == null) {
-                if(text_context != null) {
+        @Override
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+            if (locale_text == null) {
+                if (text_context != null) {
                     locale_text = trc(text_context, fixPresetString(text));
                 } else {
                     locale_text = tr(fixPresetString(text));
@@ -923,21 +823,26 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             p.add(new JLabel(locale_text), GBC.eol());
             return false;
         }
-        @Override public void addCommands(List<Tag> changedTags) {}
+
+        @Override
+        public void addCommands(List<Tag> changedTags) {
+        }
     }
 
     public static class Link extends Item {
+
         public String href;
         public String text;
         public String text_context;
         public String locale_text;
         public String locale_href;
 
-        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
-            if(locale_text == null) {
-                if(text == null) {
+        @Override
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+            if (locale_text == null) {
+                if (text == null) {
                     locale_text = tr("More information about this feature");
-                } else if(text_context != null) {
+                } else if (text_context != null) {
                     locale_text = trc(text_context, fixPresetString(text));
                 } else {
                     locale_text = tr(fixPresetString(text));
@@ -952,7 +857,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
             return false;
         }
-        @Override public void addCommands(List<Tag> changedTags) {}
+
+        @Override
+        public void addCommands(List<Tag> changedTags) {
+        }
     }
 
     public static class Role {
@@ -1024,15 +932,17 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     }
 
     public static class Roles extends Item {
+
         public List<Role> roles = new LinkedList<Role>();
-        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+
+        @Override
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             p.add(new JLabel(" "), GBC.eol()); // space
-            if(roles.size() > 0)
-            {
+            if (roles.size() > 0) {
                 JPanel proles = new JPanel(new GridBagLayout());
-                proles.add(new JLabel(tr("Available roles")), GBC.std().insets(0,0,10,0));
-                proles.add(new JLabel(tr("role")), GBC.std().insets(0,0,10,0));
-                proles.add(new JLabel(tr("count")), GBC.std().insets(0,0,10,0));
+                proles.add(new JLabel(tr("Available roles")), GBC.std().insets(0, 0, 10, 0));
+                proles.add(new JLabel(tr("role")), GBC.std().insets(0, 0, 10, 0));
+                proles.add(new JLabel(tr("count")), GBC.std().insets(0, 0, 10, 0));
                 proles.add(new JLabel(tr("elements")), GBC.eol());
                 for (Role i : roles) {
                     i.addToPanel(proles, sel);
@@ -1041,35 +951,54 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
             return false;
         }
-        @Override public void addCommands(List<Tag> changedTags) {}
+
+        @Override
+        public void addCommands(List<Tag> changedTags) {
+        }
     }
 
     public static class Optional extends Item {
+
         // TODO: Draw a box around optional stuff
-        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        @Override
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             p.add(new JLabel(" "), GBC.eol()); // space
             p.add(new JLabel(tr("Optional Attributes:")), GBC.eol());
             p.add(new JLabel(" "), GBC.eol()); // space
             return false;
         }
-        @Override public void addCommands(List<Tag> changedTags) {}
+
+        @Override
+        public void addCommands(List<Tag> changedTags) {
+        }
     }
 
     public static class Space extends Item {
-        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+
+        @Override
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             p.add(new JLabel(" "), GBC.eol()); // space
             return false;
         }
-        @Override public void addCommands(List<Tag> changedTags) {}
+
+        @Override
+        public void addCommands(List<Tag> changedTags) {
+        }
     }
 
     public static class Key extends Item {
+
         public String key;
         public String value;
 
-        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) { return false; }
-        @Override public void addCommands(List<Tag> changedTags) {
-            changedTags.add(new Tag(key, value != null && !value.equals("") ? value : null));
+        @Override
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+            return false;
+        }
+
+        @Override
+        public void addCommands(List<Tag> changedTags) {
+            changedTags.add(new Tag(key, value));
         }
     }
 

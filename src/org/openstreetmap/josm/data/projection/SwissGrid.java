@@ -68,7 +68,7 @@ public class SwissGrid extends AbstractProjection implements ProjectionSubPrefs 
 
     @Override
     public void setupPreferencePanel(JPanel p, ActionListener listener) {
-        p.add(new HtmlPanel("<i>CH1903 / LV03 (without local corrections)</i>"), GBC.eol().fill(GBC.HORIZONTAL));
+        p.add(new HtmlPanel(tr("<i>CH1903 / LV03 (without local corrections)</i>")), GBC.eol().fill(GBC.HORIZONTAL));
         p.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
     }
 

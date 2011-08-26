@@ -10,9 +10,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -67,6 +71,25 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
         this.changesetId  = changesetId;
         this.timestamp = timestamp;
         tags = new HashMap<String, String>();
+    }
+
+    public HistoryOsmPrimitive(OsmPrimitive p) {
+        this(p.getId(), p.getVersion(), p.isVisible(),
+                p.getUser() == null ? null : p.getUser().getName(),
+                p.getUser() == null ? 0 : p.getUser().getId(),
+                p.getChangesetId(), p.getTimestamp());
+    }
+
+    public static HistoryOsmPrimitive forOsmPrimitive(OsmPrimitive p) {
+        if (p instanceof Node) {
+            return new HistoryNode((Node) p);
+        } else if (p instanceof Way) {
+            return new HistoryWay((Way) p);
+        } else if (p instanceof Relation) {
+            return new HistoryRelation((Relation) p);
+        } else {
+            return null;
+        }
     }
 
     public long getId() {
