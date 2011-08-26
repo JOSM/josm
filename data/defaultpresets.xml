@@ -2515,7 +2515,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Clock" />
             <key key="amenity" value="clock" />
             <optional>
-                <combo key="display" text="Display" values="analog,digital,sundial,unorthodox" default="" delete_if_empty="true" />
+                <combo key="display" text="Display" values="analog,digital,sundial,unorthodox" values_context="display" default="" delete_if_empty="true" />
                 <combo key="support" text="Support" values="pole,wall_mounted,billboard,ground" default="" delete_if_empty="true" />
                 <combo key="visibility" text="Visibility/readability" values="house,street,area" display_values="(up to 5m),(up to 20m),(more than 20m)" default="" delete_if_empty="true" />
                 <check key="date" text="Shows current date" default="off" delete_if_empty="true" />
@@ -3079,7 +3079,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="operator" text="Operator" default="" delete_if_empty="true" />             
             <combo key="measurement" text="Measurement" values="particulate_matter,seismic,water_level,weather" default="" delete_if_empty="true" />
             <combo key="recording" text="Recording" values="manually,automated,remote,no" default="" delete_if_empty="true" />  
-            <combo key="display" text="Display" values="analog,digital,no" default="" delete_if_empty="true" />                                     
+            <combo key="display" text="Display" values="analog,digital,no" values_context="display" default="" delete_if_empty="true" />                                     
        </item>                	
         <item name="Survey Point" icon="presets/survey_point.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=survey_point" />
