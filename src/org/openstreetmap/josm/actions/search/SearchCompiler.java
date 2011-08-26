@@ -578,6 +578,15 @@ public class SearchCompiler {
         }
     }
 
+    private static class New extends Match {
+        @Override public boolean match(OsmPrimitive osm) {
+            return osm.isNew();
+        }
+        @Override public String toString() {
+            return "new";
+        }
+    }
+
     private static class Modified extends Match {
         @Override public boolean match(OsmPrimitive osm) {
             return osm.isModified() || osm.isNewOrUndeleted();
@@ -769,6 +778,8 @@ public class SearchCompiler {
                     return parseKV(key, tokenizer.readTextOrNumber());
             } else if (tokenizer.readIfEqual(Token.QUESTION_MARK))
                 return new BooleanMatch(key, false);
+            else if ("new".equals(key))
+                return new New();
             else if ("modified".equals(key))
                 return new Modified();
             else if ("incomplete".equals(key))
