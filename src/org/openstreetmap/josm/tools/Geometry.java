@@ -14,6 +14,7 @@ import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodePositionComparator;
@@ -220,12 +221,7 @@ public class Geometry {
      * @return true if first vector is clockwise before second vector.
      */
     public static boolean angleIsClockwise(Node commonNode, Node firstNode, Node secondNode) {
-        double dy1 = (firstNode.getEastNorth().getY() - commonNode.getEastNorth().getY());
-        double dy2 = (secondNode.getEastNorth().getY() - commonNode.getEastNorth().getY());
-        double dx1 = (firstNode.getEastNorth().getX() - commonNode.getEastNorth().getX());
-        double dx2 = (secondNode.getEastNorth().getX() - commonNode.getEastNorth().getX());
-
-        return dy1 * dx2 - dx1 * dy2 > 0;
+        return angleIsClockwise(commonNode.getEastNorth(), firstNode.getEastNorth(), secondNode.getEastNorth());
     }
 
     /**
@@ -526,5 +522,32 @@ public class Geometry {
         return 6367000 * c;
     }
 
+    /**
+     * Determines whether a way is oriented clockwise.
+     *
+     * Internals: Assuming a closed non-looping way, compute twice the area
+     * of the polygon using the formula {@code 2 * area = sum (X[n] * Y[n+1] - X[n+1] * Y[n])}.
+     * If the area is negative the way is ordered in a clockwise direction.
+     *
+     * @param w the way to be checked.
+     * @return true if and only if way is oriented clockwise.
+     * @throws IllegalArgumentException if way is not closed (see {@see Way#isClosed}).
+     * @see http://paulbourke.net/geometry/polyarea/
+     */
+    public static boolean isClockwise(Way w) {
+        if (!w.isClosed()) {
+            throw new IllegalArgumentException("Way must be closed to check orientation.");
+        }
 
+        double area2 = 0.;
+        int nodesCount = w.getNodesCount();
+
+        for (int node = 1; node <= /*sic! consider last-first as well*/ nodesCount; node++) {
+            LatLon coorPrev = w.getNode(node - 1).getCoor();
+            LatLon coorCurr = w.getNode(node % nodesCount).getCoor();
+            area2 += coorPrev.lon() * coorCurr.lat();
+            area2 -= coorCurr.lon() * coorPrev.lat();
+        }
+        return area2 < 0;
+    }
 }

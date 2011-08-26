@@ -11,6 +11,8 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -23,9 +25,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
+import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadReferrersTask;
@@ -36,6 +40,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.io.DownloadPrimitivesTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.OsmIdTextField;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitiveTypesComboBox;
@@ -56,6 +61,29 @@ public class DownloadPrimitiveAction extends JosmAction {
         putValue("help", ht("/Action/DownloadObject"));
     }
 
+    /**
+     * Restore the current history from the preferences
+     *
+     * @param cbHistory
+     */
+    protected void restorePrimitivesHistory(HistoryComboBox cbHistory) {
+        List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(getClass().getName() + ".primitivesHistory", new LinkedList<String>()));
+        // we have to reverse the history, because ComboBoxHistory will reverse it again
+        // in addElement()
+        //
+        Collections.reverse(cmtHistory);
+        cbHistory.setPossibleItems(cmtHistory);
+    }
+
+    /**
+     * Remind the current history in the preferences
+     * @param cbHistory
+     */
+    protected void remindPrimitivesHistory(HistoryComboBox cbHistory) {
+        cbHistory.addCurrentItemToHistory();
+        Main.pref.putCollection(getClass().getName() + ".primitivesHistory", cbHistory.getHistory());
+    }
+
     public void actionPerformed(ActionEvent e) {
 
         JPanel all = new JPanel();
@@ -66,11 +94,19 @@ public class DownloadPrimitiveAction extends JosmAction {
 
         JLabel lbl1 = new JLabel(tr("Object type:"));
         OsmPrimitiveTypesComboBox cbType = new OsmPrimitiveTypesComboBox();
-        cbType.addItem(new SimpleListItem("mixed", trc("osm object types", "mixed")));
+        cbType.addItem(trc("osm object types", "mixed"));
         cbType.setToolTipText(tr("Choose the OSM object type"));
         JLabel lbl2 = new JLabel(tr("Object ID:"));
-        OsmIdTextField tfId = new OsmIdTextField();
-        tfId.setToolTipText(tr("Enter the ID of the object that should be downloaded"));
+        final OsmIdTextField tfId = new OsmIdTextField();
+        HistoryComboBox cbId = new HistoryComboBox();
+        cbId.setEditor(new BasicComboBoxEditor() {
+            @Override
+            protected JTextField createEditorComponent() {
+                return tfId;
+            }
+        });
+        cbId.setToolTipText(tr("Enter the ID of the object that should be downloaded"));
+        restorePrimitivesHistory(cbId);
         // forward the enter key stroke to the download button
         tfId.getKeymap().removeKeyStrokeBinding(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false));
         JCheckBox layer = new JCheckBox(tr("Separate Layer"));
@@ -90,7 +126,7 @@ public class DownloadPrimitiveAction extends JosmAction {
                 .addComponent(cbType, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createParallelGroup()
                 .addComponent(lbl2)
-                .addComponent(tfId, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(cbId, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
             .addComponent(referrers)
             .addComponent(layer)
             .addComponent(help)
@@ -104,7 +140,7 @@ public class DownloadPrimitiveAction extends JosmAction {
                 )
                 .addGroup(layout.createParallelGroup()
                     .addComponent(cbType)
-                    .addComponent(tfId))
+                    .addComponent(cbId))
                 )
             .addComponent(referrers)
             .addComponent(layer)
@@ -141,13 +177,11 @@ public class DownloadPrimitiveAction extends JosmAction {
             );
             return;
         }
-
-        processItems(layer.isSelected(), cbType.getType(), tfId.getIds(), referrers.isSelected());
+        remindPrimitivesHistory(cbId);
+        processItems(layer.isSelected(), tfId.getIds(), referrers.isSelected());
     }
 
-    void processItems(boolean newLayer, OsmPrimitiveType type,
-            final List<PrimitiveId> ids,
-            boolean downloadReferrers) {
+    void processItems(boolean newLayer, final List<PrimitiveId> ids, boolean downloadReferrers) {
         OsmDataLayer layer = getEditLayer();
         if ((layer == null) || newLayer) {
             layer = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
@@ -198,7 +232,7 @@ public class DownloadPrimitiveAction extends JosmAction {
                         del.add(id);
                     }
                 }
-                if (del != null && !del.isEmpty()) {
+                if (!del.isEmpty()) {
                     final ExtendedDialog dlg = reportProblemDialog(del,
                             trn("Object deleted", "Objects deleted", del.size()),
                             trn(
@@ -247,19 +281,5 @@ public class DownloadPrimitiveAction extends JosmAction {
             .setButtonIcons(new String[] { "ok" })
             .setIcon(msgType)
             .setContent(p, false);
-    }
-
-    private static class SimpleListItem  {
-        final String data;
-        final String text;
-
-        public SimpleListItem(String data, String text) {
-            this.data = data;
-            this.text = text;
-        }
-
-        @Override public String toString() {
-            return text;
-        }
     }
 }

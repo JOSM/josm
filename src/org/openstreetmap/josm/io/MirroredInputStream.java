@@ -151,8 +151,7 @@ public class MirroredInputStream extends InputStream {
             if (!url.getProtocol().equals("file"))
             {
                 String prefKey = getPrefKey(url, destDir);
-                // FIXME: replace with normal getCollection after july 2011
-                Collection<String> localPath = Main.pref.getCollectionOld(prefKey, ";");
+                Collection<String> localPath = Main.pref.getCollection(prefKey);
                 if(localPath.size() == 2) {
                     String[] lp = (String[]) localPath.toArray();
                     File lfile = new File(lp[1]);
