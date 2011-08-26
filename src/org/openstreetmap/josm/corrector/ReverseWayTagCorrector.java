@@ -137,7 +137,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 if (newValue.equals(value)) {
                     newValue = invertNumber(value);
                 }
-            } else if (!key.startsWith("name") && !key.endsWith("name")) {
+            } else if (!ignoreKeyForPrefixSuffixCorrection(key)) {
                 for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
                     newKey = prefixSuffixSwitcher.apply(key);
                     if (!key.equals(newKey)) {
@@ -209,5 +209,10 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 tr("When reversing this way, the following changes to properties "
                         + "of the way and its nodes are suggested in order "
                         + "to maintain data consistency."));
+    }
+
+    private static boolean ignoreKeyForPrefixSuffixCorrection(String key) {
+        return key.startsWith("name") || key.endsWith("name")
+                || key.equalsIgnoreCase("fixme") || key.startsWith("note");
     }
 }
