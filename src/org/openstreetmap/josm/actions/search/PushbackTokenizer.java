@@ -39,6 +39,7 @@ public class PushbackTokenizer {
     private Long currentNumber;
     private Long currentRange;
     private int c;
+    private boolean isRange;
 
     public PushbackTokenizer(Reader search) {
         this.search = search;
@@ -156,21 +157,29 @@ public class PushbackTokenizer {
                 return Token.OR;
             if ("and".equalsIgnoreCase(currentText))
                 return nextToken();
+            // try parsing number
             try {
                 currentNumber = Long.parseLong(currentText);
             } catch (NumberFormatException e) {
                 currentNumber = null;
             }
+            // if text contains "-", try parsing a range
             int pos = currentText.indexOf('-', 1);
-            if (pos > 0) {
+            isRange = pos > 0;
+            if (isRange) {
                 try {
                     currentNumber = Long.parseLong(currentText.substring(0, pos));
-                    currentRange = Long.parseLong(currentText.substring(pos + 1));
                 } catch (NumberFormatException e) {
                     currentNumber = null;
+                }
+                try {
+                    currentRange = Long.parseLong(currentText.substring(pos + 1));
+                } catch (NumberFormatException e) {
+                    currentRange = null;
+                    }
+                } else {
                     currentRange = null;
                 }
-            }
             return Token.KEY;
         }
     }
@@ -203,13 +212,21 @@ public class PushbackTokenizer {
     }
 
     public Range readRange(String errorMessage) throws ParseError {
-        if ((nextToken() == Token.KEY) && (currentNumber != null)) {
-            if (currentRange == null)
-                return new Range(currentNumber, currentNumber);
-            else
-                return new Range(currentNumber, currentRange);
-        } else
+        if (nextToken() != Token.KEY || (currentNumber == null && currentRange == null)) {
             throw new ParseError(errorMessage);
+        } else if (!isRange && currentNumber != null) {
+            if (currentNumber >= 0) {
+                return new Range(currentNumber, currentNumber);
+            } else {
+                return new Range(0, Math.abs(currentNumber));
+            }
+        } else if (isRange && currentRange == null) {
+            return new Range(currentNumber, Integer.MAX_VALUE);
+        } else if (currentNumber != null && currentRange != null) {
+            return new Range(currentNumber, currentRange);
+        } else {
+            throw new ParseError(errorMessage);
+        }
     }
 
     public String getText() {

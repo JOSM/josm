@@ -508,43 +508,74 @@ public class SearchCompiler {
         }
     }
 
-    private static class NodeCountRange extends Match {
+    private abstract static class CountRange extends Match {
+
         private int minCount;
         private int maxCount;
-        public NodeCountRange(int minCount, int maxCount) {
-            if(maxCount < minCount) {
-                this.minCount = maxCount;
-                this.maxCount = minCount;
+
+        public CountRange(int minCount, int maxCount) {
+            this.minCount = Math.min(minCount, maxCount);
+            this.maxCount = Math.max(minCount, maxCount);
+        }
+
+        protected abstract Integer getCount(OsmPrimitive osm);
+
+        protected abstract String getCountString();
+
+        @Override
+        public boolean match(OsmPrimitive osm) {
+            Integer count = getCount(osm);
+            if (count == null) {
+                return false;
             } else {
-                this.minCount = minCount;
-                this.maxCount = maxCount;
+                return (count >= minCount) && (count <= maxCount);
             }
         }
-        @Override public boolean match(OsmPrimitive osm) {
-            if(!(osm instanceof Way)) return false;
-            int size = ((Way)osm).getNodesCount();
-            return (size >= minCount) && (size <= maxCount);
+
+        @Override
+        public String toString() {
+            return getCountString() + "=" + minCount + "-" + maxCount;
         }
-        @Override public String toString() {return "nodes="+minCount+"-"+maxCount;}
     }
 
-    private static class TagCountRange extends Match {
-        private int minCount;
-        private int maxCount;
-        public TagCountRange(int minCount, int maxCount) {
-            if(maxCount < minCount) {
-                this.minCount = maxCount;
-                this.maxCount = minCount;
+
+
+    private static class NodeCountRange extends CountRange {
+
+        public NodeCountRange(int minCount, int maxCount) {
+            super(minCount, maxCount);
+        }
+
+        @Override
+        protected Integer getCount(OsmPrimitive osm) {
+            if (!(osm instanceof Way)) {
+                return null;
             } else {
-                this.minCount = minCount;
-                this.maxCount = maxCount;
+                return ((Way) osm).getNodesCount();
             }
         }
-        @Override public boolean match(OsmPrimitive osm) {
-            int size = osm.getKeys().size();
-            return (size >= minCount) && (size <= maxCount);
+
+        @Override
+        protected String getCountString() {
+            return "nodes";
         }
-        @Override public String toString() {return "tags="+minCount+"-"+maxCount;}
+    }
+
+    private static class TagCountRange extends CountRange {
+
+        public TagCountRange(int minCount, int maxCount) {
+            super(minCount, maxCount);
+        }
+
+        @Override
+        protected Integer getCount(OsmPrimitive osm) {
+            return osm.getKeys().size();
+        }
+
+        @Override
+        protected String getCountString() {
+            return "tags";
+        }
     }
 
     private static class Modified extends Match {
@@ -636,24 +667,24 @@ public class SearchCompiler {
      * 
      * @author Ole Jørgen Brønner
      */
-    private static class Area extends Match {
-        private int min, max;
+    private static class Area extends CountRange {
 
-        public Area(int min, int max) {
-            this.min = min;
-            this.max = max;
-            if (min == max) {
-                this.min = 0;
-            }
+        public Area(int minCount, int maxCount) {
+            super(minCount, maxCount);
         }
 
         @Override
-        public boolean match(OsmPrimitive osm) {
-            if(!(osm instanceof Way && ((Way) osm).isClosed()))
-                return false;
-            Way way = (Way)osm;
-            double area = Geometry.closedWayArea(way);
-            return (min <= area && area <= max);
+        protected Integer getCount(OsmPrimitive osm) {
+            if (!(osm instanceof Way && ((Way) osm).isClosed())) {
+                return null;
+            }
+            Way way = (Way) osm;
+            return (int) Geometry.closedWayArea(way);
+        }
+
+        @Override
+        protected String getCountString() {
+            return "area";
         }
     }
 
