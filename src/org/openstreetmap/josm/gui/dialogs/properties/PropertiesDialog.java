@@ -763,17 +763,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         membershipTable.addMouseListener(dblClickWatch);
         JScrollPane scrollPane = new JScrollPane(bothTables);
         scrollPane.addMouseListener(dblClickWatch);
-        add(scrollPane, BorderLayout.CENTER);
 
         selectSth.setPreferredSize(scrollPane.getSize());
         presets.setSize(scrollPane.getSize());
 
-        JPanel buttonPanel = getButtonPanel(3);
-
         // -- add action and shortcut
         this.btnAdd = new SideButton(addAction);
         btnAdd.setFocusable(true);
-        buttonPanel.add(this.btnAdd);
         btnAdd.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "onEnter");
         btnAdd.getActionMap().put("onEnter", addAction);
 
@@ -783,7 +779,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyTable.getSelectionModel().addListSelectionListener(editAction);
         membershipTable.getSelectionModel().addListSelectionListener(editAction);
         this.btnEdit = new SideButton(editAction);
-        buttonPanel.add(this.btnEdit);
 
         // -- delete action
         //
@@ -795,8 +790,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),"delete"
         );
         getActionMap().put("delete", deleteAction);
-        buttonPanel.add(this.btnDel);
-        add(buttonPanel, BorderLayout.SOUTH);
+
+        createLayout(scrollPane, false, Arrays.asList(new SideButton[] {
+            this.btnAdd, this.btnEdit, this.btnDel
+        }));
 
         // -- help action
         //

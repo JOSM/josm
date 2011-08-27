@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -17,6 +16,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -30,9 +30,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -113,58 +111,6 @@ public class LayerListDialog extends ToggleDialog {
     private SideButton opacityButton;
 
     ActivateLayerAction activateLayerAction;
-
-    protected JPanel createButtonPanel() {
-        JPanel buttonPanel = getButtonPanel(5);
-
-        // -- move up action
-        MoveUpAction moveUpAction = new MoveUpAction();
-        adaptTo(moveUpAction, model);
-        adaptTo(moveUpAction,selectionModel);
-        buttonPanel.add(new SideButton(moveUpAction));
-
-        // -- move down action
-        MoveDownAction moveDownAction = new MoveDownAction();
-        adaptTo(moveDownAction, model);
-        adaptTo(moveDownAction,selectionModel);
-        buttonPanel.add(new SideButton(moveDownAction));
-
-        // -- activate action
-        activateLayerAction = new ActivateLayerAction();
-        adaptTo(activateLayerAction, selectionModel);
-        buttonPanel.add(new SideButton(activateLayerAction));
-
-        // -- show hide action
-        ShowHideLayerAction showHideLayerAction = new ShowHideLayerAction();
-        adaptTo(showHideLayerAction, selectionModel);
-        buttonPanel.add(new SideButton(showHideLayerAction));
-
-        //-- layer opacity action
-        LayerOpacityAction layerOpacityAction = new LayerOpacityAction();
-        adaptTo(layerOpacityAction, selectionModel);
-        opacityButton = new SideButton(layerOpacityAction);
-        buttonPanel.add(opacityButton);
-
-        // -- merge layer action
-        MergeAction mergeLayerAction = new MergeAction();
-        adaptTo(mergeLayerAction, model);
-        adaptTo(mergeLayerAction,selectionModel);
-        buttonPanel.add(new SideButton(mergeLayerAction));
-
-        // -- duplicate layer action
-        DuplicateAction duplicateLayerAction = new DuplicateAction();
-        adaptTo(duplicateLayerAction, model);
-        adaptTo(duplicateLayerAction, selectionModel);
-        buttonPanel.add(new SideButton(duplicateLayerAction));
-
-        //-- delete layer action
-        DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
-        layerList.getActionMap().put("deleteLayer", deleteLayerAction);
-        adaptTo(deleteLayerAction, selectionModel);
-        buttonPanel.add(new SideButton(deleteLayerAction, false));
-
-        return buttonPanel;
-    }
 
     /** stores which layer index to toggle and executes the ShowHide action if the layer is present */
     private final class ToggleLayerIndexVisibility extends AbstractAction {
@@ -253,8 +199,6 @@ public class LayerListDialog extends ToggleDialog {
             layerList.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ks, new Object());
         }
 
-        add(new JScrollPane(layerList), BorderLayout.CENTER);
-
         // init the model
         //
         final MapView mapView = mapFrame.mapView;
@@ -274,7 +218,55 @@ public class LayerListDialog extends ToggleDialog {
                 }
                 );
 
-        add(createButtonPanel(), BorderLayout.SOUTH);
+        // -- move up action
+        MoveUpAction moveUpAction = new MoveUpAction();
+        adaptTo(moveUpAction, model);
+        adaptTo(moveUpAction,selectionModel);
+
+        // -- move down action
+        MoveDownAction moveDownAction = new MoveDownAction();
+        adaptTo(moveDownAction, model);
+        adaptTo(moveDownAction,selectionModel);
+
+        // -- activate action
+        activateLayerAction = new ActivateLayerAction();
+        adaptTo(activateLayerAction, selectionModel);
+
+        // -- show hide action
+        ShowHideLayerAction showHideLayerAction = new ShowHideLayerAction();
+        adaptTo(showHideLayerAction, selectionModel);
+
+        //-- layer opacity action
+        LayerOpacityAction layerOpacityAction = new LayerOpacityAction();
+        adaptTo(layerOpacityAction, selectionModel);
+        opacityButton = new SideButton(layerOpacityAction);
+
+        // -- merge layer action
+        MergeAction mergeLayerAction = new MergeAction();
+        adaptTo(mergeLayerAction, model);
+        adaptTo(mergeLayerAction,selectionModel);
+
+        // -- duplicate layer action
+        DuplicateAction duplicateLayerAction = new DuplicateAction();
+        adaptTo(duplicateLayerAction, model);
+        adaptTo(duplicateLayerAction, selectionModel);
+
+        //-- delete layer action
+        DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
+        layerList.getActionMap().put("deleteLayer", deleteLayerAction);
+        adaptTo(deleteLayerAction, selectionModel);
+
+        createLayout(layerList, true, Arrays.asList(new SideButton[] {
+            new SideButton(moveUpAction),
+            new SideButton(moveDownAction),
+            new SideButton(activateLayerAction),
+            new SideButton(showHideLayerAction),
+            opacityButton,
+            new SideButton(mergeLayerAction),
+            new SideButton(duplicateLayerAction),
+            new SideButton(deleteLayerAction, false)
+        }));
+
         createVisibilityToggleShortcuts();
     }
 
