@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -11,7 +12,10 @@ import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -50,7 +54,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * This class is a toggle dialog that can be turned on and off.
  *
  */
-public class ToggleDialog extends JPanel implements Helpful {
+public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
 
     /** The action to toggle this dialog */
     protected ToggleDialogAction toggleAction;
@@ -88,6 +92,7 @@ public class ToggleDialog extends JPanel implements Helpful {
 
     protected JToggleButton button;
     protected boolean buttonHidden;
+    private JPanel buttonsPanel;
 
     /**
      * Constructor
@@ -670,11 +675,30 @@ public class ToggleDialog extends JPanel implements Helpful {
         else
             add(data, BorderLayout.CENTER);
         if(buttons != null && buttons.size() != 0) {
-            JPanel buttonsPanel = new JPanel(Main.pref.getBoolean("dialog.align.left", false)
+            buttonsPanel = new JPanel(Main.pref.getBoolean("dialog.align.left", false)
                 ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1,buttons.size()));
             for(SideButton button : buttons)
                 buttonsPanel.add(button);
             add(buttonsPanel, BorderLayout.SOUTH);
+            if(Main.pref.getBoolean("dialog.dynamic.buttons", false)) {
+                Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_MOTION_EVENT_MASK);
+                buttonsPanel.setVisible(false);
+            }
+        }
+    }
+
+    @Override
+    public void eventDispatched(AWTEvent event) {
+        if(isShowing()) {
+            Rectangle b = this.getBounds();
+            b.setLocation(getLocationOnScreen());
+            if (b.contains(((MouseEvent)event).getLocationOnScreen())) {
+                if(!buttonsPanel.isVisible()) {
+                    buttonsPanel.setVisible(true);
+                }
+            } else if (buttonsPanel.isVisible()) {
+                buttonsPanel.setVisible(false);
+            }
         }
     }
 }
