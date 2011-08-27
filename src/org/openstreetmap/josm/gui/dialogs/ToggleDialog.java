@@ -21,6 +21,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import java.util.Collection;
+
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -29,6 +31,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
@@ -38,6 +41,7 @@ import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
+import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -115,8 +119,6 @@ public class ToggleDialog extends JPanel implements Helpful {
         toggleAction = new ToggleDialogAction(name, "dialogs/"+iconName, tooltip, shortcut, iconName);
         String helpId = "Dialog/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
         toggleAction.putValue("help", helpId.substring(0, helpId.length()-6));
-
-        setLayout(new BorderLayout());
 
         /** show the minimize button */
         lblMinimized = new JLabel(ImageProvider.get("misc", "normal"));
@@ -653,10 +655,27 @@ public class ToggleDialog extends JPanel implements Helpful {
     protected void stateChanged() {
     }
 
+    /* use createLayout() instead of self-constructed dialogs */
+    @Deprecated
     protected JPanel getButtonPanel(int columns) {
         JPanel pnl = new JPanel();
         pnl.setLayout(Main.pref.getBoolean("dialog.align.left", false)
                 ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1,columns));
         return pnl;
+    }
+
+    protected void createLayout(Component data, boolean scroll, Collection<SideButton> buttons) {
+        if(scroll)
+            add(new JScrollPane(data), BorderLayout.CENTER);
+        else
+            add(data, BorderLayout.CENTER);
+        if(buttons != null && buttons.size() != 0) {
+            JPanel buttonsPanel = new JPanel();
+            buttonsPanel.setLayout(Main.pref.getBoolean("dialog.align.left", false)
+                ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1,buttons.size()));
+            for(SideButton button : buttons)
+                buttonsPanel.add(button);
+            add(buttonsPanel, BorderLayout.SOUTH);
+        }
     }
 }

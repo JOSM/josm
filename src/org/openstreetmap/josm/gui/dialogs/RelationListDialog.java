@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -22,9 +23,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -105,41 +104,38 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         });
         displaylist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         displaylist.addMouseListener(new MouseEventHandler());
-        add(new JScrollPane(displaylist), BorderLayout.CENTER);
 
-        // create the panel with buttons
-        //
-        JPanel tp = getButtonPanel(5);
         // the new action
         //
         newAction = new NewAction();
-        tp.add(new SideButton(newAction, false));
 
         // the edit action
         //
         editAction = new EditAction();
         displaylist.addListSelectionListener(editAction);
-        tp.add(new SideButton(editAction, false));
 
         // the duplicate action
         //
         DuplicateAction duplicateAction = new DuplicateAction();
         displaylist.addListSelectionListener(duplicateAction);
-        tp.add(new SideButton(duplicateAction, false));
 
         // the delete action
         //
         deleteAction = new DeleteAction();
         displaylist.addListSelectionListener(deleteAction);
-        tp.add(new SideButton(deleteAction, false));
 
         // the select action
         //
         SelectAction selectAction = new SelectAction(false);
         displaylist.addListSelectionListener(selectAction);
-        tp.add(new SideButton(selectAction, false));
 
-        add(tp, BorderLayout.SOUTH);
+        createLayout(displaylist, true, Arrays.asList(new SideButton[] {
+            new SideButton(newAction, false),
+            new SideButton(editAction, false),
+            new SideButton(duplicateAction, false),
+            new SideButton(deleteAction, false),
+            new SideButton(selectAction, false)
+        }));
 
         // activate DEL in the list of relations
         displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "deleteRelation");
