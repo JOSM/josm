@@ -670,8 +670,7 @@ public class ToggleDialog extends JPanel implements Helpful {
         else
             add(data, BorderLayout.CENTER);
         if(buttons != null && buttons.size() != 0) {
-            JPanel buttonsPanel = new JPanel();
-            buttonsPanel.setLayout(Main.pref.getBoolean("dialog.align.left", false)
+            JPanel buttonsPanel = new JPanel(Main.pref.getBoolean("dialog.align.left", false)
                 ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1,buttons.size()));
             for(SideButton button : buttons)
                 buttonsPanel.add(button);

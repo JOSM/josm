@@ -4,10 +4,7 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,22 +24,17 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
-import javax.swing.BorderFactory;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.basic.BasicArrowButton;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
@@ -97,12 +90,9 @@ public class SelectionListDialog extends ToggleDialog  {
     private InspectAction actInspect;
 
     /**
-     * Builds the panel with the list of selected OSM primitives
-     *
-     * @return the panel with the list of selected OSM primitives
+     * Builds the content panel for this dialog
      */
-    protected JPanel buildListPanel() {
-        JPanel pnl = new JPanel(new BorderLayout());
+    protected void buildContentPanel() {
         DefaultListSelectionModel selectionModel  = new DefaultListSelectionModel();
         model = new SelectionListModel(selectionModel);
         lstPrimitives = new JList(model);
@@ -110,54 +100,27 @@ public class SelectionListDialog extends ToggleDialog  {
         lstPrimitives.setSelectionModel(selectionModel);
         lstPrimitives.setCellRenderer(new OsmPrimitivRenderer());
         lstPrimitives.setTransferHandler(null); // Fix #6290. Drag & Drop is not supported anyway and Copy/Paste is better propagated to main window
-        pnl.add(new JScrollPane(lstPrimitives), BorderLayout.CENTER);
-
-        return pnl;
-    }
-
-    /**
-     * Builds the row of action buttons at the bottom of this dialog
-     *
-     * @return the panel
-     */
-    protected JPanel buildActionPanel() {
-        JPanel pnl = new  JPanel(new GridLayout(1,2));
 
         // the select action
-        final JButton selectButton = new SideButton(actSelect = new SelectAction());
+        final SideButton selectButton = new SideButton(actSelect = new SelectAction());
         lstPrimitives.getSelectionModel().addListSelectionListener(actSelect);
-        pnl.add(selectButton);
-        BasicArrowButton selectionHistoryMenuButton = createArrowButton(selectButton);
-        selectionHistoryMenuButton.addActionListener(new ActionListener() {
+        selectButton.createArrow(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SelectionHistoryPopup.launch(selectButton, model.getSelectionHistory());
             }
         });
 
         // the search button
-        final JButton searchButton = new SideButton(actSearch = new SearchAction());
-        pnl.add(searchButton);
-
-        BasicArrowButton searchHistoryMenuButton = createArrowButton(searchButton);
-        searchHistoryMenuButton.addActionListener(new ActionListener() {
+        final SideButton searchButton = new SideButton(actSearch = new SearchAction());
+        searchButton.createArrow(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SearchPopupMenu.launch(searchButton);
             }
         });
 
-        return pnl;
-    }
-
-    /**
-     * Builds the content panel for this dialog
-     *
-     * @return the content panel
-     */
-    protected JPanel buildContentPanel() {
-        JPanel pnl = new JPanel(new BorderLayout());
-        pnl.add(buildListPanel(), BorderLayout.CENTER);
-        pnl.add(buildActionPanel(), BorderLayout.SOUTH);
-        return pnl;
+        createLayout(lstPrimitives, true, Arrays.asList(new SideButton[] {
+            selectButton, searchButton
+        }));
     }
 
     public SelectionListDialog() {
@@ -167,7 +130,7 @@ public class SelectionListDialog extends ToggleDialog  {
                 true // default is "show dialog"
         );
 
-        add(buildContentPanel(), BorderLayout.CENTER);
+        buildContentPanel();
         model.addListDataListener(new TitleUpdater());
         actZoomToJOSMSelection = new ZoomToJOSMSelectionAction();
         model.addListDataListener(actZoomToJOSMSelection);
@@ -212,15 +175,6 @@ public class SelectionListDialog extends ToggleDialog  {
         SelectionEventManager.getInstance().removeSelectionListener(model);
         DatasetEventManager.getInstance().removeDatasetListener(model);
     }
-
-    private BasicArrowButton createArrowButton(JButton parentButton) {
-        BasicArrowButton arrowButton = new BasicArrowButton(SwingConstants.SOUTH, null, null, Color.BLACK, null);
-        arrowButton.setBorder(BorderFactory.createEmptyBorder());
-        parentButton.setLayout(new BorderLayout());
-        parentButton.add(arrowButton, BorderLayout.EAST);
-        return arrowButton;
-    }
-
 
     /**
      * Responds to double clicks on the list of selected objects
