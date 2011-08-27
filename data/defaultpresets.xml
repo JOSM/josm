@@ -922,8 +922,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item> <!-- hedge -->
         <item name="Fence" icon="presets/fence.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=fence" />
-            <combo key="barrier" text="Fence" values="fence,wood_fence,wire_fence" default="" delete_if_empty="true" />
+            <key key="barrier" value="fence" />
         </item> <!-- fence -->
+        <item name="Wire Fence" type="way,closedway">
+            <key key="barrier" value="wire_fence" />
+        </item> <!-- wire_fence -->
+        <item name="Wood Fence" type="way,closedway">
+            <key key="barrier" value="wood_fence" />
+        </item> <!-- wood_fence -->
         <item name="Wall" icon="presets/wall.png" type="way,closedway">
             <key key="barrier" value="wall" />
         </item> <!-- wall -->
