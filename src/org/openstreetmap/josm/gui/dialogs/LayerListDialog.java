@@ -181,6 +181,8 @@ public class LayerListDialog extends ToggleDialog {
         }
     }
 
+    private final Shortcut[] visibilityToggleShortcuts = new Shortcut[10];
+    private final ToggleLayerIndexVisibility[] visibilityToggleActions = new ToggleLayerIndexVisibility[10];
     /**
      * registers (shortcut to toggle right hand side toggle dialogs)+(number keys) shortcuts
      * to toggle the visibility of the first ten layers.
@@ -190,13 +192,14 @@ public class LayerListDialog extends ToggleDialog {
                 KeyEvent.VK_5, KeyEvent.VK_6, KeyEvent.VK_7, KeyEvent.VK_8,
                 KeyEvent.VK_9, KeyEvent.VK_0 };
 
-        for(int i=1; i <= 10; i++) {
-            Main.registerActionShortcut(
-                    new ToggleLayerIndexVisibility(i),
-                    Shortcut.registerShortcut("subwindow:layers:toggleLayer" + i,
-                            tr("Toggle visibility of layer: {0}", i),
-                            k[i-1],
-                            Shortcut.GROUP_LAYER));
+        for(int i=0; i < 10; i++) {
+            visibilityToggleShortcuts[i] = Shortcut.registerShortcut(
+                    "subwindow:layers:toggleLayer" + (i+1),
+                    tr("Toggle visibility of layer: {0}", (i+1)),
+                    k[i],
+                    Shortcut.GROUP_LAYER);
+            visibilityToggleActions[i] = new ToggleLayerIndexVisibility(i);
+            Main.registerActionShortcut(visibilityToggleActions[i], visibilityToggleShortcuts[i]);
         }
     }
 
@@ -337,6 +340,9 @@ public class LayerListDialog extends ToggleDialog {
 
     @Override
     public void destroy() {
+        for(int i=0; i < 10; i++) {
+            Main.unregisterActionShortcut(visibilityToggleActions[i], visibilityToggleShortcuts[i]);
+        }
         super.destroy();
         instance = null;
     }
