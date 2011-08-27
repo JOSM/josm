@@ -380,7 +380,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * This is required to update the cursors when ctrl/shift/alt is pressed
      */
     public void eventDispatched(AWTEvent e) {
-        if(e == null)
+        if(oldEvent == null)
             return;
         // We don't have a mouse event, so we pass the old mouse event but the
         // new modifiers.
