@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -23,9 +23,7 @@ import java.util.Set;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -107,27 +105,27 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
         tree.addMouseListener(new ClickWatch());
         tree.addTreeSelectionListener(new SelectionWatch());
 
-        add(new JScrollPane(tree), BorderLayout.CENTER);
-
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 3));
-
+        List<SideButton> buttons = new LinkedList<SideButton>();
         selectButton = new SideButton(marktr("Select"), "select", "Validator",
                 tr("Set the selected elements on the map to the selected items in the list above."), this);
         selectButton.setEnabled(false);
-        buttonPanel.add(selectButton);
-        buttonPanel.add(new SideButton(Main.main.validator.validateAction), "refresh");
+        buttons.add(selectButton);
+
+        buttons.add(new SideButton(Main.main.validator.validateAction));
+
         fixButton = new SideButton(marktr("Fix"), "fix", "Validator", tr("Fix the selected issue."), this);
         fixButton.setEnabled(false);
-        buttonPanel.add(fixButton);
+        buttons.add(fixButton);
+
         if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
             ignoreButton = new SideButton(marktr("Ignore"), "delete", "Validator",
                     tr("Ignore the selected issue next time."), this);
             ignoreButton.setEnabled(false);
-            buttonPanel.add(ignoreButton);
+            buttons.add(ignoreButton);
         } else {
             ignoreButton = null;
         }
-        add(buttonPanel, BorderLayout.SOUTH);
+        createLayout(tree, true, buttons);
     }
 
     @Override
@@ -465,11 +463,6 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
                 ignoreButton.setEnabled(false);
             }
             selectButton.setEnabled(false);
-
-            if (e.getSource() instanceof JScrollPane) {
-                System.out.println(e.getSource());
-                return;
-            }
 
             boolean hasFixes = setSelection(null, false);
             fixButton.setEnabled(hasFixes);

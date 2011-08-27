@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -24,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -90,9 +90,6 @@ public class MapPaintDialog extends ToggleDialog {
     }
 
     protected void build() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BorderLayout());
-
         model = new StylesModel();
 
         cbWireframe = new JCheckBox();
@@ -135,11 +132,21 @@ public class MapPaintDialog extends ToggleDialog {
         p.add(wfLabel, GBC.std(1, 0).weight(1, 0));
         p.add(tblStyles, GBC.std(0, 1).span(2).fill());
 
-        pnl.add(new JScrollPane(p), BorderLayout.CENTER);
+        reloadAction = new ReloadAction();
+        onoffAction = new OnOffAction();
+        upAction = new MoveUpDownAction(false);
+        downAction = new MoveUpDownAction(true);
+        selectionModel.addListSelectionListener(onoffAction);
+        selectionModel.addListSelectionListener(reloadAction);
+        selectionModel.addListSelectionListener(upAction);
+        selectionModel.addListSelectionListener(downAction);
 
-        pnl.add(buildButtonRow(), BorderLayout.SOUTH);
-
-        add(pnl, BorderLayout.CENTER);
+        createLayout(p, true, Arrays.asList(new SideButton[] {
+            new SideButton(onoffAction),
+            new SideButton(upAction),
+            new SideButton(downAction),
+            new SideButton(new LaunchMapPaintPreferencesAction())
+        }));
     }
 
     protected static class StylesTable extends JTable {
@@ -157,24 +164,6 @@ public class MapPaintDialog extends ToggleDialog {
             rect.setLocation(rect.x - pt.x, rect.y - pt.y);
             viewport.scrollRectToVisible(rect);
         }
-    }
-
-    protected JPanel buildButtonRow() {
-        JPanel p = getButtonPanel(4);
-        reloadAction = new ReloadAction();
-        onoffAction = new OnOffAction();
-        upAction = new MoveUpDownAction(false);
-        downAction = new MoveUpDownAction(true);
-        selectionModel.addListSelectionListener(onoffAction);
-        selectionModel.addListSelectionListener(reloadAction);
-        selectionModel.addListSelectionListener(upAction);
-        selectionModel.addListSelectionListener(downAction);
-        p.add(new SideButton(onoffAction));
-        p.add(new SideButton(upAction));
-        p.add(new SideButton(downAction));
-        p.add(new SideButton(new LaunchMapPaintPreferencesAction()));
-
-        return p;
     }
 
     @Override

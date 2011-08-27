@@ -669,11 +669,10 @@ public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
         return pnl;
     }
 
-    protected void createLayout(Component data, boolean scroll, Collection<SideButton> buttons) {
+    protected Component createLayout(Component data, boolean scroll, Collection<SideButton> buttons) {
         if(scroll)
-            add(new JScrollPane(data), BorderLayout.CENTER);
-        else
-            add(data, BorderLayout.CENTER);
+            data = new JScrollPane(data);
+        add(data, BorderLayout.CENTER);
         if(buttons != null && buttons.size() != 0) {
             buttonsPanel = new JPanel(Main.pref.getBoolean("dialog.align.left", false)
                 ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1,buttons.size()));
@@ -685,6 +684,7 @@ public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
                 buttonsPanel.setVisible(false);
             }
         }
+        return data;
     }
 
     @Override

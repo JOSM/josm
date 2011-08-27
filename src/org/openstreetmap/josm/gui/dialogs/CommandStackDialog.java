@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -101,9 +102,21 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         treesPanel.add(Box.createRigidArea(new Dimension(0, 0)), GBC.std().weight(0, 1));
         treesPanel.setBackground(redoTree.getBackground());
 
-        scrollPane = new JScrollPane(treesPanel);
-        add(scrollPane, BorderLayout.CENTER);
-        add(createButtonPanel(), BorderLayout.SOUTH);
+        SelectAction selectAction = new SelectAction();
+        wireUpdateEnabledStateUpdater(selectAction, undoTree);
+        wireUpdateEnabledStateUpdater(selectAction, redoTree);
+
+        UndoRedoAction undoAction = new UndoRedoAction(UndoRedoType.UNDO);
+        wireUpdateEnabledStateUpdater(undoAction, undoTree);
+
+        UndoRedoAction redoAction = new UndoRedoAction(UndoRedoType.REDO);
+        wireUpdateEnabledStateUpdater(redoAction, redoTree);
+
+        scrollPane = (JScrollPane)createLayout(treesPanel, true, Arrays.asList(new SideButton[] {
+            new SideButton(selectAction),
+            new SideButton(undoAction),
+            new SideButton(redoAction)
+        }));
     }
 
     private static class CommandCellRenderer extends DefaultTreeCellRenderer {
@@ -143,25 +156,6 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
                 undoTree.getSelectionModel().addTreeSelectionListener(undoSelectionListener);
             }
         }
-    }
-
-    protected JPanel createButtonPanel() {
-        JPanel buttonPanel = getButtonPanel(3);
-
-        SelectAction selectAction = new SelectAction();
-        wireUpdateEnabledStateUpdater(selectAction, undoTree);
-        wireUpdateEnabledStateUpdater(selectAction, redoTree);
-        buttonPanel.add(new SideButton(selectAction));
-
-        UndoRedoAction undoAction = new UndoRedoAction(UndoRedoType.UNDO);
-        wireUpdateEnabledStateUpdater(undoAction, undoTree);
-        buttonPanel.add(new SideButton(undoAction));
-
-        UndoRedoAction redoAction = new UndoRedoAction(UndoRedoType.REDO);
-        wireUpdateEnabledStateUpdater(redoAction, redoTree);
-        buttonPanel.add(new SideButton(redoAction));
-
-        return buttonPanel;
     }
 
     /**

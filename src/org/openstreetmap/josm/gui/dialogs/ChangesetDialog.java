@@ -11,6 +11,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -174,57 +175,52 @@ public class ChangesetDialog extends ToggleDialog{
         return pnl;
     }
 
-    protected JPanel buildButtonPanel() {
-        JPanel tp = getButtonPanel(5);
+    protected void build() {
+        JPanel pnl = new JPanel(new BorderLayout());
+        pnl.add(buildFilterPanel(), BorderLayout.NORTH);
+        pnl.add(pnlList = buildListPanel(), BorderLayout.CENTER);
+
+        cbInSelectionOnly.addItemListener(new FilterChangeHandler());
+
+        HelpUtil.setHelpContext(pnl, HelpUtil.ht("/Dialog/ChangesetListDialog"));
 
         // -- select objects action
         selectObjectsAction = new SelectObjectsAction();
-        tp.add(new SideButton(selectObjectsAction, false));
         cbInSelectionOnly.addItemListener(selectObjectsAction);
         lstInActiveDataLayer.getSelectionModel().addListSelectionListener(selectObjectsAction);
         lstInSelection.getSelectionModel().addListSelectionListener(selectObjectsAction);
 
         // -- read changesets action
         readChangesetAction = new ReadChangesetsAction();
-        tp.add(new SideButton(readChangesetAction, false));
         cbInSelectionOnly.addItemListener(readChangesetAction);
         lstInActiveDataLayer.getSelectionModel().addListSelectionListener(readChangesetAction);
         lstInSelection.getSelectionModel().addListSelectionListener(readChangesetAction);
 
         // -- close changesets action
         closeChangesetAction = new CloseOpenChangesetsAction();
-        tp.add(new SideButton(closeChangesetAction, false));
         cbInSelectionOnly.addItemListener(closeChangesetAction);
         lstInActiveDataLayer.getSelectionModel().addListSelectionListener(closeChangesetAction);
         lstInSelection.getSelectionModel().addListSelectionListener(closeChangesetAction);
 
         // -- show info action
         showChangesetInfoAction = new ShowChangesetInfoAction();
-        tp.add(new SideButton(showChangesetInfoAction, false));
         cbInSelectionOnly.addItemListener(showChangesetInfoAction);
         lstInActiveDataLayer.getSelectionModel().addListSelectionListener(showChangesetInfoAction);
         lstInSelection.getSelectionModel().addListSelectionListener(showChangesetInfoAction);
 
         // -- launch changeset manager action
         launchChangesetManagerAction = new LaunchChangesetManagerAction();
-        tp.add(new SideButton(launchChangesetManagerAction, false));
         cbInSelectionOnly.addItemListener(launchChangesetManagerAction);
         lstInActiveDataLayer.getSelectionModel().addListSelectionListener(launchChangesetManagerAction);
         lstInSelection.getSelectionModel().addListSelectionListener(launchChangesetManagerAction);
 
-        return tp;
-    }
-
-    protected void build() {
-        JPanel pnl = new JPanel(new BorderLayout());
-        pnl.add(buildFilterPanel(), BorderLayout.NORTH);
-        pnl.add(pnlList = buildListPanel(), BorderLayout.CENTER);
-        pnl.add(buildButtonPanel(), BorderLayout.SOUTH);
-        add(pnl, BorderLayout.CENTER);
-
-        cbInSelectionOnly.addItemListener(new FilterChangeHandler());
-
-        HelpUtil.setHelpContext(pnl, HelpUtil.ht("/Dialog/ChangesetListDialog"));
+        createLayout(pnl, false, Arrays.asList(new SideButton[] {
+            new SideButton(selectObjectsAction, false),
+            new SideButton(readChangesetAction, false),
+            new SideButton(closeChangesetAction, false),
+            new SideButton(showChangesetInfoAction, false),
+            new SideButton(launchChangesetManagerAction, false)
+        }));
     }
 
     protected JList getCurrentChangesetList() {
