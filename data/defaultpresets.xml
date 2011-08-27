@@ -196,6 +196,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="name" text="Name" default="" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
                 <check key="motorroad" text="Motorroad" default="off" delete_if_empty="false" />
@@ -214,6 +215,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <optional>
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
                 <check key="motorroad" text="Motorroad" default="off" delete_if_empty="false" />
@@ -236,6 +238,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="name" text="Name" default="" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
@@ -257,6 +260,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="name" text="Name" default="" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
@@ -286,6 +290,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Residential" icon="presets/residential.png" type="way">
@@ -307,6 +312,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Living Street" icon="presets/living_street.png" type="way">
@@ -326,6 +332,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Pedestrian" icon="presets/pedestrian.png" type="way,closedway,relation">
@@ -345,6 +352,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Service" icon="presets/way_unclassified.png" type="way">
@@ -367,6 +375,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Parking Aisle" icon="presets/way_unclassified.png" type="way">
@@ -401,6 +410,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Construction" icon="presets/construction.png" type="way">
@@ -422,6 +432,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="junction" text="Junction" values="roundabout,jughandle,yes" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <separator/>
@@ -477,6 +488,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Bridge" icon="presets/bridge.png" type="way">
@@ -493,6 +505,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="maxweight" text="Max. weight (tonnes)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Tunnel" icon="presets/tunnel.png" type="way">
@@ -507,6 +520,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
     </group> <!-- Streets -->
@@ -534,6 +548,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" default="" delete_if_empty="true" />
                 <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Path" icon="presets/path.png" type="way">
@@ -571,6 +586,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <separator/>
@@ -591,6 +607,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Dedicated Cycleway" icon="presets/cycleway.png" type="way">
@@ -612,6 +629,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="foot" text="Pedestrians" values="unknown,yes,no" default="" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Segregated Foot- and Cycleway" icon="presets/foot_and_cycleway_segregated.png" type="way">
@@ -635,6 +653,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Combined Foot- and Cycleway" icon="presets/foot_and_cycleway_combined.png" type="way">
@@ -659,6 +678,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="passing_places" text="Passing Places" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Dedicated Footway" icon="presets/footway.png" type="way">
@@ -678,6 +698,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="passing_places" text="Passing Places" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Steps" icon="presets/steps.png" type="way">
@@ -799,12 +820,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="highway" value="speed_camera" />
         </item>
         <separator/>
-        <item name="Incline" icon="presets/incline.png" type="node,way">
-            <key key="highway" value="incline" />
-        </item>
-        <item name="Incline Steep" icon="presets/incline_steep.png" type="node,way">
-            <key key="highway" value="incline_steep" />
-        </item>
         <item name="Grit Bin" icon="styles/standard/misc/grit_bin.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dgrit_bin" />
             <key key="amenity" value="grit_bin" />
@@ -1373,6 +1388,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
         <separator/>
