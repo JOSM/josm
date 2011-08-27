@@ -3780,6 +3780,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
+        <item name="Isolated Dwelling" icon="presets/places.png" type="node,closedway">
+            <label text="Edit Isolated Dwelling" />
+            <space />
+            <key key="place" value="isolated_dwelling" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
+        </item>
         <separator/>
         <item name="Locality" icon="presets/locality.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=locality" />
