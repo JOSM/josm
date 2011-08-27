@@ -737,7 +737,16 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         }
 
         mode = null;
-        giveUserFeedback(e);
+
+        // simply remove any highlights if the middle click popup is active because
+        // the highlights don't depend on the cursor position there. If something was
+        // selected beforehand this would put us into move mode as well, which breaks
+        // the cycling through primitives on top of each other (see #6739).
+        if(e.getButton() == MouseEvent.BUTTON2) {
+            removeHighlighting();
+        } else {
+            giveUserFeedback(e);
+        }
         updateStatusLine();
     }
 
