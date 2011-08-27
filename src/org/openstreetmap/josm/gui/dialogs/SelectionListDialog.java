@@ -860,7 +860,7 @@ public class SelectionListDialog extends ToggleDialog  {
         public void actionPerformed(ActionEvent e) {
             Collection<OsmPrimitive> sel = model.getSelected();
             if (sel.isEmpty()) return;
-            InspectPrimitiveDialog inspectDialog = new InspectPrimitiveDialog(sel);
+            InspectPrimitiveDialog inspectDialog = new InspectPrimitiveDialog(sel, Main.map.mapView.getEditLayer());
             inspectDialog.showDialog();
         }
 

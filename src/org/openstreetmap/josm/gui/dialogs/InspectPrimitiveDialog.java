@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -21,16 +22,21 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.conflict.Conflict;
+import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
@@ -52,18 +58,18 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * Gives an unfiltered view of the object's internal state.
  * Might be useful for power users to give more detailed bug reports and
  * to better understand the JOSM data representation.
- *
- * TODO: show conflicts
  */
 public class InspectPrimitiveDialog extends ExtendedDialog {
-    protected Collection<OsmPrimitive> primitives;
+    protected List<OsmPrimitive> primitives;
+    protected OsmDataLayer layer;
     private JTextArea txtData;
     private JTextArea txtMappaint;
     boolean mappaintTabLoaded;
 
-    public InspectPrimitiveDialog(Collection<OsmPrimitive> primitives) {
+    public InspectPrimitiveDialog(Collection<OsmPrimitive> primitives, OsmDataLayer layer) {
         super(Main.parent, tr("Advanced object info"), new String[] {tr("Close")});
-        this.primitives = primitives;
+        this.primitives = new ArrayList<OsmPrimitive>(primitives);
+        this.layer = layer;
         setRememberWindowGeometry(getClass().getName() + ".geometry",
                 WindowGeometry.centerInWindow(Main.parent, new Dimension(750, 550)));
 
@@ -102,17 +108,51 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     protected String buildDataText() {
         StringBuilder s = new StringBuilder();
-        for (Node n : new SubclassFilteredCollection<OsmPrimitive, Node>(primitives, OsmPrimitive.nodePredicate)) {
+
+        Collections.sort(primitives, new OsmPrimitiveComparator());
+
+        String sep = "";
+        for (OsmPrimitive o : primitives) {
+            s.append(sep);
+            sep = "\n";
+            addInfo(s, o);
+        }
+
+        return s.toString();
+    }
+
+    protected void addInfo(StringBuilder s, OsmPrimitive o) {
+        o.visit(new AddPrimitiveInfoVisitor(s));
+        addConflicts(s, o);
+    }
+
+    protected void addConflicts(StringBuilder s, OsmPrimitive o) {
+        ConflictCollection conflicts = layer.getConflicts();
+        Conflict<?> c = conflicts.getConflictForMy(o);
+        if (c != null) {
+            s.append(tr("In conflict with:\n"));
+            c.getTheir().visit(new AddPrimitiveInfoVisitor(s));
+        }
+    }
+
+    protected class AddPrimitiveInfoVisitor extends AbstractVisitor {
+        StringBuilder s;
+
+        public AddPrimitiveInfoVisitor(StringBuilder s) {
+            this.s = s;
+        }
+
+        public void visit(Node n) {
             s.append(tr("Node id={0}", n.getUniqueId()));
             if (!checkDataSet(n)) {
                 s.append(tr(" not in data set"));
-                continue;
+                return;
             }
             if (n.isIncomplete()) {
                 s.append(tr(" incomplete\n"));
                 addWayReferrer(s, n);
                 addRelationReferrer(s, n);
-                continue;
+                return;
             }
             s.append(tr(" lat={0} lon={1} (projected: x={2}, y={3}); ",
                     Double.toString(n.getCoor().lat()), Double.toString(n.getCoor().lon()),
@@ -121,19 +161,18 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             addAttributes(s, n);
             addWayReferrer(s, n);
             addRelationReferrer(s, n);
-            s.append('\n');
         }
 
-        for (Way w : new SubclassFilteredCollection<OsmPrimitive, Way>(primitives, OsmPrimitive.wayPredicate)) {
+        public void visit(Way w) {
             s.append(tr("Way id={0}", w.getUniqueId()));
             if (!checkDataSet(w)) {
                 s.append(tr(" not in data set"));
-                continue;
+                return;
             }
             if (w.isIncomplete()) {
                 s.append(tr(" incomplete\n"));
                 addRelationReferrer(s, w);
-                continue;
+                return;
             }
             s.append(trn(" {0} node; ", " {0} nodes; ", w.getNodes().size(), w.getNodes().size()));
             addCommon(s, w);
@@ -144,19 +183,18 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             for (Node n : w.getNodes()) {
                 s.append(String.format("    %d\n", n.getUniqueId()));
             }
-            s.append('\n');
         }
 
-        for (Relation r : new SubclassFilteredCollection<OsmPrimitive, Relation>(primitives, OsmPrimitive.relationPredicate)) {
+        public void visit(Relation r) {
             s.append(tr("Relation id={0}",r.getUniqueId()));
             if (!checkDataSet(r)) {
                 s.append(tr(" not in data set"));
-                continue;
+                return;
             }
             if (r.isIncomplete()) {
                 s.append(tr(" incomplete\n"));
                 addRelationReferrer(s, r);
-                continue;
+                return;
             }
             s.append(trn(" {0} member; ", " {0} members; ", r.getMembersCount(), r.getMembersCount()));
             addCommon(s, r);
@@ -167,10 +205,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             for (RelationMember m : r.getMembers() ) {
                 s.append(String.format("    %s%d '%s'\n", m.getMember().getType().getAPIName().substring(0,1), m.getMember().getUniqueId(), m.getRole()));
             }
-            s.append('\n');
         }
-
-        return s.toString().trim();
     }
 
     protected void addCommon(StringBuilder s, OsmPrimitive o) {
