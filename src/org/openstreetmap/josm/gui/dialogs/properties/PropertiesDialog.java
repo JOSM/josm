@@ -758,15 +758,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             bothTables.add(presets, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2));
         }
 
-        DblClickWatch dblClickWatch = new DblClickWatch();
-        propertyTable.addMouseListener(dblClickWatch);
-        membershipTable.addMouseListener(dblClickWatch);
-        JScrollPane scrollPane = new JScrollPane(bothTables);
-        scrollPane.addMouseListener(dblClickWatch);
-
-        selectSth.setPreferredSize(scrollPane.getSize());
-        presets.setSize(scrollPane.getSize());
-
         // -- add action and shortcut
         this.btnAdd = new SideButton(addAction);
         btnAdd.setFocusable(true);
@@ -791,9 +782,17 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         );
         getActionMap().put("delete", deleteAction);
 
-        createLayout(scrollPane, false, Arrays.asList(new SideButton[] {
+        JScrollPane scrollPane = (JScrollPane) createLayout(bothTables, true, Arrays.asList(new SideButton[] {
             this.btnAdd, this.btnEdit, this.btnDel
         }));
+
+        DblClickWatch dblClickWatch = new DblClickWatch();
+        propertyTable.addMouseListener(dblClickWatch);
+        membershipTable.addMouseListener(dblClickWatch);
+        scrollPane.addMouseListener(dblClickWatch);
+
+        selectSth.setPreferredSize(scrollPane.getSize());
+        presets.setSize(scrollPane.getSize());
 
         // -- help action
         //

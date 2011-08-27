@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -13,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -20,8 +20,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
@@ -94,18 +92,15 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             }
         });
 
-        add(new JScrollPane(lstConflicts), BorderLayout.CENTER);
-
         SideButton btnResolve = new SideButton(actResolve = new ResolveAction());
         lstConflicts.getSelectionModel().addListSelectionListener(actResolve);
 
         SideButton btnSelect = new SideButton(actSelect = new SelectAction());
         lstConflicts.getSelectionModel().addListSelectionListener(actSelect);
 
-        JPanel buttonPanel = getButtonPanel(2);
-        buttonPanel.add(btnResolve);
-        buttonPanel.add(btnSelect);
-        add(buttonPanel, BorderLayout.SOUTH);
+        createLayout(lstConflicts, true, Arrays.asList(new SideButton[] {
+            btnResolve, btnSelect
+        }));
     }
 
     /**

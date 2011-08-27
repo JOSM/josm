@@ -3,13 +3,13 @@ package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -19,8 +19,6 @@ import javax.swing.Action;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -74,25 +72,6 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
     }
 
     /**
-     * builds the row with the command buttons
-     *
-     * @return the rows with the command buttons
-     */
-    protected JPanel buildButtonRow() {
-        JPanel buttons = getButtonPanel(2);
-
-        SideButton btn = new SideButton(reloadAction = new ReloadAction());
-        btn.setName("btn.reload");
-        buttons.add(btn);
-
-        btn = new SideButton(showHistoryAction = new ShowHistoryAction());
-        btn.setName("btn.showhistory");
-        buttons.add(btn);
-
-        return buttons;
-    }
-
-    /**
      * builds the GUI
      */
     protected void build() {
@@ -103,7 +82,6 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
                 selectionModel
         );
         historyTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        historyTable.setName("table.historyitems");
         final TableCellRenderer oldRenderer = historyTable.getTableHeader().getDefaultRenderer();
         historyTable.getTableHeader().setDefaultRenderer(new DefaultTableCellRenderer(){
             @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -120,15 +98,12 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
             }
         });
         historyTable.addMouseListener(new ShowHistoryMouseAdapter());
-
-        JScrollPane pane = new JScrollPane(historyTable);
-        pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         historyTable.setTableHeader(null);
-        pane.setColumnHeaderView(null);
-        add(pane, BorderLayout.CENTER);
 
-        add(buildButtonRow(), BorderLayout.SOUTH);
+        createLayout(historyTable, true, Arrays.asList(new SideButton[] {
+            new SideButton(reloadAction = new ReloadAction()),
+            new SideButton(showHistoryAction = new ShowHistoryAction())
+        }));
 
         // wire actions
         //

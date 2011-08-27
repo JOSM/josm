@@ -4,21 +4,19 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
 import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -81,68 +79,6 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         Main.map.mapView.repaint();
     }
 
-    protected JPanel buildButtonRow() {
-        JPanel pnl = getButtonPanel(5);
-
-        addButton = new SideButton(marktr("Add"), "add", "SelectionList", tr("Add filter."),
-                new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
-                Filter filter = (Filter)SearchAction.showSearchDialog(new Filter());
-                if(filter != null){
-                    filterModel.addFilter(filter);
-                }
-            }
-        });
-        pnl.add(addButton);
-
-        editButton = new SideButton(marktr("Edit"), "edit", "SelectionList", tr("Edit filter."),
-                new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
-                int index = userTable.getSelectionModel().getMinSelectionIndex();
-                if(index < 0) return;
-                Filter f = filterModel.getFilter(index);
-                Filter filter = (Filter)SearchAction.showSearchDialog(f);
-                if(filter != null){
-                    filterModel.setFilter(index, filter);
-                }
-            }
-        });
-        pnl.add(editButton);
-
-        deleteButton = new SideButton(marktr("Delete"), "delete", "SelectionList", tr("Delete filter."),
-                new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
-                int index = userTable.getSelectionModel().getMinSelectionIndex();
-                if(index < 0) return;
-                filterModel.removeFilter(index);
-            }
-        });
-        pnl.add(deleteButton);
-
-        upButton = new SideButton(marktr("Up"), "up", "SelectionList", tr("Move filter up."),
-                new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
-                int index = userTable.getSelectionModel().getMinSelectionIndex();
-                if(index < 0) return;
-                filterModel.moveUpFilter(index);
-                userTable.getSelectionModel().setSelectionInterval(index-1, index-1);
-            }
-        });
-        pnl.add(upButton);
-
-        downButton = new SideButton(marktr("Down"), "down", "SelectionList", tr("Move filter down."),
-                new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
-                int index = userTable.getSelectionModel().getMinSelectionIndex();
-                if(index < 0) return;
-                filterModel.moveDownFilter(index);
-                userTable.getSelectionModel().setSelectionInterval(index+1, index+1);
-            }
-        });
-        pnl.add(downButton);
-        return pnl;
-    }
-
     protected String[] columnToolTips = {
             tr("Enable filter"),
             tr("Hide elements"),
@@ -152,8 +88,6 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     };
 
     protected void build() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BorderLayout());
         userTable = new JTable(filterModel){
             @Override
             protected JTableHeader createDefaultTableHeader() {
@@ -184,12 +118,61 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         userTable.setDefaultRenderer(Boolean.class, new BooleanRenderer());
         userTable.setDefaultRenderer(String.class, new StringRenderer());
 
-        pnl.add(new JScrollPane(userTable), BorderLayout.CENTER);
+        addButton = new SideButton(marktr("Add"), "add", "SelectionList", tr("Add filter."),
+                new ActionListener(){
+            public void actionPerformed(ActionEvent evt){
+                Filter filter = (Filter)SearchAction.showSearchDialog(new Filter());
+                if(filter != null){
+                    filterModel.addFilter(filter);
+                }
+            }
+        });
 
-        // -- the button row
-        pnl.add(buildButtonRow(), BorderLayout.SOUTH);
-        /*userTable.addMouseListener(new DoubleClickAdapter());*/
-        add(pnl, BorderLayout.CENTER);
+        editButton = new SideButton(marktr("Edit"), "edit", "SelectionList", tr("Edit filter."),
+                new ActionListener(){
+            public void actionPerformed(ActionEvent evt){
+                int index = userTable.getSelectionModel().getMinSelectionIndex();
+                if(index < 0) return;
+                Filter f = filterModel.getFilter(index);
+                Filter filter = (Filter)SearchAction.showSearchDialog(f);
+                if(filter != null){
+                    filterModel.setFilter(index, filter);
+                }
+            }
+        });
+
+        deleteButton = new SideButton(marktr("Delete"), "delete", "SelectionList", tr("Delete filter."),
+                new ActionListener(){
+            public void actionPerformed(ActionEvent evt){
+                int index = userTable.getSelectionModel().getMinSelectionIndex();
+                if(index < 0) return;
+                filterModel.removeFilter(index);
+            }
+        });
+
+        upButton = new SideButton(marktr("Up"), "up", "SelectionList", tr("Move filter up."),
+                new ActionListener(){
+            public void actionPerformed(ActionEvent evt){
+                int index = userTable.getSelectionModel().getMinSelectionIndex();
+                if(index < 0) return;
+                filterModel.moveUpFilter(index);
+                userTable.getSelectionModel().setSelectionInterval(index-1, index-1);
+            }
+        });
+
+        downButton = new SideButton(marktr("Down"), "down", "SelectionList", tr("Move filter down."),
+                new ActionListener(){
+            public void actionPerformed(ActionEvent evt){
+                int index = userTable.getSelectionModel().getMinSelectionIndex();
+                if(index < 0) return;
+                filterModel.moveDownFilter(index);
+                userTable.getSelectionModel().setSelectionInterval(index+1, index+1);
+            }
+        });
+
+        createLayout(userTable, true, Arrays.asList(new SideButton[] {
+            addButton, editButton, deleteButton, upButton, downButton
+        }));
     }
 
     static class StringRenderer extends DefaultTableCellRenderer {
