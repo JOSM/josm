@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,8 +29,6 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -86,33 +85,11 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         DataSet.removeSelectionListener(this);
     }
 
-    protected JPanel buildButtonRow() {
-        JPanel pnl = getButtonPanel(2);
-
-        // -- select users primitives action
-        //
-        selectionUsersPrimitivesAction = new SelectUsersPrimitivesAction();
-        userTable.getSelectionModel().addListSelectionListener(selectionUsersPrimitivesAction);
-        pnl.add(new SideButton(selectionUsersPrimitivesAction));
-
-        // -- info action
-        //
-        showUserInfoAction = new ShowUserInfoAction();
-        userTable.getSelectionModel().addListSelectionListener(showUserInfoAction);
-        pnl.add(new SideButton(showUserInfoAction));
-
-        // -- load relicensing info action
-        loadRelicensingInformationAction = new LoadRelicensingInformationAction();
-        pnl.add(new SideButton(loadRelicensingInformationAction));
-        return pnl;
-    }
-
     protected void build() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BorderLayout());
         model = new UserTableModel();
         userTable = new JTable(model);
         userTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        userTable.addMouseListener(new DoubleClickAdapter());
         TableColumnModel columnModel = userTable.getColumnModel();
         columnModel.getColumn(3).setPreferredWidth(20);
         columnModel.getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
@@ -124,12 +101,25 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
                 return label;
             };
         });
-        pnl.add(new JScrollPane(userTable), BorderLayout.CENTER);
 
-        // -- the button row
-        pnl.add(buildButtonRow(), BorderLayout.SOUTH);
-        userTable.addMouseListener(new DoubleClickAdapter());
-        add(pnl, BorderLayout.CENTER);
+        // -- select users primitives action
+        //
+        selectionUsersPrimitivesAction = new SelectUsersPrimitivesAction();
+        userTable.getSelectionModel().addListSelectionListener(selectionUsersPrimitivesAction);
+
+        // -- info action
+        //
+        showUserInfoAction = new ShowUserInfoAction();
+        userTable.getSelectionModel().addListSelectionListener(showUserInfoAction);
+
+        // -- load relicensing info action
+        loadRelicensingInformationAction = new LoadRelicensingInformationAction();
+
+        createLayout(userTable, true, Arrays.asList(new SideButton[] {
+            new SideButton(selectionUsersPrimitivesAction),
+            new SideButton(showUserInfoAction),
+            new SideButton(loadRelicensingInformationAction)
+        }));
     }
 
     /**
