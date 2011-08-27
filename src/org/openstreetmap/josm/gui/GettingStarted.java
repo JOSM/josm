@@ -28,8 +28,11 @@ import org.openstreetmap.josm.tools.WikiReader;
 
 public class GettingStarted extends JPanel {
     private String content = "";
-    static private String styles = "<style type=\"text/css\">\n"
-        + "body { font-family: sans-serif; font-weight: bold; }\n" + "h1 {text-align: center;}\n" + "</style>\n";
+    private static final String STYLE = "<style type=\"text/css\">\n"
+            + "body {font-family: sans-serif; font-weight: bold; }\n"
+            + "h1 {text-align: center; }\n"
+            + ".icon {font-size: 0; }\n"
+            + "</style>\n";
 
     public static class LinkGeneral extends JEditorPane implements HyperlinkListener {
         public LinkGeneral(String text) {
@@ -66,7 +69,7 @@ public class GettingStarted extends JPanel {
         protected byte[] updateData() {
             String motd = new WikiReader().readLang("StartupPage");
             if (motd.length() == 0) {
-                motd = "<html>" + styles + "<body><h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
+                motd = "<html>" + STYLE + "<h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
                 + "</h1>\n<h2 align=\"center\">(" + tr("Message of the day not available") + ")</h2></html>";
             }
             // Save this to prefs in case JOSM is updated so MOTD can be refreshed
@@ -100,8 +103,8 @@ public class GettingStarted extends JPanel {
      */
     public GettingStarted() {
         super(new BorderLayout());
-        final LinkGeneral lg = new LinkGeneral("<html>" + styles + "<h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
-                + "</h1><h2 align=\"center\">" + tr("Downloading \"Message of the day\"") + "</h2>");
+        final LinkGeneral lg = new LinkGeneral("<html>" + STYLE + "<h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
+                + "</h1><h2 align=\"center\">" + tr("Downloading \"Message of the day\"") + "</h2></html>");
         // clear the build-in command ctrl+shift+O, because it is used as shortcut in JOSM
         lg.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK), "none");
 
