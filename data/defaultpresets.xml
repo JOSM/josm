@@ -848,9 +848,21 @@ are supplied, then "values" will be treated as "display_values" and translated i
         <item name="Cycle Barrier" icon="styles/standard/vehicle/cycle_barrier.png" type="node">
             <link href="http://de.wikipedia.org/wiki/Umlaufgitter" />
             <key key="barrier" value="cycle_barrier" />
+            <label text="Allowed traffic:" />
+            <space />
+            <check key="foot" text="Foot" default="on" delete_if_empty="true" />
+            <check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
+            <check key="horse" text="Horse" default="off" delete_if_empty="true" />
+            <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
         </item> <!-- cycle_barrier -->
         <item name="Block" icon="presets/block.png" type="node,way,closedway">
             <key key="barrier" value="block" />
+            <label text="Allowed traffic:" />
+            <space />
+            <check key="foot" text="Foot" default="on" delete_if_empty="true" />
+            <check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
+            <check key="horse" text="Horse" default="off" delete_if_empty="true" />
+            <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
         </item> <!-- block -->
         <item name="Cattle Grid" icon="presets/cattle_grid.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cattle_grid" />
