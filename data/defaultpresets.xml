@@ -1409,24 +1409,129 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Chair Lift" />
             <key key="aerialway" value="chair_lift" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <optional>
+                <text key="aerialway:capacity" text="Number of people per hour" default="" delete_if_empty="true" />
+                <text key="aerialway:occupancy" text="Number of people per chair" default="" delete_if_empty="true" />
+                <text key="aerialway:duration" text="Typical journey time in minutes" default="" delete_if_empty="true" />
+                <check key="aerialway:bubble" text="Has bubble?" default="" delete_if_empty="true" />
+                <check key="aerialway:heating" text="Has heating?" default="" delete_if_empty="true" />
+            </optional>
         </item>
         <item name="Drag Lift" icon="presets/drag_lift.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=drag_lift" />
             <label text="Edit Drag Lift" />
             <key key="aerialway" value="drag_lift" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <optional>
+                <text key="aerialway:capacity" text="Number of people per hour" default="" delete_if_empty="true" />
+                <text key="aerialway:duration" text="Typical journey time in minutes" default="" delete_if_empty="true" />
+            </optional>
         </item>
         <item name="Cable Car" icon="presets/cable_car.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=cable_car" />
             <label text="Edit Cable Car" />
             <key key="aerialway" value="cable_car" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <optional>
+                <text key="aerialway:capacity" text="Number of people per hour" default="" delete_if_empty="true" />
+                <text key="aerialway:occupancy" text="Number of people per car" default="" delete_if_empty="true" />
+                <text key="aerialway:duration" text="Typical journey time in minutes" default="" delete_if_empty="true" />
+                <check key="aerialway:heating" text="Has heating?" default="" delete_if_empty="true" />
+            </optional>
         </item>
         <item name="Gondola" icon="presets/gondola.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
             <label text="Edit Gondola" />
             <key key="aerialway" value="gondola" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <optional>
+                <text key="aerialway:capacity" text="Number of people per hour" default="" delete_if_empty="true" />
+                <text key="aerialway:occupancy" text="Number of people per gondola" default="" delete_if_empty="true" />
+                <text key="aerialway:duration" text="Typical journey time in minutes" default="" delete_if_empty="true" />
+                <check key="aerialway:heating" text="Has heating?" default="" delete_if_empty="true" />
+            </optional>
+        </item>
+        <item name="Mixed Lift" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
+            <label text="Edit Mixed Lift (containing both gondolas and chairs)" />
+            <key key="aerialway" value="mixed_lift" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <optional>
+                <text key="aerialway:capacity" text="Number of people per hour" default="" delete_if_empty="true" />
+                <text key="aerialway:occupancy" text="Number of people per gondola/chair" default="" delete_if_empty="true" />
+                <text key="aerialway:duration" text="Typical journey time in minutes" default="" delete_if_empty="true" />
+                <check key="aerialway:bubble" text="Has bubble?" default="" delete_if_empty="true" />
+                <check key="aerialway:heating" text="Has heating?" default="" delete_if_empty="true" />
+            </optional>
+        </item>
+        <item name="T-bar Lift" icon="presets/drag_lift.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
+            <label text="Edit T-bar Lift" />
+            <key key="aerialway" value="t-bar" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <optional>
+                <text key="aerialway:capacity" text="Number of people per hour" default="" delete_if_empty="true" />
+                <text key="aerialway:duration" text="Typical journey time in minutes" default="" delete_if_empty="true" />
+            </optional>
+        </item>
+        <item name="J-bar Lift" icon="presets/drag_lift.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
+            <label text="Edit J-bar Lift" />
+            <key key="aerialway" value="j-bar" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <optional>
+                <text key="aerialway:capacity" text="Number of people per hour" default="" delete_if_empty="true" />
+                <text key="aerialway:duration" text="Typical journey time in minutes" default="" delete_if_empty="true" />
+            </optional>
+        </item>
+        <item name="Platter Lift" icon="presets/drag_lift.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
+            <label text="Edit Platter Lift" />
+            <key key="aerialway" value="platter" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <optional>
+                <text key="aerialway:capacity" text="Number of people per hour" default="" delete_if_empty="true" />
+                <text key="aerialway:duration" text="Typical journey time in minutes" default="" delete_if_empty="true" />
+            </optional>
+        </item>
+        <item name="Rope Tow" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
+            <label text="Edit Rope Tow" />
+            <key key="aerialway" value="rope_tow" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <optional>
+                <text key="aerialway:capacity" text="Number of people per hour" default="" delete_if_empty="true" />
+                <text key="aerialway:duration" text="Typical journey time in minutes" default="" delete_if_empty="true" />
+            </optional>
+        </item>
+        <item name="Magic Carpet" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
+            <label text="Edit Magic Carpet" />
+            <key key="aerialway" value="magic_carpet" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <optional>
+                <text key="aerialway:capacity" text="Number of people per hour" default="" delete_if_empty="true" />
+                <text key="aerialway:duration" text="Typical journey time in minutes" default="" delete_if_empty="true" />
+            </optional>
+        </item>
+        <item name="Goods" name_context="aerialway" icon="presets/goods.png" type="way">
+            <label text="Edit Goods" text_context="aerialway" />
+            <key key="aerialway" value="goods" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <optional>
+                <text key="aerialway:duration" text="Typical journey time in minutes" default="" delete_if_empty="true" />
+            </optional>
         </item>
         <separator/>
         <item name="Station" name_context="aerialway" icon="presets/aerialway_station.png" type="node,closedway">
@@ -1439,11 +1544,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
             <label text="Edit Pylon" text_context="aerialway" />
             <key key="aerialway" value="pylon" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Goods" name_context="aerialway" icon="presets/goods.png" type="way">
-            <label text="Edit Goods" text_context="aerialway" />
-            <key key="aerialway" value="goods" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Aerialway -->
