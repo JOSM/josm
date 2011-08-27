@@ -2550,6 +2550,12 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
     </group> <!-- Education -->
     <group name="Health" icon="presets/pharmacy.png">
+        <item name="Hospital" icon="styles/standard/health/hospital.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=hospital" />
+            <label text="Edit Hospital" />
+            <key key="amenity" value="hospital" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <item name="Doctors" icon="styles/standard/health/doctor.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=doctors" />
             <label text="Edit Doctors" />
@@ -2563,6 +2569,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
+        <item name="Nursing Home" type="node,closedway">
+            <label text="Edit Nursing Home" />
+            <key key="amenity" value="nursing_home" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+        </item>
+        <separator/>
         <item name="Pharmacy" icon="presets/pharmacy.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=pharmacy" />
             <label text="Edit Pharmacy" />
@@ -2574,18 +2587,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
         <item name="Hearing Aids" icon="presets/hearing_aids.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dhearing_aids"/>
             <label text="Edit Hearing Aids" />
-            <space />            
+            <space />
             <key key="shop" value="hearing_aids" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
-        </item>             
-        <item name="Hospital" icon="styles/standard/health/hospital.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=hospital" />
-            <label text="Edit Hospital" />
-            <key key="amenity" value="hospital" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <separator/>
         <item name="Baby Hatch" icon="presets/baby_hatch.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=baby_hatch" />
             <label text="Edit Baby Hatch" />
@@ -2593,6 +2601,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="opening_hours" text="Opening Hours" default="" delete_if_empty="true" />
         </item>
+        <separator/>
         <item name="Emergency Access Point" icon="styles/standard/service/emergency_access_point.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=emergency_access_point"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=emergency_access_point" />
@@ -2606,6 +2615,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="(Use international code, like +12-345-67890)" />
             <space />
         </item>
+        <separator/>
         <item name="Veterinary" icon="styles/standard/health/veterinary.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=veterinary"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=veterinary" />
