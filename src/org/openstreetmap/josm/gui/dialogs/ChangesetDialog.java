@@ -450,7 +450,6 @@ public class ChangesetDialog extends ToggleDialog{
             putValue(NAME, tr("Details"));
             putValue(SHORT_DESCRIPTION, tr("Opens the Changeset Manager window for the selected changesets"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "changesetmanager"));
-            updateEnabledState();
         }
 
         protected void launchChangesetManager(Collection<Integer> toSelect) {
@@ -470,8 +469,6 @@ public class ChangesetDialog extends ToggleDialog{
         public void actionPerformed(ActionEvent arg0) {
             ChangesetListModel model = getCurrentChangesetListModel();
             Set<Integer> sel = model.getSelectedChangesetIds();
-            if (sel.isEmpty())
-                return;
             final Set<Integer> toDownload = new HashSet<Integer>();
             ChangesetCache cc = ChangesetCache.getInstance();
             for (int id: sel) {
@@ -521,16 +518,10 @@ public class ChangesetDialog extends ToggleDialog{
             Main.worker.submit(r);
         }
 
-        protected void updateEnabledState() {
-            setEnabled(getCurrentChangesetList().getSelectedIndices().length > 0);
-        }
-
         public void itemStateChanged(ItemEvent arg0) {
-            updateEnabledState();
         }
 
         public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
         }
     }
 
