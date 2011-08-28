@@ -129,6 +129,28 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
+    private static class DescriptionTextBuilder {
+
+        StringBuilder s = new StringBuilder(4096);
+
+        public StringBuilder append(String string) {
+            return s.append(string);
+        }
+
+        StringBuilder appendItem(String item) {
+            return append("<li>").append(item).append("</li>\n");
+        }
+
+        StringBuilder appendItemHeader(String itemHeader) {
+            return append("<li class=\"header\">").append(itemHeader).append("</li>\n");
+        }
+
+        @Override
+        public String toString() {
+            return s.toString();
+        }
+    }
+
     public static SearchSetting showSearchDialog(SearchSetting initialValues) {
         if (initialValues == null) {
             initialValues = new SearchSetting();
@@ -177,40 +199,43 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         left.add(regexSearch, GBC.eol());
 
         JPanel right = new JPanel();
-        JLabel description =
-            new JLabel("<html><ul>"
-                    + "<li>"+tr("<b>Baker Street</b> - ''Baker'' and ''Street'' in any key or name.")+"</li>"
-                    + "<li>"+tr("<b>\"Baker Street\"</b> - ''Baker Street'' in any key or name.")+"</li>"
-                    + "<li>"+tr("<b>name:Bak</b> - ''Bak'' anywhere in the name.")+"</li>"
-                    + "<li>"+tr("<b>type=route</b> - key ''type'' with value exactly ''route''.") + "</li>"
-                    + "<li>"+tr("<b>type=*</b> - key ''type'' with any value. Try also <b>*=value</b>, <b>type=</b>, <b>*=*</b>, <b>*=</b>") + "</li>"
-                    + "<li>"+tr("<b>-name:Bak</b> - not ''Bak'' in the name.")+"</li>"
-                    + "<li>"+tr("<b>oneway?</b> - oneway=yes, true, 1 or on")+"</li>"
-                    + "<li>"+tr("<b>foot:</b> - key=foot set to any value.")+"</li>"
-                    + "<li>"+tr("<u>Special targets:</u>")+"</li>"
-                    + "<li>"+tr("<b>type:</b> - type of the object (<b>node</b>, <b>way</b>, <b>relation</b>)")+"</li>"
-                    + "<li>"+tr("<b>user:</b>... - all objects changed by user")+"</li>"
-                    + "<li>"+tr("<b>user:anonymous</b> - all objects changed by anonymous users")+"</li>"
-                    + "<li>"+tr("<b>id:</b>... - object with given ID (0 for new objects)")+"</li>"
-                    + "<li>"+tr("<b>version:</b>... - object with given version (0 objects without an assigned version)")+"</li>"
-                    + "<li>"+tr("<b>changeset:</b>... - object with given changeset id (0 objects without assigned changeset)")+"</li>"
-                    + "<li>"+tr("<b>nodes:</b>... - object with given number of nodes (nodes:count, nodes:min-max, nodes:min- or nodes:-max)")+"</li>"
-                    + "<li>"+tr("<b>tags:</b>... - object with given number of tags (nodes:count, nodes:min-max, nodes:min- or nodes:-max)")+"</li>"
-                    + "<li>"+tr("<b>role:</b>... - object with given role in a relation")+"</li>"
-                    + "<li>"+tr("<b>timestamp:</b>... -  objects with this timestamp (<b>2009-11-12T14:51:09Z</b>, <b>2009-11-12</b> or <b>T14:51</b> ...)")+"</li>"
-                    + "<li>"+tr("<b>areasize:</b>... - closed ways with given area in m\u00b2 (areasize:min-max or areasize:max)")+"</li>"
-                    + "<li>"+tr("<b>modified</b> - all changed objects")+"</li>"
-                    + "<li>"+tr("<b>selected</b> - all selected objects")+"</li>"
-                    + "<li>"+tr("<b>incomplete</b> - all incomplete objects")+"</li>"
-                    + "<li>"+tr("<b>untagged</b> - all untagged objects")+"</li>"
-                    + "<li>"+tr("<b>closed</b> - all closed ways (a node is not considered closed)")+"</li>"
-                    + "<li>"+tr("<b>child <i>expr</i></b> - all children of objects matching the expression")+"</li>"
-                    + "<li>"+tr("<b>parent <i>expr</i></b> - all parents of objects matching the expression")+"</li>"
-                    + "<li>"+tr("Use <b>|</b> or <b>OR</b> to combine with logical or")+"</li>"
-                    + "<li>"+tr("Use <b>\"</b> to quote operators (e.g. if key contains <b>:</b>)") + "<br/>"
-                    + tr("Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>).")+"</li>"
-                    + "<li>"+tr("Use <b>(</b> and <b>)</b> to group expressions")+"</li>"
-                    + "</ul></html>");
+        DescriptionTextBuilder descriptionText = new DescriptionTextBuilder();
+        descriptionText.append("<html><style>li.header{font-size:110%; list-style-type:none; margin-top:5px;}</style><ul>");
+        descriptionText.appendItem(tr("<b>Baker Street</b> - ''Baker'' and ''Street'' in any key or name."));
+        descriptionText.appendItem(tr("<b>\"Baker Street\"</b> - ''Baker Street'' in any key or name."));
+        descriptionText.appendItem(tr("<b>name:Bak</b> - ''Bak'' anywhere in the name."));
+        descriptionText.appendItem(tr("<b>type=route</b> - key ''type'' with value exactly ''route''.") + "</li>");
+        descriptionText.appendItem(tr("<b>type=*</b> - key ''type'' with any value. Try also <b>*=value</b>, <b>type=</b>, <b>*=*</b>, <b>*=</b>") + "</li>");
+        descriptionText.appendItem(tr("<b>-name:Bak</b> - not ''Bak'' in the name."));
+        descriptionText.appendItem(tr("<b>oneway?</b> - oneway=yes, true, 1 or on"));
+        descriptionText.appendItem(tr("<b>foot:</b> - key=foot set to any value."));
+        descriptionText.appendItemHeader(tr("Special targets"));
+        descriptionText.appendItem(tr("<b>type:</b> - objects with corresponding type (<b>node</b>, <b>way</b>, <b>relation</b>)"));
+        descriptionText.appendItem(tr("<b>user:</b>... - objects changed by user"));
+        descriptionText.appendItem(tr("<b>user:anonymous</b> - objects changed by anonymous users"));
+        descriptionText.appendItem(tr("<b>id:</b>... - objects with given ID (0 for new objects)"));
+        descriptionText.appendItem(tr("<b>version:</b>... - objects with given version (0 objects without an assigned version)"));
+        descriptionText.appendItem(tr("<b>changeset:</b>... - objects with given changeset id (0 objects without assigned changeset)"));
+        descriptionText.appendItem(tr("<b>nodes:</b>... - objects with given number of nodes (nodes:count, nodes:min-max, nodes:min- or nodes:-max)"));
+        descriptionText.appendItem(tr("<b>tags:</b>... - objects with given number of tags (nodes:count, nodes:min-max, nodes:min- or nodes:-max)"));
+        descriptionText.appendItem(tr("<b>role:</b>... - objects with given role in a relation"));
+        descriptionText.appendItem(tr("<b>timestamp:</b>... -  objects with this timestamp (<b>2009-11-12T14:51:09Z</b>, <b>2009-11-12</b> or <b>T14:51</b> ...)"));
+        descriptionText.appendItem(tr("<b>areasize:</b>... - closed ways with given area in m\u00b2 (areasize:min-max or areasize:max)"));
+        descriptionText.appendItem(tr("<b>modified</b> - all changed objects"));
+        descriptionText.appendItem(tr("<b>selected</b> - all selected objects"));
+        descriptionText.appendItem(tr("<b>incomplete</b> - all incomplete objects"));
+        descriptionText.appendItem(tr("<b>untagged</b> - all untagged objects"));
+        descriptionText.appendItem(tr("<b>closed</b> - all closed ways (a node is not considered closed)"));
+        descriptionText.appendItem(tr("<b>child <i>expr</i></b> - all children of objects matching the expression"));
+        descriptionText.appendItem(tr("<b>parent <i>expr</i></b> - all parents of objects matching the expression"));
+        descriptionText.appendItem(tr("<b>(all)inDownloadedArea</b> - objects (and all its way nodes / relation members) in downloaded area"));
+        descriptionText.appendItem(tr("Use <b>|</b> or <b>OR</b> to combine with logical or"));
+        descriptionText.appendItem(tr("Use <b>\"</b> to quote operators (e.g. if key contains <b>:</b>)")
+                + "<br/>"
+                + tr("Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."));
+        descriptionText.appendItem(tr("Use <b>(</b> and <b>)</b> to group expressions"));
+        descriptionText.append("</ul></html>");
+        JLabel description = new JLabel(descriptionText.toString());
         description.setFont(description.getFont().deriveFont(Font.PLAIN));
         right.add(description);
 

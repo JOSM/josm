@@ -6,7 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -22,15 +24,21 @@ import org.openstreetmap.josm.io.FileExporter;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public abstract class SaveActionBase extends DiskAccessAction {
+    private File file;
 
     public SaveActionBase(String name, String iconName, String tooltip, Shortcut shortcut) {
         super(name, iconName, tooltip, shortcut);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled())
+        if (!isEnabled()) {
             return;
-        doSave();
+        }
+        boolean saved = doSave();
+        if (saved) {
+            addToFileOpenHistory();
+        }
     }
 
     public boolean doSave() {
@@ -47,7 +55,8 @@ public abstract class SaveActionBase extends DiskAccessAction {
     public boolean doSave(Layer layer) {
         if(!checkSaveConditions(layer))
             return false;
-        return doInternalSave(layer, getFile(layer));
+        file = getFile(layer);
+        return doInternalSave(layer, file);
     }
 
     public boolean doSave(Layer layer, File file) {
@@ -222,5 +231,21 @@ public abstract class SaveActionBase extends DiskAccessAction {
             return (dialog.getValue() == 1);
         }
         return true;
+    }
+
+    protected void addToFileOpenHistory() {
+        String filepath;
+        try {
+            filepath = file.getCanonicalPath();
+        } catch (IOException ign) {
+            return;
+        }
+
+        int maxsize = Math.max(0, Main.pref.getInteger("file-open.history.max-size", 15));
+        Collection<String> oldHistory = Main.pref.getCollection("file-open.history");
+        List<String> history = new LinkedList<String>(oldHistory);
+        history.remove(filepath);
+        history.add(0, filepath);
+        Main.pref.putCollectionBounded("file-open.history", maxsize, history);
     }
 }
