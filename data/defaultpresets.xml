@@ -3247,9 +3247,20 @@ are supplied, then "values" will be treated as "display_values" and translated i
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=generator" />
             <label text="Edit Power Generator" />
             <key key="power" value="generator" />
-            <combo key="generator:source" text="Source" values="wind,hydro,solar,gas,coal,nuclear,fossil,oil,biofuel,waste,biomass,geothermal,biogas" default="" />
-            <combo key="generator:method" text="Method" values="photovoltaic,combustion,fission,thermal,gasification,wind_turbine,anaerobic_digestion" default="" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="generator:source" text="Source" values="biofuel,biogas,biomass,coal,diesel,gas,gasoline,geothermal,hydro,nuclear,oil,osmotic,solar,tidal,waste,wave,wind" default="" delete_if_empty="true" />
+            <combo key="generator:method" text="Method" values="anaerobic_digestion,combustion,dam,fission,fusion,gasification,photovoltaic,pumped-storage,pumping,pyrolysis,run-of-the-river,thermal" default="" delete_if_empty="true" />
+            <space />
+            <label text="Output forms of energy" />
+            <combo key="generator:output:electricity" text="electricity" values="yes,2 W,3 kW,5 MW,7 GW" delete_if_empty="true" />
+            <combo key="generator:output:hot_water" text="hot water" values="yes,2 W,3 kW,5 MW,7 GW" delete_if_empty="true" />
+            <combo key="generator:output:hot_air" text="hot air" values="yes,2 W,3 kW,5 MW,7 GW" delete_if_empty="true" />
+            <combo key="generator:output:cold_water" text="cold water" values="yes,2 W,3 kW,5 MW,7 GW" delete_if_empty="true" />
+            <combo key="generator:output:cold_air" text="cold air" values="yes,2 W,3 kW,5 MW,7 GW" delete_if_empty="true" />
+            <combo key="generator:output:compressed_air" text="compressed air" values="yes,2 W,3 kW,5 MW,7 GW" delete_if_empty="true" />
+            <combo key="generator:output:steam" text="steam" values="yes,2 W,3 kW,5 MW,7 GW" delete_if_empty="true" />
+            <combo key="generator:output:vacuum" text="vacuum" values="yes,2 W,3 kW,5 MW,7 GW" delete_if_empty="true" />
+            <combo key="generator:output:battery_charging" text="battery charging" values="yes,2 W,3 kW,5 MW,7 GW" delete_if_empty="true" />
         </item>
         <item name="Power Station" icon="presets/power.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=line"
