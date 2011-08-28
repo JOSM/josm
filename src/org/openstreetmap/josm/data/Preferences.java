@@ -740,6 +740,20 @@ public class Preferences {
         return put(key, Utils.join("\u001e", val));
     }
 
+    /**
+     * Saves at most {@code maxsize} items of collection {@code val}.
+     */
+    public boolean putCollectionBounded(String key, int maxsize, Collection<String> val) {
+        Collection<String> newCollection = new ArrayList<String>(maxsize);
+        for (String i : val) {
+            if (newCollection.size() >= maxsize) {
+                break;
+            }
+            newCollection.add(i);
+        }
+        return putCollection(key, newCollection);
+    }
+
     synchronized private void putCollectionDefault(String key, Collection<String> val) {
         putDefault(key, Utils.join("\u001e", val));
     }
