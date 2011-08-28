@@ -135,8 +135,15 @@ public class MultipolygonTest extends Test {
             Multipolygon polygon = new Multipolygon(Main.map.mapView);
             polygon.load(r);
 
-            if (polygon.getOuterWays().isEmpty()) {
-                errors.add( new TestError(this, Severity.WARNING, tr("No outer way for multipolygon"), MISSING_OUTER_WAY,  r));
+            boolean hasOuterWay = false;
+            for (RelationMember m : r.getMembers()) {
+                if ("outer".equals(m.getRole())) {
+                    hasOuterWay = true;
+                    break;
+                }
+            }
+            if (!hasOuterWay) {
+                errors.add(new TestError(this, Severity.WARNING, tr("No outer way for multipolygon"), MISSING_OUTER_WAY, r));
             }
 
             for (RelationMember rm : r.getMembers()) {
