@@ -885,13 +885,13 @@ public class SearchCompiler {
                 return new Child(parseFactor());
             else if ("parent".equals(key))
                 return new Parent(parseFactor());
-            else if ("inDownloadedArea".equals(key))
+            else if ("indownloadedarea".equals(key))
                 return new InDataSourceArea(false);
-            else if ("allinDownloadedArea".equals(key))
+            else if ("allindownloadedarea".equals(key))
                 return new InDataSourceArea(true);
-            else if ("inView".equals(key))
+            else if ("inview".equals(key))
                 return new InView(false);
-            else if ("allinView".equals(key))
+            else if ("allinview".equals(key))
                 return new InView(true);
             else
                 return new Any(key, regexSearch, caseSensitive);
