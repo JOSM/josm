@@ -539,6 +539,8 @@ public class I18n {
                         return false;
                     enval = (enlen[0] < 0 ? 256+enlen[0]:enlen[0])*256+(enlen[1] < 0 ? 256+enlen[1]:enlen[1]);
                     trval = (trlen[0] < 0 ? 256+trlen[0]:trlen[0])*256+(trlen[1] < 0 ? 256+trlen[1]:trlen[1]);
+                    if(trval == 0xFFFE) /* marks identical string, handle equally to non-translated */
+                        trval = 0;
                     if(enval == 0xFFFF)
                     {
                         multimode = true;
