@@ -744,7 +744,7 @@ public class Preferences {
      * Saves at most {@code maxsize} items of collection {@code val}.
      */
     public boolean putCollectionBounded(String key, int maxsize, Collection<String> val) {
-        Collection<String> newCollection = new ArrayList<String>(maxsize);
+        Collection<String> newCollection = new ArrayList<String>(Math.min(maxsize, val.size()));
         for (String i : val) {
             if (newCollection.size() >= maxsize) {
                 break;
