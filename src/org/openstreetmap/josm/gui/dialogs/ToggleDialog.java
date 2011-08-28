@@ -689,7 +689,7 @@ public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
 
     @Override
     public void eventDispatched(AWTEvent event) {
-        if(isShowing()) {
+        if(isShowing() && !isCollapsed) {
             Rectangle b = this.getBounds();
             b.setLocation(getLocationOnScreen());
             if (b.contains(((MouseEvent)event).getLocationOnScreen())) {
