@@ -4307,7 +4307,12 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
         <item name="Route" icon="presets/path.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:route"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:route"/>
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:route"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Relation:route"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Relation:route"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Relation:route"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Relation:route"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Relation:route"/>
             <label text="Edit Route" />
             <key key="type" value="route" />
             <combo key="route" text="Route type" values="bicycle,bus,road,ferry,ski,foot,hiking,tram,detour,railway,subway" default="" delete_if_empty="true" />
@@ -4325,6 +4330,38 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <role key="" text="route segment" requisite="optional" type="way" />
                 <role key="forward" text="forward segment" requisite="optional" type="way" />
                 <role key="backward" text="backward segment" requisite="optional" type="way" />
+                <role key="stop" text="halt point" requisite="optional" type="node" />
+                <role key="forward_stop" text="forward halt point" requisite="optional" type="node" />
+                <role key="backward_stop" text="backward halt point" requisite="optional" type="node" />
+            </roles>
+        </item>
+        <item name="Directional Route (North America)" icon="presets/path.png" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Relation:route"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:route"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Relation:route"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Relation:route"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Relation:route"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Relation:route"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Relation:route"/>
+            <label text="Edit Directional Route (used in North America)" />
+            <key key="type" value="route" />
+            <combo key="route" text="Route type" values="bicycle,bus,road,ferry,ski,foot,hiking,tram,detour,railway,subway" default="" delete_if_empty="true" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference" default="" delete_if_empty="true" />
+            <text key="symbol" text="Symbol description" default="" delete_if_empty="true" />
+            <text key="description" text="Description" default="" delete_if_empty="true" />
+            <optional>
+                <text key="network" text="Network" default="" delete_if_empty="true" />
+                <text key="operator" text="Operator" default="" delete_if_empty="true" />
+                <combo key="state" text="Route state" values="proposed,alternate,temporary,connection" default="" delete_if_empty="true" />
+                <text key="color" text="Color (hex)" default="" delete_if_empty="true" />
+            </optional>
+            <roles>
+                <role key="" text="route segment" requisite="optional" type="way" />
+                <role key="east" text="east segment" requisite="optional" type="way" />
+                <role key="north" text="north segment" requisite="optional" type="way" />
+                <role key="west" text="west segment" requisite="optional" type="way" />
+                <role key="south" text="south segment" requisite="optional" type="way" />
                 <role key="stop" text="halt point" requisite="optional" type="node" />
                 <role key="forward_stop" text="forward halt point" requisite="optional" type="node" />
                 <role key="backward_stop" text="backward halt point" requisite="optional" type="node" />
