@@ -15,6 +15,7 @@ import java.util.regex.PatternSyntaxException;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.PushbackTokenizer.Range;
 import org.openstreetmap.josm.actions.search.PushbackTokenizer.Token;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -723,18 +724,20 @@ public class SearchCompiler {
     }
 
     /**
-     * Matches data in source area ("downloaded area").
+     * Matches data within bounds.
      */
-    private static class InDataSourceArea extends Match {
+    private abstract static class InArea extends Match {
 
-        private final java.awt.geom.Area dataSourceArea = Main.main.getCurrentDataSet().getDataSourceArea();
-        private final boolean all;
+        protected abstract Bounds getBounds();
+        protected final boolean all;
+        protected final Bounds bounds;
 
         /**
          * @param all if true, all way nodes or relation members have to be within source area;if false, one suffices.
          */
-        public InDataSourceArea(boolean all) {
+        public InArea(boolean all) {
             this.all = all;
+            this.bounds = getBounds();
         }
 
         @Override
@@ -742,7 +745,7 @@ public class SearchCompiler {
             if (!osm.isUsable()) {
                 return false;
             } else if (osm instanceof Node) {
-                return dataSourceArea.contains(((Node) osm).getCoor());
+                return bounds.contains(((Node) osm).getCoor());
             } else if (osm instanceof Way) {
                 Collection<Node> nodes = ((Way) osm).getNodes();
                 return all ? forallMatch(nodes) : existsMatch(nodes);
@@ -752,6 +755,36 @@ public class SearchCompiler {
             } else {
                 return false;
             }
+        }
+    }
+
+    /**
+     * Matches data in source area ("downloaded area").
+     */
+    private static class InDataSourceArea extends InArea {
+
+        public InDataSourceArea(boolean all) {
+            super(all);
+        }
+
+        @Override
+        protected Bounds getBounds() {
+            return new Bounds(Main.main.getCurrentDataSet().getDataSourceArea().getBounds2D());
+        }
+    }
+
+    /**
+     * Matches data in current map view.
+     */
+    private static class InView extends InArea {
+
+        public InView(boolean all) {
+            super(all);
+        }
+
+        @Override
+        protected Bounds getBounds() {
+            return Main.map.mapView.getRealBounds();
         }
     }
 
@@ -856,6 +889,10 @@ public class SearchCompiler {
                 return new InDataSourceArea(false);
             else if ("allinDownloadedArea".equals(key))
                 return new InDataSourceArea(true);
+            else if ("inView".equals(key))
+                return new InView(false);
+            else if ("allinView".equals(key))
+                return new InView(true);
             else
                 return new Any(key, regexSearch, caseSensitive);
         } else

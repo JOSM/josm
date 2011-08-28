@@ -229,6 +229,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         descriptionText.appendItem(tr("<b>child <i>expr</i></b> - all children of objects matching the expression"));
         descriptionText.appendItem(tr("<b>parent <i>expr</i></b> - all parents of objects matching the expression"));
         descriptionText.appendItem(tr("<b>(all)inDownloadedArea</b> - objects (and all its way nodes / relation members) in downloaded area"));
+        descriptionText.appendItem(tr("<b>(all)inView</b> - objects (and all its way nodes / relation members) in current view"));
         descriptionText.appendItem(tr("Use <b>|</b> or <b>OR</b> to combine with logical or"));
         descriptionText.appendItem(tr("Use <b>\"</b> to quote operators (e.g. if key contains <b>:</b>)")
                 + "<br/>"
