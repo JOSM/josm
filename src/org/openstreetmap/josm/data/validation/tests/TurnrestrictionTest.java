@@ -4,7 +4,9 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -30,6 +32,8 @@ public class TurnrestrictionTest extends Test {
     protected static final int TO_VIA_NODE = 1810;
     protected static final int FROM_VIA_WAY = 1811;
     protected static final int TO_VIA_WAY = 1812;
+    protected static final int MIX_VIA = 1813;
+    protected static final int UNCONNECTED_VIA = 1814;
 
     public TurnrestrictionTest() {
         super(tr("Turnrestriction"), tr("This test checks if turnrestrictions are valid"));
@@ -42,11 +46,12 @@ public class TurnrestrictionTest extends Test {
 
         Way fromWay = null;
         Way toWay = null;
-        OsmPrimitive via = null;
+        List<OsmPrimitive> via = new ArrayList<OsmPrimitive>();
 
         boolean morefrom = false;
         boolean moreto = false;
         boolean morevia = false;
+        boolean mixvia = false;
 
         /* find the "from", "via" and "to" elements */
         for (RelationMember m : r.getMembers()) {
@@ -75,10 +80,10 @@ public class TurnrestrictionTest extends Test {
                         toWay = w;
                     }
                 } else if ("via".equals(m.getRole())) {
-                    if (via != null) {
-                        morevia = true;
+                    if (!via.isEmpty() && via.get(0) instanceof Node) {
+                        mixvia = true;
                     } else {
-                        via = w;
+                        via.add(w);
                     }
                 } else {
                     errors.add(new TestError(this, Severity.WARNING, tr("Unknown role"), UNKNOWN_ROLE,
@@ -87,10 +92,14 @@ public class TurnrestrictionTest extends Test {
             } else if (m.isNode()) {
                 Node n = m.getNode();
                 if ("via".equals(m.getRole())) {
-                    if (via != null) {
-                        morevia = true;
+                    if (!via.isEmpty()) {
+                        if (via.get(0) instanceof Node) {
+                            morevia = true;
+                        } else {
+                            mixvia = true;
+                        }
                     } else {
-                        via = n;
+                        via.add(n);
                     }
                 } else {
                     errors.add(new TestError(this, Severity.WARNING, tr("Unknown role"), UNKNOWN_ROLE,
@@ -108,7 +117,10 @@ public class TurnrestrictionTest extends Test {
             errors.add(new TestError(this, Severity.ERROR, tr("More than one \"to\" way found"), MORE_TO, r));
         }
         if (morevia) {
-            errors.add(new TestError(this, Severity.ERROR, tr("More than one \"via\" way found"), MORE_VIA, r));
+            errors.add(new TestError(this, Severity.ERROR, tr("More than one \"via\" node found"), MORE_VIA, r));
+        }
+        if (mixvia) {
+            errors.add(new TestError(this, Severity.ERROR, tr("Cannot mix node and way for role \"via\""), MIX_VIA, r));
         }
 
         if (fromWay == null) {
@@ -119,58 +131,75 @@ public class TurnrestrictionTest extends Test {
             errors.add(new TestError(this, Severity.ERROR, tr("No \"to\" way found"), NO_TO, r));
             return;
         }
-        if (via == null) {
+        if (via.isEmpty()) {
             errors.add(new TestError(this, Severity.ERROR, tr("No \"via\" node or way found"), NO_VIA, r));
             return;
         }
 
         Node viaNode;
-        if (via instanceof Node) {
-            viaNode = (Node) via;
-            if (!fromWay.isFirstLastNode(viaNode)) {
-                errors.add(new TestError(this, Severity.ERROR,
-                        tr("The \"from\" way does not start or end at a \"via\" node"), FROM_VIA_NODE, r));
-                return;
-            }
-            if (!toWay.isFirstLastNode(viaNode)) {
-                errors.add(new TestError(this, Severity.ERROR,
-                        tr("The \"to\" way does not start or end at a \"via\" node"), TO_VIA_NODE, r));
-                return;
-            }
+        if (via.get(0) instanceof Node) {
+            viaNode = (Node) via.get(0);
+            Way viaPseudoWay = new Way();
+            viaPseudoWay.addNode(viaNode);
+            checkIfConnected(fromWay, viaPseudoWay,
+                    tr("The \"from\" way does not start or end at a \"via\" node"), FROM_VIA_NODE);
+            checkIfConnected(viaPseudoWay, toWay,
+                    tr("The \"to\" way does not start or end at a \"via\" node"), TO_VIA_NODE);
         } else {
-            Way viaWay = (Way) via;
-            Node firstNode = viaWay.firstNode();
-            Node lastNode = viaWay.lastNode();
-            Boolean onewayvia = false;
-
-            String onewayviastr = viaWay.get("oneway");
-            if (onewayviastr != null) {
-                if ("-1".equals(onewayviastr)) {
-                    onewayvia = true;
-                    Node tmp = firstNode;
-                    firstNode = lastNode;
-                    lastNode = tmp;
-                } else {
-                    onewayvia = OsmUtils.getOsmBoolean(onewayviastr);
-                    if (onewayvia == null) {
-                        onewayvia = false;
-                    }
+            // check if consecutive ways are connected: from/via[0], via[i-1]/via[i], via[last]/to
+            checkIfConnected(fromWay, (Way) via.get(0), 
+                    tr("The \"from\" and the first \"via\" way are not connected."), FROM_VIA_WAY);
+            if (via.size() > 1) {
+                for (int i = 1; i < via.size(); i++) {
+                    Way previous = (Way) via.get(i - 1);
+                    Way current = (Way) via.get(i);
+                    checkIfConnected(previous, current, 
+                            tr("The \"via\" ways are not connected."), UNCONNECTED_VIA);
                 }
             }
+            checkIfConnected((Way) via.get(via.size() - 1), toWay, 
+                    tr("The last \"via\" and the \"to\" way are not connected."), TO_VIA_WAY);
 
-            if (fromWay.isFirstLastNode(firstNode)) {
-                viaNode = firstNode;
-            } else if (!onewayvia && fromWay.isFirstLastNode(lastNode)) {
-                viaNode = lastNode;
+        }
+    }
+
+    private void checkIfConnected(Way previous, Way current, String msg, int code) {
+        int onewayPrevious = isOneway(previous);
+        int onewayCurrent = isOneway(current);
+        Node endPrevious = onewayPrevious != -1 ? previous.lastNode() : previous.firstNode();
+        Node startCurrent = onewayCurrent != -1 ? current.firstNode() : current.lastNode();
+        //System.out.println(previous.getUniqueId() + " -- " + current.getUniqueId() + ": " + onewayPrevious + "/" + onewayCurrent + " " + endPrevious.getUniqueId() + "/" + startCurrent.getUniqueId());
+        boolean c;
+        if (onewayPrevious != 0 && onewayCurrent != 0) {
+            // both oneways: end/start node must be equal
+            c = endPrevious.equals(startCurrent);
+        } else if (onewayPrevious != 0) {
+            // previous way is oneway: end of previous must be start/end of current
+            c = current.isFirstLastNode(endPrevious);
+        } else if (onewayCurrent != 0) {
+            // current way is oneway: start of current must be start/end of previous
+            c = previous.isFirstLastNode(startCurrent);
+        } else {
+            // otherwise: start/end of previous must be start/end of current
+            c = current.isFirstLastNode(previous.firstNode()) || current.isFirstLastNode(previous.lastNode());
+        }
+        if (!c) {
+            errors.add(new TestError(this, Severity.ERROR, msg, code, Arrays.asList(previous, current)));
+        }
+    }
+
+    private static int isOneway(Way w) {
+        String onewayviastr = w.get("oneway");
+        if (onewayviastr != null) {
+            if ("-1".equals(onewayviastr)) {
+                return -1;
             } else {
-                errors.add(new TestError(this, Severity.ERROR,
-                        tr("The \"from\" way does not start or end at a \"via\" way."), FROM_VIA_WAY, r));
-                return;
-            }
-            if (!toWay.isFirstLastNode(viaNode == firstNode ? lastNode : firstNode)) {
-                errors.add(new TestError(this, Severity.ERROR,
-                        tr("The \"to\" way does not start or end at a \"via\" way."), TO_VIA_WAY, r));
+                Boolean onewayvia = OsmUtils.getOsmBoolean(onewayviastr);
+                if (onewayvia != null && onewayvia) {
+                    return 1;
+                }
             }
         }
+        return 0;
     }
 }
