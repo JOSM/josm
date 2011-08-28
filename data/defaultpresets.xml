@@ -4301,7 +4301,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             </optional>
             <roles>
                 <role key="from" text="from way" requisite="required" count="1" type="way" />
-                <role key="via" text="via node or way" requisite="required" count="1" type="way,node" />
+                <role key="via" text="via node or ways" requisite="required" type="way,node" />
                 <role key="to" text="to way" requisite="required" count="1" type="way" />
             </roles>
         </item>
