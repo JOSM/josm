@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.PushbackReader;
 import java.io.StringReader;
 import java.text.Normalizer;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -60,6 +61,30 @@ public class SearchCompiler {
 
     abstract public static class Match {
         abstract public boolean match(OsmPrimitive osm);
+
+        /**
+         * Tests whether one of the primitives matches.
+         */
+        protected boolean existsMatch(Collection<? extends OsmPrimitive> primitives) {
+            for (OsmPrimitive p : primitives) {
+                if (match(p)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Tests whether all primitives match.
+         */
+        protected boolean forallMatch(Collection<? extends OsmPrimitive> primitives) {
+            for (OsmPrimitive p : primitives) {
+                if (!match(p)) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     public static class Always extends Match {
@@ -697,6 +722,39 @@ public class SearchCompiler {
         }
     }
 
+    /**
+     * Matches data in source area ("downloaded area").
+     */
+    private static class InDataSourceArea extends Match {
+
+        private final java.awt.geom.Area dataSourceArea = Main.main.getCurrentDataSet().getDataSourceArea();
+        private final boolean all;
+
+        /**
+         * @param all if true, all way nodes or relation members have to be within source area;if false, one suffices.
+         */
+        public InDataSourceArea(boolean all) {
+            this.all = all;
+        }
+
+        @Override
+        public boolean match(OsmPrimitive osm) {
+            if (!osm.isUsable()) {
+                return false;
+            } else if (osm instanceof Node) {
+                return dataSourceArea.contains(((Node) osm).getCoor());
+            } else if (osm instanceof Way) {
+                Collection<Node> nodes = ((Way) osm).getNodes();
+                return all ? forallMatch(nodes) : existsMatch(nodes);
+            } else if (osm instanceof Relation) {
+                Collection<OsmPrimitive> primitives = ((Relation) osm).getMemberPrimitives();
+                return all ? forallMatch(primitives) : existsMatch(primitives);
+            } else {
+                return false;
+            }
+        }
+    }
+
     public static class ParseError extends Exception {
         public ParseError(String msg) {
             super(msg);
@@ -794,6 +852,10 @@ public class SearchCompiler {
                 return new Child(parseFactor());
             else if ("parent".equals(key))
                 return new Parent(parseFactor());
+            else if ("inDownloadedArea".equals(key))
+                return new InDataSourceArea(false);
+            else if ("allinDownloadedArea".equals(key))
+                return new InDataSourceArea(true);
             else
                 return new Any(key, regexSearch, caseSensitive);
         } else
