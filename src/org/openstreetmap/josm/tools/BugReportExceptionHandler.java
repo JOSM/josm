@@ -5,11 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.GridBagLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
@@ -126,13 +121,9 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                             tr("Alternatively, if that does not work you can manually fill in the information " +
                             "below at this URL:")), GBC.eol());
                     p.add(new UrlLabel("http://josm.openstreetmap.de/newticket"), GBC.eop().insets(8,0,0,0));
-                    try {
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), new ClipboardOwner(){
-                            public void lostOwnership(Clipboard clipboard, Transferable contents) {}
-                        });
+                    if (Utils.copyToClipboard(text)) {
                         p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")), GBC.eop());
                     }
-                    catch (RuntimeException x) {}
 
                     JTextArea info = new JTextArea(text, 20, 60);
                     info.setCaretPosition(0);

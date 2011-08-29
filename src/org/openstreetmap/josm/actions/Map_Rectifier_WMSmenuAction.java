@@ -5,9 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -28,6 +25,7 @@ import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.UrlLabel;
+import org.openstreetmap.josm.tools.Utils;
 
 public class Map_Rectifier_WMSmenuAction extends JosmAction {
     /**
@@ -117,7 +115,8 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
 
         JTextField tfWmsUrl = new JTextField(30);
 
-        String clip = getClipboardContents();
+        String clip = Utils.getClipboardContent();
+        clip = clip == null ? "" : clip.trim();
         ButtonGroup group = new ButtonGroup();
 
         JRadioButton firstBtn = null;
@@ -221,26 +220,6 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
      */
     private void addWMSLayer(String title, String url) {
         Main.main.addLayer(new WMSLayer(new ImageryInfo(title, url)));
-    }
-
-    /**
-     * Helper function that extracts a String from the Clipboard if available.
-     * Returns an empty String otherwise
-     * @return String Clipboard contents if available
-     */
-    private String getClipboardContents() {
-        String result = "";
-        Transferable contents = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-
-        if(contents == null || !contents.isDataFlavorSupported(DataFlavor.stringFlavor))
-            return "";
-
-        try {
-            result = (String)contents.getTransferData(DataFlavor.stringFlavor);
-        } catch(Exception ex) {
-            return "";
-        }
-        return result.trim();
     }
 
     @Override

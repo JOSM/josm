@@ -5,11 +5,6 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
@@ -20,6 +15,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 public final class CopyAction extends JosmAction {
 
@@ -30,6 +26,7 @@ public final class CopyAction extends JosmAction {
         putValue("help", ht("/Action/Copy"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if(isEmptySelection()) return;
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
@@ -41,17 +38,10 @@ public final class CopyAction extends JosmAction {
         /* copy ids to the clipboard */
         StringBuilder idsBuilder = new StringBuilder();
         for (OsmPrimitive p : primitives) {
-            idsBuilder.append(p.getId()+",");
+            idsBuilder.append(p.getId()).append(",");
         }
         String ids = idsBuilder.substring(0, idsBuilder.length() - 1);
-        try {
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
-                    new StringSelection(ids.toString()), new ClipboardOwner() {
-                        public void lostOwnership(Clipboard clipboard, Transferable contents) {}
-                    }
-            );
-        }
-        catch (RuntimeException x) {}
+        Utils.copyToClipboard(ids);
 
         Main.pasteBuffer.makeCopy(primitives);
         Main.pasteSource = source;

@@ -12,9 +12,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -43,6 +40,7 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -182,32 +180,19 @@ public class DownloadDialog extends JDialog  {
 
         getRootPane().getActionMap().put("checkClipboardContents", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                checkClipboardContents();
+                String clip = Utils.getClipboardContent();
+                if (clip == null) {
+                    return;
+                }
+                Bounds b = OsmUrlToBounds.parse(clip);
+                if (b != null) {
+                    boundingBoxChanged(new Bounds(b), null);
+                }
             }
         });
         HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/Download"));
         addWindowListener(new WindowEventHandler());
         restoreSettings();
-    }
-
-    private void checkClipboardContents() {
-        String result = "";
-        Transferable contents = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-
-        if(contents == null || !contents.isDataFlavorSupported(DataFlavor.stringFlavor))
-            return;
-
-        try {
-            result = (String)contents.getTransferData(DataFlavor.stringFlavor);
-        }
-        catch(Exception ex) {
-            return;
-        }
-
-        Bounds b = OsmUrlToBounds.parse(result);
-        if (b != null) {
-            boundingBoxChanged(new Bounds(b),null);
-        }
     }
 
     private void updateSizeCheck() {
