@@ -5,11 +5,6 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
@@ -26,6 +21,7 @@ import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * @author xeen
@@ -126,13 +122,6 @@ public final class ShowStatusReportAction extends JosmAction {
         ed.showDialog();
 
         if(ed.getValue() != 1) return;
-        try {
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
-                    new StringSelection(text.toString()), new ClipboardOwner() {
-                        public void lostOwnership(Clipboard clipboard, Transferable contents) {}
-                    }
-            );
-        }
-        catch (RuntimeException x) {}
+        Utils.copyToClipboard(text.toString());
     }
 }

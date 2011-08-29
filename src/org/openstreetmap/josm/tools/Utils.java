@@ -2,6 +2,13 @@
 package org.openstreetmap.josm.tools;
 
 import java.awt.Color;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -262,5 +269,46 @@ public class Utils {
 
     public static boolean equalsEpsilon(double a, double b) {
         return Math.abs(a - b) <= EPSILION;
+    }
+
+    /**
+     * Copies the string {@code s} to system clipboard.
+     * @param s string to be copied to clipboard.
+     * @return true if succeeded, false otherwise.
+     */
+    public static boolean copyToClipboard(String s) {
+        try {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s), new ClipboardOwner() {
+
+                @Override
+                public void lostOwnership(Clipboard clpbrd, Transferable t) {
+                }
+            });
+            return true;
+        } catch (IllegalStateException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Extracts clipboard content as string.
+     * @return string clipboard contents if available, {@code null} otherwise.
+     */
+    public static String getClipboardContent() {
+        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        try {
+            if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                String text = (String) t.getTransferData(DataFlavor.stringFlavor);
+                return text;
+            }
+        } catch (UnsupportedFlavorException ex) {
+            ex.printStackTrace();
+            return null;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return null;
     }
 }

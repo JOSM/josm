@@ -7,18 +7,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.FlavorEvent;
 import java.awt.datatransfer.FlavorListener;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -39,6 +35,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Bounding box selector.
@@ -305,32 +302,15 @@ public class BoundingBoxSelection implements DownloadSelection {
             Toolkit.getDefaultToolkit().getSystemClipboard().addFlavorListener(this);
         }
 
-        protected String getClipboardContent() {
-            Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-            try {
-                if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                    String text = (String)t.getTransferData(DataFlavor.stringFlavor);
-                    return text;
-                }
-            } catch (UnsupportedFlavorException ex) {
-                ex.printStackTrace();
-                return null;
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                return null;
-            }
-            return null;
-        }
-
         public void actionPerformed(ActionEvent e) {
-            String content = getClipboardContent();
+            String content = Utils.getClipboardContent();
             if (content != null) {
                 tfOsmUrl.setText(content);
             }
         }
 
         protected void updateEnabledState() {
-            setEnabled(getClipboardContent() != null);
+            setEnabled(Utils.getClipboardContent() != null);
         }
 
         public void flavorsChanged(FlavorEvent e) {
