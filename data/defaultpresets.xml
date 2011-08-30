@@ -610,6 +610,18 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
+        <item name="Cycle Lane" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Bicycle" />
+            <label text="Edit Cycle Lane" />
+            <combo key="cycleway" text="Cycleway" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" default="" delete_if_empty="true" />
+            <combo key="cycleway:left" text="Cycleway left" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" default="" delete_if_empty="true" />
+            <combo key="cycleway:right" text="Cycleway right" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" default="" delete_if_empty="true" />
+            <check key="oneway:bicycle" text="Oneway (bicycle)" default="off" delete_if_empty="true" />
+            <space />
+            <label text="Edit Highway" />
+            <combo key="highway" text="Highway" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,unclassified,residential,living_street,service,bus_guideway,construction" delete_if_empty="true" />
+            <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+        </item>
         <item name="Dedicated Cycleway" icon="presets/cycleway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cycleway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=cycleway"
