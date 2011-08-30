@@ -64,7 +64,7 @@ public class LambertCC9Zones extends AbstractProjection implements ProjectionSub
         ((LambertConformalConic)proj).updateParameters2SP(ellps, lat_0, lat_1, lat_2);
     }
 
-    @Override 
+    @Override
     public String toString() {
         return tr("Lambert CC9 Zone (France)");
     }
@@ -96,7 +96,7 @@ public class LambertCC9Zones extends AbstractProjection implements ProjectionSub
     {
         double medLatZone = cMinLatZonesDegree + (layoutZone+1);
         return new Bounds(
-                new LatLon(Math.max(medLatZone - 1.0 - cMaxOverlappingZones, cMinLatZonesDegree), -4.9),
+                new LatLon(Math.max(medLatZone - 1.0 - cMaxOverlappingZones, cMinLatZonesDegree), -5.5),
                 new LatLon(Math.min(medLatZone + 1.0 + cMaxOverlappingZones, Math.toDegrees(cMaxLatZonesRadian)), 10.2));
     }
 
