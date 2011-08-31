@@ -212,7 +212,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
     }
 
     private static boolean ignoreKeyForPrefixSuffixCorrection(String key) {
-        return key.startsWith("name") || key.endsWith("name")
+        return key.contains("name") || key.equals("tiger:county")
                 || key.equalsIgnoreCase("fixme") || key.startsWith("note");
     }
 }
