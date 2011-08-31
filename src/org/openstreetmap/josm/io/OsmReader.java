@@ -267,8 +267,9 @@ public class OsmReader {
                     if (key == null || value == null) {
                         throwException(tr("Missing key or value attribute in tag."));
                     }
-                    currentPrimitive.put(key.intern(), value.intern());
-
+                    if (currentPrimitive != null) {
+                        currentPrimitive.put(key.intern(), value.intern());
+                    }
                 } else {
                     System.out.println(tr("Undefined element ''{0}'' found in input stream. Skipping.", qName));
                 }
