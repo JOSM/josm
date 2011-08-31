@@ -108,7 +108,7 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
 
         protected Map<OsmPrimitiveType, Integer> getSourceStatistics() {
             HashMap<OsmPrimitiveType, Integer> ret = new HashMap<OsmPrimitiveType, Integer>();
-            for (OsmPrimitiveType type: OsmPrimitiveType.values()) {
+            for (OsmPrimitiveType type: OsmPrimitiveType.dataValues()) {
                 if (!getSourceTagsByType(type).isEmpty()) {
                     ret.put(type, getSourcePrimitivesByType(type).size());
                 }
@@ -118,7 +118,7 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
 
         protected Map<OsmPrimitiveType, Integer> getTargetStatistics() {
             HashMap<OsmPrimitiveType, Integer> ret = new HashMap<OsmPrimitiveType, Integer>();
-            for (OsmPrimitiveType type: OsmPrimitiveType.values()) {
+            for (OsmPrimitiveType type: OsmPrimitiveType.dataValues()) {
                 int count = OsmPrimitive.getFilteredList(target, type.getOsmClass()).size();
                 if (count > 0) {
                     ret.put(type, count);
@@ -138,7 +138,7 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
          */
         protected void pasteFromHomogeneousSource() {
             TagCollection tc = null;
-            for (OsmPrimitiveType type : OsmPrimitiveType.values()) {
+            for (OsmPrimitiveType type : OsmPrimitiveType.dataValues()) {
                 TagCollection tc1 = getSourceTagsByType(type);
                 if (!tc1.isEmpty()) {
                     tc = tc1;
@@ -184,7 +184,7 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
          * @return true if this a heterogeneous source can be pasted without conflicts to targets
          */
         protected boolean canPasteFromHeterogeneousSourceWithoutConflict(Collection<OsmPrimitive> targets) {
-            for (OsmPrimitiveType type:OsmPrimitiveType.values()) {
+            for (OsmPrimitiveType type : OsmPrimitiveType.dataValues()) {
                 if (hasTargetPrimitives(type.getOsmClass())) {
                     TagCollection tc = TagCollection.unionOfAllPrimitives(getSourcePrimitivesByType(type));
                     if (!tc.isEmpty() && ! tc.isApplicableToPrimitive())
@@ -202,7 +202,7 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
          */
         protected void pasteFromHeterogeneousSource() {
             if (canPasteFromHeterogeneousSourceWithoutConflict(target)) {
-                for (OsmPrimitiveType type:OsmPrimitiveType.values()) {
+                for (OsmPrimitiveType type : OsmPrimitiveType.dataValues()) {
                     if (hasSourceTagsByType(type) && hasTargetPrimitives(type.getOsmClass())) {
                         buildChangeCommand(target, getSourceTagsByType(type));
                     }
@@ -219,7 +219,7 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
                 dialog.setVisible(true);
                 if (dialog.isCanceled())
                     return;
-                for (OsmPrimitiveType type:OsmPrimitiveType.values()) {
+                for (OsmPrimitiveType type : OsmPrimitiveType.dataValues()) {
                     if (hasSourceTagsByType(type) && hasTargetPrimitives(type.getOsmClass())) {
                         buildChangeCommand(OsmPrimitive.getFilteredList(target, type.getOsmClass()), dialog.getResolution(type));
                     }
