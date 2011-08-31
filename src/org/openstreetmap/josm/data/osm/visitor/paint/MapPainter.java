@@ -408,7 +408,7 @@ public class MapPainter {
         Point lastPoint = null;
         Iterator<Node> it = way.getNodes().iterator();
         double pathLength = 0;
-        int dx, dy;
+        long dx, dy;
         while (it.hasNext()) {
             Node n = it.next();
             Point p = nc.getPoint(n);
@@ -480,7 +480,7 @@ public class MapPainter {
     private double[] pointAt(double t, Polygon poly, double pathLength) {
         double totalLen = t * pathLength;
         double curLen = 0;
-        int dx, dy;
+        long dx, dy;
         double segLen;
 
         // Yes, it is ineffecient to iterate from the beginning for each glyph.
