@@ -4398,7 +4398,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="type" value="associatedStreet" />
             <text key="name" text="Street name" default="" delete_if_empty="true" />
             <roles>
-                <role key="street" text="street" requisite="required" count="1" type="way" />
+                <role key="street" text="street" requisite="required" type="way" />
                 <role key="house" text="house" requisite="required" type="node,closedway" />
             </roles>
         </item>
