@@ -77,7 +77,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         setTitle(tr("Conflicts in pasted tags"));
         allPrimitivesResolver = new TagConflictResolver();
         resolvers = new HashMap<OsmPrimitiveType, TagConflictResolver>();
-        for (OsmPrimitiveType type: OsmPrimitiveType.values()) {
+        for (OsmPrimitiveType type: OsmPrimitiveType.dataValues()) {
             resolvers.put(type, new TagConflictResolver());
             resolvers.get(type).getModel().addPropertyChangeListener(this);
         }

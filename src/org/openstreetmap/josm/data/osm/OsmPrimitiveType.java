@@ -1,9 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
+
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Collection;
 
 public enum OsmPrimitiveType {
 
@@ -14,6 +17,8 @@ public enum OsmPrimitiveType {
     /* only for display, no real type */
     CLOSEDWAY  (marktr(/* ICON(data/) */"closedway"), null, WayData.class),
     MULTIPOLYGON (marktr(/* ICON(data/) */"multipolygon"), null, RelationData.class);
+
+    private final static Collection<OsmPrimitiveType> DATA_VALUES = Arrays.asList(NODE, WAY, RELATION);
 
     private final String apiTypeName;
     private final Class<? extends OsmPrimitive> osmClass;
@@ -58,6 +63,10 @@ public enum OsmPrimitiveType {
                 return type;
         }
         return null;
+    }
+
+    public static Collection<OsmPrimitiveType> dataValues() {
+        return DATA_VALUES;
     }
 
     public OsmPrimitive newInstance(long uniqueId, boolean allowNegative) {
