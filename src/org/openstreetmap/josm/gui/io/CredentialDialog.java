@@ -34,6 +34,7 @@ import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -263,7 +264,7 @@ public class CredentialDialog extends JDialog {
             tfPassword.setToolTipText(tr("Please enter the password for authenticating at your proxy server"));
             lblHeading.setText(
                     "<html>" + tr("Authenticating at the HTTP proxy ''{0}'' failed. Please enter a valid username and a valid password.",
-                            System.getProperty("http.proxyHost") + ":" + System.getProperty("http.proxyPort")) + "</html>");
+                            Main.pref.get(ProxyPreferencesPanel.PROXY_HTTP_HOST) + ":" + Main.pref.get(ProxyPreferencesPanel.PROXY_HTTP_PORT)) + "</html>");
             lblWarning.setText("<html>" + tr("Warning: depending on the authentication method the proxy server uses the password may be transferred unencrypted.") + "</html>");
         }
 
