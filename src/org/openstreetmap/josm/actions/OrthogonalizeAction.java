@@ -13,7 +13,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -160,27 +163,7 @@ public final class OrthogonalizeAction extends JosmAction {
                         commands.addAll(orthogonalize(wayDataList, nodeList));
                     }
                     else if (nodeList.isEmpty()) {
-                        // collect groups of ways with common nodes and orthogonalize each group separately.
-                        ArrayList<ArrayList<WayData>> groups = new ArrayList<ArrayList<WayData>>();
-                        for (WayData w: wayDataList) {
-                            boolean add = false;
-                            for (ArrayList<WayData> g: groups) {
-                                for (WayData groupedWay: g) {
-                                    if (!Collections.disjoint(w.way.getNodes(), groupedWay.way.getNodes())) {
-                                        add = true;
-                                        break;
-                                    }
-                                }
-                                if (add) {
-                                    g.add(w);
-                                }
-                            }
-                            if (!add) {
-                                ArrayList<WayData> newGroup = new ArrayList<WayData>();
-                                newGroup.add(w);
-                                groups.add(newGroup);
-                            }
-                        }
+                        List<ArrayList<WayData>> groups = buildGroups(wayDataList);
                         for (ArrayList<WayData> g: groups) {
                             commands.addAll(orthogonalize(g, nodeList));
                         }
@@ -207,6 +190,36 @@ public final class OrthogonalizeAction extends JosmAction {
                         "<html>" + ex.getMessage() + "<br><hr><h2>" + tr("Usage") + "</h2>" + USAGE + "</html>",
                         tr("Selected Elements cannot be orthogonalized"),
                         JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+    
+    /**
+     * Collect groups of ways with common nodes in order to orthogonalize each group separately.
+     */
+    private static List<ArrayList<WayData>> buildGroups(ArrayList<WayData> wayDataList) {
+        List<ArrayList<WayData>> groups = new ArrayList<ArrayList<WayData>>();
+        Set<WayData> remaining = new HashSet<WayData>(wayDataList);
+        while (!remaining.isEmpty()) {
+            ArrayList<WayData> group = new ArrayList<WayData>();
+            groups.add(group);
+            Iterator<WayData> it = remaining.iterator();
+            WayData next = it.next();
+            it.remove();
+            extendGroupRec(group, next, new ArrayList<WayData>(remaining));
+            remaining.removeAll(group);
+        }
+        return groups;
+    }
+    
+    private static void extendGroupRec(List<WayData> group, WayData newGroupMember, List<WayData> remaining) {
+        group.add(newGroupMember);
+        for (int i = 0; i < remaining.size(); ++i) {
+            WayData candidate = remaining.get(i);
+            if (candidate == null) continue;
+            if (!Collections.disjoint(candidate.way.getNodes(), newGroupMember.way.getNodes())) {
+                remaining.set(i, null);
+                extendGroupRec(group, candidate, remaining);
             }
         }
     }
@@ -301,7 +314,7 @@ public final class OrthogonalizeAction extends JosmAction {
         for (Direction[] orientation : ORIENTATIONS){
             final HashSet<Node> s = new HashSet<Node>(allNodes);
             int s_size = s.size();
-            for (int dummy = 0; dummy < s_size; ++ dummy) {
+            for (int dummy = 0; dummy < s_size; ++dummy) {
                 if (s.isEmpty()) {
                     break;
                 }
@@ -521,7 +534,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
     /**
      * Recognize angle to be approximately 0, 90, 180 or 270 degrees.
-     * returns a integral value, corresponding to a counter clockwise turn:
+     * returns an integral value, corresponding to a counter clockwise turn:
      */
     private static int angleToDirectionChange(double a, double deltaMax) throws RejectedAngleException {
         a = standard_angle_mPI_to_PI(a);
