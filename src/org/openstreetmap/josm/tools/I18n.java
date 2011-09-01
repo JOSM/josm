@@ -8,13 +8,14 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 import java.util.Locale;
-import java.util.Vector;
 
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
@@ -126,36 +127,39 @@ public class I18n {
      * Translates some text for the current locale.
      * These strings are collected by a script that runs on the source code files.
      * After translation, the localizations are distributed with the main program.
+     * <br/>
+     * For example, {@code tr("JOSM''s default value is ''{0}''.", val)}.
+     * <br/>
+     * Use {@see #trn} for distinguishing singular from plural text, i.e.,
+     * do not use {@code tr(size == 1 ? "singular" : "plural")} nor
+     * {@code size == 1 ? tr("singular") : tr("plural")}
      *
      * @param text the text to translate.
      * Must be a string literal. (No constants or local vars.)
      * Can be broken over multiple lines.
      * An apostrophe ' must be quoted by another apostrophe.
-     * @param objects Parameters for the string.
-     * Mark occurrences in <code>text</code> with {0}, {1}, ...
-     * @return the translated string
-     *
-     * Example: tr("JOSM''s default value is ''{0}''.", val);
+     * @param objects the parameters for the string.
+     * Mark occurrences in {@code text} with {@code {0}}, {@code {1}}, ...
+     * @return the translated string.
+     * @see #trn
+     * @see #trc
+     * @see #trnc
      */
     public static final String tr(String text, Object... objects) {
         return MessageFormat.format(gettext(text, null), objects);
     }
 
-    public static final String tr(String text) {
-        if (text == null)
-            return null;
-        return MessageFormat.format(gettext(text, null), (Object)null);
-    }
-
     /**
-     * Provide translation in a context.
-     * There can be different translations for the same text (but
-     * different context).
+     * Translates some text in a context for the current locale.
+     * There can be different translations for the same text within different contexts.
      *
      * @param context string that helps translators to find an appropriate
-     * translation for <code>text</code>
-     * @param text the text to translate
-     * @return the translated string
+     * translation for {@code text}.
+     * @param text the text to translate.
+     * @return the translated string.
+     * @see #tr
+     * @see #trn
+     * @see #trnc
      */
     public static final String trc(String context, String text) {
         if (context == null)
@@ -177,9 +181,11 @@ public class I18n {
      * Marks a string for translation (such that a script can harvest
      * the translatable strings from the source files).
      *
-     * Example:
+     * For example, {@code
      * String[] options = new String[] {marktr("up"), marktr("down")};
-     * lbl.setText(tr(options[0]));
+     * lbl.setText(tr(options[0]));}
+     * @param text the string to be marked for translation.
+     * @return {@code text} unmodified.
      */
     public static final String marktr(String text) {
         return text;
@@ -190,28 +196,60 @@ public class I18n {
     }
 
     /**
-     * Example: trn("Found {0} error in {1}!", "Found {0} errors in {1}!", i, Integer.toString(i), url);
+     * Translates some text for the current locale and distinguishes between
+     * {@code singularText} and {@code pluralText} depending on {@code n}.
+     * <br/>
+     * For instance, {@code trn("There was an error!", "There were errors!", i)} or
+     * {@code trn("Found {0} error in {1}!", "Found {0} errors in {1}!", i, Integer.toString(i), url)}.
+     * 
+     * @param singularText the singular text to translate.
+     * Must be a string literal. (No constants or local vars.)
+     * Can be broken over multiple lines.
+     * An apostrophe ' must be quoted by another apostrophe.
+     * @param pluralText the plural text to translate.
+     * Must be a string literal. (No constants or local vars.)
+     * Can be broken over multiple lines.
+     * An apostrophe ' must be quoted by another apostrophe.
+     * @param n a number to determine whether {@code singularText} or {@code pluralText} is used.
+     * @param objects the parameters for the string.
+     * Mark occurrences in {@code singularText} and {@code pluralText} with {@code {0}}, {@code {1}}, ...
+     * @return the translated string.
+     * @see #tr
+     * @see #trc
+     * @see #trnc
      */
-    public static final String trn(String text, String pluralText, long n, Object... objects) {
-        return MessageFormat.format(gettextn(text, pluralText, null, n), objects);
+    public static final String trn(String singularText, String pluralText, long n, Object... objects) {
+        return MessageFormat.format(gettextn(singularText, pluralText, null, n), objects);
     }
 
     /**
-     * Example: trn("There was an error!", "There were errors!", i);
+     * Translates some text in a context for the current locale and distinguishes between
+     * {@code singularText} and {@code pluralText} depending on {@code n}.
+     * There can be different translations for the same text within different contexts.
+     *
+     * @param context string that helps translators to find an appropriate
+     * translation for {@code text}.
+     * @param singularText the singular text to translate.
+     * Must be a string literal. (No constants or local vars.)
+     * Can be broken over multiple lines.
+     * An apostrophe ' must be quoted by another apostrophe.
+     * @param pluralText the plural text to translate.
+     * Must be a string literal. (No constants or local vars.)
+     * Can be broken over multiple lines.
+     * An apostrophe ' must be quoted by another apostrophe.
+     * @param n a number to determine whether {@code singularText} or {@code pluralText} is used.
+     * @param objects the parameters for the string.
+     * Mark occurrences in {@code singularText} and {@code pluralText} with {@code {0}}, {@code {1}}, ...
+     * @return the translated string.
+     * @see #tr
+     * @see #trc
+     * @see #trn
      */
-    public static final String trn(String text, String pluralText, long n) {
-        return MessageFormat.format(gettextn(text, pluralText, null, n), (Object)null);
+    public static final String trnc(String context, String singularText, String pluralText, long n, Object... objects) {
+        return MessageFormat.format(gettextn(singularText, pluralText, context, n), objects);
     }
 
-    public static final String trnc(String ctx, String text, String pluralText, long n, Object... objects) {
-        return MessageFormat.format(gettextn(text, pluralText, ctx, n), objects);
-    }
-
-    public static final String trnc(String ctx, String text, String pluralText, long n) {
-        return MessageFormat.format(gettextn(text, pluralText, ctx, n), (Object)null);
-    }
-
-    private static final String gettext(String text, String ctx)
+    private static final String gettext(String text, String ctx, boolean lazy)
     {
         int i;
         if(ctx == null && text.startsWith("_:") && (i = text.indexOf("\n")) >= 0)
@@ -230,30 +268,17 @@ public class I18n {
             if(trans != null)
                 return trans[0];
         }
-        return text;
+        return lazy ? gettext(text, null) : text;
     }
+
+    private static final String gettext(String text, String ctx) {
+        return gettext(text, ctx, false);
+    }
+
 
     /* try without context, when context try fails */
-    private static final String gettext_lazy(String text, String ctx)
-    {
-        int i;
-        if(ctx == null && text.startsWith("_:") && (i = text.indexOf("\n")) >= 0)
-        {
-            ctx = text.substring(2,i-1);
-            text = text.substring(i+1);
-        }
-        if(strings != null)
-        {
-            String trans = strings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
-            if(trans != null)
-                return trans;
-        }
-        if(pstrings != null) {
-            String[] trans = pstrings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
-            if(trans != null)
-                return trans[0];
-        }
-        return gettext(text, null);
+    private static final String gettext_lazy(String text, String ctx) {
+        return gettext(text, ctx, true);
     }
 
     private static final String gettextn(String text, String plural, String ctx, long num)
@@ -280,7 +305,7 @@ public class I18n {
      * @return an array of locale objects.
      */
     public static final Locale[] getAvailableTranslations() {
-        Vector<Locale> v = new Vector<Locale>();
+        Collection<Locale> v = new ArrayList<Locale>(languages.size());
         if(Main.class.getResource("/data/en.lang") != null)
         {
             for (String loc : languages.keySet()) {
