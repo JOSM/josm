@@ -236,8 +236,6 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             undoRoot.add(getNodeForCommand(undoCommands.get(i), i));
         }
         undoTreeModel.setRoot(undoRoot);
-        undoTree.scrollRowToVisible(undoTreeModel.getChildCount(undoRoot)-1);
-        scrollPane.getHorizontalScrollBar().setValue(0);
 
         List<Command> redoCommands = Main.main.undoRedo.redoCommands;
         DefaultMutableTreeNode redoRoot = new DefaultMutableTreeNode();
@@ -276,6 +274,9 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             redoTree.setSelectionRow(0);
             break;
         }
+
+        undoTree.scrollRowToVisible(undoTreeModel.getChildCount(undoRoot)-1);
+        scrollPane.getHorizontalScrollBar().setValue(0);
     }
 
     /**
