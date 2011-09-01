@@ -283,12 +283,7 @@ public class OpenFileAction extends DiskAccessAction {
         public void importData(FileImporter importer, List<File> files) {
             if (importer.isBatchImporter()) {
                 if (canceled) return;
-                String msg;
-                if (files.size() == 1) {
-                    msg = tr("Opening 1 file...");
-                } else {
-                    msg = trn("Opening {0} file...", "Opening {0} files...", files.size(), files.size());
-                }
+                String msg = trn("Opening {0} file...", "Opening {0} files...", files.size(), files.size());
                 getProgressMonitor().setCustomText(msg);
                 getProgressMonitor().indeterminateSubTask(msg);
                 if (importer.importDataHandleExceptions(files, getProgressMonitor().createSubTaskMonitor(files.size(), false))) {
