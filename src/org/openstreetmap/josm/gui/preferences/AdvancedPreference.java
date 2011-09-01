@@ -188,8 +188,11 @@ public class AdvancedPreference implements PreferenceSetting {
             boolean canHas = true;
 
             // Make 'wmsplugin cache' search for e.g. 'cache.wmsplugin'
+            final String prefKeyLower = prefKey.toLowerCase();
+            final String prefValueLower = prefValue.toLowerCase();
             for (String bit : input) {
-                if (!prefKey.contains(bit) && !prefValue.contains(bit)) {
+                bit = bit.toLowerCase();
+                if (!prefKeyLower.contains(bit) && !prefValueLower.contains(bit)) {
                     canHas = false;
                 }
             }
