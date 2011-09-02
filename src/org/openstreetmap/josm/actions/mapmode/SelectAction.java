@@ -11,7 +11,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
-import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -69,9 +68,8 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     // or select if no mouse movement occurs (i.e. just clicking)
     enum Mode { move, rotate, scale, select }
 
-    // contains all possible cases the cursor can be in the SelectAction except the
-    // the move pointer (latter is a system one and not an image)
-    private enum SelectActionCursor {
+    // contains all possible cases the cursor can be in the SelectAction
+    static private enum SelectActionCursor {
         rect("normal", "selection"),
         rect_add("normal", "select_add"),
         rect_rm("normal", "select_remove"),
@@ -83,11 +81,17 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         node_rm("normal", "select_node_remove"),
         virtual_node("normal", "addnode"),
         scale("scale", null),
-        rotate("rotate", null);
+        rotate("rotate", null),
+        merge("crosshair", null),
+        merge_to_node("crosshair", "joinnode"),
+        move(Cursor.MOVE_CURSOR);
 
         private final Cursor c;
         private SelectActionCursor(String main, String sub) {
             c = ImageProvider.getCursor(main, sub);
+        }
+        private SelectActionCursor(int systemCursor) {
+            c = Cursor.getPredefinedCursor(systemCursor);
         }
         public Cursor cursor() {
             return c;
@@ -153,12 +157,6 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay", 200);
         initialMoveThreshold = Main.pref.getInteger("edit.initial-move-threshold", 5);
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
-        // This is required to update the cursors when ctrl/shift/alt is pressed
-        try {
-            Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
-        } catch (SecurityException ex) {
-            System.out.println(ex);
-        }
     }
 
     @Override
@@ -168,6 +166,10 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         mv.addMouseMotionListener(this);
         mv.setVirtualNodesEnabled(
                 Main.pref.getInteger("mappaint.node.virtual-size", 8) != 0);
+        // This is required to update the cursors when ctrl/shift/alt is pressed
+        try {
+            Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
+        } catch (SecurityException ex) {}
     }
 
     @Override
@@ -177,6 +179,9 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         mv.removeMouseListener(this);
         mv.removeMouseMotionListener(this);
         mv.setVirtualNodesEnabled(false);
+        try {
+            Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+        } catch (SecurityException ex) {}
         removeHighlighting();
     }
 
@@ -195,14 +200,19 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                 c = "virtual_node";
                 break;
             }
+            final Iterator<OsmPrimitive> it = nearbyStuff.iterator();
+            final OsmPrimitive osm = it.hasNext() ? it.next() : null;
 
-            // nearbyStuff cannot be empty as otherwise we would be in
-            // Move.select and not Move.move
-            OsmPrimitive osm = nearbyStuff.iterator().next();
+            if(dragInProgress()) {
+                c = ctrl ? "merge" : "move";
+                if(osm != null && osm instanceof Node) {
+                    c += "_to_node";
+                }
+                break;
+            }
 
             c = (osm instanceof Node) ? "node" : c;
             c = (osm instanceof Way) ? "way" : c;
-
             if(shift) {
                 c += "_add";
             } else if(ctrl) {
@@ -245,6 +255,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
 
     /**
      * handles adding highlights and updating the cursor for the given mouse event.
+     * Please note that the highlighting for merging while moving is handled via mouseDragged.
      * @param MouseEvent which should be used as base for the feedback
      * @return true if repaint is required
      */
@@ -254,6 +265,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
 
     /**
      * handles adding highlights and updating the cursor for the given mouse event.
+     * Please note that the highlighting for merging while moving is handled via mouseDragged.
      * @param MouseEvent which should be used as base for the feedback
      * @param define custom keyboard modifiers if the ones from MouseEvent are outdated or similar
      * @return true if repaint is required
@@ -309,7 +321,9 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             return;
         // We don't have a mouse event, so we pass the old mouse event but the
         // new modifiers.
-        giveUserFeedback(oldEvent, ((InputEvent) e).getModifiers());
+        if(giveUserFeedback(oldEvent, ((InputEvent) e).getModifiers())) {
+            mv.repaint();
+        }
     }
 
     /**
@@ -337,7 +351,19 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         }
 
         if (mode == Mode.move) {
-            mv.setNewCursor(Cursor.MOVE_CURSOR, this);
+            // If ctrl is pressed we are in merge mode. Look for a nearby node,
+            // highlight it and adjust the cursor accordingly.
+            final OsmPrimitive p = ctrl ? (OsmPrimitive)findNodeToMergeTo(e) : null;
+            boolean needsRepaint = removeHighlighting();
+            if(p != null) {
+                p.setHighlighted(true);
+                oldHighlights.add(p);
+                needsRepaint = true;
+            }
+            mv.setNewCursor(getCursor(MapView.asColl(p)), this);
+            if(needsRepaint) {
+                mv.repaint();
+            }
         }
 
         if (startingDraggingPos == null) {
@@ -462,6 +488,14 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         if(removeHighlighting()) {
             mv.repaint();
         }
+    }
+
+    /** returns true whenever elements have been grabbed and moved (i.e. the initial
+     * thresholds have been exceeded) and is still in progress (i.e. mouse button
+     * still pressed)
+     */
+    final private boolean dragInProgress() {
+        return didMouseDrag && startingDraggingPos != null;
     }
 
     private Node virtualNode = null;
@@ -594,7 +628,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             mode = Mode.rotate;
         } else if (alt && ctrl) {
             mode = Mode.scale;
-        } else if (hasSelectionNearby) {
+        } else if (hasSelectionNearby || dragInProgress()) {
             mode = Mode.move;
         } else {
             mode = Mode.select;
@@ -730,7 +764,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                         Main.main.undoRedo.undo();
                     }
                 } else {
-                    mergePrims(getCurrentDataSet().getSelectedNodes(), e);
+                    mergePrims(e);
                 }
                 getCurrentDataSet().fireSelectionChanged();
             }
@@ -814,22 +848,35 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         return (nxt != null) ? MapView.asColl(nxt) : prims;
     }
 
-    private void mergePrims(Collection<Node> affectedNodes, MouseEvent e) {
-        boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+    /** Merges the selected nodes to the one closest to the given mouse position iff the control
+     * key is pressed. If there is no such node, no action will be done and no error will be
+     * reported. If there is, it will execute the merge and add it to the undo buffer. */
+    final private void mergePrims(MouseEvent e) {
+        updateKeyModifiers(e);
+        Collection<Node> selNodes = getCurrentDataSet().getSelectedNodes();
+        if (!ctrl || selNodes.isEmpty())
+            return;
 
-        if (ctrl && !affectedNodes.isEmpty()) {
-            Collection<Node> target = mv.getNearestNodes(e.getPoint(), affectedNodes, OsmPrimitive.isSelectablePredicate);
-            if (!target.isEmpty()) {
-                Collection<Node> nodesToMerge = new LinkedList<Node>(affectedNodes);
-                Node t = target.iterator().next();
-                nodesToMerge.add(t);
-                Command cmd = MergeNodesAction.mergeNodes(Main.main.getEditLayer(), nodesToMerge, t);
-                if (cmd != null) {
-                    Main.main.undoRedo.add(cmd);
-                    getCurrentDataSet().setSelected(t);
-                }
-            }
+        Node target = findNodeToMergeTo(e);
+        if (target == null)
+            return;
+
+        Collection<Node> nodesToMerge = new LinkedList<Node>(selNodes);
+        nodesToMerge.add(target);
+        Command cmd = MergeNodesAction.mergeNodes(Main.main.getEditLayer(), nodesToMerge, target);
+        if (cmd != null) {
+            Main.main.undoRedo.add(cmd);
+            getCurrentDataSet().setSelected(target);
         }
+    }
+
+    /** tries to find a node to merge to when in move-merge mode for the current mouse
+     * position. Either returns the node or null, if no suitable one is nearby. */
+    final private Node findNodeToMergeTo(MouseEvent e) {
+        Collection<Node> target = mv.getNearestNodes(e.getPoint(),
+                getCurrentDataSet().getSelectedNodes(),
+                OsmPrimitive.isSelectablePredicate);
+        return target.isEmpty() ? null : target.iterator().next();
     }
 
     private void selectPrims(Collection<OsmPrimitive> prims, MouseEvent e, boolean released, boolean area) {
