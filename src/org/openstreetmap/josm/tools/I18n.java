@@ -146,6 +146,7 @@ public class I18n {
      * @see #trnc
      */
     public static final String tr(String text, Object... objects) {
+        if (text == null) return null;
         return MessageFormat.format(gettext(text, null), objects);
     }
 
