@@ -89,7 +89,7 @@ public interface Expression {
                 return res;
             }
 
-            public Float devided_by(float... args) {
+            public Float divided_by(float... args) {
                 if (args.length == 0)
                     return 1f;
                 float res = args[0];
