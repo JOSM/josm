@@ -198,7 +198,8 @@ public class ProjectionPreference implements PreferenceSetting {
             );
             coll = null;
             proj = new Mercator();
-            name = Main.getProjection().getClass().getName();
+            name = proj.getClass().getName();
+            PROP_PROJECTION.put(name);
         }
         PROP_SUB_PROJECTION.put(coll);
         PROP_PROJECTION_SUBPROJECTION.put(coll, name);
