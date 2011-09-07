@@ -153,15 +153,19 @@ public class OpenFileAction extends DiskAccessAction {
             msg.append("<html>");
             msg.append(
                     trn(
-                            "Cannot open {0} file because no suitable file importer is available.",
-                            "Cannot open {0} files because no suitable file importer is available.",
+                            "Cannot open {0} file because file does not exist or no suitable file importer is available.",
+                            "Cannot open {0} files because files do not exist or no suitable file importer is available.",
                             files.size(),
                             files.size()
                     )
             ).append("<br>");
             msg.append("<ul>");
             for (File f: files) {
-                msg.append("<li>").append(f.getAbsolutePath()).append("</li>");
+                msg.append("<li>");
+                msg.append(f.getAbsolutePath());
+                msg.append(" (<i>");
+                msg.append(f.exists() ? tr("no importer") : tr("does not exist"));
+                msg.append("</i>)</li>");
             }
             msg.append("</ul>");
 
