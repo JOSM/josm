@@ -7,10 +7,15 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.font.TextAttribute;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -41,7 +46,7 @@ public class PresetListPanel extends JPanel {
      */
     private static class PresetLabelML implements MouseListener {
         final JLabel label;
-        final Font bold;
+        final Font hover;
         final Font normal;
         final TaggingPreset tag;
         final PresetHandler presetHandler;
@@ -51,7 +56,7 @@ public class PresetListPanel extends JPanel {
             label = lbl;
             lbl.setCursor(new Cursor(Cursor.HAND_CURSOR));
             normal = label.getFont();
-            bold = normal.deriveFont(normal.getStyle() ^ Font.BOLD);
+            hover = normal.deriveFont(Collections.singletonMap(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_DOTTED));
             tag = t;
             this.presetHandler = presetHandler;
         }
@@ -67,7 +72,7 @@ public class PresetListPanel extends JPanel {
 
         }
         public void mouseEntered(MouseEvent arg0) {
-            label.setFont(bold);
+            label.setFont(hover);
         }
         public void mouseExited(MouseEvent arg0) {
             label.setFont(normal);
@@ -133,7 +138,8 @@ public class PresetListPanel extends JPanel {
                     continue;
                 }
 
-                JLabel lbl = new JLabel(t.getName());
+                JLabel lbl = new JLabel(t.getName() + " …");
+                lbl.setIcon((Icon) t.getValue(Action.SMALL_ICON));
                 lbl.addMouseListener(new PresetLabelML(lbl, t, presetHandler));
                 add(lbl, GBC.eol().fill(GBC.HORIZONTAL));
             }

@@ -235,6 +235,7 @@ public class ImageryReader {
                         "logo-url",
                         "terms-of-use-text",
                         "terms-of-use-url",
+                        "country-code",
                     }).contains(qName)) {
                         newState = State.ENTRY_ATTRIBUTE;
                     } else if (qName.equals("bounds")) {
@@ -352,6 +353,9 @@ public class ImageryReader {
                         // TODO: it should be possible to configure the terms of use display text
                     } else if (qName.equals("terms-of-use-url")) {
                         entry.setTermsOfUseURL(accumulator.toString());
+                    } else if (qName.equals("country-code")) {
+                        entry.setCountryCode(accumulator.toString());
+                    } else {
                     }
                     break;
                 case PR:

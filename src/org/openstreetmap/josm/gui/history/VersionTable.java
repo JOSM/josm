@@ -94,6 +94,11 @@ public class VersionTable extends JTable implements Observer{
         }
     }
 
+    public void updateSelection() {
+        final int row = getVersionTableModel().getRowCount() - 1;
+        setRowSelectionInterval(row, row);
+    }
+
     class PopupMenuTrigger extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
