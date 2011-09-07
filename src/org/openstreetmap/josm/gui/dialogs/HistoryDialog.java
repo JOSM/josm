@@ -21,7 +21,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -35,7 +34,6 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
-import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSetListener;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
@@ -43,7 +41,6 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.history.HistoryLoadTask;
-import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -289,7 +286,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
                 int row = historyTable.rowAtPoint(e.getPoint());
-                new ShowHistoryAction().showHistory(Collections.singletonList(model.getPrimitive(row)));
+                HistoryBrowserDialogManager.getInstance().showHistory(Collections.singletonList(model.getPrimitive(row)));
             }
         }
     }
@@ -305,57 +302,10 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
             updateEnabledState();
         }
 
-        protected List<OsmPrimitive> filterPrimitivesWithUnloadedHistory(Collection<OsmPrimitive> primitives) {
-            ArrayList<OsmPrimitive> ret = new ArrayList<OsmPrimitive>(primitives.size());
-            HistoryDataSet hds = HistoryDataSet.getInstance();
-            for (OsmPrimitive p: primitives) {
-                if (hds.getHistory(p.getPrimitiveId()) == null) {
-                    // reload if the history is not in the cache yet
-                    ret.add(p);
-                } else if (!p.isNew() && hds.getHistory(p.getPrimitiveId()).getByVersion(p.getUniqueId()) == null) {
-                    // reload if the history object of the selected object is not in the cache
-                    // yet
-                    ret.add(p);
-                }
-            }
-            return ret;
-        }
-
-        public void showHistory(final List<OsmPrimitive> primitives) {
-            List<OsmPrimitive> toLoad = filterPrimitivesWithUnloadedHistory(primitives);
-            if (!toLoad.isEmpty()) {
-                HistoryLoadTask task = new HistoryLoadTask();
-                task.add(primitives);
-                Main.worker.submit(task);
-            }
-
-            Runnable r = new Runnable() {
-                public void run() {
-                    try {
-                        for (OsmPrimitive p : primitives) {
-                            History h = HistoryDataSet.getInstance().getHistory(p.getPrimitiveId());
-                            if (h == null) {
-                                continue;
-                            }
-                            HistoryBrowserDialogManager.getInstance().show(h);
-                        }
-                    } catch (final Exception e) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                BugReportExceptionHandler.handleException(e);
-                            }
-                        });
-                    }
-
-                }
-            };
-            Main.worker.submit(r);
-        }
-
         public void actionPerformed(ActionEvent e) {
             int [] rows = historyTable.getSelectedRows();
             if (rows == null || rows.length == 0) return;
-            showHistory(model.getPrimitives(rows));
+            HistoryBrowserDialogManager.getInstance().showHistory(model.getPrimitives(rows));
         }
 
         protected void updateEnabledState() {

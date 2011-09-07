@@ -38,7 +38,9 @@ import org.openstreetmap.josm.actions.FullscreenToggleAction;
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.HelpAction;
 import org.openstreetmap.josm.actions.HistoryInfoAction;
+import org.openstreetmap.josm.actions.HistoryInfoWebAction;
 import org.openstreetmap.josm.actions.InfoAction;
+import org.openstreetmap.josm.actions.InfoWebAction;
 import org.openstreetmap.josm.actions.JoinAreasAction;
 import org.openstreetmap.josm.actions.JoinNodeWayAction;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -142,7 +144,9 @@ public class MainMenu extends JMenuBar {
     public final WireframeToggleAction wireFrameToggleAction = new WireframeToggleAction();
     public final JosmAction toggleGPXLines = new ToggleGPXLinesAction();
     public final InfoAction info = new InfoAction();
+    public final InfoWebAction infoweb = new InfoWebAction();
     public final HistoryInfoAction historyinfo = new HistoryInfoAction();
+    public final HistoryInfoWebAction historyinfoweb = new HistoryInfoWebAction();
 
     /* Tools menu */
     public final JosmAction splitWay = new SplitWayAction();
@@ -316,7 +320,9 @@ public class MainMenu extends JMenuBar {
         }
         viewMenu.addSeparator();
         add(viewMenu, info);
+        add(viewMenu, infoweb);
         add(viewMenu, historyinfo);
+		add(viewMenu, historyinfoweb);
 
         add(presetsMenu, presetSearchAction);
 

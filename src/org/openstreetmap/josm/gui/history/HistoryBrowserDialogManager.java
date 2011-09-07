@@ -1,16 +1,26 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Dimension;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.History;
+import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.tools.BugReportExceptionHandler;
+import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class HistoryBrowserDialogManager implements MapView.LayerChangeListener {
@@ -122,4 +132,75 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
             hideAll();
         }
     }
+
+	public void showHistory(final Collection<OsmPrimitive> primitives) {
+		final Collection<OsmPrimitive> notNewPrimitives = Utils.filter(primitives, notNewPredicate);
+		if (notNewPrimitives.isEmpty()) {
+			JOptionPane.showMessageDialog(
+					Main.parent,
+					tr("Please select at least one already uploaded node, way, or relation."),
+					tr("Warning"),
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		Collection<OsmPrimitive> toLoad = Utils.filter(primitives, unloadedHistoryPredicate);
+		if (!toLoad.isEmpty()) {
+			HistoryLoadTask task = new HistoryLoadTask();
+			task.add(notNewPrimitives);
+			Main.worker.submit(task);
+		}
+
+		Runnable r = new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					for (OsmPrimitive p : notNewPrimitives) {
+						History h = HistoryDataSet.getInstance().getHistory(p.getPrimitiveId());
+						if (h == null) {
+							continue;
+						}
+						show(h);
+					}
+				} catch (final Exception e) {
+					SwingUtilities.invokeLater(new Runnable() {
+
+						@Override
+						public void run() {
+							BugReportExceptionHandler.handleException(e);
+						}
+					});
+				}
+
+			}
+		};
+		Main.worker.submit(r);
+	}
+
+	private final Predicate<OsmPrimitive> unloadedHistoryPredicate = new Predicate<OsmPrimitive>() {
+
+		HistoryDataSet hds = HistoryDataSet.getInstance();
+
+		@Override
+		public boolean evaluate(OsmPrimitive p) {
+			if (hds.getHistory(p.getPrimitiveId()) == null) {
+				// reload if the history is not in the cache yet
+				return true;
+			} else if (!p.isNew() && hds.getHistory(p.getPrimitiveId()).getByVersion(p.getUniqueId()) == null) {
+				// reload if the history object of the selected object is not in the cache yet
+				return true;
+			} else {
+				return false;
+			}
+		}
+	};
+
+	private final Predicate<OsmPrimitive> notNewPredicate = new Predicate<OsmPrimitive>() {
+
+		@Override
+		public boolean evaluate(OsmPrimitive p) {
+			return !p.isNew();
+		}
+	};
+
 }
