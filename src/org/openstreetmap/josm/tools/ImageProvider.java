@@ -3,10 +3,6 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import com.kitfox.svg.SVGDiagram;
-import com.kitfox.svg.SVGException;
-import com.kitfox.svg.SVGUniverse;
-
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -20,6 +16,7 @@ import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +29,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
@@ -40,6 +36,18 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.tools.Utils;
+import org.xml.sax.Attributes;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLReaderFactory;
+
+import com.kitfox.svg.SVGDiagram;
+import com.kitfox.svg.SVGException;
+import com.kitfox.svg.SVGUniverse;
 
 /**
  * Helper class to support the application with images.
@@ -79,8 +87,8 @@ public class ImageProvider {
         if (icon == null) {
             String ext = name.indexOf('.') != -1 ? "" : ".???";
             throw new NullPointerException(tr(
-            "Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.",
-            name+ext));
+                    "Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.",
+                    name+ext));
         }
         return icon;
     }
@@ -116,7 +124,7 @@ public class ImageProvider {
     public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive, boolean sanitize) {
         return getIfAvailable(dirs, id, subdir, name, archive, null, sanitize);
     }
-    
+
     /**
      * The full path of the image is either a url (starting with http://)
      * or something like
@@ -128,7 +136,7 @@ public class ImageProvider {
      *                  it will try both extensions.
      * @param archive   A zip file where the image is located (may be null).
      * @param dim       The dimensions of the image if it should be scaled. null if the
-     *                  original size of the image should be returned. The width 
+     *                  original size of the image should be returned. The width
      *                  part of the dimension can be -1. Then it will scale the width
      *                  in the same way as the height. (And the other way around.)
      * @param sanitize  If the image should be repainted to a new BufferedImage to work
@@ -153,6 +161,14 @@ public class ImageProvider {
             ir = getIfAvailableHttp(url, type);
             if (ir != null) {
                 cache.put(url, ir);
+            }
+            return ir;
+        } else if (name.startsWith("wiki://")) {
+            ImageResource ir = cache.get(name);
+            if (ir != null) return ir;
+            ir = getIfAvailableWiki(name, type);
+            if (ir != null) {
+                cache.put(name, ir);
             }
             return ir;
         }
@@ -208,8 +224,9 @@ public class ImageProvider {
                         // and don't bother to create a URL unless we're actually
                         // creating the image.
                         URL path = getImageUrl(full_name, dirs);
-                        if (path == null)
+                        if (path == null) {
                             continue;
+                        }
                         ir = getIfAvailableLocalURL(path, type);
                         if (ir != null) {
                             cache.put(cache_name, ir);
@@ -240,6 +257,36 @@ public class ImageProvider {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    private static ImageResource getIfAvailableWiki(String name, ImageType type) {
+        final Collection<String> defaultBaseUrls = Arrays.asList(
+                "http://wiki.openstreetmap.org/w/images/",
+                "http://upload.wikimedia.org/wikipedia/commons/",
+                "http://wiki.openstreetmap.org/wiki/File:"
+        );
+        final Collection<String> baseUrls = Main.pref.getCollection("image-provider.wiki.urls", defaultBaseUrls);
+
+        final String fn = name.substring(name.lastIndexOf('/') + 1);
+
+        ImageResource result = null;
+        for (String b : baseUrls) {
+            String url;
+            if (b.endsWith(":")) {
+                url = getImgUrlFromWikiInfoPage(b, fn);
+                if (url == null) {
+                    continue;
+                }
+            } else {
+                final String fn_md5 = Utils.md5Hex(fn);
+                url = b + fn_md5.substring(0,1) + "/" + fn_md5.substring(0,2) + "/" + fn;
+            }
+            result = getIfAvailableHttp(url, type);
+            if (result != null) {
+                break;
+            }
+        }
+        return result;
     }
 
     private static ImageResource getIfAvailableZip(String full_name, File archive, ImageType type) {
@@ -375,6 +422,58 @@ public class ImageProvider {
                 return u;
         }
 
+        return null;
+    }
+
+    /**
+     * Reads the wiki page on a certain file in html format in order to find the real image URL.
+     */
+    private static String getImgUrlFromWikiInfoPage(final String base, final String fn) {
+
+        /** Quit parsing, when a certain condition is met */
+        class SAXReturnException extends SAXException {
+            private String result;
+
+            public SAXReturnException(String result) {
+                this.result = result;
+            }
+
+            public String getResult() {
+                return result;
+            }
+        }
+
+        try {
+            final XMLReader parser = XMLReaderFactory.createXMLReader();
+            parser.setContentHandler(new DefaultHandler() {
+                @Override
+                public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+                    System.out.println();
+                    if (localName.equalsIgnoreCase("img")) {
+                        String val = atts.getValue("src");
+                        if (val.endsWith(fn))
+                            throw new SAXReturnException(val);  // parsing done, quit early
+                    }
+                }
+            });
+
+            parser.setEntityResolver(new EntityResolver() {
+                public InputSource resolveEntity (String publicId, String systemId) {
+                    return new InputSource(new ByteArrayInputStream(new byte[0]));
+                }
+            });
+
+            parser.parse(new InputSource(new MirroredInputStream(
+                    base + fn,
+                    new File(Main.pref.getPreferencesDir(), "images").toString()
+            )));
+        } catch (SAXReturnException r) {
+            return r.getResult();
+        } catch (Exception e) {
+            System.out.println("INFO: parsing " + base + fn + " failed:\n" + e);
+            return null;
+        }
+        System.out.println("INFO: parsing " + base + fn + " failed: Unexpected content.");
         return null;
     }
 
