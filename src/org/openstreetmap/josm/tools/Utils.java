@@ -57,6 +57,10 @@ public class Utils {
         }
         return null;
     }
+
+	public static <T> Collection<T> filter(Collection<? extends T> collection, Predicate<? super T> predicate) {
+		return new FilteredCollection<T>(collection, predicate);
+	}
     
     /**
      * Filter a collection by (sub)class.

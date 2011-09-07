@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +24,6 @@ import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListSelectionModel;
-import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -87,7 +85,6 @@ public class SelectionListDialog extends ToggleDialog  {
     private SetRelationSelection actSetRelationSelection;
     private EditRelationSelection actEditRelationSelection;
     private DownloadSelectedIncompleteMembersAction actDownloadSelectedIncompleteMembers;
-    private InspectAction actInspect;
 
     /**
      * Builds the content panel for this dialog
@@ -146,9 +143,6 @@ public class SelectionListDialog extends ToggleDialog  {
 
         actDownloadSelectedIncompleteMembers = new DownloadSelectedIncompleteMembersAction();
         lstPrimitives.getSelectionModel().addListSelectionListener(actDownloadSelectedIncompleteMembers);
-
-        actInspect = new InspectAction();
-        lstPrimitives.getSelectionModel().addListSelectionListener(actInspect);
 
         lstPrimitives.addMouseListener(new SelectionPopupMenuLauncher());
         lstPrimitives.addMouseListener(new DblClickHandler());
@@ -220,8 +214,6 @@ public class SelectionListDialog extends ToggleDialog  {
             add(actEditRelationSelection);
             addSeparator();
             add(actDownloadSelectedIncompleteMembers);
-            addSeparator();
-            add(actInspect);
         }
     }
 
@@ -843,29 +835,6 @@ public class SelectionListDialog extends ToggleDialog  {
 
         protected void updateEnabledState() {
             setEnabled(!model.getSelectedRelationsWithIncompleteMembers().isEmpty());
-        }
-
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
-        }
-    }
-
-    class InspectAction extends AbstractAction implements ListSelectionListener {
-        public InspectAction() {
-            putValue(SHORT_DESCRIPTION, tr("Get detailed information on the internal state of the objects."));
-            putValue(NAME, tr("Inspect"));
-            updateEnabledState();
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            Collection<OsmPrimitive> sel = model.getSelected();
-            if (sel.isEmpty()) return;
-            InspectPrimitiveDialog inspectDialog = new InspectPrimitiveDialog(sel, Main.map.mapView.getEditLayer());
-            inspectDialog.showDialog();
-        }
-
-        public void updateEnabledState() {
-            setEnabled(!model.getSelected().isEmpty());
         }
 
         public void valueChanged(ListSelectionEvent e) {
