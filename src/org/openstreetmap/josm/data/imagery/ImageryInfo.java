@@ -57,6 +57,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     private String attributionImage;
     private String attributionLinkURL;
     private String termsOfUseURL;
+    private String countryCode = "";
 
     public ImageryInfo() {
     }
@@ -165,11 +166,14 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     @Override
     public int compareTo(ImageryInfo in)
     {
-        int i = name.compareTo(in.name);
-        if(i == 0) {
+        int i = countryCode.compareTo(in.countryCode);
+        if (i == 0) {
+            i = name.compareTo(in.name);
+        }
+        if (i == 0) {
             i = url.compareTo(in.url);
         }
-        if(i == 0) {
+        if (i == 0) {
             i = Double.compare(pixelPerDegree, in.pixelPerDegree);
         }
         return i;
@@ -292,6 +296,14 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
 
     public void setEulaAcceptanceRequired(String eulaAcceptanceRequired) {
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
     }
 
     /**

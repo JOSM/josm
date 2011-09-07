@@ -389,8 +389,9 @@ public class ImageryPreference implements PreferenceSetting {
             };
 
             TableColumnModel mod = listdef.getColumnModel();
-            mod.getColumn(1).setPreferredWidth(800);
-            mod.getColumn(0).setPreferredWidth(200);
+            mod.getColumn(2).setPreferredWidth(800);
+            mod.getColumn(1).setPreferredWidth(400);
+            mod.getColumn(0).setPreferredWidth(50);
             mod = listActive.getColumnModel();
             mod.getColumn(2).setPreferredWidth(50);
             mod.getColumn(1).setPreferredWidth(800);
@@ -640,7 +641,7 @@ public class ImageryPreference implements PreferenceSetting {
          */
         class ImageryDefaultLayerTableModel extends DefaultTableModel {
             public ImageryDefaultLayerTableModel() {
-                setColumnIdentifiers(new String[] { tr("Menu Name (Default)"), tr("Imagery URL (Default)") });
+                setColumnIdentifiers(new String[]{"", tr("Menu Name (Default)"), tr("Imagery URL (Default)")});
             }
 
             public ImageryInfo getRow(int row) {
@@ -657,8 +658,10 @@ public class ImageryPreference implements PreferenceSetting {
                 ImageryInfo info = layerInfo.getDefaultLayers().get(row);
                 switch (column) {
                 case 0:
-                    return info.getName();
+                    return info.getCountryCode();
                 case 1:
+                    return info.getName();
+                case 2:
                     return info.getExtendedUrl();
                 }
                 return null;
