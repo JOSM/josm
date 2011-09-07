@@ -173,16 +173,22 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     public void setHistory(History history) {
         this.history = history;
         if (history.getNumVersions() > 0) {
-            current = history.getEarliest();
-            reference = history.getEarliest();
-            setLatest(null);
+            HistoryOsmPrimitive newLatest = null;
             if (getEditLayer() != null) {
                 OsmPrimitive p = getEditLayer().data.getPrimitiveById(history.getId(), history.getType());
                 if (canShowAsLatest(p)) {
-                    HistoryOsmPrimitive latest = new HistoryPrimitiveBuilder().build(p);
-                    setLatest(latest);
+                    newLatest = new HistoryPrimitiveBuilder().build(p);
                 }
             }
+            if (newLatest == null) {
+                current = history.getLatest();
+                int prevIndex = history.getNumVersions() - 2;
+                reference = prevIndex < 0 ? history.getEarliest() : history.get(prevIndex);
+            } else {
+                reference = history.getLatest();
+                current = newLatest;
+            }
+            setLatest(newLatest);
         }
         initTagTableModels();
         fireModelChange();
