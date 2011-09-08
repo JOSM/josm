@@ -23,16 +23,12 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
-import org.openstreetmap.josm.data.conflict.ConflictCollection;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -49,7 +45,6 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -60,6 +55,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * to better understand the JOSM data representation.
  */
 public class InspectPrimitiveDialog extends ExtendedDialog {
+
     protected List<OsmPrimitive> primitives;
     protected OsmDataLayer layer;
     private JTextArea txtData;
@@ -73,7 +69,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         setRememberWindowGeometry(getClass().getName() + ".geometry",
                 WindowGeometry.centerInWindow(Main.parent, new Dimension(750, 550)));
 
-        setButtonIcons(new String[] {"ok.png"});
+        setButtonIcons(new String[]{"ok.png"});
         final JTabbedPane tabs = new JTabbedPane();
         JPanel pData = buildDataPanel();
         tabs.addTab(tr("data"), pData);
@@ -90,7 +86,6 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                 }
             }
         });
-        txtData.setText(buildDataText());
         setContent(tabs, false);
     }
 
@@ -99,6 +94,9 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         txtData = new JTextArea();
         txtData.setFont(new Font("Monospaced", txtData.getFont().getStyle(), txtData.getFont().getSize()));
         txtData.setEditable(false);
+        txtData.setText(buildDataText());
+        txtData.setSelectionStart(0);
+        txtData.setSelectionEnd(0);
 
         JScrollPane scroll = new JScrollPane(txtData);
 
@@ -107,199 +105,197 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     }
 
     protected String buildDataText() {
-        StringBuilder s = new StringBuilder();
-
+        DataText dt = new DataText();
         Collections.sort(primitives, new OsmPrimitiveComparator());
-
-        String sep = "";
         for (OsmPrimitive o : primitives) {
-            s.append(sep);
-            sep = "\n";
-            addInfo(s, o);
+            dt.addPrimitive(o);
         }
-
-        return s.toString();
+        return dt.toString();
     }
 
-    protected void addInfo(StringBuilder s, OsmPrimitive o) {
-        o.visit(new AddPrimitiveInfoVisitor(s));
-        addConflicts(s, o);
-    }
+    class DataText {
+        static final String INDENT = "  ";
+        static final String NL = "\n";
 
-    protected void addConflicts(StringBuilder s, OsmPrimitive o) {
-        ConflictCollection conflicts = layer.getConflicts();
-        Conflict<?> c = conflicts.getConflictForMy(o);
-        if (c != null) {
-            s.append(tr("In conflict with:\n"));
-            c.getTheir().visit(new AddPrimitiveInfoVisitor(s));
-        }
-    }
+        private StringBuilder s = new StringBuilder();
 
-    protected class AddPrimitiveInfoVisitor extends AbstractVisitor {
-        StringBuilder s;
-
-        public AddPrimitiveInfoVisitor(StringBuilder s) {
-            this.s = s;
+        private DataText add(String title, String... values) {
+            s.append(INDENT).append(title);
+            for (String v : values) {
+                s.append(v);
+            }
+            s.append(NL);
+            return this;
         }
 
-        public void visit(Node n) {
-            s.append(tr("Node id={0}", n.getUniqueId()));
-            if (!checkDataSet(n)) {
-                s.append(tr(" not in data set"));
-                return;
+        private String getNameAndId(String name, long id) {
+            if (name != null) {
+                return name + tr(" ({0})", /* sic to avoid thousand seperators */ Long.toString(id));
+            } else {
+                return Long.toString(id);
             }
-            if (n.isIncomplete()) {
-                s.append(tr(" incomplete\n"));
-                addWayReferrer(s, n);
-                addRelationReferrer(s, n);
-                return;
-            }
-            s.append(tr(" lat={0} lon={1} (projected: x={2}, y={3}); ",
-                    Double.toString(n.getCoor().lat()), Double.toString(n.getCoor().lon()),
-                    Double.toString(n.getEastNorth().east()), Double.toString(n.getEastNorth().north())));
-            addCommon(s, n);
-            addAttributes(s, n);
-            addWayReferrer(s, n);
-            addRelationReferrer(s, n);
         }
 
-        public void visit(Way w) {
-            s.append(tr("Way id={0}", w.getUniqueId()));
-            if (!checkDataSet(w)) {
-                s.append(tr(" not in data set"));
-                return;
-            }
-            if (w.isIncomplete()) {
-                s.append(tr(" incomplete\n"));
-                addRelationReferrer(s, w);
-                return;
-            }
-            s.append(trn(" {0} node; ", " {0} nodes; ", w.getNodes().size(), w.getNodes().size()));
-            addCommon(s, w);
-            addAttributes(s, w);
-            addRelationReferrer(s, w);
+        public void addPrimitive(OsmPrimitive o) {
 
-            s.append(tr("  nodes:\n"));
+            addHeadline(o);
+
+            if (!(o.getDataSet() != null && o.getDataSet().getPrimitiveById(o) != null)) {
+                s.append(NL).append(INDENT).append(tr("not in data set"));
+                return;
+            }
+            if (o.isIncomplete()) {
+                s.append(NL).append(INDENT).append(tr("incomplete"));
+                return;
+            }
+            s.append(NL);
+
+            addState(o);
+            addCommon(o);
+            addAttributes(o);
+            addSpecial(o);
+            addReferrers(s, o);
+            addConflicts(o);
+            s.append(NL);
+        }
+
+        void addHeadline(OsmPrimitive o) {
+            addType(o);
+            addNameAndId(o);
+        }
+
+        void addType(OsmPrimitive o) {
+            if (o instanceof Node) {
+                s.append(tr("Node: "));
+            } else if (o instanceof Way) {
+                s.append(tr("Way: "));
+            } else if (o instanceof Relation) {
+                s.append(tr("Relation: "));
+            }
+        }
+
+        void addNameAndId(OsmPrimitive o) {
+            String name = o.get("name");
+            if (name == null) {
+                s.append(o.getUniqueId());
+            } else {
+                s.append(getNameAndId(name, o.getUniqueId()));
+            }
+        }
+
+        void addState(OsmPrimitive o) {
+            StringBuilder sb = new StringBuilder(INDENT);
+            /* selected state is left out: not interesting as it is always selected */
+            if (o.isDeleted()) {
+                sb.append(tr("deleted")).append(INDENT);
+            }
+            if (!o.isVisible()) {
+                sb.append(tr("deleted-on-server")).append(INDENT);
+            }
+            if (o.isModified()) {
+                sb.append(tr("modified")).append(INDENT);
+            }
+            if (o.isDisabledAndHidden()) {
+                sb.append(tr("filtered/hidden")).append(INDENT);
+            }
+            if (o.isDisabled()) {
+                sb.append(tr("filtered/disabled")).append(INDENT);
+            }
+            if (o.hasDirectionKeys()) {
+                if (o.reversedDirection()) {
+                    sb.append(tr("has direction keys (reversed)")).append(INDENT);
+                } else {
+                    sb.append(tr("has direction keys")).append(INDENT);
+                }
+            }
+            String state = sb.toString().trim();
+            if (!state.isEmpty()) {
+                add(tr("State: "), sb.toString().trim());
+            }
+        }
+
+        void addCommon(OsmPrimitive o) {
+            add(tr("Data Set: "), Integer.toHexString(o.getDataSet().hashCode()));
+            add(tr("Edited at: "), o.isTimestampEmpty() ? tr("<new object>")
+                    : DateUtils.fromDate(o.getTimestamp()));
+            add(tr("Edited by: "), o.getUser() == null ? tr("<new object>")
+                    : getNameAndId(o.getUser().getName(), o.getUser().getId()));
+            add(tr("Version: "), Integer.toString(o.getVersion()));
+            add(tr("In changeset: "), Integer.toString(o.getChangesetId()));
+        }
+
+        void addAttributes(OsmPrimitive o) {
+            if (o.hasKeys()) {
+                add(tr("Tags: "));
+                for (String key : o.keySet()) {
+                    s.append(INDENT).append(INDENT);
+                    s.append(String.format("\"%s\"=\"%s\"\n", key, o.get(key)));
+                }
+            }
+        }
+
+        void addSpecial(OsmPrimitive o) {
+            if (o instanceof Node) {
+                addCorrdinates((Node) o);
+            } else if (o instanceof Way) {
+                addWayNodes((Way) o);
+            } else if (o instanceof Relation) {
+                addRelationMembers((Relation) o);
+            }
+        }
+
+        void addRelationMembers(Relation r) {
+            add(trn("{0} Member: ", "{0} Members: ", r.getMembersCount(), r.getMembersCount()));
+            for (RelationMember m : r.getMembers()) {
+                s.append(INDENT).append(INDENT);
+                addHeadline(m.getMember());
+                s.append(tr(" as \"{0}\"", m.getRole()));
+                s.append(NL);
+            }
+        }
+
+        void addWayNodes(Way w) {
+            add(tr("{0} Nodes: ", w.getNodesCount()));
             for (Node n : w.getNodes()) {
-                s.append(String.format("    %d\n", n.getUniqueId()));
+                s.append(INDENT).append(INDENT);
+                addNameAndId(n);
+                s.append(NL);
             }
         }
 
-        public void visit(Relation r) {
-            s.append(tr("Relation id={0}",r.getUniqueId()));
-            if (!checkDataSet(r)) {
-                s.append(tr(" not in data set"));
-                return;
-            }
-            if (r.isIncomplete()) {
-                s.append(tr(" incomplete\n"));
-                addRelationReferrer(s, r);
-                return;
-            }
-            s.append(trn(" {0} member; ", " {0} members; ", r.getMembersCount(), r.getMembersCount()));
-            addCommon(s, r);
-            addAttributes(s, r);
-            addRelationReferrer(s, r);
+        void addCorrdinates(Node n) {
+            add(tr("Coordinates: "),
+                    Double.toString(n.getCoor().lat()), ", ",
+                    Double.toString(n.getCoor().lon()));
+            add(tr("Coordinates (projected): "),
+                    Double.toString(n.getEastNorth().east()), ", ",
+                    Double.toString(n.getEastNorth().north()));
+        }
 
-            s.append(tr("  members:\n"));
-            for (RelationMember m : r.getMembers() ) {
-                s.append(String.format("    %s%d '%s'\n", m.getMember().getType().getAPIName().substring(0,1), m.getMember().getUniqueId(), m.getRole()));
-            }
-        }
-    }
-
-    protected void addCommon(StringBuilder s, OsmPrimitive o) {
-        s.append(tr("Data set: {0}; User: [{1}]; ChangeSet id: {2}; Timestamp: {3}; Version: {4}",
-                Integer.toHexString(o.getDataSet().hashCode()),
-                userString(o.getUser()),
-                o.getChangesetId(),
-                o.isTimestampEmpty() ? tr("<new object>") : DateUtils.fromDate(o.getTimestamp()),
-                o.getVersion()));
-
-        /* selected state is left out: not interesting as it is always selected */
-        if (o.isDeleted()) {
-            s.append(tr("; deleted"));
-        }
-        if (!o.isVisible()) {
-            s.append(tr("; deleted-on-server"));
-        }
-        if (o.isModified()) {
-            s.append(tr("; modified"));
-        }
-        if (o.isDisabledAndHidden()) {
-            s.append(tr("; filtered/hidden"));
-        }
-        if (o.isDisabled()) {
-            s.append(tr("; filtered/disabled"));
-        }
-        if (o.hasDirectionKeys()) {
-            s.append(tr("; has direction keys"));
-            if (o.reversedDirection()) {
-                s.append(tr(" (reversed)"));
+        void addReferrers(StringBuilder s, OsmPrimitive o) {
+            List<OsmPrimitive> refs = o.getReferrers();
+            if (!refs.isEmpty()) {
+                add(tr("Part of: "));
+                for (OsmPrimitive p : refs) {
+                    s.append(INDENT).append(INDENT);
+                    addHeadline(p);
+                    s.append(NL);
+                }
             }
         }
-        s.append("\n");
-    }
 
-    protected void addAttributes(StringBuilder s, OsmPrimitive o) {
-        if (o.hasKeys()) {
-            s.append(tr("  tags:\n"));
-            for (String key: o.keySet()) {
-                s.append(String.format("    \"%s\"=\"%s\"\n", key, o.get(key)));
+        void addConflicts(OsmPrimitive o) {
+            Conflict<?> c = layer.getConflicts().getConflictForMy(o);
+            if (c != null) {
+                add(tr("In conflict with: "));
+                addNameAndId(c.getTheir());
             }
         }
-    }
 
-    protected void addWayReferrer(StringBuilder s, Node n) {
-        // add way referrer
-        List<OsmPrimitive> refs = n.getReferrers();
-        Collection<Way> wayRefs = new SubclassFilteredCollection<OsmPrimitive, Way>(refs, OsmPrimitive.wayPredicate);
-        if (wayRefs.size() > 0) {
-            s.append(tr("  way referrer:\n"));
-            for (Way w : wayRefs) {
-                s.append("    "+w.getUniqueId()+"\n");
-            }
+        @Override
+        public String toString() {
+            return s.toString();
         }
-    }
-
-    protected void addRelationReferrer(StringBuilder s, OsmPrimitive o) {
-        List<OsmPrimitive> refs = o.getReferrers();
-        Collection<Relation> relRefs = new SubclassFilteredCollection<OsmPrimitive, Relation>(refs, OsmPrimitive.relationPredicate);
-        if (relRefs.size() > 0) {
-            s.append(tr("  relation referrer:\n"));
-            for (Relation r : relRefs) {
-                s.append("    "+r.getUniqueId()+"\n");
-            }
-        }
-    }
-
-    /**
-     * See if primitive is in a data set properly.
-     * This does not hold for primitives that are new and deleted.
-     */
-    protected boolean checkDataSet(OsmPrimitive o) {
-        DataSet ds = o.getDataSet();
-        if (ds == null)
-            return false;
-        return ds.getPrimitiveById(o) != null;
-    }
-
-    protected String userString(User user) {
-        if (user == null)
-            return tr("<new object>");
-
-        List<String> names = user.getNames();
-
-        StringBuilder us = new StringBuilder();
-
-        us.append(tr("id: {0}",user.getId()));
-        if (names.size() == 1) {
-            us.append(tr(" name: {0}",user.getName()));
-        }
-        else if (names.size() > 1) {
-            us.append(trn(" {0} name: {1}", " {0} names: {1}", names.size(), names.size(), user.getName()));
-        }
-        return us.toString();
     }
 
     protected void buildMapPaintPanel(JPanel p) {
@@ -318,26 +314,26 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         double scale = nc.getDist100Pixel();
 
         for (OsmPrimitive osm : sel) {
-            txtMappaint.append(tr("Styles Cache for \"{0}\":",osm.getDisplayName(DefaultNameFormatter.getInstance())));
+            txtMappaint.append(tr("Styles Cache for \"{0}\":", osm.getDisplayName(DefaultNameFormatter.getInstance())));
 
             MultiCascade mc = new MultiCascade();
 
             for (StyleSource s : elemstyles.getStyleSources()) {
                 if (s.active) {
-                    txtMappaint.append(tr("\n\n> applying {0} style \"{1}\"\n",getSort(s), s.getDisplayString()));
+                    txtMappaint.append(tr("\n\n> applying {0} style \"{1}\"\n", getSort(s), s.getDisplayString()));
                     s.apply(mc, osm, scale, null, false);
-                    txtMappaint.append(tr("\nRange:{0}",mc.range));
+                    txtMappaint.append(tr("\nRange:{0}", mc.range));
                     for (Entry<String, Cascade> e : mc.getLayers()) {
-                        txtMappaint.append("\n "+e.getKey()+": \n"+e.getValue());
+                        txtMappaint.append("\n " + e.getKey() + ": \n" + e.getValue());
                     }
                 } else {
-                    txtMappaint.append(tr("\n\n> skipping \"{0}\" (not active)",s.getDisplayString()));
+                    txtMappaint.append(tr("\n\n> skipping \"{0}\" (not active)", s.getDisplayString()));
                 }
             }
             txtMappaint.append(tr("\n\nList of generated Styles:\n"));
             StyleList sl = elemstyles.get(osm, scale, nc);
             for (ElemStyle s : sl) {
-                txtMappaint.append(" * "+s+"\n");
+                txtMappaint.append(" * " + s + "\n");
             }
             txtMappaint.append("\n\n");
         }
@@ -359,11 +355,12 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     }
 
     private String getSort(StyleSource s) {
-        if (s instanceof XmlStyleSource)
+        if (s instanceof XmlStyleSource) {
             return tr("xml");
-        if (s instanceof MapCSSStyleSource)
+        } else if (s instanceof MapCSSStyleSource) {
             return tr("mapcss");
-        return tr("unknown");
+        } else {
+            return tr("unknown");
+        }
     }
-
 }
