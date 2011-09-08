@@ -25,6 +25,7 @@ import org.openstreetmap.josm.actions.ValidateAction;
 import org.openstreetmap.josm.data.projection.Epsg4326;
 import org.openstreetmap.josm.data.projection.Lambert;
 import org.openstreetmap.josm.data.projection.Mercator;
+import org.openstreetmap.josm.data.validation.tests.BuildingInBuilding;
 import org.openstreetmap.josm.data.validation.tests.Coastlines;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays;
 import org.openstreetmap.josm.data.validation.tests.DuplicateNode;
@@ -95,6 +96,7 @@ public class OsmValidator implements LayerChangeListener {
         RelationChecker.class, // ID  1701 ..  1799
         TurnrestrictionTest.class, // ID  1801 ..  1899
         DuplicateRelation.class, // ID 1901 .. 1999
+        BuildingInBuilding.class, // ID 2001 .. 2099
     };
 
     public OsmValidator() {

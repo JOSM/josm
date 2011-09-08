@@ -526,11 +526,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         return true;
     }
 
-    public void unsupported()
-    {
-        System.out.println("unsupported operation");
-        throw new UnsupportedOperationException();
-    }
     public boolean retainAll(Collection<?> objects)
     {
         for (T o : this) {
