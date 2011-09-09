@@ -216,7 +216,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             if(shift) {
                 c += "_add";
             } else if(ctrl) {
-                c += osm.isSelected() ? "_rm" : "_add";
+                c += osm == null || osm.isSelected() ? "_rm" : "_add";
             }
             break;
         case rotate:
