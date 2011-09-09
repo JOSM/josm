@@ -325,6 +325,7 @@ public class MainMenu extends JMenuBar {
 		add(viewMenu, historyinfoweb);
 
         add(presetsMenu, presetSearchAction);
+        presetsMenu.addSeparator();
 
         add(toolsMenu, splitWay);
         add(toolsMenu, combineWay);
