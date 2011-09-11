@@ -69,17 +69,31 @@ public class ElemStyles {
         }
         Pair<StyleList, Range> p = getImpl(osm, scale, nc);
         if (osm instanceof Node && isDefaultNodes()) {
-            boolean hasNonModifier = false;
-            for (ElemStyle s : p.a) {
-                if (!s.isModifier) {
-                    hasNonModifier = true;
-                    break;
+            if (p.a.isEmpty()) {
+                if (TextElement.AUTO_LABEL_COMPOSITION_STRATEGY.compose(osm) != null) {
+                    p.a = NodeElemStyle.DEFAULT_NODE_STYLELIST_TEXT;
+                } else {
+                    p.a = NodeElemStyle.DEFAULT_NODE_STYLELIST;
                 }
-            }
-            if (!hasNonModifier) {
-                p.a = new StyleList(p.a, NodeElemStyle.SIMPLE_NODE_ELEMSTYLE);
-                if (BoxTextElemStyle.SIMPLE_NODE_TEXT_ELEMSTYLE.text.labelCompositionStrategy.compose(osm) != null) {
-                    p.a = new StyleList(p.a, BoxTextElemStyle.SIMPLE_NODE_TEXT_ELEMSTYLE);
+            } else {
+                boolean hasNonModifier = false;
+                boolean hasText = false;
+                for (ElemStyle s : p.a) {
+                    if (s instanceof BoxTextElemStyle) {
+                        hasText = true;
+                    } else {
+                        if (!s.isModifier) {
+                            hasNonModifier = true;
+                        }
+                    }
+                }
+                if (!hasNonModifier) {
+                    p.a = new StyleList(p.a, NodeElemStyle.SIMPLE_NODE_ELEMSTYLE);
+                    if (!hasText) {
+                        if (TextElement.AUTO_LABEL_COMPOSITION_STRATEGY.compose(osm) != null) {
+                            p.a = new StyleList(p.a, BoxTextElemStyle.SIMPLE_NODE_TEXT_ELEMSTYLE);
+                        }
+                    }
                 }
             }
         } else if (osm instanceof Way && isDefaultLines()) {
@@ -92,8 +106,7 @@ public class ElemStyles {
             }
             if (!hasProperLineStyle) {
                 AreaElemStyle area = Utils.find(p.a, AreaElemStyle.class);
-                LineElemStyle line = null;
-                line = (area == null ? LineElemStyle.UNTAGGED_WAY : LineElemStyle.createSimpleLineStyle(area.color, true));
+                LineElemStyle line = area == null ? LineElemStyle.UNTAGGED_WAY : LineElemStyle.createSimpleLineStyle(area.color, true);
                 p.a = new StyleList(p.a, line);
             }
         }
@@ -307,6 +320,8 @@ public class ElemStyles {
                 if (nodeStyle != null) {
                     sl.add(nodeStyle);
                     addIfNotNull(sl, BoxTextElemStyle.create(env, nodeStyle.getBox()));
+                } else {
+                    addIfNotNull(sl, BoxTextElemStyle.create(env, NodeElemStyle.SIMPLE_NODE_ELEMSTYLE.getBox()));
                 }
             } else if (osm instanceof Relation) {
                 if (((Relation)osm).isMultipolygon()) {
