@@ -80,7 +80,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * Note that it is not necessary to call beginUpdate/endUpdate for every dataset modification - dataset will get locked
  * automatically.
- * 
+ *
  * Note that locks cannot be upgraded - if one threads use read lock and and then write lock, dead lock will occur - see #5814 for
  * sample ticket
  *
@@ -204,6 +204,19 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
      */
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    /*
+    * Holding bin for changeset tag information, to be applied when or if this is ever uploaded.
+    */
+    private Map<String, String> changeSetTags = new HashMap<String, String>();
+
+    public Map<String, String> getChangeSetTags() {
+        return changeSetTags;
+    }
+
+    public void addChangeSetTag(String k, String v) {
+        this.changeSetTags.put(k,v);
     }
 
     /**
@@ -437,7 +450,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
      * returns an unmodifiable collection of *WaySegments* whose virtual
      * nodes should be highlighted. WaySegments are used to avoid having
      * to create a VirtualNode class that wouldn't have much purpose otherwise.
-     * 
+     *
      * @return unmodifiable collection of WaySegments
      */
     public Collection<WaySegment> getHighlightedVirtualNodes() {
@@ -447,7 +460,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
     /**
      * returns an unmodifiable collection of WaySegments that should be
      * highlighted.
-     * 
+     *
      * @return unmodifiable collection of WaySegments
      */
     public Collection<WaySegment> getHighlightedWaySegments() {
@@ -1055,7 +1068,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
 
     /**
      * Invalidates the internal cache of projected east/north coordinates.
-     * 
+     *
      * This method can be invoked after the globally configured projection method
      * changed. In contrast to {@link DataSet#reproject()} it only invalidates the
      * cache and doesn't reproject the coordinates.
@@ -1142,13 +1155,13 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
 
     /**
      * <p>Replies the list of data source bounds.</p>
-     * 
+     *
      * <p>Dataset maintains a list of data sources which have been merged into the
      * data set. Each of these sources can optionally declare a bounding box of the
      * data it supplied to the dataset.</p>
-     * 
+     *
      * <p>This method replies the list of defined (non {@code null}) bounding boxes.</p>
-     * 
+     *
      * @return the list of data source bounds. An empty list, if no non-null data source
      * bounds are defined.
      */
