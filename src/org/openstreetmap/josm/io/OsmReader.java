@@ -23,6 +23,7 @@ import javax.xml.stream.Location;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
@@ -35,6 +36,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
@@ -84,6 +86,8 @@ public class OsmReader {
      * Data structure for relation objects
      */
     private Map<Long, Collection<RelationMemberData>> relations = new HashMap<Long, Collection<RelationMemberData>>();
+
+    private Changeset uploadChangeset;
 
     /**
      * constructor (for private use only)
@@ -140,8 +144,12 @@ public class OsmReader {
         if (!(v.equals("0.5") || v.equals("0.6"))) {
             throwException(tr("Unsupported version: {0}", v));
         }
-        String generator = parser.getAttributeValue(null, "generator");
         ds.setVersion(v);
+        String generator = parser.getAttributeValue(null, "generator");
+        Long uploadChangesetId = null;
+        if (parser.getAttributeValue(null, "upload-changeset") != null) {
+            uploadChangesetId = getLong("upload-changeset");
+        }
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
@@ -153,6 +161,8 @@ public class OsmReader {
                     parseWay();
                 } else if (parser.getLocalName().equals("relation")) {
                     parseRelation();
+                } else if (parser.getLocalName().equals("changeset")) {
+                    parseChangeset(uploadChangesetId);
                 } else {
                     parseUnkown();
                 }
@@ -319,36 +329,36 @@ public class OsmReader {
         return emd;
     }
 
-    private void parseTag(OsmPrimitive osm) throws XMLStreamException {
+    private void parseChangeset(Long uploadChangesetId) throws XMLStreamException {
+        long id = getLong("id");
+
+        if (id == uploadChangesetId) {
+            uploadChangeset = new Changeset((int) getLong("id"));
+            while (true) {
+                int event = parser.next();
+                if (event == XMLStreamConstants.START_ELEMENT) {
+                    if (parser.getLocalName().equals("tag")) {
+                        parseTag(uploadChangeset);
+                    } else {
+                        parseUnkown();
+                    }
+                } else if (event == XMLStreamConstants.END_ELEMENT) {
+                    return;
+                }
+            }
+        } else {
+            jumpToEnd(false);
+        }
+    }
+
+    private void parseTag(Tagged t) throws XMLStreamException {
         String key = parser.getAttributeValue(null, "k");
         String value = parser.getAttributeValue(null, "v");
         if (key == null || value == null) {
             throwException(tr("Missing key or value attribute in tag."));
         }
-        osm.put(key.intern(), value.intern());
+        t.put(key.intern(), value.intern());
         jumpToEnd();
-    }
-
-    /**
-     * When cursor is at the start of an element, moves it to the end tag of that element.
-     * Nested content is skipped.
-     *
-     * This is basically the same code as parseUnkown(), except for the warnings, which
-     * are displayed for inner elements and not at top level.
-     */
-    private void jumpToEnd() throws XMLStreamException {
-        while (true) {
-            int event = parser.next();
-            if (event == XMLStreamConstants.START_ELEMENT) {
-                parseUnkown();
-            } else if (event == XMLStreamConstants.END_ELEMENT) {
-                return;
-            }
-        }
-    }
-
-    private void parseUnkown() throws XMLStreamException {
-        parseUnkown(true);
     }
 
     private void parseUnkown(boolean printWarning) throws XMLStreamException {
@@ -363,6 +373,32 @@ public class OsmReader {
                 return;
             }
         }
+    }
+
+    private void parseUnkown() throws XMLStreamException {
+        parseUnkown(true);
+    }
+
+    /**
+     * When cursor is at the start of an element, moves it to the end tag of that element.
+     * Nested content is skipped.
+     *
+     * This is basically the same code as parseUnkown(), except for the warnings, which
+     * are displayed for inner elements and not at top level.
+     */
+    private void jumpToEnd(boolean printWarning) throws XMLStreamException {
+        while (true) {
+            int event = parser.next();
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                parseUnkown(printWarning);
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
+                return;
+            }
+        }
+    }
+
+    private void jumpToEnd() throws XMLStreamException {
+        jumpToEnd(true);
     }
 
     private User createUser(String uid, String name) throws XMLStreamException {
@@ -664,6 +700,14 @@ public class OsmReader {
         }
     }
 
+    private void processChangesetAfterParsing() {
+        if (uploadChangeset != null) {
+            for (Map.Entry<String, String> e : uploadChangeset.getKeys().entrySet()) {
+                ds.addChangeSetTag(e.getKey(), e.getValue());
+            }
+        }
+    }
+
     /**
      * Parse the given input source and return the dataset.
      *
@@ -696,6 +740,7 @@ public class OsmReader {
                 reader.processNodesAfterParsing();
                 reader.processWaysAfterParsing();
                 reader.processRelationsAfterParsing();
+                reader.processChangesetAfterParsing();
             } finally {
                 reader.ds.endUpdate();
             }

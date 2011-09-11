@@ -8,7 +8,7 @@ import java.util.Observable;
  * in the {@see UploadDialog}.
  *
  */
-public class ChangesetCommentModel extends Observable{
+public class ChangesetCommentModel extends Observable {
     private String comment = "";
 
     /**
@@ -17,7 +17,7 @@ public class ChangesetCommentModel extends Observable{
      * 
      * @param comment the new upload comment. Empty string assumed if null.
      */
-    public void setComment(String comment){
+    public void setComment(String comment) {
         String oldValue = this.comment;
         this.comment = comment == null ? "" : comment;
         if (!oldValue.equals(this.comment)) {
