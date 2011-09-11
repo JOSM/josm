@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
+import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -90,6 +91,9 @@ public class NodeElemStyle extends ElemStyle {
         SIMPLE_NODE_ELEMSTYLE = create(new Environment(null, mc, "default", null), true);
         if (SIMPLE_NODE_ELEMSTYLE == null) throw new AssertionError();
     }
+
+    public static final StyleList DEFAULT_NODE_STYLELIST = new StyleList(NodeElemStyle.SIMPLE_NODE_ELEMSTYLE);
+    public static final StyleList DEFAULT_NODE_STYLELIST_TEXT = new StyleList(NodeElemStyle.SIMPLE_NODE_ELEMSTYLE, BoxTextElemStyle.SIMPLE_NODE_TEXT_ELEMSTYLE);
 
     protected NodeElemStyle(Cascade c, ImageIcon icon, Integer iconAlpha, Symbol symbol) {
         super(c, 1000f);
