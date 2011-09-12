@@ -17,8 +17,10 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -47,7 +49,11 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
+import org.openstreetmap.gui.jmapviewer.MapRectangleImpl;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
@@ -363,6 +369,7 @@ public class ImageryPreference implements PreferenceSetting {
         private final ImageryLayerInfo layerInfo;
         private JTable listActive;
         final JTable listdef;
+        final JMapViewer map;
         final PreferenceTabbedPane gui;
 
         public ImageryProvidersPanel(final PreferenceTabbedPane gui, ImageryLayerInfo layerInfo) {
@@ -406,6 +413,14 @@ public class ImageryPreference implements PreferenceSetting {
             scrolldef.setPreferredSize(new Dimension(200, 200));
             add(scrolldef, GBC.std().insets(0, 5, 0, 0).fill(GridBagConstraints.BOTH).weight(1.0, 0.6).insets(5, 0, 0, 0));
 
+            // Add default item map
+            map = new JMapViewer();
+            map.setZoomContolsVisible(false);
+            map.setPreferredSize(new Dimension(200, 200));
+            add(map, GBC.std().insets(5, 5, 0, 0).fill(GridBagConstraints.BOTH).weight(0.333, 0.6).insets(5, 0, 0, 0));
+
+            listdef.getSelectionModel().addListSelectionListener(new DefListSelectionListener());
+
             JToolBar tb = new JToolBar(JToolBar.VERTICAL);
             tb.setFloatable(false);
             tb.setBorderPainted(false);
@@ -428,7 +443,7 @@ public class ImageryPreference implements PreferenceSetting {
 
             add(new JLabel(tr("Selected entries:")), GBC.eol().insets(5, 0, 0, 0));
             JScrollPane scroll = new JScrollPane(listActive);
-            add(scroll, GBC.std().fill(GridBagConstraints.BOTH).weight(1.0, 0.4).insets(5, 0, 0, 5));
+            add(scroll, GBC.std().fill(GridBagConstraints.BOTH).span(GridBagConstraints.RELATIVE).weight(1.0, 0.4).insets(5, 0, 0, 5));
             scroll.setPreferredSize(new Dimension(200, 200));
 
             JToolBar sideButtonTB = new JToolBar(JToolBar.VERTICAL);
@@ -440,6 +455,49 @@ public class ImageryPreference implements PreferenceSetting {
             sideButtonTB.add(remove);
             add(sideButtonTB, GBC.eol().anchor(GBC.NORTH).insets(0, 0, 5, 5));
 
+        }
+
+        // Listener of default providers list selection
+        private final class DefListSelectionListener implements ListSelectionListener {
+            // The current drawn rectangles
+            private final Map<Integer, MapRectangle> mapRectangles;
+
+            private DefListSelectionListener() {
+                this.mapRectangles = new HashMap<Integer, MapRectangle>();
+            }
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                // First index is set to -1 when the list is refreshed, so discard all map rectangles
+                if (e.getFirstIndex() == -1) {
+                    map.removeAllMapRectangles();
+                    mapRectangles.clear();
+                    // Only process complete (final) selection events
+                } else if (!e.getValueIsAdjusting()) {
+                    for (int i = e.getFirstIndex(); i<=e.getLastIndex(); i++) {
+                        Bounds bounds = modeldef.getRow(i).getBounds();
+                        if (bounds != null) {
+                            if (listdef.getSelectionModel().isSelectedIndex(i)) {
+                                if (!mapRectangles.containsKey(i)) {
+                                    // Add new map rectangle
+                                    MapRectangle rectangle = new MapRectangleImpl(bounds);
+                                    mapRectangles.put(i, rectangle);
+                                    map.addMapRectangle(rectangle);
+                                }
+                            } else if (mapRectangles.containsKey(i)) {
+                                // Remove previousliy drawn map rectangle
+                                map.removeMapRectangle(mapRectangles.get(i));
+                                mapRectangles.remove(i);
+                            }
+                        }
+                    }
+                    // If needed, adjust map to show all map rectangles
+                    if (!mapRectangles.isEmpty()) {
+                        map.setDisplayToFitMapRectangle();
+                        map.zoomOut();
+                    }
+                }
+            }
         }
 
         class NewEntryAction extends AbstractAction {
