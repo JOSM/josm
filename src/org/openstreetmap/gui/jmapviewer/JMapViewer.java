@@ -670,6 +670,11 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         repaint();
     }
 
+    public void removeAllMapMarkers() {
+        mapMarkerList.clear();
+        repaint();
+    }
+
     public void addMapRectangle(MapRectangle rectangle) {
         mapRectangleList.add(rectangle);
         repaint();
@@ -677,6 +682,11 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     public void removeMapRectangle(MapRectangle rectangle) {
         mapRectangleList.remove(rectangle);
+        repaint();
+    }
+
+    public void removeAllMapRectangles() {
+        mapRectangleList.clear();
         repaint();
     }
 
