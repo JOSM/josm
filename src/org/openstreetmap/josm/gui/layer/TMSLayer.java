@@ -496,7 +496,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                                 } catch (URISyntaxException e1) {
                                     e1.printStackTrace();
                                 }
-                            } else if(attrToUBounds.contains(e.getPoint())) {
+                            } else if(attrToUBounds != null && attrToUBounds.contains(e.getPoint())) {
                                 try {
                                     java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
                                     desktop.browse(new URI(tileSource.getTermsOfUseURL()));
