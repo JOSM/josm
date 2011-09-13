@@ -1,6 +1,7 @@
 //License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
+import java.awt.Menu;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
@@ -24,7 +25,7 @@ import org.openstreetmap.josm.Main;
  *       shortcut objects from, manages shortcuts and shortcut collisions, and
  *       finally manages loading and saving shortcuts to/from the preferences.
  *
- * Action authors: You only need the registerShortcut() factory. Ignore everything
+ * Action authors: You only need the {@see #registerShortcut} factory. Ignore everything
  *                 else.
  *
  * All: Use only public methods that are also marked to be used. The others are
@@ -255,13 +256,34 @@ public class Shortcut {
     }
 
     // use these constants to request shortcuts
-    public static final int GROUP_NONE = 0;          // no shortcut
-    public static final int GROUP_HOTKEY = 1;        // a button action, will use another modifier than MENU on system with a meta key
-    public static final int GROUP_MENU = 2;          // a menu action, e.g. "ctrl-e"/"cmd-e" (export)
-    public static final int GROUP_EDIT = 3;          // direct edit key, e.g. "a" (add)
-    public static final int GROUP_LAYER = 4;         // toggle one of the right-hand-side windows, e.g. "alt-l" (layers)
-    public static final int GROUP_DIRECT = 5;        // for non-letter keys, preferable without modifier, e.g. F5
-    public static final int GROUP_MNEMONIC = 6;      // for use with Menu.setMnemonic() only!
+    /**
+     * no shortcut.
+     */
+    public static final int GROUP_NONE = 0;
+    /**
+     * a button action, will use another modifier than MENU on system with a meta key.
+     */
+    public static final int GROUP_HOTKEY = 1;
+    /**
+     * a menu action, e.g. "ctrl-e" (export).
+     */
+    public static final int GROUP_MENU = 2;
+    /**
+     * direct edit key, e.g. "a" (add).
+     */
+    public static final int GROUP_EDIT = 3;
+    /**
+     * toggle one of the right-hand-side windows, e.g. "alt-l" (layers).
+     */
+    public static final int GROUP_LAYER = 4;
+    /**
+     * for non-letter keys, preferable without modifier, e.g. F5.
+     */
+    public static final int GROUP_DIRECT = 5;
+    /**
+     * for use with {@see #setMnemonic} only!
+     */
+    public static final int GROUP_MNEMONIC = 6;
     public static final int GROUP__MAX = 7;
     public static final int GROUP_RESERVED = 1000;
     public static final int GROUPS_DEFAULT = 0;
@@ -374,20 +396,38 @@ public class Shortcut {
      *
      * Here you get your shortcuts from. The parameters are:
      *
-     * shortText - an ID. re-use a "system:*" ID if possible, else use something unique.
-     *             "menu:*" is reserved for menu mnemonics, "core:*" is reserved for
-     *             actions that are part of JOSM's core. Use something like
-     *             <pluginname>+":"+<actionname>
-     * longText - this will be displayed in the shortcut preferences dialog. Better
-     *            use soomething the user will recognize...
-     * requestedKey - the key you'd prefer. Use a KeyEvent.VK_* constant here.
-     * requestedGroup - the group this shortcut fits best. This will determine the
-     *                  modifiers your shortcut will get assigned. Use the GROUP_*
-     *                  constants defined above.
+     * @param shortText an ID. re-use a {@code "system:*"} ID if possible, else use something unique.
+     * {@code "menu:*"} is reserved for menu mnemonics, {@code "core:*"} is reserved for
+     * actions that are part of JOSM's core. Use something like
+     * {@code <pluginname>+":"+<actionname>}.
+     * @param longText this will be displayed in the shortcut preferences dialog. Better
+     * use something the user will recognize...
+     * @param requestedKey the key you'd prefer. Use a {@link KeyEvent KeyEvent.VK_*} constant here.
+     * @param requestedGroup the group this shortcut fits best. This will determine the
+     * modifiers your shortcut will get assigned. Use the {@code GROUP_*}
+     * constants defined above.
+     * @param modifier to register a {@code ctrl+shift} command, use {@see #SHIFT_DEFAULT}.
      */
     public static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup, int modifier) {
         return registerShortcut(shortText, longText, requestedKey, requestedGroup, modifier, null);
     }
+
+    /**
+     * Register a shortcut.
+     *
+     * Here you get your shortcuts from. The parameters are:
+     *
+     * @param shortText an ID. re-use a {@code "system:*"} ID if possible, else use something unique.
+     * {@code "menu:*"} is reserved for menu mnemonics, {@code "core:*"} is reserved for
+     * actions that are part of JOSM's core. Use something like
+     * {@code <pluginname>+":"+<actionname>}.
+     * @param longText this will be displayed in the shortcut preferences dialog. Better
+     * use something the user will recognize...
+     * @param requestedKey the key you'd prefer. Use a {@link KeyEvent KeyEvent.VK_*} constant here.
+     * @param requestedGroup the group this shortcut fits best. This will determine the
+     * modifiers your shortcut will get assigned. Use the {@code GROUP_*}
+     * constants defined above.
+     */
     public static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup) {
         return registerShortcut(shortText, longText, requestedKey, requestedGroup, null, null);
     }
