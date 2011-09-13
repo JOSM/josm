@@ -26,7 +26,7 @@ import org.apache.commons.codec.StringEncoder;
  * <CITE>Margaret Odell</CITE> and <CITE>Robert Russell</CITE>.
  * 
  * @author Apache Software Foundation
- * @version $Id: RefinedSoundex.java 1157192 2011-08-12 17:27:38Z ggregory $
+ * @version $Id: RefinedSoundex.java 1170351 2011-09-13 21:09:09Z ggregory $
  */
 public class RefinedSoundex implements StringEncoder {
 
@@ -163,7 +163,7 @@ public class RefinedSoundex implements StringEncoder {
     }
 
     /**
-     * Retreives the Refined Soundex code for a given String object.
+     * Retrieves the Refined Soundex code for a given String object.
      * 
      * @param str
      *                  String to encode using the Refined Soundex algorithm

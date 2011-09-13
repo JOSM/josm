@@ -45,12 +45,12 @@ package org.apache.commons.codec;
  * </ul>
  * 
  * This perhaps would best belong in the [lang] project. Even if a similar interface is defined in [lang], it is not
- * forseen that [codec] would be made to depend on [lang].
+ * foreseen that [codec] would be made to depend on [lang].
  * 
  * @see <a href="http://download.oracle.com/javase/1.5.0/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
  * @author Apache Software Foundation
  * @since 1.4
- * @version $Id: CharEncoding.java 1157192 2011-08-12 17:27:38Z ggregory $
+ * @version $Id: CharEncoding.java 1170351 2011-09-13 21:09:09Z ggregory $
  */
 public class CharEncoding {
     /**

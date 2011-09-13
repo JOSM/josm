@@ -28,7 +28,7 @@ import org.apache.commons.codec.CharEncoding;
  * @see CharEncoding
  * @see <a href="http://download.oracle.com/javase/1.5.0/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
  * @author <a href="mailto:ggregory@seagullsw.com">Gary Gregory</a>
- * @version $Id: StringUtils.java 1157192 2011-08-12 17:27:38Z ggregory $
+ * @version $Id: StringUtils.java 1170351 2011-09-13 21:09:09Z ggregory $
  * @since 1.4
  */
 public class StringUtils {
@@ -175,7 +175,7 @@ public class StringUtils {
      * @param charsetName
      *            The name of a required {@link java.nio.charset.Charset}
      * @return A new <code>String</code> decoded from the specified array of bytes using the given charset,
-     *         or <code>null</code> if the input byte arrray was <code>null</code>.
+     *         or <code>null</code> if the input byte array was <code>null</code>.
      * @throws IllegalStateException
      *             Thrown when a {@link UnsupportedEncodingException} is caught, which should never happen for a
      *             required charset name.
