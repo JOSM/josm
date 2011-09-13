@@ -296,7 +296,7 @@ public class ImageryReader {
                     break;
                 case ENTRY_ATTRIBUTE:
                     if (qName.equals("name")) {
-                        entry.setName(accumulator.toString());
+                        entry.setName(tr(accumulator.toString()));
                     } else if (qName.equals("type")) {
                         boolean found = false;
                         for (ImageryType type : ImageryType.values()) {
