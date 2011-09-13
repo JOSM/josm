@@ -3,17 +3,21 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Collections;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
 public class CopyCoordinatesAction extends JosmAction {
 
     public CopyCoordinatesAction() {
         super(tr("Copy Coordinates"), null,
-                tr("Copy coordinates of selected nodes to clipboard."), null, false);
+                tr("Copy coordinates of selected nodes to clipboard."),
+                Shortcut.registerShortcut("copy:coordinates", tr("Edit: {0}", tr("Copy Coordinates")), KeyEvent.VK_C, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT),
+                false);
         putValue("toolbar", "copy/coordinates");
     }
 
