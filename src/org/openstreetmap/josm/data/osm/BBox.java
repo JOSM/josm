@@ -2,10 +2,12 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.tools.Utils;
 
 public class BBox {
 
@@ -191,5 +193,13 @@ public class BBox {
     public String toString() {
         return "[ x: " + xmin + " -> " + xmax +
         ", y: " + ymin + " -> " + ymax + " ]";
+    }
+
+    public String toStringCSV(String separator) {
+        return Utils.join(separator, Arrays.asList(
+                LatLon.cDdFormatter.format(xmin),
+                LatLon.cDdFormatter.format(ymin),
+                LatLon.cDdFormatter.format(xmax),
+                LatLon.cDdFormatter.format(ymax)));
     }
 }
