@@ -31,6 +31,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -185,10 +186,10 @@ public class BoundingBoxSelection implements DownloadSelection {
 
     private void updateBboxFields(Bounds area) {
         if (area == null) return;
-        latlon[0].setText(LatLon.cDdFormatter.format(area.getMin().lat()));
-        latlon[1].setText(LatLon.cDdFormatter.format(area.getMin().lon()));
-        latlon[2].setText(LatLon.cDdFormatter.format(area.getMax().lat()));
-        latlon[3].setText(LatLon.cDdFormatter.format(area.getMax().lon()));
+        latlon[0].setText(area.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES));
+        latlon[1].setText(area.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES));
+        latlon[2].setText(area.getMax().latToString(CoordinateFormat.DECIMAL_DEGREES));
+        latlon[3].setText(area.getMax().lonToString(CoordinateFormat.DECIMAL_DEGREES));
         for (JTextField tf: latlon) {
             resetErrorMessage(tf);
         }

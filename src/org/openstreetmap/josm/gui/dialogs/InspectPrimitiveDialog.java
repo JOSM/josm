@@ -236,10 +236,12 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
         void addSpecial(OsmPrimitive o) {
             if (o instanceof Node) {
-                addCorrdinates((Node) o);
+                addCoordinates((Node) o);
             } else if (o instanceof Way) {
+                addBbox(o);
                 addWayNodes((Way) o);
             } else if (o instanceof Relation) {
+                addBbox(o);
                 addRelationMembers((Relation) o);
             }
         }
@@ -263,7 +265,13 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             }
         }
 
-        void addCorrdinates(Node n) {
+        void addBbox(OsmPrimitive o) {
+            if (o.getBBox() != null) {
+                add(tr("Bounding box: "), o.getBBox().toStringCSV(", "));
+            }
+        }
+
+        void addCoordinates(Node n) {
             add(tr("Coordinates: "),
                     Double.toString(n.getCoor().lat()), ", ",
                     Double.toString(n.getCoor().lon()));
