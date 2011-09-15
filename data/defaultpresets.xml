@@ -2738,14 +2738,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Fire Hydrant" />
             <key key="emergency" value="fire_hydrant" />
             <combo key="fire_hydrant:type" text="Type" values="underground,pillar,wall,pond" values_context="pipeline" default="pillar" delete_if_empty="true" />
-            <combo key="fire_hydrant:diameter" text="Diameter" values="50,80,100,150,200,250,300,400" default="" delete_if_empty="true" />
+            <combo key="fire_hydrant:diameter" text="Diameter (in mm)" values="50,80,100,150,200,250,300,400" default="" delete_if_empty="true" />
             <space />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="ref" text="Reference" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <space />
             <combo key="fire_hydrant:position" text="Position" values_context="hydrant position" values="lane,parking_lot,sidewalk,green" default="" delete_if_empty="true" />
-            <combo key="fire_hydrant:pressure" text="Pressure" values="xx l/min,suction" default="" delete_if_empty="true" />
+            <combo key="fire_hydrant:pressure" text="Pressure (in bar)" values="5,6,8,suction" default="" delete_if_empty="true" />
             <text key="fire_hydrant:count" text="Count" values="" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Facilities -->
