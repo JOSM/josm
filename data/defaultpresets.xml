@@ -4300,7 +4300,8 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <role key="outer" text="outer segment" requisite="required" type="way" />
                 <role key="inner" text="inner segment" requisite="optional" type="way" />
                 <role key="subarea" text="Sub area" requisite="optional" type="relation" />
-                <role key="admin_centre" text="Administration centre" requisite="optional" type="node" />
+                <role key="admin_centre" text="Administration centre" requisite="optional" type="node" count="1" />
+                <role key="label" text="Label point" requisite="optional" type="node" count="1" />
             </roles>
         </item>
         <item name="Turn restriction" icon="styles/standard/vehicle/restriction/turn_restrictions/no_u_turn.png" type="relation">
