@@ -18,9 +18,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.Utils;
@@ -40,10 +41,12 @@ public class ImageryReader {
         ENTRY_ATTRIBUTE,    // note we are inside an entry attribute to collect the character data
         SUPPORTED_PROJECTIONS,
         PR,
+        BOUNDS,
+        SHAPE,
         UNKNOWN,            // element is not recognized in the current context
     }
 
-    public ImageryReader(String source) throws IOException {
+    public ImageryReader(String source) {
         this.source = source;
     }
 
@@ -142,7 +145,7 @@ public class ImageryReader {
                         if (val.length >= 5 && !val[4].isEmpty()) {
                             // 5th parameter optional for bounds
                             try {
-                                info.setBounds(new Bounds(val[4], ","));
+                                info.setBounds(new ImageryBounds(val[4], ","));
                             } catch (IllegalArgumentException e) {
                                 Main.warn(e.toString());
                             }
@@ -189,7 +192,8 @@ public class ImageryReader {
         boolean skipEntry;
 
         ImageryInfo entry;
-        Bounds bounds;
+        ImageryBounds bounds;
+        Shape shape;
         List<String> supported_srs;
 
         @Override public void startDocument() {
@@ -240,7 +244,7 @@ public class ImageryReader {
                         newState = State.ENTRY_ATTRIBUTE;
                     } else if (qName.equals("bounds")) {
                         try {
-                            bounds = new Bounds(
+                            bounds = new ImageryBounds(
                                     atts.getValue("min-lat") + "," +
                                     atts.getValue("min-lon") + "," +
                                     atts.getValue("max-lat") + "," +
@@ -248,10 +252,25 @@ public class ImageryReader {
                         } catch (IllegalArgumentException e) {
                             break;
                         }
-                        newState = State.ENTRY_ATTRIBUTE;
+                        newState = State.BOUNDS;
                     } else if (qName.equals("supported-projections")) {
                         supported_srs = new ArrayList<String>();
                         newState = State.SUPPORTED_PROJECTIONS;
+                    }
+                    break;
+                case BOUNDS:
+                    if (qName.equals("shape")) {
+                        shape = new Shape();
+                        newState = State.SHAPE;
+                    }
+                    break;
+                case SHAPE:
+                    if (qName.equals("point")) {
+                        try {
+                            shape.addPoint(atts.getValue("lat"), atts.getValue("lon"));
+                        } catch (IllegalArgumentException e) {
+                            break;
+                        }
                     }
                     break;
                 case SUPPORTED_PROJECTIONS:
@@ -338,9 +357,6 @@ public class ImageryReader {
                                 entry.setMaxZoom(val);
                             }
                         }
-                    } else if (qName.equals("bounds")) {
-                        entry.setBounds(bounds);
-                        bounds = null;
                     } else if (qName.equals("attribution-text")) {
                         entry.setAttributionText(accumulator.toString());
                     } else if (qName.equals("attribution-url")) {
@@ -357,6 +373,14 @@ public class ImageryReader {
                         entry.setCountryCode(accumulator.toString());
                     } else {
                     }
+                    break;
+                case BOUNDS:
+                    entry.setBounds(bounds);
+                    bounds = null;
+                    break;
+                case SHAPE:
+                    bounds.addShape(shape);
+                    shape = null;
                     break;
                 case PR:
                     supported_srs.add(accumulator.toString());

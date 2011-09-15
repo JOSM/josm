@@ -40,6 +40,26 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
             return urlString;
         }
     }
+    
+    public static class ImageryBounds extends Bounds {
+        public ImageryBounds(String asString, String separator) {
+            super(asString, separator);
+        }
+
+        private List<Shape> shapes = new ArrayList<Shape>();
+        
+        public void addShape(Shape shape) {
+            this.shapes.add(shape);
+        }
+
+        public void setShapes(List<Shape> shapes) {
+            this.shapes = shapes;
+        }
+
+        public List<Shape> getShapes() {
+            return shapes;
+        }
+    }
 
     private String name;
     private String url = null;
@@ -51,7 +71,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     private int maxZoom = 0;
     private int defaultMaxZoom = 0;
     private int defaultMinZoom = 0;
-    private Bounds bounds = null;
+    private ImageryBounds bounds = null;
     private List<String> serverProjections;
     private String attributionText;
     private String attributionImage;
@@ -106,6 +126,17 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         res.add(attributionLinkURL);
         res.add(attributionImage);
         res.add(termsOfUseURL);
+        // Shapes
+        String shapesString = "";
+        if (bounds != null) {
+            for (Shape s : bounds.getShapes()) {
+                if (!shapesString.isEmpty()) {
+                    shapesString += ";";
+                }
+                shapesString += s.encodeAsString(",");
+            }
+        }
+        res.add(shapesString.isEmpty() ? null : shapesString);
         return res;
     }
 
@@ -127,7 +158,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         }
         if(array.size() >= 5 && !array.get(4).isEmpty()) {
             try {
-                bounds = new Bounds(array.get(4), ",");
+                bounds = new ImageryBounds(array.get(4), ",");
             } catch (IllegalArgumentException e) {
                 Main.warn(e.toString());
             }
@@ -143,6 +174,15 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         }
         if(array.size() >= 9 && !array.get(8).isEmpty()) {
             setTermsOfUseURL(array.get(8));
+        }
+        if(bounds != null && array.size() >= 10 && !array.get(9).isEmpty()) {
+            try {
+                for (String s : array.get(9).split(";")) {
+                    bounds.addShape(new Shape(s, ","));
+                }
+            } catch (IllegalArgumentException e) {
+                Main.warn(e.toString());
+            }
         }
     }
 
@@ -200,16 +240,16 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         this.maxZoom = maxZoom;
     }
 
-    public void setBounds(Bounds b) {
+    public void setBounds(ImageryBounds b) {
         this.bounds = b;
     }
 
-    public Bounds getBounds() {
+    public ImageryBounds getBounds() {
         return bounds;
     }
 
     public void setAttributionText(String text) {
-         attributionText = text;
+        attributionText = text;
     }
 
     public void setAttributionImage(String text) {

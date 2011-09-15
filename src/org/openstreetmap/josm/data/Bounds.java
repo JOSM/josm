@@ -42,20 +42,20 @@ public class Bounds {
     }
 
     public Bounds(double minlat, double minlon, double maxlat, double maxlon) {
-        this.minLat = roundToOsmPrecision(minlat);
-        this.minLon = roundToOsmPrecision(minlon);
-        this.maxLat = roundToOsmPrecision(maxlat);
-        this.maxLon = roundToOsmPrecision(maxlon);
+        this.minLat = LatLon.roundToOsmPrecision(minlat);
+        this.minLon = LatLon.roundToOsmPrecision(minlon);
+        this.maxLat = LatLon.roundToOsmPrecision(maxlat);
+        this.maxLon = LatLon.roundToOsmPrecision(maxlon);
     }
 
     public Bounds(double [] coords) {
         CheckParameterUtil.ensureParameterNotNull(coords, "coords");
         if (coords.length != 4)
             throw new IllegalArgumentException(MessageFormat.format("Expected array of length 4, got {0}", coords.length));
-        this.minLat = roundToOsmPrecision(coords[0]);
-        this.minLon = roundToOsmPrecision(coords[1]);
-        this.maxLat = roundToOsmPrecision(coords[2]);
-        this.maxLon = roundToOsmPrecision(coords[3]);
+        this.minLat = LatLon.roundToOsmPrecision(coords[0]);
+        this.minLon = LatLon.roundToOsmPrecision(coords[1]);
+        this.maxLat = LatLon.roundToOsmPrecision(coords[2]);
+        this.maxLon = LatLon.roundToOsmPrecision(coords[3]);
     }
 
     public Bounds(String asString, String separator) throws IllegalArgumentException {
@@ -80,10 +80,10 @@ public class Bounds {
         if (!LatLon.isValidLon(values[3]))
             throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", values[3]));
 
-        this.minLat = roundToOsmPrecision(values[0]);
-        this.minLon = roundToOsmPrecision(values[1]);
-        this.maxLat = roundToOsmPrecision(values[2]);
-        this.maxLon = roundToOsmPrecision(values[3]);
+        this.minLat = LatLon.roundToOsmPrecision(values[0]);
+        this.minLon = LatLon.roundToOsmPrecision(values[1]);
+        this.maxLat = LatLon.roundToOsmPrecision(values[2]);
+        this.maxLon = LatLon.roundToOsmPrecision(values[3]);
     }
 
     public Bounds(Bounds other) {
@@ -113,10 +113,10 @@ public class Bounds {
         if (lonExtent <= 0.0)
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0.0 exptected, got {1}", "lonExtent", lonExtent));
 
-        this.minLat = roundToOsmPrecision(center.lat() - latExtent / 2);
-        this.minLon = roundToOsmPrecision(center.lon() - lonExtent / 2);
-        this.maxLat = roundToOsmPrecision(center.lat() + latExtent / 2);
-        this.maxLon = roundToOsmPrecision(center.lon() + lonExtent / 2);
+        this.minLat = LatLon.roundToOsmPrecision(center.lat() - latExtent / 2);
+        this.minLon = LatLon.roundToOsmPrecision(center.lon() - lonExtent / 2);
+        this.maxLat = LatLon.roundToOsmPrecision(center.lat() + latExtent / 2);
+        this.maxLon = LatLon.roundToOsmPrecision(center.lon() + lonExtent / 2);
     }
 
     @Override public String toString() {
@@ -144,16 +144,16 @@ public class Bounds {
      */
     public void extend(LatLon ll) {
         if (ll.lat() < minLat) {
-            minLat = roundToOsmPrecision(ll.lat());
+            minLat = LatLon.roundToOsmPrecision(ll.lat());
         }
         if (ll.lon() < minLon) {
-            minLon = roundToOsmPrecision(ll.lon());
+            minLon = LatLon.roundToOsmPrecision(ll.lon());
         }
         if (ll.lat() > maxLat) {
-            maxLat = roundToOsmPrecision(ll.lat());
+            maxLat = LatLon.roundToOsmPrecision(ll.lat());
         }
         if (ll.lon() > maxLon) {
-            maxLon = roundToOsmPrecision(ll.lon());
+            maxLon = LatLon.roundToOsmPrecision(ll.lon());
         }
     }
 
@@ -282,15 +282,5 @@ public class Bounds {
         if (Double.doubleToLongBits(minLon) != Double.doubleToLongBits(other.minLon))
             return false;
         return true;
-    }
-
-    /**
-     * Returns the value rounded to OSM precisions, i.e. to
-     * LatLon.MAX_SERVER_PRECISION
-     *
-     * @return rounded value
-     */
-    private double roundToOsmPrecision(double value) {
-        return Math.round(value / LatLon.MAX_SERVER_PRECISION) * LatLon.MAX_SERVER_PRECISION;
     }
 }
