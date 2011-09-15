@@ -420,7 +420,7 @@ public class ImageryPreference implements PreferenceSetting {
             // Add default item map
             map = new JMapViewer();
             map.setZoomContolsVisible(false);
-            map.setPreferredSize(new Dimension(200, 200));
+            map.setMinimumSize(new Dimension(100, 200));
             add(map, GBC.std().insets(5, 5, 0, 0).fill(GridBagConstraints.BOTH).weight(0.33, 0.6).insets(5, 0, 0, 0));
 
             listdef.getSelectionModel().addListSelectionListener(new DefListSelectionListener());
