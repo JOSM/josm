@@ -1,9 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.gui.jmapviewer;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Stroke;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 import org.openstreetmap.josm.data.Bounds;
@@ -16,16 +19,18 @@ public class MapRectangleImpl implements MapRectangle {
 
     private Coordinate topLeft;
     private Coordinate bottomRight;
-    Color color;
+    private Color color;
+    private Stroke stroke;
 
     public MapRectangleImpl(Bounds bounds) {
-        this(bounds, Color.BLUE);
+        this(bounds, Color.BLUE, new BasicStroke(2));
     }
 
-    public MapRectangleImpl(Bounds bounds, Color color) {
+    public MapRectangleImpl(Bounds bounds, Color color, Stroke stroke) {
         this.topLeft = new Coordinate(bounds.getMax().lat(), bounds.getMin().lon());
         this.bottomRight = new Coordinate(bounds.getMin().lat(), bounds.getMax().lon());
         this.color = color;
+        this.stroke = stroke;
     }
 
     /* (non-Javadoc)
@@ -49,8 +54,22 @@ public class MapRectangleImpl implements MapRectangle {
      */
     @Override
     public void paint(Graphics g, Point topLeft, Point bottomRight) {
+        // Prepare graphics
+        Color oldColor = g.getColor();
         g.setColor(color);
+        Stroke oldStroke = null;
+        if (g instanceof Graphics2D) {
+            Graphics2D g2 = (Graphics2D) g;
+            oldStroke = g2.getStroke();
+            g2.setStroke(stroke);
+        }
+        // Draw
         g.drawRect(topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
+        // Restore graphics
+        g.setColor(oldColor);
+        if (g instanceof Graphics2D) {
+            ((Graphics2D) g).setStroke(oldStroke);
+        }
     }
 
     @Override
