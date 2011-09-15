@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -50,14 +51,17 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
+import org.openstreetmap.gui.jmapviewer.MapPolygonImpl;
 import org.openstreetmap.gui.jmapviewer.MapRectangleImpl;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
+import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
@@ -417,7 +421,7 @@ public class ImageryPreference implements PreferenceSetting {
             map = new JMapViewer();
             map.setZoomContolsVisible(false);
             map.setPreferredSize(new Dimension(200, 200));
-            add(map, GBC.std().insets(5, 5, 0, 0).fill(GridBagConstraints.BOTH).weight(0.333, 0.6).insets(5, 0, 0, 0));
+            add(map, GBC.std().insets(5, 5, 0, 0).fill(GridBagConstraints.BOTH).weight(0.33, 0.6).insets(5, 0, 0, 0));
 
             listdef.getSelectionModel().addListSelectionListener(new DefListSelectionListener());
 
@@ -459,42 +463,73 @@ public class ImageryPreference implements PreferenceSetting {
 
         // Listener of default providers list selection
         private final class DefListSelectionListener implements ListSelectionListener {
-            // The current drawn rectangles
+            // The current drawn rectangles and polygons
             private final Map<Integer, MapRectangle> mapRectangles;
+            private final Map<Integer, List<MapPolygon>> mapPolygons;
 
             private DefListSelectionListener() {
                 this.mapRectangles = new HashMap<Integer, MapRectangle>();
+                this.mapPolygons = new HashMap<Integer, List<MapPolygon>>();
             }
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                // First index is set to -1 when the list is refreshed, so discard all map rectangles
+                // First index is set to -1 when the list is refreshed, so discard all map rectangles and polygons
                 if (e.getFirstIndex() == -1) {
                     map.removeAllMapRectangles();
+                    map.removeAllMapPolygons();
                     mapRectangles.clear();
+                    mapPolygons.clear();
                     // Only process complete (final) selection events
                 } else if (!e.getValueIsAdjusting()) {
                     for (int i = e.getFirstIndex(); i<=e.getLastIndex(); i++) {
-                        Bounds bounds = modeldef.getRow(i).getBounds();
-                        if (bounds != null) {
-                            if (listdef.getSelectionModel().isSelectedIndex(i)) {
-                                if (!mapRectangles.containsKey(i)) {
-                                    // Add new map rectangle
-                                    MapRectangle rectangle = new MapRectangleImpl(bounds);
-                                    mapRectangles.put(i, rectangle);
-                                    map.addMapRectangle(rectangle);
-                                }
-                            } else if (mapRectangles.containsKey(i)) {
-                                // Remove previousliy drawn map rectangle
-                                map.removeMapRectangle(mapRectangles.get(i));
-                                mapRectangles.remove(i);
-                            }
-                        }
+                        updateBoundsAndShapes(i);
                     }
-                    // If needed, adjust map to show all map rectangles
-                    if (!mapRectangles.isEmpty()) {
-                        map.setDisplayToFitMapRectangle();
+                    // If needed, adjust map to show all map rectangles and polygons
+                    if (!mapRectangles.isEmpty() || !mapPolygons.isEmpty()) {
+                        map.setDisplayToFitMapElements(false, true, true);
                         map.zoomOut();
+                    }
+                }
+            }
+            
+            private void updateBoundsAndShapes(int i) {
+                ImageryBounds bounds = modeldef.getRow(i).getBounds();
+                if (bounds != null) {
+                    List<Shape> shapes = bounds.getShapes();
+                    if (shapes != null && !shapes.isEmpty()) {
+                        if (listdef.getSelectionModel().isSelectedIndex(i)) {
+                            if (!mapPolygons.containsKey(i)) {
+                                List<MapPolygon> list = new ArrayList<MapPolygon>();
+                                mapPolygons.put(i, list);
+                                // Add new map polygons
+                                for (Shape shape : shapes) {
+                                    MapPolygon polygon = new MapPolygonImpl(shape.getPoints());
+                                    list.add(polygon);
+                                    map.addMapPolygon(polygon);
+                                }
+                            }
+                        } else if (mapPolygons.containsKey(i)) {
+                            // Remove previously drawn map polygons
+                            for (MapPolygon polygon : mapPolygons.get(i)) {
+                                map.removeMapPolygon(polygon);
+                            }
+                            mapPolygons.remove(i);
+                        }
+                     // Only display bounds when no polygons (shapes) are defined for this provider
+                    } else {
+                        if (listdef.getSelectionModel().isSelectedIndex(i)) {
+                            if (!mapRectangles.containsKey(i)) {
+                                // Add new map rectangle
+                                MapRectangle rectangle = new MapRectangleImpl(bounds);
+                                mapRectangles.put(i, rectangle);
+                                map.addMapRectangle(rectangle);
+                            }
+                        } else if (mapRectangles.containsKey(i)) {
+                            // Remove previously drawn map rectangle
+                            map.removeMapRectangle(mapRectangles.get(i));
+                            mapRectangles.remove(i);
+                        }
                     }
                 }
             }

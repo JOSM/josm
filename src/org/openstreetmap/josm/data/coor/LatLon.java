@@ -222,7 +222,17 @@ public class LatLon extends Coordinate {
     @Override public String toString() {
         return "LatLon[lat="+lat()+",lon="+lon()+"]";
     }
-
+    
+    /**
+     * Returns the value rounded to OSM precisions, i.e. to
+     * LatLon.MAX_SERVER_PRECISION
+     *
+     * @return rounded value
+     */
+    public static double roundToOsmPrecision(double value) {
+        return Math.round(value / MAX_SERVER_PRECISION) * MAX_SERVER_PRECISION;
+    }
+    
     /**
      * Replies a clone of this lat LatLon, rounded to OSM precisions, i.e. to
      * MAX_SERVER_PRECISION
@@ -231,8 +241,8 @@ public class LatLon extends Coordinate {
      */
     public LatLon getRoundedToOsmPrecision() {
         return new LatLon(
-                Math.round(lat() / MAX_SERVER_PRECISION) * MAX_SERVER_PRECISION,
-                Math.round(lon() / MAX_SERVER_PRECISION) * MAX_SERVER_PRECISION
+                roundToOsmPrecision(lat()),
+                roundToOsmPrecision(lon())
         );
     }
 
