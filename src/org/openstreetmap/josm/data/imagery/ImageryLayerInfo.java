@@ -37,6 +37,7 @@ public class ImageryLayerInfo {
     }
 
     public void load() {
+        boolean addedDefault = layers.size() != 0;
         for(Collection<String> c : Main.pref.getArray("imagery.layers",
                 Collections.<Collection<String>>emptySet())) {
             ImageryInfo i = new ImageryInfo(c);
@@ -56,6 +57,8 @@ public class ImageryLayerInfo {
             }
         }
         Collections.sort(layers);
+        if(addedDefault)
+            save();
     }
 
     public void loadDefaults(boolean clearCache) {
@@ -80,13 +83,13 @@ public class ImageryLayerInfo {
             }
         }
         while (defaultLayers.remove(null)) {}
-        
+
         Collection<String> defaults = Main.pref.getCollection("imagery.layers.default");
         ArrayList<String> defaultsSave = new ArrayList<String>();
         for (ImageryInfo def : defaultLayers) {
             if (def.isDefaultEntry()) {
                 defaultsSave.add(def.getUrl());
-                
+
                 boolean isKnownDefault = false;
                 for (String url : defaults) {
                     if (isSimilar(url, def.getUrl())) {
@@ -113,7 +116,7 @@ public class ImageryLayerInfo {
         Main.pref.putCollection("imagery.layers.default", defaultsSave.size() > 0
                 ? defaultsSave : defaults);
     }
-    
+
     // some additional checks to respect extended URLs in preferences (legacy workaround)
     private boolean isSimilar(String a, String b) {
         return Utils.equal(a, b) || (a != null && b != null && !"".equals(a) && !"".equals(b) && (a.contains(b) || b.contains(a)));
