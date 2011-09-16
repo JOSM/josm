@@ -33,6 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.XmlWriter;
@@ -546,6 +547,10 @@ public class Preferences {
      */
     synchronized public Color getColor(String colName, Color def) {
         return getColor(colName, null, def);
+    }
+
+    synchronized public Color getUIColor(String colName) {
+        return UIManager.getColor(colName);
     }
 
     /* only for preferences */
