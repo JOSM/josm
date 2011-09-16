@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
@@ -22,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -47,6 +47,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
@@ -376,10 +377,10 @@ public class ImageryPreference implements PreferenceSetting {
         final JMapViewer map;
         final PreferenceTabbedPane gui;
 
-        public ImageryProvidersPanel(final PreferenceTabbedPane gui, ImageryLayerInfo layerInfo) {
+        public ImageryProvidersPanel(final PreferenceTabbedPane gui, ImageryLayerInfo layerInfoArg) {
             super(new GridBagLayout());
             this.gui = gui;
-            this.layerInfo = layerInfo;
+            this.layerInfo = layerInfoArg;
             this.model = new ImageryLayerTableModel();
 
             listActive = new JTable(model) {
@@ -403,10 +404,55 @@ public class ImageryPreference implements PreferenceSetting {
             mod.getColumn(2).setPreferredWidth(800);
             mod.getColumn(1).setPreferredWidth(400);
             mod.getColumn(0).setPreferredWidth(50);
+
+            mod.getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(JTable table,
+                Object value, boolean isSelected, boolean hasFocus, int row,
+                int column) {
+                    JLabel label = (JLabel) super.getTableCellRendererComponent(
+                    table, value, isSelected, hasFocus, row, column);
+                    String t = value.toString();
+                    label.setBackground(Main.pref.getUIColor("Table.background"));
+                    for(ImageryInfo l : layerInfo.getLayers())
+                    {
+                        if(l.getExtendedUrl().equals(t)) {
+                            label.setBackground(Main.pref.getColor(
+                            marktr("Imagery Background: Default"),
+                            new Color(200,255,200)));
+                            break;
+                        }
+                    }
+                    return label;
+                };
+            });
+
             mod = listActive.getColumnModel();
             mod.getColumn(2).setPreferredWidth(50);
             mod.getColumn(1).setPreferredWidth(800);
             mod.getColumn(0).setPreferredWidth(200);
+
+            mod.getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(JTable table,
+                Object value, boolean isSelected, boolean hasFocus, int row,
+                int column) {
+                    JLabel label = (JLabel) super.getTableCellRendererComponent(
+                    table, value, isSelected, hasFocus, row, column);
+                    String t = value.toString();
+                    label.setBackground(Main.pref.getUIColor("Table.background"));
+                    for(ImageryInfo l : layerInfo.getDefaultLayers())
+                    {
+                        if(l.getExtendedUrl().equals(t)) {
+                            label.setBackground(Main.pref.getColor(
+                            marktr("Imagery Background: Default"),
+                            new Color(200,255,200)));
+                            break;
+                        }
+                    }
+                    return label;
+                };
+            });
 
             RemoveEntryAction remove = new RemoveEntryAction();
             listActive.getSelectionModel().addListSelectionListener(remove);
@@ -492,7 +538,7 @@ public class ImageryPreference implements PreferenceSetting {
                     }
                 }
             }
-            
+
             private void updateBoundsAndShapes(int i) {
                 ImageryBounds bounds = modeldef.getRow(i).getBounds();
                 if (bounds != null) {
