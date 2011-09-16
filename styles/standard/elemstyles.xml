@@ -960,6 +960,27 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="railway" v="rail"/>
+		<condition k="service" v="siding"/>
+		<line width="1" colour="rail#404040" dashed="true" dashedcolour="raildashed#ffffff" priority="2"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+	</rule>
+
+	<rule>
+		<condition k="railway" v="rail"/>
+		<condition k="service" v="yard"/>
+		<line width="1" colour="railyard#552200" dashed="true" dashedcolour="raildashed#ffffff" priority="2"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+	</rule>
+
+	<rule>
+		<condition k="railway" v="rail"/>
+		<condition k="service" v="spur"/>
+		<line width="1" colour="railyard#552200" dashed="true" dashedcolour="raildashed#ffffff" priority="2"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+	</rule>
+
+	<rule>
 		<condition k="railway" v="tram"/>
 		<!-- prefer way types over tram - draw tram as overlay in joined cases -->
 		<line width="1" colour="otherrail#808080" dashed="true" priority="-10000"/>
