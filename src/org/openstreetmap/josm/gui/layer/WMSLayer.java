@@ -37,6 +37,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.ProjectionBounds;
+import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.GeorefImage;
@@ -929,7 +930,8 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
     
     @Override
     public boolean isProjectionSupported(Projection proj) {
-        return serverProjections == null || serverProjections.contains(proj.toCode().toUpperCase());
+        return serverProjections == null || serverProjections.contains(proj.toCode().toUpperCase())
+        || (proj instanceof Mercator && serverProjections.contains("EPSG:4326"));
     }
 
     @Override
