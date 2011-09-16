@@ -47,6 +47,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
@@ -399,6 +401,24 @@ public class ImageryPreference implements PreferenceSetting {
                     return (String) modeldef.getValueAt(rowAtPoint(p), columnAtPoint(p));
                 }
             };
+
+            modeldef.addTableModelListener(
+                new TableModelListener() {
+                    @Override
+                    public void tableChanged(TableModelEvent e) {
+                        listActive.repaint();
+                    }
+                }
+            );
+
+            model.addTableModelListener(
+                new TableModelListener() {
+                    @Override
+                    public void tableChanged(TableModelEvent e) {
+                        listdef.repaint();
+                    }
+                }
+            );
 
             TableColumnModel mod = listdef.getColumnModel();
             mod.getColumn(2).setPreferredWidth(800);
