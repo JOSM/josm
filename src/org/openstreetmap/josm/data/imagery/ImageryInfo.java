@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -137,6 +138,15 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
             }
         }
         res.add(shapesString.isEmpty() ? null : shapesString);
+        if(serverProjections != null && serverProjections.size() != 0) {
+            String val = "";
+            for(String p : serverProjections) {
+                if(!val.isEmpty())
+                    val += ",";
+                val += p;
+            }
+            res.add(val);
+        }
         return res;
     }
 
@@ -184,6 +194,9 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
                 Main.warn(e.toString());
             }
         }
+        if(array.size() >= 11 && !array.get(10).isEmpty()) {
+            serverProjections = Arrays.asList(array.get(10).split(","));
+        }
     }
 
     public ImageryInfo(ImageryInfo i) {
@@ -201,6 +214,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         this.attributionLinkURL = i.attributionLinkURL;
         this.attributionText = i.attributionText;
         this.termsOfUseURL = i.termsOfUseURL;
+        this.serverProjections = i.serverProjections;
     }
 
     @Override

@@ -95,6 +95,7 @@ public class WMSGrabber extends Grabber {
         String myProj = Main.getProjection().toCode();
         String srs = "";
         boolean useepsg = false;
+        // FIXME: Non-Pattern format should be dropped in future
         try
         {
             Matcher m = Pattern.compile(".*SRS=([a-z0-9:]+).*", Pattern.CASE_INSENSITIVE).matcher(baseURL.toUpperCase());
@@ -102,7 +103,7 @@ public class WMSGrabber extends Grabber {
             {
                 if(m.group(1).equals("EPSG:4326") && Main.getProjection() instanceof Mercator)
                     useepsg = true;
-            } else if(Main.getProjection() instanceof Mercator) {
+            } else if((Main.getProjection() instanceof Mercator) && !serverProjections.contains(myProj)) {
                 useepsg = true;
                 srs ="&srs=EPSG:4326";
             } else {
@@ -155,20 +156,20 @@ public class WMSGrabber extends Grabber {
     static public ArrayList<String> getServerProjections(String baseURL, Boolean warn)
     {
         ArrayList<String> serverProjections = new ArrayList<String>();
+        boolean hasepsg = false;
+        
+        // FIXME: Non-Pattern format should be dropped in future
         try
         {
             Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(baseURL.toUpperCase());
             if(m.matches())
             {
-                boolean hasepsg = false;
                 for(String p : m.group(1).split(","))
                 {
                     serverProjections.add(p);
                     if(p.equals("EPSG:4326"))
                         hasepsg = true;
                 }
-                if(hasepsg && !serverProjections.contains(new Mercator().toCode()))
-                    serverProjections.add(new Mercator().toCode());
             }
             else
             {
@@ -177,7 +178,7 @@ public class WMSGrabber extends Grabber {
                 {
                     serverProjections.add(m.group(1));
                     if(m.group(1).equals("EPSG:4326"))
-                        serverProjections.add(new Mercator().toCode());
+                        hasepsg = true;
                 }
                 /* TODO: here should be an "else" code checking server capabilities */
             }
@@ -190,7 +191,8 @@ public class WMSGrabber extends Grabber {
         if(warn)
         {
             String myProj = Main.getProjection().toCode().toUpperCase();
-            if(!serverProjections.contains(myProj))
+            if(!serverProjections.contains(myProj) &&
+            !(Main.getProjection() instanceof Mercator && serverProjections.contains("EPSG:4326")))
             {
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("The projection ''{0}'' in URL and current projection ''{1}'' mismatch.\n"
