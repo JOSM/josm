@@ -61,15 +61,10 @@ public class RelationData extends PrimitiveData implements IRelation {
     public OsmPrimitiveType getType() {
         return OsmPrimitiveType.RELATION;
     }
-    
-    @Override 
-    public void visit(PrimitiveVisitor visitor) {
-        visitor.visit(this);
-    }
 
     @Override
-    public String getDisplayName(NameFormatter formatter) {
-        return formatter.format(this);
+    public void visit(PrimitiveVisitor visitor) {
+        visitor.visit(this);
     }
 
 }

@@ -46,6 +46,8 @@ import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.search.SearchCompiler;
+import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -75,6 +77,9 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
 import org.openstreetmap.josm.tools.XmlObjectParser;
+import org.openstreetmap.josm.tools.template_engine.ParseError;
+import org.openstreetmap.josm.tools.template_engine.TemplateEntry;
+import org.openstreetmap.josm.tools.template_engine.TemplateParser;
 import org.xml.sax.SAXException;
 
 /**
@@ -120,9 +125,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
         protected void initAutoCompletionField(AutoCompletingTextField field, String key) {
             OsmDataLayer layer = Main.main.getEditLayer();
-            if (layer == null) {
+            if (layer == null)
                 return;
-            }
             AutoCompletionList list = new AutoCompletionList();
             Main.main.getEditLayer().data.getAutoCompletionManager().populateWithTagValues(list, key);
             field.setAutoCompletionList(list);
@@ -302,20 +306,19 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             // return if unchanged
             String v = (value instanceof JComboBox)
                     ? ((JComboBox) value).getEditor().getItem().toString()
-                    : ((JTextField) value).getText();
-            v = v.trim();
+                            : ((JTextField) value).getText();
+                    v = v.trim();
 
-            if (!"false".equals(use_last_as_default)) {
-                lastValue.put(key, v);
-            }
-            if (v.equals(originalValue) || (originalValue == null && v.length() == 0)) {
-                return;
-            }
+                    if (!"false".equals(use_last_as_default)) {
+                        lastValue.put(key, v);
+                    }
+                    if (v.equals(originalValue) || (originalValue == null && v.length() == 0))
+                        return;
 
-            if (delete_if_empty && v.length() == 0) {
-                v = null;
-            }
-            changedTags.add(new Tag(key, v));
+                    if (delete_if_empty && v.length() == 0) {
+                        v = null;
+                    }
+                    changedTags.add(new Tag(key, v));
         }
 
         @Override
@@ -490,12 +493,12 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 PresetListEntry e = new PresetListEntry(value_array[i]);
                 e.display_value = (locale_display_values == null)
                         ? (values_context == null ? tr(fixPresetString(display_array[i]))
-                        : trc(values_context, fixPresetString(display_array[i]))) : display_array[i];
-                if (short_descriptions_array != null) {
-                    e.short_description = locale_short_descriptions == null ? tr(fixPresetString(short_descriptions_array[i]))
-                            : fixPresetString(short_descriptions_array[i]);
-                }
-                lhm.put(value_array[i], e);
+                                : trc(values_context, fixPresetString(display_array[i]))) : display_array[i];
+                        if (short_descriptions_array != null) {
+                            e.short_description = locale_short_descriptions == null ? tr(fixPresetString(short_descriptions_array[i]))
+                                    : fixPresetString(short_descriptions_array[i]);
+                        }
+                        lhm.put(value_array[i], e);
             }
 
             if (locale_text == null) {
@@ -543,12 +546,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
             // no change if same as before
             if (originalValue == null) {
-                if (value.length() == 0) {
+                if (value.length() == 0)
                     return;
-                }
-            } else if (value.equals(originalValue.toString())) {
+            } else if (value.equals(originalValue.toString()))
                 return;
-            }
 
             if (delete_if_empty && value.length() == 0) {
                 value = null;
@@ -675,11 +676,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
         @Override
         protected String getDisplayIfNull(String display) {
-            if (combo.isEditable()) {
+            if (combo.isEditable())
                 return combo.getEditor().getItem().toString();
-            } else {
+            else
                 return display;
-            }
 
         }
     }
@@ -1007,6 +1007,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      */
     public EnumSet<PresetType> types;
     public List<Item> data = new LinkedList<Item>();
+    public TemplateEntry nameTemplate;
+    public Match nameTemplateFilter;
     private static HashMap<String,String> lastValue = new HashMap<String,String>();
 
     /**
@@ -1087,6 +1089,25 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public void setType(String types) throws SAXException {
         this.types = getType(types);
     }
+
+    public void setName_template(String pattern) throws SAXException {
+        try {
+            this.nameTemplate = new TemplateParser(pattern).parse();
+        } catch (ParseError e) {
+            System.err.println("Error while parsing " + pattern + ": " + e.getMessage());
+            throw new SAXException(e);
+        }
+    }
+
+    public void setName_template_filter(String filter) throws SAXException {
+        try {
+            this.nameTemplateFilter = SearchCompiler.compile(filter, false, false);
+        } catch (org.openstreetmap.josm.actions.search.SearchCompiler.ParseError e) {
+            System.err.println("Error while parsing" + filter + ": " + e.getMessage());
+            throw new SAXException(e);
+        }
+    }
+
 
     public static List<TaggingPreset> readAll(Reader in, boolean validate) throws SAXException {
         XmlObjectParser parser = new XmlObjectParser();
@@ -1198,7 +1219,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                         tr("Could not read tagging preset source: {0}",source),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
-                );
+                        );
             } catch (SAXException e) {
                 System.err.println(e.getMessage());
                 System.err.println(source);
@@ -1208,7 +1229,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                         tr("Error parsing {0}: ", source)+e.getMessage(),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
-                );
+                        );
             }
             zipIcons = null;
         }

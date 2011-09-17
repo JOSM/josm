@@ -73,16 +73,16 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
 
     /**
      * <p>Replies the projected east/north coordinates.</p>
-     * 
+     *
      * <p>Uses the {@link Main#getProjection() global projection} to project the lan/lon-coordinates.
      * Internally caches the projected coordinates.</p>
      *
      * <p><strong>Caveat:</strong> doesn't listen to projection changes. Clients must
      * {@link #reproject() trigger a reprojection} or {@link #invalidateEastNorthCache() invalidate the internal cache}.</p>
-     * 
+     *
      * @return the east north coordinates or {@code null}
      * @see #invalidateEastNorthCache()
-     * 
+     *
      */
     public final EastNorth getEastNorth() {
         if (Double.isNaN(east) || Double.isNaN(north)) {
@@ -122,8 +122,11 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
     }
 
     @Override
-    public Object getTemplateValue(String name) {
-        return attr.get(name);
+    public Object getTemplateValue(String name, boolean special) {
+        if (!special)
+            return attr.get(name);
+        else
+            return null;
     }
 
     @Override

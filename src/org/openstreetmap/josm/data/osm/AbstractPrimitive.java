@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class AbstractPrimitive implements IPrimitive {
-    
+
     private static final AtomicLong idCounter = new AtomicLong(0);
 
     static long generateUniqueId() {
@@ -304,7 +304,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
             flags &= ~flag;
         }
     }
-    
+
     /**
      * Marks this primitive as being modified.
      *
@@ -372,7 +372,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
     public boolean isVisible() {
         return (flags & FLAG_VISIBLE) != 0;
     }
-    
+
     /**
      * Sets whether this primitive is visible, i.e. whether it is known on the server
      * and not deleted on the server.
@@ -413,7 +413,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
     public boolean isIncomplete() {
         return (flags & FLAG_INCOMPLETE) != 0;
     }
-    
+
     protected String getFlagsAsString() {
         StringBuilder builder = new StringBuilder();
 
@@ -527,7 +527,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
             keysChangedImpl(originalKeys);
         }
     }
-    
+
     /**
      * Remove the given key from the list
      *
@@ -588,6 +588,18 @@ public abstract class AbstractPrimitive implements IPrimitive {
         return null;
     }
 
+    public final String getIgnoreCase(String key) {
+        String[] keys = this.keys;
+        if (key == null)
+            return null;
+        if (keys == null)
+            return null;
+        for (int i=0; i<keys.length;i+=2) {
+            if (keys[i].equalsIgnoreCase(key)) return keys[i+1];
+        }
+        return null;
+    }
+
     @Override
     public final Collection<String> keySet() {
         String[] keys = this.keys;
@@ -641,7 +653,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * What to do, when the tags have changed by one of the tag-changing methods.
      */
     abstract protected void keysChangedImpl(Map<String, String> originalKeys);
-    
+
     /**
      * Replies the name of this primitive. The default implementation replies the value
      * of the tag <tt>name</tt> or null, if this tag is not present.
@@ -679,13 +691,5 @@ public abstract class AbstractPrimitive implements IPrimitive {
             return get(key);
         return getName();
     }
-    
-    /**
-     * Replies the display name of a primitive formatted by <code>formatter</code>
-     *
-     * @return the display name
-     */
-    @Override
-    public abstract String getDisplayName(NameFormatter formatter);
 
 }

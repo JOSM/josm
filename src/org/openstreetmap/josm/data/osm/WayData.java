@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 
 public class WayData extends PrimitiveData implements IWay {
@@ -56,15 +57,10 @@ public class WayData extends PrimitiveData implements IWay {
     public OsmPrimitiveType getType() {
         return OsmPrimitiveType.WAY;
     }
-    
-    @Override 
-    public void visit(PrimitiveVisitor visitor) {
-        visitor.visit(this);
-    }
 
     @Override
-    public String getDisplayName(NameFormatter formatter) {
-        return formatter.format(this);
+    public void visit(PrimitiveVisitor visitor) {
+        visitor.visit(this);
     }
 
 }

@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
 /**
  * An OSM primitive can be associated with a key/value pair. It can be created, deleted
@@ -35,7 +36,10 @@ import org.openstreetmap.josm.tools.Predicate;
  *
  * @author imi
  */
-abstract public class OsmPrimitive extends AbstractPrimitive implements Comparable<OsmPrimitive> {
+abstract public class OsmPrimitive extends AbstractPrimitive implements Comparable<OsmPrimitive>, TemplateEngineDataProvider {
+    private static final String SPECIAL_VALUE_ID = "id";
+    private static final String SPECIAL_VALUE_LOCAL_NAME = "localname";
+
 
     /**
      * An object can be disabled by the filter mechanism.
@@ -411,7 +415,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     private void updateFlagsNoLock (int flag, boolean value) {
         super.updateFlags(flag, value);
     }
-    
+
     @Override
     protected final void updateFlags(int flag, boolean value) {
         boolean locked = writeLock();
@@ -620,9 +624,9 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         String reversedDirectionDefault = "oneway=\"-1\" | incline=down | incline=\"-*\"";
 
         String directionDefault = "oneway? | incline=* | aerialway=* | "+
-        "waterway=stream | waterway=river | waterway=canal | waterway=drain | waterway=rapids | "+
-        "\"piste:type\"=downhill | \"piste:type\"=sled | man_made=\"piste:halfpipe\" | "+
-        "junction=roundabout";
+                "waterway=stream | waterway=river | waterway=canal | waterway=drain | waterway=rapids | "+
+                "\"piste:type\"=downhill | \"piste:type\"=sled | man_made=\"piste:halfpipe\" | "+
+                "junction=roundabout";
 
         try {
             reversedDirectionKeys = SearchCompiler.compile(Main.pref.get("tags.reversed_direction", reversedDirectionDefault), false, false);
@@ -699,7 +703,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     /*------------
      * Keys handling
      ------------*/
-    
+
     @Override
     public final void setKeys(Map<String, String> keys) {
         boolean locked = writeLock();
@@ -709,7 +713,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
             writeUnlock(locked);
         }
     }
-    
+
     @Override
     public final void put(String key, String value) {
         boolean locked = writeLock();
@@ -718,8 +722,8 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         } finally {
             writeUnlock(locked);
         }
-    }  
-    
+    }
+
     @Override
     public final void remove(String key) {
         boolean locked = writeLock();
@@ -738,8 +742,8 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         } finally {
             writeUnlock(locked);
         }
-    }  
-    
+    }
+
     @Override
     protected final void keysChangedImpl(Map<String, String> originalKeys) {
         clearCachedStyle();
@@ -856,7 +860,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * <p>Visits {@code visitor} for all referrers.</p>
-     * 
+     *
      * @param visitor the visitor. Ignored, if null.
      */
     public void visitReferrers(Visitor visitor){
@@ -888,17 +892,17 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         Object referrers = this.referrers;
         if (referrers == null) return false;
         checkDataset();
-        if (referrers instanceof OsmPrimitive) {
-          return n<=1 && referrers instanceof Way && ((OsmPrimitive)referrers).dataSet == dataSet;
-        } else {
-          int counter=0;
-          for (OsmPrimitive o : (OsmPrimitive[])referrers) {
-            if (dataSet == o.dataSet && o instanceof Way) {
-              if (++counter >= n) 
-                return true;
+        if (referrers instanceof OsmPrimitive)
+            return n<=1 && referrers instanceof Way && ((OsmPrimitive)referrers).dataSet == dataSet;
+        else {
+            int counter=0;
+            for (OsmPrimitive o : (OsmPrimitive[])referrers) {
+                if (dataSet == o.dataSet && o instanceof Way) {
+                    if (++counter >= n)
+                        return true;
+                }
             }
-          }
-          return false;
+            return false;
         }
     }
 
@@ -1001,13 +1005,13 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         if (other == null) return false;
 
         return
-        isDeleted() == other.isDeleted()
-        && isModified() == other.isModified()
-        && timestamp == other.timestamp
-        && version == other.version
-        && isVisible() == other.isVisible()
-        && (user == null ? other.user==null : user==other.user)
-        && changesetId == other.changesetId;
+                isDeleted() == other.isDeleted()
+                && isModified() == other.isModified()
+                && timestamp == other.timestamp
+                && version == other.version
+                && isVisible() == other.isVisible()
+                && (user == null ? other.user==null : user==other.user)
+                && changesetId == other.changesetId;
     }
 
     /**
@@ -1098,6 +1102,43 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     @Override public final int hashCode() {
         return (int)id;
+    }
+
+    /**
+     * Replies the display name of a primitive formatted by <code>formatter</code>
+     *
+     * @return the display name
+     */
+    public abstract String getDisplayName(NameFormatter formatter);
+
+    @Override
+    public Collection<String> getTemplateKeys() {
+        Collection<String> keySet = keySet();
+        List<String> result = new ArrayList<String>(keySet.size() + 2);
+        result.add(SPECIAL_VALUE_ID);
+        result.add(SPECIAL_VALUE_LOCAL_NAME);
+        result.addAll(keySet);
+        return result;
+    }
+
+    @Override
+    public Object getTemplateValue(String name, boolean special) {
+        if (special) {
+            String lc = name.toLowerCase();
+            if (SPECIAL_VALUE_ID.equals(lc))
+                return getId();
+            else if (SPECIAL_VALUE_LOCAL_NAME.equals(lc))
+                return getLocalName();
+            else
+                return null;
+
+        } else
+            return getIgnoreCase(name);
+    }
+
+    @Override
+    public boolean evaluateCondition(Match condition) {
+        return condition.match(this);
     }
 
 }

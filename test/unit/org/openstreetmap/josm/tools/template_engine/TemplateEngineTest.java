@@ -6,12 +6,21 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
+import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.unitils.reflectionassert.ReflectionAssert;
 
 public class TemplateEngineTest {
+
+    @BeforeClass
+    public static void before() {
+        Main.pref = new Preferences();
+    }
 
     @Test
     public void testEmpty() throws ParseError {
@@ -61,13 +70,22 @@ public class TemplateEngineTest {
 
     TemplateEngineDataProvider dataProvider = new TemplateEngineDataProvider() {
         @Override
-        public Object getTemplateValue(String name) {
-            if ("name".equals(name))
-                return "waypointName";
-            else if ("number".equals(name))
-                return 10;
-            else
-                return null;
+        public Object getTemplateValue(String name, boolean special) {
+            if (special) {
+                if ("localName".equals(name))
+                    return "localName";
+                else
+                    return null;
+            } else {
+                if ("name".equals(name))
+                    return "waypointName";
+                else if ("number".equals(name))
+                    return 10;
+                else if ("special:key".equals(name))
+                    return "specialKey";
+                else
+                    return null;
+            }
         }
         @Override
         public boolean evaluateCondition(Match condition) {
@@ -89,8 +107,25 @@ public class TemplateEngineTest {
     }
 
     @Test
+    public void testFillingSearchExpression() throws Exception {
+        TemplateParser parser = new TemplateParser("?{ admin_level = 2 'NUTS 1' | admin_level = 4 'NUTS 2' |  '{admin_level}'}");
+        TemplateEntry templateEntry = parser.parse();
+
+        StringBuilder sb = new StringBuilder();
+        Relation r = new Relation();
+        r.put("admin_level", "2");
+        templateEntry.appendText(sb, r);
+        Assert.assertEquals("NUTS 1", sb.toString());
+
+        sb.setLength(0);
+        r.put("admin_level", "5");
+        templateEntry.appendText(sb, r);
+        Assert.assertEquals("5", sb.toString());
+    }
+
+    @Test
     public void testPrintAll() throws Exception {
-        TemplateParser parser = new TemplateParser("{*}");
+        TemplateParser parser = new TemplateParser("{special:everything}");
         TemplateEntry entry = parser.parse();
         StringBuilder sb = new StringBuilder();
         entry.appendText(sb, dataProvider);
@@ -104,6 +139,17 @@ public class TemplateEngineTest {
         StringBuilder sb = new StringBuilder();
         entry.appendText(sb, dataProvider);
         Assert.assertEquals("waypointName\n10", sb.toString());
+    }
+
+    @Test
+    public void testSpecialVariable() throws Exception {
+        TemplateParser parser = new TemplateParser("{name}u{special:localName}u{special:special:key}");
+        TemplateEntry templateEntry = parser.parse();
+
+        StringBuilder sb = new StringBuilder();
+        templateEntry.appendText(sb, dataProvider);
+        Assert.assertEquals("waypointNameulocalNameuspecialKey", sb.toString());
+
     }
 
 
