@@ -243,7 +243,6 @@ public class ImageryReader {
                                 entry.setDefaultMinZoom(val);
                             } else {
                                 entry.setDefaultMaxZoom(val);
-                                entry.setMaxZoom(val);
                             }
                         }
                     } else if (qName.equals("attribution-text")) {

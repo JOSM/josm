@@ -448,7 +448,6 @@ public class ImageryPreference implements PreferenceSetting {
             });
 
             mod = listActive.getColumnModel();
-            mod.getColumn(2).setPreferredWidth(50);
             mod.getColumn(1).setPreferredWidth(800);
             mod.getColumn(0).setPreferredWidth(200);
 
@@ -721,7 +720,7 @@ public class ImageryPreference implements PreferenceSetting {
          */
         class ImageryLayerTableModel extends DefaultTableModel {
             public ImageryLayerTableModel() {
-                setColumnIdentifiers(new String[] { tr("Menu Name"), tr("Imagery URL"), trc("layer", "Zoom") });
+                setColumnIdentifiers(new String[] { tr("Menu Name"), tr("Imagery URL")});
             }
 
             public ImageryInfo getRow(int row) {
@@ -753,10 +752,6 @@ public class ImageryPreference implements PreferenceSetting {
                     return info.getName();
                 case 1:
                     return info.getExtendedUrl();
-                case 2:
-                    return (info.getImageryType() == ImageryType.WMS || info.getImageryType() == ImageryType.HTML) ?
-                            (info.getPixelPerDegree() == 0.0 ? "" : info.getPixelPerDegree()) :
-                                (info.getMaxZoom() == 0 ? "" : info.getMaxZoom());
                 default:
                     throw new ArrayIndexOutOfBoundsException();
                 }
@@ -771,18 +766,6 @@ public class ImageryPreference implements PreferenceSetting {
                     break;
                 case 1:
                     info.setExtendedUrl((String)o);
-                    break;
-                case 2:
-                    info.setPixelPerDegree(0);
-                    info.setMaxZoom(0);
-                    try {
-                        if(info.getImageryType() == ImageryType.WMS || info.getImageryType() == ImageryType.HTML) {
-                            info.setPixelPerDegree(Double.parseDouble((String) o));
-                        } else {
-                            info.setMaxZoom(Integer.parseInt((String) o));
-                        }
-                    } catch (NumberFormatException e) {
-                    }
                     break;
                 default:
                     throw new ArrayIndexOutOfBoundsException();
