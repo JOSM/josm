@@ -322,7 +322,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
                         url += "SRS={proj}&";
                 } catch(Exception e) {
                 }
-                url += "WIDTH={width}&height={HEIGHT}&BBOX={bbox}";
+                url += "WIDTH={width}&height={height}&BBOX={bbox}";
             }
             else if(imageryType == ImageryType.TMS) {
                 if(!url.endsWith("/"))
