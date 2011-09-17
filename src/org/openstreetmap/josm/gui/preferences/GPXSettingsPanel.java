@@ -32,7 +32,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
     private static final int WAYPOINT_LABEL_CUSTOM = 6;
     private static final String[] LABEL_PATTERN_TEMPLATE = new String[] {Marker.LABEL_PATTERN_AUTO, Marker.LABEL_PATTERN_NAME,
-        Marker.LABEL_PATTERN_DESC, "{*}", "?{ '{name}' | '{desc}' | '{formattedWaypointOffset}' }", ""};
+        Marker.LABEL_PATTERN_DESC, "{special:everything}", "?{ '{name}' | '{desc}' | '{formattedWaypointOffset}' }", ""};
     private static final String[] LABEL_PATTERN_DESC = new String[] {tr("Auto"), /* gpx data field name */ trc("gpx_field", "Name"),
         /* gpx data field name */ trc("gpx_field", "Desc(ription)"), tr("Everything"), tr("Name or offset"), tr("None"), tr("Custom")};
 

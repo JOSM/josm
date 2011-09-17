@@ -3,8 +3,8 @@
 	xmlns:tns="http://josm.openstreetmap.de/tagging-preset-1.0"
 	elementFormDefault="qualified">
 
-	<!-- Localized attributes (for example de.description are not supported 
-		by xsd, so every element needs <anyAttribute/> To cover at least some common 
+	<!-- Localized attributes (for example de.description are not supported
+		by xsd, so every element needs <anyAttribute/> To cover at least some common
 		errors, elements have specified prohibited attributes -->
 
 	<element name="annotations" type="tns:root" />
@@ -61,6 +61,8 @@
 		<attribute name="name" type="string" use="required" />
 		<attribute name="icon" type="string" />
 		<attribute name="type" type="string" />
+		<attribute name="name_template" type="string"/>
+		<attribute name="name_template_filter" type="string"/>
 
 		<attribute name="text" use="prohibited" />
 		<anyAttribute processContents="skip" />

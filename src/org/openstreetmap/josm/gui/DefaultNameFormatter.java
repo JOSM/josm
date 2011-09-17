@@ -18,22 +18,20 @@ import java.util.Set;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.Changeset;
-import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
-import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.history.HistoryNameFormatter;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
+import org.openstreetmap.josm.gui.tagging.TaggingPreset;
+import org.openstreetmap.josm.tools.TaggingPresetNameTemplateList;
 
 /**
  * This is the default implementation of a {@see NameFormatter} for names of {@see OsmPrimitive}s.
@@ -56,7 +54,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
         return instance;
     }
-    
+
     /**
      * Registers a format hook. Adds the hook at the first position of the format hooks.
      * (for plugins)
@@ -102,7 +100,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         if (namingTagsForRelations == null) {
             namingTagsForRelations = new ArrayList<String>(
                     Main.pref.getCollection("relation.nameOrder", Arrays.asList(DEFAULT_NAMING_TAGS_FOR_RELATIONS))
-            );
+                    );
         }
         return namingTagsForRelations;
     }
@@ -115,14 +113,14 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param primitive the primitive
      * @return the decorated name
      */
-    protected String decorateNameWithId(String name, IPrimitive primitive) {
-        if (Main.pref.getBoolean("osm-primitives.showid"))
-            if (Main.pref.getBoolean("osm-primitives.showid.new-primitives"))
-                return name + tr(" [id: {0}]", primitive.getUniqueId());
-            else
-                return name + tr(" [id: {0}]", primitive.getId());
-        else
-            return name;
+    protected void decorateNameWithId(StringBuilder name, IPrimitive primitive) {
+        if (Main.pref.getBoolean("osm-primitives.showid")) {
+            if (Main.pref.getBoolean("osm-primitives.showid.new-primitives")) {
+                name.append(tr(" [id: {0}]", primitive.getUniqueId()));
+            } else {
+                name.append(tr(" [id: {0}]", primitive.getId()));
+            }
+        }
     }
 
     /**
@@ -131,52 +129,60 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param node the node
      * @return the name
      */
-    public String format(INode node) {
-        String name = "";
+    public String format(Node node) {
+        StringBuilder name = new StringBuilder();
         if (node.isIncomplete()) {
-            name = tr("incomplete");
+            name.append(tr("incomplete"));
         } else {
-            if (Main.pref.getBoolean("osm-primitives.localize-name", true)) {
-                name = node.getLocalName();
-            } else {
-                name = node.getName();
-            }
-            if(name == null)
-            {
-                String s;
-                if((s = node.get("addr:housename")) != null) {
-                    /* I18n: name of house as parameter */
-                    name = tr("House {0}", s);
+            TaggingPreset preset = TaggingPresetNameTemplateList.getInstance().findPresetTemplate(node);
+            if (preset == null) {
+                String n;
+                if (Main.pref.getBoolean("osm-primitives.localize-name", true)) {
+                    n = node.getLocalName();
+                } else {
+                    n = node.getName();
                 }
-                if(name == null && (s = node.get("addr:housenumber")) != null) {
-                    String t = node.get("addr:street");
-                    if(t != null) {
-                        /* I18n: house number, street as parameter, number should remain
+                if(n == null)
+                {
+                    String s;
+                    if((s = node.get("addr:housename")) != null) {
+                        /* I18n: name of house as parameter */
+                        n = tr("House {0}", s);
+                    }
+                    if(n == null && (s = node.get("addr:housenumber")) != null) {
+                        String t = node.get("addr:street");
+                        if(t != null) {
+                            /* I18n: house number, street as parameter, number should remain
                         before street for better visibility */
-                        name =  tr("House number {0} at {1}", s, t);
-                    }
-                    else {
-                        /* I18n: house number as parameter */
-                        name = tr("House number {0}", s);
+                            n =  tr("House number {0} at {1}", s, t);
+                        }
+                        else {
+                            /* I18n: house number as parameter */
+                            n = tr("House number {0}", s);
+                        }
                     }
                 }
-            }
 
-            if (name == null) {
-                name = node.isNew() ? tr("node") : ""+ node.getId();
+                if (n == null) {
+                    n = node.isNew() ? tr("node") : ""+ node.getId();
+                }
+                name.append(n);
+            } else {
+                preset.nameTemplate.appendText(name, node);
             }
-            name += " \u200E(" + node.getCoor().latToString(CoordinateFormat.getDefaultFormat()) + ", " + node.getCoor().lonToString(CoordinateFormat.getDefaultFormat()) + ")";
+            name.append(" \u200E(").append(node.getCoor().latToString(CoordinateFormat.getDefaultFormat())).append(", ").append(node.getCoor().lonToString(CoordinateFormat.getDefaultFormat())).append(")");
         }
-        name = decorateNameWithId(name, node);
+        decorateNameWithId(name, node);
 
+
+        String result = name.toString();
         for (NameFormatterHook hook: formatHooks) {
-            String hookResult = hook.checkFormat(node, name);
-            if (hookResult != null) {
+            String hookResult = hook.checkFormat(node, result);
+            if (hookResult != null)
                 return hookResult;
-            }
         }
 
-        return name;
+        return result;
     }
 
     private final Comparator<Node> nodeComparator = new Comparator<Node>() {
@@ -197,70 +203,78 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param way the way
      * @return the name
      */
-    public String format(IWay way) {
-        String name = "";
+    public String format(Way way) {
+        StringBuilder name = new StringBuilder();
         if (way.isIncomplete()) {
-            name = tr("incomplete");
+            name.append(tr("incomplete"));
         } else {
-            if (Main.pref.getBoolean("osm-primitives.localize-name", true)) {
-                name = way.getLocalName();
-            } else {
-                name = way.getName();
-            }
-            if (name == null) {
-                name = way.get("ref");
-            }
-            if (name == null) {
-                name =
-                    (way.get("highway") != null) ? tr("highway") :
-                        (way.get("railway") != null) ? tr("railway") :
-                            (way.get("waterway") != null) ? tr("waterway") :
-                                (way.get("landuse") != null) ? tr("landuse") : null;
-            }
-            if(name == null)
-            {
-                String s;
-                if((s = way.get("addr:housename")) != null) {
-                    /* I18n: name of house as parameter */
-                    name = tr("House {0}", s);
+            TaggingPreset preset = TaggingPresetNameTemplateList.getInstance().findPresetTemplate(way);
+            if (preset == null) {
+                String n;
+                if (Main.pref.getBoolean("osm-primitives.localize-name", true)) {
+                    n = way.getLocalName();
+                } else {
+                    n = way.getName();
                 }
-                if(name == null && (s = way.get("addr:housenumber")) != null) {
-                    String t = way.get("addr:street");
-                    if(t != null) {
-                        /* I18n: house number, street as parameter, number should remain
+                if (n == null) {
+                    n = way.get("ref");
+                }
+                if (n == null) {
+                    n =
+                            (way.get("highway") != null) ? tr("highway") :
+                                (way.get("railway") != null) ? tr("railway") :
+                                    (way.get("waterway") != null) ? tr("waterway") :
+                                        (way.get("landuse") != null) ? tr("landuse") : null;
+                }
+                if(n == null)
+                {
+                    String s;
+                    if((s = way.get("addr:housename")) != null) {
+                        /* I18n: name of house as parameter */
+                        n = tr("House {0}", s);
+                    }
+                    if(n == null && (s = way.get("addr:housenumber")) != null) {
+                        String t = way.get("addr:street");
+                        if(t != null) {
+                            /* I18n: house number, street as parameter, number should remain
                         before street for better visibility */
-                        name =  tr("House number {0} at {1}", s, t);
-                    }
-                    else {
-                        /* I18n: house number as parameter */
-                        name = tr("House number {0}", s);
+                            n =  tr("House number {0} at {1}", s, t);
+                        }
+                        else {
+                            /* I18n: house number as parameter */
+                            n = tr("House number {0}", s);
+                        }
                     }
                 }
+                if(n == null || n.length() == 0) {
+                    n = String.valueOf(way.getId());
+                }
+
+                name.append(n);
+            } else {
+                preset.nameTemplate.appendText(name, way);
             }
 
             int nodesNo = way.getNodesCount();
             if (nodesNo > 1 && way.isClosed()) {
                 nodesNo--;
             }
-            if(name == null || name.length() == 0) {
-                name = String.valueOf(way.getId());
-            }
             /* note: length == 0 should no longer happen, but leave the bracket code
                nevertheless, who knows what future brings */
             /* I18n: count of nodes as parameter */
             String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
-            name += (name.length() > 0) ? " ("+nodes+")" : nodes;
+            name.append(" (").append(nodes).append(")");
         }
-        name = decorateNameWithId(name, way);
-        
+        decorateNameWithId(name, way);
+
+        String result = name.toString();
         for (NameFormatterHook hook: formatHooks) {
-            String hookResult = hook.checkFormat(way, name);
-            if (hookResult != null) {
+            String hookResult = hook.checkFormat(way, result);
+            if (hookResult != null)
                 return hookResult;
-            }
         }
 
-        return name;
+        return result;
     }
 
     private final Comparator<Way> wayComparator = new Comparator<Way>() {
@@ -281,89 +295,116 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param relation the relation
      * @return the name
      */
-    public String format(IRelation relation) {
-        String name;
+    public String format(Relation relation) {
+        StringBuilder name = new StringBuilder();
         if (relation.isIncomplete()) {
-            name = tr("incomplete");
+            name.append(tr("incomplete"));
         } else {
-            name = getRelationTypeName(relation);
+            TaggingPreset preset = TaggingPresetNameTemplateList.getInstance().findPresetTemplate(relation);
+
+            formatRelationNameAndType(relation, name, preset);
+
+            int mbno = relation.getMembersCount();
+            name.append(trn("{0} member", "{0} members", mbno, mbno));
+
+            if (relation.hasIncompleteMembers()) {
+                name.append(", ").append(tr("incomplete"));
+            }
+
+            name.append(")");
+        }
+        decorateNameWithId(name, relation);
+
+        String result = name.toString();
+        for (NameFormatterHook hook: formatHooks) {
+            String hookResult = hook.checkFormat(relation, result);
+            if (hookResult != null)
+                return hookResult;
+        }
+
+        return result;
+    }
+
+    private void formatRelationNameAndType(Relation relation, StringBuilder result, TaggingPreset preset) {
+        if (preset == null) {
+            result.append(getRelationTypeName(relation));
             String relationName = getRelationName(relation);
             if (relationName == null) {
                 relationName = Long.toString(relation.getId());
             } else {
                 relationName = "\"" + relationName + "\"";
             }
-            name += " (" + relationName + ", ";
-
-            int mbno = relation.getMembersCount();
-            name += trn("{0} member", "{0} members", mbno, mbno);
-
-            if (relation instanceof Relation) {
-                if (((Relation) relation).hasIncompleteMembers()) {
-                    name += ", "+tr("incomplete");
-                }
-            }
-
-            name += ")";
+            result.append(" (").append(relationName).append(", ");
+        } else {
+            preset.nameTemplate.appendText(result, relation);
+            result.append("(");
         }
-        name = decorateNameWithId(name, relation);
-
-        for (NameFormatterHook hook: formatHooks) {
-            String hookResult = hook.checkFormat(relation, name);
-            if (hookResult != null) {
-                return hookResult;
-            }
-        }
-
-        return name;
     }
 
     private final Comparator<Relation> relationComparator = new Comparator<Relation>() {
         @Override
         public int compare(Relation r1, Relation r2) {
-            String type1 = getRelationTypeName(r1);
-            String type2 = getRelationTypeName(r2);
+            //TODO This doesn't work correctly with formatHooks
 
-            int comp = type1.compareTo(type2);
-            if (comp != 0)
-                return comp;
+            TaggingPreset preset1 = TaggingPresetNameTemplateList.getInstance().findPresetTemplate(r1);
+            TaggingPreset preset2 = TaggingPresetNameTemplateList.getInstance().findPresetTemplate(r2);
 
-            String name1 = getRelationName(r1);
-            String name2 = getRelationName(r2);
+            if (preset1 != null || preset2 != null) {
+                StringBuilder name1 = new StringBuilder();
+                formatRelationNameAndType(r1, name1, preset1);
+                StringBuilder name2 = new StringBuilder();
+                formatRelationNameAndType(r2, name2, preset2);
 
-            if (name1 == null && name2 == null)
-                return (r1.getUniqueId() > r2.getUniqueId())?1:-1;
-            else if (name1 == null)
-                return -1;
-            else if (name2 == null)
-                return 1;
-            else if (!name1.isEmpty() && !name2.isEmpty() && Character.isDigit(name1.charAt(0)) && Character.isDigit(name2.charAt(0))) {
-                //Compare numerically
-                String ln1 = getLeadingNumber(name1);
-                String ln2 = getLeadingNumber(name2);
-
-                comp = Long.valueOf(ln1).compareTo(Long.valueOf(ln2));
-                if (comp != 0)
-                    return comp;
-
-                // put 1 before 0001
-                comp = ln1.compareTo(ln2);
-                if (comp != 0)
-                    return comp;
-
-                comp = name1.substring(ln1.length()).compareTo(name2.substring(ln2.length()));
+                int comp = name1.toString().compareTo(name2.toString());
                 if (comp != 0)
                     return comp;
             } else {
-                comp = name1.compareToIgnoreCase(name2);
+
+                String type1 = getRelationTypeName(r1);
+                String type2 = getRelationTypeName(r2);
+
+                int comp = type1.compareTo(type2);
                 if (comp != 0)
                     return comp;
+
+                String name1 = getRelationName(r1);
+                String name2 = getRelationName(r2);
+
+                if (name1 == null && name2 == null)
+                    return (r1.getUniqueId() > r2.getUniqueId())?1:-1;
+                else if (name1 == null)
+                    return -1;
+                else if (name2 == null)
+                    return 1;
+                else if (!name1.isEmpty() && !name2.isEmpty() && Character.isDigit(name1.charAt(0)) && Character.isDigit(name2.charAt(0))) {
+                    //Compare numerically
+                    String ln1 = getLeadingNumber(name1);
+                    String ln2 = getLeadingNumber(name2);
+
+                    comp = Long.valueOf(ln1).compareTo(Long.valueOf(ln2));
+                    if (comp != 0)
+                        return comp;
+
+                    // put 1 before 0001
+                    comp = ln1.compareTo(ln2);
+                    if (comp != 0)
+                        return comp;
+
+                    comp = name1.substring(ln1.length()).compareTo(name2.substring(ln2.length()));
+                    if (comp != 0)
+                        return comp;
+                } else {
+                    comp = name1.compareToIgnoreCase(name2);
+                    if (comp != 0)
+                        return comp;
+                }
             }
+
 
             if (r1.getMembersCount() != r2.getMembersCount())
                 return (r1.getMembersCount() > r2.getMembersCount())?1:-1;
 
-            comp = Boolean.valueOf(r1.hasIncompleteMembers()).compareTo(Boolean.valueOf(r2.hasIncompleteMembers()));
+            int comp = Boolean.valueOf(r1.hasIncompleteMembers()).compareTo(Boolean.valueOf(r2.hasIncompleteMembers()));
             if (comp != 0)
                 return comp;
 
@@ -407,12 +448,11 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         if (admin_level != null) {
             name += "["+admin_level+"]";
         }
-        
+
         for (NameFormatterHook hook: formatHooks) {
             String hookResult = hook.checkRelationTypeName(relation, name);
-            if (hookResult != null) {
+            if (hookResult != null)
                 return hookResult;
-            }
         }
 
         return name;
@@ -561,7 +601,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                         (way.get("railway") != null) ? tr("railway") :
                             (way.get("waterway") != null) ? tr("waterway") :
                                 (way.get("landuse") != null) ? tr("landuse") : ""
-            );
+                    );
         }
 
         int nodesNo = way.isClosed() ? way.getNumNodes() -1 : way.getNumNodes();

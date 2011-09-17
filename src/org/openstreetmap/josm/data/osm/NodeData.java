@@ -24,7 +24,7 @@ public class NodeData extends PrimitiveData implements INode {
     private boolean isLatLonKnown() {
         return lat != Double.NaN && lon != Double.NaN;
     }
-    
+
     @Override
     public LatLon getCoor() {
         return isLatLonKnown() ? new LatLon(lat,lon) : null;
@@ -76,8 +76,4 @@ public class NodeData extends PrimitiveData implements INode {
         visitor.visit(this);
     }
 
-    @Override
-    public String getDisplayName(NameFormatter formatter) {
-        return formatter.format(this);
-    }
 }

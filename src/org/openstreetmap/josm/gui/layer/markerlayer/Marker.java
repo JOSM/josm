@@ -377,8 +377,8 @@ public class Marker implements TemplateEngineDataProvider {
     }
 
     @Override
-    public List<String> getTemplateKeys() {
-        List<String> result;
+    public Collection<String> getTemplateKeys() {
+        Collection<String> result;
         if (dataProvider != null) {
             result = dataProvider.getTemplateKeys();
         } else {
@@ -400,13 +400,13 @@ public class Marker implements TemplateEngineDataProvider {
     }
 
     @Override
-    public Object getTemplateValue(String name) {
+    public Object getTemplateValue(String name, boolean special) {
         if (MARKER_FORMATTED_OFFSET.equals(name))
             return formatOffset();
         else if (MARKER_OFFSET.equals(name))
             return offset;
         else if (dataProvider != null)
-            return dataProvider.getTemplateValue(name);
+            return dataProvider.getTemplateValue(name, special);
         else
             return null;
     }

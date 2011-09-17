@@ -29,10 +29,9 @@ public interface IPrimitive extends Tagged, PrimitiveId {
     boolean isTimestampEmpty();
     int getChangesetId();
     void setChangesetId(int changesetId);
-    
+
     void visit(PrimitiveVisitor visitor);
     String getName();
     String getLocalName();
-    String getDisplayName(NameFormatter formatter);
 
 }

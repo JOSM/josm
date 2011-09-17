@@ -161,7 +161,7 @@ public final class Way extends OsmPrimitive implements IWay {
     @Override public void visit(Visitor visitor) {
         visitor.visit(this);
     }
-    
+
     @Override public void visit(PrimitiveVisitor visitor) {
         visitor.visit(this);
     }
@@ -452,7 +452,6 @@ public final class Way extends OsmPrimitive implements IWay {
     }
 
 
-    @Override
     public String getDisplayName(NameFormatter formatter) {
         return formatter.format(this);
     }
