@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -56,6 +55,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapPolygonImpl;
 import org.openstreetmap.gui.jmapviewer.MapRectangleImpl;
@@ -64,7 +64,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
-import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.imagery.Shape;
@@ -578,7 +577,9 @@ public class ImageryPreference implements PreferenceSetting {
                         if (listdef.getSelectionModel().isSelectedIndex(i)) {
                             if (!mapRectangles.containsKey(i)) {
                                 // Add new map rectangle
-                                MapRectangle rectangle = new MapRectangleImpl(bounds);
+                                Coordinate topLeft = new Coordinate(bounds.getMax().lat(), bounds.getMin().lon());
+                                Coordinate bottomRight = new Coordinate(bounds.getMin().lat(), bounds.getMax().lon());
+                                MapRectangle rectangle = new MapRectangleImpl(topLeft, bottomRight);
                                 mapRectangles.put(i, rectangle);
                                 map.addMapRectangle(rectangle);
                             }
