@@ -9,7 +9,6 @@ import java.awt.Point;
 import java.awt.Stroke;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
-import org.openstreetmap.josm.data.Bounds;
 
 /**
  * @author Vincent
@@ -22,13 +21,13 @@ public class MapRectangleImpl implements MapRectangle {
     private Color color;
     private Stroke stroke;
 
-    public MapRectangleImpl(Bounds bounds) {
-        this(bounds, Color.BLUE, new BasicStroke(2));
+    public MapRectangleImpl(Coordinate topLeft, Coordinate bottomRight) {
+        this(topLeft, bottomRight, Color.BLUE, new BasicStroke(2));
     }
 
-    public MapRectangleImpl(Bounds bounds, Color color, Stroke stroke) {
-        this.topLeft = new Coordinate(bounds.getMax().lat(), bounds.getMin().lon());
-        this.bottomRight = new Coordinate(bounds.getMin().lat(), bounds.getMax().lon());
+    public MapRectangleImpl(Coordinate topLeft, Coordinate bottomRight, Color color, Stroke stroke) {
+        this.topLeft = topLeft;
+        this.bottomRight = bottomRight;
         this.color = color;
         this.stroke = stroke;
     }
