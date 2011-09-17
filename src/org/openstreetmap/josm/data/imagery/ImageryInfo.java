@@ -118,6 +118,8 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         res.add(cookies);
         if(imageryType == ImageryType.WMS || imageryType == ImageryType.HTML) {
             res.add(pixelPerDegree != 0.0 ? String.valueOf(pixelPerDegree) : null);
+        } else {
+            res.add(null);
         }
         res.add(bounds != null ? bounds.encodeAsString(",") : null);
         res.add(attributionText);
