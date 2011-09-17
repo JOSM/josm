@@ -20,9 +20,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -662,6 +665,8 @@ public class ImageryPreference implements PreferenceSetting {
                             JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
+                
+                Set<String> acceptedEulas = new HashSet<String>();
 
                 outer: for (int i = 0; i < lines.length; i++) {
                     ImageryInfo info = modeldef.getRow(lines[i]);
@@ -678,8 +683,12 @@ public class ImageryPreference implements PreferenceSetting {
                         }
                     }
 
-                    if (info.getEulaAcceptanceRequired() != null) {
-                        if (!confirmEulaAcceptance(gui, info.getEulaAcceptanceRequired())) {
+                    String eulaURL = info.getEulaAcceptanceRequired();
+                    // If set and not already accepted, ask for EULA acceptance
+                    if (eulaURL != null && !acceptedEulas.contains(eulaURL)) {
+                        if (confirmEulaAcceptance(gui, eulaURL)) {
+                            acceptedEulas.add(eulaURL);
+                        } else {
                             continue outer;
                         }
                     }
