@@ -272,7 +272,7 @@ public class AddWMSLayerPanel extends JPanel {
         a.append(buildRootUrl());
         a.append("FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=");
         a.append(commaSepLayerList());
-        a.append("&");
+        a.append("&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}");
 
         return a.toString();
     }
