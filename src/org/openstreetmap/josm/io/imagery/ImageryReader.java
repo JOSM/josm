@@ -39,8 +39,8 @@ public class ImageryReader {
         IMAGERY,            // inside the imagery element
         ENTRY,              // inside an entry
         ENTRY_ATTRIBUTE,    // note we are inside an entry attribute to collect the character data
-        SUPPORTED_PROJECTIONS,
-        SRS,
+        PROJECTIONS,
+        CODE,
         BOUNDS,
         SHAPE,
         UNKNOWN,            // element is not recognized in the current context
@@ -83,7 +83,7 @@ public class ImageryReader {
         ImageryInfo entry;
         ImageryBounds bounds;
         Shape shape;
-        List<String> supported_srs;
+        List<String> projections;
 
         @Override public void startDocument() {
             accumulator = new StringBuffer();
@@ -93,7 +93,7 @@ public class ImageryReader {
             entries = new ArrayList<ImageryInfo>();
             entry = null;
             bounds = null;
-            supported_srs = null;
+            projections = null;
         }
 
         @Override
@@ -142,9 +142,9 @@ public class ImageryReader {
                             break;
                         }
                         newState = State.BOUNDS;
-                    } else if (qName.equals("supported-projections")) {
-                        supported_srs = new ArrayList<String>();
-                        newState = State.SUPPORTED_PROJECTIONS;
+                    } else if (qName.equals("projections")) {
+                        projections = new ArrayList<String>();
+                        newState = State.PROJECTIONS;
                     }
                     break;
                 case BOUNDS:
@@ -162,9 +162,9 @@ public class ImageryReader {
                         }
                     }
                     break;
-                case SUPPORTED_PROJECTIONS:
-                    if (qName.equals("srs")) {
-                        newState = State.SRS;
+                case PROJECTIONS:
+                    if (qName.equals("code")) {
+                        newState = State.CODE;
                     }
                     break;
             }
@@ -270,12 +270,12 @@ public class ImageryReader {
                     bounds.addShape(shape);
                     shape = null;
                     break;
-                case SRS:
-                    supported_srs.add(accumulator.toString());
+                case CODE:
+                    projections.add(accumulator.toString());
                     break;
-                case SUPPORTED_PROJECTIONS:
-                    entry.setServerProjections(supported_srs);
-                    supported_srs = null;
+                case PROJECTIONS:
+                    entry.setServerProjections(projections);
+                    projections = null;
                     break;
             }
         }
