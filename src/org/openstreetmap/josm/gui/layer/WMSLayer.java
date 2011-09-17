@@ -108,7 +108,6 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
     private int threadCount;
     private int workingThreadCount;
     private boolean canceled;
-    private List<String> serverProjections = null;
 
     /** set to true if this layer uses an invalid base url */
     private boolean usesInvalidUrl = false;
@@ -121,7 +120,6 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
 
     public WMSLayer(ImageryInfo info) {
         super(info);
-        serverProjections = info.getServerProjections();
         mv = Main.map.mapView;
         setBackgroundLayer(true); /* set global background variable */
         initializeImages();
@@ -143,24 +141,8 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         }
         resolution = mv.getDist100PixelText();
 
-        if(info.getUrl() != null) {
-            if (serverProjections == null) {
-                serverProjections = WMSGrabber.getServerProjections(info.getUrl(), true);
-            }
+        if(info.getUrl() != null)
             startGrabberThreads();
-            if(info.getImageryType() == ImageryType.WMS && !ImageryInfo.isUrlWithPatterns(info.getUrl())) {
-                if (!(info.getUrl().endsWith("&") || info.getUrl().endsWith("?"))) {
-                    if (!confirmMalformedUrl(info.getUrl())) {
-                        System.out.println(tr("Warning: WMS layer deactivated because of malformed base url ''{0}''", info.getUrl()));
-                        usesInvalidUrl = true;
-                        setName(getName() + tr("(deactivated)"));
-                        return;
-                    } else {
-                        isInvalidUrlConfirmed = true;
-                    }
-                }
-            }
-        }
 
         Main.pref.addPreferenceChangeListener(this);
     }
@@ -246,35 +228,6 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
             }
         } else {
             downloadAndPaintVisible(g, mv, false);
-        }
-    }
-
-    protected boolean confirmMalformedUrl(String url) {
-        if (isInvalidUrlConfirmed)
-            return true;
-        String msg  = tr("<html>The base URL<br>"
-                + "''{0}''<br>"
-                + "for this WMS layer does neither end with a ''&'' nor with a ''?''.<br>"
-                + "This is likely to lead to invalid WMS request. You should check your<br>"
-                + "preference settings.<br>"
-                + "Do you want to fetch WMS tiles anyway?</html>",
-                url);
-        String [] options = new String[] {
-                tr("Yes, fetch images"),
-                tr("No, abort")
-        };
-        int ret = JOptionPane.showOptionDialog(
-                Main.parent,
-                msg,
-                tr("Invalid URL?"),
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE,
-                null,
-                options, options[1]
-        );
-        switch(ret) {
-        case JOptionPane.YES_OPTION: return true;
-        default: return false;
         }
     }
 
@@ -917,27 +870,17 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         else throw new IllegalStateException("getGrabber() called for non-WMS layer type");
     }
 
-    /**
-     * Get the list of projections supported by the WMS server corresponding to this layer.
-     * @return The list of projections, if known. An empty list otherwise.
-     */
-    public List<String> getServerProjections() {
-        if (serverProjections == null)
-            return Collections.emptyList();
-        else
-            return Collections.unmodifiableList(serverProjections);
-    }
-    
     @Override
     public boolean isProjectionSupported(Projection proj) {
-        return serverProjections == null || serverProjections.contains(proj.toCode().toUpperCase())
+        List<String> serverProjections = info.getServerProjections();
+        return serverProjections.contains(proj.toCode().toUpperCase())
         || (proj instanceof Mercator && serverProjections.contains("EPSG:4326"));
     }
 
     @Override
     public String nameSupportedProjections() {
         String res = "";
-        for(String p : serverProjections) {
+        for(String p : info.getServerProjections()) {
             if(!res.isEmpty())
                 res += ", ";
             res += p;

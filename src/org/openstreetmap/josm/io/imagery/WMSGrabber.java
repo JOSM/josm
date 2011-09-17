@@ -46,16 +46,13 @@ import org.openstreetmap.josm.tools.Utils;
 public class WMSGrabber extends Grabber {
 
     protected String baseURL;
-    private final boolean urlWithPatterns;
-    private List<String> serverProjections;
+    private ImageryInfo info;
     private Map<String, String> props = new HashMap<String, String>();
 
     public WMSGrabber(MapView mv, WMSLayer layer) {
         super(mv, layer);
-        this.baseURL = layer.getInfo().getUrl();
-        this.serverProjections = layer.getServerProjections();
-        /* URL containing placeholders? */
-        urlWithPatterns = ImageryInfo.isUrlWithPatterns(baseURL);
+        this.info = layer.getInfo();
+        this.baseURL = info.getUrl();
         if(layer.getInfo().getCookies() != null && !layer.getInfo().getCookies().equals("")) {
             props.put("Cookie", layer.getInfo().getCookies());
         }
@@ -93,29 +90,7 @@ public class WMSGrabber extends Grabber {
     protected URL getURL(double w, double s,double e,double n,
             int wi, int ht) throws MalformedURLException {
         String myProj = Main.getProjection().toCode();
-        String srs = "";
-        boolean useepsg = false;
-        // FIXME: Non-Pattern format should be dropped in future
-        try
-        {
-            Matcher m = Pattern.compile(".*SRS=([a-z0-9:]+).*", Pattern.CASE_INSENSITIVE).matcher(baseURL.toUpperCase());
-            if(m.matches())
-            {
-                if(m.group(1).equals("EPSG:4326") && Main.getProjection() instanceof Mercator)
-                    useepsg = true;
-            } else if((Main.getProjection() instanceof Mercator) && !serverProjections.contains(myProj)) {
-                useepsg = true;
-                srs ="&srs=EPSG:4326";
-            } else {
-                srs ="&srs="+myProj;
-            }
-        }
-        catch(Exception ex)
-        {
-        }
-
-        if(useepsg) // don't use mercator code directly
-        {
+        if((Main.getProjection() instanceof Mercator) && !info.getServerProjections().contains(myProj)) {
             LatLon sw = Main.getProjection().eastNorth2latlon(new EastNorth(w, s));
             LatLon ne = Main.getProjection().eastNorth2latlon(new EastNorth(e, n));
             myProj = "EPSG:4326";
@@ -125,84 +100,18 @@ public class WMSGrabber extends Grabber {
             e = ne.lon();
         }
 
-        String str = baseURL;
-        String bbox = latLonFormat.format(w) + ","
-        + latLonFormat.format(s) + ","
-        + latLonFormat.format(e) + ","
-        + latLonFormat.format(n);
-
-        if (urlWithPatterns) {
-            str = str.replaceAll("\\{proj(\\([^})]+\\))?\\}", myProj)
-            .replaceAll("\\{bbox\\}", bbox)
+        return new URL(baseURL.replaceAll("\\{proj(\\([^})]+\\))?\\}", myProj)
+            .replaceAll("\\{bbox\\}", latLonFormat.format(w) + ","
+                + latLonFormat.format(s) + ","
+                + latLonFormat.format(e) + ","
+                + latLonFormat.format(n))
             .replaceAll("\\{w\\}", latLonFormat.format(w))
             .replaceAll("\\{s\\}", latLonFormat.format(s))
             .replaceAll("\\{e\\}", latLonFormat.format(e))
             .replaceAll("\\{n\\}", latLonFormat.format(n))
             .replaceAll("\\{width\\}", String.valueOf(wi))
-            .replaceAll("\\{height\\}", String.valueOf(ht));
-        } else {
-            str += "bbox=" + bbox
-                    + srs
-                    + "&width=" + wi + "&height=" + ht;
-            if (!(baseURL.endsWith("&") || baseURL.endsWith("?"))) {
-                System.out.println(tr("Warning: The base URL ''{0}'' for a WMS service doesn''t have a trailing ''&'' or a trailing ''?''.", baseURL));
-                System.out.println(tr("Warning: Fetching WMS tiles is likely to fail. Please check you preference settings."));
-                System.out.println(tr("Warning: The complete URL is ''{0}''.", str));
-            }
-        }
-        return new URL(str.replace(" ", "%20"));
-    }
-
-    static public ArrayList<String> getServerProjections(String baseURL, Boolean warn)
-    {
-        ArrayList<String> serverProjections = new ArrayList<String>();
-        boolean hasepsg = false;
-        
-        // FIXME: Non-Pattern format should be dropped in future
-        try
-        {
-            Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(baseURL.toUpperCase());
-            if(m.matches())
-            {
-                for(String p : m.group(1).split(","))
-                {
-                    serverProjections.add(p);
-                    if(p.equals("EPSG:4326"))
-                        hasepsg = true;
-                }
-            }
-            else
-            {
-                m = Pattern.compile(".*SRS=([a-z0-9:]+).*", Pattern.CASE_INSENSITIVE).matcher(baseURL.toUpperCase());
-                if(m.matches())
-                {
-                    serverProjections.add(m.group(1));
-                    if(m.group(1).equals("EPSG:4326"))
-                        hasepsg = true;
-                }
-                /* TODO: here should be an "else" code checking server capabilities */
-            }
-        }
-        catch(Exception e)
-        {
-        }
-        if(serverProjections.isEmpty())
-            return null;
-        if(warn)
-        {
-            String myProj = Main.getProjection().toCode().toUpperCase();
-            if(!serverProjections.contains(myProj) &&
-            !(Main.getProjection() instanceof Mercator && serverProjections.contains("EPSG:4326")))
-            {
-                JOptionPane.showMessageDialog(Main.parent,
-                        tr("The projection ''{0}'' in URL and current projection ''{1}'' mismatch.\n"
-                                + "This may lead to wrong coordinates.",
-                                serverProjections.get(0), myProj),
-                                tr("Warning"),
-                                JOptionPane.WARNING_MESSAGE);
-            }
-        }
-        return serverProjections;
+            .replaceAll("\\{height\\}", String.valueOf(ht))
+            .replace(" ", "%20"));
     }
 
     @Override

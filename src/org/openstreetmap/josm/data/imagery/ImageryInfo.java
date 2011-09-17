@@ -69,7 +69,6 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     private String eulaAcceptanceRequired= null;
     private ImageryType imageryType = ImageryType.WMS;
     private double pixelPerDegree = 0.0;
-    private int maxZoom = 0;
     private int defaultMaxZoom = 0;
     private int defaultMinZoom = 0;
     private ImageryBounds bounds = null;
@@ -119,8 +118,6 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         res.add(cookies);
         if(imageryType == ImageryType.WMS || imageryType == ImageryType.HTML) {
             res.add(pixelPerDegree != 0.0 ? String.valueOf(pixelPerDegree) : null);
-        } else {
-            res.add(maxZoom != 0 ? String.valueOf(maxZoom) : null);
         }
         res.add(bounds != null ? bounds.encodeAsString(",") : null);
         res.add(attributionText);
@@ -162,8 +159,6 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         if(array.size() >= 4 && !array.get(3).isEmpty()) {
             if (imageryType == ImageryType.WMS || imageryType == ImageryType.HTML) {
                 this.pixelPerDegree=Double.valueOf(array.get(3));
-            } else {
-                this.maxZoom=Integer.valueOf(array.get(3));
             }
         }
         if(array.size() >= 5 && !array.get(4).isEmpty()) {
@@ -205,7 +200,6 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         this.cookies=i.cookies;
         this.imageryType=i.imageryType;
         this.defaultMinZoom=i.defaultMinZoom;
-        this.maxZoom=i.maxZoom;
         this.defaultMaxZoom=i.defaultMaxZoom;
         this.pixelPerDegree=i.pixelPerDegree;
         this.eulaAcceptanceRequired = null;
@@ -250,10 +244,6 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         this.defaultMinZoom = defaultMinZoom;
     }
     
-    public void setMaxZoom(int maxZoom) {
-        this.maxZoom = maxZoom;
-    }
-
     public void setBounds(ImageryBounds b) {
         this.bounds = b;
     }
@@ -281,6 +271,10 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     public void setExtendedUrl(String url) {
         CheckParameterUtil.ensureParameterNotNull(url);
         
+        // Default imagery type is WMS
+        this.url = url;
+        this.imageryType = ImageryType.WMS;
+
         defaultMaxZoom = 0;
         defaultMinZoom = 0;
         for (ImageryType type : ImageryType.values()) {
@@ -290,18 +284,56 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
                 this.imageryType = type;
                 if(m.group(2) != null) {
                     defaultMaxZoom = Integer.valueOf(m.group(2));
-                    maxZoom = defaultMaxZoom;
                 }
                 if(m.group(1) != null) {
                     defaultMinZoom = Integer.valueOf(m.group(1));
                 }
-                return;
+                break;
             }
         }
 
-        // Default imagery type is WMS
-        this.url = url;
-        this.imageryType = ImageryType.WMS;
+        if(url.contains("{") && url.contains("}")) {
+            if(serverProjections == null || serverProjections.isEmpty()) {
+                try {
+                    serverProjections = new ArrayList<String>();
+                    Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(url.toUpperCase());
+                    if(m.matches()) {
+                        for(String p : m.group(1).split(","))
+                            serverProjections.add(p);
+                    }
+                } catch(Exception e) {
+                }
+            }
+        // FIXME: Remove else case in March 2012 - convert old style WMS/TMS
+        } else {
+            url = this.url;
+            if(imageryType == ImageryType.WMS) {
+                if(!url.endsWith("&") && !url.endsWith("?")) {
+                    url = url + (url.contains("?") ? "&" : "?");
+                }
+                try {
+                    Matcher m = Pattern.compile(".*SRS=([a-z0-9:]+).*", Pattern.CASE_INSENSITIVE).matcher(url.toUpperCase());
+                    if(m.matches()) {
+                        String newProj = m.group(1);
+                        if(serverProjections == null || serverProjections.isEmpty())
+                            serverProjections = Collections.singletonList(newProj);
+                        url = url.replaceAll("([sS][rR][sS]=)[a-zA-Z0-9:]+","SRS={proj("+newProj+")}");
+                    } else
+                        url += "SRS={proj}&";
+                } catch(Exception e) {
+                }
+                url += "WIDTH={width}&height={HEIGHT}&BBOX={bbox}";
+            }
+            else if(imageryType == ImageryType.TMS) {
+                if(!url.endsWith("/"))
+                    url += "/";
+                url += "{zoom}/{x}/{y}.png";
+            }
+            if(!url.equals(this.url)) {
+                Main.warn("Changed Imagery URL '"+this.url+"' to '"+url+"'");
+                this.url = url;
+            }
+        }
     }
 
     public String getName() {
@@ -337,7 +369,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     }
 
     public int getMaxZoom() {
-        return this.maxZoom;
+        return this.defaultMaxZoom;
     }
 
     public int getMinZoom() {
@@ -367,7 +399,8 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
      * of supported projections otherwise.
      */
     public List<String> getServerProjections() {
-        if (serverProjections == null) return null;
+        if (serverProjections == null)
+            return Collections.emptyList();
         return Collections.unmodifiableList(serverProjections);
     }
 
@@ -394,8 +427,6 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         String res = name;
         if(pixelPerDegree != 0.0) {
             res += " ("+pixelPerDegree+")";
-        } else if(maxZoom != 0 && maxZoom != defaultMaxZoom) {
-            res += " (z"+maxZoom+")";
         }
         return res;
     }
@@ -446,10 +477,6 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
 
     public void setImageryType(ImageryType imageryType) {
         this.imageryType = imageryType;
-    }
-
-    public static boolean isUrlWithPatterns(String url) {
-        return url != null && url.contains("{") && url.contains("}");
     }
 
     /**

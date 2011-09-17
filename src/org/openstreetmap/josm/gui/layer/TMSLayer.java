@@ -235,15 +235,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     public static TileSource getTileSource(ImageryInfo info) {
         if (info.getImageryType() == ImageryType.TMS) {
-            if(ImageryInfo.isUrlWithPatterns(info.getUrl())) {
-                TMSTileSource t = new TemplatedTMSTileSource(info.getName(), info.getUrl(), info.getMinZoom(), info.getMaxZoom());
-                info.setAttribution(t);
-                return t;
-            } else {
-                TMSTileSource t = new TMSTileSource(info.getName(),info.getUrl(), info.getMinZoom(), info.getMaxZoom());
-                info.setAttribution(t);
-                return t;
-            }
+            TMSTileSource t = new TemplatedTMSTileSource(info.getName(), info.getUrl(), info.getMinZoom(), info.getMaxZoom());
+            info.setAttribution(t);
+            return t;
         } else if (info.getImageryType() == ImageryType.BING)
             return new BingAerialTileSource();
         else if (info.getImageryType() == ImageryType.SCANEX)

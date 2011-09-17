@@ -20,9 +20,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -378,6 +381,37 @@ public class ImageryPreference implements PreferenceSetting {
         final JTable listdef;
         final JMapViewer map;
         final PreferenceTabbedPane gui;
+        
+        private class ImageryTableCellRenderer extends DefaultTableCellRenderer {
+            
+            private List<ImageryInfo> layers;
+            
+            public ImageryTableCellRenderer(List<ImageryInfo> layers) {
+                this.layers = layers;
+            }
+            
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean
+            isSelected, boolean hasFocus, int row, int column) {
+                JLabel label = (JLabel) super.getTableCellRendererComponent(
+                table, value, isSelected, hasFocus, row, column);
+                String t = value.toString();
+                label.setBackground(Main.pref.getUIColor("Table.background"));
+                if (isSelected) {
+                    label.setForeground(Main.pref.getUIColor("Table.foreground"));
+                }
+                for(ImageryInfo l : layers)
+                {
+                    if(l.getExtendedUrl().equals(t)) {
+                        label.setBackground(Main.pref.getColor(
+                        marktr("Imagery Background: Default"),
+                        new Color(200,255,200)));
+                        break;
+                    }
+                }
+                return label;
+            }
+        }
 
         public ImageryProvidersPanel(final PreferenceTabbedPane gui, ImageryLayerInfo layerInfoArg) {
             super(new GridBagLayout());
@@ -422,57 +456,14 @@ public class ImageryPreference implements PreferenceSetting {
 
             TableColumnModel mod = listdef.getColumnModel();
             mod.getColumn(2).setPreferredWidth(800);
+            mod.getColumn(2).setCellRenderer(new ImageryTableCellRenderer(layerInfo.getLayers()));
             mod.getColumn(1).setPreferredWidth(400);
             mod.getColumn(0).setPreferredWidth(50);
 
-            mod.getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
-                @Override
-                public Component getTableCellRendererComponent(JTable table,
-                Object value, boolean isSelected, boolean hasFocus, int row,
-                int column) {
-                    JLabel label = (JLabel) super.getTableCellRendererComponent(
-                    table, value, isSelected, hasFocus, row, column);
-                    String t = value.toString();
-                    label.setBackground(Main.pref.getUIColor("Table.background"));
-                    for(ImageryInfo l : layerInfo.getLayers())
-                    {
-                        if(l.getExtendedUrl().equals(t)) {
-                            label.setBackground(Main.pref.getColor(
-                            marktr("Imagery Background: Default"),
-                            new Color(200,255,200)));
-                            break;
-                        }
-                    }
-                    return label;
-                };
-            });
-
             mod = listActive.getColumnModel();
-            mod.getColumn(2).setPreferredWidth(50);
             mod.getColumn(1).setPreferredWidth(800);
+            mod.getColumn(1).setCellRenderer(new ImageryTableCellRenderer(layerInfo.getDefaultLayers()));
             mod.getColumn(0).setPreferredWidth(200);
-
-            mod.getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
-                @Override
-                public Component getTableCellRendererComponent(JTable table,
-                Object value, boolean isSelected, boolean hasFocus, int row,
-                int column) {
-                    JLabel label = (JLabel) super.getTableCellRendererComponent(
-                    table, value, isSelected, hasFocus, row, column);
-                    String t = value.toString();
-                    label.setBackground(Main.pref.getUIColor("Table.background"));
-                    for(ImageryInfo l : layerInfo.getDefaultLayers())
-                    {
-                        if(l.getExtendedUrl().equals(t)) {
-                            label.setBackground(Main.pref.getColor(
-                            marktr("Imagery Background: Default"),
-                            new Color(200,255,200)));
-                            break;
-                        }
-                    }
-                    return label;
-                };
-            });
 
             RemoveEntryAction remove = new RemoveEntryAction();
             listActive.getSelectionModel().addListSelectionListener(remove);
@@ -674,6 +665,8 @@ public class ImageryPreference implements PreferenceSetting {
                             JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
+                
+                Set<String> acceptedEulas = new HashSet<String>();
 
                 outer: for (int i = 0; i < lines.length; i++) {
                     ImageryInfo info = modeldef.getRow(lines[i]);
@@ -690,8 +683,12 @@ public class ImageryPreference implements PreferenceSetting {
                         }
                     }
 
-                    if (info.getEulaAcceptanceRequired() != null) {
-                        if (!confirmEulaAcceptance(gui, info.getEulaAcceptanceRequired())) {
+                    String eulaURL = info.getEulaAcceptanceRequired();
+                    // If set and not already accepted, ask for EULA acceptance
+                    if (eulaURL != null && !acceptedEulas.contains(eulaURL)) {
+                        if (confirmEulaAcceptance(gui, eulaURL)) {
+                            acceptedEulas.add(eulaURL);
+                        } else {
                             continue outer;
                         }
                     }
@@ -721,7 +718,7 @@ public class ImageryPreference implements PreferenceSetting {
          */
         class ImageryLayerTableModel extends DefaultTableModel {
             public ImageryLayerTableModel() {
-                setColumnIdentifiers(new String[] { tr("Menu Name"), tr("Imagery URL"), trc("layer", "Zoom") });
+                setColumnIdentifiers(new String[] { tr("Menu Name"), tr("Imagery URL")});
             }
 
             public ImageryInfo getRow(int row) {
@@ -753,10 +750,6 @@ public class ImageryPreference implements PreferenceSetting {
                     return info.getName();
                 case 1:
                     return info.getExtendedUrl();
-                case 2:
-                    return (info.getImageryType() == ImageryType.WMS || info.getImageryType() == ImageryType.HTML) ?
-                            (info.getPixelPerDegree() == 0.0 ? "" : info.getPixelPerDegree()) :
-                                (info.getMaxZoom() == 0 ? "" : info.getMaxZoom());
                 default:
                     throw new ArrayIndexOutOfBoundsException();
                 }
@@ -771,18 +764,6 @@ public class ImageryPreference implements PreferenceSetting {
                     break;
                 case 1:
                     info.setExtendedUrl((String)o);
-                    break;
-                case 2:
-                    info.setPixelPerDegree(0);
-                    info.setMaxZoom(0);
-                    try {
-                        if(info.getImageryType() == ImageryType.WMS || info.getImageryType() == ImageryType.HTML) {
-                            info.setPixelPerDegree(Double.parseDouble((String) o));
-                        } else {
-                            info.setMaxZoom(Integer.parseInt((String) o));
-                        }
-                    } catch (NumberFormatException e) {
-                    }
                     break;
                 default:
                     throw new ArrayIndexOutOfBoundsException();
