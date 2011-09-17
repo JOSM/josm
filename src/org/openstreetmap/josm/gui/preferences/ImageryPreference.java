@@ -378,6 +378,37 @@ public class ImageryPreference implements PreferenceSetting {
         final JTable listdef;
         final JMapViewer map;
         final PreferenceTabbedPane gui;
+        
+        private class ImageryTableCellRenderer extends DefaultTableCellRenderer {
+            
+            private List<ImageryInfo> layers;
+            
+            public ImageryTableCellRenderer(List<ImageryInfo> layers) {
+                this.layers = layers;
+            }
+            
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean
+            isSelected, boolean hasFocus, int row, int column) {
+                JLabel label = (JLabel) super.getTableCellRendererComponent(
+                table, value, isSelected, hasFocus, row, column);
+                String t = value.toString();
+                label.setBackground(Main.pref.getUIColor("Table.background"));
+                if (isSelected) {
+                    label.setForeground(Main.pref.getUIColor("Table.foreground"));
+                }
+                for(ImageryInfo l : layers)
+                {
+                    if(l.getExtendedUrl().equals(t)) {
+                        label.setBackground(Main.pref.getColor(
+                        marktr("Imagery Background: Default"),
+                        new Color(200,255,200)));
+                        break;
+                    }
+                }
+                return label;
+            }
+        }
 
         public ImageryProvidersPanel(final PreferenceTabbedPane gui, ImageryLayerInfo layerInfoArg) {
             super(new GridBagLayout());
@@ -422,56 +453,14 @@ public class ImageryPreference implements PreferenceSetting {
 
             TableColumnModel mod = listdef.getColumnModel();
             mod.getColumn(2).setPreferredWidth(800);
+            mod.getColumn(2).setCellRenderer(new ImageryTableCellRenderer(layerInfo.getLayers()));
             mod.getColumn(1).setPreferredWidth(400);
             mod.getColumn(0).setPreferredWidth(50);
 
-            mod.getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
-                @Override
-                public Component getTableCellRendererComponent(JTable table,
-                Object value, boolean isSelected, boolean hasFocus, int row,
-                int column) {
-                    JLabel label = (JLabel) super.getTableCellRendererComponent(
-                    table, value, isSelected, hasFocus, row, column);
-                    String t = value.toString();
-                    label.setBackground(Main.pref.getUIColor("Table.background"));
-                    for(ImageryInfo l : layerInfo.getLayers())
-                    {
-                        if(l.getExtendedUrl().equals(t)) {
-                            label.setBackground(Main.pref.getColor(
-                            marktr("Imagery Background: Default"),
-                            new Color(200,255,200)));
-                            break;
-                        }
-                    }
-                    return label;
-                };
-            });
-
             mod = listActive.getColumnModel();
             mod.getColumn(1).setPreferredWidth(800);
+            mod.getColumn(1).setCellRenderer(new ImageryTableCellRenderer(layerInfo.getDefaultLayers()));
             mod.getColumn(0).setPreferredWidth(200);
-
-            mod.getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
-                @Override
-                public Component getTableCellRendererComponent(JTable table,
-                Object value, boolean isSelected, boolean hasFocus, int row,
-                int column) {
-                    JLabel label = (JLabel) super.getTableCellRendererComponent(
-                    table, value, isSelected, hasFocus, row, column);
-                    String t = value.toString();
-                    label.setBackground(Main.pref.getUIColor("Table.background"));
-                    for(ImageryInfo l : layerInfo.getDefaultLayers())
-                    {
-                        if(l.getExtendedUrl().equals(t)) {
-                            label.setBackground(Main.pref.getColor(
-                            marktr("Imagery Background: Default"),
-                            new Color(200,255,200)));
-                            break;
-                        }
-                    }
-                    return label;
-                };
-            });
 
             RemoveEntryAction remove = new RemoveEntryAction();
             listActive.getSelectionModel().addListSelectionListener(remove);
