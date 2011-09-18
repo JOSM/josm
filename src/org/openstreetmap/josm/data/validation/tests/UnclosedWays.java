@@ -5,10 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -113,20 +111,13 @@ public class UnclosedWays extends Test {
                 if (parent instanceof Relation && ((Relation)parent).isMultipolygon())
                     return;
             }
-            Node f = w.firstNode();
-            Node l = w.lastNode();
-
-            List<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
-            List<OsmPrimitive> highlight = new ArrayList<OsmPrimitive>();
-            primitives.add(w);
-
-            // The important parts of an unclosed way are the first and
-            // the last node which should be connected, therefore we highlight them
-            highlight.add(f);
-            highlight.add(l);
 
             errors.add(new TestError(this, Severity.WARNING, tr("Unclosed way"),
-                            type, etype, mode, primitives, highlight));
+                    type, etype, mode,
+                    Arrays.asList(w),
+                    // The important parts of an unclosed way are the first and
+                    // the last node which should be connected, therefore we highlight them
+                    Arrays.asList(w.firstNode(), w.lastNode())));
         }
     }
 }
