@@ -205,7 +205,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
 
             if(dragInProgress()) {
                 c = ctrl ? "merge" : "move";
-                if(osm != null && osm instanceof Node) {
+                if(osm != null && osm instanceof Node && ctrl) {
                     c += "_to_node";
                 }
                 break;
