@@ -523,6 +523,16 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
             </optional>
         </item>
+        <item name="Ford" icon="presets/ford.png" type="node,way">
+            <label text="Edit Ford" />
+            <link href="http://wiki.openstreetmap.org/wiki/Key:ford" />
+            <space />
+            <key key="ford" value="yes" />
+            <optional>
+                <text key="name" text="Name" default="" delete_if_empty="true" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" default="" delete_if_empty="true" />
+            </optional>
+        </item>
     </group> <!-- Streets -->
     <group name="Ways" icon="presets/way_unclassified.png">
         <item name="Track" icon="presets/track1.png" type="way">
@@ -837,14 +847,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="grit_bin" />
         </item>
         <separator/>
-        <item name="Ford" icon="presets/ford.png" type="node,way">
-            <label text="Edit Ford" />
-            <space />
-            <key key="highway" value="ford" />
-            <optional>
-                <text key="name" text="Name" default="" delete_if_empty="true" />
-            </optional>
-        </item>
         <item name="Mountain Pass" icon="presets/mountain_pass.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Key:mountain_pass" />
             <label text="Edit Mountain Pass" />
