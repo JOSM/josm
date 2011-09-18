@@ -950,13 +950,10 @@ are supplied, then "values" will be treated as "display_values" and translated i
         <item name="Fence" icon="presets/fence.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=fence" />
             <key key="barrier" value="fence" />
+            <optional>
+                <combo key="fence_type" text="Type" values="barbed_wire,chain,electric,hedge,pole,split_rail,wood" default="" delete_if_empty="true" />
+            </optional>
         </item> <!-- fence -->
-        <item name="Wire Fence" type="way,closedway">
-            <key key="barrier" value="wire_fence" />
-        </item> <!-- wire_fence -->
-        <item name="Wood Fence" type="way,closedway">
-            <key key="barrier" value="wood_fence" />
-        </item> <!-- wood_fence -->
         <item name="Wall" icon="presets/wall.png" type="way,closedway">
             <key key="barrier" value="wall" />
         </item> <!-- wall -->
