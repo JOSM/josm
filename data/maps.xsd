@@ -587,7 +587,7 @@
 		<xs:sequence>
 			<xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
-					<xs:sequence>
+					<xs:all>
 						<!-- The name of the imagery source -->
 						<xs:element name="name" minOccurs="1" maxOccurs="1" type="xs:string" />
 						<!-- The type. Can be tms, wms and html. In addition, there are the special types bing and scanex 
@@ -598,7 +598,7 @@
 						<!-- The URL of the service. Can contain templates, e.g. {zoom} will be replaced by the current 
 							zoom level (see below). The list of services is a XML document, so the '&' character is represented by 
 							'&amp;'. Alternatively, the URL can be wrapped in a <![CDATA[...]]> section. -->
-						<xs:element name="url" minOccurs="1" maxOccurs="1" type="xs:anyURI" />
+						<xs:element name="url" minOccurs="1" maxOccurs="1" type="xs:string" />
 						<!-- A list of supported projections (inside <code> tags) -->
 						<xs:element name="projections" minOccurs="0" maxOccurs="1" type="tns:projections" />
 						<!-- TMS only: The minimum zoom level -->
@@ -617,7 +617,7 @@
 						<xs:element name="terms-of-use-url" minOccurs="0" maxOccurs="1" type="xs:string" />
 						<!-- The ISO 3166 country code -->
 						<xs:element name="country-code" minOccurs="0" maxOccurs="1" type="tns:iso3166" />
-					</xs:sequence>
+					</xs:all>
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
