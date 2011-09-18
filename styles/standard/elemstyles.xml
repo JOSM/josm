@@ -307,7 +307,6 @@ For external files the <rules> should have following elements:
 		<condition k="barrier" v="hedge"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<line width="3" colour="barrier#F0F050"/>
-		<area colour="barrier#F0F050" closed="true"/>
 	</rule>
 	<rule>
 		<condition k="barrier" v="stile"/>
@@ -321,7 +320,6 @@ For external files the <rules> should have following elements:
 		<condition k="barrier" v="fence"/>
 		<icon annotate="true" src="misc/no_icon.png"/>
 		<line width="3" colour="barrier#F0F050"/>
-		<area colour="barrier#F0F050" closed="true"/>
 	</rule>
 	<rule>
 		<condition k="barrier" v="cycle_barrier"/>
@@ -335,7 +333,6 @@ For external files the <rules> should have following elements:
 		<condition k="barrier" v="wall"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<line width="3" colour="barrier#F0F050"/>
-		<area colour="barrier#F0F050" closed="true"/>
 	</rule>
 	<rule>
 		<condition k="barrier" v="toll_booth"/>
@@ -350,7 +347,6 @@ For external files the <rules> should have following elements:
 		<condition k="barrier" v="city_wall"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<line width="3" colour="barrier#F0F050"/>
-		<area colour="barrier#F0F050" closed="true"/>
 	</rule>
 	<rule>
 		<condition k="barrier" v="entrance"/>
@@ -360,7 +356,6 @@ For external files the <rules> should have following elements:
 		<condition k="barrier" v="retaining_wall"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<line width="3" colour="barrier#F0F050"/>
-		<area colour="barrier#F0F050" closed="true"/>
 	</rule>
 	<rule>
 		<condition k="barrier" v="cattle_grid"/>
@@ -370,7 +365,6 @@ For external files the <rules> should have following elements:
 		<condition k="barrier" v="block"/>
 		<icon annotate="true" src="vehicle/block.png"/>
 		<line width="3" colour="barrier#F0F050"/>
-		<area colour="barrier#F0F050" closed="true"/>
 	</rule>
 	<rule>
 		<condition k="barrier" v="border_control"/>
