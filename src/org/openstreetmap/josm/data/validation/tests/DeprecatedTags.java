@@ -162,14 +162,14 @@ public class DeprecatedTags extends Test {
             for (Tag tag : change) {
                 cmds.add(new ChangePropertyCommand(p, tag.getKey(), tag.getValue()));
             }
-            return new SequenceCommand(tr("Depreation fix of {0}", Utils.join(", ", test)), cmds);
+            return new SequenceCommand(tr("Deprecation fix of {0}", Utils.join(", ", test)), cmds);
         }
 
         String getDescription() {
             if (alternatives.isEmpty()) {
                 return tr("{0} is deprecated", Utils.join(", ", test));
             } else {
-                return tr("{0} is deprecated, use {1} instead", Utils.join(", ", test), Utils.join(" or ", alternatives));
+                return tr("{0} is deprecated, use {1} instead", Utils.join(", ", test), Utils.join(tr(" or "), alternatives));
             }
         }
     }
