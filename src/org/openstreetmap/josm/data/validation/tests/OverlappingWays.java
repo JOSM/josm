@@ -100,8 +100,7 @@ public class OverlappingWays extends Test {
 
                     if (area > 0) {
                         if (ways == 0 || duplicated.size() == area) {
-                            errortype = tr("Overlapping areas");
-                            type = OVERLAPPING_AREA;
+                            continue;
                         } else if (highway == ways) {
                             errortype = tr("Overlapping highways (with area)");
                             type = OVERLAPPING_HIGHWAY_AREA;
@@ -126,7 +125,7 @@ public class OverlappingWays extends Test {
 
                     errors.add(new TestError(this, 
                             type < OVERLAPPING_HIGHWAY_AREA ? Severity.WARNING : Severity.OTHER,
-                            tr(errortype), type, prims, duplicated));
+                            errortype, type, prims, duplicated));
                     ways_seen.put(current_ways, duplicated);
                 } else { /* way seen, mark highlight layer only */
                     for (WaySegment ws : duplicated) {
