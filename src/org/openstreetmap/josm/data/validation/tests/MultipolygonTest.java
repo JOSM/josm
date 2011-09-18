@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
@@ -224,9 +225,18 @@ public class MultipolygonTest extends Test {
                 }
             }
 
+            List<Node> openNodes = new LinkedList<Node>();
             for (List<Node> w : nonClosedWays) {
-                errors.add(new TestError(this, Severity.WARNING, tr("Multipolygon is not closed"), NON_CLOSED_WAY, 
-                        w, Arrays.asList(w.get(0), w.get(w.size() - 1))));
+                openNodes.add(w.get(0));
+                openNodes.add(w.get(w.size() - 1));
+            }
+            if (!openNodes.isEmpty()) {
+                List<OsmPrimitive> primitives = new LinkedList<OsmPrimitive>();
+                primitives.add(r);
+                primitives.addAll(openNodes);
+                Arrays.asList(openNodes, r);
+                errors.add(new TestError(this, Severity.WARNING, tr("Multipolygon is not closed"), NON_CLOSED_WAY,
+                        primitives, openNodes));
             }
 
             // For painting is used Polygon class which works with ints only. For validation we need more precision
