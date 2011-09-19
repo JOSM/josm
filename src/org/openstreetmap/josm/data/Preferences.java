@@ -900,9 +900,9 @@ public class Preferences {
         try {
             structPrototype = klass.newInstance();
         } catch (InstantiationException ex) {
-            throw new RuntimeException();
+            throw new RuntimeException(ex);
         } catch (IllegalAccessException ex) {
-            throw new RuntimeException();
+            throw new RuntimeException(ex);
         }
 
         Collection<String> hash = new ArrayList<String>();
