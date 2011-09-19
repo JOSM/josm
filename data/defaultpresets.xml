@@ -1472,7 +1472,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="aerialway:capacity" text="Number of people per hour" default="" delete_if_empty="true" />
                 <text key="aerialway:occupancy" text="Number of people per car" default="" delete_if_empty="true" />
                 <text key="aerialway:duration" text="Typical journey time in minutes" default="" delete_if_empty="true" />
-                <check key="aerialway:heating" text="Has heating?" default="" delete_if_empty="true" />
+                <check key="aerialway:heating" text="Has heating?" default="off" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Gondola" icon="presets/gondola.png" type="way">
@@ -1485,7 +1485,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="aerialway:capacity" text="Number of people per hour" default="" delete_if_empty="true" />
                 <text key="aerialway:occupancy" text="Number of people per gondola" default="" delete_if_empty="true" />
                 <text key="aerialway:duration" text="Typical journey time in minutes" default="" delete_if_empty="true" />
-                <check key="aerialway:heating" text="Has heating?" default="" delete_if_empty="true" />
+                <check key="aerialway:heating" text="Has heating?" default="off" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Mixed Lift" type="way">
@@ -1498,8 +1498,8 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="aerialway:capacity" text="Number of people per hour" default="" delete_if_empty="true" />
                 <text key="aerialway:occupancy" text="Number of people per gondola/chair" default="" delete_if_empty="true" />
                 <text key="aerialway:duration" text="Typical journey time in minutes" default="" delete_if_empty="true" />
-                <check key="aerialway:bubble" text="Has bubble?" default="" delete_if_empty="true" />
-                <check key="aerialway:heating" text="Has heating?" default="" delete_if_empty="true" />
+                <check key="aerialway:bubble" text="Has bubble?" default="off" delete_if_empty="true" />
+                <check key="aerialway:heating" text="Has heating?" default="off" delete_if_empty="true" />
             </optional>
         </item>
         <item name="T-bar Lift" icon="presets/drag_lift.png" type="way">
