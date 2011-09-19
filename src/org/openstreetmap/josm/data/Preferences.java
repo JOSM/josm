@@ -966,6 +966,12 @@ public class Preferences {
                 } catch (NumberFormatException nfe) {
                     continue;
                 }
+            } else if (f.getType() == Double.class || f.getType() == double.class) {
+                try {
+                    value = Double.parseDouble(valueString);
+                } catch (NumberFormatException nfe) {
+                    continue;
+                }
             } else  if (f.getType() == String.class) {
                 value = valueString;
             } else

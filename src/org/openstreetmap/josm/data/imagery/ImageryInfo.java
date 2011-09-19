@@ -85,9 +85,11 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         @pref String name;
         @pref String type;
         @pref String url;
+        @pref double pixel_per_eastnorth;
         @pref String eula;
         @pref String attribution_text;
         @pref String attribution_url;
+        @pref String logo_image;
         @pref String terms_of_use_url;
         @pref String country_code = "";
         @pref int max_zoom;
@@ -104,9 +106,11 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
             name = i.name;
             type = i.imageryType.getUrlString();
             url = i.url;
+            pixel_per_eastnorth = i.pixelPerDegree;
             eula = i.eulaAcceptanceRequired;
             attribution_text = i.attributionText;
             attribution_url = i.attributionLinkURL;
+            logo_image = i.attributionImage;
             terms_of_use_url = i.termsOfUseURL;
             country_code = i.countryCode;
             max_zoom = i.defaultMaxZoom;
@@ -172,6 +176,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     public ImageryInfo(ImageryPreferenceEntry e) {
         name = e.name;
         url = e.url;
+        cookies = e.cookies;
         eulaAcceptanceRequired = e.eula;
         for (ImageryType type : ImageryType.values()) {
             if (type.getUrlString().equals(e.type)) {
@@ -179,6 +184,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
                 break;
             }
         }
+        pixelPerDegree = e.pixel_per_eastnorth;
         defaultMaxZoom = e.max_zoom;
         defaultMinZoom = e.min_zoom;
         if (e.bounds != null) {
@@ -197,6 +203,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
             serverProjections = Arrays.asList(e.projections.split(","));
         }
         attributionText = e.attribution_text;
+        attributionImage = e.logo_image;
         attributionLinkURL = e.attribution_url;
         termsOfUseURL = e.terms_of_use_url;
         countryCode = e.country_code;
