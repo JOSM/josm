@@ -13,6 +13,7 @@ import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Preferences.pref;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -41,14 +42,14 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
             return urlString;
         }
     }
-    
+
     public static class ImageryBounds extends Bounds {
         public ImageryBounds(String asString, String separator) {
             super(asString, separator);
         }
 
         private List<Shape> shapes = new ArrayList<Shape>();
-        
+
         public void addShape(Shape shape) {
             this.shapes.add(shape);
         }
@@ -78,6 +79,63 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     private String attributionLinkURL;
     private String termsOfUseURL;
     private String countryCode = "";
+
+    /** auxiliary class to save an ImageryInfo object in the preferences */
+    public static class ImageryPreferenceEntry {
+        @pref String name;
+        @pref String type;
+        @pref String url;
+        @pref String eula;
+        @pref String attribution_text;
+        @pref String attribution_url;
+        @pref String terms_of_use_url;
+        @pref String country_code = "";
+        @pref int max_zoom;
+        @pref int min_zoom;
+        @pref String cookies;
+        @pref String bounds;
+        @pref String shapes;
+        @pref String projections;
+
+        public ImageryPreferenceEntry() {
+        }
+
+        public ImageryPreferenceEntry(ImageryInfo i) {
+            name = i.name;
+            type = i.imageryType.getUrlString();
+            url = i.url;
+            eula = i.eulaAcceptanceRequired;
+            attribution_text = i.attributionText;
+            attribution_url = i.attributionLinkURL;
+            terms_of_use_url = i.termsOfUseURL;
+            country_code = i.countryCode;
+            max_zoom = i.defaultMaxZoom;
+            min_zoom = i.defaultMinZoom;
+            cookies = i.cookies;
+            if (i.bounds != null) {
+                bounds = i.bounds.encodeAsString(",");
+                String shapesString = "";
+                for (Shape s : i.bounds.getShapes()) {
+                    if (!shapesString.isEmpty()) {
+                        shapesString += ";";
+                    }
+                    shapesString += s.encodeAsString(",");
+                }
+                if (!shapesString.isEmpty()) {
+                    shapes = shapesString;
+                }
+            }
+            if (i.serverProjections != null && !i.serverProjections.isEmpty()) {
+                String val = "";
+                for (String p : i.serverProjections) {
+                    if (!val.isEmpty())
+                        val += ",";
+                    val += p;
+                }
+                projections = val;
+            }
+        }
+    }
 
     public ImageryInfo() {
     }
@@ -111,42 +169,37 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         this.pixelPerDegree=pixelPerDegree;
     }
 
-    public ArrayList<String> getInfoArray() {
-        ArrayList<String> res = new ArrayList<String>();
-        res.add(name);
-        res.add((url != null && !url.isEmpty()) ? getExtendedUrl() : null);
-        res.add(cookies);
-        if(imageryType == ImageryType.WMS || imageryType == ImageryType.HTML) {
-            res.add(pixelPerDegree != 0.0 ? String.valueOf(pixelPerDegree) : null);
-        } else {
-            res.add(null);
+    public ImageryInfo(ImageryPreferenceEntry e) {
+        name = e.name;
+        url = e.url;
+        eulaAcceptanceRequired = e.eula;
+        for (ImageryType type : ImageryType.values()) {
+            if (type.getUrlString().equals(e.type)) {
+                imageryType = type;
+                break;
+            }
         }
-        res.add(bounds != null ? bounds.encodeAsString(",") : null);
-        res.add(attributionText);
-        res.add(attributionLinkURL);
-        res.add(attributionImage);
-        res.add(termsOfUseURL);
-        // Shapes
-        String shapesString = "";
-        if (bounds != null) {
-            for (Shape s : bounds.getShapes()) {
-                if (!shapesString.isEmpty()) {
-                    shapesString += ";";
+        defaultMaxZoom = e.max_zoom;
+        defaultMinZoom = e.min_zoom;
+        if (e.bounds != null) {
+            bounds = new ImageryBounds(e.bounds, ",");
+            if (e.shapes != null) {
+                try {
+                    for (String s : e.shapes.split(";")) {
+                        bounds.addShape(new Shape(s, ","));
+                    }
+                } catch (IllegalArgumentException ex) {
+                    Main.warn(ex.toString());
                 }
-                shapesString += s.encodeAsString(",");
             }
         }
-        res.add(shapesString.isEmpty() ? null : shapesString);
-        if(serverProjections != null && serverProjections.size() != 0) {
-            String val = "";
-            for(String p : serverProjections) {
-                if(!val.isEmpty())
-                    val += ",";
-                val += p;
-            }
-            res.add(val);
+        if (e.projections != null) {
+            serverProjections = Arrays.asList(e.projections.split(","));
         }
-        return res;
+        attributionText = e.attribution_text;
+        attributionLinkURL = e.attribution_url;
+        termsOfUseURL = e.terms_of_use_url;
+        countryCode = e.country_code;
     }
 
     public ImageryInfo(Collection<String> list) {
@@ -245,7 +298,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     public void setDefaultMinZoom(int defaultMinZoom) {
         this.defaultMinZoom = defaultMinZoom;
     }
-    
+
     public void setBounds(ImageryBounds b) {
         this.bounds = b;
     }
@@ -272,7 +325,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
 
     public void setExtendedUrl(String url) {
         CheckParameterUtil.ensureParameterNotNull(url);
-        
+
         // Default imagery type is WMS
         this.url = url;
         this.imageryType = ImageryType.WMS;
