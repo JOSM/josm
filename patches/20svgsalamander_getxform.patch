@@ -1,0 +1,17 @@
+Patch against rev 98 of https://svn.java.net/svn/svgsalamander~svn/trunk. Adds getXForm() method needed for the importvec plugin.
+Index: josm/src/com/kitfox/svg/TransformableElement.java
+===================================================================
+--- josm.orig/src/com/kitfox/svg/TransformableElement.java
++++ josm/src/com/kitfox/svg/TransformableElement.java
+@@ -53,6 +54,11 @@
+     {
+         super(id, parent);
+     }
++
++    public AffineTransform getXForm()
++    {
++        return xform;
++    }
+ /*
+     public void loaderStartElement(SVGLoaderHelper helper, Attributes attrs, SVGElement parent)
+     {

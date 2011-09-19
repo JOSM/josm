@@ -53,6 +53,11 @@ public class TransformableElement extends SVGElement
     {
         super(id, parent);
     }
+
+    public AffineTransform getXForm()
+    {
+        return xform;
+    }
 /*
     public void loaderStartElement(SVGLoaderHelper helper, Attributes attrs, SVGElement parent)
     {
