@@ -29,12 +29,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
-import java.util.Vector;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -96,6 +98,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This dialog displays the properties of the current selected primitives.
@@ -170,6 +173,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
     private DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
     private HelpAction helpAction = new HelpAction();
+    private CopyValueAction copyValueAction = new CopyValueAction();
+    private CopyKeyValueAction copyKeyValueAction = new CopyKeyValueAction();
+    private CopyAllKeyValueAction copyAllKeyValueAction = new CopyAllKeyValueAction();
     private AddAction addAction = new AddAction();
     private Shortcut addActionShortcut = Shortcut.registerShortcut("properties:add", tr("Add Properties"), KeyEvent.VK_B,
             Shortcut.GROUP_MNEMONIC);
@@ -614,6 +620,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 if (row > -1) {
                     propertyTable.changeSelection(row, 0, false, false);
                     JPopupMenu menu = new JPopupMenu();
+                    menu.add(copyValueAction);
+                    menu.add(copyKeyValueAction);
+                    menu.add(copyAllKeyValueAction);
+                    menu.addSeparator();
                     menu.add(helpAction);
                     menu.show(propertyTable, p.x, p.y-3);
                 }
@@ -1289,6 +1299,75 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     buildSetOfIncompleteMembers(relation),
                     Main.map.mapView.getEditLayer()
             ));
+        }
+    }
+
+    abstract class AbstractCopyAction extends AbstractAction {
+
+        protected abstract Collection<String> getString(OsmPrimitive p, String key);
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            if (propertyTable.getSelectedRowCount() != 1) {
+                return;
+            }
+            String key = propertyData.getValueAt(propertyTable.getSelectedRow(), 0).toString();
+            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+            if (sel.isEmpty()) {
+                return;
+            }
+            Set<String> values = new TreeSet<String>();
+            for (OsmPrimitive p : sel) {
+                Collection<String> s = getString(p,key);
+                if (s != null) {
+                    values.addAll(s);
+                }
+            }
+            Utils.copyToClipboard(Utils.join("\n", values));
+        }
+    }
+
+    class CopyValueAction extends AbstractCopyAction {
+
+        public CopyValueAction() {
+            putValue(NAME, tr("Copy Value"));
+            putValue(SHORT_DESCRIPTION, tr("Copy the value of the selected tag to clipboard"));
+        }
+
+        @Override
+        protected Collection<String> getString(OsmPrimitive p, String key) {
+            return Collections.singleton(p.get(key));
+        }
+    }
+
+    class CopyKeyValueAction extends AbstractCopyAction {
+
+        public CopyKeyValueAction() {
+            putValue(NAME, tr("Copy Key/Value"));
+            putValue(SHORT_DESCRIPTION, tr("Copy the key and value of the selected tag to clipboard"));
+        }
+
+        @Override
+        protected Collection<String> getString(OsmPrimitive p, String key) {
+            String v = p.get(key);
+            return v == null ? null : Collections.singleton(new Tag(key, v).toString());
+        }
+    }
+
+    class CopyAllKeyValueAction extends AbstractCopyAction {
+
+        public CopyAllKeyValueAction() {
+            putValue(NAME, tr("Copy all Keys/Values"));
+            putValue(SHORT_DESCRIPTION, tr("Copy the key and value of the all tags to clipboard"));
+        }
+
+        @Override
+        protected Collection<String> getString(OsmPrimitive p, String key) {
+            List<String> r = new LinkedList<String>();
+            for (Entry<String, String> kv : p.getKeys().entrySet()) {
+                r.add(new Tag(kv.getKey(), kv.getValue()).toString());
+            }
+            return r;
         }
     }
 }
