@@ -709,7 +709,7 @@ public class LayerListDialog extends ToggleDialog {
                 } else  if (getModel().getSelectedLayers().size() > 1) {
                     Layer firstLayer = getModel().getSelectedLayers().get(0);
                     for (Layer l: getModel().getSelectedLayers()) {
-                        if (l != firstLayer && !l.isMergable(firstLayer)) {
+                        if (l != firstLayer && (!l.isMergable(firstLayer) || !firstLayer.isMergable(l))) {
                             setEnabled(false);
                             return;
                         }
@@ -1286,7 +1286,7 @@ public class LayerListDialog extends ToggleDialog {
                 if (source == target) {
                     continue;
                 }
-                if (target.isMergable(source)) {
+                if (target.isMergable(source) && source.isMergable(target)) {
                     targets.add(target);
                 }
             }
