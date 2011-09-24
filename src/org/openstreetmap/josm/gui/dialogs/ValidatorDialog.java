@@ -86,7 +86,7 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
      * Constructor
      */
     public ValidatorDialog() {
-        super(tr("Validation results"), "validator", tr("Open the validation window."),
+        super(tr("Validation Results"), "validator", tr("Open the validation window."),
                 Shortcut.registerShortcut("subwindow:validator", tr("Toggle: {0}", tr("Validation results")),
                         KeyEvent.VK_V, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
 
