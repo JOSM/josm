@@ -182,9 +182,14 @@ abstract public class Command extends PseudoCommand {
      * Check whether user is about to operate on data outside of the download area.
      * Request confirmation if he is.
      *
-     * @param layer the layer in whose context data is deleted
+     * @param operation the operation name which is used for setting some preferences
+     * @param dialogTitle the title of the dialog being displayed
+     * @param outsideDialogMessage the message text to be displayed when data is outside of the download area
+     * @param incompleteDialogMessage the message text to be displayed when data is incomplete
+     * @param area the area used to determine whether data is outlying
      * @param primitives the primitives to operate on
-     * @return true, if deleting outlying primitives is OK; false, otherwise
+     * @param ignore {@code null} or a primitive to be ignored
+     * @return true, if operating on outlying primitives is OK; false, otherwise
      */
     public static boolean checkAndConfirmOutlyingOperation(String operation,
             String dialogTitle, String outsideDialogMessage, String incompleteDialogMessage,
@@ -195,8 +200,7 @@ abstract public class Command extends PseudoCommand {
             for (OsmPrimitive osm : primitives) {
                 if (osm.isIncomplete()) {
                     incomplete = true;
-                } else if (osm instanceof Node && !osm.isNewOrUndeleted()
-                        && !area.contains(((Node) osm).getCoor())
+                } else if (isOutlying(osm, area)
                         && (ignore == null || !ignore.equals(osm))) {
                     outside = true;
                 }
@@ -239,4 +243,17 @@ abstract public class Command extends PseudoCommand {
         return true;
     }
 
+    private static boolean isOutlying(OsmPrimitive osm, Area area) {
+        if (osm instanceof Node) {
+            return !osm.isNewOrUndeleted() && !area.contains(((Node) osm).getCoor());
+        } else if (osm instanceof Way) {
+            for (Node n : ((Way) osm).getNodes()) {
+                if (isOutlying(n, area)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
+    }
 }

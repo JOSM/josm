@@ -21,16 +21,13 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -41,59 +38,9 @@ public class SimplifyWayAction extends JosmAction {
         putValue("help", ht("/Action/SimplifyWay"));
     }
 
-    protected List<Bounds> getCurrentEditBounds() {
-        LinkedList<Bounds> bounds = new LinkedList<Bounds>();
-        OsmDataLayer dataLayer = Main.map.mapView.getEditLayer();
-        for (DataSource ds : dataLayer.data.dataSources) {
-            if (ds.bounds != null) {
-                bounds.add(ds.bounds);
-            }
-        }
-        return bounds;
-    }
-
-    protected boolean isInBounds(Node node, List<Bounds> bounds) {
-        for (Bounds b : bounds) {
-            if (b.contains(node.getCoor()))
-                return true;
-        }
-        return false;
-    }
-
-    protected boolean confirmWayWithNodesOutsideBoundingBox() {
-        ButtonSpec[] options = new ButtonSpec[] {
-                new ButtonSpec(
-                        tr("Yes, delete nodes"),
-                        ImageProvider.get("ok"),
-                        tr("Delete nodes outside of downloaded data regions"),
-                        null
-                ),
-                new ButtonSpec(
-                        tr("No, abort"),
-                        ImageProvider.get("cancel"),
-                        tr("Cancel operation"),
-                        null
-                )
-        };
-        int ret = HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
-                "<html>"
-                + trn("The selected way has nodes outside of the downloaded data region.",
-                        "The selected ways have nodes outside of the downloaded data region.",
-                        getCurrentDataSet().getSelectedWays().size())
-
-                        + "<br>"
-                        + tr("This can lead to nodes being deleted accidentally.") + "<br>"
-                        + tr("Do you want to delete them anyway?")
-                        + "</html>",
-                        tr("Delete nodes outside of data regions?"),
-                        JOptionPane.WARNING_MESSAGE,
-                        null, // no special icon
-                        options,
-                        options[0],
-                        HelpUtil.ht("/Action/SimplifyWay#ConfirmDeleteNodesOutsideBoundingBoxes")
-        );
-        return ret == 0;
+    protected boolean confirmWayWithNodesOutsideBoundingBox(List<? extends OsmPrimitive> primitives) {
+        System.out.println(primitives);
+        return DeleteCommand.checkAndConfirmOutlyingDelete(Main.map.mapView.getEditLayer(), primitives, null);
     }
 
     protected void alertSelectAtLeastOneWay() {
@@ -142,32 +89,14 @@ public class SimplifyWayAction extends JosmAction {
         ds.beginUpdate();
         try
         {
-            Collection<OsmPrimitive> selection = ds.getSelected();
-
-            List<Bounds> bounds = getCurrentEditBounds();
-            for (OsmPrimitive prim : selection) {
-                if (! (prim instanceof Way)) {
-                    continue;
-                }
-                if (bounds.size() > 0) {
-                    Way way = (Way) prim;
-                    // We check if each node of each way is at least in one download
-                    // bounding box. Otherwise nodes may get deleted that are necessary by
-                    // unloaded ways (see Ticket #1594)
-                    for (Node node : way.getNodes()) {
-                        if (!isInBounds(node, bounds)) {
-                            if (!confirmWayWithNodesOutsideBoundingBox())
-                                return;
-                            break;
-                        }
-                    }
-                }
-            }
-            List<Way> ways = OsmPrimitive.getFilteredList(selection, Way.class);
+            List<Way> ways = OsmPrimitive.getFilteredList(ds.getSelected(), Way.class);
             if (ways.isEmpty()) {
                 alertSelectAtLeastOneWay();
                 return;
-            } else if (ways.size() > 10) {
+            } else if (!confirmWayWithNodesOutsideBoundingBox(ways)) {
+                return;
+            }
+             else if (ways.size() > 10) {
                 if (!confirmSimplifyManyWays(ways.size()))
                     return;
             }
