@@ -1,6 +1,10 @@
 //License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.command;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.GridBagLayout;
+import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,6 +12,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
@@ -18,6 +25,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -168,6 +176,67 @@ abstract public class Command extends PseudoCommand {
     @Deprecated
     public MutableTreeNode description() {
         return null;
+    }
+
+    /**
+     * Check whether user is about to operate on data outside of the download area.
+     * Request confirmation if he is.
+     *
+     * @param layer the layer in whose context data is deleted
+     * @param primitives the primitives to operate on
+     * @return true, if deleting outlying primitives is OK; false, otherwise
+     */
+    public static boolean checkAndConfirmOutlyingOperation(String operation,
+            String dialogTitle, String outsideDialogMessage, String incompleteDialogMessage,
+            Area area, Collection<? extends OsmPrimitive> primitives, OsmPrimitive ignore) {
+        boolean outside = false;
+        boolean incomplete = false;
+        if (area != null) {
+            for (OsmPrimitive osm : primitives) {
+                if (osm.isIncomplete()) {
+                    incomplete = true;
+                } else if (osm instanceof Node && !osm.isNewOrUndeleted()
+                        && !area.contains(((Node) osm).getCoor())
+                        && (ignore == null || !ignore.equals(osm))) {
+                    outside = true;
+                }
+            }
+        } else {
+            for (OsmPrimitive osm : primitives) {
+                if (osm.isIncomplete()) {
+                    incomplete = true;
+                }
+            }
+        }
+        if (outside) {
+            JPanel msg = new JPanel(new GridBagLayout());
+            msg.add(new JLabel("<html>" + outsideDialogMessage + "</html>"));
+            boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
+                    operation + "_outside_nodes",
+                    Main.parent,
+                    msg,
+                    dialogTitle,
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    JOptionPane.YES_OPTION);
+            if(!answer)
+                return false;
+        }
+        if (incomplete) {
+            JPanel msg = new JPanel(new GridBagLayout());
+            msg.add(new JLabel("<html>" + incompleteDialogMessage + "</html>"));
+            boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
+                    operation + "_incomplete",
+                    Main.parent,
+                    msg,
+                    dialogTitle,
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    JOptionPane.YES_OPTION);
+            if(!answer)
+                return false;
+        }
+        return true;
     }
 
 }

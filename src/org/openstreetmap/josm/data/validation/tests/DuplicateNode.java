@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Hash;
 import org.openstreetmap.josm.data.osm.Node;
@@ -389,7 +390,7 @@ public class DuplicateNode extends Test {
             target = nodes.iterator().next();
         }
 
-        if (checkAndConfirmOutlyingDeletes(nodes, target))
+        if (DeleteCommand.checkAndConfirmOutlyingDelete(Main.main.getCurrentDataSet().getDataSourceArea(), nodes, target))
             return MergeNodesAction.mergeNodes(Main.main.getEditLayer(), nodes, target);
 
         return null;// undoRedo handling done in mergeNodes
@@ -403,42 +404,6 @@ public class DuplicateNode extends Test {
         // never merge nodes from two different non-closed geometries
         if (testError.getCode() == DUPLICATE_NODE_UNCLOSED) return false;
         // everything else is ok to merge
-        return true;
-    }
-
-    /**
-     * Check whether user is about to delete data outside of the download area.
-     * Request confirmation if he is.
-     */
-    private static boolean checkAndConfirmOutlyingDeletes(LinkedHashSet<Node> del, Node ignore) {
-        Area a = Main.main.getCurrentDataSet().getDataSourceArea();
-        if (a != null) {
-            for (OsmPrimitive osm : del) {
-                if (osm instanceof Node && !osm.isNew() && osm != ignore) {
-                    Node n = (Node) osm;
-                    if (!a.contains(n.getCoor())) {
-                        JPanel msg = new JPanel(new GridBagLayout());
-                        msg.add(new JLabel(
-                                "<html>" +
-                                // leave message in one tr() as there is a grammatical
-                                // connection.
-                                tr("You are about to delete nodes outside of the area you have downloaded."
-                                        + "<br>"
-                                        + "This can cause problems because other objects (that you do not see) might use them."
-                                        + "<br>" + "Do you really want to delete?") + "</html>"));
-
-                        return ConditionalOptionPaneUtil.showConfirmationDialog(
-                                "delete_outside_nodes",
-                                Main.parent,
-                                msg,
-                                tr("Delete confirmation"),
-                                JOptionPane.YES_NO_OPTION,
-                                JOptionPane.QUESTION_MESSAGE,
-                                JOptionPane.YES_OPTION);
-                    }
-                }
-            }
-        }
         return true;
     }
 }

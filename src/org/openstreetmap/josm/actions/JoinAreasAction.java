@@ -333,23 +333,16 @@ public class JoinAreasAction extends JosmAction {
 
         // TODO: Only display this warning when nodes outside dataSourceArea are deleted
         Area dataSourceArea = Main.main.getCurrentDataSet().getDataSourceArea();
-        if (dataSourceArea != null) {
-            for (Node node : allNodes) {
-                if (!dataSourceArea.contains(node.getCoor())) {
-                    int option = JOptionPane.showConfirmDialog(Main.parent,
-                            trn("The selected way has nodes outside of the downloaded data region.",
-                                    "The selected ways have nodes outside of the downloaded data region.",
-                                    ways.size()) + "\n"
-                                    + tr("This can lead to nodes being deleted accidentally.") + "\n"
-                                    + tr("Are you really sure to continue?"),
-                                    tr("Please abort if you are not sure"), JOptionPane.YES_NO_OPTION,
-                                    JOptionPane.WARNING_MESSAGE);
-
-                    if (option != JOptionPane.YES_OPTION) return;
-                    break;
-                }
-            }
-        }
+        boolean ok = Command.checkAndConfirmOutlyingOperation("joinarea", tr("Join area confirmation"),
+                trn("The selected way has nodes outside of the downloaded data region.",
+                    "The selected ways have nodes outside of the downloaded data region.",
+                    ways.size()) + "<br/>"
+                    + tr("This can lead to nodes being deleted accidentally.") + "<br/>"
+                    + tr("Are you really sure to continue?")
+                    + tr("Please abort if you are not sure"),
+                tr("The selected area is incomplete. Continue?"),
+                dataSourceArea, allNodes, null);
+        if(!ok) return;
 
         //analyze multipolygon relations and collect all areas
         List<Multipolygon> areas = collectMultipolygons(ways);
