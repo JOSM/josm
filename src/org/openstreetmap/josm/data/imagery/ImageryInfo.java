@@ -314,6 +314,10 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         return bounds;
     }
 
+    public String getAttributionText() {
+        return attributionText;
+    }
+
     public void setAttributionText(String text) {
         attributionText = text;
     }
@@ -322,8 +326,16 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         attributionImage = text;
     }
 
+    public String getAttributionLinkURL() {
+        return attributionLinkURL;
+    }
+
     public void setAttributionLinkURL(String text) {
         attributionLinkURL = text;
+    }
+
+    public String getTermsOfUseURL() {
+        return termsOfUseURL;
     }
 
     public void setTermsOfUseURL(String text) {
