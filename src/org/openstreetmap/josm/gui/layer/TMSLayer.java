@@ -19,8 +19,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,6 +67,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.tools.OpenBrowser;
 
 /**
  * Class that displays a slippy map layer.
@@ -477,28 +476,14 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                             clickedTile = getTileForPixelpos(e.getX(), e.getY());
                             tileOptionMenu.show(e.getComponent(), e.getX(), e.getY());
                         } else if (e.getButton() == MouseEvent.BUTTON1) {
-                            if(!tileSource.requiresAttribution())
+                            if (!tileSource.requiresAttribution())
                                 return;
 
-                            if((attrImageBounds != null && attrImageBounds.contains(e.getPoint()))
-                            || (attrTextBounds != null && attrTextBounds.contains(e.getPoint()))) {
-                                try {
-                                    java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
-                                    desktop.browse(new URI(tileSource.getAttributionLinkURL()));
-                                } catch (IOException e1) {
-                                    e1.printStackTrace();
-                                } catch (URISyntaxException e1) {
-                                    e1.printStackTrace();
-                                }
-                            } else if(attrToUBounds != null && attrToUBounds.contains(e.getPoint())) {
-                                try {
-                                    java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
-                                    desktop.browse(new URI(tileSource.getTermsOfUseURL()));
-                                } catch (IOException e1) {
-                                    e1.printStackTrace();
-                                } catch (URISyntaxException e1) {
-                                    e1.printStackTrace();
-                                }
+                            if ((attrImageBounds != null && attrImageBounds.contains(e.getPoint()))
+                                    || (attrTextBounds != null && attrTextBounds.contains(e.getPoint()))) {
+                                OpenBrowser.displayUrl(tileSource.getAttributionLinkURL());
+                            } else if (attrToUBounds != null && attrToUBounds.contains(e.getPoint())) {
+                                OpenBrowser.displayUrl(tileSource.getTermsOfUseURL());
                             }
                         }
                     }

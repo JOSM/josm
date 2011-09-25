@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.bbox;
 
 import java.awt.Color;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -11,8 +10,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,6 +36,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
+import org.openstreetmap.josm.tools.OpenBrowser;
 
 public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
 
@@ -222,25 +220,19 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
 
         /* TODO: Somehow indicate the link is clickable state to user */
 
-        try {
-            if((attrImageBounds != null && attrImageBounds.contains(p))
-            || (attrTextBounds != null && attrTextBounds.contains(p))) {
-                if(click)
-                    Desktop.getDesktop().browse(new URI(ts.getAttributionLinkURL()));
-                /*else
-                    Main.warn(ts.getAttributionLinkURL());*/
-                return true;
-            } else if(attrToUBounds != null && attrToUBounds.contains(p)) {
-                if(click)
-                    Desktop.getDesktop().browse(new URI(ts.getTermsOfUseURL()));
-                /*else
-                    Main.warn(ts.getTermsOfUseURL());*/
-                return true;
-            }
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        } catch (URISyntaxException e1) {
-            e1.printStackTrace();
+        if ((attrImageBounds != null && attrImageBounds.contains(p))
+                || (attrTextBounds != null && attrTextBounds.contains(p))) {
+            if (click)
+                OpenBrowser.displayUrl(ts.getAttributionLinkURL());
+            /*else
+                Main.warn(ts.getAttributionLinkURL());*/
+            return true;
+        } else if (attrToUBounds != null && attrToUBounds.contains(p)) {
+            if (click)
+                OpenBrowser.displayUrl(ts.getTermsOfUseURL());
+            /*else
+                Main.warn(ts.getTermsOfUseURL());*/
+            return true;
         }
         return false;
     }
