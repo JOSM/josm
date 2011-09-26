@@ -281,12 +281,14 @@ public class AddWMSLayerPanel extends JPanel {
     private String commaSepLayerList() {
         StringBuilder b = new StringBuilder();
 
-        Iterator<LayerDetails> iterator = selectedLayers.iterator();
-        while (iterator.hasNext()) {
-            LayerDetails layerDetails = iterator.next();
-            b.append(layerDetails.ident);
-            if(iterator.hasNext()) {
-                b.append(",");
+        if (selectedLayers != null) {
+            Iterator<LayerDetails> iterator = selectedLayers.iterator();
+            while (iterator.hasNext()) {
+                LayerDetails layerDetails = iterator.next();
+                b.append(layerDetails.ident);
+                if(iterator.hasNext()) {
+                    b.append(",");
+                }
             }
         }
 
