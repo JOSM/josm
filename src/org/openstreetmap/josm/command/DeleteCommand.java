@@ -1,12 +1,11 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.command;
 
+import java.awt.geom.Area;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.GridBagLayout;
-import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,10 +19,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SplitWayAction;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -33,7 +29,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.actionsupport.DeleteFromRelationConfirmationDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -233,7 +228,7 @@ public class DeleteCommand extends Command {
 
         if (parents.isEmpty())
             return null;
-        if (!silent && !checkAndConfirmOutlyingDeletes(layer,parents))
+        if (!silent && !checkAndConfirmOutlyingDelete(layer, parents, null))
             return null;
         return new DeleteCommand(layer,parents);
     }
@@ -330,7 +325,7 @@ public class DeleteCommand extends Command {
             primitivesToDelete.addAll(nodesToDelete);
         }
 
-        if (!silent && !checkAndConfirmOutlyingDeletes(layer,primitivesToDelete))
+        if (!silent && !checkAndConfirmOutlyingDelete(layer, primitivesToDelete, null))
             return null;
 
         waysToBeChanged.addAll(OsmPrimitive.getFilteredSet(OsmPrimitive.getReferrer(primitivesToDelete), Way.class));
@@ -426,81 +421,23 @@ public class DeleteCommand extends Command {
         }
     }
 
-    /**
-     * Check whether user is about to delete data outside of the download area. Request confirmation
-     * if he is.
-     *
-     * @param layer the layer in whose context data is deleted
-     * @param primitivesToDelete the primitives to delete
-     * @return true, if deleting outlying primitives is OK; false, otherwise
-     */
-    private static boolean checkAndConfirmOutlyingDeletes(OsmDataLayer layer, Collection<OsmPrimitive> primitivesToDelete) {
-        Area a = layer.data.getDataSourceArea();
-        boolean outside = false;
-        boolean incomplete = false;
-        if (a != null) {
-            for (OsmPrimitive osm : primitivesToDelete) {
-                if (osm.isIncomplete()) {
-                    incomplete = true;
-                } else if (osm instanceof Node && !osm.isNewOrUndeleted()
-                        && !a.contains(((Node) osm).getCoor())) {
-                    outside = true;
-                }
-            }
-        }
-        else
-        {
-            for (OsmPrimitive osm : primitivesToDelete)
-                if (osm.isIncomplete()) {
-                    incomplete = true;
-                }
-        }
-        if(outside)
-        {
-            JPanel msg = new JPanel(new GridBagLayout());
-            msg.add(new JLabel(
-                    "<html>" +
-                    // leave message in one tr() as there is a grammatical
-                    // connection.
-                    tr("You are about to delete nodes outside of the area you have downloaded."
-                            + "<br>"
-                            + "This can cause problems because other objects (that you do not see) might use them."
-                            + "<br>" + "Do you really want to delete?") + "</html>"));
-            boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
-                    "delete_outside_nodes",
-                    Main.parent,
-                    msg,
-                    tr("Delete confirmation"),
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    JOptionPane.YES_OPTION
-            );
-            if(!answer)
-                return false;
-        }
-        if(incomplete)
-        {
-            JPanel msg = new JPanel(new GridBagLayout());
-            msg.add(new JLabel(
-                    "<html>" +
-                    // leave message in one tr() as there is a grammatical
-                    // connection.
-                    tr("You are about to delete incomplete objects."
-                            + "<br>"
-                            + "This will cause problems because you don''t see the real object."
-                            + "<br>" + "Do you really want to delete?") + "</html>"));
-            boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
-                    "delete_incomplete",
-                    Main.parent,
-                    msg,
-                    tr("Delete confirmation"),
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    JOptionPane.YES_OPTION
-            );
-            if(!answer)
-                return false;
-        }
-        return true;
+    public static boolean checkAndConfirmOutlyingDelete(OsmDataLayer layer, Collection<? extends OsmPrimitive> primitives, OsmPrimitive ignore) {
+        return checkAndConfirmOutlyingDelete(layer.data.getDataSourceArea(), primitives, ignore);
     }
+
+    public static boolean checkAndConfirmOutlyingDelete(Area area, Collection<? extends OsmPrimitive> primitives, OsmPrimitive ignore) {
+        return Command.checkAndConfirmOutlyingOperation("delete",
+                tr("Delete confirmation"),
+                tr("You are about to delete nodes outside of the area you have downloaded."
+                        + "<br>"
+                        + "This can cause problems because other objects (that you do not see) might use them."
+                        + "<br>"
+                        + "Do you really want to delete?"),
+                tr("You are about to delete incomplete objects."
+                        + "<br>"
+                        + "This will cause problems because you don''t see the real object."
+                        + "<br>" + "Do you really want to delete?"),
+                area, primitives, ignore);
+    }
+
 }

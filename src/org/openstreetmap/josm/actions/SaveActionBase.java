@@ -75,6 +75,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 if (exporter.acceptFile(file, layer)) {
                     exporter.exportData(file, layer);
                     exported = true;
+                    break;
                 }
             }
             if (!exported) {

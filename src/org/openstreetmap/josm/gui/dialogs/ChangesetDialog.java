@@ -20,11 +20,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -50,6 +51,7 @@ import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetListModel;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetsInActiveDataLayerListModel;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.CloseChangesetTask;
+import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -82,6 +84,8 @@ public class ChangesetDialog extends ToggleDialog{
     private ShowChangesetInfoAction showChangesetInfoAction;
     private CloseOpenChangesetsAction closeChangesetAction;
     private LaunchChangesetManagerAction launchChangesetManagerAction;
+    
+    private ChangesetDialogPopup popupMenu;
 
     protected void buildChangesetsLists() {
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
@@ -187,32 +191,24 @@ public class ChangesetDialog extends ToggleDialog{
         // -- select objects action
         selectObjectsAction = new SelectObjectsAction();
         cbInSelectionOnly.addItemListener(selectObjectsAction);
-        lstInActiveDataLayer.getSelectionModel().addListSelectionListener(selectObjectsAction);
-        lstInSelection.getSelectionModel().addListSelectionListener(selectObjectsAction);
 
         // -- read changesets action
         readChangesetAction = new ReadChangesetsAction();
         cbInSelectionOnly.addItemListener(readChangesetAction);
-        lstInActiveDataLayer.getSelectionModel().addListSelectionListener(readChangesetAction);
-        lstInSelection.getSelectionModel().addListSelectionListener(readChangesetAction);
 
         // -- close changesets action
         closeChangesetAction = new CloseOpenChangesetsAction();
         cbInSelectionOnly.addItemListener(closeChangesetAction);
-        lstInActiveDataLayer.getSelectionModel().addListSelectionListener(closeChangesetAction);
-        lstInSelection.getSelectionModel().addListSelectionListener(closeChangesetAction);
 
         // -- show info action
         showChangesetInfoAction = new ShowChangesetInfoAction();
         cbInSelectionOnly.addItemListener(showChangesetInfoAction);
-        lstInActiveDataLayer.getSelectionModel().addListSelectionListener(showChangesetInfoAction);
-        lstInSelection.getSelectionModel().addListSelectionListener(showChangesetInfoAction);
 
         // -- launch changeset manager action
         launchChangesetManagerAction = new LaunchChangesetManagerAction();
         cbInSelectionOnly.addItemListener(launchChangesetManagerAction);
-        lstInActiveDataLayer.getSelectionModel().addListSelectionListener(launchChangesetManagerAction);
-        lstInSelection.getSelectionModel().addListSelectionListener(launchChangesetManagerAction);
+        
+        popupMenu = new ChangesetDialogPopup(lstInActiveDataLayer, lstInSelection);
 
         createLayout(pnl, false, Arrays.asList(new SideButton[] {
             new SideButton(selectObjectsAction, false),
@@ -535,14 +531,13 @@ public class ChangesetDialog extends ToggleDialog{
                     lst.getSelectionModel().addSelectionInterval(idx, idx);
                 }
             }
-            ChangesetDialogPopup popup = new ChangesetDialogPopup();
-            popup.show(lst, evt.getX(), evt.getY());
-
+            popupMenu.show(lst, evt.getX(), evt.getY());
         }
     }
 
-    class ChangesetDialogPopup extends JPopupMenu {
-        public ChangesetDialogPopup() {
+    class ChangesetDialogPopup extends ListPopupMenu {
+        public ChangesetDialogPopup(JList ... lists) {
+            super(lists);
             add(selectObjectsAction);
             addSeparator();
             add(readChangesetAction);
@@ -550,5 +545,13 @@ public class ChangesetDialog extends ToggleDialog{
             addSeparator();
             add(showChangesetInfoAction);
         }
+    }
+
+    public void addPopupMenuSeparator() {
+        popupMenu.addSeparator();
+    }
+
+    public JMenuItem addPopupMenuAction(Action a) {
+        return popupMenu.add(a);
     }
 }

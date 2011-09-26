@@ -56,8 +56,8 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
         pnlMessage= new HtmlPanel();
         pnlMessage.setText("<html><body>"
                 + tr("Please enter an OAuth Access Token which is authorized to access the OSM server "
-                + "''{0}''.",
-                getApiUrl()) + "</body></html>");
+                        + "''{0}''.",
+                        getApiUrl()) + "</body></html>");
         pnl.add(pnlMessage, gc);
 
         // the access token key input field
@@ -94,7 +94,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
         gc.gridx = 0;
         gc.gridwidth =2;
         gc.weightx = 1.0;
-        pnl.add(cbSaveToPreferences = new JCheckBox(tr("Save Access Token to preferences")), gc);
+        pnl.add(cbSaveToPreferences = new JCheckBox(tr("Save Access Token in preferences")), gc);
         cbSaveToPreferences.setSelected(OAuthAccessTokenHolder.getInstance().isSaveToPreferences());
 
         // filler - grab remaining space

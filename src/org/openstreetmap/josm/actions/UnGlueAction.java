@@ -60,12 +60,16 @@ public class UnGlueAction extends JosmAction {
      *
      * This method does some checking on the selection and calls the matching unGlueWay method.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
 
         String errMsg = null;
         if (checkSelection(selection)) {
+            if (!checkAndConfirmOutlyingUnglue()) {
+                return;
+            }
             int count = 0;
             for (Way w : OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class)) {
                 if (!w.isUsable() || w.getNodesCount() < 1) {
@@ -86,6 +90,9 @@ public class UnGlueAction extends JosmAction {
                 unglueWays();
             }
         } else if (checkSelection2(selection)) {
+            if (!checkAndConfirmOutlyingUnglue()) {
+                return;
+            }
             ArrayList<Node> tmpNodes = new ArrayList<Node>();
             for (Node n : selectedNodes) {
                 int count = 0;
@@ -406,5 +413,27 @@ public class UnGlueAction extends JosmAction {
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         setEnabled(selection != null && !selection.isEmpty());
+    }
+
+    protected boolean checkAndConfirmOutlyingUnglue() {
+        List<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>(2 + (selectedNodes == null ? 0 : selectedNodes.size()));
+        if (selectedNodes != null)
+            primitives.addAll(selectedNodes);
+        if (selectedNode != null)
+            primitives.add(selectedNode);
+        if (selectedWay != null)
+            primitives.add(selectedWay);
+        return Command.checkAndConfirmOutlyingOperation("unglue",
+                tr("Unglue confirmation"),
+                tr("You are about to unglue nodes outside of the area you have downloaded."
+                        + "<br>"
+                        + "This can cause problems because other objects (that you do not see) might use them."
+                        + "<br>"
+                        + "Do you really want to unglue?"),
+                tr("You are about to unglue incomplete objects."
+                        + "<br>"
+                        + "This will cause problems because you don''t see the real object."
+                        + "<br>" + "Do you really want to unglue?"),
+                getEditLayer().data.getDataSourceArea(), primitives, null);
     }
 }

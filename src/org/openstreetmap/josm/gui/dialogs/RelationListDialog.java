@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BorderLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -21,9 +20,10 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
+import javax.swing.Action;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
-import javax.swing.JPopupMenu;
+import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -55,6 +55,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -141,7 +142,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "deleteRelation");
         displaylist.getActionMap().put("deleteRelation", deleteAction);
 
-        popupMenu = new RelationDialogPopupMenu();
+        popupMenu = new RelationDialogPopupMenu(displaylist);
     }
 
     @Override public void showNotify() {
@@ -776,46 +777,39 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
     }
 
-    class RelationDialogPopupMenu extends JPopupMenu {
-        protected void build() {
+    class RelationDialogPopupMenu extends ListPopupMenu {
+
+        public RelationDialogPopupMenu(JList list) {
+            super(list);
+            
             // -- download members action
             //
-            DownloadMembersAction downloadMembersAction = new DownloadMembersAction();
-            displaylist.addListSelectionListener(downloadMembersAction);
-            add(downloadMembersAction);
+            add(new DownloadMembersAction());
 
             // -- download incomplete members action
             //
-            DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembers = new DownloadSelectedIncompleteMembersAction();
-            displaylist.addListSelectionListener(downloadSelectedIncompleteMembers);
-            add(downloadSelectedIncompleteMembers);
+            add(new DownloadSelectedIncompleteMembersAction());
 
             addSeparator();
 
             // -- select members action
             //
-            SelectMembersAction selectMembersAction = new SelectMembersAction(false);
-            displaylist.addListSelectionListener(selectMembersAction);
-            add(selectMembersAction);
-
-            selectMembersAction = new SelectMembersAction(true);
-            displaylist.addListSelectionListener(selectMembersAction);
-            add(selectMembersAction);
+            add(new SelectMembersAction(false));
+            add(new SelectMembersAction(true));
 
             // -- select action
             //
-            SelectAction selectAction = new SelectAction(false);
-            displaylist.addListSelectionListener(selectAction);
-            add(selectAction);
-
-            selectAction = new SelectAction(true);
-            displaylist.addListSelectionListener(selectAction);
-            add(selectAction);
+            add(new SelectAction(false));
+            add(new SelectAction(true));
         }
+    }
 
-        public RelationDialogPopupMenu() {
-            build();
-        }
+    public void addPopupMenuSeparator() {
+        popupMenu.addSeparator();
+    }
+
+    public JMenuItem addPopupMenuAction(Action a) {
+        return popupMenu.add(a);
     }
 
     /* ---------------------------------------------------------------------------------- */

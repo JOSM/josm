@@ -27,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -303,9 +304,17 @@ public class AddWMSLayerPanel extends JPanel {
     private void attemptGetCapabilities(String serviceUrlStr) {
         URL getCapabilitiesUrl = null;
         try {
-            if (!serviceUrlStr.trim().contains("capabilities")) {
+            if (!Pattern.compile(".*GetCapabilities.*", Pattern.CASE_INSENSITIVE).matcher(serviceUrlStr).matches()) {
                 // If the url doesn't already have GetCapabilities, add it in
-                getCapabilitiesUrl = new URL(serviceUrlStr + "VERSION=1.1.1&SERVICE=WMS&REQUEST=GetCapabilities");
+                getCapabilitiesUrl = new URL(serviceUrlStr);
+                final String getCapabilitiesQuery = "VERSION=1.1.1&SERVICE=WMS&REQUEST=GetCapabilities";
+                if (getCapabilitiesUrl.getQuery() == null) {
+                    getCapabilitiesUrl = new URL(serviceUrlStr + "?" + getCapabilitiesQuery);
+                } else if (!getCapabilitiesUrl.getQuery().isEmpty() && !getCapabilitiesUrl.getQuery().endsWith("&")) {
+                    getCapabilitiesUrl = new URL(serviceUrlStr + "&" + getCapabilitiesQuery);
+                } else {
+                    getCapabilitiesUrl = new URL(serviceUrlStr + getCapabilitiesQuery);
+                }
             } else {
                 // Otherwise assume it's a good URL and let the subsequent error
                 // handling systems deal with problems

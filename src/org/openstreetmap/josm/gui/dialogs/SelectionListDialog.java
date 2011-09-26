@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
+import javax.swing.Action;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
@@ -66,6 +67,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -85,6 +87,8 @@ public class SelectionListDialog extends ToggleDialog  {
     private SetRelationSelection actSetRelationSelection;
     private EditRelationSelection actEditRelationSelection;
     private DownloadSelectedIncompleteMembersAction actDownloadSelectedIncompleteMembers;
+
+    private SelectionPopup popupMenu;
 
     /**
      * Builds the content panel for this dialog
@@ -121,7 +125,7 @@ public class SelectionListDialog extends ToggleDialog  {
     }
 
     public SelectionListDialog() {
-        super(tr("Current Selection"), "selectionlist", tr("Open a selection list window."),
+        super(tr("Selection"), "selectionlist", tr("Open a selection list window."),
                 Shortcut.registerShortcut("subwindow:selection", tr("Toggle: {0}", tr("Current Selection")), KeyEvent.VK_T, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT),
                 150, // default height
                 true // default is "show dialog"
@@ -133,19 +137,14 @@ public class SelectionListDialog extends ToggleDialog  {
         model.addListDataListener(actZoomToJOSMSelection);
 
         actZoomToListSelection = new ZoomToListSelection();
-        lstPrimitives.getSelectionModel().addListSelectionListener(actZoomToListSelection);
-
         actSetRelationSelection = new SetRelationSelection();
-        lstPrimitives.getSelectionModel().addListSelectionListener(actSetRelationSelection);
-
         actEditRelationSelection = new EditRelationSelection();
-        lstPrimitives.getSelectionModel().addListSelectionListener(actEditRelationSelection);
-
         actDownloadSelectedIncompleteMembers = new DownloadSelectedIncompleteMembersAction();
-        lstPrimitives.getSelectionModel().addListSelectionListener(actDownloadSelectedIncompleteMembers);
 
         lstPrimitives.addMouseListener(new SelectionPopupMenuLauncher());
         lstPrimitives.addMouseListener(new DblClickHandler());
+        
+        popupMenu = new SelectionPopup(lstPrimitives);
     }
 
     @Override
@@ -189,7 +188,6 @@ public class SelectionListDialog extends ToggleDialog  {
      * The popup menu launcher
      */
     class SelectionPopupMenuLauncher extends PopupMenuLauncher {
-        private SelectionPopup popup = new SelectionPopup();
 
         @Override
         public void launch(MouseEvent evt) {
@@ -198,15 +196,16 @@ public class SelectionListDialog extends ToggleDialog  {
                 if (idx < 0) return;
                 model.setSelected(Collections.singleton((OsmPrimitive)model.getElementAt(idx)));
             }
-            popup.show(lstPrimitives, evt.getX(), evt.getY());
+            popupMenu.show(lstPrimitives, evt.getX(), evt.getY());
         }
     }
 
     /**
      * The popup menu for the selection list
      */
-    class SelectionPopup extends JPopupMenu {
-        public SelectionPopup() {
+    class SelectionPopup extends ListPopupMenu {
+        public SelectionPopup(JList list) {
+            super(list);
             add(actZoomToJOSMSelection);
             add(actZoomToListSelection);
             addSeparator();
@@ -215,6 +214,14 @@ public class SelectionListDialog extends ToggleDialog  {
             addSeparator();
             add(actDownloadSelectedIncompleteMembers);
         }
+    }
+
+    public void addPopupMenuSeparator() {
+        popupMenu.addSeparator();
+    }
+
+    public JMenuItem addPopupMenuAction(Action a) {
+        return popupMenu.add(a);
     }
 
     /**
