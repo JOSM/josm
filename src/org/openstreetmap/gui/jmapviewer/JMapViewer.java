@@ -25,7 +25,11 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.EventListenerList;
 
+import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
+import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent.COMMAND;
+import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
@@ -36,12 +40,12 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 
 /**
- * 
+ *
  * Provides a simple panel that displays pre-rendered map tiles loaded from the
  * OpenStreetMap project.
- * 
+ *
  * @author Jan Peter Stotz
- * 
+ *
  */
 public class JMapViewer extends JPanel implements TileLoaderListener {
 
@@ -117,8 +121,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         tileSource = new OsmTileSource.Mapnik();
         tileController = new TileController(tileSource, tileCache, this);
         mapMarkerList = new LinkedList<MapMarker>();
-        mapRectangleList = new LinkedList<MapRectangle>();
         mapPolygonList = new LinkedList<MapPolygon>();
+        mapRectangleList = new LinkedList<MapRectangle>();
         mapMarkersVisible = true;
         mapRectanglesVisible = true;
         mapPolygonsVisible = true;
@@ -187,7 +191,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     /**
      * Changes the map pane so that it is centered on the specified coordinate
      * at the given zoom level.
-     * 
+     *
      * @param lat
      *            latitude of the specified coordinate
      * @param lon
@@ -203,7 +207,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * Changes the map pane so that the specified coordinate at the given zoom
      * level is displayed on the map at the screen coordinate
      * <code>mapPoint</code>.
-     * 
+     *
      * @param mapPoint
      *            point on the map denoted in pixels where the coordinate should
      *            be set
@@ -264,13 +268,13 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
             nbElemToCheck += mapPolygonList.size();
         if (nbElemToCheck == 0)
             return;
-        
+
         int x_min = Integer.MAX_VALUE;
         int y_min = Integer.MAX_VALUE;
         int x_max = Integer.MIN_VALUE;
         int y_max = Integer.MIN_VALUE;
         int mapZoomMax = tileController.getTileSource().getMaxZoom();
-        
+
         if (markers) {
             for (MapMarker marker : mapMarkerList) {
                 int x = OsmMercator.LonToX(marker.getLon(), mapZoomMax);
@@ -281,7 +285,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
                 y_min = Math.min(y_min, y);
             }
         }
-        
+
         if (rectangles) {
             for (MapRectangle rectangle : mapRectangleList) {
                 x_max = Math.max(x_max, OsmMercator.LonToX(rectangle.getBottomRight().getLon(), mapZoomMax));
@@ -290,7 +294,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
                 y_min = Math.min(y_min, OsmMercator.LatToY(rectangle.getBottomRight().getLat(), mapZoomMax));
             }
         }
-        
+
         if (polygons) {
             for (MapPolygon polygon : mapPolygonList) {
                 for (Coordinate c : polygon.getPoints()) {
@@ -303,7 +307,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
                 }
             }
         }
-        
+
         int height = Math.max(0, getHeight());
         int width = Math.max(0, getWidth());
         int newZoom = mapZoomMax;
@@ -321,7 +325,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         y /= z;
         setDisplayPosition(x, y, newZoom);
     }
-    
+
+
     /**
      * Sets the displayed map pane and zoom level so that all map markers are
      * visible.
@@ -337,7 +342,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     public void setDisplayToFitMapRectangles() {
         setDisplayToFitMapElements(false, true, false);
     }
-    
+
     /**
      * Sets the displayed map pane and zoom level so that all map polygons are
      * visible.
@@ -347,9 +352,23 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     }
 
     /**
+     * @return the center
+     */
+    public Point getCenter() {
+        return center;
+    }
+
+    /**
+     * @param center the center to set
+     */
+    public void setCenter(Point center) {
+        this.center = center;
+    }
+
+    /**
      * Calculates the latitude/longitude coordinate of the center of the
      * currently displayed map area.
-     * 
+     *
      * @return latitude / longitude
      */
     public Coordinate getPosition() {
@@ -361,7 +380,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     /**
      * Converts the relative pixel coordinate (regarding the top left corner of
      * the displayed map) into a latitude / longitude coordinate
-     * 
+     *
      * @param mapPoint
      *            relative pixel coordinate regarding the top left corner of the
      *            displayed map
@@ -374,7 +393,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     /**
      * Converts the relative pixel coordinate (regarding the top left corner of
      * the displayed map) into a latitude / longitude coordinate
-     * 
+     *
      * @param mapPointX
      * @param mapPointY
      * @return
@@ -389,7 +408,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     /**
      * Calculates the position on the map of a given coordinate
-     * 
+     *
      * @param lat
      * @param lon
      * @param checkOutside
@@ -410,7 +429,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     /**
      * Calculates the position on the map of a given coordinate
-     * 
+     *
      * @param lat
      * @param lon
      * @return point on the map or <code>null</code> if the point is not visible
@@ -421,7 +440,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     /**
      * Calculates the position on the map of a given coordinate
-     * 
+     *
      * @param coord
      * @return point on the map or <code>null</code> if the point is not visible
      */
@@ -434,7 +453,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     /**
      * Calculates the position on the map of a given coordinate
-     * 
+     *
      * @param coord
      * @return point on the map or <code>null</code> if the point is not visible
      *         and checkOutside set to <code>true</code>
@@ -444,6 +463,27 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
             return getMapPosition(coord.getLat(), coord.getLon(), checkOutside);
         else
             return null;
+    }
+
+    /**
+     * Gets the meter per pixel.
+     *
+     * @return the meter per pixel
+     * @author Jason Huntley
+     */
+    public double getMeterPerPixel() {
+        Point origin=new Point(5,5);
+        Point center=new Point(getWidth()/2, getHeight()/2);
+
+        double pDistance=center.distance(origin);
+
+        Coordinate originCoord=getPosition(origin);
+        Coordinate centerCoord=getPosition(center);
+
+        double mDistance=OsmMercator.getDistance(originCoord.getLat(), originCoord.getLon(),
+                centerCoord.getLat(), centerCoord.getLon());
+
+        return mDistance/pDistance;
     }
 
     @Override
@@ -542,6 +582,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
                 paintMarker(g, marker);
             }
         }
+
         paintAttribution(g);
     }
 
@@ -587,10 +628,10 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
             polygon.paint(g, points);
         }
     }
-    
+
     /**
      * Moves the visible map pane.
-     * 
+     *
      * @param x
      *            horizontal movement in pixel.
      * @param y
@@ -600,6 +641,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         center.x += x;
         center.y += y;
         repaint();
+        this.fireJMVEvent(new JMVCommandEvent(COMMAND.MOVE, this));
     }
 
     /**
@@ -645,6 +687,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         tileController.cancelOutstandingJobs(); // Clearing outstanding load
         // requests
         setDisplayPositionByLatLon(mapPoint, zoomPos.getLat(), zoomPos.getLon(), zoom);
+
+        this.fireJMVEvent(new JMVCommandEvent(COMMAND.ZOOM, this));
     }
 
     public void setZoom(int zoom) {
@@ -655,7 +699,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * Every time the zoom level changes this method is called. Override it in
      * derived implementations for adapting zoom dependent values. The new zoom
      * level can be obtained via {@link #getZoom()}.
-     * 
+     *
      * @param oldZoom
      *            the previous zoom level
      */
@@ -682,7 +726,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     /**
      * Enables or disables painting of the {@link MapMarker}
-     * 
+     *
      * @param mapMarkersVisible
      * @see #addMapMarker(MapMarker)
      * @see #getMapMarkerList()
@@ -763,7 +807,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         mapPolygonList.clear();
         repaint();
     }
-    
+
     public void setZoomContolsVisible(boolean visible) {
         zoomSlider.setVisible(visible);
         zoomInButton.setVisible(visible);
@@ -808,7 +852,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     /**
      * Enables or disables painting of the {@link MapRectangle}
-     * 
+     *
      * @param mapRectanglesVisible
      * @see #addMapRectangle(MapRectangle)
      * @see #getMapRectangleList()
@@ -824,7 +868,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     /**
      * Enables or disables painting of the {@link MapPolygon}
-     * 
+     *
      * @param mapPolygonsVisible
      * @see #addMapPolygon(MapPolygon)
      * @see #getMapPolygonList()
@@ -836,7 +880,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener#getTileCache
      * ()
@@ -897,5 +941,35 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         }
 
         g.setFont(font);
+    }
+
+    protected EventListenerList listenerList = new EventListenerList();
+
+    /**
+     * @param listener to set
+     */
+    public void addJMVListener(JMapViewerEventListener listener) {
+        listenerList.add(JMapViewerEventListener.class, listener);
+    }
+
+    /**
+     * @param listener to remove
+     */
+    public void removeJMVListener(JMapViewerEventListener listener) {
+        listenerList.remove(JMapViewerEventListener.class, listener);
+    }
+
+    /**
+     * Send an update to all objects registered with viewer
+     * 
+     * @param event to dispatch
+     */
+    void fireJMVEvent(JMVCommandEvent evt) {
+        Object[] listeners = listenerList.getListenerList();
+        for (int i=0; i<listeners.length; i+=2) {
+            if (listeners[i]==JMapViewerEventListener.class) {
+                ((JMapViewerEventListener)listeners[i+1]).processCommand(evt);
+            }
+        }
     }
 }

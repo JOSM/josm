@@ -16,6 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
+import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
@@ -28,22 +30,44 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
  * @author Jan Peter Stotz
  *
  */
-public class Demo extends JFrame {
+public class Demo extends JFrame implements JMapViewerEventListener  {
 
     private static final long serialVersionUID = 1L;
+
+    private JMapViewer map = null;
+
+    private JLabel zoomLabel=null;
+    private JLabel zoomValue=null;
+
+    private JLabel mperpLabelName=null;
+    private JLabel mperpLabelValue = null;
 
     public Demo() {
         super("JMapViewer Demo");
         setSize(400, 400);
-        final JMapViewer map = new JMapViewer();
+
+        map = new JMapViewer();
+
+        // Listen to the map viewer for user operations so components will
+        // recieve events and update
+        map.addJMVListener(this);
+
         // final JMapViewer map = new JMapViewer(new MemoryTileCache(),4);
         // map.setTileLoader(new OsmFileCacheTileLoader(map));
         // new DefaultMapController(map);
+
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         JPanel panel = new JPanel();
         JPanel helpPanel = new JPanel();
+
+        mperpLabelName=new JLabel("Meters/Pixels: ");
+        mperpLabelValue=new JLabel(String.format("%s",map.getMeterPerPixel()));
+
+        zoomLabel=new JLabel("Zoom: ");
+        zoomValue=new JLabel(String.format("%s", map.getZoom()));
+
         add(panel, BorderLayout.NORTH);
         add(helpPanel, BorderLayout.SOUTH);
         JLabel helpLabel = new JLabel("Use right mouse button to move,\n "
@@ -106,6 +130,12 @@ public class Demo extends JFrame {
         });
         panel.add(showZoomControls);
         panel.add(button);
+
+        panel.add(zoomLabel);
+        panel.add(zoomValue);
+        panel.add(mperpLabelName);
+        panel.add(mperpLabelValue);
+
         add(map, BorderLayout.CENTER);
 
         //
@@ -127,6 +157,21 @@ public class Demo extends JFrame {
         // systemProperties.setProperty("http.proxyHost", "localhost");
         // systemProperties.setProperty("http.proxyPort", "8008");
         new Demo().setVisible(true);
+    }
+
+    private void updateZoomParameters() {
+        if (mperpLabelValue!=null)
+            mperpLabelValue.setText(String.format("%s",map.getMeterPerPixel()));
+        if (zoomValue!=null)
+            zoomValue.setText(String.format("%s", map.getZoom()));
+    }
+
+    @Override
+    public void processCommand(JMVCommandEvent command) {
+        if (command.getCommand().equals(JMVCommandEvent.COMMAND.ZOOM) ||
+                command.getCommand().equals(JMVCommandEvent.COMMAND.MOVE)) {
+            updateZoomParameters();
+        }
     }
 
 }

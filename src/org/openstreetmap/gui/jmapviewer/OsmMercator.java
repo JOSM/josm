@@ -18,6 +18,7 @@ public class OsmMercator {
     private static int TILE_SIZE = 256;
     public static final double MAX_LAT = 85.05112877980659;
     public static final double MIN_LAT = -85.05112877980659;
+    private static double EARTH_RADIUS = 6378137; // equatorial earth radius for EPSG:3857 (Mercator) 
 
     public static double radius(int aZoomlevel) {
         return (TILE_SIZE * (1 << aZoomlevel)) / (2.0 * Math.PI);
@@ -40,6 +41,50 @@ public class OsmMercator {
 
     public static int falseNorthing(int aZoomlevel) {
         return (-1 * getMaxPixels(aZoomlevel) / 2);
+    }
+
+    /**
+     * Transform pixelspace to coordinates and get the distance.
+     *
+     * @param x1 the first x coordinate
+     * @param y1 the first y coordinate
+     * @param x2 the second x coordinate
+     * @param y2 the second y coordinate
+     * 
+     * @param zoomLevel the zoom level
+     * @return the distance
+     * @author Jason Huntley
+     */
+    public static double getDistance(int x1, int y1, int x2, int y2, int zoomLevel) {
+        double la1 = YToLat(y1, zoomLevel);
+        double lo1 = XToLon(x1, zoomLevel);
+        double la2 = YToLat(y2, zoomLevel);
+        double lo2 = XToLon(x2, zoomLevel);
+
+        return getDistance(la1, lo1, la2, lo2);
+    }
+
+    /**
+     * Gets the distance using Spherical law of cosines.
+     *
+     * @param la1 the Latitude in degrees
+     * @param lo1 the Longitude in degrees
+     * @param la2 the Latitude from 2nd coordinate in degrees
+     * @param lo2 the Longitude from 2nd coordinate in degrees
+     * @return the distance
+     * @author Jason Huntley
+     */
+    public static double getDistance(double la1, double lo1, double la2, double lo2) {
+        double aStartLat = Math.toRadians(la1);
+        double aStartLong = Math.toRadians(lo1);
+        double aEndLat =Math.toRadians(la2);
+        double aEndLong = Math.toRadians(lo2);
+
+        double distance = Math.acos(Math.sin(aStartLat) * Math.sin(aEndLat)
+                + Math.cos(aStartLat) * Math.cos(aEndLat)
+                * Math.cos(aEndLong - aStartLong));
+
+        return (EARTH_RADIUS * distance);		
     }
 
     /**
