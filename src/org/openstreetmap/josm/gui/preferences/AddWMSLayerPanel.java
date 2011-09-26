@@ -27,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -303,7 +304,7 @@ public class AddWMSLayerPanel extends JPanel {
     private void attemptGetCapabilities(String serviceUrlStr) {
         URL getCapabilitiesUrl = null;
         try {
-            if (!serviceUrlStr.trim().contains("capabilities")) {
+            if (!Pattern.compile(".*GetCapabilities.*", Pattern.CASE_INSENSITIVE).matcher(serviceUrlStr).matches()) {
                 // If the url doesn't already have GetCapabilities, add it in
                 getCapabilitiesUrl = new URL(serviceUrlStr + "VERSION=1.1.1&SERVICE=WMS&REQUEST=GetCapabilities");
             } else {
