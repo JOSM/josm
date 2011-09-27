@@ -57,7 +57,6 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
@@ -383,7 +382,7 @@ public class PluginHandler {
                 parent,
                 tr("<html>Plugin {0} requires JOSM version {1}. The current JOSM version is {2}.<br>"
                         +"You have to update JOSM in order to use this plugin.</html>",
-                        plugin, requiredVersion, Version.getInstance().getVersion()
+                        plugin, Integer.toString(requiredVersion), Version.getInstance().getVersionString()
                 ),
                 tr("Warning"),
                 JOptionPane.WARNING_MESSAGE,
