@@ -386,7 +386,7 @@ public class AddWMSLayerPanel extends JPanel {
         child = getChild(child, "OnlineResource");
         if (child != null) {
             String baseURL = child.getAttribute("xlink:href");
-            if(baseURL != null) {
+            if (baseURL != null && !baseURL.equals(serviceUrlStr)) {
                 try {
                     System.out.println("GetCapabilities specifies a different service URL: " + baseURL);
                     serviceUrl = new URL(baseURL);
