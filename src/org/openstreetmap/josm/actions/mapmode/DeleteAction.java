@@ -315,6 +315,9 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         if (cmd != null) {
             // cmd can be null if the user cancels dialogs DialogCommand displays
             Main.main.undoRedo.add(cmd);
+            if (getCurrentDataSet().getSelectedRelations().contains(toDelete)) {
+            	getCurrentDataSet().toggleSelected(toDelete);
+            }
             RelationDialogManager.getRelationDialogManager().close(layer, toDelete);
         }
     }

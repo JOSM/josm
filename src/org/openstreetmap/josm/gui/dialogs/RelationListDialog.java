@@ -328,13 +328,8 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled()) return;
-            int [] idx  = displaylist.getSelectedIndices();
-            ArrayList<Relation> toDelete = new ArrayList<Relation>(idx.length);
-            for (int i: idx) {
-                toDelete.add(model.getRelation(i));
-            }
-            for (Relation r: toDelete) {
-                deleteRelation(r);
+            for (int i: displaylist.getSelectedIndices()) {
+            	deleteRelation(model.getRelation(i));
             }
         }
 
