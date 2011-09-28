@@ -55,6 +55,8 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
 
     private SizeButton iSizeButton = null;
     private SourceButton iSourceButton = null;
+    
+    private boolean isSelecting;
 
     /**
      * Create a new OsmMapControl
@@ -76,6 +78,8 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
         }
         iSizeButton = sizeButton;
         iSourceButton = sourceButton;
+        
+        isSelecting = false;
 
         InputMap inputMap = navComp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = navComp.getActionMap();
@@ -131,6 +135,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
             if (iStartSelectionPoint != null) {
                 iEndSelectionPoint = e.getPoint();
                 iSlippyMapChooser.setSelection(iStartSelectionPoint, iEndSelectionPoint);
+                isSelecting = true;
             }
         }
     }
@@ -143,28 +148,29 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
     public void mouseReleased(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
 
-            int sourceButton = iSourceButton.hit(e.getPoint());
+        	if (isSelecting && e.getClickCount() == 1) {
+                iSlippyMapChooser.setSelection(iStartSelectionPoint, e.getPoint());
 
-            if (iSizeButton.hit(e.getPoint())) {
-                iSizeButton.toggle();
-                iSlippyMapChooser.resizeSlippyMap();
-            } else if (iSlippyMapChooser.handleAttribution(e.getPoint(), true)) {
-                /* do nothing, handleAttribution() already did the work */
-            } else if (sourceButton == SourceButton.HIDE_OR_SHOW) {
-                iSourceButton.toggle();
-                iSlippyMapChooser.repaint();
-            } else if (sourceButton != 0) {
-                iSlippyMapChooser.toggleMapSource(iSourceButton.hitToTileSource(sourceButton));
-            } else {
-                if (e.getClickCount() == 1) {
-                    iSlippyMapChooser.setSelection(iStartSelectionPoint, e.getPoint());
+                // reset the selections start and end
+                iEndSelectionPoint = null;
+                iStartSelectionPoint = null;
+                isSelecting = false;
+                
+        	} else {
+                int sourceButton = iSourceButton.hit(e.getPoint());
 
-                    // reset the selections start and end
-                    iEndSelectionPoint = null;
-                    iStartSelectionPoint = null;
+                if (iSizeButton.hit(e.getPoint())) {
+                    iSizeButton.toggle();
+                    iSlippyMapChooser.resizeSlippyMap();
+                } else if (iSlippyMapChooser.handleAttribution(e.getPoint(), true)) {
+                    /* do nothing, handleAttribution() already did the work */
+                } else if (sourceButton == SourceButton.HIDE_OR_SHOW) {
+                    iSourceButton.toggle();
+                    iSlippyMapChooser.repaint();
+                } else if (sourceButton != 0) {
+                    iSlippyMapChooser.toggleMapSource(iSourceButton.hitToTileSource(sourceButton));
                 }
-            }
-
+        	}
         }
     }
 
