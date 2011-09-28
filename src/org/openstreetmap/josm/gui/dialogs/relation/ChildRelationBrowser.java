@@ -22,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
@@ -413,6 +414,11 @@ public class ChildRelationBrowser extends JPanel {
                     mergeDataSet(dataSet);
                     refreshView(r);
                 }
+                SwingUtilities.invokeLater(new Runnable() { 
+	                public void run() { 
+	                	Main.map.repaint(); 
+	                } 
+	            }); 
             } catch (Exception e) {
                 if (canceled) {
                     System.out.println(tr("Warning: Ignoring exception because task was canceled. Exception: {0}", e
