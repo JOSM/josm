@@ -63,7 +63,16 @@ public class LatLon extends Coordinate {
     public static boolean isValidLon(double lon) {
         return lon >= -180d && lon <= 180d;
     }
-
+ 		     
+	/**
+	 * Replies true if lat is in the range [-90,90] and lon is in the range [-180,180]
+	 * 
+	 * @return true if lat is in the range [-90,90] and lon is in the range [-180,180]
+	 */
+	public boolean isValid() {
+		return isValidLat(lat()) && isValidLon(lon());
+	}
+ 	
     /**
      * Replies the coordinate in degrees/minutes/seconds format
      */
