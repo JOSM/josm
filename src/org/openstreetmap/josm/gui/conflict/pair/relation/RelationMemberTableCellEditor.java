@@ -33,6 +33,10 @@ public class RelationMemberTableCellEditor extends AbstractCellEditor implements
     }
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        // Do not edit empty or incomplete members ! (fix #5374 and #6315)
+        if (value == null)
+            return null;
+
         RelationMember member = (RelationMember)value;
 
         editor.setText(member.getRole());
