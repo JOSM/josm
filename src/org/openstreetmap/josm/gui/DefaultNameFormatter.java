@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
+import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.TaggingPresetNameTemplateList;
 
 /**
@@ -471,7 +472,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             }
             return null;
         } else
-            return trc_lazy(nameTag, relation.get(nameTag));
+            return trc_lazy(nameTag, I18n.escape(relation.get(nameTag)));
     }
 
     private String getRelationName(IRelation relation) {

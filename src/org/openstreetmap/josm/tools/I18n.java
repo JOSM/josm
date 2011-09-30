@@ -301,6 +301,11 @@ public class I18n {
         return num == 1 ? text : plural;
     }
 
+    public static String escape(String msg) {
+        if (msg == null) return null;
+        return msg.replace("\'", "\'\'").replace("{", "\'{\'").replace("}", "\'}\'");
+    }
+
     /**
      * Get a list of all available JOSM Translations.
      * @return an array of locale objects.
