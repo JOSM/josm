@@ -723,8 +723,16 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
          * that I switch layers and actions at the same time and it was annoying to mind the
          * order. This way it works as visual clue for new users */
         for (Enumeration<AbstractButton> e = Main.map.toolGroup.getElements() ; e.hasMoreElements() ;) {
-            AbstractButton x=e.nextElement();
-            x.setEnabled(((MapMode)x.getAction()).layerIsSupported(layer));
+            AbstractButton button = e.nextElement();
+            MapMode mode = (MapMode)button.getAction();
+            boolean isLayerSupported = mode.layerIsSupported(layer); 
+            button.setEnabled(isLayerSupported);
+            // Also update associated shortcut (fix #6876)
+            if (isLayerSupported) {
+                Main.registerActionShortcut(mode, mode.getShortcut());
+            } else {
+                Main.unregisterActionShortcut(mode.getShortcut());
+            }
         }
         AudioPlayer.reset();
         repaint();
