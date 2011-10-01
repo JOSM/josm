@@ -104,8 +104,8 @@ public class ExceptionUtil {
         }
         msg = tr(
                 "<html>Uploading to the server <strong>failed</strong> because your current<br>"
-                + "dataset violates a precondition.<br>" + "The error message is:<br>" + "{0}" + "</html>", e
-                .getMessage().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"));
+                + "dataset violates a precondition.<br>" + "The error message is:<br>" + "{0}" + "</html>", 
+                escapeReservedCharactersHTML(e.getMessage()));
         return msg;
     }
 
@@ -297,7 +297,7 @@ public class ExceptionUtil {
             msg = e.toString();
         }
         e.printStackTrace();
-        return msg;
+        return escapeReservedCharactersHTML(msg);
     }
 
     /**
@@ -409,6 +409,20 @@ public class ExceptionUtil {
         e.printStackTrace();
         return message;
     }
+    
+    /**
+     * Explains a {@see OsmApiException} which was thrown because of
+     * bandwidth limit exceeded (HTTP error 509) 
+     *
+     * @param e the exception
+     */
+    public static String explainBandwidthLimitExceeded(OsmApiException e) {
+        // TODO: Write a proper error message
+        String message = explainGenericOsmApiException(e);
+        e.printStackTrace();
+        return message;
+    }
+    
 
     /**
      * Explains a {@see OsmApiException} which was thrown because a resource wasn't found.
@@ -503,6 +517,8 @@ public class ExceptionUtil {
                 return explainInternalServerError(oae);
             if (oae.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST)
                 return explainBadRequest(oae);
+            if (oae.getResponseCode() == 509)
+                return explainBandwidthLimitExceeded(oae);
         }
         return explainGeneric(e);
     }
@@ -521,7 +537,7 @@ public class ExceptionUtil {
                 + "<strong>Downloading failed</strong> if you tried to download this object.<br>"
                 + "<br>"
                 + "The error message is:<br>" + "{0}"
-                + "</html>", e.getMessage().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"));
+                + "</html>", escapeReservedCharactersHTML(e.getMessage()));
         return msg;
 
     }
@@ -540,5 +556,14 @@ public class ExceptionUtil {
         }
         e.printStackTrace();
         return msg;
+    }
+    
+    /**
+     * Replaces some HTML reserved characters (<, > and &) by their equivalent entity (&lt;, &gt; and &amp;);
+     * @param s The unescaped string
+     * @return The escaped string
+     */
+    public static String escapeReservedCharactersHTML(String s) {
+        return s == null ? "" : s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
 }
