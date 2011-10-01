@@ -252,8 +252,14 @@ public class GpxExporter extends FileExporter {
 
         predefined.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                JList l = new JList(new String[]{"Creative Commons By-SA", "public domain", "GNU Lesser Public License (LGPL)", "BSD License (MIT/X11)"});
-                l.setVisibleRowCount(4);
+                final String[] licenses = {
+                        "Creative Commons By-SA",
+                        "Open Database License (ODbL)",
+                        "public domain",
+                        "GNU Lesser Public License (LGPL)",
+                        "BSD License (MIT/X11)"};
+                JList l = new JList(licenses);
+                l.setVisibleRowCount(licenses.length);
                 l.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
                 int answer = JOptionPane.showConfirmDialog(
                         Main.parent,
@@ -266,12 +272,13 @@ public class GpxExporter extends FileExporter {
                     return;
                 final String[] urls = {
                         "http://creativecommons.org/licenses/by-sa/2.5",
+                        "http://opendatacommons.org/licenses/odbl/1.0",
                         "public domain",
                         "http://www.gnu.org/copyleft/lesser.html",
-                "http://www.opensource.org/licenses/bsd-license.php"};
+                        "http://www.opensource.org/licenses/bsd-license.php"};
                 String license = "";
                 for (int i : l.getSelectedIndices()) {
-                    if (i == 1) {
+                    if (i == 2) {
                         license = "public domain";
                         break;
                     }
