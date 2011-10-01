@@ -73,6 +73,7 @@ public class CrossingWays extends Test {
         boolean isSubway1 = "subway".equals(railway1);
         boolean isTram1 = "tram".equals(railway1);
         boolean isBuilding = (w.get("building") != null);
+        String waterway1 = w.get("waterway");
 
         if (w.get("highway") == null && w.get("waterway") == null
                 && (railway1 == null || isSubway1 || isTram1)
@@ -85,7 +86,7 @@ public class CrossingWays extends Test {
         int nodesSize = w.getNodesCount();
         for (int i = 0; i < nodesSize - 1; i++) {
             WaySegment ws = new WaySegment(w, i);
-            ExtendedSegment es1 = new ExtendedSegment(ws, layer1, railway1, isCoastline1);
+            ExtendedSegment es1 = new ExtendedSegment(ws, layer1, railway1, isCoastline1, waterway1);
             List<List<ExtendedSegment>> cellSegments = getSegments(es1.n1, es1.n2);
             for (List<ExtendedSegment> segments : cellSegments) {
                 for (ExtendedSegment es2 : segments) {
@@ -106,6 +107,8 @@ public class CrossingWays extends Test {
                     if (isTram1 && "tram".equals(railway2)) continue;
 
                     if (isCoastline1 != isCoastline2) continue;
+                    if (("river".equals(waterway1) && "riverbank".equals(es2.waterway))
+                            || ("riverbank".equals(waterway1) && "river".equals(es2.waterway))) continue;
 
                     if ((es1.railway != null && es1.railway.equals("abandoned"))
                             || (railway2 != null && railway2.equals("abandoned"))) continue;
@@ -169,6 +172,9 @@ public class CrossingWays extends Test {
         /** The railway type */
         public String railway;
 
+        /** The waterway type */
+        public String waterway;
+
         /** The coastline type */
         public boolean coastline;
 
@@ -178,14 +184,16 @@ public class CrossingWays extends Test {
          * @param layer The layer of the way this segment is in
          * @param railway The railway type of the way this segment is in
          * @param coastline The coastline flag of the way the segment is in
+         * @param waterway The waterway type of the way this segment is in
          */
-        public ExtendedSegment(WaySegment ws, String layer, String railway, boolean coastline) {
+        public ExtendedSegment(WaySegment ws, String layer, String railway, boolean coastline, String waterway) {
             this.ws = ws;
             this.n1 = ws.way.getNodes().get(ws.lowerIndex);
             this.n2 = ws.way.getNodes().get(ws.lowerIndex + 1);
             this.layer = layer;
             this.railway = railway;
             this.coastline = coastline;
+            this.waterway = waterway;
         }
 
         /**
