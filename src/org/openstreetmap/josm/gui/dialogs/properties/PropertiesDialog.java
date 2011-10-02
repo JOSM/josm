@@ -39,6 +39,7 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
@@ -46,6 +47,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -162,6 +164,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     // hook for roadsigns plugin to display a small
     // button in the upper right corner of this dialog
     public static JPanel pluginHook = new JPanel();
+    
+    private JPopupMenu propertyMenu;
+    private JPopupMenu membershipMenu;
 
     private final Map<String, Map<String, Integer>> valueCount = new TreeMap<String, Map<String, Integer>>();
 
@@ -609,6 +614,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                         Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150, true);
 
         // setting up the properties table
+        propertyMenu = new JPopupMenu();
+        propertyMenu.add(copyValueAction);
+        propertyMenu.add(copyKeyValueAction);
+        propertyMenu.add(copyAllKeyValueAction);
+        propertyMenu.addSeparator();
+        propertyMenu.add(helpAction);
+        
         propertyData.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
         propertyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         propertyTable.getTableHeader().setReorderingAllowed(false);
@@ -619,13 +631,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 int row = propertyTable.rowAtPoint(p);
                 if (row > -1) {
                     propertyTable.changeSelection(row, 0, false, false);
-                    JPopupMenu menu = new JPopupMenu();
-                    menu.add(copyValueAction);
-                    menu.add(copyKeyValueAction);
-                    menu.add(copyAllKeyValueAction);
-                    menu.addSeparator();
-                    menu.add(helpAction);
-                    menu.show(propertyTable, p.x, p.y-3);
+                    propertyMenu.show(propertyTable, p.x, p.y-3);
                 }
             }
         });
@@ -657,6 +663,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         });
 
         // setting up the membership table
+        membershipMenu = new JPopupMenu();
+        membershipMenu.add(new SelectRelationAction(true));
+        membershipMenu.add(new SelectRelationAction(false));
+        membershipMenu.add(new SelectRelationMembersAction());
+        membershipMenu.add(new DownloadIncompleteMembersAction());
+        membershipMenu.addSeparator();
+        membershipMenu.add(helpAction);
 
         membershipData.setColumnIdentifiers(new String[]{tr("Member Of"),tr("Role"),tr("Position")});
         membershipTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -667,15 +680,16 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 int row = membershipTable.rowAtPoint(p);
                 if (row > -1) {
                     membershipTable.changeSelection(row, 0, false, false);
-                    JPopupMenu menu = new JPopupMenu();
                     Relation relation = (Relation)membershipData.getValueAt(row, 0);
-                    menu.add(new SelectRelationAction(relation, true));
-                    menu.add(new SelectRelationAction(relation, false));
-                    menu.add(new SelectRelationMembersAction(relation));
-                    menu.add(new DownloadIncompleteMembersAction(relation));
-                    menu.addSeparator();
-                    menu.add(helpAction);
-                    menu.show(membershipTable, p.x, p.y-3);
+                    for (Component c : membershipMenu.getComponents()) {
+                        if (c instanceof JMenuItem) {
+                            Action action = ((JMenuItem) c).getAction();
+                            if (action instanceof RelationRelated) {
+                                ((RelationRelated)action).setRelation(relation);
+                            }
+                        }
+                    }
+                    membershipMenu.show(membershipTable, p.x, p.y-3);
                 }
             }
         });
@@ -1222,12 +1236,41 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
     }
 
-    static class SelectRelationAction extends AbstractAction {
+    public void addPropertyPopupMenuSeparator() {
+        propertyMenu.addSeparator();
+    }
+
+    public JMenuItem addPropertyPopupMenuAction(Action a) {
+        return propertyMenu.add(a);
+    }
+    
+    public void addMembershipPopupMenuSeparator() {
+        membershipMenu.addSeparator();
+    }
+
+    public JMenuItem addMembershipPopupMenuAction(Action a) {
+        return membershipMenu.add(a);
+    }
+    
+    public static interface RelationRelated {
+        public Relation getRelation();
+        public void setRelation(Relation relation);
+    }
+    
+    static abstract class AbstractRelationAction extends AbstractAction implements RelationRelated {
+        protected Relation relation;
+        public Relation getRelation() {
+            return this.relation;
+        }
+        public void setRelation(Relation relation) {
+            this.relation = relation;
+        }
+    }
+    
+    static class SelectRelationAction extends AbstractRelationAction {
         boolean selectionmode;
-        Relation relation;
-        public SelectRelationAction(Relation r, boolean select) {
+        public SelectRelationAction(boolean select) {
             selectionmode = select;
-            relation = r;
             if(select) {
                 putValue(NAME, tr("Select relation"));
                 putValue(SHORT_DESCRIPTION, tr("Select relation in main selection."));
@@ -1254,10 +1297,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * Sets the current selection to the members of selected relation
      *
      */
-    class SelectRelationMembersAction extends AbstractAction {
-        Relation relation;
-        public SelectRelationMembersAction(Relation r) {
-            relation = r;
+    class SelectRelationMembersAction extends AbstractRelationAction {
+        public SelectRelationMembersAction() {
             putValue(SHORT_DESCRIPTION,tr("Select the members of selected relation"));
             putValue(SMALL_ICON, ImageProvider.get("selectall"));
             putValue(NAME, tr("Select members"));
@@ -1275,10 +1316,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * Action for downloading incomplete members of selected relation
      *
      */
-    class DownloadIncompleteMembersAction extends AbstractAction {
-        Relation relation;
-        public DownloadIncompleteMembersAction(Relation r) {
-            relation = r;
+    class DownloadIncompleteMembersAction extends AbstractRelationAction {
+        public DownloadIncompleteMembersAction() {
             putValue(SHORT_DESCRIPTION, tr("Download incomplete members of selected relations"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
             putValue(NAME, tr("Download incomplete members"));
