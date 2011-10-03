@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -44,7 +45,7 @@ public class UnGlueAction extends JosmAction {
 
     private Node selectedNode;
     private Way selectedWay;
-    private ArrayList<Node> selectedNodes;
+    private Set<Node> selectedNodes;
 
     /**
      * Create a new UnGlueAction.
@@ -93,7 +94,7 @@ public class UnGlueAction extends JosmAction {
             if (!checkAndConfirmOutlyingUnglue()) {
                 return;
             }
-            ArrayList<Node> tmpNodes = new ArrayList<Node>();
+            Set<Node> tmpNodes = new HashSet<Node>();
             for (Node n : selectedNodes) {
                 int count = 0;
                 for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
@@ -260,7 +261,7 @@ public class UnGlueAction extends JosmAction {
         if (selectedWay == null)
             return false;
 
-        selectedNodes = new ArrayList<Node>();
+        selectedNodes = new HashSet<Node>();
         for (OsmPrimitive p : selection) {
             if (p instanceof Node) {
                 Node n = (Node) p;
