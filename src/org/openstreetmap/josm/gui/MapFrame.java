@@ -96,6 +96,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     public RelationListDialog relationListDialog;
     public ValidatorDialog validatorDialog;
     public SelectionListDialog selectionListDialog;
+    public PropertiesDialog propertiesDialog;
+    
     /**
      * The panel list of all toggle dialog icons. To add new toggle dialog actions, use addToggleDialog
      * instead of adding directly to this list.
@@ -177,7 +179,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         toolBarToggle.setFloatable(false);
         LayerListDialog.createInstance(this);
         addToggleDialog(LayerListDialog.getInstance());
-        addToggleDialog(new PropertiesDialog(this));
+        addToggleDialog(propertiesDialog = new PropertiesDialog(this));
         addToggleDialog(selectionListDialog = new SelectionListDialog());
         addToggleDialog(relationListDialog = new RelationListDialog());
         addToggleDialog(new CommandStackDialog(this));
