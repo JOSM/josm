@@ -214,27 +214,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
     }
 
     public boolean handleAttribution(Point p, boolean click) {
-        TileSource ts = tileController.getTileSource();
-        if(!ts.requiresAttribution())
-            return false;
-
-        /* TODO: Somehow indicate the link is clickable state to user */
-
-        if ((attrImageBounds != null && attrImageBounds.contains(p))
-                || (attrTextBounds != null && attrTextBounds.contains(p))) {
-            if (click)
-                OpenBrowser.displayUrl(ts.getAttributionLinkURL());
-            /*else
-                Main.warn(ts.getAttributionLinkURL());*/
-            return true;
-        } else if (attrToUBounds != null && attrToUBounds.contains(p)) {
-            if (click)
-                OpenBrowser.displayUrl(ts.getTermsOfUseURL());
-            /*else
-                Main.warn(ts.getTermsOfUseURL());*/
-            return true;
-        }
-        return false;
+        return attribution.handleAttribution(p, click);
     }
 
     protected Point getTopLeftCoordinates() {

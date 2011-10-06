@@ -21,6 +21,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 
+import org.openstreetmap.gui.jmapviewer.FeatureAdapter.TranslationAdapter;
 import org.openstreetmap.josm.Main;
 
 /**
@@ -202,7 +203,7 @@ public class I18n {
      * <br/>
      * For instance, {@code trn("There was an error!", "There were errors!", i)} or
      * {@code trn("Found {0} error in {1}!", "Found {0} errors in {1}!", i, Integer.toString(i), url)}.
-     * 
+     *
      * @param singularText the singular text to translate.
      * Must be a string literal. (No constants or local vars.)
      * Can be broken over multiple lines.
@@ -692,5 +693,14 @@ public class I18n {
         //            || ((n % 100) == 4)) ? 3 : 0)));
         }
         return 0;
+    }
+
+    public static TranslationAdapter getTranslationAdapter() {
+        return new TranslationAdapter() {
+            @Override
+            public String tr(String text, Object... objects) {
+                return I18n.tr(text, objects);
+            }
+        };
     }
 }
