@@ -8,10 +8,6 @@ import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,14 +24,11 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
-import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationData;
-import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
@@ -52,42 +45,9 @@ import org.openstreetmap.josm.tools.DateUtils;
  * The XMLStreamReader cursor points to the start of the element, when the method is
  * entered, and it must point to the end of the same element, when it is exited.
  */
-public class OsmReader {
-
-    /**
-     * Used as a temporary storage for relation members, before they
-     * are resolved into pointers to real objects.
-     */
-    private static class RelationMemberData {
-        public OsmPrimitiveType type;
-        public long id;
-        public String role;
-    }
-
-    /**
-     * The dataset to add parsed objects to.
-     */
-    private DataSet ds = new DataSet();
+public class OsmReader extends AbstractReader {
 
     private XMLStreamReader parser;
-
-    /** the map from external ids to read OsmPrimitives. External ids are
-     * longs too, but in contrast to internal ids negative values are used
-     * to identify primitives unknown to the OSM server
-     */
-    private Map<PrimitiveId, OsmPrimitive> externalIdMap = new HashMap<PrimitiveId, OsmPrimitive>();
-
-    /**
-     * Data structure for the remaining way objects
-     */
-    private Map<Long, Collection<Long>> ways = new HashMap<Long, Collection<Long>>();
-
-    /**
-     * Data structure for relation objects
-     */
-    private Map<Long, Collection<RelationMemberData>> relations = new HashMap<Long, Collection<RelationMemberData>>();
-
-    private Changeset uploadChangeset;
 
     /**
      * constructor (for private use only)
@@ -95,20 +55,10 @@ public class OsmReader {
      * @see #parseDataSet(InputStream, DataSet, ProgressMonitor)
      */
     private OsmReader() {
-        externalIdMap = new HashMap<PrimitiveId, OsmPrimitive>();
     }
 
     public void setParser(XMLStreamReader parser) {
         this.parser = parser;
-    }
-
-    /**
-     * Replies the parsed data set
-     *
-     * @return the parsed data set
-     */
-    public DataSet getDataSet() {
-        return ds;
     }
 
     protected void throwException(String msg) throws XMLStreamException {
@@ -300,33 +250,35 @@ public class OsmReader {
     }
 
     private RelationMemberData parseRelationMember(Relation r) throws XMLStreamException {
-        RelationMemberData emd = new RelationMemberData();
+        String role = null;
+        OsmPrimitiveType type = null;
+        long id = 0;
         String value = parser.getAttributeValue(null, "ref");
         if (value == null) {
             throwException(tr("Missing attribute ''ref'' on member in relation {0}.",r.getUniqueId()));
         }
         try {
-            emd.id = Long.parseLong(value);
+            id = Long.parseLong(value);
         } catch(NumberFormatException e) {
             throwException(tr("Illegal value for attribute ''ref'' on member in relation {0}. Got {1}", Long.toString(r.getUniqueId()),value));
         }
         value = parser.getAttributeValue(null, "type");
         if (value == null) {
-            throwException(tr("Missing attribute ''type'' on member {0} in relation {1}.", Long.toString(emd.id), Long.toString(r.getUniqueId())));
+            throwException(tr("Missing attribute ''type'' on member {0} in relation {1}.", Long.toString(id), Long.toString(r.getUniqueId())));
         }
         try {
-            emd.type = OsmPrimitiveType.fromApiTypeName(value);
+            type = OsmPrimitiveType.fromApiTypeName(value);
         } catch(IllegalArgumentException e) {
-            throwException(tr("Illegal value for attribute ''type'' on member {0} in relation {1}. Got {2}.", Long.toString(emd.id), Long.toString(r.getUniqueId()), value));
+            throwException(tr("Illegal value for attribute ''type'' on member {0} in relation {1}. Got {2}.", Long.toString(id), Long.toString(r.getUniqueId()), value));
         }
         value = parser.getAttributeValue(null, "role");
-        emd.role = value;
+        role = value;
 
-        if (emd.id == 0) {
+        if (id == 0) {
             throwException(tr("Incomplete <member> specification with ref=0"));
         }
         jumpToEnd();
-        return emd;
+        return new RelationMemberData(role, type, id);
     }
 
     private void parseChangeset(Long uploadChangesetId) throws XMLStreamException {
@@ -579,136 +531,6 @@ public class OsmReader {
     }
 
     /**
-     * Processes the parsed nodes after parsing. Just adds them to
-     * the dataset
-     *
-     */
-    protected void processNodesAfterParsing() {
-        for (OsmPrimitive primitive: externalIdMap.values()) {
-            if (primitive instanceof Node) {
-                this.ds.addPrimitive(primitive);
-            }
-        }
-    }
-
-    /**
-     * Processes the ways after parsing. Rebuilds the list of nodes of each way and
-     * adds the way to the dataset
-     *
-     * @throws IllegalDataException thrown if a data integrity problem is detected
-     */
-    protected void processWaysAfterParsing() throws IllegalDataException{
-        for (Long externalWayId: ways.keySet()) {
-            Way w = (Way)externalIdMap.get(new SimplePrimitiveId(externalWayId, OsmPrimitiveType.WAY));
-            List<Node> wayNodes = new ArrayList<Node>();
-            for (long id : ways.get(externalWayId)) {
-                Node n = (Node)externalIdMap.get(new SimplePrimitiveId(id, OsmPrimitiveType.NODE));
-                if (n == null) {
-                    if (id <= 0)
-                        throw new IllegalDataException (
-                                tr("Way with external ID ''{0}'' includes missing node with external ID ''{1}''.",
-                                        externalWayId,
-                                        id));
-                    // create an incomplete node if necessary
-                    //
-                    n = (Node)ds.getPrimitiveById(id,OsmPrimitiveType.NODE);
-                    if (n == null) {
-                        n = new Node(id);
-                        ds.addPrimitive(n);
-                    }
-                }
-                if (n.isDeleted()) {
-                    System.out.println(tr("Deleted node {0} is part of way {1}", id, w.getId()));
-                } else {
-                    wayNodes.add(n);
-                }
-            }
-            w.setNodes(wayNodes);
-            if (w.hasIncompleteNodes()) {
-                  System.out.println(tr("Way {0} with {1} nodes has incomplete nodes because at least one node was missing in the loaded data.",
-                          externalWayId, w.getNodesCount()));
-            }
-            ds.addPrimitive(w);
-        }
-    }
-
-    /**
-     * Completes the parsed relations with its members.
-     *
-     * @throws IllegalDataException thrown if a data integrity problem is detected, i.e. if a
-     * relation member refers to a local primitive which wasn't available in the data
-     *
-     */
-    private void processRelationsAfterParsing() throws IllegalDataException {
-
-        // First add all relations to make sure that when relation reference other relation, the referenced will be already in dataset
-        for (Long externalRelationId : relations.keySet()) {
-            Relation relation = (Relation) externalIdMap.get(
-                    new SimplePrimitiveId(externalRelationId, OsmPrimitiveType.RELATION)
-            );
-            ds.addPrimitive(relation);
-        }
-
-        for (Long externalRelationId : relations.keySet()) {
-            Relation relation = (Relation) externalIdMap.get(
-                    new SimplePrimitiveId(externalRelationId, OsmPrimitiveType.RELATION)
-            );
-            List<RelationMember> relationMembers = new ArrayList<RelationMember>();
-            for (RelationMemberData rm : relations.get(externalRelationId)) {
-                OsmPrimitive primitive = null;
-
-                // lookup the member from the map of already created primitives
-                primitive = externalIdMap.get(new SimplePrimitiveId(rm.id, rm.type));
-
-                if (primitive == null) {
-                    if (rm.id <= 0)
-                        // relation member refers to a primitive with a negative id which was not
-                        // found in the data. This is always a data integrity problem and we abort
-                        // with an exception
-                        //
-                        throw new IllegalDataException(
-                                tr("Relation with external id ''{0}'' refers to a missing primitive with external id ''{1}''.",
-                                        externalRelationId,
-                                        rm.id));
-
-                    // member refers to OSM primitive which was not present in the parsed data
-                    // -> create a new incomplete primitive and add it to the dataset
-                    //
-                    primitive = ds.getPrimitiveById(rm.id, rm.type);
-                    if (primitive == null) {
-                        switch (rm.type) {
-                        case NODE:
-                            primitive = new Node(rm.id); break;
-                        case WAY:
-                            primitive = new Way(rm.id); break;
-                        case RELATION:
-                            primitive = new Relation(rm.id); break;
-                        default: throw new AssertionError(); // can't happen
-                        }
-
-                        ds.addPrimitive(primitive);
-                        externalIdMap.put(new SimplePrimitiveId(rm.id, rm.type), primitive);
-                    }
-                }
-                if (primitive.isDeleted()) {
-                    System.out.println(tr("Deleted member {0} is used by relation {1}", primitive.getId(), relation.getId()));
-                } else {
-                    relationMembers.add(new RelationMember(rm.role, primitive));
-                }
-            }
-            relation.setMembers(relationMembers);
-        }
-    }
-
-    private void processChangesetAfterParsing() {
-        if (uploadChangeset != null) {
-            for (Map.Entry<String, String> e : uploadChangeset.getKeys().entrySet()) {
-                ds.addChangeSetTag(e.getKey(), e.getValue());
-            }
-        }
-    }
-
-    /**
      * Parse the given input source and return the dataset.
      *
      * @param source the source input stream. Must not be null.
@@ -735,15 +557,7 @@ public class OsmReader {
             progressMonitor.worked(1);
 
             progressMonitor.indeterminateSubTask(tr("Preparing data set..."));
-            reader.ds.beginUpdate();
-            try {
-                reader.processNodesAfterParsing();
-                reader.processWaysAfterParsing();
-                reader.processRelationsAfterParsing();
-                reader.processChangesetAfterParsing();
-            } finally {
-                reader.ds.endUpdate();
-            }
+            reader.prepareDataSet();
             progressMonitor.worked(1);
             return reader.getDataSet();
         } catch(IllegalDataException e) {
