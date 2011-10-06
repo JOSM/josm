@@ -88,21 +88,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     private TileSource tileSource;
 
-    // Attribution
-    private Image attrImage;
-    private String attrTermsUrl;
-    public static final Font ATTR_FONT = new Font("Arial", Font.PLAIN, 10);
-    public static final Font ATTR_LINK_FONT;
-
-    protected Rectangle attrTextBounds = null;
-    protected Rectangle attrToUBounds = null;
-    protected Rectangle attrImageBounds = null;
-
-    static {
-        HashMap<TextAttribute, Integer> aUnderline = new HashMap<TextAttribute, Integer>();
-        aUnderline.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-        ATTR_LINK_FONT = ATTR_FONT.deriveFont(aUnderline);
-    }
+    protected AttributionSupport attribution = new AttributionSupport();
 
     /**
      * Creates a standard {@link JMapViewer} instance that can be controlled via
@@ -583,7 +569,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
             }
         }
 
-        paintAttribution(g);
+        attribution.paintAttribution(g, getWidth(), getHeight(), getPosition(0, 0), getPosition(getWidth(), getHeight()), zoom, this);
     }
 
     /**
@@ -831,14 +817,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         if (zoom > tileSource.getMaxZoom()) {
             setZoom(tileSource.getMaxZoom());
         }
-        boolean requireAttr = tileSource.requiresAttribution();
-        if (requireAttr) {
-            attrImage = tileSource.getAttributionImage();
-            attrTermsUrl = tileSource.getTermsOfUseURL();
-        } else {
-            attrImage = null;
-            attrTermsUrl = null;
-        }
+
+        attribution.initialize(tileSource);
         repaint();
     }
 
@@ -893,56 +873,6 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         tileController.setTileLoader(loader);
     }
 
-    private void paintAttribution(Graphics g) {
-        if (!tileSource.requiresAttribution())
-            return;
-        // Draw attribution
-        Font font = g.getFont();
-        g.setFont(ATTR_LINK_FONT);
-
-        Rectangle2D termsStringBounds = g.getFontMetrics().getStringBounds("Background Terms of Use", g);
-        int textRealHeight = (int) termsStringBounds.getHeight();
-        int textHeight = textRealHeight - 5;
-        int textWidth = (int) termsStringBounds.getWidth();
-        int termsTextY = getHeight() - textHeight;
-        if (attrTermsUrl != null) {
-            int x = 2;
-            int y = getHeight() - textHeight;
-            attrToUBounds = new Rectangle(x, y-textHeight, textWidth, textRealHeight);
-            g.setColor(Color.black);
-            g.drawString("Background Terms of Use", x + 1, y + 1);
-            g.setColor(Color.white);
-            g.drawString("Background Terms of Use", x, y);
-        }
-
-        // Draw attribution logo
-        if (attrImage != null) {
-            int x = 2;
-            int imgWidth = attrImage.getWidth(this);
-            int height = attrImage.getHeight(null);
-            int y = termsTextY - height - textHeight - 5;
-            attrImageBounds = new Rectangle(x, y, imgWidth, height);
-            g.drawImage(attrImage, x, y, null);
-        }
-
-        g.setFont(ATTR_FONT);
-        Coordinate topLeft = getPosition(0, 0);
-        Coordinate bottomRight = getPosition(getWidth(), getHeight());
-        String attributionText = tileSource.getAttributionText(zoom, topLeft, bottomRight);
-        if (attributionText != null) {
-            Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(attributionText, g);
-            int x = getWidth() - (int) stringBounds.getWidth();
-            int y = getHeight() - textHeight;
-            g.setColor(Color.black);
-            g.drawString(attributionText, x + 1, y + 1);
-            g.setColor(Color.white);
-            g.drawString(attributionText, x, y);
-            attrTextBounds = new Rectangle(x, y-textHeight, textWidth, textRealHeight);
-        }
-
-        g.setFont(font);
-    }
-
     protected EventListenerList listenerList = new EventListenerList();
 
     /**
@@ -961,7 +891,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     /**
      * Send an update to all objects registered with viewer
-     * 
+     *
      * @param event to dispatch
      */
     void fireJMVEvent(JMVCommandEvent evt) {
