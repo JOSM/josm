@@ -42,6 +42,10 @@ public class OsmImporter extends FileImporter {
     protected void importData(InputStream in, final File associatedFile) throws IllegalDataException {
         final DataSet dataSet = OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
         final OsmDataLayer layer = new OsmDataLayer(dataSet, associatedFile.getName(), associatedFile);
+        addDataLayer(dataSet, layer, associatedFile.getPath()); 
+    }
+        
+    protected void addDataLayer(final DataSet dataSet, final OsmDataLayer layer, final String filePath) { 
         // FIXME: remove UI stuff from IO subsystem
         //
         Runnable uiStuff = new Runnable() {
@@ -50,7 +54,7 @@ public class OsmImporter extends FileImporter {
                 if (dataSet.allPrimitives().isEmpty()) {
                     JOptionPane.showMessageDialog(
                             Main.parent,
-                            tr("No data found in file {0}.", associatedFile.getPath()),
+                            tr("No data found in file {0}.", filePath),
                             tr("Open OSM file"),
                             JOptionPane.INFORMATION_MESSAGE);
                 }

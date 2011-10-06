@@ -20,9 +20,11 @@ public class RelationMemberData implements PrimitiveId {
     public long getMemberId() {
         return memberId;
     }
+    
     public String getRole() {
         return role;
     }
+    
     public OsmPrimitiveType getMemberType() {
         return memberType;
     }
@@ -33,12 +35,13 @@ public class RelationMemberData implements PrimitiveId {
 
     @Override
     public String toString() {
-        return memberType.getAPIName() + " " + memberId;
+        return (memberType != null ? memberType.getAPIName() : "undefined") + " " + memberId;
     }
 
     /**
      * PrimitiveId implementation. Returns the same value as {@link #getMemberType()}
      */
+    @Override
     public OsmPrimitiveType getType() {
         return memberType;
     }
@@ -46,10 +49,12 @@ public class RelationMemberData implements PrimitiveId {
     /**
      * PrimitiveId implementation. Returns the same value as {@link #getMemberId()()}
      */
+    @Override
     public long getUniqueId() {
         return memberId;
     }
 
+    @Override
     public boolean isNew() {
         return memberId <= 0;
     }
