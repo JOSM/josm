@@ -41,6 +41,7 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
+import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
@@ -78,6 +79,7 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.PlatformHook;
 import org.openstreetmap.josm.tools.PlatformHookOsx;
@@ -251,6 +253,15 @@ abstract public class Main {
 
         validator = new OsmValidator();
         MapView.addLayerChangeListener(validator);
+
+        // hooks for the jmapviewer component
+        FeatureAdapter.registerBrowserAdapter(new FeatureAdapter.BrowserAdapter() {
+            @Override
+            public void openLink(String url) {
+                OpenBrowser.displayUrl(url);
+            }
+        });
+        FeatureAdapter.registerTranslationAdapter(I18n.getTranslationAdapter());
 
         toolbar.refreshToolbarControl();
 
@@ -795,7 +806,7 @@ abstract public class Main {
 
     /**
      * Replies the current projection.
-     * 
+     *
      * @return
      */
     public static Projection getProjection() {
@@ -804,7 +815,7 @@ abstract public class Main {
 
     /**
      * Sets the current projection
-     * 
+     *
      * @param p the projection
      */
     public static void setProjection(Projection p) {
@@ -848,7 +859,7 @@ abstract public class Main {
 
     /**
      * Register a projection change listener
-     * 
+     *
      * @param listener the listener. Ignored if null.
      */
     public static void addProjectionChangeListener(ProjectionChangeListener listener) {
@@ -864,7 +875,7 @@ abstract public class Main {
 
     /**
      * Removes a projection change listener
-     * 
+     *
      * @param listener the listener. Ignored if null.
      */
     public static void removeProjectionChangeListener(ProjectionChangeListener listener) {

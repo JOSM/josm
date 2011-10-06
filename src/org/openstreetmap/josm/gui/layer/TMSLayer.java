@@ -35,6 +35,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import org.openstreetmap.gui.jmapviewer.AttributionSupport;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JobDispatcher;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
@@ -157,17 +158,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     JCheckBoxMenuItem autoLoadPopup;
     JCheckBoxMenuItem showErrorsPopup;
     Tile showMetadataTile;
-    private Image attrImage;
-    private String attrTermsUrl;
-    private Rectangle attrImageBounds, attrToUBounds, attrTextBounds;
+    private AttributionSupport attribution = new AttributionSupport();
     private static final Font InfoFont = new Font("sansserif", Font.BOLD, 13);
-    private static final Font ATTR_FONT = new Font("Arial", Font.PLAIN, 10);
-    private static final Font ATTR_LINK_FONT;
-    static {
-        HashMap<TextAttribute, Integer> aUnderline = new HashMap<TextAttribute, Integer>();
-        aUnderline.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-        ATTR_LINK_FONT = ATTR_FONT.deriveFont(aUnderline);
-    }
 
     protected boolean autoZoom;
     protected boolean autoLoad;
@@ -247,17 +239,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     private void initTileSource(TileSource tileSource)
     {
         this.tileSource = tileSource;
-        boolean requireAttr = tileSource.requiresAttribution();
-        if(requireAttr) {
-            attrImage = tileSource.getAttributionImage();
-            /*if(attrImage == null) {
-                Main.debug("Attribution image was null.");
-            } else {
-                Main.debug("Got an attribution image " + attrImage.getHeight(this) + "x" + attrImage.getWidth(this));
-            }*/
-
-            attrTermsUrl = tileSource.getTermsOfUseURL();
-        }
+        attribution.initialize(tileSource);
 
         currentZoomLevel = getBestZoom();
 
@@ -476,15 +458,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                             clickedTile = getTileForPixelpos(e.getX(), e.getY());
                             tileOptionMenu.show(e.getComponent(), e.getX(), e.getY());
                         } else if (e.getButton() == MouseEvent.BUTTON1) {
-                            if (!tileSource.requiresAttribution())
-                                return;
-
-                            if ((attrImageBounds != null && attrImageBounds.contains(e.getPoint()))
-                                    || (attrTextBounds != null && attrTextBounds.contains(e.getPoint()))) {
-                                OpenBrowser.displayUrl(tileSource.getAttributionLinkURL());
-                            } else if (attrToUBounds != null && attrToUBounds.contains(e.getPoint())) {
-                                OpenBrowser.displayUrl(tileSource.getTermsOfUseURL());
-                            }
+                            attribution.handleAttribution(e.getPoint(), true);
                         }
                     }
                 };
@@ -919,6 +893,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         LatLon ll = getShiftedLatLon(en);
         return new Coordinate(ll.lat(),ll.lon());
     }
+
     private final TileSet nullTileSet = new TileSet((LatLon)null, (LatLon)null, 0);
     private class TileSet {
         int x0, x1, y0, y1;
@@ -1238,49 +1213,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         for (Tile t : ts.allExistingTiles()) {
             this.paintTileText(ts, t, g, mv, displayZoomLevel, t);
         }
-
-        if (tileSource.requiresAttribution()) {
-            // Draw attribution
-            Font font = g.getFont();
-            g.setFont(ATTR_LINK_FONT);
-            g.setColor(Color.white);
-
-            // Draw terms of use text
-            Rectangle2D termsStringBounds = g.getFontMetrics().getStringBounds("Background Terms of Use", g);
-            int textRealHeight = (int) termsStringBounds.getHeight();
-            int textHeight = textRealHeight - 5;
-            int textWidth = (int) termsStringBounds.getWidth();
-            int termsTextY = mv.getHeight() - textHeight;
-            if(attrTermsUrl != null) {
-                int x = 2;
-                int y = mv.getHeight() - textHeight;
-                attrToUBounds = new Rectangle(x, y-textHeight, textWidth, textRealHeight);
-                myDrawString(g, "Background Terms of Use", x, y);
-            }
-
-            // Draw attribution logo
-            if(attrImage != null) {
-                int x = 2;
-                int imgWidth = attrImage.getWidth(this);
-                int height = attrImage.getHeight(this);
-                int y = termsTextY - height - textHeight - 5;
-                attrImageBounds = new Rectangle(x, y, imgWidth, height);
-                g.drawImage(attrImage, x, y, this);
-            }
-
-            g.setFont(ATTR_FONT);
-            String attributionText = tileSource.getAttributionText(displayZoomLevel,
-                    getShiftedCoord(topLeft), getShiftedCoord(botRight));
-            Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(attributionText, g);
-            {
-                int x = mv.getWidth() - (int) stringBounds.getWidth();
-                int y = mv.getHeight() - textHeight;
-                myDrawString(g, attributionText, x, y);
-                attrTextBounds = new Rectangle(x, y-textHeight, textWidth, textRealHeight);
-            }
-
-            g.setFont(font);
-        }
+        
+        attribution.paintAttribution(g, mv.getWidth(), mv.getHeight(), getShiftedCoord(topLeft), getShiftedCoord(botRight), displayZoomLevel, this);
 
         //g.drawString("currentZoomLevel=" + currentZoomLevel, 120, 120);
         g.setColor(Color.lightGray);
