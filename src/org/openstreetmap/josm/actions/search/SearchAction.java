@@ -584,4 +584,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     public List<ActionParameter<?>> getActionParameters() {
         return Collections.<ActionParameter<?>>singletonList(new SearchSettingsActionParameter(SEARCH_EXPRESSION));
     }
+
+    public static String escapeStringForSearch(String s) {
+        return s.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
 }
