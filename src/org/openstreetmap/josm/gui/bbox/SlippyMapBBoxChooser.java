@@ -70,13 +70,17 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
 
         @Override public String getTileUrl(int zoom, int tilex, int tiley) throws IOException { return source.getTileUrl(zoom, tilex, tiley); }
 
-        @Override public Image getAttributionImage() { return source.getAttributionImage(); }
+        @Override public boolean requiresAttribution() { return source.requiresAttribution(); }
 
         @Override public String getAttributionText(int zoom, Coordinate topLeft, Coordinate botRight) { return source.getAttributionText(zoom, topLeft, botRight); }
 
-        @Override public boolean requiresAttribution() { return source.requiresAttribution(); }
-
         @Override public String getAttributionLinkURL() { return source.getAttributionLinkURL(); }
+
+        @Override public Image getAttributionImage() { return source.getAttributionImage(); }
+
+        @Override public String getAttributionImageURL() { return source.getAttributionImageURL(); }
+
+        @Override public String getTermsOfUseText() { return source.getTermsOfUseText(); }
 
         @Override public String getTermsOfUseURL() { return source.getTermsOfUseURL(); }
 

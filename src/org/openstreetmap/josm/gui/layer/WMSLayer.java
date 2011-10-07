@@ -301,7 +301,6 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         return img;
     }
 
-
     /**
      *
      * @param xIndex
@@ -311,7 +310,6 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
     public EastNorth getEastNorth(int xIndex, int yIndex) {
         return new EastNorth((xIndex * imageSize) / info.getPixelPerDegree(), (yIndex * imageSize) / info.getPixelPerDegree());
     }
-
 
     protected void downloadAndPaintVisible(Graphics g, final MapView mv, boolean real){
 

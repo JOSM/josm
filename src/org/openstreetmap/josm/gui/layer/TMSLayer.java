@@ -1170,11 +1170,13 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         List<Tile> missedTiles = this.paintTileImages(g, ts, displayZoomLevel, null);
         int otherZooms[] = { -1, 1, -2, 2, -3, -4, -5};
         for (int zoomOffset : otherZooms) {
-            if (!autoZoom)
+            if (!autoZoom) {
                 break;
+            }
             int newzoom = displayZoomLevel + zoomOffset;
-            if (newzoom < MIN_ZOOM)
+            if (newzoom < MIN_ZOOM) {
                 continue;
+            }
             if (missedTiles.size() <= 0) {
                 break;
             }
@@ -1236,7 +1238,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             myDrawString(g, tr("Pixel scale: {0}", getScaleFactor(currentZoomLevel)), 50, 170);
             myDrawString(g, tr("Best zoom: {0}", Math.log(getScaleFactor(1))/Math.log(2)/2+1), 50, 185);
         }*/
-    }// end of paint method
+    }
 
     /**
      * This isn't very efficient, but it is only used when the
