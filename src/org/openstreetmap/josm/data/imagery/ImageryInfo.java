@@ -75,8 +75,10 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     private ImageryBounds bounds = null;
     private List<String> serverProjections;
     private String attributionText;
-    private String attributionImage;
     private String attributionLinkURL;
+    private String attributionImage;
+    private String attributionImageURL;
+    private String termsOfUseText;
     private String termsOfUseURL;
     private String countryCode = "";
 
@@ -90,6 +92,8 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         @pref String attribution_text;
         @pref String attribution_url;
         @pref String logo_image;
+        @pref String logo_url;
+        @pref String terms_of_use_text;
         @pref String terms_of_use_url;
         @pref String country_code = "";
         @pref int max_zoom;
@@ -111,6 +115,8 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
             attribution_text = i.attributionText;
             attribution_url = i.attributionLinkURL;
             logo_image = i.attributionImage;
+            logo_url = i.attributionImageURL;
+            terms_of_use_text = i.termsOfUseText;
             terms_of_use_url = i.termsOfUseURL;
             country_code = i.countryCode;
             max_zoom = i.defaultMaxZoom;
@@ -203,8 +209,10 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
             serverProjections = Arrays.asList(e.projections.split(","));
         }
         attributionText = e.attribution_text;
-        attributionImage = e.logo_image;
         attributionLinkURL = e.attribution_url;
+        attributionImage = e.logo_image;
+        attributionImageURL = e.logo_url;
+        termsOfUseText = e.terms_of_use_text;
         termsOfUseURL = e.terms_of_use_url;
         countryCode = e.country_code;
     }
@@ -266,9 +274,11 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         this.pixelPerDegree=i.pixelPerDegree;
         this.eulaAcceptanceRequired = null;
         this.bounds = i.bounds;
-        this.attributionImage = i.attributionImage;
-        this.attributionLinkURL = i.attributionLinkURL;
         this.attributionText = i.attributionText;
+        this.attributionLinkURL = i.attributionLinkURL;
+        this.attributionImage = i.attributionImage;
+        this.attributionImageURL = i.attributionImageURL;
+        this.termsOfUseText = i.termsOfUseText;
         this.termsOfUseURL = i.termsOfUseURL;
         this.serverProjections = i.serverProjections;
     }
@@ -326,12 +336,20 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         attributionImage = text;
     }
 
+    public void setAttributionImageURL(String text) {
+        attributionImageURL = text;
+    }
+
     public String getAttributionLinkURL() {
         return attributionLinkURL;
     }
 
     public void setAttributionLinkURL(String text) {
         attributionLinkURL = text;
+    }
+
+    public void setTermsOfUseText(String text) {
+        termsOfUseText = text;
     }
 
     public String getTermsOfUseURL() {
@@ -513,35 +531,49 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     public void copyAttribution(ImageryInfo i)
     {
         this.attributionImage = i.attributionImage;
-        this.attributionLinkURL = i.attributionLinkURL;
+        this.attributionImageURL = i.attributionImageURL;
         this.attributionText = i.attributionText;
+        this.attributionLinkURL = i.attributionLinkURL;
+        this.termsOfUseText = i.termsOfUseText;
         this.termsOfUseURL = i.termsOfUseURL;
     }
 
-    public void setAttribution(TMSTileSource s)
-    {
-        if(attributionLinkURL != null) {
-            if(attributionLinkURL.equals("osm"))
-                s.setAttributionLinkURL(new Mapnik().getAttributionLinkURL());
-            else
-                s.setAttributionLinkURL(attributionLinkURL);
-        }
-        if(attributionText != null) {
-            if(attributionText.equals("osm"))
+    /**
+     * Applies the attribution from this object to a TMSTileSource.
+     */
+    public void setAttribution(TMSTileSource s) {
+        if (attributionText != null) {
+            if (attributionText.equals("osm")) {
                 s.setAttributionText(new Mapnik().getAttributionText(0, null, null));
-            else
+            } else {
                 s.setAttributionText(attributionText);
+            }
         }
-        if(attributionImage != null) {
+        if (attributionLinkURL != null) {
+            if (attributionLinkURL.equals("osm")) {
+                s.setAttributionLinkURL(new Mapnik().getAttributionLinkURL());
+            } else {
+                s.setAttributionLinkURL(attributionLinkURL);
+            }
+        }
+        if (attributionImage != null) {
             ImageIcon i = ImageProvider.getIfAvailable(null, attributionImage);
-            if(i != null)
+            if (i != null) {
                 s.setAttributionImage(i.getImage());
+            }
         }
-        if(termsOfUseURL != null) {
-            if(termsOfUseURL.equals("osm"))
+        if (attributionImageURL != null) {
+            s.setAttributionImageURL(attributionImageURL);
+        }
+        if (termsOfUseText != null) {
+            s.setTermsOfUseText(termsOfUseText);
+        }
+        if (termsOfUseURL != null) {
+            if (termsOfUseURL.equals("osm")) {
                 s.setTermsOfUseURL(new Mapnik().getTermsOfUseURL());
-            else
+            } else {
                 s.setTermsOfUseURL(termsOfUseURL);
+            }
         }
     }
 

@@ -252,9 +252,9 @@ public class ImageryReader {
                     } else if (qName.equals("logo-image")) {
                         entry.setAttributionImage(accumulator.toString());
                     } else if (qName.equals("logo-url")) {
-                        // TODO: it should be possible to specify the link for the logo
+                        entry.setAttributionImageURL(accumulator.toString());
                     } else if (qName.equals("terms-of-use-text")) {
-                        // TODO: it should be possible to configure the terms of use display text
+                        entry.setTermsOfUseText(accumulator.toString());
                     } else if (qName.equals("terms-of-use-url")) {
                         entry.setTermsOfUseURL(accumulator.toString());
                     } else if (qName.equals("country-code")) {
