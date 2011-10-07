@@ -9,6 +9,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
@@ -93,7 +94,7 @@ public class DownloadPrimitiveAction extends JosmAction {
         layout.setAutoCreateContainerGaps(true);
 
         JLabel lbl1 = new JLabel(tr("Object type:"));
-        OsmPrimitiveTypesComboBox cbType = new OsmPrimitiveTypesComboBox();
+        final OsmPrimitiveTypesComboBox cbType = new OsmPrimitiveTypesComboBox();
         cbType.addItem(trc("osm object types", "mixed"));
         cbType.setToolTipText(tr("Choose the OSM object type"));
         JLabel lbl2 = new JLabel(tr("Object ID:"));
@@ -112,9 +113,13 @@ public class DownloadPrimitiveAction extends JosmAction {
         JCheckBox layer = new JCheckBox(tr("Separate Layer"));
         layer.setToolTipText(tr("Select if the data should be downloaded into a new layer"));
         layer.setSelected(Main.pref.getBoolean("download.newlayer"));
-        JCheckBox referrers = new JCheckBox(tr("Download referrers"));
-        referrers.setToolTipText(tr("Select if the referrers of the object should be downloaded as well"));
+        final JCheckBox referrers = new JCheckBox(tr("Download referrers (parent relations)"));
+        referrers.setToolTipText(tr("Select if the referrers of the object should be downloaded as well, i.e.,"
+                + "parent relations and for nodes, additionally, parent ways"));
         referrers.setSelected(Main.pref.getBoolean("downloadprimitive.referrers"));
+        JCheckBox full = new JCheckBox(tr("Download relation members"));
+        full.setToolTipText(tr("Select if the members of a relation should be downloaded as well"));
+        full.setSelected(Main.pref.getBoolean("downloadprimitive.full", true));
         HtmlPanel help = new HtmlPanel(tr("Object IDs can be separated by comma or space.<br/>"
                 + " Examples: <b><ul><li>1 2 5</li><li>1,2,5</li></ul><br/></b>"
                 + " In mixed mode, specify objects like this: <b>w123, n110, w12, r15</b><br/>"));
@@ -128,9 +133,20 @@ public class DownloadPrimitiveAction extends JosmAction {
                 .addComponent(lbl2)
                 .addComponent(cbId, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
             .addComponent(referrers)
+            .addComponent(full)
             .addComponent(layer)
             .addComponent(help)
         );
+
+        cbType.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                referrers.setText(cbType.getType() == OsmPrimitiveType.NODE
+                        ? tr("Download referrers (parent relations and ways)")
+                        : tr("Download referrers (parent relations)"));
+            }
+        });
 
         layout.setHorizontalGroup(layout.createParallelGroup()
             .addGroup(layout.createSequentialGroup()
@@ -143,6 +159,7 @@ public class DownloadPrimitiveAction extends JosmAction {
                     .addComponent(cbId))
                 )
             .addComponent(referrers)
+            .addComponent(full)
             .addComponent(layer)
             .addComponent(help)
         );
@@ -164,6 +181,7 @@ public class DownloadPrimitiveAction extends JosmAction {
         if (dialog.getValue() != 1) return;
         Main.pref.putInteger("downloadprimitive.lasttype", cbType.getSelectedIndex());
         Main.pref.put("downloadprimitive.referrers", referrers.isSelected());
+        Main.pref.put("downloadprimitive.full", full.isSelected());
         Main.pref.put("download.newlayer", layer.isSelected());
 
         tfId.setType(cbType.getType());
@@ -178,16 +196,16 @@ public class DownloadPrimitiveAction extends JosmAction {
             return;
         }
         remindPrimitivesHistory(cbId);
-        processItems(layer.isSelected(), tfId.getIds(), referrers.isSelected());
+        processItems(layer.isSelected(), tfId.getIds(), referrers.isSelected(), full.isSelected());
     }
 
-    void processItems(boolean newLayer, final List<PrimitiveId> ids, boolean downloadReferrers) {
+    void processItems(boolean newLayer, final List<PrimitiveId> ids, boolean downloadReferrers, boolean full) {
         OsmDataLayer layer = getEditLayer();
         if ((layer == null) || newLayer) {
             layer = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
             Main.main.addLayer(layer);
         }
-        final DownloadPrimitivesTask task = new DownloadPrimitivesTask(layer, ids);
+        final DownloadPrimitivesTask task = new DownloadPrimitivesTask(layer, ids, full);
         Main.worker.submit(task);
 
         if (downloadReferrers) {
