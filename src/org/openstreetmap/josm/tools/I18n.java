@@ -491,9 +491,13 @@ public class I18n {
             p = new HashMap<String, String[]>();
         }
         /* file format:
+           Files are always a group. English file and translated file must provide identical datasets.
+
            for all single strings:
            {
              unsigned short (2 byte) stringlength
+               - length 0 indicates missing translation
+               - length 0xFFFE indicates translation equal to original, but otherwise is equal to length 0
              string
            }
            unsigned short (2 byte) 0xFFFF (marks end of single strings)
