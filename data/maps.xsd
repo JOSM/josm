@@ -613,6 +613,12 @@
 						<xs:element name="attribution-text" minOccurs="0" maxOccurs="1" type="tns:attribution-text" />
 						<!-- A link that is opened, when the user clicks on the attribution text -->
 						<xs:element name="attribution-url" minOccurs="0" maxOccurs="1" type="xs:anyURI" />
+						<!-- A image that is displayed as attribution for the imagery background -->
+						<xs:element name="logo-image" minOccurs="0" maxOccurs="1" type="xs:string" />
+						<!-- A link that is opened, when the user clicks on the logo image -->
+						<xs:element name="logo-url" minOccurs="0" maxOccurs="1" type="xs:anyURI" />
+						<!-- terms-of-use text (if missing, default tou text will be used, unless terms-of-use-url is also missing) -->
+						<xs:element name="terms-of-use-text" minOccurs="0" maxOccurs="1" type="xs:string" />
 						<!-- A link that is opened, when the user clicks on the terms-of-use text -->
 						<xs:element name="terms-of-use-url" minOccurs="0" maxOccurs="1" type="xs:string" />
 						<!-- The ISO 3166 country code -->
