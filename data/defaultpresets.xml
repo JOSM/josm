@@ -4269,6 +4269,18 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
             <text key="image" text="Image" default="" delete_if_empty="true" />
         </item>
+        <item name="Contact (new schema)" icon="presets/contact.png" type="node,way,closedway,relation">
+            <label text="Edit Contact information (new schema)" />
+            <space />
+            <text key="contact:phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="contact:fax" text="Fax Number" default="" delete_if_empty="true" />
+            <space />
+            <text key="contact:website" text="Website" default="" delete_if_empty="true" />
+            <text key="contact:email" text="Email Address" default="" delete_if_empty="true" />
+            <space />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
+            <text key="image" text="Image" default="" delete_if_empty="true" />
+        </item>
     </group> <!-- Annotation -->
     <group name="Relations" icon="presets/relations.png">
         <item name="Multipolygon" icon="presets/multipolygon.png" type="relation">

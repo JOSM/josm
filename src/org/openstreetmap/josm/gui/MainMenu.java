@@ -352,7 +352,7 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, createMultipolygon);
 
         if (!Main.pref.getBoolean("audio.menuinvisible", false)) {
-            audioMenu = addMenu(marktr("Audio"), KeyEvent.VK_A, defaultMenuPos, ht("/Menu/Audio"));
+            audioMenu = addMenu(marktr("Audio"), KeyEvent.VK_U, defaultMenuPos, ht("/Menu/Audio"));
             add(audioMenu, audioPlayPause);
             add(audioMenu, audioNext);
             add(audioMenu, audioPrev);

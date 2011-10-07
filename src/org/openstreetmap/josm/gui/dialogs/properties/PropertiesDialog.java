@@ -182,8 +182,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private CopyKeyValueAction copyKeyValueAction = new CopyKeyValueAction();
     private CopyAllKeyValueAction copyAllKeyValueAction = new CopyAllKeyValueAction();
     private AddAction addAction = new AddAction();
-    private Shortcut addActionShortcut = Shortcut.registerShortcut("properties:add", tr("Add Properties"), KeyEvent.VK_B,
-            Shortcut.GROUP_MNEMONIC);
 
     @Override
     public void showNotify() {
@@ -191,7 +189,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
         MapView.addEditLayerChangeListener(this);
         updateSelection();
-        Main.registerActionShortcut(addAction, addActionShortcut);
     }
 
     @Override
@@ -199,7 +196,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
         SelectionEventManager.getInstance().removeSelectionListener(this);
         MapView.removeEditLayerChangeListener(this);
-        Main.unregisterActionShortcut(addAction, addActionShortcut);
     }
 
     /**
@@ -1069,7 +1065,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             putValue(NAME, tr("Delete"));
             putValue(SHORT_DESCRIPTION, tr("Delete the selected key in all objects"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
-            Shortcut s = Shortcut.registerShortcut("properties:delete", tr("Delete Properties"), KeyEvent.VK_Q,
+            Shortcut s = Shortcut.registerShortcut("properties:delete", tr("Delete Properties"), KeyEvent.VK_D,
                     Shortcut.GROUP_MNEMONIC);
             putValue(MNEMONIC_KEY, (int) KeyEvent.getKeyText(s.getAssignedKey()).charAt(0));
             updateEnabledState();
@@ -1102,6 +1098,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             putValue(NAME, tr("Add"));
             putValue(SHORT_DESCRIPTION, tr("Add a new key/value pair to all objects"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
+            Shortcut s = Shortcut.registerShortcut("properties:add", tr("Add Property"), KeyEvent.VK_A,
+                    Shortcut.GROUP_MNEMONIC);
+            putValue(MNEMONIC_KEY, (int) KeyEvent.getKeyText(s.getAssignedKey()).charAt(0));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -1114,6 +1113,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             putValue(NAME, tr("Edit"));
             putValue(SHORT_DESCRIPTION, tr("Edit the value of the selected key for all objects"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
+            Shortcut s = Shortcut.registerShortcut("properties:edit", tr("Edit Properties"), KeyEvent.VK_S,
+                    Shortcut.GROUP_MNEMONIC);
+            putValue(MNEMONIC_KEY, (int) KeyEvent.getKeyText(s.getAssignedKey()).charAt(0));
             updateEnabledState();
         }
 
