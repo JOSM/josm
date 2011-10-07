@@ -29,7 +29,7 @@ public final class ZoomInAction extends JosmAction {
 
     public void actionPerformed(ActionEvent e) {
         if (!Main.isDisplayingMapView()) return;
-        Main.map.mapView.zoomToFactor(0.9);
+        Main.map.mapView.zoomToFactor(1/Math.sqrt(2));
     }
 
     @Override

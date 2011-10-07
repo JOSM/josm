@@ -181,7 +181,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
      * @param e The wheel event.
      */
     public void mouseWheelMoved(MouseWheelEvent e) {
-        nc.zoomToFactor(e.getX(), e.getY(), Math.pow(0.8, - e.getWheelRotation()));
+        nc.zoomToFactor(e.getX(), e.getY(), Math.pow(Math.sqrt(2), e.getWheelRotation()));
     }
 
     /**
