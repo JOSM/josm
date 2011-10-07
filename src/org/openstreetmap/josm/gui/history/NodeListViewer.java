@@ -17,14 +17,16 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
-import org.openstreetmap.josm.gui.history.HistoryBrowserModel.NodeListTableModel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -273,6 +275,13 @@ public class NodeListViewer extends JPanel {
         }
     }
 
+    static private PrimitiveId primitiveIdAtRow(TableModel model, int row) {
+        DiffTableModel castedModel = (DiffTableModel) model;
+        Long id = (Long)castedModel.getValueAt(row, 0).value;
+        if(id == null) return null;
+        return new SimplePrimitiveId(id, OsmPrimitiveType.NODE);
+    }
+
     class PopupMenuLauncher extends MouseAdapter {
         private JTable table;
 
@@ -294,8 +303,10 @@ public class NodeListViewer extends JPanel {
             if (!e.isPopupTrigger()) return;
             Point p = e.getPoint();
             int row = table.rowAtPoint(p);
-            NodeListTableModel model = (NodeListTableModel) table.getModel();
-            PrimitiveId pid = model.getNodeId(row);
+
+            PrimitiveId pid = primitiveIdAtRow(table.getModel(), row);
+            if (pid == null)
+                return;
             popupMenu.prepare(pid);
             popupMenu.show(e.getComponent(), e.getX(), e.getY());
         }
@@ -310,15 +321,12 @@ public class NodeListViewer extends JPanel {
             showHistoryAction = new ShowHistoryAction();
         }
 
-        protected NodeListTableModel getModel() {
-            return (NodeListTableModel)table.getModel();
-        }
-
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() < 2) return;
             int row = table.rowAtPoint(e.getPoint());
-            PrimitiveId pid = getModel().getNodeId(row);
+            if(row <= 0) return;
+            PrimitiveId pid = primitiveIdAtRow(table.getModel(), row);
             if (pid == null)
                 return;
             showHistoryAction.setPrimitiveId(pid);

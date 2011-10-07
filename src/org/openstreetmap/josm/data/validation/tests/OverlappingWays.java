@@ -100,15 +100,16 @@ public class OverlappingWays extends Test {
 
                     if (area > 0) {
                         if (ways == 0 || duplicated.size() == area) {
-                            continue;
+                            errortype = tr("Areas share segment");
+                            type = OVERLAPPING_AREA;
                         } else if (highway == ways) {
-                            errortype = tr("Overlapping highways (with area)");
+                            errortype = tr("Highways share segment with area");
                             type = OVERLAPPING_HIGHWAY_AREA;
                         } else if (railway == ways) {
-                            errortype = tr("Overlapping railways (with area)");
+                            errortype = tr("Railways share segment with area");
                             type = OVERLAPPING_RAILWAY_AREA;
                         } else {
-                            errortype = tr("Overlapping ways (with area)");
+                            errortype = tr("Ways share segment with area");
                             type = OVERLAPPING_WAY_AREA;
                         }
                     }

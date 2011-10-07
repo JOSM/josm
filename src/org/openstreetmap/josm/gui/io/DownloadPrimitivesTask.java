@@ -38,6 +38,7 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
     private Set<PrimitiveId> missingPrimitives;
 
     private OsmDataLayer layer;
+    private boolean fullRelation;
     private MultiFetchServerObjectReader multiObjectReader;
     private OsmServerObjectReader objectReader;
 
@@ -47,13 +48,16 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
      * @param layer the layer in which primitives are updated. Must not be null.
      * @param toUpdate a collection of primitives to update from the server. Set to
      * the empty collection if null.
+     * @param fullRelation true if a full download is required, i.e.,
+     * a download including the immediate children of a relation.
      * @throws IllegalArgumentException thrown if layer is null.
      */
-    public DownloadPrimitivesTask(OsmDataLayer layer, List<PrimitiveId>  ids) throws IllegalArgumentException {
+    public DownloadPrimitivesTask(OsmDataLayer layer, List<PrimitiveId>  ids, boolean fullRelation) throws IllegalArgumentException {
         super(tr("Download objects"), false /* don't ignore exception */);
         ensureParameterNotNull(layer, "layer");
         this.ids = ids;
         this.layer = layer;
+        this.fullRelation = fullRelation;
     }
 
     @Override
@@ -144,7 +148,7 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
                 if (r.hasIncompleteMembers()) {
                     synchronized(this) {
                         if (canceled) return;
-                        objectReader = new OsmServerObjectReader(r.getId(), OsmPrimitiveType.RELATION, true /* full */);
+                        objectReader = new OsmServerObjectReader(r.getId(), OsmPrimitiveType.RELATION, fullRelation);
                     }
                     theirDataSet = objectReader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
                     synchronized (this) {

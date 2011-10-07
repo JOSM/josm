@@ -6,18 +6,17 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Observable;
 
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
@@ -39,6 +38,7 @@ import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Diff;
 
 /**
  * This is the model used by the history browser.
@@ -79,10 +79,10 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     private VersionTableModel versionTableModel;
     private TagTableModel currentTagTableModel;
     private TagTableModel referenceTagTableModel;
-    private NodeListTableModel currentNodeListTableModel;
-    private NodeListTableModel referenceNodeListTableModel;
     private RelationMemberTableModel currentRelationMemberTableModel;
     private RelationMemberTableModel referenceRelationMemberTableModel;
+    private DiffTableModel referenceNodeListTableModel;
+    private DiffTableModel currentNodeListTableModel;
 
     /**
      * constructor
@@ -91,8 +91,8 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         versionTableModel = new VersionTableModel();
         currentTagTableModel = new TagTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
         referenceTagTableModel = new TagTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
-        currentNodeListTableModel = new NodeListTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
-        referenceNodeListTableModel = new NodeListTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
+        referenceNodeListTableModel = new DiffTableModel();
+        currentNodeListTableModel = new DiffTableModel();
         currentRelationMemberTableModel = new RelationMemberTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
         referenceRelationMemberTableModel = new RelationMemberTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
 
@@ -145,7 +145,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     protected boolean canShowAsLatest(OsmPrimitive primitive) {
         if (primitive == null) return false;
         if (primitive.isNew() || !primitive.isUsable()) return false;
-        
+
         //try creating a history primitive. if that fails, the primitive cannot be used.
         try {
             HistoryOsmPrimitive.forOsmPrimitive(primitive);
@@ -195,6 +195,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     }
 
     protected void fireModelChange() {
+        initNodeListTableModels();
         setChanged();
         notifyObservers();
         versionTableModel.fireTableDataChanged();
@@ -215,9 +216,22 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         referenceTagTableModel.initKeyList();
     }
 
-    protected void initNodeListTabeModels() {
-        currentNodeListTableModel.fireTableDataChanged();
+    /**
+     * Should be called everytime either reference of current changes to update the diff.
+     * TODO: Maybe rename to reflect this? eg. updateNodeListTableModels
+     */
+    protected void initNodeListTableModels() {
+
+        if(current.getType() != OsmPrimitiveType.WAY || reference.getType() != OsmPrimitiveType.WAY)
+            return;
+        TwoColumnDiff diff = new TwoColumnDiff(
+                ((HistoryWay)reference).getNodes().toArray(),
+                ((HistoryWay)current).getNodes().toArray());
+        referenceNodeListTableModel.setRows(diff.referenceDiff);
+        currentNodeListTableModel.setRows(diff.currentDiff);
+
         referenceNodeListTableModel.fireTableDataChanged();
+        currentNodeListTableModel.fireTableDataChanged();
     }
 
     protected void initMemberListTableModels() {
@@ -243,7 +257,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         return null;
     }
 
-    public NodeListTableModel getNodeListTableModel(PointInTimeType pointInTimeType) throws IllegalArgumentException {
+    public DiffTableModel getNodeListTableModel(PointInTimeType pointInTimeType) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(pointInTimeType, "pointInTimeType");
         if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
             return currentNodeListTableModel;
@@ -289,7 +303,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
 
         this.reference = reference;
         initTagTableModels();
-        initNodeListTabeModels();
+        initNodeListTableModels();
         initMemberListTableModels();
         setChanged();
         notifyObservers();
@@ -318,7 +332,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             throw new IllegalArgumentException(tr("Failed to set current primitive. Current version {0} not available in history.", current.getVersion()));
         this.current = current;
         initTagTableModels();
-        initNodeListTabeModels();
+        initNodeListTableModels();
         initMemberListTableModels();
         setChanged();
         notifyObservers();
@@ -377,7 +391,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      * The table model for the list of versions in the current history
      *
      */
-    public class VersionTableModel extends DefaultTableModel{
+    public class VersionTableModel extends AbstractTableModel {
 
         private VersionTableModel() {
         }
@@ -458,6 +472,11 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             OsmPrimitive p = getEditLayer().data.getPrimitiveById(latest.getId(), latest.getType());
             return p;
         }
+
+        @Override
+        public int getColumnCount() {
+            return 1;
+        }
     }
 
     /**
@@ -465,7 +484,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      * or {@see PointInTimeType#CURRENT_POINT_IN_TIME}
      *
      */
-    public class TagTableModel extends DefaultTableModel {
+    public class TagTableModel extends AbstractTableModel {
 
         private ArrayList<String> keys;
         private PointInTimeType pointInTimeType;
@@ -553,104 +572,10 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         public boolean isReferencePointInTime() {
             return pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME);
         }
-    }
-
-    /**
-     * The table model for the nodes of the version at {@see PointInTimeType#REFERENCE_POINT_IN_TIME}
-     * or {@see PointInTimeType#CURRENT_POINT_IN_TIME}
-     *
-     */
-    public class NodeListTableModel extends DefaultTableModel {
-
-        private PointInTimeType pointInTimeType;
-
-        private NodeListTableModel(PointInTimeType pointInTimeType) {
-            this.pointInTimeType = pointInTimeType;
-        }
 
         @Override
-        public int getRowCount() {
-            int n = 0;
-            if (current != null && current.getType().equals(OsmPrimitiveType.WAY)) {
-                n = ((HistoryWay)current).getNumNodes();
-            }
-            if (reference != null && reference.getType().equals(OsmPrimitiveType.WAY)) {
-                n = Math.max(n,((HistoryWay)reference).getNumNodes());
-            }
-            return n;
-        }
-
-        protected HistoryWay getWay() {
-            if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME)) {
-                if (! current.getType().equals(OsmPrimitiveType.WAY))
-                    return null;
-                return (HistoryWay)current;
-            }
-            if (pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME)) {
-                if (! reference.getType().equals(OsmPrimitiveType.WAY))
-                    return null;
-                return (HistoryWay)reference;
-            }
-
-            // should not happen
-            return null;
-        }
-
-        protected HistoryWay getOppositeWay() {
-            PointInTimeType opposite = pointInTimeType.opposite();
-            if (opposite.equals(PointInTimeType.CURRENT_POINT_IN_TIME)) {
-                if (! current.getType().equals(OsmPrimitiveType.WAY))
-                    return null;
-                return (HistoryWay)current;
-            }
-            if (opposite.equals(PointInTimeType.REFERENCE_POINT_IN_TIME)) {
-                if (! reference.getType().equals(OsmPrimitiveType.WAY))
-                    return null;
-                return (HistoryWay)reference;
-            }
-
-            // should not happen
-            return null;
-        }
-
-        @Override
-        public Object getValueAt(int row, int column) {
-            HistoryWay way = getWay();
-            if (way == null)
-                return null;
-            if (row >= way.getNumNodes())
-                return null;
-            return way.getNodes().get(row);
-        }
-
-        public PrimitiveId getNodeId(int row) {
-            HistoryWay way = getWay();
-            if (way == null) return null;
-            if (row > way.getNumNodes()) return null;
-            return new SimplePrimitiveId(way.getNodeId(row), OsmPrimitiveType.NODE);
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-
-        public boolean isSameInOppositeWay(int row) {
-            HistoryWay thisWay = getWay();
-            HistoryWay oppositeWay = getOppositeWay();
-            if (thisWay == null || oppositeWay == null)
-                return false;
-            if (row >= oppositeWay.getNumNodes())
-                return false;
-            return thisWay.getNodeId(row) == oppositeWay.getNodeId(row);
-        }
-
-        public boolean isInOppositeWay(int row) {
-            HistoryWay thisWay = getWay();
-            HistoryWay oppositeWay = getOppositeWay();
-            if (thisWay == null || oppositeWay == null)
-                return false;
-            return oppositeWay.getNodes().contains(thisWay.getNodeId(row));
+        public int getColumnCount() {
+            return 1;
         }
     }
 
@@ -660,7 +585,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      *
      */
 
-    public class RelationMemberTableModel extends DefaultTableModel {
+    public class RelationMemberTableModel extends AbstractTableModel {
 
         private PointInTimeType pointInTimeType;
 
@@ -746,6 +671,11 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             if (thisRelation == null || oppositeRelation == null)
                 return false;
             return oppositeRelation.getMembers().contains(thisRelation.getMembers().get(row));
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 1;
         }
     }
 
@@ -914,6 +844,141 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         public HistoryOsmPrimitive build(OsmPrimitive primitive) {
             primitive.visit(this);
             return clone;
+        }
+    }
+}
+
+/**
+ * Simple model storing "diff cells" in a list. Could probably have used a DefaultTableModel instead..
+ *
+ * {@see NodeListDiffTableCellRenderer}
+ */
+class DiffTableModel extends AbstractTableModel {
+    private List<TwoColumnDiff.Item> rows;
+
+    public void setRows(List<TwoColumnDiff.Item> rows) {
+        this.rows = rows;
+    }
+
+    public DiffTableModel(List<TwoColumnDiff.Item> rows) {
+        this.rows = rows;
+    }
+    public DiffTableModel() {
+        this.rows = new ArrayList<TwoColumnDiff.Item>();
+    }
+    @Override
+    public int getRowCount() {
+        return rows.size();
+    }
+
+    @Override
+    public int getColumnCount() {
+        return 1;
+    }
+
+    @Override
+    public TwoColumnDiff.Item getValueAt(int rowIndex, int columnIndex) {
+        return rows.get(rowIndex);
+    }
+}
+
+
+/// Feel free to move me somewhere else. Maybe a bit specific for josm.tools?
+/**
+ * Produces a "two column diff" of two lists. (same as diff -y)
+ *
+ * Each list is annotated with the changes relative to the other, and "empty" cells are inserted so the lists are comparable item by item.
+ *
+ * diff on [1 2 3 4] [1 a 4 5] yields:
+ *
+ * item(SAME, 1)    item(SAME, 1)
+ * item(CHANGED, 2) item(CHANGED, 2)
+ * item(DELETED, 3) item(EMPTY)
+ * item(SAME, 4)    item(SAME, 4)
+ * item(EMPTY)      item(INSERTED, 5)
+ *
+ * @author olejorgenb
+ */
+class TwoColumnDiff {
+    public static class Item {
+        public static final int INSERTED = 1;
+        public static final int DELETED = 2;
+        public static final int CHANGED = 3;
+        public static final int SAME = 4;
+        public static final int EMPTY = 5; // value should be null
+        public Item(int state, Object value) {
+            this.state = state;
+            this.value = state == EMPTY ? null : value;
+        }
+
+        public final Object value;
+        public final int state;
+    }
+
+    public ArrayList<Item> referenceDiff;
+    public ArrayList<Item> currentDiff;
+    Object[] reference;
+    Object[] current;
+
+    /**
+     * The arguments will _not_ be modified
+     */
+    public TwoColumnDiff(Object[] reference, Object[] current) {
+        this.reference = reference;
+        this.current = current;
+        referenceDiff = new ArrayList<Item>();
+        currentDiff = new ArrayList<Item>();
+        diff();
+    }
+    private void diff() {
+        Diff diff = new Diff(reference, current);
+        Diff.change script = diff.diff_2(false);
+        twoColumnDiffFromScript(script, reference, current);
+    }
+
+    /**
+     * The result from the diff algorithm is a "script" (a compressed description of the changes)
+     * This method expands this script into a full two column description.
+     */
+    private void twoColumnDiffFromScript(Diff.change script, Object[] a, Object[] b) {
+        int ia = 0;
+        int ib = 0;
+
+        while(script != null) {
+            int deleted = script.deleted;
+            int inserted = script.inserted;
+            while(ia < script.line0 && ib < script.line1){
+                // System.out.println(" "+a[ia] + "\t "+b[ib]);
+                Item cell = new Item(Item.SAME, a[ia]);
+                referenceDiff.add(cell);
+                currentDiff.add(cell);
+                ia++;
+                ib++;
+            }
+
+            while(inserted > 0 || deleted > 0) {
+                if(inserted > 0 && deleted > 0) {
+                    // System.out.println("="+a[ia] + "\t="+b[ib]);
+                    referenceDiff.add(new Item(Item.CHANGED, a[ia++]));
+                    currentDiff.add(new Item(Item.CHANGED, b[ib++]));
+                } else if(inserted > 0) {
+                    // System.out.println("\t+" + b[ib]);
+                    referenceDiff.add(new Item(Item.EMPTY, null));
+                    currentDiff.add(new Item(Item.INSERTED, b[ib++]));
+                } else if(deleted > 0) {
+                    // System.out.println("-"+a[ia]);
+                    referenceDiff.add(new Item(Item.DELETED, a[ia++]));
+                    currentDiff.add(new Item(Item.EMPTY, null));
+                }
+                inserted--;
+                deleted--;
+            }
+            script = script.link;
+        }
+        while(ia < a.length && ib < b.length) {
+            // System.out.println((ia < a.length ? " "+a[ia]+"\t" : "\t") + (ib < b.length ? " "+b[ib] : ""));
+            referenceDiff.add(new Item(Item.SAME, a[ia++]));
+            currentDiff.add(new Item(Item.SAME, b[ib++]));
         }
     }
 }
