@@ -71,7 +71,9 @@ public class VersionTable extends JTable implements Observer{
     class SelectionHandler implements ListSelectionListener {
         public void valueChanged(ListSelectionEvent e) {
             DefaultListSelectionModel model = (DefaultListSelectionModel)e.getSource();
-            if (model.getMinSelectionIndex() >= 0) {
+            // For some reason we receive multiple "adjusting" events here even when the source is a simple "set selection" action
+            // The last and proper event will have getValueIsAdjusting() == false
+            if (model.getMinSelectionIndex() >= 0 && e.getValueIsAdjusting() == false) {
                 handleSelectCurrentPointInTime(model.getMinSelectionIndex());
             }
         }

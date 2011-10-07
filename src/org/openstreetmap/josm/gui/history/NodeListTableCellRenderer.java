@@ -13,16 +13,12 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.tools.ImageProvider;
 
-/**
- * The {@see TableCellRenderer} for a list of nodes in [@see HistoryBrower}
- *
- *
- */
 public class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {
 
     public final static Color BGCOLOR_EMPTY_ROW = new Color(234,234,234);
-    public final static Color BGCOLOR_NOT_IN_OPPOSITE = new Color(255,197,197);
-    public final static Color BGCOLOR_IN_OPPOSITE = new Color(255,234,213);
+    public final static Color BGCOLOR_DELETED = new Color(255,197,197);
+    public final static Color BGCOLOR_INSERTED = new Color(0xDD, 0xFF, 0xDD);
+    public final static Color BGCOLOR_CHANGED = new Color(255,234,213);
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
 
     private ImageIcon nodeIcon;
@@ -33,23 +29,30 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
         setIcon(nodeIcon);
     }
 
-    protected void renderNode(HistoryBrowserModel.NodeListTableModel model, Long nodeId, int row, boolean isSelected) {
+    protected void renderNode(TwoColumnDiff.Item item, boolean isSelected) {
         String text = "";
         Color bgColor = Color.WHITE;
-        if (nodeId == null) {
+        setIcon(nodeIcon);
+        if (item.value != null) {
+            text = tr("Node {0}", item.value.toString());
+        }
+        switch(item.state) {
+        case TwoColumnDiff.Item.EMPTY:
             text = "";
             bgColor = BGCOLOR_EMPTY_ROW;
             setIcon(null);
-        } else {
-            text = tr("Node {0}", nodeId.toString());
-            setIcon(nodeIcon);
-            if (model.isSameInOppositeWay(row)) {
-                bgColor = Color.WHITE;
-            } else if (model.isInOppositeWay(row)) {
-                bgColor = BGCOLOR_IN_OPPOSITE;
-            } else {
-                bgColor = BGCOLOR_NOT_IN_OPPOSITE;
-            }
+            break;
+        case TwoColumnDiff.Item.CHANGED:
+            bgColor = BGCOLOR_CHANGED;
+            break;
+        case TwoColumnDiff.Item.INSERTED:
+            bgColor = BGCOLOR_INSERTED;
+            break;
+        case TwoColumnDiff.Item.DELETED:
+            bgColor = BGCOLOR_DELETED;
+            break;
+        default:
+            bgColor = BGCOLOR_EMPTY_ROW;
         }
         if (isSelected) {
             bgColor = BGCOLOR_SELECTED;
@@ -63,13 +66,7 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
         if (value == null)
             return this;
 
-        HistoryBrowserModel.NodeListTableModel model = getNodeListTableModel(table);
-        Long nodeId = (Long)value;
-        renderNode(model, nodeId, row, isSelected);
+        renderNode((TwoColumnDiff.Item)value, isSelected);
         return this;
-    }
-
-    protected HistoryBrowserModel.NodeListTableModel getNodeListTableModel(JTable table) {
-        return (HistoryBrowserModel.NodeListTableModel) table.getModel();
     }
 }
