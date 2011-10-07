@@ -101,6 +101,8 @@ import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
+import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 
 /**
  * This dialog displays the properties of the current selected primitives.
@@ -181,6 +183,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private CopyValueAction copyValueAction = new CopyValueAction();
     private CopyKeyValueAction copyKeyValueAction = new CopyKeyValueAction();
     private CopyAllKeyValueAction copyAllKeyValueAction = new CopyAllKeyValueAction();
+    private SearchAction searchActionSame = new SearchAction(true);
+    private SearchAction searchActionAny = new SearchAction(false);
     private AddAction addAction = new AddAction();
 
     @Override
@@ -614,6 +618,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyMenu.add(copyValueAction);
         propertyMenu.add(copyKeyValueAction);
         propertyMenu.add(copyAllKeyValueAction);
+        propertyMenu.addSeparator();
+        propertyMenu.add(searchActionAny);
+        propertyMenu.add(searchActionSame);
         propertyMenu.addSeparator();
         propertyMenu.add(helpAction);
         
@@ -1409,6 +1416,57 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 r.add(new Tag(kv.getKey(), kv.getValue()).toString());
             }
             return r;
+        }
+    }
+
+    class SearchAction extends AbstractAction {
+        final boolean sameType;
+
+        public SearchAction(boolean sameType) {
+            this.sameType = sameType;
+            if (sameType) {
+                putValue(NAME, tr("Search Key/Value/Type"));
+                putValue(SHORT_DESCRIPTION, tr("Search with the key and value of the selected tag, restrict to type (i.e., node/way/relation)"));
+            } else {
+                putValue(NAME, tr("Search Key/Value"));
+                putValue(SHORT_DESCRIPTION, tr("Search with the key and value of the selected tag"));
+            }
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (propertyTable.getSelectedRowCount() != 1) {
+                return;
+            }
+            String key = propertyData.getValueAt(propertyTable.getSelectedRow(), 0).toString();
+            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+            if (sel.isEmpty()) {
+                return;
+            }
+            String sep = "";
+            String s = "";
+            for (OsmPrimitive p : sel) {
+                String val = p.get(key);
+                if (val == null) {
+                    continue;
+                }
+                String t = "";
+                if (!sameType) {
+                    t = "";
+                } else if (p instanceof Node) {
+                    t = "type:node ";
+                } else if (p instanceof Way) {
+                    t = "type:way ";
+                } else if (p instanceof Relation) {
+                    t = "type:relation ";
+                }
+                s += sep + "(" + t + "\"" +
+                        org.openstreetmap.josm.actions.search.SearchAction.escapeStringForSearch(key) + "\"=\"" +
+                        org.openstreetmap.josm.actions.search.SearchAction.escapeStringForSearch(val) + "\")";
+                sep = " OR ";
+            }
+
+            SearchSetting ss = new SearchSetting(s, SearchMode.replace, true, false, false);
+            org.openstreetmap.josm.actions.search.SearchAction.searchWithoutHistory(ss);
         }
     }
 }
