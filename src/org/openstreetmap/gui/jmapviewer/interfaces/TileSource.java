@@ -47,7 +47,7 @@ public interface TileSource {
      * @return maximum zoom value that has to be smaller or equal to
      *         {@link JMapViewer#MAX_ZOOM}
      */
-    public int getMaxZoom();
+    int getMaxZoom();
 
     /**
      * Specifies the minimum zoom value. This value is usually 0.
@@ -56,13 +56,13 @@ public interface TileSource {
      *
      * @return minimum zoom value - usually 0
      */
-    public int getMinZoom();
+    int getMinZoom();
 
     /**
      * @return The supported tile update mechanism
      * @see TileUpdate
      */
-    public TileUpdate getTileUpdate();
+    TileUpdate getTileUpdate();
 
     /**
      * A tile layer name has to be unique and has to consist only of characters
@@ -70,7 +70,7 @@ public interface TileSource {
      *
      * @return Name of the tile layer
      */
-    public String getName();
+    String getName();
 
     /**
      * Constructs the tile url.
@@ -80,7 +80,7 @@ public interface TileSource {
      * @param tiley
      * @return fully qualified url for downloading the specified tile image
      */
-    public String getTileUrl(int zoom, int tilex, int tiley) throws IOException;
+    String getTileUrl(int zoom, int tilex, int tiley) throws IOException;
 
     /**
      * Specifies the tile image type. For tiles rendered by Mapnik or
@@ -88,18 +88,18 @@ public interface TileSource {
      *
      * @return file extension of the tile image type
      */
-    public String getTileType();
+    String getTileType();
 
     /**
      * Specifies how large each tile is.
      * @return The size of a single tile in pixels.
      */
-    public int getTileSize();
+    int getTileSize();
 
     /**
      * @return True if the tile source requires attribution in text or image form.
      */
-    public boolean requiresAttribution();
+    boolean requiresAttribution();
 
     /**
      * @param zoom The optional zoom level for the view.
@@ -107,28 +107,42 @@ public interface TileSource {
      * @param topLeft The top left of the bounding box for attribution.
      * @return Attribution text for the image source.
      */
-    public String getAttributionText(int zoom, Coordinate topLeft, Coordinate botRight);
+    String getAttributionText(int zoom, Coordinate topLeft, Coordinate botRight);
+
+    /**
+     * @return The URL to open when the user clicks the attribution text.
+     */
+    String getAttributionLinkURL();
 
     /**
      * @return The URL for the attribution image. Null if no image should be displayed.
      */
-    public Image getAttributionImage();
+    Image getAttributionImage();
 
     /**
      * @return The URL to open when the user clicks the attribution image.
+     * When return value is null, the image is still displayed (provided getAttributionImage()
+     * returns a value other than null), but the image does not link to a website.
      */
-    public String getAttributionLinkURL();
+    String getAttributionImageURL();
+
+    /**
+     * @return The attribution "Terms of Use" text.
+     * In case it returns null, but getTermsOfUseURL() is not null, a default
+     * terms of use text is used.
+     */
+    String getTermsOfUseText();
 
     /**
      * @return The URL to open when the user clicks the attribution "Terms of Use" text.
      */
-    public String getTermsOfUseURL();
+    String getTermsOfUseURL();
 
-    public double latToTileY(double lat, int zoom);
+    double latToTileY(double lat, int zoom);
 
-    public double lonToTileX(double lon, int zoom);
+    double lonToTileX(double lon, int zoom);
 
-    public double tileYToLat(int y, int zoom);
+    double tileYToLat(int y, int zoom);
 
-    public double tileXToLon(int x, int zoom);
+    double tileXToLon(int x, int zoom);
 }

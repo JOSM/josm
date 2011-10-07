@@ -1,5 +1,7 @@
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
+//License: GPL.
+
 import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
@@ -176,6 +178,14 @@ public class BingAerialTileSource extends AbstractTSMTileSource {
     }
 
     @Override
+    public String getAttributionLinkURL() {
+        //return "http://bing.com/maps"
+        // FIXME: I've set attributionLinkURL temporarily to ToU URL to comply with bing ToU
+        // (the requirement is that we have such a link at the bottom of the window)
+        return "http://go.microsoft.com/?linkid=9710837";
+    }
+
+    @Override
     public Image getAttributionImage() {
         try {
             return ImageIO.read(getClass().getResourceAsStream("/org/openstreetmap/gui/jmapviewer/images/bing_maps.png"));
@@ -185,11 +195,13 @@ public class BingAerialTileSource extends AbstractTSMTileSource {
     }
 
     @Override
-    public String getAttributionLinkURL() {
-        //return "http://bing.com/maps"
-        // FIXME: I've set attributionLinkURL temporarily to ToU URL to comply with bing ToU
-        // (the requirement is that we have such a link at the bottom of the window)
-        return "http://go.microsoft.com/?linkid=9710837";
+    public String getAttributionImageURL() {
+        return "http://opengeodata.org/microsoft-imagery-details";
+    }
+
+    @Override
+    public String getTermsOfUseText() {
+        return null;
     }
 
     @Override

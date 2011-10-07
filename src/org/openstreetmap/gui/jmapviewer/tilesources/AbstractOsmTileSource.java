@@ -39,6 +39,21 @@ public abstract class AbstractOsmTileSource extends AbstractTSMTileSource {
     }
 
     @Override
+    public Image getAttributionImage() {
+        return null;
+    }
+
+    @Override
+    public String getAttributionImageURL() {
+        return null;
+    }
+
+    @Override
+    public String getTermsOfUseText() {
+        return null;
+    }
+
+    @Override
     public String getTermsOfUseURL() {
         return "http://www.openstreetmap.org/copyright";
     }

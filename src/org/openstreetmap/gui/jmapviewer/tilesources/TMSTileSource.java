@@ -1,5 +1,7 @@
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
+//License: GPL.
+
 import java.awt.Image;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
@@ -8,8 +10,10 @@ public class TMSTileSource extends AbstractTSMTileSource {
     protected int maxZoom;
     protected int minZoom = 0;
     protected String attributionText;
-    protected Image attributionImage;
     protected String attributionLinkURL;
+    protected Image attributionImage;
+    protected String attributionImageURL;
+    protected String termsOfUseText;
     protected String termsOfUseURL;
 
     public TMSTileSource(String name, String url, int maxZoom) {
@@ -48,13 +52,23 @@ public class TMSTileSource extends AbstractTSMTileSource {
     }
 
     @Override
+    public String getAttributionLinkURL() {
+        return attributionLinkURL;
+    }
+
+    @Override
     public Image getAttributionImage() {
         return attributionImage;
     }
 
     @Override
-    public String getAttributionLinkURL() {
-        return attributionLinkURL;
+    public String getAttributionImageURL() {
+        return attributionImageURL;
+    }
+
+    @Override
+    public String getTermsOfUseText() {
+        return termsOfUseText;
     }
 
     @Override
@@ -66,12 +80,20 @@ public class TMSTileSource extends AbstractTSMTileSource {
         attributionText = text;
     }
 
+    public void setAttributionLinkURL(String text) {
+        attributionLinkURL = text;
+    }
+
     public void setAttributionImage(Image img) {
         attributionImage = img;
     }
 
-    public void setAttributionLinkURL(String text) {
-        attributionLinkURL = text;
+    public void setAttributionImageURL(String text) {
+        attributionImageURL = text;
+    }
+
+    public void setTermsOfUseText(String text) {
+        termsOfUseText = text;
     }
 
     public void setTermsOfUseURL(String text) {
