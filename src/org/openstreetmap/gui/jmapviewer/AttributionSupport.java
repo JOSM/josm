@@ -27,8 +27,6 @@ public class AttributionSupport {
     public static final Font ATTR_FONT = new Font("Arial", Font.PLAIN, 10);
     public static final Font ATTR_LINK_FONT;
     
-    private static final String DEFAULT_TERMS_OF_USE_TEXT = tr("Background Terms of Use");
-
     protected Rectangle attrTextBounds = null;
     protected Rectangle attrToUBounds = null;
     protected Rectangle attrImageBounds = null;
@@ -47,7 +45,7 @@ public class AttributionSupport {
             attrTermsText = tileSource.getTermsOfUseText();
             attrTermsUrl = tileSource.getTermsOfUseURL();
             if (attrTermsUrl != null && attrTermsText == null) {
-                attrTermsText = DEFAULT_TERMS_OF_USE_TEXT;
+                attrTermsText = tr("Background Terms of Use");
             }
         } else {
             attrImage = null;
