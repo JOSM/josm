@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
+import java.awt.Image;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,15 +18,17 @@ import org.openstreetmap.josm.data.Preferences.pref;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.gui.jmapviewer.interfaces.Attributed;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource.Mapnik;
-import org.openstreetmap.gui.jmapviewer.tilesources.TMSTileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
 
 /**
  * Class that stores info about an image background layer.
  *
  * @author Frederik Ramm <frederik@remote.org>
  */
-public class ImageryInfo implements Comparable<ImageryInfo> {
+public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
 
     public enum ImageryType {
         WMS("wms"),
@@ -324,24 +327,55 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         return bounds;
     }
 
-    public String getAttributionText() {
+    @Override
+    public boolean requiresAttribution() {
+        return attributionText != null || attributionImage != null || termsOfUseText != null || termsOfUseURL != null;
+    }
+
+    @Override
+    public String getAttributionText(int zoom, Coordinate topLeft, Coordinate botRight) {
         return attributionText;
+    }
+
+    @Override
+    public String getAttributionLinkURL() {
+        return attributionLinkURL;
+    }
+
+    @Override
+    public Image getAttributionImage() {
+        ImageIcon i = ImageProvider.getIfAvailable(attributionImage);
+        if (i != null) {
+            return i.getImage();
+        }
+        return null;
+    }
+
+    @Override
+    public String getAttributionImageURL() {
+        return attributionImageURL;
+    }
+
+    @Override
+    public String getTermsOfUseText() {
+        return termsOfUseText;
+    }
+
+    @Override
+    public String getTermsOfUseURL() {
+        return termsOfUseURL;
     }
 
     public void setAttributionText(String text) {
         attributionText = text;
     }
 
-    public void setAttributionImage(String text) {
-        attributionImage = text;
-    }
-
     public void setAttributionImageURL(String text) {
         attributionImageURL = text;
     }
 
-    public String getAttributionLinkURL() {
-        return attributionLinkURL;
+    public void setAttributionImage(String text) {
+        attributionImage = text;
     }
 
     public void setAttributionLinkURL(String text) {
@@ -350,10 +384,6 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
 
     public void setTermsOfUseText(String text) {
         termsOfUseText = text;
-    }
-
-    public String getTermsOfUseURL() {
-        return termsOfUseURL;
     }
 
     public void setTermsOfUseURL(String text) {
@@ -541,7 +571,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     /**
      * Applies the attribution from this object to a TMSTileSource.
      */
-    public void setAttribution(TMSTileSource s) {
+    public void setAttribution(AbstractTileSource s) {
         if (attributionText != null) {
             if (attributionText.equals("osm")) {
                 s.setAttributionText(new Mapnik().getAttributionText(0, null, null));
