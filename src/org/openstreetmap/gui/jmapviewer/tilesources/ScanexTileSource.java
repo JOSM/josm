@@ -4,7 +4,7 @@ import java.util.Random;
 
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 
-public class ScanexTileSource extends AbstractTSMTileSource {
+public class ScanexTileSource extends AbstractTMSTileSource {
     private static String API_KEY = "4018C5A9AECAD8868ED5DEB2E41D09F7";
 
     private enum ScanexLayer {

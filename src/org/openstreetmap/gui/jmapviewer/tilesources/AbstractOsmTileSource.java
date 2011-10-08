@@ -11,14 +11,11 @@ import javax.swing.ImageIcon;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
-public abstract class AbstractOsmTileSource extends AbstractTSMTileSource {
+public abstract class AbstractOsmTileSource extends AbstractTMSTileSource {
     public AbstractOsmTileSource(String name, String base_url) {
         super(name, base_url);
     }
 
-    public AbstractOsmTileSource(String name, String base_url, String attr_img_url) {
-        super(name, base_url, attr_img_url);
-    }
     public int getMaxZoom() {
         return 18;
     }

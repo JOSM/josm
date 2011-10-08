@@ -31,7 +31,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class BingAerialTileSource extends AbstractTSMTileSource {
+public class BingAerialTileSource extends AbstractTMSTileSource {
     private static String API_KEY = "Arzdiw4nlOJzRwOz__qailc8NiR31Tt51dN2D7cm57NrnceZnCpgOkmJhNpGoppU";
     private static Future<List<Attribution>> attributions;
     private static String imageUrlTemplate;

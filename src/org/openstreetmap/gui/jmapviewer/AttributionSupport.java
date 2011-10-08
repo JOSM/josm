@@ -15,11 +15,11 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.util.HashMap;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.interfaces.Attributed;
 
 public class AttributionSupport {
 
-    private TileSource tileSource;
+    private Attributed source;
 
     private Image attrImage;
     private String attrTermsText;
@@ -37,13 +37,13 @@ public class AttributionSupport {
         ATTR_LINK_FONT = ATTR_FONT.deriveFont(aUnderline);
     }
 
-    public void initialize(TileSource tileSource) {
-        this.tileSource = tileSource;
-        boolean requireAttr = tileSource.requiresAttribution();
+    public void initialize(Attributed source) {
+        this.source = source;
+        boolean requireAttr = source.requiresAttribution();
         if (requireAttr) {
-            attrImage = tileSource.getAttributionImage();
-            attrTermsText = tileSource.getTermsOfUseText();
-            attrTermsUrl = tileSource.getTermsOfUseURL();
+            attrImage = source.getAttributionImage();
+            attrTermsText = source.getTermsOfUseText();
+            attrTermsUrl = source.getTermsOfUseURL();
             if (attrTermsUrl != null && attrTermsText == null) {
                 attrTermsText = tr("Background Terms of Use");
             }
@@ -54,7 +54,7 @@ public class AttributionSupport {
     }
 
     public void paintAttribution(Graphics g, int width, int height, Coordinate topLeft, Coordinate bottomRight, int zoom, ImageObserver observer) {
-        if (tileSource == null || !tileSource.requiresAttribution())
+        if (source == null || !source.requiresAttribution())
             return;
         // Draw attribution
         Font font = g.getFont();
@@ -90,7 +90,7 @@ public class AttributionSupport {
         }
 
         g.setFont(ATTR_FONT);
-        String attributionText = tileSource.getAttributionText(zoom, topLeft, bottomRight);
+        String attributionText = source.getAttributionText(zoom, topLeft, bottomRight);
         if (attributionText != null) {
             Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(attributionText, g);
             int textHeight = (int) stringBounds.getHeight() - 5;
@@ -107,13 +107,13 @@ public class AttributionSupport {
     }
 
     public boolean handleAttribution(Point p, boolean click) {
-        if (tileSource == null || !tileSource.requiresAttribution())
+        if (source == null || !source.requiresAttribution())
             return false;
 
         /* TODO: Somehow indicate the link is clickable state to user */
 
         if (attrTextBounds != null && attrTextBounds.contains(p)) {
-            String attributionURL = tileSource.getAttributionLinkURL();
+            String attributionURL = source.getAttributionLinkURL();
             if (attributionURL != null) {
                 if (click) {
                     FeatureAdapter.openLink(attributionURL);
@@ -121,15 +121,15 @@ public class AttributionSupport {
                 return true;
             }
         } else if (attrImageBounds != null && attrImageBounds.contains(p)) {
-            String attributionImageURL = tileSource.getAttributionImageURL();
+            String attributionImageURL = source.getAttributionImageURL();
             if (attributionImageURL != null) {
                 if (click) {
-                    FeatureAdapter.openLink(tileSource.getAttributionImageURL());
+                    FeatureAdapter.openLink(source.getAttributionImageURL());
                 }
                 return true;
             }
         } else if (attrToUBounds != null && attrToUBounds.contains(p)) {
-            String termsOfUseURL = tileSource.getTermsOfUseURL();
+            String termsOfUseURL = source.getTermsOfUseURL();
             if (termsOfUseURL != null) {
                 if (click) {
                     FeatureAdapter.openLink(termsOfUseURL);
