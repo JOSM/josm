@@ -100,6 +100,10 @@ public class ImageProvider {
         return get("", name);
     }
 
+    public static ImageIcon getIfAvailable(String name) {
+        return getIfAvailable((Collection<String>) null, null, "", name);
+    }
+
     public static ImageIcon getIfAvailable(String subdir, String name) {
         return getIfAvailable((Collection<String>) null, null, subdir, name);
     }

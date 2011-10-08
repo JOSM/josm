@@ -1215,7 +1215,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         for (Tile t : ts.allExistingTiles()) {
             this.paintTileText(ts, t, g, mv, displayZoomLevel, t);
         }
-        
+
         attribution.paintAttribution(g, mv.getWidth(), mv.getHeight(), getShiftedCoord(topLeft), getShiftedCoord(botRight), displayZoomLevel, this);
 
         //g.drawString("currentZoomLevel=" + currentZoomLevel, 120, 120);

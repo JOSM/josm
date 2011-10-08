@@ -6,8 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -29,7 +33,9 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
+import org.openstreetmap.gui.jmapviewer.AttributionSupport;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
@@ -50,6 +56,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.io.imagery.Grabber;
@@ -62,7 +69,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * This is a layer that grabs the current screen from an WMS server. The data
  * fetched this way is tiled and managed to the disc to reduce server load.
  */
-public class WMSLayer extends ImageryLayer implements PreferenceChangedListener {
+public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceChangedListener {
     public static final BooleanProperty PROP_ALPHA_CHANNEL = new BooleanProperty("imagery.wms.alpha_channel", true);
     public static final IntegerProperty PROP_SIMULTANEOUS_CONNECTIONS = new IntegerProperty("imagery.wms.simultaneousConnections", 3);
     public static final BooleanProperty PROP_OVERLAP = new BooleanProperty("imagery.wms.overlap", false);
@@ -84,7 +91,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
     protected ImageryInfo info;
     protected final MapView mv;
     public WmsCache cache;
-
+    private AttributionSupport attribution = new AttributionSupport();
 
     // Image index boundary for current view
     private volatile int bminx;
@@ -141,10 +148,48 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         }
         resolution = mv.getDist100PixelText();
 
+        attribution.initialize(this.info);
+
         if(info.getUrl() != null)
             startGrabberThreads();
 
         Main.pref.addPreferenceChangeListener(this);
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                final MouseAdapter adapter = new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (!isVisible()) return;
+                        if (e.getButton() == MouseEvent.BUTTON1) {
+                            attribution.handleAttribution(e.getPoint(), true);
+                        }
+                    }
+                };
+                Main.map.mapView.addMouseListener(adapter);
+
+                MapView.addLayerChangeListener(new LayerChangeListener() {
+                    @Override
+                    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+                        //
+                    }
+
+                    @Override
+                    public void layerAdded(Layer newLayer) {
+                        //
+                    }
+
+                    @Override
+                    public void layerRemoved(Layer oldLayer) {
+                        if (oldLayer == WMSLayer.this) {
+                            Main.map.mapView.removeMouseListener(adapter);
+                            MapView.removeLayerChangeListener(this);
+                        }
+                    }
+                });
+            }
+        });
     }
 
     public void doSetName(String name) {
@@ -229,6 +274,9 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         } else {
             downloadAndPaintVisible(g, mv, false);
         }
+
+        attribution.paintAttribution(g, mv.getWidth(), mv.getHeight(), null, null, 0, this);
+
     }
 
     @Override
@@ -288,7 +336,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
     }
 
     /**
-     * 
+     *
      * @return When overlapping is enabled, return visible part of tile. Otherwise return original image
      */
     public BufferedImage normalizeImage(BufferedImage img) {
@@ -885,4 +933,12 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         }
         return tr("Supported projections are: {0}", res);
     }
+
+    @Override
+    public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+        boolean done = ((infoflags & (ERROR | FRAMEBITS | ALLBITS)) != 0);
+        Main.map.repaint(done ? 0 : 100);
+        return !done;
+    }
+
 }
