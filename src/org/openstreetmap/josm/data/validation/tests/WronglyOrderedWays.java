@@ -52,6 +52,6 @@ public class WronglyOrderedWays extends Test {
     }
 
     private void reportError(Way w, String msg, int type) {
-        errors.add(new TestError(this, Severity.OTHER, msg, type, Collections.singletonList(w)));
+        errors.add(new TestError(this, Severity.WARNING, msg, type, Collections.singletonList(w)));
     }
 }
