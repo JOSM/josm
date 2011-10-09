@@ -16,6 +16,10 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
  *
  */
 public final class Changeset implements Tagged {
+    
+    /** The maximum changeset comment text length allowed by API 0.6 **/
+    public static final int MAX_COMMENT_LENGTH = 255;
+    
     /** the changeset id */
     private int id;
     /** the user who owns the changeset */
