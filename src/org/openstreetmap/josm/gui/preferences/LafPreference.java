@@ -40,6 +40,8 @@ public class LafPreference implements PreferenceSetting {
     private JCheckBox showLocalizedName = new JCheckBox(tr("Show localized name in selection lists"));
     private JCheckBox drawHelperLine = new JCheckBox(tr("Draw rubber-band helper line"));
     private JCheckBox modeless = new JCheckBox(tr("Modeless working (Potlatch style)"));
+    private JCheckBox expert = new JCheckBox(tr("Expert mode"));
+    private JCheckBox dynamicButtons = new JCheckBox(tr("Dynamic buttons in side menus"));
 
     public void addGui(PreferenceTabbedPane gui) {
         lafCombo = new JComboBox(UIManager.getInstalledLookAndFeels());
@@ -80,23 +82,33 @@ public class LafPreference implements PreferenceSetting {
         showSplashScreen.setSelected(Main.pref.getBoolean("draw.splashscreen", true));
         panel.add(showSplashScreen, GBC.eop().insets(20, 0, 0, 0));
 
-        // Show ID in selection
-        showID.setToolTipText(tr("Show object ID in selection lists"));
-        showID.setSelected(Main.pref.getBoolean("osm-primitives.showid", false));
-        panel.add(showID, GBC.eop().insets(20, 0, 0, 0));
+        if(Main.pref.getBoolean("expert", false)) {
+            // Show ID in selection
+            showID.setToolTipText(tr("Show object ID in selection lists"));
+            showID.setSelected(Main.pref.getBoolean("osm-primitives.showid", false));
+            panel.add(showID, GBC.eop().insets(20, 0, 0, 0));
 
-        // Show localized names
-        showLocalizedName.setToolTipText(tr("Show localized name in selection lists, if available"));
-        showLocalizedName.setSelected(Main.pref.getBoolean("osm-primitives.localize-name", true));
-        panel.add(showLocalizedName, GBC.eop().insets(20, 0, 0, 0));
+            // Show localized names
+            showLocalizedName.setToolTipText(tr("Show localized name in selection lists, if available"));
+            showLocalizedName.setSelected(Main.pref.getBoolean("osm-primitives.localize-name", true));
+            panel.add(showLocalizedName, GBC.eop().insets(20, 0, 0, 0));
 
-        drawHelperLine.setToolTipText(tr("Draw rubber-band helper line"));
-        drawHelperLine.setSelected(Main.pref.getBoolean("draw.helper-line", true));
-        panel.add(drawHelperLine, GBC.eop().insets(20, 0, 0, 0));
+            drawHelperLine.setToolTipText(tr("Draw rubber-band helper line"));
+            drawHelperLine.setSelected(Main.pref.getBoolean("draw.helper-line", true));
+            panel.add(drawHelperLine, GBC.eop().insets(20, 0, 0, 0));
 
-        modeless.setToolTipText(tr("Do not require to switch modes (potlatch style workflow)"));
-        modeless.setSelected(Main.pref.getBoolean("modeless", false));
-        panel.add(modeless, GBC.eop().insets(20, 0, 0, 0));
+            modeless.setToolTipText(tr("Do not require to switch modes (potlatch style workflow)"));
+            modeless.setSelected(Main.pref.getBoolean("modeless", false));
+            panel.add(modeless, GBC.eop().insets(20, 0, 0, 0));
+        }
+
+        dynamicButtons.setToolTipText(tr("Display buttons in right side menus only when mouse is inside the element"));
+        dynamicButtons.setSelected(Main.pref.getBoolean("dialog.dynamic.buttons", true));
+        panel.add(dynamicButtons, GBC.eop().insets(20, 0, 0, 0));
+
+        expert.setToolTipText(tr("The expert mode shows a lot of additional settings hidden from normal user"));
+        expert.setSelected(Main.pref.getBoolean("expert", false));
+        panel.add(expert, GBC.eop().insets(20, 0, 0, 0));
 
         panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
 
@@ -110,11 +122,17 @@ public class LafPreference implements PreferenceSetting {
     }
 
     public boolean ok() {
+        boolean mod = false;
         Main.pref.put("draw.splashscreen", showSplashScreen.isSelected());
         Main.pref.put("osm-primitives.showid", showID.isSelected());
         Main.pref.put("osm-primitives.localize-name", showLocalizedName.isSelected());
         Main.pref.put("draw.helper-line", drawHelperLine.isSelected());
         Main.pref.put("modeless", modeless.isSelected());
-        return Main.pref.put("laf", ((LookAndFeelInfo)lafCombo.getSelectedItem()).getClassName());
+        if(Main.pref.put("expert", expert.isSelected()))
+            mod = true;
+        Main.pref.put("dialog.dynamic.buttons", dynamicButtons.isSelected());
+        if(Main.pref.put("laf", ((LookAndFeelInfo)lafCombo.getSelectedItem()).getClassName()))
+            mod = true;
+        return mod;
     }
 }

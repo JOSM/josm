@@ -275,8 +275,10 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
 
         PluginHandler.getPreferenceSetting(settingsFactory);
 
-        // always the last: advanced tab
-        settingsFactory.add(new AdvancedPreference.Factory());
+        if(Main.pref.getBoolean("expert", false)) {
+            // always the last: advanced tab
+            settingsFactory.add(new AdvancedPreference.Factory());
+        }
     }
 
     /**

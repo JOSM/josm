@@ -679,7 +679,7 @@ public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
             for(SideButton button : buttons)
                 buttonsPanel.add(button);
             add(buttonsPanel, BorderLayout.SOUTH);
-            if(Main.pref.getBoolean("dialog.dynamic.buttons", false)) {
+            if(Main.pref.getBoolean("dialog.dynamic.buttons", true)) {
                 Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_MOTION_EVENT_MASK);
                 buttonsPanel.setVisible(false);
             }
