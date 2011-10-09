@@ -460,6 +460,16 @@ public class Preferences {
                 throw new IOException(tr("Malformed config file at lines {0}", errLines));
         }
         updateSystemProperties();
+        /* FIXME: TODO: remove special version check end of 2012 */
+        if(!properties.containsKey("expert")) {
+            try {
+                String v = get("josm.version");
+                if(v.isEmpty() || Integer.parseInt(v) <= 4511)
+                    properties.put("expert", "true");
+            } catch(Exception e) {
+                properties.put("expert", "true");
+            }
+        }
     }
 
     public void init(boolean reset){
