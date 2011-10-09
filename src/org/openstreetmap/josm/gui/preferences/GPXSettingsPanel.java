@@ -165,7 +165,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         add(drawGpsArrowsMinDist, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 
         // hdopCircleGpsPoints
-        hdopCircleGpsPoints.setToolTipText(tr("Draw a circle form HDOP value."));
+        hdopCircleGpsPoints.setToolTipText(tr("Draw a circle from HDOP value."));
         add(hdopCircleGpsPoints, GBC.eop().insets(20,0,0,0));
 
         // largeGpsPoints
