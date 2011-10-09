@@ -23,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
@@ -49,6 +50,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         pnl.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
         hcbUploadComment = new HistoryComboBox();
         hcbUploadComment.setToolTipText(tr("Enter an upload comment"));
+        hcbUploadComment.setMaxTextLength(Changeset.MAX_COMMENT_LENGTH);
         List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
         // we have to reverse the history, because ComboBoxHistory will reverse it again
         // in addElement()

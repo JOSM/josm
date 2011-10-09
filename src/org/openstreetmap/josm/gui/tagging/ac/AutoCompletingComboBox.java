@@ -13,6 +13,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
@@ -20,6 +21,7 @@ import javax.swing.text.PlainDocument;
 import javax.swing.text.StyleConstants;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.DocumentSizeFilter;
 
 /**
  * @author guilhem.bonnefille@gmail.com
@@ -147,6 +149,13 @@ public class AutoCompletingComboBox extends JComboBox {
         );
         int maxsize=Math.max(getMaximumRowCount(),java.awt.Toolkit.getDefaultToolkit().getScreenSize().height/getPreferredSize().height - 1);
         setMaximumRowCount(maxsize);
+    }
+    
+    public void setMaxTextLength(int length)
+    {
+        JTextComponent editor = (JTextComponent) this.getEditor().getEditorComponent();
+        AbstractDocument doc = (AbstractDocument) editor.getDocument();
+        doc.setDocumentFilter(new DocumentSizeFilter(length));
     }
 
     /**
