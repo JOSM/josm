@@ -715,7 +715,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             }
         }
 
-        if (mode == Mode.move) {
+        if (mode == Mode.move && e.getButton() == MouseEvent.BUTTON1) {
             if (!didMouseDrag) {
                 // only built in move mode
                 virtualWays.clear();
