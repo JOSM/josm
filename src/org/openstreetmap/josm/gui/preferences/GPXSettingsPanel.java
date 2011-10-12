@@ -44,6 +44,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private ActionListener drawRawGpsLinesActionListener;
     private JTextField drawRawGpsMaxLineLength = new JTextField(8);
     private JTextField drawRawGpsMaxLineLengthLocal = new JTextField(8);
+    private JTextField drawLineWidth = new JTextField(2);
     private JCheckBox forceRawGpsLines = new JCheckBox(tr("Force lines if no segments imported."));
     private JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points."));
     private JCheckBox hdopCircleGpsPoints = new JCheckBox(tr("Draw a circle form HDOP value."));
@@ -172,6 +173,11 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         largeGpsPoints.setToolTipText(tr("Draw larger dots for the GPS points."));
         add(largeGpsPoints, GBC.eop().insets(20,0,0,0));
 
+        // drawLineWidth
+        drawLineWidth.setToolTipText(tr("Width of drawn GPX line (0 for default)"));
+        add(new JLabel(tr("Drawing width of GPX lines")), GBC.std().insets(40,0,0,0));
+        add(drawLineWidth, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
+
         // colorTracks
         colorGroup = new ButtonGroup();
         if (layerName!=null) {
@@ -276,6 +282,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
         drawRawGpsMaxLineLengthLocal.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.max-line-length.local",layerName, -1)));
         drawRawGpsMaxLineLength.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.max-line-length",layerName, 200)));
+        drawLineWidth.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.linewidth",layerName, 0)));
         forceRawGpsLines.setSelected(Main.pref.getBoolean("draw.rawgps.lines.force",layerName, false));
         drawGpsArrows.setSelected(Main.pref.getBoolean("draw.rawgps.direction",layerName, false));
         drawGpsArrowsFast.setSelected(Main.pref.getBoolean("draw.rawgps.alternatedirection",layerName, false));
@@ -341,6 +348,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
         Main.pref.put("draw.rawgps.hdopcircle"+layerNameDot, hdopCircleGpsPoints.isSelected());
         Main.pref.put("draw.rawgps.large"+layerNameDot, largeGpsPoints.isSelected());
+        Main.pref.put("draw.rawgps.linewidth"+layerNameDot, drawLineWidth.getText());
 
         TemplateEntryProperty.forMarker(layerName).put(waypointLabelPattern.getText());
         TemplateEntryProperty.forAudioMarker(layerName).put(audioWaypointLabelPattern.getText());
