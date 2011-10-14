@@ -539,14 +539,14 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             } catch(NumberFormatException e){
                 return false;
             }
-            if (x < 0 || x >= Math.pow(2, zoom -1)) return false;
+            if (x < 0 || x >= Math.pow(2, zoom)) return false;
             int y;
             try {
                 y = Integer.parseInt(m.group(3));
             } catch(NumberFormatException e){
                 return false;
             }
-            if (y < 0 || y >= Math.pow(2, zoom -1)) return false;
+            if (y < 0 || y >= Math.pow(2, zoom)) return false;
 
             tileBounds = new TileBounds(new Point(x,y), new Point(x,y), zoom);
             return true;
