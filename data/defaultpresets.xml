@@ -1590,8 +1590,10 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="ref" text="Reference number" default="" delete_if_empty="true" />
             <combo key="parking" text="Type" values="multi-storey,surface,underground" default="surface" delete_if_empty="true" />
+            <combo key="access" text="Access" values="yes,private,customers,permissive,no" default="" delete_if_empty="true" />
             <combo key="park_ride" text="Park and Ride" values="yes,no" default="" delete_if_empty="true" />
             <combo key="fee" text="Fee" values="yes,no" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <space />
             <text key="capacity" text="Capacity (overall)" default="" delete_if_empty="true" />
             <combo key="capacity:disabled" text="Spaces for Disabled" values="yes,no,unknown,1,2,3" default="" delete_if_empty="true" />
