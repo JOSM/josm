@@ -64,6 +64,7 @@ import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
@@ -1015,7 +1016,14 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         updateSelection();
     }
 
-    class DeleteAction extends AbstractAction implements ListSelectionListener {
+    class DeleteAction extends JosmAction implements ListSelectionListener {
+
+        public DeleteAction() {
+            super(tr("Delete"), "dialogs/delete", tr("Delete the selected key in all objects"),
+                    Shortcut.registerShortcut("properties:delete", tr("Delete Properties"), KeyEvent.VK_D,
+                    Shortcut.GROUP_MNEMONIC), false);
+            updateEnabledState();
+        }
 
         protected void deleteProperty(int row){
             String key = propertyData.getValueAt(row, 0).toString();
@@ -1068,16 +1076,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         }
 
-        public DeleteAction() {
-            putValue(NAME, tr("Delete"));
-            putValue(SHORT_DESCRIPTION, tr("Delete the selected key in all objects"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
-            Shortcut s = Shortcut.registerShortcut("properties:delete", tr("Delete Properties"), KeyEvent.VK_D,
-                    Shortcut.GROUP_MNEMONIC);
-            putValue(MNEMONIC_KEY, (int) KeyEvent.getKeyText(s.getAssignedKey()).charAt(0));
-            updateEnabledState();
-        }
-
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (propertyTable.getSelectedRowCount() >0 ) {
                 int row = propertyTable.getSelectedRow();
@@ -1088,6 +1087,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         }
 
+        @Override
         protected void updateEnabledState() {
             setEnabled(
                     PropertiesDialog.this.propertyTable.getSelectedRowCount() >0
@@ -1095,37 +1095,34 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             );
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
     }
 
-    class AddAction extends AbstractAction {
+    class AddAction extends JosmAction {
         public AddAction() {
-            putValue(NAME, tr("Add"));
-            putValue(SHORT_DESCRIPTION, tr("Add a new key/value pair to all objects"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
-            Shortcut s = Shortcut.registerShortcut("properties:add", tr("Add Property"), KeyEvent.VK_A,
-                    Shortcut.GROUP_MNEMONIC);
-            putValue(MNEMONIC_KEY, (int) KeyEvent.getKeyText(s.getAssignedKey()).charAt(0));
+            super(tr("Add"), "dialogs/add", tr("Add a new key/value pair to all objects"),
+                    Shortcut.registerShortcut("properties:add", tr("Add Property"), KeyEvent.VK_A,
+                    Shortcut.GROUP_MNEMONIC), false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             add();
         }
     }
 
-    class EditAction extends AbstractAction implements ListSelectionListener {
+    class EditAction extends JosmAction implements ListSelectionListener {
         public EditAction() {
-            putValue(NAME, tr("Edit"));
-            putValue(SHORT_DESCRIPTION, tr("Edit the value of the selected key for all objects"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
-            Shortcut s = Shortcut.registerShortcut("properties:edit", tr("Edit Properties"), KeyEvent.VK_S,
-                    Shortcut.GROUP_MNEMONIC);
-            putValue(MNEMONIC_KEY, (int) KeyEvent.getKeyText(s.getAssignedKey()).charAt(0));
+            super(tr("Edit"), "dialogs/edit", tr("Edit the value of the selected key for all objects"),
+                    Shortcut.registerShortcut("properties:edit", tr("Edit Properties"), KeyEvent.VK_S,
+                    Shortcut.GROUP_MNEMONIC), false);
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
@@ -1138,6 +1135,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         }
 
+        @Override
         protected void updateEnabledState() {
             setEnabled(
                     propertyTable.getSelectedRowCount() == 1
@@ -1145,6 +1143,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             );
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
