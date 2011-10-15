@@ -10,15 +10,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Stack;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -94,7 +91,7 @@ public class XmlObjectParser implements Iterable<Object> {
     public static class Uniform<T> implements Iterable<T>{
         private Iterator<Object> iterator;
         /**
-         * @param klass This has to be specified since generics are ereased from
+         * @param klass This has to be specified since generics are erased from
          * class files so the JVM cannot deduce T itself.
          */
         public Uniform(Reader input, String tagname, Class<T> klass) {
@@ -134,7 +131,7 @@ public class XmlObjectParser implements Iterable<Object> {
 
     private class Parser extends DefaultHandler {
         Stack<Object> current = new Stack<Object>();
-        String characters = "";
+        StringBuilder characters = new StringBuilder(64);
 
         private Locator locator;
 
@@ -161,12 +158,8 @@ public class XmlObjectParser implements Iterable<Object> {
                 if (mapping.get(qname).onStart) {
                     report();
                 }
-                if (mapping.get(qname).both)
-                {
-                    try {
-                        queue.put(current.peek());
-                    } catch (InterruptedException e) {
-                    }
+                if (mapping.get(qname).both) {
+                    queue.add(current.peek());
                 }
             }
         }
@@ -174,21 +167,17 @@ public class XmlObjectParser implements Iterable<Object> {
             if (mapping.containsKey(qname) && !mapping.get(qname).onStart) {
                 report();
             } else if (characters != null && !current.isEmpty()) {
-                setValue(qname, characters.trim());
-                characters = "";
+                setValue(qname, characters.toString().trim());
+                characters  = new StringBuilder(64);
             }
         }
         @Override public void characters(char[] ch, int start, int length) {
-            String s = new String(ch, start, length);
-            characters += s;
+            characters.append(ch, start, length);
         }
 
         private void report() {
-            try {
-                queue.put(current.pop());
-            } catch (InterruptedException e) {
-            }
-            characters = "";
+            queue.add(current.pop());
+            characters  = new StringBuilder(64);
         }
 
         private Object getValueForClass(Class<?> klass, String value) {
@@ -248,11 +237,11 @@ public class XmlObjectParser implements Iterable<Object> {
         }
 
         private boolean parseBoolean(String s) {
-            return s != null &&
-            !s.equals("0") &&
-            !s.startsWith("off") &&
-            !s.startsWith("false") &&
-            !s.startsWith("no");
+            return s != null
+                    && !s.equals("0")
+                    && !s.startsWith("off")
+                    && !s.startsWith("false")
+                    && !s.startsWith("no");
         }
 
         @Override
@@ -284,19 +273,8 @@ public class XmlObjectParser implements Iterable<Object> {
     /**
      * The queue of already parsed items from the parsing thread.
      */
-    private BlockingQueue<Object> queue = new ArrayBlockingQueue<Object>(10);
-
-    /**
-     * This stores one item retrieved from the queue to give hasNext a chance.
-     * So this is also the object that will be returned on the next call to next().
-     */
-    private Object lookAhead = null;
-
-    /**
-     * This object represent the end of the stream (null is not allowed as
-     * member in class Queue).
-     */
-    private Object EOS = new Object();
+    private LinkedList<Object> queue = new LinkedList<Object>();
+    private Iterator<Object> queueIterator = null;
 
     public XmlObjectParser() {
         parser = new Parser();
@@ -307,27 +285,17 @@ public class XmlObjectParser implements Iterable<Object> {
     }
 
     private Iterable<Object> start(final Reader in, final ContentHandler contentHandler) {
-        new Thread("XML Reader"){
-            @Override public void run() {
-                try {
-                    SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-                    parserFactory.setNamespaceAware(true);
-                    SAXParser parser = parserFactory.newSAXParser();
-                    XMLReader reader = parser.getXMLReader();
-                    reader.setContentHandler(contentHandler);
-                    reader.parse(new InputSource(in));
-                } catch (Exception e) {
-                    try {
-                        queue.put(e);
-                    } catch (InterruptedException e1) {
-                    }
-                }
-                try {
-                    queue.put(EOS);
-                } catch (InterruptedException e) {
-                }
-            }
-        }.start();
+        try {
+            SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+            parserFactory.setNamespaceAware(true);
+            SAXParser saxParser = parserFactory.newSAXParser();
+            XMLReader reader = saxParser.getXMLReader();
+            reader.setContentHandler(contentHandler);
+            reader.parse(new InputSource(in));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        queueIterator = queue.iterator();
         return this;
     }
 
@@ -363,61 +331,16 @@ public class XmlObjectParser implements Iterable<Object> {
         mapping.put(tagName, new Entry(klass,false,true));
     }
 
-    /**
-     * @return The next object from the xml stream or <code>null</code>,
-     * if no more objects.
-     */
-    public Object next() throws SAXException {
-        fillLookAhead();
-        if (lookAhead == EOS)
-            throw new NoSuchElementException();
-        Object o = lookAhead;
-        lookAhead = null;
-        return o;
+    public Object next() {
+        return queueIterator.next();
     }
 
-    private void fillLookAhead() throws SAXException {
-        if (lookAhead != null)
-            return;
-        try {
-            lookAhead = queue.take();
-            if (lookAhead instanceof SAXException)
-                throw (SAXException)lookAhead;
-            else if (lookAhead instanceof RuntimeException)
-                throw (RuntimeException)lookAhead;
-            else if (lookAhead instanceof Exception)
-                throw new SAXException((Exception)lookAhead);
-        } catch (InterruptedException e) {
-            throw new RuntimeException("XmlObjectParser must not be interrupted.", e);
-        }
+    public boolean hasNext() {
+        return queueIterator.hasNext();
     }
 
-    public boolean hasNext() throws SAXException {
-        fillLookAhead();
-        return lookAhead != EOS;
-    }
-
+    @Override
     public Iterator<Object> iterator() {
-        return new Iterator<Object>(){
-            public boolean hasNext() {
-                try {
-                    return XmlObjectParser.this.hasNext();
-                } catch (SAXException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
-                }
-            }
-            public Object next() {
-                try {
-                    return XmlObjectParser.this.next();
-                } catch (SAXException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
-                }
-            }
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
+        return queue.iterator();
     }
 }
