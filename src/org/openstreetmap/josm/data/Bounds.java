@@ -81,39 +81,32 @@ public class Bounds {
             }
         }
         
-        int minLatIndex;
-        int minLonIndex;
-        int maxLatIndex;
-        int maxLonIndex;
-        
         switch (parseMethod) {
             case LEFT_BOTTOM_RIGHT_TOP:
-                minLatIndex = 1;
-                minLonIndex = 0;
-                maxLatIndex = 3;
-                maxLonIndex = 2;
+                this.minLat = initLat(values[1]);
+                this.minLon = initLon(values[0]);
+                this.maxLat = initLat(values[3]);
+                this.maxLon = initLon(values[2]);
                 break;
             case MINLAT_MINLON_MAXLAT_MAXLON:
             default:
-                minLatIndex = 0;
-                minLonIndex = 1;
-                maxLatIndex = 2;
-                maxLonIndex = 3;
+                this.minLat = initLat(values[0]);
+                this.minLon = initLon(values[1]);
+                this.maxLat = initLat(values[2]);
+                this.maxLon = initLon(values[3]);
         }
-        
-        if (!LatLon.isValidLat(values[minLatIndex]))
-            throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", values[minLatIndex]));
-        if (!LatLon.isValidLon(values[minLonIndex]))
-            throw new IllegalArgumentException(tr("Illegal longitude value ''{0}''", values[minLonIndex]));
-        if (!LatLon.isValidLat(values[maxLatIndex]))
-            throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", values[maxLatIndex]));
-        if (!LatLon.isValidLon(values[maxLonIndex]))
-            throw new IllegalArgumentException(tr("Illegal longitude value ''{0}''", values[maxLonIndex]));
+    }
+    
+    protected static double initLat(double value) {
+        if (!LatLon.isValidLat(value))
+            throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", value));
+        return LatLon.roundToOsmPrecision(value);
+    }
 
-        this.minLat = LatLon.roundToOsmPrecision(values[minLatIndex]);
-        this.minLon = LatLon.roundToOsmPrecision(values[minLonIndex]);
-        this.maxLat = LatLon.roundToOsmPrecision(values[maxLatIndex]);
-        this.maxLon = LatLon.roundToOsmPrecision(values[maxLonIndex]);
+    protected static double initLon(double value) {
+        if (!LatLon.isValidLon(value))
+            throw new IllegalArgumentException(tr("Illegal longitude value ''{0}''", value));
+        return LatLon.roundToOsmPrecision(value);
     }
 
     public Bounds(Bounds other) {
