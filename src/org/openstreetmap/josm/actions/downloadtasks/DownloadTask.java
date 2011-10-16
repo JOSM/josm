@@ -64,6 +64,13 @@ public interface DownloadTask {
      * @see #download(boolean, Bounds, ProgressMonitor)
      */
     Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor);
+    
+    /**
+     * Returns true if the task is able to open the given URL, false otherwise.
+     * @param url the url to download from
+     * @return True if the task is able to open the given URL, false otherwise.
+     */
+    boolean acceptsUrl(String url);
 
     /**
      * Replies the error objects of the task. Empty list, if no error messages are available.

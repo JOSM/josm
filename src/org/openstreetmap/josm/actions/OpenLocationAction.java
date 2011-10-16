@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,10 +16,14 @@ import java.util.concurrent.Future;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
@@ -32,6 +37,8 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class OpenLocationAction extends JosmAction {
 
+    protected final List<Class<? extends DownloadTask>> downloadTasks;
+    
     /**
      * Create an open action. The name is "Open a file".
      */
@@ -40,6 +47,9 @@ public class OpenLocationAction extends JosmAction {
         super(tr("Open Location..."), "openlocation", tr("Open an URL."),
                 Shortcut.registerShortcut("system:open_location", tr("File: {0}", tr("Open Location...")), KeyEvent.VK_L, Shortcut.GROUP_MENU), true);
         putValue("help", ht("/Action/OpenLocation"));
+        this.downloadTasks = new ArrayList<Class<? extends DownloadTask>>();
+        addDownloadTaskClass(DownloadOsmTask.class);
+        addDownloadTaskClass(DownloadGpsTask.class);
     }
 
     /**
@@ -103,12 +113,39 @@ public class OpenLocationAction extends JosmAction {
     }
 
     /**
-     * Open the given file.
+     * Open the given URL.
      */
-    public void openUrl(boolean new_layer, String url) {
-        DownloadOsmTask task = new DownloadOsmTask();
+    public void openUrl(boolean new_layer, final String url) {
         PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download Data"));
-        Future<?> future = task.loadUrl(new_layer, url, monitor);
-        Main.worker.submit(new PostDownloadHandler(task, future));
+        DownloadTask task = null;
+        Future<?> future = null;
+        for (int i = 0; future == null && i < downloadTasks.size(); i++) {
+            Class<? extends DownloadTask> taskClass = downloadTasks.get(i);
+            if (taskClass != null) {
+                try {
+                    task = taskClass.getConstructor().newInstance();
+                    if (task.acceptsUrl(url)) {
+                        future = task.loadUrl(new_layer, url, monitor);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if (future != null) {
+            Main.worker.submit(new PostDownloadHandler(task, future));
+        } else {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    JOptionPane.showMessageDialog(Main.parent, tr(
+                            "<html>Cannot open URL ''{0}'' because no suitable download task is available.</html>",
+                            url), tr("Download Location"), JOptionPane.ERROR_MESSAGE);
+                }
+            });
+        }
+    }
+    
+    public boolean addDownloadTaskClass(Class<? extends DownloadTask> taskClass) {
+        return this.downloadTasks.add(taskClass);
     }
 }
