@@ -29,11 +29,11 @@ import org.xml.sax.SAXException;
  * Run in the worker thread.
  */
 public class DownloadOsmTask extends AbstractDownloadTask {
-    private Bounds currentBounds;
-    private DataSet downloadedData;
-    private DownloadTask downloadTask;
+    protected Bounds currentBounds;
+    protected DataSet downloadedData;
+    protected DownloadTask downloadTask;
 
-    private void rememberDownloadedData(DataSet ds) {
+    protected void rememberDownloadedData(DataSet ds) {
         this.downloadedData = ds;
     }
 
@@ -78,10 +78,10 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         }
     }
 
-    private class DownloadTask extends PleaseWaitRunnable {
-        private OsmServerReader reader;
-        private DataSet dataSet;
-        private boolean newLayer;
+     protected  class DownloadTask extends PleaseWaitRunnable {
+        protected OsmServerReader reader;
+        protected DataSet dataSet;
+        protected boolean newLayer;
 
         public DownloadTask(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor) {
             super(tr("Downloading data"), progressMonitor, false);
@@ -137,6 +137,10 @@ public class DownloadOsmTask extends AbstractDownloadTask {
             }
             return null;
         }
+        
+        protected OsmDataLayer createNewLayer() {
+            return new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
+        }
 
         @Override protected void finish() {
             if (isFailed() || isCanceled())
@@ -156,7 +160,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 // the user explicitly wants a new layer, we don't have any layer at all
                 // or it is not clear which layer to merge to
                 //
-                OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
+                OsmDataLayer layer = createNewLayer();
                 final boolean isDisplayingMapView = Main.isDisplayingMapView();
 
                 Main.main.addLayer(layer);
