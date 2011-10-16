@@ -29,7 +29,12 @@ public class Bounds {
     public LatLon getMax() {
         return new LatLon(maxLat, maxLon);
     }
-
+    
+    public enum ParseMethod {
+        MINLAT_MINLON_MAXLAT_MAXLON,
+        LEFT_BOTTOM_RIGHT_TOP
+    }
+    
     /**
      * Construct bounds out of two points
      */
@@ -59,10 +64,14 @@ public class Bounds {
     }
 
     public Bounds(String asString, String separator) throws IllegalArgumentException {
+        this(asString, separator, ParseMethod.MINLAT_MINLON_MAXLAT_MAXLON);
+    }
+
+    public Bounds(String asString, String separator, ParseMethod parseMethod) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(asString, "asString");
         String[] components = asString.split(separator);
         if (components.length != 4)
-            throw new IllegalArgumentException(MessageFormat.format("Exactly four doubles excpected in string, got {0}: {1}", components.length, asString));
+            throw new IllegalArgumentException(MessageFormat.format("Exactly four doubles expected in string, got {0}: {1}", components.length, asString));
         double[] values = new double[4];
         for (int i=0; i<4; i++) {
             try {
@@ -71,19 +80,40 @@ public class Bounds {
                 throw new IllegalArgumentException(MessageFormat.format("Illegal double value ''{0}''", components[i]));
             }
         }
-        if (!LatLon.isValidLat(values[0]))
-            throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", values[0]));
-        if (!LatLon.isValidLon(values[1]))
-            throw new IllegalArgumentException(tr("Illegal longitude value ''{0}''", values[1]));
-        if (!LatLon.isValidLat(values[2]))
-            throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", values[2]));
-        if (!LatLon.isValidLon(values[3]))
-            throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", values[3]));
+        
+        int minLatIndex;
+        int minLonIndex;
+        int maxLatIndex;
+        int maxLonIndex;
+        
+        switch (parseMethod) {
+            case LEFT_BOTTOM_RIGHT_TOP:
+                minLatIndex = 1;
+                minLonIndex = 0;
+                maxLatIndex = 3;
+                maxLonIndex = 2;
+                break;
+            case MINLAT_MINLON_MAXLAT_MAXLON:
+            default:
+                minLatIndex = 0;
+                minLonIndex = 1;
+                maxLatIndex = 2;
+                maxLonIndex = 3;
+        }
+        
+        if (!LatLon.isValidLat(values[minLatIndex]))
+            throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", values[minLatIndex]));
+        if (!LatLon.isValidLon(values[minLonIndex]))
+            throw new IllegalArgumentException(tr("Illegal longitude value ''{0}''", values[minLonIndex]));
+        if (!LatLon.isValidLat(values[maxLatIndex]))
+            throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", values[maxLatIndex]));
+        if (!LatLon.isValidLon(values[maxLonIndex]))
+            throw new IllegalArgumentException(tr("Illegal longitude value ''{0}''", values[maxLonIndex]));
 
-        this.minLat = LatLon.roundToOsmPrecision(values[0]);
-        this.minLon = LatLon.roundToOsmPrecision(values[1]);
-        this.maxLat = LatLon.roundToOsmPrecision(values[2]);
-        this.maxLon = LatLon.roundToOsmPrecision(values[3]);
+        this.minLat = LatLon.roundToOsmPrecision(values[minLatIndex]);
+        this.minLon = LatLon.roundToOsmPrecision(values[minLonIndex]);
+        this.maxLat = LatLon.roundToOsmPrecision(values[maxLatIndex]);
+        this.maxLon = LatLon.roundToOsmPrecision(values[maxLonIndex]);
     }
 
     public Bounds(Bounds other) {

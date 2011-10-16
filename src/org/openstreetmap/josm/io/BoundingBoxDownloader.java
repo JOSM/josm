@@ -35,7 +35,8 @@ public class BoundingBoxDownloader extends OsmServerReader {
      *      contain only one list, since the server cannot distinguish between
      *      ways.
      */
-    public GpxData parseRawGps(ProgressMonitor progressMonitor) throws IOException, SAXException,OsmTransferException {
+    @Override
+    public GpxData parseRawGps(ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask("", 1);
         try {
             progressMonitor.indeterminateSubTask(tr("Contacting OSM Server..."));
@@ -69,13 +70,13 @@ public class BoundingBoxDownloader extends OsmServerReader {
             // caused by HttpUrlConnection in case of illegal stuff in the response
             if (cancel)
                 return null;
-            throw new SAXException("Illegal characters within the HTTP-header response.", e);
+            throw new OsmTransferException("Illegal characters within the HTTP-header response.", e);
         } catch (IOException e) {
             if (cancel)
                 return null;
-            throw e;
+            throw new OsmTransferException(e);
         } catch (SAXException e) {
-            throw e;
+            throw new OsmTransferException(e);
         } catch (OsmTransferException e) {
             throw e;
         } catch (RuntimeException e) {

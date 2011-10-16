@@ -15,6 +15,7 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
@@ -140,6 +141,10 @@ public abstract class OsmServerReader extends OsmConnection {
 
     public abstract DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException;
 
+    public GpxData parseRawGps(ProgressMonitor progressMonitor) throws OsmTransferException {
+        return null;
+    }
+    
     /**
      * Returns true if this reader is adding authentication credentials to the read
      * request sent to the server.

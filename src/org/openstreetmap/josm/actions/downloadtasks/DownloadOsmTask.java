@@ -63,6 +63,14 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         currentBounds = null;
         return Main.worker.submit(downloadTask);
     }
+    
+    /* (non-Javadoc)
+     * @see org.openstreetmap.josm.actions.downloadtasks.DownloadTask#acceptsUrl(java.lang.String)
+     */
+    @Override
+    public boolean acceptsUrl(String url) {
+        return url != null && url.matches("http://.*/api/0.6/(map|nodes?|ways?|relations?).*");
+    }
 
     public void cancel() {
         if (downloadTask != null) {
