@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
@@ -26,10 +27,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
 import java.util.regex.Pattern;
+
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -83,17 +83,17 @@ public class AddWMSLayerPanel extends JPanel {
     private JTextField tmsZoom;
 
     public AddWMSLayerPanel() {
-        JPanel imageryAddPanel = new JPanel(new GridBagLayout());
-        imageryAddPanel.add(new JLabel(tr("Menu Name")), GBC.std().insets(0,0,5,0));
+        super(new GridBagLayout());
+        add(new JLabel(tr("Menu Name")), GBC.std().insets(0,0,5,0));
         menuName = new JTextField(40);
         menuName.setText(tr("Unnamed Imagery Layer"));
-        imageryAddPanel.add(menuName, GBC.eop().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
+        add(menuName, GBC.eop().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
 
         final JTabbedPane tabbedPane = new JTabbedPane();
 
         final JPanel wmsFetchPanel = new JPanel(new GridBagLayout());
         tabbedPane.addTab(tr("WMS"), wmsFetchPanel);
-        imageryAddPanel.add(tabbedPane, GBC.eop().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
+        add(tabbedPane, GBC.eop().insets(5,0,0,0).weight(1.0, 1.0).fill(GridBagConstraints.BOTH));
 
         final JTextArea serviceUrlText = new JTextArea(3, 40);
         serviceUrlText.setLineWrap(true);
@@ -102,7 +102,8 @@ public class AddWMSLayerPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(serviceUrlText,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        wmsFetchPanel.add(scrollPane, GBC.eop().insets(5,0,0,0));
+        scrollPane.setMinimumSize(new Dimension(60, 60));
+        wmsFetchPanel.add(scrollPane, GBC.eol().weight(1.0, 0.0).insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
         JButton getLayersButton = new JButton(tr("Get Layers"));
         getLayersButton.addActionListener(new ActionListener() {
             @Override
@@ -165,7 +166,7 @@ public class AddWMSLayerPanel extends JPanel {
                 }
             }
         });
-        wmsFetchPanel.add(new JScrollPane(layerTree), GBC.eop().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
+        wmsFetchPanel.add(new JScrollPane(layerTree), GBC.eol().weight(1.0, 1.0).insets(5,0,0,0).fill(GridBagConstraints.BOTH));
 
         JPanel layerManipulationButtons = new JPanel();
         showBoundsButton = new JButton(tr("Show Bounds"));
@@ -201,7 +202,8 @@ public class AddWMSLayerPanel extends JPanel {
         JScrollPane tmsUrlScrollPane = new JScrollPane(tmsURL,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        tmsView.add(tmsUrlScrollPane, GBC.eop().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
+        tmsUrlScrollPane.setMinimumSize(new Dimension(60, 60));
+        tmsView.add(tmsUrlScrollPane, GBC.eol().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
         tmsView.add(new JLabel(trc("layer", "Zoom")), GBC.std().insets(0,0,5,0));
         tmsZoom = new JTextField(3);
         tmsZoom.addKeyListener(new KeyAdapter() {
@@ -210,13 +212,17 @@ public class AddWMSLayerPanel extends JPanel {
                 resultingLayerField.setText(buildTMSUrl());
             }
         });
-        tmsView.add(tmsZoom, GBC.eop().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
+        tmsView.add(tmsZoom, GBC.eol().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
+        tmsView.add(new JLabel(), GBC.eop().weight(1.0, 1.0).fill(GridBagConstraints.BOTH));
         tabbedPane.addTab(tr("TMS"), tmsView);
 
-        imageryAddPanel.add(new JLabel(tr("Imagery URL")), GBC.std().insets(0,0,5,0));
+        add(new JLabel(tr("Imagery URL")), GBC.std().insets(0,0,5,0));
         resultingLayerField = new JTextArea(3, 40);
         resultingLayerField.setLineWrap(true);
-        imageryAddPanel.add(new JScrollPane(resultingLayerField, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), GBC.eop().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
+        JScrollPane bottomScrollPane = new JScrollPane(resultingLayerField, 
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        bottomScrollPane.setMinimumSize(new Dimension(60, 60));
+        add(bottomScrollPane, GBC.eol().weight(1.0, 0.0).insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
 
         tabbedPane.addChangeListener(new ChangeListener() {
             @Override
@@ -231,8 +237,6 @@ public class AddWMSLayerPanel extends JPanel {
                 }
             }
         });
-
-        add(imageryAddPanel);
     }
 
     private String sanitize(String s) {
@@ -503,14 +507,6 @@ public class AddWMSLayerPanel extends JPanel {
 
     public String getUrl() {
         return resultingLayerField.getText();
-    }
-
-    public static void main(String[] args) {
-        JFrame f = new JFrame("Test");
-        f.setContentPane(new AddWMSLayerPanel());
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.pack();
-        f.setVisible(true);
     }
 
     private static String getChildContent(Element parent, String name, String missing, String empty) {
