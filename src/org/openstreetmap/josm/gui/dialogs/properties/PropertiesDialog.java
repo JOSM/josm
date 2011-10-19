@@ -187,6 +187,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private SearchAction searchActionSame = new SearchAction(true);
     private SearchAction searchActionAny = new SearchAction(false);
     private AddAction addAction = new AddAction();
+    private EditAction editAction = new EditAction();
+    private DeleteAction deleteAction = new DeleteAction();
 
     @Override
     public void showNotify() {
@@ -201,6 +203,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
         SelectionEventManager.getInstance().removeSelectionListener(this);
         MapView.removeEditLayerChangeListener(this);
+        Main.unregisterActionShortcut(addAction);
+        Main.unregisterActionShortcut(editAction);
+        Main.unregisterActionShortcut(deleteAction);
     }
 
     /**
@@ -794,14 +799,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         // -- edit action
         //
-        EditAction editAction = new EditAction();
         propertyTable.getSelectionModel().addListSelectionListener(editAction);
         membershipTable.getSelectionModel().addListSelectionListener(editAction);
         this.btnEdit = new SideButton(editAction);
 
         // -- delete action
         //
-        DeleteAction deleteAction = new DeleteAction();
         this.btnDel = new SideButton(deleteAction);
         membershipTable.getSelectionModel().addListSelectionListener(deleteAction);
         propertyTable.getSelectionModel().addListSelectionListener(deleteAction);
@@ -1090,8 +1093,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         @Override
         protected void updateEnabledState() {
             setEnabled(
-                    PropertiesDialog.this.propertyTable.getSelectedRowCount() >0
-                    || PropertiesDialog.this.membershipTable.getSelectedRowCount() > 0
+                    (propertyTable != null && propertyTable.getSelectedRowCount() == 1)
+                    ^ (membershipTable != null && membershipTable.getSelectedRowCount() == 1)
             );
         }
 
@@ -1138,8 +1141,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         @Override
         protected void updateEnabledState() {
             setEnabled(
-                    propertyTable.getSelectedRowCount() == 1
-                    ^ membershipTable.getSelectedRowCount() == 1
+                    (propertyTable != null && propertyTable.getSelectedRowCount() == 1)
+                    ^ (membershipTable != null && membershipTable.getSelectedRowCount() == 1)
             );
         }
 
