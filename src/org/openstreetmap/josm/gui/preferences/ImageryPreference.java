@@ -6,13 +6,17 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -45,6 +49,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -601,11 +606,24 @@ public class ImageryPreference implements PreferenceSetting {
             }
 
             public void actionPerformed(ActionEvent evt) {
-                AddWMSLayerPanel p = new AddWMSLayerPanel();
+                final AddWMSLayerPanel p = new AddWMSLayerPanel();
+                // This code snippet allows to resize the JOptionPane (fix #6090)
+                p.addHierarchyListener(new HierarchyListener() {
+                    public void hierarchyChanged(HierarchyEvent e) {
+                        Window window = SwingUtilities.getWindowAncestor(p);
+                        if (window instanceof Dialog) {
+                            Dialog dialog = (Dialog)window;
+                            if (!dialog.isResizable()) {
+                                dialog.setResizable(true);
+                                dialog.setMinimumSize(new Dimension(250, 350));
+                            }
+                        }
+                    }
+                });
                 int answer = JOptionPane.showConfirmDialog(
                         gui, p,
                         tr("Add Imagery URL"),
-                        JOptionPane.OK_CANCEL_OPTION);
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (answer == JOptionPane.OK_OPTION) {
                     model.addRow(new ImageryInfo(p.getUrlName(), p.getUrl()));
                 }
