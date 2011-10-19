@@ -15,6 +15,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
 
 import org.openstreetmap.josm.actions.AbstractInfoAction;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
@@ -81,6 +82,19 @@ public class VersionTable extends JTable implements Observer{
 
     public void update(Observable o, Object arg) {
         repaint();
+    }
+
+    /* (non-Javadoc)
+     * @see javax.swing.JTable#tableChanged(javax.swing.event.TableModelEvent)
+     */
+    @Override
+    public void tableChanged(TableModelEvent e) {
+        int selectedRow = getSelectedRow();
+        super.tableChanged(e);
+        // Restore list selection (fix #6899)
+        if (selectedRow > -1 && selectedRow < getRowCount()) {
+            getSelectionModel().setSelectionInterval(0, selectedRow);
+        }
     }
 
     protected void showPopupMenu(MouseEvent evt) {
