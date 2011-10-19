@@ -309,8 +309,7 @@ public class MainApplication extends Main {
     public static void removeObsoletePreferences() {
 
         String[] obsolete = {
-                "proxy.anonymous", // 01/2010 - not needed anymore. Can be removed mid 2010
-                "proxy.enable"     // 01/2010 - not needed anymore. Can be removed mid 2010
+                "edit.make-parallel-way-action.snap-threshold"  // 10/2011 - replaced by snap-threshold-percent. Can be removed mid 2012
         };
         for (String key : obsolete) {
             if (Main.pref.hasKey(key)) {

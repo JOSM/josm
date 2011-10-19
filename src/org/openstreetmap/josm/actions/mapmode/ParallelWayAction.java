@@ -30,6 +30,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.NavigatableComponent.SystemOfMeasurement;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -48,8 +50,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  * 2. Enter exact offset
  *
  * 3. Improve snapping
- *
- * Need at least a setting for step length
  *
  * 4. Visual cues could be better
  *
@@ -95,7 +95,10 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
     private boolean snap;
     private boolean snapDefault;
 
-    private double snapThreshold;
+    private double snapThreshold; 
+    private double snapDistanceMetric;
+    private double snapDistanceImperial;
+    private double snapDistanceChinese;
 
     private ModifiersSpec snapModifierCombo;
     private ModifiersSpec copyTagsModifierCombo;
@@ -195,10 +198,14 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
 
     private void updateModeLocalPreferences() {
         // @formatter:off
-        snapThreshold    = Main.pref.getDouble (prefKey("snap-threshold"), 0.35);
-        snapDefault      = Main.pref.getBoolean(prefKey("snap-default"),      true);
-        copyTagsDefault  = Main.pref.getBoolean(prefKey("copy-tags-default"), true);
-        initialMoveDelay = Main.pref.getInteger(prefKey("initial-move-delay"), 200);
+        //snapThreshold        = Main.pref.getDouble (prefKey("snap-threshold"), 0.35); // Old preference was stored in meters, hence the new name (percent)
+        snapThreshold        = Main.pref.getDouble (prefKey("snap-threshold-percent"), 0.70);
+        snapDefault          = Main.pref.getBoolean(prefKey("snap-default"),      true);
+        copyTagsDefault      = Main.pref.getBoolean(prefKey("copy-tags-default"), true);
+        initialMoveDelay     = Main.pref.getInteger(prefKey("initial-move-delay"), 200);
+        snapDistanceMetric   = Main.pref.getDouble(prefKey("snap-distance-metric"), 0.5);
+        snapDistanceImperial = Main.pref.getDouble(prefKey("snap-distance-imperial"), 1);
+        snapDistanceChinese  = Main.pref.getDouble(prefKey("snap-distance-chinese"), 1);
 
         snapModifierCombo           = new ModifiersSpec(getStringPref("snap-modifier-combo",             "?sC"));
         copyTagsModifierCombo       = new ModifiersSpec(getStringPref("copy-tags-modifier-combo",        "As?"));
@@ -407,12 +414,27 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
 
         if (snap) {
             // TODO: Very simple snapping
-            // - Snap steps and/or threshold relative to the distance?
-            long closestWholeUnit = Math.round(realD);
-            if (Math.abs(closestWholeUnit - realD) < snapThreshold) {
+            // - Snap steps relative to the distance?
+            double snapDistance;
+            SystemOfMeasurement som = NavigatableComponent.getSystemOfMeasurement();
+            if (som.equals(NavigatableComponent.CHINESE_SOM)) {
+                snapDistance = snapDistanceChinese * NavigatableComponent.CHINESE_SOM.aValue;
+            } else if (som.equals(NavigatableComponent.IMPERIAL_SOM)) {
+                snapDistance = snapDistanceImperial * NavigatableComponent.IMPERIAL_SOM.aValue;
+            } else {
+                snapDistance = snapDistanceMetric; // Metric system by default
+            }
+            double closestWholeUnit;
+            double modulo = realD % snapDistance;
+            if (modulo < snapDistance/2.0) {
+                closestWholeUnit = realD - modulo;
+            } else {
+                closestWholeUnit = realD + (snapDistance-modulo);
+            }
+            if (Math.abs(closestWholeUnit - realD) < (snapThreshold * snapDistance)) {
                 snappedRealD = closestWholeUnit;
             } else {
-                snappedRealD = closestWholeUnit + Math.signum(closestWholeUnit - realD) * -0.5;
+                snappedRealD = closestWholeUnit + Math.signum(realD - closestWholeUnit) * snapDistance;
             }
         }
         d = snappedRealD * (d/realD); // convert back to projected distance. (probably ok on small scales)
