@@ -1374,6 +1374,12 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     setupDialog();
                     buttons.get(0).setEnabled(!disableApply);
                     buttons.get(0).setToolTipText(title);
+                    // Prevent dialogs of being too narrow (fix #6261)
+                    Dimension d = getSize();
+                    if (d.width < 350) {
+                        d.width = 350;
+                        setSize(d);
+                    }
                     showDialog();
                 }
             }
