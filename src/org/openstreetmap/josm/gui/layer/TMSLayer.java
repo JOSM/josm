@@ -14,14 +14,11 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.font.TextAttribute;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,7 +65,6 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
-import org.openstreetmap.josm.tools.OpenBrowser;
 
 /**
  * Class that displays a slippy map layer.
@@ -131,18 +127,19 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             Main.debug("tileLoadingFinished() tile: " + tile + " success: " + success);
         }*/
     }
+    
     @Override
     public TileCache getTileCache()
     {
         return tileCache;
     }
+
     void clearTileCache()
     {
-        /*if (debug) {
-            Main.debug("clearing tile storage");
-        }*/
-        tileCache = new MemoryTileCache();
-        tileCache.setCacheSize(200);
+        tileCache.clear();
+        if (tileLoader instanceof OsmFileCacheTileLoader) {
+            ((OsmFileCacheTileLoader)tileLoader).clearCache(tileSource);
+        }
     }
 
     /**
@@ -243,7 +240,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
         currentZoomLevel = getBestZoom();
 
-        clearTileCache();
+        tileCache = new MemoryTileCache();
+
         String cachePath = TMSLayer.PROP_TILECACHE_DIR.get();
         tileLoader = null;
         if (cachePath != null && !cachePath.isEmpty()) {
@@ -440,9 +438,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 new AbstractAction(tr("Flush Tile Cache")) {
                     @Override
                     public void actionPerformed(ActionEvent ae) {
-                        //Main.debug("flushing all tiles...");
                         clearTileCache();
-                        //Main.debug("done");
                     }
                 }));
         // end of adding menu commands
@@ -559,7 +555,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         return currentZoomLevel > this.getMinZoomLvl();
     }
     public boolean decreaseZoomLevel() {
-        int minZoom = this.getMinZoomLvl();
+        //int minZoom = this.getMinZoomLvl();
         if (zoomDecreaseAllowed()) {
             /*if (debug) {
                 Main.debug("decreasing zoom level to: " + currentZoomLevel);
@@ -783,7 +779,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         // default will only return already-existing tiles.  However, we
         // need to return *all* tiles to the callers, so force creation
         // here.
-        boolean forceTileCreation = true;
+        //boolean forceTileCreation = true;
         for (Tile tile : ts.allTilesCreate()) {
             Image img = getLoadedTileImage(tile);
             if (img == null || tile.hasError()) {
@@ -841,8 +837,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             }
         }
 
-        String tileStatus = tile.getStatus();
-        /*if (!tile.isLoaded() && PROP_DRAW_DEBUG.get()) {
+        /*String tileStatus = tile.getStatus();
+        if (!tile.isLoaded() && PROP_DRAW_DEBUG.get()) {
             myDrawString(g, tr("image " + tileStatus), p.x + 2, texty);
             texty += 1 + fontHeight;
         }*/
