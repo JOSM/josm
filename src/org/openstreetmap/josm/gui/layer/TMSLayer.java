@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -221,8 +223,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         PROP_MIN_ZOOM_LVL.put(minZoomLvl);
     }
 
-    public static TileSource getTileSource(ImageryInfo info) {
+    public static TileSource getTileSource(ImageryInfo info) throws IllegalArgumentException {
         if (info.getImageryType() == ImageryType.TMS) {
+            checkUrl(info.getUrl());
             TMSTileSource t = new TemplatedTMSTileSource(info.getName(), info.getUrl(), info.getMinZoom(), info.getMaxZoom());
             info.setAttribution(t);
             return t;
@@ -231,6 +234,26 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         else if (info.getImageryType() == ImageryType.SCANEX)
             return new ScanexTileSource(info.getUrl());
         return null;
+    }
+    
+    public static void checkUrl(String url) throws IllegalArgumentException {
+        if (url == null) {
+            throw new IllegalArgumentException();
+        } else {
+            Matcher m = Pattern.compile("\\{[^}]*\\}").matcher(url);
+            while (m.find()) {
+                boolean isSupportedPattern = false;
+                for (String pattern : TemplatedTMSTileSource.ALL_PATTERNS) {
+                    if (m.group().matches(pattern)) {
+                        isSupportedPattern = true;
+                        break;
+                    }
+                }
+                if (!isSupportedPattern) {
+                    throw new IllegalArgumentException(tr("{0} is not a valid TMS argument. Please check this server URL:\n{1}", m.group(), url));
+                }
+            }
+        }
     }
 
     private void initTileSource(TileSource tileSource)
