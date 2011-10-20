@@ -69,6 +69,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.imagery.Shape;
@@ -625,7 +626,21 @@ public class ImageryPreference implements PreferenceSetting {
                         tr("Add Imagery URL"),
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (answer == JOptionPane.OK_OPTION) {
-                    model.addRow(new ImageryInfo(p.getUrlName(), p.getUrl()));
+                    try {
+                        ImageryInfo info = new ImageryInfo(p.getUrlName(), p.getUrl());
+                        if (ImageryType.TMS.equals(info.getImageryType())) {
+                            TMSLayer.checkUrl(info.getUrl());
+                        }
+                        model.addRow(info);
+                    } catch (IllegalArgumentException ex) {
+                        if (ex.getMessage() == null || ex.getMessage().isEmpty()) {
+                            throw ex;
+                        } else {
+                            JOptionPane.showMessageDialog(Main.parent,
+                                    ex.getMessage(), tr("Error"),
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 }
             }
         }

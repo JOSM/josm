@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.JOptionPane;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
@@ -24,7 +26,17 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled()) return;
-        Main.main.addLayer(ImageryLayer.create(info));
+        try {
+            Main.main.addLayer(ImageryLayer.create(info));
+        } catch (IllegalArgumentException ex) {
+            if (ex.getMessage() == null || ex.getMessage().isEmpty()) {
+                throw ex;
+            } else {
+                JOptionPane.showMessageDialog(Main.parent,
+                        ex.getMessage(), tr("Error"),
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     @Override

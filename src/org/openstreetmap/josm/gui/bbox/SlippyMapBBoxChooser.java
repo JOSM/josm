@@ -1,6 +1,8 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui.bbox;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -17,6 +19,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.swing.JOptionPane;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
@@ -36,7 +40,6 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
-import org.openstreetmap.josm.tools.OpenBrowser;
 
 public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
 
@@ -113,9 +116,17 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
                 if (existingSlippyMapUrls.contains(info.getUrl())) {
                     continue;
                 }
-                TileSource source = TMSLayer.getTileSource(info);
-                if (source != null) {
-                    sources.add(source);
+                try {
+                    TileSource source = TMSLayer.getTileSource(info);
+                    if (source != null) {
+                        sources.add(source);
+                    }
+                } catch (IllegalArgumentException ex) {
+                    if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
+                        JOptionPane.showMessageDialog(Main.parent,
+                                ex.getMessage(), tr("Warning"),
+                                JOptionPane.WARNING_MESSAGE);
+                    }
                 }
             }
             return sources;
