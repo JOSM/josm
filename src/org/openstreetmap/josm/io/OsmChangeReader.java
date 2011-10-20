@@ -8,6 +8,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public class OsmChangeReader extends OsmReader {
@@ -60,39 +61,38 @@ public class OsmChangeReader extends OsmReader {
     }
 
     private void parseDelete() throws XMLStreamException {
-        // Do nothing. If the object has been deleted, do not load it to avoid consistency errors.
-        parseCommon(false);
+        parseCommon(true);
     }
 
     private void parseModify() throws XMLStreamException {
-        parseCommon(true);
+        parseCommon(false);
     }
 
     private void parseCreate() throws XMLStreamException {
-        parseCommon(true);
+        parseCommon(false);
     }
 
-    private void parseCommon(boolean keepPrimitive) throws XMLStreamException {
+    private void parseCommon(boolean deletePrimitive) throws XMLStreamException {
         while (parser.hasNext()) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
+                OsmPrimitive p = null;
                 if (parser.getLocalName().equals("node")) {
-                    if (keepPrimitive) parseNode(); else doNothing();
+                    p = parseNode();
                 } else if (parser.getLocalName().equals("way")) {
-                    if (keepPrimitive) parseWay(); else doNothing();
+                    p = parseWay();
                 } else if (parser.getLocalName().equals("relation")) {
-                    if (keepPrimitive) parseRelation(); else doNothing();
+                    p = parseRelation();
                 } else {
                     parseUnknown();
+                }
+                if (p != null && deletePrimitive) {
+                    p.setDeleted(true);
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 return;
             }
         }
-    }
-    
-    private void doNothing() throws XMLStreamException {
-        while (parser.hasNext() && parser.next() != XMLStreamConstants.END_ELEMENT);
     }
     
     /**
