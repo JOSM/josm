@@ -11,11 +11,11 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.stream.Location;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.Location;
+import javax.xml.stream.XMLStreamReader;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -47,17 +47,17 @@ import org.openstreetmap.josm.tools.DateUtils;
  */
 public class OsmReader extends AbstractReader {
 
-    private XMLStreamReader parser;
+    protected XMLStreamReader parser;
 
     /**
-     * constructor (for private use only)
+     * constructor (for private and subclasses use only)
      *
      * @see #parseDataSet(InputStream, DataSet, ProgressMonitor)
      */
-    private OsmReader() {
+    protected OsmReader() {
     }
 
-    public void setParser(XMLStreamReader parser) {
+    protected void setParser(XMLStreamReader parser) {
         this.parser = parser;
     }
 
@@ -65,15 +65,11 @@ public class OsmReader extends AbstractReader {
         throw new OsmParsingException(msg, parser.getLocation());
     }
 
-    public void parse() throws XMLStreamException {
+    protected void parse() throws XMLStreamException {
         int event = parser.getEventType();
         while (true) {
             if (event == XMLStreamConstants.START_ELEMENT) {
-                if (parser.getLocalName().equals("osm") || parser.getLocalName().equals("osmChange")) {
-                    parseOsm();
-                } else {
-                    parseUnkown();
-                }
+                parseRoot();
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 return;
             }
@@ -84,6 +80,14 @@ public class OsmReader extends AbstractReader {
             }
         }
         parser.close();
+    }
+    
+    protected void parseRoot() throws XMLStreamException {
+        if (parser.getLocalName().equals("osm")) {
+            parseOsm();
+        } else {
+            parseUnknown();
+        }
     }
 
     private void parseOsm() throws XMLStreamException {
@@ -114,7 +118,7 @@ public class OsmReader extends AbstractReader {
                 } else if (parser.getLocalName().equals("changeset")) {
                     parseChangeset(uploadChangesetId);
                 } else {
-                    parseUnkown();
+                    parseUnknown();
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 return;
@@ -151,7 +155,7 @@ public class OsmReader extends AbstractReader {
         jumpToEnd();
     }
 
-    private void parseNode() throws XMLStreamException {
+    protected void parseNode() throws XMLStreamException {
         NodeData nd = new NodeData();
         nd.setCoor(new LatLon(Double.parseDouble(parser.getAttributeValue(null, "lat")), Double.parseDouble(parser.getAttributeValue(null, "lon"))));
         readCommon(nd);
@@ -165,7 +169,7 @@ public class OsmReader extends AbstractReader {
                 if (parser.getLocalName().equals("tag")) {
                     parseTag(n);
                 } else {
-                    parseUnkown();
+                    parseUnknown();
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 return;
@@ -173,7 +177,7 @@ public class OsmReader extends AbstractReader {
         }
     }
 
-    private void parseWay() throws XMLStreamException {
+    protected void parseWay() throws XMLStreamException {
         WayData wd = new WayData();
         readCommon(wd);
         Way w = new Way(wd.getId(), wd.getVersion());
@@ -190,7 +194,7 @@ public class OsmReader extends AbstractReader {
                 } else if (parser.getLocalName().equals("tag")) {
                     parseTag(w);
                 } else {
-                    parseUnkown();
+                    parseUnknown();
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 break;
@@ -219,7 +223,7 @@ public class OsmReader extends AbstractReader {
         return id;
     }
 
-    private void parseRelation() throws XMLStreamException {
+    protected void parseRelation() throws XMLStreamException {
         RelationData rd = new RelationData();
         readCommon(rd);
         Relation r = new Relation(rd.getId(), rd.getVersion());
@@ -236,7 +240,7 @@ public class OsmReader extends AbstractReader {
                 } else if (parser.getLocalName().equals("tag")) {
                     parseTag(r);
                 } else {
-                    parseUnkown();
+                    parseUnknown();
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 break;
@@ -292,7 +296,7 @@ public class OsmReader extends AbstractReader {
                     if (parser.getLocalName().equals("tag")) {
                         parseTag(uploadChangeset);
                     } else {
-                        parseUnkown();
+                        parseUnknown();
                     }
                 } else if (event == XMLStreamConstants.END_ELEMENT) {
                     return;
@@ -313,22 +317,22 @@ public class OsmReader extends AbstractReader {
         jumpToEnd();
     }
 
-    private void parseUnkown(boolean printWarning) throws XMLStreamException {
+    protected void parseUnknown(boolean printWarning) throws XMLStreamException {
         if (printWarning) {
             System.out.println(tr("Undefined element ''{0}'' found in input stream. Skipping.", parser.getLocalName()));
         }
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
-                parseUnkown(false); /* no more warning for inner elements */
+                parseUnknown(false); /* no more warning for inner elements */
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 return;
             }
         }
     }
 
-    private void parseUnkown() throws XMLStreamException {
-        parseUnkown(true);
+    protected void parseUnknown() throws XMLStreamException {
+        parseUnknown(true);
     }
 
     /**
@@ -342,7 +346,7 @@ public class OsmReader extends AbstractReader {
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
-                parseUnkown(printWarning);
+                parseUnknown(printWarning);
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 return;
             }
@@ -530,36 +534,25 @@ public class OsmReader extends AbstractReader {
         }
     }
 
-    /**
-     * Parse the given input source and return the dataset.
-     *
-     * @param source the source input stream. Must not be null.
-     * @param progressMonitor  the progress monitor. If null, {@see NullProgressMonitor#INSTANCE} is assumed
-     *
-     * @return the dataset with the parsed data
-     * @throws IllegalDataException thrown if the an error was found while parsing the data from the source
-     * @throws IllegalArgumentException thrown if source is null
-     */
-    public static DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
+    protected DataSet doParseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
         CheckParameterUtil.ensureParameterNotNull(source, "source");
-        OsmReader reader = new OsmReader();
         try {
             progressMonitor.beginTask(tr("Prepare OSM data...", 2));
             progressMonitor.indeterminateSubTask(tr("Parsing OSM data..."));
 
             InputStreamReader ir = UTFInputStreamReader.create(source, "UTF-8");
             XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(ir);
-            reader.setParser(parser);
-            reader.parse();
+            setParser(parser);
+            parse();
             progressMonitor.worked(1);
 
             progressMonitor.indeterminateSubTask(tr("Preparing data set..."));
-            reader.prepareDataSet();
+            prepareDataSet();
             progressMonitor.worked(1);
-            return reader.getDataSet();
+            return getDataSet();
         } catch(IllegalDataException e) {
             throw e;
         } catch(OsmParsingException e) {
@@ -581,5 +574,19 @@ public class OsmReader extends AbstractReader {
         } finally {
             progressMonitor.finishTask();
         }
+    }
+    
+    /**
+     * Parse the given input source and return the dataset.
+     *
+     * @param source the source input stream. Must not be null.
+     * @param progressMonitor  the progress monitor. If null, {@see NullProgressMonitor#INSTANCE} is assumed
+     *
+     * @return the dataset with the parsed data
+     * @throws IllegalDataException thrown if the an error was found while parsing the data from the source
+     * @throws IllegalArgumentException thrown if source is null
+     */
+    public static DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
+        return new OsmReader().doParseDataSet(source, progressMonitor);
     }
 }

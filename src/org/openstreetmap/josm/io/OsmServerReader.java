@@ -141,6 +141,10 @@ public abstract class OsmServerReader extends OsmConnection {
 
     public abstract DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException;
 
+    public DataSet parseOsmChange(ProgressMonitor progressMonitor) throws OsmTransferException {
+        return null;
+    }
+    
     public GpxData parseRawGps(ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
     }

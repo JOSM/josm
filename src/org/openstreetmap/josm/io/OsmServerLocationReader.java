@@ -47,6 +47,37 @@ public class OsmServerLocationReader extends OsmServerReader {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.openstreetmap.josm.io.OsmServerReader#parseOsmChange(org.openstreetmap.josm.gui.progress.ProgressMonitor)
+     */
+    @Override
+    public DataSet parseOsmChange(ProgressMonitor progressMonitor)
+            throws OsmTransferException {
+        InputStream in = null;
+        progressMonitor.beginTask(tr("Contacting Server...", 10));
+        try {
+            in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(9, false));
+            if (in == null)
+                return null;
+            progressMonitor.subTask(tr("Downloading OSM data..."));
+            return OsmChangeReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+        } catch(OsmTransferException e) {
+            throw e;
+        } catch (Exception e) {
+            if (cancel)
+                return null;
+            throw new OsmTransferException(e);
+        } finally {
+            progressMonitor.finishTask();
+            try {
+                activeConnection = null;
+                if (in != null) {
+                    in.close();
+                }
+            } catch(Exception e) {/* ignore it */}
+        }
+    }
+
     @Override
     public GpxData parseRawGps(ProgressMonitor progressMonitor) throws OsmTransferException {
         InputStream in = null;

@@ -32,6 +32,8 @@ public class DownloadOsmTask extends AbstractDownloadTask {
     protected Bounds currentBounds;
     protected DataSet downloadedData;
     protected DownloadTask downloadTask;
+    
+    protected OsmDataLayer targetLayer;
 
     protected void rememberDownloadedData(DataSet ds) {
         this.downloadedData = ds;
@@ -78,7 +80,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         }
     }
 
-     protected  class DownloadTask extends PleaseWaitRunnable {
+    protected class DownloadTask extends PleaseWaitRunnable {
         protected OsmServerReader reader;
         protected DataSet dataSet;
         protected boolean newLayer;
@@ -88,12 +90,16 @@ public class DownloadOsmTask extends AbstractDownloadTask {
             this.reader = reader;
             this.newLayer = newLayer;
         }
+        
+        protected DataSet parseDataSet() throws OsmTransferException {
+            return reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+        }
 
         @Override public void realRun() throws IOException, SAXException, OsmTransferException {
             try {
                 if (isCanceled())
                     return;
-                dataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+                dataSet = parseDataSet();
             } catch(Exception e) {
                 if (isCanceled()) {
                     System.out.println(tr("Ignoring exception because download has been canceled. Exception was: {0}", e.toString()));
@@ -160,38 +166,35 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 // the user explicitly wants a new layer, we don't have any layer at all
                 // or it is not clear which layer to merge to
                 //
-                OsmDataLayer layer = createNewLayer();
+                targetLayer = createNewLayer();
                 final boolean isDisplayingMapView = Main.isDisplayingMapView();
 
-                Main.main.addLayer(layer);
+                Main.main.addLayer(targetLayer);
 
                 // If the mapView is not there yet, we cannot calculate the bounds (see constructor of MapView).
                 // Otherwise jump to the current download.
                 if (isDisplayingMapView) {
-                    BoundingXYVisitor v = new BoundingXYVisitor();
-                    if (currentBounds != null) {
-                        v.visit(currentBounds);
-                    } else {
-                        v.computeBoundingBox(dataSet.getNodes());
-                    }
-                    Main.map.mapView.recalculateCenterScale(v);
+                    computeBboxAndCenterScale();
                 }
             } else {
-                OsmDataLayer target;
-                target = getEditLayer();
-                if (target == null) {
-                    target = getFirstDataLayer();
+                targetLayer = getEditLayer();
+                if (targetLayer == null) {
+                    targetLayer = getFirstDataLayer();
                 }
-                target.mergeFrom(dataSet);
-                BoundingXYVisitor v = new BoundingXYVisitor();
-                if (currentBounds != null) {
-                    v.visit(currentBounds);
-                } else {
-                    v.computeBoundingBox(dataSet.getNodes());
-                }
-                Main.map.mapView.recalculateCenterScale(v);
-                target.onPostDownloadFromServer();
+                targetLayer.mergeFrom(dataSet);
+                computeBboxAndCenterScale();
+                targetLayer.onPostDownloadFromServer();
             }
+        }
+        
+        protected void computeBboxAndCenterScale() {
+            BoundingXYVisitor v = new BoundingXYVisitor();
+            if (currentBounds != null) {
+                v.visit(currentBounds);
+            } else {
+                v.computeBoundingBox(dataSet.getNodes());
+            }
+            Main.map.mapView.recalculateCenterScale(v);
         }
 
         @Override protected void cancel() {
