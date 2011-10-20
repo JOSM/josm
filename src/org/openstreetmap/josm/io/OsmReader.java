@@ -155,7 +155,7 @@ public class OsmReader extends AbstractReader {
         jumpToEnd();
     }
 
-    protected void parseNode() throws XMLStreamException {
+    protected Node parseNode() throws XMLStreamException {
         NodeData nd = new NodeData();
         nd.setCoor(new LatLon(Double.parseDouble(parser.getAttributeValue(null, "lat")), Double.parseDouble(parser.getAttributeValue(null, "lon"))));
         readCommon(nd);
@@ -172,12 +172,12 @@ public class OsmReader extends AbstractReader {
                     parseUnknown();
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
-                return;
+                return n;
             }
         }
     }
 
-    protected void parseWay() throws XMLStreamException {
+    protected Way parseWay() throws XMLStreamException {
         WayData wd = new WayData();
         readCommon(wd);
         Way w = new Way(wd.getId(), wd.getVersion());
@@ -205,6 +205,7 @@ public class OsmReader extends AbstractReader {
             nodeIds = new ArrayList<Long>();
         }
         ways.put(wd.getUniqueId(), nodeIds);
+        return w;
     }
 
     private long parseWayNode(Way w) throws XMLStreamException {
@@ -223,7 +224,7 @@ public class OsmReader extends AbstractReader {
         return id;
     }
 
-    protected void parseRelation() throws XMLStreamException {
+    protected Relation parseRelation() throws XMLStreamException {
         RelationData rd = new RelationData();
         readCommon(rd);
         Relation r = new Relation(rd.getId(), rd.getVersion());
@@ -251,6 +252,7 @@ public class OsmReader extends AbstractReader {
             members = new ArrayList<RelationMemberData>();
         }
         relations.put(rd.getUniqueId(), members);
+        return r;
     }
 
     private RelationMemberData parseRelationMember(Relation r) throws XMLStreamException {
