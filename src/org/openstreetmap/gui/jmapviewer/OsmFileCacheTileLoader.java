@@ -19,6 +19,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.logging.Level;
@@ -51,6 +53,8 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
     public static final long FILE_AGE_ONE_WEEK = FILE_AGE_ONE_DAY * 7;
 
     protected String cacheDirBase;
+    
+    protected final Map<TileSource, File> sourceCacheDirMap;
 
     protected long maxCacheFileAge = FILE_AGE_ONE_WEEK;
     protected long recheckAfter = FILE_AGE_ONE_DAY;
@@ -95,6 +99,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 
         log.finest("Tile cache directory: " + cacheDir);
         cacheDirBase = cacheDir.getAbsolutePath();
+        sourceCacheDirMap = new HashMap<TileSource, File>();
     }
 
     /**
@@ -111,6 +116,17 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
         return new FileLoadJob(source, tilex, tiley, zoom);
     }
 
+    protected File getSourceCacheDir(TileSource source) {
+        File dir = sourceCacheDirMap.get(source);
+        if (dir == null) {
+            dir = new File(cacheDirBase, source.getName().replaceAll("[\\\\/:*?\"<>|]", "_"));
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+        }
+        return dir;
+    }
+    
     protected class FileLoadJob implements Runnable {
         InputStream input = null;
 
@@ -139,10 +155,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
                 tile.error = false;
                 tile.loading = true;
             }
-            tileCacheDir = new File(cacheDirBase, source.getName().replaceAll("[\\\\/:*?\"<>|]", "_"));
-            if (!tileCacheDir.exists()) {
-                tileCacheDir.mkdirs();
-            }
+            tileCacheDir = getSourceCacheDir(source);
             if (loadTileFromFile())
                 return;
             if (fileTilePainted) {
@@ -462,5 +475,14 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
         dir.mkdirs();
         this.cacheDirBase = dir.getAbsolutePath();
     }
-
+    
+    public void clearCache(TileSource source) {
+        File dir = getSourceCacheDir(source);
+        if (dir.isDirectory()) {
+            for (File file : dir.listFiles()) {
+                file.delete();
+            }
+        }
+        dir.delete();
+    }
 }
