@@ -40,6 +40,7 @@ public class ExtensionFileFilter extends FileFilter {
         String[] importerNames = {
                 "org.openstreetmap.josm.io.OsmImporter",
                 "org.openstreetmap.josm.io.OsmGzipImporter",
+                "org.openstreetmap.josm.io.OsmChangeImporter",
                 "org.openstreetmap.josm.io.GpxImporter",
                 "org.openstreetmap.josm.io.NMEAImporter",
                 "org.openstreetmap.josm.io.OsmBzip2Importer",

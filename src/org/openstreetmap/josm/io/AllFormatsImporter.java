@@ -12,7 +12,7 @@ import org.openstreetmap.josm.actions.ExtensionFileFilter;
  */
 public class AllFormatsImporter extends FileImporter {
     public AllFormatsImporter() {
-        super(new ExtensionFileFilter("osm,xml,osm.gz,osm.bz2,osm.bz,gpx,gpx.gz,nmea,nme,nma,log,txt,wms,jpg", "", tr("All Formats")
+        super(new ExtensionFileFilter("osm,xml,osm.gz,osm.bz2,osm.bz,osc,gpx,gpx.gz,nmea,nme,nma,log,txt,wms,jpg", "", tr("All Formats")
                     + " (*.gpx *.osm *.nmea *.jpg ...)"));
     }
     @Override public boolean acceptFile(File pathname) {
