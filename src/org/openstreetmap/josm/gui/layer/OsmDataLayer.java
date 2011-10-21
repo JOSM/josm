@@ -50,6 +50,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -395,7 +396,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
      * @param processed A list of all objects that were actually uploaded.
      *         May be <code>null</code>, which means nothing has been uploaded
      */
-    public void cleanupAfterUpload(final Collection<OsmPrimitive> processed) {
+    public void cleanupAfterUpload(final Collection<IPrimitive> processed) {
         // return immediately if an upload attempt failed
         if (processed == null || processed.isEmpty())
             return;

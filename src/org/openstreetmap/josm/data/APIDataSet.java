@@ -16,6 +16,7 @@ import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
@@ -215,7 +216,7 @@ public class APIDataSet {
         return toAdd.size() + toUpdate.size() + toDelete.size();
     }
 
-    public void removeProcessed(Collection<OsmPrimitive> processed) {
+    public void removeProcessed(Collection<IPrimitive> processed) {
         if (processed == null) return;
         toAdd.removeAll(processed);
         toUpdate.removeAll(processed);

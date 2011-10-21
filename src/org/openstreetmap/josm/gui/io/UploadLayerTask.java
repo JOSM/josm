@@ -9,6 +9,7 @@ import java.util.HashSet;
 import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
@@ -42,7 +43,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
     private ProgressMonitor monitor;
     private Changeset changeset;
     private Collection<OsmPrimitive> toUpload;
-    private HashSet<OsmPrimitive> processedPrimitives;
+    private HashSet<IPrimitive> processedPrimitives;
     private UploadStrategySpecification strategy;
 
     /**
@@ -65,7 +66,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
         this.monitor = monitor;
         this.changeset = changeset;
         this.strategy = strategy;
-        processedPrimitives = new HashSet<OsmPrimitive>();
+        processedPrimitives = new HashSet<IPrimitive>();
     }
 
     protected OsmPrimitive getPrimitive(OsmPrimitiveType type, long id) {
@@ -92,7 +93,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
             // we tried to delete an already deleted primitive.
             //
             System.out.println(tr("Warning: object ''{0}'' is already deleted on the server. Skipping this object and retrying to upload.", p.getDisplayName(DefaultNameFormatter.getInstance())));
-            processedPrimitives.addAll((Collection) writer.getProcessedPrimitives());
+            processedPrimitives.addAll(writer.getProcessedPrimitives());
             processedPrimitives.add(p);
             toUpload.removeAll(processedPrimitives);
             return;
@@ -123,7 +124,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
                     ProgressMonitor m = monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
                     if (isCanceled()) return;
                     writer.uploadOsm(strategy, toUpload, changeset, m);
-                    processedPrimitives.addAll((Collection) writer.getProcessedPrimitives()); // OsmPrimitive in => OsmPrimitive out
+                    processedPrimitives.addAll(writer.getProcessedPrimitives()); // OsmPrimitive in => OsmPrimitive out
                     break;
                 } catch(OsmApiPrimitiveGoneException e) {
                     recoverFromGoneOnServer(e, monitor);

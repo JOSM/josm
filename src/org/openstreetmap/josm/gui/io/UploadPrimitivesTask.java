@@ -8,7 +8,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.HashSet;
 
 import javax.swing.JOptionPane;
@@ -18,6 +17,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -44,7 +44,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
     private OsmServerWriter writer;
     private OsmDataLayer layer;
     private Changeset changeset;
-    private HashSet<OsmPrimitive> processedPrimitives;
+    private HashSet<IPrimitive> processedPrimitives;
     private UploadStrategySpecification strategy;
 
     /**
@@ -69,7 +69,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
         this.layer = layer;
         this.changeset = changeset;
         this.strategy = strategy;
-        this.processedPrimitives = new HashSet<OsmPrimitive>();
+        this.processedPrimitives = new HashSet<IPrimitive>();
     }
 
     protected MaxChangesetSizeExceededPolicy askMaxChangesetSizeExceedsPolicy() {
@@ -190,7 +190,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
             //
             System.out.println(tr("Warning: object ''{0}'' is already deleted on the server. Skipping this object and retrying to upload.", p.getDisplayName(DefaultNameFormatter.getInstance())));
             monitor.appendLogMessage(tr("Object ''{0}'' is already deleted. Skipping object in upload.",p.getDisplayName(DefaultNameFormatter.getInstance())));
-            processedPrimitives.addAll((Collection) writer.getProcessedPrimitives());
+            processedPrimitives.addAll(writer.getProcessedPrimitives());
             processedPrimitives.add(p);
             toUpload.removeProcessed(processedPrimitives);
             return;
@@ -244,7 +244,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                     //
                     recoverFromGoneOnServer(e, getProgressMonitor());
                 } catch(ChangesetClosedException e) {
-                    processedPrimitives.addAll((Collection) writer.getProcessedPrimitives()); // OsmPrimitive in => OsmPrimitive out
+                    processedPrimitives.addAll(writer.getProcessedPrimitives()); // OsmPrimitive in => OsmPrimitive out
                     changeset.setOpen(false);
                     switch(e.getSource()) {
                     case UNSPECIFIED:
@@ -269,7 +269,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                     }
                 } finally {
                     if (writer != null) {
-                        processedPrimitives.addAll((Collection) writer.getProcessedPrimitives());
+                        processedPrimitives.addAll(writer.getProcessedPrimitives());
                     }
                     synchronized(this) {
                         writer = null;
