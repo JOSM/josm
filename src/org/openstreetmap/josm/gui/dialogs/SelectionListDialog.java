@@ -34,6 +34,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
@@ -223,7 +224,19 @@ public class SelectionListDialog extends ToggleDialog  {
     public JMenuItem addPopupMenuAction(Action a) {
         return popupMenu.add(a);
     }
+    
+    public void addPopupMenuListener(PopupMenuListener l) {
+        popupMenu.addPopupMenuListener(l);
+    }
 
+    public void removePopupMenuListener(PopupMenuListener l) {
+        popupMenu.addPopupMenuListener(l);
+    }
+    
+    public Collection<OsmPrimitive> getSelectedPrimitives() {
+        return model.getSelected();
+    }
+    
     /**
      * Updates the dialog title with a summary of the current JOSM selection
      */

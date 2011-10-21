@@ -29,6 +29,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -805,6 +806,18 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
     public JMenuItem addPopupMenuAction(Action a) {
         return popupMenu.add(a);
+    }
+
+    public void addPopupMenuListener(PopupMenuListener l) {
+        popupMenu.addPopupMenuListener(l);
+    }
+
+    public void removePopupMenuListener(PopupMenuListener l) {
+        popupMenu.addPopupMenuListener(l);
+    }
+    
+    public Collection<Relation> getSelectedRelations() {
+        return model.getSelectedRelations();
     }
 
     /* ---------------------------------------------------------------------------------- */
