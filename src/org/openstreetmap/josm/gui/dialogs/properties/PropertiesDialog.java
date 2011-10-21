@@ -57,6 +57,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
@@ -70,6 +71,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -1255,14 +1257,45 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         return propertyMenu.add(a);
     }
     
+    public void addPropertyPopupMenuListener(PopupMenuListener l) {
+        propertyMenu.addPopupMenuListener(l);
+    }
+
+    public void removePropertyPopupMenuListener(PopupMenuListener l) {
+        propertyMenu.addPopupMenuListener(l);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public Tag getSelectedProperty() {
+        int row = propertyTable.getSelectedRow();
+        if (row == -1) return null;
+        TreeMap<String, Integer> map = (TreeMap<String, Integer>) propertyData.getValueAt(row, 1);
+        return new Tag(
+                propertyData.getValueAt(row, 0).toString(), 
+                map.size() > 1 ? "" : map.keySet().iterator().next());
+    }
+    
     public void addMembershipPopupMenuSeparator() {
         membershipMenu.addSeparator();
     }
-
+    
     public JMenuItem addMembershipPopupMenuAction(Action a) {
         return membershipMenu.add(a);
     }
     
+    public void addMembershipPopupMenuListener(PopupMenuListener l) {
+        membershipMenu.addPopupMenuListener(l);
+    }
+
+    public void removeMembershipPopupMenuListener(PopupMenuListener l) {
+        membershipMenu.addPopupMenuListener(l);
+    }
+    
+    public IRelation getSelectedMembershipRelation() {
+        int row = membershipTable.getSelectedRow();
+        return row > -1 ? (IRelation) membershipData.getValueAt(row, 0) : null;
+    }
+
     public static interface RelationRelated {
         public Relation getRelation();
         public void setRelation(Relation relation);
