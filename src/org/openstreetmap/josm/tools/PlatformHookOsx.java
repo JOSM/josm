@@ -29,9 +29,9 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
     public void startupHook() {
         // Here we register callbacks for the menu entries in the system menu
         try {
-            Class Ccom_apple_eawt_Application = Class.forName("com.apple.eawt.Application");
+            Class<?> Ccom_apple_eawt_Application = Class.forName("com.apple.eawt.Application");
             Object Ocom_apple_eawt_Application = Ccom_apple_eawt_Application.getConstructor((Class[])null).newInstance((Object[])null);
-            Class Ccom_apple_eawt_ApplicationListener = Class.forName("com.apple.eawt.ApplicationListener");
+            Class<?> Ccom_apple_eawt_ApplicationListener = Class.forName("com.apple.eawt.ApplicationListener");
             Method MaddApplicationListener = Ccom_apple_eawt_Application.getDeclaredMethod("addApplicationListener", new Class[] { Ccom_apple_eawt_ApplicationListener });
             Object Oproxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class[] { Ccom_apple_eawt_ApplicationListener }, ivhandler);
             MaddApplicationListener.invoke(Ocom_apple_eawt_Application, new Object[] { Oproxy });
