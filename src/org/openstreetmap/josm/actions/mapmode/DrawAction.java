@@ -52,9 +52,10 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
- *
+ * Mapmode to add nodes, create and extend ways.
  */
 public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, AWTEventListener {
     final private Cursor cursorJoinNode;
@@ -97,6 +98,18 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private void redrawIfRequired() {
         updateStatusLine();
         if ((!drawHelperLine || wayIsFinished) && !drawTargetHighlight) return;
+        // update selection to reflect which way being modified
+        if (currentBaseNode != null && getCurrentDataSet().getSelected().isEmpty() == false) {
+            Way continueFrom = getWayForNode(currentBaseNode);
+            if (alt && continueFrom != null) {
+                getCurrentDataSet().beginUpdate(); // to prevent the selection listener to screw around with the state
+                getCurrentDataSet().addSelected(currentBaseNode);
+                getCurrentDataSet().clearSelection(continueFrom);
+                getCurrentDataSet().endUpdate();
+            } else if (!alt && continueFrom != null) {
+                getCurrentDataSet().addSelected(continueFrom);
+            }
+        }
         Main.map.mapView.repaint();
     }
 
@@ -293,9 +306,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 // select the clicked node and do nothing else
                 // (this is just a convenience option so that people don't
                 // have to switch modes)
-                newSelection.clear();
-                newSelection.add(n);
+
                 getCurrentDataSet().setSelected(n);
+                // If we extend/continue an existing way, select it already now to make it obvious
+                Way continueFrom = getWayForNode(n);
+                if (continueFrom != null) {
+                    getCurrentDataSet().addSelected(continueFrom);
+                }
+
                 // The user explicitly selected a node, so let him continue drawing
                 wayIsFinished = false;
                 return;
@@ -717,7 +735,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      */
     public Way getWayForNode(Node n) {
         Way way = null;
-        for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
+        for (Way w : Utils.filteredCollection(n.getReferrers(), Way.class)) {
             if (!w.isUsable() || w.getNodesCount() < 1) {
                 continue;
             }
