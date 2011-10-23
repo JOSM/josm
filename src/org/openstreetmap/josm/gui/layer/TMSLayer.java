@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,7 +108,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     protected MemoryTileCache tileCache;
     protected TileSource tileSource;
-    protected TileLoader tileLoader;
+    protected OsmTileLoader tileLoader;
     JobDispatcher jobDispatcher = JobDispatcher.getInstance();
 
     HashSet<Tile> tileRequestsOutstanding = new HashSet<Tile>();
@@ -275,6 +276,13 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         }
         if (tileLoader == null) {
             tileLoader = new OsmTileLoader(this);
+        }
+        tileLoader.timeoutConnect = Main.pref.getInteger("socket.timeout.connect",15) * 1000;
+        tileLoader.timeoutRead = Main.pref.getInteger("socket.timeout.read", 30) * 1000;
+        if (tileSource instanceof TemplatedTMSTileSource) {
+            for(Entry<String, String> e : ((TemplatedTMSTileSource)tileSource).getHeaders().entrySet()) {
+                tileLoader.headers.put(e.getKey(), e.getValue());
+            }
         }
     }
 
