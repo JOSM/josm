@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.HashMap;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
@@ -21,15 +24,17 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 public class OsmTileLoader implements TileLoader {
 
     /**
-     * Holds the used user agent used for HTTP requests. If this field is
-     * <code>null</code>, the default Java user agent is used.
+     * Holds the HTTP headers. Insert e.g. User-Agent here when default should not be used.
      */
-    public static String USER_AGENT = null;
-    public static String ACCEPT = "text/html, image/png, image/jpeg, image/gif, */*";
+    public Map<String, String> headers = new HashMap<String, String>();
+
+    public int timeoutConnect = 0;
+    public int timeoutRead = 0;
 
     protected TileLoaderListener listener;
 
     public OsmTileLoader(TileLoaderListener listener) {
+        headers.put("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
         this.listener = listener;
     }
 
@@ -101,10 +106,13 @@ public class OsmTileLoader implements TileLoader {
     }
 
     protected void prepareHttpUrlConnection(HttpURLConnection urlConn) {
-        if (USER_AGENT != null) {
-            urlConn.setRequestProperty("User-agent", USER_AGENT);
+        for(Entry<String, String> e : headers.entrySet()) {
+            urlConn.setRequestProperty(e.getKey(), e.getValue());
         }
-        urlConn.setRequestProperty("Accept", ACCEPT);
+        if(timeoutConnect != 0)
+            urlConn.setConnectTimeout(timeoutConnect);
+        if(timeoutRead != 0)
+            urlConn.setReadTimeout(timeoutRead);
     }
 
     @Override
