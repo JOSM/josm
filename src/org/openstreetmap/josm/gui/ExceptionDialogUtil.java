@@ -298,6 +298,22 @@ public class ExceptionDialogUtil {
     }
 
     /**
+     * Explains a {@see OsmApiException} which was thrown because of a
+     * bandwidth limit (HTTP 509)
+     *
+     * @param e the exception
+     */
+    public static void explainBandwidthLimitExceeded(OsmApiException e) {
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainBandwidthLimitExceeded(e),
+                tr("Bandwidth Limit Exceeded"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#BandwidthLimit")
+        );
+    }
+
+    /**
      * Explains a {@see OsmApiException} with a generic error
      * message.
      *
@@ -439,6 +455,9 @@ public class ExceptionDialogUtil {
                 return;
             case HttpURLConnection.HTTP_CLIENT_TIMEOUT:
                 explainClientTimeout(oae);
+                return;
+            case 509:
+                explainBandwidthLimitExceeded(oae);
                 return;
             default:
                 explainGenericHttpException(oae);
