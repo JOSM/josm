@@ -11,6 +11,8 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -27,11 +29,13 @@ import org.openstreetmap.josm.data.Bounds;
  */
 public class LatLon extends Coordinate {
 
+    
     /**
      * Minimum difference in location to not be represented as the same position.
      * The API returns 7 decimals.
      */
     public static final double MAX_SERVER_PRECISION = 1e-7;
+    public static final int    MAX_SERVER_DIGITS = 7;
 
     private static DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
     private static DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
@@ -239,7 +243,10 @@ public class LatLon extends Coordinate {
      * @return rounded value
      */
     public static double roundToOsmPrecision(double value) {
-        return Math.round(value / MAX_SERVER_PRECISION) * MAX_SERVER_PRECISION;
+        double absV = Math.abs(value);
+        int numOfDigits = MAX_SERVER_DIGITS + (absV < 1 ? 0 : (absV < 10 ? 1 : (absV < 100 ? 2 : 3))); 
+        return BigDecimal.valueOf(value).round(new MathContext(numOfDigits)).doubleValue();
+        //return Math.round(value / MAX_SERVER_PRECISION) * MAX_SERVER_PRECISION; // Old method, causes rounding errors (see LatLonTest) !
     }
     
     /**
