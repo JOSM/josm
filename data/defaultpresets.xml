@@ -2407,6 +2407,10 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="leisure" value="fishing" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Private Swimming Pool" icon="presets/swimming.png" type="node,closedway">
+            <key key="leisure" value="swimming_pool" />
+            <key key="access" value="private" />
+        </item>
     </group> <!-- Leisure -->
     <group name="Culture" icon="presets/theater.png">
         <item name="Museum" icon="presets/State_Public.png" type="node,closedway">
@@ -2782,7 +2786,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <label text="select sport:" />
             <space />
-            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" default="" delete_if_empty="true" />
+            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,table_tennis,tennis" default="" delete_if_empty="true" />
         </item>
         <item name="Racetrack" icon="presets/stadium.png" type="node,way,closedway,relation">
             <label text="Edit Racetrack" />
@@ -2791,7 +2795,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <label text="select sport:" />
             <space />
-            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" default="" delete_if_empty="true" />
+            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,table_tennis,tennis" default="" delete_if_empty="true" />
         </item>
         <item name="Golf Course" icon="presets/golf.png" type="node,closedway">
             <label text="Edit Golf Course" />
@@ -2889,7 +2893,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Swimming" />
             <key key="sport" value="swimming" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="sports_centre,stadium,swimming_pool" default="swimming_pool" delete_if_empty="true" />
         </item>
         <item name="Skiing" icon="presets/skiing_downhill.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps"/>
