@@ -195,8 +195,11 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         left.add(remove, GBC.eol());
         left.add(in_selection, GBC.eop());
         left.add(caseSensitive, GBC.eol());
-        left.add(allElements, GBC.eol());
-        left.add(regexSearch, GBC.eol());
+        if(Main.pref.getBoolean("expert", false))
+        {
+            left.add(allElements, GBC.eol());
+            left.add(regexSearch, GBC.eol());
+        }
 
         JPanel right = new JPanel();
         DescriptionTextBuilder descriptionText = new DescriptionTextBuilder();
@@ -209,27 +212,30 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         descriptionText.appendItem(tr("<b>key=*</b> - key ''key'' with any value. Try also <b>*=value</b>, <b>key=</b>, <b>*=*</b>, <b>*=</b>"));
         descriptionText.appendItem(tr("<b>key:</b> - key ''key'' set to any value"));
         descriptionText.appendItem(tr("<b>key?</b> - key ''key'' with the value ''yes'', ''true'', ''1'' or ''on''"));
-        descriptionText.appendItemHeader(tr("Special targets"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>type:</b>... - objects with corresponding type (<b>node</b>, <b>way</b>, <b>relation</b>)"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>user:</b>... - objects changed by user"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>user:anonymous</b> - objects changed by anonymous users"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>id:</b>... - objects with given ID (0 for new objects)"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>version:</b>... - objects with given version (0 objects without an assigned version)"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>changeset:</b>... - objects with given changeset ID (0 objects without an assigned changeset)"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>nodes:</b>... - objects with given number of nodes (<b>nodes:</b>count, <b>nodes:</b>min-max, <b>nodes:</b>min- or <b>nodes:</b>-max)"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>tags:</b>... - objects with given number of tags (<b>tags:</b>count, <b>tags:</b>min-max, <b>tags:</b>min- or <b>tags:</b>-max)"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>role:</b>... - objects with given role in a relation"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>timestamp:</b>... - objects with this timestamp (2009-11-12T14:51:09Z, 2009-11-12 or T14:51 ...)"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>areasize:</b>... - closed ways with given area in m\u00b2 (<b>areasize:</b>min-max or <b>areasize:</b>max)"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>modified</b> - all changed objects"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>selected</b> - all selected objects"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>incomplete</b> - all incomplete objects"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>untagged</b> - all untagged objects"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>closed</b> - all closed ways (a node is not considered closed)"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>child <i>expr</i></b> - all children of objects matching the expression"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>parent <i>expr</i></b> - all parents of objects matching the expression"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>(all)indownloadedarea</b> - objects (and all its way nodes / relation members) in downloaded area"));
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>(all)inview</b> - objects (and all its way nodes / relation members) in current view"));
+        if(Main.pref.getBoolean("expert", false))
+        {
+            descriptionText.appendItemHeader(tr("Special targets"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>type:</b>... - objects with corresponding type (<b>node</b>, <b>way</b>, <b>relation</b>)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>user:</b>... - objects changed by user"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>user:anonymous</b> - objects changed by anonymous users"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>id:</b>... - objects with given ID (0 for new objects)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>version:</b>... - objects with given version (0 objects without an assigned version)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>changeset:</b>... - objects with given changeset ID (0 objects without an assigned changeset)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>nodes:</b>... - objects with given number of nodes (<b>nodes:</b>count, <b>nodes:</b>min-max, <b>nodes:</b>min- or <b>nodes:</b>-max)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>tags:</b>... - objects with given number of tags (<b>tags:</b>count, <b>tags:</b>min-max, <b>tags:</b>min- or <b>tags:</b>-max)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>role:</b>... - objects with given role in a relation"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>timestamp:</b>... - objects with this timestamp (2009-11-12T14:51:09Z, 2009-11-12 or T14:51 ...)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>areasize:</b>... - closed ways with given area in m\u00b2 (<b>areasize:</b>min-max or <b>areasize:</b>max)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>modified</b> - all changed objects"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>selected</b> - all selected objects"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>incomplete</b> - all incomplete objects"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>untagged</b> - all untagged objects"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>closed</b> - all closed ways (a node is not considered closed)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>child <i>expr</i></b> - all children of objects matching the expression"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>parent <i>expr</i></b> - all parents of objects matching the expression"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>(all)indownloadedarea</b> - objects (and all its way nodes / relation members) in downloaded area"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>(all)inview</b> - objects (and all its way nodes / relation members) in current view"));
+        }
         /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("Use <b>|</b> or <b>OR</b> to combine with logical or"));
         descriptionText.appendItem(tr("Use <b>\"</b> to quote operators (e.g. if key contains <b>:</b>)")
                 + "<br/>"
