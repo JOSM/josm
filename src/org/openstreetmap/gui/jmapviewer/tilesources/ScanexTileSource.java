@@ -30,7 +30,7 @@ public class ScanexTileSource extends AbstractTMSTileSource {
     private ScanexLayer Layer = ScanexLayer.IRS;
 
     public ScanexTileSource(String url) {
-        super("Scanex" + url, "http://maps.kosmosnimki.ru");
+        super("Scanex " + url, "http://maps.kosmosnimki.ru");
 
         for (ScanexLayer layer : ScanexLayer.values()) {
             if (url.equalsIgnoreCase(layer.getName())) {
