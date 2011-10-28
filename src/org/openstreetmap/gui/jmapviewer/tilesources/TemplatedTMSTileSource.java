@@ -7,22 +7,24 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 public class TemplatedTMSTileSource extends TMSTileSource {
-    
+
     private Random rand = null;
     private String[] randomParts = null;
     private Map<String, String> headers = new HashMap<String, String>();
-    
+
     public static final String PATTERN_ZOOM    = "\\{(?:(\\d+)-)?zoom([+-]\\d+)?\\}";
     public static final String PATTERN_X       = "\\{x\\}";
     public static final String PATTERN_Y       = "\\{y\\}";
     public static final String PATTERN_Y_YAHOO = "\\{!y\\}";
+    public static final String PATTERN_NEG_Y   = "\\{-y\\}";
     public static final String PATTERN_SWITCH  = "\\{switch:([^}]+)\\}";
     public static final String PATTERN_HEADER  = "\\{header\\(([^,]+),([^}]+)\\)\\}";
-    
+
     public static final String[] ALL_PATTERNS = {
-        PATTERN_HEADER, PATTERN_ZOOM, PATTERN_X, PATTERN_Y, PATTERN_Y_YAHOO, PATTERN_SWITCH
+        PATTERN_HEADER, PATTERN_ZOOM, PATTERN_X, PATTERN_Y, PATTERN_Y_YAHOO, PATTERN_NEG_Y,
+        PATTERN_SWITCH
     };
-    
+
     public TemplatedTMSTileSource(String name, String url, int maxZoom) {
         super(name, url, maxZoom);
         handleTemplate();
@@ -74,7 +76,8 @@ public class TemplatedTMSTileSource extends TMSTileSource {
             .replaceAll(PATTERN_ZOOM, Integer.toString(finalZoom))
             .replaceAll(PATTERN_X, Integer.toString(tilex))
             .replaceAll(PATTERN_Y, Integer.toString(tiley))
-            .replaceAll(PATTERN_Y_YAHOO, Integer.toString((int)Math.pow(2, zoom)-1-tiley));
+            .replaceAll(PATTERN_Y_YAHOO, Integer.toString((int)Math.pow(2, zoom-1)-1-tiley))
+            .replaceAll(PATTERN_NEG_Y, Integer.toString((int)Math.pow(2, zoom)-1-tiley));
         if (rand != null) {
             r = r.replaceAll(PATTERN_SWITCH, randomParts[rand.nextInt(randomParts.length)]);
         }
