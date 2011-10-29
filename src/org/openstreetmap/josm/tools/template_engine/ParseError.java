@@ -20,12 +20,21 @@ public class ParseError extends Exception {
         this.unexpectedToken = unexpectedToken;
     }
 
-    public ParseError(org.openstreetmap.josm.actions.search.SearchCompiler.ParseError e) {
-        super(tr("Error while parsing search expression"), e);
+    public ParseError(int position, org.openstreetmap.josm.actions.search.SearchCompiler.ParseError e) {
+        super(tr("Error while parsing search expression on position {0}", position), e);
+        unexpectedToken = null;
+    }
+
+    public ParseError(String message) {
+        super(message);
         unexpectedToken = null;
     }
 
     public Token getUnexpectedToken() {
         return unexpectedToken;
+    }
+
+    public static ParseError unexpectedChar(char expected, char found, int position) {
+        return new ParseError(tr("Unexpected char on {0}. Expected {1} found {2}", position, expected, found));
     }
 }

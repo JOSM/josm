@@ -12,7 +12,10 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.osm.DatasetFactory;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.unitils.reflectionassert.ReflectionAssert;
 
 public class TemplateEngineTest {
@@ -149,8 +152,133 @@ public class TemplateEngineTest {
         StringBuilder sb = new StringBuilder();
         templateEntry.appendText(sb, dataProvider);
         Assert.assertEquals("waypointNameulocalNameuspecialKey", sb.toString());
-
     }
 
+    @Test
+    public void testSearchExpression() throws Exception {
+        Match match = compile("(parent type=type1 type=parent1) | (parent type=type2 type=parent2)");
+        //"parent(type=type1,type=parent1) | (parent(type=type2,type=parent2)"
+        //TODO
+    }
+
+    @Test
+    public void testSwitchContext() throws Exception {
+        TemplateParser parser = new TemplateParser("!{parent() type=parent2 '{name}'}");
+        DatasetFactory ds = new DatasetFactory();
+        Relation parent1 = ds.addRelation(1);
+        parent1.put("type", "parent1");
+        parent1.put("name", "name_parent1");
+        Relation parent2 = ds.addRelation(2);
+        parent2.put("type", "parent2");
+        parent2.put("name", "name_parent2");
+        Node child = ds.addNode(1);
+        parent1.addMember(new RelationMember("", child));
+        parent2.addMember(new RelationMember("", child));
+
+        StringBuilder sb = new StringBuilder();
+        TemplateEntry entry = parser.parse();
+        entry.appendText(sb, child);
+
+        Assert.assertEquals("name_parent2", sb.toString());
+    }
+
+    @Test
+    public void testSetOr() throws ParseError {
+        TemplateParser parser = new TemplateParser("!{(parent(type=type1) type=parent1) | (parent type=type2 type=parent2) '{name}'}");
+        DatasetFactory ds = new DatasetFactory();
+        Relation parent1 = ds.addRelation(1);
+        parent1.put("type", "parent1");
+        parent1.put("name", "name_parent1");
+        Relation parent2 = ds.addRelation(2);
+        parent2.put("type", "parent2");
+        parent2.put("name", "name_parent2");
+        Node child1 = ds.addNode(1);
+        child1.put("type", "type1");
+        parent1.addMember(new RelationMember("", child1));
+        parent2.addMember(new RelationMember("", child1));
+        Node child2 = ds.addNode(2);
+        child2.put("type", "type2");
+        parent1.addMember(new RelationMember("", child2));
+        parent2.addMember(new RelationMember("", child2));
+
+
+        StringBuilder sb = new StringBuilder();
+        TemplateEntry entry = parser.parse();
+        entry.appendText(sb, child1);
+        entry.appendText(sb, child2);
+
+        Assert.assertEquals("name_parent1name_parent2", sb.toString());
+    }
+
+    @Test
+    public void testMultilevel() throws ParseError {
+        TemplateParser parser = new TemplateParser("!{(parent(parent(type=type1)) type=grandparent) | (parent type=type2 type=parent2) '{name}'}");
+        DatasetFactory ds = new DatasetFactory();
+        Relation parent1 = ds.addRelation(1);
+        parent1.put("type", "parent1");
+        parent1.put("name", "name_parent1");
+        Relation parent2 = ds.addRelation(2);
+        parent2.put("type", "parent2");
+        parent2.put("name", "name_parent2");
+        Node child1 = ds.addNode(1);
+        child1.put("type", "type1");
+        parent1.addMember(new RelationMember("", child1));
+        parent2.addMember(new RelationMember("", child1));
+        Node child2 = ds.addNode(2);
+        child2.put("type", "type2");
+        parent1.addMember(new RelationMember("", child2));
+        parent2.addMember(new RelationMember("", child2));
+        Relation grandParent = ds.addRelation(3);
+        grandParent.put("type", "grandparent");
+        grandParent.put("name", "grandparent_name");
+        grandParent.addMember(new RelationMember("", parent1));
+
+
+        StringBuilder sb = new StringBuilder();
+        TemplateEntry entry = parser.parse();
+        entry.appendText(sb, child1);
+        entry.appendText(sb, child2);
+
+        Assert.assertEquals("grandparent_namename_parent2", sb.toString());
+    }
+
+    @Test(expected=ParseError.class)
+    public void testErrorsNot() throws ParseError {
+        TemplateParser parser = new TemplateParser("!{-parent() '{name}'}");
+        parser.parse();
+    }
+
+    @Test(expected=ParseError.class)
+    public void testErrorOr() throws ParseError {
+        TemplateParser parser = new TemplateParser("!{parent() | type=type1 '{name}'}");
+        parser.parse();
+    }
+
+    @Test
+    public void testChild() throws ParseError {
+        TemplateParser parser = new TemplateParser("!{((child(type=type1) type=child1) | (child type=type2 type=child2)) type=child2 '{name}'}");
+        DatasetFactory ds = new DatasetFactory();
+        Relation parent1 = ds.addRelation(1);
+        parent1.put("type", "type1");
+        Relation parent2 = ds.addRelation(2);
+        parent2.put("type", "type2");
+        Node child1 = ds.addNode(1);
+        child1.put("type", "child1");
+        child1.put("name", "child1");
+        parent1.addMember(new RelationMember("", child1));
+        parent2.addMember(new RelationMember("", child1));
+        Node child2 = ds.addNode(2);
+        child2.put("type", "child2");
+        child2.put("name", "child2");
+        parent1.addMember(new RelationMember("", child2));
+        parent2.addMember(new RelationMember("", child2));
+
+
+        StringBuilder sb = new StringBuilder();
+        TemplateEntry entry = parser.parse();
+        entry.appendText(sb, parent2);
+
+        Assert.assertEquals("child2", sb.toString());
+    }
 
 }

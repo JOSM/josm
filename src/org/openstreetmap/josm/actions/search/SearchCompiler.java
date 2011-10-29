@@ -68,9 +68,8 @@ public class SearchCompiler {
          */
         protected boolean existsMatch(Collection<? extends OsmPrimitive> primitives) {
             for (OsmPrimitive p : primitives) {
-                if (match(p)) {
+                if (match(p))
                     return true;
-                }
             }
             return false;
         }
@@ -80,9 +79,8 @@ public class SearchCompiler {
          */
         protected boolean forallMatch(Collection<? extends OsmPrimitive> primitives) {
             for (OsmPrimitive p : primitives) {
-                if (!match(p)) {
+                if (!match(p))
                     return false;
-                }
             }
             return true;
         }
@@ -109,6 +107,9 @@ public class SearchCompiler {
             return !match.match(osm);
         }
         @Override public String toString() {return "!"+match;}
+        public Match getMatch() {
+            return match;
+        }
     }
 
     private static class BooleanMatch extends Match {
@@ -129,24 +130,36 @@ public class SearchCompiler {
         }
     }
 
-    private static class And extends Match {
-        private Match lhs;
-        private Match rhs;
+    public static class And extends Match {
+        private final Match lhs;
+        private final Match rhs;
         public And(Match lhs, Match rhs) {this.lhs = lhs; this.rhs = rhs;}
         @Override public boolean match(OsmPrimitive osm) {
             return lhs.match(osm) && rhs.match(osm);
         }
         @Override public String toString() {return lhs+" && "+rhs;}
+        public Match getLhs() {
+            return lhs;
+        }
+        public Match getRhs() {
+            return rhs;
+        }
     }
 
-    private static class Or extends Match {
-        private Match lhs;
-        private Match rhs;
+    public static class Or extends Match {
+        private final Match lhs;
+        private final Match rhs;
         public Or(Match lhs, Match rhs) {this.lhs = lhs; this.rhs = rhs;}
         @Override public boolean match(OsmPrimitive osm) {
             return lhs.match(osm) || rhs.match(osm);
         }
         @Override public String toString() {return lhs+" || "+rhs;}
+        public Match getLhs() {
+            return lhs;
+        }
+        public Match getRhs() {
+            return rhs;
+        }
     }
 
     private static class Id extends Match {
@@ -551,11 +564,10 @@ public class SearchCompiler {
         @Override
         public boolean match(OsmPrimitive osm) {
             Integer count = getCount(osm);
-            if (count == null) {
+            if (count == null)
                 return false;
-            } else {
+            else
                 return (count >= minCount) && (count <= maxCount);
-            }
         }
 
         @Override
@@ -574,11 +586,10 @@ public class SearchCompiler {
 
         @Override
         protected Integer getCount(OsmPrimitive osm) {
-            if (!(osm instanceof Way)) {
+            if (!(osm instanceof Way))
                 return null;
-            } else {
+            else
                 return ((Way) osm).getNodesCount();
-            }
         }
 
         @Override
@@ -648,17 +659,19 @@ public class SearchCompiler {
         @Override public String toString() {return "closed";}
     }
 
-    private static class Parent extends Match {
-        private Match child;
-        public Parent(Match m) { child = m; }
+    public static class Parent extends Match {
+        private final Match child;
+        public Parent(Match m) {
+            if (m == null) {
+                // "parent" (null) should mean the same as "parent()"
+                // (Always). I.e. match everything
+                child = new Always();
+            } else {
+                child = m;
+            }
+        }
         @Override public boolean match(OsmPrimitive osm) {
             boolean isParent = false;
-
-            // "parent" (null) should mean the same as "parent()"
-            // (Always). I.e. match everything
-            if (child == null) {
-                child = new Always();
-            }
 
             if (osm instanceof Way) {
                 for (Node n : ((Way)osm).getNodes()) {
@@ -672,9 +685,12 @@ public class SearchCompiler {
             return isParent;
         }
         @Override public String toString() {return "parent(" + child + ")";}
+        public Match getChild() {
+            return child;
+        }
     }
 
-    private static class Child extends Match {
+    public static class Child extends Match {
         private final Match parent;
 
         public Child(Match m) {
@@ -695,11 +711,15 @@ public class SearchCompiler {
             return isChild;
         }
         @Override public String toString() {return "child(" + parent + ")";}
+
+        public Match getParent() {
+            return parent;
+        }
     }
-    
+
     /**
      * Matches on the area of a closed way.
-     * 
+     *
      * @author Ole Jørgen Brønner
      */
     private static class Area extends CountRange {
@@ -710,9 +730,8 @@ public class SearchCompiler {
 
         @Override
         protected Integer getCount(OsmPrimitive osm) {
-            if (!(osm instanceof Way && ((Way) osm).isClosed())) {
+            if (!(osm instanceof Way && ((Way) osm).isClosed()))
                 return null;
-            }
             Way way = (Way) osm;
             return (int) Geometry.closedWayArea(way);
         }
@@ -742,19 +761,18 @@ public class SearchCompiler {
 
         @Override
         public boolean match(OsmPrimitive osm) {
-            if (!osm.isUsable()) {
+            if (!osm.isUsable())
                 return false;
-            } else if (osm instanceof Node) {
+            else if (osm instanceof Node)
                 return bounds.contains(((Node) osm).getCoor());
-            } else if (osm instanceof Way) {
+            else if (osm instanceof Way) {
                 Collection<Node> nodes = ((Way) osm).getNodes();
                 return all ? forallMatch(nodes) : existsMatch(nodes);
             } else if (osm instanceof Relation) {
                 Collection<OsmPrimitive> primitives = ((Relation) osm).getMemberPrimitives();
                 return all ? forallMatch(primitives) : existsMatch(primitives);
-            } else {
+            } else
                 return false;
-            }
         }
     }
 
@@ -798,7 +816,7 @@ public class SearchCompiler {
     }
 
     public static Match compile(String searchStr, boolean caseSensitive, boolean regexSearch)
-    throws ParseError {
+            throws ParseError {
         return new SearchCompiler(caseSensitive, regexSearch,
                 new PushbackTokenizer(
                         new PushbackReader(new StringReader(searchStr))))
