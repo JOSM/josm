@@ -2,12 +2,15 @@
 package org.openstreetmap.josm.tools.template_engine;
 
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import org.openstreetmap.josm.actions.search.SearchCompiler;
+import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.tools.template_engine.Tokenizer.Token;
 import org.openstreetmap.josm.tools.template_engine.Tokenizer.TokenType;
 
@@ -41,6 +44,8 @@ public class TemplateParser {
             Token token = tokenizer.lookAhead();
             if (token.getType() == TokenType.CONDITION_START) {
                 templateEntry = parseCondition();
+            } else if (token.getType() == TokenType.CONTEXT_SWITCH_START) {
+                templateEntry = parseContextSwitch();
             } else if (token.getType() == TokenType.VARIABLE_START) {
                 templateEntry = parseVariable();
             } else if (endTokens.contains(token.getType()))
@@ -62,7 +67,7 @@ public class TemplateParser {
         return new Variable(variableName);
     }
 
-    private void skipWhitespace() {
+    private void skipWhitespace() throws ParseError {
         Token token = tokenizer.lookAhead();
         if (token.getType() == TokenType.TEXT && token.getText().trim().isEmpty()) {
             tokenizer.nextToken();
@@ -75,17 +80,17 @@ public class TemplateParser {
         while (true) {
 
             TemplateEntry condition;
-            String searchExpression = tokenizer.skip('\'');
+            Token searchExpression = tokenizer.skip('\'');
             check(TokenType.APOSTROPHE);
             condition = parseExpression(CONDITION_WITH_APOSTROPHES_END_TOKENS);
             check(TokenType.APOSTROPHE);
-            if (searchExpression.trim().isEmpty()) {
+            if (searchExpression.getText().trim().isEmpty()) {
                 result.getEntries().add(condition);
             } else {
                 try {
-                    result.getEntries().add(new SearchExpressionCondition(SearchCompiler.compile(searchExpression, false, false), condition));
+                    result.getEntries().add(new SearchExpressionCondition(SearchCompiler.compile(searchExpression.getText(), false, false), condition));
                 } catch (org.openstreetmap.josm.actions.search.SearchCompiler.ParseError e) {
-                    throw new ParseError(e);
+                    throw new ParseError(searchExpression.getPosition(), e);
                 }
             }
             skipWhitespace();
@@ -98,6 +103,29 @@ public class TemplateParser {
                 check(TokenType.PIPE);
             }
         }
+    }
+
+    private TemplateEntry parseContextSwitch() throws ParseError {
+
+        check(TokenType.CONTEXT_SWITCH_START);
+        Token searchExpression = tokenizer.skip('\'');
+        check(TokenType.APOSTROPHE);
+        TemplateEntry template = parseExpression(CONDITION_WITH_APOSTROPHES_END_TOKENS);
+        check(TokenType.APOSTROPHE);
+        ContextSwitchTemplate result;
+        if (searchExpression.getText().trim().isEmpty())
+            throw new ParseError(tr("Expected search expression"));
+        else {
+            try {
+                Match match = SearchCompiler.compile(searchExpression.getText(), false, false);
+                result = new ContextSwitchTemplate(match, template, searchExpression.getPosition());
+            } catch (org.openstreetmap.josm.actions.search.SearchCompiler.ParseError e) {
+                throw new ParseError(searchExpression.getPosition(), e);
+            }
+        }
+        skipWhitespace();
+        check(TokenType.END);
+        return result;
     }
 
 }

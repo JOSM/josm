@@ -39,7 +39,7 @@ public class Tokenizer {
         }
     }
 
-    public enum TokenType { CONDITION_START, VARIABLE_START, END, PIPE, APOSTROPHE, TEXT, EOF }
+    public enum TokenType { CONDITION_START, VARIABLE_START, CONTEXT_SWITCH_START, END, PIPE, APOSTROPHE, TEXT, EOF }
 
     private final List<Character> specialCharaters = Arrays.asList(new Character[] {'$', '?', '{', '}', '|', '\''});
 
@@ -63,7 +63,7 @@ public class Tokenizer {
         }
     }
 
-    public Token nextToken() {
+    public Token nextToken() throws ParseError {
         if (currentToken != null) {
             Token result = currentToken;
             currentToken = null;
@@ -78,14 +78,20 @@ public class Tokenizer {
         case '{':
             getChar();
             return new Token(TokenType.VARIABLE_START, position);
-
         case '?':
             getChar();
             if (c == '{') {
                 getChar();
                 return new Token(TokenType.CONDITION_START, position);
             } else
-                throw new AssertionError();
+                throw ParseError.unexpectedChar('{', (char)c, position);
+        case '!':
+            getChar();
+            if (c == '{') {
+                getChar();
+                return new Token(TokenType.CONTEXT_SWITCH_START, position);
+            } else
+                throw ParseError.unexpectedChar('{', (char)c, position);
         case '}':
             getChar();
             return new Token(TokenType.END, position);
@@ -110,15 +116,16 @@ public class Tokenizer {
         }
     }
 
-    public Token lookAhead() {
+    public Token lookAhead() throws ParseError {
         if (currentToken == null) {
             currentToken = nextToken();
         }
         return currentToken;
     }
 
-    public String skip(char lastChar) {
+    public Token skip(char lastChar) {
         currentToken = null;
+        int position = index;
         StringBuilder result = new StringBuilder();
         while (c != lastChar && c != -1) {
             if (c == '\\') {
@@ -127,7 +134,7 @@ public class Tokenizer {
             result.append((char)c);
             getChar();
         }
-        return result.toString();
+        return new Token(TokenType.TEXT, position, result.toString());
     }
 
 }
