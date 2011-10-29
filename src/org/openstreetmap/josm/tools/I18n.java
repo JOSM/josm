@@ -504,6 +504,8 @@ public class I18n {
            for all multi strings:
            {
              unsigned char (1 byte) stringcount
+               - count 0 indicates missing translations
+               - count 0xFE indicates translations equal to original, but otherwise is equal to length 0
              for stringcount
                unsigned short (2 byte) stringlength
                string
@@ -523,6 +525,8 @@ public class I18n {
                 {
                     int ennum = ens.read();
                     int trnum = trs.read();
+                    if(trnum == 0xFE) /* marks identical string, handle equally to non-translated */
+                        trnum = 0;
                     if((ennum == -1 && trnum != -1) || (ennum != -1 && trnum == -1)) /* files do not match */
                         return false;
                     if(ennum == -1) {
