@@ -11,6 +11,7 @@
 				<element name="collection" type="tns:collection" />
 			</choice>
 		</sequence>
+		<attribute name="version" type="string" />
 	</complexType>
 
 	<complexType name="tag">
