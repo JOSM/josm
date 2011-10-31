@@ -10,6 +10,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -132,6 +133,12 @@ public class DownloadDialog extends JDialog  {
         pnl.add(sizeCheck,  GBC.eol().anchor(GBC.EAST).insets(5,5,5,5));
 
         return pnl;
+    }
+
+    /* This should not be necessary, but if not here, repaint is not always correct in SlippyMap! */
+    public void paint(Graphics g) {
+        tpDownloadAreaSelectors.getSelectedComponent().paint(g);
+        super.paint(g);
     }
 
     protected JPanel buildButtonPanel() {
