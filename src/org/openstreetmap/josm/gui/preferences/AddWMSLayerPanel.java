@@ -52,10 +52,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionSubPrefs;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
+import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.tools.GBC;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -501,12 +504,17 @@ public class AddWMSLayerPanel extends JPanel {
         return false;
     }
 
-    public String getUrlName() {
-        return menuName.getText();
-    }
-
-    public String getUrl() {
-        return resultingLayerField.getText();
+    public ImageryInfo getImageryInfo() {
+        ImageryInfo info = new ImageryInfo(menuName.getText(), resultingLayerField.getText());
+        if (ImageryType.TMS.equals(info.getImageryType())) {
+            TMSLayer.checkUrl(info.getUrl());
+        } else {
+            HashSet<String> proj = new HashSet<String>();
+            for(LayerDetails l : selectedLayers)
+                proj.addAll(l.getProjections());
+            info.setServerProjections(proj);
+        }
+        return info;
     }
 
     private static String getChildContent(Element parent, String name, String missing, String empty) {
@@ -564,6 +572,7 @@ public class AddWMSLayerPanel extends JPanel {
         private String ident;
         private List<LayerDetails> children;
         private Bounds bounds;
+        private Set<String> crsList;
         private boolean supported;
 
         public LayerDetails(String name, String ident, Set<String> crsList,
@@ -574,10 +583,15 @@ public class AddWMSLayerPanel extends JPanel {
             this.supported = supportedLayer;
             this.children = childLayers;
             this.bounds = bounds;
+            this.crsList = crsList;
         }
 
         public boolean isSupported() {
             return this.supported;
+        }
+
+        public Set<String> getProjections() {
+            return crsList;
         }
 
         @Override
