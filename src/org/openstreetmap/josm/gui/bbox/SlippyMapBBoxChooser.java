@@ -381,5 +381,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         setMapMarkerList(marker);
         setDisplayToFitMapMarkers();
         zoomOut();
+        repaint();
     }
 }
