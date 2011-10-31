@@ -627,11 +627,7 @@ public class ImageryPreference implements PreferenceSetting {
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (answer == JOptionPane.OK_OPTION) {
                     try {
-                        ImageryInfo info = new ImageryInfo(p.getUrlName(), p.getUrl());
-                        if (ImageryType.TMS.equals(info.getImageryType())) {
-                            TMSLayer.checkUrl(info.getUrl());
-                        }
-                        model.addRow(info);
+                        model.addRow(p.getImageryInfo());
                     } catch (IllegalArgumentException ex) {
                         if (ex.getMessage() == null || ex.getMessage().isEmpty()) {
                             throw ex;
