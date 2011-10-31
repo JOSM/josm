@@ -384,13 +384,7 @@ public class Preferences {
 
         final PrintWriter out = new PrintWriter(new OutputStreamWriter(
                 new FileOutputStream(prefFile + "_tmp"), "utf-8"), false);
-        for (final Entry<String, String> e : properties.entrySet()) {
-            String s = defaults.get(e.getKey());
-            /* don't save default values */
-            if(s == null || !s.equals(e.getValue())) {
-                out.println(e.getKey() + "=" + e.getValue());
-            }
-        }
+        out.print(toXML(false));
         out.close();
 
         File tmpFile = new File(prefFile + "_tmp");
@@ -437,27 +431,35 @@ public class Preferences {
         }
     }
 
-    public void load() throws IOException {
+    public void load() throws Exception {
         properties.clear();
         if(!Main.applet) {
             final BufferedReader in = new BufferedReader(new InputStreamReader(
                     new FileInputStream(getPreferencesDir()+"preferences"), "utf-8"));
-            int lineNumber = 0;
-            ArrayList<Integer> errLines = new ArrayList<Integer>();
-            for (String line = in.readLine(); line != null; line = in.readLine(), lineNumber++) {
-                final int i = line.indexOf('=');
-                if (i == -1 || i == 0) {
-                    errLines.add(lineNumber);
-                    continue;
+            /* FIXME: TODO: remove old style config file end of 2012 */
+            in.mark(1);
+            int v = in.read();
+            in.reset();
+            if(v == '<') {
+                fromXML(in);
+            } else {
+                int lineNumber = 0;
+                ArrayList<Integer> errLines = new ArrayList<Integer>();
+                for (String line = in.readLine(); line != null; line = in.readLine(), lineNumber++) {
+                    final int i = line.indexOf('=');
+                    if (i == -1 || i == 0) {
+                        errLines.add(lineNumber);
+                        continue;
+                    }
+                    String key = line.substring(0,i);
+                    String value = line.substring(i+1);
+                    if (!value.isEmpty()) {
+                        properties.put(key, value);
+                    }
                 }
-                String key = line.substring(0,i);
-                String value = line.substring(i+1);
-                if (!value.isEmpty()) {
-                    properties.put(key, value);
-                }
+                if (!errLines.isEmpty())
+                    throw new IOException(tr("Malformed config file at lines {0}", errLines));
             }
-            if (!errLines.isEmpty())
-                throw new IOException(tr("Malformed config file at lines {0}", errLines));
         }
         updateSystemProperties();
         /* FIXME: TODO: remove special version check end of 2012 */
@@ -524,7 +526,7 @@ public class Preferences {
         }
         try {
             load();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             File backupFile = new File(prefDir,"preferences.bak");
             JOptionPane.showMessageDialog(
@@ -1066,32 +1068,37 @@ public class Preferences {
     public String toXML(boolean nopass) {
         StringBuilder b = new StringBuilder(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-        "<preferences xmlns=\"http://josm.openstreetmap.de/preferences-1.0\">\n");
+                "<preferences xmlns=\"http://josm.openstreetmap.de/preferences-1.0\" version=\""+
+                Version.getInstance().getVersion() + "\">\n");
         for (Entry<String, String> p : properties.entrySet()) {
             if (nopass && p.getKey().equals("osm-server.password")) {
                 continue; // do not store plain password.
             }
             String r = p.getValue();
-            if(r.contains("\u001e"))
-            {
-                b.append(" <collection key='");
-                b.append(XmlWriter.encode(p.getKey()));
-                b.append("'>\n");
-                for (String val : r.split("\u001e", -1))
+            String s = defaults.get(p.getKey());
+            /* don't save default values */
+            if(s == null || !s.equals(r)) {
+                if(r.contains("\u001e"))
                 {
-                    b.append("  <entry value='");
-                    b.append(XmlWriter.encode(val));
+                    b.append(" <collection key='");
+                    b.append(XmlWriter.encode(p.getKey()));
+                    b.append("'>\n");
+                    for (String val : r.split("\u001e", -1))
+                    {
+                        b.append("  <entry value='");
+                        b.append(XmlWriter.encode(val));
+                        b.append("' />\n");
+                    }
+                    b.append(" </collection>\n");
+                }
+                else
+                {
+                    b.append(" <tag key='");
+                    b.append(XmlWriter.encode(p.getKey()));
+                    b.append("' value='");
+                    b.append(XmlWriter.encode(p.getValue()));
                     b.append("' />\n");
                 }
-                b.append(" </collection>\n");
-            }
-            else
-            {
-                b.append(" <tag key='");
-                b.append(XmlWriter.encode(p.getKey()));
-                b.append("' value='");
-                b.append(XmlWriter.encode(p.getValue()));
-                b.append("' />\n");
             }
         }
         b.append("</preferences>");
