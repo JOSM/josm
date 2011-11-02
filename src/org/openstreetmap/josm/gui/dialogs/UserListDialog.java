@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -26,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -95,11 +93,15 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         columnModel.getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                final JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                label.setIcon((ImageIcon)value);
-                label.setText("");
-                return label;
-            };
+                // see http://download.oracle.com/javase/6/docs/api/javax/swing/table/DefaultTableCellRenderer.html#override
+                // for why we don't use the label directly
+                final JLabel renderLabel = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                JLabel sourceLabel = (JLabel) value;
+                renderLabel.setIcon(sourceLabel.getIcon());
+                renderLabel.setText("");
+                renderLabel.setToolTipText(sourceLabel.getToolTipText());
+                return renderLabel;
+            }
         });
 
         // -- select users primitives action
@@ -327,16 +329,22 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
      */
     static class UserTableModel extends DefaultTableModel {
         private ArrayList<UserInfo> data;
-        private ImageIcon greenCheckmark;
-        private ImageIcon greyCheckmark;
-        private ImageIcon redX;
+        private JLabel greenCheckmark;
+        private JLabel greyCheckmark;
+        private JLabel redX;
+        private JLabel empty;
 
         public UserTableModel() {
             setColumnIdentifiers(new String[]{tr("Author"),tr("# Objects"),"%", tr("CT")});
             data = new ArrayList<UserInfo>();
-            greenCheckmark = ImageProvider.get("misc", "green_check.png");
-            greyCheckmark = ImageProvider.get("misc", "grey_check.png");
-            redX = ImageProvider.get("misc", "red_x.png");
+            greenCheckmark = new JLabel(ImageProvider.get("misc", "green_check.png"));
+            greenCheckmark.setToolTipText(tr("Accepted"));
+            greyCheckmark = new JLabel(ImageProvider.get("misc", "grey_check.png"));
+            greyCheckmark.setToolTipText("Auto-accepted");
+            redX = new JLabel(ImageProvider.get("misc", "red_x.png"));
+            redX.setToolTipText("Declined");
+            empty = new JLabel("");
+            empty.setToolTipText("Undecided");
         }
 
         protected Map<User, Integer> computeStatistics(Collection<? extends OsmPrimitive> primitives) {
@@ -382,7 +390,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
                 case User.STATUS_AGREED: return greenCheckmark;
                 case User.STATUS_AUTO_AGREED: return greyCheckmark;
                 case User.STATUS_NOT_AGREED: return redX;
-                default: return null;
+                default: return empty; // Undecided or unknown?
                 }
             }
             return null;
