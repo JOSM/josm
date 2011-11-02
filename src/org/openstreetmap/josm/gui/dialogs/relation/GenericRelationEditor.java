@@ -67,8 +67,8 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandler;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -1117,7 +1117,7 @@ public class GenericRelationEditor extends RelationEditor  {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                	// Relation list gets update in EDT so selecting my be postponed to following EDT run
+                    // Relation list gets update in EDT so selecting my be postponed to following EDT run
                     Main.map.relationListDialog.selectRelation(newRelation);
                 }
             });
@@ -1267,7 +1267,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
     }
 
-    class CancelAction extends AbstractAction {
+    class CancelAction extends SavingAction {
         public CancelAction() {
             putValue(SHORT_DESCRIPTION, tr("Cancel the updates and close the dialog"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
@@ -1280,7 +1280,72 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         public void actionPerformed(ActionEvent e) {
+            if (!memberTableModel.hasSameMembersAs(getRelationSnapshot()) || tagEditorPanel.getModel().isDirty()) {
+                //give the user a chance to save the changes
+                int ret = confirmClosingByCancel();
+                if (ret == 0) { //Yes, save the changes
+                    //copied from OKAction.run()
+                    Main.pref.put("relation.editor.generic.lastrole", tfRole.getText());
+                    if (getRelation() == null) {
+                        applyNewRelation();
+                    } else if (!memberTableModel.hasSameMembersAs(getRelationSnapshot())
+                            || tagEditorPanel.getModel().isDirty()) {
+                        if (isDirtyRelation()) {
+                            if (confirmClosingBecauseOfDirtyState()) {
+                                if (getLayer().getConflicts().hasConflictForMy(getRelation())) {
+                                    warnDoubleConflict();
+                                    return;
+                                }
+                                applyExistingConflictingRelation();
+                            } else
+                                return;
+                        } else {
+                            applyExistingNonConflictingRelation();
+                        }
+                    }
+                }
+                else if (ret == 2) //Cancel, continue editing
+                    return;
+                //in case of "No, discard", there is no extra action to be performed here.
+            }
             setVisible(false);
+        }
+
+        protected int confirmClosingByCancel() {
+            ButtonSpec [] options = new ButtonSpec[] {
+                    new ButtonSpec(
+                            tr("Yes, save the changes and close"),
+                            ImageProvider.get("ok"),
+                            tr("Click to save the changes and close this relation editor") ,
+                            null /* no specific help topic */
+                    ),
+                    new ButtonSpec(
+                            tr("No, discard the changes and close"),
+                            ImageProvider.get("cancel"),
+                            tr("Click to discard the changes and close this relation editor") ,
+                            null /* no specific help topic */
+                    ),
+                    new ButtonSpec(
+                            tr("Cancel, continue editing"),
+                            ImageProvider.get("cancel"),
+                            tr("Click to return to the relation editor and to resume relation editing") ,
+                            null /* no specific help topic */
+                    )
+            };
+
+            int ret = HelpAwareOptionPane.showOptionDialog(
+                    Main.parent,
+                    tr("<html>The relation has been changed.<br>"
+                            + "<br>"
+                            + "Do you want to save your changes?</html>"),
+                            tr("Unsaved changes"),
+                            JOptionPane.WARNING_MESSAGE,
+                            null,
+                            options,
+                            options[0], // OK is default,
+                            "/Dialog/RelationEditor#DiscardChanges"
+            );
+            return ret;
         }
     }
 
