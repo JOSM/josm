@@ -74,6 +74,9 @@ public class Preferences {
     protected final SortedMap<String, String> defaults = new TreeMap<String, String>();
     protected final SortedMap<String, String> colornames = new TreeMap<String, String>();
 
+    /* NOTE: FIXME: Remove when saving XML enabled */
+    private boolean loadedXML = false;
+
     public interface PreferenceChangeEvent{
         String getKey();
         String getOldValue();
@@ -384,7 +387,18 @@ public class Preferences {
 
         final PrintWriter out = new PrintWriter(new OutputStreamWriter(
                 new FileOutputStream(prefFile + "_tmp"), "utf-8"), false);
-        out.print(toXML(false));
+        /* FIXME: NOTE: loadedXML - removed 01.12.2011 */
+        if(loadedXML) {
+            out.print(toXML(false));
+        } else {
+            for (final Entry<String, String> e : properties.entrySet()) {
+                String s = defaults.get(e.getKey());
+                /* don't save default values */
+                if(s == null || !s.equals(e.getValue())) {
+                    out.println(e.getKey() + "=" + e.getValue());
+                }
+              }
+        }
         out.close();
 
         File tmpFile = new File(prefFile + "_tmp");
@@ -442,6 +456,7 @@ public class Preferences {
             in.reset();
             if(v == '<') {
                 fromXML(in);
+                loadedXML = true;
             } else {
                 int lineNumber = 0;
                 ArrayList<Integer> errLines = new ArrayList<Integer>();
