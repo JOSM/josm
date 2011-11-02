@@ -884,7 +884,10 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         DataSet ds = getCurrentDataSet();
 
         // not allowed together: do not change dataset selection, return early
-        if ((shift && ctrl) || (ctrl && !released) || (!virtualWays.isEmpty()))
+        // Virtual Ways: if non-empty the cursor is above a virtual node. So don't highlight
+        // anything if about to drag the virtual node (i.e. !released) but continue if the
+        // cursor is only released above a virtual node by accident (i.e. released). See #7018
+        if ((shift && ctrl) || (ctrl && !released) || (!virtualWays.isEmpty() && !released))
             return;
 
         if (!released) {
