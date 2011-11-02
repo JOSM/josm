@@ -61,10 +61,9 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
         setBackground(bgColor);
     }
 
+    // Warning: The model pads with null-rows to match the size of the opposite table. 'value' could be null
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
-        if (value == null)
-            return this;
 
         renderNode((TwoColumnDiff.Item)value, isSelected);
         return this;
