@@ -75,7 +75,7 @@ public class Preferences {
     protected final SortedMap<String, String> colornames = new TreeMap<String, String>();
 
     /* NOTE: FIXME: Remove when saving XML enabled */
-    private boolean loadedXML = false;
+    private boolean loadedXML = true;
 
     public interface PreferenceChangeEvent{
         String getKey();
@@ -456,8 +456,8 @@ public class Preferences {
             in.reset();
             if(v == '<') {
                 fromXML(in);
-                loadedXML = true;
             } else {
+                loadedXML = false;
                 int lineNumber = 0;
                 ArrayList<Integer> errLines = new ArrayList<Integer>();
                 for (String line = in.readLine(); line != null; line = in.readLine(), lineNumber++) {
