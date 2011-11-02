@@ -451,29 +451,33 @@ public class Preferences {
             final BufferedReader in = new BufferedReader(new InputStreamReader(
                     new FileInputStream(getPreferencesDir()+"preferences"), "utf-8"));
             /* FIXME: TODO: remove old style config file end of 2012 */
-            in.mark(1);
-            int v = in.read();
-            in.reset();
-            if(v == '<') {
-                fromXML(in);
-            } else {
-                loadedXML = false;
-                int lineNumber = 0;
-                ArrayList<Integer> errLines = new ArrayList<Integer>();
-                for (String line = in.readLine(); line != null; line = in.readLine(), lineNumber++) {
-                    final int i = line.indexOf('=');
-                    if (i == -1 || i == 0) {
-                        errLines.add(lineNumber);
-                        continue;
+            try {
+                in.mark(1);
+                int v = in.read();
+                in.reset();
+                if(v == '<') {
+                    fromXML(in);
+                } else {
+                    loadedXML = false;
+                    int lineNumber = 0;
+                    ArrayList<Integer> errLines = new ArrayList<Integer>();
+                    for (String line = in.readLine(); line != null; line = in.readLine(), lineNumber++) {
+                        final int i = line.indexOf('=');
+                        if (i == -1 || i == 0) {
+                            errLines.add(lineNumber);
+                            continue;
+                        }
+                        String key = line.substring(0,i);
+                        String value = line.substring(i+1);
+                        if (!value.isEmpty()) {
+                            properties.put(key, value);
+                        }
                     }
-                    String key = line.substring(0,i);
-                    String value = line.substring(i+1);
-                    if (!value.isEmpty()) {
-                        properties.put(key, value);
-                    }
+                    if (!errLines.isEmpty())
+                        throw new IOException(tr("Malformed config file at lines {0}", errLines));
                 }
-                if (!errLines.isEmpty())
-                    throw new IOException(tr("Malformed config file at lines {0}", errLines));
+            } finally {
+                in.close();
             }
         }
         updateSystemProperties();
@@ -550,6 +554,9 @@ public class Preferences {
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );
+            if (backupFile.exists()) {
+                backupFile.delete();
+            }
             preferenceFile.renameTo(backupFile);
             try {
                 resetToDefault();
