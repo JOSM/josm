@@ -554,10 +554,7 @@ public class Preferences {
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );
-            if (backupFile.exists()) {
-                backupFile.delete();
-            }
-            preferenceFile.renameTo(backupFile);
+            Main.platform.rename(preferenceFile, backupFile);
             try {
                 resetToDefault();
                 save();
