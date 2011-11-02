@@ -35,21 +35,27 @@ public class JoinNodeWayAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
-        if (sel.size() < 1) return;
+        Collection<Node> selectedNodes = getCurrentDataSet().getSelectedNodes();
+        // Allow multiple selected nodes too?
+        if (selectedNodes.size() != 1) return;
+
+        Node node = selectedNodes.iterator().next();
 
         Collection<Command> cmds = new LinkedList<Command>();
 
-        for (OsmPrimitive osm : sel) {
-            if (!(osm instanceof Node)) {
-                continue;
-            }
-            Node node = (Node) osm;
+        // If the user has selected some ways, only join the node to these.
+        boolean restrictToSelectedWays =
+            getCurrentDataSet().getSelectedWays().size() > 0;
 
             List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(
                     Main.map.mapView.getPoint(node), OsmPrimitive.isSelectablePredicate);
             HashMap<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
             for (WaySegment ws : wss) {
+                // Maybe cleaner to pass a "isSelected" predicate to getNearestWaySegements, but this is atm. less invasive.
+                if(restrictToSelectedWays && !ws.way.isSelected()) {
+                    continue;
+                }
+
                 List<Integer> is;
                 if (insertPoints.containsKey(ws.way)) {
                     is = insertPoints.get(ws.way);
@@ -80,10 +86,9 @@ public class JoinNodeWayAction extends JosmAction {
                 wnew.setNodes(nodesToAdd);
                 cmds.add(new ChangeCommand(w, wnew));
             }
-        }
-        if (cmds.size() == 0) return;
-        Main.main.undoRedo.add(new SequenceCommand(tr("Join Node and Line"), cmds));
-        Main.map.repaint();
+            if (cmds.size() == 0) return;
+            Main.main.undoRedo.add(new SequenceCommand(tr("Join Node and Line"), cmds));
+            Main.map.repaint();
     }
 
     private static void pruneSuccsAndReverse(List<Integer> is) {
