@@ -287,7 +287,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         }
         return button;
     }
-    
+
     public void validateToolBarToggle() {
         toolBarToggle.removeAll();
         for (ToggleDialog dlg : allDialogs) {
@@ -319,10 +319,25 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
     /**
      * Change the operating map mode for the view. Will call unregister on the
-     * old MapMode and register on the new one.
+     * old MapMode and register on the new one. Now this function also verifies
+     * if new map mode is correct mode for current layer and does not change mode
+     * in such cases.
      * @param mapMode   The new mode to set.
      */
     public void selectMapMode(MapMode newMapMode) {
+        selectMapMode(newMapMode, mapView.getActiveLayer());
+    }
+
+    /**
+     * Another version of the selectMapMode for changing layer action.
+     * Pass newly selected layer to this method.
+     * @param newMapMode
+     * @param newLayer
+     */
+    public void selectMapMode(MapMode newMapMode, Layer newLayer) {
+        if (newMapMode == null || !newMapMode.layerIsSupported(newLayer))
+            return;
+
         MapMode oldMapMode = this.mapMode;
         if (newMapMode == oldMapMode)
             return;
@@ -331,7 +346,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         }
         this.mapMode = newMapMode;
         newMapMode.enterMode();
-        lastMapMode.put(mapView.getActiveLayer(), newMapMode);
+        lastMapMode.put(newLayer, newMapMode);
         fireMapModeChanged(oldMapMode, newMapMode);
     }
 
@@ -473,8 +488,10 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
             MapMode newMapMode = lastMapMode.get(newLayer);
             modeChanged = newMapMode != mapMode;
             if (newMapMode != null) {
-                selectMapMode(newMapMode);
-            } // it would be nice to select first supported mode when layer is first selected, but it don't work well with for example editgpx layer
+                selectMapMode(newMapMode, newLayer); // it would be nice to select first supported mode when layer is first selected, but it don't work well with for example editgpx layer
+            } else {
+                mapMode.exitMode(); // if new mode is null - simply exit from previous mode
+            }
         }
         if (!modeChanged && mapMode != null) {
             // Let mapmodes know about new active layer

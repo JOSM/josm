@@ -277,7 +277,7 @@ abstract public class Main {
         if (map == null) {
             final MapFrame mapFrame = new MapFrame(contentPanePrivate);
             setMapFrame(mapFrame);
-            mapFrame.selectMapMode((MapMode)mapFrame.getDefaultButtonAction());
+            mapFrame.selectMapMode((MapMode)mapFrame.getDefaultButtonAction(), layer);
             mapFrame.setVisible(true);
             mapFrame.initializeDialogsPane();
             // bootstrapping problem: make sure the layer list dialog is going to
