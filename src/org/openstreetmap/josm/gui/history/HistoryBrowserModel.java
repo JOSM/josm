@@ -595,6 +595,8 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
 
         @Override
         public int getRowCount() {
+            // Match the size of the opposite table so comparison is less confusing.
+            // (scroll bars lines up properly, etc.)
             int n = 0;
             if (current != null && current.getType().equals(OsmPrimitiveType.RELATION)) {
                 n = ((HistoryRelation)current).getNumMembers();
@@ -643,7 +645,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             HistoryRelation relation = getRelation();
             if (relation == null)
                 return null;
-            if (row >= relation.getNumMembers())
+            if (row >= relation.getNumMembers()) // see getRowCount
                 return null;
             return relation.getMembers().get(row);
         }
