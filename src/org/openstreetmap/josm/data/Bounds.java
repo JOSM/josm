@@ -43,7 +43,11 @@ public class Bounds {
     }
 
     public Bounds(LatLon b) {
-        this(b, b);
+        // Do not call this(b, b) to avoid GPX performance issue (see #7028) until roundToOsmPrecision() is improved
+        this.minLat = LatLon.roundToOsmPrecision(b.lat());
+        this.minLon = LatLon.roundToOsmPrecision(b.lon());
+        this.maxLat = this.minLat;
+        this.maxLon = this.minLon;
     }
 
     public Bounds(double minlat, double minlon, double maxlat, double maxlon) {
