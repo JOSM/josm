@@ -5,7 +5,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.util.regex.Matcher;
@@ -101,7 +105,7 @@ public class WindowGeometry {
     protected int parseField(String preferenceKey, String preferenceValue, String field) throws WindowGeometryException {
         String v = "";
         try {
-            Pattern p = Pattern.compile(field + "=(\\d+)",Pattern.CASE_INSENSITIVE);
+            Pattern p = Pattern.compile(field + "=(-?\\d+)",Pattern.CASE_INSENSITIVE);
             Matcher m = p.matcher(preferenceValue);
             if (!m.find())
                 throw new WindowGeometryException(tr("Preference with key ''{0}'' does not include ''{1}''. Cannot restore window geometry from preferences.", preferenceKey, field));
@@ -213,12 +217,49 @@ public class WindowGeometry {
      */
     public void applySafe(Window window) {
         Point p = new Point(topLeft);
-        if (p.x > Toolkit.getDefaultToolkit().getScreenSize().width - 10) {
+        if (p.x < 0 || p.x > Toolkit.getDefaultToolkit().getScreenSize().width - 10) {
             p.x  = 0;
         }
-        if (p.y >  Toolkit.getDefaultToolkit().getScreenSize().height - 10) {
+        if (p.y < 0 || p.y > Toolkit.getDefaultToolkit().getScreenSize().height - 10) {
             p.y = 0;
         }
+        window.setLocation(p);
+        window.setSize(extent);
+    }
+    
+    /**
+     * Applies this geometry to a window. Makes sure that the window is not
+     * placed outside of the coordinate range of all available screens.
+     * 
+     * @param window the window
+     */
+    public void applySafeMultiScreen(Window window) {
+        Point p = new Point(topLeft);
+
+        Rectangle virtualBounds = new Rectangle();
+        GraphicsEnvironment ge = GraphicsEnvironment
+                .getLocalGraphicsEnvironment();
+        GraphicsDevice[] gs = ge.getScreenDevices();
+        for (int j = 0; j < gs.length; j++) {
+            GraphicsDevice gd = gs[j];
+            GraphicsConfiguration[] gc = gd.getConfigurations();
+            for (int i = 0; i < gc.length; i++) {
+                virtualBounds = virtualBounds.union(gc[i].getBounds());
+            }
+        }
+
+        if (p.x < virtualBounds.x) {
+            p.x = virtualBounds.x;
+        } else if (p.x > virtualBounds.x + virtualBounds.width - extent.width) {
+            p.x = virtualBounds.x + virtualBounds.width - extent.width;
+        }
+
+        if (p.y < virtualBounds.y) {
+            p.y = virtualBounds.y;
+        } else if (p.y > virtualBounds.y + virtualBounds.height - extent.height) {
+            p.y = virtualBounds.y + virtualBounds.height - extent.height;
+        }
+
         window.setLocation(p);
         window.setSize(extent);
     }
