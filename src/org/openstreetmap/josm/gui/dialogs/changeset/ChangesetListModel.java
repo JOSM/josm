@@ -61,20 +61,6 @@ public class ChangesetListModel extends DefaultListModel  implements ChangesetCa
         }
     }
 
-    protected void addChangeset(Changeset changeset) {
-        if (shownChangesets.add(changeset)) {
-            setChangesets(shownChangesets);
-            updateModel();
-        }
-    }
-
-    protected void removeChangeset(Changeset changeset) {
-        if (shownChangesets.remove(changeset)) {
-            setChangesets(shownChangesets);
-            updateModel();
-        }
-    }
-
     protected void setChangesets(Collection<Changeset> changesets) {
         shownChangesets.clear();
         if (changesets != null) {
