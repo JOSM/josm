@@ -3,10 +3,7 @@ package org.openstreetmap.josm.gui.dialogs.changeset;
 
 import javax.swing.DefaultListSelectionModel;
 
-import org.openstreetmap.josm.data.osm.Changeset;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
-import org.openstreetmap.josm.data.osm.event.ChangesetIdChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
 import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
@@ -35,25 +32,11 @@ public class ChangesetsInActiveDataLayerListModel extends ChangesetListModel imp
         initFromDataSet(event.getDataset());
     }
 
-    public void primitivesAdded(PrimitivesAddedEvent event) {
-        for (OsmPrimitive primitive:event.getPrimitives()) {
-            addChangeset(new Changeset(primitive.getChangesetId()));
-        }
-    }
+    public void primitivesAdded(PrimitivesAddedEvent event) {/* ignored */}
 
-    public void primitivesRemoved(PrimitivesRemovedEvent event) {
-        for (OsmPrimitive primitive:event.getPrimitives()) {
-            removeChangeset(new Changeset(primitive.getChangesetId()));
-        }
-    }
+    public void primitivesRemoved(PrimitivesRemovedEvent event) {/* ignored */}
 
-    public void otherDatasetChange(AbstractDatasetChangedEvent event) {
-        if (event instanceof ChangesetIdChangedEvent) {
-            ChangesetIdChangedEvent e = (ChangesetIdChangedEvent) event;
-            removeChangeset(new Changeset(e.getOldChangesetId()));
-            addChangeset(new Changeset(e.getNewChangesetId()));
-        }
-    }
+    public void otherDatasetChange(AbstractDatasetChangedEvent event) {/* ignored */}
 
     public void nodeMoved(NodeMovedEvent event) {/* ignored */}
 

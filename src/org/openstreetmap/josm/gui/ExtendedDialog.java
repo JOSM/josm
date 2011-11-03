@@ -455,7 +455,7 @@ public class ExtendedDialog extends JDialog {
         if(rememberSizePref.length() != 0 && defaultWindowGeometry != null) {
             if(visible) {
                 new WindowGeometry(rememberSizePref,
-                        defaultWindowGeometry).applySafe(this);
+                        defaultWindowGeometry).applySafeMultiScreen(this);
             } else {
                 new WindowGeometry(this).remember(rememberSizePref);
             }
