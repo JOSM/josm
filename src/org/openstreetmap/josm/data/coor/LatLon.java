@@ -243,12 +243,22 @@ public class LatLon extends Coordinate {
      * @return rounded value
      */
     public static double roundToOsmPrecision(double value) {
+        return Math.round(value / MAX_SERVER_PRECISION) * MAX_SERVER_PRECISION; // causes tiny rounding errors (see LatLonTest)
+    }
+
+    /**
+     * Returns the value rounded to OSM precisions, i.e. to
+     * LatLon.MAX_SERVER_PRECISION. The result is guaranteed to be exact, but at a great cost.
+     * This function is about 1000 times slower than roundToOsmPrecision(), use it with caution.
+     *
+     * @return rounded value
+     */
+    public static double roundToOsmPrecisionStrict(double value) {
         double absV = Math.abs(value);
         int numOfDigits = MAX_SERVER_DIGITS + (absV < 1 ? 0 : (absV < 10 ? 1 : (absV < 100 ? 2 : 3))); 
         return BigDecimal.valueOf(value).round(new MathContext(numOfDigits)).doubleValue();
-        //return Math.round(value / MAX_SERVER_PRECISION) * MAX_SERVER_PRECISION; // Old method, causes rounding errors (see LatLonTest) !
     }
-    
+
     /**
      * Replies a clone of this lat LatLon, rounded to OSM precisions, i.e. to
      * MAX_SERVER_PRECISION
@@ -259,6 +269,19 @@ public class LatLon extends Coordinate {
         return new LatLon(
                 roundToOsmPrecision(lat()),
                 roundToOsmPrecision(lon())
+        );
+    }
+
+    /**
+     * Replies a clone of this lat LatLon, rounded to OSM precisions, i.e. to
+     * MAX_SERVER_PRECISION
+     *
+     * @return a clone of this lat LatLon
+     */
+    public LatLon getRoundedToOsmPrecisionStrict() {
+        return new LatLon(
+                roundToOsmPrecisionStrict(lat()),
+                roundToOsmPrecisionStrict(lon())
         );
     }
 
