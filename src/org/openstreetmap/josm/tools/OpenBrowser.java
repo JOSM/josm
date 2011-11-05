@@ -7,7 +7,6 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 
 import javax.swing.JApplet;
 
@@ -22,6 +21,12 @@ import org.openstreetmap.josm.Main;
  */
 public class OpenBrowser {
 
+    private static void displayUrlFallback(URI uri) throws IOException {
+        if (Main.platform == null)
+            throw new IllegalStateException(tr("Failed to open URL. There is currently no platform set. Please set a platform first."));
+        Main.platform.openUrl(uri.toString());
+    }
+    
     /**
      * @return <code>null</code> for success or a string in case of an error.
      * @throws IllegalStateException thrown if no platform is set to which opening the URL can be dispatched,
@@ -40,18 +45,22 @@ public class OpenBrowser {
 
         if (Desktop.isDesktopSupported()) {
             try {
-                Desktop.getDesktop().browse(uri);
+                try {
+                    Desktop.getDesktop().browse(uri);
+                } catch (IOException e) {
+                    // Workaround for KDE (Desktop API is severely flawed)
+                    // see http://bugs.sun.com/view_bug.do?bug_id=6486393
+                    System.err.println("Warning: Desktop class failed. Platform dependent fall back for open url in browser.");
+                    displayUrlFallback(uri);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 return e.getMessage();
             }
         } else {
-            System.err.println("Warning: Desktop class is not supported. Platform dependent fall back for open url in browser.");
-
-            if (Main.platform == null)
-                throw new IllegalStateException(tr("Failed to open URL. There is currently no platform set. Please set a platform first."));
             try {
-                Main.platform.openUrl(uri.toString());
+                System.err.println("Warning: Desktop class is not supported. Platform dependent fall back for open url in browser.");
+                displayUrlFallback(uri);
             } catch (IOException e) {
                 return e.getMessage();
             }
