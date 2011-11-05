@@ -3428,97 +3428,117 @@ are supplied, then "values" will be treated as "display_values" and translated i
     </group> <!-- Sport facilities -->
     <group name="Sport" icon="presets/rowing.png">
         <item name="Multi" icon="styles/standard/sport/multi.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dmulti" />
             <label text="Edit Multi" />
             <key key="sport" value="multi" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
+        <item name="9pin" icon="styles/standard/sport/10pin.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3D9pin" />
+            <label text="Edit 9pin" />
+            <key key="sport" value="9pin" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="" delete_if_empty="true" />
+        </item>
         <item name="10pin" icon="styles/standard/sport/10pin.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3D10pin" />
             <label text="Edit 10pin" />
             <key key="sport" value="10pin" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
-        </item>
-        <item name="Athletics" icon="presets/athletics.png" type="node,closedway">
-            <label text="Edit Athletics" />
-            <key key="sport" value="athletics" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="" delete_if_empty="true" />
         </item>
         <item name="Archery" icon="styles/standard/sport/archery.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Darchery" />
             <label text="Edit Archery" />
             <key key="sport" value="archery" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="" delete_if_empty="true" />
+        </item>
+        <item name="Athletics" icon="presets/athletics.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sports%3Dathletics" />
+            <label text="Edit Athletics" />
+            <key key="sport" value="athletics" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="track" delete_if_empty="true" />
         </item>
         <item name="Climbing" icon="styles/standard/sport/climbing.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dclimbing" />
             <label text="Edit Climbing" />
             <key key="sport" value="climbing" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="sports_centre" default="" delete_if_empty="true" />
         </item>
         <item name="Canoeing" icon="presets/canoe.png" type="node,way,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dcanoe" />
             <label text="Edit Canoeing" />
             <key key="sport" value="canoe" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
         <item name="Cycling" icon="presets/cycling.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dcycling" />
             <label text="Edit Cycling" />
             <key key="sport" value="cycling" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
         <item name="Dog Racing" icon="styles/standard/leisure/dog.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Ddog_racing" />
             <label text="Edit Dog Racing" />
             <key key="sport" value="dog_racing" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
         <item name="Equestrian" icon="presets/equestrian.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dequestrian" />
             <label text="Edit Equestrian" />
             <key key="sport" value="equestrian" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="horse_riding,pitch,sports_centre,stadium,track" default="horse_riding" delete_if_empty="true" />
         </item>
         <item name="Horse Racing" icon="presets/equestrian.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dhorse_racing" />
             <label text="Edit Horse Racing" />
             <key key="sport" value="horse_racing" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
         <item name="Gymnastics" icon="presets/gymnastics.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dgymnastics" />
             <label text="Edit Gymnastics" />
             <key key="sport" value="gymnastics" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="" delete_if_empty="true" />
         </item>
         <item name="Skating" icon="presets/skating.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dskating" />
             <label text="Edit Skating" />
             <key key="sport" value="skating" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="ice_rink,pitch,sports_centre,stadium" default="ice_rink" delete_if_empty="true" />
         </item>
         <item name="Skateboard" icon="styles/standard/sport/skateboard.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dskateboard" />
             <label text="Edit Skateboard" />
             <key key="sport" value="skateboard" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Swimming" icon="presets/swimming.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dswimming" />
             <label text="Edit Swimming" />
             <key key="sport" value="swimming" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="sports_centre,stadium,swimming_pool" default="swimming_pool" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="sports_centre,stadium,swimming_pool,water_park" default="swimming_pool" delete_if_empty="true" />
         </item>
         <item name="Skiing" icon="presets/skiing_downhill.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps"/>
             <label text="Edit Skiing" />
             <key key="sport" value="skiing" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="piste:type" text="Piste type" values="downhill,nordic,snow_park" default="" delete_if_empty="true" />
+            <combo key="piste:type" text="Piste type" values="downhill,nordic,skitour,snow_park" default="" delete_if_empty="true" />
             <combo key="piste:difficulty" text="Difficulty" values="novice,easy,intermediate,advanced,expert,freeride" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="piste:grooming" text="Grooming" values="classic,mogul,skating,classic;skating,scooter,backcountry" default="" delete_if_empty="true" />
         </item>
         <item name="Shooting" icon="presets/range.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=shooting"
@@ -3533,58 +3553,67 @@ are supplied, then "values" will be treated as "display_values" and translated i
     </group> <!-- Sport -->
     <group name="Sport (Ball)" icon="presets/soccer.png">
         <item name="Soccer" icon="presets/soccer.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dsoccer"/>
             <label text="Edit Soccer" />
             <key key="sport" value="soccer" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Australian Football" icon="presets/soccer.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Daustralian_football"/>
             <label text="Edit Australian Football" />
             <key key="sport" value="australian_football" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="American Football" icon="presets/football.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Damerican_football"/>
             <label text="Edit American Football" />
             <key key="sport" value="american_football" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Canadian Football" icon="presets/football.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dcanadian_football"/>
             <label text="Edit Canadian Football" />
             <key key="sport" value="canadian_football" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Gaelic Football" icon="presets/soccer.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dgaelic_games"/>
             <label text="Edit Gaelic Football" />
             <key key="sport" value="gaelic_football" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Rugby League" icon="presets/football.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Drugby_league"/>
             <label text="Edit Rugby League" />
             <key key="sport" value="rugby_league" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Rugby Union" icon="presets/football.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Drugby_union"/>
             <label text="Edit Rugby Union" />
             <key key="sport" value="rugby_union" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Baseball" icon="presets/baseball.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dbaseball"/>
             <label text="Edit Baseball" />
             <key key="sport" value="baseball" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Basketball" icon="presets/basketball.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dbasketball"/>
             <label text="Edit Basketball" />
             <key key="sport" value="basketball" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Volleyball" icon="styles/standard/sport/volleyball.png" type="node,closedway">         	
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dvolleyball" />
@@ -3605,70 +3634,81 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="leisure" text="Type" values="stadium,pitch,sports_centre" default="" delete_if_empty="true" />
         </item> 
         <item name="Golf" icon="presets/golf.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dgolf"/>
             <label text="Edit Golf" />
             <key key="sport" value="golf" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="golf_course,pitch,sports_centre,stadium,track" default="golf_course" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="golf_course,pitch,sports_centre,stadium" default="golf_course" delete_if_empty="true" />
         </item>
         <item name="Boule" icon="presets/boule.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dboules"/>
             <label text="Edit Boule" />
             <key key="sport" value="boules" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Bowls" icon="presets/boule.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dbowls"/>
             <label text="Edit Bowls" />
             <key key="sport" value="bowls" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Cricket" icon="presets/cricket.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dcricket"/>
             <label text="Edit Cricket" />
             <key key="sport" value="cricket" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Cricket Nets" icon="presets/cricket.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dcricket_nets"/>
             <label text="Edit Cricket Nets" />
             <key key="sport" value="cricket_nets" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="" delete_if_empty="true" />
         </item>
         <item name="Croquet" icon="styles/standard/sport/croquet.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dcroquet"/>
             <label text="Edit Croquet" />
             <key key="sport" value="croquet" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Hockey" icon="presets/Hockey.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dhockey"/>
             <label text="Edit Hockey" />
             <key key="sport" value="hockey" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="ice_rink,pitch,sports_centre,stadium" default="" delete_if_empty="true" />
         </item>
         <item name="Pelota" icon="presets/pelota.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dpelota"/>
             <label text="Edit Pelota" />
             <key key="sport" value="pelota" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Racquet" icon="presets/racquetball.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dracquet"/>
             <label text="Edit Racquet" />
             <key key="sport" value="racquet" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="" delete_if_empty="true" />
         </item>
         <item name="Table Tennis" icon="presets/table_tennis.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dtable_tennis"/>
             <label text="Edit Table Tennis" />
             <key key="sport" value="table_tennis" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="" delete_if_empty="true" />
         </item>
         <item name="Tennis" icon="presets/tennis.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dtennis"/>
             <label text="Edit Tennis" />
             <key key="sport" value="tennis" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
     </group> <!-- Sport (Ball) -->
     <group name="Motorsport" icon="presets/motorbike.png">
