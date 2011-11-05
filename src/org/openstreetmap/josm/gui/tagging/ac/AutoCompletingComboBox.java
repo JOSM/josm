@@ -13,7 +13,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
@@ -21,7 +20,6 @@ import javax.swing.text.PlainDocument;
 import javax.swing.text.StyleConstants;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.DocumentSizeFilter;
 
 /**
  * @author guilhem.bonnefille@gmail.com
@@ -29,6 +27,8 @@ import org.openstreetmap.josm.gui.DocumentSizeFilter;
 public class AutoCompletingComboBox extends JComboBox {
 
     private boolean autocompleteEnabled = true;
+    
+    private int maxTextLength = -1;
 
     /**
      * Auto-complete a JComboBox.
@@ -52,6 +52,9 @@ public class AutoCompletingComboBox extends JComboBox {
         @Override public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
             if (selecting || (offs == 0 && str.equals(getText(0, getLength()))))
                 return;
+            if (maxTextLength > -1 && str.length()+getLength() > maxTextLength) {
+                return;
+            }
             boolean initial = (offs == 0 && getLength() == 0 && str.length() > 1);
             super.insertString(offs, str, a);
 
@@ -153,9 +156,7 @@ public class AutoCompletingComboBox extends JComboBox {
     
     public void setMaxTextLength(int length)
     {
-        JTextComponent editor = (JTextComponent) this.getEditor().getEditorComponent();
-        AbstractDocument doc = (AbstractDocument) editor.getDocument();
-        doc.setDocumentFilter(new DocumentSizeFilter(length));
+        this.maxTextLength = length;
     }
 
     /**
