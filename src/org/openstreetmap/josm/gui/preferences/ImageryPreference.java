@@ -69,7 +69,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
-import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.imagery.Shape;
@@ -90,8 +89,8 @@ public class ImageryPreference implements PreferenceSetting {
             return new ImageryPreference();
         }
     }
-    ImageryProvidersPanel imageryProviders;
-    ImageryLayerInfo layerInfo;
+    private ImageryProvidersPanel imageryProviders;
+    private ImageryLayerInfo layerInfo;
 
     // Common settings
     private Color colFadeColor;
@@ -103,10 +102,10 @@ public class ImageryPreference implements PreferenceSetting {
 
     // WMS Settings
     private JComboBox browser;
-    JCheckBox overlapCheckBox;
-    JSpinner spinEast;
-    JSpinner spinNorth;
-    JSpinner spinSimConn;
+    private JCheckBox overlapCheckBox;
+    private JSpinner spinEast;
+    private JSpinner spinNorth;
+    private JSpinner spinSimConn;
 
     //TMS settings controls
     private JCheckBox autozoomActive = new JCheckBox();
@@ -282,6 +281,10 @@ public class ImageryPreference implements PreferenceSetting {
         pane.setTitleAt(2, tr("Offset bookmarks"));
         p.add(pane,GBC.std().fill(GBC.BOTH));
     }
+    
+    public ImageryProvidersPanel getProvidersPanel() {
+        return imageryProviders;
+    }
 
     private void loadSettings() {
         // Common settings
@@ -354,13 +357,13 @@ public class ImageryPreference implements PreferenceSetting {
      *            The server URL
      */
     public void setServerUrl(String server, String url) {
-        for (int i = 0; i < imageryProviders.model.getRowCount(); i++) {
-            if (server.equals(imageryProviders.model.getValueAt(i, 0).toString())) {
-                imageryProviders.model.setValueAt(url, i, 1);
+        for (int i = 0; i < imageryProviders.activeModel.getRowCount(); i++) {
+            if (server.equals(imageryProviders.activeModel.getValueAt(i, 0).toString())) {
+                imageryProviders.activeModel.setValueAt(url, i, 1);
                 return;
             }
         }
-        imageryProviders.model.addRow(new String[] { server, url });
+        imageryProviders.activeModel.addRow(new String[] { server, url });
     }
 
     /**
@@ -371,21 +374,31 @@ public class ImageryPreference implements PreferenceSetting {
      * @return The server URL
      */
     public String getServerUrl(String server) {
-        for (int i = 0; i < imageryProviders.model.getRowCount(); i++) {
-            if (server.equals(imageryProviders.model.getValueAt(i, 0).toString()))
-                return imageryProviders.model.getValueAt(i, 1).toString();
+        for (int i = 0; i < imageryProviders.activeModel.getRowCount(); i++) {
+            if (server.equals(imageryProviders.activeModel.getValueAt(i, 0).toString()))
+                return imageryProviders.activeModel.getValueAt(i, 1).toString();
         }
         return null;
     }
 
-    static class ImageryProvidersPanel extends JPanel {
-        final ImageryLayerTableModel model;
-        final ImageryDefaultLayerTableModel modeldef;
+    public static class ImageryProvidersPanel extends JPanel {
+        // Public JTables and JMapViewer
+        public final JTable activeTable;
+        public final JTable defaultTable;
+        public final JMapViewer defaultMap;
+
+        // Public models
+        public final ImageryLayerTableModel activeModel;
+        public final ImageryDefaultLayerTableModel defaultModel;
+        
+        // Public JToolbars
+        public final JToolBar activeToolbar;
+        public final JToolBar middleToolbar;
+        public final JToolBar defaultToolbar;
+
+        // Private members
+        private final PreferenceTabbedPane gui;
         private final ImageryLayerInfo layerInfo;
-        private JTable listActive;
-        final JTable listdef;
-        final JMapViewer map;
-        final PreferenceTabbedPane gui;
         
         private class ImageryTableCellRenderer extends DefaultTableCellRenderer {
             
@@ -422,104 +435,104 @@ public class ImageryPreference implements PreferenceSetting {
             super(new GridBagLayout());
             this.gui = gui;
             this.layerInfo = layerInfoArg;
-            this.model = new ImageryLayerTableModel();
+            this.activeModel = new ImageryLayerTableModel();
 
-            listActive = new JTable(model) {
+            activeTable = new JTable(activeModel) {
                 @Override
                 public String getToolTipText(MouseEvent e) {
                     java.awt.Point p = e.getPoint();
-                    return model.getValueAt(rowAtPoint(p), columnAtPoint(p)).toString();
+                    return activeModel.getValueAt(rowAtPoint(p), columnAtPoint(p)).toString();
                 }
             };
 
-            modeldef = new ImageryDefaultLayerTableModel();
-            listdef = new JTable(modeldef) {
+            defaultModel = new ImageryDefaultLayerTableModel();
+            defaultTable = new JTable(defaultModel) {
                 @Override
                 public String getToolTipText(MouseEvent e) {
                     java.awt.Point p = e.getPoint();
-                    return (String) modeldef.getValueAt(rowAtPoint(p), columnAtPoint(p));
+                    return (String) defaultModel.getValueAt(rowAtPoint(p), columnAtPoint(p));
                 }
             };
 
-            modeldef.addTableModelListener(
+            defaultModel.addTableModelListener(
                 new TableModelListener() {
                     @Override
                     public void tableChanged(TableModelEvent e) {
-                        listActive.repaint();
+                        activeTable.repaint();
                     }
                 }
             );
 
-            model.addTableModelListener(
+            activeModel.addTableModelListener(
                 new TableModelListener() {
                     @Override
                     public void tableChanged(TableModelEvent e) {
-                        listdef.repaint();
+                        defaultTable.repaint();
                     }
                 }
             );
 
-            TableColumnModel mod = listdef.getColumnModel();
+            TableColumnModel mod = defaultTable.getColumnModel();
             mod.getColumn(2).setPreferredWidth(800);
             mod.getColumn(2).setCellRenderer(new ImageryTableCellRenderer(layerInfo.getLayers()));
             mod.getColumn(1).setPreferredWidth(400);
             mod.getColumn(0).setPreferredWidth(50);
 
-            mod = listActive.getColumnModel();
+            mod = activeTable.getColumnModel();
             mod.getColumn(1).setPreferredWidth(800);
             mod.getColumn(1).setCellRenderer(new ImageryTableCellRenderer(layerInfo.getDefaultLayers()));
             mod.getColumn(0).setPreferredWidth(200);
 
             RemoveEntryAction remove = new RemoveEntryAction();
-            listActive.getSelectionModel().addListSelectionListener(remove);
+            activeTable.getSelectionModel().addListSelectionListener(remove);
 
             add(new JLabel(tr("Available default entries:")), GBC.eol().insets(5, 5, 0, 0));
             // Add default item list
-            JScrollPane scrolldef = new JScrollPane(listdef);
+            JScrollPane scrolldef = new JScrollPane(defaultTable);
             scrolldef.setPreferredSize(new Dimension(200, 200));
             add(scrolldef, GBC.std().insets(0, 5, 0, 0).fill(GridBagConstraints.BOTH).weight(1.0, 0.6).insets(5, 0, 0, 0));
 
             // Add default item map
-            map = new JMapViewer();
-            map.setZoomContolsVisible(false);
-            map.setMinimumSize(new Dimension(100, 200));
-            add(map, GBC.std().insets(5, 5, 0, 0).fill(GridBagConstraints.BOTH).weight(0.33, 0.6).insets(5, 0, 0, 0));
+            defaultMap = new JMapViewer();
+            defaultMap.setZoomContolsVisible(false);
+            defaultMap.setMinimumSize(new Dimension(100, 200));
+            add(defaultMap, GBC.std().insets(5, 5, 0, 0).fill(GridBagConstraints.BOTH).weight(0.33, 0.6).insets(5, 0, 0, 0));
 
-            listdef.getSelectionModel().addListSelectionListener(new DefListSelectionListener());
+            defaultTable.getSelectionModel().addListSelectionListener(new DefListSelectionListener());
 
-            JToolBar tb = new JToolBar(JToolBar.VERTICAL);
-            tb.setFloatable(false);
-            tb.setBorderPainted(false);
-            tb.setOpaque(false);
-            tb.add(new ReloadAction());
-            add(tb, GBC.eol().anchor(GBC.SOUTH).insets(0, 0, 5, 0));
+            defaultToolbar = new JToolBar(JToolBar.VERTICAL);
+            defaultToolbar.setFloatable(false);
+            defaultToolbar.setBorderPainted(false);
+            defaultToolbar.setOpaque(false);
+            defaultToolbar.add(new ReloadAction());
+            add(defaultToolbar, GBC.eol().anchor(GBC.SOUTH).insets(0, 0, 5, 0));
 
             ActivateAction activate = new ActivateAction();
-            listdef.getSelectionModel().addListSelectionListener(activate);
+            defaultTable.getSelectionModel().addListSelectionListener(activate);
             JButton btnActivate = new JButton(activate);
 
-            JToolBar tb2 = new JToolBar(JToolBar.VERTICAL);
-            tb2.setFloatable(false);
-            tb2.setBorderPainted(false);
-            tb2.setOpaque(false);
-            tb2.add(btnActivate);
-            add(tb2, GBC.eol().anchor(GBC.CENTER).insets(5, 15, 5, 0));
+            middleToolbar = new JToolBar(JToolBar.HORIZONTAL);
+            middleToolbar.setFloatable(false);
+            middleToolbar.setBorderPainted(false);
+            middleToolbar.setOpaque(false);
+            middleToolbar.add(btnActivate);
+            add(middleToolbar, GBC.eol().anchor(GBC.CENTER).insets(5, 15, 5, 0));
 
             add(Box.createHorizontalGlue(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
             add(new JLabel(tr("Selected entries:")), GBC.eol().insets(5, 0, 0, 0));
-            JScrollPane scroll = new JScrollPane(listActive);
+            JScrollPane scroll = new JScrollPane(activeTable);
             add(scroll, GBC.std().fill(GridBagConstraints.BOTH).span(GridBagConstraints.RELATIVE).weight(1.0, 0.4).insets(5, 0, 0, 5));
             scroll.setPreferredSize(new Dimension(200, 200));
 
-            JToolBar sideButtonTB = new JToolBar(JToolBar.VERTICAL);
-            sideButtonTB.setFloatable(false);
-            sideButtonTB.setBorderPainted(false);
-            sideButtonTB.setOpaque(false);
-            sideButtonTB.add(new NewEntryAction());
-            //sideButtonTB.add(edit); TODO
-            sideButtonTB.add(remove);
-            add(sideButtonTB, GBC.eol().anchor(GBC.NORTH).insets(0, 0, 5, 5));
+            activeToolbar = new JToolBar(JToolBar.VERTICAL);
+            activeToolbar.setFloatable(false);
+            activeToolbar.setBorderPainted(false);
+            activeToolbar.setOpaque(false);
+            activeToolbar.add(new NewEntryAction());
+            //activeToolbar.add(edit); TODO
+            activeToolbar.add(remove);
+            add(activeToolbar, GBC.eol().anchor(GBC.NORTH).insets(0, 0, 5, 5));
 
         }
 
@@ -538,8 +551,8 @@ public class ImageryPreference implements PreferenceSetting {
             public void valueChanged(ListSelectionEvent e) {
                 // First index is set to -1 when the list is refreshed, so discard all map rectangles and polygons
                 if (e.getFirstIndex() == -1) {
-                    map.removeAllMapRectangles();
-                    map.removeAllMapPolygons();
+                    defaultMap.removeAllMapRectangles();
+                    defaultMap.removeAllMapPolygons();
                     mapRectangles.clear();
                     mapPolygons.clear();
                     // Only process complete (final) selection events
@@ -549,18 +562,18 @@ public class ImageryPreference implements PreferenceSetting {
                     }
                     // If needed, adjust map to show all map rectangles and polygons
                     if (!mapRectangles.isEmpty() || !mapPolygons.isEmpty()) {
-                        map.setDisplayToFitMapElements(false, true, true);
-                        map.zoomOut();
+                        defaultMap.setDisplayToFitMapElements(false, true, true);
+                        defaultMap.zoomOut();
                     }
                 }
             }
 
             private void updateBoundsAndShapes(int i) {
-                ImageryBounds bounds = modeldef.getRow(i).getBounds();
+                ImageryBounds bounds = defaultModel.getRow(i).getBounds();
                 if (bounds != null) {
                     List<Shape> shapes = bounds.getShapes();
                     if (shapes != null && !shapes.isEmpty()) {
-                        if (listdef.getSelectionModel().isSelectedIndex(i)) {
+                        if (defaultTable.getSelectionModel().isSelectedIndex(i)) {
                             if (!mapPolygons.containsKey(i)) {
                                 List<MapPolygon> list = new ArrayList<MapPolygon>();
                                 mapPolygons.put(i, list);
@@ -568,30 +581,30 @@ public class ImageryPreference implements PreferenceSetting {
                                 for (Shape shape : shapes) {
                                     MapPolygon polygon = new MapPolygonImpl(shape.getPoints());
                                     list.add(polygon);
-                                    map.addMapPolygon(polygon);
+                                    defaultMap.addMapPolygon(polygon);
                                 }
                             }
                         } else if (mapPolygons.containsKey(i)) {
                             // Remove previously drawn map polygons
                             for (MapPolygon polygon : mapPolygons.get(i)) {
-                                map.removeMapPolygon(polygon);
+                                defaultMap.removeMapPolygon(polygon);
                             }
                             mapPolygons.remove(i);
                         }
                      // Only display bounds when no polygons (shapes) are defined for this provider
                     } else {
-                        if (listdef.getSelectionModel().isSelectedIndex(i)) {
+                        if (defaultTable.getSelectionModel().isSelectedIndex(i)) {
                             if (!mapRectangles.containsKey(i)) {
                                 // Add new map rectangle
                                 Coordinate topLeft = new Coordinate(bounds.getMax().lat(), bounds.getMin().lon());
                                 Coordinate bottomRight = new Coordinate(bounds.getMin().lat(), bounds.getMax().lon());
                                 MapRectangle rectangle = new MapRectangleImpl(topLeft, bottomRight);
                                 mapRectangles.put(i, rectangle);
-                                map.addMapRectangle(rectangle);
+                                defaultMap.addMapRectangle(rectangle);
                             }
                         } else if (mapRectangles.containsKey(i)) {
                             // Remove previously drawn map rectangle
-                            map.removeMapRectangle(mapRectangles.get(i));
+                            defaultMap.removeMapRectangle(mapRectangles.get(i));
                             mapRectangles.remove(i);
                         }
                     }
@@ -599,7 +612,7 @@ public class ImageryPreference implements PreferenceSetting {
             }
         }
 
-        class NewEntryAction extends AbstractAction {
+        private class NewEntryAction extends AbstractAction {
             public NewEntryAction() {
                 putValue(NAME, tr("New"));
                 putValue(SHORT_DESCRIPTION, tr("Add a new WMS/TMS entry by entering the URL"));
@@ -627,7 +640,7 @@ public class ImageryPreference implements PreferenceSetting {
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (answer == JOptionPane.OK_OPTION) {
                     try {
-                        model.addRow(p.getImageryInfo());
+                        activeModel.addRow(p.getImageryInfo());
                     } catch (IllegalArgumentException ex) {
                         if (ex.getMessage() == null || ex.getMessage().isEmpty()) {
                             throw ex;
@@ -641,7 +654,7 @@ public class ImageryPreference implements PreferenceSetting {
             }
         }
 
-        class RemoveEntryAction extends AbstractAction implements ListSelectionListener {
+        private class RemoveEntryAction extends AbstractAction implements ListSelectionListener {
 
             public RemoveEntryAction() {
                 putValue(NAME, tr("Remove"));
@@ -651,7 +664,7 @@ public class ImageryPreference implements PreferenceSetting {
             }
 
             protected void updateEnabledState() {
-                setEnabled(listActive.getSelectedRowCount() > 0);
+                setEnabled(activeTable.getSelectedRowCount() > 0);
             }
 
             @Override
@@ -662,13 +675,13 @@ public class ImageryPreference implements PreferenceSetting {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Integer i;
-                while ((i = listActive.getSelectedRow()) != -1) {
-                    model.removeRow(i);
+                while ((i = activeTable.getSelectedRow()) != -1) {
+                    activeModel.removeRow(i);
                 }
             }
         }
 
-        class ActivateAction extends AbstractAction implements ListSelectionListener {
+        private class ActivateAction extends AbstractAction implements ListSelectionListener {
             public ActivateAction() {
                 putValue(NAME, tr("Activate"));
                 putValue(SHORT_DESCRIPTION, tr("copy selected defaults"));
@@ -676,7 +689,7 @@ public class ImageryPreference implements PreferenceSetting {
             }
 
             protected void updateEnabledState() {
-                setEnabled(listdef.getSelectedRowCount() > 0);
+                setEnabled(defaultTable.getSelectedRowCount() > 0);
             }
 
             @Override
@@ -686,7 +699,7 @@ public class ImageryPreference implements PreferenceSetting {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                int[] lines = listdef.getSelectedRows();
+                int[] lines = defaultTable.getSelectedRows();
                 if (lines.length == 0) {
                     JOptionPane.showMessageDialog(
                             gui,
@@ -699,16 +712,16 @@ public class ImageryPreference implements PreferenceSetting {
                 Set<String> acceptedEulas = new HashSet<String>();
 
                 outer: for (int i = 0; i < lines.length; i++) {
-                    ImageryInfo info = modeldef.getRow(lines[i]);
+                    ImageryInfo info = defaultModel.getRow(lines[i]);
 
                     // Check if an entry with exactly the same values already
                     // exists
-                    for (int j = 0; j < model.getRowCount(); j++) {
-                        if (info.equalsBaseValues(model.getRow(j))) {
+                    for (int j = 0; j < activeModel.getRowCount(); j++) {
+                        if (info.equalsBaseValues(activeModel.getRow(j))) {
                             // Select the already existing row so the user has
                             // some feedback in case an entry exists
-                            listActive.getSelectionModel().setSelectionInterval(j, j);
-                            listActive.scrollRectToVisible(listActive.getCellRect(j, 0, true));
+                            activeTable.getSelectionModel().setSelectionInterval(j, j);
+                            activeTable.scrollRectToVisible(activeTable.getCellRect(j, 0, true));
                             continue outer;
                         }
                     }
@@ -723,15 +736,15 @@ public class ImageryPreference implements PreferenceSetting {
                         }
                     }
 
-                    model.addRow(new ImageryInfo(info));
-                    int lastLine = model.getRowCount() - 1;
-                    listActive.getSelectionModel().setSelectionInterval(lastLine, lastLine);
-                    listActive.scrollRectToVisible(listActive.getCellRect(lastLine, 0, true));
+                    activeModel.addRow(new ImageryInfo(info));
+                    int lastLine = activeModel.getRowCount() - 1;
+                    activeTable.getSelectionModel().setSelectionInterval(lastLine, lastLine);
+                    activeTable.scrollRectToVisible(activeTable.getCellRect(lastLine, 0, true));
                 }
             }
         }
 
-        class ReloadAction extends AbstractAction {
+        private class ReloadAction extends AbstractAction {
             public ReloadAction() {
                 putValue(SHORT_DESCRIPTION, tr("reload defaults"));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
@@ -739,14 +752,14 @@ public class ImageryPreference implements PreferenceSetting {
 
             public void actionPerformed(ActionEvent evt) {
                 layerInfo.loadDefaults(true);
-                modeldef.fireTableDataChanged();
+                defaultModel.fireTableDataChanged();
             }
         }
 
         /**
          * The table model for imagery layer list
          */
-        class ImageryLayerTableModel extends DefaultTableModel {
+        public class ImageryLayerTableModel extends DefaultTableModel {
             public ImageryLayerTableModel() {
                 setColumnIdentifiers(new String[] { tr("Menu Name"), tr("Imagery URL")});
             }
@@ -809,7 +822,7 @@ public class ImageryPreference implements PreferenceSetting {
         /**
          * The table model for the default imagery layer list
          */
-        class ImageryDefaultLayerTableModel extends DefaultTableModel {
+        public class ImageryDefaultLayerTableModel extends DefaultTableModel {
             public ImageryDefaultLayerTableModel() {
                 setColumnIdentifiers(new String[]{"", tr("Menu Name (Default)"), tr("Imagery URL (Default)")});
             }
