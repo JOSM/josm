@@ -215,7 +215,7 @@ abstract public class Main {
     public final void removeLayer(final Layer layer) {
         if (map != null) {
             map.mapView.removeLayer(layer);
-            if (map.mapView.getAllLayers().isEmpty()) {
+            if (map != null && map.mapView.getAllLayers().isEmpty()) {
                 setMapFrame(null);
             }
         }
