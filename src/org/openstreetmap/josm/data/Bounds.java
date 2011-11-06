@@ -140,10 +140,10 @@ public class Bounds {
         if (lonExtent <= 0.0)
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0.0 exptected, got {1}", "lonExtent", lonExtent));
 
-        this.minLat = LatLon.roundToOsmPrecision(center.lat() - latExtent / 2);
-        this.minLon = LatLon.roundToOsmPrecision(center.lon() - lonExtent / 2);
-        this.maxLat = LatLon.roundToOsmPrecision(center.lat() + latExtent / 2);
-        this.maxLon = LatLon.roundToOsmPrecision(center.lon() + lonExtent / 2);
+        this.minLat = LatLon.roundToOsmPrecision(LatLon.toIntervalLat(center.lat() - latExtent / 2));
+        this.minLon = LatLon.roundToOsmPrecision(LatLon.toIntervalLon(center.lon() - lonExtent / 2));
+        this.maxLat = LatLon.roundToOsmPrecision(LatLon.toIntervalLat(center.lat() + latExtent / 2));
+        this.maxLon = LatLon.roundToOsmPrecision(LatLon.toIntervalLon(center.lon() + lonExtent / 2));
     }
 
     @Override public String toString() {
@@ -163,7 +163,15 @@ public class Bounds {
      */
     public LatLon getCenter()
     {
-        return getMin().getCenter(getMax());
+        if (crosses180thMeridian()) {
+            LatLon result = new LatLon(minLat, minLon-360.0).getCenter(getMax());
+            if (result.lon() < -180.0) {
+                result.setLocation(result.lon()+360.0, result.lat());
+            }
+            return result;
+        } else {
+            return getMin().getCenter(getMax());
+        }
     }
 
     /**
@@ -173,14 +181,24 @@ public class Bounds {
         if (ll.lat() < minLat) {
             minLat = LatLon.roundToOsmPrecision(ll.lat());
         }
-        if (ll.lon() < minLon) {
-            minLon = LatLon.roundToOsmPrecision(ll.lon());
-        }
         if (ll.lat() > maxLat) {
             maxLat = LatLon.roundToOsmPrecision(ll.lat());
         }
-        if (ll.lon() > maxLon) {
-            maxLon = LatLon.roundToOsmPrecision(ll.lon());
+        if (crosses180thMeridian()) {
+            if (ll.lon() > maxLon && ll.lon() < minLon) {
+                if (Math.abs(ll.lon() - minLon) <= Math.abs(ll.lon() - maxLon)) {
+                    minLon = LatLon.roundToOsmPrecision(ll.lon());
+                } else {
+                    maxLon = LatLon.roundToOsmPrecision(ll.lon());
+                }
+            }
+        } else {
+            if (ll.lon() < minLon) {
+                minLon = LatLon.roundToOsmPrecision(ll.lon());
+            }
+            if (ll.lon() > maxLon) {
+                maxLon = LatLon.roundToOsmPrecision(ll.lon());
+            }
         }
     }
 
@@ -188,39 +206,67 @@ public class Bounds {
         extend(b.getMin());
         extend(b.getMax());
     }
+    
     /**
      * Is the given point within this bounds?
      */
     public boolean contains(LatLon ll) {
-        if (ll.lat() < minLat || ll.lon() < minLon)
+        if (ll.lat() < minLat || ll.lat() > maxLat)
             return false;
-        if (ll.lat() > maxLat || ll.lon() > maxLon)
-            return false;
+        if (crosses180thMeridian()) {
+            if (ll.lon() > maxLon && ll.lon() < minLon)
+                return false;
+        } else {
+            if (ll.lon() < minLon || ll.lon() > maxLon)
+                return false;
+        }
         return true;
     }
 
+    private static boolean intersectsLonCrossing(Bounds crossing, Bounds notCrossing) {
+        return notCrossing.minLon <= crossing.maxLon || notCrossing.maxLon >= crossing.minLon;
+    }
+    
     /**
      * The two bounds intersect? Compared to java Shape.intersects, if does not use
      * the interior but the closure. (">=" instead of ">")
      */
     public boolean intersects(Bounds b) {
-        return b.maxLat >= minLat &&
-        b.maxLon >= minLon &&
-        b.minLat <= maxLat &&
-        b.minLon <= maxLon;
+        if (b.maxLat < minLat || b.minLat > maxLat)
+            return false;
+        
+        if (crosses180thMeridian() && !b.crosses180thMeridian()) {
+            return intersectsLonCrossing(this, b);
+        } else if (!crosses180thMeridian() && b.crosses180thMeridian()) {
+            return intersectsLonCrossing(b, this);
+        } else if (crosses180thMeridian() && b.crosses180thMeridian()) {
+            return true;
+        } else {
+            return b.maxLon >= minLon && b.minLon <= maxLon;
+        }
     }
 
-
+    /**
+     * Determines if this Bounds object crosses the 180th Meridian.
+     * See http://wiki.openstreetmap.org/wiki/180th_meridian
+     * @return true if this Bounds object crosses the 180th Meridian.
+     */
+    public boolean crosses180thMeridian() {
+        return this.minLon > this.maxLon;
+    }
+    
     /**
      * Converts the lat/lon bounding box to an object of type Rectangle2D.Double
      * @return the bounding box to Rectangle2D.Double
      */
     public Rectangle2D.Double asRect() {
-        return new Rectangle2D.Double(minLon, minLat, maxLon-minLon, maxLat-minLat);
+        double w = maxLon-minLon + (crosses180thMeridian() ? 360.0 : 0.0);
+        return new Rectangle2D.Double(minLon, minLat, w, maxLat-minLat);
     }
 
     public double getArea() {
-        return (maxLon - minLon) * (maxLat - minLat);
+        double w = maxLon-minLon + (crosses180thMeridian() ? 360.0 : 0.0);
+        return w * (maxLat - minLat);
     }
 
     public String encodeAsString(String separator) {
@@ -249,30 +295,11 @@ public class Bounds {
         maxLon < -180 || maxLon > 180;
     }
 
-    private double toIntervalLat(double value, double min, double max) {
-        if (value < min)
-            return min;
-        if (value > max)
-            return max;
-        return value;
-    }
-
-    private double toIntervalLon(double value) {
-        if (value < -180 || value > 180) {
-            value = (value + 180) % 360;
-            if (value < 0) {
-                value += 360;
-            }
-            return value - 180;
-        } else
-            return value;
-    }
-
     public void normalize() {
-        minLat = toIntervalLat(minLat, -90, 90);
-        maxLat = toIntervalLat(maxLat, -90, 90);
-        minLon = toIntervalLon(minLon);
-        maxLon = toIntervalLon(maxLon);
+        minLat = LatLon.toIntervalLat(minLat);
+        maxLat = LatLon.toIntervalLat(maxLat);
+        minLon = LatLon.toIntervalLon(minLon);
+        maxLon = LatLon.toIntervalLon(maxLon);
     }
 
     @Override

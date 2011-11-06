@@ -21,14 +21,43 @@ public class BoundingBoxDownloader extends OsmServerReader {
     private final double lon1;
     private final double lat2;
     private final double lon2;
+    private final boolean crosses180th;
 
     public BoundingBoxDownloader(Bounds downloadArea) {
         this.lat1 = downloadArea.getMin().lat();
         this.lon1 = downloadArea.getMin().lon();
         this.lat2 = downloadArea.getMax().lat();
         this.lon2 = downloadArea.getMax().lon();
+        this.crosses180th = downloadArea.crosses180thMeridian();
     }
 
+    private GpxData downloadRawGps(String url, ProgressMonitor progressMonitor) throws IOException, OsmTransferException, SAXException {
+        boolean done = false;
+        GpxData result = null;
+        for (int i = 0;!done;++i) {
+            progressMonitor.subTask(tr("Downloading points {0} to {1}...", i * 5000, ((i + 1) * 5000)));
+            InputStream in = getInputStream(url+i, progressMonitor.createSubTaskMonitor(1, true));
+            if (in == null) {
+                break;
+            }
+            progressMonitor.setTicks(0);
+            GpxReader reader = new GpxReader(in);
+            reader.parse(false);
+            GpxData currentGpx = reader.data;
+            if (result == null) {
+                result = currentGpx;
+            } else if (currentGpx.hasTrackPoints()) {
+                result.mergeFrom(currentGpx);
+            } else{
+                done = true;
+            }
+            in.close();
+            activeConnection = null;
+        }
+        result.fromServer = true;
+        return result;
+    }
+    
     /**
      * Retrieve raw gps waypoints from the server API.
      * @return A list of all primitives retrieved. Currently, the list of lists
@@ -40,32 +69,15 @@ public class BoundingBoxDownloader extends OsmServerReader {
         progressMonitor.beginTask("", 1);
         try {
             progressMonitor.indeterminateSubTask(tr("Contacting OSM Server..."));
-            String url = "trackpoints?bbox="+lon1+","+lat1+","+lon2+","+lat2+"&page=";
-
-            boolean done = false;
-            GpxData result = null;
-            for (int i = 0;!done;++i) {
-                progressMonitor.subTask(tr("Downloading points {0} to {1}...", i * 5000, ((i + 1) * 5000)));
-                InputStream in = getInputStream(url+i, progressMonitor.createSubTaskMonitor(1, true));
-                if (in == null) {
-                    break;
-                }
-                progressMonitor.setTicks(0);
-                GpxReader reader = new GpxReader(in);
-                reader.parse(false);
-                GpxData currentGpx = reader.data;
-                if (result == null) {
-                    result = currentGpx;
-                } else if (currentGpx.hasTrackPoints()) {
-                    result.mergeFrom(currentGpx);
-                } else{
-                    done = true;
-                }
-                in.close();
-                activeConnection = null;
+            if (crosses180th) {
+                // API 0.6 does not support requests crossing the 180th meridian, so make two requests
+                GpxData result = downloadRawGps("trackpoints?bbox="+lon1+","+lat1+",180.0,"+lat2+"&page=", progressMonitor);
+                result.mergeFrom(downloadRawGps("trackpoints?bbox=-180.0,"+lat1+","+lon2+","+lat2+"&page=", progressMonitor));
+                return result;
+            } else {
+                // Simple request
+                return downloadRawGps("trackpoints?bbox="+lon1+","+lat1+","+lon2+","+lat2+"&page=", progressMonitor);
             }
-            result.fromServer = true;
-            return result;
         } catch (IllegalArgumentException e) {
             // caused by HttpUrlConnection in case of illegal stuff in the response
             if (cancel)
@@ -97,11 +109,31 @@ public class BoundingBoxDownloader extends OsmServerReader {
         progressMonitor.beginTask(tr("Contacting OSM Server..."), 10);
         InputStream in = null;
         try {
+            DataSet ds = null;
             progressMonitor.indeterminateSubTask(null);
-            in = getInputStream("map?bbox="+lon1+","+lat1+","+lon2+","+lat2, progressMonitor.createSubTaskMonitor(9, false));
-            if (in == null)
-                return null;
-            return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+            if (crosses180th) {
+                // API 0.6 does not support requests crossing the 180th meridian, so make two requests
+                in = getInputStream("map?bbox="+lon1+","+lat1+",180.0,"+lat2, progressMonitor.createSubTaskMonitor(9, false));
+                if (in == null)
+                    return null;
+                ds = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+
+                in = getInputStream("map?bbox=-180.0,"+lat1+","+lon2+","+lat2, progressMonitor.createSubTaskMonitor(9, false));
+                if (in == null)
+                    return null;
+                DataSet ds2 = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+                if (ds2 == null)
+                    return null;
+                ds.mergeFrom(ds2);
+                
+            } else {
+                // Simple request
+                in = getInputStream("map?bbox="+lon1+","+lat1+","+lon2+","+lat2, progressMonitor.createSubTaskMonitor(9, false));
+                if (in == null)
+                    return null;
+                ds = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+            }
+            return ds;
         } catch(OsmTransferException e) {
             throw e;
         } catch (Exception e) {

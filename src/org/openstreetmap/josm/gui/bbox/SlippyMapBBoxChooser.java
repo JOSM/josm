@@ -310,16 +310,16 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         iSelectionRectStart = pStart;
         iSelectionRectEnd = pEnd;
 
-        Coordinate l1 = getPosition(p_max);
-        Coordinate l2 = getPosition(p_min);
+        Coordinate l1 = getPosition(p_max); // lon may be outside [-180,180]
+        Coordinate l2 = getPosition(p_min); // lon may be outside [-180,180]
         Bounds b = new Bounds(
                 new LatLon(
                         Math.min(l2.getLat(), l1.getLat()),
-                        Math.min(l1.getLon(), l2.getLon())
+                        LatLon.toIntervalLon(Math.min(l1.getLon(), l2.getLon()))
                 ),
                 new LatLon(
                         Math.max(l2.getLat(), l1.getLat()),
-                        Math.max(l1.getLon(), l2.getLon()))
+                        LatLon.toIntervalLon(Math.max(l1.getLon(), l2.getLon())))
         );
         Bounds oldValue = this.bbox;
         this.bbox = b;
@@ -363,11 +363,18 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         }
 
         this.bbox = bbox;
+        double minLon = bbox.getMin().lon();
+        double maxLon = bbox.getMax().lon();
+        
+        if (bbox.crosses180thMeridian()) {
+            minLon -= 360.0;
+        }
+
         int y1 = OsmMercator.LatToY(bbox.getMin().lat(), MAX_ZOOM);
         int y2 = OsmMercator.LatToY(bbox.getMax().lat(), MAX_ZOOM);
-        int x1 = OsmMercator.LonToX(bbox.getMin().lon(), MAX_ZOOM);
-        int x2 = OsmMercator.LonToX(bbox.getMax().lon(), MAX_ZOOM);
-
+        int x1 = OsmMercator.LonToX(minLon, MAX_ZOOM);
+        int x2 = OsmMercator.LonToX(maxLon, MAX_ZOOM);
+        
         iSelectionRectStart = new Point(Math.min(x1, x2), Math.min(y1, y2));
         iSelectionRectEnd = new Point(Math.max(x1, x2), Math.max(y1, y2));
 
