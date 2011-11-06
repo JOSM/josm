@@ -72,4 +72,26 @@ public class LatLonTest {
         assertEquals(LatLon.roundToOsmPrecisionStrict(99.99999999),  100.0000000, 0);
         assertEquals(LatLon.roundToOsmPrecisionStrict(99.9999999),  99.9999999, 0);
     }
+    
+    @Test
+    public void toIntervalLonTests() {
+        assertEquals(-180.0, LatLon.toIntervalLon(-180.0), 0);
+        assertEquals(0.0, LatLon.toIntervalLon(0.0), 0);
+        assertEquals(180.0, LatLon.toIntervalLon(180.0), 0);
+
+        assertEquals(179.0, LatLon.toIntervalLon(-181.0), 0);
+        assertEquals(-179.0, LatLon.toIntervalLon(181.0), 0);
+
+        assertEquals(-1.0, LatLon.toIntervalLon(359.0), 0);
+        assertEquals(1.0, LatLon.toIntervalLon(-359.0), 0);
+
+        assertEquals(1.0, LatLon.toIntervalLon(361.0), 0);
+        assertEquals(-1.0, LatLon.toIntervalLon(-361.0), 0);
+
+        assertEquals(179.0, LatLon.toIntervalLon(539.0), 0);
+        assertEquals(-179.0, LatLon.toIntervalLon(-539.0), 0);
+
+        assertEquals(-179.0, LatLon.toIntervalLon(541.0), 0);
+        assertEquals(179.0, LatLon.toIntervalLon(-541.0), 0);
+    }
 }

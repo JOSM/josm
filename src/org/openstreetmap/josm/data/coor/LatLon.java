@@ -76,6 +76,28 @@ public class LatLon extends Coordinate {
 	public boolean isValid() {
 		return isValidLat(lat()) && isValidLon(lon());
 	}
+	
+    public static double toIntervalLat(double value) {
+        if (value < -90)
+            return -90;
+        if (value > 90)
+            return 90;
+        return value;
+    }
+
+    /**
+     * Returns a valid OSM longitude [-180,+180] for the given extended longitude value.
+     * For example, a value of -181 will return +179, a value of +181 will return -179. 
+     * @param lon A longitude value not restricted to the [-180,+180] range.
+     */
+    public static double toIntervalLon(double value) {
+        if (isValidLon(value)) {
+            return value;
+        } else {
+            int n = (int) (value + Math.signum(value)*180.0) / 360;
+            return value - n*360.0;
+        }
+    }
  	
     /**
      * Replies the coordinate in degrees/minutes/seconds format
@@ -164,7 +186,7 @@ public class LatLon extends Coordinate {
      * @return <code>true</code> if this is within the given bounding box.
      */
     public boolean isWithin(Bounds b) {
-        return lat() >= b.getMin().lat() && lat() <= b.getMax().lat() && lon() > b.getMin().lon() && lon() < b.getMax().lon();
+        return b.contains(this);
     }
 
     /**
