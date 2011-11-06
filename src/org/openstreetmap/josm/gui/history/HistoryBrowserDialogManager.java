@@ -128,7 +128,7 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
     public void layerRemoved(Layer oldLayer) {
         // remove all history browsers if the number of layers drops to 0
         //
-        if (Main.map.mapView.getNumLayers() == 0) {
+        if (Main.map != null && Main.map.mapView.getNumLayers() == 0) {
             hideAll();
         }
     }
