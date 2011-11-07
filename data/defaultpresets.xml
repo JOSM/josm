@@ -1009,7 +1009,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="highway" value="turning_circle" />
         </item>
         <item name="City Limit" icon="presets/citylimit.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:traffic_sign%3Dcity_limit"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:traffic_sign=city_limit"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_sign" />
             <label text="Edit City Limit Sign" />
             <space />
@@ -1019,7 +1019,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="alt_name" text="Second Name" default="" delete_if_empty="true" />
         </item>
         <item name="Speed Camera" icon="presets/speed_camera.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway%3Dspeed_camera"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=speed_camera"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=speed_camera"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:highway=speed_camera"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=speed_camera" />
@@ -1027,7 +1027,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
         <separator/>
         <item name="Grit Bin" icon="styles/standard/misc/grit_bin.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dgrit_bin"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=grit_bin"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=grit_bin"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=grit_bin"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=grit_bin" />
@@ -1399,7 +1399,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
          <item name="Groyne" icon="presets/groyne.png" type="node,way,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dgroyne"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=groyne"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=groyne"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=groyne"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=groyne" />
@@ -1746,7 +1746,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="railway" value="turntable" />
         </item>
         <item name="Buffer Stop" icon="styles/standard/transport/buffer_stop.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway%3Dbuffer_stop"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=buffer_stop"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:railway=buffer_stop" />
             <key key="railway" value="buffer_stop" />
         </item>
@@ -2235,7 +2235,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
         <separator/>
         <item name="Ticket Machine" de.name="Fahrausweisautomat" icon="presets/vending_machine.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dvending_machine"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=vending_machine"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=vending_machine"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=vending_machine"/>
@@ -2325,7 +2325,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="building" value="hangar" />
         </item>
         <item name="Beacon" icon="styles/standard/misc/landmark/beacon.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dbeacon"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=beacon"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=beacon"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=beacon" />
             <label text="Beacon" />
@@ -2383,6 +2383,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
         <item name="Motel" icon="styles/standard/accommodation/motel.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=motel"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:tourism=motel"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:tourism=motel" />
             <label text="Edit Motel" />
             <key key="tourism" value="motel" />
@@ -2734,7 +2735,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="... other transportation modes possible" />
         </item>
         <item name="Information Board" icon="presets/board.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:information%3Dboard"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:information=board"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Proposed_features/information"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Proposed_features/information" />
             <key key="tourism" value="information" />
@@ -2787,7 +2788,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="phone" text="Phone number" default="" delete_if_empty="true" />
         </item>
         <item name="Other Information Points" icon="presets/information.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism%3Dinformation"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=information"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:tourism=information"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:tourism=information" />
             <key key="tourism" value="information" />
@@ -2877,7 +2878,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="fireplace" text="Fireplace" default="off" delete_if_empty="true" />
         </item>
         <item name="Public Grill" icon="presets/bbq.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dbbq"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bbq"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=bbq"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=bbq"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=bbq" />
@@ -2967,7 +2968,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours for visiting" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Recording Studio" icon="presets/studio.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dstudio"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=studio"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=studio" />
             <label text="Edit Studio" />
             <space />            
@@ -3001,9 +3002,10 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Community Centre" icon="presets/community_centre.png" type="node,closedway">      	
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dcommunity_centre"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=community_centre"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=community_centre"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=community_centre"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=community_centre"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=community_centre"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=community_centre" />
             <label text="Community Centre" />
@@ -3141,6 +3143,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
         <item name="Doctors" icon="styles/standard/health/doctor.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=doctors"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=doctors"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=doctors" />
             <label text="Edit Doctors" />
             <key key="amenity" value="doctors" />
@@ -3175,7 +3178,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Hearing Aids" icon="presets/hearing_aids.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dhearing_aids"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=hearing_aids"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=hearing_aids"/>
             <label text="Edit Hearing Aids" />
             <space />
@@ -3308,7 +3311,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="recycling_type" text="Type" values="container,centre" default="" delete_if_empty="true" />
         </item>
         <item name="Waste Basket" icon="styles/standard/service/recycling/trash-bin.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dwaste_basket"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=waste_basket"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=waste_basket"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=waste_basket"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=waste_basket"
@@ -3428,104 +3431,108 @@ are supplied, then "values" will be treated as "display_values" and translated i
     </group> <!-- Sport facilities -->
     <group name="Sport" icon="presets/rowing.png">
         <item name="Multi" icon="styles/standard/sport/multi.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dmulti" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=multi" />
             <label text="Edit Multi" />
             <key key="sport" value="multi" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
         <item name="9pin" icon="styles/standard/sport/10pin.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3D9pin" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=9pin"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:sport=9pin" />
             <label text="Edit 9pin" />
             <key key="sport" value="9pin" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="" delete_if_empty="true" />
         </item>
         <item name="10pin" icon="styles/standard/sport/10pin.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3D10pin" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=10pin" />
             <label text="Edit 10pin" />
             <key key="sport" value="10pin" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="" delete_if_empty="true" />
         </item>
         <item name="Archery" icon="styles/standard/sport/archery.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Darchery" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=archery" />
             <label text="Edit Archery" />
             <key key="sport" value="archery" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="" delete_if_empty="true" />
         </item>
         <item name="Athletics" icon="presets/athletics.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sports%3Dathletics" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sports=athletics" />
             <label text="Edit Athletics" />
             <key key="sport" value="athletics" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="track" delete_if_empty="true" />
         </item>
         <item name="Climbing" icon="styles/standard/sport/climbing.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dclimbing" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=climbing" />
             <label text="Edit Climbing" />
             <key key="sport" value="climbing" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="sports_centre" default="" delete_if_empty="true" />
         </item>
         <item name="Canoeing" icon="presets/canoe.png" type="node,way,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dcanoe" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=canoe" />
             <label text="Edit Canoeing" />
             <key key="sport" value="canoe" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Cycling" icon="presets/cycling.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dcycling" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=cycling" />
             <label text="Edit Cycling" />
             <key key="sport" value="cycling" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
         <item name="Dog Racing" icon="styles/standard/leisure/dog.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Ddog_racing" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=dog_racing" />
             <label text="Edit Dog Racing" />
             <key key="sport" value="dog_racing" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
         <item name="Equestrian" icon="presets/equestrian.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dequestrian" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=equestrian" />
             <label text="Edit Equestrian" />
             <key key="sport" value="equestrian" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="horse_riding,pitch,sports_centre,stadium,track" default="horse_riding" delete_if_empty="true" />
         </item>
         <item name="Horse Racing" icon="presets/equestrian.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dhorse_racing" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=horse_racing" />
             <label text="Edit Horse Racing" />
             <key key="sport" value="horse_racing" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
         <item name="Gymnastics" icon="presets/gymnastics.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dgymnastics" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=gymnastics" />
             <label text="Edit Gymnastics" />
             <key key="sport" value="gymnastics" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="" delete_if_empty="true" />
         </item>
         <item name="Skating" icon="presets/skating.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dskating" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=skating"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:sport=skating" />
             <label text="Edit Skating" />
             <key key="sport" value="skating" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="ice_rink,pitch,sports_centre,stadium" default="ice_rink" delete_if_empty="true" />
         </item>
         <item name="Skateboard" icon="styles/standard/sport/skateboard.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dskateboard" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=skateboard"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:sport=skateboard" />
             <label text="Edit Skateboard" />
             <key key="sport" value="skateboard" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Swimming" icon="presets/swimming.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dswimming" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=swimming"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:sport=swimming" />
             <label text="Edit Swimming" />
             <key key="sport" value="swimming" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -3553,70 +3560,74 @@ are supplied, then "values" will be treated as "display_values" and translated i
     </group> <!-- Sport -->
     <group name="Sport (Ball)" icon="presets/soccer.png">
         <item name="Soccer" icon="presets/soccer.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dsoccer"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=soccer"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:sport=soccer"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:sport=soccer"/>
             <label text="Edit Soccer" />
             <key key="sport" value="soccer" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Australian Football" icon="presets/soccer.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Daustralian_football"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=australian_football"/>
             <label text="Edit Australian Football" />
             <key key="sport" value="australian_football" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="American Football" icon="presets/football.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Damerican_football"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=american_football"/>
             <label text="Edit American Football" />
             <key key="sport" value="american_football" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Canadian Football" icon="presets/football.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dcanadian_football"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=canadian_football"/>
             <label text="Edit Canadian Football" />
             <key key="sport" value="canadian_football" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Gaelic Football" icon="presets/soccer.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dgaelic_games"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=gaelic_games"/>
             <label text="Edit Gaelic Football" />
             <key key="sport" value="gaelic_football" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Rugby League" icon="presets/football.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Drugby_league"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=rugby_league"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:sport=rugby_league"/>
             <label text="Edit Rugby League" />
             <key key="sport" value="rugby_league" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Rugby Union" icon="presets/football.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Drugby_union"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=rugby_union"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:sport=rugby_union"/>
             <label text="Edit Rugby Union" />
             <key key="sport" value="rugby_union" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Baseball" icon="presets/baseball.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dbaseball"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=baseball"/>
             <label text="Edit Baseball" />
             <key key="sport" value="baseball" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Basketball" icon="presets/basketball.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dbasketball"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=basketball"/>
             <label text="Edit Basketball" />
             <key key="sport" value="basketball" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Volleyball" icon="styles/standard/sport/volleyball.png" type="node,closedway">         	
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dvolleyball" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=volleyball" />
             <label text="Edit Volleyball" />
             <space />            
             <key key="sport" value="volleyball" />
@@ -3625,7 +3636,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="leisure" text="Type" values="stadium,pitch,sports_centre" default="" delete_if_empty="true" />
         </item> 
         <item name="Beachvolleyball" icon="presets/beachvolleyball.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dbeachvolleyball" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=beachvolleyball" />
             <label text="Edit Beachvolleyball" />
             <space />            
             <key key="sport" value="beachvolleyball" />
@@ -3634,77 +3645,81 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="leisure" text="Type" values="stadium,pitch,sports_centre" default="" delete_if_empty="true" />
         </item> 
         <item name="Golf" icon="presets/golf.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dgolf"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=golf"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:sport=golf"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:sport=golf"/>
             <label text="Edit Golf" />
             <key key="sport" value="golf" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="golf_course,pitch,sports_centre,stadium" default="golf_course" delete_if_empty="true" />
         </item>
         <item name="Boule" icon="presets/boule.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dboules"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=boules"/>
             <label text="Edit Boule" />
             <key key="sport" value="boules" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Bowls" icon="presets/boule.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dbowls"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=bowls"/>
             <label text="Edit Bowls" />
             <key key="sport" value="bowls" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Cricket" icon="presets/cricket.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dcricket"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=cricket"/>
             <label text="Edit Cricket" />
             <key key="sport" value="cricket" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Cricket Nets" icon="presets/cricket.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dcricket_nets"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=cricket_nets"/>
             <label text="Edit Cricket Nets" />
             <key key="sport" value="cricket_nets" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="" delete_if_empty="true" />
         </item>
         <item name="Croquet" icon="styles/standard/sport/croquet.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dcroquet"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=croquet"/>
             <label text="Edit Croquet" />
             <key key="sport" value="croquet" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Hockey" icon="presets/Hockey.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dhockey"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=hockey"/>
             <label text="Edit Hockey" />
             <key key="sport" value="hockey" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="ice_rink,pitch,sports_centre,stadium" default="" delete_if_empty="true" />
         </item>
         <item name="Pelota" icon="presets/pelota.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dpelota"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=pelota"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:sport=pelota"/>
             <label text="Edit Pelota" />
             <key key="sport" value="pelota" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" delete_if_empty="true" />
         </item>
         <item name="Racquet" icon="presets/racquetball.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dracquet"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=racquet"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:sport=racquet"/>
             <label text="Edit Racquet" />
             <key key="sport" value="racquet" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="" delete_if_empty="true" />
         </item>
         <item name="Table Tennis" icon="presets/table_tennis.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dtable_tennis"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=table_tennis"/>
             <label text="Edit Table Tennis" />
             <key key="sport" value="table_tennis" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="" delete_if_empty="true" />
         </item>
         <item name="Tennis" icon="presets/tennis.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dtennis"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=tennis"/>
             <label text="Edit Tennis" />
             <key key="sport" value="tennis" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -3790,6 +3805,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
         <item name="Windmill" icon="presets/windmill.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=windmill"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=windmill"
+                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:man_made=windmill"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=windmill" />
             <label text="Edit Windmill" />
             <key key="man_made" value="windmill" />
@@ -3820,7 +3836,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Mineshaft" icon="presets/mineshaft.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dmineshaft"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=mineshaft"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=mineshaft"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=mineshaft" />
             <label text="Edit Mineshaft" />
@@ -3834,7 +3850,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="disused" text="Disused" default="off" delete_if_empty="true" />                                                             
         </item>
         <item name="Adit" icon="presets/adit.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dadit"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=adit"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=adit"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=adit"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=adit" />
@@ -3853,7 +3869,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Water Works" icon="presets/water_works.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dwater_works"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=water_works"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=water_works"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=water_works" />
             <label text="Edit Water Works" />
@@ -3874,7 +3890,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Watermill" icon="styles/standard/misc/landmark/watermill.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dwatermill"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=watermill"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:man_made=watermill"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=watermill" />
             <label text="Edit Watermill"/>
@@ -3887,6 +3903,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=fountain"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=fountain"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=fountain"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=fountain"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=fountain"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=fountain" />
             <label text="Edit Fountain" />
@@ -3894,7 +3911,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Water Well" icon="presets/water_well.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dwater_well"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=water_well"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=water_well"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=water_well" />
             <label text="Edit Water Well" />
@@ -3920,7 +3937,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Street Lamp" icon="styles/standard/misc/streetlamp.png" type="node">         	
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway%3Dstreet_lamp"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=street_lamp"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:highway=street_lamp" />
             <label text="Edit Street Lamp" />
             <space />            
@@ -4006,7 +4023,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="ref" text="Line reference" default="" delete_if_empty="true" />
         </item>
         <item name="Cable Distribution Cabinet" icon="presets/power.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:power%3Dcable_distribution_cabinet"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=cable_distribution_cabinet"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=cable_distribution_cabinet"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=cable_distribution_cabinet" />
             <label text="Edit Cable Distribution Cabinet" />
@@ -4028,7 +4045,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="ref" text="Tower reference" default="" delete_if_empty="true" />
         </item>
         <item name="Pole" icon="styles/standard/misc/landmark/power/pole.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:power%3Dpole"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=pole"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=pole"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:power=pole"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:power=pole"
@@ -4174,7 +4191,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Seafood" icon="presets/seafood.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dseafood"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=seafood"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=seafood"/>
             <label text="Edit Seafood" />
             <space />            
@@ -4184,7 +4201,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Deli (Fine Food)" icon="presets/deli.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Ddeli"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=deli"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=deli"/>
             <label text="Edit Deli (Fine Food)" />
             <space />            
@@ -4194,7 +4211,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>                     
         <item name="Confectionery" icon="presets/confectionery.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dconfectionery"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=confectionery"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=confectionery"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=confectionery"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=confectionery" />
@@ -4205,7 +4222,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
         <separator/>
         <item name="Marketplace" icon="styles/standard/place/marketplace.png" type="node,way,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dmarketplace"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=marketplace"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=marketplace"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=marketplace"
                   no.href="http://wiki.openstreetmap.org/wiki/No:Tag:amenity=marketplace"
@@ -4220,7 +4237,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />                      
         </item>     	
         <item name="Greengrocer" icon="presets/greengrocer.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dgreengrocer"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=greengrocer"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:shop=greengrocer"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:shop=greengrocer"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=greengrocer"/>
@@ -4261,7 +4278,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Boutique" icon="presets/boutique.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dboutique"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=boutique"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=boutique"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=boutique"/>
             <label text="Edit Boutique" />
@@ -4316,7 +4333,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Fabric" icon="presets/fabric.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dfabric"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=fabric"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=fabric"/>
             <label text="Edit Fabric" />
             <space />            
@@ -4340,7 +4357,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Mobile Phone" icon="presets/mobile_phone.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dmobile_phone"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=mobile_phone"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=mobile_phone"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=mobile_phone"/>
             <label text="Edit Mobile Phone" />
@@ -4351,7 +4368,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>                                     
         <item name="Vacuum Cleaner" icon="presets/vacuum_cleaner.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dvacuum_cleaner"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=vacuum_cleaner"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=vacuum_cleaner"/>
             <label text="Edit Vacuum Cleaner" />
             <space />            
@@ -4419,7 +4436,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
     </group> <!-- Cash -->
     <group name="Other" icon="styles/standard/shop/mall.png">
         <item name="Department Store" icon="styles/standard/shop/mall.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Ddepartment_store"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=department_store"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:shop=department_store"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=department_store"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=department_store"/>
@@ -4431,7 +4448,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>                                  
         <item name="Mall" icon="styles/standard/shop/mall.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dmall"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=mall"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=mall"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=mall"/>
             <label text="Edit Mall" />
@@ -4461,7 +4478,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Jewelry" icon="styles/standard/shop/jewelry.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Djewelry"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=jewelry"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=jewelry"/>
             <label text="Edit Jewelry" />
             <space />            
@@ -4471,7 +4488,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" /> 
         </item>                               
         <item name="Erotic" icon="presets/erotic.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Derotic"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=erotic"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=erotic"/>
             <label text="Edit Erotic" />
             <space />            
@@ -4522,7 +4539,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Paint" icon="presets/paint.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dpaint"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=paint"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=paint"/>
             <label text="Edit Paint" />
             <space />            
@@ -4539,7 +4556,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Kitchen" icon="presets/kitchen.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dkitchen"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=kitchen"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=kitchen"/>
             <label text="Edit Kitchen" />
             <space />            
@@ -4549,7 +4566,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>                   
         <item name="Curtain" icon="presets/curtain.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dcurtain"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=curtain"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=curtain"/>
             <label text="Edit Curtain" />
             <space />            
@@ -4559,7 +4576,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>                     
         <item name="Frame" icon="presets/frame.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dframe"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=frame"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=frame"/>
             <label text="Edit Frames" />
             <space />            
@@ -4576,7 +4593,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Copyshop" icon="presets/copyshop.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dcopyshop"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=copyshop"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=copyshop"/>
             <label text="Edit Copyshop" />
             <space />            
@@ -4599,7 +4616,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Musical Instrument" icon="presets/musical_instrument.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dmusical_instrument"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=musical_instrument"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=musical_instrument"/>
             <label text="Edit Musical Instruments" />
             <space />            
@@ -4615,7 +4632,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Variety Store" icon="presets/variety_store.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dvariety_store"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=variety_store"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=variety_store"/>
             <label text="Edit Variety Store" />
             <space />            
@@ -4949,7 +4966,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Greenhouse Horticulture" icon="presets/greenhouse_horticulture.png" type="closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse%3Dgreenhouse_horticulture"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=greenhouse_horticulture"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=greenhouse_horticulture" />
             <label text="Edit Greenhouse Horticulture" />
             <space />            
@@ -5054,7 +5071,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Garages" icon="presets/garages.png" type="closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse%3Dgarages"
+            <link href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=garages"
                   en.href="http://wiki.openstreetmap.org/wiki/Tag:landuse=garages"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=garages"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:landuse=garages"
