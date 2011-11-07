@@ -99,6 +99,10 @@ public class PreferenceDialog extends JDialog {
         super.setVisible(visible);
     }
 
+    void selectPreferencesTabByName(String name) {
+        tpPreferences.selectTabByName(name);
+    }
+
     class CancelAction extends AbstractAction {
         public CancelAction() {
             putValue(NAME, tr("Cancel"));

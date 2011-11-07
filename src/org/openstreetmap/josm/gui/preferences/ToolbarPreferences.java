@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -62,6 +61,7 @@ import org.openstreetmap.josm.actions.AdaptableAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
 import org.openstreetmap.josm.actions.ParameterizedActionDecorator;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -364,6 +364,34 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             fireTableDataChanged();
         }
 
+    }
+
+    private static class ToolbarPopupMenu extends JPopupMenu {
+        public ToolbarPopupMenu(final ActionDefinition action) {
+            
+            add(tr("Remove from toolbar",action.getDisplayName()))
+                    .addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            Collection<String> t = new LinkedList<String>(getToolString());
+                            ActionParser parser = new ActionParser(null);
+                            // get text definition of current action
+                            String res = parser.saveAction(action);
+                            // remove the button from toolbar preferences
+                            t.remove( res );
+                            Main.pref.putCollection("toolbar", t);
+                            Main.toolbar.refreshToolbarControl();                
+                        }
+            });
+            
+            add(tr("Configure toolbar")).addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    final PreferenceDialog p =new PreferenceDialog(Main.parent);
+                    p.selectPreferencesTabByName("toolbar");
+                    p.setVisible(true);
+                }
+            });
+            
+        }
     }
 
     /**
@@ -920,6 +948,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 Icon i = action.getDisplayIcon();
                 if (i != null)
                     b.setIcon(i);
+                b.addMouseListener(new PopupMenuLauncher( new ToolbarPopupMenu(action)));
             }
         }
         control.setVisible(control.getComponentCount() != 0);
