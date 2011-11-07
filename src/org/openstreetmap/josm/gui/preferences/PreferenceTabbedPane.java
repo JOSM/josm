@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.ScrollPane;
@@ -10,9 +11,11 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -51,6 +54,8 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         boolean validatePreferences();
     }
 
+    // all created tabs
+    private final Map<String,Component> tabs = new HashMap<String,Component>();
     private final static Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<PreferenceSettingFactory>();
     private final List<PreferenceSetting> settings = new ArrayList<PreferenceSetting>();
 
@@ -114,9 +119,15 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
             JScrollPane sp = new JScrollPane(p);
             tab = sp;
         }
+        tabs.put(icon,tab);
         addTab(null, ImageProvider.get("preferences", icon), tab);
         setToolTipTextAt(getTabCount()-1, "<html>"+desc+"</html>");
         return p;
+    }
+    
+    public void selectTabByName(String name) {
+        Component c = tabs.get(name);
+        if (c!=null) setSelectedComponent(c);
     }
 
     protected PluginPreference getPluginPreference() {
