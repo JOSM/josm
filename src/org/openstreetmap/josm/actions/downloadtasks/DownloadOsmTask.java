@@ -73,6 +73,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
     public boolean acceptsUrl(String url) {
         return url != null && (
                 url.matches("http://.*/api/0.6/(map|nodes?|ways?|relations?).*")    // OSM API 0.6
+             || url.matches("http://.*/interpreter\\?data=.*")                      // Overpass API
              || url.matches("http://.*/xapi\\?.*\\[@meta\\]")                       // Overpass API XAPI compatibility layer
                 );
     }
