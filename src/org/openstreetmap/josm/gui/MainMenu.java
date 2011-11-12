@@ -11,7 +11,11 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
@@ -55,7 +59,6 @@ import org.openstreetmap.josm.actions.NewAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.OpenLocationAction;
 import org.openstreetmap.josm.actions.OrthogonalizeAction;
-import org.openstreetmap.josm.actions.OrthogonalizeAction.Undo;
 import org.openstreetmap.josm.actions.PasteAction;
 import org.openstreetmap.josm.actions.PasteTagsAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
@@ -81,6 +84,7 @@ import org.openstreetmap.josm.actions.ViewportFollowToggleAction;
 import org.openstreetmap.josm.actions.WireframeToggleAction;
 import org.openstreetmap.josm.actions.ZoomInAction;
 import org.openstreetmap.josm.actions.ZoomOutAction;
+import org.openstreetmap.josm.actions.OrthogonalizeAction.Undo;
 import org.openstreetmap.josm.actions.audio.AudioBackAction;
 import org.openstreetmap.josm.actions.audio.AudioFasterAction;
 import org.openstreetmap.josm.actions.audio.AudioFwdAction;
@@ -190,9 +194,17 @@ public class MainMenu extends JMenuBar {
     public final JMenu presetsMenu = addMenu(marktr("Presets"), KeyEvent.VK_P, 4, ht("/Menu/Presets"));
     public final ImageryMenu imageryMenu =
         (ImageryMenu)addMenu(new ImageryMenu(), marktr("Imagery"), KeyEvent.VK_I, 5, ht("/Menu/Imagery"));
+    /** the window menu is split into several groups. The first is for windows that can be opened from
+     * this menu any time, e.g. the changeset editor. The second group is for toggle dialogs and the third
+     * group is for currently open windows that cannot be toggled, e.g. relation editors. It's recommended
+     * to use WINDOW_MENU_GROUP to determine the group integer.
+     */
+    public final JMenu windowMenu = addMenu(marktr("Windows"), KeyEvent.VK_W, 6, ht("/Menu/Windows"));
+    public static enum WINDOW_MENU_GROUP { ALWAYS, TOGGLE_DIALOG, VOLATILE }
+
     public JMenu audioMenu = null;
-    public final JMenu helpMenu = addMenu(marktr("Help"), KeyEvent.VK_H, 6, ht("/Menu/Help"));
-    public final int defaultMenuPos = 6;
+    public final JMenu helpMenu = addMenu(marktr("Help"), KeyEvent.VK_H, 7, ht("/Menu/Help"));
+    public final int defaultMenuPos = 7;
 
     public final JosmAction moveUpAction = new MoveAction(MoveAction.Direction.UP);
     public final JosmAction moveDownAction = new MoveAction(MoveAction.Direction.DOWN);
@@ -202,22 +214,119 @@ public class MainMenu extends JMenuBar {
 
     public final TaggingPresetSearchAction presetSearchAction = new TaggingPresetSearchAction();
     public FullscreenToggleAction fullscreenToggleAction = null;
+
+    /** this menu listener hides unnecessary JSeparators in a menu list but does not remove them.
+     * If at a later time the separators are required, they will be made visible again. Intended
+     * usage is make menus not look broken if separators are used to group the menu and some of
+     * these groups are empty.
+     */
+    public final static MenuListener menuSeparatorHandler = new MenuListener() {
+        @Override
+        public void menuCanceled(MenuEvent arg0) {}
+        @Override
+        public void menuDeselected(MenuEvent arg0) {}
+        @Override
+        public void menuSelected(MenuEvent a) {
+            if(!(a.getSource() instanceof JMenu))
+                return;
+            final JPopupMenu m = ((JMenu) a.getSource()).getPopupMenu();
+            for(int i=0; i < m.getComponentCount()-1; i++) {
+                if(!(m.getComponent(i) instanceof JSeparator)) {
+                    continue;
+                }
+                // hide separator if the next menu item is one as well
+                ((JSeparator) m.getComponent(i)).setVisible(!(m.getComponent(i+1) instanceof JSeparator));
+            }
+            // hide separator at the end of the menu
+            if(m.getComponent(m.getComponentCount()-1) instanceof JSeparator) {
+                ((JSeparator) m.getComponent(m.getComponentCount()-1)).setVisible(false);
+            }
+        }
+    };
+
+    /**
+     * Add a JosmAction to a menu.
+     *
+     * This method handles all the shortcut handling. It also makes sure that actions that are
+     * handled by the OS are not duplicated on the menu. Menu item will be added at the end of
+     * the menu.
+     * @param menu to add the action to
+     * @param the action that should get a menu item
+     */
+    public static JMenuItem add(JMenu menu, JosmAction action) {
+        if (action.getShortcut().getAutomatic())
+            return null;
+        JMenuItem menuitem = menu.add(action);
+            KeyStroke ks = action.getShortcut().getKeyStroke();
+            if (ks != null) {
+                menuitem.setAccelerator(ks);
+            }
+        return menuitem;
+    }
+
     /**
      * Add a JosmAction to a menu.
      *
      * This method handles all the shortcut handling. It also makes sure that actions that are
      * handled by the OS are not duplicated on the menu.
+     * @param menu to add the action to
+     * @param the action that should get a menu item
+     * @param group the item should be added to. Groups are split by a separator.
+     *        0 is the first group, -1 will add the item to the end.
      */
-    public static JMenuItem add(JMenu menu, JosmAction action) {
-        JMenuItem menuitem = null;
-        if (!action.getShortcut().getAutomatic()) {
-            menuitem = menu.add(action);
-            KeyStroke ks = action.getShortcut().getKeyStroke();
-            if (ks != null) {
-                menuitem.setAccelerator(ks);
-            }
+    public static <E extends Enum<E>> JMenuItem add(JMenu menu, JosmAction action, Enum<E> group) {
+        if (action.getShortcut().getAutomatic())
+            return null;
+        int i = getInsertionIndexForGroup(menu, group.ordinal());
+        JMenuItem menuitem = (JMenuItem) menu.add(new JMenuItem(action), i);
+        KeyStroke ks = action.getShortcut().getKeyStroke();
+        if (ks != null) {
+            menuitem.setAccelerator(ks);
         }
         return menuitem;
+    }
+
+    /**
+     * Add a JosmAction to a menu and automatically prints accelerator if available.
+     * Also adds a checkbox that may be toggled.
+     * @param menu to add the action to
+     * @param the action that should get a menu item
+     * @param group the item should be added to. Groups are split by a separator. Use
+     *        one of the enums that are defined for some of the menus to tell in which
+     *        group the item should go.
+     */
+    public static <E extends Enum<E>> JCheckBoxMenuItem addWithCheckbox(JMenu menu, JosmAction action, Enum<E> group) {
+        int i = getInsertionIndexForGroup(menu, group.ordinal());
+        final JCheckBoxMenuItem mi = (JCheckBoxMenuItem) menu.add(new JCheckBoxMenuItem(action), i);
+        final KeyStroke ks = action.getShortcut().getKeyStroke();
+        if (ks != null) {
+            mi.setAccelerator(ks);
+        }
+        return mi;
+    }
+
+    /** finds the correct insertion index for a given group and adds separators if necessary */
+    private static int getInsertionIndexForGroup(JMenu menu, int group) {
+        if(group < 0)
+            return -1;
+        // look for separator that *ends* the group (or stop at end of menu)
+        int i;
+        for(i=0; i < menu.getItemCount() && group >= 0; i++) {
+            if(menu.getItem(i) == null) {
+                group--;
+            }
+        }
+        // insert before separator that ends the group
+        if(group < 0) {
+            i--;
+        }
+        // not enough separators have been found, add them
+        while(group > 0) {
+            menu.addSeparator();
+            group--;
+            i++;
+        }
+        return i;
     }
 
     public JMenu addMenu(String name, int mnemonicKey, int position, String relativeHelpTopic) {
@@ -301,14 +410,6 @@ public class MainMenu extends JMenuBar {
         vft.setAccelerator(viewportFollowToggleAction.getShortcut().getKeyStroke());
         viewportFollowToggleAction.addButtonModel(vft.getModel());
 
-        // -- changeset manager toggle action
-        ChangesetManagerToggleAction changesetManagerToggleAction = new ChangesetManagerToggleAction();
-        final JCheckBoxMenuItem mi = new JCheckBoxMenuItem(changesetManagerToggleAction);
-        viewMenu.addSeparator();
-        viewMenu.add(mi);
-        mi.setAccelerator(changesetManagerToggleAction.getShortcut().getKeyStroke());
-        changesetManagerToggleAction.addButtonModel(mi.getModel());
-
         if(!Main.applet && Main.platform.canFullscreen()) {
             // -- fullscreen toggle action
             fullscreenToggleAction = new FullscreenToggleAction();
@@ -351,6 +452,13 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, joinAreas);
         add(toolsMenu, createMultipolygon);
 
+        // -- changeset manager toggle action
+        ChangesetManagerToggleAction changesetManagerToggleAction = new ChangesetManagerToggleAction();
+        final JCheckBoxMenuItem mi = MainMenu.addWithCheckbox(windowMenu, changesetManagerToggleAction,
+                MainMenu.WINDOW_MENU_GROUP.ALWAYS);
+        changesetManagerToggleAction.addButtonModel(mi.getModel());
+
+
         if (!Main.pref.getBoolean("audio.menuinvisible", false)) {
             audioMenu = addMenu(marktr("Audio"), KeyEvent.VK_U, defaultMenuPos, ht("/Menu/Audio"));
             add(audioMenu, audioPlayPause);
@@ -368,6 +476,9 @@ public class MainMenu extends JMenuBar {
         current.setAccelerator(Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1,
                 Shortcut.GROUP_DIRECT).getKeyStroke());
         add(helpMenu, about);
+
+
+        windowMenu.addMenuListener(menuSeparatorHandler);
 
         new PresetsMenuEnabler(presetsMenu).refreshEnabled();
     }
