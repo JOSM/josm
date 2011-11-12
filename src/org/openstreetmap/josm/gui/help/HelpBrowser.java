@@ -24,6 +24,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -44,7 +45,9 @@ import javax.swing.text.html.StyleSheet;
 import javax.swing.text.html.HTML.Tag;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -52,6 +55,11 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 public class HelpBrowser extends JDialog {
     /** the unique instance */
     private static HelpBrowser instance;
+
+    /** the menu item in the windows menu. Required to properly
+     * hide on dialog close.
+     */
+    private JMenuItem windowMenuItem;
 
     /**
      * Replies the unique instance of the help browser
@@ -105,6 +113,13 @@ public class HelpBrowser extends JDialog {
     private String url;
 
     private HelpContentReader reader;
+
+    private static final JosmAction focusAction = new JosmAction(tr("JOSM Help Browser"), "help", "", null, false, false) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            HelpBrowser.getInstance().setVisible(true);
+        }
+    };
 
     /**
      * Builds the style sheet used in the internal help browser
@@ -192,6 +207,13 @@ public class HelpBrowser extends JDialog {
             ).applySafe(this);
         } else if (!visible && isShowing()){
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
+        }
+        if(windowMenuItem != null && !visible) {
+            Main.main.menu.windowMenu.remove(windowMenuItem);
+            windowMenuItem = null;
+        }
+        if(windowMenuItem == null && visible) {
+            windowMenuItem = MainMenu.add(Main.main.menu.windowMenu, focusAction, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
         }
         super.setVisible(visible);
     }

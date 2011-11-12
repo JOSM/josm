@@ -31,6 +31,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -41,6 +42,7 @@ import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.help.Helpful;
@@ -94,6 +96,11 @@ public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
     protected boolean buttonHidden;
     private JPanel buttonsPanel;
 
+    /** holds the menu entry in the windows menu. Required to properly
+     * toggle the checkbox on show/hide
+     */
+    protected JCheckBoxMenuItem windowMenuItem;
+
     /**
      * Constructor
      * (see below)
@@ -139,6 +146,10 @@ public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
         buttonHidden = Main.pref.getBoolean(preferencePrefix+".button_hidden", false);
 
         RedirectInputMap.redirectToMainContentPane(this);
+
+        windowMenuItem = MainMenu.addWithCheckbox(Main.main.menu.windowMenu,
+                (JosmAction) getToggleAction(),
+                MainMenu.WINDOW_MENU_GROUP.TOGGLE_DIALOG);
     }
 
     /**
@@ -159,6 +170,9 @@ public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
 
         public void actionPerformed(ActionEvent e) {
             toggleButtonHook();
+            if(getValue("toolbarbutton") != null && getValue("toolbarbutton") instanceof JButton) {
+                ((JButton) getValue("toolbarbutton")).setSelected(!isShowing);
+            }
             if (isShowing) {
                 hideDialog();
                 dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
@@ -194,6 +208,7 @@ public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
         }
         // toggling the selected value in order to enforce PropertyChangeEvents
         setIsShowing(true);
+        windowMenuItem.setState(true);
         toggleAction.putValue("selected", false);
         toggleAction.putValue("selected", true);
     }
@@ -251,6 +266,7 @@ public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
     public void hideDialog() {
         closeDetachedDialog();
         this.setVisible(false);
+        windowMenuItem.setState(false);
         setIsShowing(false);
         toggleAction.putValue("selected", false);
     }
@@ -329,6 +345,7 @@ public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
     public void destroy() {
         closeDetachedDialog();
         hideNotify();
+        Main.main.menu.windowMenu.remove(windowMenuItem);
     }
 
     /**

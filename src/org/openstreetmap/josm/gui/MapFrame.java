@@ -363,13 +363,15 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         toolBarActions.setAlignmentX(0.5f);
         jb.add(toolBarActions);
 
-        jb.addSeparator(new Dimension(0,18));
-        toolBarToggle.setAlignmentX(0.5f);
-        jb.add(toolBarToggle);
-        otherButton.setAlignmentX(0.5f);
-        otherButton.setBorder(null);
-        otherButton.setFont(otherButton.getFont().deriveFont(Font.PLAIN));
-        jb.add(otherButton);
+        if(Main.pref.getBoolean("sidetoolbar.togglevisible", true)) {
+            jb.addSeparator(new Dimension(0,18));
+            toolBarToggle.setAlignmentX(0.5f);
+            jb.add(toolBarToggle);
+            otherButton.setAlignmentX(0.5f);
+            otherButton.setBorder(null);
+            otherButton.setFont(otherButton.getFont().deriveFont(Font.PLAIN));
+            jb.add(otherButton);
+        }
 
         if(Main.pref.getBoolean("sidetoolbar.visible", true))
         {

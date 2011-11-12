@@ -34,6 +34,8 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -53,6 +55,7 @@ import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.CopyAction;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.PasteTagsAction.TagPaster;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -67,6 +70,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandler;
@@ -100,6 +104,11 @@ public class GenericRelationEditor extends RelationEditor  {
     private SelectionTableModel selectionTableModel;
 
     private AutoCompletingTextField tfRole;
+
+    /** the menu item in the windows menu. Required to properly
+     * hide on dialog close.
+     */
+    private JMenuItem windowMenuItem;
 
     /**
      * Creates a new relation editor for the given relation. The relation will be saved if the user
@@ -574,14 +583,39 @@ public class GenericRelationEditor extends RelationEditor  {
         super.setVisible(visible);
         if (visible) {
             RelationDialogManager.getRelationDialogManager().positionOnScreen(this);
+            if(windowMenuItem == null) {
+                addToWindowMenu();
+            }
         } else {
             // make sure all registered listeners are unregistered
             //
             selectionTableModel.unregister();
             memberTableModel.unregister();
             memberTable.unlinkAsListener();
+            if(windowMenuItem != null) {
+                Main.main.menu.windowMenu.remove(windowMenuItem);
+                windowMenuItem = null;
+            }
             dispose();
         }
+    }
+
+    /** adds current relation editor to the windows menu (in the "volatile" group) o*/
+    protected void addToWindowMenu() {
+        String name = getRelation() == null ? tr("New Relation") : getRelation().getLocalName();
+        final String tt = tr("Focus Relation Editor with relation ''{0}'' in layer ''{1}''",
+                name, getLayer().getName());
+        name = tr("Relation Editor: {0}", name == null ? getRelation().getId() : name);
+        final JMenu wm = Main.main.menu.windowMenu;
+        final JosmAction focusAction = new JosmAction(name, "dialogs/relationlist", tt, null, false, false) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final RelationEditor r = (RelationEditor) getValue("relationEditor");
+                r.setVisible(true);
+            }
+        };
+        focusAction.putValue("relationEditor", this);
+        windowMenuItem = MainMenu.add(wm, focusAction, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
     }
 
     /**
