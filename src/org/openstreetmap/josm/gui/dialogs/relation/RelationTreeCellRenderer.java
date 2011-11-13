@@ -63,6 +63,11 @@ public class RelationTreeCellRenderer extends JLabel implements TreeCellRenderer
 
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
             boolean leaf, int row, boolean hasFocus) {
+
+        // Hackish fix for #7056 - if name template for duplicated relation contains tags from parent, template will fail because getReffers doesn't work on primitives not yet in dataset
+        if (!tree.isRootVisible() && tree.getModel().getRoot() == value)
+            return this;
+
         renderIcon();
         renderValue((Relation)value);
         renderBackground(selected);
