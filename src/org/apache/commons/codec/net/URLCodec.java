@@ -48,7 +48,7 @@ import org.apache.commons.codec.binary.StringUtils;
  * 
  * @author Apache Software Foundation
  * @since 1.2
- * @version $Id: URLCodec.java 1157192 2011-08-12 17:27:38Z ggregory $
+ * @version $Id: URLCodec.java 1201529 2011-11-13 21:57:16Z ggregory $
  */
 public class URLCodec implements BinaryEncoder, BinaryDecoder, StringEncoder, StringDecoder {
     
@@ -59,8 +59,10 @@ public class URLCodec implements BinaryEncoder, BinaryDecoder, StringEncoder, St
     
     /**
      * The default charset used for string decoding and encoding.
+     * 
+     * TODO: This field will be final in 2.0.
      */
-    protected final String charset;
+    protected String charset;
     
     /**
      * Release 1.5 made this field final.
@@ -343,6 +345,17 @@ public class URLCodec implements BinaryEncoder, BinaryDecoder, StringEncoder, St
      * @return the default string charset.
      */
     public String getDefaultCharset() {
+        return this.charset;
+    }
+
+    /**
+     * The <code>String</code> encoding used for decoding and encoding.
+     * 
+     * @return Returns the encoding.
+     * 
+     * @deprecated Use {@link #getDefaultCharset()}, will be removed in 2.0.
+     */
+    public String getEncoding() {
         return this.charset;
     }
 

@@ -25,7 +25,7 @@ import java.util.Comparator;
  * as Soundex.
  * 
  * @author Apache Software Foundation
- * @version $Id: StringEncoderComparator.java 1157192 2011-08-12 17:27:38Z ggregory $
+ * @version $Id: StringEncoderComparator.java 1201520 2011-11-13 21:36:18Z ggregory $
  */
 public class StringEncoderComparator implements Comparator {
 
@@ -33,6 +33,16 @@ public class StringEncoderComparator implements Comparator {
      * Internal encoder instance.
      */
     private final StringEncoder stringEncoder;
+
+    /**
+     * Constructs a new instance.
+     * 
+     * @deprecated Creating an instance without a {@link StringEncoder} leads to a {@link NullPointerException}. Will be
+     *             removed in 2.0.
+     */
+    public StringEncoderComparator() {
+        this.stringEncoder = null; // Trying to use this will cause things to break
+    }
 
     /**
      * Constructs a new instance with the given algorithm.
