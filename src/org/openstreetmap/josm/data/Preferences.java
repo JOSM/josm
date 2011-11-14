@@ -74,9 +74,6 @@ public class Preferences {
     protected final SortedMap<String, String> defaults = new TreeMap<String, String>();
     protected final SortedMap<String, String> colornames = new TreeMap<String, String>();
 
-    /* NOTE: FIXME: Remove when saving XML enabled */
-    private boolean loadedXML = true;
-
     public interface PreferenceChangeEvent{
         String getKey();
         String getOldValue();
@@ -163,6 +160,10 @@ public class Preferences {
     }
 
     public File getPreferenceFile() {
+        return new File(getPreferencesDirFile(), "preferences.xml");
+    }
+
+    public File getOldPreferenceFile() {
         return new File(getPreferencesDirFile(), "preferences");
     }
 
@@ -387,18 +388,7 @@ public class Preferences {
 
         final PrintWriter out = new PrintWriter(new OutputStreamWriter(
                 new FileOutputStream(prefFile + "_tmp"), "utf-8"), false);
-        /* FIXME: NOTE: loadedXML - removed 01.12.2011 */
-        if(loadedXML) {
-            out.print(toXML(false));
-        } else {
-            for (final Entry<String, String> e : properties.entrySet()) {
-                String s = defaults.get(e.getKey());
-                /* don't save default values */
-                if(s == null || !s.equals(e.getValue())) {
-                    out.println(e.getKey() + "=" + e.getValue());
-                }
-              }
-        }
+        out.print(toXML(false));
         out.close();
 
         File tmpFile = new File(prefFile + "_tmp");
@@ -445,36 +435,47 @@ public class Preferences {
         }
     }
 
+    public void loadOld() throws Exception {
+        load(true);
+    }
+
     public void load() throws Exception {
+        load(false);
+    }
+
+    private void load(boolean old) throws Exception {
         properties.clear();
         if(!Main.applet) {
             final BufferedReader in = new BufferedReader(new InputStreamReader(
-                    new FileInputStream(getPreferencesDir()+"preferences"), "utf-8"));
+                    new FileInputStream(old ? getOldPreferenceFile() : getPreferenceFile()), "utf-8"));
             /* FIXME: TODO: remove old style config file end of 2012 */
             try {
-                in.mark(1);
-                int v = in.read();
-                in.reset();
-                if(v == '<') {
-                    fromXML(in);
-                } else {
-                    loadedXML = false;
-                    int lineNumber = 0;
-                    ArrayList<Integer> errLines = new ArrayList<Integer>();
-                    for (String line = in.readLine(); line != null; line = in.readLine(), lineNumber++) {
-                        final int i = line.indexOf('=');
-                        if (i == -1 || i == 0) {
-                            errLines.add(lineNumber);
-                            continue;
+                if (old) {
+                    in.mark(1);
+                    int v = in.read();
+                    in.reset();
+                    if(v == '<') {
+                        fromXML(in);
+                    } else {
+                        int lineNumber = 0;
+                        ArrayList<Integer> errLines = new ArrayList<Integer>();
+                        for (String line = in.readLine(); line != null; line = in.readLine(), lineNumber++) {
+                            final int i = line.indexOf('=');
+                            if (i == -1 || i == 0) {
+                                errLines.add(lineNumber);
+                                continue;
+                            }
+                            String key = line.substring(0,i);
+                            String value = line.substring(i+1);
+                            if (!value.isEmpty()) {
+                                properties.put(key, value);
+                            }
                         }
-                        String key = line.substring(0,i);
-                        String value = line.substring(i+1);
-                        if (!value.isEmpty()) {
-                            properties.put(key, value);
-                        }
+                        if (!errLines.isEmpty())
+                            throw new IOException(tr("Malformed config file at lines {0}", errLines));
                     }
-                    if (!errLines.isEmpty())
-                        throw new IOException(tr("Malformed config file at lines {0}", errLines));
+                } else {
+                    fromXML(in);
                 }
             } finally {
                 in.close();
@@ -525,9 +526,34 @@ public class Preferences {
         File preferenceFile = getPreferenceFile();
         try {
             if (!preferenceFile.exists()) {
-                System.out.println(tr("Warning: Missing preference file ''{0}''. Creating a default preference file.", preferenceFile.getAbsoluteFile()));
-                resetToDefault();
-                save();
+                File oldPreferenceFile = getOldPreferenceFile();
+                if (!oldPreferenceFile.exists()) {
+                    System.out.println(tr("Warning: Missing preference file ''{0}''. Creating a default preference file.", preferenceFile.getAbsoluteFile()));
+                    resetToDefault();
+                    save();
+                } else {
+                    try {
+                        loadOld();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        File backupFile = new File(prefDir,"preferences.bak");
+                        JOptionPane.showMessageDialog(
+                                Main.parent,
+                                tr("<html>Preferences file had errors.<br> Making backup of old one to <br>{0}<br> and creating a new default preference file.</html>", backupFile.getAbsoluteFile()),
+                                tr("Error"),
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                        Main.platform.rename(oldPreferenceFile, backupFile);
+                        try {
+                            resetToDefault();
+                            save();
+                        } catch(IOException e1) {
+                            e1.printStackTrace();
+                            System.err.println(tr("Warning: Failed to initialize preferences. Failed to reset preference file to default: {0}", getPreferenceFile()));
+                        }
+                    }
+                    return;
+                }
             } else if (reset) {
                 System.out.println(tr("Warning: Replacing existing preference file ''{0}'' with default preference file.", preferenceFile.getAbsoluteFile()));
                 resetToDefault();
@@ -547,7 +573,7 @@ public class Preferences {
             load();
         } catch (Exception e) {
             e.printStackTrace();
-            File backupFile = new File(prefDir,"preferences.bak");
+            File backupFile = new File(prefDir,"preferences.xml.bak");
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>Preferences file had errors.<br> Making backup of old one to <br>{0}<br> and creating a new default preference file.</html>", backupFile.getAbsoluteFile()),
