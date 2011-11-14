@@ -1,6 +1,7 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui;
 
+import java.awt.Toolkit;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -330,7 +331,11 @@ public class MainMenu extends JMenuBar {
     }
 
     public JMenu addMenu(String name, int mnemonicKey, int position, String relativeHelpTopic) {
-        return addMenu(new JMenu(tr(name)), name, mnemonicKey, position, relativeHelpTopic);
+        final JMenu menu = new JMenu(tr(name));
+        int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+        int menuItemHeight = new JMenu().add(newAction).getPreferredSize().height;
+        MenuScroller.setScrollerFor(menu, screenHeight / menuItemHeight);
+        return addMenu(menu, name, mnemonicKey, position, relativeHelpTopic);
     }
 
     public JMenu addMenu(JMenu menu, String name, int mnemonicKey, int position, String relativeHelpTopic) {
