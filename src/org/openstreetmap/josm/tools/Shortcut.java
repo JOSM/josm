@@ -1,7 +1,6 @@
 //License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
-import java.awt.Menu;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
@@ -206,6 +205,11 @@ public class Shortcut {
         String modifText = KeyEvent.getKeyModifiersText(keyStroke.getModifiers());
         if ("".equals (modifText)) return KeyEvent.getKeyText (keyStroke.getKeyCode ());
         return modifText + "+" + KeyEvent.getKeyText(keyStroke.getKeyCode ());
+    }
+
+    @Override
+    public String toString() {
+        return getKeyText();
     }
 
     ///////////////////////////////
@@ -503,11 +507,11 @@ public class Shortcut {
                                 tr("This action will have no shortcut.\n\n")
                                 :
                                     tr("Using the shortcut ''{0}'' instead.\n\n", potentialShortcut.getKeyText())
-                        )+
-                        tr("(Hint: You can edit the shortcuts in the preferences.)"),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-        );
+                                )+
+                                tr("(Hint: You can edit the shortcuts in the preferences.)"),
+                                tr("Error"),
+                                JOptionPane.ERROR_MESSAGE
+                );
     }
 
     /**

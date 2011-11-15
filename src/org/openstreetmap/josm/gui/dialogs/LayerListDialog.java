@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,6 +64,9 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.MultikeyActionsHandler;
+import org.openstreetmap.josm.tools.MultikeyShortcutAction;
+import org.openstreetmap.josm.tools.MultikeyShortcutAction.MultikeyInfo;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -84,6 +88,8 @@ public class LayerListDialog extends ToggleDialog {
         if (instance != null)
             throw new IllegalStateException("Dialog was already created");
         instance = new LayerListDialog(mapFrame);
+
+        MultikeyActionsHandler.getInstance().addAction(instance.new ShowHideLayerAction(false));
     }
 
     /**
@@ -112,6 +118,7 @@ public class LayerListDialog extends ToggleDialog {
 
     ActivateLayerAction activateLayerAction;
 
+    //TODO This duplicates ShowHide actions functionality
     /** stores which layer index to toggle and executes the ShowHide action if the layer is present */
     private final class ToggleLayerIndexVisibility extends AbstractAction {
         int layerIndex = -1;
@@ -122,7 +129,7 @@ public class LayerListDialog extends ToggleDialog {
         public void actionPerformed(ActionEvent e) {
             final Layer l = model.getLayer(model.getRowCount() - layerIndex);
             if(l != null) {
-                new ShowHideLayerAction(l).actionPerformed(e);
+                l.toggleVisible();
             }
         }
     }
@@ -257,14 +264,14 @@ public class LayerListDialog extends ToggleDialog {
         adaptTo(deleteLayerAction, selectionModel);
 
         createLayout(layerList, true, Arrays.asList(new SideButton[] {
-            new SideButton(moveUpAction),
-            new SideButton(moveDownAction),
-            new SideButton(activateLayerAction),
-            new SideButton(showHideLayerAction),
-            opacityButton,
-            new SideButton(mergeLayerAction),
-            new SideButton(duplicateLayerAction),
-            new SideButton(deleteLayerAction, false)
+                new SideButton(moveUpAction),
+                new SideButton(moveDownAction),
+                new SideButton(activateLayerAction),
+                new SideButton(showHideLayerAction),
+                opacityButton,
+                new SideButton(mergeLayerAction),
+                new SideButton(duplicateLayerAction),
+                new SideButton(deleteLayerAction, false)
         }));
 
         createVisibilityToggleShortcuts();
@@ -419,42 +426,50 @@ public class LayerListDialog extends ToggleDialog {
         }
     }
 
-    public final class ShowHideLayerAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
-        private  Layer layer;
+    public final class ShowHideLayerAction extends AbstractAction implements IEnabledStateUpdating, LayerAction, MultikeyShortcutAction {
 
-        /**
-         * Creates a {@see ShowHideLayerAction} which toggle the visibility of
-         * a specific layer.
-         *
-         * @param layer  the layer. Must not be null.
-         * @exception IllegalArgumentException thrown, if layer is null
-         */
-        public ShowHideLayerAction(Layer layer) throws IllegalArgumentException {
-            this();
-            putValue(NAME, tr("Show/Hide"));
-            CheckParameterUtil.ensureParameterNotNull(layer, "layer");
-            this.layer = layer;
-            updateEnabledState();
-        }
+        private WeakReference<Layer> lastLayer;
 
         /**
          * Creates a {@see ShowHideLayerAction} which will toggle the visibility of
          * the currently selected layers
          *
          */
-        public ShowHideLayerAction() {
+        public ShowHideLayerAction(boolean init) {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "showhide"));
             putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the selected layer."));
             putValue("help", HelpUtil.ht("/Dialog/LayerList#ShowHideLayer"));
-            updateEnabledState();
+            putValue(ACCELERATOR_KEY, Shortcut.registerShortcut("core_multikey:showHideLayer", "", 'S', Shortcut.GROUP_DIRECT, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK).getKeyStroke());
+            if (init) {
+                updateEnabledState();
+            }
+        }
+
+        public ShowHideLayerAction() {
+            this(true);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (layer != null) {
-                layer.toggleVisible();
-            } else {
-                for(Layer l : model.getSelectedLayers()) {
+            for(Layer l : model.getSelectedLayers()) {
+                l.toggleVisible();
+            }
+        }
+
+        @Override
+        public void executeMultikeyAction(int index) {
+            Layer l = LayerListDialog.getLayerForIndex(index);
+            if (l != null) {
+                l.toggleVisible();
+                lastLayer = new WeakReference<Layer>(l);
+            }
+        }
+
+        @Override
+        public void repeateLastMultikeyAction() {
+            if (lastLayer != null) {
+                Layer l = lastLayer.get();
+                if (LayerListDialog.isLayerValid(l)) {
                     l.toggleVisible();
                 }
             }
@@ -462,11 +477,7 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public void updateEnabledState() {
-            if (layer == null) {
-                setEnabled(! getModel().getSelectedLayers().isEmpty());
-            } else {
-                setEnabled(true);
-            }
+            setEnabled(!model.getSelectedLayers().isEmpty());
         }
 
         @Override
@@ -487,6 +498,18 @@ public class LayerListDialog extends ToggleDialog {
         @Override
         public int hashCode() {
             return getClass().hashCode();
+        }
+
+        @Override
+        public List<MultikeyInfo> getMultikeyCombinations() {
+            return LayerListDialog.getLayerInfoByClass(Layer.class);
+        }
+
+        @Override
+        public MultikeyInfo getLastMultikeyAction() {
+            if (lastLayer != null)
+                return LayerListDialog.getLayerInfo(lastLayer.get());
+            return null;
         }
     }
 
@@ -904,8 +927,9 @@ public class LayerListDialog extends ToggleDialog {
                         c = null;
                     }
                 }
-                if(c == null)
+                if(c == null) {
                     c = Main.pref.getUIColor(isSelected ? "Table.selectionForeground" : "Table.foreground");
+                }
                 label.setForeground(c);
             }
             label.setIcon(layer.getIcon());
@@ -1458,7 +1482,7 @@ public class LayerListDialog extends ToggleDialog {
      * @return the action
      */
     public ShowHideLayerAction createShowHideLayerAction() {
-        ShowHideLayerAction act = new ShowHideLayerAction();
+        ShowHideLayerAction act = new ShowHideLayerAction(true);
         act.putValue(Action.NAME, tr("Show/Hide"));
         return act;
     }
@@ -1495,5 +1519,63 @@ public class LayerListDialog extends ToggleDialog {
      */
     public MergeAction createMergeLayerAction(Layer layer) {
         return new MergeAction(layer);
+    }
+
+    public static Layer getLayerForIndex(int index) {
+
+        if (!Main.isDisplayingMapView())
+            return null;
+
+        List<Layer> layers = Main.map.mapView.getAllLayersAsList();
+
+        if (index < layers.size())
+            return layers.get(index);
+        else
+            return null;
+    }
+
+    public static List<MultikeyInfo> getLayerInfoByClass(Class<? extends Layer> layerClass) {
+
+        List<MultikeyInfo> result = new ArrayList<MultikeyShortcutAction.MultikeyInfo>();
+
+        if (!Main.isDisplayingMapView())
+            return result;
+
+        List<Layer> layers = Main.map.mapView.getAllLayersAsList();
+
+        int index = 0;
+        for (Layer l: layers) {
+            if (layerClass.isAssignableFrom(l.getClass())) {
+                result.add(new MultikeyInfo(index, l.getName()));
+            }
+            index++;
+        }
+
+        return result;
+    }
+
+    public static boolean isLayerValid(Layer l) {
+        if (l == null)
+            return false;
+
+        if (!Main.isDisplayingMapView())
+            return false;
+
+        return Main.map.mapView.getAllLayersAsList().indexOf(l) >= 0;
+    }
+
+    public static MultikeyInfo getLayerInfo(Layer l) {
+
+        if (l == null)
+            return null;
+
+        if (!Main.isDisplayingMapView())
+            return null;
+
+        int index = Main.map.mapView.getAllLayersAsList().indexOf(l);
+        if (index < 0)
+            return null;
+
+        return new MultikeyInfo(index, l.getName());
     }
 }
