@@ -508,7 +508,7 @@ public class AddWMSLayerPanel extends JPanel {
         ImageryInfo info = new ImageryInfo(menuName.getText(), resultingLayerField.getText());
         if (ImageryType.TMS.equals(info.getImageryType())) {
             TMSLayer.checkUrl(info.getUrl());
-        } else {
+        } else if (selectedLayers != null) {
             HashSet<String> proj = new HashSet<String>();
             for(LayerDetails l : selectedLayers)
                 proj.addAll(l.getProjections());
