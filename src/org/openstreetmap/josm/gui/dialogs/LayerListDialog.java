@@ -90,6 +90,7 @@ public class LayerListDialog extends ToggleDialog {
         instance = new LayerListDialog(mapFrame);
 
         MultikeyActionsHandler.getInstance().addAction(instance.new ShowHideLayerAction(false));
+        MultikeyActionsHandler.getInstance().addAction(instance.new ActivateLayerAction());
     }
 
     /**
@@ -237,6 +238,7 @@ public class LayerListDialog extends ToggleDialog {
 
         // -- activate action
         activateLayerAction = new ActivateLayerAction();
+        activateLayerAction.updateEnabledState();
         adaptTo(activateLayerAction, selectionModel);
 
         // -- show hide action
@@ -617,7 +619,7 @@ public class LayerListDialog extends ToggleDialog {
      * The action to activate the currently selected layer
      */
 
-    public final class ActivateLayerAction extends AbstractAction implements IEnabledStateUpdating, MapView.LayerChangeListener{
+    public final class ActivateLayerAction extends AbstractAction implements IEnabledStateUpdating, MapView.LayerChangeListener, MultikeyShortcutAction{
         private  Layer layer;
 
         public ActivateLayerAction(Layer layer) {
@@ -631,8 +633,8 @@ public class LayerListDialog extends ToggleDialog {
         public ActivateLayerAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "activate"));
             putValue(SHORT_DESCRIPTION, tr("Activate the selected layer"));
+            putValue(ACCELERATOR_KEY, Shortcut.registerShortcut("core_multikey:activateLayer", "", 'A', Shortcut.GROUP_DIRECT, KeyEvent.SHIFT_DOWN_MASK + KeyEvent.ALT_DOWN_MASK).getKeyStroke());
             putValue("help", HelpUtil.ht("/Dialog/LayerList#ActivateLayer"));
-            updateEnabledState();
         }
 
         @Override
@@ -643,10 +645,14 @@ public class LayerListDialog extends ToggleDialog {
             } else {
                 toActivate = model.getSelectedLayers().get(0);
             }
+            execute(toActivate);
+        }
+
+        private void execute(Layer layer) {
             // model is  going to be updated via LayerChangeListener
             // and PropertyChangeEvents
-            Main.map.mapView.setActiveLayer(toActivate);
-            toActivate.setVisible(true);
+            Main.map.mapView.setActiveLayer(layer);
+            layer.setVisible(true);
         }
 
         protected boolean isActiveLayer(Layer layer) {
@@ -680,6 +686,29 @@ public class LayerListDialog extends ToggleDialog {
         @Override
         public void layerRemoved(Layer oldLayer) {
             updateEnabledState();
+        }
+
+        @Override
+        public void executeMultikeyAction(int index) {
+            Layer l = LayerListDialog.getLayerForIndex(index);
+            if (l != null) {
+                execute(l);
+            }
+        }
+
+        @Override
+        public void repeateLastMultikeyAction() {
+            // Do nothing, repating not supported
+        }
+
+        @Override
+        public List<MultikeyInfo> getMultikeyCombinations() {
+            return LayerListDialog.getLayerInfoByClass(Layer.class);
+        }
+
+        @Override
+        public MultikeyInfo getLastMultikeyAction() {
+            return null; // Repeating action doesn't make much sense for activating
         }
     }
 
