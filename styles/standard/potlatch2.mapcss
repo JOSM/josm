@@ -58,7 +58,7 @@ way[highway=trunk],way[highway=trunk_link],
 way[highway=primary],way[highway=primary_link],
 way[highway=secondary],way[highway=secondary_link],
 way[highway=tertiary],way[highway=tertiary_link],
-way[highway=residential],way[highway=unclassified]  { text: auto; text-color: black; font-size: 10; text-position: line; text-halo-color: white; text-halo-radius: 2; }
+way[highway=residential],way[highway=unclassified]  { z-index: 5; text: auto; text-color: black; font-size: 10; text-position: line; text-halo-color: white; text-halo-radius: 2; }
 way[highway=motorway],way[highway=motorway_link]    { z-index: 9; color: #809BC0; width: 7; casing-color: black; casing-width: 8; }
 way[highway=trunk],way[highway=trunk_link]          { z-index: 9; color: #7FC97F; width: 7; casing-color: black; casing-width: 8; }
 way[highway=primary],way[highway=primary_link]      { z-index: 8; color: #E46D71; width: 7; casing-color: black; casing-width: 8; }
@@ -67,33 +67,33 @@ way[highway=tertiary]                               { z-index: 6; color: #FEFECB
 way[highway=unclassified]                           { z-index: 6; color: #D0D0D0; width: 5; casing-width: 7; }
 way[highway=tertiary_link]                          { z-index: 5; color: #FEFECB; width: 4; casing-width: 5; }
 way[highway=residential]                            { z-index: 5; color: #E8E8E8; width: 5; casing-color: gray; casing-width: 7; }
-way[highway=service][service!=parking_aisle]        { color: white; width: 3; casing-color: gray; casing-width: 5; }
-way[highway=service][service=parking_aisle]         { color: white; width: 1; casing-color: #aaaaaa; casing-width: 2; }
-way[highway=service][service=alley]                 { color: white; width: 2; dashes: 6,2; casing-color: black; casing-width: 4; }
-way[highway=road]                                   { color: gray; width: 5; casing-color: white; casing-width: 7; }
+way[highway=service][service!=parking_aisle]        { z-index: 5; color: white; width: 3; casing-color: gray; casing-width: 5; }
+way[highway=service][service=parking_aisle]         { z-index: 5; color: white; width: 1; casing-color: #aaaaaa; casing-width: 2; }
+way[highway=service][service=alley]                 { z-index: 5; color: white; width: 2; dashes: 6,2; casing-color: black; casing-width: 4; }
+way[highway=road]                                   { z-index: 5; color: gray; width: 5; casing-color: white; casing-width: 7; }
 way[highway=living_street]                          { z-index: 5; color: #ddffee; width: 3; casing-color: #555555; casing-width: 4; }
 
 /* Road areas */
 
-way[highway=pedestrian]!:closed { color: #ddddee; width: 5; casing-color: #555555; casing-width: 6; casing-dashes: 2,4;}
+way[highway=pedestrian]!:closed { z-index: 5; color: #ddddee; width: 5; casing-color: #555555; casing-width: 6; casing-dashes: 2,4;}
 way[highway=pedestrian]:closed  { color: #555555; width: 1; fill-color: #ddddee; fill-opacity: 0.8; } /* FIXME: dashed outline */
 
 /* Paths */
 
-way[highway=steps]     { color: #FF6644; width: 6; dashes: 2, 2; }
-way[highway=footway]   { color: #FF6644; width: 2; dashes: 6, 3; prop_path : 1;}
+way[highway=steps]     { z-index: 5; color: #FF6644; width: 6; dashes: 2, 2; }
+way[highway=footway]   { z-index: 5; color: #FF6644; width: 2; dashes: 6, 3; prop_path : 1;}
 way[highway=footway][bicycle=yes]   { z-index: 4; color: blue; width: 1; }
 way[highway=bridleway] { z-index:9; color: #996644; width: 2; dashes: 4, 2, 2, 2; prop_path : 1;}
-way[highway=track]     { color: #996644; width: 2; dashes: 4, 2; prop_path : 1;}
-way[highway=path]      { color: brown; width: 2; dashes: 2, 2; prop_path : 1;}
-way[highway=cycleway]  { color: blue; width: 2; dashes: 4, 2; prop_path : 1;}
+way[highway=track]     { z-index: 5; color: #996644; width: 2; dashes: 4, 2; prop_path : 1;}
+way[highway=path]      { z-index: 5; color: brown; width: 2; dashes: 2, 2; prop_path : 1;}
+way[highway=cycleway]  { z-index: 5; color: blue; width: 2; dashes: 4, 2; prop_path : 1;}
 way[railway=tram]      { z-index: 11; color: #999999; width: 2; casing-color: black; casing-width: 6; }
 way[is_prop_set("prop_path")]              { text:auto; text-color: black; text-position: line; text-offset: 5;}
 
 /* Under construction */
 
-way[highway=proposed] { color: #88ffff; width: 6; dashes: 8, 4; }
-way[highway=construction] { color: #ffffbb; width: 6; dashes: 8, 4; casing-color: #0000aa; casing-width: 8; casing-dashes: 8,4;}
+way[highway=proposed] { z-index: 5; color: #88ffff; width: 6; dashes: 8, 4; }
+way[highway=construction] { z-index: 5; color: #ffffbb; width: 6; dashes: 8, 4; casing-color: #0000aa; casing-width: 8; casing-dashes: 8,4;}
 way[construction=rail]
 	{ z-index: 6; color: black; width: 5; dashes: 6, 6, 4, 8;}
 way[construction=rail]::rail_over
@@ -119,9 +119,9 @@ way[railway=disused]::railway_over, way[railway=abandoned]::railway_over
 
 way[waterway=river],
 way[waterway=canal],
-way[waterway=stream]   { color: blue; width: 2; text:auto; text-color:blue; font-size:9; text-position: line; text-offset: 7;}
-way[waterway=drain] 			 {color: blue; width: 1; text:auto; text-color: blue; text-position: line; text-offset: 3;}
-way[waterway][tunnel=yes]                {dashes: 8,4;}
+way[waterway=stream]   { z-index: 5; color: blue; width: 2; text:auto; text-color:blue; font-size:9; text-position: line; text-offset: 7;}
+way[waterway=drain] 			 {z-index: 5; color: blue; width: 1; text:auto; text-color: blue; text-position: line; text-offset: 3;}
+way[waterway][tunnel=yes]                {z-index: 5; dashes: 8,4;}
 
 /* Aeroways */
 
@@ -160,19 +160,19 @@ way[aeroway=apron]:closed { z-index: 4; color: #cc66cc; width: 1; fill-color: #d
 
 /* Barriers */
 
-way[barrier] {color: #000000; width: 1}
-way[barrier=fence] {color: #000000; width: 1; dashes: 8,4,2,4; }
+way[barrier] {z-index: 5; color: #000000; width: 1}
+way[barrier=fence] {z-index: 5; color: #000000; width: 1; dashes: 8,4,2,4; }
 
 /* Power */
 
-way[power=line] {color: darkgray; width: 3; dashes: 12,2; casing-color: black; casing-width: 8; casing-dashes: 4, 38;}
-way[power=minor_line] {color: gray; width: 2; dashes: 2,4; casing-width: 8; casing-color: white; casing-dashes: 2,22;}
-way[power=station]:closed { color: black; width: 2; fill-color: #666666; fill-opacity: 0.6; prop_area_small_name : 1;}
-way[power=generator]:closed { color: black; width: 2; fill-color: #444444; fill-opacity: 0.6; prop_area_small_name : 1;}
+way[power=line] {z-index: 5; color: darkgray; width: 3; dashes: 12,2; casing-color: black; casing-width: 8; casing-dashes: 4, 38;}
+way[power=minor_line] {z-index: 5; color: gray; width: 2; dashes: 2,4; casing-width: 8; casing-color: white; casing-dashes: 2,22;}
+way[power=station]:closed { z-index: 5; color: black; width: 2; fill-color: #666666; fill-opacity: 0.6; prop_area_small_name : 1;}
+way[power=generator]:closed { z-index: 5; color: black; width: 2; fill-color: #444444; fill-opacity: 0.6; prop_area_small_name : 1;}
 
 /* Leisure */
 
-way[golf=hole] {color: darkgreen; width: 5; casing-color: green; casing-width: 10; }
+way[golf=hole] {z-index: 5; color: darkgreen; width: 5; casing-color: green; casing-width: 10; }
 way[leisure=sports_centre]:closed { color: #66ddcc; fill-color: #66ddcc; prop_area_small_name : 1; }
 
 
@@ -285,7 +285,7 @@ node[addr:housenumber],
 node[addr:housename] { symbol-shape: circle; symbol-size: 8; symbol-fill-color: #B0E0E6; }
 node[addr:housenumber]::hn_casing,
 node[addr:housename]::hn_casing { z-index: -100; symbol-shape: circle; symbol-size: 10; symbol-fill-color: blue; }
-way[addr:interpolation] { color: #B0E0E6; width: 3; dashes: 3,3;}
+way[addr:interpolation] { z-index: 5; color: #B0E0E6; width: 3; dashes: 3,3;}
 
 /****************
  * core_landuse.css
@@ -295,7 +295,7 @@ way[addr:interpolation] { color: #B0E0E6; width: 3; dashes: 3,3;}
 
 area[natural]:closed                          { color: #ADD6A5; width: 1; fill-color: #ADD6A5; fill-opacity: 0.2; }
 area[natural=beach]:closed                    { color: #ffdd44; width: 1; fill-color: yellow; fill-opacity: 0.2; prop_area_small_name : 1;}
-way[natural=coastline]						{ color: black; width: 3; }
+way[natural=coastline]						{ z-index: 5; color: black; width: 3; }
 area[landuse]:closed                          { color: #444444; width: 2; fill-color: #444444; fill-opacity: 0.3; }
 area[landuse=residential]:closed              { color: #666666; width: 2; fill-color: #666666; fill-opacity: 0.15; }
 area[landuse=retail]:closed                   { color: #cc2222; width: 2; fill-color: #aa4422; fill-opacity: 0.15; }
@@ -310,7 +310,7 @@ area[military]:closed                         { color: #D6D6D6; width: 1; fill-c
 area[building]:closed                         { color: #ff6ec7; width: 1; fill-color: #ff6ec7; fill-opacity: 0.2; }
 area[natural=water]:closed,
 area[waterway][waterway!=dam]:closed          { color: blue;    width: 2; fill-color: blue;    fill-opacity: 0.2; prop_area_small_name : 1;}
-way[waterway=dam]							{ color: black; width: 1; fill-color: #222222; fill-opacity: 0.1; prop_area_small_name : 1;}
+way[waterway=dam]							{ z-index: 5; color: black; width: 1; fill-color: #222222; fill-opacity: 0.1; prop_area_small_name : 1;}
 area[man_made]:closed							{ color: black; width: 2; fill-color: #222222; fill-opacity: 0.1; prop_area_small_name : 1; }
 area[man_made=reservoir_covered]:closed       { color: blue; width: 2; dashes: 4, 2; fill-color: #222222; fill-opacity: 0.1; prop_area_small_name : 1; }
 area[landuse=reservoir]:closed                { color: blue;    width: 2; fill-color: blue;    fill-opacity: 0.2; prop_area_small_name : 1;}
@@ -322,17 +322,17 @@ area[landuse=recreation_ground]:closed        { color: green; fill-color: green;
 area[amenity=parking]:closed                  { color: #bbaa66;    width: 1; fill-color: #bbaa66;    fill-opacity: 0.2; }
 area[public_transport=pay_scale_area]:closed  { color: gray;    width: 1; fill-color: gray;    fill-opacity: 0.1; }
 way[man_made=pier]							{ z-index: 4; color: #777; width: 3; casing-color: black; casing-width: 5;}
-way[man_made=pier][floating=yes]			{ dashes: 4,2; casing-color: #444;}
+way[man_made=pier][floating=yes]			{ z-index: 5; dashes: 4,2; casing-color: #444;}
 area[leisure=marina]:closed					{ color: pink; fill-color: pink; fill-opacity: 0.4; prop_area_small_name : 1;}
-way[leisure=slipway]						{ color: grey; width: 3; casing-color: blue; casing-width: 7; }
+way[leisure=slipway]						{ z-index: 5; color: grey; width: 3; casing-color: blue; casing-width: 7; }
 area[leisure=golf_course]:closed { color: #44ee22; width: 2; fill-color: #44ee22; fill-opacity: 0.2; prop_area_small_name : 1;}
-way[boundary]                               { color: #000066; width: 2; opacity: 0.6; dashes: 24,4, 4, 4; z-index: 4;}
+way[boundary]                               { z-index: 5; color: #000066; width: 2; opacity: 0.6; dashes: 24,4, 4, 4; z-index: 4;}
 /* Perhaps should be filled, on lower zooms. */
-way[boundary=national_park]                 { color: #225500; width: 2; opacity: 0.6; dashes: 24,4, 4, 4; z-index: 4;}
-way[boundary=protected_area]                { color: #447744; width: 2; opacity: 0.6; dashes: 12,4, 4, 4; z-index: 4;}
-way[boundary=administrative]                { color: purple; width: 2; opacity: 0.2; dashes: 24,4; z-index: 4;}
-way[boundary=administrative][waterway]      { opacity: 0.8; z-index: 4; dashes: 24,4; width: 6; }
-way[landuse=cemetery]						{ color: #664466; width: 2; fill-color: #664466; opacity: 0.2; prop_area_small_name : 1;}
+way[boundary=national_park]                 { z-index: 5; color: #225500; width: 2; opacity: 0.6; dashes: 24,4, 4, 4; z-index: 4;}
+way[boundary=protected_area]                { z-index: 5; color: #447744; width: 2; opacity: 0.6; dashes: 12,4, 4, 4; z-index: 4;}
+way[boundary=administrative]                { z-index: 5; color: purple; width: 2; opacity: 0.2; dashes: 24,4; z-index: 4;}
+way[boundary=administrative][waterway]      { z-index: 5; opacity: 0.8; z-index: 4; dashes: 24,4; width: 6; }
+way[landuse=cemetery]						{ z-index: 5; color: #664466; width: 2; fill-color: #664466; opacity: 0.2; prop_area_small_name : 1;}
 /* Addressing. Nodes with addresses *and* match POIs should have a poi icon, so we put addressing first */
 /* Route relations */
 

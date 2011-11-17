@@ -92,4 +92,4 @@ node[addr:housenumber],
 node[addr:housename] { symbol-shape: circle; symbol-size: 8; symbol-fill-color: #B0E0E6; }
 node[addr:housenumber]::hn_casing,
 node[addr:housename]::hn_casing { z-index: -100; symbol-shape: circle; symbol-size: 10; symbol-fill-color: blue; }
-way[addr:interpolation] { color: #B0E0E6; width: 3; dashes: 3,3;}
+way[addr:interpolation] { z-index: 5; color: #B0E0E6; width: 3; dashes: 3,3;}

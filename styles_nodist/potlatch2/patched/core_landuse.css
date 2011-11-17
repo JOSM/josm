@@ -7,7 +7,7 @@
 
 area[natural]:closed                          { color: #ADD6A5; width: 1; fill-color: #ADD6A5; fill-opacity: 0.2; }
 area[natural=beach]:closed                    { color: #ffdd44; width: 1; fill-color: yellow; fill-opacity: 0.2; prop_area_small_name : 1;}
-way[natural=coastline]						{ color: black; width: 3; }
+way[natural=coastline]						{ z-index: 5; color: black; width: 3; }
 area[landuse]:closed                          { color: #444444; width: 2; fill-color: #444444; fill-opacity: 0.3; }
 area[landuse=residential]:closed              { color: #666666; width: 2; fill-color: #666666; fill-opacity: 0.15; }
 area[landuse=retail]:closed                   { color: #cc2222; width: 2; fill-color: #aa4422; fill-opacity: 0.15; }
@@ -22,7 +22,7 @@ area[military]:closed                         { color: #D6D6D6; width: 1; fill-c
 area[building]:closed                         { color: #ff6ec7; width: 1; fill-color: #ff6ec7; fill-opacity: 0.2; }
 area[natural=water]:closed,
 area[waterway][waterway!=dam]:closed          { color: blue;    width: 2; fill-color: blue;    fill-opacity: 0.2; prop_area_small_name : 1;}
-way[waterway=dam]							{ color: black; width: 1; fill-color: #222222; fill-opacity: 0.1; prop_area_small_name : 1;}
+way[waterway=dam]							{ z-index: 5; color: black; width: 1; fill-color: #222222; fill-opacity: 0.1; prop_area_small_name : 1;}
 area[man_made]:closed							{ color: black; width: 2; fill-color: #222222; fill-opacity: 0.1; prop_area_small_name : 1; }
 area[man_made=reservoir_covered]:closed       { color: blue; width: 2; dashes: 4, 2; fill-color: #222222; fill-opacity: 0.1; prop_area_small_name : 1; }
 area[landuse=reservoir]:closed                { color: blue;    width: 2; fill-color: blue;    fill-opacity: 0.2; prop_area_small_name : 1;}
@@ -34,15 +34,15 @@ area[landuse=recreation_ground]:closed        { color: green; fill-color: green;
 area[amenity=parking]:closed                  { color: #bbaa66;    width: 1; fill-color: #bbaa66;    fill-opacity: 0.2; }
 area[public_transport=pay_scale_area]:closed  { color: gray;    width: 1; fill-color: gray;    fill-opacity: 0.1; }
 way[man_made=pier]							{ z-index: 4; color: #777; width: 3; casing-color: black; casing-width: 5;}
-way[man_made=pier][floating=yes]			{ dashes: 4,2; casing-color: #444;}
+way[man_made=pier][floating=yes]			{ z-index: 5; dashes: 4,2; casing-color: #444;}
 area[leisure=marina]:closed					{ color: pink; fill-color: pink; fill-opacity: 0.4; prop_area_small_name : 1;}
-way[leisure=slipway]						{ color: grey; width: 3; casing-color: blue; casing-width: 7; }
+way[leisure=slipway]						{ z-index: 5; color: grey; width: 3; casing-color: blue; casing-width: 7; }
 area[leisure=golf_course]:closed { color: #44ee22; width: 2; fill-color: #44ee22; fill-opacity: 0.2; prop_area_small_name : 1;}
-way[boundary]                               { color: #000066; width: 2; opacity: 0.6; dashes: 24,4, 4, 4; z-index: 4;}
+way[boundary]                               { z-index: 5; color: #000066; width: 2; opacity: 0.6; dashes: 24,4, 4, 4; z-index: 4;}
 /* Perhaps should be filled, on lower zooms. */
-way[boundary=national_park]                 { color: #225500; width: 2; opacity: 0.6; dashes: 24,4, 4, 4; z-index: 4;}
-way[boundary=protected_area]                { color: #447744; width: 2; opacity: 0.6; dashes: 12,4, 4, 4; z-index: 4;}
-way[boundary=administrative]                { color: purple; width: 2; opacity: 0.2; dashes: 24,4; z-index: 4;}
-way[boundary=administrative][waterway]      { opacity: 0.8; z-index: 4; dashes: 24,4; width: 6; }
-way[landuse=cemetery]						{ color: #664466; width: 2; fill-color: #664466; opacity: 0.2; prop_area_small_name : 1;}
+way[boundary=national_park]                 { z-index: 5; color: #225500; width: 2; opacity: 0.6; dashes: 24,4, 4, 4; z-index: 4;}
+way[boundary=protected_area]                { z-index: 5; color: #447744; width: 2; opacity: 0.6; dashes: 12,4, 4, 4; z-index: 4;}
+way[boundary=administrative]                { z-index: 5; color: purple; width: 2; opacity: 0.2; dashes: 24,4; z-index: 4;}
+way[boundary=administrative][waterway]      { z-index: 5; opacity: 0.8; z-index: 4; dashes: 24,4; width: 6; }
+way[landuse=cemetery]						{ z-index: 5; color: #664466; width: 2; fill-color: #664466; opacity: 0.2; prop_area_small_name : 1;}
 /* Addressing. Nodes with addresses *and* match POIs should have a poi icon, so we put addressing first */
