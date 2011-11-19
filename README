@@ -1,50 +1,47 @@
-This is a readme.txt to the Java OpenStreetMap Editor
+Supplemental information for JOSM -- the Java OpenStreetMap Editor
 
 
-Install Notes
--------------
-
+Installation notes
+------------------
 To run JOSM, you need:
 
-* The jar file (e.g. josm.jar)
-* The latest Java Runtime Environment 1.6. 
+* The JOSM .jar file, e.g., josm-tested.jar or josm-latest.jar
+* Java Runtime Environment (JRE) 1.6, or later. 
 
 
-How to get Java
----------------
+How to get Java Runtime Environment
+-----------------------------------
+You need JRE Version 1.6 (also called Java6), or later. 
 
-You need at least Version 1.6 (called Java6). 
+Microsoft Windows users should visit 
+http://www.oracle.com/technetwork/java/index.html 
+and download the latest Java6 executable for Windows systems.
 
-Microsoft Windows people should just visit java.sun.com and
-download the latest Java6 executable. 
+Linux users should visit http://www.oracle.com/technetwork/java/index.html
+There is a Linux binary installer, which you must execute from a console, or 
+use the mechanism of your distribution's packaging system.
 
-To get Java under linux, either download the environment 
-directly from Sun at http://java.sun.com (there is a linux 
-binary installer which you have to execute from a console) or
-use the mechanisms of your distributions packaging system.
 
 How to launch
 -------------
+Microsoft Windows users launch by double-clicking on the .jar file.
+If this does not work, open a command shell and type
+"java -jar josm-latest.jar"  in the directory that holds the file. (Please
+replace josm-latest.jar with the name of your .jar file, if you aren't using
+the latest version.)
 
-Microsoft Windows people launch by double clicking on the jar file.
-If this does not help, open a command shell and type 
-"java -jar josm-latest.jar" in the directory that holds the file.
-(Please replace josm-latest.jar with the name of your jar file, if
-you don't used the latest version.)
+Under Linux, open a shell, go to the file directory and type
+"java -jar josm-latest.jar" to launch. If this does not work, try to set
+your JAVA_HOME variable to the java executable location (the root location, 
+not the bin).
 
-Under Linux open a shell, go to the file directory and type
-"java -jar josm-latest.jar" to launch. If this don't help, try to set
-your JAVA_HOME variable to the java location (the root location, not
-the bin)
-
-MacOS people just click on the jar-file.
+MacOS users just click on the .jar file icon.
 
 
-How to get the Source
----------------------
-
+How to get the source code
+--------------------------
 Download it directly from the subversion at 
-https://josm.openstreetmap.de/svn/trunk. To use the command line
-subverion client, type
+https://josm.openstreetmap.de/svn/trunk. To use the command line subversion 
+client, type
 
 svn co https://josm.openstreetmap.de/svn/trunk
