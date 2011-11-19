@@ -14,9 +14,24 @@ public class VersionTableColumnModel extends DefaultTableColumnModel {
     protected void createColumns() {
         TableColumn col = null;
         TableCellRenderer renderer = new VersionTableCellRenderer();
+        VersionTable.RadioButtonRenderer bRenderer = new VersionTable.RadioButtonRenderer();
 
-        // column 0 - Version
+        // column 0 - Reverence
         col = new TableColumn(0);
+        col.setCellRenderer(bRenderer);
+        col.setCellEditor(new VersionTable.RadioButtonEditor());
+        col.setMaxWidth(1);
+        col.setResizable(false);
+        addColumn(col);
+        // column 1 - Current
+        col = new TableColumn(1);
+        col.setCellRenderer(bRenderer);
+        col.setCellEditor(new VersionTable.RadioButtonEditor());
+        col.setMaxWidth(1);
+        col.setResizable(false);
+        addColumn(col);
+        // column 2 - Rest
+        col = new TableColumn(2);
         col.setHeaderValue(tr("Version"));
         col.setCellRenderer(renderer);
         addColumn(col);
