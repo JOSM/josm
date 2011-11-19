@@ -37,7 +37,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         /* gpx data field name */ trc("gpx_field", "Desc(ription)"), tr("Everything"), tr("Name or offset"), tr("None"), tr("Custom")};
 
 
-    private JRadioButton drawRawGpsLinesGlobal = new JRadioButton(tr("Use global settings."));
+    private JRadioButton drawRawGpsLinesGlobal = new JRadioButton(tr("Use global settings"));
     private JRadioButton drawRawGpsLinesAll = new JRadioButton(tr("All"));
     private JRadioButton drawRawGpsLinesLocal = new JRadioButton(tr("Local files"));
     private JRadioButton drawRawGpsLinesNone = new JRadioButton(tr("None"));
@@ -45,18 +45,18 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private JTextField drawRawGpsMaxLineLength = new JTextField(8);
     private JTextField drawRawGpsMaxLineLengthLocal = new JTextField(8);
     private JTextField drawLineWidth = new JTextField(2);
-    private JCheckBox forceRawGpsLines = new JCheckBox(tr("Force lines if no segments imported."));
-    private JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points."));
-    private JCheckBox hdopCircleGpsPoints = new JCheckBox(tr("Draw a circle form HDOP value."));
+    private JCheckBox forceRawGpsLines = new JCheckBox(tr("Force lines if no segments imported"));
+    private JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points"));
+    private JCheckBox hdopCircleGpsPoints = new JCheckBox(tr("Draw a circle from HDOP value"));
     private ButtonGroup colorGroup;
     private JRadioButton colorTypeVelocity = new JRadioButton(tr("Velocity (red = slow, green = fast)"));
     private JRadioButton colorTypeDirection = new JRadioButton(tr("Direction (red = west, yellow = north, green = east, blue = south)"));
     private JRadioButton colorTypeDilution = new JRadioButton(tr("Dilution of Position (red = high, green = low, if available)"));
     private JRadioButton colorTypeTime = new JRadioButton(tr("Track date"));
     private JRadioButton colorTypeNone = new JRadioButton(tr("Single Color (can be customized for named layers)"));
-    private JRadioButton colorTypeGlobal  = new JRadioButton(tr("Use global settings."));
+    private JRadioButton colorTypeGlobal  = new JRadioButton(tr("Use global settings"));
     private JComboBox colorTypeVelocityTune = new JComboBox(new String[] {tr("Car"), tr("Bicycle"), tr("Foot")});
-    private JCheckBox makeAutoMarkers = new JCheckBox(tr("Create markers when reading GPX."));
+    private JCheckBox makeAutoMarkers = new JCheckBox(tr("Create markers when reading GPX"));
     private JCheckBox drawGpsArrows = new JCheckBox(tr("Draw Direction Arrows"));
     private JCheckBox drawGpsArrowsFast = new JCheckBox(tr("Fast drawing (looks uglier)"));
     private JTextField drawGpsArrowsMinDist = new JTextField(8);
