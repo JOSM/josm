@@ -26,7 +26,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class VersionTableCellRenderer extends JLabel implements TableCellRenderer {
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
-    public final static Color BGCOLOR_IS_REFERENCE_POINT = new Color(255,197,197);
 
     protected HashMap<OsmPrimitiveType, ImageIcon> icons = null;
 
@@ -119,26 +118,14 @@ public class VersionTableCellRenderer extends JLabel implements TableCellRendere
         setToolTipText(sb.toString());
     }
 
-    protected void renderBackground(JTable table, int row, boolean isSelected) {
-        Color bgColor = Color.WHITE;
-        if (isSelected) {
-            bgColor = BGCOLOR_SELECTED;
-        } else if (getModel(table).isReferencePointInTime(row)) {
-            bgColor = BGCOLOR_IS_REFERENCE_POINT;
-        }
-        setBackground(bgColor);
-    }
-
     public void renderVersionFromHistory(HistoryOsmPrimitive primitive, JTable table, int row, boolean isSelected) {
         renderIcon(primitive == null? null : primitive.getType());
         renderText(primitive);
-        renderBackground(table, row, isSelected);
     }
 
     public void renderLatest(OsmPrimitive primitive, JTable table, int row, boolean isSelected) {
         renderIcon(primitive.getType());
         renderLatestText(getModel(table).getLatest());
-        renderBackground(table, row, isSelected);
     }
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,

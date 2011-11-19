@@ -3,19 +3,27 @@ package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JCheckBox;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
+import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.actions.AbstractInfoAction;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
@@ -24,15 +32,12 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * VersionTable shows a list of version in a {@see History} of an {@see OsmPrimitive}.
  *
- *
  */
 public class VersionTable extends JTable implements Observer{
     private VersionTablePopupMenu popupMenu;
 
     protected void build() {
-        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        addMouseListener(new MouseHandler());
-        getSelectionModel().addListSelectionListener(new SelectionHandler());
+        setRowSelectionAllowed(false);
         popupMenu = new VersionTablePopupMenu();
         addMouseListener(new PopupMenuTrigger());
     }
@@ -43,76 +48,22 @@ public class VersionTable extends JTable implements Observer{
         build();
     }
 
-    protected void handleSelectReferencePointInTime(int row) {
-        getVersionTableModel().setReferencePointInTime(row);
-    }
-
-    protected void handleSelectCurrentPointInTime(int row) {
-        getVersionTableModel().setCurrentPointInTime(row);
-    }
-
     protected HistoryBrowserModel.VersionTableModel getVersionTableModel() {
         return (HistoryBrowserModel.VersionTableModel) getModel();
-    }
-
-    class MouseHandler extends MouseAdapter {
-        protected void handleDoubleClick(MouseEvent e) {
-            int row = rowAtPoint(e.getPoint());
-            handleSelectReferencePointInTime(row);
-        }
-
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            switch(e.getClickCount()) {
-            case 2: handleDoubleClick(e); break;
-            }
-        }
-    }
-
-    class SelectionHandler implements ListSelectionListener {
-        public void valueChanged(ListSelectionEvent e) {
-            DefaultListSelectionModel model = (DefaultListSelectionModel)e.getSource();
-            // For some reason we receive multiple "adjusting" events here even when the source is a simple "set selection" action
-            // The last and proper event will have getValueIsAdjusting() == false
-            if (model.getMinSelectionIndex() >= 0 && e.getValueIsAdjusting() == false) {
-                handleSelectCurrentPointInTime(model.getMinSelectionIndex());
-            }
-        }
     }
 
     public void update(Observable o, Object arg) {
         repaint();
     }
 
-    /* (non-Javadoc)
-     * @see javax.swing.JTable#tableChanged(javax.swing.event.TableModelEvent)
-     */
-    @Override
-    public void tableChanged(TableModelEvent e) {
-        int selectedRow = getSelectedRow();
-        super.tableChanged(e);
-        // Restore list selection (fix #6899)
-        if (selectedRow > -1 && selectedRow < getRowCount()) {
-            getSelectionModel().setSelectionInterval(0, selectedRow);
-        }
-    }
-
     protected void showPopupMenu(MouseEvent evt) {
         HistoryBrowserModel.VersionTableModel model = getVersionTableModel();
-        int row = getSelectedRow();
-        if (row == -1) {
-            row = rowAtPoint(evt.getPoint());
-        }
+        int row = rowAtPoint(evt.getPoint());
         if (!model.isLatest(row)) {
             HistoryOsmPrimitive primitive = model.getPrimitive(row);
             popupMenu.prepare(primitive);
             popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
-    }
-
-    public void updateSelection() {
-        final int row = getVersionTableModel().getRowCount() - 1;
-        setRowSelectionInterval(row, row);
     }
 
     class PopupMenuTrigger extends MouseAdapter {
@@ -177,6 +128,44 @@ public class VersionTable extends JTable implements Observer{
         public void prepare(HistoryOsmPrimitive primitive) {
             changesetInfoAction.prepare(primitive);
             invalidate();
+        }
+    }
+
+    public static class RadioButtonRenderer extends JRadioButton implements TableCellRenderer {
+
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
+            HistoryBrowserModel.VersionTableModel model = (HistoryBrowserModel.VersionTableModel)table.getModel();
+            setSelected(value != null && (Boolean)value);
+            setHorizontalAlignment(SwingConstants.CENTER);
+            return this;
+        }
+    }
+
+    public static class RadioButtonEditor extends DefaultCellEditor implements ItemListener {
+
+        private JRadioButton btn;
+
+        public RadioButtonEditor() {
+            super(new JCheckBox());
+            btn = new JRadioButton();
+            btn.setHorizontalAlignment(SwingConstants.CENTER);
+        }
+
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            if (value == null) return null;
+            boolean val = (Boolean) value;
+            btn.setSelected(val);
+            btn.addItemListener(this);
+            return btn;
+        }
+
+        public Object getCellEditorValue() {
+            btn.removeItemListener(this);
+            return btn.isSelected();
+        }
+
+        public void itemStateChanged(ItemEvent e) {
+            fireEditingStopped();
         }
     }
 }

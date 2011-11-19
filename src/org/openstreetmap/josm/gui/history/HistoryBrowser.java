@@ -126,7 +126,6 @@ public class HistoryBrowser extends JPanel {
      */
     public void populate(History history) {
         model.setHistory(history);
-        versionTable.updateSelection();
 
         tpViewers.removeAll();
 

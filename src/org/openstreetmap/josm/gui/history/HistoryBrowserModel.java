@@ -409,18 +409,40 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
 
         @Override
         public Object getValueAt(int row, int column) {
-            if(history == null)
+            switch (column) {
+            case 0:
+                return isReferencePointInTime(row);
+            case 1:
+                return isCurrentPointInTime(row);
+            case 2:
+                if(history == null)
+                    return null;
+                if (row < history.getNumVersions())
+                    return history.get(row);
+                if (row == history.getNumVersions())
+                    return latest;
                 return null;
-            if (row < history.getNumVersions())
-                return history.get(row);
-            if (row == history.getNumVersions())
-                return latest;
+            }
             return null;
         }
 
         @Override
+        public void setValueAt(Object aValue, int row, int column) {
+            if (!((Boolean) aValue)) return;
+            switch (column) {
+            case 0:
+                setReferencePointInTime(row);
+                break;
+            case 1:
+                setCurrentPointInTime(row);
+                break;
+            }
+            fireTableDataChanged();
+        }
+
+        @Override
         public boolean isCellEditable(int row, int column) {
-            return false;
+            return column < 2;
         }
 
         public void setReferencePointInTime(int row) {
@@ -458,6 +480,15 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             return p == reference;
         }
 
+        public boolean isCurrentPointInTime(int row) {
+            if (history == null) return false;
+            if (row == history.getNumVersions())
+                return latest == current;
+            if (row < 0 || row > history.getNumVersions()) return false;
+            HistoryOsmPrimitive p = history.get(row);
+            return p == current;
+        }
+
         public HistoryOsmPrimitive getPrimitive(int row) {
             return isLatest(row) ? latest : history.get(row);
         }
@@ -475,7 +506,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
 
         @Override
         public int getColumnCount() {
-            return 1;
+            return 3;
         }
     }
 
