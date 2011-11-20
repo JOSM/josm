@@ -62,7 +62,7 @@ public class User {
      * @param uid  the user id
      * @param name the name
      */
-    public static User  createOsmUser(long uid, String name) {
+    public static User createOsmUser(long uid, String name) {
         User user = userMap.get(uid);
         if (user == null) {
             user = new User(uid, name);

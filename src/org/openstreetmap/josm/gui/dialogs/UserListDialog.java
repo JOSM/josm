@@ -329,22 +329,10 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
      */
     static class UserTableModel extends DefaultTableModel {
         private ArrayList<UserInfo> data;
-        private JLabel greenCheckmark;
-        private JLabel greyCheckmark;
-        private JLabel redX;
-        private JLabel empty;
 
         public UserTableModel() {
             setColumnIdentifiers(new String[]{tr("Author"),tr("# Objects"),"%", tr("CT")});
             data = new ArrayList<UserInfo>();
-            greenCheckmark = new JLabel(ImageProvider.get("misc", "green_check.png"));
-            greenCheckmark.setToolTipText(tr("Accepted"));
-            greyCheckmark = new JLabel(ImageProvider.get("misc", "grey_check.png"));
-            greyCheckmark.setToolTipText("Auto-accepted");
-            redX = new JLabel(ImageProvider.get("misc", "red_x.png"));
-            redX.setToolTipText("Declined");
-            empty = new JLabel("");
-            empty.setToolTipText("Undecided");
         }
 
         protected Map<User, Integer> computeStatistics(Collection<? extends OsmPrimitive> primitives) {
@@ -385,13 +373,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             case 0: /* author */ return info.getName() == null ? "" : info.getName();
             case 1: /* count */ return info.count;
             case 2: /* percent */ return NumberFormat.getPercentInstance().format(info.percent);
-            case 3: /* relicensing status */
-                switch(info.getRelicensingStatus()) {
-                case User.STATUS_AGREED: return greenCheckmark;
-                case User.STATUS_AUTO_AGREED: return greyCheckmark;
-                case User.STATUS_NOT_AGREED: return redX;
-                default: return empty; // Undecided or unknown?
-                }
+            case 3: /* relicensing status */ return getRelicensingStatusIcon(info.getRelicensingStatus());
             }
             return null;
         }
@@ -427,5 +409,39 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             }
             return ret;
         }
+    }
+
+    private static JLabel greenCheckmark;
+    private static JLabel greyCheckmark;
+    private static JLabel redX;
+    private static JLabel empty;
+
+    public static JLabel getRelicensingStatusIcon(int status) {
+        switch(status) {
+        case User.STATUS_AGREED:
+            if (greenCheckmark == null) {
+                greenCheckmark = new JLabel(ImageProvider.get("misc", "green_check.png"));
+                greenCheckmark.setToolTipText(tr("Accepted"));
+            }
+            return greenCheckmark;
+        case User.STATUS_AUTO_AGREED:
+            if (greyCheckmark == null) {
+                greyCheckmark = new JLabel(ImageProvider.get("misc", "grey_check.png"));
+                greyCheckmark.setToolTipText("Auto-accepted");
+            }
+            return greyCheckmark;
+        case User.STATUS_NOT_AGREED:
+            if (redX == null) {
+                redX = new JLabel(ImageProvider.get("misc", "red_x.png"));
+                redX.setToolTipText("Declined");
+            }
+            return redX;
+        default:
+            if (empty == null) {
+                empty = new JLabel("");
+                empty.setToolTipText("Undecided");
+            }
+        }
+        return empty; // Undecided or unknown?
     }
 }
