@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -28,8 +29,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
 
     private long id;
     private boolean visible;
-    private String user;
-    private long uid;
+    private User user;
     private long changesetId;
     private Date timestamp;
     private long version;
@@ -53,19 +53,15 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
      *
      * @throws IllegalArgumentException thrown if preconditions are violated
      */
-    public HistoryOsmPrimitive(long id, long version, boolean visible, String user, long uid, long changesetId, Date timestamp) throws IllegalArgumentException {
+    public HistoryOsmPrimitive(long id, long version, boolean visible, User user, long changesetId, Date timestamp) throws IllegalArgumentException {
         ensurePositiveLong(id, "id");
         ensurePositiveLong(version, "version");
-        if(uid != -1) {
-            ensurePositiveLong(uid, "uid");
-        }
         CheckParameterUtil.ensureParameterNotNull(user, "user");
         CheckParameterUtil.ensureParameterNotNull(timestamp, "timestamp");
         this.id = id;
         this.version = version;
         this.visible = visible;
         this.user = user;
-        this.uid = uid;
         // FIXME: restrict to IDs > 0 as soon as OsmPrimitive holds the
         // changeset id too
         this.changesetId  = changesetId;
@@ -75,8 +71,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
 
     public HistoryOsmPrimitive(OsmPrimitive p) {
         this(p.getId(), p.getVersion(), p.isVisible(),
-                p.getUser() == null ? null : p.getUser().getName(),
-                p.getUser() == null ? 0 : p.getUser().getId(),
+                p.getUser(),
                 p.getChangesetId(), p.getTimestamp());
     }
 
@@ -103,11 +98,8 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
     public boolean isVisible() {
         return visible;
     }
-    public String getUser() {
+    public User getUser() {
         return user;
-    }
-    public long getUid() {
-        return uid;
     }
     public long getChangesetId() {
         return changesetId;

@@ -155,7 +155,7 @@ public class History{
                 this,
                 new FilterPredicate() {
                     public boolean matches(HistoryOsmPrimitive primitive) {
-                        return primitive.getUid() == uid;
+                        return primitive.getUser() != null && primitive.getUser().getId() == uid;
                     }
                 }
         );

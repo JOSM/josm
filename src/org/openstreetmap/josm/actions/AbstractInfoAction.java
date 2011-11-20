@@ -53,7 +53,7 @@ public abstract class AbstractInfoAction extends JosmAction {
     /**
      * replies the base URL for browsing information about a user
      *
-     * @return the base URL, i.e. http://ww.openstreetmap.org/user
+     * @return the base URL, i.e. http://www.openstreetmap.org/user
      */
     static public String getBaseUserUrl() {
         String baseUrl = Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api");

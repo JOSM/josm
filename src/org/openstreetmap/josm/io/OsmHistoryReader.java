@@ -13,6 +13,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
@@ -80,11 +81,11 @@ public class OsmHistoryReader {
             return l;
         }
 
-        protected long getAttributeLong(Attributes attr, String name, long defaultValue) throws SAXException{
+        protected Long getAttributeLong(Attributes attr, String name) throws SAXException {
             String v = attr.getValue(name);
             if (v == null)
-                return defaultValue;
-            Long l = 0l;
+                return null;
+            Long l = null;
             try {
                 l = Long.parseLong(v);
             } catch(NumberFormatException e) {
@@ -118,13 +119,6 @@ public class OsmHistoryReader {
             return v;
         }
 
-        protected String getAttributeString(Attributes attr, String name, String defaultValue) {
-            String v = attr.getValue(name);
-            if (v == null)
-                return defaultValue;
-            return v;
-        }
-
         protected boolean getMandatoryAttributeBoolean(Attributes attr, String name) throws SAXException{
             String v = attr.getValue(name);
             if (v == null) {
@@ -142,8 +136,18 @@ public class OsmHistoryReader {
             long version = getMandatoryAttributeLong(atts,"version");
             long changesetId = getMandatoryAttributeLong(atts,"changeset");
             boolean visible= getMandatoryAttributeBoolean(atts, "visible");
-            long uid = getAttributeLong(atts, "uid",-1);
-            String user = getAttributeString(atts, "user", tr("<anonymous>"));
+            Long uid = getAttributeLong(atts, "uid");
+            String userStr = atts.getValue("user");
+            User user;
+            if (userStr != null) {
+                if (uid != null) {
+                    user = User.createOsmUser(uid, userStr);
+                } else {
+                    user = User.createLocalUser(userStr);
+                }
+            } else {
+                user = User.getAnonymous();
+            }
             String v = getMandatoryAttributeString(atts, "timestamp");
             Date timestamp = DateUtils.fromString(v);
             HistoryOsmPrimitive primitive = null;
@@ -151,16 +155,16 @@ public class OsmHistoryReader {
                 double lat = getMandatoryAttributeDouble(atts, "lat");
                 double lon = getMandatoryAttributeDouble(atts, "lon");
                 primitive = new HistoryNode(
-                        id,version,visible,user,uid,changesetId,timestamp, new LatLon(lat,lon)
+                        id,version,visible,user,changesetId,timestamp, new LatLon(lat,lon)
                 );
 
             } else if (type.equals(OsmPrimitiveType.WAY)) {
                 primitive = new HistoryWay(
-                        id,version,visible,user,uid,changesetId,timestamp
+                        id,version,visible,user,changesetId,timestamp
                 );
             }if (type.equals(OsmPrimitiveType.RELATION)) {
                 primitive = new HistoryRelation(
-                        id,version,visible,user,uid,changesetId,timestamp
+                        id,version,visible,user,changesetId,timestamp
                 );
             }
             return primitive;

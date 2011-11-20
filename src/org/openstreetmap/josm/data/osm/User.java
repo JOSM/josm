@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -34,6 +36,7 @@ public class User {
     private static HashMap<Long,User> userMap = new HashMap<Long,User>();
     private static HashSet<Long> relicensingUsers = null;
     private static HashSet<Long> nonRelicensingUsers = null;
+    private final static User anonymous = createLocalUser(tr("<anonymous>"));
 
     private static long getNextLocalUid() {
         return uidCounter.decrementAndGet();
@@ -111,6 +114,10 @@ public class User {
         return ret;
     }
 
+    public static User getAnonymous() {
+        return anonymous;
+    }
+
     public static void initRelicensingInformation() {
         if (relicensingUsers == null) {
             loadRelicensingInformation(false);
@@ -184,7 +191,7 @@ public class User {
     public static final int STATUS_AUTO_AGREED = 3;
     public static final int STATUS_ANONYMOUS = 4;
 
-    /** 
+    /**
     * Finds out this user's relicensing status and saves it for quicker
     * access.
     */

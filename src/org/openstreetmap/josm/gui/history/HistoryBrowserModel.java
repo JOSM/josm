@@ -40,6 +40,7 @@ import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.UserListDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Diff;
 
@@ -419,16 +420,16 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
                 return isReferencePointInTime(row);
             case 2:
                 return isCurrentPointInTime(row);
-            case 3:
-                long uId = getPrimitive(row).getUid();
-                User user = User.getById(uId);
-                int status;
-                if (user == null) {
-                    status = User.STATUS_UNKNOWN;
-                } else {
-                    status = user.getRelicensingStatus();
+            case 3: {
+                    User user = getPrimitive(row).getUser();
+                    int status;
+                    if (user == null) {
+                        status = User.STATUS_UNKNOWN;
+                    } else {
+                        status = user.getRelicensingStatus();
+                    }
+                    return UserListDialog.getRelicensingStatusIcon(status);
                 }
-                return UserListDialog.getRelicensingStatusIcon(status);
             case 4: {
                     HistoryOsmPrimitive p = getPrimitive(row);
                     if (p != null)
@@ -437,8 +438,11 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
                 }
             case 5: {
                     HistoryOsmPrimitive p = getPrimitive(row);
-                    if (p != null)
-                        return "<html>"+p.getUser() + " <font color=gray>(" + p.getUid() + ")</font></html>";
+                    if (p != null) {
+                        User user = p.getUser();
+                        if (user != null)
+                            return "<html>" + XmlWriter.encode(user.getName()) + " <font color=gray>(" + user.getId() + ")</font></html>";
+                    }
                     return null;
                 }
             }
@@ -867,21 +871,13 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     static class HistoryPrimitiveBuilder extends AbstractVisitor {
         private HistoryOsmPrimitive clone;
 
-        private String getUserName(OsmPrimitive primitive) {
-            return primitive.getUser() == null?null:primitive.getUser().getName();
-        }
-
-        private long getUserId(OsmPrimitive primitive) {
-            return primitive.getUser() == null?0:primitive.getUser().getId();
-        }
-
         public void visit(Node n) {
-            clone = new HistoryNode(n.getId(), n.getVersion(), n.isVisible(), getUserName(n), getUserId(n), 0, n.getTimestamp(), n.getCoor());
+            clone = new HistoryNode(n.getId(), n.getVersion(), n.isVisible(), n.getUser(), 0, n.getTimestamp(), n.getCoor());
             clone.setTags(n.getKeys());
         }
 
         public void visit(Relation r) {
-            clone = new HistoryRelation(r.getId(), r.getVersion(), r.isVisible(), getUserName(r), getUserId(r), 0, r.getTimestamp());
+            clone = new HistoryRelation(r.getId(), r.getVersion(), r.isVisible(), r.getUser(), 0, r.getTimestamp());
             clone.setTags(r.getKeys());
             HistoryRelation hr = (HistoryRelation)clone;
             for (RelationMember rm : r.getMembers()) {
@@ -890,7 +886,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
 
         public void visit(Way w) {
-            clone = new HistoryWay(w.getId(), w.getVersion(), w.isVisible(), getUserName(w), getUserId(w), 0, w.getTimestamp());
+            clone = new HistoryWay(w.getId(), w.getVersion(), w.isVisible(), w.getUser(), 0, w.getTimestamp());
             clone.setTags(w.getKeys());
             for (Node n: w.getNodes()) {
                 ((HistoryWay)clone).addNode(n.getUniqueId());
