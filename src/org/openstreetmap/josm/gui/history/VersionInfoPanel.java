@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
+import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -134,8 +135,8 @@ public class VersionInfoPanel extends JPanel implements Observer{
             lblChangeset.setDescription(Long.toString(getPrimitive().getChangesetId()));
 
             try {
-                if (getPrimitive().getUid() != -1) {
-                    url = AbstractInfoAction.getBaseUserUrl() + "/" +  URLEncoder.encode(getPrimitive().getUser(), "UTF-8").replaceAll("\\+", "%20");
+                if (getPrimitive().getUser() != null && getPrimitive().getUser() != User.getAnonymous()) {
+                    url = AbstractInfoAction.getBaseUserUrl() + "/" +  URLEncoder.encode(getPrimitive().getUser().getName(), "UTF-8").replaceAll("\\+", "%20");
                     lblUser.setUrl(url);
                 } else {
                     lblUser.setUrl(null);
@@ -144,7 +145,10 @@ public class VersionInfoPanel extends JPanel implements Observer{
                 e.printStackTrace();
                 lblUser.setUrl(null);
             }
-            String username = getPrimitive().getUser();
+            String username = "";
+            if (getPrimitive().getUser() != null) {
+                username = getPrimitive().getUser().getName();
+            }
             lblUser.setDescription(username);
         } else {
             String user = CredentialsManager.getInstance().getUsername();

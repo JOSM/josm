@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -33,9 +34,9 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      *
      * @throws IllegalArgumentException thrown if preconditions are violated
      */
-    public HistoryRelation(long id, long version, boolean visible, String user, long uid, long changesetId,
+    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId,
             Date timestamp) throws IllegalArgumentException {
-        super(id, version, visible, user, uid, changesetId, timestamp);
+        super(id, version, visible, user, changesetId, timestamp);
     }
     /**
      * constructor
@@ -51,9 +52,9 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      *
      * @throws IllegalArgumentException thrown if preconditions are violated
      */
-    public HistoryRelation(long id, long version, boolean visible, String user, long uid, long changesetId,
+    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId,
             Date timestamp, ArrayList<RelationMember> members) {
-        this(id, version, visible, user, uid, changesetId, timestamp);
+        this(id, version, visible, user, changesetId, timestamp);
         if (members != null) {
             this.members.addAll(members);
         }

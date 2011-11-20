@@ -6,6 +6,7 @@ import java.util.Date;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.User;
 
 /**
  * Represents an immutable OSM node in the context of a historical view on
@@ -17,8 +18,8 @@ public class HistoryNode extends HistoryOsmPrimitive {
 
     private LatLon coords;
 
-    public HistoryNode(long id, long version, boolean visible, String user, long uid, long changesetId, Date timestamp, LatLon coords) {
-        super(id, version, visible, user, uid, changesetId, timestamp);
+    public HistoryNode(long id, long version, boolean visible, User user, long changesetId, Date timestamp, LatLon coords) {
+        super(id, version, visible, user, changesetId, timestamp);
         setCoords(coords);
     }
 
