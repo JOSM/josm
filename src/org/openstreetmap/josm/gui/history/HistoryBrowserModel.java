@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
@@ -35,6 +37,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
+import org.openstreetmap.josm.gui.dialogs.UserListDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -411,17 +414,33 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         public Object getValueAt(int row, int column) {
             switch (column) {
             case 0:
-                return isReferencePointInTime(row);
+                return Long.toString(getPrimitive(row).getVersion());
             case 1:
-                return isCurrentPointInTime(row);
+                return isReferencePointInTime(row);
             case 2:
-                if(history == null)
+                return isCurrentPointInTime(row);
+            case 3:
+                long uId = getPrimitive(row).getUid();
+                User user = User.getById(uId);
+                int status;
+                if (user == null) {
+                    status = User.STATUS_UNKNOWN;
+                } else {
+                    status = user.getRelicensingStatus();
+                }
+                return UserListDialog.getRelicensingStatusIcon(status);
+            case 4: {
+                    HistoryOsmPrimitive p = getPrimitive(row);
+                    if (p != null)
+                        return new SimpleDateFormat().format(p.getTimestamp());
                     return null;
-                if (row < history.getNumVersions())
-                    return history.get(row);
-                if (row == history.getNumVersions())
-                    return latest;
-                return null;
+                }
+            case 5: {
+                    HistoryOsmPrimitive p = getPrimitive(row);
+                    if (p != null)
+                        return "<html>"+p.getUser() + " <font color=gray>(" + p.getUid() + ")</font></html>";
+                    return null;
+                }
             }
             return null;
         }
@@ -430,19 +449,21 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         public void setValueAt(Object aValue, int row, int column) {
             if (!((Boolean) aValue)) return;
             switch (column) {
-            case 0:
+            case 1:
                 setReferencePointInTime(row);
                 break;
-            case 1:
+            case 2:
                 setCurrentPointInTime(row);
                 break;
+            default:
+                return;
             }
             fireTableDataChanged();
         }
 
         @Override
         public boolean isCellEditable(int row, int column) {
-            return column < 2;
+            return column >= 1 && column <= 2;
         }
 
         public void setReferencePointInTime(int row) {
@@ -490,6 +511,8 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
 
         public HistoryOsmPrimitive getPrimitive(int row) {
+            if (history == null)
+                return null;
             return isLatest(row) ? latest : history.get(row);
         }
 
@@ -506,7 +529,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
 
         @Override
         public int getColumnCount() {
-            return 3;
+            return 6;
         }
     }
 

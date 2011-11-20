@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.history;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -15,14 +17,17 @@ import java.util.Observer;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.actions.AbstractInfoAction;
@@ -37,15 +42,36 @@ public class VersionTable extends JTable implements Observer{
     private VersionTablePopupMenu popupMenu;
 
     protected void build() {
+        getTableHeader().setFont(getTableHeader().getFont().deriveFont(9f));
         setRowSelectionAllowed(false);
+        setShowGrid(false);
+        setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        setBackground(UIManager.getColor("Button.background"));
+        setIntercellSpacing(new Dimension(6, 0));
+        putClientProperty("terminateEditOnFocusLost", true);
         popupMenu = new VersionTablePopupMenu();
         addMouseListener(new PopupMenuTrigger());
+        getModel().addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                adjustColumnWidth(VersionTable.this, 0);
+                adjustColumnWidth(VersionTable.this, 4);
+                adjustColumnWidth(VersionTable.this, 5);
+            }
+        });
     }
 
     public VersionTable(HistoryBrowserModel model) {
         super(model.getVersionTableModel(), new VersionTableColumnModel());
         model.addObserver(this);
         build();
+    }
+
+    // some kind of hack to prevent the table from scrolling to the
+    // right when clicking on the cells
+    @Override
+    public void scrollRectToVisible(Rectangle aRect) {
+        super.scrollRectToVisible(new Rectangle(0, aRect.y, aRect.width, aRect.height));
     }
 
     protected HistoryBrowserModel.VersionTableModel getVersionTableModel() {
@@ -134,7 +160,6 @@ public class VersionTable extends JTable implements Observer{
     public static class RadioButtonRenderer extends JRadioButton implements TableCellRenderer {
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
-            HistoryBrowserModel.VersionTableModel model = (HistoryBrowserModel.VersionTableModel)table.getModel();
             setSelected(value != null && (Boolean)value);
             setHorizontalAlignment(SwingConstants.CENTER);
             return this;
@@ -168,4 +193,40 @@ public class VersionTable extends JTable implements Observer{
             fireEditingStopped();
         }
     }
+
+    public static class LabelRenderer implements TableCellRenderer {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
+            return (Component) value;
+        }
+    }
+
+    public static class AlignedRenderer extends JLabel implements TableCellRenderer {
+        public AlignedRenderer(int hAlignment) {
+            setHorizontalAlignment(hAlignment);
+        }
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
+            String v = value.toString();
+            setText(v);
+            return this;
+        }
+    }
+
+    private static void adjustColumnWidth(JTable tbl, int col) {
+        int maxwidth = 0;
+
+        for (int row=0; row<tbl.getRowCount(); row++) {
+            TableCellRenderer tcr = tbl.getCellRenderer(row, col);
+            Object val = tbl.getValueAt(row, col);
+            Component comp = tcr.getTableCellRendererComponent(tbl, val, false, false, row, col);
+            maxwidth = Math.max(comp.getPreferredSize().width, maxwidth);
+        }
+        TableCellRenderer tcr = tbl.getTableHeader().getDefaultRenderer();
+        Object val = tbl.getColumnModel().getColumn(col).getHeaderValue();
+        Component comp = tcr.getTableCellRendererComponent(tbl, val, false, false, -1, col);
+        maxwidth = Math.max(comp.getPreferredSize().width, maxwidth);
+
+        int spacing = tbl.getIntercellSpacing().width;
+        tbl.getColumnModel().getColumn(col).setPreferredWidth(maxwidth + spacing);
+    }
+
 }
