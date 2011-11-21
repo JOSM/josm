@@ -94,19 +94,41 @@ public class MapStatus extends JPanel implements Helpful {
         }
     }
 
-    ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 11);
-    ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20);
-    JTextField helpText = new JTextField();
-    ImageLabel latText = new ImageLabel("lat", tr("The geographic latitude at the mouse pointer."), 11);
-    ImageLabel angleText = new ImageLabel("angle", tr("The angle between the previous and the current way segment."), 6);
-    ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6);
-    ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 10);
+    final ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 11);
+    final ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20);
+    final JTextField helpText = new JTextField();
+    final ImageLabel latText = new ImageLabel("lat", tr("The geographic latitude at the mouse pointer."), 11);
+    final ImageLabel angleText = new ImageLabel("angle", tr("The angle between the previous and the current way segment."), 6);
+    final ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6);
+    final ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 10);
 
     /**
      * This is the thread that runs in the background and collects the information displayed.
      * It gets destroyed by MapFrame.java/destroy() when the MapFrame itself is destroyed.
      */
     public Thread thread;
+
+    private final List<StatusTextHistory> statusText = new ArrayList<StatusTextHistory>();
+
+    private static class StatusTextHistory {
+        final Object id;
+        final String text;
+
+        public StatusTextHistory(Object id, String text) {
+            this.id = id;
+            this.text = text;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof StatusTextHistory && ((StatusTextHistory)obj).id == id;
+        }
+
+        @Override
+        public int hashCode() {
+            return System.identityHashCode(id);
+        }
+    }
 
     /**
      * The collector class that waits for notification and then update
@@ -217,10 +239,10 @@ public class MapStatus extends JPanel implements Helpful {
                                         final JPanel c = new JPanel(new GridBagLayout());
                                         final JLabel lbl = new JLabel(
                                                 "<html>"+tr("Middle click again to cycle through.<br>"+
-                                                "Hold CTRL to select directly from this list with the mouse.<hr>")+"</html>",
-                                                null,
-                                                JLabel.HORIZONTAL
-                                        );
+                                                        "Hold CTRL to select directly from this list with the mouse.<hr>")+"</html>",
+                                                        null,
+                                                        JLabel.HORIZONTAL
+                                                );
                                         lbl.setHorizontalAlignment(JLabel.LEFT);
                                         c.add(lbl, GBC.eol().insets(2, 0, 2, 0));
 
@@ -471,7 +493,7 @@ public class MapStatus extends JPanel implements Helpful {
                     "<html>" +text.toString() + "</html>",
                     ImageProvider.get(OsmPrimitiveType.from(osm)),
                     JLabel.HORIZONTAL
-            ) {
+                    ) {
                 // This is necessary so the label updates its colors when the
                 // selection is changed from the outside
                 @Override public void validate() {
@@ -655,8 +677,32 @@ public class MapStatus extends JPanel implements Helpful {
     }
 
     public void setHelpText(String t) {
-        helpText.setText(t);
-        helpText.setToolTipText(t);
+        setHelpText(null, t);
+    }
+    public void setHelpText(Object id, String text)  {
+
+        StatusTextHistory entry = new StatusTextHistory(id, text);
+
+        statusText.remove(entry);
+        statusText.add(entry);
+
+        helpText.setText(text);
+        helpText.setToolTipText(text);
+    }
+    public void resetHelpText(Object id) {
+        if (statusText.isEmpty())
+            return;
+
+        StatusTextHistory entry = new StatusTextHistory(id, null);
+        if (statusText.get(statusText.size() - 1).equals(entry)) {
+            if (statusText.size() == 1) {
+                setHelpText("");
+            } else {
+                StatusTextHistory history = statusText.get(statusText.size() - 2);
+                setHelpText(history.id, history.text);
+            }
+        }
+        statusText.remove(entry);
     }
     public void setAngle(double a) {
         angleText.setText(a < 0 ? "--" : Math.round(a*10)/10.0 + " \u00B0");

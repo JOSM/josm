@@ -459,18 +459,13 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         @Override
-        public void executeMultikeyAction(int index) {
+        public void executeMultikeyAction(int index, boolean repeat) {
             Layer l = LayerListDialog.getLayerForIndex(index);
             if (l != null) {
                 l.toggleVisible();
                 lastLayer = new WeakReference<Layer>(l);
-            }
-        }
-
-        @Override
-        public void repeateLastMultikeyAction() {
-            if (lastLayer != null) {
-                Layer l = lastLayer.get();
+            } else if (repeat && lastLayer != null) {
+                l = lastLayer.get();
                 if (LayerListDialog.isLayerValid(l)) {
                     l.toggleVisible();
                 }
@@ -689,16 +684,11 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         @Override
-        public void executeMultikeyAction(int index) {
+        public void executeMultikeyAction(int index, boolean repeat) {
             Layer l = LayerListDialog.getLayerForIndex(index);
             if (l != null) {
                 execute(l);
             }
-        }
-
-        @Override
-        public void repeateLastMultikeyAction() {
-            // Do nothing, repating not supported
         }
 
         @Override
@@ -1557,7 +1547,7 @@ public class LayerListDialog extends ToggleDialog {
 
         List<Layer> layers = Main.map.mapView.getAllLayersAsList();
 
-        if (index < layers.size())
+        if (index < layers.size() && index >= 0)
             return layers.get(index);
         else
             return null;
