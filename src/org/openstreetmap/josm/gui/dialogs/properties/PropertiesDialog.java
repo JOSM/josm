@@ -31,8 +31,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -66,11 +66,14 @@ import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
+import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -104,8 +107,6 @@ import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
-import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 
 /**
  * This dialog displays the properties of the current selected primitives.
@@ -169,7 +170,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     // hook for roadsigns plugin to display a small
     // button in the upper right corner of this dialog
     public static JPanel pluginHook = new JPanel();
-    
+
     private JPopupMenu propertyMenu;
     private JPopupMenu membershipMenu;
 
@@ -337,14 +338,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                             new String[]{tr("Replace"), tr("Cancel")});
                     ed.setButtonIcons(new String[]{"purge", "cancel"});
                     ed.setContent(tr("You changed the key from ''{0}'' to ''{1}''.\n"
-                    + "The new key is already used, overwrite values?", key, newkey));
+                            + "The new key is already used, overwrite values?", key, newkey));
                     ed.setCancelButton(2);
                     ed.toggleEnable("overwriteEditKey");
                     ed.showDialog();
 
-                    if (ed.getValue() != 1) {
+                    if (ed.getValue() != 1)
                         return;
-                    }
                     break;
                 }
             }
@@ -388,17 +388,16 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     }
 
     /**
-     * For a given key k, return a list of keys which are used as keys for 
+     * For a given key k, return a list of keys which are used as keys for
      * auto-completing values to increase the search space.
      * @param key the key k
      * @return a list of keys
      */
     static List<String> getAutocompletionKeys(String key) {
-        if ("name".equals(key) || "addr:street".equals(key)) {
+        if ("name".equals(key) || "addr:street".equals(key))
             return Arrays.asList("addr:street", "name");
-        } else {
+        else
             return Arrays.asList(key);
-        }
     }
 
     /**
@@ -423,7 +422,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * to the dataset, of course).
      */
     void add() {
-        Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+        DataSet ds = Main.main.getCurrentDataSet();
+        if (ds == null) return;
+        Collection<OsmPrimitive> sel = ds.getSelected();
         if (sel.isEmpty()) return;
 
         JPanel p = new JPanel(new BorderLayout());
@@ -434,7 +435,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         AutoCompletionManager autocomplete = Main.main.getEditLayer().data.getAutoCompletionManager();
         List<AutoCompletionListItem> keyList = autocomplete.getKeys();
 
-        AutoCompletionListItem itemToSelect = null; 
+        AutoCompletionListItem itemToSelect = null;
         // remove the object's tag keys from the list
         Iterator<AutoCompletionListItem> iter = keyList.iterator();
         while (iter.hasNext()) {
@@ -444,8 +445,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
             for (int i = 0; i < propertyData.getRowCount(); ++i) {
                 if (item.getValue().equals(propertyData.getValueAt(i, 0))) {
-                    if (itemToSelect == item)
+                    if (itemToSelect == item) {
                         itemToSelect = null;
+                    }
                     iter.remove();
                     break;
                 }
@@ -467,8 +469,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         if (itemToSelect != null) {
             keys.setSelectedItem(itemToSelect);
             /* don't add single chars, as they are no properly selected */
-            if(lastAddValue != null && lastAddValue.length() > 1)
+            if(lastAddValue != null && lastAddValue.length() > 1) {
                 values.setSelectedItem(lastAddValue);
+            }
         }
 
         FocusAdapter focus = addFocusAdapter(-1, keys, values, autocomplete);
@@ -505,7 +508,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private FocusAdapter addFocusAdapter(final int row, final AutoCompletingComboBox keys, final AutoCompletingComboBox values, final AutoCompletionManager autocomplete) {
         // get the combo box' editor component
         JTextComponent editor = (JTextComponent)values.getEditor()
-        .getEditorComponent();
+                .getEditorComponent();
         // Refresh the values model when focus is gained
         FocusAdapter focus = new FocusAdapter() {
             @Override public void focusGained(FocusEvent e) {
@@ -631,7 +634,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyMenu.add(searchActionSame);
         propertyMenu.addSeparator();
         propertyMenu.add(helpAction);
-        
+
         propertyData.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
         propertyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         propertyTable.getTableHeader().setReorderingAllowed(false);
@@ -812,11 +815,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyTable.getSelectionModel().addListSelectionListener(deleteAction);
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),"delete"
-        );
+                );
         getActionMap().put("delete", deleteAction);
 
         JScrollPane scrollPane = (JScrollPane) createLayout(bothTables, true, Arrays.asList(new SideButton[] {
-            this.btnAdd, this.btnEdit, this.btnDel
+                this.btnAdd, this.btnEdit, this.btnDel
         }));
 
         DblClickWatch dblClickWatch = new DblClickWatch();
@@ -961,7 +964,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 }
                 return comp;
             }}
-        );
+                );
 
         for (Relation r: sortedRelations) {
             membershipData.addRow(new Object[]{r, roles.get(r)});
@@ -1026,7 +1029,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         public DeleteAction() {
             super(tr("Delete"), "dialogs/delete", tr("Delete the selected key in all objects"),
                     Shortcut.registerShortcut("properties:delete", tr("Delete Properties"), KeyEvent.VK_D,
-                    Shortcut.GROUP_MNEMONIC), false);
+                            Shortcut.GROUP_MNEMONIC), false);
             updateEnabledState();
         }
 
@@ -1097,7 +1100,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             setEnabled(
                     (propertyTable != null && propertyTable.getSelectedRowCount() == 1)
                     ^ (membershipTable != null && membershipTable.getSelectedRowCount() == 1)
-            );
+                    );
         }
 
         @Override
@@ -1110,7 +1113,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         public AddAction() {
             super(tr("Add"), "dialogs/add", tr("Add a new key/value pair to all objects"),
                     Shortcut.registerShortcut("properties:add", tr("Add Property"), KeyEvent.VK_A,
-                    Shortcut.GROUP_MNEMONIC), false);
+                            Shortcut.GROUP_MNEMONIC), false);
         }
 
         @Override
@@ -1123,7 +1126,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         public EditAction() {
             super(tr("Edit"), "dialogs/edit", tr("Edit the value of the selected key for all objects"),
                     Shortcut.registerShortcut("properties:edit", tr("Edit Properties"), KeyEvent.VK_S,
-                    Shortcut.GROUP_MNEMONIC), false);
+                            Shortcut.GROUP_MNEMONIC), false);
             updateEnabledState();
         }
 
@@ -1145,7 +1148,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             setEnabled(
                     (propertyTable != null && propertyTable.getSelectedRowCount() == 1)
                     ^ (membershipTable != null && membershipTable.getSelectedRowCount() == 1)
-            );
+                    );
         }
 
         @Override
@@ -1173,7 +1176,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     String val = URLEncoder.encode(
                             ((Map<String,Integer>)propertyData.getValueAt(row, 1))
                             .entrySet().iterator().next().getKey(), "UTF-8"
-                    );
+                            );
 
                     uris.add(new URI(String.format("%s%sTag:%s=%s", base, lang, key, val)));
                     uris.add(new URI(String.format("%sTag:%s=%s", base, key, val)));
@@ -1185,7 +1188,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     row = membershipTable.getSelectedRow();
                     String type = URLEncoder.encode(
                             ((Relation)membershipData.getValueAt(row, 0)).get("type"), "UTF-8"
-                    );
+                            );
 
                     if (type != null && !type.equals("")) {
                         uris.add(new URI(String.format("%s%sRelation:%s", base, lang, type)));
@@ -1219,7 +1222,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                                     conn = (HttpURLConnection) new URI(u.toString()
                                             .replace("=", "%3D") /* do not URLencode whole string! */
                                             .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
-                                    ).toURL().openConnection();
+                                            ).toURL().openConnection();
                                     conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
 
                                     /* redirect pages have different content length, but retrieving a "nonredirect"
@@ -1256,7 +1259,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     public JMenuItem addPropertyPopupMenuAction(Action a) {
         return propertyMenu.add(a);
     }
-    
+
     public void addPropertyPopupMenuListener(PopupMenuListener l) {
         propertyMenu.addPopupMenuListener(l);
     }
@@ -1264,25 +1267,25 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     public void removePropertyPopupMenuListener(PopupMenuListener l) {
         propertyMenu.addPopupMenuListener(l);
     }
-    
+
     @SuppressWarnings("unchecked")
     public Tag getSelectedProperty() {
         int row = propertyTable.getSelectedRow();
         if (row == -1) return null;
         TreeMap<String, Integer> map = (TreeMap<String, Integer>) propertyData.getValueAt(row, 1);
         return new Tag(
-                propertyData.getValueAt(row, 0).toString(), 
+                propertyData.getValueAt(row, 0).toString(),
                 map.size() > 1 ? "" : map.keySet().iterator().next());
     }
-    
+
     public void addMembershipPopupMenuSeparator() {
         membershipMenu.addSeparator();
     }
-    
+
     public JMenuItem addMembershipPopupMenuAction(Action a) {
         return membershipMenu.add(a);
     }
-    
+
     public void addMembershipPopupMenuListener(PopupMenuListener l) {
         membershipMenu.addPopupMenuListener(l);
     }
@@ -1290,7 +1293,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     public void removeMembershipPopupMenuListener(PopupMenuListener l) {
         membershipMenu.addPopupMenuListener(l);
     }
-    
+
     public IRelation getSelectedMembershipRelation() {
         int row = membershipTable.getSelectedRow();
         return row > -1 ? (IRelation) membershipData.getValueAt(row, 0) : null;
@@ -1300,7 +1303,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         public Relation getRelation();
         public void setRelation(Relation relation);
     }
-    
+
     static abstract class AbstractRelationAction extends AbstractAction implements RelationRelated {
         protected Relation relation;
         public Relation getRelation() {
@@ -1310,7 +1313,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             this.relation = relation;
         }
     }
-    
+
     static class SelectRelationAction extends AbstractRelationAction {
         boolean selectionmode;
         public SelectRelationAction(boolean select) {
@@ -1381,7 +1384,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     rels,
                     buildSetOfIncompleteMembers(relation),
                     Main.map.mapView.getEditLayer()
-            ));
+                    ));
         }
     }
 
@@ -1391,14 +1394,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         @Override
         public void actionPerformed(ActionEvent ae) {
-            if (propertyTable.getSelectedRowCount() != 1) {
+            if (propertyTable.getSelectedRowCount() != 1)
                 return;
-            }
             String key = propertyData.getValueAt(propertyTable.getSelectedRow(), 0).toString();
             Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
-            if (sel.isEmpty()) {
+            if (sel.isEmpty())
                 return;
-            }
             Set<String> values = new TreeSet<String>();
             for (OsmPrimitive p : sel) {
                 Collection<String> s = getString(p,key);
@@ -1469,14 +1470,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
 
         public void actionPerformed(ActionEvent e) {
-            if (propertyTable.getSelectedRowCount() != 1) {
+            if (propertyTable.getSelectedRowCount() != 1)
                 return;
-            }
             String key = propertyData.getValueAt(propertyTable.getSelectedRow(), 0).toString();
             Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
-            if (sel.isEmpty()) {
+            if (sel.isEmpty())
                 return;
-            }
             String sep = "";
             String s = "";
             for (OsmPrimitive p : sel) {

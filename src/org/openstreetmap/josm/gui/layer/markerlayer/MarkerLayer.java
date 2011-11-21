@@ -459,22 +459,20 @@ public class MarkerLayer extends Layer {
         }
 
         @Override
-        public void executeMultikeyAction(int index) {
+        public void executeMultikeyAction(int index, boolean repeat) {
             Layer l = LayerListDialog.getLayerForIndex(index);
-            if (l != null && l instanceof MarkerLayer) {
-                execute((MarkerLayer) l);
-            }
-        }
-
-        @Override
-        public void repeateLastMultikeyAction() {
-            if (lastLayer != null) {
-                MarkerLayer l = lastLayer.get();
+            if (l != null) {
+                if (l instanceof MarkerLayer) {
+                    execute((MarkerLayer) l);
+                }
+            } else if (repeat && lastLayer != null) {
+                l = lastLayer.get();
                 if (LayerListDialog.isLayerValid(l)) {
-                    execute(l);
+                    execute((MarkerLayer) l);
                 }
             }
         }
+
 
         private void execute(MarkerLayer l) {
             l.jumpToNextMarker();
@@ -515,19 +513,16 @@ public class MarkerLayer extends Layer {
         }
 
         @Override
-        public void executeMultikeyAction(int index) {
+        public void executeMultikeyAction(int index, boolean repeat) {
             Layer l = LayerListDialog.getLayerForIndex(index);
-            if (l != null && l instanceof MarkerLayer) {
-                execute((MarkerLayer) l);
-            }
-        }
-
-        @Override
-        public void repeateLastMultikeyAction() {
-            if (lastLayer != null) {
-                MarkerLayer l = lastLayer.get();
+            if (l != null) {
+                if (l instanceof MarkerLayer) {
+                    execute((MarkerLayer) l);
+                }
+            } else if (repeat && lastLayer != null) {
+                l = lastLayer.get();
                 if (LayerListDialog.isLayerValid(l)) {
-                    execute(l);
+                    execute((MarkerLayer) l);
                 }
             }
         }

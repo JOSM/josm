@@ -21,8 +21,10 @@ public interface MultikeyShortcutAction extends Action {
         }
 
         public char getShortcut() {
-            if (index < 10)
-                return (char)('0' + index);
+            if (index < 9)
+                return (char)('1' + index);
+            else if (index == 9)
+                return '0';
             else
                 return (char)('A' +  index - 10);
         }
@@ -32,8 +34,7 @@ public interface MultikeyShortcutAction extends Action {
         }
     }
 
-    void executeMultikeyAction(int index);
-    void repeateLastMultikeyAction();
+    void executeMultikeyAction(int index, boolean repeatLastAction);
     List<MultikeyInfo> getMultikeyCombinations();
     MultikeyInfo getLastMultikeyAction();
 
