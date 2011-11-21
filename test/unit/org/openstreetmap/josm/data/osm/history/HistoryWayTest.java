@@ -9,6 +9,7 @@ import java.util.Date;
 
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.User;
 
 public class HistoryWayTest {
 
@@ -19,17 +20,16 @@ public class HistoryWayTest {
                 1,
                 2,
                 true,
-                "testuser",
-                3,
+                User.createOsmUser(3, "testuser"),
                 4,
                 d
-        );
+                );
 
         assertEquals(1, way.getId());
         assertEquals(2, way.getVersion());
         assertEquals(true, way.isVisible());
-        assertEquals("testuser", way.getUser());
-        assertEquals(3, way.getUid());
+        assertEquals("testuser", way.getUser().getName());
+        assertEquals(3, way.getUser().getId());
         assertEquals(4, way.getChangesetId());
         assertEquals(d, way.getTimestamp());
 
@@ -43,11 +43,10 @@ public class HistoryWayTest {
                 1,
                 2,
                 true,
-                "testuser",
-                3,
+                User.createOsmUser(3, "testuser"),
                 4,
                 d
-        );
+                );
 
         assertEquals(OsmPrimitiveType.WAY, way.getType());
     }
@@ -59,11 +58,10 @@ public class HistoryWayTest {
                 1,
                 2,
                 true,
-                "testuser",
-                3,
+                User.createOsmUser(3, "testuser"),
                 4,
                 d
-        );
+                );
 
         way.addNode(1);
         assertEquals(1, way.getNumNodes());
@@ -87,11 +85,10 @@ public class HistoryWayTest {
                 1,
                 2,
                 true,
-                "testuser",
-                3,
+                User.createOsmUser(3, "testuser"),
                 4,
                 d
-        );
+                );
 
         way.addNode(1);
         way.addNode(2);
