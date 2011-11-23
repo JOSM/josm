@@ -10,6 +10,7 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.nio.ByteBuffer;
 
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -21,6 +22,11 @@ import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.plugins.PluginHandler;
 
+import javax.swing.JPanel;
+import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.tools.GBC;
+import java.awt.GridBagLayout;
+
 /**
  * An exception handler that asks the user to send a bug report.
  *
@@ -29,6 +35,8 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 public final class BugReportExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     private static boolean handlingInProgress = false;
+    private static int exceptionCounter = 0;
+    private static boolean suppressExceptionDialogs = false;
 
     public void uncaughtException(Thread t, Throwable e) {
         handleException(e);
@@ -42,7 +50,10 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
     public static void handleException(Throwable e) {
         if (handlingInProgress)
             return;                  // we do not handle secondary exceptions, this gets too messy
+        if (suppressExceptionDialogs)
+            return;
         handlingInProgress = true;
+        exceptionCounter++;
         try {
             e.printStackTrace();
             if (Main.parent != null) {
@@ -65,23 +76,28 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 
                 // Then ask for submitting a bug report, for exceptions thrown from a plugin too
                 //
-                Object[] options = new String[]{tr("Do nothing"), tr("Report Bug")};
-                int answer = JOptionPane.showOptionDialog(
-                        Main.parent,
+                ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Unexpected Exception"), new String[] {tr("Do nothing"), tr("Report Bug")});
+                ed.setIcon(JOptionPane.ERROR_MESSAGE);
+                JPanel pnl = new JPanel(new GridBagLayout());
+                pnl.add(new JLabel(
                         "<html>"
                         + tr("An unexpected exception occurred.<br>" +
                                 "This is always a coding error. If you are running the latest<br>" +
                                 "version of JOSM, please consider being kind and file a bug report."
                         )
-                        + "</html>",
-                        tr("Unexpected Exception"),
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.ERROR_MESSAGE,
-                        null,
-                        options, options[0]
-                );
-                if (answer != 1)  return;
-
+                        + "</html>"), GBC.eol());
+                JCheckBox cbSuppress = null;
+                if (exceptionCounter > 1) {
+                    cbSuppress = new JCheckBox(tr("Suppress further error dialogs for this session."));
+                    pnl.add(cbSuppress, GBC.eol());
+                }
+                ed.setContent(pnl);
+                ed.showDialog();
+                if (cbSuppress != null && cbSuppress.isSelected()) {
+                    suppressExceptionDialogs = true;
+                }
+                if (ed.getValue() != 2) return;
+                
                 try {
                     final int maxlen = 6000;
                     StringWriter stack = new StringWriter();
