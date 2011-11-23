@@ -37,7 +37,6 @@ abstract public class DiskAccessAction extends JosmAction {
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         fc.setMultiSelectionEnabled(multiple);
         fc.setAcceptAllFileFilterUsed(false);
-        //System.out.println("opening fc for extension " + extension);
         ExtensionFileFilter.applyChoosableImportFileFilters(fc, extension);
 
         int answer = open ? fc.showOpenDialog(Main.parent) : fc.showSaveDialog(Main.parent);
@@ -58,6 +57,7 @@ abstract public class DiskAccessAction extends JosmAction {
                 );
                 dialog.setContent(tr("File exists. Overwrite?"));
                 dialog.setButtonIcons(new String[] {"save_as.png", "cancel.png"});
+                dialog.showDialog();
                 if (dialog.getValue() != 1)
                     return null;
             }
