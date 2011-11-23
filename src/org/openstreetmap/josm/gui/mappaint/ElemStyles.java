@@ -189,14 +189,13 @@ public class ElemStyles {
                                 break;
                             }
                         }
+                        p.b = Range.cut(p.b, mpElemStyles.b);
                         if (mpLine != null) {
                             p.a = new StyleList(p.a, mpLine);
-                            p.b = Range.cut(p.b, mpElemStyles.b);
                             break;
                         } else if (wayColor == null && isDefaultLines()) {
                             AreaElemStyle mpArea = Utils.find(mpElemStyles.a, AreaElemStyle.class);
                             if (mpArea != null) {
-                                p.b = Range.cut(p.b, mpElemStyles.b);
                                 wayColor = mpArea.color;
                             }
                         }
