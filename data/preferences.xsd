@@ -9,6 +9,7 @@
 			<choice minOccurs="0" maxOccurs="unbounded">
 				<element name="tag" type="tns:tag" />
 				<element name="collection" type="tns:collection" />
+				<element name="list" type="tns:list" />
 			</choice>
 		</sequence>
 		<attribute name="version" type="string" />
@@ -19,6 +20,7 @@
 		<attribute name="value" type="string" use="required"/>
 	</complexType>
 
+    <!-- deprecated: remove mid 2012 -->
 	<complexType name="collection">
 		<sequence>
 			<choice minOccurs="1" maxOccurs="unbounded">
@@ -26,6 +28,33 @@
 			</choice>
 		</sequence>
 		<attribute name="key" type="string" use="required" />
+	</complexType>
+
+	<complexType name="list">
+	    <choice>
+            <sequence>
+			    <element name="entry" type="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+            <sequence>
+			    <element name="list" type="tns:slist" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+            <sequence>
+			    <element name="map" type="tns:map" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+        </choice>
+		<attribute name="key" type="string" use="required" />
+	</complexType>
+	
+	<complexType name="slist">
+        <sequence>
+		    <element name="entry" type="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+	</complexType>
+
+	<complexType name="map">
+        <sequence>
+		    <element name="tag" type="tns:tag" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
 	</complexType>
 
 	<complexType name="entry">

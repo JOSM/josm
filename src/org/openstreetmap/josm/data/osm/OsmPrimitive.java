@@ -607,19 +607,6 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Initialized by checkDirectionTagged()
      */
     static {
-        // Legacy support - convert list of keys to search pattern
-        if (Main.pref.isCollection("tags.direction", false)) {
-            System.out.println("Collection of keys in tags.direction is no longer supported, value will converted to search pattern");
-            Collection<String> keys = Main.pref.getCollection("tags.direction", null);
-            StringBuilder builder = new StringBuilder();
-            for (String key:keys) {
-                builder.append(key);
-                builder.append("=* | ");
-            }
-            builder.delete(builder.length() - 3, builder.length());
-            Main.pref.put("tags.direction", builder.toString());
-        }
-
         // FIXME: incline=\"-*\" search pattern does not work.
         String reversedDirectionDefault = "oneway=\"-1\" | incline=down | incline=\"-*\"";
 

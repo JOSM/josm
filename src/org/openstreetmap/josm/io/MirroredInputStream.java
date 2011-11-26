@@ -14,9 +14,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -187,10 +189,9 @@ public class MirroredInputStream extends InputStream {
         String prefKey = getPrefKey(url, destDir);
         long age = 0L;
         File localFile = null;
-        Collection<String> localPathEntry = Main.pref.getCollection(prefKey);
-        if(localPathEntry.size() == 2) {
-            String[] lp = (String[]) localPathEntry.toArray();
-            localFile = new File(lp[1]);
+        List<String> localPathEntry = new ArrayList<String>(Main.pref.getCollection(prefKey));
+        if (localPathEntry.size() == 2) {
+            localFile = new File(localPathEntry.get(1));
             if(!localFile.exists())
                 localFile = null;
             else {
@@ -199,7 +200,7 @@ public class MirroredInputStream extends InputStream {
                 ) {
                     maxTime = Main.pref.getInteger("mirror.maxtime", 7*24*60*60);
                 }
-                age = System.currentTimeMillis() - Long.parseLong(lp[0]);
+                age = System.currentTimeMillis() - Long.parseLong(localPathEntry.get(0));
                 if (age < maxTime*1000) {
                     return localFile;
                 }

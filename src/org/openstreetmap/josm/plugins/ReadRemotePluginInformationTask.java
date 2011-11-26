@@ -148,7 +148,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
         StringBuilder sb = new StringBuilder();
         try {
             /* replace %<x> with empty string or x=plugins (separated with comma) */
-            String pl = Main.pref.getCollectionAsString("plugins");
+            String pl = Utils.join(",", Main.pref.getCollection("plugins"));
             String printsite = site.replaceAll("%<(.*)>", "");
             if(pl != null && pl.length() != 0) {
                 site = site.replaceAll("%<(.*)>", "$1"+pl);

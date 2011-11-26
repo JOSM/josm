@@ -21,12 +21,12 @@ import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
+import javax.xml.stream.XMLStreamException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Base64;
-import org.xml.sax.SAXException;
 
 /**
  * This class tweak the Preferences class to provide server side preference settings, as example
@@ -170,7 +170,7 @@ public class ServerSidePreferences extends Preferences {
             fromXML(in);
         } catch (RuntimeException e) {
             e.printStackTrace();
-        } catch (SAXException e) {
+        } catch (XMLStreamException e) {
             e.printStackTrace();
         }
         return res;
