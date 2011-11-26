@@ -12,6 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
+import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
@@ -78,7 +80,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private EastNorth currentMouseEastNorth;
 
     private Shortcut extraShortcut;
-
+    private Shortcut backspaceShortcut;
+            
     public DrawAction(MapFrame mapFrame) {
         super(tr("Draw"), "node/autonode", tr("Draw nodes"),
                 Shortcut.registerShortcut("mapmode:draw", tr("Mode: {0}", tr("Draw")), KeyEvent.VK_A, Shortcut.GROUP_EDIT),
@@ -175,6 +178,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
         wayIsFinished = false;
+        
+        backspaceShortcut = Shortcut.registerShortcut("mapmode:backspace", tr("Backspace in Add mode"), KeyEvent.VK_BACK_SPACE, Shortcut.GROUP_EDIT);
+        Main.registerActionShortcut(new BackSpaceAction(), backspaceShortcut);
 
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
@@ -195,6 +201,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.mapView.removeMouseMotionListener(this);
         Main.map.mapView.removeTemporaryLayer(this);
         DataSet.removeSelectionListener(this);
+        Main.unregisterActionShortcut(backspaceShortcut);
+
         removeHighlighting();
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
@@ -967,4 +975,30 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         super.destroy();
         Main.unregisterActionShortcut(extraShortcut);
     }
+    
+    public static class BackSpaceAction extends AbstractAction {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Main.main.undoRedo.undo();
+            Node n=null;
+            Command lastCmd=Main.main.undoRedo.commands.peekLast();  
+            if (lastCmd==null) return;
+            for (OsmPrimitive p: lastCmd.getParticipatingPrimitives()) {
+                if (p instanceof Node) {
+                    if (n==null) {
+                        n=(Node) p; // found one node
+                    }  else {
+                    // if more than 1 node were affected by previous command,
+                    // we have no way to continue, so we forget about found node
+                        n=null;
+                        break; 
+                    }
+                }
+            }
+            // select last added node - maybe we will continue drawing from it 
+            if (n!=null) getCurrentDataSet().addSelected(n);
+    }
+    }
+
 }
