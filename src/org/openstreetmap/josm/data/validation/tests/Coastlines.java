@@ -149,13 +149,10 @@ public class Coastlines extends Test {
             if (headWays == 0 || tailWays == 0) {
                 List<OsmPrimitive> highlight = new ArrayList<OsmPrimitive>();
 
-                System.out.println("Unconnected coastline: " + c1.getId());
                 if (headWays == 0 && (downloadedArea == null || downloadedArea.contains(head.getCoor()))) {
-                    System.out.println("headways: " +headWays+ " node: " + head.toString());
                     highlight.add(head);
                 }
                 if (tailWays == 0 && (downloadedArea == null || downloadedArea.contains(tail.getCoor()))) {
-                    System.out.println("tailways: " +tailWays+ " tail: " + tail.toString());
                     highlight.add(tail);
                 }
 
@@ -174,18 +171,17 @@ public class Coastlines extends Test {
                 unordered = true;
             } else if (reversed && next == prev) {
                 unordered = true;
+            } else if ((headReversed || tailReversed) && headReversed != tailReversed) {
+                unordered = true;
             }
 
             if (unordered) {
                 List<OsmPrimitive> highlight = new ArrayList<OsmPrimitive>();
 
-                System.out.println("Unordered coastline: " + c1.toString());
-                if (headWays > 1 || headUnordered || reversed) {
-                    System.out.println("head: " + head.toString());
+                if (headWays > 1 || headUnordered || headReversed || reversed) {
                     highlight.add(head);
                 }
-                if (tailWays > 1 || tailUnordered || reversed) {
-                    System.out.println("tail: " + tail.toString());
+                if (tailWays > 1 || tailUnordered || tailReversed || reversed) {
                     highlight.add(tail);
                 }
 
