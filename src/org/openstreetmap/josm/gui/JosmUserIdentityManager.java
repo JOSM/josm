@@ -8,6 +8,7 @@ import java.text.MessageFormat;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.data.Preferences.StringSetting;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -201,7 +202,8 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     /* ------------------------------------------------------------------- */
     public void preferenceChanged(PreferenceChangeEvent evt) {
         if (evt.getKey().equals("osm-server.username")) {
-            String newValue = evt.getNewValue();
+            if (!(evt.getNewValue() instanceof StringSetting)) return;
+            String newValue = ((StringSetting) evt.getNewValue()).getValue();
             if (newValue == null || newValue.trim().length() == 0) {
                 setAnonymous();
             } else {
@@ -213,7 +215,8 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
         }
 
         if (evt.getKey().equals("osm-server.url")) {
-            String newValue = evt.getNewValue();
+            if (!(evt.getNewValue() instanceof StringSetting)) return;
+            String newValue = ((StringSetting) evt.getNewValue()).getValue();
             if (newValue == null || newValue.trim().equals("")) {
                 setAnonymous();
             } else if (isFullyIdentified()) {

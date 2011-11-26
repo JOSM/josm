@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,13 +36,23 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.stax.StAXSource;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlObjectParser;
-import org.xml.sax.SAXException;
 
 /**
  * This class holds all preferences for JOSM.
@@ -74,22 +86,89 @@ public class Preferences {
     protected final SortedMap<String, String> defaults = new TreeMap<String, String>();
     protected final SortedMap<String, String> colornames = new TreeMap<String, String>();
 
-    public interface PreferenceChangeEvent{
+    protected final SortedMap<String, List<String>> collectionProperties = new TreeMap<String, List<String>>();
+    protected final SortedMap<String, List<String>> collectionDefaults = new TreeMap<String, List<String>>();
+
+    protected final SortedMap<String, List<List<String>>> arrayProperties = new TreeMap<String, List<List<String>>>();
+    protected final SortedMap<String, List<List<String>>> arrayDefaults = new TreeMap<String, List<List<String>>>();
+
+    protected final SortedMap<String, List<Map<String,String>>> listOfStructsProperties = new TreeMap<String, List<Map<String,String>>>();
+    protected final SortedMap<String, List<Map<String,String>>> listOfStructsDefaults = new TreeMap<String, List<Map<String,String>>>();
+
+    public interface Setting<T> {
+        T getValue();
+        void visit(SettingVisitor visitor);
+    }
+
+    abstract public static class AbstractSetting<T> implements Setting<T> {
+        private T value;
+        public AbstractSetting(T value) {
+            this.value = value;
+        }
+        public T getValue() {
+            return value;
+        }
+    }
+
+    public static class StringSetting extends AbstractSetting<String> {
+        public StringSetting(String value) {
+            super(value);
+        }
+        public void visit(SettingVisitor visitor) {
+            visitor.visit(this);
+        }
+    }
+
+    public static class ListSetting extends AbstractSetting<List<String>> {
+        public ListSetting(List<String> value) {
+            super(value);
+        }
+        public void visit(SettingVisitor visitor) {
+            visitor.visit(this);
+        }
+    }
+
+    public static class ListListSetting extends AbstractSetting<List<List<String>>> {
+        public ListListSetting(List<List<String>> value) {
+            super(value);
+        }
+        public void visit(SettingVisitor visitor) {
+            visitor.visit(this);
+        }
+    }
+
+    public static class MapListSetting extends AbstractSetting<List<Map<String, String>>> {
+        public MapListSetting(List<Map<String, String>> value) {
+            super(value);
+        }
+        public void visit(SettingVisitor visitor) {
+            visitor.visit(this);
+        }
+    }
+
+    public interface SettingVisitor {
+        void visit(StringSetting setting);
+        void visit(ListSetting value);
+        void visit(ListListSetting value);
+        void visit(MapListSetting value);
+    }
+
+    public interface PreferenceChangeEvent<T> {
         String getKey();
-        String getOldValue();
-        String getNewValue();
+        Setting<T> getOldValue();
+        Setting<T> getNewValue();
     }
 
     public interface PreferenceChangedListener {
         void preferenceChanged(PreferenceChangeEvent e);
     }
 
-    private static class DefaultPreferenceChangeEvent implements PreferenceChangeEvent {
+    private static class DefaultPreferenceChangeEvent<T> implements PreferenceChangeEvent<T> {
         private final String key;
-        private final String oldValue;
-        private final String newValue;
+        private final Setting<T> oldValue;
+        private final Setting<T> newValue;
 
-        public DefaultPreferenceChangeEvent(String key, String oldValue, String newValue) {
+        public DefaultPreferenceChangeEvent(String key, Setting<T> oldValue, Setting<T> newValue) {
             this.key = key;
             this.oldValue = oldValue;
             this.newValue = newValue;
@@ -98,10 +177,10 @@ public class Preferences {
         public String getKey() {
             return key;
         }
-        public String getOldValue() {
+        public Setting<T> getOldValue() {
             return oldValue;
         }
-        public String getNewValue() {
+        public Setting<T> getNewValue() {
             return newValue;
         }
     }
@@ -124,8 +203,8 @@ public class Preferences {
         listeners.remove(listener);
     }
 
-    protected void firePreferenceChanged(String key, String oldValue, String newValue) {
-        PreferenceChangeEvent evt = new DefaultPreferenceChangeEvent(key, oldValue, newValue);
+    protected <T> void firePreferenceChanged(String key, Setting<T> oldValue, Setting<T> newValue) {
+        PreferenceChangeEvent<T> evt = new DefaultPreferenceChangeEvent<T>(key, oldValue, newValue);
         for (PreferenceChangedListener l : listeners) {
             l.preferenceChanged(evt);
         }
@@ -345,7 +424,7 @@ public class Preferences {
         }
         if (changed) {
             // Call outside of synchronized section in case some listener wait for other thread that wait for preference lock
-            firePreferenceChanged(key, oldValue, value);
+            firePreferenceChanged(key, new StringSetting(oldValue), new StringSetting(value));
         }
         return changed;
     }
@@ -445,9 +524,9 @@ public class Preferences {
 
     private void load(boolean old) throws Exception {
         properties.clear();
-        if(!Main.applet) {
-            final BufferedReader in = new BufferedReader(new InputStreamReader(
-                    new FileInputStream(old ? getOldPreferenceFile() : getPreferenceFile()), "utf-8"));
+        if (!Main.applet) {
+            File pref = old ? getOldPreferenceFile() : getPreferenceFile();
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), "utf-8"));
             /* FIXME: TODO: remove old style config file end of 2012 */
             try {
                 if (old) {
@@ -455,6 +534,9 @@ public class Preferences {
                     int v = in.read();
                     in.reset();
                     if(v == '<') {
+                        validateXML(in);
+                        Utils.close(in);
+                        in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), "utf-8"));
                         fromXML(in);
                     } else {
                         int lineNumber = 0;
@@ -475,6 +557,9 @@ public class Preferences {
                             throw new IOException(tr("Malformed config file at lines {0}", errLines));
                     }
                 } else {
+                    validateXML(in);
+                    Utils.close(in);
+                    in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), "utf-8"));
                     fromXML(in);
                 }
             } finally {
@@ -731,22 +816,6 @@ public class Preferences {
         return 0.0;
     }
 
-    synchronized public String getCollectionAsString(final String key) {
-        String s = get(key);
-        if(s != null && s.length() != 0) {
-            s = s.replaceAll("\u001e",",");
-        }
-        return s;
-    }
-
-    public boolean isCollection(String key, boolean def) {
-        String s = get(key);
-        if (s != null && s.length() != 0)
-            return s.indexOf("\u001e") >= 0;
-            else
-                return def;
-    }
-
     /**
      * Get a list of values for a certain key
      * @param key the identifier for the setting
@@ -754,12 +823,15 @@ public class Preferences {
      * @return the corresponding value if the property has been set before,
      *  def otherwise
      */
-    synchronized public Collection<String> getCollection(String key, Collection<String> def) {
-        putCollectionDefault(key, def);
-        String s = get(key);
-        if(s != null && s.length() != 0)
-            return Arrays.asList(s.split("\u001e", -1));
-        return def;
+    public Collection<String> getCollection(String key, Collection<String> def) {
+        if (def != null) {
+            putCollectionDefault(key, new ArrayList<String>(def));
+        }
+        Collection<String> prop = getCollectionInternal(key);
+        if (prop != null)
+            return prop;
+        else
+            return def;
     }
 
     /**
@@ -768,28 +840,30 @@ public class Preferences {
      * @return the corresponding value if the property has been set before,
      *  an empty Collection otherwise.
      */
-    synchronized public Collection<String> getCollection(String key) {
+    public Collection<String> getCollection(String key) {
         putCollectionDefault(key, null);
-        String s = get(key);
-        if (s != null && s.length() != 0)
-            return Arrays.asList(s.split("\u001e", -1));
-        return Collections.emptyList();
+        Collection<String> prop = getCollectionInternal(key);
+        if (prop != null)
+            return prop;
+        else
+            return Collections.emptyList();
     }
 
-    /* old style conversion, replace by above call after some transition time */
-    /* remove this function, when no more old-style preference collections in the code */
-    @Deprecated
-    synchronized public Collection<String> getCollectionOld(String key, String sep) {
-        putCollectionDefault(key, null);
-        String s = get(key);
-        if (s != null && s.length() != 0) {
-            if(!s.contains("\u001e") && s.contains(sep)) {
-                s = s.replace(sep, "\u001e");
-                put(key, s);
+    synchronized private List<String> getCollectionInternal(String key) {
+        List<String> prop = collectionProperties.get(key);
+        if (prop != null)
+            return prop;
+        else {
+            String s = properties.get(key);
+            if(s != null) {
+                prop = Arrays.asList(s.split("\u001e", -1));
+                collectionProperties.put(key, Collections.unmodifiableList(prop));
+                properties.remove(key);
+                defaults.remove(key);
+                return prop;
             }
-            return Arrays.asList(s.split("\u001e", -1));
         }
-        return Collections.emptyList();
+        return null;
     }
 
     synchronized public void removeFromCollection(String key, String value) {
@@ -798,8 +872,48 @@ public class Preferences {
         putCollection(key, a);
     }
 
-    synchronized public boolean putCollection(String key, Collection<String> val) {
-        return put(key, Utils.join("\u001e", val));
+    public boolean putCollection(String key, Collection<String> value) {
+        List<String> oldValue = null;
+        List<String> valueCopy = null;
+
+        synchronized (this) {
+            if (value == null) {
+                oldValue = collectionProperties.remove(key);
+                boolean changed = oldValue != null;
+                changed |= properties.remove(key) != null;
+                if (!changed) return false;
+            } else {
+                oldValue = getCollectionInternal(key);
+                if (equalCollection(value, oldValue)) return false;
+                Collection<String> defValue = collectionDefaults.get(key);
+                if (oldValue == null && equalCollection(value, defValue)) return false;
+
+                valueCopy = new ArrayList<String>(value);
+                collectionProperties.put(key, Collections.unmodifiableList(valueCopy));
+                try {
+                    save();
+                } catch(IOException e){
+                    System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
+                }
+            }
+        }
+        // Call outside of synchronized section in case some listener wait for other thread that wait for preference lock
+        firePreferenceChanged(key, new ListSetting(oldValue), new ListSetting(valueCopy));
+        return true;
+    }
+
+    private static boolean equalCollection(Collection<String> a, Collection<String> b) {
+        if (a == null) return b == null;
+        if (b == null) return false;
+        if (a.size() != b.size()) return false;
+        Iterator<String> itA = a.iterator();
+        Iterator<String> itB = b.iterator();
+        while (itA.hasNext()) {
+            String aStr = itA.next();
+            String bStr = itB.next();
+            if (!Utils.equal(aStr,bStr)) return false;
+        }
+        return true;
     }
 
     /**
@@ -816,69 +930,208 @@ public class Preferences {
         return putCollection(key, newCollection);
     }
 
-    synchronized private void putCollectionDefault(String key, Collection<String> val) {
-        putDefault(key, Utils.join("\u001e", val));
+    synchronized private void putCollectionDefault(String key, List<String> val) {
+        collectionDefaults.put(key, val);
     }
 
     /**
      * Used to read a 2-dimensional array of strings from the preference file.
      * If not a single entry could be found, def is returned.
      */
-    synchronized public Collection<Collection<String>> getArray(String key,
-            Collection<Collection<String>> def)
-            {
-        if(def != null) {
-            putArrayDefault(key, def);
-        }
-        key += ".";
-        int num = 0;
-        Collection<Collection<String>> col = new LinkedList<Collection<String>>();
-        while(properties.containsKey(key+num)) {
-            col.add(getCollection(key+num++, null));
-        }
-        return num == 0 ? def : col;
+    synchronized public Collection<Collection<String>> getArray(String key, Collection<Collection<String>> def) {
+        if (def != null) {
+            List<List<String>> defCopy = new ArrayList<List<String>>(def.size());
+            for (Collection<String> lst : def) {
+                defCopy.add(Collections.unmodifiableList(new ArrayList<String>(lst)));
             }
-
-    synchronized public boolean putArray(String key, Collection<Collection<String>> val) {
-        boolean changed = false;
-        key += ".";
-        Collection<String> keys = getAllPrefix(key).keySet();
-        if(val != null) {
-            int num = 0;
-            for(Collection<String> c : val) {
-                keys.remove(key+num);
-                changed |= putCollection(key+num++, c);
-            }
+            putArrayDefault(key, Collections.unmodifiableList(defCopy));
         }
-        int l = key.length();
-        for(String k : keys) {
-            try {
-                Integer.valueOf(k.substring(l));
-                changed |= put(k, null);
-            } catch(NumberFormatException e) {
-                /* everything which does not end with a number should not be deleted */
-            }
-        }
-        return changed;
+        List<List<String>> prop = getArrayInternal(key);
+        if (prop != null) {
+            @SuppressWarnings("unchecked")
+            Collection<Collection<String>> prop_cast = (Collection) prop;
+            return prop_cast;
+        } else
+            return def;
     }
 
-    synchronized private void putArrayDefault(String key, Collection<Collection<String>> val) {
-        key += ".";
-        Collection<String> keys = getAllPrefixDefault(key).keySet();
-        int num = 0;
-        for(Collection<String> c : val) {
-            keys.remove(key+num);
-            putCollectionDefault(key+num++, c);
-        }
-        int l = key.length();
-        for(String k : keys) {
-            try {
-                Integer.valueOf(k.substring(l));
-                defaults.remove(k);
-            } catch(Exception e) {
-                /* everything which does not end with a number should not be deleted */
+    synchronized private List<List<String>> getArrayInternal(String key) {
+        List<List<String>> prop = arrayProperties.get(key);
+        if (prop != null)
+            return prop;
+        else {
+            String keyDot = key + ".";
+            int num = 0;
+            List<List<String>> col = new ArrayList<List<String>>();
+            while (true) {
+                List<String> c = getCollectionInternal(keyDot+num);
+                if (c == null) {
+                    break;
+                }
+                col.add(c);
+                collectionProperties.remove(keyDot+num);
+                collectionDefaults.remove(keyDot+num);
+                num++;
+            }
+            if (num > 0) {
+                arrayProperties.put(key, Collections.unmodifiableList(col));
+                return col;
             }
         }
+        return null;
+    }
+
+    public boolean putArray(String key, Collection<Collection<String>> value) {
+        boolean changed = false;
+
+        List<List<String>> oldValue = null;
+        List<List<String>> valueCopy = null;
+
+        synchronized (this) {
+            if (value == null) {
+                oldValue = getArrayInternal(key);
+                if (arrayProperties.remove(key) != null) return false;
+            } else {
+                oldValue = getArrayInternal(key);
+                if (equalArray(value, oldValue)) return false;
+
+                List<List<String>> defValue = arrayDefaults.get(key);
+                if (oldValue == null && equalArray(value, defValue)) return false;
+
+                valueCopy = new ArrayList<List<String>>(value.size());
+                for (Collection<String> lst : value) {
+                    valueCopy.add(Collections.unmodifiableList(new ArrayList<String>(lst)));
+                }
+                arrayProperties.put(key, Collections.unmodifiableList(valueCopy));
+                try {
+                    save();
+                } catch(IOException e){
+                    System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
+                }
+            }
+        }
+        // Call outside of synchronized section in case some listener wait for other thread that wait for preference lock
+        firePreferenceChanged(key, new ListListSetting(oldValue), new ListListSetting(valueCopy));
+        return true;
+    }
+
+    private static boolean equalArray(Collection<Collection<String>> a, Collection<List<String>> b) {
+        if (a == null) return b == null;
+        if (b == null) return false;
+        if (a.size() != b.size()) return false;
+        Iterator<Collection<String>> itA = a.iterator();
+        Iterator<List<String>> itB = b.iterator();
+        while (itA.hasNext()) {
+            if (!equalCollection(itA.next(), itB.next())) return false;
+        }
+        return true;
+    }
+
+    synchronized private void putArrayDefault(String key, List<List<String>> val) {
+        arrayDefaults.put(key, val);
+    }
+
+    public Collection<Map<String, String>> getListOfStructs(String key, Collection<Map<String, String>> def) {
+        if (def != null) {
+            List<Map<String, String>> defCopy = new ArrayList<Map<String, String>>(def.size());
+            for (Map<String, String> map : def) {
+                defCopy.add(Collections.unmodifiableMap(new LinkedHashMap<String,String>(map)));
+            }
+            putListOfStructsDefault(key, Collections.unmodifiableList(defCopy));
+        }
+        Collection<Map<String, String>> prop = getListOfStructsInternal(key);
+        if (prop != null)
+            return prop;
+        else
+            return def;
+    }
+
+    private synchronized List<Map<String, String>> getListOfStructsInternal(String key) {
+        List<Map<String, String>> prop = listOfStructsProperties.get(key);
+        if (prop != null)
+            return prop;
+        else {
+            List<List<String>> array = getArrayInternal(key);
+            if (array == null) return null;
+            prop = new ArrayList<Map<String, String>>(array.size());
+            for (Collection<String> mapStr : array) {
+                Map<String, String> map = new LinkedHashMap<String, String>();
+                for (String key_value : mapStr) {
+                    final int i = key_value.indexOf(':');
+                    if (i == -1 || i == 0) {
+                        continue;
+                    }
+                    String k = key_value.substring(0,i);
+                    String v = key_value.substring(i+1);
+                    map.put(k, v);
+                }
+                prop.add(Collections.unmodifiableMap(map));
+            }
+            arrayProperties.remove(key);
+            arrayDefaults.remove(key);
+            listOfStructsProperties.put(key, Collections.unmodifiableList(prop));
+            return prop;
+        }
+    }
+
+    public boolean putListOfStructs(String key, Collection<Map<String, String>> value) {
+        boolean changed = false;
+
+        List<Map<String, String>> oldValue;
+        List<Map<String, String>> valueCopy = null;
+
+        synchronized (this) {
+            if (value == null) {
+                oldValue = getListOfStructsInternal(key);
+                if (listOfStructsProperties.remove(key) != null) return false;
+            } else {
+                oldValue = getListOfStructsInternal(key);
+                if (equalListOfStructs(oldValue, value)) return false;
+
+                List<Map<String, String>> defValue = listOfStructsDefaults.get(key);
+                if (oldValue == null && equalListOfStructs(value, defValue)) return false;
+
+                valueCopy = new ArrayList<Map<String, String>>(value.size());
+                for (Map<String, String> map : value) {
+                    valueCopy.add(Collections.unmodifiableMap(new LinkedHashMap<String,String>(map)));
+                }
+                listOfStructsProperties.put(key, Collections.unmodifiableList(valueCopy));
+                try {
+                    save();
+                } catch(IOException e){
+                    System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
+                }
+            }
+        }
+        // Call outside of synchronized section in case some listener wait for other thread that wait for preference lock
+        firePreferenceChanged(key, new MapListSetting(oldValue), new MapListSetting(valueCopy));
+        return true;
+    }
+
+    private static boolean equalListOfStructs(Collection<Map<String, String>> a, Collection<Map<String, String>> b) {
+        if (a == null) return b == null;
+        if (b == null) return false;
+        if (a.size() != b.size()) return false;
+        Iterator<Map<String, String>> itA = a.iterator();
+        Iterator<Map<String, String>> itB = b.iterator();
+        while (itA.hasNext()) {
+            if (!equalMap(itA.next(), itB.next())) return false;
+        }
+        return true;
+    }
+
+    private static boolean equalMap(Map<String, String> a, Map<String, String> b) {
+        if (a == null) return b == null;
+        if (b == null) return false;
+        if (a.size() != b.size()) return false;
+        for (Entry<String, String> e : a.entrySet()) {
+            if (!Utils.equal(e.getValue(), b.get(e.getKey()))) return false;
+        }
+        return true;
+    }
+
+    synchronized private void putListOfStructsDefault(String key, List<Map<String, String>> val) {
+        listOfStructsDefaults.put(key, val);
     }
 
     @Retention(RetentionPolicy.RUNTIME) public @interface pref { }
@@ -910,12 +1163,12 @@ public class Preferences {
      * same as above, but returns def if nothing was found
      */
     public <T> List<T> getListOfStructs(String key, Collection<T> def, Class<T> klass) {
-        Collection<Collection<String>> array =
-            getArray(key, def == null ? null : serializeListOfStructs(def, klass));
-        if (array == null)
+        Collection<Map<String,String>> prop =
+            getListOfStructs(key, def == null ? null : serializeListOfStructs(def, klass));
+        if (prop == null)
             return def == null ? null : new ArrayList<T>(def);
         List<T> lst = new ArrayList<T>();
-        for (Collection<String> entries : array) {
+        for (Map<String,String> entries : prop) {
             T struct = deserializeStruct(entries, klass);
             lst.add(struct);
         }
@@ -936,13 +1189,13 @@ public class Preferences {
      * @return true if something has changed
      */
     public <T> boolean putListOfStructs(String key, Collection<T> val, Class<T> klass) {
-        return putArray(key, serializeListOfStructs(val, klass));
+        return putListOfStructs(key, serializeListOfStructs(val, klass));
     }
 
-    private <T> Collection<Collection<String>> serializeListOfStructs(Collection<T> l, Class<T> klass) {
+    private <T> Collection<Map<String,String>> serializeListOfStructs(Collection<T> l, Class<T> klass) {
         if (l == null)
             return null;
-        Collection<Collection<String>> vals = new ArrayList<Collection<String>>();
+        Collection<Map<String,String>> vals = new ArrayList<Map<String,String>>();
         for (T struct : l) {
             if (struct == null) {
                 continue;
@@ -952,7 +1205,7 @@ public class Preferences {
         return vals;
     }
 
-    private <T> Collection<String> serializeStruct(T struct, Class<T> klass) {
+    private <T> Map<String,String> serializeStruct(T struct, Class<T> klass) {
         T structPrototype;
         try {
             structPrototype = klass.newInstance();
@@ -962,7 +1215,7 @@ public class Preferences {
             throw new RuntimeException(ex);
         }
 
-        Collection<String> hash = new ArrayList<String>();
+        Map<String,String> hash = new LinkedHashMap<String,String>();
         for (Field f : klass.getDeclaredFields()) {
             if (f.getAnnotation(pref.class) == null) {
                 continue;
@@ -973,7 +1226,7 @@ public class Preferences {
                 Object defaultFieldValue = f.get(structPrototype);
                 if (fieldValue != null) {
                     if (f.getAnnotation(writeExplicitly.class) != null || !Utils.equal(fieldValue, defaultFieldValue)) {
-                        hash.add(String.format("%s:%s", f.getName().replace("_", "-"), fieldValue.toString()));
+                        hash.put(f.getName().replace("_", "-"), fieldValue.toString());
                     }
                 }
             } catch (IllegalArgumentException ex) {
@@ -985,7 +1238,7 @@ public class Preferences {
         return hash;
     }
 
-    private <T> T deserializeStruct(Collection<String> hash, Class<T> klass) {
+    private <T> T deserializeStruct(Map<String,String> hash, Class<T> klass) {
         T struct = null;
         try {
             struct = klass.newInstance();
@@ -994,18 +1247,11 @@ public class Preferences {
         } catch (IllegalAccessException ex) {
             throw new RuntimeException();
         }
-        for (String key_value : hash) {
-            final int i = key_value.indexOf(':');
-            if (i == -1 || i == 0) {
-                continue;
-            }
-            String key = key_value.substring(0,i);
-            String valueString = key_value.substring(i+1);
-
+        for (Entry<String,String> key_value : hash.entrySet()) {
             Object value = null;
             Field f;
             try {
-                f = klass.getDeclaredField(key.replace("-", "_"));
+                f = klass.getDeclaredField(key_value.getKey().replace("-", "_"));
             } catch (NoSuchFieldException ex) {
                 continue;
             } catch (SecurityException ex) {
@@ -1016,21 +1262,21 @@ public class Preferences {
             }
             f.setAccessible(true);
             if (f.getType() == Boolean.class || f.getType() == boolean.class) {
-                value = Boolean.parseBoolean(valueString);
+                value = Boolean.parseBoolean(key_value.getValue());
             } else if (f.getType() == Integer.class || f.getType() == int.class) {
                 try {
-                    value = Integer.parseInt(valueString);
+                    value = Integer.parseInt(key_value.getValue());
                 } catch (NumberFormatException nfe) {
                     continue;
                 }
             } else if (f.getType() == Double.class || f.getType() == double.class) {
                 try {
-                    value = Double.parseDouble(valueString);
+                    value = Double.parseDouble(key_value.getValue());
                 } catch (NumberFormatException nfe) {
                     continue;
                 }
             } else  if (f.getType() == String.class) {
-                value = valueString;
+                value = key_value.getValue();
             } else
                 throw new RuntimeException("unsupported preference primitive type");
 
@@ -1079,34 +1325,225 @@ public class Preferences {
         putCollection("pluginmanager.sites", sites);
     }
 
-    public static class XMLTag {
-        public String key;
-        public String value;
+    protected XMLStreamReader parser;
+
+    public void validateXML(Reader in) throws Exception {
+        SchemaFactory factory =  SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+        Schema schema = factory.newSchema(new StreamSource(new MirroredInputStream("resource://data/preferences.xsd")));
+        XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(in);
+        Validator validator = schema.newValidator();
+        validator.validate(new StAXSource(parser));
     }
-    public static class XMLCollection {
-        public String key;
+
+    public void fromXML(Reader in) throws XMLStreamException {
+        XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(in);
+        this.parser = parser;
+        parse();
     }
-    public static class XMLEntry {
-        public String value;
-    }
-    public void fromXML(Reader in) throws SAXException {
-        XmlObjectParser parser = new XmlObjectParser();
-        parser.map("tag", XMLTag.class);
-        parser.map("entry", XMLEntry.class);
-        parser.map("collection", XMLCollection.class);
-        parser.startWithValidation(in,
-                "http://josm.openstreetmap.de/preferences-1.0", "resource://data/preferences.xsd");
-        LinkedList<String> vals = new LinkedList<String>();
-        while(parser.hasNext()) {
-            Object o = parser.next();
-            if(o instanceof XMLTag) {
-                properties.put(((XMLTag)o).key, ((XMLTag)o).value);
-            } else if (o instanceof XMLEntry) {
-                vals.add(((XMLEntry)o).value);
-            } else if (o instanceof XMLCollection) {
-                properties.put(((XMLCollection)o).key, Utils.join("\u001e", vals));
-                vals = new LinkedList<String>();
+
+    public void parse() throws XMLStreamException {
+        int event = parser.getEventType();
+        while (true) {
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                parseRoot();
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
+                return;
             }
+            if (parser.hasNext()) {
+                event = parser.next();
+            } else {
+                break;
+            }
+        }
+        parser.close();
+    }
+
+    public void parseRoot() throws XMLStreamException {
+        while (true) {
+            int event = parser.next();
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                if (parser.getLocalName().equals("tag")) {
+                    properties.put(parser.getAttributeValue(null, "key"), parser.getAttributeValue(null, "value"));
+                    jumpToEnd();
+                } else if (parser.getLocalName().equals("list") || parser.getLocalName().equals("collection")) {
+                    parseToplevelList();
+                } else {
+                    throwException("Unexpected element: "+parser.getLocalName());
+                }
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
+                return;
+            }
+        }
+    }
+
+    private void jumpToEnd() throws XMLStreamException {
+        while (true) {
+            int event = parser.next();
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                jumpToEnd();
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
+                return;
+            }
+        }
+    }
+
+    protected void parseToplevelList() throws XMLStreamException {
+        String key = parser.getAttributeValue(null, "key");
+        List<String> entries = null;
+        List<List<String>> lists = null;
+        List<Map<String, String>> maps = null;
+        while (true) {
+            int event = parser.next();
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                if (parser.getLocalName().equals("entry")) {
+                    if (entries == null) {
+                        entries = new ArrayList<String>();
+                    }
+                    entries.add(parser.getAttributeValue(null, "value"));
+                    jumpToEnd();
+                } else if (parser.getLocalName().equals("list")) {
+                    if (lists == null) {
+                        lists = new ArrayList<List<String>>();
+                    }
+                    lists.add(parseInnerList());
+                } else if (parser.getLocalName().equals("map")) {
+                    if (maps == null) {
+                        maps = new ArrayList<Map<String, String>>();
+                    }
+                    maps.add(parseMap());
+                } else {
+                    throwException("Unexpected element: "+parser.getLocalName());
+                }
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
+                break;
+            }
+        }
+        if (entries != null) {
+            collectionProperties.put(key, Collections.unmodifiableList(entries));
+        }
+        if (lists != null) {
+            arrayProperties.put(key, Collections.unmodifiableList(lists));
+        }
+        if (maps != null) {
+            listOfStructsProperties.put(key, Collections.unmodifiableList(maps));
+        }
+    }
+
+    protected List<String> parseInnerList() throws XMLStreamException {
+        List<String> entries = new ArrayList<String>();
+        while (true) {
+            int event = parser.next();
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                if (parser.getLocalName().equals("entry")) {
+                    entries.add(parser.getAttributeValue(null, "value"));
+                    jumpToEnd();
+                } else {
+                    throwException("Unexpected element: "+parser.getLocalName());
+                }
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
+                break;
+            }
+        }
+        return Collections.unmodifiableList(entries);
+    }
+
+    protected Map<String, String> parseMap() throws XMLStreamException {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        while (true) {
+            int event = parser.next();
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                if (parser.getLocalName().equals("tag")) {
+                    map.put(parser.getAttributeValue(null, "key"), parser.getAttributeValue(null, "value"));
+                    jumpToEnd();
+                } else {
+                    throwException("Unexpected element: "+parser.getLocalName());
+                }
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
+                break;
+            }
+        }
+        return Collections.unmodifiableMap(map);
+    }
+
+    protected void throwException(String msg) {
+        throw new RuntimeException(msg + tr(" (at line {0}, column {1})", parser.getLocation().getLineNumber(), parser.getLocation().getColumnNumber()));
+    }
+
+    private class SettingToXml implements SettingVisitor {
+        private StringBuilder b;
+        private boolean noPassword;
+        private String key;
+
+        public SettingToXml(StringBuilder b, boolean noPassword) {
+            this.b = b;
+            this.noPassword = noPassword;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public void visit(StringSetting setting) {
+            if (noPassword && key.equals("osm-server.password"))
+                return; // do not store plain password.
+            String r = setting.getValue();
+            String s = defaults.get(key);
+            /* don't save default values */
+            if(s == null || !s.equals(r)) {
+                if(r.contains("\u001e"))
+                {
+                    b.append("  <list key='");
+                    b.append(XmlWriter.encode(key));
+                    b.append("'>\n");
+                    for (String val : r.split("\u001e", -1))
+                    {
+                        b.append("    <entry value='");
+                        b.append(XmlWriter.encode(val));
+                        b.append("'/>\n");
+                    }
+                    b.append("  </list>\n");
+                }
+                else
+                {
+                    b.append("  <tag key='");
+                    b.append(XmlWriter.encode(key));
+                    b.append("' value='");
+                    b.append(XmlWriter.encode(setting.getValue()));
+                    b.append("'/>\n");
+                }
+            }
+        }
+
+        public void visit(ListSetting setting) {
+            b.append("  <list key='").append(XmlWriter.encode(key)).append("'>\n");
+            for (String s : setting.getValue()) {
+                b.append("    <entry value='").append(XmlWriter.encode(s)).append("'/>\n");
+            }
+            b.append("  </list>\n");
+        }
+
+        public void visit(ListListSetting setting) {
+            b.append("  <list key='").append(XmlWriter.encode(key)).append("'>\n");
+            for (List<String> list : setting.getValue()) {
+                b.append("    <list>\n");
+                for (String s : list) {
+                    b.append("      <entry value='").append(XmlWriter.encode(s)).append("'/>\n");
+                }
+                b.append("    </list>\n");
+            }
+            b.append("  </list>\n");
+        }
+
+        public void visit(MapListSetting setting) {
+            b.append("  <list key='").append(XmlWriter.encode(key)).append("'>\n");
+            for (Map<String, String> struct : setting.getValue()) {
+                b.append("    <map>\n");
+                for (Entry<String, String> e : struct.entrySet()) {
+                    b.append("      <tag key='").append(XmlWriter.encode(e.getKey())).append("' value='").append(XmlWriter.encode(e.getValue())).append("'/>\n");
+                }
+                b.append("    </map>\n");
+            }
+            b.append("  </list>\n");
         }
     }
 
@@ -1115,38 +1552,26 @@ public class Preferences {
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<preferences xmlns=\"http://josm.openstreetmap.de/preferences-1.0\" version=\""+
                 Version.getInstance().getVersion() + "\">\n");
-        for (Entry<String, String> p : properties.entrySet()) {
-            if (nopass && p.getKey().equals("osm-server.password")) {
-                continue; // do not store plain password.
-            }
-            String r = p.getValue();
-            String s = defaults.get(p.getKey());
-            /* don't save default values */
-            if(s == null || !s.equals(r)) {
-                if(r.contains("\u001e"))
-                {
-                    b.append(" <collection key='");
-                    b.append(XmlWriter.encode(p.getKey()));
-                    b.append("'>\n");
-                    for (String val : r.split("\u001e", -1))
-                    {
-                        b.append("  <entry value='");
-                        b.append(XmlWriter.encode(val));
-                        b.append("' />\n");
-                    }
-                    b.append(" </collection>\n");
-                }
-                else
-                {
-                    b.append(" <tag key='");
-                    b.append(XmlWriter.encode(p.getKey()));
-                    b.append("' value='");
-                    b.append(XmlWriter.encode(p.getValue()));
-                    b.append("' />\n");
-                }
-            }
+        SettingToXml toXml = new SettingToXml(b, nopass);
+        Map<String, Setting> settings = new TreeMap<String, Setting>();
+
+        for (Entry<String, String> e : properties.entrySet()) {
+            settings.put(e.getKey(), new StringSetting(e.getValue()));
         }
-        b.append("</preferences>");
+        for (Entry<String, List<String>> e : collectionProperties.entrySet()) {
+            settings.put(e.getKey(), new ListSetting(e.getValue()));
+        }
+        for (Entry<String, List<List<String>>> e : arrayProperties.entrySet()) {
+            settings.put(e.getKey(), new ListListSetting(e.getValue()));
+        }
+        for (Entry<String, List<Map<String, String>>> e : listOfStructsProperties.entrySet()) {
+            settings.put(e.getKey(), new MapListSetting(e.getValue()));
+        }
+        for (Entry<String, Setting> e : settings.entrySet()) {
+            toXml.setKey(e.getKey());
+            e.getValue().visit(toXml);
+        }
+        b.append("</preferences>\n");
         return b.toString();
     }
 }
