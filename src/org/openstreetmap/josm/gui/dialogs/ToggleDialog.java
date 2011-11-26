@@ -12,7 +12,6 @@ import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
@@ -46,6 +45,7 @@ import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.help.Helpful;
+import org.openstreetmap.josm.gui.ShowHideButtonListener;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.GBC;
@@ -56,7 +56,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * This class is a toggle dialog that can be turned on and off.
  *
  */
-public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
+public class ToggleDialog extends JPanel implements ShowHideButtonListener, Helpful, AWTEventListener {
 
     /** The action to toggle this dialog */
     protected ToggleDialogAction toggleAction;
@@ -93,7 +93,6 @@ public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
     protected JDialog detachedDialog;
 
     protected JToggleButton button;
-    protected boolean buttonHidden;
     private JPanel buttonsPanel;
 
     /** holds the menu entry in the windows menu. Required to properly
@@ -142,8 +141,6 @@ public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
         isShowing = Main.pref.getBoolean(preferencePrefix+".visible", defShow);
         isDocked = Main.pref.getBoolean(preferencePrefix+".docked", true);
         isCollapsed = Main.pref.getBoolean(preferencePrefix+".minimized", false);
-
-        buttonHidden = Main.pref.getBoolean(preferencePrefix+".button_hidden", false);
 
         RedirectInputMap.redirectToMainContentPane(this);
 
@@ -224,9 +221,9 @@ public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
             expand();
             dialogsPanel.reconstruct(Action.COLLAPSED_TO_DEFAULT, this);
         } else if (!isDialogShowing()) {
-            if (isButtonHidden()) {
-                showButtonImpl();
-            }
+//            if (isButtonHidden()) {
+//                showButtonImpl();
+//            }
             showDialog();
             if (isDocked && isCollapsed) {
                 expand();
@@ -238,27 +235,17 @@ public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
         }
     }
 
-    public void hideButton() {
-        if (!button.isVisible())
-            throw new AssertionError();
+    @Override
+    public void buttonHidden() {
         if ((Boolean) toggleAction.getValue("selected")) {
             toggleAction.actionPerformed(null);
         }
-        button.setVisible(false);
-        setButtonHidden(true);
     }
 
-    public void showButton() {
-        showButtonImpl();
+    public void buttonShown() {
         unfurlDialog();
     }
 
-    protected void showButtonImpl() {
-        if (button.isVisible())
-            throw new AssertionError();
-        button.setVisible(true);
-        setButtonHidden(false);
-    }
 
     /**
      * Hides the dialog
@@ -622,25 +609,14 @@ public class ToggleDialog extends JPanel implements Helpful, AWTEventListener {
         return isShowing && isDocked && isCollapsed;
     }
 
-    public boolean isButtonHidden() {
-        return buttonHidden;
-    }
-
-    protected void setButtonHidden(boolean buttonHidden) {
-        this.buttonHidden = buttonHidden;
-        Main.pref.put(preferencePrefix+".button_hidden", buttonHidden);
-    }
-
-
     public void setButton(JToggleButton button) {
         this.button = button;
-        button.setVisible(!buttonHidden);
     }
 
     public JToggleButton getButton() {
         return button;
     }
-
+    
     /***
      * The following methods are intended to be overridden, in order to customize
      * the toggle dialog behavior.

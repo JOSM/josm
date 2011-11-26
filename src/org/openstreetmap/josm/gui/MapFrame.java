@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,8 +107,18 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     private final DialogsPanel dialogsPanel;
 
     public final ButtonGroup toolGroup = new ButtonGroup();
-
-    public final JButton otherButton = new JButton(new OtherButtonsAction());
+    
+    private List<IconToggleButton> allDialogButtons = new ArrayList<IconToggleButton>();
+    private List<IconToggleButton> allMapModeButtons = new ArrayList<IconToggleButton>();
+    
+    private final ListAllButtonsAction listAllDialogsAction = new ListAllButtonsAction(allDialogButtons);
+    private final ListAllButtonsAction listAllMapModesAction = new ListAllButtonsAction(allMapModeButtons);
+    private final JButton listAllToggleDialogsButton = new JButton(listAllDialogsAction);
+    private final JButton listAllMapModesButton = new JButton(listAllMapModesAction);
+    {
+        listAllDialogsAction.setButton(listAllToggleDialogsButton);
+        listAllMapModesAction.setButton(listAllMapModesButton);
+    }
 
     /**
      * Default width of the toggle dialog area.
@@ -261,49 +272,31 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      */
     public IconToggleButton addToggleDialog(final ToggleDialog dlg) {
         final IconToggleButton button = new IconToggleButton(dlg.getToggleAction());
-        button.addMouseListener(new PopupMenuLauncher(new JPopupMenu() {
-            {
-                add(new AbstractAction() {
-                    {
-                        putValue(NAME, tr("Hide this button"));
-                        putValue(SHORT_DESCRIPTION, tr("Click the arrow at the bottom to show it again."));
-                    }
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        dlg.hideButton();
-                        validateToolBarToggle();
-                    }
-                });
-            }
-        }));
+        button.setShowHideButtonListener(dlg);
+        addHideContextMenu(button);
         dlg.setButton(button);
-        if (button.isVisible()) {
-            toolBarToggle.add(button);
-        }
+        toolBarToggle.add(button);
         allDialogs.add(dlg);
+        allDialogButtons.add(button);
+        button.applyButtonHiddenPreferences();
         if (dialogsPanel.initialized) {
             dialogsPanel.add(dlg);
         }
         return button;
     }
 
-    public void validateToolBarToggle() {
-        toolBarToggle.removeAll();
-        for (ToggleDialog dlg : allDialogs) {
-            if (dlg.getButton().isVisible()) {
-                toolBarToggle.add(dlg.getButton());
-            }
-        }
-    }
+
 
     public void addMapMode(IconToggleButton b) {
         toolBarActions.add(b);
         toolGroup.add(b);
+        allMapModeButtons.add(b);
         if (b.getAction() instanceof MapMode) {
             mapModes.add((MapMode) b.getAction());
         } else
             throw new IllegalArgumentException("MapMode action must be subclass of MapMode");
+        addHideContextMenu(b);
+        b.applyButtonHiddenPreferences();
     }
 
     /**
@@ -362,15 +355,19 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         jb.setFloatable(false);
         toolBarActions.setAlignmentX(0.5f);
         jb.add(toolBarActions);
-
+        listAllMapModesButton.setAlignmentX(0.5f);
+        listAllMapModesButton.setBorder(null);
+        listAllMapModesButton.setFont(listAllMapModesButton.getFont().deriveFont(Font.PLAIN));
+        jb.add(listAllMapModesButton);
+        
         if(Main.pref.getBoolean("sidetoolbar.togglevisible", true)) {
             jb.addSeparator(new Dimension(0,18));
             toolBarToggle.setAlignmentX(0.5f);
             jb.add(toolBarToggle);
-            otherButton.setAlignmentX(0.5f);
-            otherButton.setBorder(null);
-            otherButton.setFont(otherButton.getFont().deriveFont(Font.PLAIN));
-            jb.add(otherButton);
+            listAllToggleDialogsButton.setAlignmentX(0.5f);
+            listAllToggleDialogsButton.setBorder(null);
+            listAllToggleDialogsButton.setFont(listAllToggleDialogsButton.getFont().deriveFont(Font.PLAIN));
+            jb.add(listAllToggleDialogsButton);
         }
 
         if(Main.pref.getBoolean("sidetoolbar.visible", true))
@@ -392,38 +389,73 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         }
     }
 
-    class OtherButtonsAction extends AbstractAction {
+    private void addHideContextMenu(final IconToggleButton b) {
+        //context menu
+        b.addMouseListener(new PopupMenuLauncher(new JPopupMenu() {
+            {
+                add(new AbstractAction() {
+                    {
+                        putValue(NAME, tr("Hide this button"));
+                        putValue(SHORT_DESCRIPTION, tr("Click the arrow at the bottom to show it again."));
+                    }
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        b.setButtonHidden(true);
+                        validateToolBarsVisibility();
+                    }
+                });
+            }
+        }));
+    }
+   
+        class ListAllButtonsAction extends AbstractAction {
 
-        public OtherButtonsAction() {
+        private JButton button;
+        private Collection<? extends HideableButton> buttons;
+        
+                
+        public ListAllButtonsAction(Collection<? extends HideableButton> buttons) {
+            this.buttons = buttons;
             putValue(NAME, ">>");
+        }
+
+        public void setButton(JButton button) {
+            this.button =  button;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             JPopupMenu menu = new JPopupMenu();
-            for (final ToggleDialog t : allDialogs) {
+            for (HideableButton b : buttons) {
+                final HideableButton t = b;
                 menu.add(new JCheckBoxMenuItem(new AbstractAction() {
                     {
-                        putValue(NAME, t.getToggleAction().getValue(NAME));
-                        putValue(SMALL_ICON, t.getToggleAction().getValue(SMALL_ICON));
-                        putValue(SELECTED_KEY, !t.isButtonHidden());
+                        putValue(NAME, t.getActionName());
+                        putValue(SMALL_ICON, t.getIcon());
+                        putValue(SELECTED_KEY, t.isButtonVisible());
                         putValue(SHORT_DESCRIPTION, tr("Hide or show this toggle button"));
                     }
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if ((Boolean) getValue(SELECTED_KEY)) {
-                            t.showButton();
-                            validateToolBarToggle();
-                        } else {
-                            t.hideButton();
-                            validateToolBarToggle();
-                        }
+                        if ((Boolean) getValue(SELECTED_KEY)) t.showButton(); else t.hideButton();
+                        validateToolBarsVisibility();
                     }
                 }));
             }
-            Rectangle bounds = otherButton.getBounds();
-            menu.show(otherButton, bounds.x+bounds.width, 0);
+            Rectangle bounds = button.getBounds();
+            menu.show(button, bounds.x + bounds.width, 0);
         }
+    }
+
+    public void validateToolBarsVisibility() {
+        for (IconToggleButton b : allDialogButtons) {
+            b.applyButtonHiddenPreferences();
+        }
+        toolBarToggle.repaint();
+        for (IconToggleButton b : allMapModeButtons) {
+            b.applyButtonHiddenPreferences();
+        }
+        toolBarActions.repaint();
     }
 
     /**
