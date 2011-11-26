@@ -875,7 +875,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     "tagginggroup_Facilities/Food+Drinks", "|", "tagginggroup_Man Made/Historic Places", "|",
     "tagginggroup_Man Made/Man Made"};
 
-    private static Collection<String> getToolString() {
+    public static Collection<String> getToolString() {
 
         Collection<String> toolStr = Main.pref.getCollection("toolbar", Arrays.asList(deftoolbar));
         if (toolStr == null || toolStr.size() == 0) {
