@@ -36,6 +36,11 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  */
 public class FilterTableModel extends AbstractTableModel {
 
+    public static final int COL_ENABLED = 0;
+    public static final int COL_HIDING = 1;
+    public static final int COL_TEXT = 2;
+    public static final int COL_INVERTED = 3;
+
     // number of primitives that are disabled but not hidden
     public int disabledCount;
     // number of primitives that are disabled and hidden
@@ -292,22 +297,22 @@ public class FilterTableModel extends AbstractTableModel {
     public void setValueAt(Object aValue, int row, int column) {
         Filter f = filters.get(row);
         switch (column) {
-        case 0:
+        case COL_ENABLED:
             f.enable = (Boolean) aValue;
             savePrefs();
             updateFilters();
             fireTableRowsUpdated(row, row);
             break;
-        case 1:
+        case COL_HIDING:
             f.hiding = (Boolean) aValue;
             savePrefs();
             updateFilters();
             break;
-        case 2:
+        case COL_TEXT:
             f.text = (String) aValue;
             savePrefs();
             break;
-        case 3:
+        case COL_INVERTED:
             f.inverted = (Boolean) aValue;
             savePrefs();
             updateFilters();
@@ -321,13 +326,13 @@ public class FilterTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int column) {
         Filter f = filters.get(row);
         switch (column) {
-        case 0:
+        case COL_ENABLED:
             return f.enable;
-        case 1:
+        case COL_HIDING:
             return f.hiding;
-        case 2:
+        case COL_TEXT:
             return f.text;
-        case 3:
+        case COL_INVERTED:
             return f.inverted;
         case 4:
             switch (f.mode) { /* translators notes must be in front */
@@ -395,5 +400,9 @@ public class FilterTableModel extends AbstractTableModel {
         g.translate(dx, dy);
         lblOSD.paintComponent(g);
         g.translate(-dx, -dy);
+    }
+
+    public List<Filter> getFilters() {
+        return filters;
     }
 }

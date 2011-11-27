@@ -10,14 +10,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -43,6 +47,8 @@ import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.tools.MultikeyActionsHandler;
+import org.openstreetmap.josm.tools.MultikeyShortcutAction;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -64,6 +70,9 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         super(tr("Filter"), "filter", tr("Filter objects and hide/disable them."),
                 Shortcut.registerShortcut("subwindow:filter", tr("Toggle: {0}", tr("Filter")), KeyEvent.VK_F, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 162);
         build();
+
+        MultikeyActionsHandler.getInstance().addAction(new EnableFilterAction());
+        MultikeyActionsHandler.getInstance().addAction(new HidingFilterAction());
     }
 
     @Override
@@ -79,9 +88,16 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         Main.map.mapView.repaint();
     }
 
-    protected String[] columnToolTips = {
-            tr("Enable filter"),
-            tr("Hide elements"),
+    private static final KeyStroke ENABLE_FILTER_SHORTCUT
+    = Shortcut.registerShortcut("core_multikey:enableFilter", "", 'E', Shortcut.GROUP_DIRECT, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK).getKeyStroke();
+
+    private static final KeyStroke HIDING_FILTER_SHORTCUT
+    = Shortcut.registerShortcut("core_multikey:hidingFilter", "", 'H', Shortcut.GROUP_DIRECT, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK).getKeyStroke();
+
+
+    protected final String[] columnToolTips = {
+            tr("Enable filter ({0}+{1})", KeyEvent.getKeyModifiersText(ENABLE_FILTER_SHORTCUT.getModifiers()), KeyEvent.getKeyText(ENABLE_FILTER_SHORTCUT.getKeyCode())),
+            tr("Hiding filter ({0}+{1})", KeyEvent.getKeyModifiersText(HIDING_FILTER_SHORTCUT.getModifiers()), KeyEvent.getKeyText(HIDING_FILTER_SHORTCUT.getKeyCode())),
             null,
             tr("Inverse filter"),
             tr("Filter mode")
@@ -171,7 +187,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         });
 
         createLayout(userTable, true, Arrays.asList(new SideButton[] {
-            addButton, editButton, deleteButton, upButton, downButton
+                addButton, editButton, deleteButton, upButton, downButton
         }));
     }
 
@@ -275,5 +291,80 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
     public void wayNodesChanged(WayNodesChangedEvent event) {
         filterModel.executeFilters(getAffectedPrimitives(event.getPrimitives()));
+    }
+
+    abstract class AbstractFilterAction extends AbstractAction implements MultikeyShortcutAction {
+
+        protected Filter lastFilter;
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<MultikeyInfo> getMultikeyCombinations() {
+            List<MultikeyInfo> result = new ArrayList<MultikeyShortcutAction.MultikeyInfo>();
+
+            for (int i=0; i<filterModel.getRowCount(); i++) {
+                Filter filter = filterModel.getFilter(i);
+                MultikeyInfo info = new MultikeyInfo(i, filter.text);
+                result.add(info);
+            }
+
+            return result;
+        }
+
+        protected boolean isLastFilterValid() {
+            return lastFilter != null && filterModel.getFilters().contains(lastFilter);
+        }
+
+        @Override
+        public MultikeyInfo getLastMultikeyAction() {
+            if (isLastFilterValid())
+                return new MultikeyInfo(-1, lastFilter.text);
+            else
+                return null;
+        }
+
+    }
+
+    private class EnableFilterAction extends AbstractFilterAction  {
+
+        EnableFilterAction() {
+            putValue(SHORT_DESCRIPTION, tr("Enable filter"));
+            putValue(ACCELERATOR_KEY, ENABLE_FILTER_SHORTCUT);
+        }
+
+        @Override
+        public void executeMultikeyAction(int index, boolean repeatLastAction) {
+            if (index >= 0 && index < filterModel.getRowCount()) {
+                Filter filter = filterModel.getFilter(index);
+                filterModel.setValueAt(!filter.enable, index, FilterTableModel.COL_ENABLED);
+                lastFilter = filter;
+            } else if (repeatLastAction && isLastFilterValid()) {
+                filterModel.setValueAt(!lastFilter.enable, filterModel.getFilters().indexOf(lastFilter), FilterTableModel.COL_ENABLED);
+            }
+        }
+    }
+
+    private class HidingFilterAction extends AbstractFilterAction {
+
+        public HidingFilterAction() {
+            putValue(SHORT_DESCRIPTION, tr("Hiding filter"));
+            putValue(ACCELERATOR_KEY, HIDING_FILTER_SHORTCUT);
+        }
+
+        @Override
+        public void executeMultikeyAction(int index, boolean repeatLastAction) {
+            if (index >= 0 && index < filterModel.getRowCount()) {
+                Filter filter = filterModel.getFilter(index);
+                filterModel.setValueAt(!filter.hiding, index, FilterTableModel.COL_HIDING);
+                lastFilter = filter;
+            } else if (repeatLastAction && isLastFilterValid()) {
+                filterModel.setValueAt(!lastFilter.hiding, filterModel.getFilters().indexOf(lastFilter), FilterTableModel.COL_HIDING);
+            }
+        }
+
     }
 }
