@@ -889,6 +889,7 @@ public class Preferences {
                 if (oldValue == null && equalCollection(value, defValue)) return false;
 
                 valueCopy = new ArrayList<String>(value);
+                if (valueCopy.contains(null)) throw new RuntimeException("Error: Null as list element in preference setting (key '"+key+"')");
                 collectionProperties.put(key, Collections.unmodifiableList(valueCopy));
                 try {
                     save();
@@ -999,8 +1000,11 @@ public class Preferences {
                 if (oldValue == null && equalArray(value, defValue)) return false;
 
                 valueCopy = new ArrayList<List<String>>(value.size());
+                if (valueCopy.contains(null)) throw new RuntimeException("Error: Null as list element in preference setting (key '"+key+"')");
                 for (Collection<String> lst : value) {
-                    valueCopy.add(Collections.unmodifiableList(new ArrayList<String>(lst)));
+                    List<String> lstCopy = new ArrayList<String>(lst);
+                    if (lstCopy.contains(null)) throw new RuntimeException("Error: Null as inner list element in preference setting (key '"+key+"')");
+                    valueCopy.add(Collections.unmodifiableList(lstCopy));
                 }
                 arrayProperties.put(key, Collections.unmodifiableList(valueCopy));
                 try {
@@ -1092,8 +1096,12 @@ public class Preferences {
                 if (oldValue == null && equalListOfStructs(value, defValue)) return false;
 
                 valueCopy = new ArrayList<Map<String, String>>(value.size());
+                if (valueCopy.contains(null)) throw new RuntimeException("Error: Null as list element in preference setting (key '"+key+"')");
                 for (Map<String, String> map : value) {
-                    valueCopy.add(Collections.unmodifiableMap(new LinkedHashMap<String,String>(map)));
+                    Map<String, String> mapCopy = new LinkedHashMap<String,String>(map);
+                    if (mapCopy.keySet().contains(null)) throw new RuntimeException("Error: Null as map key in preference setting (key '"+key+"')");
+                    if (mapCopy.values().contains(null)) throw new RuntimeException("Error: Null as map value in preference setting (key '"+key+"')");
+                    valueCopy.add(Collections.unmodifiableMap(mapCopy));
                 }
                 listOfStructsProperties.put(key, Collections.unmodifiableList(valueCopy));
                 try {
