@@ -335,7 +335,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
 
         @Override
         public Collection<String> serialize(SourceEntry entry) {
-            return Arrays.asList(new String[] {entry.url, entry.title});
+            return Arrays.asList(new String[] {entry.url, entry.title == null ? "" : entry.title});
         }
 
         @Override

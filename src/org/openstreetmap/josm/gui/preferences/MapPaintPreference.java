@@ -254,7 +254,12 @@ public class MapPaintPreference implements PreferenceSetting {
 
         @Override
         public Collection<String> serialize(SourceEntry entry) {
-            return Arrays.asList(new String[] {entry.url, entry.name, entry.title, Boolean.toString(entry.active)});
+            return Arrays.asList(new String[] {
+                    entry.url,
+                    entry.name == null ? "" : entry.name,
+                    entry.title == null ? "" : entry.title,
+                    Boolean.toString(entry.active)
+            });
         }
 
         @Override
