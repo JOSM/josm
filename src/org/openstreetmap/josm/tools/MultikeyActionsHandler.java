@@ -14,8 +14,11 @@ import java.util.TimerTask;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction.MultikeyInfo;
@@ -130,9 +133,10 @@ public class MultikeyActionsHandler {
         JPopupMenu layers = new JPopupMenu();
 
         JMenuItem lbTitle = new JMenuItem((String) action.action.getValue(Action.SHORT_DESCRIPTION));
-        lbTitle.setHorizontalAlignment(JMenuItem.CENTER);
         lbTitle.setEnabled(false);
-        layers.add(lbTitle);
+        JPanel pnTitle = new JPanel();
+        pnTitle.add(lbTitle);
+        layers.add(pnTitle);
 
         char repeatKey = (char) action.shortcut.getKeyCode();
         boolean repeatKeyUsed = false;
@@ -149,7 +153,6 @@ public class MultikeyActionsHandler {
             item.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Main.map.statusLine.resetHelpText(STATUS_BAR_ID);
                     action.action.executeMultikeyAction(info.getIndex(), false);
                 }
             });
@@ -166,13 +169,25 @@ public class MultikeyActionsHandler {
                 repeateItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        Main.map.statusLine.resetHelpText(STATUS_BAR_ID);
                         action.action.executeMultikeyAction(-1, true);
                     }
                 });
                 layers.add(repeateItem);
             }
         }
+        layers.addPopupMenuListener(new PopupMenuListener() {
+
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                Main.map.statusLine.resetHelpText(STATUS_BAR_ID);
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {}
+        });
 
         layers.show(Main.parent, Integer.MAX_VALUE, Integer.MAX_VALUE);
         layers.setLocation(Main.parent.getX() + Main.parent.getWidth() - layers.getWidth(), Main.parent.getY() + Main.parent.getHeight() - layers.getHeight());
