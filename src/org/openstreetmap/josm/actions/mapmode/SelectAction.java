@@ -124,6 +124,14 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
      */
     private long mouseDownTime = 0;
     /**
+     * The pressed button of the user mouse down event.
+     */
+    private int mouseDownButton = 0;
+    /**
+     * The time of the user mouse down event.
+     */
+    private long mouseReleaseTime = 0;
+    /**
      * The time which needs to pass between click and release before something
      * counts as a move, in milliseconds
      */
@@ -335,6 +343,12 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     public void mouseDragged(MouseEvent e) {
         if (!mv.isActiveLayerVisible())
             return;
+        
+        // Swing sends random mouseDragged events when closing dialogs by double-clicking their top-left icon on Windows
+        // Ignore such false events to prevent issues like #7078
+        if (mouseDownButton == MouseEvent.BUTTON1 && mouseReleaseTime > mouseDownTime) {
+            return;
+        }
 
         cancelDrawMode = true;
         if (mode == Mode.select)
@@ -647,7 +661,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     @Override
     public void mousePressed(MouseEvent e) {
         // return early
-        if (!mv.isActiveLayerVisible() || !(Boolean) this.getValue("active") || e.getButton() != MouseEvent.BUTTON1)
+        if (!mv.isActiveLayerVisible() || !(Boolean) this.getValue("active") || (mouseDownButton = e.getButton()) != MouseEvent.BUTTON1)
             return;
 
         // request focus in order to enable the expected keyboard shortcuts
@@ -704,6 +718,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             return;
 
         startingDraggingPos = null;
+        mouseReleaseTime = System.currentTimeMillis();
 
         if (mode == Mode.select) {
             selectionManager.unregister(mv);
