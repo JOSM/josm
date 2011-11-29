@@ -174,6 +174,10 @@ public class BBox {
     public LatLon getBottomRight() {
         return new LatLon(ymin, xmax);
     }
+    
+    public LatLon getCenter() {
+        return new LatLon(ymin + (ymax-ymin)/2.0, xmin + (xmax-xmin)/2.0);
+    }
 
     @Override
     public int hashCode() {
