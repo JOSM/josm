@@ -23,12 +23,14 @@ import java.util.concurrent.Future;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
 import org.openstreetmap.josm.Main;
@@ -292,6 +294,9 @@ public class SaveLayersDialog extends JDialog {
             putValue(NAME, tr("Cancel"));
             putValue(SHORT_DESCRIPTION, tr("Close this dialog and resume editing in JOSM"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
+            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+            .put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
+            getRootPane().getActionMap().put("ESCAPE", this);
         }
 
         protected void cancelWhenInEditingModel() {
