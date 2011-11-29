@@ -372,7 +372,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                         Main.main.undoRedo.add(cmds);
                     }
                 }
-                else if (e.getPoint().distance(initialMousePos) > 10 && newN1en != null) {
+                else if (e.getPoint().distance(initialMousePos) > 10 && newN1en != null && selectedSegment != null) {
                     // create extrusion
 
                     Collection<Command> cmds = new LinkedList<Command>();
