@@ -19,6 +19,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -26,6 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -261,6 +263,9 @@ public class UploadSelectionDialog extends JDialog {
             putValue(Action.SHORT_DESCRIPTION, tr("Cancel uploading"));
             putValue(Action.NAME, tr("Cancel"));
             putValue(Action.SMALL_ICON, ImageProvider.get("", "cancel"));
+            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW) 
+            .put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE"); 
+            getRootPane().getActionMap().put("ESCAPE", this);
             setEnabled(true);
         }
 
