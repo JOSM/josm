@@ -5,8 +5,10 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.data.osm.Node;
@@ -27,10 +29,13 @@ public class ElemStyles {
 
     private boolean defaultNodes, defaultLines;
     private int defaultNodesIdx, defaultLinesIdx;
+    
+    private final Map<NavigatableComponent, Map<Relation, Multipolygon>> multipolygonsCache;
 
     public ElemStyles()
     {
         styleSources = new ArrayList<StyleSource>();
+        multipolygonsCache = new HashMap<NavigatableComponent, Map<Relation,Multipolygon>>();
     }
 
     public void clearCached() {
@@ -115,6 +120,20 @@ public class ElemStyles {
         return p;
     }
 
+    private final Multipolygon getCachedMultipolygon(NavigatableComponent nc, Relation r) {
+        Multipolygon multipolygon = null;
+        Map<Relation, Multipolygon> map = multipolygonsCache.get(nc);
+        if (map == null) {
+            multipolygonsCache.put(nc, map = new HashMap<Relation, Multipolygon>());
+        }
+        multipolygon = map.get(r);
+        if (multipolygon == null) {
+            map.put(r, multipolygon = new Multipolygon(nc));
+            multipolygon.load(r);
+        }
+        return multipolygon;
+    }
+    
     /**
      * Create the list of styles and its valid scale range for one primitive.
      *
@@ -159,8 +178,7 @@ public class ElemStyles {
                 if (!drawMultipolygon || !r.isMultipolygon()  || !r.isUsable()) {
                     continue;
                 }
-                Multipolygon multipolygon = new Multipolygon(nc);
-                multipolygon.load(r);
+                Multipolygon multipolygon = getCachedMultipolygon(nc, r);
 
                 if (multipolygon.getOuterWays().contains(osm)) {
                     boolean hasIndependentLineStyle = false;
@@ -225,8 +243,7 @@ public class ElemStyles {
                 if (!drawMultipolygon || !ref.isMultipolygon() || !ref.isUsable()) {
                     continue;
                 }
-                Multipolygon multipolygon = new Multipolygon(nc);
-                multipolygon.load(ref);
+                final Multipolygon multipolygon = getCachedMultipolygon(nc, ref);
 
                 if (multipolygon.getInnerWays().contains(osm)) {
                     Iterator<Way> it = multipolygon.getOuterWays().iterator();
@@ -412,4 +429,7 @@ public class ElemStyles {
         styleSources.addAll(sources);
     }
 
+    public void clearMultipolygonsCache(NavigatableComponent nc) {
+        multipolygonsCache.remove(nc);
+    }
 }
