@@ -44,13 +44,13 @@ import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 
@@ -237,6 +237,10 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 lastMEvent = e;
             }
         });
+        
+        // Add Multipolygon cache to layer and zoom listeners
+        addLayerChangeListener(MultipolygonCache.getInstance());
+        addZoomChangeListener(MultipolygonCache.getInstance());
     }
 
     /**
@@ -842,7 +846,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     public void destroy() {
         Main.pref.removePreferenceChangeListener(this);
         DataSet.removeSelectionListener(repaintSelectionChangedListener);
-        MapPaintStyles.getStyles().clearMultipolygonsCache(this);
+        MultipolygonCache.getInstance().clear(this);
     }
 
 }

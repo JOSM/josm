@@ -62,6 +62,7 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapRendererFactory;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -206,6 +207,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         this.setAssociatedFile(associatedFile);
         conflicts = new ConflictCollection();
         data.addDataSetListener(new DataSetListenerAdapter(this));
+        data.addDataSetListener(MultipolygonCache.getInstance());
         DataSet.addSelectionListener(this);
     }
 
