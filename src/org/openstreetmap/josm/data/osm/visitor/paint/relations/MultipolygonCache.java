@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -20,6 +21,8 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
@@ -30,7 +33,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * A memory cache for Multipolygon objects.
  * 
  */
-public class MultipolygonCache implements DataSetListener, LayerChangeListener, ZoomChangeListener {
+public class MultipolygonCache implements DataSetListener, LayerChangeListener, ZoomChangeListener, ProjectionChangeListener {
 
     private static final MultipolygonCache instance = new MultipolygonCache(); 
     
@@ -38,6 +41,7 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
     
     private MultipolygonCache() {
         this.cache = new HashMap<NavigatableComponent, Map<DataSet, Map<Relation,Multipolygon>>>();
+        Main.addProjectionChangeListener(this);
     }
 
     public static final MultipolygonCache getInstance() {
@@ -203,6 +207,11 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
     public void zoomChanged(/*NavigatableComponent source*/) {
         // TODO Change zoomChanged() method to add a "NavigatableComponent source" argument ? (this method is however used at least by one plugin)
         //clear(source);
+        clear();
+    }
+
+    @Override
+    public void projectionChanged(Projection oldValue, Projection newValue) {
         clear();
     }
 }
