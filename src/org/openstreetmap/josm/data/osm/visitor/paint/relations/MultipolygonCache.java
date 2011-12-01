@@ -49,6 +49,10 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
     }
 
     public final Multipolygon get(NavigatableComponent nc, Relation r) {
+        return get(nc, r, false);
+    }
+
+    public final Multipolygon get(NavigatableComponent nc, Relation r, boolean forceRefresh) {
         Multipolygon multipolygon = null;
         if (nc != null && r != null) {
             Map<DataSet, Map<Relation, Multipolygon>> map1 = cache.get(nc);
@@ -60,7 +64,7 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
                 map1.put(r.getDataSet(), map2 = new HashMap<Relation, Multipolygon>());
             }
             multipolygon = map2.get(r);
-            if (multipolygon == null) {
+            if (multipolygon == null || forceRefresh) {
                 map2.put(r, multipolygon = new Multipolygon(nc, r));
             }
         }
@@ -129,7 +133,7 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
                     }
                     removeMultipolygonFrom((Relation) p, maps);
                     
-                } else if (p instanceof Way) {
+                } else if (p instanceof Way && p.getDataSet() != null) {
                     for (OsmPrimitive ref : p.getReferrers()) {
                         if (isMultipolygon(ref)) {
                             if (maps == null) {
@@ -138,7 +142,7 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
                             removeMultipolygonFrom((Relation) ref, maps);
                         }
                     }
-                } else if (p instanceof Node) {
+                } else if (p instanceof Node && p.getDataSet() != null) {
                     maps = removeMultipolygonsReferringTo(p.getReferrers(), ds, maps);
                 }
             }
