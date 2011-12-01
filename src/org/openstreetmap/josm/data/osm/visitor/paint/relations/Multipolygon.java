@@ -133,7 +133,7 @@ public class Multipolygon {
      * changes.
      */
     private static MultipolygonRoleMatcher roleMatcher;
-    private static MultipolygonRoleMatcher getMultipoloygonRoleMatcher() {
+    private static MultipolygonRoleMatcher getMultipolygonRoleMatcher() {
         if (roleMatcher == null) {
             roleMatcher = new MultipolygonRoleMatcher();
             if (Main.pref != null){
@@ -236,20 +236,18 @@ public class Multipolygon {
         }
     }
 
-    private final NavigatableComponent nc;
-
     private final List<Way> innerWays = new ArrayList<Way>();
     private final List<Way> outerWays = new ArrayList<Way>();
     private final List<PolyData> innerPolygons = new ArrayList<PolyData>();
     private final List<PolyData> outerPolygons = new ArrayList<PolyData>();
     private final List<PolyData> combinedPolygons = new ArrayList<PolyData>();
 
-    public Multipolygon(NavigatableComponent nc) {
-        this.nc = nc;
+    public Multipolygon(NavigatableComponent nc, Relation r) {
+        load(r, nc);
     }
 
-    public void load(Relation r) {
-        MultipolygonRoleMatcher matcher = getMultipoloygonRoleMatcher();
+    private void load(Relation r, NavigatableComponent nc) {
+        MultipolygonRoleMatcher matcher = getMultipolygonRoleMatcher();
 
         // Fill inner and outer list with valid ways
         for (RelationMember m : r.getMembers()) {
@@ -272,14 +270,14 @@ public class Multipolygon {
             }
         }
 
-        createPolygons(innerWays, innerPolygons);
-        createPolygons(outerWays, outerPolygons);
+        createPolygons(nc, innerWays, innerPolygons);
+        createPolygons(nc, outerWays, outerPolygons);
         if (!outerPolygons.isEmpty()) {
             addInnerToOuters();
         }
     }
 
-    private void createPolygons(List<Way> ways, List<PolyData> result) {
+    private void createPolygons(NavigatableComponent nc, List<Way> ways, List<PolyData> result) {
         List<Way> waysToJoin = new ArrayList<Way>();
         for (Way way: ways) {
             if (way.isClosed()) {

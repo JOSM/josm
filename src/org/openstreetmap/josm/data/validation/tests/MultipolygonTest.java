@@ -133,8 +133,7 @@ public class MultipolygonTest extends Test {
         if (r.isMultipolygon()) {
             checkMembersAndRoles(r);
 
-            Multipolygon polygon = new Multipolygon(Main.map.mapView);
-            polygon.load(r);
+            Multipolygon polygon = new Multipolygon(Main.map.mapView, r);
 
             boolean hasOuterWay = false;
             for (RelationMember m : r.getMembers()) {

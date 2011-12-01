@@ -37,6 +37,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
@@ -859,8 +860,7 @@ public class MapPainter {
     }
 
     public void drawArea(Relation r, Color color, BufferedImage fillImage, float fillImageAlpha, TextElement text) {
-        Multipolygon multipolygon = new Multipolygon(nc);
-        multipolygon.load(r);
+        Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);
         if(!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
             for (PolyData pd : multipolygon.getCombinedPolygons()) {
                 Polygon p = pd.get();
