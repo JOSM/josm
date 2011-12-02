@@ -49,6 +49,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
+import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
@@ -789,7 +790,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
-        if ("center".equals(evt.getPropertyName()) || "scale".equals(evt.getPropertyName())) {
+        if (NavigatableComponent.PROPNAME_CENTER.equals(evt.getPropertyName()) || NavigatableComponent.PROPNAME_SCALE.equals(evt.getPropertyName())) {
             updateOffscreenBuffer = true;
         }
     }

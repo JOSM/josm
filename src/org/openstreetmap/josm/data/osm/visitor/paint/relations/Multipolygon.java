@@ -1,9 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.visitor.paint.relations;
 
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.Rectangle;
+import java.awt.geom.Path2D;
+import java.awt.geom.Path2D.Double;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -16,7 +18,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData.Intersection;
-import org.openstreetmap.josm.gui.NavigatableComponent;
 
 public class Multipolygon {
     /** preference key for a collection of roles which indicate that the respective member belongs to an
@@ -169,70 +170,69 @@ public class Multipolygon {
     public static class PolyData {
         public enum Intersection {INSIDE, OUTSIDE, CROSSING}
 
-        public Polygon poly = new Polygon();
+        public final Path2D.Double poly;
         public final boolean selected;
-        private Point lastP;
-        private Rectangle bounds;
+        private Rectangle2D bounds;
 
-        public PolyData(NavigatableComponent nc, JoinedWay joinedWay) {
-            this(nc, joinedWay.getNodes(), joinedWay.isSelected());
+        public PolyData(JoinedWay joinedWay) {
+            this(joinedWay.getNodes(), joinedWay.isSelected());
         }
 
-        public PolyData(NavigatableComponent nc, List<Node> nodes, boolean selected) {
+        public PolyData(List<Node> nodes, boolean selected) {
             this.selected = selected;
-            Point p = null;
+            boolean initial = true;
+            this.poly = new Path2D.Double();
+            this.poly.setWindingRule(Path2D.WIND_EVEN_ODD);
             for (Node n : nodes)
             {
-                p = nc.getPoint(n);
-                poly.addPoint(p.x,p.y);
+                Point2D p = n.getEastNorth();
+                if (initial) {
+                    poly.moveTo(p.getX(), p.getY());
+                    initial = false;
+                } else {
+                    poly.lineTo(p.getX(), p.getY());
+                }
             }
-            if (!nodes.get(0).equals(nodes.get(nodes.size() - 1))) {
-                p = nc.getPoint(nodes.get(0));
-                poly.addPoint(p.x, p.y);
-            }
-            lastP = p;
+            poly.closePath();
         }
 
         public PolyData(PolyData copy) {
-            poly = new Polygon(copy.poly.xpoints, copy.poly.ypoints, copy.poly.npoints);
             this.selected = copy.selected;
-            lastP = copy.lastP;
+            this.poly = (Double) copy.poly.clone();
         }
-
-        public Intersection contains(Polygon p) {
-            int contains = p.npoints;
-            for(int i = 0; i < p.npoints; ++i)
-            {
-                if(poly.contains(p.xpoints[i],p.ypoints[i])) {
-                    --contains;
+        
+        public Intersection contains(Path2D.Double p) {
+            int contains = 0;
+            int total = 0;
+            double[] coords = new double[6];
+            for (PathIterator it = p.getPathIterator(null); !it.isDone(); it.next()) {
+                switch (it.currentSegment(coords)) {
+                    case PathIterator.SEG_MOVETO:
+                    case PathIterator.SEG_LINETO:
+                        if (poly.contains(coords[0], coords[1])) {
+                            contains++;
+                        }
+                        total++;
                 }
             }
-            if(contains == 0) return Intersection.INSIDE;
-            if(contains == p.npoints) return Intersection.OUTSIDE;
+            if (contains == total) return Intersection.INSIDE;
+            if (contains == 0) return Intersection.OUTSIDE;
             return Intersection.CROSSING;
         }
 
-        public void addInner(Polygon p) {
-            for(int i = 0; i < p.npoints; ++i) {
-                poly.addPoint(p.xpoints[i],p.ypoints[i]);
-            }
-            poly.addPoint(lastP.x, lastP.y);
+        public void addInner(Path2D.Double inner) {
+            poly.append(inner.getPathIterator(null), false);
         }
 
-        public Polygon get() {
+        public Path2D.Double get() {
             return poly;
         }
 
-        public Rectangle getBounds() {
+        public Rectangle2D getBounds() {
             if (bounds == null) {
-                bounds = poly.getBounds();
+                bounds = poly.getBounds2D();
             }
             return bounds;
-        }
-
-        @Override
-        public String toString() {
-            return "Points: " + poly.npoints + " Selected: " + selected;
         }
     }
 
@@ -242,26 +242,26 @@ public class Multipolygon {
     private final List<PolyData> outerPolygons = new ArrayList<PolyData>();
     private final List<PolyData> combinedPolygons = new ArrayList<PolyData>();
 
-    public Multipolygon(NavigatableComponent nc, Relation r) {
-        load(r, nc);
+    public Multipolygon(Relation r) {
+        load(r);
     }
 
-    private void load(Relation r, NavigatableComponent nc) {
+    private void load(Relation r) {
         MultipolygonRoleMatcher matcher = getMultipolygonRoleMatcher();
 
         // Fill inner and outer list with valid ways
         for (RelationMember m : r.getMembers()) {
             if (m.getMember().isDrawable()) {
-                if(m.isWay()) {
+                if (m.isWay()) {
                     Way w = m.getWay();
 
-                    if(w.getNodesCount() < 2) {
+                    if (w.getNodesCount() < 2) {
                         continue;
                     }
 
-                    if(matcher.isInnerRole(m.getRole())) {
+                    if (matcher.isInnerRole(m.getRole())) {
                         innerWays.add(w);
-                    } else if(matcher.isOuterRole(m.getRole())) {
+                    } else if (matcher.isOuterRole(m.getRole())) {
                         outerWays.add(w);
                     } else if (!m.hasRole()) {
                         outerWays.add(w);
@@ -270,25 +270,25 @@ public class Multipolygon {
             }
         }
 
-        createPolygons(nc, innerWays, innerPolygons);
-        createPolygons(nc, outerWays, outerPolygons);
+        createPolygons(innerWays, innerPolygons);
+        createPolygons(outerWays, outerPolygons);
         if (!outerPolygons.isEmpty()) {
             addInnerToOuters();
         }
     }
 
-    private void createPolygons(NavigatableComponent nc, List<Way> ways, List<PolyData> result) {
+    private void createPolygons(List<Way> ways, List<PolyData> result) {
         List<Way> waysToJoin = new ArrayList<Way>();
         for (Way way: ways) {
             if (way.isClosed()) {
-                result.add(new PolyData(nc, way.getNodes(), way.isSelected()));
+                result.add(new PolyData(way.getNodes(), way.isSelected()));
             } else {
                 waysToJoin.add(way);
             }
         }
 
         for (JoinedWay jw: joinWays(waysToJoin)) {
-            result.add(new PolyData(nc, jw));
+            result.add(new PolyData(jw));
         }
     }
 
@@ -389,36 +389,35 @@ public class Multipolygon {
     }
 
     public PolyData findOuterPolygon(PolyData inner, List<PolyData> outerPolygons) {
-        PolyData result = null;
 
-        {// First try to test only bbox, use precise testing only if we don't get unique result
-            Rectangle innerBox = inner.getBounds();
-            PolyData insidePolygon = null;
-            PolyData intersectingPolygon = null;
-            int insideCount = 0;
-            int intersectingCount = 0;
+        // First try to test only bbox, use precise testing only if we don't get unique result
+        Rectangle2D innerBox = inner.getBounds();
+        PolyData insidePolygon = null;
+        PolyData intersectingPolygon = null;
+        int insideCount = 0;
+        int intersectingCount = 0;
 
-            for (PolyData outer: outerPolygons) {
-                if (outer.getBounds().contains(innerBox)) {
-                    insidePolygon = outer;
-                    insideCount++;
-                } else if (outer.getBounds().intersects(innerBox)) {
-                    intersectingPolygon = outer;
-                    intersectingCount++;
-                }
+        for (PolyData outer: outerPolygons) {
+            if (outer.getBounds().contains(innerBox)) {
+                insidePolygon = outer;
+                insideCount++;
+            } else if (outer.getBounds().intersects(innerBox)) {
+                intersectingPolygon = outer;
+                intersectingCount++;
             }
-
-            if (insideCount == 1)
-                return insidePolygon;
-            else if (intersectingCount == 1)
-                return intersectingPolygon;
         }
+        
+        if (insideCount == 1)
+            return insidePolygon;
+        else if (intersectingCount == 1)
+            return intersectingPolygon;
 
+        PolyData result = null;
         for (PolyData combined : outerPolygons) {
             Intersection c = combined.contains(inner.poly);
-            if(c != Intersection.OUTSIDE)
+            if (c != Intersection.OUTSIDE)
             {
-                if(result == null || result.contains(combined.poly) != Intersection.INSIDE) {
+                if (result == null || result.contains(combined.poly) != Intersection.INSIDE) {
                     result = combined;
                 }
             }
@@ -443,7 +442,7 @@ public class Multipolygon {
 
             for (PolyData pdInner: innerPolygons) {
                 PolyData o = findOuterPolygon(pdInner, combinedPolygons);
-                if(o == null) {
+                if (o == null) {
                     o = outerPolygons.get(0);
                 }
                 o.addInner(pdInner.poly);

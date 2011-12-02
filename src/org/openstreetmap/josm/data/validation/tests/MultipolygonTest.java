@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.JoinedWay;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData.Intersection;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -133,7 +134,7 @@ public class MultipolygonTest extends Test {
         if (r.isMultipolygon()) {
             checkMembersAndRoles(r);
 
-            Multipolygon polygon = new Multipolygon(Main.map.mapView, r);
+            Multipolygon polygon = MultipolygonCache.getInstance().get(Main.map.mapView, r);
 
             boolean hasOuterWay = false;
             for (RelationMember m : r.getMembers()) {

@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,6 +61,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     public static final IntegerProperty PROP_SNAP_DISTANCE = new IntegerProperty("mappaint.node.snap-distance", 10);
 
+    public static final String PROPNAME_CENTER = "center";
+    public static final String PROPNAME_SCALE  = "scale";
+    
     /**
      * the zoom listeners
      */
@@ -228,6 +232,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return result;
     }
 
+    public AffineTransform getAffineTransform() {
+        return new AffineTransform(
+                1.0/scale, 0.0, 0.0, -1.0/scale, getWidth()/2.0 - center.east()/scale, getHeight()/2.0 + center.north()/scale);
+    }
+    
     /**
      * Return the point on the screen where this Coordinate would be.
      * @param p The point, where this geopoint would be drawn.
@@ -334,12 +343,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if (!newCenter.equals(center)) {
             EastNorth oldCenter = center;
             center = newCenter;
-            firePropertyChange("center", oldCenter, newCenter);
+            firePropertyChange(PROPNAME_CENTER, oldCenter, newCenter);
         }
         if (scale != newScale) {
             double oldScale = scale;
             scale = newScale;
-            firePropertyChange("scale", oldScale, newScale);
+            firePropertyChange(PROPNAME_SCALE, oldScale, newScale);
         }
 
         repaint();

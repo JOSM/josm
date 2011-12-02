@@ -238,9 +238,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             }
         });
         
-        // Add Multipolygon cache to layer and zoom listeners
+        // Add Multipolygon cache to layer listeners
         addLayerChangeListener(MultipolygonCache.getInstance());
-        addZoomChangeListener(MultipolygonCache.getInstance());
     }
 
     /**
