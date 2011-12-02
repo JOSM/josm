@@ -25,7 +25,6 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
@@ -33,14 +32,14 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * A memory cache for Multipolygon objects.
  * 
  */
-public class MultipolygonCache implements DataSetListener, LayerChangeListener, ZoomChangeListener, ProjectionChangeListener {
+public class MultipolygonCache implements DataSetListener, LayerChangeListener, ProjectionChangeListener {
 
     private static final MultipolygonCache instance = new MultipolygonCache(); 
     
     private final Map<NavigatableComponent, Map<DataSet, Map<Relation, Multipolygon>>> cache;
     
     private MultipolygonCache() {
-        this.cache = new HashMap<NavigatableComponent, Map<DataSet, Map<Relation,Multipolygon>>>();
+        this.cache = new HashMap<NavigatableComponent, Map<DataSet, Map<Relation, Multipolygon>>>();
         Main.addProjectionChangeListener(this);
     }
 
@@ -65,7 +64,7 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
             }
             multipolygon = map2.get(r);
             if (multipolygon == null || forceRefresh) {
-                map2.put(r, multipolygon = new Multipolygon(nc, r));
+                map2.put(r, multipolygon = new Multipolygon(r));
             }
         }
         return multipolygon;
@@ -205,13 +204,6 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
         if (oldLayer instanceof OsmDataLayer) {
             clear(((OsmDataLayer) oldLayer).data);
         }
-    }
-
-    @Override
-    public void zoomChanged(/*NavigatableComponent source*/) {
-        // TODO Change zoomChanged() method to add a "NavigatableComponent source" argument ? (this method is however used at least by one plugin)
-        //clear(source);
-        clear();
     }
 
     @Override

@@ -18,6 +18,8 @@ import java.awt.font.GlyphVector;
 import java.awt.font.LineMetrics;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -28,6 +30,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -40,11 +43,11 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.Poly
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle;
-import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
-import org.openstreetmap.josm.gui.mappaint.TextElement;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.HorizontalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.VerticalTextAlignment;
+import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
+import org.openstreetmap.josm.gui.mappaint.TextElement;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
 
@@ -782,35 +785,43 @@ public class MapPainter {
         g.setFont(defaultFont);
     }
 
-    private Polygon getPolygon(Way w) {
-        Polygon polygon = new Polygon();
-
-        for (Node n : w.getNodes()) {
-            Point p = nc.getPoint(n);
-            polygon.addPoint(p.x,p.y);
+    private Path2D.Double getPath(Way w) {
+        Path2D.Double path = new Path2D.Double();
+        boolean initial = true;
+        for (Node n : w.getNodes())
+        {
+            Point2D p = n.getEastNorth();
+            if (initial) {
+                path.moveTo(p.getX(), p.getY());
+                initial = false;
+            } else {
+                path.lineTo(p.getX(), p.getY());
+            }
         }
-        return polygon;
+        return path;
     }
 
     public void drawArea(Way w, Color color, BufferedImage fillImage, float fillImageAlpha, TextElement text) {
-        Polygon polygon = getPolygon(w);
-        drawArea(w, polygon, color, fillImage, fillImageAlpha, text);
+        drawArea(w, getPath(w), color, fillImage, fillImageAlpha, text);
     }
 
-    protected void drawArea(OsmPrimitive osm, Polygon polygon, Color color, BufferedImage fillImage, float fillImageAlpha, TextElement text) {
+    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, BufferedImage fillImage, float fillImageAlpha, TextElement text) {
 
+        Shape area = path.createTransformedShape(nc.getAffineTransform());
+        
         if (!isOutlineOnly) {
             if (fillImage == null) {
                 g.setColor(color);
-                g.fillPolygon(polygon);
+                g.fill(area);
             } else {
                 TexturePaint texture = new TexturePaint(fillImage,
-                        new Rectangle(polygon.xpoints[0], polygon.ypoints[0], fillImage.getWidth(), fillImage.getHeight()));
+//                        new Rectangle(polygon.xpoints[0], polygon.ypoints[0], fillImage.getWidth(), fillImage.getHeight()));
+                      new Rectangle(0, 0, fillImage.getWidth(), fillImage.getHeight()));
                 g.setPaint(texture);
                 if (fillImageAlpha != 1f) {
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fillImageAlpha));
                 }
-                g.fill(polygon);
+                g.fill(area);
                 g.setPaintMode();
             }
         }
@@ -823,7 +834,7 @@ public class MapPainter {
             String name = text.labelCompositionStrategy.compose(osm);
             if (name == null) return;
 
-            Rectangle pb = polygon.getBounds();
+            Rectangle pb = area.getBounds();
             FontMetrics fontMetrics = g.getFontMetrics(orderFont); // if slow, use cache
             Rectangle2D nb = fontMetrics.getStringBounds(name, g); // if slow, approximate by strlen()*maxcharbounds(font)
 
@@ -846,7 +857,7 @@ public class MapPainter {
                     (int)nb.getHeight());
 
             if ((pb.width >= nb.getWidth() && pb.height >= nb.getHeight()) && // quick check
-                    polygon.contains(centeredNBounds) // slow but nice
+                  area.contains(centeredNBounds) // slow but nice
             ) {
                 g.setColor(text.color);
                 Font defaultFont = g.getFont();
@@ -861,10 +872,10 @@ public class MapPainter {
 
     public void drawArea(Relation r, Color color, BufferedImage fillImage, float fillImageAlpha, TextElement text) {
         Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);
-        if(!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
+        if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
             for (PolyData pd : multipolygon.getCombinedPolygons()) {
-                Polygon p = pd.get();
-                if(!isPolygonVisible(p)) {
+                Path2D.Double p = pd.get();
+                if (!isAreaVisible(p)) {
                     continue;
                 }
                 drawArea(r, p,
@@ -874,13 +885,15 @@ public class MapPainter {
         }
     }
 
-    private boolean isPolygonVisible(Polygon polygon) {
-        Rectangle bounds = polygon.getBounds();
-        if (bounds.width == 0 && bounds.height == 0) return false;
-        if (bounds.x > nc.getWidth()) return false;
-        if (bounds.y > nc.getHeight()) return false;
-        if (bounds.x + bounds.width < 0) return false;
-        if (bounds.y + bounds.height < 0) return false;
+    private boolean isAreaVisible(Path2D.Double area) {
+        Rectangle2D bounds = area.getBounds2D();
+        if (bounds.isEmpty()) return false;
+        Point2D p = nc.getPoint2D(new EastNorth(bounds.getX(), bounds.getY()));
+        if (p.getX() > nc.getWidth()) return false;
+        if (p.getY() < 0) return false;
+        p = nc.getPoint2D(new EastNorth(bounds.getX() + bounds.getWidth(), bounds.getY() + bounds.getHeight()));
+        if (p.getX() < 0) return false;
+        if (p.getY() > nc.getHeight()) return false;
         return true;
     }
 
