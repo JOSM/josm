@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData.Intersection;
 
 public class Multipolygon {
@@ -175,6 +176,8 @@ public class Multipolygon {
         public boolean selected;
         private Rectangle2D bounds;
         private final Collection<Way> ways;
+        private final List<Node> nodes;
+        private final List<PolyData> inners;
 
         public PolyData(JoinedWay joinedWay, Collection<Way> refWays) {
             this(joinedWay.getNodes(), joinedWay.isSelected(), refWays);
@@ -182,10 +185,16 @@ public class Multipolygon {
 
         public PolyData(List<Node> nodes, boolean selected, Collection<Way> refWays) {
             this.ways = Collections.unmodifiableCollection(refWays);
+            this.nodes = Collections.unmodifiableList(nodes);
             this.selected = selected;
-            boolean initial = true;
+            this.inners = new ArrayList<Multipolygon.PolyData>();
             this.poly = new Path2D.Double();
             this.poly.setWindingRule(Path2D.WIND_EVEN_ODD);
+            buildPoly();
+        }
+        
+        private void buildPoly() {
+            boolean initial = true;
             for (Node n : nodes)
             {
                 Point2D p = n.getEastNorth();
@@ -197,12 +206,17 @@ public class Multipolygon {
                 }
             }
             poly.closePath();
+            for (PolyData inner : inners) {
+                appendInner(inner.poly);
+            }
         }
 
         public PolyData(PolyData copy) {
             this.selected = copy.selected;
             this.poly = (Double) copy.poly.clone();
-            this.ways = new ArrayList<Way>(copy.ways);
+            this.ways = Collections.unmodifiableCollection(copy.ways);
+            this.nodes = Collections.unmodifiableList(copy.nodes);
+            this.inners = new ArrayList<Multipolygon.PolyData>(copy.inners);
         }
         
         public Intersection contains(Path2D.Double p) {
@@ -224,7 +238,12 @@ public class Multipolygon {
             return Intersection.CROSSING;
         }
 
-        public void addInner(Path2D.Double inner) {
+        public void addInner(PolyData inner) {
+            inners.add(inner);
+            appendInner(inner.poly);
+        }
+        
+        private void appendInner(Path2D.Double inner) {
             poly.append(inner.getPathIterator(null), false);
         }
 
@@ -241,6 +260,26 @@ public class Multipolygon {
         
         public Collection<Way> getWays() {
             return ways;
+        }
+        
+        private void resetPoly() {
+            poly.reset();
+            buildPoly();
+            bounds = null;
+        }
+        
+        public void nodeMoved(NodeMovedEvent event) {
+            final Node n = event.getNode();
+            boolean innerChanged = false;
+            for (PolyData inner : inners) {
+                if (inner.nodes.contains(n)) {
+                    inner.resetPoly();
+                    innerChanged = true;
+                }
+            }
+            if (nodes.contains(n) || innerChanged) {
+                resetPoly();
+            }
         }
     }
 
@@ -440,7 +479,7 @@ public class Multipolygon {
         } else if (outerPolygons.size() == 1) {
             PolyData combinedOuter = new PolyData(outerPolygons.get(0));
             for (PolyData inner: innerPolygons) {
-                combinedOuter.addInner(inner.poly);
+                combinedOuter.addInner(inner);
             }
             combinedPolygons.add(combinedOuter);
         } else {
@@ -453,7 +492,7 @@ public class Multipolygon {
                 if (o == null) {
                     o = outerPolygons.get(0);
                 }
-                o.addInner(pdInner.poly);
+                o.addInner(pdInner);
             }
         }
         
