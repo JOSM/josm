@@ -119,22 +119,18 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
         return p instanceof Relation && ((Relation) p).isMultipolygon();
     }
     
-    private static final void removeMultipolygonFrom(Relation mp, Collection<Map<Relation, Multipolygon>> maps) {
-        for (Map<Relation, Multipolygon> map : maps) {
-            map.remove(mp);
-        }
+    private final void updateMultipolygonsReferringTo(final AbstractDatasetChangedEvent event) {
+        updateMultipolygonsReferringTo(event, event.getPrimitives(), event.getDataset());
     }
 
-    private final void removeMultipolygonsReferringTo(AbstractDatasetChangedEvent event) {
-        removeMultipolygonsReferringTo(event.getPrimitives(), event.getDataset());
-    }
-
-    private final void removeMultipolygonsReferringTo(Collection<? extends OsmPrimitive> primitives, DataSet ds) {
-        removeMultipolygonsReferringTo(primitives, ds, null);
+    private final void updateMultipolygonsReferringTo(
+            final AbstractDatasetChangedEvent event, final Collection<? extends OsmPrimitive> primitives, final DataSet ds) {
+        updateMultipolygonsReferringTo(event, primitives, ds, null);
     }
     
-    private final Collection<Map<Relation, Multipolygon>> removeMultipolygonsReferringTo(
-            Collection<? extends OsmPrimitive> primitives, DataSet ds, Collection<Map<Relation, Multipolygon>> initialMaps) {
+    private final Collection<Map<Relation, Multipolygon>> updateMultipolygonsReferringTo(
+            final AbstractDatasetChangedEvent event, final Collection<? extends OsmPrimitive> primitives, 
+            final DataSet ds, final Collection<Map<Relation, Multipolygon>> initialMaps) {
         Collection<Map<Relation, Multipolygon>> maps = initialMaps;
         if (primitives != null) {
             for (OsmPrimitive p : primitives) {
@@ -142,7 +138,7 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
                     if (maps == null) {
                         maps = getMapsFor(ds);
                     }
-                    removeMultipolygonFrom((Relation) p, maps);
+                    processEvent(event, (Relation) p, maps);
                     
                 } else if (p instanceof Way && p.getDataSet() != null) {
                     for (OsmPrimitive ref : p.getReferrers()) {
@@ -150,15 +146,31 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
                             if (maps == null) {
                                 maps = getMapsFor(ds);
                             }
-                            removeMultipolygonFrom((Relation) ref, maps);
+                            processEvent(event, (Relation) ref, maps);
                         }
                     }
                 } else if (p instanceof Node && p.getDataSet() != null) {
-                    maps = removeMultipolygonsReferringTo(p.getReferrers(), ds, maps);
+                    maps = updateMultipolygonsReferringTo(event, p.getReferrers(), ds, maps);
                 }
             }
         }
         return maps;
+    }
+    
+    private final void processEvent(final AbstractDatasetChangedEvent event, final Relation r, final Collection<Map<Relation, Multipolygon>> maps) {
+        if (event instanceof NodeMovedEvent) {
+            for (Map<Relation, Multipolygon> map : maps) {
+                Multipolygon m = map.get(r);
+                for (PolyData pd : m.getCombinedPolygons()) {
+                    pd.nodeMoved((NodeMovedEvent) event);
+                }
+            }
+        } else {
+            // Default (non-optimal) action: remove multipolygon from cache 
+            for (Map<Relation, Multipolygon> map : maps) {
+                map.remove(r);
+            }
+        }
     }
 
     @Override
@@ -168,7 +180,7 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
 
     @Override
     public void primitivesRemoved(PrimitivesRemovedEvent event) {
-        removeMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
+        updateMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
     }
 
     @Override
@@ -178,27 +190,27 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
 
     @Override
     public void nodeMoved(NodeMovedEvent event) {
-        removeMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
+        updateMultipolygonsReferringTo(event);
     }
 
     @Override
     public void wayNodesChanged(WayNodesChangedEvent event) {
-        removeMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
+        updateMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
     }
 
     @Override
     public void relationMembersChanged(RelationMembersChangedEvent event) {
-        removeMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
+        updateMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
     }
 
     @Override
     public void otherDatasetChange(AbstractDatasetChangedEvent event) {
-        removeMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
+        updateMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
     }
 
     @Override
     public void dataChanged(DataChangedEvent event) {
-        removeMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
+        updateMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
     }
 
     @Override
