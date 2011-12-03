@@ -8,6 +8,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
@@ -171,14 +172,16 @@ public class Multipolygon {
         public enum Intersection {INSIDE, OUTSIDE, CROSSING}
 
         public final Path2D.Double poly;
-        public final boolean selected;
+        public boolean selected;
         private Rectangle2D bounds;
+        private final Collection<Way> ways;
 
-        public PolyData(JoinedWay joinedWay) {
-            this(joinedWay.getNodes(), joinedWay.isSelected());
+        public PolyData(JoinedWay joinedWay, Collection<Way> refWays) {
+            this(joinedWay.getNodes(), joinedWay.isSelected(), refWays);
         }
 
-        public PolyData(List<Node> nodes, boolean selected) {
+        public PolyData(List<Node> nodes, boolean selected, Collection<Way> refWays) {
+            this.ways = Collections.unmodifiableCollection(refWays);
             this.selected = selected;
             boolean initial = true;
             this.poly = new Path2D.Double();
@@ -199,6 +202,7 @@ public class Multipolygon {
         public PolyData(PolyData copy) {
             this.selected = copy.selected;
             this.poly = (Double) copy.poly.clone();
+            this.ways = new ArrayList<Way>(copy.ways);
         }
         
         public Intersection contains(Path2D.Double p) {
@@ -233,6 +237,10 @@ public class Multipolygon {
                 bounds = poly.getBounds2D();
             }
             return bounds;
+        }
+        
+        public Collection<Way> getWays() {
+            return ways;
         }
     }
 
@@ -281,14 +289,14 @@ public class Multipolygon {
         List<Way> waysToJoin = new ArrayList<Way>();
         for (Way way: ways) {
             if (way.isClosed()) {
-                result.add(new PolyData(way.getNodes(), way.isSelected()));
+                result.add(new PolyData(way.getNodes(), way.isSelected(), Collections.singleton(way)));
             } else {
                 waysToJoin.add(way);
             }
         }
 
         for (JoinedWay jw: joinWays(waysToJoin)) {
-            result.add(new PolyData(jw));
+            result.add(new PolyData(jw, waysToJoin));
         }
     }
 
@@ -448,6 +456,10 @@ public class Multipolygon {
                 o.addInner(pdInner.poly);
             }
         }
+        
+        // Clear inner and outer polygons to reduce memory footprint
+        innerPolygons.clear();
+        outerPolygons.clear();
     }
 
     public List<Way> getOuterWays() {
@@ -457,7 +469,7 @@ public class Multipolygon {
     public List<Way> getInnerWays() {
         return innerWays;
     }
-
+/*
     public List<PolyData> getInnerPolygons() {
         return innerPolygons;
     }
@@ -465,7 +477,7 @@ public class Multipolygon {
     public List<PolyData> getOuterPolygons() {
         return outerPolygons;
     }
-
+*/
     public List<PolyData> getCombinedPolygons() {
         return combinedPolygons;
     }

@@ -3,10 +3,12 @@ package org.openstreetmap.josm.data.osm.visitor.paint.relations;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -21,6 +23,7 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
@@ -32,15 +35,19 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * A memory cache for Multipolygon objects.
  * 
  */
-public class MultipolygonCache implements DataSetListener, LayerChangeListener, ProjectionChangeListener {
+public class MultipolygonCache implements DataSetListener, LayerChangeListener, ProjectionChangeListener, SelectionChangedListener {
 
     private static final MultipolygonCache instance = new MultipolygonCache(); 
     
     private final Map<NavigatableComponent, Map<DataSet, Map<Relation, Multipolygon>>> cache;
     
+    private final Collection<PolyData> selectedPolyData;
+    
     private MultipolygonCache() {
         this.cache = new HashMap<NavigatableComponent, Map<DataSet, Map<Relation, Multipolygon>>>();
+        this.selectedPolyData = new ArrayList<Multipolygon.PolyData>();
         Main.addProjectionChangeListener(this);
+        DataSet.addSelectionListener(this);
     }
 
     public static final MultipolygonCache getInstance() {
@@ -65,6 +72,11 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
             multipolygon = map2.get(r);
             if (multipolygon == null || forceRefresh) {
                 map2.put(r, multipolygon = new Multipolygon(r));
+                for (PolyData pd : multipolygon.getCombinedPolygons()) {
+                    if (pd.selected) {
+                        selectedPolyData.add(pd);
+                    }
+                }
             }
         }
         return multipolygon;
@@ -156,37 +168,37 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
 
     @Override
     public void primitivesRemoved(PrimitivesRemovedEvent event) {
-        removeMultipolygonsReferringTo(event);
+        removeMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
     }
 
     @Override
     public void tagsChanged(TagsChangedEvent event) {
-        removeMultipolygonsReferringTo(event);
+        //removeMultipolygonsReferringTo(event);
     }
 
     @Override
     public void nodeMoved(NodeMovedEvent event) {
-        removeMultipolygonsReferringTo(event);
+        removeMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
     }
 
     @Override
     public void wayNodesChanged(WayNodesChangedEvent event) {
-        removeMultipolygonsReferringTo(event);
+        removeMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
     }
 
     @Override
     public void relationMembersChanged(RelationMembersChangedEvent event) {
-        removeMultipolygonsReferringTo(event);
+        removeMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
     }
 
     @Override
     public void otherDatasetChange(AbstractDatasetChangedEvent event) {
-        removeMultipolygonsReferringTo(event);
+        removeMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
     }
 
     @Override
     public void dataChanged(DataChangedEvent event) {
-        removeMultipolygonsReferringTo(event);
+        removeMultipolygonsReferringTo(event);// FIXME: See if it is possible to update only concerned PolyData
     }
 
     @Override
@@ -209,5 +221,42 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
     @Override
     public void projectionChanged(Projection oldValue, Projection newValue) {
         clear();
+    }
+
+    @Override
+    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        
+        for (Iterator<PolyData> it = selectedPolyData.iterator(); it.hasNext();) {
+            it.next().selected = false;
+            it.remove();
+        }
+        
+        DataSet ds = null;
+        Collection<Map<Relation, Multipolygon>> maps = null;
+        for (OsmPrimitive p : newSelection) {
+            if (p instanceof Way && p.getDataSet() != null) {
+                if (ds == null) {
+                    ds = p.getDataSet();
+                }
+                for (OsmPrimitive ref : p.getReferrers()) {
+                    if (isMultipolygon(ref)) {
+                        if (maps == null) {
+                            maps = getMapsFor(ds);
+                        }
+                        for (Map<Relation, Multipolygon> map : maps) {
+                            Multipolygon multipolygon = map.get(ref);
+                            if (multipolygon != null) {
+                                for (PolyData pd : multipolygon.getCombinedPolygons()) {
+                                    if (pd.getWays().contains(p)) {
+                                        pd.selected = true;
+                                        selectedPolyData.add(pd);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
