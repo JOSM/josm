@@ -192,7 +192,7 @@ public class Multipolygon {
         private final List<PolyData> inners;
 
         public PolyData(Way closedWay) {
-            this(closedWay.getNodes(), closedWay.isSelected(), Collections.singleton(closedWay.getId()));
+            this(closedWay.getNodes(), closedWay.isSelected(), Collections.singleton(closedWay.getUniqueId()));
         }
 
         public PolyData(JoinedWay joinedWay) {
@@ -316,7 +316,7 @@ public class Multipolygon {
         }
         
         public void wayNodesChanged(WayNodesChangedEvent event) {
-            final Long wayId = event.getChangedWay().getId();
+            final Long wayId = event.getChangedWay().getUniqueId();
             boolean innerChanged = false;
             for (PolyData inner : inners) {
                 if (inner.wayIds.contains(wayId)) {
@@ -443,7 +443,7 @@ public class Multipolygon {
                                 --left;
                                 if (nodes == null) {
                                     nodes = w.getNodes();
-                                    wayIds.add(w.getId());
+                                    wayIds.add(w.getUniqueId());
                                 }
                                 nodes.remove((mode == 21 || mode == 22) ? nl : 0);
                                 if (mode == 21) {
@@ -459,7 +459,7 @@ public class Multipolygon {
                                         nodes.add(0, node);
                                     }
                                 }
-                                wayIds.add(c.getId());
+                                wayIds.add(c.getUniqueId());
                             }
                         }
                     }
@@ -468,7 +468,7 @@ public class Multipolygon {
 
             if (nodes == null) {
                 nodes = w.getNodes();
-                wayIds.add(w.getId());
+                wayIds.add(w.getUniqueId());
             }
 
             result.add(new JoinedWay(nodes, wayIds, selected));

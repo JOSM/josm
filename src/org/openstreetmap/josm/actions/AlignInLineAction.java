@@ -135,8 +135,11 @@ public final class AlignInLineAction extends JosmAction {
                 if(w.containsNode(n) == false)
                     // warning
                     return;
-            } else if(n.isReferredByWays(2) == false) { // node used in only one way
-                w = OsmPrimitive.getFilteredList(n.getReferrers(), Way.class).iterator().next();
+            } else {
+                List<Way> refWays = OsmPrimitive.getFilteredList(n.getReferrers(), Way.class);
+                if (refWays.size() == 1) { // node used in only one way
+                    w = refWays.iterator().next();
+                }
             }
             if (w == null || w.getNodesCount() < 3)
                 // warning, need at least 3 nodes
