@@ -60,7 +60,9 @@ import org.openstreetmap.josm.tools.XmlObjectParser;
  * Other classes can register their beloved properties here. All properties will be
  * saved upon set-access.
  *
- * Each property is a simple key=value pair of Strings.
+ * Each property is a key=setting pair, where key is a String and setting can be one of
+ * 4 types:
+ *     string, list, list of lists and list of maps.
  * In addition, each key has a unique default value that is set when the value is first
  * accessed using one of the get...() methods. You can use the same preference
  * key in different parts of the code, but the default value must be the same
@@ -68,8 +70,8 @@ import org.openstreetmap.josm.tools.XmlObjectParser;
  * no default value was set. This is used in advanced preferences to present a list
  * off all possible settings.
  *
- * At the moment, there is no such thing as an empty value.
- * If you put "" or null as value, the property is removed.
+ * At the moment, you cannot put the empty string for string properties.
+ * put(key, "") means, the property is removed.
  *
  * @author imi
  */
@@ -82,13 +84,16 @@ public class Preferences {
     private File preferencesDirFile = null;
 
     /**
-     * Map the property name to the property object. Does not contain null or "" values.
+     * Map the property name to strings. Does not contain null or "" values.
      */
     protected final SortedMap<String, String> properties = new TreeMap<String, String>();
+    /** Map of defaults, can contain null values */
     protected final SortedMap<String, String> defaults = new TreeMap<String, String>();
     protected final SortedMap<String, String> colornames = new TreeMap<String, String>();
 
+    /** Mapping for list settings. Must not conatin null values */
     protected final SortedMap<String, List<String>> collectionProperties = new TreeMap<String, List<String>>();
+    /** Defaults, can contain null values */
     protected final SortedMap<String, List<String>> collectionDefaults = new TreeMap<String, List<String>>();
 
     protected final SortedMap<String, List<List<String>>> arrayProperties = new TreeMap<String, List<List<String>>>();
