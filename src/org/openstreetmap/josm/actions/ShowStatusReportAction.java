@@ -7,14 +7,16 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences.Setting;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
@@ -22,6 +24,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
+
 
 /**
  * @author xeen
@@ -82,26 +85,19 @@ public final class ShowStatusReportAction extends JosmAction {
         StringBuilder text = new StringBuilder();
         text.append(getReportHeader());
         try {
-            BufferedReader input = new BufferedReader(new FileReader(Main.pref
-                    .getPreferencesDirFile()
-                    + File.separator + "preferences"));
-            try {
-                String line = null;
-
-                while ((line = input.readLine()) != null) {
-                    String toCheck = line.trim().toLowerCase();
-                    if (toCheck.startsWith("osm-server.username")
-                            || toCheck.startsWith("osm-server.password")
-                            || toCheck.startsWith("marker.show")
-                            || toCheck.startsWith("oauth.access-token.key")
-                            || toCheck.startsWith("oauth.access-token.secret")) {
-                        continue;
-                    }
-                    text.append(line);
-                    text.append("\n");
+            Map<String, Setting> settings = Main.pref.getAllSettings();
+            settings.remove("osm-server.username");
+            settings.remove("osm-server.password");
+            settings.remove("oauth.access-token.key");
+            settings.remove("oauth.access-token.secret");
+            Set<String> keys = new HashSet<String>(settings.keySet());
+            for (String key : keys) {
+                if (key.startsWith("marker.show")) {
+                    settings.remove(key);
                 }
-            } finally {
-                input.close();
+            }
+            for (Entry<String, Setting> entry : settings.entrySet()) {
+                text.append(entry.getKey()).append("=").append(entry.getValue().getValue().toString()).append("\n");
             }
         } catch (Exception x) {
             x.printStackTrace();
