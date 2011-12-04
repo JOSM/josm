@@ -275,7 +275,7 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
                             Multipolygon multipolygon = map.get(ref);
                             if (multipolygon != null) {
                                 for (PolyData pd : multipolygon.getCombinedPolygons()) {
-                                    if (pd.getWayIds().contains(p.getId())) {
+                                    if (pd.getWayIds().contains(p.getUniqueId())) {
                                         pd.selected = true;
                                         selectedPolyData.add(pd);
                                     }
