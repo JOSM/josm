@@ -9,16 +9,22 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
+import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData.Intersection;
 
 public class Multipolygon {
@@ -149,15 +155,21 @@ public class Multipolygon {
 
     public static class JoinedWay {
         private final List<Node> nodes;
+        private final Collection<Long> wayIds;
         private final boolean selected;
 
-        public JoinedWay(List<Node> nodes, boolean selected) {
+        public JoinedWay(List<Node> nodes, Collection<Long> wayIds, boolean selected) {
             this.nodes = nodes;
+            this.wayIds = wayIds;
             this.selected = selected;
         }
 
         public List<Node> getNodes() {
             return nodes;
+        }
+
+        public Collection<Long> getWayIds() {
+            return wayIds;
         }
 
         public boolean isSelected() {
@@ -172,20 +184,24 @@ public class Multipolygon {
     public static class PolyData {
         public enum Intersection {INSIDE, OUTSIDE, CROSSING}
 
-        public final Path2D.Double poly;
+        private final Path2D.Double poly;
         public boolean selected;
         private Rectangle2D bounds;
-        private final Collection<Way> ways;
+        private final Collection<Long> wayIds;
         private final List<Node> nodes;
         private final List<PolyData> inners;
 
-        public PolyData(JoinedWay joinedWay, Collection<Way> refWays) {
-            this(joinedWay.getNodes(), joinedWay.isSelected(), refWays);
+        public PolyData(Way closedWay) {
+            this(closedWay.getNodes(), closedWay.isSelected(), Collections.singleton(closedWay.getId()));
         }
 
-        public PolyData(List<Node> nodes, boolean selected, Collection<Way> refWays) {
-            this.ways = Collections.unmodifiableCollection(refWays);
-            this.nodes = Collections.unmodifiableList(nodes);
+        public PolyData(JoinedWay joinedWay) {
+            this(joinedWay.getNodes(), joinedWay.isSelected(), joinedWay.getWayIds());
+        }
+
+        private PolyData(List<Node> nodes, boolean selected, Collection<Long> wayIds) {
+            this.wayIds = Collections.unmodifiableCollection(wayIds);
+            this.nodes = nodes;
             this.selected = selected;
             this.inners = new ArrayList<Multipolygon.PolyData>();
             this.poly = new Path2D.Double();
@@ -195,8 +211,7 @@ public class Multipolygon {
         
         private void buildPoly() {
             boolean initial = true;
-            for (Node n : nodes)
-            {
+            for (Node n : nodes) {
                 Point2D p = n.getEastNorth();
                 if (initial) {
                     poly.moveTo(p.getX(), p.getY());
@@ -214,8 +229,8 @@ public class Multipolygon {
         public PolyData(PolyData copy) {
             this.selected = copy.selected;
             this.poly = (Double) copy.poly.clone();
-            this.ways = Collections.unmodifiableCollection(copy.ways);
-            this.nodes = Collections.unmodifiableList(copy.nodes);
+            this.wayIds = Collections.unmodifiableCollection(copy.wayIds);
+            this.nodes = new ArrayList<Node>(copy.nodes);
             this.inners = new ArrayList<Multipolygon.PolyData>(copy.inners);
         }
         
@@ -258,8 +273,26 @@ public class Multipolygon {
             return bounds;
         }
         
-        public Collection<Way> getWays() {
-            return ways;
+        public Collection<Long> getWayIds() {
+            return wayIds;
+        }
+        
+        private void resetNodes() {
+            if (!nodes.isEmpty()) {
+                DataSet ds = nodes.get(0).getDataSet();
+                nodes.clear();
+                if (wayIds.size() == 1) {
+                    Way w = (Way) ds.getPrimitiveById(wayIds.iterator().next(), OsmPrimitiveType.WAY);
+                    nodes.addAll(w.getNodes());
+                } else {
+                    List<Way> waysToJoin = new ArrayList<Way>();
+                    for (Iterator<Long> it = wayIds.iterator(); it.hasNext(); ) {
+                        waysToJoin.add((Way) ds.getPrimitiveById(it.next(), OsmPrimitiveType.WAY));
+                    }
+                    nodes.addAll(joinWays(waysToJoin).iterator().next().getNodes());
+                }
+                resetPoly();
+            }
         }
         
         private void resetPoly() {
@@ -279,6 +312,20 @@ public class Multipolygon {
             }
             if (nodes.contains(n) || innerChanged) {
                 resetPoly();
+            }
+        }
+        
+        public void wayNodesChanged(WayNodesChangedEvent event) {
+            final Long wayId = event.getChangedWay().getId();
+            boolean innerChanged = false;
+            for (PolyData inner : inners) {
+                if (inner.wayIds.contains(wayId)) {
+                    inner.resetNodes();
+                    innerChanged = true;
+                }
+            }
+            if (wayIds.contains(wayId) || innerChanged) {
+                resetNodes();
             }
         }
     }
@@ -328,111 +375,106 @@ public class Multipolygon {
         List<Way> waysToJoin = new ArrayList<Way>();
         for (Way way: ways) {
             if (way.isClosed()) {
-                result.add(new PolyData(way.getNodes(), way.isSelected(), Collections.singleton(way)));
+                result.add(new PolyData(way));
             } else {
                 waysToJoin.add(way);
             }
         }
 
         for (JoinedWay jw: joinWays(waysToJoin)) {
-            result.add(new PolyData(jw, waysToJoin));
+            result.add(new PolyData(jw));
         }
     }
 
-    public static Collection<JoinedWay> joinWays(Collection<Way> join)
+    public static Collection<JoinedWay> joinWays(Collection<Way> waysToJoin)
     {
-        Collection<JoinedWay> res = new ArrayList<JoinedWay>();
-        Way[] joinArray = join.toArray(new Way[join.size()]);
-        int left = join.size();
-        while(left != 0)
-        {
+        final Collection<JoinedWay> result = new ArrayList<JoinedWay>();
+        final Way[] joinArray = waysToJoin.toArray(new Way[waysToJoin.size()]);
+        int left = waysToJoin.size();
+        while (left > 0) {
             Way w = null;
             boolean selected = false;
-            List<Node> n = null;
+            List<Node> nodes = null;
+            Set<Long> wayIds = new HashSet<Long>();
             boolean joined = true;
-            while(joined && left != 0)
-            {
+            while (joined && left > 0) {
                 joined = false;
-                for(int i = 0; i < joinArray.length && left != 0; ++i)
-                {
-                    if(joinArray[i] != null)
-                    {
+                for (int i = 0; i < joinArray.length && left != 0; ++i) {
+                    if (joinArray[i] != null) {
                         Way c = joinArray[i];
-                        if(w == null)
-                        { w = c; selected = w.isSelected(); joinArray[i] = null; --left; }
-                        else
-                        {
+                        if (w == null) {
+                            w = c;
+                            selected = w.isSelected();
+                            joinArray[i] = null;
+                            --left;
+                        } else {
                             int mode = 0;
                             int cl = c.getNodesCount()-1;
                             int nl;
-                            if(n == null)
-                            {
+                            if (nodes == null) {
                                 nl = w.getNodesCount()-1;
-                                if(w.getNode(nl) == c.getNode(0)) {
+                                if (w.getNode(nl) == c.getNode(0)) {
                                     mode = 21;
-                                } else if(w.getNode(nl) == c.getNode(cl)) {
+                                } else if (w.getNode(nl) == c.getNode(cl)) {
                                     mode = 22;
-                                } else if(w.getNode(0) == c.getNode(0)) {
+                                } else if (w.getNode(0) == c.getNode(0)) {
                                     mode = 11;
-                                } else if(w.getNode(0) == c.getNode(cl)) {
+                                } else if (w.getNode(0) == c.getNode(cl)) {
                                     mode = 12;
                                 }
-                            }
-                            else
-                            {
-                                nl = n.size()-1;
-                                if(n.get(nl) == c.getNode(0)) {
+                            } else {
+                                nl = nodes.size()-1;
+                                if (nodes.get(nl) == c.getNode(0)) {
                                     mode = 21;
-                                } else if(n.get(0) == c.getNode(cl)) {
+                                } else if (nodes.get(0) == c.getNode(cl)) {
                                     mode = 12;
-                                } else if(n.get(0) == c.getNode(0)) {
+                                } else if (nodes.get(0) == c.getNode(0)) {
                                     mode = 11;
-                                } else if(n.get(nl) == c.getNode(cl)) {
+                                } else if (nodes.get(nl) == c.getNode(cl)) {
                                     mode = 22;
                                 }
                             }
-                            if(mode != 0)
-                            {
+                            if (mode != 0) {
                                 joinArray[i] = null;
                                 joined = true;
-                                if(c.isSelected()) {
+                                if (c.isSelected()) {
                                     selected = true;
                                 }
                                 --left;
-                                if(n == null) {
-                                    n = w.getNodes();
+                                if (nodes == null) {
+                                    nodes = w.getNodes();
+                                    wayIds.add(w.getId());
                                 }
-                                n.remove((mode == 21 || mode == 22) ? nl : 0);
-                                if(mode == 21) {
-                                    n.addAll(c.getNodes());
-                                } else if(mode == 12) {
-                                    n.addAll(0, c.getNodes());
-                                } else if(mode == 22)
-                                {
-                                    for(Node node : c.getNodes()) {
-                                        n.add(nl, node);
+                                nodes.remove((mode == 21 || mode == 22) ? nl : 0);
+                                if (mode == 21) {
+                                    nodes.addAll(c.getNodes());
+                                } else if (mode == 12) {
+                                    nodes.addAll(0, c.getNodes());
+                                } else if (mode == 22) {
+                                    for (Node node : c.getNodes()) {
+                                        nodes.add(nl, node);
+                                    }
+                                } else /* mode == 11 */ {
+                                    for (Node node : c.getNodes()) {
+                                        nodes.add(0, node);
                                     }
                                 }
-                                else /* mode == 11 */
-                                {
-                                    for(Node node : c.getNodes()) {
-                                        n.add(0, node);
-                                    }
-                                }
+                                wayIds.add(c.getId());
                             }
                         }
                     }
                 } /* for(i = ... */
             } /* while(joined) */
 
-            if (n == null) {
-                n = w.getNodes();
+            if (nodes == null) {
+                nodes = w.getNodes();
+                wayIds.add(w.getId());
             }
 
-            res.add(new JoinedWay(n, selected));
+            result.add(new JoinedWay(nodes, wayIds, selected));
         } /* while(left != 0) */
 
-        return res;
+        return result;
     }
 
     public PolyData findOuterPolygon(PolyData inner, List<PolyData> outerPolygons) {
@@ -520,5 +562,4 @@ public class Multipolygon {
     public List<PolyData> getCombinedPolygons() {
         return combinedPolygons;
     }
-
 }
