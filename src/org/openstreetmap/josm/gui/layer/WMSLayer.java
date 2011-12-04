@@ -43,8 +43,6 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.ProjectionBounds;
-import org.openstreetmap.josm.data.projection.Mercator;
-import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.GeorefImage;
 import org.openstreetmap.josm.data.imagery.GeorefImage.State;
@@ -52,9 +50,12 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.WmsCache;
+import org.openstreetmap.josm.data.imagery.types.ObjectFactory;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.projection.Mercator;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -70,6 +71,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * fetched this way is tiled and managed to the disc to reduce server load.
  */
 public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceChangedListener {
+
+    private static final ObjectFactory OBJECT_FACTORY = null; // Fake reference to keep build scripts from removing ObjectFactory class. This class is not used directly but it's necessary for jaxb to work
+
     public static final BooleanProperty PROP_ALPHA_CHANNEL = new BooleanProperty("imagery.wms.alpha_channel", true);
     public static final IntegerProperty PROP_SIMULTANEOUS_CONNECTIONS = new IntegerProperty("imagery.wms.simultaneousConnections", 3);
     public static final BooleanProperty PROP_OVERLAP = new BooleanProperty("imagery.wms.overlap", false);
@@ -150,8 +154,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
 
         attribution.initialize(this.info);
 
-        if(info.getUrl() != null)
+        if(info.getUrl() != null) {
             startGrabberThreads();
+        }
 
         Main.pref.addPreferenceChangeListener(this);
 
@@ -571,7 +576,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                         tr("The requested area is too big. Please zoom in a little, or change resolution"),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
-                );
+                        );
             } else {
                 downloadAndPaintVisible(mv.getGraphics(), mv, true);
             }
@@ -691,7 +696,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                 if (f != null) {
                     ObjectOutputStream oos = new ObjectOutputStream(
                             new FileOutputStream(f)
-                    );
+                            );
                     oos.writeInt(serializeFormatVersion);
                     oos.writeInt(dax);
                     oos.writeInt(day);
@@ -920,15 +925,16 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     public boolean isProjectionSupported(Projection proj) {
         List<String> serverProjections = info.getServerProjections();
         return serverProjections.contains(proj.toCode().toUpperCase())
-        || (proj instanceof Mercator && serverProjections.contains("EPSG:4326"));
+                || (proj instanceof Mercator && serverProjections.contains("EPSG:4326"));
     }
 
     @Override
     public String nameSupportedProjections() {
         String res = "";
         for(String p : info.getServerProjections()) {
-            if(!res.isEmpty())
+            if(!res.isEmpty()) {
                 res += ", ";
+            }
             res += p;
         }
         return tr("Supported projections are: {0}", res);
