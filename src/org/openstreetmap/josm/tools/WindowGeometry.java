@@ -263,4 +263,8 @@ public class WindowGeometry {
         window.setLocation(p);
         window.setSize(extent);
     }
+
+    public String toString() {
+        return "WindowGeometry{topLeft="+topLeft+",extent="+extent+"}";
+    }
 }

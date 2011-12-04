@@ -64,7 +64,9 @@ import org.openstreetmap.josm.tools.XmlObjectParser;
  * In addition, each key has a unique default value that is set when the value is first
  * accessed using one of the get...() methods. You can use the same preference
  * key in different parts of the code, but the default value must be the same
- * everywhere. null is a legitimate default value.
+ * everywhere. A default value of null means, the setting has been requested, but
+ * no default value was set. This is used in advanced preferences to present a list
+ * off all possible settings.
  *
  * At the moment, there is no such thing as an empty value.
  * If you put "" or null as value, the property is removed.
@@ -98,6 +100,7 @@ public class Preferences {
     public interface Setting<T> {
         T getValue();
         void visit(SettingVisitor visitor);
+        Setting<T> getNullInstance();
     }
 
     abstract public static class AbstractSetting<T> implements Setting<T> {
@@ -117,6 +120,9 @@ public class Preferences {
         public void visit(SettingVisitor visitor) {
             visitor.visit(this);
         }
+        public StringSetting getNullInstance() {
+            return new StringSetting(null);
+        }
     }
 
     public static class ListSetting extends AbstractSetting<List<String>> {
@@ -125,6 +131,9 @@ public class Preferences {
         }
         public void visit(SettingVisitor visitor) {
             visitor.visit(this);
+        }
+        public ListSetting getNullInstance() {
+            return new ListSetting(null);
         }
     }
 
@@ -135,6 +144,9 @@ public class Preferences {
         public void visit(SettingVisitor visitor) {
             visitor.visit(this);
         }
+        public ListListSetting getNullInstance() {
+            return new ListListSetting(null);
+        }
     }
 
     public static class MapListSetting extends AbstractSetting<List<Map<String, String>>> {
@@ -143,6 +155,9 @@ public class Preferences {
         }
         public void visit(SettingVisitor visitor) {
             visitor.visit(this);
+        }
+        public MapListSetting getNullInstance() {
+            return new MapListSetting(null);
         }
     }
 
@@ -824,9 +839,7 @@ public class Preferences {
      *  def otherwise
      */
     public Collection<String> getCollection(String key, Collection<String> def) {
-        if (def != null) {
-            putCollectionDefault(key, new ArrayList<String>(def));
-        }
+        putCollectionDefault(key, def == null ? null : new ArrayList<String>(def));
         Collection<String> prop = getCollectionInternal(key);
         if (prop != null)
             return prop;
@@ -903,7 +916,7 @@ public class Preferences {
         return true;
     }
 
-    private static boolean equalCollection(Collection<String> a, Collection<String> b) {
+    public static boolean equalCollection(Collection<String> a, Collection<String> b) {
         if (a == null) return b == null;
         if (b == null) return false;
         if (a.size() != b.size()) return false;
@@ -946,6 +959,8 @@ public class Preferences {
                 defCopy.add(Collections.unmodifiableList(new ArrayList<String>(lst)));
             }
             putArrayDefault(key, Collections.unmodifiableList(defCopy));
+        } else {
+            putArrayDefault(key, null);
         }
         List<List<String>> prop = getArrayInternal(key);
         if (prop != null) {
@@ -954,6 +969,17 @@ public class Preferences {
             return prop_cast;
         } else
             return def;
+    }
+
+    public Collection<Collection<String>> getArray(String key) {
+        putArrayDefault(key, null);
+        List<List<String>> prop = getArrayInternal(key);
+        if (prop != null) {
+            @SuppressWarnings("unchecked")
+            Collection<Collection<String>> prop_cast = (Collection) prop;
+            return prop_cast;
+        } else
+            return Collections.emptyList();
     }
 
     synchronized private List<List<String>> getArrayInternal(String key) {
@@ -1019,7 +1045,7 @@ public class Preferences {
         return true;
     }
 
-    private static boolean equalArray(Collection<Collection<String>> a, Collection<List<String>> b) {
+    public static boolean equalArray(Collection<Collection<String>> a, Collection<List<String>> b) {
         if (a == null) return b == null;
         if (b == null) return false;
         if (a.size() != b.size()) return false;
@@ -1042,6 +1068,8 @@ public class Preferences {
                 defCopy.add(Collections.unmodifiableMap(new LinkedHashMap<String,String>(map)));
             }
             putListOfStructsDefault(key, Collections.unmodifiableList(defCopy));
+        } else {
+            putListOfStructsDefault(key, null);
         }
         Collection<Map<String, String>> prop = getListOfStructsInternal(key);
         if (prop != null)
@@ -1116,7 +1144,7 @@ public class Preferences {
         return true;
     }
 
-    private static boolean equalListOfStructs(Collection<Map<String, String>> a, Collection<Map<String, String>> b) {
+    public static boolean equalListOfStructs(Collection<Map<String, String>> a, Collection<Map<String, String>> b) {
         if (a == null) return b == null;
         if (b == null) return false;
         if (a.size() != b.size()) return false;
@@ -1297,6 +1325,64 @@ public class Preferences {
             }
         }
         return struct;
+    }
+
+    public boolean putSetting(final String key, Setting value) {
+        if (value == null) return false;
+        class PutVisitor implements SettingVisitor {
+            public boolean changed;
+            public void visit(StringSetting setting) {
+                changed = put(key, setting.getValue());
+            }
+            public void visit(ListSetting setting) {
+                changed = putCollection(key, setting.getValue());
+            }
+            public void visit(ListListSetting setting) {
+                changed = putArray(key, (Collection) setting.getValue());
+            }
+            public void visit(MapListSetting setting) {
+                changed = putListOfStructs(key, setting.getValue());
+            }
+        };
+        PutVisitor putVisitor = new PutVisitor();
+        value.visit(putVisitor);
+        return putVisitor.changed;
+    }
+
+    public Map<String, Setting> getAllSettings() {
+        Map<String, Setting> settings = new TreeMap<String, Setting>();
+
+        for (Entry<String, String> e : properties.entrySet()) {
+            settings.put(e.getKey(), new StringSetting(e.getValue()));
+        }
+        for (Entry<String, List<String>> e : collectionProperties.entrySet()) {
+            settings.put(e.getKey(), new ListSetting(e.getValue()));
+        }
+        for (Entry<String, List<List<String>>> e : arrayProperties.entrySet()) {
+            settings.put(e.getKey(), new ListListSetting(e.getValue()));
+        }
+        for (Entry<String, List<Map<String, String>>> e : listOfStructsProperties.entrySet()) {
+            settings.put(e.getKey(), new MapListSetting(e.getValue()));
+        }
+        return settings;
+    }
+
+    public Map<String, Setting> getAllDefaults() {
+        Map<String, Setting> allDefaults = new TreeMap<String, Setting>();
+
+        for (Entry<String, String> e : defaults.entrySet()) {
+            allDefaults.put(e.getKey(), new StringSetting(e.getValue()));
+        }
+        for (Entry<String, List<String>> e : collectionDefaults.entrySet()) {
+            allDefaults.put(e.getKey(), new ListSetting(e.getValue()));
+        }
+        for (Entry<String, List<List<String>>> e : arrayDefaults.entrySet()) {
+            allDefaults.put(e.getKey(), new ListListSetting(e.getValue()));
+        }
+        for (Entry<String, List<Map<String, String>>> e : listOfStructsDefaults.entrySet()) {
+            allDefaults.put(e.getKey(), new MapListSetting(e.getValue()));
+        }
+        return allDefaults;
     }
 
     /**
