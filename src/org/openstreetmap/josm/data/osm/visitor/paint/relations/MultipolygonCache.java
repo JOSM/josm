@@ -173,11 +173,13 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
     private final void dispatchEvent(AbstractDatasetChangedEvent event, Relation r, Collection<Map<Relation, Multipolygon>> maps) {
         for (Map<Relation, Multipolygon> map : maps) {
             Multipolygon m = map.get(r);
-            for (PolyData pd : m.getCombinedPolygons()) {
-                if (event instanceof NodeMovedEvent) {
-                    pd.nodeMoved((NodeMovedEvent) event);
-                } else if (event instanceof WayNodesChangedEvent) {
-                    pd.wayNodesChanged((WayNodesChangedEvent)event);
+            if (m != null) {
+                for (PolyData pd : m.getCombinedPolygons()) {
+                    if (event instanceof NodeMovedEvent) {
+                        pd.nodeMoved((NodeMovedEvent) event);
+                    } else if (event instanceof WayNodesChangedEvent) {
+                        pd.wayNodesChanged((WayNodesChangedEvent)event);
+                    }
                 }
             }
         }
