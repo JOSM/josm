@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.preferences.advanced;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -129,7 +128,7 @@ public class MapListEditor extends ExtendedDialog {
 
     class EntryListModel extends AbstractListModel {
         public Object getElementAt(int index) {
-            return trn("Entry {0}", "Entry {0}", index+1, index+1);
+            return tr("Entry {0}", index+1);
         }
 
         public int getSize() {
