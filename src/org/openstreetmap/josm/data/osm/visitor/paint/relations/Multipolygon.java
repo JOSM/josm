@@ -201,7 +201,7 @@ public class Multipolygon {
 
         private PolyData(List<Node> nodes, boolean selected, Collection<Long> wayIds) {
             this.wayIds = Collections.unmodifiableCollection(wayIds);
-            this.nodes = nodes;
+            this.nodes = new ArrayList<Node>(nodes);
             this.selected = selected;
             this.inners = new ArrayList<Multipolygon.PolyData>();
             this.poly = new Path2D.Double();
