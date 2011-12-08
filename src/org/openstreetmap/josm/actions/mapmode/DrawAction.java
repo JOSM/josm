@@ -699,7 +699,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
         } else if (selectedWay == null) {
             currentBaseNode = selectedNode;
-        } else {
+        } else if (!selectedWay.isDeleted()) { // fix #7118
             if (selectedNode == selectedWay.getNode(0) || selectedNode == selectedWay.getNode(selectedWay.getNodesCount()-1)) {
                 currentBaseNode = selectedNode;
             }
