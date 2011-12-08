@@ -12,6 +12,14 @@ public class ChildProgress extends AbstractProgressMonitor {
         this.internal = internal;
     }
 
+    public final AbstractProgressMonitor getParent() {
+        return parent;
+    }
+
+    public final boolean isInternal() {
+        return internal;
+    }
+
     @Override
     void updateProgress(double value) {
         parent.childSetProgress(this, value);
