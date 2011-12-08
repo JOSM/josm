@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.progress;
 
-class ChildProgress extends AbstractProgressMonitor {
+public class ChildProgress extends AbstractProgressMonitor {
 
     private final AbstractProgressMonitor parent;
     private final boolean internal;
