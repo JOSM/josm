@@ -15,6 +15,7 @@ import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -454,6 +455,7 @@ public class GpxLayer extends Layer {
         boolean colorModeDynamic = Main.pref.getBoolean("draw.rawgps.colors.dynamic", spec, false);
         int hdopfactor = Main.pref.getInteger("hdop.factor", 25);
 
+        Stroke storedStroke = g.getStroke();
         if(lineWidth != 0)
         {
             g.setStroke(new BasicStroke(lineWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
@@ -796,6 +798,10 @@ public class GpxLayer extends Layer {
             } // end for trkpnt
         } // end if large
 
+        if(lineWidth != 0)
+        {
+            g.setStroke(storedStroke);
+        }
         // Long duration = System.currentTimeMillis() - startTime;
         // System.out.println(duration);
     } // end paint
