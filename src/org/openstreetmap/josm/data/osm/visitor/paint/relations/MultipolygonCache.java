@@ -228,7 +228,25 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
 
     @Override
     public void dataChanged(DataChangedEvent event) {
-        // Do nothing
+        // Do not call updateMultipolygonsReferringTo as getPrimitives() 
+        // can return all the data set primitives for this event
+        Collection<Map<Relation, Multipolygon>> maps = null;
+        for (OsmPrimitive p : event.getPrimitives()) {
+            if (isMultipolygon(p)) {
+                if (maps == null) {
+                    maps = getMapsFor(event.getDataset());
+                }
+                for (Map<Relation, Multipolygon> map : maps) {
+                    Multipolygon mp = map.get(p);
+                    // DataChangedEvent is sent after downloading incomplete members,
+                    // without having received RelationMembersChangedEvent or PrimitivesAddedEvent
+                    if (mp != null && mp.isIncomplete()) {
+                        // This ensures previously incomplete multipolygons will be correctly redrawn
+                        map.remove(p);
+                    }
+                }
+            }
+        }
     }
 
     @Override
