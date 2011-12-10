@@ -459,6 +459,7 @@ public class GpxLayer extends Layer {
         if(lineWidth != 0)
         {
             g.setStroke(new BasicStroke(lineWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+            largesize += lineWidth;
         }
 
         /****************************************************************
