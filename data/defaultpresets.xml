@@ -5218,6 +5218,19 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <role key="label" text="Label point" requisite="optional" type="node" count="1" />
             </roles>
         </item>
+        <item name="Site" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Relations/Proposed/Site"/>
+            <label text="Edit Site" />
+            <key key="type" value="site" />
+            <text key="name" text="Site name" default="" delete_if_empty="true" />
+            <roles>
+                <role key="label" text="where to place the label" requisite="optional" type="node" />
+                <role key="perimeter" text="perimeter of the site" requisite="optional" type="closedway,relation" />
+                <role key="entrance" text="entrances to the site, on the perimeter" requisite="optional" type="node" />
+                <role key="" text="members of site" requisite="optional" type="node,way,closedway,relation" />
+            </roles>
+        </item>
+        <separator/>
         <item name="Turn restriction" icon="styles/standard/vehicle/restriction/turn_restrictions/no_u_turn.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:restriction"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:restriction"
@@ -5238,6 +5251,22 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <role key="to" text="to way" requisite="required" count="1" type="way" />
             </roles>
         </item>
+        <item name="Enforcement" icon="presets/speed_camera.png" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Relation:enforcement"/>
+            <label text="Edit Enforcement" />
+            <key key="type" value="enforcement" />
+            <combo key="enforcement" text="Type of enforcement" values="maxheight,maxweight,maxspeed,mindistance,traffic_signals,check " default="" delete_if_empty="true" />
+            <text key="maxheight" text="Max. height (meters, only if enforcement=maxheight)" default="" delete_if_empty="true" />
+            <text key="maxweight" text="Max. weight (tonnes, only if enforcement=maxweight)" default="" delete_if_empty="true" />
+            <text key="maxspeed" text="Max. speed (km/h, only if enforcement=maxspeed)" default="" delete_if_empty="true" />
+            <roles>
+                <role key="device" text="location of enforcement device" requisite="required" type="node,way,closedway" />
+                <role key="from" text="node on way where enforcement starts" requisite="required" type="node" />
+                <role key="to" text="where enforcement ends" requisite="optional" type="node" />
+                <role key="force" text="traffic light or barrier that stops you" requisite="optional" type="node" />
+            </roles>
+        </item>
+        <separator/>
         <item name="Route" icon="presets/path.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:route"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:route"
@@ -5254,6 +5283,8 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="symbol" text="Symbol description" default="" delete_if_empty="true" />
             <text key="description" text="Description" default="" delete_if_empty="true" />
             <optional>
+                <text key="from" text="From (initial stop)" default="" delete_if_empty="true" />
+                <text key="to" text="To (terminal stop)" default="" delete_if_empty="true" />
                 <text key="network" text="Network" default="" delete_if_empty="true" />
                 <text key="operator" text="Operator" default="" delete_if_empty="true" />
                 <combo key="state" text="Route state" values="proposed,alternate,temporary,connection" default="" delete_if_empty="true" />
@@ -5266,6 +5297,23 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <role key="stop" text="halt point" requisite="optional" type="node" />
                 <role key="forward_stop" text="forward halt point" requisite="optional" type="node" />
                 <role key="backward_stop" text="backward halt point" requisite="optional" type="node" />
+                <role key="platform" text="platform belonging to route" requisite="optional" type="node,way,closedway" />
+            </roles>
+        </item>
+        <item name="Route master" icon="presets/path.png" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Relation:route_master"/>
+            <label text="Edit Route master" />
+            <key key="type" value="route_master" />
+            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry" default="" delete_if_empty="true" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference" default="" delete_if_empty="true" />
+            <optional>
+                <text key="network" text="Network" default="" delete_if_empty="true" />
+                <text key="operator" text="Operator" default="" delete_if_empty="true" />
+                <text key="color" text="Color (hex)" default="" delete_if_empty="true" />
+            </optional>
+            <roles>
+              <role key="" text="route variant/direction (at least 2)" requisite="required" type="relation" /><!-- FIXME: at least 2 members are required -->
             </roles>
         </item>
         <item name="Directional Route (North America)" icon="presets/path.png" type="relation">
@@ -5313,6 +5361,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <role key="" text="member" requisite="required" type="relation" />
             </roles>
         </item>
+        <separator/>
         <item name="Associated street" icon="presets/addresses.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:associatedStreet"/>
             <label text="Edit associated street" />
@@ -5321,6 +5370,58 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <roles>
                 <role key="street" text="street" requisite="required" type="way" />
                 <role key="house" text="house" requisite="required" type="node,closedway" />
+            </roles>
+        </item>
+        <item name="Street" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Relations/Proposed/Street"/>
+            <label text="Edit Street" />
+            <key key="type" value="street" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <roles>
+                <role key="street" text="ways being part of street" requisite="required" type="way" />
+                <role key="address" text="addressed belonging to the street" requisite="optional" type="node,way,closedway" />
+                <role key="house" text="houses belonging to the street" requisite="optional" type="node,way,closedway" />
+                <role key="associated" text="anything related to the street" requisite="optional" type="node,way,closedway" />
+            </roles>
+        </item>
+        <item name="Destination sign" icon="presets/guidepost.png" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Relation:destination_sign"/>
+            <label text="Edit Destination sign" />
+            <key key="type" value="destination_sign" />
+            <text key="destination" text="Destination written on sign (w/o distance)" default="" delete_if_empty="true" />
+            <text key="distance" text="Distance (km)" default="" delete_if_empty="true" />
+            <text key="time" text="Time (hh:mm, for trekking)" default="" delete_if_empty="true" />
+            <text key="colour:back" text="Colour of background" default="" delete_if_empty="true" />
+            <text key="colour:text" text="Colour of text" default="" delete_if_empty="true" />
+            <text key="colour:arrow" text="Colour of border/arrow" default="" delete_if_empty="true" />
+            <roles>
+                <role key="from" text="last way before junction" requisite="optional" type="node,way" />
+                <role key="intersection" text="node of the intersection" requisite="optional" count="1" type="node" />
+                <role key="to" text="first way after junction" requisite="required" count="1" type="node,way" />
+                <role key="sign" text="position of sign" requisite="optional" type="node" />
+            </roles>
+        </item>
+        <separator/>
+        <item name="Waterway" icon="presets/river.png" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Relations/Proposed/Waterway"/>
+            <label text="Edit Waterway" />
+            <key key="type" value="waterway" />
+            <combo key="waterway" text="Subtype of waterway (largest one of members)" values="river,stream,canal,drain,ditch" default="" delete_if_empty="true" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <optional>
+                <text key="destination" text="Name of river/sea/ocean" default="" delete_if_empty="true" />
+                <text key="ref" text="Reference" default="" delete_if_empty="true" />
+                <text key="ref:sandre" text="Reference Sandre (FR)" default="" delete_if_empty="true" />
+                <text key="ref:fgkz" text="Reference FGKZ (DE)" default="" delete_if_empty="true" />
+                <text key="ref:regine" text="Reference REGINE (NO)" default="" delete_if_empty="true" />
+                <text key="ref:gnis" text="Reference GNIS (USA)" default="" delete_if_empty="true" />
+                <text key="ref:gnbc" text="Reference GNBC (CA)" default="" delete_if_empty="true" />
+                <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
+            </optional>
+            <roles>
+                <role key="main_stream" text="waterways (no riverbank)" requisite="required" type="way" />
+                <role key="side_stream" text="branch waterways (no riverbank)" requisite="optional" type="way" />
+                <role key="spring" text="spring of waterway" requisite="optional" type="node" />
             </roles>
         </item>
     </group> <!-- Relations -->
