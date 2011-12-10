@@ -5369,7 +5369,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Street name" default="" delete_if_empty="true" />
             <roles>
                 <role key="street" text="street" requisite="required" type="way" />
-                <role key="house" text="house" requisite="required" type="node,closedway" />
+                <role key="house" text="house" requisite="required" type="node,closedway,relation" />
             </roles>
         </item>
         <item name="Street" type="relation">
@@ -5422,6 +5422,38 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <role key="main_stream" text="waterways (no riverbank)" requisite="required" type="way" />
                 <role key="side_stream" text="branch waterways (no riverbank)" requisite="optional" type="way" />
                 <role key="spring" text="spring of waterway" requisite="optional" type="node" />
+            </roles>
+        </item>
+        <item name="Bridge" icon="presets/bridge.png" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Relations/Proposed/Bridges_and_Tunnels"/>
+            <label text="Edit Bridge" />
+            <key key="type" value="bridge" />
+            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference" default="" delete_if_empty="true" />
+            <text key="height" text="Height (meters)" default="" delete_if_empty="true" />
+            <text key="length" text="Length (meters)" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <roles>
+                <role key="across" text="ways supported by (on top of) the bridge" requisite="optional" type="way" />
+                <role key="under" text="ways passing under the bridge" requisite="optional" type="way" />
+                <role key="outline" text="way forming the outline footprint" requisite="optional" count="1" type="closedway" />
+                <role key="edge" text="nodes forming the outline" requisite="optional" type="node" />
+            </roles>
+        </item>
+        <item name="Tunnel" icon="presets/tunnel.png" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Relations/Proposed/Bridges_and_Tunnels"/>
+            <label text="Edit Tunnel" />
+            <key key="type" value="tunnel" />
+            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference" default="" delete_if_empty="true" />
+            <text key="length" text="Length (meters)" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <roles>
+                <role key="through" text="ways passing through the tunnel" requisite="required" type="way" />
+                <role key="outline" text="way forming the outline footprint" requisite="optional" count="1" type="closedway" />
+                <role key="edge" text="nodes forming the outline" requisite="optional" type="node" />
             </roles>
         </item>
     </group> <!-- Relations -->
