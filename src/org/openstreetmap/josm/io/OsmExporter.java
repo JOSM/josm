@@ -66,7 +66,7 @@ public class OsmExporter extends FileExporter {
             OutputStream out = getOutputStream(file);
             Writer writer = new OutputStreamWriter(out, "UTF-8");
 
-            OsmWriter w = new OsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
+            OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
             layer.data.getReadLock().lock();
             try {
                 w.header();

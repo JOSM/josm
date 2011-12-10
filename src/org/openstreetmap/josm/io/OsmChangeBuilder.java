@@ -33,7 +33,7 @@ public class OsmChangeBuilder {
     public OsmChangeBuilder(Changeset changeset, String apiVersion) {
         this.apiVersion = apiVersion == null ? DEFAULT_API_VERSION : apiVersion;
         writer = new PrintWriter(swriter = new StringWriter());
-        osmwriter = new OsmWriter(writer, false, apiVersion);
+        osmwriter = OsmWriterFactory.createOsmWriter(writer, false, apiVersion);
         osmwriter.setChangeset(changeset);
     }
 
