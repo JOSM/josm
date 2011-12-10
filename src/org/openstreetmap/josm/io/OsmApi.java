@@ -30,8 +30,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -107,9 +107,6 @@ public class OsmApi extends OsmConnection {
      */
     private boolean initialized = false;
 
-    private StringWriter swriter = new StringWriter();
-    private OsmWriter osmWriter = new OsmWriter(new PrintWriter(swriter), true, null);
-
     /**
      * A parser for the "capabilities" response XML
      */
@@ -174,10 +171,9 @@ public class OsmApi extends OsmConnection {
             System.out.println(tr("Communications with {0} established using protocol version {1}.",
                     serverUrl,
                     version));
-            osmWriter.setVersion(version);
             initialized = true;
 
-            /* This is an interim solution for openstreetmap.org not currently 
+            /* This is an interim solution for openstreetmap.org not currently
              * transmitting their imagery blacklist in the capabilities call.
              * remove this as soon as openstreetmap.org adds blacklists. */
             if (this.serverUrl.matches(".*openstreetmap.org/api.*") && capabilities.getImageryBlacklist().isEmpty())
@@ -190,7 +186,7 @@ public class OsmApi extends OsmConnection {
 
             /* This checks if there are any layers currently displayed that
              * are now on the blacklist, and removes them. This is a rare
-             * situaton - probably only occurs if the user changes the API URL
+             * situation - probably only occurs if the user changes the API URL
              * in the preferences menu. Otherwise they would not have been able
              * to load the layers in the first place becuase they would have
              * been disabled! */
@@ -227,13 +223,15 @@ public class OsmApi extends OsmConnection {
      * @return XML string
      */
     private String toXml(IPrimitive o, boolean addBody) {
+        StringWriter swriter = new StringWriter();
+        OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(swriter), true, version);
         swriter.getBuffer().setLength(0);
         osmWriter.setWithBody(addBody);
         osmWriter.setChangeset(changeset);
         osmWriter.header();
         o.visit(osmWriter);
         osmWriter.footer();
-        osmWriter.out.flush();
+        osmWriter.flush();
         return swriter.toString();
     }
 
@@ -244,11 +242,13 @@ public class OsmApi extends OsmConnection {
      * @return XML string
      */
     private String toXml(Changeset s) {
+        StringWriter swriter = new StringWriter();
+        OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(swriter), true, version);
         swriter.getBuffer().setLength(0);
         osmWriter.header();
         osmWriter.visit(s);
         osmWriter.footer();
-        osmWriter.out.flush();
+        osmWriter.flush();
         return swriter.toString();
     }
 

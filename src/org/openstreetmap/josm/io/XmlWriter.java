@@ -17,6 +17,10 @@ public class XmlWriter {
         this.out = out;
     }
 
+    public void flush() {
+        out.flush();
+    }
+
     /**
      * Encode the given string in XML1.0 format.
      * Optimized to fast pass strings that don't need encoding (normal case).
@@ -26,11 +30,13 @@ public class XmlWriter {
         for (int i = 0; i < unencoded.length(); ++i) {
             String encS = XmlWriter.encoding.get(unencoded.charAt(i));
             if (encS != null) {
-                if (buffer == null)
+                if (buffer == null) {
                     buffer = new StringBuilder(unencoded.substring(0,i));
+                }
                 buffer.append(encS);
-            } else if (buffer != null)
+            } else if (buffer != null) {
                 buffer.append(unencoded.charAt(i));
+            }
         }
         return (buffer == null) ? unencoded : buffer.toString();
     }

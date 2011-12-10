@@ -36,6 +36,19 @@ public class OsmServerWriter {
      */
     private Collection<IPrimitive> processed;
 
+    private static ArrayList<OsmServerWritePostprocessor> postprocessors;
+    public static void registerPostprocessor(OsmServerWritePostprocessor pp) {
+        if (postprocessors == null) {
+            postprocessors = new ArrayList<OsmServerWritePostprocessor>();
+        }
+        postprocessors.add(pp);
+    }
+    public static void unregisterPostprocessor(OsmServerWritePostprocessor pp) {
+        if (postprocessors != null) {
+            postprocessors.remove(pp);
+        }
+    }
+
     private OsmApi api = OsmApi.getOsmApi();
     private boolean canceled = false;
 
@@ -204,6 +217,7 @@ public class OsmServerWriter {
         } catch(OsmTransferException e) {
             throw e;
         } finally {
+            executePostprocessors(monitor);
             monitor.finishTask();
             api.setChangeset(null);
         }
@@ -215,7 +229,7 @@ public class OsmServerWriter {
         } else if (osm.isNew()) {
             api.createPrimitive(osm, progressMonitor);
         } else {
-            api.modifyPrimitive(osm,progressMonitor);
+            api.modifyPrimitive(osm, progressMonitor);
         }
     }
 
@@ -233,5 +247,16 @@ public class OsmServerWriter {
      */
     public Collection<IPrimitive> getProcessedPrimitives() {
         return processed;
+    }
+
+    /**
+     * Calls all registered upload postprocessors.
+     */
+    public void executePostprocessors(ProgressMonitor pm) {
+        if (postprocessors != null) {
+            for (OsmServerWritePostprocessor pp : postprocessors) {
+                pp.postprocessUploadedPrimitives(processed, pm);
+            }
+        }
     }
 }

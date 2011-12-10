@@ -56,7 +56,7 @@ public class CredentialDialog extends JDialog {
     }
 
     private boolean canceled;
-    private CredentialPanel pnlCredentials;
+    protected CredentialPanel pnlCredentials;
     String saveUsernameAndPasswordCheckboxText;
 
     public boolean isCanceled() {
@@ -134,7 +134,7 @@ public class CredentialDialog extends JDialog {
         return pnlCredentials.isSaveCredentials();
     }
 
-    private static class CredentialPanel extends JPanel {
+    protected static class CredentialPanel extends JPanel {
         protected JTextField tfUserName;
         protected JPasswordField tfPassword;
         protected JCheckBox cbSaveCredentials;

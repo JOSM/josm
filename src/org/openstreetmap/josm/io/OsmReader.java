@@ -49,6 +49,24 @@ public class OsmReader extends AbstractReader {
 
     protected XMLStreamReader parser;
 
+    /** Used by plugins to register themselves as data postprocessors. */
+    public static ArrayList<OsmServerReadPostprocessor> postprocessors;
+
+    /** register a new postprocessor */
+    public static void registerPostprocessor(OsmServerReadPostprocessor pp) {
+        if (postprocessors == null) {
+            postprocessors = new ArrayList<OsmServerReadPostprocessor>();
+        }
+        postprocessors.add(pp);
+    }
+
+    /** deregister a postprocessor previously registered with registerPostprocessor */
+    public static void deregisterPostprocessor(OsmServerReadPostprocessor pp) {
+        if (postprocessors != null) {
+            postprocessors.remove(pp);
+        }
+    }
+
     /**
      * constructor (for private and subclasses use only)
      *
@@ -70,9 +88,8 @@ public class OsmReader extends AbstractReader {
         while (true) {
             if (event == XMLStreamConstants.START_ELEMENT) {
                 parseRoot();
-            } else if (event == XMLStreamConstants.END_ELEMENT) {
+            } else if (event == XMLStreamConstants.END_ELEMENT)
                 return;
-            }
             if (parser.hasNext()) {
                 event = parser.next();
             } else {
@@ -81,7 +98,7 @@ public class OsmReader extends AbstractReader {
         }
         parser.close();
     }
-    
+
     protected void parseRoot() throws XMLStreamException {
         if (parser.getLocalName().equals("osm")) {
             parseOsm();
@@ -120,9 +137,8 @@ public class OsmReader extends AbstractReader {
                 } else {
                     parseUnknown();
                 }
-            } else if (event == XMLStreamConstants.END_ELEMENT) {
+            } else if (event == XMLStreamConstants.END_ELEMENT)
                 return;
-            }
         }
     }
 
@@ -171,9 +187,8 @@ public class OsmReader extends AbstractReader {
                 } else {
                     parseUnknown();
                 }
-            } else if (event == XMLStreamConstants.END_ELEMENT) {
+            } else if (event == XMLStreamConstants.END_ELEMENT)
                 return n;
-            }
         }
     }
 
@@ -300,9 +315,8 @@ public class OsmReader extends AbstractReader {
                     } else {
                         parseUnknown();
                     }
-                } else if (event == XMLStreamConstants.END_ELEMENT) {
+                } else if (event == XMLStreamConstants.END_ELEMENT)
                     return;
-                }
             }
         } else {
             jumpToEnd(false);
@@ -327,9 +341,8 @@ public class OsmReader extends AbstractReader {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
                 parseUnknown(false); /* no more warning for inner elements */
-            } else if (event == XMLStreamConstants.END_ELEMENT) {
+            } else if (event == XMLStreamConstants.END_ELEMENT)
                 return;
-            }
         }
     }
 
@@ -349,9 +362,8 @@ public class OsmReader extends AbstractReader {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
                 parseUnknown(printWarning);
-            } else if (event == XMLStreamConstants.END_ELEMENT) {
+            } else if (event == XMLStreamConstants.END_ELEMENT)
                 return;
-            }
         }
     }
 
@@ -554,6 +566,14 @@ public class OsmReader extends AbstractReader {
             progressMonitor.indeterminateSubTask(tr("Preparing data set..."));
             prepareDataSet();
             progressMonitor.worked(1);
+
+            // iterate over registered postprocessors and give them each a chance
+            // to modify the dataset we have just loaded.
+            if (postprocessors != null) {
+                for (OsmServerReadPostprocessor pp : postprocessors) {
+                    pp.postprocessDataSet(getDataSet(), progressMonitor);
+                }
+            }
             return getDataSet();
         } catch(IllegalDataException e) {
             throw e;
@@ -566,18 +586,17 @@ public class OsmReader extends AbstractReader {
             if (m.find()) {
                 msg = m.group(1);
             }
-            if (e.getLocation() != null) {
+            if (e.getLocation() != null)
                 throw new IllegalDataException(tr("Line {0} column {1}: ", e.getLocation().getLineNumber(), e.getLocation().getColumnNumber()) + msg, e);
-            } else {
+            else
                 throw new IllegalDataException(msg, e);
-            }
         } catch(Exception e) {
             throw new IllegalDataException(e);
         } finally {
             progressMonitor.finishTask();
         }
     }
-    
+
     /**
      * Parse the given input source and return the dataset.
      *

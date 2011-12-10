@@ -41,7 +41,10 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     private String version;
     private Changeset changeset;
 
-    public OsmWriter(PrintWriter out, boolean osmConform, String version) {
+    /**
+     * Do not call this directly. Use OsmWriterFactory instead.
+     */
+    protected OsmWriter(PrintWriter out, boolean osmConform, String version) {
         super(out);
         this.osmConform = osmConform;
         this.version = (version == null ? DEFAULT_API_VERSION : version);
@@ -67,13 +70,13 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         out.println("</osm>");
     }
 
-    private static final Comparator<OsmPrimitive> byIdComparator = new Comparator<OsmPrimitive>() {
+    protected static final Comparator<OsmPrimitive> byIdComparator = new Comparator<OsmPrimitive>() {
         @Override public int compare(OsmPrimitive o1, OsmPrimitive o2) {
             return (o1.getUniqueId()<o2.getUniqueId() ? -1 : (o1.getUniqueId()==o2.getUniqueId() ? 0 : 1));
         }
     };
 
-    private Collection<OsmPrimitive> sortById(Collection<? extends OsmPrimitive> primitives) {
+    protected Collection<OsmPrimitive> sortById(Collection<? extends OsmPrimitive> primitives) {
         List<OsmPrimitive> result = new ArrayList<OsmPrimitive>(primitives.size());
         result.addAll(primitives);
         Collections.sort(result, byIdComparator);
@@ -98,7 +101,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         }
     }
 
-    private boolean shouldWrite(OsmPrimitive osm) {
+    protected boolean shouldWrite(OsmPrimitive osm) {
         return !osm.isNewOrUndeleted() || !osm.isDeleted();
     }
 
@@ -184,13 +187,13 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         addTags(cs, "changeset", false); // also writes closing </changeset>
     }
 
-    private static final Comparator<Entry<String, String>> byKeyComparator = new Comparator<Entry<String,String>>() {
+    protected static final Comparator<Entry<String, String>> byKeyComparator = new Comparator<Entry<String,String>>() {
         @Override public int compare(Entry<String, String> o1, Entry<String, String> o2) {
             return o1.getKey().compareTo(o2.getKey());
         }
     };
 
-    private void addTags(Tagged osm, String tagname, boolean tagOpen) {
+    protected void addTags(Tagged osm, String tagname, boolean tagOpen) {
         if (osm.hasKeys()) {
             if (tagOpen) {
                 out.println(">");
@@ -215,7 +218,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
      * Add the common part as the form of the tag as well as the XML attributes
      * id, action, user, and visible.
      */
-    private void addCommon(IPrimitive osm, String tagname) {
+    protected void addCommon(IPrimitive osm, String tagname) {
         out.print("  <"+tagname);
         if (osm.getUniqueId() != 0) {
             out.print(" id='"+ osm.getUniqueId()+"'");
@@ -260,6 +263,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         out.close();
     }
 
+    @Override
     public void flush() {
         out.flush();
     }
