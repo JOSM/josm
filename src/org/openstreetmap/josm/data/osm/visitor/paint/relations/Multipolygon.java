@@ -335,6 +335,8 @@ public class Multipolygon {
     private final List<PolyData> innerPolygons = new ArrayList<PolyData>();
     private final List<PolyData> outerPolygons = new ArrayList<PolyData>();
     private final List<PolyData> combinedPolygons = new ArrayList<PolyData>();
+    
+    private boolean incomplete;
 
     public Multipolygon(Relation r) {
         load(r);
@@ -345,7 +347,9 @@ public class Multipolygon {
 
         // Fill inner and outer list with valid ways
         for (RelationMember m : r.getMembers()) {
-            if (m.getMember().isDrawable()) {
+            if (m.getMember().isIncomplete()) {
+                this.incomplete = true;
+            } else if (m.getMember().isDrawable()) {
                 if (m.isWay()) {
                     Way w = m.getWay();
 
@@ -369,6 +373,10 @@ public class Multipolygon {
         if (!outerPolygons.isEmpty()) {
             addInnerToOuters();
         }
+    }
+    
+    public final boolean isIncomplete() {
+        return incomplete;
     }
 
     private void createPolygons(List<Way> ways, List<PolyData> result) {
