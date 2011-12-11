@@ -5379,7 +5379,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <roles>
                 <role key="street" text="ways being part of street" requisite="required" type="way" />
-                <role key="address" text="addressed belonging to the street" requisite="optional" type="node,way,closedway" />
+                <role key="address" text="addresses belonging to the street" requisite="optional" type="node,way,closedway" />
                 <role key="house" text="houses belonging to the street" requisite="optional" type="node,way,closedway" />
                 <role key="associated" text="anything related to the street" requisite="optional" type="node,way,closedway" />
             </roles>
