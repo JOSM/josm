@@ -10,6 +10,8 @@
 				<element name="tag" type="tns:tag" />
 				<element name="collection" type="tns:collection" />
 				<element name="list" type="tns:list" />
+				<element name="lists" type="tns:lists" />
+				<element name="maps" type="tns:maps" />
 			</choice>
 		</sequence>
 		<attribute name="version" type="string" />
@@ -35,9 +37,11 @@
             <sequence>
 			    <element name="entry" type="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
             </sequence>
+            <!-- deprecated: remove mid 2012 -->
             <sequence>
 			    <element name="list" type="tns:slist" minOccurs="0" maxOccurs="unbounded"/>
             </sequence>
+            <!-- deprecated: remove mid 2012 -->
             <sequence>
 			    <element name="map" type="tns:map" minOccurs="0" maxOccurs="unbounded"/>
             </sequence>
@@ -45,6 +49,20 @@
 		<attribute name="key" type="string" use="required" />
 	</complexType>
 	
+	<complexType name="lists">
+        <sequence>
+		    <element name="list" type="tns:slist" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+		<attribute name="key" type="string" use="required" />
+	</complexType>
+
+	<complexType name="maps">
+        <sequence>
+		    <element name="map" type="tns:map" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+		<attribute name="key" type="string" use="required" />
+	</complexType>
+
 	<complexType name="slist">
         <sequence>
 		    <element name="entry" type="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
