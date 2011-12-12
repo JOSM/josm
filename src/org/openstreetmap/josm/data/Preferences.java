@@ -1343,7 +1343,9 @@ public class Preferences {
                 changed = putCollection(key, setting.getValue());
             }
             public void visit(ListListSetting setting) {
-                changed = putArray(key, (Collection) setting.getValue());
+                @SuppressWarnings("unchecked")
+                boolean changed = putArray(key, (Collection) setting.getValue());
+                this.changed = changed;
             }
             public void visit(MapListSetting setting) {
                 changed = putListOfStructs(key, setting.getValue());
@@ -1464,7 +1466,11 @@ public class Preferences {
                 if (parser.getLocalName().equals("tag")) {
                     properties.put(parser.getAttributeValue(null, "key"), parser.getAttributeValue(null, "value"));
                     jumpToEnd();
-                } else if (parser.getLocalName().equals("list") || parser.getLocalName().equals("collection")) {
+                } else if (parser.getLocalName().equals("list") ||
+                        parser.getLocalName().equals("collection") ||
+                        parser.getLocalName().equals("lists") ||
+                        parser.getLocalName().equals("maps")
+                ) {
                     parseToplevelList();
                 } else {
                     throwException("Unexpected element: "+parser.getLocalName());
@@ -1488,6 +1494,8 @@ public class Preferences {
 
     protected void parseToplevelList() throws XMLStreamException {
         String key = parser.getAttributeValue(null, "key");
+        String name = parser.getLocalName();
+
         List<String> entries = null;
         List<List<String>> lists = null;
         List<Map<String, String>> maps = null;
@@ -1519,12 +1527,18 @@ public class Preferences {
         }
         if (entries != null) {
             collectionProperties.put(key, Collections.unmodifiableList(entries));
-        }
-        if (lists != null) {
+        } else if (lists != null) {
             arrayProperties.put(key, Collections.unmodifiableList(lists));
-        }
-        if (maps != null) {
+        } else if (maps != null) {
             listOfStructsProperties.put(key, Collections.unmodifiableList(maps));
+        } else {
+            if (name.equals("lists")) {
+                arrayProperties.put(key, Collections.<List<String>>emptyList());
+            } else if (name.equals("maps")) {
+                listOfStructsProperties.put(key, Collections.<Map<String, String>>emptyList());
+            } else {
+                collectionProperties.put(key, Collections.<String>emptyList());
+            }
         }
     }
 
@@ -1622,7 +1636,7 @@ public class Preferences {
         }
 
         public void visit(ListListSetting setting) {
-            b.append("  <list key='").append(XmlWriter.encode(key)).append("'>\n");
+            b.append("  <lists key='").append(XmlWriter.encode(key)).append("'>\n");
             for (List<String> list : setting.getValue()) {
                 b.append("    <list>\n");
                 for (String s : list) {
@@ -1630,11 +1644,11 @@ public class Preferences {
                 }
                 b.append("    </list>\n");
             }
-            b.append("  </list>\n");
+            b.append("  </lists>\n");
         }
 
         public void visit(MapListSetting setting) {
-            b.append("  <list key='").append(XmlWriter.encode(key)).append("'>\n");
+            b.append("  <maps key='").append(XmlWriter.encode(key)).append("'>\n");
             for (Map<String, String> struct : setting.getValue()) {
                 b.append("    <map>\n");
                 for (Entry<String, String> e : struct.entrySet()) {
@@ -1642,7 +1656,7 @@ public class Preferences {
                 }
                 b.append("    </map>\n");
             }
-            b.append("  </list>\n");
+            b.append("  </maps>\n");
         }
     }
 
