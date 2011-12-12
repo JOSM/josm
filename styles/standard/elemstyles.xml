@@ -3545,6 +3545,12 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="place" v="isolated_dwelling"/>
+		<icon annotate="true" src="place/settlement/town.png"/>
+		<area colour="place#8de3cb"/>
+	</rule>
+
+	<rule>
 		<condition k="place" v="suburb"/>
 		<icon annotate="true" src="place/settlement/town.png"/>
 		<area colour="place#8de3cb"/>
