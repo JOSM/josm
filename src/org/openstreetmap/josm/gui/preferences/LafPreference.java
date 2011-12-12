@@ -82,23 +82,24 @@ public class LafPreference implements PreferenceSetting {
         showSplashScreen.setSelected(Main.pref.getBoolean("draw.splashscreen", true));
         panel.add(showSplashScreen, GBC.eop().insets(20, 0, 0, 0));
 
-        if(Main.pref.getBoolean("expert", false)) {
-            // Show ID in selection
-            showID.setToolTipText(tr("Show object ID in selection lists"));
-            showID.setSelected(Main.pref.getBoolean("osm-primitives.showid", false));
+        // Show ID in selection
+        showID.setToolTipText(tr("Show object ID in selection lists"));
+        showID.setSelected(Main.pref.getBoolean("osm-primitives.showid", false));
+
+        // Show localized names
+        showLocalizedName.setToolTipText(tr("Show localized name in selection lists, if available"));
+        showLocalizedName.setSelected(Main.pref.getBoolean("osm-primitives.localize-name", true));
+
+        drawHelperLine.setToolTipText(tr("Draw rubber-band helper line"));
+        drawHelperLine.setSelected(Main.pref.getBoolean("draw.helper-line", true));
+
+        modeless.setToolTipText(tr("Do not require to switch modes (potlatch style workflow)"));
+        modeless.setSelected(Main.pref.getBoolean("modeless", false));
+
+        if (Main.pref.getBoolean("expert", false)) {
             panel.add(showID, GBC.eop().insets(20, 0, 0, 0));
-
-            // Show localized names
-            showLocalizedName.setToolTipText(tr("Show localized name in selection lists, if available"));
-            showLocalizedName.setSelected(Main.pref.getBoolean("osm-primitives.localize-name", true));
             panel.add(showLocalizedName, GBC.eop().insets(20, 0, 0, 0));
-
-            drawHelperLine.setToolTipText(tr("Draw rubber-band helper line"));
-            drawHelperLine.setSelected(Main.pref.getBoolean("draw.helper-line", true));
             panel.add(drawHelperLine, GBC.eop().insets(20, 0, 0, 0));
-
-            modeless.setToolTipText(tr("Do not require to switch modes (potlatch style workflow)"));
-            modeless.setSelected(Main.pref.getBoolean("modeless", false));
             panel.add(modeless, GBC.eop().insets(20, 0, 0, 0));
         }
 
