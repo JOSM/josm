@@ -62,6 +62,8 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
         @Override
         protected void finish() {
             super.finish();
+            if (isFailed() || isCanceled() || downloadedData == null)
+                return; // user canceled download or error occurred
             progressMonitor.subTask(tr("Updating data"));
             UpdatePrimitivesTask task = new UpdatePrimitivesTask(targetLayer, downloadedData.allPrimitives());
             Main.worker.submit(task);
