@@ -573,44 +573,35 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         List<RelationMember> role = new ArrayList<RelationMember>();
         List<Integer> position = new ArrayList<Integer>();
         private String positionString = null;
-        void add(RelationMember r, Integer p)
-        {
+        void add(RelationMember r, Integer p) {
             role.add(r);
             position.add(p);
         }
-        String getPositionString()
-        {
-            if(positionString == null)
-            {
+        String getPositionString() {
+            if (positionString == null) {
                 Collections.sort(position);
                 positionString = String.valueOf(position.get(0));
                 int cnt = 0;
                 int last = position.get(0);
-                for(int i = 1; i < position.size(); ++i) {
+                for (int i = 1; i < position.size(); ++i) {
                     int cur = position.get(i);
-                    if(cur == last+1) {
+                    if (cur == last + 1) {
                         ++cnt;
                     } else if (cnt == 0) {
-                        positionString += ","+String.valueOf(cur);
+                        positionString += "," + String.valueOf(cur);
                     } else {
-                        if(cnt == 1) {
-                            positionString += ","+String.valueOf(last);
-                        } else if(cnt > 1) {
-                            positionString += "-"+String.valueOf(last);
-                        }
-                        positionString += "-"+String.valueOf(cur);
+                        positionString += "-" + String.valueOf(last);
+                        positionString += "," + String.valueOf(cur);
                         cnt = 0;
                     }
                     last = cur;
                 }
-                if(cnt == 1) {
-                    positionString += ","+String.valueOf(last);
-                } else if(cnt > 1) {
-                    positionString += "-"+String.valueOf(last);
+                if (cnt >= 1) {
+                    positionString += "-" + String.valueOf(last);
                 }
             }
-            if(positionString.length() > 20) {
-                positionString = positionString.substring(0,17)+"...";
+            if (positionString.length() > 20) {
+                positionString = positionString.substring(0, 17) + "...";
             }
             return positionString;
         }
