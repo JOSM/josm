@@ -60,31 +60,33 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
         if (action instanceof Destroyable) {
             ((Destroyable) action).destroy();
         }
-        action.removePropertyChangeListener(this);
+        if (action != null) {
+            action.removePropertyChangeListener(this);
+        }
     }
     
     @Override
     public void applyButtonHiddenPreferences() {
-            String actionName = (String) getAction().getValue(AbstractAction.NAME);
-            boolean hiddenFlag =
-                    Main.pref.getBoolean(actionName + ".itbutton_hidden", false);
-            setVisible(!hiddenFlag);   
+        String actionName = (String) getSafeActionValue(AbstractAction.NAME);
+        boolean hiddenFlag = Main.pref.getBoolean(actionName + ".itbutton_hidden", false);
+        setVisible(!hiddenFlag);   
     }
 
     @Override
     public void setButtonHidden(boolean b) {
-            String actionName = (String) getAction().getValue(AbstractAction.NAME);
-            setVisible(!b);
-            if (listener!=null) { // if someone wants to know about changes of visibility
-                if (!b) listener.buttonShown(); else listener.buttonHidden();
-            }
-            Main.pref.put(actionName + ".itbutton_hidden", b);
-            
+        String actionName = (String) getSafeActionValue(AbstractAction.NAME);
+        setVisible(!b);
+        if (listener!=null) { // if someone wants to know about changes of visibility
+            if (!b) listener.buttonShown(); else listener.buttonHidden();
+        }
+        Main.pref.put(actionName + ".itbutton_hidden", b);
     }
+    
     @Override
     public void showButton() {
         setButtonHidden(false);
     }
+    
     @Override
     public void hideButton() {
         setButtonHidden(true);
@@ -92,12 +94,12 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
 
     @Override
     public String getActionName() {
-        return (String) getAction().getValue(Action.NAME);
+        return (String) getSafeActionValue(Action.NAME);
     }
 
     @Override
     public Icon getIcon() {
-        return (Icon) getAction().getValue(Action.SMALL_ICON);
+        return (Icon) getSafeActionValue(Action.SMALL_ICON);
     }
 
     @Override
@@ -110,5 +112,8 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
         listener = l;
     }
 
- 
+    protected final Object getSafeActionValue(String key) {
+        // Mac OS X Aqua L&F can call accessors from constructor, so getAction() can be null in those cases
+        return getAction() != null ? getAction().getValue(key) : null;
+    }
 }
