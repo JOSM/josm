@@ -279,9 +279,16 @@ public class Multipolygon {
         
         private void resetNodes() {
             if (!nodes.isEmpty()) {
-                DataSet ds = nodes.get(0).getDataSet();
+                DataSet ds = null;
+                // Find DataSet (can be null for several nodes when undoing nodes creation, see #7162)
+                for (Iterator<Node> it = nodes.iterator(); it.hasNext() && ds == null; ) {
+                    ds = it.next().getDataSet();
+                }
                 nodes.clear();
-                if (wayIds.size() == 1) {
+                if (ds == null) {
+                    // DataSet still not found. This should not happen, but a warning does no harm
+                    System.err.println("Warning: DataSet not found while resetting nodes in Multipolygon. This should not happen, you may report it to JOSM developers.");
+                } else if (wayIds.size() == 1) {
                     Way w = (Way) ds.getPrimitiveById(wayIds.iterator().next(), OsmPrimitiveType.WAY);
                     nodes.addAll(w.getNodes());
                 } else {
