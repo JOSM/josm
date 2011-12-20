@@ -69,6 +69,7 @@ import org.openstreetmap.josm.actions.ReverseWayAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.SelectAllAction;
+import org.openstreetmap.josm.actions.SessionLoadAction;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.actions.SimplifyWayAction;
 import org.openstreetmap.josm.actions.SplitWayAction;
@@ -97,6 +98,7 @@ import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.gui.io.RecentlyOpenedFilesMenu;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSearchAction;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -116,6 +118,7 @@ public class MainMenu extends JMenuBar {
     public final OpenLocationAction openLocation = new OpenLocationAction();
     public final JosmAction save = new SaveAction();
     public final JosmAction saveAs = new SaveAsAction();
+    public final JosmAction sessionLoad = new SessionLoadAction();
     public final JosmAction gpxExport = new GpxExportAction();
     public final DownloadAction download = new DownloadAction();
     public final DownloadPrimitiveAction downloadPrimitive = new DownloadPrimitiveAction();
@@ -189,6 +192,7 @@ public class MainMenu extends JMenuBar {
     public final JosmAction statusreport = new ShowStatusReportAction();
 
     public final JMenu fileMenu = addMenu(marktr("File"), KeyEvent.VK_F, 0, ht("/Menu/File"));
+    public final JMenu sessionMenu = new JMenu(tr("Session")); // submenu of the file menu
     public final JMenu editMenu = addMenu(marktr("Edit"), KeyEvent.VK_E, 1, ht("/Menu/Edit"));
     public final JMenu viewMenu = addMenu(marktr("View"), KeyEvent.VK_V, 2, ht("/Menu/View"));
     public final JMenu toolsMenu = addMenu(marktr("Tools"), KeyEvent.VK_T, 3, ht("/Menu/Tools"));
@@ -205,6 +209,7 @@ public class MainMenu extends JMenuBar {
 
     public JMenu audioMenu = null;
     public final JMenu helpMenu = addMenu(marktr("Help"), KeyEvent.VK_H, 7, ht("/Menu/Help"));
+
     public final int defaultMenuPos = 7;
 
     public final JosmAction moveUpAction = new MoveAction(MoveAction.Direction.UP);
@@ -356,6 +361,12 @@ public class MainMenu extends JMenuBar {
         fileMenu.addSeparator();
         add(fileMenu, save);
         add(fileMenu, saveAs);
+        if (Main.pref.getBoolean("session")) {
+            sessionMenu.setToolTipText(tr("Save and load the current session (list of layers, etc.)"));
+            sessionMenu.setIcon(ImageProvider.get("session"));
+            add(sessionMenu, sessionLoad);
+            fileMenu.add(sessionMenu);
+        }
         add(fileMenu, gpxExport);
         fileMenu.addSeparator();
         add(fileMenu, download);

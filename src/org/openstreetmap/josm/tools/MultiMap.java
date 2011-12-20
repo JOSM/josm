@@ -1,9 +1,11 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.tools;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -12,7 +14,7 @@ import java.util.Set;
  * MultiMap - maps keys to multiple values
  *
  * Corresponds to Google guava LinkedHashMultimap and Apache Collections MultiValueMap
- * but it is an independent (simplistic) implementation.
+ * but it is an independent (simple) implementation.
  *
  */
 public class MultiMap<A, B> {
@@ -114,5 +116,33 @@ public class MultiMap<A, B> {
      */
     public Collection<LinkedHashSet<B>> values() {
         return map.values();
+    }
+
+    /**
+     * Removes a cerain key=value mapping
+     *
+     * @return true, if something was removed
+     */
+    public boolean remove(A key, B value) {
+        Set<B> values = get(key);
+        if (values != null) {
+            return values.remove(value);
+        }
+        return false;
+    }
+
+    /**
+     * Removes all mappings for a certain key
+     */
+    public LinkedHashSet<B> remove(A key) {
+        return map.remove(key);
+    }
+
+    public String toString() {
+        List<String> entries = new ArrayList<String>(map.size());
+        for (A key : map.keySet()) {
+            entries.add(key + "->{" + Utils.join(",", map.get(key)) + "}");
+        }
+        return "(" + Utils.join(",", entries) + ")";
     }
 }

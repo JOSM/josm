@@ -21,6 +21,9 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public class OsmImporter extends FileImporter {
 
+    private OsmDataLayer layer;
+    private Runnable postLayerTask;
+
     public OsmImporter() {
         super(new ExtensionFileFilter("osm,xml", "osm", tr("OSM Server Files") + " (*.osm *.xml)"));
     }
@@ -29,7 +32,8 @@ public class OsmImporter extends FileImporter {
         super(filter);
     }
 
-    @Override public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
+    @Override
+    public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         try {
             FileInputStream in = new FileInputStream(file);
             importData(in, file);
@@ -40,25 +44,13 @@ public class OsmImporter extends FileImporter {
     }
 
     protected void importData(InputStream in, final File associatedFile) throws IllegalDataException {
-        final DataSet dataSet = OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
-        final OsmDataLayer layer = new OsmDataLayer(dataSet, associatedFile.getName(), associatedFile);
-        addDataLayer(dataSet, layer, associatedFile.getPath()); 
-    }
-        
-    protected void addDataLayer(final DataSet dataSet, final OsmDataLayer layer, final String filePath) { 
+        loadLayer(in, associatedFile, associatedFile.getName(), NullProgressMonitor.INSTANCE);
         // FIXME: remove UI stuff from IO subsystem
-        //
         Runnable uiStuff = new Runnable() {
             @Override
             public void run() {
-                if (dataSet.allPrimitives().isEmpty()) {
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("No data found in file {0}.", filePath),
-                            tr("Open OSM file"),
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
                 Main.main.addLayer(layer);
+                postLayerTask.run();
                 layer.onPostLoadFromFile();
             }
         };
@@ -67,5 +59,42 @@ public class OsmImporter extends FileImporter {
         } else {
             SwingUtilities.invokeLater(uiStuff);
         }
+    }
+
+    /**
+     * Load osm data layer from InputStream.
+     * associatedFile can be null if the stream does not come from a file.
+     */
+    public void loadLayer(InputStream in, final File associatedFile, final String layerName, ProgressMonitor progressMonitor) throws IllegalDataException {
+        final DataSet dataSet = OsmReader.parseDataSet(in, progressMonitor);
+        String name = associatedFile == null ? OsmDataLayer.createNewName() : associatedFile.getName();
+        layer = new OsmDataLayer(dataSet, layerName, associatedFile);
+        postLayerTask = new Runnable() {
+            @Override
+            public void run() {
+                if (dataSet.allPrimitives().isEmpty()) {
+                    String msg;
+                    if (associatedFile == null) {
+                        msg = tr("No data found for layer ''{0}''.", layerName);
+                    } else {
+                        msg = tr("No data found in file ''{0}''.", associatedFile.getPath());
+                    }
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            msg,
+                            tr("Open OSM file"),
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+                layer.onPostLoadFromFile();
+            }
+        };
+    }
+
+    public OsmDataLayer getLayer() {
+        return layer;
+    }
+
+    public Runnable getPostLayerTask() {
+        return postLayerTask;
     }
 }
