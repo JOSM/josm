@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.ArrayList;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
@@ -119,6 +120,21 @@ public class TestError {
     public Collection<? extends OsmPrimitive> getPrimitives() {
         return primitives;
     }
+
+    /**
+     * Gets the list of primitives affected by this error and are selectable
+     * @return the list of selectable primitives affected by this error
+     */
+    public Collection<? extends OsmPrimitive> getSelectablePrimitives() {
+	List<OsmPrimitive> selectablePrimitives = new ArrayList<OsmPrimitive>(primitives.size());
+	for (OsmPrimitive o : primitives) {
+	    if (o.isSelectable()) {
+		selectablePrimitives.add(o);
+	    }
+	}
+        return selectablePrimitives;
+    }
+
 
     /**
      * Sets the list of primitives affected by this error

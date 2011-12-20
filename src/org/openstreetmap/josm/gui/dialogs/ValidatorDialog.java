@@ -328,7 +328,7 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
                 Object nodeInfo = childNode.getUserObject();
                 if (nodeInfo instanceof TestError) {
                     TestError error = (TestError) nodeInfo;
-                    sel.addAll(error.getPrimitives());
+                    sel.addAll(error.getSelectablePrimitives());
                 }
             }
         }
