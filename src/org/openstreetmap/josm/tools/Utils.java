@@ -18,7 +18,9 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Basic utils, that can be useful in different parts of the program.
@@ -61,7 +63,7 @@ public class Utils {
 	public static <T> Collection<T> filter(Collection<? extends T> collection, Predicate<? super T> predicate) {
 		return new FilteredCollection<T>(collection, predicate);
 	}
-    
+
     /**
      * Filter a collection by (sub)class.
      * This is an efficient read-only implementation.
@@ -232,7 +234,7 @@ public class Utils {
 
     /**
      * <p>Utility method for closing an input stream.</p>
-     * 
+     *
      * @param is the input stream. May be null.
      */
     public static void close(InputStream is){
@@ -246,7 +248,7 @@ public class Utils {
 
     /**
      * <p>Utility method for closing an output stream.</p>
-     * 
+     *
      * @param os the output stream. May be null.
      */
     public static void close(OutputStream os){
@@ -260,7 +262,7 @@ public class Utils {
 
     /**
      * <p>Utility method for closing a reader.</p>
-     * 
+     *
      * @param reader the reader. May be null.
      */
     public static void close(Reader reader){
@@ -353,5 +355,44 @@ public class Utils {
             hexChars[j*2 + 1] = hexArray[v%16];
         }
         return new String(hexChars);
+    }
+
+    /**
+     * Topological sort.
+     *
+     * @param dependencies contains mappings (key -> value). In the final list of sorted objects, the key will come
+     * after the value. (In other words, the key depends on the value(s).)
+     * There must not be cyclic dependencies.
+     * @return the list of sorted objects
+     */
+    public static <T> List<T> topologicalSort(final MultiMap<T,T> dependencies) {
+        MultiMap<T,T> deps = new MultiMap<T,T>();
+        for (T key : dependencies.keySet()) {
+            deps.putVoid(key);
+            for (T val : dependencies.get(key)) {
+                deps.putVoid(val);
+                deps.put(key, val);
+            }
+        }
+
+        int size = deps.size();
+        List<T> sorted = new ArrayList<T>();
+        for (int i=0; i<size; ++i) {
+            T parentless = null;
+            for (T key : deps.keySet()) {
+                if (deps.get(key).size() == 0) {
+                    parentless = key;
+                    break;
+                }
+            }
+            if (parentless == null) throw new RuntimeException();
+            sorted.add(parentless);
+            deps.remove(parentless);
+            for (T key : deps.keySet()) {
+                deps.remove(key, parentless);
+            }
+        }
+        if (sorted.size() != size) throw new RuntimeException();
+        return sorted;
     }
 }
