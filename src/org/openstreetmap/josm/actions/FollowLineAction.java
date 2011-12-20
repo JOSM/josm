@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
@@ -71,6 +72,8 @@ public class FollowLineAction extends JosmAction {
         if (last == null)
             return;
         Way follower = selectedLines.iterator().next();
+        if (follower.isClosed())    /* Don't loop until OOM */
+            return;
         Node prev = follower.getNode(1);
         boolean reversed = true;
         if (follower.lastNode().equals(last)) {
@@ -80,6 +83,7 @@ public class FollowLineAction extends JosmAction {
         List<OsmPrimitive> referrers = last.getReferrers();
         if (referrers.size() < 2) return; // There's nothing to follow
         
+        Node newPoint = null;        
         Iterator<OsmPrimitive> i = referrers.iterator();
         while (i.hasNext()) {
             OsmPrimitive referrer = i.next();
@@ -90,43 +94,35 @@ public class FollowLineAction extends JosmAction {
             if (toFollow.equals(follower)) {
                 continue;
             }
-            List<Node> points = toFollow.getNodes();
-            int indexOfLast = points.indexOf(last);
-            int indexOfPrev = points.indexOf(prev);
-            if ((indexOfLast == -1) || (indexOfPrev == -1)) { // Both points must belong to both lines
+            Set<Node> points = toFollow.getNeighbours(last);
+            if (!points.remove(prev) || (points.size() == 0))
                 continue;
-            }
-            if (Math.abs(indexOfPrev - indexOfLast) != 1) {  // ...and be consecutive
-                continue;
-            }
-            Node newPoint = null;
-            if (indexOfPrev == (indexOfLast - 1)) {
-                if ((indexOfLast + 1) < points.size()) {
-                    newPoint = points.get(indexOfLast + 1);
-                }
-            } else {
-                if ((indexOfLast - 1) >= 0) {
-                    newPoint = points.get(indexOfLast - 1);
-                }
-            }
-            if (newPoint != null) {
-                Way newFollower = new Way(follower);
-                if (reversed) {
-                    newFollower.addNode(0, newPoint);
-                } else {
-                    newFollower.addNode(newPoint);
-                }
-                Main.main.undoRedo.add(new ChangeCommand(follower, newFollower));
-                osmLayer.data.clearSelection();
-                osmLayer.data.addSelected(newFollower);
-                osmLayer.data.addSelected(newPoint);
-                // "viewport following" mode for tracing long features 
-                // from aerial imagery or GPS tracks. 
-                if (Main.map.mapView.viewportFollowing) {
-                    Main.map.mapView.smoothScrollTo(newPoint.getEastNorth());
-                };
+            if (points.size() > 1)    // Ambiguous junction?
                 return;
+
+            Node newPointCandidate = points.iterator().next();
+
+            if ((newPoint != null) && (newPoint != newPointCandidate))
+                return;         // Ambiguous junction, force to select next
+
+            newPoint = newPointCandidate;
+        }
+        if (newPoint != null) {
+            Way newFollower = new Way(follower);
+            if (reversed) {
+                newFollower.addNode(0, newPoint);
+            } else {
+                newFollower.addNode(newPoint);
             }
+            Main.main.undoRedo.add(new ChangeCommand(follower, newFollower));
+            osmLayer.data.clearSelection();
+            osmLayer.data.addSelected(newFollower);
+            osmLayer.data.addSelected(newPoint);
+            // "viewport following" mode for tracing long features 
+            // from aerial imagery or GPS tracks. 
+            if (Main.map.mapView.viewportFollowing) {
+                Main.map.mapView.smoothScrollTo(newPoint.getEastNorth());
+            };
         }
     }
 }

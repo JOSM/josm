@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -136,6 +137,30 @@ public final class Way extends OsmPrimitive implements IWay {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Return nodes adjacent to <code>node</code>
+     *
+     * @param node the node. May be null.
+     * @return Set of nodes adjacent to <code>node</code>
+     * @since 4666
+     */
+    public Set<Node> getNeighbours(Node node) {
+        HashSet<Node> neigh = new HashSet<Node>();
+
+        if (node == null) return neigh;
+
+        Node[] nodes = this.nodes;
+        for (int i=0; i<nodes.length; i++) {
+            if (nodes[i].equals(node)) {
+                if (i > 0)
+                    neigh.add(nodes[i-1]);
+                if (i < nodes.length-1)
+                    neigh.add(nodes[i+1]);
+            }
+        }
+        return neigh;
     }
 
     public List<Pair<Node,Node>> getNodePairs(boolean sort) {
