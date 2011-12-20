@@ -31,7 +31,7 @@ import org.openstreetmap.josm.Main;
  */
 public class I18n {
     private enum PluralMode { MODE_NOTONE, MODE_NONE, MODE_GREATERONE,
-        MODE_CS, MODE_AR, MODE_PL/*, MODE_RO*/, MODE_RU, MODE_SK/*, MODE_SL*/}
+        MODE_CS/*, MODE_AR*/, MODE_PL/*, MODE_RO*/, MODE_RU, MODE_SK/*, MODE_SL*/}
     private static PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */
     private static String loadedCode = "en";
 
@@ -339,7 +339,7 @@ public class I18n {
 
     public static void init()
     {
-        languages.put("ar", PluralMode.MODE_AR);
+        //languages.put("ar", PluralMode.MODE_AR);
         languages.put("bg", PluralMode.MODE_NOTONE);
         languages.put("cs", PluralMode.MODE_CS);
         languages.put("da", PluralMode.MODE_NOTONE);
@@ -353,9 +353,9 @@ public class I18n {
         languages.put("fi", PluralMode.MODE_NOTONE);
         languages.put("fr", PluralMode.MODE_GREATERONE);
         languages.put("gl", PluralMode.MODE_NOTONE);
-        languages.put("he", PluralMode.MODE_NOTONE);
+        //languages.put("he", PluralMode.MODE_NOTONE);
         languages.put("id", PluralMode.MODE_NONE);
-        languages.put("is", PluralMode.MODE_NOTONE);
+        //languages.put("is", PluralMode.MODE_NOTONE);
         languages.put("it", PluralMode.MODE_NOTONE);
         languages.put("ja", PluralMode.MODE_NONE);
         languages.put("nb", PluralMode.MODE_NOTONE);
@@ -683,9 +683,9 @@ public class I18n {
             return ((n > 1) ? 1 : 0);
         case MODE_CS:
             return ((n == 1) ? 0 : (((n >= 2) && (n <= 4)) ? 1 : 2));
-        case MODE_AR:
-            return ((n == 0) ? 0 : ((n == 1) ? 1 : ((n == 2) ? 2 : ((((n % 100) >= 3)
-                    && ((n % 100) <= 10)) ? 3 : ((((n % 100) >= 11) && ((n % 100) <= 99)) ? 4 : 5)))));
+        //case MODE_AR:
+        //    return ((n == 0) ? 0 : ((n == 1) ? 1 : ((n == 2) ? 2 : ((((n % 100) >= 3)
+        //            && ((n % 100) <= 10)) ? 3 : ((((n % 100) >= 11) && ((n % 100) <= 99)) ? 4 : 5)))));
         case MODE_PL:
             return ((n == 1) ? 0 : (((((n % 10) >= 2) && ((n % 10) <= 4))
                     && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2));

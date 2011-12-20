@@ -32,6 +32,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
@@ -407,7 +408,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
             }
         }));
     }
-   
+
         class ListAllButtonsAction extends AbstractAction {
 
         private JButton button;
@@ -453,11 +454,11 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         }
         toolBarToggle.repaint();
         for (IconToggleButton b : allMapModeButtons) {
-            b.applyButtonHiddenPreferences();
+             b.applyButtonHiddenPreferences();
         }
         toolBarActions.repaint();
     }
-
+    
     /**
      * Replies the instance of a toggle dialog of type <code>type</code> managed by this
      * map frame
@@ -534,7 +535,16 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         }
         // invalidate repaint cache
         Main.map.mapView.preferenceChanged(null);
+        
+        // After all listeners notice new layer, some buttons will be disabled/enabled 
+        // and possibly need to be hidden/shown.
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                validateToolBarsVisibility();
+            }
+        });
     }
+    
 
     private MapMode getLastMapMode(Layer newLayer) {
         MapMode mode = lastMapMode.get(newLayer);
