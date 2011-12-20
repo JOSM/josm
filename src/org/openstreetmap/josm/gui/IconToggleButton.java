@@ -24,6 +24,7 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
 
     public boolean groupbutton;
     private ShowHideButtonListener listener;
+    private boolean hideIfDisabled=false;
 
     /**
      * Construct the toggle button with the given action.
@@ -65,21 +66,41 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
         }
     }
     
+    String getPreferenceKey() {
+        String s = (String) getSafeActionValue("toolbar");
+        if (s==null) {
+            if (getAction()!=null) s=getAction().getClass().getName();
+        }
+        return "sidetoolbar.hidden."+s;
+        
+    }
+    
     @Override
     public void applyButtonHiddenPreferences() {
-        String actionName = (String) getSafeActionValue(AbstractAction.NAME);
-        boolean hiddenFlag = Main.pref.getBoolean(actionName + ".itbutton_hidden", false);
-        setVisible(!hiddenFlag);   
+        boolean alwaysHideDisabled = Main.pref.getBoolean("sidetoolbar.hideDisabledButtons", false);
+        boolean hiddenFlag = Main.pref.getBoolean(getPreferenceKey(), false);
+        if (!isEnabled() && (hideIfDisabled || alwaysHideDisabled)) 
+                setVisible(false);  // hide because of disabled button 
+            else 
+                setVisible( !hiddenFlag ); // show or hide, do what preferences say  
     }
 
     @Override
     public void setButtonHidden(boolean b) {
-        String actionName = (String) getSafeActionValue(AbstractAction.NAME);
         setVisible(!b);
         if (listener!=null) { // if someone wants to know about changes of visibility
             if (!b) listener.buttonShown(); else listener.buttonHidden();
         }
-        Main.pref.put(actionName + ".itbutton_hidden", b);
+        Main.pref.put(getPreferenceKey(), b);
+    }
+    
+    /* 
+     * This fuction should be called for plugins that want to enable auto-hiding
+     * custom buttons when they are disabled (because of incorrect layer, for example)
+     */
+    public void setAutoHideDisabledButton(boolean b) {
+        hideIfDisabled=b;
+        if (b && !isEnabled()) setVisible(false);
     }
     
     @Override
