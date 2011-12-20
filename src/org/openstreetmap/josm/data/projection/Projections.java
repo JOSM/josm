@@ -26,6 +26,7 @@ public class Projections {
                 new GaussKrueger(),
                 new LambertEST(),
                 new Lambert(),
+                new Lambert93(),
                 new LambertCC9Zones(),
                 new UTM_France_DOM(),
                 new TransverseMercatorLV(),
