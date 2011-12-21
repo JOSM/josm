@@ -70,6 +70,7 @@ import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.SelectAllAction;
 import org.openstreetmap.josm.actions.SessionLoadAction;
+import org.openstreetmap.josm.actions.SessionSaveAsAction;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.actions.SimplifyWayAction;
 import org.openstreetmap.josm.actions.SplitWayAction;
@@ -119,6 +120,7 @@ public class MainMenu extends JMenuBar {
     public final JosmAction save = new SaveAction();
     public final JosmAction saveAs = new SaveAsAction();
     public final JosmAction sessionLoad = new SessionLoadAction();
+    public final JosmAction sessionSaveAs = new SessionSaveAsAction();
     public final JosmAction gpxExport = new GpxExportAction();
     public final DownloadAction download = new DownloadAction();
     public final DownloadPrimitiveAction downloadPrimitive = new DownloadPrimitiveAction();
@@ -364,6 +366,7 @@ public class MainMenu extends JMenuBar {
         if (Main.pref.getBoolean("session")) {
             sessionMenu.setToolTipText(tr("Save and load the current session (list of layers, etc.)"));
             sessionMenu.setIcon(ImageProvider.get("session"));
+            add(sessionMenu, sessionSaveAs);
             add(sessionMenu, sessionLoad);
             fileMenu.add(sessionMenu);
         }
