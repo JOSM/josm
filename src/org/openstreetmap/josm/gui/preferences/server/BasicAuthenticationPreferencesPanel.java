@@ -22,6 +22,7 @@ import org.openstreetmap.josm.io.auth.CredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.io.auth.JosmPreferencesCredentialAgent;
+import org.openstreetmap.josm.io.OsmApi;
 
 /**
  * The preferences panel for parameters necessary for the Basic Authentication
@@ -93,7 +94,7 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
         try {
             decorationPanel.removeAll();
             decorationPanel.add(cm.getPreferencesDecorationPanel(), BorderLayout.CENTER);
-            PasswordAuthentication pa = cm.lookup(RequestorType.SERVER);
+            PasswordAuthentication pa = cm.lookup(RequestorType.SERVER, OsmApi.getOsmApi().getHost());
             if (pa == null) {
                 tfOsmUserName.setText("");
                 tfOsmPassword.setText("");
@@ -117,7 +118,7 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
                     tfOsmUserName.getText().trim(),
                     tfOsmPassword.getPassword()
             );
-            cm.store(RequestorType.SERVER, pa);
+            cm.store(RequestorType.SERVER, OsmApi.getOsmApi().getHost(), pa);
         } catch(CredentialsAgentException e) {
             e.printStackTrace();
             System.err.println(tr("Warning: failed to save OSM credentials to credential manager."));

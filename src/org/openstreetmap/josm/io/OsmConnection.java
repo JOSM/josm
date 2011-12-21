@@ -76,7 +76,8 @@ public class OsmConnection {
         String token;
         try {
             synchronized (CredentialsManager.getInstance()) {
-                response = CredentialsManager.getInstance().getCredentials(RequestorType.SERVER, false /* don't know yet whether the credentials will succeed */);
+                response = CredentialsManager.getInstance().getCredentials(RequestorType.SERVER,
+                con.getURL().getHost(), false /* don't know yet whether the credentials will succeed */);
             }
         } catch (CredentialsAgentException e) {
             throw new OsmTransferException(e);

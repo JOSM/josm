@@ -324,7 +324,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         // the credentials manager
         CredentialsAgent cm = CredentialsManager.getInstance();
         try {
-            PasswordAuthentication pa = cm.lookup(RequestorType.PROXY);
+            PasswordAuthentication pa = cm.lookup(RequestorType.PROXY, tfProxyHttpHost.getText());
             if (pa == null) {
                 tfProxyHttpUser.setText("");
                 tfProxyHttpPassword.setText("");
@@ -403,7 +403,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
                     tfProxyHttpUser.getText().trim(),
                     tfProxyHttpPassword.getPassword()
             );
-            cm.store(RequestorType.PROXY, pa);
+            cm.store(RequestorType.PROXY, tfProxyHttpHost.getText(), pa);
         } catch(CredentialsAgentException e) {
             e.printStackTrace();
         }

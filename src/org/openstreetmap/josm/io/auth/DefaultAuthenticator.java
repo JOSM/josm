@@ -48,7 +48,7 @@ public  class DefaultAuthenticator extends Authenticator {
                     return null;
             }
             boolean tried = credentialsTried.get(getRequestorType()) != null;
-            CredentialsAgentResponse response = CredentialsManager.getInstance().getCredentials(getRequestorType(), tried);
+            CredentialsAgentResponse response = CredentialsManager.getInstance().getCredentials(getRequestorType(), getRequestingHost(), tried);
             if (response == null || response.isCanceled())
                 return null;
             credentialsTried.put(getRequestorType(), true);
