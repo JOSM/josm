@@ -96,10 +96,10 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
         lbl.setToolTipText(layer.getToolTipText());
 
         JLabel lblData = new JLabel(tr("Data:"));
-        link = new JRadioButton(tr("local file"));
+        /* I18n: Refer to a OSM data file in session file */ link = new JRadioButton(tr("local file"));
         link.putClientProperty("actionname", "link");
         link.setToolTipText(tr("Link to a OSM data file on your local disk."));
-        include = new JRadioButton(tr("include"));
+        /* I18n: Include OSM data in session file */ include = new JRadioButton(tr("include"));
         include.setToolTipText(tr("Include OSM data in the .joz session file."));
         include.putClientProperty("actionname", "include");
         ButtonGroup group = new ButtonGroup();
