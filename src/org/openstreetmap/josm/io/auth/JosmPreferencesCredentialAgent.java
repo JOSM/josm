@@ -13,6 +13,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.io.OsmApi;
 
 /**
  * This is the default credentials agent in JOSM. It keeps username and password for both
@@ -25,15 +26,20 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
      * @see CredentialsAgent#lookup(RequestorType)
      */
     @Override
-    public PasswordAuthentication lookup(RequestorType requestorType) throws CredentialsAgentException{
+    public PasswordAuthentication lookup(RequestorType requestorType, String host) throws CredentialsAgentException{
         if (requestorType == null)
             return null;
         String user;
         String password;
         switch(requestorType) {
         case SERVER:
-            user = Main.pref.get("osm-server.username", null);
-            password = Main.pref.get("osm-server.password", null);
+            if(OsmApi.getOsmApi().getHost().equals(host)) {
+                user = Main.pref.get("osm-server.username", null);
+                password = Main.pref.get("osm-server.password", null);
+            } else {
+                user = null;
+                password = null;
+            }
             if (user == null)
                 return null;
             return new PasswordAuthentication(user, password == null ? new char[0] : password.toCharArray());
@@ -51,16 +57,18 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
      * @see CredentialsAgent#store(RequestorType, PasswordAuthentication)
      */
     @Override
-    public void store(RequestorType requestorType, PasswordAuthentication credentials) throws CredentialsAgentException {
+    public void store(RequestorType requestorType, String host, PasswordAuthentication credentials) throws CredentialsAgentException {
         if (requestorType == null)
             return;
         switch(requestorType) {
         case SERVER:
-            Main.pref.put("osm-server.username", credentials.getUserName());
-            if (credentials.getPassword() == null) {
-                Main.pref.put("osm-server.password", null);
-            } else {
-                Main.pref.put("osm-server.password", String.valueOf(credentials.getPassword()));
+            if(OsmApi.getOsmApi().getHost().equals(host)) {
+                Main.pref.put("osm-server.username", credentials.getUserName());
+                if (credentials.getPassword() == null) {
+                    Main.pref.put("osm-server.password", null);
+                } else {
+                    Main.pref.put("osm-server.password", String.valueOf(credentials.getPassword()));
+                }
             }
             break;
         case PROXY:

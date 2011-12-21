@@ -41,14 +41,18 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class CredentialDialog extends JDialog {
 
-    static public CredentialDialog getOsmApiCredentialDialog(String username, String password, String saveUsernameAndPasswordCheckboxText) {
+    static public CredentialDialog getOsmApiCredentialDialog(String username, String password, String host, String saveUsernameAndPasswordCheckboxText) {
         CredentialDialog dialog = new CredentialDialog(saveUsernameAndPasswordCheckboxText);
-        dialog.prepareForOsmApiCredentials(username, password);
+        if(OsmApi.getOsmApi().getHost().equals(host)) {
+            dialog.prepareForOsmApiCredentials(username, password);
+        } else {
+            dialog.prepareForOtherHostCredentials(username, password, host);
+        }
         dialog.pack();
         return dialog;
     }
 
-    static public CredentialDialog getHttpProxyCredentialDialog(String username, String password, String saveUsernameAndPasswordCheckboxText) {
+    static public CredentialDialog getHttpProxyCredentialDialog(String username, String password, String host, String saveUsernameAndPasswordCheckboxText) {
         CredentialDialog dialog = new CredentialDialog(saveUsernameAndPasswordCheckboxText);
         dialog.prepareForProxyCredentials(username, password);
         dialog.pack();
@@ -108,6 +112,13 @@ public class CredentialDialog extends JDialog {
     public void prepareForOsmApiCredentials(String username, String password) {
         setTitle(tr("Enter credentials for OSM API"));
         getContentPane().add(pnlCredentials = new OsmApiCredentialsPanel(this), BorderLayout.CENTER);
+        pnlCredentials.init(username, password);
+        validate();
+    }
+
+    public void prepareForOtherHostCredentials(String username, String password, String host) {
+        setTitle(tr("Enter credentials for host"));
+        getContentPane().add(pnlCredentials = new OtherHostCredentialsPanel(this, host), BorderLayout.CENTER);
         pnlCredentials.init(username, password);
         validate();
     }
@@ -252,6 +263,28 @@ public class CredentialDialog extends JDialog {
 
         public OsmApiCredentialsPanel(CredentialDialog owner) {
             super(owner);
+            build();
+        }
+    }
+
+    private static class OtherHostCredentialsPanel extends CredentialPanel {
+
+        String host;
+
+        @Override
+        protected void build() {
+            super.build();
+            tfUserName.setToolTipText(tr("Please enter the user name of your account"));
+            tfPassword.setToolTipText(tr("Please enter the password of your account"));
+            lblHeading.setText(
+                    "<html>" + tr("Authenticating at the host ''{0}'' failed. Please enter a valid username and a valid password.",
+                            host) + "</html>");
+            lblWarning.setText(tr("Warning: The password is transferred unencrypted."));
+        }
+
+        public OtherHostCredentialsPanel(CredentialDialog owner, String host) {
+            super(owner);
+            this.host = host;
             build();
         }
     }

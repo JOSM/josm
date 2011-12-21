@@ -7,6 +7,7 @@ import java.net.PasswordAuthentication;
 
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -65,9 +66,13 @@ public class CredentialsManager implements CredentialsAgent {
     }
 
     public String getUsername() {
+        return getUsername(OsmApi.getOsmApi().getHost());
+    }
+
+    public String getUsername(String host) {
         String username = null;
         try {
-            PasswordAuthentication auth = lookup(RequestorType.SERVER);
+            PasswordAuthentication auth = lookup(RequestorType.SERVER, host);
             if (auth != null) {
                 username = auth.getUserName();
             }
@@ -80,21 +85,24 @@ public class CredentialsManager implements CredentialsAgent {
     }
 
     @Override
-    public PasswordAuthentication lookup(RequestorType requestorType) throws CredentialsAgentException {
-        return delegate.lookup(requestorType);
+    public PasswordAuthentication lookup(RequestorType requestorType, String host) throws CredentialsAgentException {
+        return delegate.lookup(requestorType, host);
     }
 
     @Override
-    public void store(RequestorType requestorType, PasswordAuthentication credentials) throws CredentialsAgentException {
-        if (requestorType == RequestorType.SERVER && credentials.getUserName() != null && !credentials.getUserName().trim().isEmpty()) {
-            JosmUserIdentityManager.getInstance().setPartiallyIdentified(credentials.getUserName());
+    public void store(RequestorType requestorType, String host, PasswordAuthentication credentials) throws CredentialsAgentException {
+        if (requestorType == RequestorType.SERVER && OsmApi.getOsmApi().getHost().equals(host)) {
+            String username = credentials.getUserName();
+            if(username != null && !username.trim().isEmpty()) {
+                JosmUserIdentityManager.getInstance().setPartiallyIdentified(username);
+            }
         }
-        delegate.store(requestorType, credentials);
+        delegate.store(requestorType, host, credentials);
     }
 
     @Override
-    public CredentialsAgentResponse getCredentials(RequestorType requestorType, boolean noSuccessWithLastResponse) throws CredentialsAgentException {
-        return delegate.getCredentials(requestorType, noSuccessWithLastResponse);
+    public CredentialsAgentResponse getCredentials(RequestorType requestorType, String host, boolean noSuccessWithLastResponse) throws CredentialsAgentException {
+        return delegate.getCredentials(requestorType, host, noSuccessWithLastResponse);
     }
 
     @Override

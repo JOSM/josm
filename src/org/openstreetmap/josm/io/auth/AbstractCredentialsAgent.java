@@ -16,10 +16,10 @@ abstract public class AbstractCredentialsAgent implements CredentialsAgent {
      * @see CredentialsAgent#getCredentials(RequestorType, boolean)
      */
     @Override
-    public CredentialsAgentResponse getCredentials(RequestorType requestorType, boolean noSuccessWithLastResponse) throws CredentialsAgentException{
+    public CredentialsAgentResponse getCredentials(RequestorType requestorType, String host, boolean noSuccessWithLastResponse) throws CredentialsAgentException{
         if (requestorType == null)
             return null;
-        PasswordAuthentication credentials =  lookup(requestorType);
+        PasswordAuthentication credentials =  lookup(requestorType, host);
         String username = (credentials == null || credentials.getUserName() == null) ? "" : credentials.getUserName();
         String password = (credentials == null || credentials.getPassword() == null) ? "" : String.valueOf(credentials.getPassword());
 
@@ -46,8 +46,8 @@ abstract public class AbstractCredentialsAgent implements CredentialsAgent {
         } else if (noSuccessWithLastResponse || username.equals("") || password.equals("")) {
             CredentialDialog dialog = null;
             switch(requestorType) {
-            case SERVER: dialog = CredentialDialog.getOsmApiCredentialDialog(username, password, getSaveUsernameAndPasswordCheckboxText()); break;
-            case PROXY: dialog = CredentialDialog.getHttpProxyCredentialDialog(username, password, getSaveUsernameAndPasswordCheckboxText()); break;
+            case SERVER: dialog = CredentialDialog.getOsmApiCredentialDialog(username, password, host, getSaveUsernameAndPasswordCheckboxText()); break;
+            case PROXY: dialog = CredentialDialog.getHttpProxyCredentialDialog(username, password, host, getSaveUsernameAndPasswordCheckboxText()); break;
             }
             dialog.setVisible(true);
             response.setCanceled(dialog.isCanceled());
@@ -56,7 +56,7 @@ abstract public class AbstractCredentialsAgent implements CredentialsAgent {
             response.setUsername(dialog.getUsername());
             response.setPassword(dialog.getPassword());
             if (dialog.isSaveCredentials()) {
-                store(requestorType, new PasswordAuthentication(
+                store(requestorType, host, new PasswordAuthentication(
                         response.getUsername(),
                         response.getPassword()
                 ));

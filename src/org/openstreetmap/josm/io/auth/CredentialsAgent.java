@@ -28,7 +28,7 @@ public interface CredentialsAgent {
      * @return the credentials
      * @throws CredentialsAgentException thrown if a problem occurs in a implementation of this interface
      */
-    PasswordAuthentication lookup(RequestorType requestorType) throws CredentialsAgentException;
+    PasswordAuthentication lookup(RequestorType requestorType, String host) throws CredentialsAgentException;
 
     /**
      * Saves the credentials in <code>credentials</code> for the given service type.
@@ -38,7 +38,7 @@ public interface CredentialsAgent {
      * @param credentials the credentials
      * @throws CredentialsManagerException thrown if a problem occurs in a implementation of this interface
      */
-    void store(RequestorType requestorType, PasswordAuthentication credentials) throws CredentialsAgentException;
+    void store(RequestorType requestorType, String host, PasswordAuthentication credentials) throws CredentialsAgentException;
 
     /**
      *
@@ -49,7 +49,7 @@ public interface CredentialsAgent {
      * @throws CredentialsAgentException thrown if a problem occurs in a implementation of this interface
 
      */
-    CredentialsAgentResponse getCredentials(RequestorType requestorType, boolean noSuccessWithLastResponse) throws CredentialsAgentException;
+    CredentialsAgentResponse getCredentials(RequestorType requestorType, String host, boolean noSuccessWithLastResponse) throws CredentialsAgentException;
 
     /**
      * Lookup the current OAuth Access Token to access the OSM server. Replies null, if no

@@ -16,6 +16,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -140,6 +141,15 @@ public class OsmApi extends OsmConnection {
      */
     public String getVersion() {
         return version;
+    }
+
+    public String getHost() {
+        String host = null;
+        try {
+            host = (new URL(serverUrl)).getHost();
+        } catch (MalformedURLException e) {
+        }
+        return host;
     }
 
     public void initialize(ProgressMonitor monitor) throws OsmApiInitializationException, OsmTransferCanceledException {

@@ -41,6 +41,7 @@ import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.CredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
@@ -183,7 +184,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         super.initFromPreferences(pref);
         CredentialsAgent cm = CredentialsManager.getInstance();
         try {
-            PasswordAuthentication pa = cm.lookup(RequestorType.SERVER);
+            PasswordAuthentication pa = cm.lookup(RequestorType.SERVER, OsmApi.getOsmApi().getHost());
             if (pa == null) {
                 tfUserName.setText("");
                 tfPassword.setText("");
