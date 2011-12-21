@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -12,8 +13,11 @@ import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -83,6 +87,29 @@ public class ExceptionUtil {
         );
         return msg;
     }
+    
+    /**
+     * Explains a precondition exception when a child node could not be deleted because
+     * it is still referred to by undeleted parent ways.
+     *
+     * @param e the exception
+     * @param childNode the child node
+     * @param parentWays the parent ways
+     * @return
+     */
+    public static String explainDeletedNodeStillInUse(OsmApiException e, long childNode, Collection<Long> parentWays) {
+        String ids = parentWays.size() == 1 ? parentWays.iterator().next().toString() : parentWays.toString();
+        String msg = trn(
+                "<html><strong>Failed</strong> to delete <strong>node {0}</strong>."
+                + " It is still referred to by way {1}.<br>"
+                + "Please load way {1}, remove the reference to node {0}, and upload again.</html>",
+                "<html><strong>Failed</strong> to delete <strong>node {0}</strong>."
+                + " It is still referred to by ways {1}.<br>"
+                + "Please load ways {1}, remove the reference to node {0}, and upload again.</html>",
+                parentWays.size(), childNode, ids
+        );
+        return msg;
+    }
 
     /**
      * Explains an upload error due to a violated precondition, i.e. a HTTP return code 412
@@ -93,13 +120,20 @@ public class ExceptionUtil {
         e.printStackTrace();
         String msg = e.getErrorHeader();
         if (msg != null) {
-            String pattern = "Precondition failed: The relation (\\d+) is used in relation (\\d+)\\.";
-            Pattern p = Pattern.compile(pattern);
-            Matcher m = p.matcher(msg);
+            Matcher m = Pattern.compile("Precondition failed: The relation (\\d+) is used in relation (\\d+)\\.").matcher(msg);
             if (m.matches()) {
                 long childRelation = Long.parseLong(m.group(1));
                 long parentRelation = Long.parseLong(m.group(2));
                 return explainDeletedRelationStillInUse(e, childRelation, parentRelation);
+            }
+            m = Pattern.compile("Precondition failed: Node (\\d+) is still used by ways (\\d+(?:,\\d+)*)\\.").matcher(msg);
+            if (m.matches()) {
+                long childNode = Long.parseLong(m.group(1));
+                Set<Long> parentWays = new TreeSet<Long>(); // Error message can contain several times the same way
+                for (String s : m.group(2).split(",")) {
+                    parentWays.add(Long.parseLong(s));
+                }
+                return explainDeletedNodeStillInUse(e, childNode, parentWays);
             }
         }
         msg = tr(
