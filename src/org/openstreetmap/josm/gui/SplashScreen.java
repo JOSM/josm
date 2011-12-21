@@ -12,6 +12,8 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -132,6 +134,7 @@ public class SplashScreen extends JFrame {
                 public Dimension getPreferredSize() {
                     Dimension d = super.getPreferredSize();
                     if(d.width < 600) d.width = 600;
+                    d.height *= MAX_NUMBER_OF_MESSAGES;
                     return d;
                 }
             }, gc);
@@ -166,8 +169,39 @@ public class SplashScreen extends JFrame {
             repaint();
         }
 
+        private static final int MAX_NUMBER_OF_MESSAGES = 3;
+        private LinkedList<String> messages = new LinkedList<String>(Arrays.asList("", "", "")); //update when changing MAX_NUMBER_OF_MESSAGES
+        private long time = System.currentTimeMillis();
+
+        /**
+         * Stores and displays the {@code MAX_NUMBER_OF_MESSAGES} most recent
+         * task titles together with their execution time.
+         */
         public void setTaskTitle(String taskTitle) {
-            lblTaskTitle.setText(taskTitle);
+
+            while (messages.size() >= MAX_NUMBER_OF_MESSAGES) {
+                messages.removeFirst();
+            }
+            long now = System.currentTimeMillis();
+            String prevMessageTitle = messages.getLast();
+            if (!prevMessageTitle.isEmpty()) {
+                messages.removeLast();
+                messages.add(tr("{0} ({1} ms)", prevMessageTitle, Long.toString(now - time)));
+            }
+            time = now;
+            if (!taskTitle.isEmpty()) {
+                messages.add(taskTitle);
+            }
+            String html = "";
+            int i = 0;
+            for (String m : messages) {
+                html += "<p class=\"entry" + (++i) + "\">" + m + "</p>";
+            }
+
+            lblTaskTitle.setText("<html><style>"
+                    + ".entry1{color:#CCCCCC;}"
+                    + ".entry2{color:#999999;}"
+                    + ".entry3{color:#000000;}</style>" + html + "</html>");  //update when changing MAX_NUMBER_OF_MESSAGES
             repaint();
         }
 

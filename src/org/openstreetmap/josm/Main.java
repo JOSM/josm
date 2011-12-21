@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -221,20 +222,38 @@ abstract public class Main {
         }
     }
 
+    private static InitStatusListener initListener = null;
+
+    public static interface InitStatusListener {
+
+        void updateStatus(String event);
+    }
+
+    public static void setInitStatusListener(InitStatusListener listener) {
+        initListener = listener;
+    }
+
     public Main() {
         main = this;
         isOpenjdk = System.getProperty("java.vm.name").toUpperCase().indexOf("OPENJDK") != -1;
+
+        if (initListener != null)
+            initListener.updateStatus(tr("Executing platform startup hook"));
         platform.startupHook();
 
         // We try to establish an API connection early, so that any API
         // capabilities are already known to the editor instance. However
         // if it goes wrong that's not critical at this stage.
+        if (initListener != null)
+            initListener.updateStatus(tr("Initializing OSM API"));
         try {
             OsmApi.getOsmApi().initialize(null, true);
         } catch (Exception x) {
             // ignore any exception here.
         }
 
+        if (initListener != null)
+            initListener.updateStatus(tr("Building main menu"));
         contentPanePrivate.add(panel, BorderLayout.CENTER);
         panel.add(gettingStarted, BorderLayout.CENTER);
         menu = new MainMenu();
@@ -247,10 +266,20 @@ abstract public class Main {
         registerActionShortcut(menu.help, Shortcut.registerShortcut("system:help", tr("Help"),
                 KeyEvent.VK_F1, Shortcut.GROUP_DIRECT));
 
+        if (initListener != null)
+            initListener.updateStatus(tr("Initializing presets"));
         TaggingPresetPreference.initialize();
+
+        if (initListener != null)
+            initListener.updateStatus(tr("Initializing map styles"));
         MapPaintPreference.initialize();
+
+        if (initListener != null)
+            initListener.updateStatus(tr("Loading imagery preferences"));
         ImageryPreference.initialize();
 
+        if (initListener != null)
+            initListener.updateStatus(tr("Initializing validator"));
         validator = new OsmValidator();
         MapView.addLayerChangeListener(validator);
 
@@ -262,6 +291,9 @@ abstract public class Main {
             }
         });
         FeatureAdapter.registerTranslationAdapter(I18n.getTranslationAdapter());
+
+        if (initListener != null)
+            initListener.updateStatus(tr("Updating user interface"));
 
         toolbar.refreshToolbarControl();
 
