@@ -447,12 +447,22 @@ public final class Way extends OsmPrimitive implements IWay {
         return nodes.length >= 3 && nodes[nodes.length-1] == nodes[0];
     }
 
+    /**
+     * Returns the last node of this way.
+     * The result equals <tt>{@link #getNode getNode}({@link #getNodesCount getNodesCount} - 1)</tt>.
+     * @return the last node of this way
+     */
     public Node lastNode() {
         Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length == 0) return null;
         return nodes[nodes.length-1];
     }
 
+    /**
+     * Returns the first node of this way.
+     * The result equals {@link #getNode getNode}{@code (0)}.
+     * @return the first node of this way
+     */
     public Node firstNode() {
         Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length == 0) return null;

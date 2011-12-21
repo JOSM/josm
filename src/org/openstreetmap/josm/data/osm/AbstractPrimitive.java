@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -692,4 +693,23 @@ public abstract class AbstractPrimitive implements IPrimitive {
         return getName();
     }
 
+    /**
+     * Tests whether this primitive contains a tag consisting of {@code key} and any of {@code values}.
+     * @param key the key forming the tag.
+     * @param values one or many values forming the tag.
+     * @return true iff primitive contains a tag consisting of {@code key} and any of {@code values}.
+     */
+    public boolean hasTag(String key, String... values) {
+        return hasTag(key, Arrays.asList(values));
+    }
+
+    /**
+     * Tests whether this primitive contains a tag consisting of {@code key} and any of {@code values}.
+     * @param key the key forming the tag.
+     * @param values one or many values forming the tag.
+     * @return true iff primitive contains a tag consisting of {@code key} and any of {@code values}.
+     */
+    public boolean hasTag(String key, Collection<String> values) {
+        return values.contains(get(key));
+    }
 }
