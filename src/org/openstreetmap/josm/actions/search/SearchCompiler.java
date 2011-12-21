@@ -8,6 +8,7 @@ import java.io.PushbackReader;
 import java.io.StringReader;
 import java.text.Normalizer;
 import java.util.Collection;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -549,21 +550,21 @@ public class SearchCompiler {
 
     private abstract static class CountRange extends Match {
 
-        private int minCount;
-        private int maxCount;
+        private long minCount;
+        private long maxCount;
 
-        public CountRange(int minCount, int maxCount) {
+        public CountRange(long minCount, long maxCount) {
             this.minCount = Math.min(minCount, maxCount);
             this.maxCount = Math.max(minCount, maxCount);
         }
 
-        protected abstract Integer getCount(OsmPrimitive osm);
+        protected abstract Long getCount(OsmPrimitive osm);
 
         protected abstract String getCountString();
 
         @Override
         public boolean match(OsmPrimitive osm) {
-            Integer count = getCount(osm);
+            Long count = getCount(osm);
             if (count == null)
                 return false;
             else
@@ -580,16 +581,16 @@ public class SearchCompiler {
 
     private static class NodeCountRange extends CountRange {
 
-        public NodeCountRange(int minCount, int maxCount) {
+        public NodeCountRange(long minCount, long maxCount) {
             super(minCount, maxCount);
         }
 
         @Override
-        protected Integer getCount(OsmPrimitive osm) {
+        protected Long getCount(OsmPrimitive osm) {
             if (!(osm instanceof Way))
                 return null;
             else
-                return ((Way) osm).getNodesCount();
+                return (long) ((Way) osm).getNodesCount();
         }
 
         @Override
@@ -600,19 +601,37 @@ public class SearchCompiler {
 
     private static class TagCountRange extends CountRange {
 
-        public TagCountRange(int minCount, int maxCount) {
+        public TagCountRange(long minCount, long maxCount) {
             super(minCount, maxCount);
         }
 
         @Override
-        protected Integer getCount(OsmPrimitive osm) {
-            return osm.getKeys().size();
+        protected Long getCount(OsmPrimitive osm) {
+            return (long) osm.getKeys().size();
         }
 
         @Override
         protected String getCountString() {
             return "tags";
         }
+    }
+
+    private static class TimestampRange extends CountRange {
+
+        public TimestampRange(long minCount, long maxCount) {
+            super(minCount, maxCount);
+        }
+
+        @Override
+        protected Long getCount(OsmPrimitive osm) {
+            return osm.getTimestamp().getTime();
+        }
+
+        @Override
+        protected String getCountString() {
+            return "timestamp";
+        }
+
     }
 
     private static class New extends Match {
@@ -724,16 +743,16 @@ public class SearchCompiler {
      */
     private static class Area extends CountRange {
 
-        public Area(int minCount, int maxCount) {
+        public Area(long minCount, long maxCount) {
             super(minCount, maxCount);
         }
 
         @Override
-        protected Integer getCount(OsmPrimitive osm) {
+        protected Long getCount(OsmPrimitive osm) {
             if (!(osm instanceof Way && ((Way) osm).isClosed()))
                 return null;
             Way way = (Way) osm;
-            return (int) Geometry.closedWayArea(way);
+            return (long) Geometry.closedWayArea(way);
         }
 
         @Override
@@ -872,13 +891,27 @@ public class SearchCompiler {
                     return new Id(tokenizer.readNumber(tr("Primitive id expected")));
                 else if ("tags".equals(key)) {
                     Range range = tokenizer.readRange(tr("Range of numbers expected"));
-                    return new TagCountRange((int)range.getStart(), (int)range.getEnd());
+                    return new TagCountRange(range.getStart(), range.getEnd());
                 } else if ("nodes".equals(key)) {
                     Range range = tokenizer.readRange(tr("Range of numbers expected"));
-                    return new NodeCountRange((int)range.getStart(), (int)range.getEnd());
+                    return new NodeCountRange(range.getStart(), range.getEnd());
                 } else if ("areasize".equals(key)) {
                     Range range = tokenizer.readRange(tr("Range of numbers expected"));
-                    return new Area((int)range.getStart(), (int)range.getEnd());
+                    return new Area(range.getStart(), range.getEnd());
+                } else if ("timestamp".equals(key)) {
+                    String rangeS = " " + tokenizer.readTextOrNumber() + " "; // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
+                    String[] rangeA = rangeS.split("/");
+                    if (rangeA.length == 1) {
+                        return new KeyValue(key, rangeS, regexSearch, caseSensitive);
+                    } else if (rangeA.length == 2) {
+                        String rangeA1 = rangeA[0].trim();
+                        String rangeA2 = rangeA[1].trim();
+                        long minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime(); // if min timestap is empty: use lowest possible date
+                        long maxDate = rangeA2.isEmpty() ? new Date().getTime() : DateUtils.fromString(rangeA2).getTime(); // if max timestamp is empty: use "now"
+                        return new TimestampRange(minDate, maxDate);
+                    } else {
+                        throw new ParseError(tr("Expecting <i>min</i>/<i>max</i>'' after ''timestamp2''"));
+                    }
                 } else if ("changeset".equals(key))
                     return new ChangesetId(tokenizer.readNumber(tr("Changeset id expected")));
                 else if ("version".equals(key))
