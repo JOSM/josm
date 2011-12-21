@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.progress.ContributorTermsUpdateRunnable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -160,7 +161,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     @Override
     public void showDialog() {
         super.showDialog();
-        User.initRelicensingInformation();
+        Main.worker.submit(new ContributorTermsUpdateRunnable());
         Layer layer = Main.main.getActiveLayer();
         if (layer instanceof OsmDataLayer) {
             refresh(((OsmDataLayer)layer).data.getSelected());
@@ -270,7 +271,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            User.loadRelicensingInformation(true);
+            Main.worker.submit(new ContributorTermsUpdateRunnable());
             Layer layer = Main.main.getActiveLayer();
             if (layer instanceof OsmDataLayer) {
                 refresh(((OsmDataLayer)layer).data.getSelected());
@@ -427,19 +428,19 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         case User.STATUS_AUTO_AGREED:
             if (greyCheckmark == null) {
                 greyCheckmark = new JLabel(ImageProvider.get("misc", "grey_check.png"));
-                greyCheckmark.setToolTipText("Auto-accepted");
+                greyCheckmark.setToolTipText(tr("Auto-accepted"));
             }
             return greyCheckmark;
         case User.STATUS_NOT_AGREED:
             if (redX == null) {
                 redX = new JLabel(ImageProvider.get("misc", "red_x.png"));
-                redX.setToolTipText("Declined");
+                redX.setToolTipText(tr("Declined"));
             }
             return redX;
         default:
             if (empty == null) {
                 empty = new JLabel("");
-                empty.setToolTipText("Undecided");
+                empty.setToolTipText(tr("Undecided"));
             }
         }
         return empty; // Undecided or unknown?

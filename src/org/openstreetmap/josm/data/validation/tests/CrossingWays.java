@@ -119,8 +119,18 @@ public class CrossingWays extends Test {
                         highlight.add(es1.ws);
                         highlight.add(es2.ws);
 
+                        String message;
+                        if (isBuilding) {
+                            message = tr("Crossing buildings");
+                        } else if ((es1.waterway != null && es2.ws.way.get("highway") != null)
+                                || (es2.waterway != null && es1.ws.way.get("highway") != null)) {
+                            message = tr("Crossing waterway/highway");
+                        } else {
+                            message = tr("Crossing ways");
+                        }
+
                         errors.add(new TestError(this, Severity.WARNING,
-                            isBuilding ? tr("Crossing buildings") : tr("Crossing ways"),
+                            message,
                             CROSSING_WAYS,
                             prims,
                             highlight));

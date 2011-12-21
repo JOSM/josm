@@ -209,41 +209,41 @@ public class MainApplication extends Main {
         }
 
         SplashScreen splash = new SplashScreen();
-        ProgressMonitor monitor = splash.getProgressMonitor();
+        final ProgressMonitor monitor = splash.getProgressMonitor();
         monitor.beginTask(tr("Initializing"));
-        monitor.setTicksCount(7);
         splash.setVisible(Main.pref.getBoolean("draw.splashscreen", true));
+        Main.setInitStatusListener(new InitStatusListener() {
+
+            @Override
+            public void updateStatus(String event) {
+                monitor.indeterminateSubTask(event);
+            }
+        });
 
         List<PluginInformation> pluginsToLoad = PluginHandler.buildListOfPluginsToLoad(splash,monitor.createSubTaskMonitor(1, false));
         if (!pluginsToLoad.isEmpty() && PluginHandler.checkAndConfirmPluginUpdate(splash)) {
-            monitor.subTask(tr("Updating plugins..."));
+            monitor.subTask(tr("Updating plugins"));
             pluginsToLoad = PluginHandler.updatePlugins(splash,pluginsToLoad, monitor.createSubTaskMonitor(1, false));
         }
-        monitor.worked(1);
 
-        monitor.subTask(tr("Installing updated plugins"));
+        monitor.indeterminateSubTask(tr("Installing updated plugins"));
         PluginHandler.installDownloadedPlugins(true);
-        monitor.worked(1);
 
-        monitor.subTask(tr("Loading early plugins"));
+        monitor.indeterminateSubTask(tr("Loading early plugins"));
         PluginHandler.loadEarlyPlugins(splash,pluginsToLoad, monitor.createSubTaskMonitor(1, false));
-        monitor.worked(1);
 
-        monitor.subTask(tr("Setting defaults"));
+        monitor.indeterminateSubTask(tr("Setting defaults"));
         preConstructorInit(args);
         removeObsoletePreferences();
-        monitor.worked(1);
 
         monitor.indeterminateSubTask(tr("Creating main GUI"));
         JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
         Main.parent = mainFrame;
         Main.addListener();
         final Main main = new MainApplication(mainFrame);
-        monitor.worked(1);
 
-        monitor.subTask(tr("Loading plugins"));
+        monitor.indeterminateSubTask(tr("Loading plugins"));
         PluginHandler.loadLatePlugins(splash,pluginsToLoad,  monitor.createSubTaskMonitor(1, false));
-        monitor.worked(1);
         toolbar.refreshToolbarControl();
         splash.setVisible(false);
         splash.dispose();

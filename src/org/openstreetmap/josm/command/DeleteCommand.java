@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.command;
 
+import java.awt.GridBagLayout;
 import java.awt.geom.Area;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -20,6 +21,9 @@ import java.util.Map.Entry;
 
 import javax.swing.JLabel;
 
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SplitWayAction;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -29,11 +33,13 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.actionsupport.DeleteFromRelationConfirmationDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A command to delete a number of primitives from the dataset.
@@ -316,6 +322,12 @@ public class DeleteCommand extends Command {
             return null;
 
         Set<OsmPrimitive> primitivesToDelete = new HashSet<OsmPrimitive>(selection);
+
+        Collection<Relation> relationsToDelete = Utils.filteredCollection(primitivesToDelete, Relation.class);
+        if(!relationsToDelete.isEmpty() && !silent && !confirmRelationDeletion(relationsToDelete)) {
+            return null;
+        }
+
         Collection<Way> waysToBeChanged = new HashSet<Way>();
 
         if (alsoDeleteNodesInWay) {
@@ -440,4 +452,34 @@ public class DeleteCommand extends Command {
                 area, primitives, ignore);
     }
 
+    private static boolean confirmRelationDeletion(Collection<Relation> relations) {
+        String relationString = "<ul>";
+        for(Relation r:relations) {
+            relationString += "<li>"+DefaultNameFormatter.getInstance().format(r) + "</li>";
+        }
+        relationString += "</ul>";
+        
+        JPanel msg = new JPanel(new GridBagLayout());
+        msg.add(new JLabel("<html>" + trn(
+                "You are about to delete {0} relation: {1}"
+                + "<br/>"
+                + "This step is rarely necessary and cannot be undone easily after being uploaded to the server."
+                + "<br/>"
+                + "Do you really want to delete?",
+                "You are about to delete {0} relations: {1}"
+                + "<br/>"
+                + "This step is rarely necessary and cannot be undone easily after being uploaded to the server."
+                + "<br/>"
+                + "Do you really want to delete?",
+                relations.size(), relations.size(), relationString) + "</html>"));
+        boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
+                "delete_relations",
+                Main.parent,
+                msg,
+                tr("Delete relation?"),
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                JOptionPane.YES_OPTION);
+        return answer;
+    }
 }

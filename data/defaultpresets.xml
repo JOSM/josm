@@ -1929,6 +1929,43 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="capacity:parent" text="Spaces for Parents" values="yes,no,unknown,1,2,3" default="" delete_if_empty="true" />
             <label text="See the Wiki for other capacity:[types]=*." />
         </item>
+        <item name="Parking space" icon="presets/parking.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=parking_space" />
+            <label text="Edit Parking space" />
+            <key key="amenity" value="parking_space" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <combo key="parking" text="Type" values="multi-storey,surface,underground,rooftop" delete_if_empty="true" />
+            <text key="capacity" text="Capacity" default="" delete_if_empty="true" />
+            <space />
+            <combo key="access" text="Access" values="yes,private,customers,permissive,no" default="" delete_if_empty="true" />
+            <combo key="fee" text="Fee" values="yes,no,interval" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
+            <combo key="covered" text="Covered (with roof)" values="yes,no" default="" delete_if_empty="true" />
+            <combo key="stay" text="Time Limit (minutes)" values="0,30-60,30-180,30+" default="" delete_if_empty="true" />
+            <combo key="supervised" text="Supervised" values="yes,no,interval" default="" delete_if_empty="true" />
+            <combo key="lit" text="Lit" values="yes,no,interval" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Parking entrance" icon="presets/parking.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=parking_entrance" />
+            <label text="Edit Parking entrance" />
+            <key key="amenity" value="parking_entrance" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <space />
+            <combo key="parking" text="Type" values="multi-storey,surface,underground,rooftop" delete_if_empty="true" />
+            <combo key="access" text="Access" values="yes,private,customers,permissive,no" default="" delete_if_empty="true" />
+            <combo key="fee" text="Fee" values="yes,no,interval" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
+            <combo key="covered" text="Covered (with roof)" values="yes,no" default="" delete_if_empty="true" />
+            <combo key="stay" text="Time Limit (minutes)" values="0,30-60,30-180,30+" default="" delete_if_empty="true" />
+            <combo key="supervised" text="Supervised" values="yes,no,interval" default="" delete_if_empty="true" />
+            <combo key="lit" text="Lit" values="yes,no,interval" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
         <separator/>
         <item name="Fuel" icon="presets/fuel.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fuel"
