@@ -269,18 +269,35 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         });
         values.setEditable(true);
 
+        final Map<String, Integer> m = (Map<String, Integer>) propertyData.getValueAt(row, 1);
+
+        Comparator<AutoCompletionListItem> usedValuesAwareComparator = new Comparator<AutoCompletionListItem>() {
+
+            @Override
+            public int compare(AutoCompletionListItem o1, AutoCompletionListItem o2) {
+                boolean c1 = m.containsKey(o1.getValue());
+                boolean c2 = m.containsKey(o2.getValue());
+                if (c1 == c2) {
+                    return String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue());
+                } else if (c1) {
+                    return -1;
+                } else {
+                    return +1;
+                }
+            }
+        };
+
         List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
-        Collections.sort(valueList, defaultACItemComparator);
+        Collections.sort(valueList, usedValuesAwareComparator);
 
         values.setPossibleACItems(valueList);
-        Map<String, Integer> m=(Map<String, Integer>)propertyData.getValueAt(row, 1);
         final String selection= m.size()!=1?tr("<different>"):m.entrySet().iterator().next().getKey();
         values.setSelectedItem(selection);
         values.getEditor().setItem(selection);
         p.add(new JLabel(tr("Value")), GBC.std());
         p.add(Box.createHorizontalStrut(10), GBC.std());
         p.add(values, GBC.eol().fill(GBC.HORIZONTAL));
-        addFocusAdapter(row, keys, values, autocomplete);
+        addFocusAdapter(row, keys, values, autocomplete, usedValuesAwareComparator);
 
         final JOptionPane optionPane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
             @Override public void selectInitialValue() {
@@ -474,7 +491,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         }
 
-        FocusAdapter focus = addFocusAdapter(-1, keys, values, autocomplete);
+        FocusAdapter focus = addFocusAdapter(-1, keys, values, autocomplete, defaultACItemComparator);
         // fire focus event in advance or otherwise the popup list will be too small at first
         focus.focusGained(null);
 
@@ -505,7 +522,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * @param keys
      * @param values
      */
-    private FocusAdapter addFocusAdapter(final int row, final AutoCompletingComboBox keys, final AutoCompletingComboBox values, final AutoCompletionManager autocomplete) {
+    private FocusAdapter addFocusAdapter(final int row,
+            final AutoCompletingComboBox keys, final AutoCompletingComboBox values,
+            final AutoCompletionManager autocomplete, final Comparator<AutoCompletionListItem> comparator) {
         // get the combo box' editor component
         JTextComponent editor = (JTextComponent)values.getEditor()
                 .getEditorComponent();
@@ -515,7 +534,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 String key = keys.getEditor().getItem().toString();
 
                 List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
-                Collections.sort(valueList, defaultACItemComparator);
+                Collections.sort(valueList, comparator);
 
                 values.setPossibleACItems(valueList);
                 objKey=key;
