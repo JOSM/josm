@@ -44,7 +44,7 @@ public class OsmImporter extends FileImporter {
     }
 
     protected void importData(InputStream in, final File associatedFile) throws IllegalDataException {
-        loadLayer(in, associatedFile, associatedFile.getName(), NullProgressMonitor.INSTANCE);
+        loadLayer(in, associatedFile, associatedFile == null ? OsmDataLayer.createNewName() : associatedFile.getName(), NullProgressMonitor.INSTANCE);
         // FIXME: remove UI stuff from IO subsystem
         Runnable uiStuff = new Runnable() {
             @Override
@@ -67,9 +67,16 @@ public class OsmImporter extends FileImporter {
      */
     public void loadLayer(InputStream in, final File associatedFile, final String layerName, ProgressMonitor progressMonitor) throws IllegalDataException {
         final DataSet dataSet = OsmReader.parseDataSet(in, progressMonitor);
-        String name = associatedFile == null ? OsmDataLayer.createNewName() : associatedFile.getName();
-        layer = new OsmDataLayer(dataSet, layerName, associatedFile);
-        postLayerTask = new Runnable() {
+        layer = createLayer(dataSet, associatedFile, layerName);
+        postLayerTask = createPostLayerTask(dataSet, associatedFile, layerName);
+    }
+    
+    protected OsmDataLayer createLayer(final DataSet dataSet, final File associatedFile, final String layerName) {
+        return new OsmDataLayer(dataSet, layerName, associatedFile);
+    }
+    
+    protected Runnable createPostLayerTask(final DataSet dataSet, final File associatedFile, final String layerName) {
+        return new Runnable() {
             @Override
             public void run() {
                 if (dataSet.allPrimitives().isEmpty()) {
