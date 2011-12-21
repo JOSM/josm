@@ -38,7 +38,7 @@ public class MergeLayerAction extends AbstractMergeAction {
         Main.map.mapView.setActiveLayer(targetLayer);
     }
 
-    public void merge(Layer sourceLayer) {
+    public void merge(final Layer sourceLayer) {
         if (sourceLayer == null)
             return;
         List<Layer> targetLayers = LayerListDialog.getInstance().getModel().getPossibleMergeTargets(sourceLayer);
@@ -46,12 +46,17 @@ public class MergeLayerAction extends AbstractMergeAction {
             warnNoTargetLayersForSourceLayer(sourceLayer);
             return;
         }
-        Layer targetLayer = askTargetLayer(targetLayers);
+        final Layer targetLayer = askTargetLayer(targetLayers);
         if (targetLayer == null)
             return;
-        targetLayer.mergeFrom(sourceLayer);
-        Main.map.mapView.removeLayer(sourceLayer);
-        Main.map.mapView.setActiveLayer(targetLayer);
+        Main.worker.submit(new Runnable() {
+            @Override
+            public void run() {
+                targetLayer.mergeFrom(sourceLayer);
+                Main.map.mapView.removeLayer(sourceLayer);
+                Main.map.mapView.setActiveLayer(targetLayer);
+            }
+        });
     }
 
     public void actionPerformed(ActionEvent e) {

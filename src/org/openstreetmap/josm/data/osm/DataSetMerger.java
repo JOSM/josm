@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -76,7 +77,7 @@ public class DataSetMerger {
      * @param <P>  the type of the other primitive
      * @param source  the other primitive
      */
-    protected void mergePrimitive(OsmPrimitive source) {
+    protected void mergePrimitive(OsmPrimitive source, Collection<? extends OsmPrimitive> candidates) {
         if (!source.isNew() ) {
             // try to merge onto a matching primitive with the same
             // defined id
@@ -93,13 +94,6 @@ public class DataSetMerger {
             // try to merge onto a primitive  which has no id assigned
             // yet but which is equal in its semantic attributes
             //
-            Collection<? extends OsmPrimitive> candidates = null;
-            switch (source.getType()) {
-            case NODE: candidates = targetDataSet.getNodes(); break;
-            case WAY: candidates  = targetDataSet.getWays(); break;
-            case RELATION: candidates = targetDataSet.getRelations(); break;
-            default: throw new AssertionError();
-            }
             for (OsmPrimitive target : candidates) {
                 if (!target.isNew() || target.isDeleted()) {
                     continue;
@@ -381,22 +375,53 @@ public class DataSetMerger {
      * See {@see #getConflicts()} for a map of conflicts after the merge operation.
      */
     public void merge() {
+        merge(null);
+    }
+
+    /**
+     * Runs the merge operation. Successfully merged {@see OsmPrimitive}s are in
+     * {@see #getMyDataSet()}.
+     *
+     * See {@see #getConflicts()} for a map of conflicts after the merge operation.
+     */
+    public void merge(ProgressMonitor progressMonitor) {
         if (sourceDataSet == null)
             return;
+        if (progressMonitor != null) {
+            progressMonitor.beginTask(tr("Merging data..."), sourceDataSet.allPrimitives().size());
+        }
         targetDataSet.beginUpdate();
         try {
+        	ArrayList<? extends OsmPrimitive> candidates = new ArrayList<Node>(targetDataSet.getNodes());
             for (Node node: sourceDataSet.getNodes()) {
-                mergePrimitive(node);
+                mergePrimitive(node, candidates);
+                if (progressMonitor != null) {
+                    progressMonitor.worked(1);
+                }
             }
+            candidates.clear();
+            candidates = new ArrayList<Way>(targetDataSet.getWays());
             for (Way way: sourceDataSet.getWays()) {
-                mergePrimitive(way);
+                mergePrimitive(way, candidates);
+                if (progressMonitor != null) {
+                    progressMonitor.worked(1);
+                }
             }
+            candidates.clear();
+            candidates = new ArrayList<Relation>(targetDataSet.getRelations());
             for (Relation relation: sourceDataSet.getRelations()) {
-                mergePrimitive(relation);
+                mergePrimitive(relation, candidates);
+                if (progressMonitor != null) {
+                    progressMonitor.worked(1);
+                }
             }
+            candidates.clear();
             fixReferences();
         } finally {
             targetDataSet.endUpdate();
+        }
+        if (progressMonitor != null) {
+            progressMonitor.finishTask();
         }
     }
 
