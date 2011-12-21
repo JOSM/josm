@@ -25,6 +25,8 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
     private PleaseWaitDialog dialog;
     private String windowTitle;
+    
+    private boolean cancelable;
 
     public PleaseWaitProgressMonitor() {
         this("");
@@ -38,6 +40,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     public PleaseWaitProgressMonitor(Component dialogParent) {
         super(new CancelHandler());
         this.dialogParent = JOptionPane.getFrameForComponent(dialogParent);
+        this.cancelable = true;
     }
 
     public PleaseWaitProgressMonitor(Component dialogParent, String windowTitle) {
@@ -57,6 +60,14 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         }
     };
 
+    public final boolean isCancelable() {
+        return cancelable;
+    }
+
+    public final void setCancelable(boolean cancelable) {
+        this.cancelable = cancelable;
+    }
+
     private void doInEDT(Runnable runnable) {
         EventQueue.invokeLater(runnable);
     }
@@ -75,7 +86,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
                 if (windowTitle != null) {
                     dialog.setTitle(windowTitle);
                 }
-                dialog.setCancelEnabled(true);
+                dialog.setCancelEnabled(cancelable);
                 dialog.setCancelCallback(cancelListener);
                 dialog.setCustomText("");
                 dialog.addWindowListener(windowListener);

@@ -965,7 +965,8 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
         if (!isNew() &&  id != other.id)
             return false;
-        if (isIncomplete() && ! other.isIncomplete() || !isIncomplete()  && other.isIncomplete())
+//        if (isIncomplete() && ! other.isIncomplete() || !isIncomplete()  && other.isIncomplete())
+        if (isIncomplete() ^ other.isIncomplete()) // exclusive or operator for performance (see #7159)
             return false;
         // can't do an equals check on the internal keys array because it is not ordered
         //

@@ -70,6 +70,8 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.GBC;
@@ -281,7 +283,10 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     }
 
     @Override public void mergeFrom(final Layer from) {
-        mergeFrom(((OsmDataLayer)from).data);
+        final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Merging layers"));
+        monitor.setCancelable(false);
+        mergeFrom(((OsmDataLayer)from).data, monitor);
+        monitor.close();
     }
 
     /**
@@ -291,9 +296,19 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
      * @param from  the source data set
      */
     public void mergeFrom(final DataSet from) {
+        mergeFrom(from, null);
+    }
+    
+    /**
+     * merges the primitives in dataset <code>from</code> into the dataset of
+     * this layer
+     *
+     * @param from  the source data set
+     */
+    public void mergeFrom(final DataSet from, ProgressMonitor progressMonitor) {
         final DataSetMerger visitor = new DataSetMerger(data,from);
         try {
-            visitor.merge();
+            visitor.merge(progressMonitor);
         } catch (DataIntegrityProblemException e) {
             JOptionPane.showMessageDialog(
                     Main.parent,
