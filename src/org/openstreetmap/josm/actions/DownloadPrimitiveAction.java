@@ -116,7 +116,7 @@ public class DownloadPrimitiveAction extends JosmAction {
         final JCheckBox referrers = new JCheckBox(tr("Download referrers (parent relations)"));
         referrers.setToolTipText(tr("Select if the referrers of the object should be downloaded as well, i.e.,"
                 + "parent relations and for nodes, additionally, parent ways"));
-        referrers.setSelected(Main.pref.getBoolean("downloadprimitive.referrers"));
+        referrers.setSelected(Main.pref.getBoolean("downloadprimitive.referrers", true));
         JCheckBox full = new JCheckBox(tr("Download relation members"));
         full.setToolTipText(tr("Select if the members of a relation should be downloaded as well"));
         full.setSelected(Main.pref.getBoolean("downloadprimitive.full", true));
