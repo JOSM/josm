@@ -30,7 +30,9 @@ public class MultiMap<A, B> {
     }
 
     /**
-     * Map a key to a value. Can be called multiple times with the same key, but different value.
+     * Map a key to a value.
+     *
+     * Can be called multiple times with the same key, but different value.
      */
     public void put(A key, B value) {
         LinkedHashSet<B> vals = map.get(key);
@@ -43,6 +45,7 @@ public class MultiMap<A, B> {
 
     /**
      * Put a key that maps to nothing. (Only if it is not already in the map)
+     *
      * Afterwards containsKey(key) will return true and get(key) will return
      * an empty Set instead of null.
      */
@@ -53,16 +56,32 @@ public class MultiMap<A, B> {
     }
 
     /**
-     * Get the keySet
+     * Map the key to all the given values.
+     *
+     * Adds to the mappings that are already there.
+     */
+    public void putAll(A key, Collection<B> values) {
+        LinkedHashSet<B> vals = map.get(key);
+        if (vals == null) {
+            vals = new LinkedHashSet<B>(values);
+            map.put(key, vals);
+        }
+        vals.addAll(values);
+    }
+
+    /**
+     * Get the keySet.
      */
     public Set<A> keySet() {
         return map.keySet();
     }
 
     /**
-     * Return the Set associated with the given key. Result is null if
-     * nothing has been mapped to this key. Modifications of the returned list
-     * changes the underling map, but you should better not do that.
+     * Returns the Set associated with the given key. Result is null if
+     * nothing has been mapped to this key.
+     *
+     * Modifications of the returned list changes the underling map,
+     * but you should better not do that.
      */
     public Set<B> get(A key) {
         return map.get(key);
@@ -86,7 +105,8 @@ public class MultiMap<A, B> {
     }
 
     /**
-     * Returns true if the multimap contains a value for a key
+     * Returns true if the multimap contains a value for a key.
+     *
      * @param key The key
      * @param value The value
      * @return true if the key contains the value
@@ -105,21 +125,21 @@ public class MultiMap<A, B> {
     }
 
     /**
-     * number of keys
+     * Returns the number of keys.
      */
     public int size() {
         return map.size();
     }
 
     /**
-     * returns a collection of all value sets
+     * Returns a collection of all value sets.
      */
     public Collection<LinkedHashSet<B>> values() {
         return map.values();
     }
 
     /**
-     * Removes a cerain key=value mapping
+     * Removes a cerain key=value mapping.
      *
      * @return true, if something was removed
      */
@@ -132,7 +152,7 @@ public class MultiMap<A, B> {
     }
 
     /**
-     * Removes all mappings for a certain key
+     * Removes all mappings for a certain key.
      */
     public LinkedHashSet<B> remove(A key) {
         return map.remove(key);
