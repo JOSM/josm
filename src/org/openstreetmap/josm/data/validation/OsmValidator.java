@@ -47,6 +47,7 @@ import org.openstreetmap.josm.data.validation.tests.UnclosedWays;
 import org.openstreetmap.josm.data.validation.tests.UnconnectedWays;
 import org.openstreetmap.josm.data.validation.tests.UntaggedNode;
 import org.openstreetmap.josm.data.validation.tests.UntaggedWay;
+import org.openstreetmap.josm.data.validation.tests.WayConnectedToArea;
 import org.openstreetmap.josm.data.validation.tests.WronglyOrderedWays;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -101,6 +102,7 @@ public class OsmValidator implements LayerChangeListener {
         BuildingInBuilding.class, // ID 2001 .. 2099
         DeprecatedTags.class, // ID 2101 .. 2199
         OverlappingAreas.class, // ID 2201 .. 2299
+        WayConnectedToArea.class, // ID 2301 .. 2399
     };
 
     public OsmValidator() {

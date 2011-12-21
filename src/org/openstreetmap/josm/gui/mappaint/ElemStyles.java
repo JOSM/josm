@@ -409,4 +409,36 @@ public class ElemStyles {
         styleSources.clear();
         styleSources.addAll(sources);
     }
+
+    /**
+     * Returns the first AreaElemStyle for a given primitive.
+     * @param p the OSM primitive
+     * @param pretendWayIsClosed For styles that require the way to be closed,
+     * we pretend it is. This is useful for generating area styles from the (segmented)
+     * outer ways of a multipolygon.
+     * @return first AreaElemStyle found or {@code null}.
+     */
+    public static AreaElemStyle getAreaElemStyle(OsmPrimitive p, boolean pretendWayIsClosed) {
+        if (MapPaintStyles.getStyles() == null) {
+            return null;
+        }
+        for (ElemStyle s : MapPaintStyles.getStyles().generateStyles(p, 1.0, null, pretendWayIsClosed).a) {
+            if (s instanceof AreaElemStyle) {
+                return (AreaElemStyle) s;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Determines whether primitive has an AreaElemStyle.
+     * @param p the OSM primitive
+     * @param pretendWayIsClosed For styles that require the way to be closed,
+     * we pretend it is. This is useful for generating area styles from the (segmented)
+     * outer ways of a multipolygon.
+     * @return {@code true} iff primitive has an AreaElemStyle
+     */
+    public static boolean hasAreaElemStyle(OsmPrimitive p, boolean pretendWayIsClosed) {
+        return getAreaElemStyle(p, pretendWayIsClosed) != null;
+    }
 }

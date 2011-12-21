@@ -25,7 +25,6 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
-import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 
@@ -116,15 +115,10 @@ public class MultipolygonTest extends Test {
 
     @Override
     public void visit(Way w) {
-        if (styles != null && !w.isClosed()) {
-            for (ElemStyle s : styles.generateStyles(w, SCALE, null, false).a) {
-                if (s instanceof AreaElemStyle) {
-                    List<Node> nodes = w.getNodes();
-                    errors.add(new TestError(this, Severity.WARNING, tr("Area style way is not closed"), NOT_CLOSED, 
-                            Collections.singletonList(w), Arrays.asList(nodes.get(0), nodes.get(nodes.size() - 1))));
-                    break;
-                }
-            }
+        if (!w.isClosed() && ElemStyles.hasAreaElemStyle(w, false)) {
+            List<Node> nodes = w.getNodes();
+            errors.add(new TestError(this, Severity.WARNING, tr("Area style way is not closed"), NOT_CLOSED,
+                    Collections.singletonList(w), Arrays.asList(nodes.get(0), nodes.get(nodes.size() - 1))));
         }
     }
 
@@ -156,25 +150,12 @@ public class MultipolygonTest extends Test {
             List<List<Node>> outerWays = joinWays(polygon.getOuterWays());
             if (styles != null) {
 
-                AreaElemStyle area = null;
-                boolean areaStyle = false;
-                for (ElemStyle s : styles.generateStyles(r, SCALE, null, false).a) {
-                    if (s instanceof AreaElemStyle) {
-                        area = (AreaElemStyle) s;
-                        areaStyle = true;
-                        break;
-                    }
-                }
+                AreaElemStyle area = ElemStyles.getAreaElemStyle(r, false);
+                boolean areaStyle = area != null;
                 // If area style was not found for relation then use style of ways
                 if (area == null) {
                     for (Way w : polygon.getOuterWays()) {
-
-                        for (ElemStyle s : styles.generateStyles(w, SCALE, null, true).a) {
-                            if (s instanceof AreaElemStyle) {
-                                area = (AreaElemStyle) s;
-                                break;
-                            }
-                        }
+                        area = ElemStyles.getAreaElemStyle(w, true);
                         if (area != null) {
                             break;
                         }
@@ -188,13 +169,7 @@ public class MultipolygonTest extends Test {
 
                 if (area != null) {
                     for (Way wInner : polygon.getInnerWays()) {
-                        AreaElemStyle areaInner = null;
-                        for (ElemStyle s : styles.generateStyles(wInner, SCALE, null, false).a) {
-                            if (s instanceof AreaElemStyle) {
-                                areaInner = (AreaElemStyle) s;
-                                break;
-                            }
-                        }
+                        AreaElemStyle areaInner = ElemStyles.getAreaElemStyle(wInner, false);
 
                         if (areaInner != null && area.equals(areaInner)) {
                             List<OsmPrimitive> l = new ArrayList<OsmPrimitive>();
@@ -206,13 +181,7 @@ public class MultipolygonTest extends Test {
                     }
                     if(!areaStyle) {
                         for (Way wOuter : polygon.getOuterWays()) {
-                            AreaElemStyle areaOuter = null;
-                            for (ElemStyle s : styles.generateStyles(wOuter, SCALE, null, false).a) {
-                                if (s instanceof AreaElemStyle) {
-                                    areaOuter = (AreaElemStyle) s;
-                                    break;
-                                }
-                            }
+                            AreaElemStyle areaOuter = ElemStyles.getAreaElemStyle(wOuter, false);
                             if (areaOuter != null && !area.equals(areaOuter)) {
                                 List<OsmPrimitive> l = new ArrayList<OsmPrimitive>();
                                 l.add(r);
