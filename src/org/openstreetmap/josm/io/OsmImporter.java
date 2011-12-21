@@ -66,9 +66,13 @@ public class OsmImporter extends FileImporter {
      * associatedFile can be null if the stream does not come from a file.
      */
     public void loadLayer(InputStream in, final File associatedFile, final String layerName, ProgressMonitor progressMonitor) throws IllegalDataException {
-        final DataSet dataSet = OsmReader.parseDataSet(in, progressMonitor);
+        final DataSet dataSet = parseDataSet(in, progressMonitor);
         layer = createLayer(dataSet, associatedFile, layerName);
         postLayerTask = createPostLayerTask(dataSet, associatedFile, layerName);
+    }
+    
+    protected DataSet parseDataSet(InputStream in, ProgressMonitor progressMonitor) throws IllegalDataException {
+        return OsmReader.parseDataSet(in, progressMonitor);
     }
     
     protected OsmDataLayer createLayer(final DataSet dataSet, final File associatedFile, final String layerName) {
