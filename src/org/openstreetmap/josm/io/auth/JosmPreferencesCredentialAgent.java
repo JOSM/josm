@@ -36,6 +36,9 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
             if(OsmApi.getOsmApi().getHost().equals(host)) {
                 user = Main.pref.get("osm-server.username", null);
                 password = Main.pref.get("osm-server.password", null);
+            } else if(host != null) {
+                user = Main.pref.get("server.username."+host, null);
+                password = Main.pref.get("server.password."+host, null);
             } else {
                 user = null;
                 password = null;
@@ -68,6 +71,13 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
                     Main.pref.put("osm-server.password", null);
                 } else {
                     Main.pref.put("osm-server.password", String.valueOf(credentials.getPassword()));
+                }
+            } else if(host != null) {
+                Main.pref.put("server.username."+host, credentials.getUserName());
+                if (credentials.getPassword() == null) {
+                    Main.pref.put("server.password."+host, null);
+                } else {
+                    Main.pref.put("server.password."+host, String.valueOf(credentials.getPassword()));
                 }
             }
             break;
