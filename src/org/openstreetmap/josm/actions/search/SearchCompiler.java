@@ -910,7 +910,7 @@ public class SearchCompiler {
                         long maxDate = rangeA2.isEmpty() ? new Date().getTime() : DateUtils.fromString(rangeA2).getTime(); // if max timestamp is empty: use "now"
                         return new TimestampRange(minDate, maxDate);
                     } else {
-                        /* I18n: Don't translate timestamp keyword */ throw new ParseError(tr("Expecting <i>min</i>/<i>max</i>'' after ''timestamp''"));
+                        /* I18n: Don't translate timestamp keyword */ throw new ParseError(tr("Expecting <i>min</i>/<i>max</i> after ''timestamp''"));
                     }
                 } else if ("changeset".equals(key))
                     return new ChangesetId(tokenizer.readNumber(tr("Changeset id expected")));
