@@ -84,7 +84,7 @@ public class ImageDisplay extends JComponent {
             }
 
             boolean error = tracker.isErrorID(1);
-            if (img.getWidth(null) == 0 || img.getHeight(null) == 0) {
+            if (img.getWidth(null) < 0 || img.getHeight(null) < 0) {
                 error = true;
             }
 
@@ -95,50 +95,52 @@ public class ImageDisplay extends JComponent {
                     return;
                 }
 
-                ImageDisplay.this.image = img;
-                visibleRect = new Rectangle(0, 0, img.getWidth(null), img.getHeight(null));
-
-                final int w = (int) visibleRect.getWidth();
-                final int h = (int) visibleRect.getHeight();
-
-                outer: {
-                    final int hh, ww, q;
-                    final double ax, ay;
-                    switch (orientation) {
-                    case 8:
-                        q = -1;
-                        ax = w / 2;
-                        ay = w / 2;
-                        ww = h;
-                        hh = w;
-                        break;
-                    case 3:
-                        q = 2;
-                        ax = w / 2;
-                        ay = h / 2;
-                        ww = w;
-                        hh = h;
-                        break;
-                    case 6:
-                        q = 1;
-                        ax = h / 2;
-                        ay = h / 2;
-                        ww = h;
-                        hh = w;
-                        break;
-                    default:
-                        break outer;
+                if (!error) {
+                    ImageDisplay.this.image = img;
+                    visibleRect = new Rectangle(0, 0, img.getWidth(null), img.getHeight(null));
+    
+                    final int w = (int) visibleRect.getWidth();
+                    final int h = (int) visibleRect.getHeight();
+    
+                    outer: {
+                        final int hh, ww, q;
+                        final double ax, ay;
+                        switch (orientation) {
+                        case 8:
+                            q = -1;
+                            ax = w / 2;
+                            ay = w / 2;
+                            ww = h;
+                            hh = w;
+                            break;
+                        case 3:
+                            q = 2;
+                            ax = w / 2;
+                            ay = h / 2;
+                            ww = w;
+                            hh = h;
+                            break;
+                        case 6:
+                            q = 1;
+                            ax = h / 2;
+                            ay = h / 2;
+                            ww = h;
+                            hh = w;
+                            break;
+                        default:
+                            break outer;
+                        }
+    
+                        final BufferedImage rot = new BufferedImage(ww, hh, BufferedImage.TYPE_INT_RGB);
+                        final AffineTransform xform = AffineTransform.getQuadrantRotateInstance(q, ax, ay);
+                        final Graphics2D g = rot.createGraphics();
+                        g.drawImage(image, xform, null);
+                        g.dispose();
+    
+                        visibleRect.setSize(ww, hh);
+                        image.flush();
+                        ImageDisplay.this.image = rot;
                     }
-
-                    final BufferedImage rot = new BufferedImage(ww, hh, BufferedImage.TYPE_INT_RGB);
-                    final AffineTransform xform = AffineTransform.getQuadrantRotateInstance(q, ax, ay);
-                    final Graphics2D g = rot.createGraphics();
-                    g.drawImage(image, xform, null);
-                    g.dispose();
-
-                    visibleRect.setSize(ww, hh);
-                    image.flush();
-                    ImageDisplay.this.image = rot;
                 }
 
                 selectedRect = null;
