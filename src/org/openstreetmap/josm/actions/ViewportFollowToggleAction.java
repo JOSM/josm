@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -24,6 +25,7 @@ public class ViewportFollowToggleAction extends JosmAction {
                 Shortcut.registerShortcut("menu:view:viewportfollow", tr("Toggle Viewport Following"),KeyEvent.VK_F, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT),
                 true /* register shortcut */
         );
+        putValue("help", ht("/Action/ViewportFollowing"));
         selected = false; 
         notifySelectedState();
     }

@@ -18,7 +18,7 @@ public class InfoWebAction extends AbstractInfoAction {
                 tr("Display object information about OSM nodes, ways, or relations in web browser."),
                 Shortcut.registerShortcut("core:infoweb",
                         tr("Advanced info (web)"), KeyEvent.VK_I, Shortcut.GROUP_HOTKEY, Shortcut.SHIFT_DEFAULT), false);
-        putValue("help", ht("/Action/InfoAboutElements"));
+        putValue("help", ht("/Action/InfoAboutElementsWeb"));
         putValue("toolbar", "action/infoweb");
         Main.toolbar.register(this);
     }

@@ -815,6 +815,7 @@ public class GpxLayer extends Layer {
     public class ConvertToDataLayerAction extends AbstractAction {
         public ConvertToDataLayerAction() {
             super(tr("Convert to data layer"), ImageProvider.get("converttoosm"));
+            putValue("help", ht("/Action/ConvertToDataLayer"));
         }
 
         @Override
@@ -888,6 +889,7 @@ public class GpxLayer extends Layer {
     public class ChooseTrackVisibilityAction extends AbstractAction {
         public ChooseTrackVisibilityAction() {
             super(tr("Choose visible tracks"), ImageProvider.get("dialogs/filter"));
+            putValue("help", ht("/Action/ChooseTrackVisibility"));
         }
 
         /**
@@ -1682,6 +1684,7 @@ public class GpxLayer extends Layer {
 
         private CustomizeDrawing() {
             super(tr("Customize track drawing"), ImageProvider.get("mapmode/addsegment"));
+            putValue("help", ht("/Action/GPXLayerCustomizeLineDrawing"));
         }
 
         @Override
