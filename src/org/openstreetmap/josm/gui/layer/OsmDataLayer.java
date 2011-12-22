@@ -561,6 +561,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     public class ConvertToGpxLayerAction extends AbstractAction {
         public ConvertToGpxLayerAction() {
             super(tr("Convert to GPX layer"), ImageProvider.get("converttogpx"));
+            putValue("help", ht("/Action/ConvertToGpxLayer"));
         }
         public void actionPerformed(ActionEvent e) {
             Main.main.addLayer(new GpxLayer(toGpxData(), tr("Converted from: {0}", getName())));
