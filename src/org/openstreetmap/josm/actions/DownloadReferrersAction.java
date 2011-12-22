@@ -28,7 +28,7 @@ public class DownloadReferrersAction extends JosmAction{
     public DownloadReferrersAction() {
         super(tr("Download parent ways/relations..."), "downloadreferrers", tr("Download objects referring to one of the selected objects"),
                 Shortcut.registerShortcut("file:downloadreferrers", tr("File: {0}", tr("Download parent ways/relations...")), KeyEvent.VK_D, Shortcut.GROUPS_ALT2+Shortcut.GROUP_HOTKEY), true);
-        putValue("help", ht("/Action/DownloadReferrers"));
+        putValue("help", ht("/Action/DownloadParentWaysAndRelation"));
     }
 
     /**

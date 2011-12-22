@@ -42,7 +42,7 @@ public class ChangesetManagerToggleAction extends JosmAction {
         );
         notifySelectedState();
         changesetCacheManagerClosedHandler = new ChangesetCacheManagerClosedHandler();
-        putValue("help", ht("/Action/ToggleChangesetManager"));
+        putValue("help", ht("/Dialog/ChangesetManager"));
     }
 
     public void addButtonModel(ButtonModel model) {

@@ -24,6 +24,7 @@ public class ViewportFollowToggleAction extends JosmAction {
                 Shortcut.registerShortcut("menu:view:viewportfollow", tr("Toggle Viewport Following"),KeyEvent.VK_F, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT),
                 true /* register shortcut */
         );
+        putValue("help", ht("/Action/ViewportFollowing"));
         selected = false; 
         notifySelectedState();
     }
