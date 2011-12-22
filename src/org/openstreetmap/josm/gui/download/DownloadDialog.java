@@ -168,7 +168,7 @@ public class DownloadDialog extends JDialog  {
 
         // -- help button
         SideButton btnHelp;
-        pnl.add(btnHelp = new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/Download"))));
+        pnl.add(btnHelp = new SideButton(new ContextSensitiveHelpAction(ht("/Action/Download"))));
         btnHelp.setFocusable(true);
         btnHelp.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "enter");
         btnHelp.getActionMap().put("enter",btnHelp.getAction());
@@ -197,7 +197,7 @@ public class DownloadDialog extends JDialog  {
                 }
             }
         });
-        HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/Download"));
+        HelpUtil.setHelpContext(getRootPane(), ht("/Action/Download"));
         addWindowListener(new WindowEventHandler());
         restoreSettings();
     }
