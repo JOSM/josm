@@ -126,9 +126,9 @@ public class SessionLoadAction extends JosmAction {
             } catch (RuntimeException e) {
                 cancel();
                 throw e;
-            } catch (Throwable t) {
+            } catch (Error e) {
                 cancel();
-                throw new RuntimeException(t);
+                throw e;
             }
         }
     }

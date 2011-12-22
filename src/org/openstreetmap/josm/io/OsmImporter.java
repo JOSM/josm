@@ -18,11 +18,12 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public class OsmImporter extends FileImporter {
 
-    private OsmDataLayer layer;
-    private Runnable postLayerTask;
+    protected OsmDataLayer layer;
+    protected Runnable postLayerTask;
 
     public OsmImporter() {
         super(new ExtensionFileFilter("osm,xml", "osm", tr("OSM Server Files") + " (*.osm *.xml)"));
@@ -46,19 +47,14 @@ public class OsmImporter extends FileImporter {
     protected void importData(InputStream in, final File associatedFile) throws IllegalDataException {
         loadLayer(in, associatedFile, associatedFile == null ? OsmDataLayer.createNewName() : associatedFile.getName(), NullProgressMonitor.INSTANCE);
         // FIXME: remove UI stuff from IO subsystem
-        Runnable uiStuff = new Runnable() {
+        GuiHelper.runInEDT(new Runnable() {
             @Override
             public void run() {
                 Main.main.addLayer(layer);
                 postLayerTask.run();
                 layer.onPostLoadFromFile();
             }
-        };
-        if (SwingUtilities.isEventDispatchThread()) {
-            uiStuff.run();
-        } else {
-            SwingUtilities.invokeLater(uiStuff);
-        }
+        });
     }
 
     /**
