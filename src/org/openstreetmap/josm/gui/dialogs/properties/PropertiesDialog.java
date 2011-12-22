@@ -127,20 +127,21 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetListenerAdapter.Listener {
     /**
-     * Watches for double clicks and from editing or new property, depending on the
-     * location, the click was.
+     * Watches for mouse clicks
      * @author imi
      */
-    public class DblClickWatch extends MouseAdapter {
+    public class MouseClickWatch extends MouseAdapter {
         @Override public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() < 2)
             {
+                // single click, clear selection in other table not clicked in
                 if (e.getSource() == propertyTable) {
                     membershipTable.clearSelection();
                 } else if (e.getSource() == membershipTable) {
                     propertyTable.clearSelection();
                 }
             }
+            // double click, edit or add property
             else if (e.getSource() == propertyTable)
             {
                 int row = propertyTable.rowAtPoint(e.getPoint());
@@ -646,7 +647,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyMenu.add(helpAction);
 
         propertyData.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
-        propertyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        propertyTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         propertyTable.getTableHeader().setReorderingAllowed(false);
         propertyTable.addMouseListener(new PopupMenuLauncher() {
             @Override
@@ -832,10 +833,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 this.btnAdd, this.btnEdit, this.btnDel
         }));
 
-        DblClickWatch dblClickWatch = new DblClickWatch();
-        propertyTable.addMouseListener(dblClickWatch);
-        membershipTable.addMouseListener(dblClickWatch);
-        scrollPane.addMouseListener(dblClickWatch);
+        MouseClickWatch mouseClickWatch = new MouseClickWatch();
+        propertyTable.addMouseListener(mouseClickWatch);
+        membershipTable.addMouseListener(mouseClickWatch);
+        scrollPane.addMouseListener(mouseClickWatch);
 
         selectSth.setPreferredSize(scrollPane.getSize());
         presets.setSize(scrollPane.getSize());
@@ -1096,9 +1097,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (propertyTable.getSelectedRowCount() >0 ) {
-                int row = propertyTable.getSelectedRow();
-                deleteProperty(row);
+            if (propertyTable.getSelectedRowCount() > 0) {
+                int[] rows = propertyTable.getSelectedRows();
+                for (int i = rows.length - 1; i >= 0; i--) {
+                    deleteProperty(rows[i]);
+                }
             } else if (membershipTable.getSelectedRowCount() > 0) {
                 int row = membershipTable.getSelectedRow();
                 deleteFromRelation(row);
@@ -1108,8 +1111,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         @Override
         protected void updateEnabledState() {
             setEnabled(
-                    (propertyTable != null && propertyTable.getSelectedRowCount() == 1)
-                    ^ (membershipTable != null && membershipTable.getSelectedRowCount() == 1)
+                    (propertyTable != null && propertyTable.getSelectedRowCount() >= 1)
+                    || (membershipTable != null && membershipTable.getSelectedRowCount() == 1)
                     );
         }
 
