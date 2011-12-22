@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.util;
 import java.awt.Component;
 import java.awt.Container;
 
+import javax.swing.SwingUtilities;
+
 /**
  * basic gui utils
  */
@@ -20,6 +22,14 @@ public class GuiHelper {
             } else {
                 child.setEnabled(enabled);
             }
+        }
+    }
+
+    public static void runInEDT(Runnable task) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            task.run();
+        } else {
+            SwingUtilities.invokeLater(task);
         }
     }
 
