@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -13,7 +12,6 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -302,7 +300,7 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
         popupMenuError.visitHighlighted(bbox);
         if (bbox.getBounds() == null)
             return;
-        bbox.enlargeBoundingBox();
+        bbox.enlargeBoundingBox(Main.pref.getDouble("validator.zoom-enlarge-bbox", 0.0002));
         Main.map.mapView.recalculateCenterScale(bbox);
     }
 

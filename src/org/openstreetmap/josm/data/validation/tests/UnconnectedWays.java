@@ -109,7 +109,8 @@ public class UnconnectedWays extends Test {
             errors.add(new TestError(this, Severity.WARNING,
                     tr("Way end node near other highway"),
                     UNCONNECTED_WAYS,
-                    Arrays.asList(error.getKey(), error.getValue())));
+                    Arrays.asList(error.getKey(), error.getValue()),
+                    Arrays.asList(error.getKey())));
         }
         map.clear();
         for (MyWaySegment s : ways) {
@@ -127,7 +128,8 @@ public class UnconnectedWays extends Test {
             errors.add(new TestError(this, Severity.WARNING,
                     tr("Way end node near other way"),
                     UNCONNECTED_WAYS,
-                    Arrays.asList(error.getKey(), error.getValue())));
+                    Arrays.asList(error.getKey(), error.getValue()),
+                    Arrays.asList(error.getKey())));
         }
         /* the following two use a shorter distance */
         if (minmiddledist > 0.0) {
@@ -148,7 +150,8 @@ public class UnconnectedWays extends Test {
                 errors.add(new TestError(this, Severity.OTHER,
                         tr("Way node near other way"),
                         UNCONNECTED_WAYS,
-                        Arrays.asList(error.getKey(), error.getValue())));
+                        Arrays.asList(error.getKey(), error.getValue()),
+                        Arrays.asList(error.getKey())));
             }
             map.clear();
             for (MyWaySegment s : ways) {
@@ -167,7 +170,8 @@ public class UnconnectedWays extends Test {
                 errors.add(new TestError(this, Severity.OTHER,
                         tr("Connected way end node near other way"),
                         UNCONNECTED_WAYS,
-                        Arrays.asList(error.getKey(), error.getValue())));
+                        Arrays.asList(error.getKey(), error.getValue()),
+                        Arrays.asList(error.getKey())));
             }
         }
         ways = null;
