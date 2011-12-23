@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
+import java.awt.Toolkit;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
@@ -140,10 +141,28 @@ public class OsmUrlToBounds {
     }
 
     public static Bounds positionToBounds(final double lat, final double lon, final int zoom) {
-        final double size = 180.0 / Math.pow(2, zoom);
+        int tileSizeInPixels = 256;
+        int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+        int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+        double deltaX = screenWidth / 2. / tileSizeInPixels;
+        double deltaY = screenHeight / 2. / tileSizeInPixels;
+        Pair<Double, Double> center = getTileOfLatLon(lat, lon, zoom);
         return new Bounds(
-                new LatLon(lat - size/2, lon - size),
-                new LatLon(lat + size/2, lon + size));
+                getLatLonOfTile(center.a - deltaX, center.b - deltaY, zoom),
+                getLatLonOfTile(center.a + deltaX, center.b + deltaY, zoom));
+    }
+
+    public static Pair<Double, Double> getTileOfLatLon(double lat, double lon, double zoom) {
+        double x = Math.floor((lon + 180) / 360 * Math.pow(2.0, zoom));
+        double y = Math.floor((1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI)
+                / 2 * Math.pow(2.0, zoom));
+        return new Pair<Double, Double>(x, y);
+    }
+
+    public static LatLon getLatLonOfTile(double x, double y, double zoom) {
+        double lon = x / Math.pow(2.0, zoom) * 360.0 - 180;
+        double lat = Math.toDegrees(Math.atan(Math.sinh(Math.PI - (2.0 * Math.PI * y) / Math.pow(2.0, zoom))));
+        return new LatLon(lat, lon);
     }
 
     static public int getZoom(Bounds b) {
