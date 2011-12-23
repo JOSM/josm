@@ -34,18 +34,23 @@ public class WayConnectedToArea extends Test {
     }
 
     private void testForError(Way w, Node wayNode, OsmPrimitive p) {
-        if (ElemStyles.hasAreaElemStyle(p, false)) {
+        if (isArea(p)) {
             addError(w, wayNode, p);
         } else {
             for (OsmPrimitive r : p.getReferrers()) {
                 if (r instanceof Relation
                         && r.hasTag("type", "multipolygon")
-                        && ElemStyles.hasAreaElemStyle(r, false)) {
+                        && isArea(r)) {
                     addError(w, wayNode, p);
                     break;
                 }
             }
         }
+    }
+
+    private boolean isArea(OsmPrimitive p) {
+        return (p.hasKey("landuse") || p.hasKey("natural"))
+                && ElemStyles.hasAreaElemStyle(p, false);
     }
 
     private void addError(Way w, Node wayNode, OsmPrimitive p) {
