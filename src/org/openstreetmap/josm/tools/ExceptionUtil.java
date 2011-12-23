@@ -102,10 +102,10 @@ public class ExceptionUtil {
         String msg = trn(
                 "<html><strong>Failed</strong> to delete <strong>node {0}</strong>."
                 + " It is still referred to by way {1}.<br>"
-                + "Please load way {1}, remove the reference to node {0}, and upload again.</html>",
+                + "Please load the way, remove the reference to the node, and upload again.</html>",
                 "<html><strong>Failed</strong> to delete <strong>node {0}</strong>."
                 + " It is still referred to by ways {1}.<br>"
-                + "Please load ways {1}, remove the reference to node {0}, and upload again.</html>",
+                + "Please load the ways, remove the reference to the node, and upload again.</html>",
                 parentWays.size(), childNode, ids
         );
         return msg;
