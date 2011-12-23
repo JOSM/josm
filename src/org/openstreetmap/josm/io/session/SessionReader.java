@@ -347,7 +347,7 @@ public class SessionReader {
                         CancelOrContinueDialog dialog = new CancelOrContinueDialog();
                         dialog.show(
                             tr("Unable to load layer"),
-                            tr("Cannot load layer {0} because it depends no layer {1} which has been skipped.", idx, d),
+                            tr("Cannot load layer {0} because it depends on layer {1} which has been skipped.", idx, d),
                             JOptionPane.WARNING_MESSAGE,
                             progressMonitor
                         );
