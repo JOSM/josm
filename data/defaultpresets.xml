@@ -5406,7 +5406,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Street name" default="" delete_if_empty="true" />
             <roles>
                 <role key="street" text="street" requisite="required" type="way" />
-                <role key="house" text="house" requisite="required" type="node,closedway,relation" />
+                <role key="house" text="house" requisite="required" type="node,way,closedway,relation" />
             </roles>
         </item>
         <item name="Street" type="relation">
