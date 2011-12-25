@@ -16,10 +16,12 @@ import org.openstreetmap.josm.Main;
  * Use this class if you want to cache and store a single file that gets updated regularly.
  * Unless you flush() it will be kept in memory. If you want to cache a lot of data and/or files,
  * use CacheFiles
+ * @param <T> a {@link Throwable} that may be thrown during {@link #updateData()},
+ * use {@link RuntimeException} if no exception must be handled.
  * @author xeen
  *
  */
-public abstract class CacheCustomContent {
+public abstract class CacheCustomContent<T extends Throwable> {
     /**
      * Common intervals
      */
@@ -56,7 +58,7 @@ public abstract class CacheCustomContent {
      * executed in the current thread.
      * @return the data to cache
      */
-    protected abstract byte[] updateData();
+    protected abstract byte[] updateData() throws T;
 
     /**
      * This function serves as a comfort hook to perform additional checks if the cache is valid
@@ -82,7 +84,7 @@ public abstract class CacheCustomContent {
      * Updates data if required
      * @return Returns the data
      */
-    public byte[] updateIfRequired() {
+    public byte[] updateIfRequired() throws T {
         if(Main.pref.getInteger("cache." + ident, 0) + updateInterval < new Date().getTime()/1000
                 || !isCacheValid())
             return updateForce();
@@ -93,7 +95,7 @@ public abstract class CacheCustomContent {
      * Updates data if required
      * @return Returns the data as string
      */
-    public String updateIfRequiredString() {
+    public String updateIfRequiredString() throws T {
         if(Main.pref.getInteger("cache." + ident, 0) + updateInterval < new Date().getTime()/1000
                 || !isCacheValid())
             return updateForceString();
@@ -104,7 +106,7 @@ public abstract class CacheCustomContent {
      * Executes an update regardless of updateInterval
      * @return Returns the data
      */
-    public byte[] updateForce() {
+    public byte[] updateForce() throws T {
         this.data = updateData();
         saveToDisk();
         Main.pref.putInteger("cache." + ident, (int)(new Date().getTime()/1000));
@@ -115,7 +117,7 @@ public abstract class CacheCustomContent {
      * Executes an update regardless of updateInterval
      * @return Returns the data as String
      */
-    public String updateForceString() {
+    public String updateForceString() throws T {
         updateForce();
         try {
             return new String(data,"utf-8");
@@ -129,7 +131,7 @@ public abstract class CacheCustomContent {
      * Returns the data without performing any updates
      * @return the data
      */
-    public byte[] getData() {
+    public byte[] getData() throws T {
         if(data == null) {
             loadFromDisk();
         }
@@ -140,7 +142,7 @@ public abstract class CacheCustomContent {
      * Returns the data without performing any updates
      * @return the data as String
      */
-    public String getDataString() {
+    public String getDataString() throws T {
         try {
             return new String(getData(), "utf-8");
         } catch(UnsupportedEncodingException e){
@@ -152,7 +154,7 @@ public abstract class CacheCustomContent {
     /**
      * Tries to load the data using the given ident from disk. If this fails, data will be updated
      */
-    private void loadFromDisk() {
+    private void loadFromDisk() throws T {
         if(Main.applet)
             this.data = updateForce();
         else {

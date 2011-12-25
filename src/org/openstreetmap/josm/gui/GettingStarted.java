@@ -53,7 +53,7 @@ public class GettingStarted extends JPanel {
     /**
      * Grabs current MOTD from cache or webpage and parses it.
      */
-    private static class MotdContent extends CacheCustomContent {
+    private static class MotdContent extends CacheCustomContent<RuntimeException> {
         public MotdContent() {
             super("motd.html", CacheCustomContent.INTERVAL_DAILY);
         }

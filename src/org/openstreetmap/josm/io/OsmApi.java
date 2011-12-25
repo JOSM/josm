@@ -152,6 +152,23 @@ public class OsmApi extends OsmConnection {
         return host;
     }
 
+    private class CapabilitiesCache extends CacheCustomContent<OsmTransferException> {
+
+        ProgressMonitor monitor;
+        boolean fastFail;
+
+        public CapabilitiesCache(ProgressMonitor monitor, boolean fastFail) {
+            super("capabilities" + getBaseUrl().hashCode(), CacheCustomContent.INTERVAL_WEEKLY);
+            this.monitor = monitor;
+            this.fastFail = fastFail;
+        }
+        @Override
+        protected byte[] updateData() throws OsmTransferException {
+            String s = sendRequest("GET", "capabilities", null, monitor, false, fastFail);
+            return s.getBytes();
+        }
+    }
+
     public void initialize(ProgressMonitor monitor) throws OsmApiInitializationException, OsmTransferCanceledException {
         initialize(monitor, false);
     }
@@ -167,7 +184,7 @@ public class OsmApi extends OsmConnection {
             return;
         cancel = false;
         try {
-            String s = sendRequest("GET", "capabilities", null, monitor, false, fastFail);
+            String s = new CapabilitiesCache(monitor, fastFail).updateIfRequiredString();
             InputSource inputSource = new InputSource(new StringReader(s));
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new CapabilitiesParser());
             if (capabilities.supportsVersion("0.6")) {
