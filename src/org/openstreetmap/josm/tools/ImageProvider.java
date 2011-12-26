@@ -20,23 +20,27 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-
+import org.apache.commons.codec.binary.Base64;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.plugins.PluginHandler;
-import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -44,7 +48,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
-
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGException;
 import com.kitfox.svg.SVGUniverse;
@@ -166,9 +169,42 @@ public class ImageProvider {
             return ir.getImageIcon(dim == null ? ImageResource.DEFAULT_DIMENSION : dim, sanitize);
     }
 
+    /**
+     * {@code data:[<mediatype>][;base64],<data>}
+     * @see RFC2397
+     */
+    private static final Pattern dataUrlPattern = Pattern.compile(
+            "^data:([a-zA-Z]+/[a-zA-Z+]+)?(;base64)?,(.+)$");
+
     static ImageResource getIfAvailableImpl(Collection<String> dirs, String id, String subdir, String name, File archive) {
         if (name == null)
             return null;
+
+        try {
+            if (name.startsWith("data:")) {
+                Matcher m = dataUrlPattern.matcher(name);
+                if (m.matches()) {
+                    String mediatype = m.group(1);
+                    String base64 = m.group(2);
+                    String data = m.group(3);
+                    byte[] bytes = ";base64".equals(base64)
+                            ? Base64.decodeBase64(data)
+                            : URLDecoder.decode(data, "utf-8").getBytes();
+                    if (mediatype != null && mediatype.contains("image/svg+xml")) {
+                        URI uri = getSvgUniverse().loadSVG(new StringReader(new String(bytes)), name);
+                        SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+                        return new ImageResource(svg);
+                    } else {
+                        return new ImageResource(new ImageIcon(bytes).getImage(), true);
+                    }
+                }
+            }
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex.getMessage(), ex);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex.getMessage(), ex);
+        }
+
         ImageType type = name.toLowerCase().endsWith(".svg") ? ImageType.SVG : ImageType.OTHER;
 
         if (name.startsWith("http://")) {

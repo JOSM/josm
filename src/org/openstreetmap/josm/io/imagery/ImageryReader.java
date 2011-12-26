@@ -4,11 +4,8 @@ package org.openstreetmap.josm.io.imagery;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.Utils.equal;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,14 +14,12 @@ import java.util.Stack;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
-import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -129,6 +124,7 @@ public class ImageryReader {
                         "terms-of-use-text",
                         "terms-of-use-url",
                         "country-code",
+                        "icon",
                     }).contains(qName)) {
                         newState = State.ENTRY_ATTRIBUTE;
                     } else if (qName.equals("bounds")) {
@@ -259,6 +255,8 @@ public class ImageryReader {
                         entry.setTermsOfUseURL(accumulator.toString());
                     } else if (qName.equals("country-code")) {
                         entry.setCountryCode(accumulator.toString());
+                    } else if (qName.equals("icon")) {
+                        entry.setIcon(accumulator.toString());
                     } else {
                     }
                     break;

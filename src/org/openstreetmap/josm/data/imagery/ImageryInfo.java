@@ -84,6 +84,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     private String termsOfUseText;
     private String termsOfUseURL;
     private String countryCode = "";
+    private String icon;
 
     /** auxiliary class to save an ImageryInfo object in the preferences */
     public static class ImageryPreferenceEntry {
@@ -105,6 +106,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         @pref String bounds;
         @pref String shapes;
         @pref String projections;
+        @pref String icon;
 
         public ImageryPreferenceEntry() {
         }
@@ -125,6 +127,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
             max_zoom = i.defaultMaxZoom;
             min_zoom = i.defaultMinZoom;
             cookies = i.cookies;
+            icon = i.icon;
             if (i.bounds != null) {
                 bounds = i.bounds.encodeAsString(",");
                 String shapesString = "";
@@ -218,6 +221,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         termsOfUseText = e.terms_of_use_text;
         termsOfUseURL = e.terms_of_use_url;
         countryCode = e.country_code;
+        icon = e.icon;
     }
 
     public ImageryInfo(Collection<String> list) {
@@ -284,6 +288,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         this.termsOfUseText = i.termsOfUseText;
         this.termsOfUseURL = i.termsOfUseURL;
         this.serverProjections = i.serverProjections;
+        this.icon = i.icon;
     }
 
     @Override
@@ -512,6 +517,14 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
 
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     /**
