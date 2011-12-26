@@ -76,7 +76,8 @@ public class ImageProvider {
     private static Map<String, ImageResource> cache = new HashMap<String, ImageResource>();
 
     /**
-     * Return an image from the specified location.
+     * Return an image from the specified location. Throws a RuntimeException if
+     * the image cannot be located.
      *
      * @param subdir The position of the directory, e.g. 'layer'
      * @param name The icons name (with or without '.png' or '.svg' extension)
@@ -86,7 +87,7 @@ public class ImageProvider {
         ImageIcon icon = getIfAvailable(subdir, name);
         if (icon == null) {
             String ext = name.indexOf('.') != -1 ? "" : ".???";
-            throw new NullPointerException(tr(
+            throw new RuntimeException(tr(
                     "Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.",
                     name+ext));
         }
@@ -129,6 +130,10 @@ public class ImageProvider {
         return getIfAvailable(dirs, id, subdir, name, archive, null, sanitize);
     }
 
+    public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive, Dimension dim, boolean sanitize) {
+        return getIfAvailable(dirs, id, subdir, name, archive, dim, null, sanitize);
+    }
+
     /**
      * The full path of the image is either a url (starting with http://)
      * or something like
@@ -143,17 +148,25 @@ public class ImageProvider {
      *                  original size of the image should be returned. The width
      *                  part of the dimension can be -1. Then it will scale the width
      *                  in the same way as the height. (And the other way around.)
+     * @param maxSize   The maximum size of the image. It will shrink the image if necessary, and
+     *                  keep the aspect ratio. The given width or height can be -1 which means this
+     *                  direction is not bounded.
+     *                  If this parameter has a non-null value, the parameter 'dim' will be ignored.
      * @param sanitize  If the image should be repainted to a new BufferedImage to work
      *                  around certain issues.
      */
-    public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive, Dimension dim, boolean sanitize) {
+    public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name,
+            File archive, Dimension dim, Dimension maxSize, boolean sanitize) {
         ImageResource ir = getIfAvailableImpl(dirs, id, subdir, name, archive);
         if (ir == null)
             return null;
-        return ir.getImageIcon(dim == null ? ImageResource.DEFAULT_DIMENSION : dim, sanitize);
+        if (maxSize != null)
+            return ir.getImageIconBounded(maxSize, sanitize);
+        else
+            return ir.getImageIcon(dim == null ? ImageResource.DEFAULT_DIMENSION : dim, sanitize);
     }
 
-    private static ImageResource getIfAvailableImpl(Collection<String> dirs, String id, String subdir, String name, File archive) {
+    static ImageResource getIfAvailableImpl(Collection<String> dirs, String id, String subdir, String name, File archive) {
         if (name == null)
             return null;
         ImageType type = name.toLowerCase().endsWith(".svg") ? ImageType.SVG : ImageType.OTHER;

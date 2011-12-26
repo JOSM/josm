@@ -26,6 +26,8 @@ public class ImageRequest {
     protected File archive;
     protected int width = -1;
     protected int height = -1;
+    protected int maxWidth = -1;
+    protected int maxHeight = -1;
     protected boolean sanitize;
     protected boolean required = true;
 
@@ -64,6 +66,16 @@ public class ImageRequest {
         return this;
     }
 
+    public ImageRequest setMaxWidth(int maxWidth) {
+        this.maxWidth = maxWidth;
+        return this;
+    }
+
+    public ImageRequest setMaxHeight(int maxHeight) {
+        this.maxHeight = maxHeight;
+        return this;
+    }
+
     public ImageRequest setSanitize(boolean sanitize) {
         this.sanitize = sanitize;
         return this;
@@ -75,12 +87,18 @@ public class ImageRequest {
     }
 
     public ImageIcon get() {
-        ImageIcon icon = ImageProvider.getIfAvailable(dirs, id, subdir, name, archive, new Dimension(width, height), sanitize);
-        if (required && icon == null) {
-            String ext = name.indexOf('.') != -1 ? "" : ".???";
-            throw new NullPointerException(tr("Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.", name + ext));
+        ImageResource ir = ImageProvider.getIfAvailableImpl(dirs, id, subdir, name, archive);
+        if (ir == null) {
+            if (required) {
+                String ext = name.indexOf('.') != -1 ? "" : ".???";
+                throw new RuntimeException(tr("Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.", name + ext));
+            } else
+                return null;
         }
-        return icon;
+        if (maxWidth != -1 || maxHeight != -1)
+            return ir.getImageIconBounded(new Dimension(maxWidth, maxHeight), sanitize);
+        else 
+            return ir.getImageIcon(new Dimension(width, height), sanitize);
     }
     
 }
