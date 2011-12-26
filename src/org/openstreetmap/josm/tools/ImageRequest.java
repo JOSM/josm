@@ -16,7 +16,7 @@ import javax.swing.ImageIcon;
  *
  * or in funky double-brace style
  *
- * ImageIcon icon = new ImageProvider.Request(){{name=imgName; width=100; height=120;}}.get();
+ * ImageIcon icon = new ImageRequest(){{name=imgName; width=100; height=120;}}.get();
  */
 public class ImageRequest {
     protected Collection<String> dirs;
@@ -29,7 +29,7 @@ public class ImageRequest {
     protected int maxWidth = -1;
     protected int maxHeight = -1;
     protected boolean sanitize;
-    protected boolean required = true;
+    protected boolean optional;
 
     public ImageRequest setDirs(Collection<String> dirs) {
         this.dirs = dirs;
@@ -81,15 +81,15 @@ public class ImageRequest {
         return this;
     }
 
-    public ImageRequest setRequired(boolean required) {
-        this.required = required;
+    public ImageRequest setOptional(boolean optional) {
+        this.optional = optional;
         return this;
     }
 
     public ImageIcon get() {
         ImageResource ir = ImageProvider.getIfAvailableImpl(dirs, id, subdir, name, archive);
         if (ir == null) {
-            if (required) {
+            if (!optional) {
                 String ext = name.indexOf('.') != -1 ? "" : ".???";
                 throw new RuntimeException(tr("Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.", name + ext));
             } else
