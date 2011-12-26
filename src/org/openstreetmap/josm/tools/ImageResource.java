@@ -61,6 +61,8 @@ class ImageResource {
      *          to avoid certain problem with native image formats.
      */
     public ImageIcon getImageIcon(Dimension dim, boolean sanitized) {
+        if (dim.width < -1 || dim.width == 0 || dim.height < -1 || dim.height == 0)
+            throw new IllegalArgumentException();
         ImageWrapper iw = imgCache.get(dim);
         if (iw != null) {
             if (sanitized && !iw.sanitized) {
@@ -93,4 +95,49 @@ class ImageResource {
             return new ImageIcon(img);
         }
     }
+
+    /**
+     * Get image icon with a certain maximum size. The image is scaled down
+     * to fit maximum dimensions. (Keeps aspect ratio)
+     *
+     * @param maxSize The maximum size. One of the dimensions (widht or height) can be -1,
+     * which means it is not bounded.
+     */
+    public ImageIcon getImageIconBounded(Dimension maxSize, boolean sanitized) {
+        if (maxSize.width < -1 || maxSize.width == 0 || maxSize.height < -1 || maxSize.height == 0)
+            throw new IllegalArgumentException();
+        float realWidth;
+        float realHeight;
+        if (svg != null) {
+            realWidth = svg.getWidth();
+            realHeight = svg.getHeight();
+        } else {
+            ImageWrapper base = imgCache.get(DEFAULT_DIMENSION);
+            if (base == null) throw new AssertionError();
+            ImageIcon icon = new ImageIcon(base.img);
+            realWidth = icon.getIconWidth();
+            realHeight = icon.getIconHeight();
+        }
+        int maxWidth = maxSize.width;
+        int maxHeight = maxSize.height;
+
+        if (realWidth <= maxWidth) {
+            maxWidth = -1;
+        }
+        if (realHeight <= maxHeight) {
+            maxHeight = -1;
+        }
+
+        if (maxWidth == -1 && maxHeight == -1)
+            return getImageIcon(DEFAULT_DIMENSION, sanitized);
+        else if (maxWidth == -1)
+            return getImageIcon(new Dimension(-1, maxHeight), sanitized);
+        else if (maxHeight == -1)
+            return getImageIcon(new Dimension(maxWidth, -1), sanitized);
+        else
+            if (realWidth / maxWidth > realHeight / maxHeight)
+                return getImageIcon(new Dimension(maxWidth, -1), sanitized);
+            else
+                return getImageIcon(new Dimension(-1, maxHeight), sanitized);
+   }
 }
