@@ -4,16 +4,18 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
-
+import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
+import org.openstreetmap.josm.tools.ImageRequest;
 
 public class AddImageryLayerAction extends JosmAction implements AdaptableAction {
 
+    private static final int MAX_ICON_SIZE = 24;
     private final ImageryInfo info;
 
     public AddImageryLayerAction(ImageryInfo info) {
@@ -21,6 +23,16 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         putValue("toolbar", "imagery_" + info.getToolbarName());
         this.info = info;
         installAdapters();
+
+        // change toolbar icon from if specified
+        try {
+            if (info.getIcon() != null) {
+                ImageIcon i = new ImageRequest().setName(info.getIcon()).setMaxHeight(MAX_ICON_SIZE).setMaxWidth(MAX_ICON_SIZE).get();
+                putValue(Action.SMALL_ICON, i);
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex.getMessage(), ex);
+        }
     }
 
     @Override

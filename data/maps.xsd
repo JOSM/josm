@@ -623,6 +623,8 @@
 						<xs:element name="terms-of-use-url" minOccurs="0" maxOccurs="1" type="xs:string" />
 						<!-- The ISO 3166 country code -->
 						<xs:element name="country-code" minOccurs="0" maxOccurs="1" type="tns:iso3166" />
+						<!-- A base64-encoded image that is displayed as menu/toolbar icon -->
+						<xs:element name="icon" minOccurs="0" maxOccurs="1" type="xs:string" />
 					</xs:all>
 				</xs:complexType>
 			</xs:element>
