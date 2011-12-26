@@ -27,8 +27,11 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         // change toolbar icon from if specified
         try {
             if (info.getIcon() != null) {
-                ImageIcon i = new ImageRequest().setName(info.getIcon()).setMaxHeight(MAX_ICON_SIZE).setMaxWidth(MAX_ICON_SIZE).get();
-                putValue(Action.SMALL_ICON, i);
+                ImageIcon i = new ImageRequest().setOptional(true).setName(info.getIcon()).
+                        setMaxHeight(MAX_ICON_SIZE).setMaxWidth(MAX_ICON_SIZE).get();
+                if (i != null) {
+                    putValue(Action.SMALL_ICON, i);
+                }
             }
         } catch (Exception ex) {
             throw new RuntimeException(ex.getMessage(), ex);

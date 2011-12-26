@@ -92,8 +92,10 @@ public class ImageRequest {
             if (!optional) {
                 String ext = name.indexOf('.') != -1 ? "" : ".???";
                 throw new RuntimeException(tr("Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.", name + ext));
-            } else
+            } else {
+                System.out.println(tr("Failed to locate image ''{0}''", name));
                 return null;
+            }
         }
         if (maxWidth != -1 || maxHeight != -1)
             return ir.getImageIconBounded(new Dimension(maxWidth, maxHeight), sanitize);
