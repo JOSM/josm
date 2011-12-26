@@ -69,7 +69,10 @@ public class MarkerLayer extends Layer {
     private Marker currentMarker;
 
     public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer) {
+        this(indata, name, associatedFile, fromLayer, true);
+    }
 
+    public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer, boolean addMouseHandlerInConstructor) {
         super(name);
         this.setAssociatedFile(associatedFile);
         this.data = new ArrayList<Marker>();
@@ -87,44 +90,50 @@ public class MarkerLayer extends Layer {
             }
         }
 
-        SwingUtilities.invokeLater(new Runnable(){
-            public void run() {
-                Main.map.mapView.addMouseListener(new MouseAdapter() {
-                    @Override public void mousePressed(MouseEvent e) {
-                        if (e.getButton() != MouseEvent.BUTTON1)
-                            return;
-                        boolean mousePressedInButton = false;
-                        if (e.getPoint() != null) {
-                            for (Marker mkr : data) {
-                                if (mkr.containsPoint(e.getPoint())) {
-                                    mousePressedInButton = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (! mousePressedInButton)
-                            return;
-                        mousePressed  = true;
-                        if (isVisible()) {
-                            Main.map.mapView.repaint();
+        if (addMouseHandlerInConstructor) {
+            SwingUtilities.invokeLater(new Runnable(){
+                public void run() {
+                    addMouseHandler();
+                }
+            });
+        }
+    }
+
+    public void addMouseHandler() {
+        Main.map.mapView.addMouseListener(new MouseAdapter() {
+            @Override public void mousePressed(MouseEvent e) {
+                if (e.getButton() != MouseEvent.BUTTON1)
+                    return;
+                boolean mousePressedInButton = false;
+                if (e.getPoint() != null) {
+                    for (Marker mkr : data) {
+                        if (mkr.containsPoint(e.getPoint())) {
+                            mousePressedInButton = true;
+                            break;
                         }
                     }
-                    @Override public void mouseReleased(MouseEvent ev) {
-                        if (ev.getButton() != MouseEvent.BUTTON1 || ! mousePressed)
-                            return;
-                        mousePressed = false;
-                        if (!isVisible())
-                            return;
-                        if (ev.getPoint() != null) {
-                            for (Marker mkr : data) {
-                                if (mkr.containsPoint(ev.getPoint())) {
-                                    mkr.actionPerformed(new ActionEvent(this, 0, null));
-                                }
-                            }
+                }
+                if (! mousePressedInButton)
+                    return;
+                mousePressed  = true;
+                if (isVisible()) {
+                    Main.map.mapView.repaint();
+                }
+            }
+            @Override public void mouseReleased(MouseEvent ev) {
+                if (ev.getButton() != MouseEvent.BUTTON1 || ! mousePressed)
+                    return;
+                mousePressed = false;
+                if (!isVisible())
+                    return;
+                if (ev.getPoint() != null) {
+                    for (Marker mkr : data) {
+                        if (mkr.containsPoint(ev.getPoint())) {
+                            mkr.actionPerformed(new ActionEvent(this, 0, null));
                         }
-                        Main.map.mapView.repaint();
                     }
-                });
+                }
+                Main.map.mapView.repaint();
             }
         });
     }

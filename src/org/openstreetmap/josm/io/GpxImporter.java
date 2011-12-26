@@ -65,7 +65,7 @@ public class GpxImporter extends FileImporter {
                 gpxLayer = new GpxLayer(r.data, gpxLayerName, associatedFile != null);
             }
             if (Main.pref.getBoolean("marker.makeautomarkers", true) && !r.data.waypoints.isEmpty()) {
-                markerLayer = new MarkerLayer(r.data, markerLayerName, associatedFile, gpxLayer);
+                markerLayer = new MarkerLayer(r.data, markerLayerName, associatedFile, gpxLayer, false);
                 if (markerLayer.data.size() == 0) {
                     markerLayer = null;
                 }
@@ -73,6 +73,9 @@ public class GpxImporter extends FileImporter {
             postLayerTask = new Runnable() {
                 @Override
                 public void run() {
+                    if (markerLayer != null) {
+                        markerLayer.addMouseHandler();
+                    }
                     if (!parsedProperly) {
                         String msg;
                         if (associatedFile == null) {
