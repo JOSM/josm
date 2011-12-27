@@ -305,7 +305,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
     /**
      * All data sources of this DataSet.
      */
-    public Collection<DataSource> dataSources = new LinkedList<DataSource>();
+    public final Collection<DataSource> dataSources = new LinkedList<DataSource>();
 
     /**
      * @return A collection containing all primitives of the dataset. Data are not ordered
