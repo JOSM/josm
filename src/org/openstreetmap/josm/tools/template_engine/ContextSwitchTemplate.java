@@ -67,7 +67,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
 
             List<OsmPrimitive> result = new ArrayList<OsmPrimitive>();
             for (OsmPrimitive child: children) {
-                for (OsmPrimitive parent: child.getReferrers()) {
+                for (OsmPrimitive parent: child.getReferrers(true)) {
                     if (condition == null || condition.match(parent)) {
                         result.add(parent);
                     }
