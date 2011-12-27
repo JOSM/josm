@@ -1009,7 +1009,7 @@ public abstract class SourceEditor extends JPanel {
                             return o1.compareTo(o2);
                         }
                     }
-            );
+                    );
         }
 
         public List<String> getIconPaths() {
@@ -1098,6 +1098,7 @@ public abstract class SourceEditor extends JPanel {
         private String url;
         private BufferedReader reader;
         private boolean canceled;
+        private final List<ExtendedSourceEntry> sources = new ArrayList<ExtendedSourceEntry>();
 
         public SourceLoader(String url) {
             super(tr(getStr(I18nString.LOADING_SOURCES_FROM), url));
@@ -1116,8 +1117,6 @@ public abstract class SourceEditor extends JPanel {
             }
         }
 
-        @Override
-        protected void finish() {}
 
         protected void warn(Exception e) {
             String emsg = e.getMessage() != null ? e.getMessage() : e.toString();
@@ -1130,12 +1129,11 @@ public abstract class SourceEditor extends JPanel {
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE,
                     ht(getStr(I18nString.FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC))
-            );
+                    );
         }
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
-            LinkedList<ExtendedSourceEntry> sources = new LinkedList<ExtendedSourceEntry>();
             String lang = LanguageInfo.getLanguageCodeXML();
             try {
                 sources.addAll(getDefault());
@@ -1209,6 +1207,10 @@ public abstract class SourceEditor extends JPanel {
                 warn(ex);
                 return;
             }
+        }
+
+        @Override
+        protected void finish() {
             availableSourcesModel.setSources(sources);
         }
     }
@@ -1284,7 +1286,7 @@ public abstract class SourceEditor extends JPanel {
                             tfFileName.selectAll();
                         }
                     }
-            );
+                    );
         }
 
         public FileOrUrlCellEditor(boolean isFile) {
