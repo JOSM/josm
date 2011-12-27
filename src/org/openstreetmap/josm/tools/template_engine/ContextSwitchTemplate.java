@@ -170,7 +170,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
             List<OsmPrimitive> result = new ArrayList<OsmPrimitive>();
             List<OsmPrimitive> lhsList = lhs.getPrimitives(root);
             for (OsmPrimitive o: rhs.getPrimitives(root)) {
-                if (lhsList.contains(o) && condition == null && condition.match(o)) {
+                if (lhsList.contains(o) && (condition == null || condition.match(o))) {
                     result.add(o);
                 }
             }

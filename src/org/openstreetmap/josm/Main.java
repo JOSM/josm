@@ -38,7 +38,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
-import javax.swing.RepaintManager;
 import javax.swing.UIManager;
 
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
@@ -886,11 +885,12 @@ abstract public class Main {
                 Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
                 while(it.hasNext()){
                     WeakReference<ProjectionChangeListener> wr = it.next();
-                    if (wr.get() == null) {
+                    ProjectionChangeListener listener = wr.get();
+                    if (listener == null) {
                         it.remove();
                         continue;
                     }
-                    wr.get().projectionChanged(oldValue, newValue);
+                    listener.projectionChanged(oldValue, newValue);
                 }
             }
             if (newValue != null) {

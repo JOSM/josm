@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -26,11 +27,11 @@ public abstract class PrimitiveData extends AbstractPrimitive {
     public void setId(long id) {
         this.id = id;
     }
-    
+
     public void setVersion(int version) {
         this.version = version;
     }
-    
+
     /**
      * override to make it public
      */
@@ -44,7 +45,7 @@ public abstract class PrimitiveData extends AbstractPrimitive {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(id).append(keys).append(getFlagsAsString());
+        builder.append(id).append(Arrays.toString(keys)).append(getFlagsAsString());
         return builder.toString();
     }
 

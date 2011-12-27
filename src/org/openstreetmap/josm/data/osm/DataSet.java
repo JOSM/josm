@@ -207,8 +207,8 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /*
-    * Holding bin for changeset tag information, to be applied when or if this is ever uploaded.
-    */
+     * Holding bin for changeset tag information, to be applied when or if this is ever uploaded.
+     */
     private Map<String, String> changeSetTags = new HashMap<String, String>();
 
     public Map<String, String> getChangeSetTags() {
@@ -585,7 +585,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
             boolean wasEmpty = selectedPrimitives.isEmpty();
             selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
             changed = addSelected(selection, false)
-            || (!wasEmpty && selectedPrimitives.isEmpty());
+                    || (!wasEmpty && selectedPrimitives.isEmpty());
             if (changed) {
                 selectionSnapshot = null;
             }
@@ -782,29 +782,6 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
         return primitivesMap.get(primitiveId);
     }
 
-    /**
-     *
-     * @param primitiveId
-     * @param createNew
-     * @return
-     * @deprecated This method can created inconsistent dataset when called for node with id < 0 and createNew=true. That will add
-     * complete node without coordinates to dataset which is not allowed.
-     */
-    @Deprecated
-    public OsmPrimitive getPrimitiveById(PrimitiveId primitiveId, boolean createNew) {
-        OsmPrimitive result = primitivesMap.get(primitiveId);
-
-        if (result == null && createNew) {
-            switch (primitiveId.getType()) {
-            case NODE: result = new Node(primitiveId.getUniqueId(), true); break;
-            case WAY: result = new Way(primitiveId.getUniqueId(), true); break;
-            case RELATION: result = new Relation(primitiveId.getUniqueId(), true); break;
-            }
-            addPrimitive(result);
-        }
-
-        return result;
-    }
 
     /**
      * Show message and stack trace in log in case primitive is not found
@@ -1174,7 +1151,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
         }
         return ret;
     }
-    
+
     /**
      * Moves all primitives and datasources from DataSet "from" to this DataSet
      * @param from The source DataSet

@@ -70,7 +70,7 @@ public class History{
                         return o1.compareTo(o2);
                     }
                 }
-        );
+                );
         return new History(id, type, copy);
     }
 
@@ -83,7 +83,7 @@ public class History{
                         return o2.compareTo(o1);
                     }
                 }
-        );
+                );
         return new History(id, type,copy);
     }
 
@@ -95,7 +95,7 @@ public class History{
                         return primitive.getTimestamp().compareTo(fromDate) >= 0;
                     }
                 }
-        );
+                );
     }
 
     public History until(final Date untilDate) {
@@ -106,7 +106,7 @@ public class History{
                         return primitive.getTimestamp().compareTo(untilDate) <= 0;
                     }
                 }
-        );
+                );
     }
 
     public History between(Date fromDate, Date untilDate) {
@@ -121,7 +121,7 @@ public class History{
                         return primitive.getVersion() >= fromVersion;
                     }
                 }
-        );
+                );
     }
 
     public History until(final long untilVersion) {
@@ -132,22 +132,11 @@ public class History{
                         return primitive.getVersion() <= untilVersion;
                     }
                 }
-        );
+                );
     }
 
     public History between(long fromVersion, long untilVersion) {
         return this.from(fromVersion).until(untilVersion);
-    }
-
-    public History forUser(final String user) {
-        return filter(
-                this,
-                new FilterPredicate() {
-                    public boolean matches(HistoryOsmPrimitive primitive) {
-                        return primitive.getUser().equals(user);
-                    }
-                }
-        );
     }
 
     public History forUserId(final long uid) {
@@ -158,7 +147,7 @@ public class History{
                         return primitive.getUser() != null && primitive.getUser().getId() == uid;
                     }
                 }
-        );
+                );
     }
 
     public long getId() {
