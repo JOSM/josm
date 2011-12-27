@@ -23,17 +23,19 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor.ProgressMonitorDialog;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-public class PleaseWaitDialog extends JDialog {
+public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
 
     private final JProgressBar progressBar = new JProgressBar();
 
     public final JLabel currentAction = new JLabel("");
     private final JLabel customText = new JLabel("");
     public final BoundedRangeModel progress = progressBar.getModel();
-    private  JButton btnCancel;
+    private JButton btnCancel;
+    private JButton btnInBackground;
     /** the text area and the scroll pane for the log */
     private JTextArea taLog = new JTextArea(5,50);
     private  JScrollPane spLog;
@@ -45,10 +47,16 @@ public class PleaseWaitDialog extends JDialog {
         pane.add(currentAction, GBC.eol().fill(GBC.HORIZONTAL));
         pane.add(customText, GBC.eol().fill(GBC.HORIZONTAL));
         pane.add(progressBar, GBC.eop().fill(GBC.HORIZONTAL));
+        JPanel buttons = new JPanel();
+        buttons.setLayout(new GridBagLayout());
         btnCancel = new JButton(tr("Cancel"));
         btnCancel.setIcon(ImageProvider.get("cancel"));
         btnCancel.setToolTipText(tr("Click to cancel the current operation"));
-        pane.add(btnCancel, GBC.eol().anchor(GBC.CENTER));
+        buttons.add(btnCancel);
+        btnInBackground = new JButton(tr("In background"));
+        btnInBackground.setToolTipText(tr("Click to run job in background"));
+        buttons.add(btnInBackground, GBC.std().fill(GBC.VERTICAL).insets(5, 0, 0, 0));
+        pane.add(buttons, GBC.eol().anchor(GBC.CENTER));
         GridBagConstraints gc = GBC.eol().fill(GBC.BOTH);
         gc.weighty = 1.0;
         gc.weightx = 1.0;
@@ -131,6 +139,10 @@ public class PleaseWaitDialog extends JDialog {
         btnCancel.setEnabled(enabled);
     }
 
+    public void setInBackgroundPossible(boolean value) {
+        btnInBackground.setVisible(value);
+    }
+
     /**
      * Installs a callback for the cancel button. If callback is null, all action listeners
      * are removed from the cancel button.
@@ -147,4 +159,27 @@ public class PleaseWaitDialog extends JDialog {
             btnCancel.addActionListener(callback);
         }
     }
+
+    /**
+     * Installs a callback for the "In background" button. If callback is null, all action listeners
+     * are removed from the cancel button.
+     *
+     * @param callback the cancel callback
+     */    
+    public void setInBackgroundCallback(ActionListener callback) {
+        if (callback == null) {
+            ActionListener[] listeners = btnInBackground.getActionListeners();
+            for (ActionListener l: listeners) {
+                btnInBackground.removeActionListener(l);
+            }
+        } else {
+            btnInBackground.addActionListener(callback);
+        }
+    }
+
+    @Override
+    public void updateProgress(int progress) {
+        this.progress.setValue(progress);
+    }
+
 }

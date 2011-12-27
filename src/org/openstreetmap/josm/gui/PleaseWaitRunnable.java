@@ -10,6 +10,7 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
+import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -34,7 +35,6 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
     public PleaseWaitRunnable(String title) {
         this(title, false);
     }
-
     /**
      * Create the runnable object with a given message for the user.
      *
@@ -72,9 +72,12 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
 
     private void doRealRun() {
         try {
+            ProgressTaskId oldTaskId = null;
             try {
                 progressMonitor.addCancelListener(this);
                 progressMonitor.beginTask(title);
+                oldTaskId = progressMonitor.getProgressTaskId();
+                progressMonitor.setProgressTaskId(canRunInBackground());
                 try {
                     realRun();
                 } finally {
@@ -91,9 +94,11 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
             } finally {
                 progressMonitor.finishTask();
                 progressMonitor.removeCancelListener(this);
+                progressMonitor.setProgressTaskId(oldTaskId);
                 if (progressMonitor instanceof PleaseWaitProgressMonitor) {
                     ((PleaseWaitProgressMonitor)progressMonitor).close();
                 }
+                afterFinish();
             }
         } catch (final Exception e) {
             if (!ignoreException) {
@@ -109,6 +114,13 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
                 });
             }
         }
+    }
+
+    /**
+     * Can be overriden if something needs to run after progress monitor is closed.
+     */
+    protected void afterFinish() {
+
     }
 
     public final void run() {
@@ -150,5 +162,14 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
 
     public ProgressMonitor getProgressMonitor() {
         return progressMonitor;
+    }
+
+    /**
+     * Task can run in background if returned value <> null. Note that it's tasks responsibility
+     * to ensure proper synchronization, PleaseWaitRunnable doesn't with it.
+     * @return If returned value is <> null then task can run in background. TaskId could be used in future for "Always run in background" checkbox
+     */
+    public ProgressTaskId canRunInBackground() {
+        return null;
     }
 }

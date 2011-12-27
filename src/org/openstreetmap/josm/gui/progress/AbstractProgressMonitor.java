@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import javax.swing.SwingUtilities;
+
 public abstract class AbstractProgressMonitor implements ProgressMonitor {
 
     private static class Request {
@@ -60,6 +62,14 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
         throw new ProgressException("Expected states are %s but current state is %s", Arrays.asList(expectedStates).toString(), state);
     }
 
+    protected void doInEDT(Runnable runnable) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            runnable.run();
+        } else {
+            SwingUtilities.invokeLater(runnable);
+        }
+    }
+
     /*=======
      * Tasks
      =======*/
@@ -68,7 +78,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
         beginTask(title, DEFAULT_TICKS);
     }
 
-    public synchronized void beginTask(final String title, int ticks) {
+    public synchronized void beginTask(String title, int ticks) {
         this.taskTitle = title;
         checkState(State.INIT);
         state = State.IN_TASK;

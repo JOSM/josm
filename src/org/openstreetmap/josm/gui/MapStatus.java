@@ -31,10 +31,12 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
+import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
@@ -43,6 +45,8 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.help.Helpful;
+import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor.ProgressMonitorDialog;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -94,6 +98,52 @@ public class MapStatus extends JPanel implements Helpful {
         }
     }
 
+    public class BackgroundProgressMonitor implements ProgressMonitorDialog {
+
+        private String title;
+        private String customText;
+
+        private void updateText() {
+            if (customText != null && !customText.isEmpty()) {
+                progressBar.setToolTipText(tr("{0} ({1})", title, customText));
+            } else {
+                progressBar.setToolTipText(title);
+            }
+        }
+
+        public void setVisible(boolean visible) {
+            progressBar.setVisible(visible);
+        }
+
+        public void updateProgress(int progress) {
+            progressBar.setValue(progress);
+            MapStatus.this.doLayout();
+        }
+
+        public void setCustomText(String text) {
+            this.customText = text;
+            updateText();
+        }
+
+        public void setTitle(String text) {
+            this.title = text;
+            updateText();
+        }
+
+        public void setIndeterminate(boolean newValue) {
+            UIManager.put("ProgressBar.cycleTime", UIManager.getInt("ProgressBar.repaintInterval") * 100);
+            progressBar.setIndeterminate(newValue);
+        }
+
+        @Override
+        public void appendLogMessage(String message) {
+            if (message != null && !message.isEmpty()) {
+                System.out.println("appendLogMessage not implemented for background tasks. Message was: " + message);
+            }
+        }
+
+    }
+
     final ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 11);
     final ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20);
     final JTextField helpText = new JTextField();
@@ -101,6 +151,8 @@ public class MapStatus extends JPanel implements Helpful {
     final ImageLabel angleText = new ImageLabel("angle", tr("The angle between the previous and the current way segment."), 6);
     final ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6);
     final ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 10);
+    final JProgressBar progressBar = new JProgressBar();
+    public final BackgroundProgressMonitor progressMonitor = new BackgroundProgressMonitor();
 
     /**
      * This is the thread that runs in the background and collects the information displayed.
@@ -657,7 +709,23 @@ public class MapStatus extends JPanel implements Helpful {
 
         helpText.setEditable(false);
         add(nameText, GBC.std().insets(3,0,0,0));
-        add(helpText, GBC.eol().insets(3,0,0,0).fill(GBC.HORIZONTAL));
+        add(helpText, GBC.std().insets(3,0,0,0).fill(GBC.HORIZONTAL));
+
+        progressBar.setMaximum(PleaseWaitProgressMonitor.PROGRESS_BAR_MAX);
+        {
+            GBC gbc = GBC.eol();
+            gbc.ipadx = 100;
+            add(progressBar,gbc);
+        }
+        progressBar.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                PleaseWaitProgressMonitor monitor = Main.currentProgressMonitor;
+                if (monitor != null) {
+                    monitor.showForegroundDialog();
+                }
+            }
+        });
 
         // The background thread
         thread = new Thread(collector, "Map Status Collector");

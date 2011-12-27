@@ -21,12 +21,10 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,8 +38,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
+import javax.swing.RepaintManager;
 import javax.swing.UIManager;
 
+import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
@@ -75,6 +75,8 @@ import org.openstreetmap.josm.gui.preferences.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.ProjectionPreference;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
+import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -115,7 +117,7 @@ abstract public class Main {
      * calculations. The executed runnables are guaranteed to be executed separately
      * and sequential.
      */
-    public final static ExecutorService worker = Executors.newSingleThreadExecutor();
+    public final static ExecutorService worker = new ProgressMonitorExecutor();
     /**
      * Global application preferences
      */
@@ -142,6 +144,8 @@ abstract public class Main {
     public static ToolbarPreferences toolbar;
 
     public UndoRedoHandler undoRedo = new UndoRedoHandler();
+
+    public static PleaseWaitProgressMonitor currentProgressMonitor;
 
     /**
      * The main menu bar at top of screen.
@@ -207,6 +211,9 @@ abstract public class Main {
         Main.map = map;
 
         PluginHandler.notifyMapFrameChanged(old, map);
+        if (map == null && currentProgressMonitor != null) {
+            currentProgressMonitor.showForegroundDialog();
+        }
     }
 
     /**
@@ -237,23 +244,26 @@ abstract public class Main {
         main = this;
         isOpenjdk = System.getProperty("java.vm.name").toUpperCase().indexOf("OPENJDK") != -1;
 
-        if (initListener != null)
+        if (initListener != null) {
             initListener.updateStatus(tr("Executing platform startup hook"));
+        }
         platform.startupHook();
 
         // We try to establish an API connection early, so that any API
         // capabilities are already known to the editor instance. However
         // if it goes wrong that's not critical at this stage.
-        if (initListener != null)
+        if (initListener != null) {
             initListener.updateStatus(tr("Initializing OSM API"));
+        }
         try {
             OsmApi.getOsmApi().initialize(null, true);
         } catch (Exception x) {
             // ignore any exception here.
         }
 
-        if (initListener != null)
+        if (initListener != null) {
             initListener.updateStatus(tr("Building main menu"));
+        }
         contentPanePrivate.add(panel, BorderLayout.CENTER);
         panel.add(gettingStarted, BorderLayout.CENTER);
         menu = new MainMenu();
@@ -266,20 +276,24 @@ abstract public class Main {
         registerActionShortcut(menu.help, Shortcut.registerShortcut("system:help", tr("Help"),
                 KeyEvent.VK_F1, Shortcut.GROUP_DIRECT));
 
-        if (initListener != null)
+        if (initListener != null) {
             initListener.updateStatus(tr("Initializing presets"));
+        }
         TaggingPresetPreference.initialize();
 
-        if (initListener != null)
+        if (initListener != null) {
             initListener.updateStatus(tr("Initializing map styles"));
+        }
         MapPaintPreference.initialize();
 
-        if (initListener != null)
+        if (initListener != null) {
             initListener.updateStatus(tr("Loading imagery preferences"));
+        }
         ImageryPreference.initialize();
 
-        if (initListener != null)
+        if (initListener != null) {
             initListener.updateStatus(tr("Initializing validator"));
+        }
         validator = new OsmValidator();
         MapView.addLayerChangeListener(validator);
 
@@ -292,8 +306,9 @@ abstract public class Main {
         });
         FeatureAdapter.registerTranslationAdapter(I18n.getTranslationAdapter());
 
-        if (initListener != null)
+        if (initListener != null) {
             initListener.updateStatus(tr("Updating user interface"));
+        }
 
         toolbar.refreshToolbarControl();
 
@@ -526,7 +541,7 @@ abstract public class Main {
                                 tr("Ignoring malformed file URL: \"{0}\"", s),
                                 tr("Warning"),
                                 JOptionPane.WARNING_MESSAGE
-                        );
+                                );
                     }
                     if (f!=null) {
                         fileList.add(f);
@@ -559,7 +574,7 @@ abstract public class Main {
                             tr("Parameter \"downloadgps\" does not accept file names or file URLs"),
                             tr("Warning"),
                             JOptionPane.WARNING_MESSAGE
-                    );
+                            );
                 }
             }
         }
@@ -646,7 +661,7 @@ abstract public class Main {
                     tr("Ignoring malformed URL: \"{0}\"", s),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE
-            );
+                    );
         } else {
             downloadFromParamBounds(rawGps, b);
         }
@@ -663,7 +678,7 @@ abstract public class Main {
             Bounds b = new Bounds(
                     new LatLon(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken())),
                     new LatLon(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()))
-            );
+                    );
             downloadFromParamBounds(rawGps, b);
         }
     }

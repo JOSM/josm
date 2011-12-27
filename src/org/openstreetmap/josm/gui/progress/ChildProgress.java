@@ -54,4 +54,14 @@ public class ChildProgress extends AbstractProgressMonitor {
     protected void doFinishTask() {
         parent.childFinished(this);
     }
+
+    @Override
+    public void setProgressTaskId(ProgressTaskId taskId) {
+        parent.setProgressTaskId(taskId);
+    }
+
+    @Override
+    public ProgressTaskId getProgressTaskId() {
+        return parent.getProgressTaskId();
+    }
 }

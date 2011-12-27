@@ -79,4 +79,13 @@ public class NullProgressMonitor implements ProgressMonitor {
     public int getTicksCount() {
         return 0;
     }
+
+    @Override
+    public void setProgressTaskId(ProgressTaskId taskId) {
+    }
+
+    @Override
+    public ProgressTaskId getProgressTaskId() {
+        return null;
+    }
 }

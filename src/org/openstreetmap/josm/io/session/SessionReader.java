@@ -4,14 +4,15 @@ package org.openstreetmap.josm.io.session;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.Utils.equal;
 
-import java.awt.Component;
 import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -24,8 +25,6 @@ import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -33,21 +32,19 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.io.IllegalDataException;
-import org.openstreetmap.josm.tools.MultiMap;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Reads a .jos session file and loads the layers in the process.
@@ -152,9 +149,9 @@ public class SessionReader {
         public InputStream getInputStream(String uriStr) throws IOException {
             File file = getFile(uriStr);
             try {
-                if (file != null) {
+                if (file != null)
                     return new BufferedInputStream(new FileInputStream(file));
-                } else if (inZipPath != null) {
+                else if (inZipPath != null) {
                     ZipEntry entry = zipFile.getEntry(inZipPath);
                     if (entry != null) {
                         InputStream is = zipFile.getInputStream(entry);
@@ -177,17 +174,17 @@ public class SessionReader {
             inZipPath = null;
             try {
                 URI uri = new URI(uriStr);
-                if ("file".equals(uri.getScheme())) {
+                if ("file".equals(uri.getScheme()))
                     // absolute path
                     return new File(uri);
-                } else if (uri.getScheme() == null) {
+                else if (uri.getScheme() == null) {
                     // Check if this is an absolute path without 'file:' scheme part.
                     // At this point, (as an exception) platform dependent path separator will be recognized.
                     // (This form is discouraged, only for users that like to copy and paste a path manually.)
                     File file = new File(uriStr);
-                    if (file.isAbsolute()) {
+                    if (file.isAbsolute())
                         return file;
-                    } else {
+                    else {
                         // for relative paths, only forward slashes are permitted
                         if (isZip()) {
                             if (uri.getPath().startsWith("../")) {
@@ -199,13 +196,11 @@ public class SessionReader {
                                 inZipPath = uriStr;
                                 return null;
                             }
-                        } else {
+                        } else
                             return new File(sessionFile.toURI().resolve(uri));
-                        }
                     }
-                } else {
+                } else
                     throw new IOException(tr("Unsupported scheme ''{0}'' in URI ''{1}''.", uri.getScheme(), uriStr));
-                }
             } catch (URISyntaxException e) {
                 throw new IOException(e);
             }
@@ -327,11 +322,11 @@ public class SessionReader {
             if (imp == null) {
                 CancelOrContinueDialog dialog = new CancelOrContinueDialog();
                 dialog.show(
-                    tr("Unable to load layer"),
-                    tr("Cannot load layer of type ''{0}'' because no suitable importer was found.", type),
-                    JOptionPane.WARNING_MESSAGE,
-                    progressMonitor
-                );
+                        tr("Unable to load layer"),
+                        tr("Cannot load layer of type ''{0}'' because no suitable importer was found.", type),
+                        JOptionPane.WARNING_MESSAGE,
+                        progressMonitor
+                        );
                 if (dialog.isCancel()) {
                     progressMonitor.cancel();
                     return;
@@ -346,11 +341,11 @@ public class SessionReader {
                     if (dImp == null) {
                         CancelOrContinueDialog dialog = new CancelOrContinueDialog();
                         dialog.show(
-                            tr("Unable to load layer"),
-                            tr("Cannot load layer {0} because it depends on layer {1} which has been skipped.", idx, d),
-                            JOptionPane.WARNING_MESSAGE,
-                            progressMonitor
-                        );
+                                tr("Unable to load layer"),
+                                tr("Cannot load layer {0} because it depends on layer {1} which has been skipped.", idx, d),
+                                JOptionPane.WARNING_MESSAGE,
+                                progressMonitor
+                                );
                         if (dialog.isCancel()) {
                             progressMonitor.cancel();
                             return;
@@ -374,11 +369,11 @@ public class SessionReader {
                     exception.printStackTrace();
                     CancelOrContinueDialog dialog = new CancelOrContinueDialog();
                     dialog.show(
-                        tr("Error loading layer"),
-                        tr("<html>Could not load layer {0} ''{1}''.<br>Error is:<br>{2}</html>", idx, name, exception.getMessage()),
-                        JOptionPane.ERROR_MESSAGE,
-                        progressMonitor
-                    );
+                            tr("Error loading layer"),
+                            tr("<html>Could not load layer {0} ''{1}''.<br>Error is:<br>{2}</html>", idx, name, exception.getMessage()),
+                            JOptionPane.ERROR_MESSAGE,
+                            progressMonitor
+                            );
                     if (dialog.isCancel()) {
                         progressMonitor.cancel();
                         return;
@@ -396,7 +391,9 @@ public class SessionReader {
         layers = new ArrayList<Layer>();
         for (Entry<Integer, Layer> e : layersMap.entrySet()) {
             Layer l = e.getValue();
-            if (l == null) continue;
+            if (l == null) {
+                continue;
+            }
             l.setName(names.get(e.getKey()));
             layers.add(l);
         }
@@ -417,17 +414,11 @@ public class SessionReader {
             try {
                 SwingUtilities.invokeAndWait(new Runnable() {
                     @Override public void run() {
-                        Component parent;
-                        if (progressMonitor instanceof PleaseWaitProgressMonitor) {
-                            parent = ((PleaseWaitProgressMonitor) progressMonitor).getDialog();
-                        } else {
-                            parent = Main.parent;
-                        }
                         ExtendedDialog dlg = new ExtendedDialog(
-                                parent,
+                                Main.parent,
                                 title,
                                 new String[] { tr("Cancel"), tr("Skip layer and continue") }
-                        );
+                                );
                         dlg.setButtonIcons(new String[] {"cancel", "dialogs/next"});
                         dlg.setIcon(icon);
                         dlg.setContent(message);
