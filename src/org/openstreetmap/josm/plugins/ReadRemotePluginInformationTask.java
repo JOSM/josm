@@ -243,7 +243,11 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
         }
         for (PluginInformation pi : availablePlugins) {
             if (pi.icon == null && pi.iconPath != null) {
-                pi.icon = ImageProvider.getIfAvailable(null, null, null, pi.name+".jar/"+pi.iconPath, destFile);
+                pi.icon = new ImageProvider(pi.name+".jar/"+pi.iconPath)
+                                .setArchive(destFile)
+                                .setMaxWidth(24)
+                                .setMaxHeight(24)
+                                .setOptional(true).get();
             }
         }
     }

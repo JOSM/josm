@@ -54,11 +54,18 @@ import com.kitfox.svg.SVGUniverse;
 
 /**
  * Helper class to support the application with images.
+ *
+ * How to use:
+ *
+ * <code>ImageIcon icon = new ImageProvider(name).setMaxWidth(24).setMaxHeight(24).get();</code>
+ * (there are more options, see below)
+ *
+ * short form:
+ * <code>ImageIcon icon = ImageProvider.get(name);</code>
+ *
  * @author imi
  */
 public class ImageProvider {
-
-    private static SVGUniverse svgUniverse;
 
     /**
      * Position of an overlay icon
@@ -73,10 +80,159 @@ public class ImageProvider {
         OTHER   // everything else, e.g. png, gif (must be supported by Java)
     }
 
+    protected Collection<String> dirs;
+    protected String id;
+    protected String subdir;
+    protected String name;
+    protected File archive;
+    protected int width = -1;
+    protected int height = -1;
+    protected int maxWidth = -1;
+    protected int maxHeight = -1;
+    protected boolean sanitize;
+    protected boolean optional;
+
+    private static SVGUniverse svgUniverse;
+
     /**
      * The icon cache
      */
     private static Map<String, ImageResource> cache = new HashMap<String, ImageResource>();
+
+    /**
+     * @param subdir    Subdirectory the image lies in.
+     * @param name      The name of the image. If it does not end with '.png' or '.svg',
+     *                  both extensions are tried.
+     */
+    public ImageProvider(String subdir, String name) {
+        this.subdir = subdir;
+        this.name = name;
+    }
+
+    public ImageProvider(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Directories to look for the image.
+     */
+    public ImageProvider setDirs(Collection<String> dirs) {
+        this.dirs = dirs;
+        return this;
+    }
+
+    /**
+     * An id used for caching. Id is not used for cache if name starts with http://. (URL is unique anyway.)
+     */
+    public ImageProvider setId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    /**
+     * A zip file where the image is located.
+     */
+    public ImageProvider setArchive(File archive) {
+        this.archive = archive;
+        return this;
+    }
+
+    /**
+     * The dimensions of the image.
+     *
+     * If not specified, the original size of the image is used.
+     * The width part of the dimension can be -1. Then it will only set the height but
+     * keep the aspect ratio. (And the other way around.)
+     */
+    public ImageProvider setSize(Dimension size) {
+        this.width = size.width;
+        this.height = size.height;
+        return this;
+    }
+
+    /**
+     * see setSize
+     */
+    public ImageProvider setWidth(int width) {
+        this.width = width;
+        return this;
+    }
+
+    /**
+     * see setSize
+     */
+    public ImageProvider setHeight(int height) {
+        this.height = height;
+        return this;
+    }
+
+    /**
+     * The maximum size of the image.
+     *
+     * It will shrink the image if necessary, but keep the aspect ratio.
+     * The given width or height can be -1 which means this direction is not bounded.
+     *
+     * 'size' and 'maxSize' are not compatible, you should set only one of them.
+     */
+    public ImageProvider setMaxSize(Dimension maxSize) {
+        this.maxWidth = maxSize.width;
+        this.maxHeight = maxSize.height;
+        return this;
+    }
+
+    /**
+     * see setMaxSize
+     */
+    public ImageProvider setMaxWidth(int maxWidth) {
+        this.maxWidth = maxWidth;
+        return this;
+    }
+
+    /**
+     * see setMaxSize
+     */
+    public ImageProvider setMaxHeight(int maxHeight) {
+        this.maxHeight = maxHeight;
+        return this;
+    }
+
+    /**
+     * Set true, if the image should be repainted to a new BufferedImage in order to work around certain issues.
+     */
+    public ImageProvider setSanitize(boolean sanitize) {
+        this.sanitize = sanitize;
+        return this;
+    }
+
+    /**
+     * The image URL comes from user data and the image may be missing.
+     *
+     * Set true, if JOSM should *not* throw a RuntimeException in case the image cannot be located.
+     */
+    public ImageProvider setOptional(boolean optional) {
+        this.optional = optional;
+        return this;
+    }
+
+    /**
+     * Execute the image request.
+     */
+    public ImageIcon get() {
+        ImageResource ir = getIfAvailableImpl();
+        if (ir == null) {
+            if (!optional) {
+                String ext = name.indexOf('.') != -1 ? "" : ".???";
+                throw new RuntimeException(tr("Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.", name + ext));
+            } else {
+                System.out.println(tr("Failed to locate image ''{0}''", name));
+                return null;
+            }
+        }
+        if (maxWidth != -1 || maxHeight != -1)
+            return ir.getImageIconBounded(new Dimension(maxWidth, maxHeight), sanitize);
+        else
+            return ir.getImageIcon(new Dimension(width, height), sanitize);
+    }
 
     /**
      * Return an image from the specified location. Throws a RuntimeException if
@@ -87,31 +243,22 @@ public class ImageProvider {
      * @return The requested Image.
      */
     public static ImageIcon get(String subdir, String name) {
-        ImageIcon icon = getIfAvailable(subdir, name);
-        if (icon == null) {
-            String ext = name.indexOf('.') != -1 ? "" : ".???";
-            throw new RuntimeException(tr(
-                    "Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.",
-                    name+ext));
-        }
-        return icon;
+        return new ImageProvider(subdir, name).get();
     }
 
-    /**
-     * Shortcut for get("", name);
-     */
     public static ImageIcon get(String name) {
-        return get("", name);
+        return new ImageProvider(name).get();
     }
 
     public static ImageIcon getIfAvailable(String name) {
-        return getIfAvailable((Collection<String>) null, null, "", name);
+        return new ImageProvider(name).setOptional(true).get();
     }
 
     public static ImageIcon getIfAvailable(String subdir, String name) {
-        return getIfAvailable((Collection<String>) null, null, subdir, name);
+        return new ImageProvider(subdir, name).setOptional(true).get();
     }
 
+    @Deprecated
     public static ImageIcon getIfAvailable(String[] dirs, String id, String subdir, String name) {
         return getIfAvailable(Arrays.asList(dirs), id, subdir, name);
     }
@@ -121,18 +268,22 @@ public class ImageProvider {
      * is found. Use this, if the image to retrieve is optional. Nevertheless a warning will
      * be printed on the console if the image could not be found.
      */
+    @Deprecated
     public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name) {
         return getIfAvailable(dirs, id, subdir, name, null);
     }
 
+    @Deprecated
     public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive) {
         return getIfAvailable(dirs, id, subdir, name, archive, false);
     }
 
+    @Deprecated
     public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive, boolean sanitize) {
         return getIfAvailable(dirs, id, subdir, name, archive, null, sanitize);
     }
 
+    @Deprecated
     public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive, Dimension dim, boolean sanitize) {
         return getIfAvailable(dirs, id, subdir, name, archive, dim, null, sanitize);
     }
@@ -158,15 +309,17 @@ public class ImageProvider {
      * @param sanitize  If the image should be repainted to a new BufferedImage to work
      *                  around certain issues.
      */
+    @Deprecated
     public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name,
             File archive, Dimension dim, Dimension maxSize, boolean sanitize) {
-        ImageResource ir = getIfAvailableImpl(dirs, id, subdir, name, archive);
-        if (ir == null)
-            return null;
-        if (maxSize != null)
-            return ir.getImageIconBounded(maxSize, sanitize);
-        else
-            return ir.getImageIcon(dim == null ? ImageResource.DEFAULT_DIMENSION : dim, sanitize);
+        ImageProvider p = new ImageProvider(subdir, name).setDirs(dirs).setId(id).setArchive(archive).setSanitize(sanitize).setOptional(true);
+        if (dim != null) {
+            p.setSize(dim);
+        }
+        if (maxSize != null) {
+            p.setMaxSize(maxSize);
+        }
+        return p.get();
     }
 
     /**
@@ -176,7 +329,7 @@ public class ImageProvider {
     private static final Pattern dataUrlPattern = Pattern.compile(
             "^data:([a-zA-Z]+/[a-zA-Z+]+)?(;base64)?,(.+)$");
 
-    static ImageResource getIfAvailableImpl(Collection<String> dirs, String id, String subdir, String name, File archive) {
+    private ImageResource getIfAvailableImpl() {
         if (name == null)
             return null;
 

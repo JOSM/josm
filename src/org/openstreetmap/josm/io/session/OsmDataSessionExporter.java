@@ -44,7 +44,7 @@ import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.io.OsmWriterFactory;
 import org.openstreetmap.josm.io.session.SessionWriter.ExportSupport;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.ImageRequest;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 public class OsmDataSessionExporter implements SessionLayerExporter {
 
@@ -68,7 +68,7 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
 
     private class LayerSaveAction extends AbstractAction {
         public LayerSaveAction() {
-            putValue(SMALL_ICON, new ImageRequest().setName("save").setWidth(16).get());
+            putValue(SMALL_ICON, new ImageProvider("save").setWidth(16).get());
             putValue(SHORT_DESCRIPTION, tr("Layer contains unsaved data - save to file."));
             updateEnabledState();
         }

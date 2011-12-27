@@ -11,7 +11,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
-import org.openstreetmap.josm.tools.ImageRequest;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 public class AddImageryLayerAction extends JosmAction implements AdaptableAction {
 
@@ -27,7 +27,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         // change toolbar icon from if specified
         try {
             if (info.getIcon() != null) {
-                ImageIcon i = new ImageRequest().setOptional(true).setName(info.getIcon()).
+                ImageIcon i = new ImageProvider(info.getIcon()).setOptional(true).
                         setMaxHeight(MAX_ICON_SIZE).setMaxWidth(MAX_ICON_SIZE).get();
                 if (i != null) {
                     putValue(Action.SMALL_ICON, i);
