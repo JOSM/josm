@@ -21,6 +21,5 @@
 	<classpathentry kind="lib" path="test/lib/unitils-core/junit-4.4.jar"/>
 	<classpathentry kind="lib" path="test/lib/unitils-core/ognl-2.6.9.jar"/>
 	<classpathentry kind="lib" path="test/lib/unitils-core/unitils-core-3.1.jar"/>
-	<classpathentry kind="lib" path="lib/debug-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
