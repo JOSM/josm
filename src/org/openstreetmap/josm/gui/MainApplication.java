@@ -23,8 +23,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
+import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 
+import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.Preferences;
@@ -103,18 +105,18 @@ public class MainApplication extends Main {
                 tr("options provided as Java system properties")+":\n"+
                 "\t-Djosm.home="+tr("/PATH/TO/JOSM/FOLDER/         ")+tr("Change the folder for all user settings")+"\n\n"+
                 tr("note: For some tasks, JOSM needs a lot of memory. It can be necessary to add the following\n" +
-                "      Java option to specify the maximum size of allocated memory in megabytes")+":\n"+
-                "\t-Xmx...m\n\n"+
-                tr("examples")+":\n"+
-                "\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+
-                "\tjava -jar josm.jar http://www.openstreetmap.org/index.html?lat=43.2&lon=11.1&zoom=13\n"+
-                "\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
-                "\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n"+
-                "\tjava -Djosm.home=/home/user/.josm_dev -jar josm.jar\n"+
-                "\tjava -Xmx400m -jar josm.jar\n\n"+
-                tr("Parameters --download, --downloadgps, and --selection are processed in this order.")+"\n"+
-                tr("Make sure you load some data if you use --selection.")+"\n"
-        );
+                        "      Java option to specify the maximum size of allocated memory in megabytes")+":\n"+
+                        "\t-Xmx...m\n\n"+
+                        tr("examples")+":\n"+
+                        "\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+
+                        "\tjava -jar josm.jar http://www.openstreetmap.org/index.html?lat=43.2&lon=11.1&zoom=13\n"+
+                        "\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
+                        "\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n"+
+                        "\tjava -Djosm.home=/home/user/.josm_dev -jar josm.jar\n"+
+                        "\tjava -Xmx400m -jar josm.jar\n\n"+
+                        tr("Parameters --download, --downloadgps, and --selection are processed in this order.")+"\n"+
+                        tr("Make sure you load some data if you use --selection.")+"\n"
+                );
     }
 
     private static Map<String, Collection<String>> buildCommandLineArgumentMap(String[] args) {
@@ -261,8 +263,9 @@ public class MainApplication extends Main {
         } else {
             // Main.debug("Main window not maximized");
         }
-        if(main.menu.fullscreenToggleAction != null)
+        if(main.menu.fullscreenToggleAction != null) {
             main.menu.fullscreenToggleAction.initial();
+        }
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -274,7 +277,7 @@ public class MainApplication extends Main {
                                 Main.parent,
                                 tr("Unsaved osm data"),
                                 new String[] {tr("Restore"), tr("Cancel"), tr("Discard")}
-                        );
+                                );
                         dialog.setContent(
                                 trn("JOSM found {0} unsaved osm data layer. ",
                                         "JOSM found {0} unsaved osm data layers. ", unsavedLayerFiles.size(), unsavedLayerFiles.size()) +
@@ -297,6 +300,12 @@ public class MainApplication extends Main {
 
         if (RemoteControl.PROP_REMOTECONTROL_ENABLED.get()) {
             RemoteControl.start();
+        }
+
+        if (Main.pref.getBoolean("debug.edt-checker.enable", Version.getInstance().isLocalBuild())) {
+            // Repaint manager is registered so late for a reason - there is lots of violation during startup process but they don't seem to break anything and are difficult to fix
+            System.out.println("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to conosole");
+            RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
         }
 
     }
