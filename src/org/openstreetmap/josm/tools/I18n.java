@@ -307,16 +307,20 @@ public class I18n {
         return msg.replace("\'", "\'\'").replace("{", "\'{\'").replace("}", "\'}\'");
     }
 
+    private static URL getTranslationFile(String lang) {
+        return Main.class.getResource("/data/"+lang+".lang");
+    }
+
     /**
      * Get a list of all available JOSM Translations.
      * @return an array of locale objects.
      */
     public static final Locale[] getAvailableTranslations() {
         Collection<Locale> v = new ArrayList<Locale>(languages.size());
-        if(Main.class.getResource("/data/en.lang") != null)
+        if(getTranslationFile("en") != null)
         {
             for (String loc : languages.keySet()) {
-                if(Main.class.getResource("/data/"+loc+".lang") != null) {
+                if(getTranslationFile(loc) != null) {
                     v.add(LanguageInfo.getLocale(loc));
                 }
             }
@@ -447,17 +451,17 @@ public class I18n {
             pluralMode = PluralMode.MODE_NOTONE;
             return true;
         }
-        URL en = Main.class.getResource("/data/en.lang");
+        URL en = getTranslationFile("en");
         if(en == null)
             return false;
-        URL tr = Main.class.getResource("/data/"+l+".lang");
+        URL tr = getTranslationFile(l);
         if(tr == null || !languages.containsKey(l))
         {
             int i = l.indexOf('_');
             if (i > 0) {
                 l = l.substring(0, i);
             }
-            tr = Main.class.getResource("/data/"+l+".lang");
+            tr = getTranslationFile(l);
             if(tr == null || !languages.containsKey(l))
                 return false;
         }

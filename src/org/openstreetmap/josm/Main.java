@@ -41,7 +41,6 @@ import javax.swing.KeyStroke;
 import javax.swing.RepaintManager;
 import javax.swing.UIManager;
 
-import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
