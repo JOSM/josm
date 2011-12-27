@@ -818,13 +818,20 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      *
      * <code>Way wnew = new Way(existingWay)</code>
      *
+     * @param allowWithoutDataset If true, method will return empty list if primitive is not part of the dataset. If false,
+     * exception will be thrown in this case
+     *
      * @return a collection of all primitives that reference this primitive.
      */
 
-    public final List<OsmPrimitive> getReferrers() {
+    public final List<OsmPrimitive> getReferrers(boolean allowWithoutDataset) {
         // Method copied from OsmPrimitive in josm-ng
         // Returns only referrers that are members of the same dataset (primitive can have some fake references, for example
         // when way is cloned
+
+        if (dataSet == null && allowWithoutDataset)
+            return Collections.emptyList();
+
         checkDataset();
         Object referrers = this.referrers;
         List<OsmPrimitive> result = new ArrayList<OsmPrimitive>();
@@ -843,6 +850,10 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
             }
         }
         return result;
+    }
+
+    public final List<OsmPrimitive> getReferrers() {
+        return getReferrers(false);
     }
 
     /**
@@ -965,7 +976,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
         if (!isNew() &&  id != other.id)
             return false;
-//        if (isIncomplete() && ! other.isIncomplete() || !isIncomplete()  && other.isIncomplete())
+        //        if (isIncomplete() && ! other.isIncomplete() || !isIncomplete()  && other.isIncomplete())
         if (isIncomplete() ^ other.isIncomplete()) // exclusive or operator for performance (see #7159)
             return false;
         // can't do an equals check on the internal keys array because it is not ordered
