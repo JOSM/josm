@@ -22,7 +22,7 @@ public class NodeData extends PrimitiveData implements INode {
     }
 
     private boolean isLatLonKnown() {
-        return lat != Double.NaN && lon != Double.NaN;
+        return !Double.isNaN(lat) && !Double.isNaN(lon);
     }
 
     @Override

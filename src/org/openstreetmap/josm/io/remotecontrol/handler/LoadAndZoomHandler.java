@@ -44,7 +44,7 @@ public class LoadAndZoomHandler extends RequestHandler
     public String getPermissionMessage()
     {
         return tr("Remote Control has been asked to load data from the API.") +
-        "<br>" + tr("Request details: {0}", request);
+                "<br>" + tr("Request details: {0}", request);
     }
 
     @Override
@@ -80,8 +80,9 @@ public class LoadAndZoomHandler extends RequestHandler
                     Area present = null;
                     Area toDownload = null;
                     DataSet ds = Main.main.getCurrentDataSet();
-                    if (ds != null)
+                    if (ds != null) {
                         present = ds.getDataSourceArea();
+                    }
                     if (present != null && !present.isEmpty()) {
                         toDownload = new Area(new Rectangle2D.Double(minlon,minlat,maxlon-minlon,maxlat-minlat));
                         toDownload.subtract(present);
@@ -167,8 +168,9 @@ public class LoadAndZoomHandler extends RequestHandler
                         }
                     }
                     ds.setSelected(newSel);
-                    if (Main.pref.getBoolean(changeViewportPermissionKey, changeViewportPermissionDefault))
+                    if (Main.pref.getBoolean(changeViewportPermissionKey, changeViewportPermissionDefault)) {
                         new AutoScaleAction("selection").actionPerformed(null);
+                    }
                 }
             });
         } else if (Main.pref.getBoolean(changeViewportPermissionKey, changeViewportPermissionDefault)) {
@@ -188,7 +190,7 @@ public class LoadAndZoomHandler extends RequestHandler
                     try {
                         tags = URLDecoder.decode(args.get("addtags"), "UTF-8").split("\\|");
                     } catch (UnsupportedEncodingException e) {
-                        new RuntimeException();
+                        throw new RuntimeException();
                     }
                     String[][] keyValue = new String[tags.length][2];
                     for (int i = 0; i<tags.length; i++) {

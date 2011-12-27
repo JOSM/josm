@@ -251,7 +251,7 @@ public class MapPainter {
      * Iterates over a list of Way Nodes and returns screen coordinates that
      * represent a line that is shifted by a certain offset perpendicular
      * to the way direction.
-     * 
+     *
      * There is no intention, to handle consecutive duplicate Nodes in a
      * perfect way, but it is should not throw an exception.
      */
@@ -327,8 +327,8 @@ public class MapPainter {
 
                 int m = dx_next*(y_current0 - y_prev0) - dy_next*(x_current0 - x_prev0);
 
-                int cx_ = x_prev0 + Math.round(m * dx_prev / det);
-                int cy_ = y_prev0 + Math.round(m * dy_prev / det);
+                int cx_ = x_prev0 + Math.round((float)m * dx_prev / det);
+                int cy_ = y_prev0 + Math.round((float)m * dy_prev / det);
                 ++idx;
                 prev = current;
                 x_prev0 = x_current0;
@@ -808,15 +808,15 @@ public class MapPainter {
     protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, BufferedImage fillImage, float fillImageAlpha, TextElement text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());
-        
+
         if (!isOutlineOnly) {
             if (fillImage == null) {
                 g.setColor(color);
                 g.fill(area);
             } else {
                 TexturePaint texture = new TexturePaint(fillImage,
-//                        new Rectangle(polygon.xpoints[0], polygon.ypoints[0], fillImage.getWidth(), fillImage.getHeight()));
-                      new Rectangle(0, 0, fillImage.getWidth(), fillImage.getHeight()));
+                        //                        new Rectangle(polygon.xpoints[0], polygon.ypoints[0], fillImage.getWidth(), fillImage.getHeight()));
+                        new Rectangle(0, 0, fillImage.getWidth(), fillImage.getHeight()));
                 g.setPaint(texture);
                 if (fillImageAlpha != 1f) {
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fillImageAlpha));
@@ -857,8 +857,8 @@ public class MapPainter {
                     (int)nb.getHeight());
 
             if ((pb.width >= nb.getWidth() && pb.height >= nb.getHeight()) && // quick check
-                  area.contains(centeredNBounds) // slow but nice
-            ) {
+                    area.contains(centeredNBounds) // slow but nice
+                    ) {
                 g.setColor(text.color);
                 Font defaultFont = g.getFont();
                 g.setFont (text.font);
