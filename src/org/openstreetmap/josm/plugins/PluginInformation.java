@@ -190,7 +190,7 @@ public class PluginInformation {
         iconPath = attr.getValue("Plugin-Icon");
         if (iconPath != null && file != null) {
             // extract icon from the plugin jar file
-            icon = ImageProvider.getIfAvailable(null, null, null, iconPath, file);
+            icon = new ImageProvider(iconPath).setArchive(file).setMaxWidth(24).setMaxHeight(24).setOptional(true).get();
         }
         if(oldcheck && mainversion > Version.getInstance().getVersion())
         {

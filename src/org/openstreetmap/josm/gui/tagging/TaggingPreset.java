@@ -1057,7 +1057,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      */
     public void setIcon(String iconName) {
         Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
-        ImageIcon icon = ImageProvider.getIfAvailable(s, "presets", null, iconName, zipIcons);
+        ImageIcon icon = new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true).get();
         if (icon == null)
         {
             System.out.println("Could not get presets icon " + iconName);

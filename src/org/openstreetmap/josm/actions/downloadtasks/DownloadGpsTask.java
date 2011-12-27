@@ -121,10 +121,11 @@ public class DownloadGpsTask extends AbstractDownloadTask {
             Layer active = Main.map.mapView.getActiveLayer();
             if (active != null && active instanceof GpxLayer && (merge || ((GpxLayer)active).data.fromServer))
                 return active;
-            for (Layer l : Main.map.mapView.getAllLayers())
+            for (Layer l : Main.map.mapView.getAllLayers()) {
                 if (l instanceof GpxLayer &&  (merge || ((GpxLayer)l).data.fromServer))
                     return l;
-                    return null;
+            }
+            return null;
         }
 
         @Override protected void cancel() {

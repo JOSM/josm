@@ -6,7 +6,6 @@
 	<classpathentry excluding="build/|data_nodist/|dist/|doc/|lib/|macosx/|nb/|src/|test/|test/build/|test/functional/|test/performance/|test/unit/|tools/|utils/" kind="src" path=""/>
 	<classpathentry kind="src" path="test/performance"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="test/lib/fest/debug-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/fest-assert-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/fest-reflect-1.1.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/fest-swing-1.1.jar"/>
@@ -22,5 +21,6 @@
 	<classpathentry kind="lib" path="test/lib/unitils-core/junit-4.4.jar"/>
 	<classpathentry kind="lib" path="test/lib/unitils-core/ognl-2.6.9.jar"/>
 	<classpathentry kind="lib" path="test/lib/unitils-core/unitils-core-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/debug-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

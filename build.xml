@@ -120,7 +120,7 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="compile" depends="javacc,init">
         <javac srcdir="src" includes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.5" source="1.5" debug="on" encoding="iso-8859-1"/>
-        <javac srcdir="src" excludes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.5" source="1.5" debug="on" encoding="UTF-8">
+        <javac srcdir="src" excludes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.5" source="1.5" debug="on" encoding="UTF-8" classpathref="classpath">
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>

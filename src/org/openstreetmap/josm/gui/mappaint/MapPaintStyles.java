@@ -88,7 +88,14 @@ public class MapPaintStyles {
 
     public static ImageIcon getIcon(IconReference ref, int width, int height, boolean sanitize) {
         final String namespace = ref.source.getPrefName();
-        ImageIcon i = ImageProvider.getIfAvailable(getIconSourceDirs(ref.source), "mappaint."+namespace, null, ref.iconName, ref.source.zipIcons, width == -1 && height == -1 ? null : new Dimension(width, height), sanitize);
+        ImageIcon i = new ImageProvider(ref.iconName)
+                .setDirs(getIconSourceDirs(ref.source))
+                .setId("mappaint."+namespace)
+                .setArchive(ref.source.zipIcons)
+                .setWidth(width)
+                .setHeight(height)
+                .setSanitize(sanitize)
+                .setOptional(true).get();
         if(i == null)
         {
             System.out.println("Mappaint style \""+namespace+"\" ("+ref.source.getDisplayString()+") icon \"" + ref.iconName + "\" not found.");
@@ -106,7 +113,12 @@ public class MapPaintStyles {
      *  can be null if the defaults are turned off by user
      */
     public static ImageIcon getNoIcon_Icon(StyleSource source, boolean sanitize) {
-        return ImageProvider.getIfAvailable(getIconSourceDirs(source), "mappaint."+source.getPrefName(), null, "misc/no_icon.png", source.zipIcons, sanitize);
+        return new ImageProvider("misc/no_icon.png")
+                .setDirs(getIconSourceDirs(source))
+                .setId("mappaint."+source.getPrefName())
+                .setArchive(source.zipIcons)
+                .setSanitize(sanitize)
+                .setOptional(true).get();
     }
 
     private static List<String> getIconSourceDirs(StyleSource source) {
