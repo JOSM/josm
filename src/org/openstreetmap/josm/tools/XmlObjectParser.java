@@ -3,8 +3,8 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.Reader;
 import java.io.IOException;
+import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Stack;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.stream.StreamSource;
@@ -22,7 +23,6 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.ValidatorHandler;
 
 import org.openstreetmap.josm.io.MirroredInputStream;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -88,26 +88,6 @@ public class XmlObjectParser implements Iterable<Object> {
     }
 
     public static final String lang = LanguageInfo.getLanguageCodeXML();
-    public static class Uniform<T> implements Iterable<T>{
-        private Iterator<Object> iterator;
-        /**
-         * @param klass This has to be specified since generics are erased from
-         * class files so the JVM cannot deduce T itself.
-         */
-        public Uniform(Reader input, String tagname, Class<T> klass) {
-            XmlObjectParser parser = new XmlObjectParser();
-            parser.map(tagname, klass);
-            parser.start(input);
-            iterator = parser.iterator();
-        }
-        public Iterator<T> iterator() {
-            return new Iterator<T>(){
-                public boolean hasNext() {return iterator.hasNext();}
-                @SuppressWarnings("unchecked") public T next() {return (T)iterator.next();}
-                public void remove() {iterator.remove();}
-            };
-        }
-    }
 
     private static class AddNamespaceFilter extends XMLFilterImpl {
 
@@ -203,7 +183,7 @@ public class XmlObjectParser implements Iterable<Object> {
                     if(fieldName.startsWith(lang))
                     {
                         String locfieldName = "locale_" +
-                        fieldName.substring(lang.length());
+                                fieldName.substring(lang.length());
                         try {
                             f = c.getClass().getField(locfieldName);
                         } catch (NoSuchFieldException ex) {
@@ -284,7 +264,7 @@ public class XmlObjectParser implements Iterable<Object> {
         parser = handler;
     }
 
-    private Iterable<Object> start(final Reader in, final ContentHandler contentHandler) {
+    private Iterable<Object> start(final Reader in, final ContentHandler contentHandler) throws SAXException, IOException {
         try {
             SAXParserFactory parserFactory = SAXParserFactory.newInstance();
             parserFactory.setNamespaceAware(true);
@@ -292,15 +272,20 @@ public class XmlObjectParser implements Iterable<Object> {
             XMLReader reader = saxParser.getXMLReader();
             reader.setContentHandler(contentHandler);
             reader.parse(new InputSource(in));
-        } catch (Exception e) {
+            queueIterator = queue.iterator();
+            return this;
+        } catch (ParserConfigurationException e) {
+            // This should never happen ;-)
             throw new RuntimeException(e);
         }
-        queueIterator = queue.iterator();
-        return this;
     }
 
-    public Iterable<Object> start(final Reader in) {
-        return start(in, parser);
+    public Iterable<Object> start(final Reader in) throws SAXException {
+        try {
+            return start(in, parser);
+        } catch (IOException e) {
+            throw new SAXException(e);
+        }
     }
 
     public Iterable<Object> startWithValidation(final Reader in, String namespace, String schemaSource) throws SAXException {
