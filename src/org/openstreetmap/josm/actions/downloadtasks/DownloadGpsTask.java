@@ -14,6 +14,8 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressTaskId;
+import org.openstreetmap.josm.gui.progress.ProgressTaskIds;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
@@ -23,9 +25,9 @@ import org.xml.sax.SAXException;
 public class DownloadGpsTask extends AbstractDownloadTask {
 
     private DownloadTask downloadTask;
-    
+
     private static final String PATTERN_TRACE_ID = "http://.*openstreetmap.org/trace/\\p{Digit}+/data";
-    
+
     private static final String PATTERN_TRACKPOINTS_BBOX = "http://.*/api/0.6/trackpoints\\?bbox=.*,.*,.*,.*";
 
     public Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
@@ -43,13 +45,12 @@ public class DownloadGpsTask extends AbstractDownloadTask {
             // We need submit instead of execute so we can wait for it to finish and get the error
             // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
             return Main.worker.submit(downloadTask);
-            
+
         } else if (url != null && url.matches(PATTERN_TRACKPOINTS_BBOX)) {
             String[] table = url.split("\\?|=|&");
             for (int i = 0; i<table.length; i++) {
-                if (table[i].equals("bbox") && i<table.length-1 ) {
+                if (table[i].equals("bbox") && i<table.length-1 )
                     return download(newLayer, new Bounds(table[i+1], ",", ParseMethod.LEFT_BOTTOM_RIGHT_TOP), progressMonitor);
-                }
             }
         }
         return null;
@@ -123,7 +124,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
             for (Layer l : Main.map.mapView.getAllLayers())
                 if (l instanceof GpxLayer &&  (merge || ((GpxLayer)l).data.fromServer))
                     return l;
-            return null;
+                    return null;
         }
 
         @Override protected void cancel() {
@@ -131,6 +132,11 @@ public class DownloadGpsTask extends AbstractDownloadTask {
             if (reader != null) {
                 reader.cancel();
             }
+        }
+
+        @Override
+        public ProgressTaskId canRunInBackground() {
+            return ProgressTaskIds.DOWNLOAD_GPS;
         }
     }
 }

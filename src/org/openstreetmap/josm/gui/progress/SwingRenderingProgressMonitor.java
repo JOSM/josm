@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.progress;
 
-import javax.swing.SwingUtilities;
-
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -26,14 +24,6 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
         super(new CancelHandler());
         CheckParameterUtil.ensureParameterNotNull(delegate, "delegate");
         this.delegate = delegate;
-    }
-
-    private void doInEDT(Runnable runnable) {
-        if (SwingUtilities.isEventDispatchThread()) {
-            runnable.run();
-        } else {
-            SwingUtilities.invokeLater(runnable);
-        }
     }
 
     @Override
@@ -91,5 +81,14 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
                 delegate.setIndeterminate(value);
             }
         });
+    }
+
+    @Override
+    public void setProgressTaskId(ProgressTaskId taskId) {
+    }
+
+    @Override
+    public ProgressTaskId getProgressTaskId() {
+        return null;
     }
 }

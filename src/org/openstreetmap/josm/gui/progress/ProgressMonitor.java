@@ -49,11 +49,13 @@ public interface ProgressMonitor {
      * @param ticks
      */
     void beginTask(String title, int ticks);
+
     /**
      * Finish this progress monitor, close the dialog or inform the parent progress monitor
      * that it can continue with other tasks. Must be called at least once (if called multiply times
      * then further calls are ignored)
      */
+
     void finishTask();
     /**
      * Can be used if method receive ProgressMonitor but it's not interested progress monitoring.
@@ -125,4 +127,16 @@ public interface ProgressMonitor {
      * @param message the log message. Ignored if null or white space only.
      */
     void appendLogMessage(String message);
+
+    /**
+     * Should be used only by PleaseWaitRunnable. If taskId <> null then "In background" button will be shown
+     * @param taskId
+     */
+    void setProgressTaskId(ProgressTaskId taskId);
+
+    /**
+     * Should be used only by PleaseWaitRunnable
+     * @param taskId
+     */
+    ProgressTaskId getProgressTaskId();
 }

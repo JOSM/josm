@@ -1020,7 +1020,7 @@ public class GpxLayer extends Layer {
             ed.setRememberWindowGeometry(
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(Main.parent, new Dimension(1000, 500))
-            );
+                    );
             ed.showDialog();
             int v = ed.getValue();
             // cancel for unknown buttons and copy back original settings
@@ -1176,6 +1176,10 @@ public class GpxLayer extends Layer {
 
                 @Override
                 protected void finish() {
+                }
+
+                @Override
+                protected void afterFinish() {
                     if(cancel)
                         return;
                     confirmAndDownloadAreas(a, max_area, progressMonitor);
@@ -1273,12 +1277,6 @@ public class GpxLayer extends Layer {
                             toDownload.size())), GBC.eol());
 
             if (toDownload.size() > 1) {
-                // hide progress dialog before displaying another pop up. Really closing the
-                // dialog will be handled by PleaseWaitRunnable.
-                if (progressMonitor instanceof PleaseWaitProgressMonitor) {
-                    ((PleaseWaitProgressMonitor) progressMonitor).getDialog().setVisible(false);
-                }
-
                 int ret = JOptionPane.showConfirmDialog(
                         Main.parent,
                         msg,
