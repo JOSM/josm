@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
@@ -41,7 +42,6 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Diff;
 
 /**
  * This is the model used by the history browser.
@@ -720,7 +720,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             if (row >= oppositeRelation.getNumMembers())
                 return false;
             return
-            thisRelation.getMembers().get(row).getPrimitiveId() == oppositeRelation.getMembers().get(row).getPrimitiveId()
+            thisRelation.getMembers().get(row).getMemberId() == oppositeRelation.getMembers().get(row).getMemberId()
             &&  thisRelation.getMembers().get(row).getRole().equals(oppositeRelation.getMembers().get(row).getRole());
         }
 
@@ -880,7 +880,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             clone.setTags(r.getKeys());
             HistoryRelation hr = (HistoryRelation)clone;
             for (RelationMember rm : r.getMembers()) {
-                hr.addMember(new org.openstreetmap.josm.data.osm.history.RelationMember(rm.getRole(), rm.getType(), rm.getUniqueId()));
+                hr.addMember(new RelationMemberData(rm.getRole(), rm.getType(), rm.getUniqueId()));
             }
         }
 

@@ -21,6 +21,9 @@ import org.xml.sax.SAXException;
  *
  * It can either download the object including or not including its immediate children.
  * The former case is called a "full download".
+ * 
+ * It can also download a specific version of the object (however, "full" download is not possible
+ * in that case).
  *
  */
 public class OsmServerObjectReader extends OsmServerReader {
@@ -28,6 +31,8 @@ public class OsmServerObjectReader extends OsmServerReader {
     private PrimitiveId id;
     /** true if a full download is required, i.e. a download including the immediate children */
     private boolean full;
+    /** the specific version number, if required (incompatible with full), or -1 else */
+    private int version;
 
     /**
      * Creates a new server object reader for a given id and a primitive type.
@@ -40,11 +45,29 @@ public class OsmServerObjectReader extends OsmServerReader {
      * @throws IllegalArgumentException thrown if type is null
      */
     public OsmServerObjectReader(long id, OsmPrimitiveType type, boolean full) throws IllegalArgumentException {
+        this(id, type, full, -1);
+    }
+
+    /**
+     * Creates a new server object reader for a given id and a primitive type.
+     *
+     * @param id the object id. > 0 required.
+     * @param type the type. Must not be null.
+     * @param version the specific version number, if required; -1, otherwise
+     * @throws IllegalArgumentException thrown if id <= 0
+     * @throws IllegalArgumentException thrown if type is null
+     */
+    public OsmServerObjectReader(long id, OsmPrimitiveType type, int version) throws IllegalArgumentException {
+        this(id, type, false, version);
+    }
+
+    protected OsmServerObjectReader(long id, OsmPrimitiveType type, boolean full, int version) throws IllegalArgumentException {
         if (id <= 0)
             throw new IllegalArgumentException(MessageFormat.format("Expected value > 0 for parameter ''{0}'', got {1}", "id", id));
         CheckParameterUtil.ensureParameterNotNull(type, "type");
         this.id = new SimplePrimitiveId(id, type);
         this.full = full;
+        this.version = version;
     }
 
     /**
@@ -57,9 +80,26 @@ public class OsmServerObjectReader extends OsmServerReader {
      * @throws IllegalArgumentException thrown if id.getUniqueId() <= 0
      */
     public OsmServerObjectReader(PrimitiveId id, boolean full) {
+        this(id, full, -1);
+    }
+
+    /**
+     * Creates a new server object reader for an object with the given <code>id</code>
+     *
+     * @param id the object id. Must not be null. Unique id > 0 required.
+     * @param version the specific version number, if required; -1, otherwise
+     * @throws IllegalArgumentException thrown if id is null
+     * @throws IllegalArgumentException thrown if id.getUniqueId() <= 0
+     */
+    public OsmServerObjectReader(PrimitiveId id, int version) {
+        this(id, false, version);
+    }
+
+    protected OsmServerObjectReader(PrimitiveId id, boolean full, int version) {
         CheckParameterUtil.ensureValidPrimitiveId(id, "id");
         this.id = id;
         this.full = full;
+        this.version = version;
     }
 
     /**
@@ -86,6 +126,8 @@ public class OsmServerObjectReader extends OsmServerReader {
             sb.append(id.getUniqueId());
             if (full && ! id.getType().equals(OsmPrimitiveType.NODE)) {
                 sb.append("/full");
+            } else if (version > 0) {
+                sb.append("/"+version);
             }
 
             in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true));

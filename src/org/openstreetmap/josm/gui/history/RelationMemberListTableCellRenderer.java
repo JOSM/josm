@@ -13,7 +13,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.data.osm.history.RelationMember;
+import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -38,15 +38,15 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         icons.put(OsmPrimitiveType.RELATION, ImageProvider.get("data", "relation"));
     }
 
-    protected void renderIcon(RelationMember member) {
+    protected void renderIcon(RelationMemberData member) {
         if (member == null) {
             setIcon(null);
         } else {
-            setIcon(icons.get(member.getPrimitiveType()));
+            setIcon(icons.get(member.getMemberType()));
         }
     }
 
-    protected void renderRole( HistoryBrowserModel.RelationMemberTableModel model, RelationMember member, int row, boolean isSelected) {
+    protected void renderRole( HistoryBrowserModel.RelationMemberTableModel model, RelationMemberData member, int row, boolean isSelected) {
         String text = "";
         Color bgColor = Color.WHITE;
         if (member == null) {
@@ -66,17 +66,17 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         setBackground(bgColor);
     }
 
-    protected void renderPrimitive( HistoryBrowserModel.RelationMemberTableModel model, RelationMember member, int row, boolean isSelected) {
+    protected void renderPrimitive( HistoryBrowserModel.RelationMemberTableModel model, RelationMemberData member, int row, boolean isSelected) {
         String text = "";
         Color bgColor = Color.WHITE;
         if (member == null) {
             bgColor = BGCOLOR_EMPTY_ROW;
         } else {
             text = "";
-            switch(member.getPrimitiveType()) {
-            case NODE: text = tr("Node {0}", member.getPrimitiveId()); break;
-            case WAY: text = tr("Way {0}", member.getPrimitiveId()); break;
-            case RELATION: text = tr("Relation {0}", member.getPrimitiveId()); break;
+            switch(member.getMemberType()) {
+            case NODE: text = tr("Node {0}", member.getMemberId()); break;
+            case WAY: text = tr("Way {0}", member.getMemberId()); break;
+            case RELATION: text = tr("Relation {0}", member.getMemberId()); break;
             }
             if (model.isSameInOppositeWay(row)) {
                 bgColor = Color.WHITE;
@@ -96,7 +96,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
             int row, int column) {
 
         HistoryBrowserModel.RelationMemberTableModel model = gteRelationMemberTableModel(table);
-        RelationMember member = (RelationMember)value;
+        RelationMemberData member = (RelationMemberData)value;
         renderIcon(member);
         switch(column) {
         case 0:

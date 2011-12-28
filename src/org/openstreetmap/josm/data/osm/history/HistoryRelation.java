@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -19,7 +20,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class HistoryRelation extends HistoryOsmPrimitive{
 
-    private ArrayList<RelationMember> members = new ArrayList<RelationMember>();
+    private ArrayList<RelationMemberData> members = new ArrayList<RelationMemberData>();
 
     /**
      * constructor
@@ -53,7 +54,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      * @throws IllegalArgumentException thrown if preconditions are violated
      */
     public HistoryRelation(long id, long version, boolean visible, User user, long changesetId,
-            Date timestamp, ArrayList<RelationMember> members) {
+            Date timestamp, ArrayList<RelationMemberData> members) {
         this(id, version, visible, user, changesetId, timestamp);
         if (members != null) {
             this.members.addAll(members);
@@ -69,7 +70,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      *
      * @return an immutable list of members of this relation
      */
-    public List<RelationMember> getMembers() {
+    public List<RelationMemberData> getMembers() {
         return Collections.unmodifiableList(members);
     }
 
@@ -89,7 +90,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      * @return the idx-th member
      * @throws IndexOutOfBoundsException thrown, if idx is out of bounds
      */
-    public RelationMember getRelationMember(int idx) throws IndexOutOfBoundsException  {
+    public RelationMemberData getRelationMember(int idx) throws IndexOutOfBoundsException  {
         if (idx < 0 || idx >= members.size())
             throw new IndexOutOfBoundsException(MessageFormat.format("Parameter {0} not in range 0..{1}. Got ''{2}''.", "idx", members.size(),idx));
         return members.get(idx);
@@ -110,7 +111,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      * @param member the member (must not be null)
      * @exception IllegalArgumentException thrown, if member is null
      */
-    public void addMember(RelationMember member) throws IllegalArgumentException {
+    public void addMember(RelationMemberData member) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(member, "member");
         members.add(member);
     }
