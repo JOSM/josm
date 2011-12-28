@@ -41,7 +41,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
-public class SessionSaveAsAction extends DiskAccessAction {
+public class SessionSaveAsAction extends JosmAction {
 
     private List<Layer> layers;
     private Map<Layer, SessionLayerExporter> exporters;
@@ -54,7 +54,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
      * @param layer Save this layer.
      */
     public SessionSaveAsAction() {
-        super(tr("Save Session As..."), "save_as", tr("Save the current session to a new file."), null);
+        super(tr("Save Session As..."), "save_as", tr("Save the current session to a new file."), null, true, "save_as-session", true);
         putValue("help", ht("/Action/SessionSaveAs"));
     }
 

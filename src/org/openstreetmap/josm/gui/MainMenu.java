@@ -119,8 +119,8 @@ public class MainMenu extends JMenuBar {
     public final OpenLocationAction openLocation = new OpenLocationAction();
     public final JosmAction save = new SaveAction();
     public final JosmAction saveAs = new SaveAsAction();
-    public final JosmAction sessionLoad = new SessionLoadAction();
-    public final JosmAction sessionSaveAs = new SessionSaveAsAction();
+    public JosmAction sessionLoad;
+    public JosmAction sessionSaveAs;
     public final JosmAction gpxExport = new GpxExportAction();
     public final DownloadAction download = new DownloadAction();
     public final DownloadPrimitiveAction downloadPrimitive = new DownloadPrimitiveAction();
@@ -366,6 +366,8 @@ public class MainMenu extends JMenuBar {
         if (Main.pref.getBoolean("session")) {
             sessionMenu.setToolTipText(tr("Save and load the current session (list of layers, etc.)"));
             sessionMenu.setIcon(ImageProvider.get("session"));
+            sessionSaveAs = new SessionSaveAsAction();
+            sessionLoad = new SessionLoadAction();
             add(sessionMenu, sessionSaveAs);
             add(sessionMenu, sessionLoad);
             fileMenu.add(sessionMenu);
