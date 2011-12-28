@@ -198,25 +198,33 @@ Build-Date: ${build.tstamp}
 	 	-dontoptimize
 	 	-dontobfuscate
 
+	 	# These options probably are not necessary (and make processing a bit slower)
 	 	-dontskipnonpubliclibraryclasses
+		-dontskipnonpubliclibraryclassmembers
 
 	 	-keepclasseswithmembers public class org.openstreetmap.josm.gui.MainApplication {
 	 	    public static void main(java.lang.String[]);
 	 	}
+		-keepclasseswithmembers public class org.openstreetmap.josm.gui.MainApplet
 
 		-keep class JOSM
 	 	-keep class * extends org.openstreetmap.josm.io.FileImporter
 	 	-keep class * extends org.openstreetmap.josm.io.FileExporter
-	 	-keep class org.openstreetmap.josm.actions.search.SearchCompiler$Never
+		-keep class org.openstreetmap.josm.data.imagery.types.Adapter1
+		-keep class org.openstreetmap.josm.actions.search.SearchCompiler$Never
 
 	 	-keepclassmembers enum  * {
 	 	    public static **[] values();
 	 	    public static ** valueOf(java.lang.String);
 	 	}
 
+	 	# Keep unused public methods (can be useful for plugins)
 	 	-keepclassmembers class * {
 	 	    public protected *;
 	 	}
+		
+		# Disable annoying [proguard] Note: the configuration keeps the entry point '...', but not the descriptor class '...'. This notes should not be a problem as we don't use obfuscation
+		-dontnote
 		</proguard>
     </target>
     <target name="check-plugins" depends="dist-optimized">
