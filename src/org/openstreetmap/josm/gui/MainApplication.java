@@ -304,7 +304,7 @@ public class MainApplication extends Main {
 
         if (Main.pref.getBoolean("debug.edt-checker.enable", Version.getInstance().isLocalBuild())) {
             // Repaint manager is registered so late for a reason - there is lots of violation during startup process but they don't seem to break anything and are difficult to fix
-            System.out.println("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to conosole");
+            System.out.println("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
         }
 
