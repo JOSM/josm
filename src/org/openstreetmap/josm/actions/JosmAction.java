@@ -52,7 +52,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
     /**
      * The new super for all actions.
      *
-     * Use this super constructor to setup your action. It takes 5 parameters:
+     * Use this super constructor to setup your action.
      *
      * @param name the action's text as displayed on the menu (if it is added to a menu)
      * @param iconName the filename of the icon to use
@@ -63,21 +63,10 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
      *            won't be assigned a shortcut unless the user configures one. If you pass null here,
      *            the user CANNOT configure a shortcut for your action.
      * @param register register this action for the toolbar preferences?
+     * @param toolbarId identifier for the toolbar preferences. The iconName is used, if this parameter is null
+     * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
      */
-    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register) {
-        this(name, iconName, tooltip, shortcut, register, true);
-    }
-
-    /**
-     * Even newer super for all actions. Use if you don't want to install layer changed and selection changed adapters
-     * @param name
-     * @param iconName
-     * @param tooltip
-     * @param shortcut
-     * @param register
-     * @param installAdapters
-     */
-    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register, boolean installAdapters) {
+    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register, String toolbarId, boolean installAdapters) {
         super(name, iconName == null ? null : ImageProvider.get(iconName));
         setHelpId();
         sc = shortcut;
@@ -86,7 +75,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         }
         putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
         if (getValue("toolbar") == null) {
-            putValue("toolbar", iconName);
+            putValue("toolbar", toolbarId == null ? iconName : toolbarId);
         }
         if (register) {
             Main.toolbar.register(this);
@@ -94,6 +83,14 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         if (installAdapters) {
             installAdapters();
         }
+    }
+
+    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register, boolean installAdapters) {
+        this(name, iconName, tooltip, shortcut, register, null, installAdapters);
+    }
+
+    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register) {
+        this(name, iconName, tooltip, shortcut, register, null, true);
     }
 
     public JosmAction() {

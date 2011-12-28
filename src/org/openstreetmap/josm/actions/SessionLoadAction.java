@@ -25,7 +25,7 @@ import org.openstreetmap.josm.io.session.SessionReader;
 
 public class SessionLoadAction extends JosmAction {
     public SessionLoadAction() {
-        super(tr("Load Session"), "open", tr("Load a session from file."), null, false);
+        super(tr("Load Session"), "open", tr("Load a session from file."), null, true, "load-session", true);
         putValue("help", ht("/Action/SessionLoad"));
     }
 
