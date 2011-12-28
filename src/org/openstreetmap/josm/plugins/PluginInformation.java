@@ -38,6 +38,7 @@ public class PluginInformation {
     public File file = null;
     public String name = null;
     public int mainversion = 0;
+    public int localmainversion = 0;
     public String className = null;
     public boolean oldmode = false;
     public String requires = null;

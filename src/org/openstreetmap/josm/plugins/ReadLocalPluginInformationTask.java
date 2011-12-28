@@ -63,10 +63,12 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
         );
         if (!availablePlugins.containsKey(info.getName())) {
             info.localversion = info.version;
+            info.localmainversion = info.mainversion;
             availablePlugins.put(info.getName(), info);
         } else {
             PluginInformation current = availablePlugins.get(info.getName());
             current.localversion = info.version;
+            current.localmainversion = info.mainversion;
             if (info.icon != null) {
                 current.icon = info.icon;
             }
