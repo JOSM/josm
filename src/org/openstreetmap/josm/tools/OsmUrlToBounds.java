@@ -7,6 +7,7 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 
@@ -59,8 +60,11 @@ public class OsmUrlToBounds {
                         Integer.parseInt(map.get("zoom")));
             }
         } catch (NumberFormatException x) {
+            x.printStackTrace();
         } catch (NullPointerException x) {
+            x.printStackTrace();
         } catch (ArrayIndexOutOfBoundsException x) {
+            x.printStackTrace();
         }
         return b;
     }
@@ -140,16 +144,30 @@ public class OsmUrlToBounds {
                 zoom - 8 - (zoomOffset % 3) - 2);
     }
 
+    public static final double R = 6378137.0;
+
     public static Bounds positionToBounds(final double lat, final double lon, final int zoom) {
         int tileSizeInPixels = 256;
-        int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
-        int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
-        double deltaX = screenWidth / 2. / tileSizeInPixels;
-        double deltaY = screenHeight / 2. / tileSizeInPixels;
-        Pair<Double, Double> center = getTileOfLatLon(lat, lon, zoom);
-        return new Bounds(
-                getLatLonOfTile(center.a - deltaX, center.b - deltaY, zoom),
-                getLatLonOfTile(center.a + deltaX, center.b + deltaY, zoom));
+        int height = Toolkit.getDefaultToolkit().getScreenSize().height;
+        int width = Toolkit.getDefaultToolkit().getScreenSize().width;
+        if (Main.map != null && Main.map.mapView != null) {
+            height = Main.map.mapView.getHeight();
+            width = Main.map.mapView.getWidth();
+        }
+        double scale = (1 << zoom) * tileSizeInPixels / (2 * Math.PI * R);
+        double deltaX = width / 2.0 / scale;
+        double deltaY = height / 2.0 / scale;
+        double x = Math.toRadians(lon) * R;
+        double y = mercatorY(lat);
+        return new Bounds(invMercatorY(y - deltaY), Math.toDegrees(x - deltaX) / R, invMercatorY(y + deltaY), Math.toDegrees(x + deltaX) / R);
+    }
+
+    public static double mercatorY(double lat) {
+        return Math.log(Math.tan(Math.PI/4 + Math.toRadians(lat)/2)) * R;
+    }
+
+    public static double invMercatorY(double north) {
+        return Math.toDegrees(Math.atan(Math.sinh(north / R)));
     }
 
     public static Pair<Double, Double> getTileOfLatLon(double lat, double lon, double zoom) {

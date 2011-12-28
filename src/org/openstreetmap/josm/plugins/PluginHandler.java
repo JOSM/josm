@@ -404,8 +404,8 @@ public class PluginHandler {
         // make sure the plugin is compatible with the current JOSM version
         //
         int josmVersion = Version.getInstance().getVersion();
-        if (plugin.mainversion > josmVersion && josmVersion != Version.JOSM_UNKNOWN_VERSION) {
-            alertJOSMUpdateRequired(parent, plugin.name, plugin.mainversion);
+        if (plugin.localmainversion > josmVersion && josmVersion != Version.JOSM_UNKNOWN_VERSION) {
+            alertJOSMUpdateRequired(parent, plugin.name, plugin.localmainversion);
             return false;
         }
 

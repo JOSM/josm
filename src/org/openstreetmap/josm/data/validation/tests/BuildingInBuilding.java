@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.QuadBuckets;
@@ -45,9 +47,34 @@ public class BuildingInBuilding extends Test {
         return Geometry.nodeInsidePolygon(n, polygon);
     }
 
+    /**
+     * Return true if w is in polygon.
+     */
     private static boolean isInPolygon(Way w, List<Node> polygon) {
+        // Check that all nodes of w are in polygon
         for (Node n : w.getNodes()) {
             if (!isInPolygon(n, polygon)) {
+                return false;
+            }
+        }
+        // All nodes can be inside polygon and still, w outside:
+        //            +-------------+
+        //           /|             |
+        //          / |             |
+        //         /  |             |
+        //        / w |             |
+        //  +----+----+             |
+        //  |       polygon         |
+        //  |_______________________|
+        //
+        for (int i=0; i<w.getNodesCount(); i++) {
+            LatLon center = null;
+            if (i > 0) {
+                center = w.getNode(i).getCoor().getCenter(w.getNode(i-1).getCoor());
+            } else if (w.isClosed()) {
+                center = w.getNode(i).getCoor().getCenter(w.getNode(w.getNodesCount()-2).getCoor());
+            }
+            if (center != null && !isInPolygon(new Node(center), polygon)) {
                 return false;
             }
         }
@@ -65,7 +92,7 @@ public class BuildingInBuilding extends Test {
                     if (p.equals(object)) {
                         return false;
                     } else if (p instanceof Node) {
-                        return isInPolygon((Node) p, object.getNodes()) || object.getNodes().contains((Node) p);
+                        return isInPolygon((Node) p, object.getNodes()) || object.getNodes().contains(p);
                     } else if (p instanceof Way) {
                         return isInPolygon((Way) p, object.getNodes());
                     } else {
