@@ -237,13 +237,12 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
                     maps = getMapsFor(event.getDataset());
                 }
                 for (Map<Relation, Multipolygon> map : maps) {
-                    Multipolygon mp = map.get(p);
-                    // DataChangedEvent is sent after downloading incomplete members,
+                    // DataChangedEvent is sent after downloading incomplete members (see #7131),
                     // without having received RelationMembersChangedEvent or PrimitivesAddedEvent
-                    if (mp != null && mp.isIncomplete()) {
-                        // This ensures previously incomplete multipolygons will be correctly redrawn
-                        map.remove(p);
-                    }
+                    // OR when undoing a move of a large number of nodes (see #7195),
+                    // without having received NodeMovedEvent
+                    // This ensures concerned multipolygons will be correctly redrawn
+                    map.remove(p);
                 }
             }
         }
