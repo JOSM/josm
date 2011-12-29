@@ -23,6 +23,7 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -38,7 +39,9 @@ import java.util.concurrent.Future;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -56,6 +59,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AbstractMergeAction.LayerListCellRenderer;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
 import org.openstreetmap.josm.data.Bounds;
@@ -79,14 +83,18 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.layer.WMSLayer.PrecacheTask;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.preferences.GPXSettingsPanel;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressTaskId;
+import org.openstreetmap.josm.gui.progress.ProgressTaskIds;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.JpgImporter;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.AudioUtil;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
@@ -95,6 +103,7 @@ import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.UrlLabel;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
+import org.xml.sax.SAXException;
 
 public class GpxLayer extends Layer {
 
@@ -296,6 +305,7 @@ public class GpxLayer extends Layer {
                 new MarkersFromNamedPoins(),
                 new ConvertToDataLayerAction(),
                 new DownloadAlongTrackAction(),
+                new DownloadWmsAlongTrackAction(),
                 SeparatorLayerAction.INSTANCE,
                 new ChooseTrackVisibilityAction(),
                 new RenameLayerAction(getAssociatedFile(), this),
@@ -1244,6 +1254,7 @@ public class GpxLayer extends Layer {
             Main.worker.submit(new CalculateDownloadArea());
         }
 
+
         /**
          * Area "a" contains the hull that we would like to download data for. however we
          * can only download rectangles, so the following is an attempt at finding a number of
@@ -1308,6 +1319,107 @@ public class GpxLayer extends Layer {
                         }
                     }
                     );
+        }
+    }
+
+
+    public class DownloadWmsAlongTrackAction extends AbstractAction {
+        public DownloadWmsAlongTrackAction() {
+            super(tr("Precache imagery tiles along this track"), ImageProvider.get("downloadalongtrack"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+
+            final List<LatLon> points = new ArrayList<LatLon>();
+
+            for (GpxTrack trk : data.tracks) {
+                for (GpxTrackSegment segment : trk.getSegments()) {
+                    for (WayPoint p : segment.getWayPoints()) {
+                        points.add(p.getCoor());
+                    }
+                }
+            }
+            for (WayPoint p : data.waypoints) {
+                points.add(p.getCoor());
+            }
+
+
+            final WMSLayer layer = askWMSLayer();
+            if (layer != null) {
+                PleaseWaitRunnable task = new PleaseWaitRunnable(tr("Precaching WMS")) {
+
+                    private PrecacheTask precacheTask;
+
+                    @Override
+                    protected void realRun() throws SAXException, IOException, OsmTransferException {
+                        precacheTask = new PrecacheTask(progressMonitor);
+                        layer.downloadAreaToCache(precacheTask, points, 0, 0);
+                        while (!precacheTask.isFinished() && !progressMonitor.isCanceled()) {
+                            synchronized (this) {
+                                try {
+                                    wait(200);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void finish() {
+                    }
+
+                    @Override
+                    protected void cancel() {
+                        precacheTask.cancel();
+                    }
+
+                    @Override
+                    public ProgressTaskId canRunInBackground() {
+                        return ProgressTaskIds.PRECACHE_WMS;
+                    }
+                };
+                Main.worker.execute(task);
+            }
+
+
+        }
+
+        protected WMSLayer askWMSLayer() {
+            List<WMSLayer> targetLayers = Main.map.mapView.getLayersOfType(WMSLayer.class);
+
+            if (targetLayers.isEmpty()) {
+                warnNoImageryLayers();
+                return null;
+            }
+
+            JComboBox layerList = new JComboBox();
+            layerList.setRenderer(new LayerListCellRenderer());
+            layerList.setModel(new DefaultComboBoxModel(targetLayers.toArray()));
+            layerList.setSelectedIndex(0);
+
+            JPanel pnl = new JPanel();
+            pnl.setLayout(new GridBagLayout());
+            pnl.add(new JLabel(tr("Please select the imagery layer.")), GBC.eol());
+            pnl.add(layerList, GBC.eol());
+
+            ExtendedDialog ed = new ExtendedDialog(Main.parent,
+                    tr("Select imagery layer"),
+                    new String[] { tr("Download"), tr("Cancel") });
+            ed.setButtonIcons(new String[] { "dialogs/down", "cancel" });
+            ed.setContent(pnl);
+            ed.showDialog();
+            if (ed.getValue() != 1)
+                return null;
+
+            WMSLayer targetLayer = (WMSLayer) layerList.getSelectedItem();
+            return targetLayer;
+        }
+
+        protected void warnNoImageryLayers() {
+            JOptionPane.showMessageDialog(Main.parent,
+                    tr("There are no imagery layers."),
+                    tr("No imagery layers"), JOptionPane.WARNING_MESSAGE);
         }
     }
 

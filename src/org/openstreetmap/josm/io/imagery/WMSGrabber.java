@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.imagery;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -17,17 +15,14 @@ import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
@@ -49,8 +44,8 @@ public class WMSGrabber extends Grabber {
     private ImageryInfo info;
     private Map<String, String> props = new HashMap<String, String>();
 
-    public WMSGrabber(MapView mv, WMSLayer layer) {
-        super(mv, layer);
+    public WMSGrabber(MapView mv, WMSLayer layer, boolean localOnly) {
+        super(mv, layer, localOnly);
         this.info = layer.getInfo();
         this.baseURL = info.getUrl();
         if(layer.getInfo().getCookies() != null && !layer.getInfo().getCookies().equals("")) {
@@ -76,7 +71,7 @@ public class WMSGrabber extends Grabber {
                     b.minEast, b.minNorth,
                     b.maxEast, b.maxNorth,
                     width(), height());
-            request.finish(State.IMAGE, grab(url, attempt));
+            request.finish(State.IMAGE, grab(request, url, attempt));
 
         } catch(Exception e) {
             e.printStackTrace();
@@ -101,28 +96,28 @@ public class WMSGrabber extends Grabber {
         }
 
         return new URL(baseURL.replaceAll("\\{proj(\\([^})]+\\))?\\}", myProj)
-            .replaceAll("\\{bbox\\}", latLonFormat.format(w) + ","
-                + latLonFormat.format(s) + ","
-                + latLonFormat.format(e) + ","
-                + latLonFormat.format(n))
-            .replaceAll("\\{w\\}", latLonFormat.format(w))
-            .replaceAll("\\{s\\}", latLonFormat.format(s))
-            .replaceAll("\\{e\\}", latLonFormat.format(e))
-            .replaceAll("\\{n\\}", latLonFormat.format(n))
-            .replaceAll("\\{width\\}", String.valueOf(wi))
-            .replaceAll("\\{height\\}", String.valueOf(ht))
-            .replace(" ", "%20"));
+                .replaceAll("\\{bbox\\}", latLonFormat.format(w) + ","
+                        + latLonFormat.format(s) + ","
+                        + latLonFormat.format(e) + ","
+                        + latLonFormat.format(n))
+                        .replaceAll("\\{w\\}", latLonFormat.format(w))
+                        .replaceAll("\\{s\\}", latLonFormat.format(s))
+                        .replaceAll("\\{e\\}", latLonFormat.format(e))
+                        .replaceAll("\\{n\\}", latLonFormat.format(n))
+                        .replaceAll("\\{width\\}", String.valueOf(wi))
+                        .replaceAll("\\{height\\}", String.valueOf(ht))
+                        .replace(" ", "%20"));
     }
 
     @Override
     public boolean loadFromCache(WMSRequest request) {
-        BufferedImage cached = layer.cache.getExactMatch(Main.getProjection(), pixelPerDegree, b.minEast, b.minNorth);
+        BufferedImage cached = layer.cache.getExactMatch(Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
 
         if (cached != null) {
             request.finish(State.IMAGE, cached);
             return true;
         } else if (request.isAllowPartialCacheMatch()) {
-            BufferedImage partialMatch = layer.cache.getPartialMatch(Main.getProjection(), pixelPerDegree, b.minEast, b.minNorth);
+            BufferedImage partialMatch = layer.cache.getPartialMatch(Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
             if (partialMatch != null) {
                 request.finish(State.PARTLY_IN_CACHE, partialMatch);
                 return true;
@@ -137,7 +132,7 @@ public class WMSGrabber extends Grabber {
         return false;
     }
 
-    protected BufferedImage grab(URL url, int attempt) throws IOException, OsmTransferException {
+    protected BufferedImage grab(WMSRequest request, URL url, int attempt) throws IOException, OsmTransferException {
         System.out.println("Grabbing WMS " + (attempt > 1? "(attempt " + attempt + ") ":"") + url);
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -163,7 +158,7 @@ public class WMSGrabber extends Grabber {
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         BufferedImage img = layer.normalizeImage(ImageIO.read(bais));
         bais.reset();
-        layer.cache.saveToCache(layer.isOverlapEnabled()?img:null, bais, Main.getProjection(), pixelPerDegree, b.minEast, b.minNorth);
+        layer.cache.saveToCache(layer.isOverlapEnabled()?img:null, bais, Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
         return img;
     }
 

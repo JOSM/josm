@@ -7,6 +7,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -44,6 +45,7 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.GeorefImage;
 import org.openstreetmap.josm.data.imagery.GeorefImage.State;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -60,17 +62,42 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.imagery.Grabber;
 import org.openstreetmap.josm.io.imagery.HTMLGrabber;
 import org.openstreetmap.josm.io.imagery.WMSGrabber;
 import org.openstreetmap.josm.io.imagery.WMSRequest;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+
 /**
  * This is a layer that grabs the current screen from an WMS server. The data
  * fetched this way is tiled and managed to the disc to reduce server load.
  */
 public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceChangedListener {
+
+    public static class PrecacheTask {
+        private final ProgressMonitor progressMonitor;
+        private volatile int totalCount;
+        private volatile int processedCount;
+        private volatile boolean isCancelled;
+
+        public PrecacheTask(ProgressMonitor progressMonitor) {
+            this.progressMonitor = progressMonitor;
+        }
+
+        boolean isFinished() {
+            return totalCount == processedCount;
+        }
+
+        public int getTotalCount() {
+            return totalCount;
+        }
+
+        public void cancel() {
+            isCancelled = true;
+        }
+    }
 
     private static final ObjectFactory OBJECT_FACTORY = null; // Fake reference to keep build scripts from removing ObjectFactory class. This class is not used directly but it's necessary for jaxb to work
 
@@ -158,6 +185,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             startGrabberThreads();
         }
 
+
         Main.pref.addPreferenceChangeListener(this);
 
         SwingUtilities.invokeLater(new Runnable() {
@@ -204,6 +232,31 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
 
     public boolean hasAutoDownload(){
         return autoDownloadEnabled;
+    }
+
+    public void downloadAreaToCache(PrecacheTask precacheTask, List<LatLon> points, double bufferX, double bufferY) {
+        Set<Point> requestedTiles = new HashSet<Point>();
+        for (LatLon point: points) {
+            EastNorth minEn = Main.getProjection().latlon2eastNorth(new LatLon(point.lat() - bufferY, point.lon() - bufferX));
+            EastNorth maxEn = Main.getProjection().latlon2eastNorth(new LatLon(point.lat() + bufferY, point.lon() + bufferX));
+            int minX = getImageXIndex(minEn.east());
+            int maxX = getImageXIndex(maxEn.east());
+            int minY = getImageYIndex(minEn.north());
+            int maxY = getImageYIndex(maxEn.north());
+
+            for (int x=minX; x<=maxX; x++) {
+                for (int y=minY; y<=maxY; y++) {
+                    requestedTiles.add(new Point(x, y));
+                }
+            }
+        }
+
+        for (Point p: requestedTiles) {
+            addRequest(new WMSRequest(p.x, p.y, info.getPixelPerDegree(), true, false, precacheTask));
+        }
+
+        precacheTask.progressMonitor.setTicksCount(precacheTask.getTotalCount());
+        precacheTask.progressMonitor.setCustomText(tr("Downloaded {0}/{1} tiles", 0, precacheTask.totalCount));
     }
 
     @Override
@@ -471,35 +524,49 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         int dx = request.getXIndex() - mouseX;
         int dy = request.getYIndex() - mouseY;
 
-        return dx * dx + dy * dy;
+        return 1 + dx * dx + dy * dy;
     }
 
-    public WMSRequest getRequest() {
+    private void sortRequests(boolean localOnly) {
+        Iterator<WMSRequest> it = requestQueue.iterator();
+        while (it.hasNext()) {
+            WMSRequest item = it.next();
+
+            if (item.getPrecacheTask() != null && item.getPrecacheTask().isCancelled) {
+                it.remove();
+                continue;
+            }
+
+            int priority = getRequestPriority(item);
+            if (priority == -1 && item.isPrecacheOnly()) {
+                priority = Integer.MAX_VALUE; // Still download, but prefer requests in current view
+            }
+
+            if (localOnly && !item.hasExactMatch()) {
+                priority = Integer.MAX_VALUE; // Only interested in tiles that can be loaded from file immediately
+            }
+
+            if (       priority == -1
+                    || finishedRequests.contains(item)
+                    || processingRequests.contains(item)) {
+                it.remove();
+            } else {
+                item.setPriority(priority);
+            }
+        }
+        Collections.sort(requestQueue);
+    }
+
+    public WMSRequest getRequest(boolean localOnly) {
         requestQueueLock.lock();
         try {
             workingThreadCount--;
-            Iterator<WMSRequest> it = requestQueue.iterator();
-            while (it.hasNext()) {
-                WMSRequest item = it.next();
-                int priority = getRequestPriority(item);
-                if (priority == -1 || finishedRequests.contains(item) || processingRequests.contains(item)) {
-                    it.remove();
-                } else {
-                    item.setPriority(priority);
-                }
-            }
-            Collections.sort(requestQueue);
 
-            EastNorth cursorEastNorth = mv.getEastNorth(mv.lastMEvent.getX(), mv.lastMEvent.getY());
-            int mouseX = getImageXIndex(cursorEastNorth.east());
-            int mouseY = getImageYIndex(cursorEastNorth.north());
-            boolean isOnMouse = requestQueue.size() > 0 && requestQueue.get(0).getXIndex() == mouseX && requestQueue.get(0).getYIndex() == mouseY;
-
-            // If there is only one thread left then keep it in case we need to download other tile urgently
-            while (!canceled &&
-                    (requestQueue.isEmpty() || (!isOnMouse && threadCount - workingThreadCount == 0 && threadCount > 1))) {
+            sortRequests(localOnly);
+            while (!canceled && (requestQueue.isEmpty() || (localOnly && !requestQueue.get(0).hasExactMatch()))) {
                 try {
                     queueEmpty.await();
+                    sortRequests(localOnly);
                 } catch (InterruptedException e) {
                     // Shouldn't happen
                 }
@@ -522,8 +589,16 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     public void finishRequest(WMSRequest request) {
         requestQueueLock.lock();
         try {
+            PrecacheTask task = request.getPrecacheTask();
+            if (task != null) {
+                task.processedCount++;
+                if (!task.progressMonitor.isCanceled()) {
+                    task.progressMonitor.worked(1);
+                    task.progressMonitor.setCustomText(tr("Downloaded {0}/{1} tiles", task.processedCount, task.totalCount));
+                }
+            }
             processingRequests.remove(request);
-            if (request.getState() != null) {
+            if (request.getState() != null && !request.isPrecacheOnly()) {
                 finishedRequests.add(request);
                 mv.repaint();
             }
@@ -535,8 +610,18 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     public void addRequest(WMSRequest request) {
         requestQueueLock.lock();
         try {
+
+            ProjectionBounds b = getBounds(request);
+            // Checking for exact match is fast enough, no need to do it in separated thread
+            request.setHasExactMatch(cache.hasExactMatch(Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth));
+            if (request.isPrecacheOnly() && request.hasExactMatch())
+                return; // We already have this tile cached
+
             if (!requestQueue.contains(request) && !finishedRequests.contains(request) && !processingRequests.contains(request)) {
                 requestQueue.add(request);
+                if (request.getPrecacheTask() != null) {
+                    request.getPrecacheTask().totalCount++;
+                }
                 queueEmpty.signalAll();
             }
         } finally {
@@ -544,7 +629,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
     }
 
-    public boolean requestIsValid(WMSRequest request) {
+    public boolean requestIsVisible(WMSRequest request) {
         return bminx <= request.getXIndex() && bmaxx >= request.getXIndex() && bminy <= request.getYIndex() && bmaxy >= request.getYIndex();
     }
 
@@ -870,7 +955,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             grabbers.clear();
             grabberThreads.clear();
             for (int i=0; i<threadCount; i++) {
-                Grabber grabber = getGrabber();
+                Grabber grabber = getGrabber(i == 0 && threadCount > 1);
                 grabbers.add(grabber);
                 Thread t = new Thread(grabber, "WMS " + getName() + " " + i);
                 t.setDaemon(true);
@@ -913,12 +998,31 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
     }
 
-    protected Grabber getGrabber(){
+    protected Grabber getGrabber(boolean localOnly){
         if(getInfo().getImageryType() == ImageryType.HTML)
-            return new HTMLGrabber(mv, this);
+            return new HTMLGrabber(mv, this, localOnly);
         else if(getInfo().getImageryType() == ImageryType.WMS)
-            return new WMSGrabber(mv, this);
+            return new WMSGrabber(mv, this, localOnly);
         else throw new IllegalStateException("getGrabber() called for non-WMS layer type");
+    }
+
+    public ProjectionBounds getBounds(WMSRequest request) {
+        ProjectionBounds result = new ProjectionBounds(
+                getEastNorth(request.getXIndex(), request.getYIndex()),
+                getEastNorth(request.getXIndex() + 1, request.getYIndex() + 1));
+
+        if (WMSLayer.PROP_OVERLAP.get()) {
+            double eastSize =  result.maxEast - result.minEast;
+            double northSize =  result.maxNorth - result.minNorth;
+
+            double eastCoef = WMSLayer.PROP_OVERLAP_EAST.get() / 100.0;
+            double northCoef = WMSLayer.PROP_OVERLAP_NORTH.get() / 100.0;
+
+            result = new ProjectionBounds(result.getMin(),
+                    new EastNorth(result.maxEast + eastCoef * eastSize,
+                            result.maxNorth + northCoef * northSize));
+        }
+        return result;
     }
 
     @Override

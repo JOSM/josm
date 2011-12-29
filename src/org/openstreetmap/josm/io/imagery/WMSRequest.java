@@ -4,25 +4,34 @@ package org.openstreetmap.josm.io.imagery;
 import java.awt.image.BufferedImage;
 
 import org.openstreetmap.josm.data.imagery.GeorefImage.State;
+import org.openstreetmap.josm.gui.layer.WMSLayer.PrecacheTask;
 
 public class WMSRequest implements Comparable<WMSRequest> {
     private final int xIndex;
     private final int yIndex;
     private final double pixelPerDegree;
     private final boolean real; // Download even if autodownloading is disabled
+    private final PrecacheTask precacheTask; // Download even when wms tile is not currently visible (precache)
     private final boolean allowPartialCacheMatch;
     private int priority;
+    private boolean hasExactMatch;
     // Result
     private State state;
     private BufferedImage image;
 
     public WMSRequest(int xIndex, int yIndex, double pixelPerDegree, boolean real, boolean allowPartialCacheMatch) {
+        this(xIndex, yIndex, pixelPerDegree, real, allowPartialCacheMatch, null);
+    }
+
+    public WMSRequest(int xIndex, int yIndex, double pixelPerDegree, boolean real, boolean allowPartialCacheMatch, PrecacheTask precacheTask) {
         this.xIndex = xIndex;
         this.yIndex = yIndex;
         this.pixelPerDegree = pixelPerDegree;
         this.real = real;
+        this.precacheTask = precacheTask;
         this.allowPartialCacheMatch = allowPartialCacheMatch;
     }
+
 
     public void finish(State state, BufferedImage image) {
         this.state = state;
@@ -98,14 +107,30 @@ public class WMSRequest implements Comparable<WMSRequest> {
     @Override
     public String toString() {
         return "WMSRequest [xIndex=" + xIndex + ", yIndex=" + yIndex
-        + ", pixelPerDegree=" + pixelPerDegree + "]";
+                + ", pixelPerDegree=" + pixelPerDegree + "]";
     }
 
     public boolean isReal() {
         return real;
     }
 
+    public boolean isPrecacheOnly() {
+        return precacheTask != null;
+    }
+
+    public PrecacheTask getPrecacheTask() {
+        return precacheTask;
+    }
+
     public boolean isAllowPartialCacheMatch() {
         return allowPartialCacheMatch;
+    }
+
+    public boolean hasExactMatch() {
+        return hasExactMatch;
+    }
+
+    public void setHasExactMatch(boolean hasExactMatch) {
+        this.hasExactMatch = hasExactMatch;
     }
 }
