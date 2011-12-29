@@ -2,7 +2,7 @@ JOSM was originally designed and coded by Immanuel Scholz,
 and is now maintained by the OpenStreetMap community.
 
 The current JOSM maintainer is Dirk Stöcker.
-A lot of administration work is done by Sebastian Klein.
+A lot of administration work is done by Paul Hartmann.
 
 Major code contributions from (in alphabetical order):
 
@@ -10,9 +10,10 @@ Stefan Breunig
 David Earl
 Gabriel Ebner
 Dave Hansen
+Paul Hartmann
 Karl Guggisberg
 Matthias Julius
-Sebastian Klein
+Alexei Kasatkin
 Jiri Klement
 Ulf Lamping
 Simon Legner
