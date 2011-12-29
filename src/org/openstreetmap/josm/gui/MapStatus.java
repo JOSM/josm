@@ -125,7 +125,7 @@ public class MapStatus extends JPanel implements Helpful {
             updateText();
         }
 
-        public void setTitle(String text) {
+        public void setCurrentAction(String text) {
             this.title = text;
             updateText();
         }

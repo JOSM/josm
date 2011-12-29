@@ -20,21 +20,25 @@ import org.openstreetmap.josm.gui.PleaseWaitDialog;
 
 public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
-	/**
-	 * Implemented by both foreground dialog and background progress dialog (in status bar)
-	 */
+    /**
+     * Implemented by both foreground dialog and background progress dialog (in status bar)
+     */
     public interface ProgressMonitorDialog {
         void setVisible(boolean visible);
         void updateProgress(int progress);
         void setCustomText(String text);
-        void setTitle(String text);
+        void setCurrentAction(String text);
         void setIndeterminate(boolean newValue);
-        void appendLogMessage(String message);
+        void appendLogMessage(String message); //TODO Not implemented properly in background monitor, log message will get lost if progress runs in background
     }
 
     public static final int PROGRESS_BAR_MAX = 100;
     private final Window dialogParent;
+
     private int currentProgressValue = 0;
+    private String customText;
+    private String title;
+    private boolean indeterminate;
 
     private boolean isInBackground;
     private PleaseWaitDialog dialog;
@@ -109,6 +113,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
             isInBackground = true;
             ProgressMonitorDialog dialog = getDialog();
             if (dialog != null) {
+                reset();
                 dialog.setVisible(true);
             }
         }
@@ -178,6 +183,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     @Override
     protected void doSetCustomText(final String title) {
         checkState(State.IN_TASK, State.IN_SUBTASK);
+        this.customText = title;
         doInEDT(new Runnable() {
             public void run() {
                 ProgressMonitorDialog dialog = getDialog();
@@ -191,11 +197,12 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     @Override
     protected void doSetTitle(final String title) {
         checkState(State.IN_TASK, State.IN_SUBTASK);
+        this.title = title;
         doInEDT(new Runnable() {
             public void run() {
                 ProgressMonitorDialog dialog = getDialog();
                 if (dialog != null) {
-                    dialog.setTitle(title);
+                    dialog.setCurrentAction(title);
                 }
             }
         });
@@ -203,13 +210,14 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
     @Override
     protected void doSetIntermediate(final boolean value) {
+        this.indeterminate = value;
         doInEDT(new Runnable() {
             public void run() {
                 // Enable only if progress is at the beginning. Doing intermediate progress in the middle
                 // will hide already reached progress
                 ProgressMonitorDialog dialog = getDialog();
                 if (dialog != null) {
-                    dialog.setIndeterminate(value && PleaseWaitProgressMonitor.this.dialog.progress.getValue() == 0);
+                    dialog.setIndeterminate(value && currentProgressValue == 0);
                 }
             }
         });
@@ -225,6 +233,27 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
                 }
             }
         });
+    }
+
+    public void reset() {
+        if (dialog != null) {
+            dialog.setTitle(title);
+            dialog.setCustomText(customText);
+            dialog.updateProgress(currentProgressValue);
+            dialog.setIndeterminate(indeterminate && currentProgressValue == 0);
+        }
+        BackgroundProgressMonitor backgroundMonitor = null;
+        MapFrame map = Main.map;
+        if (map != null) {
+            backgroundMonitor = map.statusLine.progressMonitor;
+        }
+        if (backgroundMonitor != null) {
+            backgroundMonitor.setCurrentAction(title);
+            backgroundMonitor.setCustomText(customText);
+            backgroundMonitor.updateProgress(currentProgressValue);
+            backgroundMonitor.setIndeterminate(indeterminate && currentProgressValue == 0);
+        }
+
     }
 
     public void close() {
@@ -252,6 +281,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
             @Override
             public void run() {
                 dialog.setInBackgroundPossible(PleaseWaitProgressMonitor.this.taskId != null && Main.isDisplayingMapView());
+                reset();
                 getDialog();
             }
         });
