@@ -3806,7 +3806,32 @@ are supplied, then "values" will be treated as "display_values" and translated i
   <group name="Man Made" icon="presets/works.png">
     <group name="Man Made" icon="presets/works.png">
         <item name="Building" icon="styles/standard/misc/landmark/building.png" type="node,closedway,relation">
-            <key key="building" value="yes" />
+            <link href="http://wiki.openstreetmap.org/wiki/Key:building"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:building"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:building"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:building"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:building"
+                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Key:building"
+                  no.href="http://wiki.openstreetmap.org/wiki/NO:Key:building"
+                  pl.href="http://wiki.openstreetmap.org/wiki/PL:Key:building"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building" />
+            <label text="Edit Building" />
+            <combo key="building" text="Building" values="yes,roof,garage,industrial,church,school,hangar,commercial,farm,transportation,greenhouse,office,university" default="yes" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Residential Building" icon="styles/standard/misc/landmark/building.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:building"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:building"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:building"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:building"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:building"
+                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Key:building"
+                  no.href="http://wiki.openstreetmap.org/wiki/NO:Key:building"
+                  pl.href="http://wiki.openstreetmap.org/wiki/PL:Key:building"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building" />
+            <label text="Edit Residential Building" />
+            <combo key="building" text="Building" values="residential,apartments,house,hut,terraced,detached,roof" default="residential" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Tower" icon="presets/tower.png" type="node,closedway">
             <label text="Edit Tower" />

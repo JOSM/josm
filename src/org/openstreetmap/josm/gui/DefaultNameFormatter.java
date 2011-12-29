@@ -83,7 +83,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     /** the default list of tags which are used as naming tags in relations */
     static public final String[] DEFAULT_NAMING_TAGS_FOR_RELATIONS = {"name", "ref", "restriction", "landuse", "natural",
-        "public_transport", ":LocationCode", "note"};
+        "public_transport", ":LocationCode", "note", "building"};
 
     /** the current list of tags used as naming tags in relations */
     static private List<String> namingTagsForRelations =  null;
@@ -225,7 +225,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                             (way.get("highway") != null) ? tr("highway") :
                                 (way.get("railway") != null) ? tr("railway") :
                                     (way.get("waterway") != null) ? tr("waterway") :
-                                        (way.get("landuse") != null) ? tr("landuse") : null;
+                                        (way.get("building") != null) ? tr("building") :
+                                            (way.get("landuse") != null) ? tr("landuse") : null;
                 }
                 if(n == null)
                 {
@@ -432,7 +433,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
         if (name == null) {
             String building  = relation.get("building");
-            if(OsmUtils.isTrue(building)) {
+            if (OsmUtils.isTrue(building)) {
                 name = tr("building");
             } else if(building != null)
             {
@@ -471,8 +472,13 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                     return relation.get(m);
             }
             return null;
-        } else
+        } else if (OsmUtils.isTrue(relation.get(nameTag))) {
+            return tr(nameTag);
+        } else if (OsmUtils.isFalse(relation.get(nameTag))) {
+            return null;
+        } else {
             return trc_lazy(nameTag, I18n.escape(relation.get(nameTag)));
+        }
     }
 
     private String getRelationName(IRelation relation) {
