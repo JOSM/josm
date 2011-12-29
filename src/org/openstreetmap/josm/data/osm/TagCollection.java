@@ -710,7 +710,7 @@ public class TagCollection implements Iterable<Tag> {
     public String getJoinedValues(String key) {
 
         // See #7201 combining ways screws up the order of ref tags
-        Set<String> originalValues = getValues();
+        Set<String> originalValues = getValues(key);
         if (originalValues.size() == 1)
             return originalValues.iterator().next();
 
