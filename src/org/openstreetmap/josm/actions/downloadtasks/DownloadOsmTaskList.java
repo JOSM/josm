@@ -149,28 +149,28 @@ public class DownloadOsmTaskList {
                         ImageProvider.get("ok"),
                         tr("Click to check whether objects in your local dataset are deleted on the server"),
                         null  /* no specific help topic */
-                ),
-                new ButtonSpec(
-                        tr("Ignore"),
-                        ImageProvider.get("cancel"),
-                        tr("Click to abort and to resume editing"),
-                        null /* no specific help topic */
-                ),
+                        ),
+                        new ButtonSpec(
+                                tr("Ignore"),
+                                ImageProvider.get("cancel"),
+                                tr("Click to abort and to resume editing"),
+                                null /* no specific help topic */
+                                ),
         };
 
         String message = "<html>"
-            + trn("There is {0} object in your local dataset which "
-                    + "might be deleted on the server. If you later try to delete or "
-                    + "update this the server is likely to report a conflict.",
-                    "There are {0} objects in your local dataset which "
-                    + "might be deleted on the server. If you later try to delete or "
-                    + "update them the server is likely to report a conflict.", potentiallyDeleted.size(), potentiallyDeleted.size())
-                    + "<br>"
-                    + trn("Click <strong>{0}</strong> to check the state of this object on the server.",
-                            "Click <strong>{0}</strong> to check the state of these objects on the server.",
-                            potentiallyDeleted.size(),
-                            options[0].text) + "<br>"
-                            + tr("Click <strong>{0}</strong> to ignore." + "</html>", options[1].text);
+                + trn("There is {0} object in your local dataset which "
+                        + "might be deleted on the server. If you later try to delete or "
+                        + "update this the server is likely to report a conflict.",
+                        "There are {0} objects in your local dataset which "
+                                + "might be deleted on the server. If you later try to delete or "
+                                + "update them the server is likely to report a conflict.", potentiallyDeleted.size(), potentiallyDeleted.size())
+                                + "<br>"
+                                + trn("Click <strong>{0}</strong> to check the state of this object on the server.",
+                                        "Click <strong>{0}</strong> to check the state of these objects on the server.",
+                                        potentiallyDeleted.size(),
+                                        options[0].text) + "<br>"
+                                        + tr("Click <strong>{0}</strong> to ignore." + "</html>", options[1].text);
 
         int ret = HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
@@ -181,7 +181,7 @@ public class DownloadOsmTaskList {
                 options,
                 options[0],
                 ht("/Action/UpdateData#SyncPotentiallyDeletedObjects")
-        );
+                );
         if (ret != 0 /* OK */)
             return;
 
@@ -264,7 +264,10 @@ public class DownloadOsmTaskList {
                     if (task instanceof DownloadOsmTask) {
                         DataSet ds = ((DownloadOsmTask) task).getDownloadedData();
                         if (ds != null) {
-                            myPrimitives.removeAll(ds.allPrimitives());
+                            // myPrimitives.removeAll(ds.allPrimitives()) will do the same job but much slower
+                            for (OsmPrimitive primitive: ds.allPrimitives()) {
+                                myPrimitives.remove(primitive);
+                            }
                         }
                     }
                 }
