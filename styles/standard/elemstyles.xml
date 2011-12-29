@@ -402,7 +402,7 @@ For external files the <rules> should have following elements:
 <!-- highway tags -->
 
 	<rule>
-		<condition k="motorroad" v="yes"/>
+		<condition k="motorroad" b="yes"/>
 		<linemod mode="under" width="+4" colour="motorroad#0000c0"/>
 	</rule>
 
@@ -573,6 +573,13 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="highway" v="pedestrian"/>
+		<line width="3" realwidth="5" colour="foot#00ff00"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+	</rule>
+
+	<rule>
+		<condition k="highway" v="pedestrian"/>
+		<condition k="area" b="yes"/>
 		<line width="3" realwidth="5" colour="foot#00ff00"/>
 		<area colour="foot#00ff00" closed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
