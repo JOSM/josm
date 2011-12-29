@@ -21,12 +21,12 @@ import org.openstreetmap.josm.tools.Utils;
 public class HTMLGrabber extends WMSGrabber {
     public static final StringProperty PROP_BROWSER = new StringProperty("imagery.wms.browser", "webkit-image {0}");
 
-    public HTMLGrabber(MapView mv, WMSLayer layer) {
-        super(mv, layer);
+    public HTMLGrabber(MapView mv, WMSLayer layer, boolean localOnly) {
+        super(mv, layer, localOnly);
     }
 
     @Override
-    protected BufferedImage grab(URL url, int attempt) throws IOException {
+    protected BufferedImage grab(WMSRequest request, URL url, int attempt) throws IOException {
         String urlstring = url.toExternalForm();
 
         System.out.println("Grabbing HTML " + (attempt > 1? "(attempt " + attempt + ") ":"") + url);
@@ -51,7 +51,7 @@ public class HTMLGrabber extends WMSGrabber {
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         BufferedImage img = layer.normalizeImage(ImageIO.read(bais));
         bais.reset();
-        layer.cache.saveToCache(layer.isOverlapEnabled()?img:null, bais, Main.getProjection(), pixelPerDegree, b.minEast, b.minNorth);
+        layer.cache.saveToCache(layer.isOverlapEnabled()?img:null, bais, Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
 
         return img;
     }

@@ -3,46 +3,22 @@ package org.openstreetmap.josm.io.imagery;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.ProjectionBounds;
-import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.GeorefImage.State;
-import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 
 abstract public class Grabber implements Runnable {
     protected final MapView mv;
     protected final WMSLayer layer;
+    private final boolean localOnly;
 
     protected ProjectionBounds b;
-    protected Projection proj;
-    protected double pixelPerDegree;
-    protected WMSRequest request;
     protected volatile boolean canceled;
 
-    Grabber(MapView mv, WMSLayer layer) {
+    Grabber(MapView mv, WMSLayer layer, boolean localOnly) {
         this.mv = mv;
         this.layer = layer;
-    }
-
-    private void updateState(WMSRequest request) {
-        b = new ProjectionBounds(
-                layer.getEastNorth(request.getXIndex(), request.getYIndex()),
-                layer.getEastNorth(request.getXIndex() + 1, request.getYIndex() + 1));
-        if (WMSLayer.PROP_OVERLAP.get()) {
-            double eastSize =  b.maxEast - b.minEast;
-            double northSize =  b.maxNorth - b.minNorth;
-
-            double eastCoef = WMSLayer.PROP_OVERLAP_EAST.get() / 100.0;
-            double northCoef = WMSLayer.PROP_OVERLAP_NORTH.get() / 100.0;
-
-            this.b = new ProjectionBounds(b.getMin(),
-                    new EastNorth(b.maxEast + eastCoef * eastSize,
-                            b.maxNorth + northCoef * northSize));
-        }
-
-        this.proj = Main.getProjection();
-        this.pixelPerDegree = request.getPixelPerDegree();
-        this.request = request;
+        this.localOnly = localOnly;
     }
 
     abstract void fetch(WMSRequest request, int attempt) throws Exception; // the image fetch code
@@ -59,12 +35,18 @@ abstract public class Grabber implements Runnable {
         while (true) {
             if (canceled)
                 return;
-            WMSRequest request = layer.getRequest();
+            WMSRequest request = layer.getRequest(localOnly);
             if (request == null)
                 return;
-            updateState(request);
-            if(!loadFromCache(request)){
-                attempt(request);
+            this.b = layer.getBounds(request);
+            if (request.isPrecacheOnly()) {
+                if (!layer.cache.hasExactMatch(Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth)) {
+                    attempt(request);
+                }
+            } else {
+                if(!loadFromCache(request)){
+                    attempt(request);
+                }
             }
             layer.finishRequest(request);
         }
@@ -76,7 +58,7 @@ abstract public class Grabber implements Runnable {
             if (canceled)
                 return;
             try {
-                if (!layer.requestIsValid(request))
+                if (!request.isPrecacheOnly() && !layer.requestIsVisible(request))
                     return;
                 fetch(request, i);
                 break; // break out of the retry loop

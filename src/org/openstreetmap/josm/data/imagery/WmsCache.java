@@ -61,16 +61,17 @@ public class WmsCache {
         final double east;
         final double north;
         final ProjectionBounds bounds;
+        final String filename;
 
         long lastUsed;
         long lastModified;
-        String filename;
 
-        CacheEntry(double pixelPerDegree, double east, double north, int tileSize) {
+        CacheEntry(double pixelPerDegree, double east, double north, int tileSize, String filename) {
             this.pixelPerDegree = pixelPerDegree;
             this.east = east;
             this.north = north;
             this.bounds = new ProjectionBounds(east, north, east + tileSize / pixelPerDegree, north + tileSize / pixelPerDegree);
+            this.filename = filename;
         }
     }
 
@@ -200,9 +201,8 @@ public class WmsCache {
             for (ProjectionType projectionType: cacheEntries.getProjection()) {
                 ProjectionEntries projection = getProjectionEntries(projectionType.getName(), projectionType.getCacheDirectory());
                 for (EntryType entry: projectionType.getEntry()) {
-                    CacheEntry ce = new CacheEntry(entry.getPixelPerDegree(), entry.getEast(), entry.getNorth(), tileSize);
+                    CacheEntry ce = new CacheEntry(entry.getPixelPerDegree(), entry.getEast(), entry.getNorth(), tileSize, entry.getFilename());
                     ce.lastUsed = entry.getLastUsed().getTimeInMillis();
-                    ce.filename = entry.getFilename();
                     ce.lastModified = entry.getLastModified().getTimeInMillis();
                     projection.entries.add(ce);
                 }
@@ -314,27 +314,36 @@ public class WmsCache {
         return new File(cacheDir, projection.cacheDirectory + "/" + entry.filename);
     }
 
-    private BufferedImage loadImage(ProjectionEntries projectionEntries, CacheEntry entry) throws IOException {
-        entry.lastUsed = System.currentTimeMillis();
 
-        SoftReference<BufferedImage> memCache = memoryCache.get(entry);
-        if (memCache != null) {
-            BufferedImage result = memCache.get();
-            if (result != null)
-                return result;
+    private BufferedImage loadImage(ProjectionEntries projectionEntries, CacheEntry entry) throws IOException {
+
+        synchronized (this) {
+            entry.lastUsed = System.currentTimeMillis();
+
+            SoftReference<BufferedImage> memCache = memoryCache.get(entry);
+            if (memCache != null) {
+                BufferedImage result = memCache.get();
+                if (result != null)
+                    return result;
+            }
         }
 
         try {
+            // Reading can't be in synchronized section, it's too slow
             BufferedImage result = ImageIO.read(getImageFile(projectionEntries, entry));
-            if (result == null) {
+            synchronized (this) {
+                if (result == null) {
+                    projectionEntries.entries.remove(entry);
+                    totalFileSizeDirty = true;
+                }
+                return result;
+            }
+        } catch (IOException e) {
+            synchronized (this) {
                 projectionEntries.entries.remove(entry);
                 totalFileSizeDirty = true;
+                throw e;
             }
-            return result;
-        } catch (IOException e) {
-            projectionEntries.entries.remove(entry);
-            totalFileSizeDirty = true;
-            throw e;
         }
     }
 
@@ -346,12 +355,21 @@ public class WmsCache {
         return null;
     }
 
-    public synchronized BufferedImage getExactMatch(Projection projection, double pixelPerDegree, double east, double north) {
+    public synchronized boolean hasExactMatch(Projection projection, double pixelPerDegree, double east, double north) {
         ProjectionEntries projectionEntries = getProjectionEntries(projection);
         CacheEntry entry = findEntry(projectionEntries, pixelPerDegree, east, north);
+        return (entry != null);
+    }
+
+    public BufferedImage getExactMatch(Projection projection, double pixelPerDegree, double east, double north) {
+        CacheEntry entry = null;
+        ProjectionEntries projectionEntries = null;
+        synchronized (this) {
+            projectionEntries = getProjectionEntries(projection);
+            entry = findEntry(projectionEntries, pixelPerDegree, east, north);
+        }
         if (entry != null) {
             try {
-                entry.lastUsed = System.currentTimeMillis();
                 return loadImage(projectionEntries, entry);
             } catch (IOException e) {
                 System.err.println("Unable to load file from wms cache");
@@ -362,45 +380,53 @@ public class WmsCache {
         return null;
     }
 
-    public synchronized BufferedImage getPartialMatch(Projection projection, double pixelPerDegree, double east, double north) {
-        List<CacheEntry> matches = new ArrayList<WmsCache.CacheEntry>();
+    public  BufferedImage getPartialMatch(Projection projection, double pixelPerDegree, double east, double north) {
+        ProjectionEntries projectionEntries;
+        List<CacheEntry> matches;
+        synchronized (this) {
+            matches = new ArrayList<WmsCache.CacheEntry>();
 
-        double minPPD = pixelPerDegree / 5;
-        double maxPPD = pixelPerDegree * 5;
-        ProjectionEntries projectionEntries = getProjectionEntries(projection);
+            double minPPD = pixelPerDegree / 5;
+            double maxPPD = pixelPerDegree * 5;
+            projectionEntries = getProjectionEntries(projection);
 
-        ProjectionBounds bounds = new ProjectionBounds(east, north,
-                east + tileSize / pixelPerDegree, north + tileSize / pixelPerDegree);
+            double size2 = tileSize / pixelPerDegree;
+            double border = tileSize * 0.01; // Make sure not to load neighboring tiles that intersects this tile only slightly
+            ProjectionBounds bounds = new ProjectionBounds(east + border, north + border,
+                    east + size2 - border, north + size2 - border);
 
-        //TODO Do not load tile if it is completely overlapped by other tile with better ppd
-        for (CacheEntry entry: projectionEntries.entries) {
-            if (entry.pixelPerDegree >= minPPD && entry.pixelPerDegree <= maxPPD && entry.bounds.intersects(bounds)) {
-                entry.lastUsed = System.currentTimeMillis();
-                matches.add(entry);
+            //TODO Do not load tile if it is completely overlapped by other tile with better ppd
+            for (CacheEntry entry: projectionEntries.entries) {
+                if (entry.pixelPerDegree >= minPPD && entry.pixelPerDegree <= maxPPD && entry.bounds.intersects(bounds)) {
+                    entry.lastUsed = System.currentTimeMillis();
+                    matches.add(entry);
+                }
             }
+
+            if (matches.isEmpty())
+                return null;
+
+
+            Collections.sort(matches, new Comparator<CacheEntry>() {
+                @Override
+                public int compare(CacheEntry o1, CacheEntry o2) {
+                    return Double.compare(o2.pixelPerDegree, o1.pixelPerDegree);
+                }
+            });
         }
-
-        if (matches.isEmpty())
-            return null;
-
-
-        Collections.sort(matches, new Comparator<CacheEntry>() {
-            @Override
-            public int compare(CacheEntry o1, CacheEntry o2) {
-                return Double.compare(o2.pixelPerDegree, o1.pixelPerDegree);
-            }
-        });
 
         //TODO Use alpha layer only when enabled on wms layer
         BufferedImage result = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D g = result.createGraphics();
 
+
         boolean drawAtLeastOnce = false;
+        Map<CacheEntry, SoftReference<BufferedImage>> localCache = new HashMap<WmsCache.CacheEntry, SoftReference<BufferedImage>>();
         for (CacheEntry ce: matches) {
             BufferedImage img;
             try {
                 img = loadImage(projectionEntries, ce);
-                memoryCache.put(ce, new SoftReference<BufferedImage>(img));
+                localCache.put(ce, new SoftReference<BufferedImage>(img));
             } catch (IOException e) {
                 continue;
             }
@@ -417,9 +443,12 @@ public class WmsCache {
             g.drawImage(img, x, y, size, size, null);
         }
 
-        if (drawAtLeastOnce)
+        if (drawAtLeastOnce) {
+            synchronized (this) {
+                memoryCache.putAll(localCache);
+            }
             return result;
-        else
+        } else
             return null;
     }
 
@@ -460,7 +489,7 @@ public class WmsCache {
     }
 
     /**
-     * 
+     *
      * @param img Used only when overlapping is used, when not used, used raw from imageData
      * @param imageData
      * @param projection
@@ -474,9 +503,6 @@ public class WmsCache {
         CacheEntry entry = findEntry(projectionEntries, pixelPerDegree, east, north);
         File imageFile;
         if (entry == null) {
-            entry = new CacheEntry(pixelPerDegree, east, north, tileSize);
-            entry.lastUsed = System.currentTimeMillis();
-            entry.lastModified = entry.lastUsed;
 
             String mimeType;
             if (img != null) {
@@ -484,7 +510,9 @@ public class WmsCache {
             } else {
                 mimeType = URLConnection.guessContentTypeFromStream(imageData);
             }
-            entry.filename = generateFileName(projectionEntries, pixelPerDegree, projection, east, north, mimeType);
+            entry = new CacheEntry(pixelPerDegree, east, north, tileSize,generateFileName(projectionEntries, pixelPerDegree, projection, east, north, mimeType));
+            entry.lastUsed = System.currentTimeMillis();
+            entry.lastModified = entry.lastUsed;
             projectionEntries.entries.add(entry);
             imageFile = getImageFile(projectionEntries, entry);
         } else {
