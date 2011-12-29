@@ -111,6 +111,10 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
         }
     }
 
+    public void setCurrentAction(String text) {
+        currentAction.setText(text);
+    }
+
     /**
      * Appends a log message to the progress dialog. If the log area isn't visible yet
      * it becomes visible. The height of the progress dialog is slightly increased too.
@@ -165,7 +169,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
      * are removed from the cancel button.
      *
      * @param callback the cancel callback
-     */    
+     */
     public void setInBackgroundCallback(ActionListener callback) {
         if (callback == null) {
             ActionListener[] listeners = btnInBackground.getActionListeners();
