@@ -12,8 +12,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * TagCollection is a collection of tags which can be used to manipulate
@@ -708,9 +708,15 @@ public class TagCollection implements Iterable<Tag> {
      * @return the concatenation of all tag values
      */
     public String getJoinedValues(String key) {
+
+        // See #7201 combining ways screws up the order of ref tags
+        Set<String> originalValues = getValues();
+        if (originalValues.size() == 1)
+            return originalValues.iterator().next();
+
         StringBuilder buffer = new StringBuilder();
-        HashSet<String> valSet = new HashSet<String>();
-        for (String vs : getValues(key)) {
+        Set<String> valSet = new HashSet<String>();
+        for (String vs : originalValues) {
             valSet.addAll(Arrays.asList(vs.split(";")));
         }
         List<String> values = new ArrayList<String>(valSet);
