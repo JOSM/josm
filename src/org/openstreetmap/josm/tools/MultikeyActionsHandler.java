@@ -17,6 +17,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -130,67 +131,72 @@ public class MultikeyActionsHandler {
     }
 
     private void showLayersPopup(final MyAction action) {
-        JPopupMenu layers = new JPopupMenu();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JPopupMenu layers = new JPopupMenu();
 
-        JMenuItem lbTitle = new JMenuItem((String) action.action.getValue(Action.SHORT_DESCRIPTION));
-        lbTitle.setEnabled(false);
-        JPanel pnTitle = new JPanel();
-        pnTitle.add(lbTitle);
-        layers.add(pnTitle);
+                JMenuItem lbTitle = new JMenuItem((String) action.action.getValue(Action.SHORT_DESCRIPTION));
+                lbTitle.setEnabled(false);
+                JPanel pnTitle = new JPanel();
+                pnTitle.add(lbTitle);
+                layers.add(pnTitle);
 
-        char repeatKey = (char) action.shortcut.getKeyCode();
-        boolean repeatKeyUsed = false;
+                char repeatKey = (char) action.shortcut.getKeyCode();
+                boolean repeatKeyUsed = false;
 
 
-        for (final MultikeyInfo info: action.action.getMultikeyCombinations()) {
+                for (final MultikeyInfo info: action.action.getMultikeyCombinations()) {
 
-            if (info.getShortcut() == repeatKey) {
-                repeatKeyUsed = true;
-            }
-
-            JMenuItem item = new JMenuItem(formatMenuText(action.shortcut, String.valueOf(info.getShortcut()), info.getDescription()));
-            item.setMnemonic(info.getShortcut());
-            item.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    action.action.executeMultikeyAction(info.getIndex(), false);
-                }
-            });
-            layers.add(item);
-        }
-
-        if (!repeatKeyUsed) {
-            MultikeyInfo lastLayer = action.action.getLastMultikeyAction();
-            if (lastLayer != null) {
-                JMenuItem repeateItem = new JMenuItem(formatMenuText(action.shortcut,
-                        KeyEvent.getKeyText(action.shortcut.getKeyCode()),
-                        "Repeat " + lastLayer.getDescription()));
-                repeateItem.setMnemonic(action.shortcut.getKeyCode());
-                repeateItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        action.action.executeMultikeyAction(-1, true);
+                    if (info.getShortcut() == repeatKey) {
+                        repeatKeyUsed = true;
                     }
+
+                    JMenuItem item = new JMenuItem(formatMenuText(action.shortcut, String.valueOf(info.getShortcut()), info.getDescription()));
+                    item.setMnemonic(info.getShortcut());
+                    item.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            action.action.executeMultikeyAction(info.getIndex(), false);
+                        }
+                    });
+                    layers.add(item);
+                }
+
+                if (!repeatKeyUsed) {
+                    MultikeyInfo lastLayer = action.action.getLastMultikeyAction();
+                    if (lastLayer != null) {
+                        JMenuItem repeateItem = new JMenuItem(formatMenuText(action.shortcut,
+                                KeyEvent.getKeyText(action.shortcut.getKeyCode()),
+                                "Repeat " + lastLayer.getDescription()));
+                        repeateItem.setMnemonic(action.shortcut.getKeyCode());
+                        repeateItem.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                action.action.executeMultikeyAction(-1, true);
+                            }
+                        });
+                        layers.add(repeateItem);
+                    }
+                }
+                layers.addPopupMenuListener(new PopupMenuListener() {
+
+                    @Override
+                    public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+
+                    @Override
+                    public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                        Main.map.statusLine.resetHelpText(STATUS_BAR_ID);
+                    }
+
+                    @Override
+                    public void popupMenuCanceled(PopupMenuEvent e) {}
                 });
-                layers.add(repeateItem);
+
+                layers.show(Main.parent, Integer.MAX_VALUE, Integer.MAX_VALUE);
+                layers.setLocation(Main.parent.getX() + Main.parent.getWidth() - layers.getWidth(), Main.parent.getY() + Main.parent.getHeight() - layers.getHeight());
             }
-        }
-        layers.addPopupMenuListener(new PopupMenuListener() {
-
-            @Override
-            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
-
-            @Override
-            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                Main.map.statusLine.resetHelpText(STATUS_BAR_ID);
-            }
-
-            @Override
-            public void popupMenuCanceled(PopupMenuEvent e) {}
         });
-
-        layers.show(Main.parent, Integer.MAX_VALUE, Integer.MAX_VALUE);
-        layers.setLocation(Main.parent.getX() + Main.parent.getWidth() - layers.getWidth(), Main.parent.getY() + Main.parent.getHeight() - layers.getHeight());
     }
 
     public void addAction(MultikeyShortcutAction action) {
