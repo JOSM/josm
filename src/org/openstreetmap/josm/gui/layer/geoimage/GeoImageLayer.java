@@ -54,6 +54,9 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToMarkerLayer;
+import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
+import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -67,7 +70,7 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 
-public class GeoImageLayer extends Layer implements PropertyChangeListener {
+public class GeoImageLayer extends Layer implements PropertyChangeListener, JumpToMarkerLayer {
 
     List<ImageEntry> data;
     GpxLayer gpxLayer;
@@ -229,7 +232,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                         formatErrorMessages(),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
-                );
+                        );
             }
             if (layer != null) {
                 Main.main.addLayer(layer);
@@ -298,6 +301,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             entries.addAll(menuAdditions);
         }
         entries.add(SeparatorLayerAction.INSTANCE);
+        entries.add(new JumpToNextMarker(this));
+        entries.add(new JumpToPreviousMarker(this));
+        entries.add(SeparatorLayerAction.INSTANCE);
         entries.add(new LayerListPopup.InfoAction(this));
 
         return entries.toArray(new Action[0]);
@@ -311,7 +317,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 i++;
             }
         return trn("{0} image loaded.", "{0} images loaded.", data.size(), data.size())
-        + " " + trn("{0} was found to be GPS tagged.", "{0} were found to be GPS tagged.", i, i);
+                + " " + trn("{0} was found to be GPS tagged.", "{0} were found to be GPS tagged.", i, i);
     }
 
     @Override public Object getInfoComponent() {
@@ -528,7 +534,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             e.setExifOrientation(orientation);
         } catch (MetadataException ex) {
         }
-        
+
         try {
             // longitude
 
@@ -693,7 +699,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                             tr("Image file could not be deleted."),
                             tr("Error"),
                             JOptionPane.ERROR_MESSAGE
-                    );
+                            );
                 }
 
                 updateOffscreenBuffer = true;
@@ -816,5 +822,13 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             copy.add(ie.clone());
         }
         return copy;
+    }
+
+    public void jumpToNextMarker() {
+        showNextPhoto();
+    }
+
+    public void jumpToPreviousMarker() {
+        showPreviousPhoto();
     }
 }

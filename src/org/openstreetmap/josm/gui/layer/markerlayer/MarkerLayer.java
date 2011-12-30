@@ -11,11 +11,9 @@ import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,12 +38,12 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.CustomizeColor;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToMarkerLayer;
+import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
+import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.MultikeyActionsHandler;
-import org.openstreetmap.josm.tools.MultikeyShortcutAction;
-import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * A layer holding markers.
@@ -58,7 +56,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * The data is read only.
  */
-public class MarkerLayer extends Layer {
+public class MarkerLayer extends Layer implements JumpToMarkerLayer {
 
     /**
      * A list of markers.
@@ -137,12 +135,6 @@ public class MarkerLayer extends Layer {
             }
         });
     }
-
-    static {
-        MultikeyActionsHandler.getInstance().addAction(new JumpToNextMarker(null));
-        MultikeyActionsHandler.getInstance().addAction(new JumpToPreviousMarker(null));
-    }
-
 
     /**
      * Return a static icon.
@@ -449,112 +441,6 @@ public class MarkerLayer extends Layer {
         }
     }
 
-    public static final class JumpToNextMarker extends AbstractAction implements MultikeyShortcutAction {
-
-        private final MarkerLayer layer;
-        private WeakReference<MarkerLayer> lastLayer;
-
-        public JumpToNextMarker(MarkerLayer layer) {
-            putValue(ACCELERATOR_KEY, Shortcut.registerShortcut("core_multikey:nextMarker", "", 'J', Shortcut.GROUP_DIRECT, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK).getKeyStroke());
-            putValue(SHORT_DESCRIPTION, tr("Jump to next marker"));
-            putValue(NAME, tr("Jump to next marker"));
-
-            this.layer = layer;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            execute(layer);
-        }
-
-        @Override
-        public void executeMultikeyAction(int index, boolean repeat) {
-            Layer l = LayerListDialog.getLayerForIndex(index);
-            if (l != null) {
-                if (l instanceof MarkerLayer) {
-                    execute((MarkerLayer) l);
-                }
-            } else if (repeat && lastLayer != null) {
-                l = lastLayer.get();
-                if (LayerListDialog.isLayerValid(l)) {
-                    execute((MarkerLayer) l);
-                }
-            }
-        }
-
-
-        private void execute(MarkerLayer l) {
-            l.jumpToNextMarker();
-            lastLayer = new WeakReference<MarkerLayer>(l);
-        }
-
-        @Override
-        public List<MultikeyInfo> getMultikeyCombinations() {
-            return LayerListDialog.getLayerInfoByClass(MarkerLayer.class);
-        }
-
-        @Override
-        public MultikeyInfo getLastMultikeyAction() {
-            if (lastLayer != null)
-                return LayerListDialog.getLayerInfo(lastLayer.get());
-            else
-                return null;
-        }
-
-    }
-
-    public static final class JumpToPreviousMarker extends AbstractAction implements MultikeyShortcutAction {
-
-        private WeakReference<MarkerLayer> lastLayer;
-        private final MarkerLayer layer;
-
-        public JumpToPreviousMarker(MarkerLayer layer) {
-            this.layer = layer;
-
-            putValue(ACCELERATOR_KEY, Shortcut.registerShortcut("core_multikey:previousMarker", "", 'P', Shortcut.GROUP_DIRECT, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK).getKeyStroke());
-            putValue(SHORT_DESCRIPTION, tr("Jump to previous marker"));
-            putValue(NAME, tr("Jump to previous marker"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            execute(layer);
-        }
-
-        @Override
-        public void executeMultikeyAction(int index, boolean repeat) {
-            Layer l = LayerListDialog.getLayerForIndex(index);
-            if (l != null) {
-                if (l instanceof MarkerLayer) {
-                    execute((MarkerLayer) l);
-                }
-            } else if (repeat && lastLayer != null) {
-                l = lastLayer.get();
-                if (LayerListDialog.isLayerValid(l)) {
-                    execute((MarkerLayer) l);
-                }
-            }
-        }
-
-        private void execute(MarkerLayer l) {
-            l.jumpToPreviousMarker();
-            lastLayer = new WeakReference<MarkerLayer>(l);
-        }
-
-        @Override
-        public List<MultikeyInfo> getMultikeyCombinations() {
-            return LayerListDialog.getLayerInfoByClass(MarkerLayer.class);
-        }
-
-        @Override
-        public MultikeyInfo getLastMultikeyAction() {
-            if (lastLayer != null)
-                return LayerListDialog.getLayerInfo(lastLayer.get());
-            else
-                return null;
-        }
-
-    }
 
     private class SynchronizeAudio extends AbstractAction {
 

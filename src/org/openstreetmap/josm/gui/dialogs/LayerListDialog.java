@@ -58,6 +58,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
+import org.openstreetmap.josm.gui.layer.JumpToMarkerActions;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -91,6 +92,7 @@ public class LayerListDialog extends ToggleDialog {
 
         MultikeyActionsHandler.getInstance().addAction(instance.new ShowHideLayerAction(false));
         MultikeyActionsHandler.getInstance().addAction(instance.new ActivateLayerAction());
+        JumpToMarkerActions.initialize();
     }
 
     /**
@@ -1554,7 +1556,8 @@ public class LayerListDialog extends ToggleDialog {
             return null;
     }
 
-    public static List<MultikeyInfo> getLayerInfoByClass(Class<? extends Layer> layerClass) {
+    // This is not Class<? extends Layer> on purpose, to allow asking for layers implementing some interface
+    public static List<MultikeyInfo> getLayerInfoByClass(Class<?> layerClass) {
 
         List<MultikeyInfo> result = new ArrayList<MultikeyShortcutAction.MultikeyInfo>();
 
