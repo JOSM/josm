@@ -41,6 +41,10 @@ public class GpxImporter extends FileImporter {
         String fileName = file.getName();
         loadLayers(is, file, fileName, tr("Markers from {0}", fileName), progressMonitor);
 
+        final GpxLayer gpxLayer = this.gpxLayer;
+        final MarkerLayer markerLayer = this.markerLayer;
+        final Runnable postLayerTask = this.postLayerTask;
+        
         // FIXME: remove UI stuff from the IO subsystem
         GuiHelper.runInEDT(new Runnable() {
             public void run() {

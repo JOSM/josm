@@ -46,6 +46,10 @@ public class OsmImporter extends FileImporter {
 
     protected void importData(InputStream in, final File associatedFile) throws IllegalDataException {
         loadLayer(in, associatedFile, associatedFile == null ? OsmDataLayer.createNewName() : associatedFile.getName(), NullProgressMonitor.INSTANCE);
+
+        final OsmDataLayer layer = this.layer;
+        final Runnable postLayerTask = this.postLayerTask;
+
         // FIXME: remove UI stuff from IO subsystem
         GuiHelper.runInEDT(new Runnable() {
             @Override
