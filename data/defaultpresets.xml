@@ -3830,7 +3830,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                   pl.href="http://wiki.openstreetmap.org/wiki/PL:Key:building"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building" />
             <label text="Edit Residential Building" />
-            <combo key="building" text="Building" values="residential,apartments,house,hut,terraced,detached,roof" default="residential" />
+            <combo key="building" text="Building" values="residential,apartments,house,hut,terrace,detached,roof" default="residential" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Tower" icon="presets/tower.png" type="node,closedway">
