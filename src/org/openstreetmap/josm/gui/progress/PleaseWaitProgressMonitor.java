@@ -47,6 +47,12 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
     private boolean cancelable;
 
+    private void setDialogVisible(boolean visible) {
+        if (dialog.isVisible() != visible) {
+            dialog.setVisible(visible);
+        }
+    }
+
     private ProgressMonitorDialog getDialog() {
 
         BackgroundProgressMonitor backgroundMonitor = null;
@@ -59,23 +65,23 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
             backgroundMonitor.setVisible(isInBackground);
         }
         if (dialog != null) {
-            dialog.setVisible(!isInBackground || backgroundMonitor == null);
+            setDialogVisible(!isInBackground || backgroundMonitor == null);
         }
 
         if (isInBackground && backgroundMonitor != null) {
             backgroundMonitor.setVisible(true);
             if (dialog != null) {
-                dialog.setVisible(false);
+                setDialogVisible(false);
             }
             return backgroundMonitor;
         } else if (backgroundMonitor != null) {
             backgroundMonitor.setVisible(false);
             if (dialog != null) {
-                dialog.setVisible(true);
+                setDialogVisible(true);
             }
             return dialog;
         } else if (dialog != null) {
-            dialog.setVisible(true);
+            setDialogVisible(true);
             return dialog;
         } else
             return null;
