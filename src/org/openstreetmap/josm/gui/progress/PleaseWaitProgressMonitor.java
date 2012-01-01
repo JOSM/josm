@@ -12,6 +12,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -46,6 +47,12 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     protected ProgressTaskId taskId;
 
     private boolean cancelable;
+
+    private void doInEDT(Runnable runnable) {
+        // This must be invoke later even if current thread is EDT because inside there is dialog.setVisible which freeze current code flow until modal dialog is closed
+        SwingUtilities.invokeLater(runnable);
+    }
+
 
     private void setDialogVisible(boolean visible) {
         if (dialog.isVisible() != visible) {
