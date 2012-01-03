@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -134,77 +135,75 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
         }
     }
 
-	public void showHistory(final Collection<OsmPrimitive> primitives) {
-		final Collection<OsmPrimitive> notNewPrimitives = Utils.filter(primitives, notNewPredicate);
-		if (notNewPrimitives.isEmpty()) {
-			JOptionPane.showMessageDialog(
-					Main.parent,
-					tr("Please select at least one already uploaded node, way, or relation."),
-					tr("Warning"),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+    public void showHistory(final Collection<OsmPrimitive> primitives) {
+        final Collection<OsmPrimitive> notNewPrimitives = Utils.filter(primitives, notNewPredicate);
+        if (notNewPrimitives.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("Please select at least one already uploaded node, way, or relation."),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
         Main.worker.submit(new ContributorTermsUpdateRunnable());
 
-		Collection<OsmPrimitive> toLoad = Utils.filter(primitives, unloadedHistoryPredicate);
-		if (!toLoad.isEmpty()) {
-			HistoryLoadTask task = new HistoryLoadTask();
-			task.add(notNewPrimitives);
-			Main.worker.submit(task);
-		}
+        Collection<OsmPrimitive> toLoad = Utils.filter(primitives, unloadedHistoryPredicate);
+        if (!toLoad.isEmpty()) {
+            HistoryLoadTask task = new HistoryLoadTask();
+            task.add(notNewPrimitives);
+            Main.worker.submit(task);
+        }
 
-		Runnable r = new Runnable() {
+        Runnable r = new Runnable() {
 
-			@Override
-			public void run() {
-				try {
-					for (OsmPrimitive p : notNewPrimitives) {
-						History h = HistoryDataSet.getInstance().getHistory(p.getPrimitiveId());
-						if (h == null) {
-							continue;
-						}
-						show(h);
-					}
-				} catch (final Exception e) {
-					SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    for (OsmPrimitive p : notNewPrimitives) {
+                        final History h = HistoryDataSet.getInstance().getHistory(p.getPrimitiveId());
+                        if (h == null) {
+                            continue;
+                        }
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                show(h);
+                            }
+                        });
+                    }
+                } catch (final Exception e) {
+                    BugReportExceptionHandler.handleException(e);
+                }
 
-						@Override
-						public void run() {
-							BugReportExceptionHandler.handleException(e);
-						}
-					});
-				}
+            }
+        };
+        Main.worker.submit(r);
+    }
 
-			}
-		};
-		Main.worker.submit(r);
-	}
+    private final Predicate<OsmPrimitive> unloadedHistoryPredicate = new Predicate<OsmPrimitive>() {
 
-	private final Predicate<OsmPrimitive> unloadedHistoryPredicate = new Predicate<OsmPrimitive>() {
+        HistoryDataSet hds = HistoryDataSet.getInstance();
 
-		HistoryDataSet hds = HistoryDataSet.getInstance();
+        @Override
+        public boolean evaluate(OsmPrimitive p) {
+            if (hds.getHistory(p.getPrimitiveId()) == null)
+                // reload if the history is not in the cache yet
+                return true;
+            else if (!p.isNew() && hds.getHistory(p.getPrimitiveId()).getByVersion(p.getUniqueId()) == null)
+                // reload if the history object of the selected object is not in the cache yet
+                return true;
+            else
+                return false;
+        }
+    };
 
-		@Override
-		public boolean evaluate(OsmPrimitive p) {
-			if (hds.getHistory(p.getPrimitiveId()) == null) {
-				// reload if the history is not in the cache yet
-				return true;
-			} else if (!p.isNew() && hds.getHistory(p.getPrimitiveId()).getByVersion(p.getUniqueId()) == null) {
-				// reload if the history object of the selected object is not in the cache yet
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
+    private final Predicate<OsmPrimitive> notNewPredicate = new Predicate<OsmPrimitive>() {
 
-	private final Predicate<OsmPrimitive> notNewPredicate = new Predicate<OsmPrimitive>() {
-
-		@Override
-		public boolean evaluate(OsmPrimitive p) {
-			return !p.isNew();
-		}
-	};
+        @Override
+        public boolean evaluate(OsmPrimitive p) {
+            return !p.isNew();
+        }
+    };
 
 }
