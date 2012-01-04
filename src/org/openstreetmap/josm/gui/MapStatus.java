@@ -256,9 +256,9 @@ public class MapStatus extends JPanel implements Helpful {
                                 // variable true. Of course we only want the popup to show
                                 // if the middle mouse button has been pressed in the first
                                 // place
-                                boolean isAtOldPosition = (oldMousePos != null
-                                        && oldMousePos.equals(ms.mousePos)
-                                        && popup != null);
+                                boolean mouseNotMoved = oldMousePos != null
+                                        && oldMousePos.equals(ms.mousePos);
+                                boolean isAtOldPosition = mouseNotMoved && popup != null;
                                 boolean middleMouseDown = (ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0;
                                 try {
                                     ds = mv.getCurrentDataSet();
@@ -274,8 +274,9 @@ public class MapStatus extends JPanel implements Helpful {
                                         }
                                     }
 
-                                    // Set the text label in the bottom status bar
-                                    statusBarElementUpdate(ms);
+                                    // Set the text label in the bottom status bar 
+                                    // "if mouse moved only" was added to stop heap growing
+                                    if (!mouseNotMoved) statusBarElementUpdate(ms);
 
 
                                     // Popup Information
