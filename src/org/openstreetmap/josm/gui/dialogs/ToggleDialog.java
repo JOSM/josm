@@ -82,12 +82,19 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      * currently minimized or not.
      */
     protected boolean isCollapsed;
+    /**
+     * Indicates whether dynamic button hiding is active or not.
+     */
+    protected boolean isButtonHiding;
 
     /** the preferred height if the toggle dialog is expanded */
     private int preferredHeight;
 
     /** the label in the title bar which shows whether the toggle dialog is expanded or collapsed */
     private JLabel lblMinimized;
+
+    /** the label in the title bar which shows whether buttons are dynamic or not */
+    private JButton buttonsHide = null;
 
     /** the JDialog displaying the toggle dialog as undocked dialog */
     protected JDialog detachedDialog;
@@ -131,16 +138,16 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         String helpId = "Dialog/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
         toggleAction.putValue("help", helpId.substring(0, helpId.length()-6));
 
+        isShowing = Main.pref.getBoolean(preferencePrefix+".visible", defShow);
+        isDocked = Main.pref.getBoolean(preferencePrefix+".docked", true);
+        isCollapsed = Main.pref.getBoolean(preferencePrefix+".minimized", false);
+        isButtonHiding = Main.pref.getBoolean(preferencePrefix+".buttonhiding", true);
+
         /** show the minimize button */
-        lblMinimized = new JLabel(ImageProvider.get("misc", "normal"));
         titleBar = new TitleBar(name, iconName);
         add(titleBar, BorderLayout.NORTH);
 
         setBorder(BorderFactory.createEtchedBorder());
-
-        isShowing = Main.pref.getBoolean(preferencePrefix+".visible", defShow);
-        isDocked = Main.pref.getBoolean(preferencePrefix+".docked", true);
-        isCollapsed = Main.pref.getBoolean(preferencePrefix+".minimized", false);
 
         RedirectInputMap.redirectToMainContentPane(this);
 
@@ -221,9 +228,6 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             expand();
             dialogsPanel.reconstruct(Action.COLLAPSED_TO_DEFAULT, this);
         } else if (!isDialogShowing()) {
-//            if (isButtonHidden()) {
-//                showButtonImpl();
-//            }
             showDialog();
             if (isDocked && isCollapsed) {
                 expand();
@@ -288,7 +292,6 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      *
      */
     public void collapse() {
-        //        if (isShowing && isDocked && !isCollapsed) {
         if (isDialogInDefaultView()) {
             setContentVisible(false);
             setIsCollapsed(true);
@@ -304,7 +307,6 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      * Expands the toggle dialog
      */
     protected void expand() {
-        //        if (isShowing && isDocked && isCollapsed) {
         if (isDialogInCollapsedView()) {
             setContentVisible(true);
             setIsCollapsed(false);
@@ -374,6 +376,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
         public TitleBar(String toggleDialogName, String iconName) {
             setLayout(new GridBagLayout());
+
             lblMinimized = new JLabel(ImageProvider.get("misc", "normal"));
             add(lblMinimized);
 
@@ -403,7 +406,6 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                     new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
-                            // toggleExpandedState
                             if (isCollapsed) {
                                 expand();
                                 dialogsPanel.reconstruct(Action.COLLAPSED_TO_DEFAULT, ToggleDialog.this);
@@ -414,6 +416,20 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                         }
                     }
             );
+
+            if(Main.pref.getBoolean("dialog.dynamic.buttons", true)) {
+                buttonsHide = new JButton(ImageProvider.get("misc", isButtonHiding ? "buttonhide" : "buttonshow"));
+                buttonsHide.setToolTipText(tr("Toggle dynamic buttons"));
+                buttonsHide.setBorder(BorderFactory.createEmptyBorder());
+                buttonsHide.addActionListener(
+                    new ActionListener(){
+                        public void actionPerformed(ActionEvent e) {
+                            setIsButtonHiding(!isButtonHiding);
+                        }
+                    }
+                );
+                add(buttonsHide);
+            }
 
             // show the sticky button
             JButton sticky = new JButton(ImageProvider.get("misc", "sticky"));
@@ -573,6 +589,13 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         stateChanged();
     }
 
+    protected void setIsButtonHiding(boolean val) {
+        isButtonHiding = val;
+        Main.pref.put(preferencePrefix+".buttonhiding", val);
+        buttonsHide.setIcon(ImageProvider.get("misc", val ? "buttonhide" : "buttonshow"));
+        stateChanged();
+    }
+
     public int getPreferredHeight() {
         return preferredHeight;
     }
@@ -653,15 +676,6 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     protected void stateChanged() {
     }
 
-    /* use createLayout() instead of self-constructed dialogs */
-    @Deprecated
-    protected JPanel getButtonPanel(int columns) {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(Main.pref.getBoolean("dialog.align.left", false)
-                ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1,columns));
-        return pnl;
-    }
-
     protected Component createLayout(Component data, boolean scroll, Collection<SideButton> buttons) {
         if(scroll)
             data = new JScrollPane(data);
@@ -676,13 +690,15 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_MOTION_EVENT_MASK);
                 buttonsPanel.setVisible(false);
             }
+        } else if(buttonsHide != null) {
+            buttonsHide.setVisible(false);
         }
         return data;
     }
 
     @Override
     public void eventDispatched(AWTEvent event) {
-        if(isShowing() && !isCollapsed) {
+        if(isShowing() && !isCollapsed && isButtonHiding) {
             Rectangle b = this.getBounds();
             b.setLocation(getLocationOnScreen());
             if (b.contains(((MouseEvent)event).getLocationOnScreen())) {
