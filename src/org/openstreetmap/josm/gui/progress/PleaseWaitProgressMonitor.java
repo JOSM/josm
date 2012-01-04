@@ -273,17 +273,19 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         doInEDT(new Runnable() {
             @Override
             public void run() {
-                dialog.setVisible(false);
-                dialog.setCancelCallback(null);
-                dialog.setInBackgroundCallback(null);
-                dialog.removeWindowListener(windowListener);
-                dialog.dispose();
-                dialog = null;
-                MapFrame map = Main.map;
-                if (map != null) {
-                    map.statusLine.progressMonitor.setVisible(false);
+                if (dialog != null) {
+                    dialog.setVisible(false);
+                    dialog.setCancelCallback(null);
+                    dialog.setInBackgroundCallback(null);
+                    dialog.removeWindowListener(windowListener);
+                    dialog.dispose();
+                    dialog = null;
+                    Main.currentProgressMonitor = null;
+                    MapFrame map = Main.map;
+                    if (map != null) {
+                        map.statusLine.progressMonitor.setVisible(false);
+                    }
                 }
-                Main.currentProgressMonitor = null;
             }
         });
     }
@@ -319,4 +321,13 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         return taskId;
     }
 
+
+    @Override
+    public Component getWindowParent() {
+        Component parent = dialog;
+        if (isInBackground || parent == null)
+            return Main.parent;
+        else
+            return parent;
+    }
 }

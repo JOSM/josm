@@ -1,8 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.progress;
 
+import java.awt.Component;
+
 import javax.swing.SwingUtilities;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -100,5 +103,10 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
     @Override
     public ProgressTaskId getProgressTaskId() {
         return null;
+    }
+
+    @Override
+    public Component getWindowParent() {
+        return Main.parent;
     }
 }
