@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.progress;
 
+import java.awt.Component;
+
 public class ChildProgress extends AbstractProgressMonitor {
 
     private final AbstractProgressMonitor parent;
@@ -63,5 +65,10 @@ public class ChildProgress extends AbstractProgressMonitor {
     @Override
     public ProgressTaskId getProgressTaskId() {
         return parent.getProgressTaskId();
+    }
+
+    @Override
+    public Component getWindowParent() {
+        return parent.getWindowParent();
     }
 }

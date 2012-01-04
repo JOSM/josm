@@ -321,4 +321,13 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         return taskId;
     }
 
+
+    @Override
+    public Component getWindowParent() {
+        Component parent = dialog;
+        if (isInBackground || parent == null)
+            return Main.parent;
+        else
+            return parent;
+    }
 }

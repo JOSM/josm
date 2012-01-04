@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.progress;
 
+import java.awt.Component;
+
 /**
  * Typical use case is:
  * <pre>
@@ -139,4 +141,10 @@ public interface ProgressMonitor {
      * @param taskId
      */
     ProgressTaskId getProgressTaskId();
+
+    /**
+     *
+     * @return component suitable as parent for dialogs that wants to be shown in front of progress dialog
+     */
+    Component getWindowParent();
 }

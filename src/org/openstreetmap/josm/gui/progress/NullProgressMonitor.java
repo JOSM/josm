@@ -1,6 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.progress;
 
+import java.awt.Component;
+
+import org.openstreetmap.josm.Main;
+
 public class NullProgressMonitor implements ProgressMonitor {
 
     public static final ProgressMonitor INSTANCE = new NullProgressMonitor();
@@ -87,5 +91,10 @@ public class NullProgressMonitor implements ProgressMonitor {
     @Override
     public ProgressTaskId getProgressTaskId() {
         return null;
+    }
+
+    @Override
+    public Component getWindowParent() {
+        return Main.parent;
     }
 }
