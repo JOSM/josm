@@ -38,7 +38,6 @@ public class LafPreference implements PreferenceSetting {
     private JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
     private JCheckBox showID = new JCheckBox(tr("Show object ID in selection lists"));
     private JCheckBox showLocalizedName = new JCheckBox(tr("Show localized name in selection lists"));
-    private JCheckBox drawHelperLine = new JCheckBox(tr("Draw rubber-band helper line"));
     private JCheckBox modeless = new JCheckBox(tr("Modeless working (Potlatch style)"));
     private JCheckBox expert = new JCheckBox(tr("Expert mode"));
     private JCheckBox dynamicButtons = new JCheckBox(tr("Dynamic buttons in side menus"));
@@ -90,8 +89,6 @@ public class LafPreference implements PreferenceSetting {
         showLocalizedName.setToolTipText(tr("Show localized name in selection lists, if available"));
         showLocalizedName.setSelected(Main.pref.getBoolean("osm-primitives.localize-name", true));
 
-        drawHelperLine.setToolTipText(tr("Draw rubber-band helper line"));
-        drawHelperLine.setSelected(Main.pref.getBoolean("draw.helper-line", true));
 
         modeless.setToolTipText(tr("Do not require to switch modes (potlatch style workflow)"));
         modeless.setSelected(Main.pref.getBoolean("modeless", false));
@@ -99,7 +96,6 @@ public class LafPreference implements PreferenceSetting {
         if (Main.pref.getBoolean("expert", false)) {
             panel.add(showID, GBC.eop().insets(20, 0, 0, 0));
             panel.add(showLocalizedName, GBC.eop().insets(20, 0, 0, 0));
-            panel.add(drawHelperLine, GBC.eop().insets(20, 0, 0, 0));
             panel.add(modeless, GBC.eop().insets(20, 0, 0, 0));
         }
 
@@ -127,7 +123,6 @@ public class LafPreference implements PreferenceSetting {
         Main.pref.put("draw.splashscreen", showSplashScreen.isSelected());
         Main.pref.put("osm-primitives.showid", showID.isSelected());
         Main.pref.put("osm-primitives.localize-name", showLocalizedName.isSelected());
-        Main.pref.put("draw.helper-line", drawHelperLine.isSelected());
         Main.pref.put("modeless", modeless.isSelected());
         if(Main.pref.put("expert", expert.isSelected()))
             mod = true;

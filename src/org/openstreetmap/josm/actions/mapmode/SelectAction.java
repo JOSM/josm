@@ -164,7 +164,6 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         selectionManager = new SelectionManager(this, false, mv);
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay", 200);
         initialMoveThreshold = Main.pref.getInteger("edit.initial-move-threshold", 5);
-        drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
     }
 
     @Override
@@ -174,6 +173,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         mv.addMouseMotionListener(this);
         mv.setVirtualNodesEnabled(
                 Main.pref.getInteger("mappaint.node.virtual-size", 8) != 0);
+        drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
         // This is required to update the cursors when ctrl/shift/alt is pressed
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
