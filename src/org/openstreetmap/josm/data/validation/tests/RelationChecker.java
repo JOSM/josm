@@ -9,8 +9,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -68,11 +71,11 @@ public class RelationChecker extends Test {
 
     public class RoleInfo {
         int total = 0;
-        int nodes = 0;
-        int ways = 0;
-        int closedways = 0;
-        int openways = 0;
-        int relations = 0;
+        Collection<Node> nodes = new LinkedList<Node>();
+        Collection<Way> ways = new LinkedList<Way>();
+        Collection<Way> closedways = new LinkedList<Way>();
+        Collection<Way> openways = new LinkedList<Way>();
+        Collection<Relation> relations = new LinkedList<Relation>();
     }
 
     @Override
@@ -112,17 +115,17 @@ public class RelationChecker extends Test {
                 }
                 ri.total++;
                 if (m.isRelation()) {
-                    ri.relations++;
+                    ri.relations.add(m.getRelation());
                 } else if(m.isWay()) {
-                    ri.ways++;
+                    ri.ways.add(m.getWay());
                     if (m.getWay().isClosed()) {
-                        ri.closedways++;
+                        ri.closedways.add(m.getWay());
                     } else {
-                        ri.openways++;
+                        ri.openways.add(m.getWay());
                     }
                 }
                 else if (m.isNode()) {
-                    ri.nodes++;
+                    ri.nodes.add(m.getNode());
                 }
                 map.put(s, ri);
             }
@@ -156,12 +159,25 @@ public class RelationChecker extends Test {
                                     tr(s, keyname, count), MessageFormat.format(s, keyname, count), HIGH_COUNT, n));
                         }
                     }
-                    if (ri != null && ((!r.types.contains(PresetType.WAY) && (r.types.contains(PresetType.CLOSEDWAY) ? ri.openways > 0 : ri.ways > 0))
-                            || (!r.types.contains(PresetType.NODE) && ri.nodes > 0) || (!r.types.contains(PresetType.RELATION) && ri.relations > 0)))
-                    {
-                        String s = marktr("Member for role {0} of wrong type");
-                        errors.add( new TestError(this, Severity.WARNING, tr("Role verification problem"),
-                                tr(s, keyname), MessageFormat.format(s, keyname), WRONG_TYPE, n) );
+                    if (ri != null) {
+                        Collection<OsmPrimitive> wrongTypes = new LinkedList<OsmPrimitive>();
+                        if (!r.types.contains(PresetType.WAY)) {
+                            wrongTypes.addAll(r.types.contains(PresetType.CLOSEDWAY) ? ri.openways : ri.ways);
+                        }
+                        if (!r.types.contains(PresetType.NODE)) {
+                            wrongTypes.addAll(ri.nodes);
+                        }
+                        if (!r.types.contains(PresetType.RELATION)) {
+                            wrongTypes.addAll(ri.relations);
+                        }
+                        if (!wrongTypes.isEmpty()) {
+                            String s = marktr("Member for role {0} of wrong type");
+                            LinkedList<OsmPrimitive> highlight = new LinkedList<OsmPrimitive>(wrongTypes);
+                            highlight.addFirst(n);
+                            errors.add(new TestError(this, Severity.WARNING, tr("Role verification problem"),
+                                    tr(s, keyname), MessageFormat.format(s, keyname), WRONG_TYPE,
+                                    highlight, wrongTypes));
+                        }
                     }
                 }
                 for (String key : map.keySet()) {
