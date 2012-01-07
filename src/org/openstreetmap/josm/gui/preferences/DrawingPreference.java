@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -33,9 +34,13 @@ public class DrawingPreference implements PreferenceSetting {
     private JCheckBox sourceBounds = new JCheckBox(tr("Draw boundaries of downloaded data"));
     private JCheckBox virtualNodes = new JCheckBox(tr("Draw virtual nodes in select mode"));
     private JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
+
+    // Options that affect performance
+    private JCheckBox useHighlighting = new JCheckBox(tr("Highlight target ways and nodes"));
+    private JCheckBox drawHelperLine = new JCheckBox(tr("Draw rubber-band helper line"));
     private JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
     private JCheckBox outlineOnly = new JCheckBox(tr("Draw only outlines of areas"));
-
+    
     public void addGui(PreferenceTabbedPane gui) {
         gui.display.setPreferredSize(new Dimension(400,600));
         gpxPanel = new GPXSettingsPanel();
@@ -79,11 +84,6 @@ public class DrawingPreference implements PreferenceSetting {
         segmentOrderNumber.setSelected(Main.pref.getBoolean("draw.segment.order_number", false));
         panel.add(segmentOrderNumber, GBC.eop().insets(20,0,0,0));
 
-        // antialiasing
-        useAntialiasing.setToolTipText(tr("Apply antialiasing to the map view resulting in a smoother appearance."));
-        useAntialiasing.setSelected(Main.pref.getBoolean("mappaint.use-antialiasing", true));
-        panel.add(useAntialiasing, GBC.eop().insets(20,0,0,0));
-
         // downloaded area
         sourceBounds.setToolTipText(tr("Draw the boundaries of data loaded from the server."));
         sourceBounds.setSelected(Main.pref.getBoolean("draw.data.downloaded_area", true));
@@ -99,11 +99,29 @@ public class DrawingPreference implements PreferenceSetting {
         inactive.setSelected(Main.pref.getBoolean("draw.data.inactive_color", true));
         panel.add(inactive, GBC.eop().insets(20,0,0,0));
 
+        // antialiasing
+        useAntialiasing.setToolTipText(tr("Apply antialiasing to the map view resulting in a smoother appearance."));
+        useAntialiasing.setSelected(Main.pref.getBoolean("mappaint.use-antialiasing", true));
+
+        // highlighting
+        useHighlighting.setToolTipText(tr("Hightlight target nodes and ways while drawing or selecting"));
+        useHighlighting.setSelected(Main.pref.getBoolean("draw.target-highlight", true));
+
+        drawHelperLine.setToolTipText(tr("Draw rubber-band helper line"));
+        drawHelperLine.setSelected(Main.pref.getBoolean("draw.helper-line", true));
+        panel.add(drawHelperLine, GBC.eop().insets(20, 0, 0, 0));
+
         // outlineOnly
         outlineOnly.setSelected(Main.pref.getBoolean("draw.data.area_outline_only", false));
         outlineOnly.setToolTipText(tr("This option suppresses the filling of areas, overriding anything specified in the selected style."));
-        panel.add(outlineOnly, GBC.eol().insets(20,0,0,5));
 
+        if (Main.pref.getBoolean("expert", false)) {
+            panel.add(new JLabel(tr("Options that affect drawing performance")),GBC.eop().insets(5,10,0,0));
+            panel.add(useAntialiasing, GBC.eop().insets(20,5,0,0));
+            panel.add(useHighlighting, GBC.eop().insets(20,0,0,0));
+            panel.add(outlineOnly, GBC.eol().insets(20,0,0,5));
+        }
+        
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
         scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
@@ -120,6 +138,8 @@ public class DrawingPreference implements PreferenceSetting {
         Main.pref.put("draw.data.downloaded_area", sourceBounds.isSelected());
         Main.pref.put("draw.data.inactive_color", inactive.isSelected());
         Main.pref.put("mappaint.use-antialiasing", useAntialiasing.isSelected());
+        Main.pref.put("draw.target-highlight", useHighlighting.isSelected());
+        Main.pref.put("draw.helper-line", drawHelperLine.isSelected());
         int vn = Main.pref.getInteger("mappaint.node.virtual-size", 8);
         if (virtualNodes.isSelected()) {
             if (vn < 1) {
