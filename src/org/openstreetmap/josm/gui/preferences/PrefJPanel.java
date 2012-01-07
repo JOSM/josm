@@ -374,7 +374,7 @@ public class PrefJPanel extends javax.swing.JPanel {
         public void valueChanged(ListSelectionEvent e) {
             ListSelectionModel lsm = panel.shortcutTable.getSelectionModel(); // can't use e here
             if (!lsm.isSelectionEmpty()) {
-                int row = lsm.getMinSelectionIndex();
+                int row = panel.shortcutTable.convertRowIndexToModel(lsm.getMinSelectionIndex());
                 Shortcut sc = (Shortcut)panel.model.getValueAt(row, -1);
                 panel.cbDefault.setSelected(!sc.getAssignedUser());
                 panel.cbDisable.setSelected(sc.getKeyStroke() == null);
@@ -413,7 +413,7 @@ public class PrefJPanel extends javax.swing.JPanel {
             ListSelectionModel lsm = panel.shortcutTable.getSelectionModel();
             if (lsm != null && !lsm.isSelectionEmpty()) {
                 if (e != null) { // only if we've been called by a user action
-                    int row = lsm.getMinSelectionIndex();
+                    int row = panel.shortcutTable.convertRowIndexToModel(lsm.getMinSelectionIndex());
                     Shortcut sc = (Shortcut)panel.model.getValueAt(row, -1);
                     sc.setAssignedUser(!panel.cbDefault.isSelected());
                     if (panel.cbDisable.isSelected()) {

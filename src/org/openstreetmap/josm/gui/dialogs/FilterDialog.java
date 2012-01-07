@@ -89,10 +89,10 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     }
 
     private static final KeyStroke ENABLE_FILTER_SHORTCUT
-    = Shortcut.registerShortcut("core_multikey:enableFilter", "", 'E', Shortcut.GROUP_DIRECT, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK).getKeyStroke();
+    = Shortcut.registerShortcut("core_multikey:enableFilter", tr("Multikey: {0}", tr("Enable filter")), 'E', Shortcut.GROUP_DIRECT, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK).getKeyStroke();
 
     private static final KeyStroke HIDING_FILTER_SHORTCUT
-    = Shortcut.registerShortcut("core_multikey:hidingFilter", "", 'H', Shortcut.GROUP_DIRECT, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK).getKeyStroke();
+    = Shortcut.registerShortcut("core_multikey:hidingFilter", tr("Multikey: {0}", tr("Hide filter")), 'H', Shortcut.GROUP_DIRECT, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK).getKeyStroke();
 
 
     protected final String[] columnToolTips = {
