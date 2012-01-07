@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions.mapmode;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.AWTEvent;
 import java.awt.BasicStroke;
@@ -10,6 +11,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
@@ -18,6 +20,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -77,10 +80,15 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private Color selectedColor;
 
     private Node currentBaseNode;
+    private Node previousNode;
     private EastNorth currentMouseEastNorth;
+
+    private SnapHelper snapHelper = new SnapHelper();
 
     private Shortcut extraShortcut;
     private Shortcut backspaceShortcut;
+    
+    boolean snapOn;
             
     public DrawAction(MapFrame mapFrame) {
         super(tr("Draw"), "node/autonode", tr("Draw nodes"),
@@ -116,60 +124,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.mapView.repaint();
     }
 
-    /**
-     * Takes the data from computeHelperLine to determine which ways/nodes should be highlighted
-     * (if feature enabled). Also sets the target cursor if appropriate.
-     */
-    private void addHighlighting() {
-        removeHighlighting();
-        // if ctrl key is held ("no join"), don't highlight anything
-        if (ctrl) {
-            Main.map.mapView.setNewCursor(cursor, this);
-            return;
-        }
-
-        // This happens when nothing is selected, but we still want to highlight the "target node"
-        if (mouseOnExistingNode == null && getCurrentDataSet().getSelected().size() == 0
-                && mousePos != null) {
-            mouseOnExistingNode = Main.map.mapView.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
-        }
-
-        if (mouseOnExistingNode != null) {
-            Main.map.mapView.setNewCursor(cursorJoinNode, this);
-            // We also need this list for the statusbar help text
-            oldHighlights.add(mouseOnExistingNode);
-            if(drawTargetHighlight) {
-                mouseOnExistingNode.setHighlighted(true);
-            }
-            return;
-        }
-
-        // Insert the node into all the nearby way segments
-        if (mouseOnExistingWays.size() == 0) {
-            Main.map.mapView.setNewCursor(cursor, this);
-            return;
-        }
-
-        Main.map.mapView.setNewCursor(cursorJoinWay, this);
-
-        // We also need this list for the statusbar help text
-        oldHighlights.addAll(mouseOnExistingWays);
-        if (!drawTargetHighlight) return;
-        for (Way w : mouseOnExistingWays) {
-            w.setHighlighted(true);
-        }
-    }
-
-    /**
-     * Removes target highlighting from primitives
-     */
-    private void removeHighlighting() {
-        for(OsmPrimitive prim : oldHighlights) {
-            prim.setHighlighted(false);
-        }
-        oldHighlights = new HashSet<OsmPrimitive>();
-    }
-
     @Override public void enterMode() {
         if (!isEnabled())
             return;
@@ -178,6 +132,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
         wayIsFinished = false;
+        snapHelper.init();
         
         backspaceShortcut = Shortcut.registerShortcut("mapmode:backspace", tr("Backspace in Add mode"), KeyEvent.VK_BACK_SPACE, Shortcut.GROUP_EDIT);
         Main.registerActionShortcut(new BackSpaceAction(), backspaceShortcut);
@@ -224,6 +179,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     public void eventDispatched(AWTEvent event) {
         if(Main.map == null || Main.map.mapView == null || !Main.map.mapView.isActiveLayerDrawable())
             return;
+        if (event instanceof KeyEvent) {
+                KeyEvent ke = (KeyEvent) event;
+                if (ke.getKeyCode() == KeyEvent.VK_TAB && 
+                    ke.getID()==KeyEvent.KEY_PRESSED) {
+                    snapHelper.nextSnapMode();
+                }
+        } //  toggle angle snapping
         updateKeyModifiers((InputEvent) event);
         computeHelperLine();
         addHighlighting();
@@ -257,13 +219,23 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         lastUsedNode = null;
         wayIsFinished = true;
         Main.map.selectSelectTool(true);
-
+        snapHelper.noSnapNow();
+    
         // Redraw to remove the helper line stub
         computeHelperLine();
         removeHighlighting();
         redrawIfRequired();
     }
 
+    private Point rightClickPressPos;
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            rightClickPressPos = e.getPoint();
+        }
+    }
+    
     /**
      * If user clicked with the left button, add a node at the current mouse
      * position.
@@ -271,6 +243,18 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * If in nodeway mode, insert the node into the way.
      */
     @Override public void mouseReleased(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            Point curMousePos = e.getPoint();
+            if (curMousePos.equals(rightClickPressPos)) {
+                WaySegment seg = Main.map.mapView.getNearestWaySegment(curMousePos, OsmPrimitive.isSelectablePredicate);
+                if (seg!=null) {
+                    snapHelper.fixToSegment(seg);
+                    computeHelperLine();
+                    redrawIfRequired();
+                }
+            }
+            return;
+        }
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
         if(!Main.map.mapView.isActiveLayerDrawable())
@@ -287,7 +271,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return;
         }
         oldMousePos = mousePos;
-
+        
         // we copy ctrl/alt/shift from the event just in case our global
         // AWTEvent didn't make it through the security manager. Unclear
         // if that can ever happen but better be safe.
@@ -308,7 +292,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             n = Main.map.mapView.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
         }
 
-        if (n != null) {
+        if (n != null && !snapHelper.isActive()) {
             // user clicked on node
             if (selection.isEmpty() || wayIsFinished) {
                 // select the clicked node and do nothing else
@@ -327,8 +311,25 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 return;
             }
         } else {
-            // no node found in clicked area
-            n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
+            EastNorth newEN;
+            if (n!=null) {
+                EastNorth foundPoint = n.getEastNorth();
+                // project found node to snapping line
+                newEN = snapHelper.getSnapPoint(foundPoint); 
+                if (foundPoint.distance(newEN) > 1e-4) {
+                    n = new Node(newEN); // point != projected, so we create new node
+                    newNode = true;
+                }
+            } else { // n==null, no node found in clicked area
+                EastNorth mouseEN = Main.map.mapView.getEastNorth(e.getX(), e.getY());
+                newEN = snapOn ? snapHelper.getSnapPoint(mouseEN) : mouseEN;
+                n = new Node(newEN); //create node at clicked point
+                newNode = true;
+            }
+            snapHelper.unsetFixedMode();
+        }
+
+        if (newNode) {
             if (n.getCoor().isOutSideWorld()) {
                 JOptionPane.showMessageDialog(
                         Main.parent,
@@ -338,61 +339,17 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 );
                 return;
             }
-            newNode = true;
-
             cmds.add(new AddCommand(n));
 
             if (!ctrl) {
-                // Insert the node into all the nearby way segments
-                List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(e.getPoint(), OsmPrimitive.isSelectablePredicate);
-                Map<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
-                for (WaySegment ws : wss) {
-                    List<Integer> is;
-                    if (insertPoints.containsKey(ws.way)) {
-                        is = insertPoints.get(ws.way);
-                    } else {
-                        is = new ArrayList<Integer>();
-                        insertPoints.put(ws.way, is);
+                    // Insert the node into all the nearby way segments
+                    List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(
+                            Main.map.mapView.getPoint(n), OsmPrimitive.isSelectablePredicate);
+                    insertNodeIntoAllNearbySegments(wss, n, newSelection, cmds, replacedWays, reuseWays);
                     }
-
-                    is.add(ws.lowerIndex);
-                }
-
-                Set<Pair<Node,Node>> segSet = new HashSet<Pair<Node,Node>>();
-
-                for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
-                    Way w = insertPoint.getKey();
-                    List<Integer> is = insertPoint.getValue();
-
-                    Way wnew = new Way(w);
-
-                    pruneSuccsAndReverse(is);
-                    for (int i : is) {
-                        segSet.add(
-                                Pair.sort(new Pair<Node,Node>(w.getNode(i), w.getNode(i+1))));
-                    }
-                    for (int i : is) {
-                        wnew.addNode(i + 1, n);
-                    }
-
-                    // If ALT is pressed, a new way should be created and that new way should get
-                    // selected. This works everytime unless the ways the nodes get inserted into
-                    // are already selected. This is the case when creating a self-overlapping way
-                    // but pressing ALT prevents this. Therefore we must de-select the way manually
-                    // here so /only/ the new way will be selected after this method finishes.
-                    if(alt) {
-                        newSelection.add(insertPoint.getKey());
-                    }
-
-                    cmds.add(new ChangeCommand(insertPoint.getKey(), wnew));
-                    replacedWays.add(insertPoint.getKey());
-                    reuseWays.add(wnew);
-                }
-
-                adjustNode(segSet, n);
-            }
         }
-
+        // now "n" is newly created or reused node that shoud be added to some way
+        
         // This part decides whether or not a "segment" (i.e. a connection) is made to an
         // existing node.
 
@@ -542,6 +499,55 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         removeHighlighting();
         redrawIfRequired();
     }
+    
+    private void insertNodeIntoAllNearbySegments(List<WaySegment> wss, Node n, Collection<OsmPrimitive> newSelection, Collection<Command> cmds, ArrayList<Way> replacedWays, ArrayList<Way> reuseWays) {
+        Map<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
+        for (WaySegment ws : wss) {
+            List<Integer> is;
+            if (insertPoints.containsKey(ws.way)) {
+                is = insertPoints.get(ws.way);
+            } else {
+                is = new ArrayList<Integer>();
+                insertPoints.put(ws.way, is);
+            }
+
+            is.add(ws.lowerIndex);
+        }
+
+        Set<Pair<Node,Node>> segSet = new HashSet<Pair<Node,Node>>();
+
+        for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
+            Way w = insertPoint.getKey();
+            List<Integer> is = insertPoint.getValue();
+
+            Way wnew = new Way(w);
+
+            pruneSuccsAndReverse(is);
+            for (int i : is) {
+                segSet.add(
+                        Pair.sort(new Pair<Node,Node>(w.getNode(i), w.getNode(i+1))));
+            }
+            for (int i : is) {
+                wnew.addNode(i + 1, n);
+            }
+
+            // If ALT is pressed, a new way should be created and that new way should get
+            // selected. This works everytime unless the ways the nodes get inserted into
+            // are already selected. This is the case when creating a self-overlapping way
+            // but pressing ALT prevents this. Therefore we must de-select the way manually
+            // here so /only/ the new way will be selected after this method finishes.
+            if(alt) {
+                newSelection.add(insertPoint.getKey());
+            }
+
+            cmds.add(new ChangeCommand(insertPoint.getKey(), wnew));
+            replacedWays.add(insertPoint.getKey());
+            reuseWays.add(wnew);
+        }
+
+        adjustNode(segSet, n);
+    }
+
 
     /**
      * Prevent creation of ways that look like this: <---->
@@ -641,8 +647,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
 
-        Node selectedNode = null;
-        Way selectedWay = null;
         Node currentMouseNode = null;
         mouseOnExistingNode = null;
         mouseOnExistingWays = new HashSet<Way>();
@@ -674,37 +678,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             currentMouseEastNorth = mv.getEastNorth(mousePos.x, mousePos.y);
         }
 
-        for (OsmPrimitive p : selection) {
-            if (p instanceof Node) {
-                if (selectedNode != null) return;
-                selectedNode = (Node) p;
-            } else if (p instanceof Way) {
-                if (selectedWay != null) return;
-                selectedWay = (Way) p;
-            }
-        }
-
-        // the node from which we make a connection
-        currentBaseNode = null;
-        Node previousNode = null;
-
-        if (selectedNode == null) {
-            if (selectedWay == null)
-                return;
-            if (selectedWay.isFirstLastNode(lastUsedNode)) {
-                currentBaseNode = lastUsedNode;
-                if (lastUsedNode == selectedWay.getNode(selectedWay.getNodesCount()-1) && selectedWay.getNodesCount() > 1) {
-                    previousNode = selectedWay.getNode(selectedWay.getNodesCount()-2);
-                }
-            }
-        } else if (selectedWay == null) {
-            currentBaseNode = selectedNode;
-        } else if (!selectedWay.isDeleted()) { // fix #7118
-            if (selectedNode == selectedWay.getNode(0) || selectedNode == selectedWay.getNode(selectedWay.getNodesCount()-1)) {
-                currentBaseNode = selectedNode;
-            }
-        }
-
+        determineCurrentBaseNodeAndPreviousNode(selection);
+        if (previousNode == null) snapHelper.noSnapNow();
+        
         if (currentBaseNode == null || currentBaseNode == currentMouseNode)
             return; // Don't create zero length way segments.
 
@@ -719,13 +695,64 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     .heading(currentBaseNode.getEastNorth()));
             angle += angle < 0 ? 360 : 0;
         }
-
+        
+        if (snapOn) snapHelper.checkAngleSnapping(currentMouseEastNorth,angle);
+        
         Main.map.statusLine.setAngle(angle);
         Main.map.statusLine.setHeading(hdg);
         Main.map.statusLine.setDist(distance);
         // Now done in redrawIfRequired()
         //updateStatusLine();
     }
+    
+    
+    /** 
+     * Helper function that sets fields currentBaseNode and previousNode 
+     * @param selection 
+     * uses also lastUsedNode field
+     */
+    private void determineCurrentBaseNodeAndPreviousNode(Collection<OsmPrimitive>  selection) {
+        Node selectedNode = null;
+        Way selectedWay = null;
+        for (OsmPrimitive p : selection) {
+            if (p instanceof Node) {
+                if (selectedNode != null) return;
+                selectedNode = (Node) p;
+            } else if (p instanceof Way) {
+                if (selectedWay != null) return;
+                selectedWay = (Way) p;
+            }
+        }
+        // we are here, if not more than 1 way or node is selected,
+
+        // the node from which we make a connection
+        currentBaseNode = null;
+        previousNode = null;
+
+        if (selectedNode == null) {
+            if (selectedWay == null)
+                return;
+            if (selectedWay.isFirstLastNode(lastUsedNode)) {
+                currentBaseNode = lastUsedNode;
+                if (lastUsedNode == selectedWay.getNode(selectedWay.getNodesCount()-1) && selectedWay.getNodesCount() > 1) {
+                    previousNode = selectedWay.getNode(selectedWay.getNodesCount()-2);
+                }
+            }
+        } else if (selectedWay == null) {
+            currentBaseNode = selectedNode;
+        } else if (!selectedWay.isDeleted()) { // fix #7118
+            if (selectedNode == selectedWay.getNode(0)){
+                currentBaseNode = selectedNode;
+                if (selectedWay.getNodesCount()>1) previousNode = selectedWay.getNode(1);
+            }
+            if (selectedNode == selectedWay.lastNode()) {
+                currentBaseNode = selectedNode;
+                if (selectedWay.getNodesCount()>1) 
+                    previousNode = selectedWay.getNode(selectedWay.getNodesCount()-2);
+            }
+        }
+    }
+
 
     /**
      * Repaint on mouse exit so that the helper line goes away.
@@ -734,6 +761,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if(!Main.map.mapView.isActiveLayerDrawable())
             return;
         mousePos = e.getPoint();
+        snapHelper.noSnapNow();
         Main.map.mapView.repaint();
     }
 
@@ -741,7 +769,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * @return If the node is the end of exactly one way, return this.
      *  <code>null</code> otherwise.
      */
-    public Way getWayForNode(Node n) {
+    public static Way getWayForNode(Node n) {
         Way way = null;
         for (Way w : Utils.filteredCollection(n.getReferrers(), Way.class)) {
             if (!w.isUsable() || w.getNodesCount() < 1) {
@@ -852,10 +880,61 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     static double det(double a, double b, double c, double d) {
         return a * d - b * c;
     }
+/**
+     * Takes the data from computeHelperLine to determine which ways/nodes should be highlighted
+     * (if feature enabled). Also sets the target cursor if appropriate.
+     */
+    private void addHighlighting() {
+        removeHighlighting();
+        // if ctrl key is held ("no join"), don't highlight anything
+        if (ctrl) {
+            Main.map.mapView.setNewCursor(cursor, this);
+            return;
+        }
 
+        // This happens when nothing is selected, but we still want to highlight the "target node"
+        if (mouseOnExistingNode == null && getCurrentDataSet().getSelected().size() == 0
+                && mousePos != null) {
+            mouseOnExistingNode = Main.map.mapView.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
+        }
+
+        if (mouseOnExistingNode != null) {
+            Main.map.mapView.setNewCursor(cursorJoinNode, this);
+            // We also need this list for the statusbar help text
+            oldHighlights.add(mouseOnExistingNode);
+            if(drawTargetHighlight) {
+                mouseOnExistingNode.setHighlighted(true);
+        }
+            return;
+        }
+
+        // Insert the node into all the nearby way segments
+        if (mouseOnExistingWays.size() == 0) {
+            Main.map.mapView.setNewCursor(cursor, this);
+            return;
+    }
+
+        Main.map.mapView.setNewCursor(cursorJoinWay, this);
+
+        // We also need this list for the statusbar help text
+        oldHighlights.addAll(mouseOnExistingWays);
+        if (!drawTargetHighlight) return;
+        for (Way w : mouseOnExistingWays) {
+            w.setHighlighted(true);
+        }
+    }
+
+    /**
+     * Removes target highlighting from primitives
+     */
+    private void removeHighlighting() {
+        for(OsmPrimitive prim : oldHighlights) {
+            prim.setHighlighted(false);
+        }
+        oldHighlights = new HashSet<OsmPrimitive>();
+    }
+    
     public void paint(Graphics2D g, MapView mv, Bounds box) {
-        if (!drawHelperLine || wayIsFinished || shift) return;
-
         // sanity checks
         if (Main.map.mapView == null) return;
         if (mousePos == null) return;
@@ -865,10 +944,15 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         // don't draw line if mouse is outside window
         if (!Main.map.mapView.getBounds().contains(mousePos)) return;
-
+        
         Graphics2D g2 = g;
-        g2.setColor(selectedColor);
-        g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        if (snapOn) snapHelper.draw(g2,mv);
+        if (!drawHelperLine || wayIsFinished || shift) return;
+        
+        if (!snapHelper.isActive()) { // else use color and stoke from  snapHelper.draw
+            g2.setColor(selectedColor);
+            g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        }
         GeneralPath b = new GeneralPath();
         Point p1=mv.getPoint(currentBaseNode);
         Point p2=mv.getPoint(currentMouseEastNorth);
@@ -932,6 +1016,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             } else {
                 rv += " " + tr("Continue way from last node.");
             }
+            if (snapOn) {
+                rv += " "+ tr("Angle snapping ON.");
+            }
         }
 
         Node n = mouseOnExistingNode;
@@ -975,7 +1062,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         super.destroy();
         Main.unregisterActionShortcut(extraShortcut);
     }
-    
+
     public static class BackSpaceAction extends AbstractAction {
 
         @Override
@@ -1001,4 +1088,203 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
     }
 
+    private class SnapHelper {
+        private boolean active; // snapping is activa for current mouse position
+        private boolean fixed; // snap angle is fixed
+        private boolean absoluteFix; // snap angle is absolute
+        EastNorth dir2;
+        EastNorth projected;
+        String labelText;
+        double lastAngle;
+                
+        double snapAngles[]; 
+        double snapAngleTolerance; 
+        
+        double pe,pn; // (pe,pn) - direction of snapping line
+        double e0,n0; // (e0,n0) - origin of snapping line
+        
+        final String fixFmt="%d "+tr("FIX");
+        Color snapHelperColor;
+        private Stroke normalStroke;
+        private Stroke helperStroke;
+
+        private  void init() {
+            snapOn=false;
+            fixed=false; absoluteFix=false;
+            
+            Collection<String> angles = Main.pref.getCollection("draw.anglesnap.angles", 
+                    Arrays.asList("0","30","45","60","90","120","135","150","210","225","240","270","300","315","330"));
+            
+            snapAngles = new double[angles.size()];
+            int i=0;
+            for (String s: angles) {
+                try {
+                    snapAngles[i] = Double.parseDouble(s);
+                } catch (NumberFormatException e) {
+                    System.err.println("Warning: incorrect number in draw.anglesnap.angles preferences: "+s);
+                    snapAngles[i]=0;
+                } 
+                i++;
+            }
+            snapAngleTolerance = Main.pref.getDouble("draw.anglesnap.tolerance", 5.0);
+
+            normalStroke = new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+            snapHelperColor = Main.pref.getColor(marktr("draw angle snap"), Color.ORANGE);
+            
+            float dash1[] = { 4.0f };
+            helperStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
+                         BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
+
+        }
+        
+        private void noSnapNow() {
+            active=false; 
+            dir2=null; projected=null;
+            labelText=null;
+        }
+
+        private void draw(Graphics2D g2, MapView mv) {
+            if (!active) return;
+            Point p1=mv.getPoint(currentBaseNode);
+            Point p2=mv.getPoint(dir2);
+            Point p3=mv.getPoint(projected);
+            GeneralPath b;
+            
+            g2.setColor(snapHelperColor);
+            g2.setStroke(helperStroke);
+            
+            b = new GeneralPath();
+            if (absoluteFix) {
+                b.moveTo(p2.x,p2.y); 
+                b.lineTo(2*p1.x-p2.x,2*p1.y-p2.y); // bi-directional line
+            } else {
+                b.moveTo(p2.x,p2.y);
+                b.lineTo(p3.x,p3.y);
+            } 
+            g2.draw(b);
+
+            g2.setColor(selectedColor);
+            g2.setStroke(normalStroke);
+            b = new GeneralPath();
+            b.moveTo(p1.x,p1.y); 
+            b.lineTo(p3.x,p3.y);
+            g2.draw(b);
+            
+            g2.drawString(labelText, p3.x-5, p3.y+20);
+            g2.setStroke(normalStroke);
+            g2.drawOval(p3.x-5, p3.y-5, 10, 10); // projected point
+            
+            g2.setColor(snapHelperColor);
+            g2.setStroke(helperStroke);
+            
+        }
+        
+        private double getAngleDelta(double a, double b) {
+            double delta = Math.abs(a-b);
+            if (delta>180) return 360-delta; else return delta;
+        }
+
+        /* If mouse position is close to line at 15-30-45-... angle, remembers this direction
+         */
+        private void checkAngleSnapping(EastNorth currentEN, double angle) {
+            if (!absoluteFix && previousNode==null) return;
+            
+            double nearestAngle;
+            if (fixed) {
+                nearestAngle = lastAngle; // if direction is fixed
+                active=true;
+            } else { 
+                nearestAngle = getNearestAngle(angle);
+                lastAngle = nearestAngle;
+                active = Math.abs(nearestAngle-180)>1e-3 && getAngleDelta(nearestAngle,angle)<snapAngleTolerance;
+            }
+            
+            if (active) {
+                double de,dn,l, phi;
+
+                EastNorth p0 = currentBaseNode.getEastNorth();
+                e0=p0.east(); n0=p0.north();
+
+                if (fixed) {
+                    if (absoluteFix) labelText = "=";
+                                else labelText = String.format(fixFmt, (int) nearestAngle);
+                } else labelText = String.format("%d", (int) nearestAngle);
+                
+                if (absoluteFix) {
+                    de=0; dn=1; 
+                } else {
+                    EastNorth prev = previousNode.getEastNorth();
+                    de = e0-prev.east();
+                    dn = n0-prev.north();
+                    l=Math.hypot(de, dn);
+                    if (Math.abs(l)<1e-4) { noSnapNow(); return; }
+                    de/=l; dn/=l;
+                }
+                
+                phi=nearestAngle*Math.PI/180;
+                // (pe,pn) - direction of snapping line
+                pe = de*Math.cos(phi) + dn*Math.sin(phi);  
+                pn = -de*Math.sin(phi) + dn*Math.cos(phi);
+                double scale = 20*Main.map.mapView.getDist100Pixel();
+                dir2 = new EastNorth( e0+scale*pe, n0+scale*pn);
+                getSnapPoint(currentEN); 
+           } else {
+                noSnapNow();
+           }
+        }
+        
+        private EastNorth getSnapPoint(EastNorth p) {
+            if (!active) return p;
+            double de=p.east()-e0;
+            double dn=p.north()-n0;
+            double l = de*pe+dn*pn;
+            if (!absoluteFix && l<1e-5) {active=false; return p; } //  do not go backward!
+            return projected = new EastNorth(e0+l*pe, n0+l*pn);
+        }
+        
+        private void unsetFixedMode() {
+            fixed=false; absoluteFix=false;
+            lastAngle=0;
+            active=false;
+        }
+        
+        private void nextSnapMode() {
+            if (snapOn) {
+                // turn off snapping if we are in fixed mode or no actile snapping line exist
+                if (fixed || !active) { snapOn=false; unsetFixedMode(); } 
+                else if (active) { fixed=true; }
+            } else {
+                snapOn=true;
+                unsetFixedMode();
+            }
+        }
+
+        private boolean isActive() {
+            return active;
+        }
+
+        private double getNearestAngle(double angle) {
+            double delta,minDelta=1e5, bestAngle=0.0;
+            for (int i=0; i<snapAngles.length; i++) {
+                delta = getAngleDelta(angle,snapAngles[i]);
+                if (delta<minDelta) {
+                    minDelta=delta;
+                    bestAngle=snapAngles[i];
+                }
+            }
+            if (Math.abs(bestAngle-360)<1e-3) bestAngle=0;
+            return bestAngle;
+        }
+
+        private void fixToSegment(WaySegment seg) {
+            if (seg==null) return;
+            double hdg = seg.getFirstNode().getEastNorth().heading(seg.getSecondNode().getEastNorth());
+            hdg=Math.toDegrees(hdg);
+            if (hdg<0) hdg+=360;
+            if (hdg>360) hdg=hdg-360;
+            fixed=true;
+            absoluteFix=true;
+            lastAngle=hdg;
+        }
+    }
 }
