@@ -54,7 +54,7 @@ way[construction=rail]::rail_over
 /* Railways */
 
 way[railway=rail]
-	{ z-index: 6; color: black; width: 5; }
+	{ z-index: 6; color: black; width: 5; dashes: 0; }
 way[railway=rail]::rail_over
 	{ z-index: 7; color: white; width: 3; dashes: 12,12; }
 way[railway=platform] { color:black; width: 2; }

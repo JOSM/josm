@@ -12,7 +12,7 @@ Potlatch 2's repository is git://git.openstreetmap.org/potlatch2.git
         copy of git.openstreetmap.org/potlatch2.git/tree/HEAD:/resources/icons
         
  * styles/standard/potlatch2.mapcss
-        concatination of the patched files; the ant task 'assemble' helps with this
+        concatination of the patched files; the ant task 'assemble' helps with this (use build.xml in the current folder)
 
 When updating from upstream, keep all 4 locations in sync.
 
