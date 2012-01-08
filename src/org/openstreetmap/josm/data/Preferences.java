@@ -36,12 +36,11 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-import javax.xml.parsers.SAXParserFactory;
+import javax.xml.XMLConstants;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -1429,11 +1428,10 @@ public class Preferences {
     protected XMLStreamReader parser;
 
     public void validateXML(Reader in) throws Exception {
-        SchemaFactory factory =  SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+        SchemaFactory factory =  SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         Schema schema = factory.newSchema(new StreamSource(new MirroredInputStream("resource://data/preferences.xsd")));
-        XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(in);
         Validator validator = schema.newValidator();
-        validator.validate(new StAXSource(parser));
+        validator.validate(new StreamSource(in));
     }
 
     public void fromXML(Reader in) throws XMLStreamException {
