@@ -21,24 +21,31 @@ import com.drew.metadata.exif.ExifDirectory;
 public class ExifReader {
 
     @SuppressWarnings("unchecked") public static Date readTime(File filename) throws ParseException {
-        Date date = null;
         try {
             Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            String dateStr = null;
+            OUTER:
             for (Iterator<Directory> dirIt = metadata.getDirectoryIterator(); dirIt.hasNext();) {
                 for (Iterator<Tag> tagIt = dirIt.next().getTagIterator(); tagIt.hasNext();) {
                     Tag tag = tagIt.next();
-                    if (tag.getTagType() == 0x9003)
-                        return DateParser.parse(tag.getDescription());
-                    if (tag.getTagType() == 0x132 || tag.getTagType() == 0x9004)
-                        date = DateParser.parse(tag.getDescription());
+                    if (tag.getTagType() == ExifDirectory.TAG_DATETIME_ORIGINAL /* 0x9003 */) {
+                        dateStr = tag.getDescription();
+                        break OUTER; // prefer this tag
+                    }
+                    if (tag.getTagType() == ExifDirectory.TAG_DATETIME /* 0x0132 */ ||
+                        tag.getTagType() == ExifDirectory.TAG_DATETIME_DIGITIZED /* 0x9004 */) {
+                        dateStr = tag.getDescription();
+                    }
                 }
             }
+            dateStr = dateStr.replace('/', ':'); // workaround for HTC Sensation bug, see #7228
+            return DateParser.parse(dateStr);
         } catch (ParseException e) {
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return date;
+        return null;
     }
 
     @SuppressWarnings("unchecked") public static Integer readOrientation(File filename) throws ParseException {
