@@ -34,6 +34,7 @@ import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
+import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -157,6 +158,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.mapView.removeTemporaryLayer(this);
         DataSet.removeSelectionListener(this);
         Main.unregisterActionShortcut(backspaceShortcut);
+        snapHelper.unsetFixedMode();
 
         removeHighlighting();
         try {
@@ -1063,7 +1065,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.unregisterActionShortcut(extraShortcut);
     }
 
-    public static class BackSpaceAction extends AbstractAction {
+    public class BackSpaceAction extends AbstractAction {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -1075,6 +1077,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 if (p instanceof Node) {
                     if (n==null) {
                         n=(Node) p; // found one node
+                        wayIsFinished=false;
                     }  else {
                     // if more than 1 node were affected by previous command,
                     // we have no way to continue, so we forget about found node
@@ -1085,8 +1088,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
             // select last added node - maybe we will continue drawing from it 
             if (n!=null) getCurrentDataSet().addSelected(n);
-    }
-    }
+       }
+ }
 
     private class SnapHelper {
         private boolean active; // snapping is activa for current mouse position
