@@ -915,8 +915,8 @@ abstract public class Main {
                 // already registered ? => abort
                 if (wr.get() == listener) return;
             }
+            listeners.add(new WeakReference<ProjectionChangeListener>(listener));
         }
-        listeners.add(new WeakReference<ProjectionChangeListener>(listener));
     }
 
     /**
