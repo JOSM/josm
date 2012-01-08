@@ -1044,17 +1044,32 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             updateEnabledState();
         }
 
-        protected void deleteProperty(int row){
-            String key = propertyData.getValueAt(row, 0).toString();
+        protected void deleteProperties(int[] rows){
+            // convert list of rows to HashMap (and find gap for nextKey)
+            HashMap<String, String> tags = new HashMap<String, String>(rows.length);
+            int nextKeyIndex = rows[0];
+            for (int row : rows) {
+                String key = propertyData.getValueAt(row, 0).toString();
+                if (row == nextKeyIndex + 1)
+                    nextKeyIndex = row; // no gap yet
+                tags.put(key, null);
+            }
 
+            // find key to select after deleting other properties
             String nextKey = null;
             int rowCount = propertyData.getRowCount();
-            if (rowCount > 1) {
-                nextKey = (String)propertyData.getValueAt((row + 1 < rowCount ? row + 1 : row - 1), 0);
+            if (rowCount > rows.length) {
+                if (nextKeyIndex == rows[rows.length-1])
+                    // no gap found, pick next or previous key in list
+                    nextKeyIndex = (nextKeyIndex + 1 < rowCount ? nextKeyIndex + 1 : rows[0] - 1);
+                else
+                    // gap found
+                    nextKeyIndex++;
+                nextKey = (String)propertyData.getValueAt(nextKeyIndex, 0);
             }
 
             Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
-            Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, null));
+            Main.main.undoRedo.add(new ChangePropertyCommand(sel, tags));
 
             membershipTable.clearSelection();
             if (nextKey != null) {
@@ -1099,9 +1114,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         public void actionPerformed(ActionEvent e) {
             if (propertyTable.getSelectedRowCount() > 0) {
                 int[] rows = propertyTable.getSelectedRows();
-                for (int i = rows.length - 1; i >= 0; i--) {
-                    deleteProperty(rows[i]);
-                }
+                deleteProperties(rows);
             } else if (membershipTable.getSelectedRowCount() > 0) {
                 int row = membershipTable.getSelectedRow();
                 deleteFromRelation(row);
