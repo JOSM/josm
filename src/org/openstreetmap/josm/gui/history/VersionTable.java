@@ -30,6 +30,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -223,7 +224,7 @@ public class VersionTable extends JTable implements Observer{
         TableCellRenderer tcr = tbl.getTableHeader().getDefaultRenderer();
         Object val = tbl.getColumnModel().getColumn(col).getHeaderValue();
         Component comp = tcr.getTableCellRendererComponent(tbl, val, false, false, -1, col);
-        maxwidth = Math.max(comp.getPreferredSize().width, maxwidth);
+        maxwidth = Math.max(comp.getPreferredSize().width + Main.pref.getInteger("table.header-inset", 2), maxwidth);
 
         int spacing = tbl.getIntercellSpacing().width;
         tbl.getColumnModel().getColumn(col).setPreferredWidth(maxwidth + spacing);
