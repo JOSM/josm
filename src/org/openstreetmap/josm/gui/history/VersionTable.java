@@ -55,9 +55,12 @@ public class VersionTable extends JTable implements Observer{
         getModel().addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
-                adjustColumnWidth(VersionTable.this, 0);
-                adjustColumnWidth(VersionTable.this, 4);
-                adjustColumnWidth(VersionTable.this, 5);
+                adjustColumnWidth(VersionTable.this, 0, 0);
+                adjustColumnWidth(VersionTable.this, 1, -8);
+                adjustColumnWidth(VersionTable.this, 2, -8);
+                adjustColumnWidth(VersionTable.this, 3, 0);
+                adjustColumnWidth(VersionTable.this, 4, 0);
+                adjustColumnWidth(VersionTable.this, 5, 0);
             }
         });
     }
@@ -212,19 +215,19 @@ public class VersionTable extends JTable implements Observer{
         }
     }
 
-    private static void adjustColumnWidth(JTable tbl, int col) {
+    private static void adjustColumnWidth(JTable tbl, int col, int cellInset) {
         int maxwidth = 0;
 
         for (int row=0; row<tbl.getRowCount(); row++) {
             TableCellRenderer tcr = tbl.getCellRenderer(row, col);
             Object val = tbl.getValueAt(row, col);
             Component comp = tcr.getTableCellRendererComponent(tbl, val, false, false, row, col);
-            maxwidth = Math.max(comp.getPreferredSize().width, maxwidth);
+            maxwidth = Math.max(comp.getPreferredSize().width + cellInset, maxwidth);
         }
         TableCellRenderer tcr = tbl.getTableHeader().getDefaultRenderer();
         Object val = tbl.getColumnModel().getColumn(col).getHeaderValue();
         Component comp = tcr.getTableCellRendererComponent(tbl, val, false, false, -1, col);
-        maxwidth = Math.max(comp.getPreferredSize().width + Main.pref.getInteger("table.header-inset", 2), maxwidth);
+        maxwidth = Math.max(comp.getPreferredSize().width + Main.pref.getInteger("table.header-inset", 0), maxwidth);
 
         int spacing = tbl.getIntercellSpacing().width;
         tbl.getColumnModel().getColumn(col).setPreferredWidth(maxwidth + spacing);

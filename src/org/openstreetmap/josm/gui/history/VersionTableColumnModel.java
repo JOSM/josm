@@ -29,7 +29,6 @@ public class VersionTableColumnModel extends DefaultTableColumnModel {
         col.setHeaderValue(tr("A"));
         col.setCellRenderer(bRenderer);
         col.setCellEditor(new VersionTable.RadioButtonEditor());
-        col.setMaxWidth(18);
         col.setResizable(false);
         addColumn(col);
         // column 2 - Current
@@ -37,7 +36,6 @@ public class VersionTableColumnModel extends DefaultTableColumnModel {
         col.setHeaderValue(tr("B"));
         col.setCellRenderer(bRenderer);
         col.setCellEditor(new VersionTable.RadioButtonEditor());
-        col.setPreferredWidth(18);
         col.setResizable(false);
         addColumn(col);
         // column 3 - CT state
