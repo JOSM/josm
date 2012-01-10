@@ -1,9 +1,11 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.actions.mapmode;
 
+import javax.swing.JCheckBoxMenuItem;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.AWTEvent;
 import java.awt.BasicStroke;
@@ -15,6 +17,7 @@ import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -31,11 +34,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import java.util.TreeSet;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -50,6 +56,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -89,7 +96,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private Shortcut extraShortcut;
     private Shortcut backspaceShortcut;
     
-    boolean snapOn;
+    private JCheckBoxMenuItem snapCheckboxMenuItem;
+    
             
     public DrawAction(MapFrame mapFrame) {
         super(tr("Draw"), "node/autonode", tr("Draw nodes"),
@@ -99,7 +107,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // Add extra shortcut N
         extraShortcut = Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT);
         Main.registerActionShortcut(this, extraShortcut);
-
+        
+        snapCheckboxMenuItem = MainMenu.addWithCheckbox(Main.main.menu.editMenu, new SnapChangeAction(),  MainMenu.WINDOW_MENU_GROUP.VOLATILE);
+        snapHelper.setMenuCheckBox(snapCheckboxMenuItem);
         cursorJoinNode = ImageProvider.getCursor("crosshair", "joinnode");
         cursorJoinWay = ImageProvider.getCursor("crosshair", "joinway");
     }
@@ -134,6 +144,18 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
         wayIsFinished = false;
         snapHelper.init();
+        snapCheckboxMenuItem.getAction().setEnabled(true);
+        
+         timer = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                 timer.stop();
+                 if (set.remove(releaseEvent.getKeyCode())) {
+                   doKeyReleaseEvent(releaseEvent);
+                 }
+            }
+
+        });
         
         backspaceShortcut = Shortcut.registerShortcut("mapmode:backspace", tr("Backspace in Add mode"), KeyEvent.VK_BACK_SPACE, Shortcut.GROUP_EDIT);
         Main.registerActionShortcut(new BackSpaceAction(), backspaceShortcut);
@@ -159,7 +181,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         DataSet.removeSelectionListener(this);
         Main.unregisterActionShortcut(backspaceShortcut);
         snapHelper.unsetFixedMode();
-
+        snapCheckboxMenuItem.getAction().setEnabled(false);
+        
         removeHighlighting();
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
@@ -182,17 +205,57 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if(Main.map == null || Main.map.mapView == null || !Main.map.mapView.isActiveLayerDrawable())
             return;
         if (event instanceof KeyEvent) {
-                KeyEvent ke = (KeyEvent) event;
-                if (ke.getKeyCode() == KeyEvent.VK_TAB && 
-                    ke.getID()==KeyEvent.KEY_PRESSED) {
-                    snapHelper.nextSnapMode();
-                }
+                processKeyEvent((KeyEvent) event);
         } //  toggle angle snapping
         updateKeyModifiers((InputEvent) event);
         computeHelperLine();
         addHighlighting();
         redrawIfRequired();
     }
+    
+    
+    // events for crossplatform key holding processing 
+    // thanks to http://www.arco.in-berlin.de/keyevent.html 
+    private final TreeSet<Integer> set = new TreeSet<Integer>();
+    private KeyEvent releaseEvent;
+    private Timer timer;
+    void processKeyEvent(KeyEvent e) {
+        if (e.getKeyCode() != KeyEvent.VK_TAB) return;
+	e.consume();
+
+        if (e.getID() == KeyEvent.KEY_PRESSED) {
+             if (timer.isRunning()) {
+                  timer.stop();
+                } else {
+                  if (set.add((e.getKeyCode()))) doKeyPressEvent(e);
+                }
+             
+        }
+        if (e.getID() == KeyEvent.KEY_RELEASED) {
+            if (timer.isRunning()) {
+              timer.stop();
+               if (set.remove(e.getKeyCode())) {
+                  doKeyReleaseEvent(e);
+               }
+            } else {
+              releaseEvent = e;
+              timer.restart();
+            }
+        }
+        
+    }
+    
+    private void doKeyPressEvent(KeyEvent e) {
+        if (e.getKeyCode() != KeyEvent.VK_TAB) return;
+        snapHelper.setFixedMode();
+        computeHelperLine(); redrawIfRequired();
+    }
+    private void doKeyReleaseEvent(KeyEvent e) {
+        if (e.getKeyCode() != KeyEvent.VK_TAB) return;
+        snapHelper.unFixOrTurnOff();
+        computeHelperLine(); redrawIfRequired();
+    }
+
     /**
      * redraw to (possibly) get rid of helper line if selection changes.
      */
@@ -264,7 +327,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // request focus in order to enable the expected keyboard shortcuts
         //
         Main.map.mapView.requestFocus();
-
+        
         if(e.getClickCount() > 1 && mousePos != null && mousePos.equals(oldMousePos)) {
             // A double click equals "user clicked last node again, finish way"
             // Change draw tool only if mouse position is nearly the same, as
@@ -324,7 +387,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 }
             } else { // n==null, no node found in clicked area
                 EastNorth mouseEN = Main.map.mapView.getEastNorth(e.getX(), e.getY());
-                newEN = snapOn ? snapHelper.getSnapPoint(mouseEN) : mouseEN;
+                newEN = snapHelper.isSnapOn() ? snapHelper.getSnapPoint(mouseEN) : mouseEN;
                 n = new Node(newEN); //create node at clicked point
                 newNode = true;
             }
@@ -698,7 +761,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             angle += angle < 0 ? 360 : 0;
         }
         
-        if (snapOn) snapHelper.checkAngleSnapping(currentMouseEastNorth,angle);
+        snapHelper.checkAngleSnapping(currentMouseEastNorth,angle);
         
         Main.map.statusLine.setAngle(angle);
         Main.map.statusLine.setHeading(hdg);
@@ -948,12 +1011,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if (!Main.map.mapView.getBounds().contains(mousePos)) return;
         
         Graphics2D g2 = g;
-        if (snapOn) snapHelper.draw(g2,mv);
+        snapHelper.drawIfNeeded(g2,mv);
         if (!drawHelperLine || wayIsFinished || shift) return;
         
         if (!snapHelper.isActive()) { // else use color and stoke from  snapHelper.draw
             g2.setColor(selectedColor);
             g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        } else {
+            if (!snapHelper.drawConstructionGeometry) return;
         }
         GeneralPath b = new GeneralPath();
         Point p1=mv.getPoint(currentBaseNode);
@@ -1018,8 +1083,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             } else {
                 rv += " " + tr("Continue way from last node.");
             }
-            if (snapOn) {
-                rv += " "+ tr("Angle snapping ON.");
+            if (snapHelper.isSnapOn()) {
+                rv += " "+ tr("Angle snapping active.");
             }
         }
 
@@ -1092,9 +1157,16 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
  }
 
     private class SnapHelper {
+        boolean snapOn; // snapping is turned on
+        
         private boolean active; // snapping is activa for current mouse position
         private boolean fixed; // snap angle is fixed
         private boolean absoluteFix; // snap angle is absolute
+        
+        private boolean drawConstructionGeometry; 
+        private boolean showProjectedPoint; 
+        private boolean showAngle; 
+        
         EastNorth dir2;
         EastNorth projected;
         String labelText;
@@ -1110,11 +1182,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Color snapHelperColor;
         private Stroke normalStroke;
         private Stroke helperStroke;
-
-        private  void init() {
+        
+        JCheckBoxMenuItem checkBox;
+        
+        public void init() {
             snapOn=false;
+            checkBox.setState(snapOn);
             fixed=false; absoluteFix=false;
-            
+                        
             Collection<String> angles = Main.pref.getCollection("draw.anglesnap.angles", 
                     Arrays.asList("0","30","45","60","90","120","135","150","210","225","240","270","300","315","330"));
             
@@ -1130,6 +1205,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 i++;
             }
             snapAngleTolerance = Main.pref.getDouble("draw.anglesnap.tolerance", 5.0);
+            drawConstructionGeometry = Main.pref.getBoolean("draw.anglesnap.drawConstructionGeometry", true);
+            showProjectedPoint = Main.pref.getBoolean("draw.anglesnap.drawProjectedPoint", true);
+            showAngle = Main.pref.getBoolean("draw.anglesnap.showAngle", true);
 
             normalStroke = new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
             snapHelperColor = Main.pref.getColor(marktr("draw angle snap"), Color.ORANGE);
@@ -1140,31 +1218,32 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         }
         
-        private void noSnapNow() {
-            active=false; 
-            dir2=null; projected=null;
-            labelText=null;
+        public  void setMenuCheckBox(JCheckBoxMenuItem checkBox) {
+            this.checkBox = checkBox;
         }
+        
 
-        private void draw(Graphics2D g2, MapView mv) {
+        public  void drawIfNeeded(Graphics2D g2, MapView mv) {
+            if (!snapOn) return;
             if (!active) return;
             Point p1=mv.getPoint(currentBaseNode);
             Point p2=mv.getPoint(dir2);
             Point p3=mv.getPoint(projected);
             GeneralPath b;
-            
-            g2.setColor(snapHelperColor);
-            g2.setStroke(helperStroke);
-            
-            b = new GeneralPath();
-            if (absoluteFix) {
-                b.moveTo(p2.x,p2.y); 
-                b.lineTo(2*p1.x-p2.x,2*p1.y-p2.y); // bi-directional line
-            } else {
-                b.moveTo(p2.x,p2.y);
-                b.lineTo(p3.x,p3.y);
-            } 
-            g2.draw(b);
+            if (drawConstructionGeometry) {
+                g2.setColor(snapHelperColor);
+                g2.setStroke(helperStroke);
+
+                b = new GeneralPath();
+                if (absoluteFix) {
+                    b.moveTo(p2.x,p2.y); 
+                    b.lineTo(2*p1.x-p2.x,2*p1.y-p2.y); // bi-directional line
+                } else {
+                    b.moveTo(p2.x,p2.y);
+                    b.lineTo(p3.x,p3.y);
+                } 
+                g2.draw(b);
+            }
 
             g2.setColor(selectedColor);
             g2.setStroke(normalStroke);
@@ -1174,22 +1253,20 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             g2.draw(b);
             
             g2.drawString(labelText, p3.x-5, p3.y+20);
-            g2.setStroke(normalStroke);
-            g2.drawOval(p3.x-5, p3.y-5, 10, 10); // projected point
+            if (showProjectedPoint) {
+                g2.setStroke(normalStroke);
+                g2.drawOval(p3.x-5, p3.y-5, 10, 10); // projected point
+            }
             
             g2.setColor(snapHelperColor);
             g2.setStroke(helperStroke);
             
         }
         
-        private double getAngleDelta(double a, double b) {
-            double delta = Math.abs(a-b);
-            if (delta>180) return 360-delta; else return delta;
-        }
-
         /* If mouse position is close to line at 15-30-45-... angle, remembers this direction
          */
-        private void checkAngleSnapping(EastNorth currentEN, double angle) {
+        public  void checkAngleSnapping(EastNorth currentEN, double angle) {
+            if (!snapOn) return;
             if (!absoluteFix && previousNode==null) return;
             
             double nearestAngle;
@@ -1207,11 +1284,18 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
                 EastNorth p0 = currentBaseNode.getEastNorth();
                 e0=p0.east(); n0=p0.north();
-
-                if (fixed) {
-                    if (absoluteFix) labelText = "=";
-                                else labelText = String.format(fixFmt, (int) nearestAngle);
-                } else labelText = String.format("%d", (int) nearestAngle);
+                
+                if (showAngle)  {
+                    if (fixed) {
+                        if (absoluteFix) labelText = "=";
+                                    else labelText = String.format(fixFmt, (int) nearestAngle);
+                    } else labelText = String.format("%d", (int) nearestAngle);
+                } else {
+                    if (fixed) {
+                        if (absoluteFix) labelText = "=";
+                        else labelText = String.format(tr("FIX"),0);
+                    } else labelText="";
+                } 
                 
                 if (absoluteFix) {
                     de=0; dn=1; 
@@ -1236,7 +1320,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
            }
         }
         
-        private EastNorth getSnapPoint(EastNorth p) {
+        public  EastNorth getSnapPoint(EastNorth p) {
             if (!active) return p;
             double de=p.east()-e0;
             double dn=p.north()-n0;
@@ -1245,25 +1329,59 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return projected = new EastNorth(e0+l*pe, n0+l*pn);
         }
         
-        private void unsetFixedMode() {
+        
+        public void noSnapNow() {
+            active=false; 
+            dir2=null; projected=null;
+            labelText=null;
+        }
+
+        public void fixToSegment(WaySegment seg) {
+            if (seg==null) return;
+            double hdg = seg.getFirstNode().getEastNorth().heading(seg.getSecondNode().getEastNorth());
+            hdg=Math.toDegrees(hdg);
+            if (hdg<0) hdg+=360;
+            if (hdg>360) hdg=hdg-360;
+            fixed=true;
+            absoluteFix=true;
+            lastAngle=hdg;
+        }
+
+        private void nextSnapMode() {
+            if (snapOn) {
+                // turn off snapping if we are in fixed mode or no actile snapping line exist
+                if (fixed || !active) { snapOn=false; unsetFixedMode(); } 
+                else setFixedMode();
+            } else {
+                snapOn=true;
+                unsetFixedMode();
+            }
+            checkBox.setState(snapOn);
+        }
+        
+        private void toggleSnapping() {
+            snapOn = !snapOn;
+            checkBox.setState(snapOn);
+            unsetFixedMode();
+        }
+                
+        public void setFixedMode() {
+            if (active) { fixed=true; }
+        }
+        
+        
+        public  void unsetFixedMode() {
             fixed=false; absoluteFix=false;
             lastAngle=0;
             active=false;
         }
         
-        private void nextSnapMode() {
-            if (snapOn) {
-                // turn off snapping if we are in fixed mode or no actile snapping line exist
-                if (fixed || !active) { snapOn=false; unsetFixedMode(); } 
-                else if (active) { fixed=true; }
-            } else {
-                snapOn=true;
-                unsetFixedMode();
-            }
-        }
-
-        private boolean isActive() {
+        public  boolean isActive() {
             return active;
+        }
+        
+        public  boolean isSnapOn() {
+            return snapOn;
         }
 
         private double getNearestAngle(double angle) {
@@ -1279,15 +1397,27 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return bestAngle;
         }
 
-        private void fixToSegment(WaySegment seg) {
-            if (seg==null) return;
-            double hdg = seg.getFirstNode().getEastNorth().heading(seg.getSecondNode().getEastNorth());
-            hdg=Math.toDegrees(hdg);
-            if (hdg<0) hdg+=360;
-            if (hdg>360) hdg=hdg-360;
-            fixed=true;
-            absoluteFix=true;
-            lastAngle=hdg;
+        private double getAngleDelta(double a, double b) {
+            double delta = Math.abs(a-b);
+            if (delta>180) return 360-delta; else return delta;
         }
+
+        private void unFixOrTurnOff() {
+            if (absoluteFix) unsetFixedMode(); else toggleSnapping();
+        }
+    }
+    
+    private class SnapChangeAction extends JosmAction {
+        public SnapChangeAction() {
+             super(tr("Angle snapping"), "anglesnap", 
+ 		   tr("Switch angle snapping mode while drawing"), 
+ 		   null, false);
+             putValue("help", ht("/Action/Draw/AngleSnap"));
+        }
+        @Override 
+        public void actionPerformed(ActionEvent e) {
+               if (snapHelper!=null) snapHelper.toggleSnapping(); 
+        }
+        
     }
 }
