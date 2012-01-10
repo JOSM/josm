@@ -21,7 +21,7 @@ public class Lambert93 extends AbstractProjection {
         x_0 =  700000;
         y_0 = 6600000;
         lon_0 = 3;
-        double lat_0 = 46.30;
+        double lat_0 = 46.50;
         double lat_1 = 44.00;
         double lat_2 = 49.00;
         proj = new LambertConformalConic();
