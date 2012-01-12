@@ -221,7 +221,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private Timer timer;
     void processKeyEvent(KeyEvent e) {
         if (e.getKeyCode() != KeyEvent.VK_TAB) return;
-	e.consume();
+        //e.consume(); // ticket #7250 -  TAB should work in other windows
 
         if (e.getID() == KeyEvent.KEY_PRESSED) {
              if (timer.isRunning()) {
