@@ -101,6 +101,7 @@ public class MainApplication extends Main {
                 "\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
                 "\t--[no-]maximize                           "+tr("Launch in maximized mode")+"\n"+
                 "\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
+                "\t--set=<key>=<value>                       "+tr("Set preference key to value")+"\n\n"+
                 "\t--language=<language>                     "+tr("Set the language")+"\n\n"+
                 tr("options provided as Java system properties")+":\n"+
                 "\t-Djosm.home="+tr("/PATH/TO/JOSM/FOLDER/         ")+tr("Change the folder for all user settings")+"\n\n"+
@@ -193,11 +194,18 @@ public class MainApplication extends Main {
 
         // Check if passed as parameter
         if (args.containsKey("language")) {
-            I18n.set((String)(args.get("language").toArray()[0]));
+            I18n.set(args.get("language").iterator().next());
         } else {
             I18n.set(Main.pref.get("language", null));
         }
         Main.pref.updateSystemProperties();
+
+        if (args.containsKey("set")) {
+            for (String i : args.get("set")) {
+                String[] kv = i.split("=", 2);
+                Main.pref.put(kv[0], "null".equals(kv[1]) ? null : kv[1]);
+            }
+        }
 
         DefaultAuthenticator.createInstance();
         Authenticator.setDefault(DefaultAuthenticator.getInstance());
