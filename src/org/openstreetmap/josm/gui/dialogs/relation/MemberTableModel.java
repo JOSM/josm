@@ -178,7 +178,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         case 1:
             return members.get(rowIndex).getMember();
         case 2:
-            return wayConnection(rowIndex);
+            return getWayConnection(rowIndex);
         }
         // should not happen
         return null;
@@ -867,7 +867,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             return NONE;
     }
 
-    private WayConnectionType wayConnection(int i) {
+    WayConnectionType getWayConnection(int i) {
         if (connectionType == null) {
             updateLinks();
         }
