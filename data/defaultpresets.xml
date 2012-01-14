@@ -5214,7 +5214,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <combo key="addr:interpolation" text="Numbering scheme" values="odd,even,all,alphabetic" default="odd" />
         </item>
-        <item name="Contact" icon="presets/contact.png" type="node,way,closedway,relation">
+        <item name="Contact (common schema)" icon="presets/contact.png" type="node,way,closedway,relation">
             <label text="Edit Contact information" />
             <space />
             <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
@@ -5226,7 +5226,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
             <text key="image" text="Image" default="" delete_if_empty="true" />
         </item>
-        <item name="Contact (new schema)" icon="presets/contact.png" type="node,way,closedway,relation">
+        <item name="Contact (schema with 'contact:*' prefix)" icon="presets/contact.png" type="node,way,closedway,relation">
             <label text="Edit Contact information (new schema)" />
             <space />
             <text key="contact:phone" text="Phone Number" default="" delete_if_empty="true" />
