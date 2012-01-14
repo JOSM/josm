@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
+import java.util.Collection;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -24,8 +26,10 @@ import javax.swing.event.ListSelectionListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
+import org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
@@ -39,6 +43,7 @@ public class MemberTable extends JTable implements IMemberModelListener {
     /** the popup menu */
     protected JPopupMenu popupMenu;
     private ZoomToAction zoomToAction;
+    private ZoomToGapAction zoomToGap;
 
     /**
      * constructor
@@ -131,7 +136,7 @@ public class MemberTable extends JTable implements IMemberModelListener {
      * pressing Shift-TAB
      *
      */
-    class SelectPreviousColumnCellAction extends AbstractAction {
+    private class SelectPreviousColumnCellAction extends AbstractAction {
 
         public void actionPerformed(ActionEvent e) {
             int col = getSelectedColumn();
@@ -162,12 +167,17 @@ public class MemberTable extends JTable implements IMemberModelListener {
             MapView.addLayerChangeListener(zoomToAction);
             getSelectionModel().addListSelectionListener(zoomToAction);
             popupMenu.add(zoomToAction);
+            zoomToGap = new ZoomToGapAction();
+            MapView.addLayerChangeListener(zoomToGap);
+            getSelectionModel().addListSelectionListener(zoomToGap);
+            popupMenu.add(zoomToGap);
         }
         return popupMenu;
     }
 
     public void unlinkAsListener() {
         MapView.removeLayerChangeListener(zoomToAction);
+        MapView.removeLayerChangeListener(zoomToGap);
     }
 
     class PopupListener extends MouseAdapter {
@@ -188,7 +198,7 @@ public class MemberTable extends JTable implements IMemberModelListener {
         }
     }
 
-    class ZoomToAction extends AbstractAction implements LayerChangeListener, ListSelectionListener {
+    private class ZoomToAction extends AbstractAction implements LayerChangeListener, ListSelectionListener {
         public ZoomToAction() {
             putValue(NAME, tr("Zoom to"));
             putValue(SHORT_DESCRIPTION, tr("Zoom to the object the first selected member refers to"));
@@ -239,11 +249,75 @@ public class MemberTable extends JTable implements IMemberModelListener {
         }
     }
 
+    private class ZoomToGapAction extends AbstractAction implements LayerChangeListener, ListSelectionListener {
+
+        public ZoomToGapAction() {
+            putValue(NAME, tr("Zoom to Gap"));
+            putValue(SHORT_DESCRIPTION, tr("Zoom to the gap in the way sequence"));
+            updateEnabledState();
+        }
+
+        private WayConnectionType getConnectionType() {
+            return getMemberTableModel().getWayConnection(getSelectedRows()[0]);
+        }
+
+        private final Collection<Direction> connectionTypesOfInterest = Arrays.asList(WayConnectionType.Direction.FORWARD, WayConnectionType.Direction.BACKWARD);
+
+        private boolean hasGap() {
+            WayConnectionType connectionType = getConnectionType();
+            return connectionTypesOfInterest.contains(connectionType.direction)
+                    && !(connectionType.linkNext && connectionType.linkPrev);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            WayConnectionType connectionType = getConnectionType();
+            Way way = (Way) getMemberTableModel().getReferredPrimitive(getSelectedRows()[0]);
+            if (!connectionType.linkPrev) {
+                layer.data.setSelected(WayConnectionType.Direction.FORWARD.equals(connectionType.direction)
+                        ? way.firstNode() : way.lastNode());
+                AutoScaleAction.autoScale("selection");
+            } else if (!connectionType.linkNext) {
+                layer.data.setSelected(WayConnectionType.Direction.FORWARD.equals(connectionType.direction)
+                        ? way.lastNode() : way.firstNode());
+                AutoScaleAction.autoScale("selection");
+            }
+        }
+
+        private void updateEnabledState() {
+            setEnabled(Main.main != null
+                    && Main.main.getEditLayer() == layer
+                    && getSelectedRowCount() == 1
+                    && hasGap());
+        }
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+
+        @Override
+        public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+            updateEnabledState();
+        }
+
+        @Override
+        public void layerAdded(Layer newLayer) {
+            updateEnabledState();
+        }
+
+        @Override
+        public void layerRemoved(Layer oldLayer) {
+            updateEnabledState();
+        }
+    }
+
     protected MemberTableModel getMemberTableModel() {
         return (MemberTableModel) getModel();
     }
 
-    class DblClickHandler extends MouseAdapter {
+    private class DblClickHandler extends MouseAdapter {
+
         protected void setSelection(MouseEvent e) {
             int row = rowAtPoint(e.getPoint());
             if (row < 0) return;
