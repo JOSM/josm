@@ -578,6 +578,9 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     }
 
     protected void setIsDocked(boolean val) {
+        if(buttonsPanel != null) {
+            buttonsPanel.setVisible(val ? !isButtonHiding : true);
+        }
         isDocked = val;
         Main.pref.put(preferencePrefix+".docked", val);
         stateChanged();
@@ -688,7 +691,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             add(buttonsPanel, BorderLayout.SOUTH);
             if(Main.pref.getBoolean("dialog.dynamic.buttons", true)) {
                 Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_MOTION_EVENT_MASK);
-                buttonsPanel.setVisible(!isButtonHiding);
+                buttonsPanel.setVisible(!isButtonHiding || !isDocked);
             }
         } else if(buttonsHide != null) {
             buttonsHide.setVisible(false);
@@ -698,7 +701,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     @Override
     public void eventDispatched(AWTEvent event) {
-        if(isShowing() && !isCollapsed && isButtonHiding) {
+        if(isShowing() && !isCollapsed && isDocked && isButtonHiding) {
             Rectangle b = this.getBounds();
             b.setLocation(getLocationOnScreen());
             if (b.contains(((MouseEvent)event).getLocationOnScreen())) {
