@@ -66,6 +66,7 @@ public class LoadAndZoomHandler extends RequestHandler
             maxlat = Double.parseDouble(args.get("top"));
             minlon = Double.parseDouble(args.get("left"));
             maxlon = Double.parseDouble(args.get("right"));
+            boolean newLayer = Boolean.parseBoolean(args.get("new_layer"));
 
             if(command.equals(myCommand))
             {
@@ -102,7 +103,7 @@ public class LoadAndZoomHandler extends RequestHandler
                     }
                     else
                     {
-                        Future<?> future = osmTask.download(false /*no new layer*/, new Bounds(minlat,minlon,maxlat,maxlon), null /* let the task manage the progress monitor */);
+                        Future<?> future = osmTask.download(newLayer, new Bounds(minlat,minlon,maxlat,maxlon), null /* let the task manage the progress monitor */);
                         Main.worker.submit(new PostDownloadHandler(osmTask, future));
                     }
                 }
