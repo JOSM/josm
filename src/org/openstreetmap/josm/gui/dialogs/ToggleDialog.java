@@ -578,7 +578,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     }
 
     protected void setIsDocked(boolean val) {
-        if(buttonsPanel != null) {
+        if(buttonsPanel != null && buttonsHide != null) {
             buttonsPanel.setVisible(val ? !isButtonHiding : true);
         }
         isDocked = val;
