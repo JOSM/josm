@@ -210,11 +210,19 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      * @param relation  the relation
      */
     public void selectRelation(Relation relation) {
-        if (relation == null) {
+        selectRelations(Collections.singleton(relation));
+    }
+
+    /**
+     * Selects the relations in the list of relations.
+     * @param relations  the relations to be selected
+     */
+    public void selectRelations(Collection<Relation> relations) {
+        if (relations == null || relations.isEmpty()) {
             model.setSelectedRelations(null);
         } else {
-            model.setSelectedRelations(Collections.singletonList(relation));
-            Integer i = model.getRelationIndex(relation);
+            model.setSelectedRelations(relations);
+            Integer i = model.getRelationIndex(relations.iterator().next());
             if (i != null) { // Not all relations have to be in the list (for example when the relation list is hidden, it's not updated with new relations)
                 displaylist.scrollRectToVisible(displaylist.getCellBounds(i, i));
             }
@@ -739,7 +747,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
          *
          * @return sel the list of selected relations
          */
-        public void setSelectedRelations(List<Relation> sel) {
+        public void setSelectedRelations(Collection<Relation> sel) {
             selectionModel.clearSelection();
             if (sel == null || sel.isEmpty())
                 return;

@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Handler for load_and_zoom request.
@@ -171,6 +172,10 @@ public class LoadAndZoomHandler extends RequestHandler
                     ds.setSelected(newSel);
                     if (Main.pref.getBoolean(changeViewportPermissionKey, changeViewportPermissionDefault)) {
                         new AutoScaleAction("selection").actionPerformed(null);
+                    }
+                    if (Main.map != null && Main.map.relationListDialog != null) {
+                        Main.map.relationListDialog.dataChanged(null);
+                        Main.map.relationListDialog.selectRelations(Utils.filteredCollection(newSel, Relation.class));
                     }
                 }
             });
