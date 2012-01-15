@@ -91,38 +91,37 @@ public class OsmIdTextField extends JTextField {
         }
         
         public boolean readOsmIds() {
-            String value  = getComponent().getText();
+            String value = getComponent().getText();
             char c;
-            if (value == null || value.trim().length() == 0) return false;
-            try {
-                ids.clear();
-                StringTokenizer st = new StringTokenizer(value,",.+/ \t\n");
-                String s;
-                while (st.hasMoreTokens()) {
-                    s = st.nextToken();
-                    // convert tokens to int skipping v-words (version v2 etc)
-                    c = s.charAt(0);
-                    if (c=='v') {
-                        continue;
-                    }
-                    else if (c=='n') {
-                        ids.add(new SimplePrimitiveId(Long.parseLong(s.substring(1)), OsmPrimitiveType.NODE));
-                    } else if (c=='w') {
-                        ids.add(new SimplePrimitiveId(Long.parseLong(s.substring(1)), OsmPrimitiveType.WAY));
-                    } else if (c=='r') { 
-                        ids.add(new SimplePrimitiveId(Long.parseLong(s.substring(1)), OsmPrimitiveType.RELATION));
-                    } else if (type==OsmPrimitiveType.NODE) {
-                        ids.add(new SimplePrimitiveId(Long.parseLong(s), OsmPrimitiveType.NODE));
-                    } else if (type==OsmPrimitiveType.WAY) {
-                        ids.add(new SimplePrimitiveId(Long.parseLong(s), OsmPrimitiveType.WAY));
-                    } else if (type==OsmPrimitiveType.RELATION) {
-                        ids.add(new SimplePrimitiveId(Long.parseLong(s), OsmPrimitiveType.RELATION));
-                    }
-                }
-                return true;
-            } catch(NumberFormatException e) {
+            if (value == null || value.trim().length() == 0) {
                 return false;
             }
+            ids.clear();
+            StringTokenizer st = new StringTokenizer(value, ",.+/ \t\n");
+            String s;
+            while (st.hasMoreTokens()) {
+                s = st.nextToken();
+                // convert tokens to int skipping v-words (version v2 etc)
+                c = s.charAt(0);
+                if (c == 'v') {
+                    continue;
+                } else {
+                    try {
+                        ids.add(SimplePrimitiveId.fromString(s));
+                    } catch (IllegalArgumentException ex) {
+                        if (type == OsmPrimitiveType.NODE) {
+                            ids.add(new SimplePrimitiveId(Long.parseLong(s), OsmPrimitiveType.NODE));
+                        } else if (type == OsmPrimitiveType.WAY) {
+                            ids.add(new SimplePrimitiveId(Long.parseLong(s), OsmPrimitiveType.WAY));
+                        } else if (type == OsmPrimitiveType.RELATION) {
+                            ids.add(new SimplePrimitiveId(Long.parseLong(s), OsmPrimitiveType.RELATION));
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
         }
     }
 }

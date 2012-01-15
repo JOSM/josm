@@ -18,6 +18,7 @@ import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.ImageryHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.ImportHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadAndZoomHandler;
+import org.openstreetmap.josm.io.remotecontrol.handler.LoadObject;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerErrorException;
@@ -116,6 +117,7 @@ public class RequestProcessor extends Thread {
         addRequestHandlerClass(AddNodeHandler.command, AddNodeHandler.class, true);
         addRequestHandlerClass(ImportHandler.command, ImportHandler.class, true);
         addRequestHandlerClass(VersionHandler.command, VersionHandler.class, true);
+        addRequestHandlerClass(LoadObject.command, LoadObject.class, true);
     }
 
     /**

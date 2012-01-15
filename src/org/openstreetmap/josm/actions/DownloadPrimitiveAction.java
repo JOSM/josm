@@ -199,7 +199,13 @@ public class DownloadPrimitiveAction extends JosmAction {
         processItems(layer.isSelected(), tfId.getIds(), referrers.isSelected(), full.isSelected());
     }
 
-    void processItems(boolean newLayer, final List<PrimitiveId> ids, boolean downloadReferrers, boolean full) {
+    /**
+     * @param newLayer if the data should be downloaded into a new layer
+     * @param ids
+     * @param downloadReferrers if the referrers of the object should be downloaded as well, i.e., parent relations, and for nodes, additionally, parent ways
+     * @param full if the members of a relation should be downloaded as well
+     */
+    public static void processItems(boolean newLayer, final List<PrimitiveId> ids, boolean downloadReferrers, boolean full) {
         OsmDataLayer layer = getEditLayer();
         if ((layer == null) || newLayer) {
             layer = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
@@ -273,7 +279,7 @@ public class DownloadPrimitiveAction extends JosmAction {
         Main.worker.submit(showErrorsAndWarnings);
     }
 
-    private ExtendedDialog reportProblemDialog(Set<PrimitiveId> errs,
+    private static ExtendedDialog reportProblemDialog(Set<PrimitiveId> errs,
             String TITLE, String TEXT, String LIST_LABEL, int msgType) {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new HtmlPanel(TEXT), GBC.eop());
