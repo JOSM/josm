@@ -1,7 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -13,7 +16,6 @@ import java.net.InetAddress;
  *
  * Taken from YWMS plugin by frsantos.
  */
-
 public class RemoteControlHttpServer extends Thread {
 
     /** Default port for the HTTP server */
@@ -27,19 +29,18 @@ public class RemoteControlHttpServer extends Thread {
     /**
      * Starts or restarts the HTTP server
      */
-    public static void restartRemoteControlHttpServer()
-    {
-        try
-        {
-            if (instance != null)
+    public static void restartRemoteControlHttpServer() {
+        try {
+            if (instance != null) {
                 instance.stopServer();
+            }
 
-            int port = DEFAULT_PORT;
-            instance = new RemoteControlHttpServer(port);
+            instance = new RemoteControlHttpServer(DEFAULT_PORT);
             instance.start();
-        }
-        catch(IOException ioe)
-        {
+        } catch (BindException ex) {
+            System.err.println(tr("Warning: Cannot start remotecontrol server on port {0}: {1}",
+                    Integer.toString(DEFAULT_PORT), ex.getLocalizedMessage()));
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         }
     }
@@ -78,7 +79,7 @@ public class RemoteControlHttpServer extends Thread {
             {
                 if( !server.isClosed() )
                     se.printStackTrace();
-            }
+                }
             catch (IOException ioe)
             {
                 ioe.printStackTrace();

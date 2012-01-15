@@ -12,12 +12,9 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
  * similar to the "Download object" dialog (@see DownloadPrimitiveAction}.
  * For instance, {@code /load_object?objects=n1,w2,r3[&new_layer=false&relation_members=true]}.
  */
-public class LoadObject extends RequestHandler {
+public class LoadObjectHandler extends RequestHandler {
 
     public static final String command = "load_object";
-
-    public LoadObject() {
-    }
 
     @Override
     protected String[] getMandatoryParams() {
