@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
@@ -67,6 +66,9 @@ public class OsmImporter extends FileImporter {
      */
     public void loadLayer(InputStream in, final File associatedFile, final String layerName, ProgressMonitor progressMonitor) throws IllegalDataException {
         final DataSet dataSet = parseDataSet(in, progressMonitor);
+        if (dataSet == null) {
+            throw new IllegalDataException(tr("Invalid dataset"));
+        }
         layer = createLayer(dataSet, associatedFile, layerName);
         postLayerTask = createPostLayerTask(dataSet, associatedFile, layerName);
     }
