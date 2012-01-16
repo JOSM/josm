@@ -266,7 +266,7 @@ public class Marker implements TemplateEngineDataProvider {
         this.time = time;
         // /* ICON(markers/) */"Bridge"
         // /* ICON(markers/) */"Crossing"
-        this.symbol = ImageProvider.getIfAvailable("markers",iconName);
+        this.symbol = iconName != null ? ImageProvider.getIfAvailable("markers",iconName) : null;
         this.parentLayer = parentLayer;
 
         this.dataProvider = dataProvider;
@@ -280,7 +280,7 @@ public class Marker implements TemplateEngineDataProvider {
         this.time = time;
         // /* ICON(markers/) */"Bridge"
         // /* ICON(markers/) */"Crossing"
-        this.symbol = ImageProvider.getIfAvailable("markers",iconName);
+        this.symbol = iconName != null ? ImageProvider.getIfAvailable("markers",iconName) : null;
         this.parentLayer = parentLayer;
 
         this.dataProvider = null;
