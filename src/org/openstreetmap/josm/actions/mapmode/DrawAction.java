@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +39,7 @@ import java.util.TreeSet;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
-import javax.swing.SwingUtilities;
+import javax.swing.JPopupMenu;
 import javax.swing.Timer;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -62,6 +63,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -156,7 +158,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
 
         });
-        
+       Main.map.statusLine.getAnglePanel().addMouseListener(snapHelper.anglePopupListener);
         backspaceShortcut = Shortcut.registerShortcut("mapmode:backspace", tr("Backspace in Add mode"), KeyEvent.VK_BACK_SPACE, Shortcut.GROUP_EDIT);
         Main.registerActionShortcut(new BackSpaceAction(), backspaceShortcut);
 
@@ -182,6 +184,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.unregisterActionShortcut(backspaceShortcut);
         snapHelper.unsetFixedMode();
         snapCheckboxMenuItem.getAction().setEnabled(false);
+        Main.map.statusLine.getAnglePanel().removeMouseListener(snapHelper.anglePopupListener);
         
         removeHighlighting();
         try {
@@ -716,9 +719,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         mouseOnExistingNode = null;
         mouseOnExistingWays = new HashSet<Way>();
 
-        Main.map.statusLine.setAngle(-1);
-        Main.map.statusLine.setHeading(-1);
-        Main.map.statusLine.setDist(-1);
+        showStausInfo(-1, -1, -1);
 
         if (!ctrl && mousePos != null) {
             currentMouseNode = mv.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
@@ -749,9 +750,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if (currentBaseNode == null || currentBaseNode == currentMouseNode)
             return; // Don't create zero length way segments.
 
-        // find out the distance, in metres, between the base point and the mouse cursor
-        LatLon mouseLatLon = mv.getProjection().eastNorth2latlon(currentMouseEastNorth);
-        distance = currentBaseNode.getCoor().greatCircleDistance(mouseLatLon);
 
         double hdg = Math.toDegrees(currentBaseNode.getEastNorth()
                 .heading(currentMouseEastNorth));
@@ -760,17 +758,25 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     .heading(currentBaseNode.getEastNorth()));
             angle += angle < 0 ? 360 : 0;
         }
-        
+
         snapHelper.checkAngleSnapping(currentMouseEastNorth,angle);
+        if (!snapHelper.isActive()) {
+            // find out the distance, in metres, between the base point and the mouse cursor
+            LatLon mouseLatLon = mv.getProjection().eastNorth2latlon(currentMouseEastNorth);
+            distance = currentBaseNode.getCoor().greatCircleDistance(mouseLatLon);
+            showStausInfo(angle, hdg, distance);
+        } // elsewhere status ar was filled by snapHelper
         
-        Main.map.statusLine.setAngle(angle);
-        Main.map.statusLine.setHeading(hdg);
-        Main.map.statusLine.setDist(distance);
         // Now done in redrawIfRequired()
         //updateStatusLine();
     }
-    
-    
+
+    private void showStausInfo(double angle, double hdg, double distance) {
+        Main.map.statusLine.setAngle(angle);
+        Main.map.statusLine.setHeading(hdg);
+        Main.map.statusLine.setDist(distance);
+    }
+
     /** 
      * Helper function that sets fields currentBaseNode and previousNode 
      * @param selection 
@@ -1191,18 +1197,19 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             fixed=false; absoluteFix=false;
                         
             Collection<String> angles = Main.pref.getCollection("draw.anglesnap.angles", 
-                    Arrays.asList("0","30","45","60","90","120","135","150","210","225","240","270","300","315","330"));
+                    Arrays.asList("0","30","45","60","90","120","135","150"));
             
-            snapAngles = new double[angles.size()];
+            snapAngles = new double[2*angles.size()];
             int i=0;
             for (String s: angles) {
                 try {
-                    snapAngles[i] = Double.parseDouble(s);
+                    snapAngles[i] = Double.parseDouble(s); i++;
+                    snapAngles[i] = 360-Double.parseDouble(s); i++;
                 } catch (NumberFormatException e) {
                     System.err.println("Warning: incorrect number in draw.anglesnap.angles preferences: "+s);
-                    snapAngles[i]=0;
+                    snapAngles[i]=0;i++;
+                    snapAngles[i]=0;i++;
                 } 
-                i++;
             }
             snapAngleTolerance = Main.pref.getDouble("draw.anglesnap.tolerance", 5.0);
             drawConstructionGeometry = Main.pref.getBoolean("draw.anglesnap.drawConstructionGeometry", true);
@@ -1216,6 +1223,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             helperStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
                          BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
 
+        }
+        
+        public void saveAngles(String ... angles) {
+            Main.pref.putCollection("draw.anglesnap.angles", Arrays.asList(angles));
         }
         
         public  void setMenuCheckBox(JCheckBoxMenuItem checkBox) {
@@ -1314,7 +1325,19 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 pn = -de*Math.sin(phi) + dn*Math.cos(phi);
                 double scale = 20*Main.map.mapView.getDist100Pixel();
                 dir2 = new EastNorth( e0+scale*pe, n0+scale*pn);
-                getSnapPoint(currentEN); 
+                EastNorth snapPoint = getSnapPoint(currentEN);
+                
+                // find out the distance, in metres, between the base point and projected point
+                LatLon mouseLatLon = Main.map.mapView.getProjection().eastNorth2latlon(snapPoint);
+                double distance = currentBaseNode.getCoor().greatCircleDistance(mouseLatLon);
+                double hdg = Math.toDegrees(p0.heading(snapPoint));
+                if (previousNode != null) {
+                    angle = hdg - Math.toDegrees(previousNode.getEastNorth().heading(p0));
+                    angle += angle < 0 ? 360 : 0;
+                    if (Math.abs(angle-360)<1e-4) angle=0;
+                }
+                
+                showStausInfo(angle, hdg, distance);
            } else {
                 noSnapNow();
            }
@@ -1359,6 +1382,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             checkBox.setState(snapOn);
         }
         
+        private void enableSnapping() {
+            snapOn = true;
+            checkBox.setState(snapOn);
+            unsetFixedMode();
+        }
+        
         private void toggleSnapping() {
             snapOn = !snapOn;
             checkBox.setState(snapOn);
@@ -1368,7 +1397,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         public void setFixedMode() {
             if (active) { fixed=true; }
         }
-        
+                
         
         public  void unsetFixedMode() {
             fixed=false; absoluteFix=false;
@@ -1405,6 +1434,47 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         private void unFixOrTurnOff() {
             if (absoluteFix) unsetFixedMode(); else toggleSnapping();
         }
+        
+        MouseListener anglePopupListener = new PopupMenuLauncher( new JPopupMenu() {
+            {  
+               add(new JCheckBoxMenuItem(new AbstractAction(tr("Show helper geometry")){
+                    public void actionPerformed(ActionEvent e) {
+                        boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
+                        Main.pref.put("draw.anglesnap.drawConstructionGeometry", sel);
+                        Main.pref.put("draw.anglesnap.drawProjectedPoint", sel);
+                        Main.pref.put("draw.anglesnap.showAngle", sel);
+                        init(); enableSnapping();
+                    }
+               }));
+               add(new AbstractAction(tr("0,90,...")) {
+                public void actionPerformed(ActionEvent e) {
+                    saveAngles("0","90");
+                    init(); enableSnapping();
+                }
+               });
+               add(new AbstractAction(tr("0,45,90,...")) {
+                public void actionPerformed(ActionEvent e) {
+                    saveAngles("0","45","90","135");
+                    init(); enableSnapping();
+                }
+               });
+               add(new AbstractAction(tr("0,30,45,60,90,...")) {
+                public void actionPerformed(ActionEvent e) {
+                    saveAngles("0","30","45","60","90","120","135","150");
+                    init(); enableSnapping();
+                }
+               });
+        }
+    }) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (e.getButton()==MouseEvent.BUTTON1) {
+                    toggleSnapping();
+                    updateStatusLine();
+                }
+            }
+    };
     }
     
     private class SnapChangeAction extends JosmAction {

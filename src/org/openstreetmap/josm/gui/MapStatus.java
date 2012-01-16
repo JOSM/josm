@@ -16,6 +16,7 @@ import java.awt.Point;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
+import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -30,7 +31,9 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -47,6 +50,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor.ProgressMonitorDialog;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -680,7 +684,7 @@ public class MapStatus extends JPanel implements Helpful {
 
         lonText.addMouseListener(Main.main.menu.jumpToAct);
         latText.addMouseListener(Main.main.menu.jumpToAct);
-
+        
         // Listen for mouse movements and set the position text field
         mv.addMouseMotionListener(new MouseMotionListener(){
             public void mouseDragged(MouseEvent e) {
@@ -732,6 +736,10 @@ public class MapStatus extends JPanel implements Helpful {
         thread = new Thread(collector, "Map Status Collector");
         thread.setDaemon(true);
         thread.start();
+    }
+    
+    public JPanel getAnglePanel() {
+        return angleText;
     }
 
     public String helpTopic() {
