@@ -719,7 +719,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         mouseOnExistingNode = null;
         mouseOnExistingWays = new HashSet<Way>();
 
-        showStausInfo(-1, -1, -1);
+        showStatusInfo(-1, -1, -1);
 
         if (!ctrl && mousePos != null) {
             currentMouseNode = mv.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
@@ -764,14 +764,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // find out the distance, in metres, between the base point and the mouse cursor
             LatLon mouseLatLon = mv.getProjection().eastNorth2latlon(currentMouseEastNorth);
             distance = currentBaseNode.getCoor().greatCircleDistance(mouseLatLon);
-            showStausInfo(angle, hdg, distance);
+            showStatusInfo(angle, hdg, distance);
         } // elsewhere status ar was filled by snapHelper
         
         // Now done in redrawIfRequired()
         //updateStatusLine();
     }
 
-    private void showStausInfo(double angle, double hdg, double distance) {
+    private void showStatusInfo(double angle, double hdg, double distance) {
         Main.map.statusLine.setAngle(angle);
         Main.map.statusLine.setHeading(hdg);
         Main.map.statusLine.setDist(distance);
@@ -1337,7 +1337,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     if (Math.abs(angle-360)<1e-4) angle=0;
                 }
                 
-                showStausInfo(angle, hdg, distance);
+                showStatusInfo(angle, hdg, distance);
            } else {
                 noSnapNow();
            }
