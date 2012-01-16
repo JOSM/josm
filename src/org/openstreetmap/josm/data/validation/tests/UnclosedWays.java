@@ -27,7 +27,7 @@ public class UnclosedWays extends Test {
      * Constructor
      */
     public UnclosedWays() {
-        super(tr("Unclosed Ways."), tr("This tests if ways which should be circular are closed."));
+        super(tr("Unclosed Ways"), tr("This tests if ways which should be circular are closed."));
     }
 
     @Override

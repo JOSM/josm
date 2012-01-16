@@ -38,7 +38,7 @@ public class SimilarNamedWays extends Test {
      * Constructor
      */
     public SimilarNamedWays() {
-        super(tr("Similarly named ways."),
+        super(tr("Similarly named ways"),
                 tr("This test checks for ways with similar names that may have been misspelled."));
     }
 

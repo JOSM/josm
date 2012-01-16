@@ -42,7 +42,7 @@ public class Coastlines extends Test {
      * Constructor
      */
     public Coastlines() {
-        super(tr("Coastlines."),
+        super(tr("Coastlines"),
                 tr("This test checks that coastlines are correct."));
     }
 

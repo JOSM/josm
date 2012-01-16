@@ -42,7 +42,7 @@ public class OverlappingWays extends Test {
 
     /** Constructor */
     public OverlappingWays() {
-        super(tr("Overlapping ways."),
+        super(tr("Overlapping ways"),
               tr("This test checks that a connection between two nodes "
                 + "is not used by more than one way."));
     }

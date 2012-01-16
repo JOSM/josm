@@ -23,7 +23,7 @@ public class DeprecatedTags extends Test {
     private List<DeprecationCheck> checks = new LinkedList<DeprecationCheck>();
 
     public DeprecatedTags() {
-        super(tr("Deprecated Tags"), tr("Checks and corrects deprecated tags"));
+        super(tr("Deprecated Tags"), tr("Checks and corrects deprecated tags."));
         checks.add(new DeprecationCheck(2101).
                 testAndRemove("barrier", "wire_fence").
                 add("barrier", "fence").

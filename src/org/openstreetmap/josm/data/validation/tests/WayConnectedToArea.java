@@ -15,7 +15,7 @@ import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 public class WayConnectedToArea extends Test {
 
     public WayConnectedToArea() {
-        super(tr("Way connected to Area"));
+        super(tr("Way connected to Area"), tr("Checks for ways connected to areas."));
     }
 
     @Override

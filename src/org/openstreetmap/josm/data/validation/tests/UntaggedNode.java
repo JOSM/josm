@@ -36,7 +36,7 @@ public class UntaggedNode extends Test {
      * Constructor
      */
     public UntaggedNode() {
-        super(tr("Untagged and unconnected nodes."),
+        super(tr("Untagged and unconnected nodes"),
                 tr("This test checks for untagged nodes that are not part of any way."));
     }
 

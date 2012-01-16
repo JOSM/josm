@@ -26,7 +26,7 @@ public class WronglyOrderedWays extends Test {
      * Constructor
      */
     public WronglyOrderedWays() {
-        super(tr("Wrongly Ordered Ways."),
+        super(tr("Wrongly Ordered Ways"),
               tr("This test checks the direction of water, land and coastline ways."));
     }
 

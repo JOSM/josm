@@ -36,7 +36,7 @@ public class TurnrestrictionTest extends Test {
     protected static final int UNCONNECTED_VIA = 1814;
 
     public TurnrestrictionTest() {
-        super(tr("Turnrestriction"), tr("This test checks if turnrestrictions are valid"));
+        super(tr("Turnrestrictions"), tr("This test checks if turnrestrictions are valid"));
     }
 
     @Override

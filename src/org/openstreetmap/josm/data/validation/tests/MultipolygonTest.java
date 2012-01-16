@@ -50,7 +50,7 @@ public class MultipolygonTest extends Test {
 
     public MultipolygonTest() {
         super(tr("Multipolygon"),
-                tr("This test checks if multipolygons are valid"));
+                tr("This test checks if multipolygons are valid."));
     }
 
     @Override

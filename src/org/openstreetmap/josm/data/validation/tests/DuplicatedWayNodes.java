@@ -20,7 +20,7 @@ public class DuplicatedWayNodes extends Test {
     protected static int DUPLICATE_WAY_NODE = 501;
 
     public DuplicatedWayNodes() {
-        super(tr("Duplicated way nodes."),
+        super(tr("Duplicated way nodes"),
             tr("Checks for ways with identical consecutive nodes."));
     }
 
