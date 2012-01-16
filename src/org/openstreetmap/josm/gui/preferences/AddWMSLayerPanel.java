@@ -346,7 +346,16 @@ public class AddWMSLayerPanel extends JPanel {
             BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
             String line;
             StringBuilder ba = new StringBuilder();
-            while((line = br.readLine()) != null) {
+            boolean isFirstLine = true;
+            while ((line = br.readLine()) != null) {
+                // fix #7271
+                // see http://www.rgagnon.com/javadetails/java-handle-utf8-file-with-bom.html
+                final String UTF8_BOM = "\uFEFF";
+                if (isFirstLine && line.startsWith(UTF8_BOM)) {
+                    System.out.println("Removing UTF8_BOM (0xFEFF) from GetCapabilities response");
+                    line = line.substring(1);
+                    isFirstLine = false;
+                }
                 ba.append(line);
                 ba.append("\n");
             }
