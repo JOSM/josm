@@ -17,7 +17,6 @@ import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -59,6 +58,7 @@ import org.openstreetmap.josm.data.projection.ProjectionSubPrefs;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
+import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -343,19 +343,10 @@ public class AddWMSLayerPanel extends JPanel {
             System.out.println("GET "+getCapabilitiesUrl.toString());
             URLConnection openConnection = getCapabilitiesUrl.openConnection();
             InputStream inputStream = openConnection.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+            BufferedReader br = new BufferedReader(UTFInputStreamReader.create(inputStream, "UTF-8"));
             String line;
             StringBuilder ba = new StringBuilder();
-            boolean isFirstLine = true;
             while ((line = br.readLine()) != null) {
-                // fix #7271
-                // see http://www.rgagnon.com/javadetails/java-handle-utf8-file-with-bom.html
-                final String UTF8_BOM = "\uFEFF";
-                if (isFirstLine && line.startsWith(UTF8_BOM)) {
-                    System.out.println("Removing UTF8_BOM (0xFEFF) from GetCapabilities response");
-                    line = line.substring(1);
-                    isFirstLine = false;
-                }
                 ba.append(line);
                 ba.append("\n");
             }
