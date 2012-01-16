@@ -41,7 +41,7 @@ public class CrossingWays extends Test {
      * Constructor
      */
     public CrossingWays() {
-        super(tr("Crossing ways."),
+        super(tr("Crossing ways"),
               tr("This test checks if two roads, railways, waterways or buildings crosses in the same layer, but are not connected by a node."));
     }
 

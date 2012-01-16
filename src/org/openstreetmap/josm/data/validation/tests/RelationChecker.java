@@ -40,7 +40,7 @@ public class RelationChecker extends Test {
      * Constructor
      */
     public RelationChecker() {
-        super(tr("Relation checker :"),
+        super(tr("Relation checker"),
                 tr("This plugin checks for errors in relations."));
     }
 

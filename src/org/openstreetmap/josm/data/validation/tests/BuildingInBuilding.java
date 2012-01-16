@@ -28,7 +28,7 @@ public class BuildingInBuilding extends Test {
     protected QuadBuckets<Way> index = new QuadBuckets<Way>();
 
     public BuildingInBuilding() {
-        super(tr("Building inside building"));
+        super(tr("Building inside building"), tr("Checks for building areas inside of buildings."));
     }
 
     @Override

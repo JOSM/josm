@@ -135,7 +135,7 @@ public class DuplicateRelation extends Test
      */
     public DuplicateRelation()
     {
-        super(tr("Duplicated relations."),
+        super(tr("Duplicated relations"),
                 tr("This test checks that there are no relations with same tags and same members with same roles."));
     }
 

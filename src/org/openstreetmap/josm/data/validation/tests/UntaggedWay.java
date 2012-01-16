@@ -57,7 +57,7 @@ public class UntaggedWay extends Test
      * Constructor
      */
     public UntaggedWay() {
-        super(tr("Untagged, empty and one node ways."),
+        super(tr("Untagged, empty and one node ways"),
               tr("This test checks for untagged, empty and one node ways."));
     }
 

@@ -33,7 +33,7 @@ public class NameMismatch extends Test {
     protected static final int NAME_TRANSLATION_MISSING = 1502;
 
     public NameMismatch() {
-        super(tr("Missing name:* translation."),
+        super(tr("Missing name:* translation"),
             tr("This test finds multilingual objects whose ''name'' attribute is not equal to some ''name:*'' attribute and not a composition of ''name:*'' attributes, e.g., Italia - Italien - Italy."));
     }
 

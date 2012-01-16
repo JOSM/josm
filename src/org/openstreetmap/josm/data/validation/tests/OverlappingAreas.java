@@ -20,7 +20,7 @@ public class OverlappingAreas extends Test {
     protected QuadBuckets<Way> index = new QuadBuckets<Way>();
 
     public OverlappingAreas() {
-        super(tr("Overlapping Areas"));
+        super(tr("Overlapping Areas"), tr("This test checks if areas overlap."));
     }
 
     @Override

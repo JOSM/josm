@@ -85,7 +85,7 @@ public class DuplicateWay extends Test
      * Constructor
      */
     public DuplicateWay() {
-        super(tr("Duplicated ways."),
+        super(tr("Duplicated ways"),
               tr("This test checks that there are no ways with same node coordinates and optionally also same tags."));
     }
 
