@@ -52,7 +52,7 @@ public class WmsCache {
     //TODO Measure time for partially loading from cache, compare with time to download tile. If slower, disable partial cache
     //TODO Do loading from partial cache and downloading at the same time, don't wait for partical cache to load
 
-    private static final StringProperty PROP_CACHE_PATH = new StringProperty("imagery.wms-cache.path", "wms-cache");
+    private static final StringProperty PROP_CACHE_PATH = new StringProperty("imagery.wms-cache.path", new File(Main.pref.getCacheDirectory(), "wms").getPath());
     private static final String INDEX_FILENAME = "index.xml";
     private static final String LAYERS_INDEX_FILENAME = "layers.properties";
 
@@ -99,7 +99,7 @@ public class WmsCache {
         String cPath = PROP_CACHE_PATH.get();
         if (!(cPath.startsWith("/") || cPath.startsWith(":/",1))) {
             //Not an absolute path
-            cPath = Main.pref.getPreferencesDir() + cPath;
+            cPath = Main.pref.getCacheDirectory() + cPath;
         }
         return cPath;
     }

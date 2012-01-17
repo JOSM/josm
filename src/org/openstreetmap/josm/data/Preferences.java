@@ -81,6 +81,10 @@ public class Preferences {
      * @see #getPreferencesDirFile()
      */
     private File preferencesDirFile = null;
+    /**
+     * Internal storage for the cache directory.
+     */
+    private File cacheDirFile = null;
 
     /**
      * Map the property name to strings. Does not contain null or "" values.
@@ -270,17 +274,29 @@ public class Preferences {
     }
     
     public File getCacheDirectory() {
-        File cache = new File(getPreferencesDirFile(), "cache");
-        if (!cache.exists() && !cache.mkdirs()) {
-            System.err.println(tr("Warning: Failed to create missing cache directory: {0}", cache.getAbsoluteFile()));
+        if (cacheDirFile != null)
+            return cacheDirFile;
+        String path = System.getProperty("josm.cache");
+        if (path != null) {
+            cacheDirFile = new File(path).getAbsoluteFile();
+        } else {
+            path = Main.pref.get("cache.folder", null);
+            if (path != null) {
+                cacheDirFile = new File(path);
+            } else {
+                cacheDirFile = new File(getPreferencesDirFile(), "cache");
+            }
+        }
+        if (!cacheDirFile.exists() && !cacheDirFile.mkdirs()) {
+            System.err.println(tr("Warning: Failed to create missing cache directory: {0}", cacheDirFile.getAbsoluteFile()));
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("<html>Failed to create missing cache directory: {0}</html>",cache.getAbsoluteFile()),
+                    tr("<html>Failed to create missing cache directory: {0}</html>", cacheDirFile.getAbsoluteFile()),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );
         }
-        return cache;
+        return cacheDirFile;
     }
 
     /**
