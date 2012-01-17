@@ -199,7 +199,7 @@ public class TagChecker extends Test
             return;
         for (String source : sources.split(";")) {
             try {
-                MirroredInputStream s = new MirroredInputStream(source, OsmValidator.getValidatorDir(), -1);
+                MirroredInputStream s = new MirroredInputStream(source);
                 InputStreamReader r;
                 try {
                     r = new InputStreamReader(s, "UTF-8");
