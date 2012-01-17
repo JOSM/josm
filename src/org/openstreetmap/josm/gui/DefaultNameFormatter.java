@@ -225,7 +225,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                             (way.get("highway") != null) ? tr("highway") :
                                 (way.get("railway") != null) ? tr("railway") :
                                     (way.get("waterway") != null) ? tr("waterway") :
-                                        (way.get("building") != null) ? tr("building") :
                                             (way.get("landuse") != null) ? tr("landuse") : null;
                 }
                 if(n == null)
@@ -248,6 +247,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                         }
                     }
                 }
+                if(n == null && way.get("building") != null) n = tr("building");
                 if(n == null || n.length() == 0) {
                     n = String.valueOf(way.getId());
                 }
