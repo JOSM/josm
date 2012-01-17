@@ -77,7 +77,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
     public CacheCustomContent(String ident, int updateInterval) {
         this.ident = ident;
         this.updateInterval = updateInterval;
-        this.path = new File(Main.pref.getPreferencesDir(), ident);
+        this.path = new File(Main.pref.getCacheDirectory(), ident);
     }
 
     /**
@@ -85,7 +85,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * @return Returns the data
      */
     public byte[] updateIfRequired() throws T {
-        if(Main.pref.getInteger("cache." + ident, 0) + updateInterval < new Date().getTime()/1000
+        if (Main.pref.getInteger("cache." + ident, 0) + updateInterval < new Date().getTime()/1000
                 || !isCacheValid())
             return updateForce();
         return getData();
@@ -96,7 +96,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * @return Returns the data as string
      */
     public String updateIfRequiredString() throws T {
-        if(Main.pref.getInteger("cache." + ident, 0) + updateInterval < new Date().getTime()/1000
+        if (Main.pref.getInteger("cache." + ident, 0) + updateInterval < new Date().getTime()/1000
                 || !isCacheValid())
             return updateForceString();
         return getDataString();
@@ -120,8 +120,8 @@ public abstract class CacheCustomContent<T extends Throwable> {
     public String updateForceString() throws T {
         updateForce();
         try {
-            return new String(data,"utf-8");
-        } catch(UnsupportedEncodingException e){
+            return new String(data, "utf-8");
+        } catch (UnsupportedEncodingException e){
             e.printStackTrace();
             return "";
         }
@@ -132,7 +132,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * @return the data
      */
     public byte[] getData() throws T {
-        if(data == null) {
+        if (data == null) {
             loadFromDisk();
         }
         return data;
@@ -155,7 +155,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * Tries to load the data using the given ident from disk. If this fails, data will be updated
      */
     private void loadFromDisk() throws T {
-        if(Main.applet)
+        if (Main.applet)
             this.data = updateForce();
         else {
             try {
@@ -163,7 +163,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
                 this.data = new byte[input.available()];
                 input.read(this.data);
                 input.close();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 this.data = updateForce();
             }
         }
@@ -173,7 +173,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * Stores the data to disk
      */
     private void saveToDisk() {
-        if(Main.applet)
+        if (Main.applet)
             return;
         try {
             BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(path));

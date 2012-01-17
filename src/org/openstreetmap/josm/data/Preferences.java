@@ -268,6 +268,20 @@ public class Preferences {
     public File getPluginsDirectory() {
         return new File(getPreferencesDirFile(), "plugins");
     }
+    
+    public File getCacheDirectory() {
+        File cache = new File(getPreferencesDirFile(), "cache");
+        if (!cache.exists() && !cache.mkdirs()) {
+            System.err.println(tr("Warning: Failed to create missing cache directory: {0}", cache.getAbsoluteFile()));
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("<html>Failed to create missing cache directory: {0}</html>",cache.getAbsoluteFile()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+        return cache;
+    }
 
     /**
      * @return A list of all existing directories where resources could be stored.
