@@ -245,7 +245,7 @@ public class Preferences {
         String path;
         path = System.getProperty("josm.home");
         if (path != null) {
-            preferencesDirFile = new File(path);
+            preferencesDirFile = new File(path).getAbsoluteFile();
         } else {
             path = System.getenv("APPDATA");
             if (path != null) {
