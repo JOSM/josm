@@ -82,7 +82,7 @@ public class GpxReader {
                     parseCoord(atts.getValue("lon")));
         }
 
-        @Override public void startElement(String namespaceURI, String qName, String rqName, Attributes atts) throws SAXException {
+        @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
             elements.push(qName);
             switch(currentState) {
             case init:
@@ -214,7 +214,7 @@ public class GpxReader {
         }
 
         @SuppressWarnings("unchecked")
-        @Override public void endElement(String namespaceURI, String qName, String rqName) {
+        @Override public void endElement(String namespaceURI, String localName, String qName) {
             elements.pop();
             switch (currentState) {
             case metadata:
@@ -366,7 +366,8 @@ public class GpxReader {
         Parser parser = new Parser();
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
+            // support files with invalid xml namespace declarations (see #7247)
+            factory.setNamespaceAware(false);
             factory.newSAXParser().parse(inputSource, parser);
             return true;
         } catch (SAXException e) {
