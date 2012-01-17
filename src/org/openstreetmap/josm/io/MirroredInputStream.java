@@ -23,6 +23,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Mirrors a file to a local file.
@@ -68,7 +69,7 @@ public class MirroredInputStream extends InputStream {
                     file = new File(name.substring("file://".length()));
                 }
             } else {
-                if(Main.applet) {
+                if (Main.applet) {
                     URLConnection conn = url.openConnection();
                     conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
                     conn.setReadTimeout(Main.pref.getInteger("socket.timeout.read",30)*1000);
@@ -79,7 +80,7 @@ public class MirroredInputStream extends InputStream {
                 }
             }
         } catch (java.net.MalformedURLException e) {
-            if(name.startsWith("resource://")) {
+            if (name.startsWith("resource://")) {
                 fs = getClass().getResourceAsStream(
                         name.substring("resource:/".length()));
                 if (fs == null)
@@ -160,7 +161,7 @@ public class MirroredInputStream extends InputStream {
                         lfile.delete();
                     }
                 }
-                Main.pref.put(prefKey, null);
+                Main.pref.putCollection(prefKey, null);
             }
         } catch (java.net.MalformedURLException e) {}
     }
@@ -173,10 +174,6 @@ public class MirroredInputStream extends InputStream {
     private static String getPrefKey(URL url, String destDir) {
         StringBuilder prefKey = new StringBuilder("mirror.");
         if (destDir != null) {
-            String prefDir = Main.pref.getPreferencesDir();
-            if (destDir.startsWith(prefDir)) {
-                destDir = destDir.substring(prefDir.length());
-            }
             prefKey.append(destDir);
             prefKey.append(".");
         }
@@ -197,7 +194,7 @@ public class MirroredInputStream extends InputStream {
                 if ( maxTime == DEFAULT_MAXTIME
                         || maxTime <= 0 // arbitrary value <= 0 is deprecated
                 ) {
-                    maxTime = Main.pref.getInteger("mirror.maxtime", 7*24*60*60);
+                    maxTime = Main.pref.getInteger("mirror.maxtime", 7*24*60*60); // one week
                 }
                 age = System.currentTimeMillis() - Long.parseLong(localPathEntry.get(0));
                 if (age < maxTime*1000) {
@@ -205,8 +202,8 @@ public class MirroredInputStream extends InputStream {
                 }
             }
         }
-        if(destDir == null) {
-            destDir = Main.pref.getPreferencesDir();
+        if (destDir == null) {
+            destDir = Main.pref.getCacheDirectory().getPath();
         }
 
         File destDirFile = new File(destDir);
@@ -251,20 +248,8 @@ public class MirroredInputStream extends InputStream {
                 throw e;
             }
         } finally {
-            if (bis != null) {
-                try {
-                    bis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (bos != null) {
-                try {
-                    bos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            Utils.close(bis);
+            Utils.close(bos);
         }
 
         return localFile;
