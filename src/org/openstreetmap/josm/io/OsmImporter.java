@@ -21,8 +21,10 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public class OsmImporter extends FileImporter {
 
-    protected OsmDataLayer layer;
-    protected Runnable postLayerTask;
+    protected class OsmImporterData {
+        public OsmDataLayer layer;
+        public Runnable postLayerTask;
+    }
 
     public OsmImporter() {
         super(new ExtensionFileFilter("osm,xml", "osm", tr("OSM Server Files") + " (*.osm *.xml)"));
@@ -44,18 +46,16 @@ public class OsmImporter extends FileImporter {
     }
 
     protected void importData(InputStream in, final File associatedFile) throws IllegalDataException {
-        loadLayer(in, associatedFile, associatedFile == null ? OsmDataLayer.createNewName() : associatedFile.getName(), NullProgressMonitor.INSTANCE);
-
-        final OsmDataLayer layer = this.layer;
-        final Runnable postLayerTask = this.postLayerTask;
+        final OsmImporterData data = loadLayer(in, associatedFile, 
+                associatedFile == null ? OsmDataLayer.createNewName() : associatedFile.getName(), NullProgressMonitor.INSTANCE);
 
         // FIXME: remove UI stuff from IO subsystem
         GuiHelper.runInEDT(new Runnable() {
             @Override
             public void run() {
-                Main.main.addLayer(layer);
-                postLayerTask.run();
-                layer.onPostLoadFromFile();
+                Main.main.addLayer(data.layer);
+                data.postLayerTask.run();
+                data.layer.onPostLoadFromFile();
             }
         });
     }
@@ -64,13 +64,15 @@ public class OsmImporter extends FileImporter {
      * Load osm data layer from InputStream.
      * associatedFile can be null if the stream does not come from a file.
      */
-    public void loadLayer(InputStream in, final File associatedFile, final String layerName, ProgressMonitor progressMonitor) throws IllegalDataException {
+    public OsmImporterData loadLayer(InputStream in, final File associatedFile, final String layerName, ProgressMonitor progressMonitor) throws IllegalDataException {
         final DataSet dataSet = parseDataSet(in, progressMonitor);
         if (dataSet == null) {
             throw new IllegalDataException(tr("Invalid dataset"));
         }
-        layer = createLayer(dataSet, associatedFile, layerName);
-        postLayerTask = createPostLayerTask(dataSet, associatedFile, layerName);
+        OsmImporterData data = new OsmImporterData();
+        data.layer = createLayer(dataSet, associatedFile, layerName);
+        data.postLayerTask = createPostLayerTask(dataSet, associatedFile, layerName, data.layer);
+        return data;
     }
     
     protected DataSet parseDataSet(InputStream in, ProgressMonitor progressMonitor) throws IllegalDataException {
@@ -81,7 +83,7 @@ public class OsmImporter extends FileImporter {
         return new OsmDataLayer(dataSet, layerName, associatedFile);
     }
     
-    protected Runnable createPostLayerTask(final DataSet dataSet, final File associatedFile, final String layerName) {
+    protected Runnable createPostLayerTask(final DataSet dataSet, final File associatedFile, final String layerName, final OsmDataLayer layer) {
         return new Runnable() {
             @Override
             public void run() {
@@ -101,13 +103,5 @@ public class OsmImporter extends FileImporter {
                 layer.onPostLoadFromFile();
             }
         };
-    }
-
-    public OsmDataLayer getLayer() {
-        return layer;
-    }
-
-    public Runnable getPostLayerTask() {
-        return postLayerTask;
     }
 }
