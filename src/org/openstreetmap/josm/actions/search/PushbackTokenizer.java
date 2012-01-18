@@ -47,7 +47,7 @@ public class PushbackTokenizer {
     }
 
     public enum Token {
-        NOT(marktr("<not>")), OR(marktr("<or>")), LEFT_PARENT(marktr("<left parent>")),
+        NOT(marktr("<not>")), OR(marktr("<or>")), XOR(marktr("<xor>")), LEFT_PARENT(marktr("<left parent>")),
         RIGHT_PARENT(marktr("<right parent>")), COLON(marktr("<colon>")), EQUALS(marktr("<equals>")),
         KEY(marktr("<key>")), QUESTION_MARK(marktr("<question mark>")),
         EOF(marktr("<end-of-file>"));
@@ -73,7 +73,7 @@ public class PushbackTokenizer {
         }
     }
 
-    private static final List<Character> specialChars = Arrays.asList(new Character[] {'"', ':', '(', ')', '|', '=', '?'});
+    private static final List<Character> specialChars = Arrays.asList(new Character[] {'"', ':', '(', ')', '|', '^', '=', '?'});
     private static final List<Character> specialCharsQuoted = Arrays.asList(new Character[] {'"'});
 
     private String getString(boolean quoted) {
@@ -101,6 +101,7 @@ public class PushbackTokenizer {
      * - for an '-'. This will be the only character
      * : for an key. The value is the next token
      * | for "OR"
+     * ^ for "XOR"
      * ' ' for anything else.
      * @return The next token in the stream.
      */
@@ -133,6 +134,9 @@ public class PushbackTokenizer {
         case '|':
             getChar();
             return Token.OR;
+        case '^':
+            getChar();
+            return Token.XOR;
         case '&':
             getChar();
             return nextToken();
@@ -155,7 +159,9 @@ public class PushbackTokenizer {
             currentText = prefix + getString();
             if ("or".equalsIgnoreCase(currentText))
                 return Token.OR;
-            if ("and".equalsIgnoreCase(currentText))
+            else if ("xor".equalsIgnoreCase(currentText))
+                return Token.XOR;
+            else if ("and".equalsIgnoreCase(currentText))
                 return nextToken();
             // try parsing number
             try {

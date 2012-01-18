@@ -7,8 +7,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.PushbackReader;
 import java.io.StringReader;
 import java.text.Normalizer;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -54,14 +57,152 @@ public class SearchCompiler {
     private static String  rxErrorMsg = marktr("The regex \"{0}\" had a parse error at offset {1}, full error:\n\n{2}");
     private static String  rxErrorMsgNoPos = marktr("The regex \"{0}\" had a parse error, full error:\n\n{1}");
     private PushbackTokenizer tokenizer;
+    private static Map<String, SimpleMatchFactory> simpleMatchFactoryMap = new HashMap<String, SimpleMatchFactory>();
+    private static Map<String, UnaryMatchFactory> unaryMatchFactoryMap = new HashMap<String, UnaryMatchFactory>();
+    private static Map<String, BinaryMatchFactory> binaryMatchFactoryMap = new HashMap<String, BinaryMatchFactory>();
 
     public SearchCompiler(boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) {
         this.caseSensitive = caseSensitive;
         this.regexSearch = regexSearch;
         this.tokenizer = tokenizer;
+
+        /* register core match factories at first instance, so plugins should
+         * never be able to generate a NPE
+         */
+        if (simpleMatchFactoryMap.isEmpty()) {
+            addMatchFactory(new CoreSimpleMatchFactory());
+        }
+        if (unaryMatchFactoryMap.isEmpty()) {
+            addMatchFactory(new CoreUnaryMatchFactory());
+        }
+
     }
 
+    /**
+     * Add (register) MatchFactory with SearchCompiler
+     * @param factory
+     */
+    public static void addMatchFactory(MatchFactory factory) {
+        for (String keyword : factory.getKeywords()) {
+            // TODO: check for keyword collisions
+            if (factory instanceof SimpleMatchFactory) {
+                simpleMatchFactoryMap.put(keyword, (SimpleMatchFactory)factory);
+            } else if (factory instanceof UnaryMatchFactory) {
+                unaryMatchFactoryMap.put(keyword, (UnaryMatchFactory)factory);
+            } else if (factory instanceof BinaryMatchFactory) {
+                binaryMatchFactoryMap.put(keyword, (BinaryMatchFactory)factory);
+            } else
+                throw new AssertionError("Unknown match factory");
+        }
+    }
+
+    public class CoreSimpleMatchFactory implements SimpleMatchFactory {
+        private Collection<String> keywords = Arrays.asList("id", "version",
+                "changeset", "nodes", "tags", "areasize", "modified", "selected",
+                "incomplete", "untagged", "closed", "new", "indownloadarea",
+                "allindownloadarea", "inview", "allinview", "timestamp");
+
+        @Override
+        public Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError {
+            if ("id".equals(keyword))
+                return new Id(tokenizer);
+            else if ("version".equals(keyword))
+                return new Version(tokenizer);
+            else if ("changeset".equals(keyword))
+                return new ChangesetId(tokenizer);
+            else if ("nodes".equals(keyword))
+                return new NodeCountRange(tokenizer);
+            else if ("tags".equals(keyword))
+                return new TagCountRange(tokenizer);
+            else if ("areasize".equals(keyword))
+                return new AreaSize(tokenizer);
+            else if ("modified".equals(keyword))
+                return new Modified();
+            else if ("selected".equals(keyword))
+                return new Selected();
+            else if ("incomplete".equals(keyword))
+                return new Incomplete();
+            else if ("untagged".equals(keyword))
+                return new Untagged();
+            else if ("closed".equals(keyword))
+                return new Closed();
+            else if ("new".equals(keyword))
+                return new New();
+            else if ("indownloadedarea".equals(keyword))
+                return new InDataSourceArea(false);
+            else if ("allindownloadedarea".equals(keyword))
+                return new InDataSourceArea(true);
+            else if ("inview".equals(keyword))
+                return new InView(false);
+            else if ("allinview".equals(keyword))
+                return new InView(true);
+            else if ("timestamp".equals(keyword)) {
+                String rangeS = " " + tokenizer.readTextOrNumber() + " "; // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
+                String[] rangeA = rangeS.split("/");
+                if (rangeA.length == 1)
+                    return new KeyValue(keyword, rangeS, regexSearch, caseSensitive);
+                else if (rangeA.length == 2) {
+                    String rangeA1 = rangeA[0].trim();
+                    String rangeA2 = rangeA[1].trim();
+                    long minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime(); // if min timestap is empty: use lowest possible date
+                    long maxDate = rangeA2.isEmpty() ? new Date().getTime() : DateUtils.fromString(rangeA2).getTime(); // if max timestamp is empty: use "now"
+                    return new TimestampRange(minDate, maxDate);
+                } else
+                    /*
+                     * I18n: Don't translate timestamp keyword
+                     */ throw new ParseError(tr("Expecting <i>min</i>/<i>max</i> after ''timestamp''"));
+            } else
+                return null;
+        }
+
+        @Override
+        public Collection<String> getKeywords() {
+            return keywords;
+        }
+    }
+
+    public static class CoreUnaryMatchFactory implements UnaryMatchFactory {
+        private static Collection<String> keywords = Arrays.asList("parent", "child");
+
+        @Override
+        public UnaryMatch get(String keyword, Match matchOperand, PushbackTokenizer tokenizer) {
+            if ("parent".equals(keyword))
+                return new Parent(matchOperand);
+            else if ("child".equals(keyword))
+                return new Child(matchOperand);
+            return null;
+        }
+
+        @Override
+        public Collection<String> getKeywords() {
+            return keywords;
+        }
+    }
+
+    /**
+     * Classes implementing this interface can provide Match operators.
+     */
+    private interface MatchFactory {
+        public Collection<String> getKeywords();
+    }
+
+    public interface SimpleMatchFactory extends MatchFactory {
+        public Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError;
+    }
+
+    public interface UnaryMatchFactory extends MatchFactory {
+        public UnaryMatch get(String keyword, Match matchOperand, PushbackTokenizer tokenizer) throws ParseError;
+    }
+
+    public interface BinaryMatchFactory extends MatchFactory {
+        public BinaryMatch get(String keyword, Match lhs, Match rhs, PushbackTokenizer tokenizer) throws ParseError;
+    }
+
+    /**
+     * Base class for all search operators.
+     */
     abstract public static class Match {
+
         abstract public boolean match(OsmPrimitive osm);
 
         /**
@@ -87,6 +228,53 @@ public class SearchCompiler {
         }
     }
 
+    /**
+     * A unary search operator which may take data parameters.
+     */
+    abstract public static class UnaryMatch extends Match {
+
+        protected final Match match;
+
+        public UnaryMatch(Match match) {
+            if (match == null) {
+                // "operator" (null) should mean the same as "operator()"
+                // (Always). I.e. match everything
+                this.match = new Always();
+            } else {
+                this.match = match;
+            }
+        }
+
+        public Match getOperand() {
+            return match;
+        }
+    }
+
+    /**
+     * A binary search operator which may take data parameters.
+     */
+    abstract public static class BinaryMatch extends Match {
+
+        protected final Match lhs;
+        protected final Match rhs;
+
+        public BinaryMatch(Match lhs, Match rhs) {
+            this.lhs = lhs;
+            this.rhs = rhs;
+        }
+
+        public Match getLhs() {
+            return lhs;
+        }
+
+        public Match getRhs() {
+            return rhs;
+        }
+    }
+
+    /**
+     * Matches every OsmPrimitive.
+     */
     public static class Always extends Match {
         public static Always INSTANCE = new Always();
         @Override public boolean match(OsmPrimitive osm) {
@@ -94,6 +282,9 @@ public class SearchCompiler {
         }
     }
 
+    /**
+     * Never matches any OsmPrimitive.
+     */
     public static class Never extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
@@ -101,9 +292,11 @@ public class SearchCompiler {
         }
     }
 
-    public static class Not extends Match {
-        private final Match match;
-        public Not(Match match) {this.match = match;}
+    /**
+     * Inverts the match.
+     */
+    public static class Not extends UnaryMatch {
+        public Not(Match match) {super(match);}
         @Override public boolean match(OsmPrimitive osm) {
             return !match.match(osm);
         }
@@ -113,6 +306,9 @@ public class SearchCompiler {
         }
     }
 
+    /**
+     * Matches if the value of the corresponding key is ''yes'', ''true'', ''1'' or ''on''.
+     */
     private static class BooleanMatch extends Match {
         private final String key;
         private final boolean defaultValue;
@@ -131,42 +327,55 @@ public class SearchCompiler {
         }
     }
 
-    public static class And extends Match {
-        private final Match lhs;
-        private final Match rhs;
-        public And(Match lhs, Match rhs) {this.lhs = lhs; this.rhs = rhs;}
+    /**
+     * Matches if both left and right expressions match.
+     */
+    public static class And extends BinaryMatch {
+    public And(Match lhs, Match rhs) {super(lhs, rhs);}
         @Override public boolean match(OsmPrimitive osm) {
             return lhs.match(osm) && rhs.match(osm);
         }
-        @Override public String toString() {return lhs+" && "+rhs;}
-        public Match getLhs() {
-            return lhs;
-        }
-        public Match getRhs() {
-            return rhs;
+        @Override public String toString() {
+            return lhs + " && " + rhs;
         }
     }
 
-    public static class Or extends Match {
-        private final Match lhs;
-        private final Match rhs;
-        public Or(Match lhs, Match rhs) {this.lhs = lhs; this.rhs = rhs;}
+    /**
+     * Matches if the left OR the right expression match.
+     */
+    public static class Or extends BinaryMatch {
+    public Or(Match lhs, Match rhs) {super(lhs, rhs);}
         @Override public boolean match(OsmPrimitive osm) {
             return lhs.match(osm) || rhs.match(osm);
         }
-        @Override public String toString() {return lhs+" || "+rhs;}
-        public Match getLhs() {
-            return lhs;
-        }
-        public Match getRhs() {
-            return rhs;
+        @Override public String toString() {
+            return lhs + " || " + rhs;
         }
     }
 
+    /**
+     * Matches if the left OR the right expression match, but not both.
+     */
+    public static class Xor extends BinaryMatch {
+    public Xor(Match lhs, Match rhs) {super(lhs, rhs);}
+        @Override public boolean match(OsmPrimitive osm) {
+            return lhs.match(osm) ^ rhs.match(osm);
+        }
+        @Override public String toString() {
+            return lhs + " ^ " + rhs;
+        }
+    }
+
+    /**
+     * Matches objects with the given object ID.
+     */
     private static class Id extends Match {
         private long id;
         public Id(long id) {
             this.id = id;
+        }
+        public Id(PushbackTokenizer tokenizer) throws ParseError {
+            this(tokenizer.readNumber(tr("Primitive id expected")));
         }
         @Override public boolean match(OsmPrimitive osm) {
             return id == 0?osm.isNew():osm.getUniqueId() == id;
@@ -174,24 +383,39 @@ public class SearchCompiler {
         @Override public String toString() {return "id="+id;}
     }
 
+    /**
+     * Matches objects with the given changeset ID.
+     */
     private static class ChangesetId extends Match {
         private long changesetid;
         public ChangesetId(long changesetid) {this.changesetid = changesetid;}
+        public ChangesetId(PushbackTokenizer tokenizer) throws ParseError {
+            this(tokenizer.readNumber(tr("Changeset id expected")));
+        }
         @Override public boolean match(OsmPrimitive osm) {
             return osm.getChangesetId() == changesetid;
         }
         @Override public String toString() {return "changeset="+changesetid;}
     }
 
+    /**
+     * Matches objects with the given version number.
+     */
     private static class Version extends Match {
         private long version;
         public Version(long version) {this.version = version;}
+        public Version(PushbackTokenizer tokenizer) throws ParseError {
+            this(tokenizer.readNumber(tr("Version expected")));
+        }
         @Override public boolean match(OsmPrimitive osm) {
             return osm.getVersion() == version;
         }
         @Override public String toString() {return "version="+version;}
     }
 
+    /**
+     * Matches objects with the given key-value pair.
+     */
     private static class KeyValue extends Match {
         private final String key;
         private final Pattern keyPattern;
@@ -286,6 +510,9 @@ public class SearchCompiler {
         @Override public String toString() {return key+"="+value;}
     }
 
+    /**
+     * Matches objects with the exact given key-value pair.
+     */
     public static class ExactKeyValue extends Match {
 
         private enum Mode {
@@ -414,6 +641,9 @@ public class SearchCompiler {
 
     }
 
+    /**
+     * Match a string in any tags (key or value), with optional regex and case insensitivity.
+     */
     private static class Any extends Match {
         private final String search;
         private final Pattern searchRegex;
@@ -477,6 +707,7 @@ public class SearchCompiler {
         }
     }
 
+    // TODO: change how we handle this
     private static class ExactType extends Match {
         private final Class<?> type;
         public ExactType(String type) throws ParseError {
@@ -496,6 +727,9 @@ public class SearchCompiler {
         @Override public String toString() {return "type="+type;}
     }
 
+    /**
+     * Matches objects last changed by the given username.
+     */
     private static class UserMatch extends Match {
         private String user;
         public UserMatch(String user) {
@@ -518,6 +752,9 @@ public class SearchCompiler {
         }
     }
 
+    /**
+     * Matches objects with the given relation role (i.e. "outer").
+     */
     private static class RoleMatch extends Match {
         private String role;
         public RoleMatch(String role) {
@@ -548,6 +785,9 @@ public class SearchCompiler {
         }
     }
 
+    /**
+     * Matches objects with properties in a certain range.
+     */
     private abstract static class CountRange extends Match {
 
         private long minCount;
@@ -556,6 +796,10 @@ public class SearchCompiler {
         public CountRange(long minCount, long maxCount) {
             this.minCount = Math.min(minCount, maxCount);
             this.maxCount = Math.max(minCount, maxCount);
+        }
+
+        public CountRange(Range range) {
+            this(range.getStart(), range.getEnd());
         }
 
         protected abstract Long getCount(OsmPrimitive osm);
@@ -578,11 +822,16 @@ public class SearchCompiler {
     }
 
 
-
+    /**
+     * Matches ways with a number of nodes in given range
+     */
     private static class NodeCountRange extends CountRange {
+        public NodeCountRange(Range range) {
+            super(range);
+        }
 
-        public NodeCountRange(long minCount, long maxCount) {
-            super(minCount, maxCount);
+        public NodeCountRange(PushbackTokenizer tokenizer) throws ParseError {
+            this(tokenizer.readRange(tr("Range of numbers expected")));
         }
 
         @Override
@@ -599,10 +848,16 @@ public class SearchCompiler {
         }
     }
 
+    /**
+     * Matches objects with a number of tags in given range
+     */
     private static class TagCountRange extends CountRange {
+        public TagCountRange(Range range) {
+            super(range);
+        }
 
-        public TagCountRange(long minCount, long maxCount) {
-            super(minCount, maxCount);
+        public TagCountRange(PushbackTokenizer tokenizer) throws ParseError {
+            this(tokenizer.readRange(tr("Range of numbers expected")));
         }
 
         @Override
@@ -616,6 +871,9 @@ public class SearchCompiler {
         }
     }
 
+    /**
+     * Matches objects with a timestamp in given range
+     */
     private static class TimestampRange extends CountRange {
 
         public TimestampRange(long minCount, long maxCount) {
@@ -634,6 +892,9 @@ public class SearchCompiler {
 
     }
 
+    /**
+     * Matches objects that are new (i.e. have not been uploaded to the server)
+     */
     private static class New extends Match {
         @Override public boolean match(OsmPrimitive osm) {
             return osm.isNew();
@@ -643,6 +904,9 @@ public class SearchCompiler {
         }
     }
 
+    /**
+     * Matches all objects that have been modified, created, or undeleted
+     */
     private static class Modified extends Match {
         @Override public boolean match(OsmPrimitive osm) {
             return osm.isModified() || osm.isNewOrUndeleted();
@@ -650,6 +914,9 @@ public class SearchCompiler {
         @Override public String toString() {return "modified";}
     }
 
+    /**
+     * Matches all objects currently selected
+     */
     private static class Selected extends Match {
         @Override public boolean match(OsmPrimitive osm) {
             return Main.main.getCurrentDataSet().isSelected(osm);
@@ -657,6 +924,11 @@ public class SearchCompiler {
         @Override public String toString() {return "selected";}
     }
 
+    /**
+     * Match objects that are incomplete, where only id and type are known.
+     * Typically some members of a relation are incomplete until they are
+     * fetched from the server.
+     */
     private static class Incomplete extends Match {
         @Override public boolean match(OsmPrimitive osm) {
             return osm.isIncomplete();
@@ -664,6 +936,11 @@ public class SearchCompiler {
         @Override public String toString() {return "incomplete";}
     }
 
+    /**
+     * Matches objects that don't have any interesting tags (i.e. only has source,
+     * FIXME, etc.). The complete list of uninteresting tags can be found here:
+     * org.openstreetmap.josm.data.osm.OsmPrimitive.getUninterestingKeys()
+     */
     private static class Untagged extends Match {
         @Override public boolean match(OsmPrimitive osm) {
             return !osm.isTagged() && !osm.isIncomplete();
@@ -671,6 +948,9 @@ public class SearchCompiler {
         @Override public String toString() {return "untagged";}
     }
 
+    /**
+     * Matches ways which are closed (i.e. first and last node are the same)
+     */
     private static class Closed extends Match {
         @Override public boolean match(OsmPrimitive osm) {
             return osm instanceof Way && ((Way) osm).isClosed();
@@ -678,73 +958,62 @@ public class SearchCompiler {
         @Override public String toString() {return "closed";}
     }
 
-    public static class Parent extends Match {
-        private final Match child;
+    /**
+     * Matches objects if they are parents of the expression
+     */
+    public static class Parent extends UnaryMatch {
         public Parent(Match m) {
-            if (m == null) {
-                // "parent" (null) should mean the same as "parent()"
-                // (Always). I.e. match everything
-                child = new Always();
-            } else {
-                child = m;
-            }
+            super(m);
         }
         @Override public boolean match(OsmPrimitive osm) {
             boolean isParent = false;
 
             if (osm instanceof Way) {
                 for (Node n : ((Way)osm).getNodes()) {
-                    isParent |= child.match(n);
+                    isParent |= match.match(n);
                 }
             } else if (osm instanceof Relation) {
                 for (RelationMember member : ((Relation)osm).getMembers()) {
-                    isParent |= child.match(member.getMember());
+                    isParent |= match.match(member.getMember());
                 }
             }
             return isParent;
         }
-        @Override public String toString() {return "parent(" + child + ")";}
-        public Match getChild() {
-            return child;
-        }
+        @Override public String toString() {return "parent(" + match + ")";}
     }
 
-    public static class Child extends Match {
-        private final Match parent;
+    /**
+     * Matches objects if they are children of the expression
+     */
+    public static class Child extends UnaryMatch {
 
         public Child(Match m) {
-            // "child" (null) should mean the same as "child()"
-            // (Always). I.e. match everything
-            if (m == null) {
-                parent = new Always();
-            } else {
-                parent = m;
-            }
+            super(m);
         }
 
         @Override public boolean match(OsmPrimitive osm) {
             boolean isChild = false;
             for (OsmPrimitive p : osm.getReferrers()) {
-                isChild |= parent.match(p);
+                isChild |= match.match(p);
             }
             return isChild;
         }
-        @Override public String toString() {return "child(" + parent + ")";}
-
-        public Match getParent() {
-            return parent;
-        }
+        @Override public String toString() {return "child(" + match + ")";}
     }
 
     /**
-     * Matches on the area of a closed way.
+     * Matches if the size of the area is within the given range
      *
      * @author Ole Jørgen Brønner
      */
-    private static class Area extends CountRange {
+    private static class AreaSize extends CountRange {
 
-        public Area(long minCount, long maxCount) {
-            super(minCount, maxCount);
+        public AreaSize(Range range) {
+            super(range);
+        }
+
+        public AreaSize(PushbackTokenizer tokenizer) throws ParseError {
+            this(tokenizer.readRange(tr("Range of numbers expected")));
         }
 
         @Override
@@ -757,12 +1026,12 @@ public class SearchCompiler {
 
         @Override
         protected String getCountString() {
-            return "area";
+            return "areasize";
         }
     }
 
     /**
-     * Matches data within bounds.
+     * Matches objects within the given bounds.
      */
     private abstract static class InArea extends Match {
 
@@ -796,7 +1065,7 @@ public class SearchCompiler {
     }
 
     /**
-     * Matches data in source area ("downloaded area").
+     * Matches objects within source area ("downloaded area").
      */
     private static class InDataSourceArea extends InArea {
 
@@ -811,7 +1080,7 @@ public class SearchCompiler {
     }
 
     /**
-     * Matches data in current map view.
+     * Matches objects within current map view.
      */
     private static class InView extends InArea {
 
@@ -842,6 +1111,12 @@ public class SearchCompiler {
         .parse();
     }
 
+    /**
+     * Parse search string.
+     *
+     * @return match determined by search string
+     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError
+     */
     public Match parse() throws ParseError {
         Match m = parseExpression();
         if (!tokenizer.readIfEqual(Token.EOF))
@@ -851,21 +1126,39 @@ public class SearchCompiler {
         return m;
     }
 
+    /**
+     * Parse expression. This is a recursive method.
+     *
+     * @return match determined by parsing expression
+     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError
+     */
     private Match parseExpression() throws ParseError {
         Match factor = parseFactor();
         if (factor == null)
+            // empty search string
             return null;
         if (tokenizer.readIfEqual(Token.OR))
             return new Or(factor, parseExpression(tr("Missing parameter for OR")));
+        else if (tokenizer.readIfEqual(Token.XOR))
+            return new Xor(factor, parseExpression(tr("Missing parameter for XOR")));
         else {
             Match expression = parseExpression();
             if (expression == null)
+                // reached end of search string, no more recursive calls
                 return factor;
             else
+                // the default operator is AND
                 return new And(factor, expression);
         }
     }
 
+    /**
+     * Parse expression, showing the specified error message if parsing fails.
+     *
+     * @param errorMessage to display if parsing error occurs
+     * @return
+     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError
+     */
     private Match parseExpression(String errorMessage) throws ParseError {
         Match expression = parseExpression();
         if (expression == null)
@@ -874,78 +1167,51 @@ public class SearchCompiler {
             return expression;
     }
 
+    /**
+     * Parse next factor (a search operator or search term).
+     *
+     * @return match determined by parsing factor string
+     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError
+     */
     private Match parseFactor() throws ParseError {
         if (tokenizer.readIfEqual(Token.LEFT_PARENT)) {
             Match expression = parseExpression();
             if (!tokenizer.readIfEqual(Token.RIGHT_PARENT))
                 throw new ParseError(Token.RIGHT_PARENT, tokenizer.nextToken());
             return expression;
-        } else if (tokenizer.readIfEqual(Token.NOT))
+        } else if (tokenizer.readIfEqual(Token.NOT)) {
             return new Not(parseFactor(tr("Missing operator for NOT")));
-        else if (tokenizer.readIfEqual(Token.KEY)) {
+        } else if (tokenizer.readIfEqual(Token.KEY)) {
+            // factor consists of key:value or key=value
             String key = tokenizer.getText();
             if (tokenizer.readIfEqual(Token.EQUALS))
                 return new ExactKeyValue(regexSearch, key, tokenizer.readTextOrNumber());
             else if (tokenizer.readIfEqual(Token.COLON)) {
-                if ("id".equals(key))
-                    return new Id(tokenizer.readNumber(tr("Primitive id expected")));
-                else if ("tags".equals(key)) {
-                    Range range = tokenizer.readRange(tr("Range of numbers expected"));
-                    return new TagCountRange(range.getStart(), range.getEnd());
-                } else if ("nodes".equals(key)) {
-                    Range range = tokenizer.readRange(tr("Range of numbers expected"));
-                    return new NodeCountRange(range.getStart(), range.getEnd());
-                } else if ("areasize".equals(key)) {
-                    Range range = tokenizer.readRange(tr("Range of numbers expected"));
-                    return new Area(range.getStart(), range.getEnd());
-                } else if ("timestamp".equals(key)) {
-                    String rangeS = " " + tokenizer.readTextOrNumber() + " "; // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
-                    String[] rangeA = rangeS.split("/");
-                    if (rangeA.length == 1) {
-                        return new KeyValue(key, rangeS, regexSearch, caseSensitive);
-                    } else if (rangeA.length == 2) {
-                        String rangeA1 = rangeA[0].trim();
-                        String rangeA2 = rangeA[1].trim();
-                        long minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime(); // if min timestap is empty: use lowest possible date
-                        long maxDate = rangeA2.isEmpty() ? new Date().getTime() : DateUtils.fromString(rangeA2).getTime(); // if max timestamp is empty: use "now"
-                        return new TimestampRange(minDate, maxDate);
-                    } else {
-                        /* I18n: Don't translate timestamp keyword */ throw new ParseError(tr("Expecting <i>min</i>/<i>max</i> after ''timestamp''"));
-                    }
-                } else if ("changeset".equals(key))
-                    return new ChangesetId(tokenizer.readNumber(tr("Changeset id expected")));
-                else if ("version".equals(key))
-                    return new Version(tokenizer.readNumber(tr("Version expected")));
-                else
-                    return parseKV(key, tokenizer.readTextOrNumber());
+                // see if we have a Match that takes a data parameter
+                SimpleMatchFactory factory = simpleMatchFactoryMap.get(key);
+                if (factory != null)
+                    return factory.get(key, tokenizer);
+
+                UnaryMatchFactory unaryFactory = unaryMatchFactoryMap.get(key);
+                if (unaryFactory != null)
+                    return unaryFactory.get(key, parseFactor(), tokenizer);
+
+                // key:value form where value is a string (may be OSM key search)
+                return parseKV(key, tokenizer.readTextOrNumber());
             } else if (tokenizer.readIfEqual(Token.QUESTION_MARK))
                 return new BooleanMatch(key, false);
-            else if ("new".equals(key))
-                return new New();
-            else if ("modified".equals(key))
-                return new Modified();
-            else if ("incomplete".equals(key))
-                return new Incomplete();
-            else if ("untagged".equals(key))
-                return new Untagged();
-            else if ("selected".equals(key))
-                return new Selected();
-            else if ("closed".equals(key))
-                return new Closed();
-            else if ("child".equals(key))
-                return new Child(parseFactor());
-            else if ("parent".equals(key))
-                return new Parent(parseFactor());
-            else if ("indownloadedarea".equals(key))
-                return new InDataSourceArea(false);
-            else if ("allindownloadedarea".equals(key))
-                return new InDataSourceArea(true);
-            else if ("inview".equals(key))
-                return new InView(false);
-            else if ("allinview".equals(key))
-                return new InView(true);
-            else
+            else {
+                SimpleMatchFactory factory = simpleMatchFactoryMap.get(key);
+                if (factory != null)
+                    return factory.get(key, null);
+
+                UnaryMatchFactory unaryFactory = unaryMatchFactoryMap.get(key);
+                if (unaryFactory != null)
+                    return unaryFactory.get(key, parseFactor(), null);
+
+                // match string in any key or value
                 return new Any(key, regexSearch, caseSensitive);
+            }
         } else
             return null;
     }

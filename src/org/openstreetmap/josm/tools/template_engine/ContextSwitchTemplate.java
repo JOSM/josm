@@ -183,10 +183,10 @@ public class ContextSwitchTemplate implements TemplateEntry {
 
     private Match transform(Match m, int searchExpressionPosition) throws ParseError {
         if (m instanceof Parent) {
-            Match child = transform(((Parent) m).getChild(), searchExpressionPosition);
+            Match child = transform(((Parent) m).getOperand(), searchExpressionPosition);
             return new ParentSet(child);
         } else if (m instanceof Child) {
-            Match parent = transform(((Child) m).getParent(), searchExpressionPosition);
+            Match parent = transform(((Child) m).getOperand(), searchExpressionPosition);
             return new ChildSet(parent);
         } else if (m instanceof And) {
             Match lhs = transform(((And) m).getLhs(), searchExpressionPosition);
