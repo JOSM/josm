@@ -39,10 +39,10 @@ public class OsmDataSessionImporter implements SessionLayerImporter {
 
             OsmImporter importer = new OsmImporter();
             InputStream in = support.getInputStream(fileStr);
-            importer.loadLayer(in, support.getFile(fileStr), support.getLayerName(), progressMonitor);
+            OsmImporter.OsmImporterData importData = importer.loadLayer(in, support.getFile(fileStr), support.getLayerName(), progressMonitor);
 
-            support.addPostLayersTask(importer.getPostLayerTask());
-            return importer.getLayer();
+            support.addPostLayersTask(importData.getPostLayerTask());
+            return importData.getLayer();
 
         } catch (XPathExpressionException e) {
             throw new RuntimeException(e);
