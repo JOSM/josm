@@ -3,16 +3,19 @@ package org.openstreetmap.gui.jmapviewer.tilesources;
 //License: GPL.
 
 import java.awt.Image;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
@@ -26,9 +29,12 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.josm.io.CacheCustomContent;
+import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class BingAerialTileSource extends AbstractTMSTileSource {
@@ -44,27 +50,27 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
 
     public BingAerialTileSource() {
         super("Bing Aerial Maps", "http://example.com/");
+    }
 
-        if (attributions == null) {
-            attributions = Executors.newSingleThreadExecutor().submit(new Callable<List<Attribution>>() {
-                public List<Attribution> call() throws Exception {
-                    List<Attribution> attrs = null;
-                    int waitTime = 1;
-                    do {
+    private static class BingAttributionData extends CacheCustomContent<IOException> {
 
-                        try {
-                            attrs = loadAttributionText();
-                            System.out.println("Successfully loaded Bing attribution data.");
-                            return attrs;
-                        } catch(IOException e) {
-                            System.err.println("Could not connect to Bing API. Will retry in " + waitTime + " seconds.");
-                            Thread.sleep(waitTime * 1000L);
-                            waitTime *= 2;
-                        }
+        public BingAttributionData() {
+            super("bing.attribution.xml", CacheCustomContent.INTERVAL_WEEKLY);
+        }
 
-                    } while(true);
-                }
-            });
+        @Override
+        protected byte[] updateData() throws IOException {
+            URL u = new URL("http://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?include=ImageryProviders&output=xml&key="
+                    + API_KEY);
+            BufferedReader in = new BufferedReader(new InputStreamReader(u.openStream()));
+            StringBuilder content = new StringBuilder(1<<15 /* represents 32k */);
+            String line;
+            while ((line = in.readLine()) != null) {
+                content.append(line);
+            }
+            in.close();
+            System.out.println("Successfully loaded Bing attribution data.");
+            return content.toString().getBytes();
         }
     }
 
@@ -81,24 +87,19 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
         int t = (zoom + tilex + tiley) % subdomains.length;
         String subdomain = subdomains[t];
 
-        String url = new String(imageUrlTemplate);
+        String url = imageUrlTemplate;
         url = subdomainPattern.matcher(url).replaceAll(subdomain);
         url = quadkeyPattern.matcher(url).replaceAll(computeQuadTree(zoom, tilex, tiley));
 
         return url;
     }
 
-    private List<Attribution> loadAttributionText() throws IOException {
+    private List<Attribution> parseAttributionText(String xml) throws IOException {
         try {
-            URL u = new URL("http://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?include=ImageryProviders&output=xml&key="
-                    + API_KEY);
-            URLConnection conn = u.openConnection();
-
-            InputStream stream = conn.getInputStream();
-
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(stream);
+            Document document = builder.parse(new InputSource(
+                    UTFInputStreamReader.create(new ByteArrayInputStream(xml.getBytes()), "UTF-8")));
 
             XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xpath = xPathFactory.newXPath();
@@ -168,6 +169,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
             return 22;
     }
 
+    @Override
     public TileUpdate getTileUpdate() {
         return TileUpdate.IfNoneMatch;
     }
@@ -211,13 +213,37 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
 
     @Override
     public String getAttributionText(int zoom, Coordinate topLeft, Coordinate botRight) {
+        if (attributions == null) {
+            attributions = Executors.newSingleThreadExecutor().submit(new Callable<List<Attribution>>() {
+
+                @Override
+                public List<Attribution> call() throws Exception {
+                    BingAttributionData attributionLoader = new BingAttributionData();
+                    int waitTimeSec = 1;
+                    while (true) {
+                        try {
+                            return parseAttributionText(attributionLoader.updateIfRequiredString());
+                        } catch (IOException ex) {
+                            System.err.println("Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.");
+                            Thread.sleep(waitTimeSec * 1000L);
+                            waitTimeSec *= 2;
+                        }
+                    }
+                }
+            });
+        }
         try {
-            if (!attributions.isDone())
+            final List<Attribution> data;
+            try {
+                data = attributions.get(100, TimeUnit.MILLISECONDS);
+            } catch (TimeoutException ex) {
                 return "Loading Bing attribution data...";
-            if (attributions.get() == null)
+            }
+            if (data == null) {
                 return "Error loading Bing attribution data";
+            }
             StringBuilder a = new StringBuilder();
-            for (Attribution attr : attributions.get()) {
+            for (Attribution attr : data) {
                 if (zoom <= attr.maxZoom && zoom >= attr.minZoom) {
                     if (topLeft.getLon() < attr.max.getLon() && botRight.getLon() > attr.min.getLon()
                             && topLeft.getLat() > attr.min.getLat() && botRight.getLat() < attr.max.getLat()) {
