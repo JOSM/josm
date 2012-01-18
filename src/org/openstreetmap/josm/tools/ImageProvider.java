@@ -448,7 +448,7 @@ public class ImageProvider {
     private static ImageResource getIfAvailableHttp(String url, ImageType type) {
         try {
             MirroredInputStream is = new MirroredInputStream(url,
-                    new File(Main.pref.getPreferencesDir(), "images").toString());
+                    new File(Main.pref.getCacheDirectory(), "images").getPath());
             switch (type) {
                 case SVG:
                     URI uri = getSvgUniverse().loadSVG(is, is.getFile().toURI().toURL().toString());
