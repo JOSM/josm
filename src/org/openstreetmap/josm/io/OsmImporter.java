@@ -21,9 +21,23 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public class OsmImporter extends FileImporter {
 
-    protected class OsmImporterData {
-        public OsmDataLayer layer;
-        public Runnable postLayerTask;
+    public static class OsmImporterData {
+
+        private OsmDataLayer layer;
+        private Runnable postLayerTask;
+
+        public OsmImporterData(OsmDataLayer layer, Runnable postLayerTask) {
+            this.layer = layer;
+            this.postLayerTask = postLayerTask;
+        }
+
+        public OsmDataLayer getLayer() {
+            return layer;
+        }
+
+        public Runnable getPostLayerTask() {
+            return postLayerTask;
+        }
     }
 
     public OsmImporter() {
@@ -46,7 +60,7 @@ public class OsmImporter extends FileImporter {
     }
 
     protected void importData(InputStream in, final File associatedFile) throws IllegalDataException {
-        final OsmImporterData data = loadLayer(in, associatedFile, 
+        final OsmImporterData data = loadLayer(in, associatedFile,
                 associatedFile == null ? OsmDataLayer.createNewName() : associatedFile.getName(), NullProgressMonitor.INSTANCE);
 
         // FIXME: remove UI stuff from IO subsystem
@@ -69,20 +83,19 @@ public class OsmImporter extends FileImporter {
         if (dataSet == null) {
             throw new IllegalDataException(tr("Invalid dataset"));
         }
-        OsmImporterData data = new OsmImporterData();
-        data.layer = createLayer(dataSet, associatedFile, layerName);
-        data.postLayerTask = createPostLayerTask(dataSet, associatedFile, layerName, data.layer);
-        return data;
+        OsmDataLayer layer = createLayer(dataSet, associatedFile, layerName);
+        Runnable postLayerTask = createPostLayerTask(dataSet, associatedFile, layerName, layer);
+        return new OsmImporterData(layer, postLayerTask);
     }
-    
+
     protected DataSet parseDataSet(InputStream in, ProgressMonitor progressMonitor) throws IllegalDataException {
         return OsmReader.parseDataSet(in, progressMonitor);
     }
-    
+
     protected OsmDataLayer createLayer(final DataSet dataSet, final File associatedFile, final String layerName) {
         return new OsmDataLayer(dataSet, layerName, associatedFile);
     }
-    
+
     protected Runnable createPostLayerTask(final DataSet dataSet, final File associatedFile, final String layerName, final OsmDataLayer layer) {
         return new Runnable() {
             @Override

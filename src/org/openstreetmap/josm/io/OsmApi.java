@@ -193,7 +193,7 @@ public class OsmApi extends OsmConnection {
                 System.err.println(tr("This version of JOSM is incompatible with the configured server."));
                 System.err.println(tr("It supports protocol version 0.6, while the server says it supports {0} to {1}.",
                         capabilities.get("version", "minimum"), capabilities.get("version", "maximum")));
-                initialized = false; // FIXME get's overridden by next assignment
+                initialized = false; // FIXME gets overridden by next assignment
             }
             initialized = true;
 
