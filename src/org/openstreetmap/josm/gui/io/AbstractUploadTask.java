@@ -7,6 +7,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -30,7 +32,9 @@ import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmApiPrimitiveGoneException;
 import org.openstreetmap.josm.tools.DateUtils;
+import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Pair;
 
 public abstract class AbstractUploadTask extends PleaseWaitRunnable {
     public AbstractUploadTask(String title, boolean ignoreException) {
@@ -205,41 +209,38 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      * Handles the case where deleting a node failed because it is still in use in
      * a non-deleted way on the server.
      */
-    protected void handleUploadConflictForNodeStillInUse(long nodeId, long wayId) {
+    protected void handleUploadPreconditionFailedConflict(OsmApiException e, Pair<OsmPrimitive, Collection<OsmPrimitive>> conflict) {
         ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Prepare conflict resolution"),
                         ImageProvider.get("ok"),
-                        tr("Click to download all parent ways for node {0}", nodeId),
+                        tr("Click to download all referring objects for {0}", conflict.a),
                         null /* no specific help context */
                 ),
                 new ButtonSpec(
                         tr("Cancel"),
                         ImageProvider.get("cancel"),
-                        tr("Click to cancel and to resume editing the map", nodeId),
+                        tr("Click to cancel and to resume editing the map"),
                         null /* no specific help context */
                 )
         };
-        String msg =  tr("<html>Uploading <strong>failed</strong> because you tried "
-                + "to delete node {0} which is still in use in way {1}.<br><br>"
-                + "Click <strong>{2}</strong> to download all parent ways of node {0}.<br>"
-                + "If necessary JOSM will create conflicts which you can resolve in the Conflict Resolution Dialog."
-                + "</html>",
-                nodeId, wayId, options[0].text
-        );
-
+        String msg = ExceptionUtil.explainPreconditionFailed(e).replace("</html>", "<br><br>" + tr(
+                "Click <strong>{0}</strong> to load them now.<br>"
+                + "If necessary JOSM will create conflicts which you can resolve in the Conflict Resolution Dialog.",
+                options[0].text)) + "</html>";
         int ret = HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
                 msg,
-                tr("Node still in use"),
+                tr("Object still in use"),
                 JOptionPane.ERROR_MESSAGE,
                 null,
                 options,
                 options[0],
                 "/Action/Upload#NodeStillInUseInWay"
-        );
-        if (ret != 0) return;
-        DownloadReferrersAction.downloadReferrers(Main.map.mapView.getEditLayer(), nodeId, OsmPrimitiveType.NODE);
+);
+        if (ret == 0) {
+            DownloadReferrersAction.downloadReferrers(Main.map.mapView.getEditLayer(), Arrays.asList(conflict.a));
+        }
     }
 
     /**
@@ -262,13 +263,6 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
             handleUploadConflictForClosedChangeset(Long.parseLong(m.group(1)), DateUtils.fromString(m.group(2)));
             return;
         }
-        pattern = "Node (\\d+) is still used by way (\\d+).";
-        p = Pattern.compile(pattern);
-        m = p.matcher(e.getErrorHeader());
-        if (m.matches()) {
-            handleUploadConflictForNodeStillInUse(Long.parseLong(m.group(1)), Long.parseLong(m.group(2)));
-            return;
-        }
         System.out.println(tr("Warning: error header \"{0}\" did not match with an expected pattern", e.getErrorHeader()));
         handleUploadConflictForUnknownConflict();
     }
@@ -279,15 +273,14 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      * @param e  the exception
      */
     protected void handlePreconditionFailed(OsmApiException e) {
-        String pattern = "Precondition failed: Node (\\d+) is still used by way (\\d+).";
-        Pattern p = Pattern.compile(pattern);
-        Matcher m = p.matcher(e.getErrorHeader());
-        if (m.matches()) {
-            handleUploadConflictForNodeStillInUse(Long.parseLong(m.group(1)), Long.parseLong(m.group(2)));
-            return;
+        // in the worst case, ExceptionUtil.parsePreconditionFailed is executed trice - should not be too expensive
+        Pair<OsmPrimitive, Collection<OsmPrimitive>> conflict = ExceptionUtil.parsePreconditionFailed(e.getErrorHeader());
+        if (conflict != null) {
+            handleUploadPreconditionFailedConflict(e, conflict);
+        } else {
+            System.out.println(tr("Warning: error header \"{0}\" did not match with an expected pattern", e.getErrorHeader()));
+            ExceptionDialogUtil.explainPreconditionFailed(e);
         }
-        System.out.println(tr("Warning: error header \"{0}\" did not match with an expected pattern", e.getErrorHeader()));
-        ExceptionDialogUtil.explainPreconditionFailed(e);
     }
 
     /**

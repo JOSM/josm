@@ -12,16 +12,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -166,7 +157,12 @@ public class HelpAwareOptionPane {
         }
 
         if (msg instanceof String) {
-            msg = new JLabel((String)msg);
+            JEditorPane pane = new JEditorPane();
+            pane.setContentType("text/html");
+            pane.setText((String) msg);
+            pane.setEditable(false);
+            pane.setOpaque(false);
+            msg = pane;
         }
 
         final JOptionPane pane = new JOptionPane(

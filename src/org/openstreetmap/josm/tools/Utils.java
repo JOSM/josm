@@ -20,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -394,5 +395,123 @@ public class Utils {
         }
         if (sorted.size() != size) throw new RuntimeException();
         return sorted;
+    }
+
+    /**
+     * Represents a function that can be applied to objects of {@code A} and
+     * returns objects of {@code B}.
+     * @param <A> class of input objects
+     * @param <B> class of transformed objects
+     */
+    public static interface Function<A, B> {
+
+        /**
+         * Applies the function on {@code x}.
+         * @param x an object of
+         * @return the transformed object
+         */
+        B apply(A x);
+    }
+
+    /**
+     * Transforms the collection {@code c} into an unmodifiable collection and
+     * applies the {@link Function} {@code f} on each element upon access.
+     * @param <A> class of input collection
+     * @param <B> class of transformed collection
+     * @param c a collection
+     * @param f a function that transforms objects of {@code A} to objects of {@code B}
+     * @return the transformed unmodifiable collection
+     */
+    public static <A, B> Collection<B> transform(final Collection<A> c, final Function<A, B> f) {
+        return new Collection<B>() {
+
+            @Override
+            public int size() {
+                return c.size();
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return c.isEmpty();
+            }
+
+            @Override
+            public boolean contains(Object o) {
+                return c.contains(o);
+            }
+
+            @Override
+            public Object[] toArray() {
+                return c.toArray();
+            }
+
+            @Override
+            public <T> T[] toArray(T[] a) {
+                return c.toArray(a);
+            }
+
+            @Override
+            public String toString() {
+                return c.toString();
+            }
+
+            @Override
+            public Iterator<B> iterator() {
+                return new Iterator<B>() {
+
+                    private Iterator<A> it = c.iterator();
+
+                    @Override
+                    public boolean hasNext() {
+                        return it.hasNext();
+                    }
+
+                    @Override
+                    public B next() {
+                        return f.apply(it.next());
+                    }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+
+            @Override
+            public boolean add(B e) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean remove(Object o) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean containsAll(Collection<?> c) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean addAll(Collection<? extends B> c) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean removeAll(Collection<?> c) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean retainAll(Collection<?> c) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void clear() {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 }
