@@ -22,6 +22,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.IllegalDataException;
@@ -32,6 +36,7 @@ import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 
+@SuppressWarnings("CallToThreadDumpStack")
 public class ExceptionUtil {
     private ExceptionUtil() {
     }
@@ -45,7 +50,7 @@ public class ExceptionUtil {
         e.printStackTrace();
         String msg = tr(
                 "<html>Failed to initialize communication with the OSM server {0}.<br>"
-                + "Check the server URL in your preferences and your internet connection.</html>", Main.pref.get(
+                + "Check the server URL in your preferences and your internet connection.", Main.pref.get(
                         "osm-server.url", "http://api.openstreetmap.org/api"));
         return msg;
     }
@@ -69,46 +74,51 @@ public class ExceptionUtil {
         return msg;
     }
 
-    /**
-     * Explains a precondition exception when a child relation could not be deleted because
-     * it is still referred to by an undeleted parent relation.
-     *
-     * @param e the exception
-     * @param childRelation the child relation
-     * @param parentRelation the parent relation
-     * @return
-     */
-    public static String explainDeletedRelationStillInUse(OsmApiException e, long childRelation, long parentRelation) {
-        String msg = tr(
-                "<html><strong>Failed</strong> to delete <strong>relation {0}</strong>."
-                + " It is still referred to by relation {1}.<br>"
-                + "Please load relation {1}, remove the reference to relation {0}, and upload again.</html>",
-                childRelation,parentRelation
-        );
-        return msg;
-    }
-    
-    /**
-     * Explains a precondition exception when a child node could not be deleted because
-     * it is still referred to by undeleted parent ways.
-     *
-     * @param e the exception
-     * @param childNode the child node
-     * @param parentWays the parent ways
-     * @return
-     */
-    public static String explainDeletedNodeStillInUse(OsmApiException e, long childNode, Collection<Long> parentWays) {
-        String ids = parentWays.size() == 1 ? parentWays.iterator().next().toString() : parentWays.toString();
-        String msg = trn(
-                "<html><strong>Failed</strong> to delete <strong>node {0}</strong>."
-                + " It is still referred to by way {1}.<br>"
-                + "Please load the way, remove the reference to the node, and upload again.</html>",
-                "<html><strong>Failed</strong> to delete <strong>node {0}</strong>."
-                + " It is still referred to by ways {1}.<br>"
-                + "Please load the ways, remove the reference to the node, and upload again.</html>",
-                parentWays.size(), childNode, ids
-        );
-        return msg;
+    public static Pair<OsmPrimitive, Collection<OsmPrimitive>> parsePreconditionFailed(String msg) {
+        final String ids = "(\\d+(?:,\\d+)*)";
+        final Collection<OsmPrimitive> refs = new TreeSet<OsmPrimitive>(); // error message can contain several times the same way
+        Matcher m;
+        m = Pattern.compile(".*Node (\\d+) is still used by relations " + ids + ".*").matcher(msg);
+        if (m.matches()) {
+            OsmPrimitive n = new Node(Long.parseLong(m.group(1)));
+            for (String s : m.group(2).split(",")) {
+                refs.add(new Relation(Long.parseLong(m.group(2))));
+            }
+            return Pair.create(n, refs);
+        }
+        m = Pattern.compile(".*Node (\\d+) is still used by ways " + ids + ".*").matcher(msg);
+        if (m.matches()) {
+            OsmPrimitive n = new Node(Long.parseLong(m.group(1)));
+            for (String s : m.group(2).split(",")) {
+                refs.add(new Way(Long.parseLong(m.group(2))));
+            }
+            return Pair.create(n, refs);
+        }
+        m = Pattern.compile(".*The relation (\\d+) is used in relations? " + ids + ".*").matcher(msg);
+        if (m.matches()) {
+            OsmPrimitive n = new Relation(Long.parseLong(m.group(1)));
+            for (String s : m.group(2).split(",")) {
+                refs.add(new Relation(Long.parseLong(m.group(2))));
+            }
+            return Pair.create(n, refs);
+        }
+        m = Pattern.compile(".*Way (\\d+) is still used by relations " + ids + ".*").matcher(msg);
+        if (m.matches()) {
+            OsmPrimitive n = new Way(Long.parseLong(m.group(1)));
+            for (String s : m.group(2).split(",")) {
+                refs.add(new Relation(Long.parseLong(m.group(2))));
+            }
+            return Pair.create(n, refs);
+        }
+        m = Pattern.compile(".*Way (\\d+) requires the nodes with id in " + ids + ".*").matcher(msg); // ... ", which either do not exist, or are not visible"
+        if (m.matches()) {
+            OsmPrimitive n = new Way(Long.parseLong(m.group(1)));
+            for (String s : m.group(2).split(",")) {
+                refs.add(new Node(Long.parseLong(m.group(2))));
+            }
+            return Pair.create(n, refs);
+        }
+        return null;
     }
 
     /**
@@ -119,28 +129,120 @@ public class ExceptionUtil {
     public static String explainPreconditionFailed(OsmApiException e) {
         e.printStackTrace();
         String msg = e.getErrorHeader();
-        if (msg != null) {
-            Matcher m = Pattern.compile("Precondition failed: The relation (\\d+) is used in relation (\\d+)\\.").matcher(msg);
-            if (m.matches()) {
-                long childRelation = Long.parseLong(m.group(1));
-                long parentRelation = Long.parseLong(m.group(2));
-                return explainDeletedRelationStillInUse(e, childRelation, parentRelation);
-            }
-            m = Pattern.compile("Precondition failed: Node (\\d+) is still used by ways (\\d+(?:,\\d+)*)\\.").matcher(msg);
-            if (m.matches()) {
-                long childNode = Long.parseLong(m.group(1));
-                Set<Long> parentWays = new TreeSet<Long>(); // Error message can contain several times the same way
-                for (String s : m.group(2).split(",")) {
-                    parentWays.add(Long.parseLong(s));
+        Pair<OsmPrimitive, Collection<OsmPrimitive>> conflict = parsePreconditionFailed(e.getErrorHeader());
+        if (conflict != null) {
+            OsmPrimitive firstRefs = conflict.b.iterator().next();
+            Long objId = conflict.a.getId();
+            Collection<Long> refIds= Utils.transform(conflict.b, new Utils.Function<OsmPrimitive, Long>() {
+
+                @Override
+                public Long apply(OsmPrimitive x) {
+                    return x.getId();
                 }
-                return explainDeletedNodeStillInUse(e, childNode, parentWays);
+            });
+            String refIdsString = refIds.size() == 1 ? refIds.iterator().next().toString() : refIds.toString();
+            if (conflict.a instanceof Node) {
+                if (firstRefs instanceof Node) {
+                    return "<html>" + trn(
+                            "<strong>Failed</strong> to delete <strong>node {0}</strong>."
+                            + " It is still referred to by node {1}.<br>"
+                            + "Please load the node, remove the reference to the node, and upload again.",
+                            "<strong>Failed</strong> to delete <strong>node {0}</strong>."
+                            + " It is still referred to by nodes {1}.<br>"
+                            + "Please load the nodes, remove the reference to the node, and upload again.",
+                            conflict.b.size(), objId, refIdsString) + "</html>";
+                } else if (firstRefs instanceof Way) {
+                    return "<html>" + trn(
+                            "<strong>Failed</strong> to delete <strong>node {0}</strong>."
+                            + " It is still referred to by way {1}.<br>"
+                            + "Please load the way, remove the reference to the node, and upload again.",
+                            "<strong>Failed</strong> to delete <strong>node {0}</strong>."
+                            + " It is still referred to by ways {1}.<br>"
+                            + "Please load the ways, remove the reference to the node, and upload again.",
+                            conflict.b.size(), objId, refIdsString) + "</html>";
+                } else if (firstRefs instanceof Relation) {
+                    return "<html>" + trn(
+                            "<strong>Failed</strong> to delete <strong>node {0}</strong>."
+                            + " It is still referred to by relation {1}.<br>"
+                            + "Please load the relation, remove the reference to the node, and upload again.",
+                            "<strong>Failed</strong> to delete <strong>node {0}</strong>."
+                            + " It is still referred to by relations {1}.<br>"
+                            + "Please load the relations, remove the reference to the node, and upload again.",
+                            conflict.b.size(), objId, refIdsString) + "</html>";
+                } else {
+                    throw new IllegalStateException();
+                }
+            } else if (conflict.a instanceof Way) {
+                if (firstRefs instanceof Node) {
+                    return "<html>" + trn(
+                            "<strong>Failed</strong> to delete <strong>way {0}</strong>."
+                            + " It is still referred to by node {1}.<br>"
+                            + "Please load the node, remove the reference to the way, and upload again.",
+                            "<strong>Failed</strong> to delete <strong>way {0}</strong>."
+                            + " It is still referred to by nodes {1}.<br>"
+                            + "Please load the nodes, remove the reference to the way, and upload again.",
+                            conflict.b.size(), objId, refIdsString) + "</html>";
+                } else if (firstRefs instanceof Way) {
+                    return "<html>" + trn(
+                            "<strong>Failed</strong> to delete <strong>way {0}</strong>."
+                            + " It is still referred to by way {1}.<br>"
+                            + "Please load the way, remove the reference to the way, and upload again.",
+                            "<strong>Failed</strong> to delete <strong>way {0}</strong>."
+                            + " It is still referred to by ways {1}.<br>"
+                            + "Please load the ways, remove the reference to the way, and upload again.",
+                            conflict.b.size(), objId, refIdsString) + "</html>";
+                } else if (firstRefs instanceof Relation) {
+                    return "<html>" + trn(
+                            "<strong>Failed</strong> to delete <strong>way {0}</strong>."
+                            + " It is still referred to by relation {1}.<br>"
+                            + "Please load the relation, remove the reference to the way, and upload again.",
+                            "<strong>Failed</strong> to delete <strong>way {0}</strong>."
+                            + " It is still referred to by relations {1}.<br>"
+                            + "Please load the relations, remove the reference to the way, and upload again.",
+                            conflict.b.size(), objId, refIdsString) + "</html>";
+                } else {
+                    throw new IllegalStateException();
+                }
+            } else if (conflict.a instanceof Relation) {
+                if (firstRefs instanceof Node) {
+                    return "<html>" + trn(
+                            "<strong>Failed</strong> to delete <strong>relation {0}</strong>."
+                            + " It is still referred to by node {1}.<br>"
+                            + "Please load the node, remove the reference to the relation, and upload again.",
+                            "<strong>Failed</strong> to delete <strong>relation {0}</strong>."
+                            + " It is still referred to by nodes {1}.<br>"
+                            + "Please load the nodes, remove the reference to the relation, and upload again.",
+                            conflict.b.size(), objId, refIdsString) + "</html>";
+                } else if (firstRefs instanceof Way) {
+                    return "<html>" + trn(
+                            "<strong>Failed</strong> to delete <strong>relation {0}</strong>."
+                            + " It is still referred to by way {1}.<br>"
+                            + "Please load the way, remove the reference to the relation, and upload again.",
+                            "<strong>Failed</strong> to delete <strong>relation {0}</strong>."
+                            + " It is still referred to by ways {1}.<br>"
+                            + "Please load the ways, remove the reference to the relation, and upload again.",
+                            conflict.b.size(), objId, refIdsString) + "</html>";
+                } else if (firstRefs instanceof Relation) {
+                    return "<html>" + trn(
+                            "<strong>Failed</strong> to delete <strong>relation {0}</strong>."
+                            + " It is still referred to by relation {1}.<br>"
+                            + "Please load the relation, remove the reference to the relation, and upload again.",
+                            "<strong>Failed</strong> to delete <strong>relation {0}</strong>."
+                            + " It is still referred to by relations {1}.<br>"
+                            + "Please load the relations, remove the reference to the relation, and upload again.",
+                            conflict.b.size(), objId, refIdsString) + "</html>";
+                } else {
+                    throw new IllegalStateException();
+                }
+            } else {
+                throw new IllegalStateException();
             }
+        } else {
+            return tr(
+                    "<html>Uploading to the server <strong>failed</strong> because your current<br>"
+                    + "dataset violates a precondition.<br>" + "The error message is:<br>" + "{0}" + "</html>",
+                    escapeReservedCharactersHTML(e.getMessage()));
         }
-        msg = tr(
-                "<html>Uploading to the server <strong>failed</strong> because your current<br>"
-                + "dataset violates a precondition.<br>" + "The error message is:<br>" + "{0}" + "</html>", 
-                escapeReservedCharactersHTML(e.getMessage()));
-        return msg;
     }
 
     public static String explainFailedBasicAuthentication(OsmApiException e) {
@@ -275,14 +377,14 @@ public class ExceptionUtil {
                 }
                 if (closeDate == null) {
                     msg = tr(
-                            "<html>Closing of changeset <strong>{0}</strong> failed <br>because it has already been closed.</html>",
+                            "<html>Closing of changeset <strong>{0}</strong> failed <br>because it has already been closed.",
                             changesetId
                     );
                 } else {
                     SimpleDateFormat dateFormat = new SimpleDateFormat();
                     msg = tr(
                             "<html>Closing of changeset <strong>{0}</strong> failed<br>"
-                            +" because it has already been closed on {1}.</html>",
+                            +" because it has already been closed on {1}.",
                             changesetId,
                             dateFormat.format(closeDate)
                     );
@@ -294,10 +396,10 @@ public class ExceptionUtil {
                     "Error message (untranslated):<br>{0}</html>",
                     msg
             );
+        } else {
+            msg = tr(
+                    "<html>The server reported that it has detected a conflict.");
         }
-        msg = tr(
-                "<html>The server reported that it has detected a conflict.</html>"
-        );
         return msg;
     }
 
@@ -312,7 +414,7 @@ public class ExceptionUtil {
         SimpleDateFormat dateFormat = new SimpleDateFormat();
         msg = tr(
                 "<html>Failed to upload to changeset <strong>{0}</strong><br>"
-                +"because it has already been closed on {1}.</html>",
+                +"because it has already been closed on {1}.",
                 e.getChangesetId(),
                 e.getClosedOn() == null ? "?" : dateFormat.format(e.getClosedOn())
         );
@@ -353,7 +455,7 @@ public class ExceptionUtil {
 
         String message = tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''<br>"
                 + "for security reasons. This is most likely because you are running<br>"
-                + "in an applet and because you did not load your applet from ''{1}''.</html>", apiUrl, host);
+                + "in an applet and because you did not load your applet from ''{1}''.", apiUrl, host);
         return message;
     }
 
@@ -368,7 +470,7 @@ public class ExceptionUtil {
     public static String explainNestedSocketException(OsmTransferException e) {
         String apiUrl = e.getUrl();
         String message = tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''.<br>"
-                + "Please check your internet connection.</html>", apiUrl);
+                + "Please check your internet connection.", apiUrl);
         e.printStackTrace();
         return message;
     }
@@ -416,7 +518,7 @@ public class ExceptionUtil {
     public static String explainInternalServerError(OsmTransferException e) {
         String apiUrl = e.getUrl();
         String message = tr("<html>The OSM server<br>" + "''{0}''<br>" + "reported an internal server error.<br>"
-                + "This is most likely a temporary problem. Please try again later.</html>", apiUrl);
+                + "This is most likely a temporary problem. Please try again later.", apiUrl);
         e.printStackTrace();
         return message;
     }
@@ -494,7 +596,7 @@ public class ExceptionUtil {
 
         String message = tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''.<br>"
                 + "Host name ''{1}'' could not be resolved. <br>"
-                + "Please check the API URL in your preferences and your internet connection.</html>", apiUrl, host);
+                + "Please check the API URL in your preferences and your internet connection.", apiUrl, host);
         e.printStackTrace();
         return message;
     }
