@@ -342,7 +342,7 @@ public class GpxReader {
         public void tryToFinish() throws SAXException {
             List<String> remainingElements = new ArrayList<String>(elements);
             for (int i=remainingElements.size() - 1; i >= 0; i--) {
-                endElement(null, remainingElements.get(i), null);
+                endElement(null, remainingElements.get(i), remainingElements.get(i));
             }
             endDocument();
         }
