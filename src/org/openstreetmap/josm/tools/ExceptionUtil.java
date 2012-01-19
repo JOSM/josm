@@ -82,7 +82,7 @@ public class ExceptionUtil {
         if (m.matches()) {
             OsmPrimitive n = new Node(Long.parseLong(m.group(1)));
             for (String s : m.group(2).split(",")) {
-                refs.add(new Relation(Long.parseLong(m.group(2))));
+                refs.add(new Relation(Long.parseLong(s)));
             }
             return Pair.create(n, refs);
         }
@@ -90,7 +90,7 @@ public class ExceptionUtil {
         if (m.matches()) {
             OsmPrimitive n = new Node(Long.parseLong(m.group(1)));
             for (String s : m.group(2).split(",")) {
-                refs.add(new Way(Long.parseLong(m.group(2))));
+                refs.add(new Way(Long.parseLong(s)));
             }
             return Pair.create(n, refs);
         }
@@ -98,7 +98,7 @@ public class ExceptionUtil {
         if (m.matches()) {
             OsmPrimitive n = new Relation(Long.parseLong(m.group(1)));
             for (String s : m.group(2).split(",")) {
-                refs.add(new Relation(Long.parseLong(m.group(2))));
+                refs.add(new Relation(Long.parseLong(s)));
             }
             return Pair.create(n, refs);
         }
@@ -106,7 +106,7 @@ public class ExceptionUtil {
         if (m.matches()) {
             OsmPrimitive n = new Way(Long.parseLong(m.group(1)));
             for (String s : m.group(2).split(",")) {
-                refs.add(new Relation(Long.parseLong(m.group(2))));
+                refs.add(new Relation(Long.parseLong(s)));
             }
             return Pair.create(n, refs);
         }
@@ -114,7 +114,7 @@ public class ExceptionUtil {
         if (m.matches()) {
             OsmPrimitive n = new Way(Long.parseLong(m.group(1)));
             for (String s : m.group(2).split(",")) {
-                refs.add(new Node(Long.parseLong(m.group(2))));
+                refs.add(new Node(Long.parseLong(s)));
             }
             return Pair.create(n, refs);
         }
