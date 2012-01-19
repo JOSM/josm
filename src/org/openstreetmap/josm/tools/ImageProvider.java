@@ -34,8 +34,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
 import org.apache.commons.codec.binary.Base64;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -80,6 +82,12 @@ public class ImageProvider {
         OTHER   // everything else, e.g. png, gif (must be supported by Java)
     }
 
+    public static enum SanitizeMode {
+        OFF,                // never sanitize the image
+        ALWAYS,             // always copy to a new BufferedImage
+        MAKE_BUFFEREDIMAGE  // make sure the returned image is instance of BufferedImage
+    }
+
     protected Collection<String> dirs;
     protected String id;
     protected String subdir;
@@ -89,7 +97,7 @@ public class ImageProvider {
     protected int height = -1;
     protected int maxWidth = -1;
     protected int maxHeight = -1;
-    protected boolean sanitize;
+    protected SanitizeMode sanitize;
     protected boolean optional;
 
     private static SVGUniverse svgUniverse;
@@ -199,7 +207,7 @@ public class ImageProvider {
     /**
      * Set true, if the image should be repainted to a new BufferedImage in order to work around certain issues.
      */
-    public ImageProvider setSanitize(boolean sanitize) {
+    public ImageProvider setSanitize(SanitizeMode sanitize) {
         this.sanitize = sanitize;
         return this;
     }
@@ -275,16 +283,16 @@ public class ImageProvider {
 
     @Deprecated
     public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive) {
-        return getIfAvailable(dirs, id, subdir, name, archive, false);
+        return getIfAvailable(dirs, id, subdir, name, archive, SanitizeMode.OFF);
     }
 
     @Deprecated
-    public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive, boolean sanitize) {
+    public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive, SanitizeMode sanitize) {
         return getIfAvailable(dirs, id, subdir, name, archive, null, sanitize);
     }
 
     @Deprecated
-    public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive, Dimension dim, boolean sanitize) {
+    public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive, Dimension dim, SanitizeMode sanitize) {
         return getIfAvailable(dirs, id, subdir, name, archive, dim, null, sanitize);
     }
 
@@ -311,7 +319,7 @@ public class ImageProvider {
      */
     @Deprecated
     public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name,
-            File archive, Dimension dim, Dimension maxSize, boolean sanitize) {
+            File archive, Dimension dim, Dimension maxSize, SanitizeMode sanitize) {
         ImageProvider p = new ImageProvider(subdir, name).setDirs(dirs).setId(id).setArchive(archive).setSanitize(sanitize).setOptional(true);
         if (dim != null) {
             p.setSize(dim);
