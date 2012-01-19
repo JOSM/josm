@@ -149,9 +149,9 @@ public class NodeElemStyle extends ElemStyle {
         int width = widthF == null ? -1 : Math.round(widthF);
         int height = heightF == null ? -1 : Math.round(heightF);
 
-        ImageIcon icon = MapPaintStyles.getIcon(iconRef, width, height, false);
+        ImageIcon icon = MapPaintStyles.getIcon(iconRef, width, height);
         if (icon == null)
-            return new Pair<ImageIcon, Integer>(MapPaintStyles.getNoIcon_Icon(iconRef.source, false), 255);
+            return new Pair<ImageIcon, Integer>(MapPaintStyles.getNoIcon_Icon(iconRef.source), 255);
         int iconAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.icon-image-alpha", 255))));
         Integer pAlpha = Utils.color_float2int(c.get("icon-opacity", null, float.class));
         if (pAlpha != null) {

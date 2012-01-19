@@ -5,8 +5,11 @@ import com.kitfox.svg.SVGDiagram;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import javax.swing.ImageIcon;
+
+import org.openstreetmap.josm.tools.ImageProvider.SanitizeMode;
 
 /**
  * Holds data for one particular image.
@@ -49,7 +52,7 @@ class ImageResource {
     }
 
     public ImageIcon getImageIcon() {
-        return getImageIcon(DEFAULT_DIMENSION, false);
+        return getImageIcon(DEFAULT_DIMENSION, SanitizeMode.OFF);
     }
 
     /**
@@ -57,17 +60,19 @@ class ImageResource {
      * @param   dim The requested dimensions. Use (-1,-1) for the original size
      *          and (width, -1) to set the width, but otherwise scale the image
      *          proportionally.
-     * @param sanitized Whether the returned image should be copied to a BufferedImage
+     * @param sanitize Whether the returned image should be copied to a BufferedImage
      *          to avoid certain problem with native image formats.
      */
-    public ImageIcon getImageIcon(Dimension dim, boolean sanitized) {
+    public ImageIcon getImageIcon(Dimension dim, SanitizeMode sanitize) {
         if (dim.width < -1 || dim.width == 0 || dim.height < -1 || dim.height == 0)
             throw new IllegalArgumentException();
         ImageWrapper iw = imgCache.get(dim);
         if (iw != null) {
-            if (sanitized && !iw.sanitized) {
-                iw.img = ImageProvider.sanitize(iw.img);
-                iw.sanitized = true;
+            if (!iw.sanitized) {
+                if (sanitize == SanitizeMode.ALWAYS || (sanitize == SanitizeMode.MAKE_BUFFEREDIMAGE && !(iw.img instanceof BufferedImage))) {
+                    iw.img = ImageProvider.sanitize(iw.img);
+                    iw.sanitized = true;
+                }
             }
             return new ImageIcon(iw.img);
         }
@@ -87,9 +92,16 @@ class ImageResource {
             } else if (height == -1) {
                 height = icon.getIconHeight() * width / icon.getIconWidth();
             }
-            Image img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            if (sanitized) {
+            Image img;
+            if (width == dim.width && height == dim.height) {
+                img = icon.getImage();
+            } else {
+                img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            }
+            boolean sanitized = false;
+            if (sanitize == SanitizeMode.ALWAYS || (sanitize == SanitizeMode.MAKE_BUFFEREDIMAGE && !(img instanceof BufferedImage))) {
                 img = ImageProvider.sanitize(img);
+                sanitized = true;
             }
             imgCache.put(dim, new ImageWrapper(img, sanitized));
             return new ImageIcon(img);
@@ -103,7 +115,7 @@ class ImageResource {
      * @param maxSize The maximum size. One of the dimensions (widht or height) can be -1,
      * which means it is not bounded.
      */
-    public ImageIcon getImageIconBounded(Dimension maxSize, boolean sanitized) {
+    public ImageIcon getImageIconBounded(Dimension maxSize, SanitizeMode sanitize) {
         if (maxSize.width < -1 || maxSize.width == 0 || maxSize.height < -1 || maxSize.height == 0)
             throw new IllegalArgumentException();
         float realWidth;
@@ -129,15 +141,15 @@ class ImageResource {
         }
 
         if (maxWidth == -1 && maxHeight == -1)
-            return getImageIcon(DEFAULT_DIMENSION, sanitized);
+            return getImageIcon(DEFAULT_DIMENSION, sanitize);
         else if (maxWidth == -1)
-            return getImageIcon(new Dimension(-1, maxHeight), sanitized);
+            return getImageIcon(new Dimension(-1, maxHeight), sanitize);
         else if (maxHeight == -1)
-            return getImageIcon(new Dimension(maxWidth, -1), sanitized);
+            return getImageIcon(new Dimension(maxWidth, -1), sanitize);
         else
             if (realWidth / maxWidth > realHeight / maxHeight)
-                return getImageIcon(new Dimension(maxWidth, -1), sanitized);
+                return getImageIcon(new Dimension(maxWidth, -1), sanitize);
             else
-                return getImageIcon(new Dimension(-1, maxHeight), sanitized);
+                return getImageIcon(new Dimension(-1, maxHeight), sanitize);
    }
 }
