@@ -5,10 +5,10 @@ import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 
-import javax.swing.GrayFilter;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
@@ -26,8 +26,7 @@ import org.openstreetmap.josm.tools.Utils;
  * applies for Nodes and turn restriction relations
  */
 public class NodeElemStyle extends ElemStyle {
-    public ImageIcon icon;
-    public int iconAlpha;
+    public MapImage<Image> mapImage;
     public Symbol symbol;
 
     private ImageIcon disabledIcon;
@@ -95,10 +94,9 @@ public class NodeElemStyle extends ElemStyle {
     public static final StyleList DEFAULT_NODE_STYLELIST = new StyleList(NodeElemStyle.SIMPLE_NODE_ELEMSTYLE);
     public static final StyleList DEFAULT_NODE_STYLELIST_TEXT = new StyleList(NodeElemStyle.SIMPLE_NODE_ELEMSTYLE, BoxTextElemStyle.SIMPLE_NODE_TEXT_ELEMSTYLE);
 
-    protected NodeElemStyle(Cascade c, ImageIcon icon, Integer iconAlpha, Symbol symbol) {
+    protected NodeElemStyle(Cascade c, MapImage<Image> mapImage, Symbol symbol) {
         super(c, 1000f);
-        this.icon = icon;
-        this.iconAlpha = iconAlpha == null ? 0 : iconAlpha;
+        this.mapImage = mapImage;
         this.symbol = symbol;
     }
 
@@ -109,24 +107,21 @@ public class NodeElemStyle extends ElemStyle {
     private static NodeElemStyle create(Environment env, boolean allowDefault) {
         Cascade c = env.mc.getCascade(env.layer);
 
-        Pair<ImageIcon, Integer> icon = createIcon(env);
+        MapImage<Image> mapImage = createIcon(env);
         Symbol symbol = null;
-        if (icon == null) {
+        if (mapImage == null) {
             symbol = createSymbol(env);
         }
 
-        // optimization: if we neither have a symbol, nor an icon
+        // optimization: if we neither have a symbol, nor a mapImage
         // we don't have to check for the remaining style properties and we don't
         // have to allocate a node element style.
-        if (!allowDefault && symbol == null && icon == null) return null;
+        if (!allowDefault && symbol == null && mapImage == null) return null;
 
-        return new NodeElemStyle(c,
-                icon == null ? null : icon.a,
-                icon == null ? null : icon.b,
-                symbol);
+        return new NodeElemStyle(c, mapImage, symbol);
     }
 
-    private static Pair<ImageIcon, Integer> createIcon(Environment env) {
+    private static MapImage<Image> createIcon(Environment env) {
         Cascade c = env.mc.getCascade(env.layer);
         Cascade c_def = env.mc.getCascade("default");
 
@@ -149,16 +144,22 @@ public class NodeElemStyle extends ElemStyle {
         int width = widthF == null ? -1 : Math.round(widthF);
         int height = heightF == null ? -1 : Math.round(heightF);
 
-        ImageIcon icon = MapPaintStyles.getIcon(iconRef, width, height);
-        if (icon == null)
-            return new Pair<ImageIcon, Integer>(MapPaintStyles.getNoIcon_Icon(iconRef.source), 255);
-        int iconAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.icon-image-alpha", 255))));
-        Integer pAlpha = Utils.color_float2int(c.get("icon-opacity", null, float.class));
-        if (pAlpha != null) {
-            iconAlpha = pAlpha;
-        }
+        MapImage<Image> mapImage = new MapImage<Image>(iconRef.iconName, iconRef.source);
 
-        return new Pair<ImageIcon, Integer>(icon, iconAlpha);
+        ImageIcon icon = MapPaintStyles.getIcon(iconRef, width, height);
+        if (icon == null) {
+            mapImage.img = MapPaintStyles.getNoIcon_Icon(iconRef.source).getImage();
+        } else {
+            mapImage.img = icon.getImage();
+            mapImage.alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.icon-image-alpha", 255))));
+            Integer pAlpha = Utils.color_float2int(c.get("icon-opacity", null, float.class));
+            if (pAlpha != null) {
+                mapImage.alpha = pAlpha;
+            }
+            mapImage.width = width;
+            mapImage.height = height;
+        }
+        return mapImage;
     }
 
     private static Symbol createSymbol(Environment env) {
@@ -240,9 +241,9 @@ public class NodeElemStyle extends ElemStyle {
     public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings settings, MapPainter painter, boolean selected, boolean member) {
         if (primitive instanceof Node) {
             Node n = (Node) primitive;
-            if (icon != null && painter.isShowIcons()) {
-                painter.drawNodeIcon(n, (painter.isInactiveMode() || n.isDisabled()) ? getDisabledIcon() : icon,
-                        Utils.color_int2float(iconAlpha), selected, member);
+            if (mapImage != null && painter.isShowIcons()) {
+                painter.drawNodeIcon(n, (painter.isInactiveMode() || n.isDisabled()) ? mapImage.getDisabled() : mapImage.img,
+                        Utils.color_int2float(mapImage.alpha), selected, member);
             } else if (symbol != null) {
                 Color fillColor = symbol.fillColor;
                 if (fillColor != null) {
@@ -302,22 +303,14 @@ public class NodeElemStyle extends ElemStyle {
                 painter.drawNode(n, color, size, fill);
 
             }
-        } else if (primitive instanceof Relation && icon != null) {
-            painter.drawRestriction((Relation) primitive, this);
+        } else if (primitive instanceof Relation && mapImage != null) {
+            painter.drawRestriction((Relation) primitive, mapImage);
         }
     }
 
-    public ImageIcon getDisabledIcon() {
-        if (disabledIcon != null)
-            return disabledIcon;
-        if (icon == null)
-            return null;
-        return disabledIcon = new ImageIcon(GrayFilter.createDisabledImage(icon.getImage()));
-    }
-
     public Rectangle getBox() {
-        if (icon != null) {
-            int w = icon.getIconWidth(), h=icon.getIconHeight();
+        if (mapImage != null) {
+            int w = mapImage.img.getWidth(null), h = mapImage.img.getHeight(null);
             return new Rectangle(-w/2, -h/2, w, h);
         } else if (symbol != null) {
             return new Rectangle(-symbol.size/2, -symbol.size/2, symbol.size, symbol.size);
@@ -337,8 +330,7 @@ public class NodeElemStyle extends ElemStyle {
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 17 * hash + (icon != null ? icon.getImage().hashCode() : 0);
-        hash = 17 * hash + iconAlpha;
+        hash = 17 * hash + (mapImage != null ? mapImage.hashCode() : 0);
         hash = 17 * hash + (symbol != null ? symbol.hashCode() : 0);
         return hash;
     }
@@ -352,22 +344,19 @@ public class NodeElemStyle extends ElemStyle {
 
         final NodeElemStyle other = (NodeElemStyle) obj;
         // we should get the same image object due to caching
-        if (icon != other.icon && (icon == null || other.icon == null || icon.getImage() != other.icon.getImage()))
-            return false;
-        if (this.iconAlpha != other.iconAlpha)
+        if (!equal(mapImage, other.mapImage))
             return false;
         if (!equal(symbol, other.symbol))
             return false;
         return true;
     }
 
-
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("NodeElemStyle{");
         s.append(super.toString());
-        if (icon != null) {
-            s.append(" icon=" + icon + " iconAlpha=" + iconAlpha);
+        if (mapImage != null) {
+            s.append(" icon=[" + mapImage + "]");
         }
         if (symbol != null) {
             s.append(" symbol=[" + symbol + "]");

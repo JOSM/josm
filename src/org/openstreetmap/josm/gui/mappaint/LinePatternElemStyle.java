@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
+import java.awt.Image;
+
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -14,9 +16,9 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
  */
 public class LinePatternElemStyle extends ElemStyle {
 
-    public ImageIcon pattern;
+    public MapImage<Image> pattern;
 
-    public LinePatternElemStyle(Cascade c, ImageIcon pattern) {
+    public LinePatternElemStyle(Cascade c, MapImage<Image> pattern) {
         super(c, -1f);
         this.pattern = pattern;
     }
@@ -30,13 +32,15 @@ public class LinePatternElemStyle extends ElemStyle {
         ImageIcon icon = MapPaintStyles.getIcon(iconRef, -1, -1);
         if (icon == null)
             return null;
-        return new LinePatternElemStyle(c, icon);
+        MapImage<Image> pattern = new MapImage<Image>(iconRef.iconName, iconRef.source);
+        pattern.img = icon.getImage();
+        return new LinePatternElemStyle(c, pattern);
     }
 
     @Override
     public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, MapPainter painter, boolean selected, boolean member) {
         Way w = (Way)primitive;
-        painter.drawLinePattern(w, pattern);
+        painter.drawLinePattern(w, pattern.img);
     }
 
     @Override
@@ -51,7 +55,7 @@ public class LinePatternElemStyle extends ElemStyle {
         if (!super.equals(obj))
             return false;
         final LinePatternElemStyle other = (LinePatternElemStyle) obj;
-        return pattern.getImage() == other.pattern.getImage();
+        return pattern.equals(other.pattern);
     }
 
     @Override
@@ -61,6 +65,6 @@ public class LinePatternElemStyle extends ElemStyle {
 
     @Override
     public String toString() {
-        return "LinePatternElemStyle{" + super.toString() + "pattern=" + pattern + '}';
+        return "LinePatternElemStyle{" + super.toString() + "pattern=[" + pattern + "]}";
     }
 }

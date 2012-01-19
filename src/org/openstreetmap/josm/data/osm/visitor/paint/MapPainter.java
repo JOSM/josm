@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.HorizontalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.VerticalTextAlignment;
+import org.openstreetmap.josm.gui.mappaint.MapImage;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
 import org.openstreetmap.josm.gui.mappaint.TextElement;
@@ -504,9 +505,9 @@ public class MapPainter {
         return null;
     }
 
-    public void drawLinePattern(Way way, ImageIcon pattern) {
-        final int width = pattern.getIconWidth();
-        final int height = pattern.getIconHeight();
+    public void drawLinePattern(Way way, Image pattern) {
+        final int width = pattern.getWidth(null);
+        final int height = pattern.getHeight(null);
 
         Point lastP = null;
         double wayLength = 0;
@@ -529,15 +530,15 @@ public class MapPainter {
                 g.rotate(Math.atan2(dy, dx));
 
                 if (dist > 0) {
-                    g.drawImage(pattern.getImage(), 0, 0, (int) dist, height,
+                    g.drawImage(pattern, 0, 0, (int) dist, height,
                             width - (int) dist, 0, width, height, null);
                 }
                 while (dist < segmentLength) {
                     if (dist + width > segmentLength) {
-                        g.drawImage(pattern.getImage(), (int) dist, 0, (int) segmentLength, height,
+                        g.drawImage(pattern, (int) dist, 0, (int) segmentLength, height,
                                 0, 0, (int) segmentLength - (int) dist, height, null);
                     } else {
-                        pattern.paintIcon(nc, g, (int) dist, 0);
+                        g.drawImage(pattern, (int) dist, 0, nc);
                     }
                     dist += width;
                 }
@@ -549,18 +550,18 @@ public class MapPainter {
         }
     }
 
-    public void drawNodeIcon(Node n, ImageIcon icon, float iconAlpha, boolean selected, boolean member) {
+    public void drawNodeIcon(Node n, Image img, float alpha, boolean selected, boolean member) {
         Point p = nc.getPoint(n);
 
-        final int w = icon.getIconWidth(), h=icon.getIconHeight();
+        final int w = img.getWidth(null), h=img.getHeight(null);
         if(n.isHighlighted()) {
             drawPointHighlight(p, Math.max(w, h));
         }
 
-        if (iconAlpha != 1f) {
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, iconAlpha));
+        if (alpha != 1f) {
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
         }
-        icon.paintIcon ( nc, g, p.x-w/2, p.y-h/2 );
+        g.drawImage(img, p.x-w/2, p.y-h/2, nc);
         g.setPaintMode();
         if (selected || member)
         {
@@ -801,11 +802,11 @@ public class MapPainter {
         return path;
     }
 
-    public void drawArea(Way w, Color color, BufferedImage fillImage, float fillImageAlpha, TextElement text) {
-        drawArea(w, getPath(w), color, fillImage, fillImageAlpha, text);
+    public void drawArea(Way w, Color color, MapImage<BufferedImage> fillImage, TextElement text) {
+        drawArea(w, getPath(w), color, fillImage, text);
     }
 
-    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, BufferedImage fillImage, float fillImageAlpha, TextElement text) {
+    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage<BufferedImage> fillImage, TextElement text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());
 
@@ -814,12 +815,12 @@ public class MapPainter {
                 g.setColor(color);
                 g.fill(area);
             } else {
-                TexturePaint texture = new TexturePaint(fillImage,
+                TexturePaint texture = new TexturePaint(fillImage.img,
                         //                        new Rectangle(polygon.xpoints[0], polygon.ypoints[0], fillImage.getWidth(), fillImage.getHeight()));
-                        new Rectangle(0, 0, fillImage.getWidth(), fillImage.getHeight()));
+                        new Rectangle(0, 0, fillImage.img.getWidth(null), fillImage.img.getHeight(null)));
                 g.setPaint(texture);
-                if (fillImageAlpha != 1f) {
-                    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fillImageAlpha));
+                if (fillImage.alpha != 1f) {
+                    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fillImage.alpha));
                 }
                 g.fill(area);
                 g.setPaintMode();
@@ -870,7 +871,7 @@ public class MapPainter {
         }
     }
 
-    public void drawArea(Relation r, Color color, BufferedImage fillImage, float fillImageAlpha, TextElement text) {
+    public void drawArea(Relation r, Color color, MapImage<BufferedImage> fillImage, TextElement text) {
         Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);
         if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
             for (PolyData pd : multipolygon.getCombinedPolygons()) {
@@ -880,7 +881,7 @@ public class MapPainter {
                 }
                 drawArea(r, p,
                         pd.selected ? settings.getRelationSelectedColor(color.getAlpha()) : color,
-                                fillImage, fillImageAlpha, text);
+                                fillImage, text);
             }
         }
     }
@@ -897,14 +898,14 @@ public class MapPainter {
         return true;
     }
 
-    public void drawRestriction(ImageIcon icon, Point pVia, double vx, double vx2, double vy, double vy2, double iconAngle, boolean selected) {
-        /* rotate icon with direction last node in from to */
-        ImageIcon rotatedIcon = ImageProvider.createRotatedImage(null /*icon2*/, icon, iconAngle);
+    public void drawRestriction(Image img, Point pVia, double vx, double vx2, double vy, double vy2, double angle, boolean selected) {
+        /* rotate image with direction last node in from to */
+        Image rotatedImg = ImageProvider.createRotatedImage(null , img, angle);
 
-        /* scale down icon to 16*16 pixels */
-        ImageIcon smallIcon = new ImageIcon(rotatedIcon.getImage().getScaledInstance(16 , 16, Image.SCALE_SMOOTH));
-        int w = smallIcon.getIconWidth(), h=smallIcon.getIconHeight();
-        smallIcon.paintIcon (nc, g, (int)(pVia.x+vx+vx2)-w/2, (int)(pVia.y+vy+vy2)-h/2 );
+        /* scale down image to 16*16 pixels */
+        Image smallImg = new ImageIcon(rotatedImg.getScaledInstance(16 , 16, Image.SCALE_SMOOTH)).getImage();
+        int w = smallImg.getWidth(null), h=smallImg.getHeight(null);
+        g.drawImage(smallImg, (int)(pVia.x+vx+vx2)-w/2, (int)(pVia.y+vy+vy2)-h/2, nc);
 
         if (selected) {
             g.setColor(relationSelectedColor);
@@ -912,7 +913,7 @@ public class MapPainter {
         }
     }
 
-    public void drawRestriction(Relation r, NodeElemStyle icon) {
+    public void drawRestriction(Relation r, MapImage<Image> icon) {
         Way fromWay = null;
         Way toWay = null;
         OsmPrimitive via = null;
@@ -1083,7 +1084,7 @@ public class MapPainter {
             iconAngle = 270-fromAngleDeg;
         }
 
-        drawRestriction(inactive || r.isDisabled() ? icon.getDisabledIcon() : icon.icon,
+        drawRestriction(inactive || r.isDisabled() ? icon.getDisabled() : icon.img,
                 pVia, vx, vx2, vy, vy2, iconAngle, r.isSelected());
     }
 
