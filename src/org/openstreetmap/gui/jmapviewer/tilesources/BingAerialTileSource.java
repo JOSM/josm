@@ -3,14 +3,13 @@ package org.openstreetmap.gui.jmapviewer.tilesources;
 //License: GPL.
 
 import java.awt.Image;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -62,15 +61,10 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
         protected byte[] updateData() throws IOException {
             URL u = new URL("http://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?include=ImageryProviders&output=xml&key="
                     + API_KEY);
-            BufferedReader in = new BufferedReader(new InputStreamReader(u.openStream()));
-            StringBuilder content = new StringBuilder(1<<15 /* represents 32k */);
-            String line;
-            while ((line = in.readLine()) != null) {
-                content.append(line);
-            }
-            in.close();
+            UTFInputStreamReader in = UTFInputStreamReader.create(u.openStream(), "utf-8");
+            String r = new Scanner(in).useDelimiter("\\A").next();
             System.out.println("Successfully loaded Bing attribution data.");
-            return content.toString().getBytes();
+            return r.getBytes("utf-8");
         }
     }
 
@@ -98,8 +92,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new InputSource(
-                    UTFInputStreamReader.create(new ByteArrayInputStream(xml.getBytes()), "UTF-8")));
+            Document document = builder.parse(new InputSource(new StringReader(xml)));
 
             XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xpath = xPathFactory.newXPath();
@@ -227,6 +220,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
                             System.err.println("Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.");
                             Thread.sleep(waitTimeSec * 1000L);
                             waitTimeSec *= 2;
+                            ex.printStackTrace();
                         }
                     }
                 }
@@ -235,7 +229,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
         try {
             final List<Attribution> data;
             try {
-                data = attributions.get(100, TimeUnit.MILLISECONDS);
+                data = attributions.get(1000, TimeUnit.MILLISECONDS);
             } catch (TimeoutException ex) {
                 return "Loading Bing attribution data...";
             }
