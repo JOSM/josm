@@ -93,11 +93,7 @@ class ImageResource {
                 height = icon.getIconHeight() * width / icon.getIconWidth();
             }
             Image img;
-            if (width == dim.width && height == dim.height) {
-                img = icon.getImage();
-            } else {
-                img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            }
+            img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
             boolean sanitized = false;
             if (sanitize == SanitizeMode.ALWAYS || (sanitize == SanitizeMode.MAKE_BUFFEREDIMAGE && !(img instanceof BufferedImage))) {
                 img = ImageProvider.sanitize(img);
