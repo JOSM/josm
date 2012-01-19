@@ -759,7 +759,7 @@ public class ImageProvider {
      *
      * @return the image after rotating.
      */
-    public static ImageIcon createRotatedImage(Component c, Icon icon, double rotatedAngle) {
+    public static Image createRotatedImage(Component c, Image img, double rotatedAngle) {
         // convert rotatedAngle to a value from 0 to 360
         double originalAngle = rotatedAngle % 360;
         if (rotatedAngle != 0 && originalAngle == 0) {
@@ -774,8 +774,8 @@ public class ImageProvider {
 
         double radian = Math.toRadians(angle);
 
-        int iw = icon.getIconWidth();
-        int ih = icon.getIconHeight();
+        int iw = img.getWidth(null);
+        int ih = img.getHeight(null);
         int w;
         int h;
 
@@ -801,10 +801,11 @@ public class ImageProvider {
         g2d.rotate(Math.toRadians(originalAngle));
 
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        icon.paintIcon(c, g2d, -cx, -cy);
+        g2d.drawImage(img, -cx, -cy, c);
 
         g2d.dispose();
-        return new ImageIcon(image);
+        new ImageIcon(image); // load completely
+        return image;
     }
 
     /**
