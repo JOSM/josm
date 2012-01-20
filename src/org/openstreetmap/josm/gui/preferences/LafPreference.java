@@ -93,8 +93,8 @@ public class LafPreference implements PreferenceSetting {
         modeless.setToolTipText(tr("Do not require to switch modes (potlatch style workflow)"));
         modeless.setSelected(Main.pref.getBoolean("modeless", false));
 
+        panel.add(showID, GBC.eop().insets(20, 0, 0, 0));
         if (Main.pref.getBoolean("expert", false)) {
-            panel.add(showID, GBC.eop().insets(20, 0, 0, 0));
             panel.add(showLocalizedName, GBC.eop().insets(20, 0, 0, 0));
             panel.add(modeless, GBC.eop().insets(20, 0, 0, 0));
         }
