@@ -31,6 +31,7 @@ import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
@@ -76,11 +77,27 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         this.data = new ArrayList<Marker>();
         this.fromLayer = fromLayer;
         double firstTime = -1.0;
+        String lastLinkedFile = "";
 
         for (WayPoint wpt : indata.waypoints) {
+            /* calculate time differences in waypoints */
             double time = wpt.time;
-            if (firstTime < 0) {
+            boolean wpt_has_link = wpt.attr.containsKey(GpxData.META_LINKS);
+            if (firstTime < 0 && wpt_has_link) {
                 firstTime = time;
+                for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get(GpxData.META_LINKS)) {
+                    lastLinkedFile = oneLink.uri;
+                    break;
+                }
+            }
+            if (wpt_has_link) {
+                for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get(GpxData.META_LINKS)) {
+                    if (!oneLink.uri.equals(lastLinkedFile)) {
+                        firstTime = time;
+                    }
+                    lastLinkedFile = oneLink.uri;
+                    break;
+                }
             }
             Marker m = Marker.createMarker(wpt, indata.storageFile, this, time, time - firstTime);
             if (m != null) {
