@@ -4,12 +4,11 @@ package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.awt.Image;
 import java.io.IOException;
-import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -28,8 +27,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
-import org.openstreetmap.josm.io.CacheCustomContent;
-import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -51,24 +48,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
         super("Bing Aerial Maps", "http://example.com/");
     }
 
-    private static class BingAttributionData extends CacheCustomContent<IOException> {
-
-        public BingAttributionData() {
-            super("bing.attribution.xml", CacheCustomContent.INTERVAL_WEEKLY);
-        }
-
-        @Override
-        protected byte[] updateData() throws IOException {
-            URL u = new URL("http://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?include=ImageryProviders&output=xml&key="
-                    + API_KEY);
-            UTFInputStreamReader in = UTFInputStreamReader.create(u.openStream(), "utf-8");
-            String r = new Scanner(in).useDelimiter("\\A").next();
-            System.out.println("Successfully loaded Bing attribution data.");
-            return r.getBytes("utf-8");
-        }
-    }
-
-    class Attribution {
+    protected class Attribution {
         String attribution;
         int minZoom;
         int maxZoom;
@@ -88,11 +68,16 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
         return url;
     }
 
-    private List<Attribution> parseAttributionText(String xml) throws IOException {
+    protected URL getAttributionUrl() throws MalformedURLException {
+        return new URL("http://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?include=ImageryProviders&output=xml&key="
+                + API_KEY);
+    }
+
+    protected List<Attribution> parseAttributionText(InputSource xml) throws IOException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new InputSource(new StringReader(xml)));
+            Document document = builder.parse(xml);
 
             XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xpath = xPathFactory.newXPath();
@@ -204,27 +189,32 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
         return "http://opengeodata.org/microsoft-imagery-details";
     }
 
+    protected Callable<List<Attribution>> getAttributionLoaderCallable() {
+        return new Callable<List<Attribution>>() {
+
+            @Override
+            public List<Attribution> call() throws Exception {
+                int waitTimeSec = 1;
+                while (true) {
+                    try {
+                        InputSource xml = new InputSource(getAttributionUrl().openStream());
+                        List<Attribution> r = parseAttributionText(xml);
+                        System.out.println("Successfully loaded Bing attribution data.");
+                        return r;
+                    } catch (IOException ex) {
+                        System.err.println("Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.");
+                        Thread.sleep(waitTimeSec * 1000L);
+                        waitTimeSec *= 2;
+                    }
+                }
+            }
+        };
+    }
+
     @Override
     public String getAttributionText(int zoom, Coordinate topLeft, Coordinate botRight) {
         if (attributions == null) {
-            attributions = Executors.newSingleThreadExecutor().submit(new Callable<List<Attribution>>() {
-
-                @Override
-                public List<Attribution> call() throws Exception {
-                    BingAttributionData attributionLoader = new BingAttributionData();
-                    int waitTimeSec = 1;
-                    while (true) {
-                        try {
-                            return parseAttributionText(attributionLoader.updateIfRequiredString());
-                        } catch (IOException ex) {
-                            System.err.println("Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.");
-                            Thread.sleep(waitTimeSec * 1000L);
-                            waitTimeSec *= 2;
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-            });
+            attributions = Executors.newSingleThreadExecutor().submit(getAttributionLoaderCallable());
         }
         try {
             final List<Attribution> data;
