@@ -17,13 +17,11 @@ import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.io.StringReader;
+import java.net.URL;
+import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,7 +41,6 @@ import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
@@ -68,6 +65,9 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.io.CacheCustomContent;
+import org.openstreetmap.josm.io.UTFInputStreamReader;
+import org.xml.sax.InputSource;
 
 /**
  * Class that displays a slippy map layer.
@@ -224,6 +224,47 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         PROP_MIN_ZOOM_LVL.put(minZoomLvl);
     }
 
+    private static class CachedAttributionBingAerialTileSource extends BingAerialTileSource {
+
+        class BingAttributionData extends CacheCustomContent<IOException> {
+
+            public BingAttributionData() {
+                super("bing.attribution.xml", CacheCustomContent.INTERVAL_WEEKLY);
+            }
+
+            @Override
+            protected byte[] updateData() throws IOException {
+                URL u = getAttributionUrl();
+                UTFInputStreamReader in = UTFInputStreamReader.create(u.openStream(), "utf-8");
+                String r = new Scanner(in).useDelimiter("\\A").next();
+                System.out.println("Successfully loaded Bing attribution data.");
+                return r.getBytes("utf-8");
+            }
+        }
+
+        @Override
+        protected Callable<List<Attribution>> getAttributionLoaderCallable() {
+            return new Callable<List<Attribution>>() {
+
+                @Override
+                public List<Attribution> call() throws Exception {
+                    BingAttributionData attributionLoader = new BingAttributionData();
+                    int waitTimeSec = 1;
+                    while (true) {
+                        try {
+                            String xml = attributionLoader.updateIfRequiredString();
+                            return parseAttributionText(new InputSource(new StringReader((xml))));
+                        } catch (IOException ex) {
+                            System.err.println("Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.");
+                            Thread.sleep(waitTimeSec * 1000L);
+                            waitTimeSec *= 2;
+                        }
+                    }
+                }
+            };
+        }
+    }
+
     public static TileSource getTileSource(ImageryInfo info) throws IllegalArgumentException {
         if (info.getImageryType() == ImageryType.TMS) {
             checkUrl(info.getUrl());
@@ -231,12 +272,13 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             info.setAttribution(t);
             return t;
         } else if (info.getImageryType() == ImageryType.BING)
-            return new BingAerialTileSource();
-        else if (info.getImageryType() == ImageryType.SCANEX)
+            return new CachedAttributionBingAerialTileSource();
+        else if (info.getImageryType() == ImageryType.SCANEX) {
             return new ScanexTileSource(info.getUrl());
+        }
         return null;
     }
-    
+
     public static void checkUrl(String url) throws IllegalArgumentException {
         if (url == null) {
             throw new IllegalArgumentException();
