@@ -10,7 +10,7 @@ import org.openstreetmap.josm.gui.io.CredentialDialog;
 
 abstract public class AbstractCredentialsAgent implements CredentialsAgent {
 
-    Map<RequestorType, PasswordAuthentication> memoryCredentialsCache = new HashMap<RequestorType, PasswordAuthentication>();
+    protected Map<RequestorType, PasswordAuthentication> memoryCredentialsCache = new HashMap<RequestorType, PasswordAuthentication>();
 
     /**
      * @see CredentialsAgent#getCredentials(RequestorType, boolean)
