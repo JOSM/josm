@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +36,7 @@ import org.xml.sax.SAXException;
 
 public class BingAerialTileSource extends AbstractTMSTileSource {
     private static String API_KEY = "Arzdiw4nlOJzRwOz__qailc8NiR31Tt51dN2D7cm57NrnceZnCpgOkmJhNpGoppU";
-    private static Future<List<Attribution>> attributions;
+    private static volatile Future<List<Attribution>> attributions; // volatile is required for getAttribution(), see below.
     private static String imageUrlTemplate;
     private static Integer imageryZoomMax;
     private static String[] subdomains;
@@ -58,6 +59,9 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
 
     @Override
     public String getTileUrl(int zoom, int tilex, int tiley) throws IOException {
+        // make sure that attribution is loaded. otherwise subdomains is null.
+        getAttribution();
+
         int t = (zoom + tilex + tiley) % subdomains.length;
         String subdomain = subdomains[t];
 
@@ -211,18 +215,30 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
         };
     }
 
-    @Override
-    public String getAttributionText(int zoom, Coordinate topLeft, Coordinate botRight) {
+    protected List<Attribution> getAttribution() {
         if (attributions == null) {
-            attributions = Executors.newSingleThreadExecutor().submit(getAttributionLoaderCallable());
+            // see http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html
+            synchronized (BingAerialTileSource.class) {
+                if (attributions == null) {
+                    attributions = Executors.newSingleThreadExecutor().submit(getAttributionLoaderCallable());
+                }
+            }
         }
         try {
-            final List<Attribution> data;
-            try {
-                data = attributions.get(1000, TimeUnit.MILLISECONDS);
-            } catch (TimeoutException ex) {
-                return "Loading Bing attribution data...";
-            }
+            return attributions.get(1000, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException ex) {
+            System.err.println("Bing: attribution data is not yet loaded.");
+        } catch (ExecutionException ex) {
+            throw new RuntimeException(ex.getCause());
+        } catch (InterruptedException ign) {
+        }
+        return null;
+    }
+
+    @Override
+    public String getAttributionText(int zoom, Coordinate topLeft, Coordinate botRight) {
+        try {
+            final List<Attribution> data = getAttribution();
             if (data == null) {
                 return "Error loading Bing attribution data";
             }
