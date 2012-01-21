@@ -38,7 +38,7 @@ public class ExpertToggleAction extends JosmAction {
     }
 
     /**
-     * Register a projection change listener
+     * Register a expert mode change listener
      *
      * @param listener the listener. Ignored if null.
      */
@@ -59,7 +59,7 @@ public class ExpertToggleAction extends JosmAction {
     }
 
     /**
-     * Removes a projection change listener
+     * Removes a expert mode change listener
      *
      * @param listener the listener. Ignored if null.
      */
@@ -76,11 +76,10 @@ public class ExpertToggleAction extends JosmAction {
         }
     }
 
-
     public ExpertToggleAction() {
         super(
                 tr("Expert Mode"),
-                null, /* no icon */
+                "expert",
                 tr("Enable/disable expert mode"),
                 null,
                 false /* register toolbar */
