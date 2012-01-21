@@ -84,29 +84,33 @@ public abstract class SourceEditor extends JPanel {
 
     final protected boolean isMapPaint;
 
-    protected JTable tblActiveSources;
-    protected ActiveSourcesModel activeSourcesModel;
-    protected JList lstAvailableSources;
-    protected AvailableSourcesListModel availableSourcesModel;
-    protected JTable tblIconPaths = null;
-    protected IconPathTableModel iconPathsModel;
+    protected final JTable tblActiveSources;
+    protected final ActiveSourcesModel activeSourcesModel;
+    protected final JList lstAvailableSources;
+    protected final AvailableSourcesListModel availableSourcesModel;
+    protected final JTable tblIconPaths;
+    protected final IconPathTableModel iconPathsModel;
+    protected final String availableSourcesUrl;
+    protected final List<SourceProvider> sourceProviders;
+
     protected boolean sourcesInitiallyLoaded;
-    protected String availableSourcesUrl;
 
     /**
      * constructor
      * @param isMapPaint true for MapPaintPreference subclass, false
      *  for TaggingPresetPreference subclass
      * @param availableSourcesUrl the URL to the list of available sources
+     * @param sourceProviders the list of additional source providers, from plugins
      */
-    public SourceEditor(final boolean isMapPaint, final String availableSourcesUrl) {
+    public SourceEditor(final boolean isMapPaint, final String availableSourcesUrl, final List<SourceProvider> sourceProviders) {
 
         this.isMapPaint = isMapPaint;
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
-        lstAvailableSources = new JList(availableSourcesModel = new AvailableSourcesListModel(selectionModel));
-        lstAvailableSources.setSelectionModel(selectionModel);
-        lstAvailableSources.setCellRenderer(new SourceEntryListCellRenderer());
+        this.lstAvailableSources = new JList(availableSourcesModel = new AvailableSourcesListModel(selectionModel));
+        this.lstAvailableSources.setSelectionModel(selectionModel);
+        this.lstAvailableSources.setCellRenderer(new SourceEntryListCellRenderer());
         this.availableSourcesUrl = availableSourcesUrl;
+        this.sourceProviders = sourceProviders;
 
         selectionModel = new DefaultListSelectionModel();
         tblActiveSources = new JTable(activeSourcesModel = new ActiveSourcesModel(selectionModel)) {
@@ -262,7 +266,7 @@ public abstract class SourceEditor extends JPanel {
         bottomLeftTB.setFloatable(false);
         bottomLeftTB.setBorderPainted(false);
         bottomLeftTB.setOpaque(false);
-        bottomLeftTB.add(new ReloadSourcesAction(availableSourcesUrl));
+        bottomLeftTB.add(new ReloadSourcesAction(availableSourcesUrl, sourceProviders));
         bottomLeftTB.add(Box.createHorizontalGlue());
         add(bottomLeftTB, gbc);
 
@@ -411,13 +415,13 @@ public abstract class SourceEditor extends JPanel {
         activeSourcesModel.removeIdxs(idxs);
     }
 
-    protected void reloadAvailableSources(String url) {
-        Main.worker.submit(new SourceLoader(url));
+    protected void reloadAvailableSources(String url, List<SourceProvider> sourceProviders) {
+        Main.worker.submit(new SourceLoader(url, sourceProviders));
     }
 
     public void initiallyLoadAvailableSources() {
         if (!sourcesInitiallyLoaded) {
-            reloadAvailableSources(this.availableSourcesUrl);
+            reloadAvailableSources(availableSourcesUrl, sourceProviders);
         }
         sourcesInitiallyLoaded = true;
     }
@@ -906,17 +910,19 @@ public abstract class SourceEditor extends JPanel {
     }
 
     class ReloadSourcesAction extends AbstractAction {
-        private String url;
-        public ReloadSourcesAction(String url) {
+        private final String url;
+        private final List<SourceProvider> sourceProviders;
+        public ReloadSourcesAction(String url, List<SourceProvider> sourceProviders) {
             putValue(NAME, tr("Reload"));
             putValue(SHORT_DESCRIPTION, tr(getStr(I18nString.RELOAD_ALL_AVAILABLE), url));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
             this.url = url;
+            this.sourceProviders = sourceProviders;
         }
 
         public void actionPerformed(ActionEvent e) {
             MirroredInputStream.cleanup(url);
-            reloadAvailableSources(url);
+            reloadAvailableSources(url, sourceProviders);
         }
     }
 
@@ -1095,14 +1101,16 @@ public abstract class SourceEditor extends JPanel {
     }
 
     class SourceLoader extends PleaseWaitRunnable {
-        private String url;
+        private final String url;
+        private final List<SourceProvider> sourceProviders;
         private BufferedReader reader;
         private boolean canceled;
         private final List<ExtendedSourceEntry> sources = new ArrayList<ExtendedSourceEntry>();
 
-        public SourceLoader(String url) {
+        public SourceLoader(String url, List<SourceProvider> sourceProviders) {
             super(tr(getStr(I18nString.LOADING_SOURCES_FROM), url));
             this.url = url;
+            this.sourceProviders = sourceProviders;
         }
 
         @Override
@@ -1137,6 +1145,15 @@ public abstract class SourceEditor extends JPanel {
             String lang = LanguageInfo.getLanguageCodeXML();
             try {
                 sources.addAll(getDefault());
+                
+                for (SourceProvider provider : sourceProviders) {
+                    for (SourceEntry src : provider.getSources()) {
+                        if (src instanceof ExtendedSourceEntry) {
+                            sources.add((ExtendedSourceEntry) src);
+                        }
+                    }
+                }
+                
                 MirroredInputStream stream = new MirroredInputStream(url);
                 InputStreamReader r;
                 try {
