@@ -19,7 +19,7 @@ public class LoadObjectHandler extends RequestHandler {
     public static final String command = "load_object";
 
     @Override
-    protected String[] getMandatoryParams() {
+    public String[] getMandatoryParams() {
         return new String[]{"objects"};
     }
 

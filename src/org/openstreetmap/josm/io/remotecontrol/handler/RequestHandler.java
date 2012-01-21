@@ -4,12 +4,15 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is the parent of all classes that handle a specific remote control command
@@ -90,8 +93,7 @@ public abstract class RequestHandler {
         return null;
     }
 
-    protected String[] getMandatoryParams()
-    {
+    public String[] getMandatoryParams() {
         return null;
     }
 
@@ -168,6 +170,7 @@ public abstract class RequestHandler {
         String[] mandatory = getMandatoryParams();
         if(mandatory == null) return;
 
+        List<String> missingKeys = new LinkedList<String>();
         boolean error = false;
         for (int i = 0; i < mandatory.length; ++i) {
             String key = mandatory[i];
@@ -175,10 +178,14 @@ public abstract class RequestHandler {
             if ((value == null) || (value.length() == 0)) {
                 error = true;
                 System.out.println("'" + myCommand + "' remote control request must have '" + key + "' parameter");
+                missingKeys.add(key);
             }
         }
-        if (error)
-            throw new RequestHandlerBadRequestException();
+        if (error) {
+            throw new RequestHandlerBadRequestException(
+                    "The following keys are mandatory, but have not been provided: "
+                    + Utils.join(", ", missingKeys));
+        }
     }
 
     /**
@@ -203,12 +210,23 @@ public abstract class RequestHandler {
     }
 
     public static class RequestHandlerException extends Exception {
+
+        public RequestHandlerException(String message) {
+            super(message);
+        }
+
+        public RequestHandlerException() {
+        }
     }
 
     public static class RequestHandlerErrorException extends RequestHandlerException {
     }
 
     public static class RequestHandlerBadRequestException extends RequestHandlerException {
+
+        public RequestHandlerBadRequestException(String message) {
+            super(message);
+        }
     }
     
     public static class RequestHandlerForbiddenException extends RequestHandlerException {

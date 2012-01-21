@@ -10,9 +10,14 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddWayHandler;
@@ -25,6 +30,7 @@ import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHan
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerErrorException;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerForbiddenException;
 import org.openstreetmap.josm.io.remotecontrol.handler.VersionHandler;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Processes HTTP "remote control" requests.
@@ -48,7 +54,7 @@ public class RequestProcessor extends Thread {
      * Will be initialized with default handlers here. Other plug-ins
      * can extend this list by using @see addRequestHandler
      */
-    private static HashMap<String, Class<? extends RequestHandler>> handlers = new HashMap<String, Class<? extends RequestHandler>>();
+    private static Map<String, Class<? extends RequestHandler>> handlers = new TreeMap<String, Class<? extends RequestHandler>>();
 
     /**
      * Constructor
@@ -173,11 +179,23 @@ public class RequestProcessor extends Thread {
             }
 
             // find a handler for this command
-            Class<? extends RequestHandler> handlerClass = handlers
-                    .get(command);
+            Class<? extends RequestHandler> handlerClass = handlers.get(command);
             if (handlerClass == null) {
                 // no handler found
-                sendBadRequest(out);
+                StringBuilder usage = new StringBuilder(1024);
+                for (Entry<String, Class<? extends RequestHandler>> handler : handlers.entrySet()) {
+                    String[] mandatory = handler.getValue().newInstance().getMandatoryParams();
+                    usage.append("<li>");
+                    usage.append(handler.getKey());
+                    if (mandatory != null) {
+                        usage.append("<br/>mandatory parameter: ").append(Utils.join(", ", Arrays.asList(mandatory)));
+                    }
+                    usage.append("</li>");
+                }
+                String help = "No command specified! The following commands are available:<ul>"
+                        + usage.toString()
+                        + "</ul>";
+                sendBadRequest(out, help);
             } else {
                 // create handler object
                 RequestHandler handler = handlerClass.newInstance();
@@ -195,7 +213,7 @@ public class RequestProcessor extends Thread {
                 } catch (RequestHandlerErrorException ex) {
                     sendError(out);
                 } catch (RequestHandlerBadRequestException ex) {
-                    sendBadRequest(out);
+                    sendBadRequest(out, ex.getMessage());
                 } catch (RequestHandlerForbiddenException ex) {
                     sendForbidden(out);
                 }
@@ -281,13 +299,16 @@ public class RequestProcessor extends Thread {
      * @throws IOException
      *             If the error can not be written
      */
-    private void sendBadRequest(Writer out) throws IOException {
+    private void sendBadRequest(Writer out, String help) throws IOException {
         sendHeader(out, "400 Bad Request", "text/html", true);
         out.write("<HTML>\r\n");
         out.write("<HEAD><TITLE>Bad Request</TITLE>\r\n");
         out.write("</HEAD>\r\n");
         out.write("<BODY>");
         out.write("<H1>HTTP Error 400: Bad Request</h2>\r\n");
+        if (help != null) {
+            out.write(help);
+        }
         out.write("</BODY></HTML>\r\n");
         out.flush();
     }
