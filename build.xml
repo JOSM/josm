@@ -223,7 +223,7 @@ Build-Date: ${build.tstamp}
 	 	-keepclassmembers class * {
 	 	    public protected *;
 	 	}
-		
+
 		# Disable annoying [proguard] Note: the configuration keeps the entry point '...', but not the descriptor class '...'. This notes should not be a problem as we don't use obfuscation
 		-dontnote
 		</proguard>
@@ -295,4 +295,25 @@ Build-Date: ${build.tstamp}
             <path path="${dir}"/>
         </as:check-signature>
     </target>
+
+    <target name="findbugs" depends="dist">
+    	<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="tools/findbugs/findbugs-ant.jar"/>
+        <path id="findbugs-classpath">
+            <fileset dir="tools/findbugs/">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
+    	<property name="findbugs-classpath" refid="findbugs-classpath"/>
+      <findbugs output="xml"
+                outputFile="findbugs-josm.xml"
+      	        classpath="${findbugs-classpath}"
+      	        pluginList=""
+      	        excludeFilter="tools/findbugs/josm-filter.xml"
+      	        effort="max"
+      	        >
+        <sourcePath path="${basedir}/src" />
+        <class location="${basedir}/dist/josm-custom.jar" />
+      </findbugs>
+    </target>
+
 </project>
