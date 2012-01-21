@@ -45,9 +45,17 @@ public class TaggingPresetPreference implements PreferenceSetting {
         }
     }
 
+    private static final List<SourceProvider> presetSourceProviders = new ArrayList<SourceProvider>();
     public static Collection<TaggingPreset> taggingPresets;
     private SourceEditor sources;
     private JCheckBox sortMenu;
+    
+    public static final boolean registerSourceProvider(SourceProvider provider) {
+        if (provider != null) {
+            return presetSourceProviders.add(provider);
+        }
+        return false;
+    }
 
     private ValidationListener validationListener = new ValidationListener() {
         public boolean validatePreferences() {
@@ -166,7 +174,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
         final private String iconpref = "taggingpreset.icon.sources";
 
         public TaggingPresetSourceEditor() {
-            super(false, "http://josm.openstreetmap.de/presets");
+            super(false, "http://josm.openstreetmap.de/presets", presetSourceProviders);
         }
 
         @Override

@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -27,6 +28,15 @@ public class MapPaintPreference implements PreferenceSetting {
     private SourceEditor sources;
     private JCheckBox enableIconDefault;
 
+    private static final List<SourceProvider> styleSourceProviders = new ArrayList<SourceProvider>();
+
+    public static final boolean registerSourceProvider(SourceProvider provider) {
+        if (provider != null) {
+            return styleSourceProviders.add(provider);
+        }
+        return false;
+    }
+    
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
             return new MapPaintPreference();
@@ -66,7 +76,7 @@ public class MapPaintPreference implements PreferenceSetting {
         final private String iconpref = "mappaint.icon.sources";
 
         public MapPaintSourceEditor() {
-            super(true, "http://josm.openstreetmap.de/styles");
+            super(true, "http://josm.openstreetmap.de/styles", styleSourceProviders);
         }
 
         @Override
