@@ -1,5 +1,7 @@
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.LinkedList;
 import java.util.List;
 import org.openstreetmap.josm.Main;
@@ -37,6 +39,6 @@ public class LoadObjectHandler extends RequestHandler {
 
     @Override
     public String getPermissionMessage() {
-        return "";
+        return tr("Remote Control has been asked to load objects (specified by their id) from the API.");
     }
 }

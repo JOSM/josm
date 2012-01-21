@@ -4,8 +4,8 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.HashMap;
-
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -37,8 +37,7 @@ public class AddNodeHandler extends RequestHandler {
     }
 
     @Override
-    public PermissionPrefWithDefault getPermissionPref()
-    {
+    public PermissionPrefWithDefault getPermissionPref() {
         return new PermissionPrefWithDefault(permissionKey, permissionDefault,
                 "RemoteControl: creating objects forbidden by preferences");
     }
@@ -61,6 +60,10 @@ public class AddNodeHandler extends RequestHandler {
         // Now execute the commands to add this node.
         Main.main.undoRedo.add(new AddCommand(nnew));
         Main.main.getCurrentDataSet().setSelected(nnew);
-        Main.map.mapView.repaint();
+        if (Main.pref.getBoolean(LoadAndZoomHandler.changeViewportPermissionKey, LoadAndZoomHandler.changeViewportPermissionDefault)) {
+            new AutoScaleAction("selection").actionPerformed(null);
+        } else {
+            Main.map.mapView.repaint();
+        }
     }
 }

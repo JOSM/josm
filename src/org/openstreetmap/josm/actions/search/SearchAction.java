@@ -7,11 +7,15 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -25,6 +29,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.text.BadLocationException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ActionParameter;
@@ -41,6 +47,7 @@ import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Property;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 public class SearchAction extends JosmAction implements ParameterizedAction {
 
@@ -153,6 +160,47 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
+    private static class SearchKeywordRow extends JPanel {
+
+        private final HistoryComboBox hcb;
+
+        public SearchKeywordRow(HistoryComboBox hcb) {
+            super(new FlowLayout(FlowLayout.LEFT));
+            this.hcb = hcb;
+        }
+
+        public SearchKeywordRow addTitle(String title) {
+            add(new JLabel(tr("{0}: ", title)));
+            return this;
+        }
+
+        public SearchKeywordRow addKeyword(String displayText, final String insertText, String description, String... examples) {
+            JLabel label = new JLabel("<html><style>td{border:1px solid gray;}</style><table><tr><td>" + displayText + "</td></tr></table></html>");
+            add(label);
+            if (description != null || examples.length > 0) {
+                label.setToolTipText("<html>"
+                        + description
+                        + (examples.length > 0 ? ("<ul><li>" + Utils.join("</li><li>", Arrays.asList(examples)) + "</li></ul>") : "")
+                        + "</html>");
+            }
+            if (insertText != null) {
+                label.addMouseListener(new MouseAdapter() {
+
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        try {
+                            JTextField tf = (JTextField) hcb.getEditor().getEditorComponent();
+                            tf.getDocument().insertString(tf.getCaretPosition(), " " + insertText, null);
+                        } catch (BadLocationException ex) {
+                            throw new RuntimeException(ex.getMessage(), ex);
+                        }
+                    }
+                });
+            }
+            return this;
+        }
+    }
+
     public static SearchSetting showSearchDialog(SearchSetting initialValues) {
         if (initialValues == null) {
             initialValues = new SearchSetting();
@@ -187,7 +235,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         JCheckBox allElements = new JCheckBox(tr("all objects"), initialValues.allElements);
         allElements.setToolTipText(tr("Also include incomplete and deleted objects in search."));
         final JCheckBox regexSearch   = new JCheckBox(tr("regular expression"), initialValues.regexSearch);
-        final JCheckBox addOnToolbar  = new JCheckBox(tr("Add toolbar button"), false); 
+        final JCheckBox addOnToolbar  = new JCheckBox(tr("add toolbar button"), false);
 
         JPanel top = new JPanel(new GridBagLayout());
         top.add(label, GBC.std().insets(0, 0, 5, 0));
@@ -205,51 +253,14 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             left.add(addOnToolbar, GBC.eol()); 
         }
 
-        JPanel right = new JPanel();
-        DescriptionTextBuilder descriptionText = new DescriptionTextBuilder();
-        descriptionText.append("<html><style>li.header{font-size:110%; list-style-type:none; margin-top:5px;}</style><ul>");
-        descriptionText.appendItem(tr("<b>Baker Street</b> - ''Baker'' and ''Street'' in any key"));
-        descriptionText.appendItem(tr("<b>\"Baker Street\"</b> - ''Baker Street'' in any key"));
-        descriptionText.appendItem(tr("<b>key:Bak</b> - ''Bak'' anywhere in the key ''key''"));
-        descriptionText.appendItem(tr("<b>-key:Bak</b> - ''Bak'' nowhere in the key ''key''"));
-        descriptionText.appendItem(tr("<b>key=value</b> - key ''key'' with value exactly ''value''"));
-        descriptionText.appendItem(tr("<b>key=*</b> - key ''key'' with any value. Try also <b>*=value</b>, <b>key=</b>, <b>*=*</b>, <b>*=</b>"));
-        descriptionText.appendItem(tr("<b>key:</b> - key ''key'' set to any value"));
-        descriptionText.appendItem(tr("<b>key?</b> - key ''key'' with the value ''yes'', ''true'', ''1'' or ''on''"));
-        if(Main.pref.getBoolean("expert", false))
-        {
-            descriptionText.appendItemHeader(tr("Special targets"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>type:</b>... - objects with corresponding type (<b>node</b>, <b>way</b>, <b>relation</b>)"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>user:</b>... - objects changed by user"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>user:anonymous</b> - objects changed by anonymous users"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>id:</b>... - objects with given ID (0 for new objects)"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>version:</b>... - objects with given version (0 objects without an assigned version)"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>changeset:</b>... - objects with given changeset ID (0 objects without an assigned changeset)"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>nodes:</b>... - objects with given number of nodes (<b>nodes:</b>count, <b>nodes:</b>min-max, <b>nodes:</b>min- or <b>nodes:</b>-max)"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>tags:</b>... - objects with given number of tags (<b>tags:</b>count, <b>tags:</b>min-max, <b>tags:</b>min- or <b>tags:</b>-max)"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>role:</b>... - objects with given role in a relation"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>timestamp:</b>timestamp - objects with this last modification timestamp (2009-11-12T14:51:09Z, 2009-11-12 or T14:51 ...)"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>timestamp:</b>min/max - objects with last modification within range"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>areasize:</b>... - closed ways with given area in m\u00b2 (<b>areasize:</b>min-max or <b>areasize:</b>max)"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>modified</b> - all changed objects"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>selected</b> - all selected objects"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>incomplete</b> - all incomplete objects"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>untagged</b> - all untagged objects"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>closed</b> - all closed ways (a node is not considered closed)"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>child <i>expr</i></b> - all children of objects matching the expression"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>parent <i>expr</i></b> - all parents of objects matching the expression"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>(all)indownloadedarea</b> - objects (and all its way nodes / relation members) in downloaded area"));
-            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>(all)inview</b> - objects (and all its way nodes / relation members) in current view"));
+        final JPanel right;
+        if (Main.pref.getBoolean("dialog.search.new", false)) {
+            right = new JPanel(new GridBagLayout());
+            buildHintsNew(right, hcbSearchString);
+        } else {
+            right = new JPanel();
+            buildHints(right);
         }
-        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("Use <b>|</b> or <b>OR</b> to combine with logical or"));
-        descriptionText.appendItem(tr("Use <b>\"</b> to quote operators (e.g. if key contains <b>:</b>)")
-                + "<br/>"
-                + tr("Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."));
-        descriptionText.appendItem(tr("Use <b>(</b> and <b>)</b> to group expressions"));
-        descriptionText.append("</ul></html>");
-        JLabel description = new JLabel(descriptionText.toString());
-        description.setFont(description.getFont().deriveFont(Font.PLAIN));
-        right.add(description);
 
         final JPanel p = new JPanel(new GridBagLayout());
         p.add(top, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 5, 5, 0));
@@ -313,6 +324,123 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             Main.toolbar.refreshToolbarControl();
         }
         return initialValues;
+    }
+
+    private static void buildHints(JPanel right) {
+        DescriptionTextBuilder descriptionText = new DescriptionTextBuilder();
+        descriptionText.append("<html><style>li.header{font-size:110%; list-style-type:none; margin-top:5px;}</style><ul>");
+        descriptionText.appendItem(tr("<b>Baker Street</b> - ''Baker'' and ''Street'' in any key"));
+        descriptionText.appendItem(tr("<b>\"Baker Street\"</b> - ''Baker Street'' in any key"));
+        descriptionText.appendItem(tr("<b>key:Bak</b> - ''Bak'' anywhere in the key ''key''"));
+        descriptionText.appendItem(tr("<b>-key:Bak</b> - ''Bak'' nowhere in the key ''key''"));
+        descriptionText.appendItem(tr("<b>key=value</b> - key ''key'' with value exactly ''value''"));
+        descriptionText.appendItem(tr("<b>key=*</b> - key ''key'' with any value. Try also <b>*=value</b>, <b>key=</b>, <b>*=*</b>, <b>*=</b>"));
+        descriptionText.appendItem(tr("<b>key:</b> - key ''key'' set to any value"));
+        descriptionText.appendItem(tr("<b>key?</b> - key ''key'' with the value ''yes'', ''true'', ''1'' or ''on''"));
+        if(Main.pref.getBoolean("expert", false))
+        {
+            descriptionText.appendItemHeader(tr("Special targets"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>type:</b>... - objects with corresponding type (<b>node</b>, <b>way</b>, <b>relation</b>)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>user:</b>... - objects changed by user"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>user:anonymous</b> - objects changed by anonymous users"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>id:</b>... - objects with given ID (0 for new objects)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>version:</b>... - objects with given version (0 objects without an assigned version)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>changeset:</b>... - objects with given changeset ID (0 objects without an assigned changeset)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>nodes:</b>... - objects with given number of nodes (<b>nodes:</b>count, <b>nodes:</b>min-max, <b>nodes:</b>min- or <b>nodes:</b>-max)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>tags:</b>... - objects with given number of tags (<b>tags:</b>count, <b>tags:</b>min-max, <b>tags:</b>min- or <b>tags:</b>-max)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>role:</b>... - objects with given role in a relation"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>timestamp:</b>timestamp - objects with this last modification timestamp (2009-11-12T14:51:09Z, 2009-11-12 or T14:51 ...)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>timestamp:</b>min/max - objects with last modification within range"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>areasize:</b>... - closed ways with given area in m\u00b2 (<b>areasize:</b>min-max or <b>areasize:</b>max)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>modified</b> - all changed objects"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>selected</b> - all selected objects"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>incomplete</b> - all incomplete objects"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>untagged</b> - all untagged objects"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>closed</b> - all closed ways (a node is not considered closed)"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>child <i>expr</i></b> - all children of objects matching the expression"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>parent <i>expr</i></b> - all parents of objects matching the expression"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>(all)indownloadedarea</b> - objects (and all its way nodes / relation members) in downloaded area"));
+            /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("<b>(all)inview</b> - objects (and all its way nodes / relation members) in current view"));
+        }
+        /* I18n: don't translate the bold text keyword */ descriptionText.appendItem(tr("Use <b>|</b> or <b>OR</b> to combine with logical or"));
+        descriptionText.appendItem(tr("Use <b>\"</b> to quote operators (e.g. if key contains <b>:</b>)")
+                + "<br/>"
+                + tr("Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."));
+        descriptionText.appendItem(tr("Use <b>(</b> and <b>)</b> to group expressions"));
+        descriptionText.append("</ul></html>");
+        JLabel description = new JLabel(descriptionText.toString());
+        description.setFont(description.getFont().deriveFont(Font.PLAIN));
+        right.add(description);
+    }
+
+    private static void buildHintsNew(JPanel right, HistoryComboBox hcbSearchString) {
+        right.add(new SearchKeywordRow(hcbSearchString)
+                .addTitle(tr("basic examples"))
+                .addKeyword("Baker Street", "Baker Street", tr("''Baker'' and ''Street'' in any key"))
+                .addKeyword("\"Baker Street\"", "\"Baker Street\"", tr("''Baker Street'' in any key"))
+                , GBC.eol());
+        right.add(new SearchKeywordRow(hcbSearchString)
+                .addTitle(tr("basics"))
+                .addKeyword("<i>key</i>:<i>valuefragment</i>", null, tr("''valuefragment'' anywhere in ''key''"), "name:str matches name=Bakerstreet")
+                .addKeyword("-<i>key</i>:<i>valuefragment</i>", null, tr("''valuefragment'' nowhere in ''key''"))
+                .addKeyword("<i>key</i>=<i>value</i>", null, tr("''key'' with exactly ''value''"))
+                .addKeyword("<i>key</i>=*", null, tr("''key'' with any value"))
+                .addKeyword("*=<i>value</i>", null, tr("''value'' in any key"))
+                .addKeyword("<i>key</i>=", null, tr("matches if ''key'' exists"))
+                , GBC.eol());
+        right.add(new SearchKeywordRow(hcbSearchString)
+                .addTitle(tr("combinators"))
+                .addKeyword("<i>expr</i> <i>expr</i>", null, tr("logical and (both expressions have to be satisfied)"))
+                .addKeyword("<i>expr</i> | <i>expr</i>", "| ", tr("logical or (at least one expression has to be satisfied)"))
+                .addKeyword("<i>expr</i> OR <i>expr</i>", "OR ", tr("logical or (at least one expression has to be satisfied)"))
+                .addKeyword("-<i>expr</i>", null, tr("logical not"))
+                .addKeyword("(<i>expr</i>)", null, tr("use parenthesis to group expressions"))
+                .addKeyword("\"key\"=\"value\"", null, tr("to quote operators.<br>Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."), "\"addr:street\"")
+                , GBC.eol());
+
+        if (Main.pref.getBoolean("expert", false)) {
+            right.add(new SearchKeywordRow(hcbSearchString)
+                .addTitle(tr("objects"))
+                .addKeyword("type:node", "type:node ", tr("all ways"))
+                .addKeyword("type:way", "type:way ", tr("all ways"))
+                .addKeyword("type:relation", "type:relation ", tr("all relations"))
+                .addKeyword("closed", "closed ", tr("all closed ways"))
+                , GBC.eol());
+            right.add(new SearchKeywordRow(hcbSearchString)
+                .addTitle(tr("metadata"))
+                .addKeyword("user:", "user:", tr("objects changed by user", "user:anonymous"))
+                .addKeyword("id:", "id:", tr("objects with given ID"), "id:0 (new objects)")
+                .addKeyword("version:", "version:", tr("objects with given version"), "version:0 (objects without an assigned version)")
+                .addKeyword("changeset:", "changeset:", tr("objects with given changeset ID"), "changeset:0 (objects without an assigned changeset)")
+                .addKeyword("timestamp:", "timestamp:", tr("objects with last modification timestamp within range"), "timestamp:2012/", "timestamp:2008/2011-02-04T12")
+                , GBC.eol());
+            right.add(new SearchKeywordRow(hcbSearchString)
+                .addTitle(tr("properties"))
+                .addKeyword("nodes:<i>20-</i>", "nodes:", tr("objects with at least 20 nodes"))
+                .addKeyword("tags:<i>5-10</i>", "tags:", tr("objects having 5 to 10 tags"))
+                .addKeyword("role:", "role:", tr("objects with given role in a relation"))
+                .addKeyword("areasize:<i>-100</i>", "areasize:", tr("closed ways with an area of 100 m\u00b2"))
+                , GBC.eol());
+            right.add(new SearchKeywordRow(hcbSearchString)
+                .addTitle(tr("state"))
+                .addKeyword("modified", "modified ", tr("all modified objects"))
+                .addKeyword("new", "new ", tr("all new objects"))
+                .addKeyword("selected", "selected ", tr("all selected objects"))
+                .addKeyword("incomplete", "incomplete ", tr("all incomplete objects"))
+                , GBC.eol());
+            right.add(new SearchKeywordRow(hcbSearchString)
+                .addTitle(tr("relations"))
+                .addKeyword("child <i>expr</i>", "child ", tr("all children of objects matching the expression"), "child building")
+                .addKeyword("parent <i>expr</i>", "parent ", tr("all parents of objects matching the expression"), "parent bus_stop")
+                , GBC.eol());
+            right.add(new SearchKeywordRow(hcbSearchString)
+                .addTitle(tr("view"))
+                .addKeyword("inview", "inview ", tr("objects in current view"))
+                .addKeyword("allinview", "allinview ", tr("objects (and all its way nodes / relation members) in current view"))
+                .addKeyword("indownloadedarea", "indownloadedarea ", tr("objects in downloaded area"))
+                .addKeyword("allindownloadedarea", "allindownloadedarea ", tr("objects (and all its way nodes / relation members) in downloaded area"))
+                , GBC.eol());
+        }
     }
 
     /**
