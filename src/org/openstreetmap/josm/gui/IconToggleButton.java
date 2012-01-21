@@ -25,12 +25,21 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
     public boolean groupbutton;
     private ShowHideButtonListener listener;
     private boolean hideIfDisabled=false;
+    private boolean hiddenByDefault;
 
     /**
      * Construct the toggle button with the given action.
      */
     public IconToggleButton(Action action) {
+        this(action, false);
+    }
+
+    /**
+     * Construct the toggle button with the given action.
+     */
+    public IconToggleButton(Action action, boolean hiddenByDefault) {
         super(action);
+        this.hiddenByDefault = hiddenByDefault;
         setText(null);
 
         Object o = action.getValue(Action.SHORT_DESCRIPTION);
@@ -78,7 +87,7 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
     @Override
     public void applyButtonHiddenPreferences() {
         boolean alwaysHideDisabled = Main.pref.getBoolean("sidetoolbar.hideDisabledButtons", false);
-        boolean hiddenFlag = Main.pref.getBoolean(getPreferenceKey(), false);
+        boolean hiddenFlag = Main.pref.getBoolean(getPreferenceKey(), hiddenByDefault);
         if (!isEnabled() && (hideIfDisabled || alwaysHideDisabled)) 
                 setVisible(false);  // hide because of disabled button 
             else 
