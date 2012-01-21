@@ -123,10 +123,11 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
     private EastNorth helperLineEnd;
 
     public ParallelWayAction(MapFrame mapFrame) {
-        super(tr("Parallel"), "parallel", tr("Make parallel copies of ways"), Shortcut
-                .registerShortcut("mapmode:parallel", tr("Mode: {0}", tr("Parallel")), KeyEvent.VK_P,
-                        Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), mapFrame, ImageProvider.getCursor("normal",
-                        "parallel"));
+        super(tr("Parallel"), "parallel", tr("Make parallel copies of ways"),
+            Shortcut.registerShortcut("mapmode:parallel", tr("Mode: {0}",
+            tr("Parallel")), KeyEvent.VK_P, Shortcut.GROUP_EDIT,
+            Shortcut.SHIFT_DEFAULT), mapFrame, ImageProvider.getCursor("normal",
+            "parallel"));
         putValue("help", ht("/Action/Parallel"));
         mv = mapFrame.mapView;
         updateModeLocalPreferences();
