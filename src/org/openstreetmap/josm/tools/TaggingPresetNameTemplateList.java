@@ -30,9 +30,11 @@ public class TaggingPresetNameTemplateList {
     private final List<TaggingPreset> presetsWithPattern = new ArrayList<TaggingPreset>();
 
     private TaggingPresetNameTemplateList() {
-        for (TaggingPreset tp: TaggingPresetPreference.taggingPresets) {
-            if (tp.nameTemplate != null) {
-                presetsWithPattern.add(tp);
+        if (TaggingPresetPreference.taggingPresets != null) {
+            for (TaggingPreset tp: TaggingPresetPreference.taggingPresets) {
+                if (tp.nameTemplate != null) {
+                    presetsWithPattern.add(tp);
+                }
             }
         }
     }
