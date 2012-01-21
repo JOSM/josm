@@ -21,7 +21,7 @@ public class AddWayHandler extends RequestHandler {
     public static final String command = "add_way";
 
     @Override
-    protected String[] getMandatoryParams() {
+    public String[] getMandatoryParams() {
         return new String[]{"way"};
     }
 

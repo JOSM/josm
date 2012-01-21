@@ -26,7 +26,7 @@ public class AddNodeHandler extends RequestHandler {
     }
 
     @Override
-    protected String[] getMandatoryParams()
+    public String[] getMandatoryParams()
     {
         return new String[] { "lat", "lon" };
     }

@@ -31,7 +31,7 @@ public class ImportHandler extends RequestHandler {
     }
 
     @Override
-    protected String[] getMandatoryParams()
+    public String[] getMandatoryParams()
     {
         return new String[] { "url" };
     }
