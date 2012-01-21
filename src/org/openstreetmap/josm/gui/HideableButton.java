@@ -8,12 +8,12 @@ import javax.swing.Icon;
  * when hidden state is stored in preferences
  */
 interface HideableButton {
-    public void applyButtonHiddenPreferences();
-    public void setButtonHidden(boolean b);
-    public void showButton();
-    public void hideButton();
-    public String getActionName();
-    public Icon getIcon();
-    public boolean isButtonVisible();
-    public void setShowHideButtonListener(ShowHideButtonListener l);
+    void applyButtonHiddenPreferences();
+    void setButtonHidden(boolean b);
+    void showButton();
+    void hideButton();
+    String getActionName();
+    Icon getIcon();
+    boolean isButtonVisible();
+    void setShowHideButtonListener(ShowHideButtonListener l);
 }

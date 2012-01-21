@@ -20,9 +20,11 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
 import org.openstreetmap.josm.tools.GBC;
 
-public class LafPreference implements PreferenceSetting {
+public class LafPreference implements PreferenceSetting, ExpertModeChangeListener {
 
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
@@ -39,7 +41,6 @@ public class LafPreference implements PreferenceSetting {
     private JCheckBox showID = new JCheckBox(tr("Show object ID in selection lists"));
     private JCheckBox showLocalizedName = new JCheckBox(tr("Show localized name in selection lists"));
     private JCheckBox modeless = new JCheckBox(tr("Modeless working (Potlatch style)"));
-    private JCheckBox expert = new JCheckBox(tr("Expert mode"));
     private JCheckBox dynamicButtons = new JCheckBox(tr("Dynamic buttons in side menus"));
 
     public void addGui(PreferenceTabbedPane gui) {
@@ -94,18 +95,12 @@ public class LafPreference implements PreferenceSetting {
         modeless.setSelected(Main.pref.getBoolean("modeless", false));
 
         panel.add(showID, GBC.eop().insets(20, 0, 0, 0));
-        if (Main.pref.getBoolean("expert", false)) {
-            panel.add(showLocalizedName, GBC.eop().insets(20, 0, 0, 0));
-            panel.add(modeless, GBC.eop().insets(20, 0, 0, 0));
-        }
+        panel.add(showLocalizedName, GBC.eop().insets(20, 0, 0, 0));
+        panel.add(modeless, GBC.eop().insets(20, 0, 0, 0));
 
         dynamicButtons.setToolTipText(tr("Display buttons in right side menus only when mouse is inside the element"));
         dynamicButtons.setSelected(Main.pref.getBoolean("dialog.dynamic.buttons", true));
         panel.add(dynamicButtons, GBC.eop().insets(20, 0, 0, 0));
-
-        expert.setToolTipText(tr("The expert mode shows a lot of additional settings hidden from normal user"));
-        expert.setSelected(Main.pref.getBoolean("expert", false));
-        panel.add(expert, GBC.eop().insets(20, 0, 0, 0));
 
         panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
 
@@ -116,6 +111,14 @@ public class LafPreference implements PreferenceSetting {
         JScrollPane scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
         gui.displaycontent.addTab(tr("Look and Feel"), scrollpane);
+
+        ExpertToggleAction.addExpertModeChangeListener(this, true);
+    }
+
+    @Override
+    public void expertChanged(boolean isExpert) {
+        showLocalizedName.setVisible(isExpert);
+        modeless.setVisible(isExpert);
     }
 
     public boolean ok() {
@@ -124,11 +127,8 @@ public class LafPreference implements PreferenceSetting {
         Main.pref.put("osm-primitives.showid", showID.isSelected());
         Main.pref.put("osm-primitives.localize-name", showLocalizedName.isSelected());
         Main.pref.put("modeless", modeless.isSelected());
-        if(Main.pref.put("expert", expert.isSelected()))
-            mod = true;
         Main.pref.put("dialog.dynamic.buttons", dynamicButtons.isSelected());
-        if(Main.pref.put("laf", ((LookAndFeelInfo)lafCombo.getSelectedItem()).getClassName()))
-            mod = true;
+        mod |= Main.pref.put("laf", ((LookAndFeelInfo)lafCombo.getSelectedItem()).getClassName());
         return mod;
     }
 }

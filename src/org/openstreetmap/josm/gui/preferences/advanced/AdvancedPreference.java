@@ -114,7 +114,7 @@ public class AdvancedPreference implements PreferenceSetting {
 
     public void addGui(final PreferenceTabbedPane gui) {
         JPanel p = gui.createPreferenceTab("advanced", tr("Advanced Preferences"),
-                tr("Setting Preference entries directly. Use with caution!"), false);
+                tr("Setting Preference entries directly. Use with caution!"), false, true);
 
         txtFilter = new JTextField();
         JLabel lbFilter = new JLabel(tr("Search: "));

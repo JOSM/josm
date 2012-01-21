@@ -8,25 +8,30 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -36,11 +41,23 @@ public class PreferenceDialog extends JDialog {
     private boolean canceled;
 
     protected JPanel buildActionPanel() {
-        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-        pnl.add(new SideButton(new OKAction()));
-        pnl.add(new SideButton(new CancelAction()));
-        pnl.add(new SideButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Action/Preferences"))));
+        JPanel pnl = new JPanel(new GridBagLayout());
+
+        JCheckBox expert = new JCheckBox(tr("Expert mode"));
+        expert.setSelected(Main.main.menu.expert.isSelected());
+        expert.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Main.main.menu.expert.actionPerformed(null);
+            }
+        });
+
+        JPanel btns = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        btns.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        btns.add(new SideButton(new OKAction()));
+        btns.add(new SideButton(new CancelAction()));
+        btns.add(new SideButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Action/Preferences"))));
+        pnl.add(expert, GBC.std().insets(5,0,0,0));
+        pnl.add(btns, GBC.std().fill(GBC.HORIZONTAL));
         return pnl;
     }
 

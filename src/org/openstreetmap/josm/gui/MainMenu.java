@@ -38,6 +38,7 @@ import org.openstreetmap.josm.actions.DownloadPrimitiveAction;
 import org.openstreetmap.josm.actions.DownloadReferrersAction;
 import org.openstreetmap.josm.actions.DuplicateAction;
 import org.openstreetmap.josm.actions.ExitAction;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.FollowLineAction;
 import org.openstreetmap.josm.actions.FullscreenToggleAction;
 import org.openstreetmap.josm.actions.GpxExportAction;
@@ -157,6 +158,7 @@ public class MainMenu extends JMenuBar {
     public final InfoWebAction infoweb = new InfoWebAction();
     public final HistoryInfoAction historyinfo = new HistoryInfoAction();
     public final HistoryInfoWebAction historyinfoweb = new HistoryInfoWebAction();
+    public final ExpertToggleAction expert = new ExpertToggleAction();
 
     /* Tools menu */
     public final JosmAction splitWay = new SplitWayAction();
@@ -444,7 +446,12 @@ public class MainMenu extends JMenuBar {
         add(viewMenu, info);
         add(viewMenu, infoweb);
         add(viewMenu, historyinfo);
-		add(viewMenu, historyinfoweb);
+        add(viewMenu, historyinfoweb);
+        viewMenu.addSeparator();
+        // -- expert mode toggle action
+        final JCheckBoxMenuItem expertItem = new JCheckBoxMenuItem(expert);
+        viewMenu.add(expertItem);
+        expert.addButtonModel(expertItem.getModel());
 
         add(presetsMenu, presetSearchAction);
         presetsMenu.addSeparator();
