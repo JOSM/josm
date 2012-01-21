@@ -1,0 +1,19 @@
+<FindBugsFilter>
+
+	<Match>
+		<Class name="~com.*" />
+	</Match>
+	<Match>
+		<Class name="~oauth.signpost.*" />
+	</Match>
+	<Match>
+		<Class name="~org.apache.*" />
+	</Match>
+	<Match>
+		<Class name="~org.jdesktop.swinghelper.debug.*" />
+	</Match>
+	<Match>
+		<Class name="~org.openstreetmap.gui.jmapviewer.*" />
+	</Match>
+
+</FindBugsFilter>
