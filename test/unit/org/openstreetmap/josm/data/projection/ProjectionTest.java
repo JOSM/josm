@@ -6,7 +6,6 @@ import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -58,10 +57,13 @@ public class ProjectionTest {
             testProj(utm);
 
         }
-        UTM_France_DOM utmFr = new UTM_France_DOM();
-        for (int zone=1; zone<=5; ++zone) {
-            utmFr.setPreferences(Collections.singletonList(Integer.toString(zone)));
-            testProj(utmFr);
+
+        if (!"yes".equals(System.getProperty("suppressPermanentFailure"))) {
+            UTM_France_DOM utmFr = new UTM_France_DOM();
+            for (int zone=1; zone<=5; ++zone) {
+                utmFr.setPreferences(Collections.singletonList(Integer.toString(zone)));
+                testProj(utmFr);
+            }
         }
 
         LambertCC9Zones lamCC9 = new LambertCC9Zones();

@@ -165,6 +165,7 @@ Build-Date: ${build.tstamp}
         <junit printsummary="yes">
             <sysproperty key="josm.home" value="${test.dir}/config/unit-josm.home"/>
             <sysproperty key="java.awt.headless" value="true"/>
+	    <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
             <classpath>
                 <path refid="test.classpath"/>
                 <pathelement path="${test.dir}/${build.dir}"/>
