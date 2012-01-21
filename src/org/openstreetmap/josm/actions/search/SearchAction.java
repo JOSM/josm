@@ -376,8 +376,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     private static void buildHintsNew(JPanel right, HistoryComboBox hcbSearchString) {
         right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("basic examples"))
-                .addKeyword("Baker Street", "Baker Street", tr("''Baker'' and ''Street'' in any key"))
-                .addKeyword("\"Baker Street\"", "\"Baker Street\"", tr("''Baker Street'' in any key"))
+                .addKeyword(tr("Baker Street"), tr("Baker Street"), tr("''Baker'' and ''Street'' in any key"))
+                .addKeyword(tr("\"Baker Street\""), tr("\"Baker Street\""), tr("''Baker Street'' in any key"))
                 , GBC.eol());
         right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("basics"))

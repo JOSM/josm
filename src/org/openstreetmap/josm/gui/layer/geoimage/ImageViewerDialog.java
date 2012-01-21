@@ -63,7 +63,8 @@ public class ImageViewerDialog extends ToggleDialog {
     private JButton btnCollapse;
 
     private ImageViewerDialog() {
-        super(tr("Geotagged Images"), "geoimage", tr("Display geotagged images"), Shortcut.registerShortcut("tools:geotagged", tr("Tool: {0}", tr("Display geotagged images")), KeyEvent.VK_Y, Shortcut.GROUP_EDIT), 200);
+        super(tr("Geotagged Images"), "geoimage", tr("Display geotagged images"), Shortcut.registerShortcut("tools:geotagged",
+        tr("Tool: {0}", tr("Display geotagged images")), KeyEvent.VK_Y, Shortcut.GROUP_EDIT), 200);
 
         /* Don't show a detached dialog right from the start. */
         if (isShowing && !isDocked) {
@@ -92,7 +93,7 @@ public class ImageViewerDialog extends ToggleDialog {
         JButton btnDelete = new JButton(delAction);
         btnDelete.setPreferredSize(buttonDim);
         Shortcut scDelete = Shortcut.registerShortcut(
-                "geoimage:deleteimagefromlayer", tr("Geoimage: {0}", DELETE_TEXT), KeyEvent.VK_DELETE, Shortcut.GROUP_DIRECT, Shortcut.SHIFT_DEFAULT);
+                "geoimage:deleteimagefromlayer", tr("Geoimage: {0}", tr("Remove photo from layer")), KeyEvent.VK_DELETE, Shortcut.GROUP_DIRECT, Shortcut.SHIFT_DEFAULT);
         Main.registerActionShortcut(delAction, scDelete);
         btnDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDelete.getKeyStroke(), DELETE_TEXT);
         btnDelete.getActionMap().put(DELETE_TEXT, delAction);
@@ -101,7 +102,7 @@ public class ImageViewerDialog extends ToggleDialog {
         JButton btnDeleteFromDisk = new JButton(delFromDiskAction);
         btnDeleteFromDisk.setPreferredSize(buttonDim);
         Shortcut scDeleteFromDisk = Shortcut.registerShortcut(
-                "geoimage:deletefilefromdisk", tr("Geoimage: {0}", tr("Delete File from disk")), KeyEvent.VK_DELETE, Shortcut.GROUP_DIRECT, Shortcut.GROUP_MENU + Shortcut.SHIFT_DEFAULT);
+                "geoimage:deletefilefromdisk", tr("Geoimage: {0}", tr("Delete File from disk")), KeyEvent.VK_DELETE, Shortcut.GROUP_DIRECT, KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK);
         final String ADELFROMDISK = "Delete image file from disk";
         Main.registerActionShortcut(delFromDiskAction, scDeleteFromDisk);
         btnDeleteFromDisk.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDeleteFromDisk.getKeyStroke(), ADELFROMDISK);
