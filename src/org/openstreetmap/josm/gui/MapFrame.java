@@ -136,17 +136,14 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
         new FileDrop(mapView);
 
-        // show menu entry
-        Main.main.menu.viewMenu.setVisible(true);
-
         // toolbar
         toolBarActions.setFloatable(false);
         addMapMode(new IconToggleButton(new SelectAction(this)));
         addMapMode(new IconToggleButton(new DrawAction(this)));
         addMapMode(new IconToggleButton(new ZoomAction(this)));
-        addMapMode(new IconToggleButton(new DeleteAction(this), !Main.pref.getBoolean("expert", false)));
-        addMapMode(new IconToggleButton(new ExtrudeAction(this), !Main.pref.getBoolean("expert", false)));
-        addMapMode(new IconToggleButton(new ParallelWayAction(this), !Main.pref.getBoolean("expert", false)));
+        addMapMode(new IconToggleButton(new DeleteAction(this), true));
+        addMapMode(new IconToggleButton(new ExtrudeAction(this), true));
+        addMapMode(new IconToggleButton(new ParallelWayAction(this), true));
 
         toolGroup.setSelected(((AbstractButton)toolBarActions.getComponent(0)).getModel(), true);
 
@@ -240,9 +237,6 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
                 ((Destroyable)toolBarToggle.getComponent(i)).destroy();
             }
         }
-
-        // remove menu entries
-        Main.main.menu.viewMenu.setVisible(false);
 
         // MapFrame gets destroyed when the last layer is removed, but the status line background
         // thread that collects the information doesn't get destroyed automatically.
@@ -409,7 +403,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         }));
     }
 
-        class ListAllButtonsAction extends AbstractAction {
+    class ListAllButtonsAction extends AbstractAction {
 
         private JButton button;
         private Collection<? extends HideableButton> buttons;
@@ -438,7 +432,11 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
                     }
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if ((Boolean) getValue(SELECTED_KEY)) t.showButton(); else t.hideButton();
+                        if ((Boolean) getValue(SELECTED_KEY)) {
+                            t.showButton();
+                        } else {
+                            t.hideButton();
+                        }
                         validateToolBarsVisibility();
                     }
                 }));

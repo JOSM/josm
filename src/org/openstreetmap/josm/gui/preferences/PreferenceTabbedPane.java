@@ -27,6 +27,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
 import org.openstreetmap.josm.gui.preferences.advanced.AdvancedPreference;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
@@ -41,7 +43,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author imi
  */
-public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListener {
+public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListener, ExpertModeChangeListener {
     /**
      * Allows PreferenceSettings to do validation of entered values when ok was pressed.
      * If data is invalid then event can return false to cancel closing of preferences dialog.
@@ -55,8 +57,15 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         boolean validatePreferences();
     }
 
+    private class TabData {
+        public String icon;
+        public JComponent tab;
+        public String toolTip;
+        public boolean isExpert;
+    }
+
     // all created tabs
-    private final Map<String,Component> tabs = new HashMap<String,Component>();
+    private final List<TabData> tabs = new ArrayList<TabData>();
     private final static Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<PreferenceSettingFactory>();
     private final List<PreferenceSetting> settings = new ArrayList<PreferenceSetting>();
 
@@ -95,6 +104,10 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         return createPreferenceTab(icon, title, desc, false);
     }
 
+    public JPanel createPreferenceTab(String icon, String title, String desc, boolean inScrollPane) {
+        return createPreferenceTab(icon, title, desc, inScrollPane, false);
+    }
+
     /**
      * Construct a JPanel for the preference settings. Layout is GridBagLayout
      * and a centered title label and the description are added.
@@ -106,7 +119,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
      *        if the panel content is larger than the available space
      * @return The created panel ready to add other controls.
      */
-    public JPanel createPreferenceTab(String icon, String title, String desc, boolean inScrollPane) {
+    public JPanel createPreferenceTab(String icon, String title, String desc, boolean inScrollPane, boolean isExpert) {
         JPanel p = new JPanel(new GridBagLayout());
         p.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         p.add(new JLabel(title), GBC.eol().insets(0,5,0,10).anchor(GBC.NORTHWEST));
@@ -120,15 +133,25 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
             JScrollPane sp = new JScrollPane(p);
             tab = sp;
         }
-        tabs.put(icon,tab);
-        addTab(null, ImageProvider.get("preferences", icon), tab);
-        setToolTipTextAt(getTabCount()-1, "<html>"+desc+"</html>");
+        TabData data = new TabData();
+        data.icon = icon;
+        data.tab = tab;
+        data.isExpert = isExpert;
+        data.toolTip = "<html>"+desc+"</html>";
+        tabs.add(data);
         return p;
     }
-    
+
     public void selectTabByName(String name) {
-        Component c = tabs.get(name);
-        if (c!=null) setSelectedComponent(c);
+        for (TabData data : tabs) {
+            if (data.icon.equals(name)) {
+                Component c = data.tab;
+                if (c != null) {
+                    setSelectedComponent(c);
+                }
+                return;
+            }
+        }
     }
 
     protected PluginPreference getPluginPreference() {
@@ -226,6 +249,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
     public PreferenceTabbedPane() {
         super(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
         super.addMouseWheelListener(this);
+        ExpertToggleAction.addExpertModeChangeListener(this);
     }
 
     public void buildGui() {
@@ -249,6 +273,28 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                 BugReportExceptionHandler.handleException(e);
             }
         }
+        addGUITabs(false);
+    }
+
+    private void addGUITabs(boolean clear) {
+        boolean expert = Main.main.menu.expert.isSelected();
+        Component sel = getSelectedComponent();
+        if (clear) {
+            removeAll();
+        }
+        for (TabData data : tabs) {
+            if (expert || !data.isExpert) {
+                addTab(null, ImageProvider.get("preferences", data.icon), data.tab, data.toolTip);
+            }
+        }
+        try {
+            setSelectedComponent(sel);
+        } catch (IllegalArgumentException e) {}
+    }
+
+    @Override
+    public void expertChanged(boolean isExpert) {
+        addGUITabs(true);
     }
 
     public List<PreferenceSetting> getSettings() {
@@ -287,10 +333,8 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
 
         PluginHandler.getPreferenceSetting(settingsFactory);
 
-        if(Main.pref.getBoolean("expert", false)) {
-            // always the last: advanced tab
-            settingsFactory.add(new AdvancedPreference.Factory());
-        }
+        // always the last: advanced tab
+        settingsFactory.add(new AdvancedPreference.Factory());
     }
 
     /**

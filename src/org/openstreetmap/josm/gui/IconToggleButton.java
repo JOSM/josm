@@ -12,6 +12,8 @@ import javax.swing.Icon;
 import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
 import org.openstreetmap.josm.tools.Destroyable;
 
 /**
@@ -20,12 +22,12 @@ import org.openstreetmap.josm.tools.Destroyable;
  * Also provides methods for storing hidden state in preferences
  * @author imi, akks
  */
-public class IconToggleButton extends JToggleButton implements HideableButton, PropertyChangeListener, Destroyable {
+public class IconToggleButton extends JToggleButton implements HideableButton, PropertyChangeListener, Destroyable, ExpertModeChangeListener {
 
     public boolean groupbutton;
     private ShowHideButtonListener listener;
-    private boolean hideIfDisabled=false;
-    private boolean hiddenByDefault;
+    private boolean hideIfDisabled = false;
+    private boolean isExpert;
 
     /**
      * Construct the toggle button with the given action.
@@ -37,9 +39,9 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
     /**
      * Construct the toggle button with the given action.
      */
-    public IconToggleButton(Action action, boolean hiddenByDefault) {
+    public IconToggleButton(Action action, boolean isExpert) {
         super(action);
-        this.hiddenByDefault = hiddenByDefault;
+        this.isExpert = isExpert;
         setText(null);
 
         Object o = action.getValue(Action.SHORT_DESCRIPTION);
@@ -54,6 +56,8 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
                 groupbutton = e.getX() > getWidth()/2 && e.getY() > getHeight()/2;
             }
         });
+
+        ExpertToggleAction.addExpertModeChangeListener(this);
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
@@ -74,24 +78,40 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
             action.removePropertyChangeListener(this);
         }
     }
-    
+
     String getPreferenceKey() {
         String s = (String) getSafeActionValue("toolbar");
-        if (s==null) {
-            if (getAction()!=null) s=getAction().getClass().getName();
+        if (s == null) {
+            if (getAction()!=null) {
+                s = getAction().getClass().getName();
+            }
         }
         return "sidetoolbar.hidden."+s;
-        
+
     }
-    
+
+    @Override
+    public void expertChanged(boolean isExpert) {
+        applyButtonHiddenPreferences();
+    }
+
     @Override
     public void applyButtonHiddenPreferences() {
         boolean alwaysHideDisabled = Main.pref.getBoolean("sidetoolbar.hideDisabledButtons", false);
-        boolean hiddenFlag = Main.pref.getBoolean(getPreferenceKey(), hiddenByDefault);
-        if (!isEnabled() && (hideIfDisabled || alwaysHideDisabled)) 
-                setVisible(false);  // hide because of disabled button 
-            else 
-                setVisible( !hiddenFlag ); // show or hide, do what preferences say  
+        if (!isEnabled() && (hideIfDisabled || alwaysHideDisabled)) {
+            setVisible(false);  // hide because of disabled button
+        } else {
+            boolean hiddenFlag = false;
+            String hiddenFlagStr = Main.pref.get(getPreferenceKey(), null);
+            if (hiddenFlagStr == null) {
+                if (isExpert && !Main.main.menu.expert.isSelected()) {
+                    hiddenFlag = true;
+                }
+            } else {
+                hiddenFlag = Boolean.parseBoolean(hiddenFlagStr);
+            }
+            setVisible( !hiddenFlag ); // show or hide, do what preferences say
+        }
     }
 
     @Override
@@ -100,23 +120,30 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
         if (listener!=null) { // if someone wants to know about changes of visibility
             if (!b) listener.buttonShown(); else listener.buttonHidden();
         }
-        Main.pref.put(getPreferenceKey(), b);
+        if ((b && isExpert && !Main.main.menu.expert.isSelected()) ||
+            (!b && isExpert && Main.main.menu.expert.isSelected())) {
+            Main.pref.put(getPreferenceKey(), null);
+        } else {
+            Main.pref.put(getPreferenceKey(), b);
+        }
     }
-    
-    /* 
+
+    /*
      * This fuction should be called for plugins that want to enable auto-hiding
      * custom buttons when they are disabled (because of incorrect layer, for example)
      */
     public void setAutoHideDisabledButton(boolean b) {
-        hideIfDisabled=b;
-        if (b && !isEnabled()) setVisible(false);
+        hideIfDisabled = b;
+        if (b && !isEnabled()) {
+            setVisible(false);
+        }
     }
-    
+
     @Override
     public void showButton() {
         setButtonHidden(false);
     }
-    
+
     @Override
     public void hideButton() {
         setButtonHidden(true);
