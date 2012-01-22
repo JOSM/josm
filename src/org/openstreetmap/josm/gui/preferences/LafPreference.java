@@ -21,10 +21,9 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
-import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
 import org.openstreetmap.josm.tools.GBC;
 
-public class LafPreference implements PreferenceSetting, ExpertModeChangeListener {
+public class LafPreference implements PreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
@@ -89,10 +88,11 @@ public class LafPreference implements PreferenceSetting, ExpertModeChangeListene
         // Show localized names
         showLocalizedName.setToolTipText(tr("Show localized name in selection lists, if available"));
         showLocalizedName.setSelected(Main.pref.getBoolean("osm-primitives.localize-name", true));
-
+        ExpertToggleAction.addVisibilitySwitcher(showLocalizedName);
 
         modeless.setToolTipText(tr("Do not require to switch modes (potlatch style workflow)"));
         modeless.setSelected(Main.pref.getBoolean("modeless", false));
+        ExpertToggleAction.addVisibilitySwitcher(modeless);
 
         panel.add(showID, GBC.eop().insets(20, 0, 0, 0));
         panel.add(showLocalizedName, GBC.eop().insets(20, 0, 0, 0));
@@ -111,14 +111,6 @@ public class LafPreference implements PreferenceSetting, ExpertModeChangeListene
         JScrollPane scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
         gui.displaycontent.addTab(tr("Look and Feel"), scrollpane);
-
-        ExpertToggleAction.addExpertModeChangeListener(this, true);
-    }
-
-    @Override
-    public void expertChanged(boolean isExpert) {
-        showLocalizedName.setVisible(isExpert);
-        modeless.setVisible(isExpert);
     }
 
     public boolean ok() {

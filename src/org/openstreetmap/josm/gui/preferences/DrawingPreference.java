@@ -17,10 +17,9 @@ import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
-import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
 import org.openstreetmap.josm.tools.GBC;
 
-public class DrawingPreference implements PreferenceSetting, ExpertModeChangeListener {
+public class DrawingPreference implements PreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
@@ -38,7 +37,6 @@ public class DrawingPreference implements PreferenceSetting, ExpertModeChangeLis
     private JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
 
     // Options that affect performance
-    private JLabel performanceLabel = new JLabel(tr("Options that affect drawing performance"));
     private JCheckBox useHighlighting = new JCheckBox(tr("Highlight target ways and nodes"));
     private JCheckBox drawHelperLine = new JCheckBox(tr("Draw rubber-band helper line"));
     private JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
@@ -118,25 +116,21 @@ public class DrawingPreference implements PreferenceSetting, ExpertModeChangeLis
         outlineOnly.setSelected(Main.pref.getBoolean("draw.data.area_outline_only", false));
         outlineOnly.setToolTipText(tr("This option suppresses the filling of areas, overriding anything specified in the selected style."));
 
+        JLabel performanceLabel = new JLabel(tr("Options that affect drawing performance"));
         panel.add(performanceLabel, GBC.eop().insets(5,10,0,0));
         panel.add(useAntialiasing, GBC.eop().insets(20,5,0,0));
         panel.add(useHighlighting, GBC.eop().insets(20,0,0,0));
         panel.add(outlineOnly, GBC.eol().insets(20,0,0,5));
 
+        ExpertToggleAction.addVisibilitySwitcher(performanceLabel);
+        ExpertToggleAction.addVisibilitySwitcher(useAntialiasing);
+        ExpertToggleAction.addVisibilitySwitcher(useHighlighting);
+        ExpertToggleAction.addVisibilitySwitcher(outlineOnly);
+
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
         scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
         gui.displaycontent.addTab(tr("OSM Data"), scrollpane);
-
-        ExpertToggleAction.addExpertModeChangeListener(this, true);
-    }
-
-    @Override
-    public void expertChanged(boolean isExpert) {
-        performanceLabel.setVisible(isExpert);
-        useAntialiasing.setVisible(isExpert);
-        useHighlighting.setVisible(isExpert);
-        outlineOnly.setVisible(isExpert);
     }
 
     public boolean ok() {

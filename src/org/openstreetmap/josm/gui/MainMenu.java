@@ -1,11 +1,12 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui;
 
-import java.awt.Toolkit;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -158,7 +159,6 @@ public class MainMenu extends JMenuBar {
     public final InfoWebAction infoweb = new InfoWebAction();
     public final HistoryInfoAction historyinfo = new HistoryInfoAction();
     public final HistoryInfoWebAction historyinfoweb = new HistoryInfoWebAction();
-    public final ExpertToggleAction expert = new ExpertToggleAction();
 
     /* Tools menu */
     public final JosmAction splitWay = new SplitWayAction();
@@ -264,13 +264,20 @@ public class MainMenu extends JMenuBar {
      * @param the action that should get a menu item
      */
     public static JMenuItem add(JMenu menu, JosmAction action) {
+        return add(menu, action, false);
+    }
+
+    public static JMenuItem add(JMenu menu, JosmAction action, boolean isExpert) {
         if (action.getShortcut().getAutomatic())
             return null;
         JMenuItem menuitem = menu.add(action);
-            KeyStroke ks = action.getShortcut().getKeyStroke();
-            if (ks != null) {
-                menuitem.setAccelerator(ks);
-            }
+        if (isExpert) {
+            ExpertToggleAction.addVisibilitySwitcher(menuitem);
+        }
+        KeyStroke ks = action.getShortcut().getKeyStroke();
+        if (ks != null) {
+            menuitem.setAccelerator(ks);
+        }
         return menuitem;
     }
 
@@ -374,7 +381,7 @@ public class MainMenu extends JMenuBar {
             add(sessionMenu, sessionLoad);
             fileMenu.add(sessionMenu);
         }
-        add(fileMenu, gpxExport);
+        add(fileMenu, gpxExport, true);
         fileMenu.addSeparator();
         add(fileMenu, download);
         add(fileMenu, downloadPrimitive);
@@ -385,8 +392,10 @@ public class MainMenu extends JMenuBar {
         fileMenu.addSeparator();
         add(fileMenu, upload);
         add(fileMenu, uploadSelection);
-        fileMenu.addSeparator();
-        add(fileMenu, closeChangesetAction);
+        Component sep = new JPopupMenu.Separator();
+        fileMenu.add(sep);
+        ExpertToggleAction.addVisibilitySwitcher(sep);
+        add(fileMenu, closeChangesetAction, true);
         fileMenu.addSeparator();
         add(fileMenu, exit);
 
@@ -394,12 +403,12 @@ public class MainMenu extends JMenuBar {
         add(editMenu, redo);
         editMenu.addSeparator();
         add(editMenu, copy);
-        add(editMenu, copyCoordinates);
+        add(editMenu, copyCoordinates, true);
         add(editMenu, paste);
         add(editMenu, pasteTags);
         add(editMenu, duplicate);
         add(editMenu, delete);
-        add(editMenu, purge);
+        add(editMenu, purge, true);
         editMenu.addSeparator();
         add(editMenu,merge);
         add(editMenu,mergeSelected);
@@ -429,6 +438,7 @@ public class MainMenu extends JMenuBar {
         // -- viewport follow toggle action
         ViewportFollowToggleAction viewportFollowToggleAction = new ViewportFollowToggleAction();
         final JCheckBoxMenuItem vft = new JCheckBoxMenuItem(viewportFollowToggleAction);
+        ExpertToggleAction.addVisibilitySwitcher(vft);
         viewMenu.add(vft);
         vft.setAccelerator(viewportFollowToggleAction.getShortcut().getKeyStroke());
         viewportFollowToggleAction.addButtonModel(vft.getModel());
@@ -449,9 +459,9 @@ public class MainMenu extends JMenuBar {
         add(viewMenu, historyinfoweb);
         viewMenu.addSeparator();
         // -- expert mode toggle action
-        final JCheckBoxMenuItem expertItem = new JCheckBoxMenuItem(expert);
+        final JCheckBoxMenuItem expertItem = new JCheckBoxMenuItem(ExpertToggleAction.getInstance());
         viewMenu.add(expertItem);
-        expert.addButtonModel(expertItem.getModel());
+        ExpertToggleAction.getInstance().addButtonModel(expertItem.getModel());
 
         add(presetsMenu, presetSearchAction);
         presetsMenu.addSeparator();
@@ -466,11 +476,11 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, alignInLine);
         add(toolsMenu, distribute);
         add(toolsMenu, ortho);
-        add(toolsMenu, mirror);
+        add(toolsMenu, mirror, true);
         toolsMenu.addSeparator();
-        add(toolsMenu, followLine);
-        add(toolsMenu, addnode);
-        add(toolsMenu, movenode);
+        add(toolsMenu, followLine, true);
+        add(toolsMenu, addnode, true);
+        add(toolsMenu, movenode, true);
         add(toolsMenu, createCircle);
         toolsMenu.addSeparator();
         add(toolsMenu, mergeNodes);

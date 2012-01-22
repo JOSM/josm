@@ -277,7 +277,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
     }
 
     private void addGUITabs(boolean clear) {
-        boolean expert = Main.main.menu.expert.isSelected();
+        boolean expert = ExpertToggleAction.isExpert();
         Component sel = getSelectedComponent();
         if (clear) {
             removeAll();
