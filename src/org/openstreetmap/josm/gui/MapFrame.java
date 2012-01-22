@@ -143,8 +143,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         addMapMode(new IconToggleButton(new DrawAction(this)));
         addMapMode(new IconToggleButton(new ZoomAction(this)));
         addMapMode(new IconToggleButton(new DeleteAction(this), true));
-        addMapMode(new IconToggleButton(new ExtrudeAction(this), true));
         addMapMode(new IconToggleButton(new ParallelWayAction(this), true));
+        addMapMode(new IconToggleButton(new ExtrudeAction(this), true));
         addMapMode(new IconToggleButton(new ImproveWayAccuracyAction(Main.map), true));
 
         toolGroup.setSelected(((AbstractButton)toolBarActions.getComponent(0)).getModel(), true);
