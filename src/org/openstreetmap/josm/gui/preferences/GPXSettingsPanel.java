@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
+import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +22,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker.TemplateEntryProperty;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
@@ -90,6 +92,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
         // makeAutoMarkers
         makeAutoMarkers.setToolTipText(tr("Automatically make a marker layer from any waypoints when opening a GPX layer."));
+        ExpertToggleAction.addVisibilitySwitcher(makeAutoMarkers);
         add(makeAutoMarkers, GBC.eol().insets(20,0,0,5));
 
         // drawRawGpsLines
@@ -103,7 +106,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
         /* ensure that default is in data base */
 
-        add(new JLabel(tr("Draw lines between raw GPS points")), GBC.eol().insets(20,0,0,0));
+        JLabel label = new JLabel(tr("Draw lines between raw GPS points"));
+        add(label, GBC.eol().insets(20,0,0,0));
         if (layerName!=null) {
             add(drawRawGpsLinesGlobal, GBC.eol().insets(40,0,0,0));
         }
@@ -114,6 +118,11 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         if (layerName==null || nonlocal) {
             add(drawRawGpsLinesAll, GBC.eol().insets(40,0,0,0));
         }
+        ExpertToggleAction.addVisibilitySwitcher(label);
+        ExpertToggleAction.addVisibilitySwitcher(drawRawGpsLinesGlobal);
+        ExpertToggleAction.addVisibilitySwitcher(drawRawGpsLinesNone);
+        ExpertToggleAction.addVisibilitySwitcher(drawRawGpsLinesLocal);
+        ExpertToggleAction.addVisibilitySwitcher(drawRawGpsLinesAll);
 
         drawRawGpsLinesActionListener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -134,17 +143,24 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
         // drawRawGpsMaxLineLengthLocal
         drawRawGpsMaxLineLengthLocal.setToolTipText(tr("Maximum length (in meters) to draw lines for local files. Set to ''-1'' to draw all lines."));
-        add(new JLabel(tr("Maximum length for local files (meters)")), GBC.std().insets(40,0,0,0));
+        label = new JLabel(tr("Maximum length for local files (meters)"));
+        add(label, GBC.std().insets(40,0,0,0));
         add(drawRawGpsMaxLineLengthLocal, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
+        ExpertToggleAction.addVisibilitySwitcher(label);
+        ExpertToggleAction.addVisibilitySwitcher(drawRawGpsMaxLineLengthLocal);
 
         // drawRawGpsMaxLineLength
         drawRawGpsMaxLineLength.setToolTipText(tr("Maximum length (in meters) to draw lines. Set to ''-1'' to draw all lines."));
-        add(new JLabel(tr("Maximum length (meters)")), GBC.std().insets(40,0,0,0));
+        label = new JLabel(tr("Maximum length (meters)"));
+        add(label, GBC.std().insets(40,0,0,0));
         add(drawRawGpsMaxLineLength, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
+        ExpertToggleAction.addVisibilitySwitcher(label);
+        ExpertToggleAction.addVisibilitySwitcher(drawRawGpsMaxLineLength);
 
         // forceRawGpsLines
         forceRawGpsLines.setToolTipText(tr("Force drawing of lines if the imported data contain no line information."));
         add(forceRawGpsLines, GBC.eop().insets(40,0,0,0));
+        ExpertToggleAction.addVisibilitySwitcher(forceRawGpsLines);
 
         // drawGpsArrows
         drawGpsArrows.addActionListener(new ActionListener(){
@@ -159,6 +175,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         // drawGpsArrowsFast
         drawGpsArrowsFast.setToolTipText(tr("Draw the direction arrows using table lookups instead of complex math."));
         add(drawGpsArrowsFast, GBC.eop().insets(60,0,0,0));
+        ExpertToggleAction.addVisibilitySwitcher(drawGpsArrowsFast);
 
         // drawGpsArrowsMinDist
         drawGpsArrowsMinDist.setToolTipText(tr("Do not draw arrows if they are not at least this distance away from the last one."));
@@ -168,6 +185,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         // hdopCircleGpsPoints
         hdopCircleGpsPoints.setToolTipText(tr("Draw a circle from HDOP value."));
         add(hdopCircleGpsPoints, GBC.eop().insets(20,0,0,0));
+        ExpertToggleAction.addVisibilitySwitcher(hdopCircleGpsPoints);
 
         // largeGpsPoints
         largeGpsPoints.setToolTipText(tr("Draw larger dots for the GPS points."));
@@ -175,7 +193,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
         // drawLineWidth
         drawLineWidth.setToolTipText(tr("Width of drawn GPX line (0 for default)"));
-        add(new JLabel(tr("Drawing width of GPX lines")), GBC.std().insets(40,0,0,0));
+        add(new JLabel(tr("Drawing width of GPX lines")), GBC.std().insets(20,0,0,0));
         add(drawLineWidth, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 
         // colorTracks
@@ -222,16 +240,20 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         add(colorTypeDirection, GBC.eol().insets(40,0,0,0));
         add(colorTypeDilution, GBC.eol().insets(40,0,0,0));
         add(colorTypeTime, GBC.eol().insets(40,0,0,0));
+        ExpertToggleAction.addVisibilitySwitcher(colorTypeDirection);
+        ExpertToggleAction.addVisibilitySwitcher(colorTypeDilution);
 
         colorDynamic.setToolTipText(tr("Colors points and track segments by data limits."));
         add(colorDynamic, GBC.eop().insets(40,0,0,0));
+        ExpertToggleAction.addVisibilitySwitcher(colorDynamic);
 
         if (layerName == null) {
             // Setting waypoints for gpx layer doesn't make sense - waypoints are shown in marker layer that has different name - so show
             // this only for global config
 
             // waypointLabel
-            add(new JLabel(tr("Waypoint labelling")), GBC.std().insets(20,0,0,0));
+            label = new JLabel(tr("Waypoint labelling"));
+            add(label, GBC.std().insets(20,0,0,0));
             add(waypointLabel, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
             waypointLabel.addActionListener(new ActionListener() {
                 @Override
@@ -241,11 +263,17 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             });
             updateWaypointLabelCombobox(waypointLabel, waypointLabelPattern, TemplateEntryProperty.forMarker(layerName));
             add(waypointLabelPattern, GBC.eol().fill(GBC.HORIZONTAL).insets(20,0,0,5));
+            ExpertToggleAction.addVisibilitySwitcher(label);
+            ExpertToggleAction.addVisibilitySwitcher(waypointLabel);
+            ExpertToggleAction.addVisibilitySwitcher(waypointLabelPattern);
 
             // audioWaypointLabel
-            add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
+            Component glue = Box.createVerticalGlue();
+            add(glue, GBC.eol().insets(0, 20, 0, 0));
+            ExpertToggleAction.addVisibilitySwitcher(glue);
 
-            add(new JLabel(tr("Audio waypoint labelling")), GBC.std().insets(20,0,0,0));
+            label = new JLabel(tr("Audio waypoint labelling"));
+            add(label, GBC.std().insets(20,0,0,0));
             add(audioWaypointLabel, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
             audioWaypointLabel.addActionListener(new ActionListener() {
                 @Override
@@ -255,6 +283,9 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             });
             updateWaypointLabelCombobox(audioWaypointLabel, audioWaypointLabelPattern, TemplateEntryProperty.forAudioMarker(layerName));
             add(audioWaypointLabelPattern, GBC.eol().fill(GBC.HORIZONTAL).insets(20,0,0,5));
+            ExpertToggleAction.addVisibilitySwitcher(label);
+            ExpertToggleAction.addVisibilitySwitcher(audioWaypointLabel);
+            ExpertToggleAction.addVisibilitySwitcher(audioWaypointLabelPattern);
         }
 
         add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
