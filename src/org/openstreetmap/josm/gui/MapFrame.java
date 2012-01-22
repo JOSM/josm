@@ -143,8 +143,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         addMapMode(new IconToggleButton(new DrawAction(this)));
         addMapMode(new IconToggleButton(new ZoomAction(this)));
         addMapMode(new IconToggleButton(new DeleteAction(this), true));
-        addMapMode(new IconToggleButton(new ExtrudeAction(this), true));
         addMapMode(new IconToggleButton(new ParallelWayAction(this), true));
+        addMapMode(new IconToggleButton(new ExtrudeAction(this), true));
         addMapMode(new IconToggleButton(new ImproveWayAccuracyAction(Main.map), true));
 
         toolGroup.setSelected(((AbstractButton)toolBarActions.getComponent(0)).getModel(), true);
@@ -195,11 +195,11 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         addToggleDialog(relationListDialog = new RelationListDialog());
         addToggleDialog(new CommandStackDialog(this));
         addToggleDialog(new UserListDialog());
-        addToggleDialog(new HistoryDialog());
+        addToggleDialog(new HistoryDialog(), true);
         addToggleDialog(conflictDialog = new ConflictDialog());
         addToggleDialog(validatorDialog = new ValidatorDialog());
         addToggleDialog(filterDialog = new FilterDialog());
-        addToggleDialog(new ChangesetDialog(this));
+        addToggleDialog(new ChangesetDialog(this), true);
         addToggleDialog(new MapPaintDialog());
 
         // status line below the map
@@ -263,12 +263,16 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         dialogsPanel.initialize(allDialogs);
     }
 
+    public IconToggleButton addToggleDialog(final ToggleDialog dlg) {
+        return addToggleDialog(dlg, false);
+    }
+
     /**
      * Call this to add new toggle dialogs to the left button-list
      * @param dlg The toggle dialog. It must not be in the list already.
      */
-    public IconToggleButton addToggleDialog(final ToggleDialog dlg) {
-        final IconToggleButton button = new IconToggleButton(dlg.getToggleAction());
+    public IconToggleButton addToggleDialog(final ToggleDialog dlg, boolean isExpert) {
+        final IconToggleButton button = new IconToggleButton(dlg.getToggleAction(), isExpert);
         button.setShowHideButtonListener(dlg);
         addHideContextMenu(button);
         dlg.setButton(button);
