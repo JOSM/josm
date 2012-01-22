@@ -51,8 +51,12 @@ public class ImageryLayerInfo {
             }
         } else {
             for (ImageryPreferenceEntry prefEntry : entries) {
-                ImageryInfo i = new ImageryInfo(prefEntry);
-                add(i);
+                try {
+                    ImageryInfo i = new ImageryInfo(prefEntry);
+                    add(i);
+                } catch (IllegalArgumentException e) {
+                    System.err.println("Warning: Unable to load imagery preference entry:"+e);
+                }
             }
             Collections.sort(layers);
         }
