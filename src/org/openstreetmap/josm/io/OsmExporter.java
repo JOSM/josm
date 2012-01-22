@@ -40,8 +40,12 @@ public class OsmExporter extends FileExporter {
 
     @Override
     public void exportData(File file, Layer layer) throws IOException {
+        exportData(file, layer, false);
+    }
+
+    public void exportData(File file, Layer layer, boolean noBackup) throws IOException {
         if (layer instanceof OsmDataLayer) {
-            save(file, (OsmDataLayer) layer);
+            save(file, (OsmDataLayer) layer, noBackup);
         } else
             throw new IllegalArgumentException(MessageFormat.format("Expected instance of OsmDataLayer. Got ''{0}''.", layer
                     .getClass().getName()));
@@ -51,7 +55,7 @@ public class OsmExporter extends FileExporter {
         return new FileOutputStream(file);
     }
 
-    private void save(File file, OsmDataLayer layer) {
+    private void save(File file, OsmDataLayer layer, boolean noBackup) {
         File tmpFile = null;
         try {
             // use a tmp file because if something errors out in the
@@ -78,8 +82,10 @@ public class OsmExporter extends FileExporter {
                 layer.data.getReadLock().unlock();
             }
             // FIXME - how to close?
-            if (!Main.pref.getBoolean("save.keepbackup", false) && (tmpFile != null)) {
-                tmpFile.delete();
+            if (noBackup || !Main.pref.getBoolean("save.keepbackup", false)) {
+                if (tmpFile != null) {
+                    tmpFile.delete();
+                }
             }
             layer.onPostSaveToFile();
         } catch (IOException e) {
