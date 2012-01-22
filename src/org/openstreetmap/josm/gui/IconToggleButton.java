@@ -104,7 +104,7 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
             boolean hiddenFlag = false;
             String hiddenFlagStr = Main.pref.get(getPreferenceKey(), null);
             if (hiddenFlagStr == null) {
-                if (isExpert && !Main.main.menu.expert.isSelected()) {
+                if (isExpert && !ExpertToggleAction.isExpert()) {
                     hiddenFlag = true;
                 }
             } else {
@@ -120,8 +120,8 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
         if (listener!=null) { // if someone wants to know about changes of visibility
             if (!b) listener.buttonShown(); else listener.buttonHidden();
         }
-        if ((b && isExpert && !Main.main.menu.expert.isSelected()) ||
-            (!b && isExpert && Main.main.menu.expert.isSelected())) {
+        if ((b && isExpert && !ExpertToggleAction.isExpert()) ||
+            (!b && isExpert && ExpertToggleAction.isExpert())) {
             Main.pref.put(getPreferenceKey(), null);
         } else {
             Main.pref.put(getPreferenceKey(), b);

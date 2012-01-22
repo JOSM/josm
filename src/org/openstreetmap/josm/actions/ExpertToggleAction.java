@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -23,17 +24,34 @@ public class ExpertToggleAction extends JosmAction {
     }
 
     private static final List<WeakReference<ExpertModeChangeListener>> listeners = new ArrayList<WeakReference<ExpertModeChangeListener>>();
+    private static final List<WeakReference<Component>> visibilityToggleListeners = new ArrayList<WeakReference<Component>>();
+
+    private static ExpertToggleAction INSTANCE = new ExpertToggleAction();
 
     private synchronized static void fireExpertModeChanged(boolean isExpert) {
-        Iterator<WeakReference<ExpertModeChangeListener>> it = listeners.iterator();
-        while (it.hasNext()) {
-            WeakReference<ExpertModeChangeListener> wr = it.next();
-            ExpertModeChangeListener listener = wr.get();
-            if (listener == null) {
-                it.remove();
-                continue;
+        {
+            Iterator<WeakReference<ExpertModeChangeListener>> it = listeners.iterator();
+            while (it.hasNext()) {
+                WeakReference<ExpertModeChangeListener> wr = it.next();
+                ExpertModeChangeListener listener = wr.get();
+                if (listener == null) {
+                    it.remove();
+                    continue;
+                }
+                listener.expertChanged(isExpert);
             }
-            listener.expertChanged(isExpert);
+        }
+        {
+            Iterator<WeakReference<Component>> it = visibilityToggleListeners.iterator();
+            while (it.hasNext()) {
+                WeakReference<Component> wr = it.next();
+                Component c = wr.get();
+                if (c == null) {
+                    it.remove();
+                    continue;
+                }
+                c.setVisible(isExpert);
+            }
         }
     }
 
@@ -54,7 +72,7 @@ public class ExpertToggleAction extends JosmAction {
         }
         listeners.add(new WeakReference<ExpertModeChangeListener>(listener));
         if (fireWhenAdding) {
-            listener.expertChanged(Main.main.menu.expert.isSelected());
+            listener.expertChanged(isExpert());
         }
     }
 
@@ -71,6 +89,29 @@ public class ExpertToggleAction extends JosmAction {
             // remove the listener - and any other listener which god garbage
             // collected in the meantime
             if (wr.get() == null || wr.get() == listener) {
+                it.remove();
+            }
+        }
+    }
+
+    public synchronized static void addVisibilitySwitcher(Component c) {
+        if (c == null) return;
+        for (WeakReference<Component> wr : visibilityToggleListeners) {
+            // already registered ? => abort
+            if (wr.get() == c) return;
+        }
+        visibilityToggleListeners.add(new WeakReference<Component>(c));
+        c.setVisible(isExpert());
+    }
+
+    public synchronized static void removeVisibilitySwitcher(Component c) {
+        if (c == null) return;
+        Iterator<WeakReference<Component>> it = visibilityToggleListeners.iterator();
+        while (it.hasNext()) {
+            WeakReference<Component> wr = it.next();
+            // remove the listener - and any other listener which god garbage
+            // collected in the meantime
+            if (wr.get() == null || wr.get() == c) {
                 it.remove();
             }
         }
@@ -124,5 +165,13 @@ public class ExpertToggleAction extends JosmAction {
 
     public boolean isSelected() {
         return selected;
+    }
+
+    public static ExpertToggleAction getInstance() {
+        return INSTANCE;
+    }
+
+    public static boolean isExpert() {
+        return INSTANCE.isSelected();
     }
 }

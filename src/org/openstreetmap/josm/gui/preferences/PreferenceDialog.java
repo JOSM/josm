@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -44,10 +45,10 @@ public class PreferenceDialog extends JDialog {
         JPanel pnl = new JPanel(new GridBagLayout());
 
         JCheckBox expert = new JCheckBox(tr("Expert mode"));
-        expert.setSelected(Main.main.menu.expert.isSelected());
+        expert.setSelected(ExpertToggleAction.isExpert());
         expert.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Main.main.menu.expert.actionPerformed(null);
+                ExpertToggleAction.getInstance().actionPerformed(null);
             }
         });
 
