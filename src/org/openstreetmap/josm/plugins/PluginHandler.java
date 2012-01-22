@@ -105,6 +105,7 @@ public class PluginHandler {
             new DeprecatedPlugin("wmsplugin", IN_CORE),
             new DeprecatedPlugin("ParallelWay", IN_CORE),
             new DeprecatedPlugin("dumbutils", tr("replaced by new {0} plugin","utilsplugin2")),
+            new DeprecatedPlugin("ImproveWayAccuracy", IN_CORE),
         });
     }
 
