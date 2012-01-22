@@ -166,7 +166,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
             File file = getNewLayerFile(info);
             if (file != null) {
                 info.backupFiles.add(file);
-                new OsmExporter().exportData(file, info.layer);
+                new OsmExporter().exportData(file, info.layer, true /* no backup with appended ~ */);
             }
         }
         while (info.backupFiles.size() > PROP_FILES_PER_LAYER.get()) {
