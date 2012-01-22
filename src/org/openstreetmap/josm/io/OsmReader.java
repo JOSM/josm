@@ -354,7 +354,7 @@ public class OsmReader extends AbstractReader {
      * When cursor is at the start of an element, moves it to the end tag of that element.
      * Nested content is skipped.
      *
-     * This is basically the same code as parseUnkown(), except for the warnings, which
+     * This is basically the same code as parseUnknown(), except for the warnings, which
      * are displayed for inner elements and not at top level.
      */
     private void jumpToEnd(boolean printWarning) throws XMLStreamException {

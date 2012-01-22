@@ -199,7 +199,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
                 break;
             }
         }
-        if (imageryType == null) throw new IllegalArgumentException("unkown type");
+        if (imageryType == null) throw new IllegalArgumentException("unknown type");
         pixelPerDegree = e.pixel_per_eastnorth;
         defaultMaxZoom = e.max_zoom;
         defaultMinZoom = e.min_zoom;
