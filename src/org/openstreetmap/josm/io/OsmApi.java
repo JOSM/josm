@@ -559,7 +559,7 @@ public class OsmApi extends OsmConnection {
      */
     private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor, boolean doAuthenticate, boolean fastFail) throws OsmTransferException {
         StringBuffer responseBody = new StringBuffer();
-        int retries = getMaxRetries();
+        int retries = fastFail ? 0 : getMaxRetries();
 
         while(true) { // the retry loop
             try {
@@ -567,6 +567,7 @@ public class OsmApi extends OsmConnection {
                 System.out.print(requestMethod + " " + url + "... ");
                 activeConnection = (HttpURLConnection)url.openConnection();
                 activeConnection.setConnectTimeout(fastFail ? 1000 : Main.pref.getInteger("socket.timeout.connect",15)*1000);
+                activeConnection.setReadTimeout(fastFail ? 1000 : Main.pref.getInteger("socket.timeout.read",15)*1000);
                 activeConnection.setRequestMethod(requestMethod);
                 if (doAuthenticate) {
                     addAuth(activeConnection);
