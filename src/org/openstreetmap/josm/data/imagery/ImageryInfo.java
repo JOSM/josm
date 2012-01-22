@@ -22,6 +22,7 @@ import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.Attributed;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource.Mapnik;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Class that stores info about an image background layer.
@@ -186,6 +187,8 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     }
 
     public ImageryInfo(ImageryPreferenceEntry e) {
+        CheckParameterUtil.ensureParameterNotNull(e.name, "name");
+        CheckParameterUtil.ensureParameterNotNull(e.url, "url");
         name = e.name;
         url = e.url;
         cookies = e.cookies;
@@ -196,6 +199,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
                 break;
             }
         }
+        if (imageryType == null) throw new IllegalArgumentException("unkown type");
         pixelPerDegree = e.pixel_per_eastnorth;
         defaultMaxZoom = e.max_zoom;
         defaultMinZoom = e.min_zoom;
