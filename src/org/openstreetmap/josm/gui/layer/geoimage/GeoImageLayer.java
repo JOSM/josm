@@ -756,7 +756,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
         mapModeListener = new MapModeChangeListener() {
             public void mapModeChange(MapMode oldMapMode, MapMode newMapMode) {
-                if (newMapMode instanceof org.openstreetmap.josm.actions.mapmode.SelectAction) {
+                if (newMapMode == null || (newMapMode instanceof org.openstreetmap.josm.actions.mapmode.SelectAction)) {
                     Main.map.mapView.addMouseListener(mouseAdapter);
                 } else {
                     Main.map.mapView.removeMouseListener(mouseAdapter);
