@@ -85,7 +85,7 @@ public class WMSGrabber extends Grabber {
     protected URL getURL(double w, double s,double e,double n,
             int wi, int ht) throws MalformedURLException {
         String myProj = Main.getProjection().toCode();
-        if((Main.getProjection() instanceof Mercator) && !info.getServerProjections().contains(myProj)) {
+        if (!info.getServerProjections().contains(myProj) && (Main.getProjection() instanceof Mercator)) {
             LatLon sw = Main.getProjection().eastNorth2latlon(new EastNorth(w, s));
             LatLon ne = Main.getProjection().eastNorth2latlon(new EastNorth(e, n));
             myProj = "EPSG:4326";
@@ -94,19 +94,46 @@ public class WMSGrabber extends Grabber {
             n = ne.lat();
             e = ne.lon();
         }
+        if (myProj.equals("EPSG:4326") && !info.getServerProjections().contains(myProj) && info.getServerProjections().contains("CRS:84")) {
+            myProj = "CRS:84";
+        }
 
+        // Bounding box coordinats have to be switched for WMS 1.3.0 EPSG:4326.
+        //
+        // Background:
+        //
+        // bbox=x_min,y_min,x_max,y_max
+        //
+        //      SRS=... is WMS 1.1.1
+        //      CRS=... is WMS 1.3.0
+        //
+        // The difference:
+        //      For SRS x is east-west and y is north-south
+        //      For CRS x and y are as specified by the EPSG
+        //          E.g. [1] lists lat as first coordinate axis and lot as second, so it is switched for EPSG:4326.
+        //          For most other EPSG code there seems to be no difference.
+        // [1] http://www.epsg-registry.org/report.htm?type=selection&entity=urn:ogc:def:crs:EPSG::4326&reportDetail=short&style=urn:uuid:report-style:default-with-code&style_name=OGP%20Default%20With%20Code&title=EPSG:4326
+        boolean switchLatLon = false;
+        if (baseURL.toLowerCase().contains("crs=epsg:4326")) {
+            switchLatLon = true;
+        } else if (baseURL.toLowerCase().contains("crs=") && myProj.equals("EPSG:4326")) {
+            switchLatLon = true;
+        }
+        String bbox;
+        if (switchLatLon) {
+            bbox = String.format("%s,%s,%s,%s", latLonFormat.format(s), latLonFormat.format(w), latLonFormat.format(n), latLonFormat.format(e));
+        } else {
+            bbox = String.format("%s,%s,%s,%s", latLonFormat.format(w), latLonFormat.format(s), latLonFormat.format(e), latLonFormat.format(n));
+        }
         return new URL(baseURL.replaceAll("\\{proj(\\([^})]+\\))?\\}", myProj)
-                .replaceAll("\\{bbox\\}", latLonFormat.format(w) + ","
-                        + latLonFormat.format(s) + ","
-                        + latLonFormat.format(e) + ","
-                        + latLonFormat.format(n))
-                        .replaceAll("\\{w\\}", latLonFormat.format(w))
-                        .replaceAll("\\{s\\}", latLonFormat.format(s))
-                        .replaceAll("\\{e\\}", latLonFormat.format(e))
-                        .replaceAll("\\{n\\}", latLonFormat.format(n))
-                        .replaceAll("\\{width\\}", String.valueOf(wi))
-                        .replaceAll("\\{height\\}", String.valueOf(ht))
-                        .replace(" ", "%20"));
+                .replaceAll("\\{bbox\\}", bbox)
+                .replaceAll("\\{w\\}", latLonFormat.format(w))
+                .replaceAll("\\{s\\}", latLonFormat.format(s))
+                .replaceAll("\\{e\\}", latLonFormat.format(e))
+                .replaceAll("\\{n\\}", latLonFormat.format(n))
+                .replaceAll("\\{width\\}", String.valueOf(wi))
+                .replaceAll("\\{height\\}", String.valueOf(ht))
+                .replace(" ", "%20"));
     }
 
     @Override
