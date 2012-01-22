@@ -12,6 +12,9 @@ import org.openstreetmap.josm.Main;
  * see PlatformHook.java
  *
  * BTW: THIS IS A STUB. See comments below for details.
+ *
+ * Don't write (Main.platform instanceof PlatformHookUnixoid) because other platform
+ * hooks are subclasses of this class.
  */
 public class PlatformHookUnixoid implements PlatformHook {
     public void preStartupHook(){
