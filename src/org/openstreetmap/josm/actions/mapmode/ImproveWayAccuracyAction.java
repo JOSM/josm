@@ -97,8 +97,8 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
 
     public ImproveWayAccuracyAction(MapFrame mapFrame) {
         super(tr("Improve Way Accuracy"), "improvewayaccuracy.png",
-                tr("Improve Way Accuracy mode"), Shortcut.registerShortcut(
-                "mapmode:ImproveWayAccuracy",
+                tr("Improve Way Accuracy mode"),
+                Shortcut.registerShortcut("mapmode:ImproveWayAccuracy",
                 tr("Mode: {0}", tr("Improve Way Accuracy")),
                 KeyEvent.VK_I, Shortcut.GROUP_EDIT), mapFrame, Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 

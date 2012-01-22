@@ -69,9 +69,8 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
                 tr("Download Rectified Images From Various Services"),
                 Shortcut.registerShortcut("wms:rectimg",
                         tr("WMS: {0}", tr("Rectified Image...")),
-                        KeyEvent.VK_R,
-                        Shortcut.GROUP_NONE),
-                        true
+                        KeyEvent.VK_R, Shortcut.GROUP_NONE),
+                true
         );
 
         // Add default services

@@ -51,6 +51,11 @@ public abstract class AbstractMergeAction extends JosmAction {
         super(name, iconName, tooltip, shortcut, register);
     }
 
+    public AbstractMergeAction(String name, String iconName, String tooltip, Shortcut shortcut,
+    boolean register, String toolbar, boolean installAdapters) {
+        super(name, iconName, tooltip, shortcut, register, toolbar, installAdapters);
+    }
+
     protected Layer askTargetLayer(List<Layer> targetLayers) {
         JComboBox layerList = new JComboBox();
         layerList.setRenderer(new LayerListCellRenderer());

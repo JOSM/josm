@@ -86,10 +86,9 @@ public class UpdateSelectionAction extends JosmAction {
                 "updateselection",
                 tr("Updates the currently selected objects from the server (re-downloads data)"),
                 Shortcut.registerShortcut("file:updateselection",
-                        tr("Update selection"),
-                        KeyEvent.VK_U,
+                        tr("Update selection"), KeyEvent.VK_U,
                         Shortcut.GROUP_HOTKEY + Shortcut.GROUPS_ALT2),
-                        true);
+                true);
         putValue("help", ht("/Action/UpdateSelection"));
     }
     public UpdateSelectionAction(String name, String iconName, String tooltip,

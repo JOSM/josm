@@ -32,12 +32,9 @@ public class ChangesetManagerToggleAction extends JosmAction {
                 tr("Changeset Manager"),
                 "dialogs/changeset/changesetmanager",
                 tr("Toggle visibility of Changeset Manager window"),
-                Shortcut.registerShortcut(
-                        "menu:windows:changesetdialog",
+                Shortcut.registerShortcut("menu:windows:changesetdialog",
                         tr("Toggle visibility of Changeset Manager window"),
-                        KeyEvent.VK_C,
-                        Shortcut.GROUPS_ALT2 + Shortcut.GROUP_HOTKEY
-                ),
+                        KeyEvent.VK_C, Shortcut.GROUPS_ALT2 + Shortcut.GROUP_HOTKEY),
                 true /* register shortcut */
         );
         notifySelectedState();
