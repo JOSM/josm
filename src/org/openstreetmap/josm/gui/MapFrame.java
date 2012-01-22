@@ -41,6 +41,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.mapmode.ExtrudeAction;
+import org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.ParallelWayAction;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
@@ -144,6 +145,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         addMapMode(new IconToggleButton(new DeleteAction(this), true));
         addMapMode(new IconToggleButton(new ExtrudeAction(this), true));
         addMapMode(new IconToggleButton(new ParallelWayAction(this), true));
+        addMapMode(new IconToggleButton(new ImproveWayAccuracyAction(Main.map), true));
 
         toolGroup.setSelected(((AbstractButton)toolBarActions.getComponent(0)).getModel(), true);
 
