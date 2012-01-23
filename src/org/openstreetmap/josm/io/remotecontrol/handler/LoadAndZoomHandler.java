@@ -77,28 +77,29 @@ public class LoadAndZoomHandler extends RequestHandler
                 }
                 else
                 {
-
-                    // find out whether some data has already been downloaded
-                    Area present = null;
                     Area toDownload = null;
-                    DataSet ds = Main.main.getCurrentDataSet();
-                    if (ds != null) {
-                        present = ds.getDataSourceArea();
-                    }
-                    if (present != null && !present.isEmpty()) {
-                        toDownload = new Area(new Rectangle2D.Double(minlon,minlat,maxlon-minlon,maxlat-minlat));
-                        toDownload.subtract(present);
-                        if (!toDownload.isEmpty())
-                        {
-                            // the result might not be a rectangle (L shaped etc)
-                            Rectangle2D downloadBounds = toDownload.getBounds2D();
-                            minlat = downloadBounds.getMinY();
-                            minlon = downloadBounds.getMinX();
-                            maxlat = downloadBounds.getMaxY();
-                            maxlon = downloadBounds.getMaxX();
+                    if (!newLayer) {
+                        // find out whether some data has already been downloaded
+                        Area present = null;
+                        DataSet ds = Main.main.getCurrentDataSet();
+                        if (ds != null) {
+                            present = ds.getDataSourceArea();
+                        }
+                        if (present != null && !present.isEmpty()) {
+                            toDownload = new Area(new Rectangle2D.Double(minlon,minlat,maxlon-minlon,maxlat-minlat));
+                            toDownload.subtract(present);
+                            if (!toDownload.isEmpty())
+                            {
+                                // the result might not be a rectangle (L shaped etc)
+                                Rectangle2D downloadBounds = toDownload.getBounds2D();
+                                minlat = downloadBounds.getMinY();
+                                minlon = downloadBounds.getMinX();
+                                maxlat = downloadBounds.getMaxY();
+                                maxlon = downloadBounds.getMaxX();
+                            }
                         }
                     }
-                    if((toDownload != null) && toDownload.isEmpty())
+                    if (toDownload != null && toDownload.isEmpty())
                     {
                         System.out.println("RemoteControl: no download necessary");
                     }
