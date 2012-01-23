@@ -15,17 +15,13 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
@@ -89,7 +85,7 @@ public class VersionTable extends JTable implements Observer{
     protected void showPopupMenu(MouseEvent evt) {
         HistoryBrowserModel.VersionTableModel model = getVersionTableModel();
         int row = rowAtPoint(evt.getPoint());
-        if (!model.isLatest(row)) {
+        if (row > -1 && !model.isLatest(row)) {
             HistoryOsmPrimitive primitive = model.getPrimitive(row);
             popupMenu.prepare(primitive);
             popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
