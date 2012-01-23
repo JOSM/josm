@@ -39,11 +39,22 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         SCANEX("scanex");
 
         private String urlString;
+
         ImageryType(String urlString) {
             this.urlString = urlString;
         }
+
         public String getUrlString() {
             return urlString;
+        }
+        
+        public static ImageryType fromUrlString(String s) {
+            for (ImageryType type : ImageryType.values()) {
+                if (type.getUrlString().equals(s)) {
+                    return type;
+                }
+            }
+            return null;
         }
     }
 
@@ -179,6 +190,16 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
     }
 
+    public ImageryInfo(String name, String url, String type, String eulaAcceptanceRequired, String cookies) {
+        this.name=name;
+        setExtendedUrl(url);
+        ImageryType t = ImageryType.fromUrlString(type);
+        this.cookies=cookies;
+        if (t != null) {
+            this.imageryType = t;
+        }
+    }
+
     public ImageryInfo(String name, String url, String cookies, double pixelPerDegree) {
         this.name=name;
         setExtendedUrl(url);
@@ -193,12 +214,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         url = e.url;
         cookies = e.cookies;
         eulaAcceptanceRequired = e.eula;
-        for (ImageryType type : ImageryType.values()) {
-            if (type.getUrlString().equals(e.type)) {
-                imageryType = type;
-                break;
-            }
-        }
+        imageryType = ImageryType.fromUrlString(e.type);
         if (imageryType == null) throw new IllegalArgumentException("unknown type");
         pixelPerDegree = e.pixel_per_eastnorth;
         defaultMaxZoom = e.max_zoom;

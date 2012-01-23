@@ -43,14 +43,14 @@ public class ImageryHandler extends RequestHandler {
             throw new RequestHandlerErrorException();
         String url = args.get("url");
         String title = args.get("title");
+        String type = args.get("type");
         if((title == null) || (title.length() == 0))
         {
             title = tr("Remote imagery");
         }
         String cookies = args.get("cookies");
-        ImageryLayer imgLayer = ImageryLayer.create(new ImageryInfo(title, url, cookies));
+        ImageryLayer imgLayer = ImageryLayer.create(new ImageryInfo(title, url, type, null, cookies));
         Main.main.addLayer(imgLayer);
-
     }
 
     @Override
