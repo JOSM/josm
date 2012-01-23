@@ -9,6 +9,9 @@ import java.awt.EventQueue;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
@@ -121,7 +124,7 @@ public class GettingStarted extends JPanel {
 
                 EventQueue.invokeLater(new Runnable() {
                     public void run() {
-                        lg.setText(content);
+                        lg.setText(fixImageLinks(content));
                         // lg.moveCaretPosition(0);
                     }
                 });
@@ -131,5 +134,20 @@ public class GettingStarted extends JPanel {
         t.start();
 
         new FileDrop(scroller);
+    }
+
+    private String fixImageLinks(String s) {
+        Matcher m = Pattern.compile("src=\"http://josm.openstreetmap.de/browser/trunk(/images/.*?\\.png)\\?format=raw\"").matcher(s);
+        StringBuffer sb = new StringBuffer();
+        while (m.find()) {
+            String im = m.group(1);
+            URL u = getClass().getResource(im);
+            if (u == null) {
+                u = getClass().getResource("/images/data/node.png");
+            }
+            m.appendReplacement(sb, "src=\"" + u.toString() + "\"");
+        }
+        m.appendTail(sb);
+        return sb.toString();
     }
 }
