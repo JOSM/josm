@@ -32,7 +32,7 @@ public class RemoteControl
      * changes.
      */
     static final int protocolMajorVersion = 1;
-    static final int protocolMinorVersion = 2;
+    static final int protocolMinorVersion = 3;
 
     /**
      * Returns an array of int values with major and minor API version
