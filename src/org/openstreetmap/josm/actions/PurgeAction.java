@@ -220,21 +220,21 @@ public class PurgeAction extends JosmAction {
         pnl.add(new JLabel("<html>"+
                 tr("This operation makes JOSM forget the selected objects.<br> " +
                         "They will be removed from the layer, but <i>not</i> deleted<br> " +
-                "on the server when uploading.")+"</html>",
-                ImageProvider.get("purge"), JLabel.LEFT), GBC.eol().fill(GBC.HORIZONTAL));
+                        "on the server when uploading.")+"</html>",
+                        ImageProvider.get("purge"), JLabel.LEFT), GBC.eol().fill(GBC.HORIZONTAL));
 
         if (!toPurgeAdditionally.isEmpty()) {
             pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0,5,0,5));
             pnl.add(new JLabel("<html>"+
                     tr("The following dependent objects will be purged<br> " +
-                    "in addition to the selected objects:")+"</html>",
-                    ImageProvider.get("warning-small"), JLabel.LEFT), GBC.eol().fill(GBC.HORIZONTAL));
+                            "in addition to the selected objects:")+"</html>",
+                            ImageProvider.get("warning-small"), JLabel.LEFT), GBC.eol().fill(GBC.HORIZONTAL));
 
             Collections.sort(toPurgeAdditionally, new Comparator<OsmPrimitive>() {
                 public int compare(OsmPrimitive o1, OsmPrimitive o2) {
-                    int type = o1.getType().compareTo(o2.getType());
+                    int type = o2.getType().compareTo(o1.getType());
                     if (type != 0)
-                        return -type;
+                        return type;
                     return (Long.valueOf(o1.getUniqueId())).compareTo(o2.getUniqueId());
                 }
             });

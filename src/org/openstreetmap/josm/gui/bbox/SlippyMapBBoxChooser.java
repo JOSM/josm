@@ -91,9 +91,9 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
 
         @Override public double lonToTileX(double lon, int zoom) { return source.lonToTileX(lon,zoom); }
 
-        @Override public double tileYToLat(int y, int zoom) { return tileYToLat(y, zoom); }
+        @Override public double tileYToLat(int y, int zoom) { return source.tileYToLat(y, zoom); }
 
-        @Override public double tileXToLon(int x, int zoom) { return tileXToLon(x, zoom); }
+        @Override public double tileXToLon(int x, int zoom) { return source.tileXToLon(x, zoom); }
     }
 
     /**
@@ -156,7 +156,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
                         new RenamedSourceDecorator(new OsmTileSource.Mapnik(), "Mapnik"),
                         new RenamedSourceDecorator(new OsmTileSource.TilesAtHome(), "Osmarender"),
                         new RenamedSourceDecorator(new OsmTileSource.CycleMap(), "Cyclemap")
-                );
+                        );
             }
         });
         addTileSourceProvider(new TMSTileSourceProvider());
@@ -316,11 +316,11 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
                 new LatLon(
                         Math.min(l2.getLat(), l1.getLat()),
                         LatLon.toIntervalLon(Math.min(l1.getLon(), l2.getLon()))
-                ),
-                new LatLon(
-                        Math.max(l2.getLat(), l1.getLat()),
-                        LatLon.toIntervalLon(Math.max(l1.getLon(), l2.getLon())))
-        );
+                        ),
+                        new LatLon(
+                                Math.max(l2.getLat(), l1.getLat()),
+                                LatLon.toIntervalLon(Math.max(l1.getLon(), l2.getLon())))
+                );
         Bounds oldValue = this.bbox;
         this.bbox = b;
         repaint();
@@ -354,7 +354,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
      */
     public void setBoundingBox(Bounds bbox) {
         if (bbox == null || (bbox.getMin().lat() == 0.0 && bbox.getMin().lon() == 0.0
-        && bbox.getMax().lat() == 0.0 && bbox.getMax().lon() == 0.0)) {
+                && bbox.getMax().lat() == 0.0 && bbox.getMax().lon() == 0.0)) {
             this.bbox = null;
             iSelectionRectStart = null;
             iSelectionRectEnd = null;
@@ -365,7 +365,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         this.bbox = bbox;
         double minLon = bbox.getMin().lon();
         double maxLon = bbox.getMax().lon();
-        
+
         if (bbox.crosses180thMeridian()) {
             minLon -= 360.0;
         }
@@ -374,7 +374,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         int y2 = OsmMercator.LatToY(bbox.getMax().lat(), MAX_ZOOM);
         int x1 = OsmMercator.LonToX(minLon, MAX_ZOOM);
         int x2 = OsmMercator.LonToX(maxLon, MAX_ZOOM);
-        
+
         iSelectionRectStart = new Point(Math.min(x1, x2), Math.min(y1, y2));
         iSelectionRectEnd = new Point(Math.max(x1, x2), Math.max(y1, y2));
 

@@ -30,6 +30,8 @@ public class OsmosnimkiOffsetServer implements OffsetServer {
             final BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream(), "UTF-8"));
             String response = rdr.readLine();
             System.out.println(tr("Offset server response: {0}", response));
+            if (response == null)
+                return false;
             if (response.contains("\"offsets_available\": true")) return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -45,6 +47,8 @@ public class OsmosnimkiOffsetServer implements OffsetServer {
             System.out.println(tr("Querying offset: {0}", url.toString()));
             final BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream(), "UTF-8"));
             String s = rdr.readLine();
+            if (s == null)
+                return null;
             int i = s.indexOf(',');
             if (i == -1) return null;
             String sLon = s.substring(1,i);

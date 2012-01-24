@@ -148,18 +148,18 @@ public class SessionReader {
          */
         public InputStream getInputStream(String uriStr) throws IOException {
             File file = getFile(uriStr);
-            try {
-                if (file != null)
+            if (file != null) {
+                try {
                     return new BufferedInputStream(new FileInputStream(file));
-                else if (inZipPath != null) {
-                    ZipEntry entry = zipFile.getEntry(inZipPath);
-                    if (entry != null) {
-                        InputStream is = zipFile.getInputStream(entry);
-                        return is;
-                    }
+                } catch (FileNotFoundException e) {
+                    throw new IOException(tr("File ''{0}'' does not exist.", file.getPath()));
                 }
-            } catch (FileNotFoundException e) {
-                throw new IOException(tr("File ''{0}'' does not exist.", file.getPath()));
+            } else if (inZipPath != null) {
+                ZipEntry entry = zipFile.getEntry(inZipPath);
+                if (entry != null) {
+                    InputStream is = zipFile.getInputStream(entry);
+                    return is;
+                }
             }
             throw new IOException(tr("Unable to locate file  ''{0}''.", uriStr));
         }
