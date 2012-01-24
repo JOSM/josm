@@ -4,6 +4,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.Collections;
+
 import org.openstreetmap.josm.data.osm.QuadBuckets;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -16,7 +17,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 public class OverlappingAreas extends Test {
 
-    protected static int OVERLAPPING_AREAS = 2201;
+    protected static final int OVERLAPPING_AREAS = 2201;
     protected QuadBuckets<Way> index = new QuadBuckets<Way>();
 
     public OverlappingAreas() {
@@ -39,12 +40,11 @@ public class OverlappingAreas extends Test {
 
                         @Override
                         public boolean evaluate(Way wi) {
-                            if (w.equals(wi)) {
+                            if (w.equals(wi))
                                 return false;
-                            } else {
+                            else
                                 return Geometry.polygonIntersection(w.getNodes(), wi.getNodes())
                                         == Geometry.PolygonIntersection.CROSSING;
-                            }
                         }
                     });
             if (!overlaps.isEmpty()) {

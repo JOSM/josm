@@ -28,7 +28,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  * @author frsantos
  */
 public class CrossingWays extends Test {
-    protected static int CROSSING_WAYS = 601;
+    protected static final int CROSSING_WAYS = 601;
 
     /** All way segments, grouped by cells */
     Map<Point2D,List<ExtendedSegment>> cellSegments;
@@ -42,7 +42,7 @@ public class CrossingWays extends Test {
      */
     public CrossingWays() {
         super(tr("Crossing ways"),
-              tr("This test checks if two roads, railways, waterways or buildings crosses in the same layer, but are not connected by a node."));
+                tr("This test checks if two roads, railways, waterways or buildings crosses in the same layer, but are not connected by a node."));
     }
 
     @Override
@@ -81,7 +81,9 @@ public class CrossingWays extends Test {
             return;
 
         String layer1 = w.get("layer");
-        if ("0".equals(layer1)) layer1 = null; //0 is default value
+        if ("0".equals(layer1)) {
+            layer1 = null; //0 is default value
+        }
 
         int nodesSize = w.getNodesCount();
         for (int i = 0; i < nodesSize - 1; i++) {
@@ -93,25 +95,39 @@ public class CrossingWays extends Test {
                     List<Way> prims;
                     List<WaySegment> highlight;
 
-                    if (errorSegments.contains(ws) && errorSegments.contains(es2.ws))
+                    if (errorSegments.contains(ws) && errorSegments.contains(es2.ws)) {
                         continue;
+                    }
 
                     String layer2 = es2.layer;
                     String railway2 = es2.railway;
                     boolean isCoastline2 = es2.coastline;
-                    if (layer1 == null ? layer2 != null : !layer1.equals(layer2))
+                    if (layer1 == null ? layer2 != null : !layer1.equals(layer2)) {
                         continue;
+                    }
 
-                    if (!es1.intersects(es2) ) continue;
-                    if (isSubway1 && "subway".equals(railway2)) continue;
-                    if (isTram1 && "tram".equals(railway2)) continue;
+                    if (!es1.intersects(es2) ) {
+                        continue;
+                    }
+                    if (isSubway1 && "subway".equals(railway2)) {
+                        continue;
+                    }
+                    if (isTram1 && "tram".equals(railway2)) {
+                        continue;
+                    }
 
-                    if (isCoastline1 != isCoastline2) continue;
+                    if (isCoastline1 != isCoastline2) {
+                        continue;
+                    }
                     if (("river".equals(waterway1) && "riverbank".equals(es2.waterway))
-                            || ("riverbank".equals(waterway1) && "river".equals(es2.waterway))) continue;
+                            || ("riverbank".equals(waterway1) && "river".equals(es2.waterway))) {
+                        continue;
+                    }
 
                     if ((es1.railway != null && es1.railway.equals("abandoned"))
-                            || (railway2 != null && railway2.equals("abandoned"))) continue;
+                            || (railway2 != null && railway2.equals("abandoned"))) {
+                        continue;
+                    }
 
                     prims = Arrays.asList(es1.ws.way, es2.ws.way);
                     if ((highlight = ways_seen.get(prims)) == null) {
@@ -130,10 +146,10 @@ public class CrossingWays extends Test {
                         }
 
                         errors.add(new TestError(this, Severity.WARNING,
-                            message,
-                            CROSSING_WAYS,
-                            prims,
-                            highlight));
+                                message,
+                                CROSSING_WAYS,
+                                prims,
+                                highlight));
                         ways_seen.put(prims, highlight);
                     } else {
                         highlight.add(es1.ws);
@@ -146,13 +162,13 @@ public class CrossingWays extends Test {
     }
 
     /**
-    * Returns all the cells this segment crosses.  Each cell contains the list
-    * of segments already processed
-    *
-    * @param n1 The first node
-    * @param n2 The second node
-    * @return A list with all the cells the segment crosses
-    */
+     * Returns all the cells this segment crosses.  Each cell contains the list
+     * of segments already processed
+     *
+     * @param n1 The first node
+     * @param n2 The second node
+     * @return A list with all the cells the segment crosses
+     */
     public List<List<ExtendedSegment>> getSegments(Node n1, Node n2) {
 
         List<List<ExtendedSegment>> cells = new ArrayList<List<ExtendedSegment>>();
@@ -217,10 +233,10 @@ public class CrossingWays extends Test {
                 return false;
 
             return Line2D.linesIntersect(
-                n1.getEastNorth().east(), n1.getEastNorth().north(),
-                n2.getEastNorth().east(), n2.getEastNorth().north(),
-                s2.n1.getEastNorth().east(), s2.n1.getEastNorth().north(),
-                s2.n2.getEastNorth().east(), s2.n2.getEastNorth().north());
+                    n1.getEastNorth().east(), n1.getEastNorth().north(),
+                    n2.getEastNorth().east(), n2.getEastNorth().north(),
+                    s2.n1.getEastNorth().east(), s2.n1.getEastNorth().north(),
+                    s2.n2.getEastNorth().east(), s2.n2.getEastNorth().north());
         }
     }
 }

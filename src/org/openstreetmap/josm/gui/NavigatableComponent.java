@@ -63,7 +63,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     public static final String PROPNAME_CENTER = "center";
     public static final String PROPNAME_SCALE  = "scale";
-    
+
     /**
      * the zoom listeners
      */
@@ -236,7 +236,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return new AffineTransform(
                 1.0/scale, 0.0, 0.0, -1.0/scale, getWidth()/2.0 - center.east()/scale, getHeight()/2.0 + center.north()/scale);
     }
-    
+
     /**
      * Return the point on the screen where this Coordinate would be.
      * @param p The point, where this geopoint would be drawn.
@@ -393,7 +393,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                             }
                         }
                     }
-            ).start();
+                    ).start();
         }
     }
 
@@ -1160,7 +1160,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public int getViewID() {
         String x = center.east() + "_" + center.north() + "_" + scale + "_" +
-        getWidth() + "_" + getHeight() + "_" + getProjection().toString();
+                getWidth() + "_" + getHeight() + "_" + getProjection().toString();
         java.util.zip.CRC32 id = new java.util.zip.CRC32();
         id.update(x.getBytes());
         return (int)id.getValue();
@@ -1208,7 +1208,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public static final SystemOfMeasurement CHINESE_SOM = new SystemOfMeasurement(1.0/3.0, "\u5e02\u5c3a" /* chi */, 500, "\u5e02\u91cc" /* li */);
     public static final SystemOfMeasurement IMPERIAL_SOM = new SystemOfMeasurement(0.3048, "ft", 1609.344, "mi");
 
-    public static Map<String, SystemOfMeasurement> SYSTEMS_OF_MEASUREMENT;
+    public static final Map<String, SystemOfMeasurement> SYSTEMS_OF_MEASUREMENT;
     static {
         SYSTEMS_OF_MEASUREMENT = new LinkedHashMap<String, SystemOfMeasurement>();
         SYSTEMS_OF_MEASUREMENT.put(marktr("Metric"), METRIC_SOM);

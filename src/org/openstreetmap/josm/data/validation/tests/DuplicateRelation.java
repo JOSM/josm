@@ -121,8 +121,8 @@ public class DuplicateRelation extends Test
         }
     }
 
-    protected static int DUPLICATE_RELATION = 1901;
-    protected static int SAME_RELATION = 1902;
+    protected static final int DUPLICATE_RELATION = 1901;
+    protected static final int SAME_RELATION = 1902;
 
     /** MultiMap of all relations */
     MultiMap<RelationPair, OsmPrimitive> relations;

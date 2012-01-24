@@ -4,8 +4,6 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.GridBagLayout;
-import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,10 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.MergeNodesAction;
@@ -34,7 +28,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.MultiMap;
 
@@ -53,7 +46,7 @@ public class DuplicateNode extends Test {
             return new LatLon(
                     Math.round(o.getCoor().lat() / precision) * precision,
                     Math.round(o.getCoor().lon() / precision) * precision
-            );
+                    );
         }
 
         @SuppressWarnings("unchecked")
@@ -81,18 +74,18 @@ public class DuplicateNode extends Test {
         }
     }
 
-    protected static int DUPLICATE_NODE = 1;
-    protected static int DUPLICATE_NODE_MIXED = 2;
-    protected static int DUPLICATE_NODE_OTHER = 3;
-    protected static int DUPLICATE_NODE_UNCLOSED = 4;
-    protected static int DUPLICATE_NODE_BUILDING = 10;
-    protected static int DUPLICATE_NODE_BOUNDARY = 11;
-    protected static int DUPLICATE_NODE_HIGHWAY = 12;
-    protected static int DUPLICATE_NODE_LANDUSE = 13;
-    protected static int DUPLICATE_NODE_NATURAL = 14;
-    protected static int DUPLICATE_NODE_POWER = 15;
-    protected static int DUPLICATE_NODE_RAILWAY = 16;
-    protected static int DUPLICATE_NODE_WATERWAY = 17;
+    protected final static int DUPLICATE_NODE = 1;
+    protected final static int DUPLICATE_NODE_MIXED = 2;
+    protected final static int DUPLICATE_NODE_OTHER = 3;
+    protected final static int DUPLICATE_NODE_UNCLOSED = 4;
+    protected final static int DUPLICATE_NODE_BUILDING = 10;
+    protected final static int DUPLICATE_NODE_BOUNDARY = 11;
+    protected final static int DUPLICATE_NODE_HIGHWAY = 12;
+    protected final static int DUPLICATE_NODE_LANDUSE = 13;
+    protected final static int DUPLICATE_NODE_NATURAL = 14;
+    protected final static int DUPLICATE_NODE_POWER = 15;
+    protected final static int DUPLICATE_NODE_RAILWAY = 16;
+    protected final static int DUPLICATE_NODE_WATERWAY = 17;
 
     /** The map of potential duplicates.
      *
@@ -203,7 +196,7 @@ public class DuplicateNode extends Test {
                             msg,
                             DUPLICATE_NODE_UNCLOSED,
                             mm.get(tagSet)
-                    ));
+                            ));
                 } else if (nbType>1) {
                     String msg = marktr("Mixed type duplicated nodes");
                     errors.add(new TestError(
@@ -214,7 +207,7 @@ public class DuplicateNode extends Test {
                             msg,
                             DUPLICATE_NODE_MIXED,
                             mm.get(tagSet)
-                    ));
+                            ));
                 } else if (typeMap.get("highway")) {
                     String msg = marktr("Highway duplicated nodes");
                     errors.add(new TestError(
@@ -225,7 +218,7 @@ public class DuplicateNode extends Test {
                             msg,
                             DUPLICATE_NODE_HIGHWAY,
                             mm.get(tagSet)
-                    ));
+                            ));
                 } else if (typeMap.get("railway")) {
                     String msg = marktr("Railway duplicated nodes");
                     errors.add(new TestError(
@@ -236,7 +229,7 @@ public class DuplicateNode extends Test {
                             msg,
                             DUPLICATE_NODE_RAILWAY,
                             mm.get(tagSet)
-                    ));
+                            ));
                 } else if (typeMap.get("waterway")) {
                     String msg = marktr("Waterway duplicated nodes");
                     errors.add(new TestError(
@@ -247,7 +240,7 @@ public class DuplicateNode extends Test {
                             msg,
                             DUPLICATE_NODE_WATERWAY,
                             mm.get(tagSet)
-                    ));
+                            ));
                 } else if (typeMap.get("boundary")) {
                     String msg = marktr("Boundary duplicated nodes");
                     errors.add(new TestError(
@@ -258,7 +251,7 @@ public class DuplicateNode extends Test {
                             msg,
                             DUPLICATE_NODE_BOUNDARY,
                             mm.get(tagSet)
-                    ));
+                            ));
                 } else if (typeMap.get("power")) {
                     String msg = marktr("Power duplicated nodes");
                     errors.add(new TestError(
@@ -269,7 +262,7 @@ public class DuplicateNode extends Test {
                             msg,
                             DUPLICATE_NODE_POWER,
                             mm.get(tagSet)
-                    ));
+                            ));
                 } else if (typeMap.get("natural")) {
                     String msg = marktr("Natural duplicated nodes");
                     errors.add(new TestError(
@@ -280,7 +273,7 @@ public class DuplicateNode extends Test {
                             msg,
                             DUPLICATE_NODE_NATURAL,
                             mm.get(tagSet)
-                    ));
+                            ));
                 } else if (typeMap.get("building")) {
                     String msg = marktr("Building duplicated nodes");
                     errors.add(new TestError(
@@ -291,7 +284,7 @@ public class DuplicateNode extends Test {
                             msg,
                             DUPLICATE_NODE_BUILDING,
                             mm.get(tagSet)
-                    ));
+                            ));
                 } else if (typeMap.get("landuse")) {
                     String msg = marktr("Landuse duplicated nodes");
                     errors.add(new TestError(
@@ -302,7 +295,7 @@ public class DuplicateNode extends Test {
                             msg,
                             DUPLICATE_NODE_LANDUSE,
                             mm.get(tagSet)
-                    ));
+                            ));
                 } else {
                     String msg = marktr("Other duplicated nodes");
                     errors.add(new TestError(
@@ -313,7 +306,7 @@ public class DuplicateNode extends Test {
                             msg,
                             DUPLICATE_NODE_OTHER,
                             mm.get(tagSet)
-                    ));
+                            ));
 
                 }
                 it.remove();
@@ -335,7 +328,7 @@ public class DuplicateNode extends Test {
                         tr("Nodes at same position"),
                         DUPLICATE_NODE,
                         duplicates
-                ));
+                        ));
             }
         }
         return errors;

@@ -166,7 +166,7 @@ public class Marker implements TemplateEngineDataProvider {
      * (depending on whether they want to override default behaviour or just add new
      * stuff).
      */
-    public static List<MarkerProducers> markerProducers = new LinkedList<MarkerProducers>();
+    public static final List<MarkerProducers> markerProducers = new LinkedList<MarkerProducers>();
 
     // Add one Maker specifying the default behaviour.
     static {

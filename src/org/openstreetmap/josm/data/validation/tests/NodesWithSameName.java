@@ -3,11 +3,11 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Map;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -16,13 +16,13 @@ import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public class NodesWithSameName extends Test {
-    protected static int SAME_NAME = 801;
+    protected static final int SAME_NAME = 801;
 
     private Map<String, List<Node>> namesToNodes;
 
     public NodesWithSameName() {
         super(tr("Nodes with same name"),
-            tr("This test finds nodes that have the same name (might be duplicates)."));
+                tr("This test finds nodes that have the same name (might be duplicates)."));
     }
 
     @Override public void startTest(ProgressMonitor monitor) {

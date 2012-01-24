@@ -170,7 +170,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
     // hook for roadsigns plugin to display a small
     // button in the upper right corner of this dialog
-    public static JPanel pluginHook = new JPanel();
+    public static final JPanel pluginHook = new JPanel();
 
     private JPopupMenu propertyMenu;
     private JPopupMenu membershipMenu;
@@ -278,13 +278,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             public int compare(AutoCompletionListItem o1, AutoCompletionListItem o2) {
                 boolean c1 = m.containsKey(o1.getValue());
                 boolean c2 = m.containsKey(o2.getValue());
-                if (c1 == c2) {
+                if (c1 == c2)
                     return String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue());
-                } else if (c1) {
+                else if (c1)
                     return -1;
-                } else {
+                else
                     return +1;
-                }
             }
         };
 
@@ -1050,8 +1049,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             int nextKeyIndex = rows[0];
             for (int row : rows) {
                 String key = propertyData.getValueAt(row, 0).toString();
-                if (row == nextKeyIndex + 1)
+                if (row == nextKeyIndex + 1) {
                     nextKeyIndex = row; // no gap yet
+                }
                 tags.put(key, null);
             }
 
@@ -1059,12 +1059,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             String nextKey = null;
             int rowCount = propertyData.getRowCount();
             if (rowCount > rows.length) {
-                if (nextKeyIndex == rows[rows.length-1])
+                if (nextKeyIndex == rows[rows.length-1]) {
                     // no gap found, pick next or previous key in list
                     nextKeyIndex = (nextKeyIndex + 1 < rowCount ? nextKeyIndex + 1 : rows[0] - 1);
-                else
+                } else {
                     // gap found
                     nextKeyIndex++;
+                }
                 nextKey = (String)propertyData.getValueAt(nextKeyIndex, 0);
             }
 

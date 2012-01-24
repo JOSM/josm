@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class SimilarNamedWays extends Test {
 
-    protected static int SIMILAR_NAMED = 701;
+    protected static final int SIMILAR_NAMED = 701;
 
     /** All ways, grouped by cells */
     Map<Point2D,List<Way>> cellWays;

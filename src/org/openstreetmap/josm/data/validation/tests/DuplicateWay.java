@@ -72,8 +72,8 @@ public class DuplicateWay extends Test
         }
     }
 
-    protected static int DUPLICATE_WAY = 1401;
-    protected static int SAME_WAY = 1402;
+    protected static final int DUPLICATE_WAY = 1401;
+    protected static final int SAME_WAY = 1402;
 
     /** Bag of all ways */
     MultiMap<WayPair, OsmPrimitive> ways;
@@ -86,7 +86,7 @@ public class DuplicateWay extends Test
      */
     public DuplicateWay() {
         super(tr("Duplicated ways"),
-              tr("This test checks that there are no ways with same node coordinates and optionally also same tags."));
+                tr("This test checks that there are no ways with same node coordinates and optionally also same tags."));
     }
 
 
@@ -126,7 +126,9 @@ public class DuplicateWay extends Test
                         }
                     }
                 }
-                if (skip) continue;
+                if (skip) {
+                    continue;
+                }
                 TestError testError = new TestError(this, Severity.WARNING, tr("Ways with same position"), SAME_WAY, sameway);
                 errors.add(testError);
             }
@@ -136,7 +138,7 @@ public class DuplicateWay extends Test
     }
 
     /**
-     * Remove uninteresting keys, like created_by to normalize the tags 
+     * Remove uninteresting keys, like created_by to normalize the tags
      */
     public void removeUninterestingKeys(Map<String, String> wkeys) {
         wkeys.remove("created_by");

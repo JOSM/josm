@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import java.awt.Color;
 import static org.openstreetmap.josm.tools.Utils.equal;
 
+import java.awt.Color;
 import java.awt.Rectangle;
+
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
-
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -20,9 +20,9 @@ public class BoxTextElemStyle extends ElemStyle {
 
     public enum HorizontalTextAlignment { LEFT, CENTER, RIGHT }
     public enum VerticalTextAlignment { ABOVE, TOP, CENTER, BOTTOM, BELOW }
-    
-    public static Rectangle ZERO_BOX = new Rectangle(0, 0, 0, 0);
-    
+
+    public static final Rectangle ZERO_BOX = new Rectangle(0, 0, 0, 0);
+
     public TextElement text;
     public Rectangle box;
     public HorizontalTextAlignment hAlign;
@@ -38,7 +38,7 @@ public class BoxTextElemStyle extends ElemStyle {
         this.hAlign = hAlign;
         this.vAlign = vAlign;
     }
-    
+
     public static BoxTextElemStyle create(Environment env, Rectangle box) {
         initDefaultParameters();
         Cascade c = env.mc.getCascade(env.layer);
@@ -72,10 +72,10 @@ public class BoxTextElemStyle extends ElemStyle {
         } else if (equal(vAlignStr, "below")) {
             vAlign = VerticalTextAlignment.BELOW;
         }
-        
+
         return new BoxTextElemStyle(c, text, box, hAlign, vAlign);
     }
-    
+
     public static final BoxTextElemStyle SIMPLE_NODE_TEXT_ELEMSTYLE;
     static {
         MultiCascade mc = new MultiCascade();
@@ -107,16 +107,14 @@ public class BoxTextElemStyle extends ElemStyle {
 
     @Override
     public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
+        if (!super.equals(obj))
             return false;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
         final BoxTextElemStyle other = (BoxTextElemStyle) obj;
         return text.equals(other.text) &&
-                box.equals(other.box) && 
-                hAlign == other.hAlign && 
+                box.equals(other.box) &&
+                hAlign == other.hAlign &&
                 vAlign == other.vAlign;
     }
 

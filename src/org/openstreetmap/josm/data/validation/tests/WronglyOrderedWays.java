@@ -18,16 +18,16 @@ import org.openstreetmap.josm.tools.Geometry;
  */
 public class WronglyOrderedWays extends Test {
 
-    protected static int WRONGLY_ORDERED_COAST = 1001;
+    protected static final int WRONGLY_ORDERED_COAST = 1001;
     //protected static int WRONGLY_ORDERED_WATER = 1002;
-    protected static int WRONGLY_ORDERED_LAND  = 1003;
+    protected static final int WRONGLY_ORDERED_LAND  = 1003;
 
     /**
      * Constructor
      */
     public WronglyOrderedWays() {
         super(tr("Wrongly Ordered Ways"),
-              tr("This test checks the direction of water, land and coastline ways."));
+                tr("This test checks the direction of water, land and coastline ways."));
     }
 
     @Override
@@ -37,17 +37,16 @@ public class WronglyOrderedWays extends Test {
             return;
 
         String natural = w.get("natural");
-        if (natural == null) {
+        if (natural == null)
             return;
-        } else if ("coastline".equals(natural) && Geometry.isClockwise(w)) {
+        else if ("coastline".equals(natural) && Geometry.isClockwise(w)) {
             reportError(w, tr("Reversed coastline: land not on left side"), WRONGLY_ORDERED_COAST);
-        /*} else if ("water".equals(natural) && !Geometry.isClockwise(w)) {
+            /*} else if ("water".equals(natural) && !Geometry.isClockwise(w)) {
             reportError(w, tr("Reversed water: land not on left side"), WRONGLY_ORDERED_WATER);*/
         } else if ("land".equals(natural) && Geometry.isClockwise(w)) {
             reportError(w, tr("Reversed land: land not on left side"), WRONGLY_ORDERED_LAND);
-        } else {
+        } else
             return;
-        }
 
     }
 

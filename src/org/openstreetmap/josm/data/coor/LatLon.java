@@ -1,8 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.coor;
 
-import static org.openstreetmap.josm.tools.I18n.trc;
-
 import static java.lang.Math.PI;
 import static java.lang.Math.asin;
 import static java.lang.Math.atan2;
@@ -10,6 +8,7 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -29,7 +28,7 @@ import org.openstreetmap.josm.data.Bounds;
  */
 public class LatLon extends Coordinate {
 
-    
+
     /**
      * Minimum difference in location to not be represented as the same position.
      * The API returns 7 decimals.
@@ -40,7 +39,7 @@ public class LatLon extends Coordinate {
     private static DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
     private static DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
     private static DecimalFormat cDmMinuteFormatter = new DecimalFormat("00.000");
-    public static DecimalFormat cDdFormatter;
+    public static final DecimalFormat cDdFormatter;
     static {
         // Don't use the localized decimal separator. This way we can present
         // a comma separated list of coordinates.
@@ -67,16 +66,16 @@ public class LatLon extends Coordinate {
     public static boolean isValidLon(double lon) {
         return lon >= -180d && lon <= 180d;
     }
- 		     
-	/**
-	 * Replies true if lat is in the range [-90,90] and lon is in the range [-180,180]
-	 * 
-	 * @return true if lat is in the range [-90,90] and lon is in the range [-180,180]
-	 */
-	public boolean isValid() {
-		return isValidLat(lat()) && isValidLon(lon());
-	}
-	
+
+    /**
+     * Replies true if lat is in the range [-90,90] and lon is in the range [-180,180]
+     *
+     * @return true if lat is in the range [-90,90] and lon is in the range [-180,180]
+     */
+    public boolean isValid() {
+        return isValidLat(lat()) && isValidLon(lon());
+    }
+
     public static double toIntervalLat(double value) {
         if (value < -90)
             return -90;
@@ -87,18 +86,18 @@ public class LatLon extends Coordinate {
 
     /**
      * Returns a valid OSM longitude [-180,+180] for the given extended longitude value.
-     * For example, a value of -181 will return +179, a value of +181 will return -179. 
+     * For example, a value of -181 will return +179, a value of +181 will return -179.
      * @param lon A longitude value not restricted to the [-180,+180] range.
      */
     public static double toIntervalLon(double value) {
-        if (isValidLon(value)) {
+        if (isValidLon(value))
             return value;
-        } else {
+        else {
             int n = (int) (value + Math.signum(value)*180.0) / 360;
             return value - n*360.0;
         }
     }
- 	
+
     /**
      * Replies the coordinate in degrees/minutes/seconds format
      */
@@ -179,7 +178,7 @@ public class LatLon extends Coordinate {
     public boolean isOutSideWorld() {
         Bounds b = Main.getProjection().getWorldBoundsLatLon();
         return lat() < b.getMin().lat() || lat() > b.getMax().lat() ||
-        lon() < b.getMin().lon() || lon() > b.getMax().lon();
+                lon() < b.getMin().lon() || lon() > b.getMax().lon();
     }
 
     /**
@@ -219,7 +218,7 @@ public class LatLon extends Coordinate {
      * (I don't know the original source of this formula, but see
      * http://math.stackexchange.com/questions/720/how-to-calculate-a-heading-on-the-earths-surface
      * for some hints how it is derived.)
-     * 
+     *
      * @param other the "destination" position
      * @return heading in the range 0 <= hd < 2*PI
      */
@@ -232,7 +231,7 @@ public class LatLon extends Coordinate {
             hd += 2 * PI;
         }
         return hd;
-     }
+    }
 
     /**
      * Returns this lat/lon pair in human-readable format.
@@ -257,7 +256,7 @@ public class LatLon extends Coordinate {
     @Override public String toString() {
         return "LatLon[lat="+lat()+",lon="+lon()+"]";
     }
-    
+
     /**
      * Returns the value rounded to OSM precisions, i.e. to
      * LatLon.MAX_SERVER_PRECISION
@@ -277,7 +276,7 @@ public class LatLon extends Coordinate {
      */
     public static double roundToOsmPrecisionStrict(double value) {
         double absV = Math.abs(value);
-        int numOfDigits = MAX_SERVER_DIGITS + (absV < 1 ? 0 : (absV < 10 ? 1 : (absV < 100 ? 2 : 3))); 
+        int numOfDigits = MAX_SERVER_DIGITS + (absV < 1 ? 0 : (absV < 10 ? 1 : (absV < 100 ? 2 : 3)));
         return BigDecimal.valueOf(value).round(new MathContext(numOfDigits)).doubleValue();
     }
 
@@ -291,7 +290,7 @@ public class LatLon extends Coordinate {
         return new LatLon(
                 roundToOsmPrecision(lat()),
                 roundToOsmPrecision(lon())
-        );
+                );
     }
 
     /**
@@ -304,7 +303,7 @@ public class LatLon extends Coordinate {
         return new LatLon(
                 roundToOsmPrecisionStrict(lat()),
                 roundToOsmPrecisionStrict(lon())
-        );
+                );
     }
 
     @Override

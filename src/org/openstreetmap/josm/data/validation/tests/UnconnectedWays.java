@@ -38,7 +38,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  */
 public class UnconnectedWays extends Test {
 
-    protected static int UNCONNECTED_WAYS = 1301;
+    protected static final int UNCONNECTED_WAYS = 1301;
     protected static final String PREFIX = ValidatorPreference.PREFIX + "." + UnconnectedWays.class.getSimpleName();
 
     Set<MyWaySegment> ways;
@@ -313,9 +313,9 @@ public class UnconnectedWays extends Test {
 
         public boolean isArea() {
             return w.hasKey("landuse")
-            || w.hasKey("leisure")
-            || w.hasKey("amenity")
-            || w.hasKey("building");
+                    || w.hasKey("leisure")
+                    || w.hasKey("amenity")
+                    || w.hasKey("building");
         }
     }
 

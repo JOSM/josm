@@ -8,8 +8,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -63,7 +63,7 @@ public class AutoCompletionManager implements DataSetListener {
      * the same as tagCache but for the preset keys and values
      * can be accessed directly
      */
-    protected static MultiMap<String, String> presetTagCache = new MultiMap<String, String>();
+    protected static final MultiMap<String, String> presetTagCache = new MultiMap<String, String>();
     /**
      * the cached list of member roles
      * only accessed by getRoleCache(), rebuild() and cacheRelationMemberRoles()
@@ -74,7 +74,7 @@ public class AutoCompletionManager implements DataSetListener {
      * the same as roleCache but for the preset roles
      * can be accessed directly
      */
-    protected static Set<String> presetRoleCache = new HashSet<String>();
+    protected static final Set<String> presetRoleCache = new HashSet<String>();
 
     public AutoCompletionManager(DataSet ds) {
         this.ds = ds;

@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.Predicate;
 
 public class BuildingInBuilding extends Test {
 
-    protected static int BUILDING_INSIDE_BUILDING = 2001;
+    protected static final int BUILDING_INSIDE_BUILDING = 2001;
     protected List<OsmPrimitive> primitivesToCheck = new LinkedList<OsmPrimitive>();
     protected QuadBuckets<Way> index = new QuadBuckets<Way>();
 
@@ -56,9 +56,8 @@ public class BuildingInBuilding extends Test {
     private static boolean isInPolygon(Way w, List<Node> polygon) {
         // Check that all nodes of w are in polygon
         for (Node n : w.getNodes()) {
-            if (!isInPolygon(n, polygon)) {
+            if (!isInPolygon(n, polygon))
                 return false;
-            }
         }
         // All nodes can be inside polygon and still, w outside:
         //            +-------------+
@@ -72,9 +71,8 @@ public class BuildingInBuilding extends Test {
         //
         for (int i=1; i<w.getNodesCount(); i++) {
             LatLon center = w.getNode(i).getCoor().getCenter(w.getNode(i-1).getCoor());
-            if (center != null && !isInPolygon(new Node(center), polygon)) {
+            if (center != null && !isInPolygon(new Node(center), polygon))
                 return false;
-            }
         }
         return true;
     }
@@ -85,15 +83,14 @@ public class BuildingInBuilding extends Test {
             Collection<Way> outers = new FilteredCollection<Way>(index.search(p.getBBox()), new Predicate<Way>() {
                 @Override
                 public boolean evaluate(Way object) {
-                    if (p.equals(object)) {
+                    if (p.equals(object))
                         return false;
-                    } else if (p instanceof Node) {
+                    else if (p instanceof Node)
                         return isInPolygon((Node) p, object.getNodes()) || object.getNodes().contains(p);
-                    } else if (p instanceof Way) {
+                    else if (p instanceof Way)
                         return isInPolygon((Way) p, object.getNodes()) && !isInInnerWay((Way)p, object);
-                    } else {
+                    else
                         return false;
-                    }
                 }
             });
             if (!outers.isEmpty()) {
@@ -102,7 +99,7 @@ public class BuildingInBuilding extends Test {
             }
         }
     }
-    
+
     private boolean isInInnerWay(Way w, Way outer) {
         for (OsmPrimitive r : outer.getReferrers()) {
             if (r instanceof Relation && ((Relation)r).isMultipolygon()) {
@@ -112,9 +109,8 @@ public class BuildingInBuilding extends Test {
                         Way inner = m.getWay();
                         if (isInPolygon(inner, outer.getNodes())) {
                             // If the tested way is inside this inner, outer is a false positive
-                            if (isInPolygon(w, inner.getNodes())) {
+                            if (isInPolygon(w, inner.getNodes()))
                                 return true;
-                            }
                         }
                     }
                 }
