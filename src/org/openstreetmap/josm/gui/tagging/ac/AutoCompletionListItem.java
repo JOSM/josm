@@ -89,7 +89,7 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
         final int prime = 31;
         int result = 1;
         result = prime * result
-        + ((priority == null) ? 0 : priority.hashCode());
+                + ((priority == null) ? 0 : priority.hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
     }
@@ -116,8 +116,7 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
     }
 
     public int compareTo(AutoCompletionListItem other) {
-        int ret = this.priority.compareTo(other.priority);
-        ret = -ret; // higher priority items come first in the list
+        int ret = other.priority.compareTo(priority); // higher priority items come first in the list
         if (ret != 0)
             return ret;
         else
