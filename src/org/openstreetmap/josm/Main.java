@@ -124,7 +124,7 @@ abstract public class Main {
     /**
      * The global paste buffer.
      */
-    public static PrimitiveDeepCopy pasteBuffer = new PrimitiveDeepCopy();
+    public static final PrimitiveDeepCopy pasteBuffer = new PrimitiveDeepCopy();
     public static Layer pasteSource;
 
     /**
@@ -375,7 +375,7 @@ abstract public class Main {
         return map.mapView.getActiveLayer();
     }
 
-    protected static JPanel contentPanePrivate = new JPanel(new BorderLayout());
+    protected static final JPanel contentPanePrivate = new JPanel(new BorderLayout());
 
     /**
      * @deprecated If you just need to register shortcut for action, use registerActionShortcut instead of accessing InputMap directly
@@ -419,7 +419,7 @@ abstract public class Main {
     //  Implementation part
     ///////////////////////////////////////////////////////////////////////////
 
-    public static JPanel panel = new JPanel(new BorderLayout());
+    public static final JPanel panel = new JPanel(new BorderLayout());
 
     protected static Rectangle bounds;
     protected static int windowState = JFrame.NORMAL;

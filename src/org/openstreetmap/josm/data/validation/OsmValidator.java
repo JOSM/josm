@@ -71,7 +71,7 @@ public class OsmValidator implements LayerChangeListener {
     /** Grid detail, multiplier of east,north values for valuable cell sizing */
     public static double griddetail;
 
-    public static Collection<String> ignoredErrors = new TreeSet<String>();
+    public static final Collection<String> ignoredErrors = new TreeSet<String>();
 
     /**
      * All available tests

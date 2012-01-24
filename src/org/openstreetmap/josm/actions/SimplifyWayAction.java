@@ -50,7 +50,7 @@ public class SimplifyWayAction extends JosmAction {
                 tr("Warning"),
                 JOptionPane.WARNING_MESSAGE,
                 HelpUtil.ht("/Action/SimplifyWay#SelectAWayToSimplify")
-        );
+                );
     }
 
     protected boolean confirmSimplifyManyWays(int numWays) {
@@ -60,27 +60,27 @@ public class SimplifyWayAction extends JosmAction {
                         ImageProvider.get("ok"),
                         tr("Simplify all selected ways"),
                         null
-                ),
-                new ButtonSpec(
-                        tr("Cancel"),
-                        ImageProvider.get("cancel"),
-                        tr("Cancel operation"),
-                        null
-                )
+                        ),
+                        new ButtonSpec(
+                                tr("Cancel"),
+                                ImageProvider.get("cancel"),
+                                tr("Cancel operation"),
+                                null
+                                )
         };
         int ret = HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
                 tr(
                         "The selection contains {0} ways. Are you sure you want to simplify them all?",
                         numWays
-                ),
-                tr("Simplify ways?"),
-                JOptionPane.WARNING_MESSAGE,
-                null, // no special icon
-                options,
-                options[0],
-                HelpUtil.ht("/Action/SimplifyWay#ConfirmSimplifyAll")
-        );
+                        ),
+                        tr("Simplify ways?"),
+                        JOptionPane.WARNING_MESSAGE,
+                        null, // no special icon
+                        options,
+                        options[0],
+                        HelpUtil.ht("/Action/SimplifyWay#ConfirmSimplifyAll")
+                );
         return ret == 0;
     }
 
@@ -93,10 +93,9 @@ public class SimplifyWayAction extends JosmAction {
             if (ways.isEmpty()) {
                 alertSelectAtLeastOneWay();
                 return;
-            } else if (!confirmWayWithNodesOutsideBoundingBox(ways)) {
+            } else if (!confirmWayWithNodesOutsideBoundingBox(ways))
                 return;
-            }
-             else if (ways.size() > 10) {
+            else if (ways.size() > 10) {
                 if (!confirmSimplifyManyWays(ways.size()))
                     return;
             }
@@ -113,7 +112,7 @@ public class SimplifyWayAction extends JosmAction {
             SequenceCommand rootCommand = new SequenceCommand(
                     trn("Simplify {0} way", "Simplify {0} ways", allCommands.size(), allCommands.size()),
                     allCommands
-            );
+                    );
             Main.main.undoRedo.add(rootCommand);
         } finally {
             ds.endUpdate();
@@ -234,7 +233,7 @@ public class SimplifyWayAction extends JosmAction {
         }
     }
 
-    public static double EARTH_RAD = 6378137.0;
+    public static final double EARTH_RAD = 6378137.0;
 
     /* From Aviaton Formulary v1.3
      * http://williams.best.vwh.net/avform.htm

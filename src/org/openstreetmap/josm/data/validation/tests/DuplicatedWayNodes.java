@@ -17,11 +17,11 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 
 public class DuplicatedWayNodes extends Test {
-    protected static int DUPLICATE_WAY_NODE = 501;
+    protected static final int DUPLICATE_WAY_NODE = 501;
 
     public DuplicatedWayNodes() {
         super(tr("Duplicated way nodes"),
-            tr("Checks for ways with identical consecutive nodes."));
+                tr("Checks for ways with identical consecutive nodes."));
     }
 
     @Override
@@ -36,7 +36,7 @@ public class DuplicatedWayNodes extends Test {
             }
             if (lastN == n) {
                 errors.add(new TestError(this, Severity.ERROR, tr("Duplicated way nodes"), DUPLICATE_WAY_NODE,
-                    Arrays.asList(w), Arrays.asList(n)));
+                        Arrays.asList(w), Arrays.asList(n)));
                 break;
             }
             lastN = n;
@@ -58,12 +58,11 @@ public class DuplicatedWayNodes extends Test {
             }
             lastN = n;
         }
-        if (wnew.getNodesCount() < 2) {
+        if (wnew.getNodesCount() < 2)
             // Empty way, delete
             return DeleteCommand.delete(Main.map.mapView.getEditLayer(), Collections.singleton(w));
-        } else {
+        else
             return new ChangeCommand(w, wnew);
-        }
     }
 
     @Override public boolean isFixable(TestError testError) {

@@ -27,14 +27,14 @@ import org.openstreetmap.josm.gui.tagging.TaggingPreset.PresetType;
  */
 public class RelationChecker extends Test {
 
-    protected static int ROLE_UNKNOWN      = 1701;
-    protected static int ROLE_EMPTY        = 1702;
-    protected static int WRONG_TYPE        = 1703;
-    protected static int HIGH_COUNT        = 1704;
-    protected static int LOW_COUNT         = 1705;
-    protected static int ROLE_MISSING      = 1706;
-    protected static int RELATION_UNKNOWN  = 1707;
-    protected static int RELATION_EMPTY    = 1708;
+    protected static final int ROLE_UNKNOWN      = 1701;
+    protected static final int ROLE_EMPTY        = 1702;
+    protected static final int WRONG_TYPE        = 1703;
+    protected static final int HIGH_COUNT        = 1704;
+    protected static final int LOW_COUNT         = 1705;
+    protected static final int ROLE_MISSING      = 1706;
+    protected static final int RELATION_UNKNOWN  = 1707;
+    protected static final int RELATION_EMPTY    = 1708;
 
     /**
      * Constructor

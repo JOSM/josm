@@ -25,9 +25,9 @@ public class ExtensionFileFilter extends FileFilter {
     /**
      * list of supported formats
      */
-    public static ArrayList<FileImporter> importers;
+    public static final ArrayList<FileImporter> importers;
 
-    public static ArrayList<FileExporter> exporters;
+    public static final ArrayList<FileExporter> exporters;
 
     // add some file types only if the relevant classes are there;
     // this gives us the option to painlessly drop them from the .jar
@@ -87,7 +87,7 @@ public class ExtensionFileFilter extends FileFilter {
                         return o1.getDescription().compareTo(o2.getDescription());
                     }
                 }
-        );
+                );
     }
 
     /**
@@ -197,7 +197,7 @@ public class ExtensionFileFilter extends FileFilter {
         for (String ext : extensions.split(","))
             if (name.endsWith("."+ext))
                 return true;
-        return false;
+                return false;
     }
 
     @Override public boolean accept(File pathname) {

@@ -14,27 +14,27 @@ public class AutoCompletionItemPritority implements Comparable<AutoCompletionIte
      * This has higher priority than some arbitrary standard value that is
      * usually not used by the user.
      */
-    public static AutoCompletionItemPritority IS_IN_STANDARD_AND_IN_DATASET = new AutoCompletionItemPritority(true, true, false);
+    public static final AutoCompletionItemPritority IS_IN_STANDARD_AND_IN_DATASET = new AutoCompletionItemPritority(true, true, false);
 
     /**
      * Indicates that this is an arbitrary value from the data set, i.e.
      * the value of a tag name=*.
      */
-    public static AutoCompletionItemPritority IS_IN_DATASET = new AutoCompletionItemPritority(true, false, false);
+    public static final AutoCompletionItemPritority IS_IN_DATASET = new AutoCompletionItemPritority(true, false, false);
 
     /**
      * Indicates that this is a standard value, i.e. a standard tag name
      * or a standard value for a given tag name (from the presets).
      */
-    public static AutoCompletionItemPritority IS_IN_STANDARD = new AutoCompletionItemPritority(false, true, false);
+    public static final AutoCompletionItemPritority IS_IN_STANDARD = new AutoCompletionItemPritority(false, true, false);
 
     /**
      * Indicates that this is a value from a selected object.
      */
-    public static AutoCompletionItemPritority  IS_IN_SELECTION  = new AutoCompletionItemPritority(false, false, true);
+    public static final AutoCompletionItemPritority  IS_IN_SELECTION  = new AutoCompletionItemPritority(false, false, true);
 
     /** Unknown priority. This is the lowest priority. */
-    public static AutoCompletionItemPritority UNKNOWN = new AutoCompletionItemPritority(false, false, false);
+    public static final AutoCompletionItemPritority UNKNOWN = new AutoCompletionItemPritority(false, false, false);
 
     private final boolean inDataSet;
     private final boolean inStandard;

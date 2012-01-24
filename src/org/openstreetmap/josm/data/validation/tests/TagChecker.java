@@ -48,13 +48,12 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.Entities;
-import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
+import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.io.MirroredInputStream;
@@ -78,12 +77,12 @@ public class TagChecker extends Test
     /** The spell check preset values */
     protected static MultiMap<String, String> presetsValueData;
     /** The TagChecker data */
-    protected static List<CheckerData> checkerData = new ArrayList<CheckerData>();
-    protected static List<String> ignoreDataStartsWith = new ArrayList<String>();
-    protected static List<String> ignoreDataEquals = new ArrayList<String>();
-    protected static List<String> ignoreDataEndsWith = new ArrayList<String>();
-    protected static List<IgnoreKeyPair> ignoreDataKeyPair = new ArrayList<IgnoreKeyPair>();
-    protected static List<IgnoreTwoKeyPair> ignoreDataTwoKeyPair = new ArrayList<IgnoreTwoKeyPair>();
+    protected static final List<CheckerData> checkerData = new ArrayList<CheckerData>();
+    protected static final List<String> ignoreDataStartsWith = new ArrayList<String>();
+    protected static final List<String> ignoreDataEquals = new ArrayList<String>();
+    protected static final List<String> ignoreDataEndsWith = new ArrayList<String>();
+    protected static final List<IgnoreKeyPair> ignoreDataKeyPair = new ArrayList<IgnoreKeyPair>();
+    protected static final List<IgnoreTwoKeyPair> ignoreDataTwoKeyPair = new ArrayList<IgnoreTwoKeyPair>();
 
     /** The preferences prefix */
     protected static final String PREFIX = ValidatorPreference.PREFIX + "." + TagChecker.class.getSimpleName();
@@ -128,23 +127,23 @@ public class TagChecker extends Test
     protected JButton editSrcButton;
     protected JButton deleteSrcButton;
 
-    protected static int EMPTY_VALUES      = 1200;
-    protected static int INVALID_KEY       = 1201;
-    protected static int INVALID_VALUE     = 1202;
-    protected static int FIXME             = 1203;
-    protected static int INVALID_SPACE     = 1204;
-    protected static int INVALID_KEY_SPACE = 1205;
-    protected static int INVALID_HTML      = 1206; /* 1207 was PAINT */
-    protected static int LONG_VALUE        = 1208;
-    protected static int LONG_KEY          = 1209;
-    protected static int LOW_CHAR_VALUE    = 1210;
-    protected static int LOW_CHAR_KEY      = 1211;
+    protected static final int EMPTY_VALUES      = 1200;
+    protected static final int INVALID_KEY       = 1201;
+    protected static final int INVALID_VALUE     = 1202;
+    protected static final int FIXME             = 1203;
+    protected static final int INVALID_SPACE     = 1204;
+    protected static final int INVALID_KEY_SPACE = 1205;
+    protected static final int INVALID_HTML      = 1206; /* 1207 was PAINT */
+    protected static final int LONG_VALUE        = 1208;
+    protected static final int LONG_KEY          = 1209;
+    protected static final int LOW_CHAR_VALUE    = 1210;
+    protected static final int LOW_CHAR_KEY      = 1211;
     /** 1250 and up is used by tagcheck */
 
     /** List of sources for spellcheck data */
     protected JList sourcesList;
 
-    protected static Entities entities = new Entities();
+    protected static final Entities entities = new Entities();
 
     /**
      * Constructor
@@ -625,7 +624,7 @@ public class TagChecker extends Test
                                 tr("Please select the row to edit."),
                                 tr("Information"),
                                 JOptionPane.INFORMATION_MESSAGE
-                        );
+                                );
                     }
                 } else {
                     String source = (String)JOptionPane.showInputDialog(Main.parent,
@@ -712,7 +711,7 @@ public class TagChecker extends Test
 
     public void handlePrefEnable() {
         boolean selected = prefCheckKeys.isSelected() || prefCheckKeysBeforeUpload.isSelected()
-                    || prefCheckComplex.isSelected() || prefCheckComplexBeforeUpload.isSelected();
+                || prefCheckComplex.isSelected() || prefCheckComplexBeforeUpload.isSelected();
         sourcesList.setEnabled( selected );
         addSrcButton.setEnabled(selected);
         editSrcButton.setEnabled(selected);
@@ -791,7 +790,7 @@ public class TagChecker extends Test
             return null;
         if (commands.size() == 1)
             return commands.get(0);
-        
+
         return new SequenceCommand(tr("Fix properties"), commands);
     }
 
@@ -824,9 +823,9 @@ public class TagChecker extends Test
         private OsmPrimitiveType type;
         private int code;
         protected Severity severity;
-        protected static int TAG_CHECK_ERROR  = 1250;
-        protected static int TAG_CHECK_WARN   = 1260;
-        protected static int TAG_CHECK_INFO   = 1270;
+        protected static final int TAG_CHECK_ERROR  = 1250;
+        protected static final int TAG_CHECK_WARN   = 1260;
+        protected static final int TAG_CHECK_INFO   = 1270;
 
         private static class CheckerElement {
             public Object tag;

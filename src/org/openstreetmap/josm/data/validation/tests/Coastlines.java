@@ -30,9 +30,9 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  */
 public class Coastlines extends Test {
 
-    protected static int UNORDERED_COASTLINE = 901;
-    protected static int REVERSED_COASTLINE = 902;
-    protected static int UNCONNECTED_COASTLINE = 903;
+    protected static final int UNORDERED_COASTLINE = 901;
+    protected static final int REVERSED_COASTLINE = 902;
+    protected static final int UNCONNECTED_COASTLINE = 903;
 
     private List<Way> coastlines;
 

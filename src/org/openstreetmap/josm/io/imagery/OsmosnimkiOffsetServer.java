@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 
 public class OsmosnimkiOffsetServer implements OffsetServer {
-    public static StringProperty PROP_SERVER_URL = new StringProperty("imagery.offsetserver.url","http://offset.osmosnimki.ru/offset/v0?");
+    public static final StringProperty PROP_SERVER_URL = new StringProperty("imagery.offsetserver.url","http://offset.osmosnimki.ru/offset/v0?");
     private String url;
 
     public OsmosnimkiOffsetServer(String url) {

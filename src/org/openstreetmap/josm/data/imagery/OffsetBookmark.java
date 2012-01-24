@@ -19,7 +19,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 
 public class OffsetBookmark {
-    public static List<OffsetBookmark> allBookmarks = new ArrayList<OffsetBookmark>();
+    public static final List<OffsetBookmark> allBookmarks = new ArrayList<OffsetBookmark>();
 
     public Projection proj;
     public String layerName;

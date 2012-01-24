@@ -12,12 +12,12 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
  */
 public class GRS80Datum extends AbstractDatum {
 
-    public static GRS80Datum INSTANCE = new GRS80Datum();
-    
+    public final static GRS80Datum INSTANCE = new GRS80Datum();
+
     private GRS80Datum() {
         super(tr("GRS80"), null, Ellipsoid.GRS80);
     }
-    
+
     @Override
     public LatLon fromWGS84(LatLon ll) {
         return ll;

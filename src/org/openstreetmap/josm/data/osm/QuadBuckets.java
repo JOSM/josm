@@ -56,7 +56,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         System.out.print(s + " " + (float)((i+1)*100.0/total) + "% done    \r");
     }
 
-    public static int MAX_OBJECTS_PER_LEVEL = 16;
+    public static final int MAX_OBJECTS_PER_LEVEL = 16;
     class QBLevel
     {
         final int level;
@@ -311,15 +311,11 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                     found_me = true;
                     continue;
                 }
-                if (found_me) {
+                if (found_me)
                     /*if (debug) {
                         out("[" + this.level + "] next sibling was child nr: " + nr);
                     }*/
                     return sibling;
-                }
-                /*if (debug) {
-                    out("[" + this.level + "] nr: " + nr + " is before me, ignoring...");
-                }*/
             }
             return null;
         }
@@ -404,13 +400,13 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             /*if (debug) {
                 System.out.print("[" + level + "] qb bbox: " + this.bbox() + " ");
             }*/
-            if (!this.bbox().intersects(search_bbox)) {
+            if (!this.bbox().intersects(search_bbox))
                 /*if (debug) {
                     out("miss " + Long.toHexString(this.quad));
                     //QuadTiling.tile2xy(this.quad);
                 }*/
                 return;
-            } else if (bbox().bounds(search_bbox)) {
+            else if (bbox().bounds(search_bbox)) {
                 search_cache = this;
             }
 
@@ -631,22 +627,20 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         public boolean hasNext()
         {
-            if (this.peek() == null) {
+            if (this.peek() == null)
                 /*if (debug) {
                     out(this + " no hasNext(), but iterated over so far: " + iterated_over);
                 }*/
                 return false;
-            }
             return true;
         }
         T peek()
         {
-            if (current_node == null) {
+            if (current_node == null)
                 /*if (debug) {
                     out("null current leaf, nowhere to go");
                 }*/
                 return null;
-            }
             while((current_node.content == null) ||
                     (content_index >= current_node.content.size())) {
                 /*if (debug) {
@@ -658,12 +652,11 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                     break;
                 }
             }
-            if (current_node == null || current_node.content == null) {
+            if (current_node == null || current_node.content == null)
                 /*if (debug) {
                     out("late nowhere to go " + current_node);
                 }*/
                 return null;
-            }
             return current_node.content.get(content_index);
         }
         public T next()

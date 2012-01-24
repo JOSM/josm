@@ -21,10 +21,10 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class GaussKrueger extends AbstractProjection implements ProjectionSubPrefs {
 
-    public static int DEFAULT_ZONE = 2;
+    public static final int DEFAULT_ZONE = 2;
     private int zone;
-    
-    private static Bounds[] bounds = { 
+
+    private static Bounds[] bounds = {
         new Bounds(new LatLon(-5, 3.5), new LatLon(85, 8.5)),
         new Bounds(new LatLon(-5, 6.5), new LatLon(85, 11.5)),
         new Bounds(new LatLon(-5, 9.5), new LatLon(85, 14.5)),
@@ -32,7 +32,7 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
     };
 
     private static NTV2GridShiftFile BETA2007 = null;
-    
+
     private static String[] zones = { "2", "3", "4", "5" };
 
     public GaussKrueger() {
@@ -44,9 +44,8 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
             try {
                 String gridFileName = "BETA2007.gsb";
                 InputStream is = Main.class.getResourceAsStream("/data/"+gridFileName);
-                if (is == null) {
+                if (is == null)
                     throw new RuntimeException(tr("Error: failed to open input stream for resource ''/data/{0}''.", gridFileName));
-                }
                 BETA2007 = new NTV2GridShiftFile();
                 BETA2007.loadGridShiftFile(is, false);
             } catch (Exception e) {
@@ -69,11 +68,11 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
         lon_0 = 3 * zone;
     }
 
-    @Override 
+    @Override
     public String toString() {
         return tr("Gau\u00DF-Kr\u00FCger");
     }
-    
+
     @Override
     public Integer getEpsgCode() {
         return 31464 + zone;
@@ -88,7 +87,7 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
     public Bounds getWorldBoundsLatLon() {
         return bounds[zone-2];
     }
-    
+
     @Override
     public void setupPreferencePanel(JPanel p, ActionListener listener) {
         JComboBox prefcb = new JComboBox(zones);
@@ -105,7 +104,7 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
             prefcb.addActionListener(listener);
         }
     }
-    
+
     @Override
     public Collection<String> getPreferences(JPanel p) {
         Object prefcb = p.getComponent(2);
@@ -114,7 +113,7 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
         int zone = ((JComboBox)prefcb).getSelectedIndex();
         return Collections.singleton(Integer.toString(zone+2));
     }
-    
+
     @Override
     public void setPreferences(Collection<String> args) {
         int zone = DEFAULT_ZONE;
@@ -132,7 +131,7 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
         }
         updateParameters(zone);
     }
-    
+
     @Override
     public String[] allCodes() {
         String[] zones = new String[4];
@@ -153,5 +152,5 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
         }
         return null;
     }
-    
+
 }

@@ -11,7 +11,7 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
  */
 public class WGS84Datum extends AbstractDatum {
 
-    public static WGS84Datum INSTANCE = new WGS84Datum();
+    public static final WGS84Datum INSTANCE = new WGS84Datum();
 
     private WGS84Datum() {
         super(tr("WGS84"), "WGS84", Ellipsoid.WGS84);

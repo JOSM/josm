@@ -28,23 +28,23 @@ import org.openstreetmap.josm.tools.Pair;
  * @author frsantos
  */
 public class OverlappingWays extends Test {
-    
+
     /** Bag of all way segments */
     MultiMap<Pair<Node,Node>, WaySegment> nodePairs;
 
-    protected static int OVERLAPPING_HIGHWAY = 101;
-    protected static int OVERLAPPING_RAILWAY = 102;
-    protected static int OVERLAPPING_WAY = 103;
-    protected static int OVERLAPPING_HIGHWAY_AREA = 111;
-    protected static int OVERLAPPING_RAILWAY_AREA = 112;
-    protected static int OVERLAPPING_WAY_AREA = 113;
-    protected static int OVERLAPPING_AREA = 120;
+    protected static final int OVERLAPPING_HIGHWAY = 101;
+    protected static final int OVERLAPPING_RAILWAY = 102;
+    protected static final int OVERLAPPING_WAY = 103;
+    protected static final int OVERLAPPING_HIGHWAY_AREA = 111;
+    protected static final int OVERLAPPING_RAILWAY_AREA = 112;
+    protected static final int OVERLAPPING_WAY_AREA = 113;
+    protected static final int OVERLAPPING_AREA = 120;
 
     /** Constructor */
     public OverlappingWays() {
         super(tr("Overlapping ways"),
-              tr("This test checks that a connection between two nodes "
-                + "is not used by more than one way."));
+                tr("This test checks that a connection between two nodes "
+                        + "is not used by more than one way."));
     }
 
     @Override
@@ -124,9 +124,9 @@ public class OverlappingWays extends Test {
                         type = OVERLAPPING_WAY;
                     }
 
-                    errors.add(new TestError(this, 
+                    errors.add(new TestError(this,
                             type < OVERLAPPING_HIGHWAY_AREA ? Severity.WARNING : Severity.OTHER,
-                            errortype, type, prims, duplicated));
+                                    errortype, type, prims, duplicated));
                     ways_seen.put(current_ways, duplicated);
                 } else { /* way seen, mark highlight layer only */
                     for (WaySegment ws : duplicated) {
@@ -150,7 +150,7 @@ public class OverlappingWays extends Test {
                 continue;
             }
             nodePairs.put(Pair.sort(new Pair<Node,Node>(lastN, n)),
-                new WaySegment(w, i));
+                    new WaySegment(w, i));
             lastN = n;
         }
     }
