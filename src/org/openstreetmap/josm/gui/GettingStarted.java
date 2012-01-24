@@ -142,10 +142,9 @@ public class GettingStarted extends JPanel {
         while (m.find()) {
             String im = m.group(1);
             URL u = getClass().getResource(im);
-            if (u == null) {
-                u = getClass().getResource("/images/data/node.png");
+            if (u != null) {
+                m.appendReplacement(sb, Matcher.quoteReplacement("src=\"" + u.toString() + "\""));
             }
-            m.appendReplacement(sb, "src=\"" + u.toString() + "\"");
         }
         m.appendTail(sb);
         return sb.toString();
