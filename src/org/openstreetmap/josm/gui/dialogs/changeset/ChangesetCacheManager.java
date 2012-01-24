@@ -365,10 +365,14 @@ public class ChangesetCacheManager extends JFrame {
             if (dialog.isCanceled())
                 return;
 
-            ChangesetQuery query = dialog.getChangesetQuery();
-            if (query == null) return;
-            ChangesetQueryTask task = new ChangesetQueryTask(ChangesetCacheManager.this, query);
-            ChangesetCacheManager.getInstance().runDownloadTask(task);
+            try {
+                ChangesetQuery query = dialog.getChangesetQuery();
+                if (query == null) return;
+                ChangesetQueryTask task = new ChangesetQueryTask(ChangesetCacheManager.this, query);
+                ChangesetCacheManager.getInstance().runDownloadTask(task);
+            } catch (IllegalStateException e) {
+                JOptionPane.showMessageDialog(ChangesetCacheManager.this, e.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

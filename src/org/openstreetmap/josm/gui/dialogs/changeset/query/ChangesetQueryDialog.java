@@ -176,28 +176,32 @@ public class ChangesetQueryDialog extends JDialog {
         }
 
         public void actionPerformed(ActionEvent arg0) {
-            switch(tpQueryPanels.getSelectedIndex()) {
-            case 0:
-                // currently, query specifications can't be invalid in the basic query panel.
-                // We select from a couple of predefined queries and there is always a query
-                // selected
-                break;
-            case 1:
-                if (getChangesetQuery() == null) {
-                    alertInvalidChangesetQuery();
-                    pnlUrlBasedQueries.startUserInput();
-                    return;
+            try {
+                switch(tpQueryPanels.getSelectedIndex()) {
+                case 0:
+                    // currently, query specifications can't be invalid in the basic query panel.
+                    // We select from a couple of predefined queries and there is always a query
+                    // selected
+                    break;
+                case 1:
+                    if (getChangesetQuery() == null) {
+                        alertInvalidChangesetQuery();
+                        pnlUrlBasedQueries.startUserInput();
+                        return;
+                    }
+                    break;
+    
+                case 2:
+                    if (getChangesetQuery() == null) {
+                        pnlAdvancedQueries.displayMessageIfInvalid();
+                        return;
+                    }
                 }
-                break;
-
-            case 2:
-                if (getChangesetQuery() == null) {
-                    pnlAdvancedQueries.displayMessageIfInvalid();
-                    return;
-                }
+                setCanceled(false);
+                setVisible(false);
+            } catch (IllegalStateException e) {
+                JOptionPane.showMessageDialog(ChangesetQueryDialog.this, e.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
             }
-            setCanceled(false);
-            setVisible(false);
         }
     }
 

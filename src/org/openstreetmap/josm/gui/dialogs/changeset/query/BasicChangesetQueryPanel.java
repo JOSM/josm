@@ -232,7 +232,7 @@ public class BasicChangesetQueryPanel extends JPanel {
             } else if (im.isFullyIdentified()) {
                 query = query.forUser(im.getUserId()).beingOpen(true);
             } else
-                // anonymous -- should not happen. Message doesn't have to be translated.
+                // anonymous -- can happen with a fresh config. FIXME: Message have to be translated.
                 throw new IllegalStateException("Cannot create changeset query for open changesets of anonymous user");
         }
 
