@@ -774,6 +774,7 @@ public class ImageProvider {
 
         double radian = Math.toRadians(angle);
 
+        new ImageIcon(img); // load completely
         int iw = img.getWidth(null);
         int ih = img.getHeight(null);
         int w;
