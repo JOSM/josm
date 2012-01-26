@@ -5,13 +5,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
@@ -23,7 +21,7 @@ import org.xml.sax.SAXException;
 
 public class GpxImporter extends FileImporter {
 
-    protected class GpxImporterData {
+    protected static class GpxImporterData {
         public GpxLayer gpxLayer;
         public MarkerLayer markerLayer;
         public Runnable postLayerTask;
@@ -58,7 +56,7 @@ public class GpxImporter extends FileImporter {
     }
 
     public GpxImporterData loadLayers(InputStream is, final File associatedFile,
-                    final String gpxLayerName, String markerLayerName, ProgressMonitor progressMonitor) throws IOException {
+            final String gpxLayerName, String markerLayerName, ProgressMonitor progressMonitor) throws IOException {
         final GpxImporterData data = new GpxImporterData();
         try {
             final GpxReader r = new GpxReader(is);

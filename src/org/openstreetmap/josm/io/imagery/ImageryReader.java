@@ -29,7 +29,7 @@ public class ImageryReader {
 
     private String source;
 
-    private enum State { 
+    private enum State {
         INIT,               // initial state, should always be at the bottom of the stack
         IMAGERY,            // inside the imagery element
         ENTRY,              // inside an entry
@@ -62,7 +62,7 @@ public class ImageryReader {
         }
     }
 
-    private class Parser extends DefaultHandler {
+    private static class Parser extends DefaultHandler {
         private StringBuffer accumulator = new StringBuffer();
 
         private Stack<State> states;
@@ -96,20 +96,20 @@ public class ImageryReader {
             accumulator.setLength(0);
             State newState = null;
             switch (states.peek()) {
-                case INIT:
-                    if (qName.equals("imagery")) {
-                        newState = State.IMAGERY;
-                    }
-                    break;
-                case IMAGERY:
-                    if (qName.equals("entry")) {
-                        entry = new ImageryInfo();
-                        skipEntry = false;
-                        newState = State.ENTRY;
-                    }
-                    break;
-                case ENTRY:
-                    if (Arrays.asList(new String[] {
+            case INIT:
+                if (qName.equals("imagery")) {
+                    newState = State.IMAGERY;
+                }
+                break;
+            case IMAGERY:
+                if (qName.equals("entry")) {
+                    entry = new ImageryInfo();
+                    skipEntry = false;
+                    newState = State.ENTRY;
+                }
+                break;
+            case ENTRY:
+                if (Arrays.asList(new String[] {
                         "name",
                         "type",
                         "default",
@@ -125,44 +125,44 @@ public class ImageryReader {
                         "terms-of-use-url",
                         "country-code",
                         "icon",
-                    }).contains(qName)) {
-                        newState = State.ENTRY_ATTRIBUTE;
-                    } else if (qName.equals("bounds")) {
-                        try {
-                            bounds = new ImageryBounds(
-                                    atts.getValue("min-lat") + "," +
-                                    atts.getValue("min-lon") + "," +
-                                    atts.getValue("max-lat") + "," +
-                                    atts.getValue("max-lon"), ",");
-                        } catch (IllegalArgumentException e) {
-                            break;
-                        }
-                        newState = State.BOUNDS;
-                    } else if (qName.equals("projections")) {
-                        projections = new ArrayList<String>();
-                        newState = State.PROJECTIONS;
+                }).contains(qName)) {
+                    newState = State.ENTRY_ATTRIBUTE;
+                } else if (qName.equals("bounds")) {
+                    try {
+                        bounds = new ImageryBounds(
+                                atts.getValue("min-lat") + "," +
+                                        atts.getValue("min-lon") + "," +
+                                        atts.getValue("max-lat") + "," +
+                                        atts.getValue("max-lon"), ",");
+                    } catch (IllegalArgumentException e) {
+                        break;
                     }
-                    break;
-                case BOUNDS:
-                    if (qName.equals("shape")) {
-                        shape = new Shape();
-                        newState = State.SHAPE;
+                    newState = State.BOUNDS;
+                } else if (qName.equals("projections")) {
+                    projections = new ArrayList<String>();
+                    newState = State.PROJECTIONS;
+                }
+                break;
+            case BOUNDS:
+                if (qName.equals("shape")) {
+                    shape = new Shape();
+                    newState = State.SHAPE;
+                }
+                break;
+            case SHAPE:
+                if (qName.equals("point")) {
+                    try {
+                        shape.addPoint(atts.getValue("lat"), atts.getValue("lon"));
+                    } catch (IllegalArgumentException e) {
+                        break;
                     }
-                    break;
-                case SHAPE:
-                    if (qName.equals("point")) {
-                        try {
-                            shape.addPoint(atts.getValue("lat"), atts.getValue("lon"));
-                        } catch (IllegalArgumentException e) {
-                            break;
-                        }
-                    }
-                    break;
-                case PROJECTIONS:
-                    if (qName.equals("code")) {
-                        newState = State.CODE;
-                    }
-                    break;
+                }
+                break;
+            case PROJECTIONS:
+                if (qName.equals("code")) {
+                    newState = State.CODE;
+                }
+                break;
             }
             /**
              * Did not recognize the element, so the new state is UNKNOWN.
@@ -188,93 +188,93 @@ public class ImageryReader {
         @Override
         public void endElement(String namespaceURI, String qName, String rqName) {
             switch (states.pop()) {
-                case INIT:
-                    throw new RuntimeException("parsing error: more closing than opening elements");
-                case ENTRY:
-                    if (qName.equals("entry")) {
-                        if (!skipEntry) {
-                            entries.add(entry);
-                        }
-                        entry = null;
+            case INIT:
+                throw new RuntimeException("parsing error: more closing than opening elements");
+            case ENTRY:
+                if (qName.equals("entry")) {
+                    if (!skipEntry) {
+                        entries.add(entry);
                     }
-                    break;
-                case ENTRY_ATTRIBUTE:
-                    if (qName.equals("name")) {
-                        entry.setName(tr(accumulator.toString()));
-                    } else if (qName.equals("type")) {
-                        boolean found = false;
-                        for (ImageryType type : ImageryType.values()) {
-                            if (equal(accumulator.toString(), type.getUrlString())) {
-                                entry.setImageryType(type);
-                                found = true;
-                                break;
-                            }
+                    entry = null;
+                }
+                break;
+            case ENTRY_ATTRIBUTE:
+                if (qName.equals("name")) {
+                    entry.setName(tr(accumulator.toString()));
+                } else if (qName.equals("type")) {
+                    boolean found = false;
+                    for (ImageryType type : ImageryType.values()) {
+                        if (equal(accumulator.toString(), type.getUrlString())) {
+                            entry.setImageryType(type);
+                            found = true;
+                            break;
                         }
-                        if (!found) {
-                            skipEntry = true;
-                        }
-                    } else if (qName.equals("default")) {
-                        if (accumulator.toString().equals("true")) {
-                            entry.setDefaultEntry(true);
-                        } else if (accumulator.toString().equals("false")) {
-                            entry.setDefaultEntry(false);
-                        } else {
-                            skipEntry = true;
-                        }
-                    } else if (qName.equals("url")) {
-                        entry.setUrl(accumulator.toString());
-                    } else if (qName.equals("eula")) {
-                        entry.setEulaAcceptanceRequired(accumulator.toString());
-                    } else if (qName.equals("min-zoom") || qName.equals("max-zoom")) {
-                        Integer val = null;
-                        try {
-                            val = Integer.parseInt(accumulator.toString());
-                        } catch(NumberFormatException e) {
-                            val = null;
-                        }
-                        if (val == null) {
-                            skipEntry = true;
-                        } else {
-                            if (qName.equals("min-zoom")) {
-                                entry.setDefaultMinZoom(val);
-                            } else {
-                                entry.setDefaultMaxZoom(val);
-                            }
-                        }
-                    } else if (qName.equals("attribution-text")) {
-                        entry.setAttributionText(accumulator.toString());
-                    } else if (qName.equals("attribution-url")) {
-                        entry.setAttributionLinkURL(accumulator.toString());
-                    } else if (qName.equals("logo-image")) {
-                        entry.setAttributionImage(accumulator.toString());
-                    } else if (qName.equals("logo-url")) {
-                        entry.setAttributionImageURL(accumulator.toString());
-                    } else if (qName.equals("terms-of-use-text")) {
-                        entry.setTermsOfUseText(accumulator.toString());
-                    } else if (qName.equals("terms-of-use-url")) {
-                        entry.setTermsOfUseURL(accumulator.toString());
-                    } else if (qName.equals("country-code")) {
-                        entry.setCountryCode(accumulator.toString());
-                    } else if (qName.equals("icon")) {
-                        entry.setIcon(accumulator.toString());
+                    }
+                    if (!found) {
+                        skipEntry = true;
+                    }
+                } else if (qName.equals("default")) {
+                    if (accumulator.toString().equals("true")) {
+                        entry.setDefaultEntry(true);
+                    } else if (accumulator.toString().equals("false")) {
+                        entry.setDefaultEntry(false);
                     } else {
+                        skipEntry = true;
                     }
-                    break;
-                case BOUNDS:
-                    entry.setBounds(bounds);
-                    bounds = null;
-                    break;
-                case SHAPE:
-                    bounds.addShape(shape);
-                    shape = null;
-                    break;
-                case CODE:
-                    projections.add(accumulator.toString());
-                    break;
-                case PROJECTIONS:
-                    entry.setServerProjections(projections);
-                    projections = null;
-                    break;
+                } else if (qName.equals("url")) {
+                    entry.setUrl(accumulator.toString());
+                } else if (qName.equals("eula")) {
+                    entry.setEulaAcceptanceRequired(accumulator.toString());
+                } else if (qName.equals("min-zoom") || qName.equals("max-zoom")) {
+                    Integer val = null;
+                    try {
+                        val = Integer.parseInt(accumulator.toString());
+                    } catch(NumberFormatException e) {
+                        val = null;
+                    }
+                    if (val == null) {
+                        skipEntry = true;
+                    } else {
+                        if (qName.equals("min-zoom")) {
+                            entry.setDefaultMinZoom(val);
+                        } else {
+                            entry.setDefaultMaxZoom(val);
+                        }
+                    }
+                } else if (qName.equals("attribution-text")) {
+                    entry.setAttributionText(accumulator.toString());
+                } else if (qName.equals("attribution-url")) {
+                    entry.setAttributionLinkURL(accumulator.toString());
+                } else if (qName.equals("logo-image")) {
+                    entry.setAttributionImage(accumulator.toString());
+                } else if (qName.equals("logo-url")) {
+                    entry.setAttributionImageURL(accumulator.toString());
+                } else if (qName.equals("terms-of-use-text")) {
+                    entry.setTermsOfUseText(accumulator.toString());
+                } else if (qName.equals("terms-of-use-url")) {
+                    entry.setTermsOfUseURL(accumulator.toString());
+                } else if (qName.equals("country-code")) {
+                    entry.setCountryCode(accumulator.toString());
+                } else if (qName.equals("icon")) {
+                    entry.setIcon(accumulator.toString());
+                } else {
+                }
+                break;
+            case BOUNDS:
+                entry.setBounds(bounds);
+                bounds = null;
+                break;
+            case SHAPE:
+                bounds.addShape(shape);
+                shape = null;
+                break;
+            case CODE:
+                projections.add(accumulator.toString());
+                break;
+            case PROJECTIONS:
+                entry.setServerProjections(projections);
+                projections = null;
+                break;
             }
         }
     }

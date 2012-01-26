@@ -281,7 +281,7 @@ public class ImageryPreference implements PreferenceSetting {
         pane.setTitleAt(2, tr("Offset bookmarks"));
         p.add(pane,GBC.std().fill(GBC.BOTH));
     }
-    
+
     public ImageryProvidersPanel getProvidersPanel() {
         return imageryProviders;
     }
@@ -390,7 +390,7 @@ public class ImageryPreference implements PreferenceSetting {
         // Public models
         public final ImageryLayerTableModel activeModel;
         public final ImageryDefaultLayerTableModel defaultModel;
-        
+
         // Public JToolbars
         public final JToolBar activeToolbar;
         public final JToolBar middleToolbar;
@@ -399,20 +399,20 @@ public class ImageryPreference implements PreferenceSetting {
         // Private members
         private final PreferenceTabbedPane gui;
         private final ImageryLayerInfo layerInfo;
-        
-        private class ImageryTableCellRenderer extends DefaultTableCellRenderer {
-            
+
+        private static class ImageryTableCellRenderer extends DefaultTableCellRenderer {
+
             private List<ImageryInfo> layers;
-            
+
             public ImageryTableCellRenderer(List<ImageryInfo> layers) {
                 this.layers = layers;
             }
-            
+
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean
-            isSelected, boolean hasFocus, int row, int column) {
+                    isSelected, boolean hasFocus, int row, int column) {
                 JLabel label = (JLabel) super.getTableCellRendererComponent(
-                table, value, isSelected, hasFocus, row, column);
+                        table, value, isSelected, hasFocus, row, column);
                 String t = value.toString();
                 label.setBackground(Main.pref.getUIColor("Table.background"));
                 if (isSelected) {
@@ -422,8 +422,8 @@ public class ImageryPreference implements PreferenceSetting {
                 {
                     if(l.getExtendedUrl().equals(t)) {
                         label.setBackground(Main.pref.getColor(
-                        marktr("Imagery Background: Default"),
-                        new Color(200,255,200)));
+                                marktr("Imagery Background: Default"),
+                                new Color(200,255,200)));
                         break;
                     }
                 }
@@ -455,22 +455,22 @@ public class ImageryPreference implements PreferenceSetting {
             };
 
             defaultModel.addTableModelListener(
-                new TableModelListener() {
-                    @Override
-                    public void tableChanged(TableModelEvent e) {
-                        activeTable.repaint();
+                    new TableModelListener() {
+                        @Override
+                        public void tableChanged(TableModelEvent e) {
+                            activeTable.repaint();
+                        }
                     }
-                }
-            );
+                    );
 
             activeModel.addTableModelListener(
-                new TableModelListener() {
-                    @Override
-                    public void tableChanged(TableModelEvent e) {
-                        defaultTable.repaint();
+                    new TableModelListener() {
+                        @Override
+                        public void tableChanged(TableModelEvent e) {
+                            defaultTable.repaint();
+                        }
                     }
-                }
-            );
+                    );
 
             TableColumnModel mod = defaultTable.getColumnModel();
             mod.getColumn(2).setPreferredWidth(800);
@@ -591,7 +591,7 @@ public class ImageryPreference implements PreferenceSetting {
                             }
                             mapPolygons.remove(i);
                         }
-                     // Only display bounds when no polygons (shapes) are defined for this provider
+                        // Only display bounds when no polygons (shapes) are defined for this provider
                     } else {
                         if (defaultTable.getSelectionModel().isSelectedIndex(i)) {
                             if (!mapRectangles.containsKey(i)) {
@@ -642,9 +642,9 @@ public class ImageryPreference implements PreferenceSetting {
                     try {
                         activeModel.addRow(p.getImageryInfo());
                     } catch (IllegalArgumentException ex) {
-                        if (ex.getMessage() == null || ex.getMessage().isEmpty()) {
+                        if (ex.getMessage() == null || ex.getMessage().isEmpty())
                             throw ex;
-                        } else {
+                        else {
                             JOptionPane.showMessageDialog(Main.parent,
                                     ex.getMessage(), tr("Error"),
                                     JOptionPane.ERROR_MESSAGE);
@@ -708,7 +708,7 @@ public class ImageryPreference implements PreferenceSetting {
                             JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
-                
+
                 Set<String> acceptedEulas = new HashSet<String>();
 
                 outer: for (int i = 0; i < lines.length; i++) {

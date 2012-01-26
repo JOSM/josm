@@ -406,7 +406,7 @@ public class SessionReader {
      * This is expected to run in a worker thread (PleaseWaitRunnable), so invokeAndWait is
      * needed to block the current thread and wait for the result of the modal dialog from EDT.
      */
-    private class CancelOrContinueDialog {
+    private static class CancelOrContinueDialog {
 
         private boolean cancel;
 

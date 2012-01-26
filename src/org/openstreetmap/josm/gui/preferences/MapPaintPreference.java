@@ -31,12 +31,11 @@ public class MapPaintPreference implements PreferenceSetting {
     private static final List<SourceProvider> styleSourceProviders = new ArrayList<SourceProvider>();
 
     public static final boolean registerSourceProvider(SourceProvider provider) {
-        if (provider != null) {
+        if (provider != null)
             return styleSourceProviders.add(provider);
-        }
         return false;
     }
-    
+
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
             return new MapPaintPreference();
@@ -68,10 +67,10 @@ public class MapPaintPreference implements PreferenceSetting {
                         }
                     }
                 }
-        );
+                );
     }
 
-    class MapPaintSourceEditor extends SourceEditor {
+    static class MapPaintSourceEditor extends SourceEditor {
 
         final private String iconpref = "mappaint.icon.sources";
 
@@ -117,34 +116,34 @@ public class MapPaintPreference implements PreferenceSetting {
         @Override
         public String getStr(I18nString ident) {
             switch (ident) {
-                case AVAILABLE_SOURCES:
-                    return tr("Available styles:");
-                case ACTIVE_SOURCES:
-                    return tr("Active styles:");
-                case NEW_SOURCE_ENTRY_TOOLTIP:
-                     return tr("Add a new style by entering filename or URL");
-                case NEW_SOURCE_ENTRY:
-                    return tr("New style entry:");
-                case REMOVE_SOURCE_TOOLTIP:
-                    return tr("Remove the selected styles from the list of active styles");
-                case EDIT_SOURCE_TOOLTIP:
-                    return tr("Edit the filename or URL for the selected active style");
-                case ACTIVATE_TOOLTIP:
-                    return tr("Add the selected available styles to the list of active styles");
-                case RELOAD_ALL_AVAILABLE:
-                    return marktr("Reloads the list of available styles from ''{0}''");
-                case LOADING_SOURCES_FROM:
-                    return marktr("Loading style sources from ''{0}''");
-                case FAILED_TO_LOAD_SOURCES_FROM:
-                    return marktr("<html>Failed to load the list of style sources from<br>"
-                            + "''{0}''.<br>"
-                            + "<br>"
-                            + "Details (untranslated):<br>{1}</html>");
-                case FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC:
-                    return "/Preferences/Styles#FailedToLoadStyleSources";
-                case ILLEGAL_FORMAT_OF_ENTRY:
-                    return marktr("Warning: illegal format of entry in style list ''{0}''. Got ''{1}''");
-                default: throw new AssertionError();
+            case AVAILABLE_SOURCES:
+                return tr("Available styles:");
+            case ACTIVE_SOURCES:
+                return tr("Active styles:");
+            case NEW_SOURCE_ENTRY_TOOLTIP:
+                return tr("Add a new style by entering filename or URL");
+            case NEW_SOURCE_ENTRY:
+                return tr("New style entry:");
+            case REMOVE_SOURCE_TOOLTIP:
+                return tr("Remove the selected styles from the list of active styles");
+            case EDIT_SOURCE_TOOLTIP:
+                return tr("Edit the filename or URL for the selected active style");
+            case ACTIVATE_TOOLTIP:
+                return tr("Add the selected available styles to the list of active styles");
+            case RELOAD_ALL_AVAILABLE:
+                return marktr("Reloads the list of available styles from ''{0}''");
+            case LOADING_SOURCES_FROM:
+                return marktr("Loading style sources from ''{0}''");
+            case FAILED_TO_LOAD_SOURCES_FROM:
+                return marktr("<html>Failed to load the list of style sources from<br>"
+                        + "''{0}''.<br>"
+                        + "<br>"
+                        + "Details (untranslated):<br>{1}</html>");
+            case FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC:
+                return "/Preferences/Styles#FailedToLoadStyleSources";
+            case ILLEGAL_FORMAT_OF_ENTRY:
+                return marktr("Warning: illegal format of entry in style list ''{0}''. Got ''{1}''");
+            default: throw new AssertionError();
             }
         }
 
@@ -176,8 +175,8 @@ public class MapPaintPreference implements PreferenceSetting {
 
         public MapPaintPrefMigration() {
             super("mappaint.style.sources",
-                  "mappaint.style.enable-defaults",
-                  "mappaint.style.sources-list");
+                    "mappaint.style.enable-defaults",
+                    "mappaint.style.sources-list");
         }
 
         @Override
@@ -214,7 +213,7 @@ public class MapPaintPreference implements PreferenceSetting {
          */
         private boolean insertNewDefaults(List<SourceEntry> list) {
             boolean changed = false;
-            
+
             Collection<String> knownDefaults = new TreeSet<String>(Main.pref.getCollection("mappaint.style.known-defaults"));
 
             Collection<ExtendedSourceEntry> defaults = getDefault();
@@ -222,11 +221,11 @@ public class MapPaintPreference implements PreferenceSetting {
             for (final SourceEntry def : defaults) {
                 int i = Utils.indexOf(list,
                         new Predicate<SourceEntry>() {
-                            @Override
-                            public boolean evaluate(SourceEntry se) {
-                                return Utils.equal(def.url, se.url);
-                            }
-                        });
+                    @Override
+                    public boolean evaluate(SourceEntry se) {
+                        return Utils.equal(def.url, se.url);
+                    }
+                });
                 if (i == -1 && !knownDefaults.contains(def.url)) {
                     list.add(insertionIdx, def);
                     insertionIdx++;
@@ -267,8 +266,8 @@ public class MapPaintPreference implements PreferenceSetting {
             return Arrays.asList(new String[] {
                     entry.url,
                     entry.name == null ? "" : entry.name,
-                    entry.title == null ? "" : entry.title,
-                    Boolean.toString(entry.active)
+                            entry.title == null ? "" : entry.title,
+                                    Boolean.toString(entry.active)
             });
         }
 

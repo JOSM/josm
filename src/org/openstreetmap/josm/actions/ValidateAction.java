@@ -33,7 +33,7 @@ import org.xml.sax.SAXException;
  * @author frsantos
  */
 public class ValidateAction extends JosmAction {
-    
+
     /** Serializable ID */
     private static final long serialVersionUID = -2304521273582574603L;
 
@@ -45,7 +45,7 @@ public class ValidateAction extends JosmAction {
      */
     public ValidateAction() {
         super(tr("Validation"), "dialogs/validator", tr("Performs the data validation"),
-        Shortcut.registerShortcut("tools:validate", tr("Tool: {0}", tr("Validation")), KeyEvent.VK_V, Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), true);
+                Shortcut.registerShortcut("tools:validate", tr("Tool: {0}", tr("Validation")), KeyEvent.VK_V, Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), true);
     }
 
     public void actionPerformed(ActionEvent ev) {
@@ -105,7 +105,7 @@ public class ValidateAction extends JosmAction {
      * of primitives
      *
      */
-    class ValidationTask extends PleaseWaitRunnable {
+    static class ValidationTask extends PleaseWaitRunnable {
         private Collection<Test> tests;
         private Collection<OsmPrimitive> validatedPrimitives;
         private Collection<OsmPrimitive> formerValidatedPrimitives;
@@ -153,7 +153,7 @@ public class ValidateAction extends JosmAction {
 
         @Override
         protected void realRun() throws SAXException, IOException,
-                OsmTransferException {
+        OsmTransferException {
             if (tests == null || tests.isEmpty())
                 return;
             errors = new ArrayList<TestError>(200);

@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.MultiMap;
 public class DuplicateWay extends Test
 {
 
-    private class WayPair {
+    private static class WayPair {
         public List<LatLon> coor;
         public Map<String, String> keys;
         public WayPair(List<LatLon> _coor, Map<String, String> _keys) {
@@ -55,7 +55,7 @@ public class DuplicateWay extends Test
         }
     }
 
-    private class WayPairNoTags {
+    private static class WayPairNoTags {
         public List<LatLon> coor;
         public WayPairNoTags(List<LatLon> _coor) {
             coor=_coor;

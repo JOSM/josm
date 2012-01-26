@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.MultiMap;
 public class DuplicateRelation extends Test
 {
 
-    public class RelMember {
+    public static class RelMember {
         private String role;
         private OsmPrimitiveType type;
         private Map<String, String> tags;

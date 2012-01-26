@@ -49,11 +49,10 @@ public class TaggingPresetPreference implements PreferenceSetting {
     public static Collection<TaggingPreset> taggingPresets;
     private SourceEditor sources;
     private JCheckBox sortMenu;
-    
+
     public static final boolean registerSourceProvider(SourceProvider provider) {
-        if (provider != null) {
+        if (provider != null)
             return presetSourceProviders.add(provider);
-        }
         return false;
     }
 
@@ -165,11 +164,11 @@ public class TaggingPresetPreference implements PreferenceSetting {
                         }
                     }
                 }
-        );
+                );
         gui.addValidationListener(validationListener);
     }
 
-    class TaggingPresetSourceEditor extends SourceEditor {
+    static class TaggingPresetSourceEditor extends SourceEditor {
 
         final private String iconpref = "taggingpreset.icon.sources";
 
@@ -215,34 +214,34 @@ public class TaggingPresetPreference implements PreferenceSetting {
         @Override
         public String getStr(I18nString ident) {
             switch (ident) {
-                case AVAILABLE_SOURCES:
-                    return tr("Available presets:");
-                case ACTIVE_SOURCES:
-                    return tr("Active presets:");
-                case NEW_SOURCE_ENTRY_TOOLTIP:
-                     return tr("Add a new preset by entering filename or URL");
-                case NEW_SOURCE_ENTRY:
-                    return tr("New preset entry:");
-                case REMOVE_SOURCE_TOOLTIP:
-                    return tr("Remove the selected presets from the list of active presets");
-                case EDIT_SOURCE_TOOLTIP:
-                    return tr("Edit the filename or URL for the selected active preset");
-                case ACTIVATE_TOOLTIP:
-                    return tr("Add the selected available presets to the list of active presets");
-                case RELOAD_ALL_AVAILABLE:
-                    return marktr("Reloads the list of available presets from ''{0}''");
-                case LOADING_SOURCES_FROM:
-                    return marktr("Loading preset sources from ''{0}''");
-                case FAILED_TO_LOAD_SOURCES_FROM:
-                    return marktr("<html>Failed to load the list of preset sources from<br>"
-                            + "''{0}''.<br>"
-                            + "<br>"
-                            + "Details (untranslated):<br>{1}</html>");
-                case FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC:
-                    return "/Preferences/Presets#FailedToLoadPresetSources";
-                case ILLEGAL_FORMAT_OF_ENTRY:
-                    return marktr("Warning: illegal format of entry in preset list ''{0}''. Got ''{1}''");
-                default: throw new AssertionError();
+            case AVAILABLE_SOURCES:
+                return tr("Available presets:");
+            case ACTIVE_SOURCES:
+                return tr("Active presets:");
+            case NEW_SOURCE_ENTRY_TOOLTIP:
+                return tr("Add a new preset by entering filename or URL");
+            case NEW_SOURCE_ENTRY:
+                return tr("New preset entry:");
+            case REMOVE_SOURCE_TOOLTIP:
+                return tr("Remove the selected presets from the list of active presets");
+            case EDIT_SOURCE_TOOLTIP:
+                return tr("Edit the filename or URL for the selected active preset");
+            case ACTIVATE_TOOLTIP:
+                return tr("Add the selected available presets to the list of active presets");
+            case RELOAD_ALL_AVAILABLE:
+                return marktr("Reloads the list of available presets from ''{0}''");
+            case LOADING_SOURCES_FROM:
+                return marktr("Loading preset sources from ''{0}''");
+            case FAILED_TO_LOAD_SOURCES_FROM:
+                return marktr("<html>Failed to load the list of preset sources from<br>"
+                        + "''{0}''.<br>"
+                        + "<br>"
+                        + "Details (untranslated):<br>{1}</html>");
+            case FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC:
+                return "/Preferences/Presets#FailedToLoadPresetSources";
+            case ILLEGAL_FORMAT_OF_ENTRY:
+                return marktr("Warning: illegal format of entry in preset list ''{0}''. Got ''{1}''");
+            default: throw new AssertionError();
             }
         }
     }
@@ -303,8 +302,8 @@ public class TaggingPresetPreference implements PreferenceSetting {
 
         public PresetPrefMigration() {
             super("taggingpreset.sources",
-                  "taggingpreset.enable-defaults",
-                  "taggingpreset.sources-list");
+                    "taggingpreset.enable-defaults",
+                    "taggingpreset.sources-list");
         }
 
         @Override

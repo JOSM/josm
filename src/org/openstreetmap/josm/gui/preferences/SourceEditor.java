@@ -1145,7 +1145,7 @@ public abstract class SourceEditor extends JPanel {
             String lang = LanguageInfo.getLanguageCodeXML();
             try {
                 sources.addAll(getDefault());
-                
+
                 for (SourceProvider provider : sourceProviders) {
                     for (SourceEntry src : provider.getSources()) {
                         if (src instanceof ExtendedSourceEntry) {
@@ -1153,7 +1153,7 @@ public abstract class SourceEditor extends JPanel {
                         }
                     }
                 }
-                
+
                 MirroredInputStream stream = new MirroredInputStream(url);
                 InputStreamReader r;
                 try {
@@ -1232,7 +1232,7 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
-    class SourceEntryTableCellRenderer extends DefaultTableCellRenderer {
+    static class SourceEntryTableCellRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             if (value == null)
