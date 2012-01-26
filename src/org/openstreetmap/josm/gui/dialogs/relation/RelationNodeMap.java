@@ -29,7 +29,7 @@ import org.openstreetmap.josm.data.osm.Way;
  *
  */
 public class RelationNodeMap {
-    private class NodesWays{
+    private static class NodesWays{
         public Map<Node, Set<Integer>> nodes = new TreeMap<Node, Set<Integer>>();
         public Map<Integer, Set<Node>> ways = new TreeMap<Integer, Set<Node>>();
         public boolean oneWay;
@@ -107,22 +107,22 @@ public class RelationNodeMap {
          * Clean up the maps, i.e. remove nodes from roundabouts and dead ends that
          * cannot be used in future. (only for performance)
          */
-//        Iterator<Map.Entry<Node,TreeSet<Integer>>> it = map.nodes.entrySet().iterator();
-//        while (it.hasNext()) {
-//            Map.Entry<Node,TreeSet<Integer>> nodeLinks = it.next();
-//
-//            if (nodeLinks.getValue().size() < 2) {
-//                if (nodeLinks.getValue().size() != 1) throw new AssertionError();
-//
-//                Integer d_way = nodeLinks.getValue().iterator().next();
-//                TreeSet<Node> d_way_nodes = map.ways.get(d_way);
-//                d_way_nodes.remove(nodeLinks.getKey());
-//
-//                it.remove();
-//                continue;
-//            }
-//        }
-            }
+        //        Iterator<Map.Entry<Node,TreeSet<Integer>>> it = map.nodes.entrySet().iterator();
+        //        while (it.hasNext()) {
+        //            Map.Entry<Node,TreeSet<Integer>> nodeLinks = it.next();
+        //
+        //            if (nodeLinks.getValue().size() < 2) {
+        //                if (nodeLinks.getValue().size() != 1) throw new AssertionError();
+        //
+        //                Integer d_way = nodeLinks.getValue().iterator().next();
+        //                TreeSet<Node> d_way_nodes = map.ways.get(d_way);
+        //                d_way_nodes.remove(nodeLinks.getKey());
+        //
+        //                it.remove();
+        //                continue;
+        //            }
+        //        }
+    }
 
     private void addPair(Node n, int i) {
         Set<Integer> ts = map.nodes.get(n);
@@ -210,7 +210,7 @@ public class RelationNodeMap {
                 }
             }
         }
-        
+
         firstOneway = way;
         return popForwardOnewayPart(way);
     }
@@ -219,18 +219,19 @@ public class RelationNodeMap {
         if(onewayMap.ways.containsKey(way)) {
             for (Node n : onewayMap.ways.get(way)) {
                 Integer i = findAdjacentWay(onewayMap, n);
-                if(i == null) continue;
+                if(i == null) {
+                    continue;
+                }
 
                 lastOnewayNode = processBackwardIfEndOfLoopReached(i);
-                if(lastOnewayNode != null){
+                if(lastOnewayNode != null)
                     return popBackwardOnewayPart(firstOneway);
-                }
 
                 deleteWayNode(onewayMap, i, n);
                 return i;
             }
         }
-        
+
         firstOneway = null;
         return null;
     }
@@ -239,22 +240,24 @@ public class RelationNodeMap {
         if (onewayReverseMap.ways.containsKey(way)) {
             for (Node n : onewayReverseMap.ways.get(way)) {
                 if((map.nodes.containsKey(n))
-                        || (onewayMap.nodes.containsKey(n) && onewayMap.nodes.get(n).size() > 1)) {
+                        || (onewayMap.nodes.containsKey(n) && onewayMap.nodes.get(n).size() > 1))
                     return n;
-                }
-                if(firstCircular != null && firstCircular == n) {
+                if(firstCircular != null && firstCircular == n)
                     return firstCircular;
-                }
             }
         }
         return null;
     }
-    
+
     private Integer popBackwardOnewayPart(int way){
         if (lastOnewayNode != null) {
             TreeSet<Node> nodes = new TreeSet<Node>();
-            if (onewayReverseMap.ways.containsKey(way)) nodes.addAll(onewayReverseMap.ways.get(way));
-            if (map.ways.containsKey(way)) nodes.addAll(map.ways.get(way));
+            if (onewayReverseMap.ways.containsKey(way)) {
+                nodes.addAll(onewayReverseMap.ways.get(way));
+            }
+            if (map.ways.containsKey(way)) {
+                nodes.addAll(map.ways.get(way));
+            }
             for (Node n : nodes) {
                 if(n == lastOnewayNode) { //if oneway part ends
                     firstOneway = null;
@@ -276,7 +279,7 @@ public class RelationNodeMap {
 
         firstOneway = null;
         lastOnewayNode = null;
-        
+
         return null;
     }
 
@@ -301,10 +304,11 @@ public class RelationNodeMap {
     }
 
     private void deleteWayNode(NodesWays nw, Integer way, Node n){
-        if(nw.oneWay)
+        if(nw.oneWay) {
             doneOneway(way);
-        else
+        } else {
             done(way);
+        }
         nw.ways.get(way).remove(n);
     }
 
@@ -342,8 +346,12 @@ public class RelationNodeMap {
     private void doneOneway(Integer i) {
         Set<Node> nodesForward = remainingOneway.get(i);
         for (Node n : nodesForward) {
-            if(onewayMap.nodes.containsKey(n)) onewayMap.nodes.get(n).remove(i);
-            if(onewayReverseMap.nodes.containsKey(n)) onewayReverseMap.nodes.get(n).remove(i);
+            if(onewayMap.nodes.containsKey(n)) {
+                onewayMap.nodes.get(n).remove(i);
+            }
+            if(onewayReverseMap.nodes.containsKey(n)) {
+                onewayReverseMap.nodes.get(n).remove(i);
+            }
         }
         remainingOneway.remove(i);
     }

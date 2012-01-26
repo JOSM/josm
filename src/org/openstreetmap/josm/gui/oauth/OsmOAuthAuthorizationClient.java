@@ -5,8 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
@@ -45,7 +45,7 @@ public class OsmOAuthAuthorizationClient {
     private boolean canceled;
     private HttpURLConnection connection;
 
-    private class SessionId {
+    private static class SessionId {
         String id;
         String token;
         String userName;
@@ -208,9 +208,8 @@ public class OsmOAuthAuthorizationClient {
             Pattern p = Pattern.compile(".*authenticity_token.*value=\"([^\"]+)\".*");
             while((c = r.readLine()) != null) {
                 Matcher m = p.matcher(c);
-                if(m.find()) {
+                if(m.find())
                     return m.group(1);
-                }
             }
         } catch (IOException e) {
             return null;

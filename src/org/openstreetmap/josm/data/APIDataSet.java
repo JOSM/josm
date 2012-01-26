@@ -72,9 +72,9 @@ public class APIDataSet {
         }
         OsmPrimitiveComparator c = new OsmPrimitiveComparator();
         c.relationsFirst = true;
-        Collections.sort(toDelete, c); 
-        Collections.sort(toAdd, c); 
-        Collections.sort(toUpdate, c); 
+        Collections.sort(toDelete, c);
+        Collections.sort(toAdd, c);
+        Collections.sort(toUpdate, c);
     }
 
     /**
@@ -153,9 +153,9 @@ public class APIDataSet {
         }
         OsmPrimitiveComparator c = new OsmPrimitiveComparator();
         c.relationsFirst = true;
-        Collections.sort(toDelete, c); 
-        Collections.sort(toAdd, c); 
-        Collections.sort(toUpdate, c); 
+        Collections.sort(toDelete, c);
+        Collections.sort(toAdd, c);
+        Collections.sort(toUpdate, c);
     }
 
     /**
@@ -277,7 +277,7 @@ public class APIDataSet {
      * topologically.
      *
      */
-    private class RelationUploadDependencyGraph {
+    private static class RelationUploadDependencyGraph {
         private HashMap<Relation, Set<Relation>> children;
         private Collection<Relation> relations;
         private Set<Relation> visited;
@@ -352,7 +352,7 @@ public class APIDataSet {
                             return Integer.valueOf(uploadOrder.indexOf(o1)).compareTo(uploadOrder.indexOf(o2));
                         }
                     }
-            );
+                    );
             return ret;
         }
     }

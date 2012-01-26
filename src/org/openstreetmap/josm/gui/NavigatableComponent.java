@@ -1216,7 +1216,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         SYSTEMS_OF_MEASUREMENT.put(marktr("Imperial"), IMPERIAL_SOM);
     }
 
-    private class CursorInfo {
+    private static class CursorInfo {
         public Cursor cursor;
         public Object object;
         public CursorInfo(Cursor c, Object o) {

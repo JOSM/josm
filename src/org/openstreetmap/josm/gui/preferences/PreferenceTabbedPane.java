@@ -11,11 +11,9 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -57,7 +55,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         boolean validatePreferences();
     }
 
-    private class TabData {
+    private static class TabData {
         public String icon;
         public JComponent tab;
         public String toolTip;
@@ -216,7 +214,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                             sb.toString(),
                             tr("Warning"),
                             JOptionPane.WARNING_MESSAGE
-                    );
+                            );
                 }
                 Main.parent.repaint();
             }
@@ -233,7 +231,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                             SwingUtilities.invokeLater(continuation);
                         }
                     }
-            );
+                    );
         } else {
             // no need for asynchronous activities. Simply run the remaining "save preference"
             // activities on this thread (we are already on the Swing EDT

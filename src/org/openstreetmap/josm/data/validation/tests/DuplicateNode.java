@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.MultiMap;
  */
 public class DuplicateNode extends Test {
 
-    private class NodeHash implements Hash<Object, Object> {
+    private static class NodeHash implements Hash<Object, Object> {
 
         double precision = Main.pref.getDouble("validator.duplicatenodes.precision", 0.);
 

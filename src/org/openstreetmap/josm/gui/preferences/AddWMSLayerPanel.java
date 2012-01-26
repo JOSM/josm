@@ -146,8 +146,8 @@ public class AddWMSLayerPanel extends JPanel {
                             layerTree.removeSelectionPath(i);
                             if(!previouslyShownUnsupportedCrsError) {
                                 JOptionPane.showMessageDialog(null, tr("That layer does not support any of JOSM''s projections,\n" +
-                                "so you can not use it. This message will not show again."),
-                                tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
+                                        "so you can not use it. This message will not show again."),
+                                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
                                 previouslyShownUnsupportedCrsError = true;
                             }
                         } else if(detail.ident != null) {
@@ -222,7 +222,7 @@ public class AddWMSLayerPanel extends JPanel {
         add(new JLabel(tr("Imagery URL")), GBC.std().insets(0,0,5,0));
         resultingLayerField = new JTextArea(3, 40);
         resultingLayerField.setLineWrap(true);
-        JScrollPane bottomScrollPane = new JScrollPane(resultingLayerField, 
+        JScrollPane bottomScrollPane = new JScrollPane(resultingLayerField,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         bottomScrollPane.setMinimumSize(new Dimension(60, 60));
         add(bottomScrollPane, GBC.eol().weight(1.0, 0.0).insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
@@ -249,8 +249,9 @@ public class AddWMSLayerPanel extends JPanel {
     private String buildTMSUrl() {
         StringBuilder a = new StringBuilder("tms");
         String z = sanitize(tmsZoom.getText());
-        if(!z.isEmpty())
+        if(!z.isEmpty()) {
             a.append("["+z+"]");
+        }
         a.append(":");
         a.append(sanitize(tmsURL.getText()));
         return a.toString();
@@ -492,13 +493,11 @@ public class AddWMSLayerPanel extends JPanel {
     private boolean isProjSupported(String crs) {
         for (Projection proj : Projections.getProjections()) {
             if (proj instanceof ProjectionSubPrefs) {
-                if (((ProjectionSubPrefs) proj).getPreferencesFromCode(crs) == null) {
+                if (((ProjectionSubPrefs) proj).getPreferencesFromCode(crs) == null)
                     return true;
-                }
             } else {
-                if (proj.toCode().equals(crs)) {
+                if (proj.toCode().equals(crs))
                     return true;
-                }
             }
         }
         return false;
@@ -510,8 +509,9 @@ public class AddWMSLayerPanel extends JPanel {
             TMSLayer.checkUrl(info.getUrl());
         } else if (selectedLayers != null) {
             HashSet<String> proj = new HashSet<String>();
-            for(LayerDetails l : selectedLayers)
+            for(LayerDetails l : selectedLayers) {
                 proj.addAll(l.getProjections());
+            }
             info.setServerProjections(proj);
         }
         return info;
@@ -519,9 +519,9 @@ public class AddWMSLayerPanel extends JPanel {
 
     private static String getChildContent(Element parent, String name, String missing, String empty) {
         Element child = getChild(parent, name);
-        if (child == null) {
+        if (child == null)
             return missing;
-        } else {
+        else {
             String content = (String) getContent(child);
             return (content != null) ? content : empty;
         }
@@ -555,18 +555,16 @@ public class AddWMSLayerPanel extends JPanel {
     }
 
     private static Element getChild(Element parent, String name) {
-        if (parent == null) {
+        if (parent == null)
             return null;
-        }
         for (Node child = parent.getFirstChild(); child != null; child = child.getNextSibling()) {
-            if (child instanceof Element && name.equals(child.getNodeName())) {
+            if (child instanceof Element && name.equals(child.getNodeName()))
                 return (Element) child;
-            }
         }
         return null;
     }
 
-    class LayerDetails {
+    static class LayerDetails {
 
         private String name;
         private String ident;
@@ -596,16 +594,15 @@ public class AddWMSLayerPanel extends JPanel {
 
         @Override
         public String toString() {
-            if(this.name == null || this.name.isEmpty()) {
+            if(this.name == null || this.name.isEmpty())
                 return this.ident;
-            } else {
+            else
                 return this.name;
-            }
         }
 
     }
 
-    class LayerTreeCellRenderer extends DefaultTreeCellRenderer {
+    static class LayerTreeCellRenderer extends DefaultTreeCellRenderer {
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value,
                 boolean sel, boolean expanded, boolean leaf, int row,

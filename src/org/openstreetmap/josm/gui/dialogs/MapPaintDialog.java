@@ -142,10 +142,10 @@ public class MapPaintDialog extends ToggleDialog {
         selectionModel.addListSelectionListener(downAction);
 
         createLayout(p, true, Arrays.asList(new SideButton[] {
-            new SideButton(onoffAction),
-            new SideButton(upAction),
-            new SideButton(downAction),
-            new SideButton(new LaunchMapPaintPreferencesAction())
+                new SideButton(onoffAction),
+                new SideButton(upAction),
+                new SideButton(downAction),
+                new SideButton(new LaunchMapPaintPreferencesAction())
         }));
     }
 
@@ -358,7 +358,7 @@ public class MapPaintDialog extends ToggleDialog {
     /**
      * Opens preferences window and selects the mappaint tab.
      */
-    class LaunchMapPaintPreferencesAction extends AbstractAction {
+    static class LaunchMapPaintPreferencesAction extends AbstractAction {
         public LaunchMapPaintPreferencesAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "mappaintpreference"));
         }

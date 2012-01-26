@@ -1,18 +1,19 @@
 package org.openstreetmap.josm.data.validation.tests;
 
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -96,7 +97,7 @@ public class DeprecatedTags extends Test {
         visit((OsmPrimitive) r);
     }
 
-    private class DeprecationCheck {
+    private static class DeprecationCheck {
 
         int code;
         List<Tag> test = new LinkedList<Tag>();
@@ -147,12 +148,10 @@ public class DeprecatedTags extends Test {
             for (Tag tag : test) {
                 String key = tag.getKey();
                 String value = tag.getValue();
-                if (value.isEmpty() && !p.hasKey(key)) {
+                if (value.isEmpty() && !p.hasKey(key))
                     return false;
-                }
-                if (!value.isEmpty() && !value.equals(p.get(key))) {
+                if (!value.isEmpty() && !value.equals(p.get(key)))
                     return false;
-                }
             }
             return true;
         }
@@ -166,11 +165,10 @@ public class DeprecatedTags extends Test {
         }
 
         String getDescription() {
-            if (alternatives.isEmpty()) {
+            if (alternatives.isEmpty())
                 return tr("{0} is deprecated", Utils.join(", ", test));
-            } else {
+            else
                 return tr("{0} is deprecated, use {1} instead", Utils.join(", ", test), Utils.join(tr(" or "), alternatives));
-            }
         }
     }
 

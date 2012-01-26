@@ -14,18 +14,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.StringTokenizer;
-import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.OsmConnection;
-import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Base64;
 
 /**
@@ -35,7 +29,7 @@ import org.openstreetmap.josm.tools.Base64;
  * @author Imi
  */
 public class ServerSidePreferences extends Preferences {
-    public class MissingPassword extends Exception{
+    public static class MissingPassword extends Exception{
         public String realm;
         public MissingPassword(String r) {
             realm = r;
@@ -55,12 +49,13 @@ public class ServerSidePreferences extends Preferences {
                 URLConnection con = serverUrl.openConnection();
                 String username = get("applet.username");
                 String password = get("applet.password");
-                if(password.isEmpty() && username.isEmpty())
+                if(password.isEmpty() && username.isEmpty()) {
                     con.addRequestProperty("Authorization", "Basic "+Base64.encode(username+":"+password));
+                }
                 con.connect();
                 if(username.isEmpty() && con instanceof HttpURLConnection
-                    && ((HttpURLConnection) con).getResponseCode()
-                    == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                        && ((HttpURLConnection) con).getResponseCode()
+                        == HttpURLConnection.HTTP_UNAUTHORIZED) {
                     String t = ((HttpURLConnection) con).getHeaderField("WWW-Authenticate");
                     t = t.replace("Basic realm=\"","").replace("\"","");
                     throw new MissingPassword(t);
@@ -87,8 +82,9 @@ public class ServerSidePreferences extends Preferences {
                 HttpURLConnection con = (HttpURLConnection)u.openConnection();
                 String username = get("applet.username");
                 String password = get("applet.password");
-                if(password.isEmpty() && username.isEmpty())
+                if(password.isEmpty() && username.isEmpty()) {
                     con.addRequestProperty("Authorization", "Basic "+Base64.encode(username+":"+password));
+                }
                 con.setRequestMethod("POST");
                 con.setDoOutput(true);
                 con.connect();
@@ -102,7 +98,7 @@ public class ServerSidePreferences extends Preferences {
                         tr("Preferences stored on {0}", u.getHost()),
                         tr("Information"),
                         JOptionPane.INFORMATION_MESSAGE
-                );
+                        );
             } catch (Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(
@@ -110,7 +106,7 @@ public class ServerSidePreferences extends Preferences {
                         tr("Could not upload preferences. Reason: {0}", e.getMessage()),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
-                );
+                        );
             }
         }
     }
@@ -126,7 +122,7 @@ public class ServerSidePreferences extends Preferences {
                     tr("Could not load preferences from server."),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
-            );
+                    );
         }
         this.connection = connection;
     }

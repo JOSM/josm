@@ -56,7 +56,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                 progressMonitor);
         return Main.worker.submit(downloadTask);
     }
-    
+
     protected class DownloadTask extends DownloadOsmTask.DownloadTask {
 
         public DownloadTask(boolean newLayer, OsmServerReader reader,
@@ -113,10 +113,10 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
      * Asynchroneous updater of incomplete primitives.
      *
      */
-    private class HistoryListener implements HistoryDataSetListener {
+    private static class HistoryListener implements HistoryDataSetListener {
 
         private final List<Pair<OsmPrimitive, Date>> toMonitor;
-        
+
         public HistoryListener(List<Pair<OsmPrimitive, Date>> toMonitor) {
             this.toMonitor = toMonitor;
         }
@@ -132,29 +132,29 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                     HistoryOsmPrimitive hp = history.getByDate(pair.b);
                     if (hp != null) {
                         PrimitiveData data = null;
-                        
+
                         switch (pair.a.getType()) {
-                            case NODE:
-                                data = new NodeData();
-                                ((NodeData)data).setCoor(((HistoryNode)hp).getCoords());
-                                break;
-                            case WAY: 
-                                data = new WayData();
-                                ((WayData)data).setNodes(((HistoryWay)hp).getNodes());
-                                break;
-                            case RELATION: 
-                                data = new RelationData();
-                                ((RelationData)data).setMembers(((HistoryRelation)hp).getMembers());
-                                break;
-                            default: throw new AssertionError();
+                        case NODE:
+                            data = new NodeData();
+                            ((NodeData)data).setCoor(((HistoryNode)hp).getCoords());
+                            break;
+                        case WAY:
+                            data = new WayData();
+                            ((WayData)data).setNodes(((HistoryWay)hp).getNodes());
+                            break;
+                        case RELATION:
+                            data = new RelationData();
+                            ((RelationData)data).setMembers(((HistoryRelation)hp).getMembers());
+                            break;
+                        default: throw new AssertionError();
                         }
-                        
+
                         data.setUser(hp.getUser());
                         data.setVisible(hp.isVisible());
                         data.setTimestamp(hp.getTimestamp());
                         data.setKeys(hp.getTags());
                         data.setOsmId(hp.getChangesetId(), (int) hp.getVersion());
-                        
+
                         // Load the history data
                         pair.a.load(data);
                         // Forget this primitive

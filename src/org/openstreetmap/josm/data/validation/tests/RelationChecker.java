@@ -69,7 +69,7 @@ public class RelationChecker extends Test {
         }
     }
 
-    public class RoleInfo {
+    public static class RoleInfo {
         int total = 0;
         Collection<Node> nodes = new LinkedList<Node>();
         Collection<Way> ways = new LinkedList<Way>();

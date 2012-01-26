@@ -12,14 +12,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Collection;
-import java.util.Collections;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,19 +33,18 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.DefaultCellEditor;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
-import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
-import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.ListListSetting;
 import org.openstreetmap.josm.data.Preferences.ListSetting;
 import org.openstreetmap.josm.data.Preferences.MapListSetting;
 import org.openstreetmap.josm.data.Preferences.Setting;
 import org.openstreetmap.josm.data.Preferences.StringSetting;
+import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
@@ -243,7 +243,7 @@ public class AdvancedPreference implements PreferenceSetting {
         }
     }
 
-    private class SettingCellRenderer extends DefaultTableCellRenderer {
+    private static class SettingCellRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             if (value == null)
@@ -263,11 +263,12 @@ public class AdvancedPreference implements PreferenceSetting {
         }
     }
 
-    private class SettingCellEditor extends DefaultCellEditor {
+    private static class SettingCellEditor extends DefaultCellEditor {
         public SettingCellEditor() {
             super(new JTextField());
         }
 
+        @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             PrefEntry pe = (PrefEntry) value;
             StringSetting stg = (StringSetting) pe.getValue();
@@ -321,7 +322,7 @@ public class AdvancedPreference implements PreferenceSetting {
                     tr("Please select the row to delete."),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE
-            );
+                    );
             return;
         }
         for (int row : list.getSelectedRows()) {
@@ -429,7 +430,7 @@ public class AdvancedPreference implements PreferenceSetting {
                     tr("Please select the row to edit."),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE
-            );
+                    );
             return;
         }
         final PrefEntry e = (PrefEntry) model.getValueAt(list.getSelectedRow(), 1);
