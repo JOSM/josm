@@ -232,7 +232,7 @@ public class LineElemStyle extends ElemStyle {
         painter.drawWay(w, myColor, myLine, myDashLine, myDashedColor, offset, showOrientation,
                 showOnlyHeadArrowOnly, showOneway, onewayReversed);
 
-        if(paintSettings.isShowOrderNumber()) {
+        if(paintSettings.isShowOrderNumber() && !painter.isInactiveMode()) {
             int orderNumber = 0;
             lastN = null;
             for(Node n : w.getNodes()) {

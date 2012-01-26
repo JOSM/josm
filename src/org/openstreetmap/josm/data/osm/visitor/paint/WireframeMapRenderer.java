@@ -319,7 +319,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
                 Point p = nc.getPoint(it.next());
                 drawSegment(lastP, p, wayColor,
                         showOnlyHeadArrowOnly ? !it.hasNext() : showThisDirectionArrow);
-                if (showOrderNumber) {
+                if (showOrderNumber && !isInactiveMode) {
                     drawOrderNumber(lastP, p, orderNumber);
                 }
                 lastP = p;
