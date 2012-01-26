@@ -16,6 +16,7 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -39,6 +40,7 @@ import java.util.concurrent.Future;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JComboBox;
@@ -1829,8 +1831,14 @@ public class GpxLayer extends Layer {
                 }
             }
             GPXSettingsPanel panel=new GPXSettingsPanel(getName(), hasLocal, hasNonlocal);
-
-            int answer = JOptionPane.showConfirmDialog(Main.parent, panel,
+            JScrollPane scrollpane = new JScrollPane(panel,
+                    JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER );
+            scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
+            int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+            if (screenHeight < 700) { // to fit on screen 800x600
+                scrollpane.setPreferredSize(new Dimension(panel.getPreferredSize().width, Math.min(panel.getPreferredSize().height,450)));
+            }
+            int answer = JOptionPane.showConfirmDialog(Main.parent, scrollpane,
                     tr("Customize track drawing"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (answer == JOptionPane.CANCEL_OPTION || answer == JOptionPane.CLOSED_OPTION) return;
             for(Layer layer : layers) {
