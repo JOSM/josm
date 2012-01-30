@@ -290,7 +290,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
             switch(columnIndex) {
             case 0: return ref.getChild();
             case 1: return ref.getParent();
-            case 2: return ref.getPosition();
+            case 2: return ref.getPosition()+1;
             case 3: return ref.getRole();
             default:
                 assert false: "Illegal column index";
