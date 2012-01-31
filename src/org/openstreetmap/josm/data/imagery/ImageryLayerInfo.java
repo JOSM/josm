@@ -43,13 +43,7 @@ public class ImageryLayerInfo {
     public void load() {
         boolean addedDefault = layers.size() != 0;
         List<ImageryPreferenceEntry> entries = Main.pref.getListOfStructs("imagery.entries", null, ImageryPreferenceEntry.class);
-        if (entries == null) {
-            /* FIXME: Remove old format ~ March 2012 */
-            boolean hasOld = loadOld();
-            if (hasOld) {
-                save();
-            }
-        } else {
+        if (entries != null) {
             for (ImageryPreferenceEntry prefEntry : entries) {
                 try {
                     ImageryInfo i = new ImageryInfo(prefEntry);
@@ -63,33 +57,6 @@ public class ImageryLayerInfo {
         if (addedDefault) {
             save();
         }
-    }
-
-    public boolean loadOld() {
-        Collection<Collection<String>> entries = Main.pref.getArray("imagery.layers", null);
-        if (entries != null) {
-            for (Collection<String> c : Main.pref.getArray("imagery.layers",
-                    Collections.<Collection<String>>emptySet())) {
-                ImageryInfo i = new ImageryInfo(c);
-                String url = i.getUrl();
-                if(url != null) {
-                    /* FIXME: Remove the attribution copy stuff end of 2011 */
-                    if(!i.hasAttribution()) {
-                        for(ImageryInfo d : defaultLayers) {
-                            if(url.equals(d.getUrl())) {
-                                i.copyAttribution(d);
-                                i.setBounds(d.getBounds());
-                                break;
-                            }
-                        }
-                    }
-                    add(i);
-                }
-            }
-            Collections.sort(layers);
-            return true;
-        }
-        return false;
     }
 
     public void loadDefaults(boolean clearCache) {
