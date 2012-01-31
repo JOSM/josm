@@ -244,53 +244,6 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         icon = e.icon;
     }
 
-    public ImageryInfo(Collection<String> list) {
-        ArrayList<String> array = new ArrayList<String>(list);
-        this.name=array.get(0);
-        if(array.size() >= 2 && !array.get(1).isEmpty()) {
-            setExtendedUrl(array.get(1));
-        }
-        if(array.size() >= 3 && !array.get(2).isEmpty()) {
-            this.cookies=array.get(2);
-        }
-        if(array.size() >= 4 && !array.get(3).isEmpty()) {
-            if (imageryType == ImageryType.WMS || imageryType == ImageryType.HTML) {
-                this.pixelPerDegree=Double.valueOf(array.get(3));
-            }
-        }
-        if(array.size() >= 5 && !array.get(4).isEmpty()) {
-            try {
-                bounds = new ImageryBounds(array.get(4), ",");
-            } catch (IllegalArgumentException e) {
-                Main.warn(e.toString());
-            }
-        }
-        if(array.size() >= 6 && !array.get(5).isEmpty()) {
-            setAttributionText(array.get(5));
-        }
-        if(array.size() >= 7 && !array.get(6).isEmpty()) {
-            setAttributionLinkURL(array.get(6));
-        }
-        if(array.size() >= 8 && !array.get(7).isEmpty()) {
-            setAttributionImage(array.get(7));
-        }
-        if(array.size() >= 9 && !array.get(8).isEmpty()) {
-            setTermsOfUseURL(array.get(8));
-        }
-        if(bounds != null && array.size() >= 10 && !array.get(9).isEmpty()) {
-            try {
-                for (String s : array.get(9).split(";")) {
-                    bounds.addShape(new Shape(s, ","));
-                }
-            } catch (IllegalArgumentException e) {
-                Main.warn(e.toString());
-            }
-        }
-        if(array.size() >= 11 && !array.get(10).isEmpty()) {
-            serverProjections = Arrays.asList(array.get(10).split(","));
-        }
-    }
-
     public ImageryInfo(ImageryInfo i) {
         this.name=i.name;
         this.url=i.url;
@@ -439,46 +392,15 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
             }
         }
 
-        if(url.contains("{") && url.contains("}")) {
-            if(serverProjections == null || serverProjections.isEmpty()) {
-                try {
-                    serverProjections = new ArrayList<String>();
-                    Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(url.toUpperCase());
-                    if(m.matches()) {
-                        for(String p : m.group(1).split(","))
-                            serverProjections.add(p);
-                    }
-                } catch(Exception e) {
+        if(serverProjections == null || serverProjections.isEmpty()) {
+            try {
+                serverProjections = new ArrayList<String>();
+                Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(url.toUpperCase());
+                if(m.matches()) {
+                    for(String p : m.group(1).split(","))
+                        serverProjections.add(p);
                 }
-            }
-        // FIXME: Remove else case in March 2012 - convert old style WMS/TMS
-        } else {
-            url = this.url;
-            if(imageryType == ImageryType.WMS) {
-                if(!url.endsWith("&") && !url.endsWith("?")) {
-                    url = url + (url.contains("?") ? "&" : "?");
-                }
-                try {
-                    Matcher m = Pattern.compile(".*SRS=([a-z0-9:]+).*", Pattern.CASE_INSENSITIVE).matcher(url.toUpperCase());
-                    if(m.matches()) {
-                        String newProj = m.group(1);
-                        if(serverProjections == null || serverProjections.isEmpty())
-                            serverProjections = Collections.singletonList(newProj);
-                        url = url.replaceAll("([sS][rR][sS]=)[a-zA-Z0-9:]+","SRS={proj("+newProj+")}");
-                    } else
-                        url += "SRS={proj}&";
-                } catch(Exception e) {
-                }
-                url += "WIDTH={width}&height={height}&BBOX={bbox}";
-            }
-            else if(imageryType == ImageryType.TMS) {
-                if(!url.endsWith("/"))
-                    url += "/";
-                url += "{zoom}/{x}/{y}.png";
-            }
-            if(!url.equals(this.url)) {
-                Main.warn("Changed Imagery URL '"+this.url+"' to '"+url+"'");
-                this.url = url;
+            } catch(Exception e) {
             }
         }
     }
