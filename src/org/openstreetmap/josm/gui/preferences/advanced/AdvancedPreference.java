@@ -82,6 +82,10 @@ public class AdvancedPreference implements PreferenceSetting {
             return value;
         }
 
+        public Setting getDefaultValue() {
+            return defaultValue;
+        }
+
         public void setValue(Setting value) {
             this.value = value;
             changed = true;
@@ -258,7 +262,17 @@ public class AdvancedPreference implements PreferenceSetting {
             if (!pe.isDefault()) {
                 label.setFont(label.getFont().deriveFont(Font.BOLD));
             }
-            //label.setToolTipText("..."); TODO
+            val = pe.getDefaultValue().getValue();
+            if(val != null)
+            {
+                if(pe.isDefault()) {
+                    label.setToolTipText(tr("Current value is default."));
+                } else {
+                    label.setToolTipText(tr("Default value is ''{0}''.", val));
+                }
+            } else {
+                label.setToolTipText(tr("Default value currently unknown (setting has not been used yet)."));
+            }
             return label;
         }
     }
