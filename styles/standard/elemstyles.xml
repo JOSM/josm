@@ -672,6 +672,12 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="ford" v="yes"/>
+		<linemod mode="over" width="2" realwidth="5" colour="water#0000ff" dashed="true"/>
+		<icon annotate="true" src="vehicle/ford.png"/>
+	</rule>
+
+	<rule>
 		<condition k="highway" v="bus_stop"/>
 		<icon annotate="true" src="transport/bus_small.png"/>
 	</rule>
