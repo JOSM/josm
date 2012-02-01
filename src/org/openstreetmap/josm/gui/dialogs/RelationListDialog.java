@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -336,10 +337,17 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
 
         public void actionPerformed(ActionEvent e) {
-            if (!isEnabled()) return;
-            for (int i: displaylist.getSelectedIndices()) {
-            	deleteRelation(model.getRelation(i));
+            if (!isEnabled()) {
+                return;
             }
+            List<Relation> toDelete = new LinkedList<Relation>();
+            for (int i : displaylist.getSelectedIndices()) {
+                toDelete.add(model.getRelation(i));
+            }
+            for (Relation r : toDelete) {
+                deleteRelation(r);
+            }
+            displaylist.clearSelection();
         }
 
         public void valueChanged(ListSelectionEvent e) {
