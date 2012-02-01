@@ -586,7 +586,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final PresetListPanel presets = new PresetListPanel();
 
     private final JLabel selectSth = new JLabel("<html><p>"
-            + tr("Please select the objects you want to change properties for.") + "</p></html>");
+            + tr("Select objects for which to change properties.") + "</p></html>");
 
     static class MemberInfo {
         List<RelationMember> role = new ArrayList<RelationMember>();
