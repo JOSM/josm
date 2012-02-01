@@ -175,6 +175,7 @@ public class LoadAndZoomHandler extends RequestHandler
                         new AutoScaleAction("selection").actionPerformed(null);
                     }
                     if (Main.map != null && Main.map.relationListDialog != null) {
+                        Main.map.relationListDialog.selectRelations(null); // unselect all relations to fix #7342
                         Main.map.relationListDialog.dataChanged(null);
                         Main.map.relationListDialog.selectRelations(Utils.filteredCollection(newSel, Relation.class));
                     }
