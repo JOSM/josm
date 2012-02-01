@@ -51,6 +51,7 @@ public class RemoteControlPreference implements PreferenceSetting
     private JCheckBox permissionChangeSelection = new JCheckBox(tr("Change the selection"));
     private JCheckBox permissionChangeViewport = new JCheckBox(tr("Change the viewport"));
     private JCheckBox permissionReadProtocolversion = new JCheckBox(tr("Read protocol version"));
+    private JCheckBox loadInNewLayer = new JCheckBox(tr("Download objects to new layer"));
     private JCheckBox alwaysAskUserConfirm = new JCheckBox(tr("Confirm all Remote Control actions manually"));
 
     public void addGui(final PreferenceTabbedPane gui) {
@@ -83,6 +84,8 @@ public class RemoteControlPreference implements PreferenceSetting
 
         wrapper.add(new JSeparator(), GBC.eop().fill(GBC.HORIZONTAL).insets(15, 5, 15, 5));
 
+        wrapper.add(loadInNewLayer, GBC.eol().fill(GBC.HORIZONTAL));
+
         wrapper.add(alwaysAskUserConfirm, GBC.eol().fill(GBC.HORIZONTAL));
 
         final JLabel portLabel = new JLabel("<html>"+tr("JOSM will always listen at port 8111 on localhost. " +
@@ -100,6 +103,7 @@ public class RemoteControlPreference implements PreferenceSetting
         permissionChangeViewport.setSelected(Main.pref.getBoolean(LoadAndZoomHandler.changeViewportPermissionKey, LoadAndZoomHandler.changeViewportPermissionDefault));
         permissionCreateObjects.setSelected(Main.pref.getBoolean(AddNodeHandler.permissionKey, AddNodeHandler.permissionDefault));
         permissionReadProtocolversion.setSelected(Main.pref.getBoolean(VersionHandler.permissionKey, VersionHandler.permissionDefault));
+        loadInNewLayer.setSelected(Main.pref.getBoolean(RequestHandler.loadInNewLayerKey, RequestHandler.loadInNewLayerDefault));
         alwaysAskUserConfirm.setSelected(Main.pref.getBoolean(RequestHandler.globalConfirmationKey, RequestHandler.globalConfirmationDefault));
 
         ActionListener remoteControlEnabled = new ActionListener() {
@@ -127,6 +131,7 @@ public class RemoteControlPreference implements PreferenceSetting
             Main.pref.put(LoadAndZoomHandler.changeViewportPermissionKey, permissionChangeViewport.isSelected());
             Main.pref.put(AddNodeHandler.permissionKey, permissionCreateObjects.isSelected());
             Main.pref.put(VersionHandler.permissionKey, permissionReadProtocolversion.isSelected());
+            Main.pref.put(RequestHandler.loadInNewLayerKey, loadInNewLayer.isSelected());
             Main.pref.put(RequestHandler.globalConfirmationKey, alwaysAskUserConfirm.isSelected());
         }
         return changed;

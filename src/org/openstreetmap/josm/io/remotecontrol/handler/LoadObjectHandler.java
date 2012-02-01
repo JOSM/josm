@@ -32,7 +32,7 @@ public class LoadObjectHandler extends RequestHandler {
         for (String i : args.get("objects").split(",\\s*")) {
             ps.add(SimplePrimitiveId.fromString(i));
         }
-        boolean newLayer = Boolean.parseBoolean(args.get("new_layer"));
+        boolean newLayer = isLoadInNewLayer();
         boolean relationMembers = Boolean.parseBoolean(args.get("relation_members"));
         DownloadPrimitiveAction.processItems(newLayer, ps, true, relationMembers);
     }

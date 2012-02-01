@@ -23,6 +23,8 @@ public abstract class RequestHandler {
     
     public static final String globalConfirmationKey = "remotecontrol.always-confirm";
     public static final boolean globalConfirmationDefault = false;
+    public static final String loadInNewLayerKey = "remotecontrol.new-layer";
+    public static final boolean loadInNewLayerDefault = false;
 
     /** The GET request arguments */
     protected HashMap<String,String> args;
@@ -207,6 +209,12 @@ public abstract class RequestHandler {
 
     public String getContentType() {
         return contentType;
+    }
+
+    protected boolean isLoadInNewLayer() {
+        return args.get("new_layer") != null && !args.get("new_layer").isEmpty()
+                ? Boolean.parseBoolean(args.get("new_layer"))
+                : Main.pref.getBoolean(loadInNewLayerKey, loadInNewLayerDefault);
     }
 
     public static class RequestHandlerException extends Exception {
