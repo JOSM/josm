@@ -61,7 +61,8 @@ public class ExtensionFileFilter extends FileFilter {
                 "org.openstreetmap.josm.io.GpxExporter",
                 "org.openstreetmap.josm.io.OsmExporter",
                 "org.openstreetmap.josm.io.OsmGzipExporter",
-                "org.openstreetmap.josm.io.OsmBzip2Exporter"
+                "org.openstreetmap.josm.io.OsmBzip2Exporter",
+                "org.openstreetmap.josm.io.GeoJSONExporter",
         };
 
         for (String classname : exporterNames) {
