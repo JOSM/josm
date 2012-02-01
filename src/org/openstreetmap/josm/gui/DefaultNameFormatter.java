@@ -81,9 +81,11 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
     }
 
-    /** the default list of tags which are used as naming tags in relations */
+    /** The default list of tags which are used as naming tags in relations.
+     * A ? prefix indicates a boolean value, for which the key (instead of the value) is used.
+     */
     static public final String[] DEFAULT_NAMING_TAGS_FOR_RELATIONS = {"name", "ref", "restriction", "landuse", "natural",
-        "public_transport", ":LocationCode", "note", "building"};
+        "public_transport", ":LocationCode", "note", "?building"};
 
     /** the current list of tags used as naming tags in relations */
     static private List<String> namingTagsForRelations =  null;
@@ -472,9 +474,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                     return relation.get(m);
             }
             return null;
-        } else if (OsmUtils.isTrue(relation.get(nameTag))) {
-            return tr(nameTag);
-        } else if (OsmUtils.isFalse(relation.get(nameTag))) {
+        } else if (nameTag.startsWith("?") && OsmUtils.isTrue(relation.get(nameTag.substring(1)))) {
+            return tr(nameTag.substring(1));
+        } else if (nameTag.startsWith("?") && OsmUtils.isFalse(relation.get(nameTag.substring(1)))) {
             return null;
         } else {
             return trc_lazy(nameTag, I18n.escape(relation.get(nameTag)));
