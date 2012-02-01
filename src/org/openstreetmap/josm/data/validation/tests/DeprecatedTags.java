@@ -35,7 +35,6 @@ public class DeprecatedTags extends Test {
                 add("fence_type", "wood"));
         checks.add(new DeprecationCheck(2103).
                 testAndRemove("highway", "ford").
-                add("highway", "road").
                 add("ford", "yes"));
         // from http://wiki.openstreetmap.org/wiki/Deprecated_features
         checks.add(new DeprecationCheck(2104).
