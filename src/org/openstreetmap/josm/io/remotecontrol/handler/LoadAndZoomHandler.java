@@ -67,7 +67,7 @@ public class LoadAndZoomHandler extends RequestHandler
             maxlat = Double.parseDouble(args.get("top"));
             minlon = Double.parseDouble(args.get("left"));
             maxlon = Double.parseDouble(args.get("right"));
-            boolean newLayer = Boolean.parseBoolean(args.get("new_layer"));
+            boolean newLayer = isLoadInNewLayer();
 
             if(command.equals(myCommand))
             {
