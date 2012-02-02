@@ -24,7 +24,9 @@ public final class ZoomInAction extends JosmAction {
         );
         putValue("help", ht("/Action/ZoomIn"));
         // make numpad + behave like +
-        Main.registerActionShortcut(this, KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0));
+        Main.registerActionShortcut(this,
+            Shortcut.registerShortcut("view:zoominkeypad", tr("View: {0}", tr("Zoom In (Keypad)")),
+                KeyEvent.VK_ADD, Shortcut.GROUP_DIRECT));
     }
 
     public void actionPerformed(ActionEvent e) {
