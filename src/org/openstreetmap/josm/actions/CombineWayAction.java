@@ -107,18 +107,6 @@ public class CombineWayAction extends JosmAction {
         return ret;
     }
 
-    @Deprecated
-    public static Way combineWays(Collection<Way> ways) {
-        Pair<Way, Command> combineResult;
-        try {
-            combineResult = combineWaysWorker(ways);
-        } catch (UserCancelException ex) {
-            return null;
-        }
-        Main.main.undoRedo.add(combineResult.b);
-        return combineResult.a;
-    }
-
     /**
      * @param ways
      * @return null if ways cannot be combined. Otherwise returns the combined
