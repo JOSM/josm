@@ -476,12 +476,6 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         return (((flags & FLAG_DISABLED) != 0) && ((flags & FLAG_HIDE_IF_DISABLED) != 0));
     }
 
-    @Deprecated
-    public boolean isFiltered() {
-        return isDisabledAndHidden();
-    }
-
-
     public boolean isSelectable() {
         return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_DISABLED + FLAG_HIDE_IF_DISABLED)) == 0;
     }
