@@ -176,30 +176,13 @@ public class FilterTableModel extends AbstractTableModel {
     }
 
     private void loadPrefs() {
-        if (!loadPrefsImpl()) {
-            loadPrefsOld();
-            savePrefs();
-        }
-    }
-
-    private boolean loadPrefsImpl() {
         List<FilterPreferenceEntry> entries = Main.pref.getListOfStructs("filters.entries", null, FilterPreferenceEntry.class);
-        if (entries == null)
-            return false;
-        for (FilterPreferenceEntry e : entries) {
-            filters.add(new Filter(e));
+        if (entries != null) {
+            for (FilterPreferenceEntry e : entries) {
+                filters.add(new Filter(e));
+            }
+            updateFilters();
         }
-        updateFilters();
-        return true;
-    }
-
-    @Deprecated
-    private void loadPrefsOld() {
-        Map<String, String> prefs = Main.pref.getAllPrefix("filters.filter");
-        for (String value : prefs.values()) {
-            filters.add(new Filter(value));
-        }
-        updateFilters();
     }
 
     private void savePrefs() {
