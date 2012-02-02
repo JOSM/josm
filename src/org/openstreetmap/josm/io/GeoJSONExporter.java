@@ -23,7 +23,7 @@ public class GeoJSONExporter extends FileExporter {
             out.write(json);
             out.close();
         } else {
-            throw new IllegalArgumentException(tr("Layer ''{}'' not supported", layer.getClass().toString()));
+            throw new IllegalArgumentException(tr("Layer ''{0}'' not supported", layer.getClass().toString()));
         }
     }
 }
