@@ -46,7 +46,6 @@ import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.ShowHideButtonListener;
-import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -149,7 +148,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
         setBorder(BorderFactory.createEtchedBorder());
 
-        RedirectInputMap.redirectToMainContentPane(this);
+        Main.redirectToMainContentPane(this);
 
         windowMenuItem = MainMenu.addWithCheckbox(Main.main.menu.windowMenu,
                 (JosmAction) getToggleAction(),

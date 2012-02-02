@@ -75,6 +75,7 @@ import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
+import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -377,11 +378,9 @@ abstract public class Main {
 
     protected static final JPanel contentPanePrivate = new JPanel(new BorderLayout());
 
-    /**
-     * @deprecated If you just need to register shortcut for action, use registerActionShortcut instead of accessing InputMap directly
-     */
-    @Deprecated
-    public static final JPanel contentPane = contentPanePrivate;
+    public static void redirectToMainContentPane(JComponent source) {
+        RedirectInputMap.redirect(source, contentPanePrivate);
+    }
 
     public static void registerActionShortcut(Action action, Shortcut shortcut) {
         registerActionShortcut(action, shortcut.getKeyStroke());
@@ -842,12 +841,10 @@ abstract public class Main {
     /* ----------------------------------------------------------------------------------------- */
     /**
      * The projection method used.
-     * @deprecated use {@link #getProjection()} and {@link #setProjection(Projection)} instead.
-     * For the time being still publicly available, but avoid/migrate write access to it. Use
-     * {@link #setProjection(Projection)} in order to trigger a projection change event.
+     * use {@link #getProjection()} and {@link #setProjection(Projection)} for access.
+     * Use {@link #setProjection(Projection)} in order to trigger a projection change event.
      */
-    @Deprecated
-    public static Projection proj;
+    private static Projection proj;
 
     /**
      * Replies the current projection.

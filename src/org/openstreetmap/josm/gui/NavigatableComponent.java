@@ -665,11 +665,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return getNearestNode(p, predicate, true);
     }
 
-    @Deprecated
-    public final Node getNearestNode(Point p) {
-        return getNearestNode(p, OsmPrimitive.isUsablePredicate);
-    }
-
     /**
      * The *result* does not depend on the current map selection state,
      * neither does the result *order*.
@@ -886,11 +881,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return (nearestWaySeg == null) ? null : nearestWaySeg.way;
     }
 
-    @Deprecated
-    public final Way getNearestWay(Point p) {
-        return getNearestWay(p, OsmPrimitive.isUsablePredicate);
-    }
-
     /**
      * The *result* does not depend on the current map selection state,
      * neither does the result *order*.
@@ -1024,16 +1014,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
 
         return osm;
-    }
-
-    @Deprecated
-    public final OsmPrimitive getNearest(Point p, Predicate<OsmPrimitive> predicate) {
-        return getNearestNodeOrWay(p, predicate, false);
-    }
-
-    @Deprecated
-    public final Collection<OsmPrimitive> getNearestCollection(Point p, Predicate<OsmPrimitive> predicate) {
-        return asColl(getNearest(p, predicate));
     }
 
     /**

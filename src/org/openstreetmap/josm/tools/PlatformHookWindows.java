@@ -14,38 +14,10 @@ import org.openstreetmap.josm.Main;
   * see PlatformHook.java
   */
 public class PlatformHookWindows extends PlatformHookUnixoid implements PlatformHook {
-    public void preStartupHook(){
-    }
-    public void startupHook() {
-    }
     public void openUrl(String url) throws IOException {
         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
     }
-    public void initShortcutGroups() {
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_NONE),    Integer.toString(-1));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_HOTKEY),  Integer.toString(KeyEvent.CTRL_DOWN_MASK));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_MENU),    Integer.toString(KeyEvent.CTRL_DOWN_MASK));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_EDIT),    Integer.toString(0));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_LAYER),   Integer.toString(KeyEvent.ALT_DOWN_MASK));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_DIRECT),  Integer.toString(0));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_MNEMONIC),Integer.toString(KeyEvent.ALT_DOWN_MASK));
 
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT1+Shortcut.GROUP_NONE),       Integer.toString(-1));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY),     Integer.toString(KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT1+Shortcut.GROUP_MENU),       Integer.toString(KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT1+Shortcut.GROUP_EDIT),       Integer.toString(KeyEvent.SHIFT_DOWN_MASK));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT1+Shortcut.GROUP_LAYER),      Integer.toString(KeyEvent.ALT_DOWN_MASK  | KeyEvent.SHIFT_DOWN_MASK));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT1+Shortcut.GROUP_DIRECT),     Integer.toString(KeyEvent.SHIFT_DOWN_MASK));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT1+Shortcut.GROUP_MNEMONIC),   Integer.toString(KeyEvent.ALT_DOWN_MASK));
-
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT2+Shortcut.GROUP_NONE),       Integer.toString(-1));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT2+Shortcut.GROUP_HOTKEY),     Integer.toString(KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT2+Shortcut.GROUP_MENU),       Integer.toString(KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT2+Shortcut.GROUP_EDIT),       Integer.toString(KeyEvent.ALT_DOWN_MASK  | KeyEvent.SHIFT_DOWN_MASK));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT2+Shortcut.GROUP_LAYER),      Integer.toString(KeyEvent.ALT_DOWN_MASK));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT2+Shortcut.GROUP_DIRECT),     Integer.toString(KeyEvent.CTRL_DOWN_MASK));
-        Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT2+Shortcut.GROUP_MNEMONIC),   Integer.toString(KeyEvent.ALT_DOWN_MASK));
-    }
     public void initSystemShortcuts() {
         // This list if far from complete!
         Shortcut.registerSystemShortcut("system:exit", tr("unused"), KeyEvent.VK_F4, KeyEvent.ALT_DOWN_MASK).setAutomatic(); // items with automatic shortcuts will not be added to the menu bar at all
@@ -60,13 +32,6 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
     public String getDefaultStyle()
     {
         return "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
-    }
-
-    @Override
-    public boolean canFullscreen()
-    {
-        return GraphicsEnvironment.getLocalGraphicsEnvironment()
-        .getDefaultScreenDevice().isFullScreenSupported();
     }
 
     @Override
