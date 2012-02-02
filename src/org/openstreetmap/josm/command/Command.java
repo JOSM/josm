@@ -162,23 +162,6 @@ abstract public class Command extends PseudoCommand {
     }
 
     /**
-     * Provide a description that can be presented in a list or tree view.
-     * This override will be removed when
-     * <code>description()</code> is removed.
-     */
-    @Override public Object getDescription() {
-        return ((DefaultMutableTreeNode) description()).getUserObject();
-    }
-
-    /**
-     * @deprecated use getDescription() and getChildren() instead
-     */
-    @Deprecated
-    public MutableTreeNode description() {
-        return null;
-    }
-
-    /**
      * Check whether user is about to operate on data outside of the download area.
      * Request confirmation if he is.
      *
