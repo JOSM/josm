@@ -409,10 +409,8 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
      * A list of listeners to selection changed events. The list is static, as listeners register
      * themselves for any dataset selection changes that occur, regardless of the current active
      * dataset. (However, the selection does only change in the active layer)
-     * @deprecated Use addSelectionListener/removeSelectionListener instead
      */
-    @Deprecated
-    public static final Collection<SelectionChangedListener> selListeners = new CopyOnWriteArrayList<SelectionChangedListener>();
+    private static final Collection<SelectionChangedListener> selListeners = new CopyOnWriteArrayList<SelectionChangedListener>();
 
     public static void addSelectionListener(SelectionChangedListener listener) {
         ((CopyOnWriteArrayList<SelectionChangedListener>)selListeners).addIfAbsent(listener);

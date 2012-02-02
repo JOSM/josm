@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * This interface allows platfrom (operating system) dependent code
@@ -64,7 +65,7 @@ public interface PlatformHook {
       * data, not the internal structures! Also, do not try
       * to register any shortcuts from within.
       */
-    public void initShortcutGroups();
+    public HashMap<Integer, Integer> initShortcutGroups(boolean load);
 
     /**
       * The initSystemShortcuts hook will be called by the

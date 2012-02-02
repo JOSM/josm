@@ -19,7 +19,9 @@ public final class ZoomOutAction extends JosmAction {
                 Shortcut.registerShortcut("view:zoomout", tr("View: {0}", tr("Zoom Out")), KeyEvent.VK_MINUS, Shortcut.GROUP_DIRECT), true);
         putValue("help", ht("/Action/ZoomOut"));
         // make numpad - behave like -
-        Main.registerActionShortcut(this, KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT,0));
+        Main.registerActionShortcut(this,
+            Shortcut.registerShortcut("view:zoomoutkeypad", tr("View: {0}", tr("Zoom Out (Keypad)")),
+                KeyEvent.VK_SUBTRACT, Shortcut.GROUP_DIRECT));
     }
 
     public void actionPerformed(ActionEvent e) {

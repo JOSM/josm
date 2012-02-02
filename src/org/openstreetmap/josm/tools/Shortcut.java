@@ -5,8 +5,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,9 +35,7 @@ import org.openstreetmap.josm.Main;
  *
  */
 public class Shortcut {
-    //  public static final int SHIFT = KeyEvent.SHIFT_DOWN_MASK;
-    //  public static final int CTRL = KeyEvent.CTRL_DOWN_MASK;
-    //  public static final int SHIFT_CTRL = KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK;
+    @Deprecated
     public static final int SHIFT_DEFAULT = 1;
     private String shortText;        // the unique ID of the shortcut
     private String longText;         // a human readable description that will be shown in the preferences
@@ -154,25 +155,33 @@ public class Shortcut {
 
     private boolean isSame(int isKey, int isModifier) {
         // -1 --- an unassigned shortcut is different from any other shortcut
-        return( isKey == assignedKey && isModifier == assignedModifier && assignedModifier != groups.get(GROUP_NONE));
+        return( isKey == assignedKey && isModifier == assignedModifier && assignedModifier != getGroupModifier(GROUP_NONE));
     }
 
     // create a shortcut object from an string as saved in the preferences
     private Shortcut(String prefString) {
-        String[] s = prefString.split(";");
-        this.shortText = s[0];
-        this.longText = s[1];
-        this.requestedKey = Integer.parseInt(s[2]);
-        this.requestedGroup = Integer.parseInt(s[3]);
-        this.assignedKey = Integer.parseInt(s[4]);
-        this.assignedModifier = Integer.parseInt(s[5]);
-        this.assignedDefault = Boolean.parseBoolean(s[6]);
-        this.assignedUser = Boolean.parseBoolean(s[7]);
+        ArrayList<String> s = (new ArrayList<String>(Main.pref.getCollection(prefString)));
+        this.shortText = prefString.substring(15);
+        this.longText = s.get(0);
+        this.requestedKey = Integer.parseInt(s.get(1));
+        this.requestedGroup = Integer.parseInt(s.get(2));
+        this.assignedKey = Integer.parseInt(s.get(3));
+        this.assignedModifier = Integer.parseInt(s.get(4));
+        this.assignedDefault = Boolean.parseBoolean(s.get(5));
+        this.assignedUser = Boolean.parseBoolean(s.get(6));
+    }
+
+    private void saveDefault() {
+        Main.pref.getCollection("shortcut.entry."+shortText, Arrays.asList(new String[]{longText,
+        String.valueOf(requestedKey), String.valueOf(requestedGroup), String.valueOf(assignedKey),
+        String.valueOf(assignedModifier), String.valueOf(true), String.valueOf(false)}));
     }
 
     // get a string that can be put into the preferences
-    private String asPrefString() {
-        return shortText + ";" + longText + ";" + requestedKey + ";" + requestedGroup + ";" + assignedKey + ";" + assignedModifier + ";" + assignedDefault + ";" + assignedUser;
+    private boolean save() {
+        return Main.pref.putCollection("shortcut.entry."+shortText, Arrays.asList(new String[]{longText,
+        String.valueOf(requestedKey), String.valueOf(requestedGroup), String.valueOf(assignedKey),
+        String.valueOf(assignedModifier), String.valueOf(assignedDefault), String.valueOf(assignedUser)}));
     }
 
     private boolean isSame(Shortcut other) {
@@ -183,7 +192,7 @@ public class Shortcut {
      * use this to set a menu's mnemonic
      */
     public void setMnemonic(JMenu menu) {
-        if (requestedGroup == GROUP_MNEMONIC && assignedModifier == groups.get(requestedGroup + GROUPS_DEFAULT) && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
+        if (requestedGroup == GROUP_MNEMONIC && assignedModifier == getGroupModifier(requestedGroup + GROUPS_DEFAULT) && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
             menu.setMnemonic(KeyEvent.getKeyText(assignedKey).charAt(0)); //getKeyStroke().getKeyChar() seems not to work here
         }
     }
@@ -191,7 +200,7 @@ public class Shortcut {
      * use this to set a buttons's mnemonic
      */
     public void setMnemonic(AbstractButton button) {
-        if (requestedGroup == GROUP_MNEMONIC && assignedModifier == groups.get(requestedGroup + GROUPS_DEFAULT) && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
+        if (requestedGroup == GROUP_MNEMONIC && assignedModifier == getGroupModifier(requestedGroup + GROUPS_DEFAULT) && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
             button.setMnemonic(KeyEvent.getKeyText(assignedKey).charAt(0)); //getKeyStroke().getKeyChar() seems not to work here
         }
     }
@@ -220,11 +229,11 @@ public class Shortcut {
     private static Map<String, Shortcut> shortcuts = new LinkedHashMap<String, Shortcut>();
 
     // and here our modifier groups
-    private static Map<Integer, Integer> groups = new HashMap<Integer, Integer>();
+    private static Map<Integer, Integer> groups;
 
     // check if something collides with an existing shortcut
     private static Shortcut findShortcut(int requestedKey, int modifier) {
-        if (modifier == groups.get(GROUP_NONE))
+        if (modifier == getGroupModifier(GROUP_NONE))
             return null;
         for (Shortcut sc : shortcuts.values()) {
             if (sc.isSame(requestedKey, modifier))
@@ -249,14 +258,14 @@ public class Shortcut {
 
     // try to find an unused shortcut
     private static Shortcut findRandomShortcut(String shortText, String longText, int requestedKey, int requestedGroup) {
-        int[] mods = {groups.get(requestedGroup + GROUPS_DEFAULT), groups.get(requestedGroup + GROUPS_ALT1), groups.get(requestedGroup + GROUPS_ALT2)};
+        int[] mods = {getGroupModifier(requestedGroup + GROUPS_DEFAULT), getGroupModifier(requestedGroup + GROUPS_ALT1), getGroupModifier(requestedGroup + GROUPS_ALT2)};
         for (int m : mods) {
             for (int k = KeyEvent.VK_A; k < KeyEvent.VK_Z; k++) { // we'll limit ourself to 100% safe keys
                 if ( findShortcut(k, m) == null )
                     return new Shortcut(shortText, longText, requestedKey, requestedGroup, k, m, false, false);
             }
         }
-        return new Shortcut(shortText, longText, requestedKey, requestedGroup, requestedKey, groups.get(GROUP_NONE), false, false);
+        return new Shortcut(shortText, longText, requestedKey, requestedGroup, requestedKey, getGroupModifier(GROUP_NONE), false, false);
     }
 
     // use these constants to request shortcuts
@@ -299,68 +308,48 @@ public class Shortcut {
     private static void doInit() {
         if (initdone) return;
         initdone = true;
-        // if we have no modifier groups in the config, we have to create them
-        if (Main.pref.get("shortcut.groups.configured", null) == null) {
-            Main.platform.initShortcutGroups();
-            Main.pref.put("shortcut.groups.configured", true);
-        }
-        // pull in the groups
-        for (int i = GROUP_NONE; i < GROUP__MAX+GROUPS_ALT2*2; i++) { // fill more groups, so registering with e.g. ALT2+MNEMONIC won't NPE
-            groups.put(i, Main.pref.getInteger("shortcut.groups."+i, -1));
-        }
+        groups = Main.platform.initShortcutGroups(true);
         // (1) System reserved shortcuts
         Main.platform.initSystemShortcuts();
         // (2) User defined shortcuts
-        int i = 0;
-        String p = Main.pref.get("shortcut.shortcut."+i, null);
-        while (p != null) {
-            Shortcut sc = new Shortcut(p);
+        LinkedList<Shortcut> shortcuts = new LinkedList<Shortcut>();
+        for(String s : Main.pref.getAllPrefixKeys("shortcut.entry.")) {
+            shortcuts.add(new Shortcut(s));
+        }
+        for(Shortcut sc : shortcuts) {
             if (sc.getAssignedUser()) {
                 registerShortcut(sc);
             }
-            i++;
-            p = Main.pref.get("shortcut.shortcut."+i, null);
         }
         // Shortcuts at their default values
-        i = 0;
-        p = Main.pref.get("shortcut.shortcut."+i, null);
-        while (p != null) {
-            Shortcut sc = new Shortcut(p);
+        for(Shortcut sc : shortcuts) {
             if (!sc.getAssignedUser() && sc.getAssignedDefault()) {
                 registerShortcut(sc);
             }
-            i++;
-            p = Main.pref.get("shortcut.shortcut."+i, null);
         }
         // Shortcuts that were automatically moved
-        i = 0;
-        p = Main.pref.get("shortcut.shortcut."+i, null);
-        while (p != null) {
-            Shortcut sc = new Shortcut(p);
+        for(Shortcut sc : shortcuts) {
             if (!sc.getAssignedUser() && !sc.getAssignedDefault()) {
                 registerShortcut(sc);
             }
-            i++;
-            p = Main.pref.get("shortcut.shortcut."+i, null);
         }
+    }
+
+    private static int getGroupModifier(int group) {
+        Integer m = groups.get(group);
+        if(m == null)
+            m = -1;
+        return m;
     }
 
     // shutdown handling
     public static boolean savePrefs() {
-        //      we save this directly from the preferences pane, so don't overwrite these values here
-        //      for (int i = GROUP_NONE; i < GROUP__MAX+GROUPS_ALT2; i++) {
-        //      Main.pref.put("shortcut.groups."+i, Groups.get(i).toString());
-        //      }
         boolean changed = false;
-        int i = 0;
         for (Shortcut sc : shortcuts.values()) {
-            //          TODO: Remove sc.getAssignedUser() when we fixed all internal conflicts
             if (!sc.getAutomatic() && !sc.getReset() && sc.getAssignedUser()) {
-                changed = changed | Main.pref.put("shortcut.shortcut."+i, sc.asPrefString());
-                i++;
+                changed = changed | sc.save();
             }
         }
-        changed = changed | Main.pref.put("shortcut.shortcut."+i, "");
         return changed;
     }
 
@@ -412,6 +401,7 @@ public class Shortcut {
      * constants defined above.
      * @param modifier to register a {@code ctrl+shift} command, use {@see #SHIFT_DEFAULT}.
      */
+    @Deprecated
     public static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup, int modifier) {
         return registerShortcut(shortText, longText, requestedKey, requestedGroup, modifier, null);
     }
@@ -449,7 +439,7 @@ public class Shortcut {
             sc.setLongText(longText); // or set by the platformHook, in this case the original longText doesn't match the real action
             return sc;
         }
-        Integer defaultModifier = groups.get(requestedGroup + GROUPS_DEFAULT);
+        Integer defaultModifier = getGroupModifier(requestedGroup + GROUPS_DEFAULT);
         if(modifier != null) {
             if(modifier == SHIFT_DEFAULT) {
                 defaultModifier |= KeyEvent.SHIFT_DOWN_MASK;
@@ -458,21 +448,21 @@ public class Shortcut {
             }
         }
         else if (defaultModifier == null) { // garbage in, no shortcut out
-            defaultModifier = groups.get(GROUP_NONE + GROUPS_DEFAULT);
+            defaultModifier = getGroupModifier(GROUP_NONE + GROUPS_DEFAULT);
         }
         Shortcut conflictsWith = null;
         Shortcut potentialShortcut = findShortcut(requestedKey, defaultModifier);
         if (potentialShortcut != null) { // 3 stage conflict handling
             conflictsWith = potentialShortcut;
-            defaultModifier = groups.get(requestedGroup + GROUPS_ALT1);
+            defaultModifier = getGroupModifier(requestedGroup + GROUPS_ALT1);
             if (defaultModifier == null) { // garbage in, no shortcurt out
-                defaultModifier = groups.get(GROUP_NONE + GROUPS_DEFAULT);
+                defaultModifier = getGroupModifier(GROUP_NONE + GROUPS_DEFAULT);
             }
             potentialShortcut = findShortcut(requestedKey, defaultModifier);
             if (potentialShortcut != null) {
-                defaultModifier = groups.get(requestedGroup + GROUPS_ALT2);
+                defaultModifier = getGroupModifier(requestedGroup + GROUPS_ALT2);
                 if (defaultModifier == null) { // garbage in, no shortcurt out
-                    defaultModifier = groups.get(GROUP_NONE + GROUPS_DEFAULT);
+                    defaultModifier = getGroupModifier(GROUP_NONE + GROUPS_DEFAULT);
                 }
                 potentialShortcut = findShortcut(requestedKey, defaultModifier);
                 if (potentialShortcut != null) { // if all 3 modifiers for a group are used, we give up
@@ -492,6 +482,7 @@ public class Shortcut {
             potentialShortcut = new Shortcut(shortText, longText, requestedKey, requestedGroup, requestedKey, defaultModifier, true, false);
         }
 
+        potentialShortcut.saveDefault();
         shortcuts.put(shortText, potentialShortcut);
         return potentialShortcut;
     }

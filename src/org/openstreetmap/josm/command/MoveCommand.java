@@ -134,14 +134,6 @@ public class MoveCommand extends Command {
         return new JLabel(trn("Move {0} node", "Move {0} nodes", nodes.size(), nodes.size()), ImageProvider.get("data", "node"), JLabel.HORIZONTAL);
     }
 
-    /**
-     * @Deprecated use getParticipatingPrimitives() instead
-     */
-    @Deprecated
-    public Collection<Node> getMovedNodes() {
-        return nodes;
-    }
-
     @Override
     public Collection<Node> getParticipatingPrimitives() {
         return nodes;

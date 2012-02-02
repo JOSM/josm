@@ -375,6 +375,16 @@ public class Preferences {
         return all;
     }
 
+    synchronized public List<String> getAllPrefixKeys(final String prefix) {
+        final List<String> all = new LinkedList<String>();
+        for (final Entry<String,String> e : properties.entrySet()) {
+            if (e.getKey().startsWith(prefix)) {
+                all.add(e.getKey());
+            }
+        }
+        return all;
+    }
+
     synchronized private Map<String, String> getAllPrefixDefault(final String prefix) {
         final Map<String,String> all = new TreeMap<String,String>();
         for (final Entry<String,String> e : defaults.entrySet()) {

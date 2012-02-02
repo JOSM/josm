@@ -28,32 +28,6 @@ public class Filter extends SearchSetting {
         super(text, mode, caseSensitive, regexSearch, allElements);
     }
 
-    @Deprecated
-    public Filter(String prefText) {
-        super("", SearchMode.add, false, false, false);
-        String[] prfs = prefText.split(";");
-        if(prfs.length != 10 && !prfs[0].equals(version))
-            throw new Error("Incompatible filter preferences");
-        text = prfs[1];
-        if(prfs[2].equals("replace")) {
-            mode = SearchMode.replace;
-        }
-        if(prfs[2].equals("add")) {
-            mode = SearchMode.add;
-        }
-        if(prfs[2].equals("remove")) {
-            mode = SearchMode.remove;
-        }
-        if(prfs[2].equals("in_selection")) {
-            mode = SearchMode.in_selection;
-        }
-        caseSensitive = Boolean.parseBoolean(prfs[3]);
-        regexSearch = Boolean.parseBoolean(prfs[4]);
-        enable = Boolean.parseBoolean(prfs[6]);
-        hiding = Boolean.parseBoolean(prfs[7]);
-        inverted = Boolean.parseBoolean(prfs[8]);
-    }
-
     public Filter(FilterPreferenceEntry e) {
         super(e.text, SearchMode.add, false, false, false);
         if (equal(e.mode, "replace")) {
