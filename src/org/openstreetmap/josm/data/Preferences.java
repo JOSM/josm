@@ -94,7 +94,7 @@ public class Preferences {
     protected final SortedMap<String, String> defaults = new TreeMap<String, String>();
     protected final SortedMap<String, String> colornames = new TreeMap<String, String>();
 
-    /** Mapping for list settings. Must not conatin null values */
+    /** Mapping for list settings. Must not contain null values */
     protected final SortedMap<String, List<String>> collectionProperties = new TreeMap<String, List<String>>();
     /** Defaults, can contain null values */
     protected final SortedMap<String, List<String>> collectionDefaults = new TreeMap<String, List<String>>();
@@ -375,11 +375,11 @@ public class Preferences {
         return all;
     }
 
-    synchronized public List<String> getAllPrefixKeys(final String prefix) {
+    synchronized public List<String> getAllPrefixCollectionKeys(final String prefix) {
         final List<String> all = new LinkedList<String>();
-        for (final Entry<String,String> e : properties.entrySet()) {
-            if (e.getKey().startsWith(prefix)) {
-                all.add(e.getKey());
+        for (final String e : collectionProperties.keySet()) {
+            if (e.startsWith(prefix)) {
+                all.add(e);
             }
         }
         return all;
