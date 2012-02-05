@@ -76,7 +76,7 @@ public class ChangesetQuery {
     public ChangesetQuery forUser(String username) {
         CheckParameterUtil.ensureParameterNotNull(username, "username");
         this.userName = username;
-        this.uid = 0;
+        this.uid = null;
         return this;
     }
 
