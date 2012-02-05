@@ -638,9 +638,8 @@ abstract public class Main {
     private DownloadParamType paramType(String s) {
         if(s.startsWith("http:")) return DownloadParamType.httpUrl;
         if(s.startsWith("file:")) return DownloadParamType.fileUrl;
-        final StringTokenizer st = new StringTokenizer(s, ",");
-        // we assume a string with exactly 3 commas is a bounds parameter
-        if (st.countTokens() == 4) return DownloadParamType.bounds;
+        String coorPattern = "\\s*[0-9]+(\\.[0-9]+)?\\s*";
+        if(s.matches(coorPattern+"(,"+coorPattern+"){3}")) return DownloadParamType.bounds;
         // everything else must be a file name
         return DownloadParamType.fileName;
     }
