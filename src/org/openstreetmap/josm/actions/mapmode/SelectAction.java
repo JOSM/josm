@@ -160,7 +160,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                 mapFrame,
                 ImageProvider.getCursor("normal", "selection"));
         mv = mapFrame.mapView;
-        putValue("help", ht("/Action/Move/Move"));
+        putValue("help", ht("/Action/Select"));
         selectionManager = new SelectionManager(this, false, mv);
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay", 200);
         initialMoveThreshold = Main.pref.getInteger("edit.initial-move-threshold", 5);
