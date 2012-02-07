@@ -98,7 +98,15 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
                 if (progressMonitor instanceof PleaseWaitProgressMonitor) {
                     ((PleaseWaitProgressMonitor)progressMonitor).close();
                 }
-                afterFinish();
+                if (EventQueue.isDispatchThread()) {
+                    afterFinish();
+                } else {
+                    EventQueue.invokeAndWait(new Runnable() {
+                        public void run() {
+                            afterFinish();
+                        }
+                    });
+                }
             }
         } catch (final Exception e) {
             if (!ignoreException) {

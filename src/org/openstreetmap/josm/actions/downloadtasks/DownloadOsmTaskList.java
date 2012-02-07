@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UpdateSelectionAction;
@@ -228,7 +229,7 @@ public class DownloadOsmTaskList {
                 errors.addAll(dt.getErrorObjects());
             }
             if (!errors.isEmpty()) {
-                StringBuffer sb = new StringBuffer();
+                final StringBuilder sb = new StringBuilder();
                 for (Object error : errors) {
                     if (error instanceof String) {
                         sb.append("<li>").append(error).append("</li>").append("<br>");
@@ -240,9 +241,15 @@ public class DownloadOsmTaskList {
                 sb.insert(0, "<ul>");
                 sb.append("</ul>");
 
-                JOptionPane.showMessageDialog(Main.parent, "<html>"
-                        + tr("The following errors occurred during mass download: {0}", sb.toString()) + "</html>",
-                        tr("Errors during download"), JOptionPane.ERROR_MESSAGE);
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        JOptionPane.showMessageDialog(Main.parent, "<html>"
+                                + tr("The following errors occurred during mass download: {0}", sb.toString()) + "</html>",
+                                tr("Errors during download"), JOptionPane.ERROR_MESSAGE);
+                    }
+                });
+
                 return;
             }
 
