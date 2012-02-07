@@ -30,20 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -471,24 +458,27 @@ public class GenericRelationEditor extends RelationEditor  {
         MoveUpAction moveUpAction = new MoveUpAction();
         memberTableModel.getSelectionModel().addListSelectionListener(moveUpAction);
         tb.add(moveUpAction);
+        memberTable.getActionMap().put("moveUp", moveUpAction);
 
         // -- move down action
         MoveDownAction moveDownAction = new MoveDownAction();
         memberTableModel.getSelectionModel().addListSelectionListener(moveDownAction);
         tb.add(moveDownAction);
-
+        memberTable.getActionMap().put("moveDown", moveDownAction);
+        
         tb.addSeparator();
 
         // -- edit action
         EditAction editAction = new EditAction();
         memberTableModel.getSelectionModel().addListSelectionListener(editAction);
         tb.add(editAction);
-
+        
         // -- delete action
         RemoveAction removeSelectedAction = new RemoveAction();
         memberTable.getSelectionModel().addListSelectionListener(removeSelectedAction);
         tb.add(removeSelectedAction);
-
+        memberTable.getActionMap().put("removeSelected", removeSelectedAction);
+        
         tb.addSeparator();
         // -- sort action
         SortAction sortAction = new SortAction();
@@ -506,6 +496,7 @@ public class GenericRelationEditor extends RelationEditor  {
         DownloadIncompleteMembersAction downloadIncompleteMembersAction = new DownloadIncompleteMembersAction();
         memberTable.getModel().addTableModelListener(downloadIncompleteMembersAction);
         tb.add(downloadIncompleteMembersAction);
+        memberTable.getActionMap().put("downloadIncomplete", downloadIncompleteMembersAction);
 
         // -- download selected action
         DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction = new DownloadSelectedIncompleteMembersAction();
@@ -513,6 +504,12 @@ public class GenericRelationEditor extends RelationEditor  {
         memberTable.getSelectionModel().addListSelectionListener(downloadSelectedIncompleteMembersAction);
         tb.add(downloadSelectedIncompleteMembersAction);
 
+        InputMap inputMap = memberTable.getInputMap(MemberTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put((KeyStroke) removeSelectedAction.getValue(AbstractAction.ACCELERATOR_KEY),"removeSelected");
+        inputMap.put((KeyStroke) moveUpAction.getValue(AbstractAction.ACCELERATOR_KEY),"moveUp");
+        inputMap.put((KeyStroke) moveDownAction.getValue(AbstractAction.ACCELERATOR_KEY),"moveDown");
+        inputMap.put((KeyStroke) downloadIncompleteMembersAction.getValue(AbstractAction.ACCELERATOR_KEY),"downloadIncomplete");
+        
         return tb;
     }
 
@@ -891,9 +888,6 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SHORT_DESCRIPTION, tr("Remove all members referring to one of the selected objects"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "deletemembers"));
             // putValue(NAME, tr("Remove Selected"));
-            Shortcut.registerShortcut("relationeditor:removeselected", tr("Relation Editor: Remove Selected"),
-                    KeyEvent.VK_S, Shortcut.GROUP_MNEMONIC);
-
             updateEnabledState();
         }
 
@@ -982,8 +976,7 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SHORT_DESCRIPTION, tr("Sort the relation members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort"));
             putValue(NAME, tr("Sort"));
-            Shortcut.registerShortcut("relationeditor:sort", tr("Relation Editor: Sort"), KeyEvent.VK_T,
-                    Shortcut.GROUP_MNEMONIC);
+            //    Shortcut.registerShortcut("relationeditor:sort", tr("Relation Editor: Sort"), KeyEvent.VK_HOME, Shortcut.GROUP_MNEMONIC)
             updateEnabledState();
         }
 
@@ -1005,8 +998,7 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SHORT_DESCRIPTION, tr("Reverse the order of the relation members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "reverse"));
             putValue(NAME, tr("Reverse"));
-            Shortcut.registerShortcut("relationeditor:reverse", tr("Relation Editor: Reverse"), KeyEvent.VK_R,
-                    Shortcut.GROUP_MNEMONIC);
+            //   Shortcut.registerShortcut("relationeditor:reverse", tr("Relation Editor: Reverse"), KeyEvent.VK_END, Shortcut.GROUP_MNEMONIC)
             updateEnabledState();
         }
 
@@ -1028,8 +1020,10 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SHORT_DESCRIPTION, tr("Move the currently selected members up"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "moveup"));
             // putValue(NAME, tr("Move Up"));
-            Shortcut.registerShortcut("relationeditor:moveup", tr("Relation Editor: Move Up"), KeyEvent.VK_N,
-                    Shortcut.GROUP_MNEMONIC);
+            putValue(ACCELERATOR_KEY,
+                Shortcut.registerShortcut("relationeditor:moveup", tr("Relation Editor: Move Up"), KeyEvent.VK_UP, Shortcut.GROUP_MNEMONIC)
+                    .getKeyStroke()
+            );
             setEnabled(false);
         }
 
@@ -1047,8 +1041,10 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SHORT_DESCRIPTION, tr("Move the currently selected members down"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "movedown"));
             // putValue(NAME, tr("Move Down"));
-            Shortcut.registerShortcut("relationeditor:moveup", tr("Relation Editor: Move Down"), KeyEvent.VK_J,
-                    Shortcut.GROUP_MNEMONIC);
+            putValue(ACCELERATOR_KEY,
+                Shortcut.registerShortcut("relationeditor:movedown", tr("Relation Editor: Move Down"), KeyEvent.VK_DOWN, Shortcut.GROUP_MNEMONIC)
+                    .getKeyStroke()
+            );
             setEnabled(false);
         }
 
@@ -1065,9 +1061,10 @@ public class GenericRelationEditor extends RelationEditor  {
         public RemoveAction() {
             putValue(SHORT_DESCRIPTION, tr("Remove the currently selected members from this relation"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "remove"));
-            // putValue(NAME, tr("Remove"));
-            Shortcut.registerShortcut("relationeditor:remove", tr("Relation Editor: Remove"), KeyEvent.VK_J,
-                    Shortcut.GROUP_MNEMONIC);
+            putValue(NAME, tr("Remove"));
+            putValue(ACCELERATOR_KEY,
+                 Shortcut.registerShortcut("relationeditor:remove", tr("Relation Editor: Remove"), KeyEvent.VK_DELETE,
+                    Shortcut.GROUP_MNEMONIC).getKeyStroke());
             setEnabled(false);
         }
 
@@ -1401,8 +1398,11 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SHORT_DESCRIPTION, tr("Download all incomplete members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincomplete"));
             putValue(NAME, tr("Download Members"));
-            Shortcut.registerShortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"),
-                    KeyEvent.VK_K, Shortcut.GROUP_MNEMONIC);
+            putValue(ACCELERATOR_KEY,
+                Shortcut.registerShortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"), KeyEvent.VK_HOME, Shortcut.GROUP_MNEMONIC)
+                    .getKeyStroke()
+            );
+                
             updateEnabledState();
         }
 
@@ -1431,8 +1431,7 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SHORT_DESCRIPTION, tr("Download selected incomplete members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
             putValue(NAME, tr("Download Members"));
-            Shortcut.registerShortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"),
-                    KeyEvent.VK_K, Shortcut.GROUP_MNEMONIC);
+        //  Shortcut.registerShortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"), KeyEvent.VK_K, Shortcut.GROUP_MNEMONIC);
             updateEnabledState();
         }
 
