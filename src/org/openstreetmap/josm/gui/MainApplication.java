@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -31,6 +32,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.DefaultProxySelector;
@@ -303,6 +305,7 @@ public class MainApplication extends Main {
 
                 main.postConstructorProcessCmdLine(args);
 
+                DownloadDialog.autostartIfNeeded();
             }
         });
 

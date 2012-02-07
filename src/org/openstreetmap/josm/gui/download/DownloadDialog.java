@@ -14,6 +14,7 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -32,6 +33,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
@@ -66,6 +68,7 @@ public class DownloadDialog extends JDialog  {
     private final List<DownloadSelection> downloadSelections = new ArrayList<DownloadSelection>();
     private final JTabbedPane tpDownloadAreaSelectors = new JTabbedPane();
     private JCheckBox cbNewLayer;
+    private JCheckBox cbStartup;
     private final JLabel sizeCheck = new JLabel();
     private Bounds currentBounds = null;
     private boolean canceled;
@@ -129,9 +132,22 @@ public class DownloadDialog extends JDialog  {
         cbNewLayer.setToolTipText(tr("<html>Select to download data into a new data layer.<br>"
                 +"Unselect to download into the currently active data layer.</html>"));
 
-        pnl.add(cbNewLayer, GBC.std().anchor(GBC.WEST).insets(5,5,5,5));
-        pnl.add(sizeCheck,  GBC.eol().anchor(GBC.EAST).insets(5,5,5,5));
+        cbStartup = new JCheckBox(tr("Open this dialog on startup"));
+        cbStartup.setToolTipText(tr("<html>Autostart Download from OSM dialog every time JOSM is started.<br>You can open it manually from File menu or by Ctrl-Shift-D</html>"));
+        cbStartup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                 Main.pref.put("download.autorun", cbStartup.isSelected());
+            }});
 
+        pnl.add(cbNewLayer, GBC.std().anchor(GBC.WEST).insets(5,5,5,5));
+        pnl.add(cbStartup, GBC.std().anchor(GBC.WEST).insets(15,5,5,5));
+
+        pnl.add(sizeCheck,  GBC.eol().anchor(GBC.EAST).insets(5,5,5,2));
+        
+        if (!ExpertToggleAction.isExpert()) {
+            JLabel infoLabel  = new JLabel(tr("Use left click&drag to select area, arrows or right mouse button to scroll map, wheel or +/- to zoom"));
+            pnl.add(infoLabel,GBC.eol().anchor(GBC.SOUTH).insets(0,0,0,0));
+        }
         return pnl;
     }
 
@@ -296,6 +312,7 @@ public class DownloadDialog extends JDialog  {
         cbDownloadOsmData.setSelected(Main.pref.getBoolean("download.osm", true));
         cbDownloadGpxData.setSelected(Main.pref.getBoolean("download.gps", false));
         cbNewLayer.setSelected(Main.pref.getBoolean("download.newlayer", false));
+        cbStartup.setSelected( isAutorunEnabled() ); 
         int idx = Main.pref.getInteger("download.tab", 0);
         if (idx < 0 || idx > tpDownloadAreaSelectors.getTabCount()) {
             idx = 0;
@@ -319,6 +336,19 @@ public class DownloadDialog extends JDialog  {
             catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static boolean isAutorunEnabled() {
+        //String autorun=Main.pref.get("download.autorun",null);
+        //boolean expert=ExpertToggleAction.isExpert();
+        //return (autorun==null && !expert) || "true".equals(autorun) ;
+        return Main.pref.getBoolean("download.autorun",false);
+    }
+
+    public static void autostartIfNeeded() {
+        if (isAutorunEnabled()) {
+            Main.main.menu.download.actionPerformed(null);
         }
     }
 
