@@ -73,7 +73,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         if (sc != null) {
             Main.registerActionShortcut(this, sc);
         }
-        putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
+        setTooltip(tooltip);
         if (getValue("toolbar") == null) {
             putValue("toolbar", toolbarId == null ? iconName : toolbarId);
         }
@@ -118,6 +118,10 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
             helpId = helpId.substring(0, helpId.length()-6);
         }
         putValue("help", helpId);
+    }
+
+    public void setTooltip(String tooltip) {
+        putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
     }
 
     /**
