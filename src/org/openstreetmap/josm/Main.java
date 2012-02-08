@@ -267,7 +267,7 @@ abstract public class Main {
         panel.add(gettingStarted, BorderLayout.CENTER);
         menu = new MainMenu();
 
-        undoRedo.listenerCommands.add(redoUndoListener);
+        undoRedo.addCommandQueueListener(redoUndoListener);
 
         // creating toolbar
         contentPanePrivate.add(toolbar.control, BorderLayout.NORTH);

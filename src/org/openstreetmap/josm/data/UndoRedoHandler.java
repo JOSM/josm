@@ -23,7 +23,7 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
      */
     public final LinkedList<Command> redoCommands = new LinkedList<Command>();
 
-    public final LinkedList<CommandQueueListener> listenerCommands = new LinkedList<CommandQueueListener>();
+    private final LinkedList<CommandQueueListener> listenerCommands = new LinkedList<CommandQueueListener>();
 
     public UndoRedoHandler() {
         MapView.addLayerChangeListener(this);
@@ -162,4 +162,12 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
 
     public void layerAdded(Layer newLayer) {}
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {}
+
+    public void removeCommandQueueListener(CommandQueueListener l) {
+        listenerCommands.remove(l);
+    }
+
+    public boolean addCommandQueueListener(CommandQueueListener l) {
+        return listenerCommands.add(l);
+    }
 }

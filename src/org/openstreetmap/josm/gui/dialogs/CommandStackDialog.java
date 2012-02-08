@@ -202,7 +202,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         for (IEnabledStateUpdating listener : showNotifyListener) {
             listener.updateEnabledState();
         }
-        Main.main.undoRedo.listenerCommands.add(this);
+        Main.main.undoRedo.addCommandQueueListener(this);
     }
 
     /**
@@ -218,7 +218,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     public void hideNotify() {
         undoTreeModel.setRoot(new DefaultMutableTreeNode());
         redoTreeModel.setRoot(new DefaultMutableTreeNode());
-        Main.main.undoRedo.listenerCommands.remove(this);
+        Main.main.undoRedo.removeCommandQueueListener(this);
     }
 
     /**

@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -15,7 +16,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class UndoAction extends JosmAction {
+public class UndoAction extends JosmAction implements OsmDataLayer.CommandQueueListener {
 
     /**
      * Construct the action with "Undo" as label.
@@ -39,4 +40,15 @@ public class UndoAction extends JosmAction {
         setEnabled(Main.main != null && !Main.main.undoRedo.commands.isEmpty());
     }
 
+    @Override
+    public void commandChanged(int queueSize, int redoSize) {
+        if (Main.main.undoRedo.commands.isEmpty()) {
+            putValue(NAME, tr("Undo"));
+            setTooltip(tr("Undo the last action."));
+        } else {
+            putValue(NAME, tr("Undo ..."));
+            setTooltip(tr("Undo {0}",
+                    Main.main.undoRedo.commands.getFirst().getDescrpitionText()));
+        }
+    }
 }
