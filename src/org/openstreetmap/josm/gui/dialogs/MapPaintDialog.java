@@ -450,7 +450,7 @@ public class MapPaintDialog extends ToggleDialog {
             }
             File file = fc.getSelectedFile();
 
-            if (!SaveActionBase.confirmOverride(file))
+            if (!SaveActionBase.confirmOverwrite(file))
                 return;
 
             Main.worker.submit(new SaveToFileTask(s, file));
