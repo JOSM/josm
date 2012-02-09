@@ -1,6 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
@@ -8,15 +12,25 @@ import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.regex.PatternSyntaxException;
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 
+import javax.swing.table.TableRowSorter;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -183,6 +197,7 @@ public class PrefJPanel extends javax.swing.JPanel {
 
         shortcutTab.setLayout(new javax.swing.BoxLayout(shortcutTab, javax.swing.BoxLayout.Y_AXIS));
 
+        shortcutTab.add(buildFilterPanel());
         listPane.setLayout(new java.awt.GridLayout());
 
         // This is the list of shortcuts:
@@ -194,7 +209,7 @@ public class PrefJPanel extends javax.swing.JPanel {
         listScrollPane.setViewportView(shortcutTable);
 
         listPane.add(listScrollPane);
-
+        
         shortcutTab.add(listPane);
 
         // and here follows the edit area. I won't object to someone re-designing it, it looks, um, "minimalistic" ;)
@@ -357,6 +372,28 @@ public class PrefJPanel extends javax.swing.JPanel {
         prefTabPane.addTab(tr("Modifier Groups"), modifierScroller);
 
         add(prefTabPane);
+    }
+
+    private JPanel buildFilterPanel() {
+        // copied from PluginPreference
+        JPanel pnl  = new JPanel(new GridBagLayout());
+        pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        GridBagConstraints gc = new GridBagConstraints();
+
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.weightx = 0.0;
+        gc.insets = new Insets(0,0,0,5);
+        pnl.add(new JLabel(tr("Search:")), gc);
+
+        gc.gridx = 1;
+        gc.weightx = 1.0;
+        pnl.add(filterField = new JTextField(), gc);
+        filterField.setToolTipText(tr("Enter a search expression"));
+        SelectAllOnFocusGainedDecorator.decorate(filterField);
+        filterField.getDocument().addDocumentListener(new FilterFieldAdapter());
+        pnl.setMaximumSize(new Dimension(300,10));
+        return pnl;
     }
 
     // this allows to edit shortcuts. it:
@@ -550,4 +587,25 @@ public class PrefJPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox tfKey;
     private javax.swing.JLabel tfKeyLabel;
     private javax.swing.JPanel infoTab;
+    private JTextField filterField;
+    
+     class FilterFieldAdapter implements DocumentListener {
+        public void filter() {
+            String expr = filterField.getText().trim();
+            if (expr.length()==0) { expr=null; }
+            try {
+                final TableRowSorter<TableModel> sorter =
+                    ((TableRowSorter<TableModel> )shortcutTable.getRowSorter());
+                if (expr==null) sorter.setRowFilter(null);
+                    else  sorter.setRowFilter(  RowFilter.regexFilter(expr) );
+            }
+            catch (PatternSyntaxException ex) { }
+            catch (ClassCastException ex2) { /* eliminate warning */  }
+        }
+
+        public void changedUpdate(DocumentEvent arg0) { filter(); }
+        public void insertUpdate(DocumentEvent arg0) {  filter(); }
+        public void removeUpdate(DocumentEvent arg0) { filter(); }
+    }
+    
 }
