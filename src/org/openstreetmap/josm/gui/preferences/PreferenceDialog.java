@@ -26,7 +26,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
@@ -117,7 +116,7 @@ public class PreferenceDialog extends JDialog {
         super.setVisible(visible);
     }
 
-    void selectPreferencesTabByName(String name) {
+    public void selectPreferencesTabByName(String name) {
         tpPreferences.selectTabByName(name);
     }
 
