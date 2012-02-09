@@ -214,12 +214,12 @@ public abstract class SaveActionBase extends DiskAccessAction {
             }
             file = new File(fn);
         }
-        if (!confirmOverride(file))
+        if (!confirmOverwrite(file))
             return null;
         return file;
     }
 
-    public static boolean confirmOverride(File file) {
+    public static boolean confirmOverwrite(File file) {
         if (file == null || (file.exists())) {
             ExtendedDialog dialog = new ExtendedDialog(
                     Main.parent,
