@@ -122,7 +122,7 @@ public class SessionSaveAsAction extends JosmAction {
         if (fn.indexOf('.') == -1) {
             file = new File(file.getPath() + (zip ? ".joz" : ".jos"));
         }
-        if (!SaveActionBase.confirmOverride(file))
+        if (!SaveActionBase.confirmOverwrite(file))
             return;
 
         List<Layer> layersOut = new ArrayList<Layer>();
