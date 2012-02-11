@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs;
 
+import javax.swing.JLabel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.openstreetmap.josm.command.PseudoCommand;
@@ -14,7 +15,7 @@ public class CommandListMutableTreeNode extends DefaultMutableTreeNode {
     protected int idx;
 
     public CommandListMutableTreeNode(PseudoCommand cmd, int idx) {
-        super(cmd.getDescription());
+        super(new JLabel(cmd.getDescriptionText(), cmd.getDescriptionIcon(), JLabel.HORIZONTAL));
         this.cmd = cmd;
         this.idx = idx;
     }

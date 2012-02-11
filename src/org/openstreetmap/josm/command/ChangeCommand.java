@@ -5,8 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
-
-import javax.swing.JLabel;
+import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -49,16 +48,19 @@ public class ChangeCommand extends Command {
         modified.add(osm);
     }
 
-    @Override public JLabel getDescription() {
+    @Override
+    public String getDescriptionText() {
         String msg = "";
         switch(OsmPrimitiveType.from(osm)) {
         case NODE: msg = marktr("Change node {0}"); break;
         case WAY: msg = marktr("Change way {0}"); break;
         case RELATION: msg = marktr("Change relation {0}"); break;
         }
-        return new JLabel(tr(msg,
-                    osm.getDisplayName(DefaultNameFormatter.getInstance())),
-                    ImageProvider.get(OsmPrimitiveType.from(osm)),
-                    JLabel.HORIZONTAL);
+        return tr(msg, osm.getDisplayName(DefaultNameFormatter.getInstance()));
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get(OsmPrimitiveType.from(osm));
     }
 }

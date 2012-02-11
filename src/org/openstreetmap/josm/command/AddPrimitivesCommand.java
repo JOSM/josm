@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import javax.swing.Icon;
 
 import javax.swing.JLabel;
 
@@ -100,11 +101,15 @@ public class AddPrimitivesCommand extends Command {
         }
     }
 
-    @Override public JLabel getDescription() {
+    @Override
+    public String getDescriptionText() {
         int size = data != null ? data.size() : createdPrimitives.size();
-        return new JLabel(trn("Added {0} object", "Added {0} objects", size, size), null,
-                JLabel.HORIZONTAL
-        );
+        return trn("Added {0} object", "Added {0} objects", size, size);
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return null;
     }
 
     @Override

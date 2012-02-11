@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.JLabel;
+import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Hash;
@@ -251,8 +251,13 @@ public class PurgeCommand extends Command {
     }
 
     @Override
-    public Object getDescription() {
-        return new JLabel(trn("Purged {0} object", "Purged {0} objects", toPurge.size(), toPurge.size()), ImageProvider.get("data", "purge"), JLabel.HORIZONTAL);
+    public String getDescriptionText() {
+        return trn("Purged {0} object", "Purged {0} objects", toPurge.size(), toPurge.size());
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get("data", "purge");
     }
 
     @Override

@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.JLabel;
+import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
@@ -39,13 +39,14 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
         this.conflict = (Conflict<Way>) conflict;
         this.mergedNodeList = mergedNodeList;
     }
+    @Override
+    public String getDescriptionText() {
+        return tr("Resolve conflicts in node list of way {0}", conflict.getMy().getId());
+    }
 
-    @Override public JLabel getDescription() {
-        return new JLabel(
-                        tr("Resolve conflicts in node list of way {0}", conflict.getMy().getId()),
-                        ImageProvider.get("data", "object"),
-                        JLabel.HORIZONTAL
-        );
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get("data", "object");
     }
 
     @Override

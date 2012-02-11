@@ -4,8 +4,7 @@ package org.openstreetmap.josm.command;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
-
-import javax.swing.JLabel;
+import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
@@ -37,12 +36,14 @@ public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
         this.decision = decision;
     }
 
-    @Override public JLabel getDescription() {
-        return new JLabel(
-                        tr("Resolve conflicts in coordinates in {0}",conflict.getMy().getId()),
-                        ImageProvider.get("data", "object"),
-                        JLabel.HORIZONTAL
-        );
+    @Override
+    public String getDescriptionText() {
+        return tr("Resolve conflicts in coordinates in {0}", conflict.getMy().getId());
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get("data", "object");
     }
 
     @Override

@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
 
-import javax.swing.JLabel;
+import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
@@ -98,7 +98,12 @@ public class RotateCommand extends TransformNodesCommand {
     }
 
     @Override
-    public JLabel getDescription() {
-        return new JLabel(trn("Rotate {0} node", "Rotate {0} nodes", nodes.size(), nodes.size()), ImageProvider.get("data", "node"), JLabel.HORIZONTAL);
+    public String getDescriptionText() {
+        return trn("Rotate {0} node", "Rotate {0} nodes", nodes.size(), nodes.size());
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get("data", "node");
     }
 }

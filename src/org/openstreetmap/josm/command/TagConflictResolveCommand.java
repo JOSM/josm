@@ -6,8 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.List;
+import javax.swing.Icon;
 
-import javax.swing.JLabel;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -54,18 +54,20 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
         this.mergeItems = mergeItems;
     }
 
-    @Override public JLabel getDescription() {
+    @Override
+    public String getDescriptionText() {
         String msg = "";
         switch(OsmPrimitiveType.from(conflict.getMy())) {
         case NODE: msg = marktr("Resolve {0} tag conflicts in node {1}"); break;
         case WAY: msg = marktr("Resolve {0} tag conflicts in way {1}"); break;
         case RELATION: msg = marktr("Resolve {0} tag conflicts in relation {1}"); break;
         }
-        return new JLabel(
-                        tr(msg,getNumDecidedConflicts(), conflict.getMy().getId()),
-                        ImageProvider.get("data", "object"),
-                        JLabel.HORIZONTAL
-        );
+        return tr(msg,getNumDecidedConflicts(), conflict.getMy().getId());
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get("data", "object");
     }
 
     @Override

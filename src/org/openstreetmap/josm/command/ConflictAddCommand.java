@@ -4,8 +4,7 @@ package org.openstreetmap.josm.command;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
-
-import javax.swing.JLabel;
+import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
@@ -62,13 +61,14 @@ public class ConflictAddCommand extends Command {
         // nothing to fill
     }
 
-    @Override public JLabel getDescription() {
-        return new JLabel(
-                tr("Add conflict for ''{0}''",
-                        conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())
-                ),
-                ImageProvider.get(OsmPrimitiveType.from(conflict.getMy())),
-                JLabel.HORIZONTAL
-        );
+    @Override
+    public String getDescriptionText() {
+        return tr("Add conflict for ''{0}''",
+                conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance()));
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get(OsmPrimitiveType.from(conflict.getMy()));
     }
 }

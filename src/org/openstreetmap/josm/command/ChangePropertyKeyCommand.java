@@ -9,11 +9,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.Icon;
 
-import javax.swing.JLabel;
-
-import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.command.PseudoCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.util.NameVisitor;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -70,7 +67,7 @@ public class ChangePropertyKeyCommand extends Command {
     }
 
     @Override
-    public JLabel getDescription() {
+    public String getDescriptionText() {
         String text = tr( "Replace \"{0}\" by \"{1}\" for", key, newKey);
         if (objects.size() == 1) {
             NameVisitor v = new NameVisitor();
@@ -79,7 +76,12 @@ public class ChangePropertyKeyCommand extends Command {
         } else {
             text += " "+objects.size()+" "+trn("object","objects",objects.size());
         }
-        return new JLabel(text, ImageProvider.get("data", "key"), JLabel.HORIZONTAL);
+        return text;
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get("data", "key");
     }
 
     @Override
@@ -93,8 +95,12 @@ public class ChangePropertyKeyCommand extends Command {
             osm.visit(v);
             children.add(new PseudoCommand() {
                 @Override
-                public JLabel getDescription() {
-                    return v.toLabel();
+                public String getDescriptionText() {
+                    return v.name;
+                }
+                @Override
+                public Icon getDescriptionIcon() {
+                    return v.icon;
                 }
                 @Override
                 public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {

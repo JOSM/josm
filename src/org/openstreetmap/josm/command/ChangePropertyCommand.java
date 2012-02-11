@@ -13,8 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.JLabel;
+import javax.swing.Icon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -144,7 +143,8 @@ public class ChangePropertyCommand extends Command {
         modified.addAll(objects);
     }
 
-    @Override public JLabel getDescription() {
+    @Override
+    public String getDescriptionText() {
         String text;
         if (objects.size() == 1 && tags.size() == 1) {
             OsmPrimitive primitive = objects.iterator().next();
@@ -186,7 +186,12 @@ public class ChangePropertyCommand extends Command {
             } else
                 text = tr("Set {0} properties for {1} objects", tags.size(), objects.size());
         }
-        return new JLabel(text, ImageProvider.get("data", "key"), JLabel.HORIZONTAL);
+        return text;
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get("data", "key");
     }
 
     @Override public Collection<PseudoCommand> getChildren() {
@@ -195,13 +200,14 @@ public class ChangePropertyCommand extends Command {
         List<PseudoCommand> children = new ArrayList<PseudoCommand>();
         for (final OsmPrimitive osm : objects) {
             children.add(new PseudoCommand() {
-                @Override public JLabel getDescription() {
-                    return new JLabel(
-                                osm.getDisplayName(DefaultNameFormatter.getInstance()),
-                                ImageProvider.get(OsmPrimitiveType.from(osm)),
-                                JLabel.HORIZONTAL);
-
+                @Override public String getDescriptionText() {
+                    return osm.getDisplayName(DefaultNameFormatter.getInstance());
                 }
+
+                @Override public Icon getDescriptionIcon() {
+                    return ImageProvider.get(OsmPrimitiveType.from(osm));
+                }
+
                 @Override public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
                     return Collections.singleton(osm);
                 }

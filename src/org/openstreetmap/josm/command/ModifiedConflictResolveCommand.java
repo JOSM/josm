@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
+import javax.swing.Icon;
 
 import javax.swing.JLabel;
 
@@ -32,18 +33,20 @@ public class ModifiedConflictResolveCommand extends ConflictResolveCommand {
         this.conflict = conflict;
     }
 
-    @Override public JLabel getDescription() {
+    @Override
+    public String getDescriptionText() {
         String msg = "";
         switch(OsmPrimitiveType.from(conflict.getMy())) {
         case NODE: msg = marktr("Set the ''modified'' flag for node {0}"); break;
         case WAY: msg = marktr("Set the ''modified'' flag for way {0}"); break;
         case RELATION: msg = marktr("Set the ''modified'' flag for relation {0}"); break;
         }
-        return new JLabel(
-                        tr(msg,conflict.getMy().getId()),
-                        ImageProvider.get("data", "object"),
-                        JLabel.HORIZONTAL
-        );
+        return tr(msg,conflict.getMy().getId());
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get("data", "object");
     }
 
     @Override

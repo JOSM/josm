@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.JLabel;
+import javax.swing.Icon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -45,12 +45,14 @@ public class RelationMemberConflictResolverCommand extends Command {
         this.mergedMembers = mergedMembers;
     }
 
-    @Override public JLabel getDescription() {
-        return new JLabel(
-                        tr("Resolve conflicts in member list of relation {0}", my.getId()),
-                        ImageProvider.get("data", "object"),
-                        JLabel.HORIZONTAL
-        );
+    @Override
+    public String getDescriptionText() {
+        return tr("Resolve conflicts in member list of relation {0}", my.getId());
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get("data", "object");
     }
 
     @Override

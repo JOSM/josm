@@ -7,7 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.Collections;
 
-import javax.swing.JLabel;
+import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -59,7 +59,8 @@ public class AddCommand extends Command {
         added.add(osm);
     }
 
-    @Override public JLabel getDescription() {
+    @Override
+    public String getDescriptionText() {
         String msg;
         switch(OsmPrimitiveType.from(osm)) {
         case NODE: msg = marktr("Add node {0}"); break;
@@ -67,11 +68,12 @@ public class AddCommand extends Command {
         case RELATION: msg = marktr("Add relation {0}"); break;
         default: /* should not happen */msg = ""; break;
         }
+        return tr(msg, osm.getDisplayName(DefaultNameFormatter.getInstance()));
+    }
 
-        return new JLabel(
-                tr(msg, osm.getDisplayName(DefaultNameFormatter.getInstance())),
-                ImageProvider.get(OsmPrimitiveType.from(osm)),
-                JLabel.HORIZONTAL);
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get(OsmPrimitiveType.from(osm));
     }
 
     @Override

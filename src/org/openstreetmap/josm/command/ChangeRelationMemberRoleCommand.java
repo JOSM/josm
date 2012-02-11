@@ -5,9 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 
-import javax.swing.JLabel;
-
-import org.openstreetmap.josm.Main;
+import javax.swing.Icon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -63,14 +61,15 @@ public class ChangeRelationMemberRoleCommand extends Command {
         modified.add(relation);
     }
 
-    @Override public JLabel getDescription() {
-        return new JLabel(
-                        tr("Change relation member role for {0} {1}",
-                                OsmPrimitiveType.from(relation),
-                                relation.getDisplayName(DefaultNameFormatter.getInstance())
-                        ),
-                        ImageProvider.get(OsmPrimitiveType.from(relation)),
-                        JLabel.HORIZONTAL
-        );
+    @Override
+    public String getDescriptionText() {
+        return tr("Change relation member role for {0} {1}",
+                OsmPrimitiveType.from(relation),
+                relation.getDisplayName(DefaultNameFormatter.getInstance()));
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get(OsmPrimitiveType.from(relation));
     }
 }

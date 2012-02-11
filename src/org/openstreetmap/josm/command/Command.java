@@ -161,15 +161,6 @@ abstract public class Command extends PseudoCommand {
         return cloneMap.keySet();
     }
 
-    public String getDescrpitionText() {
-        Object o = getDescription();
-        if (o instanceof JLabel) {
-            return ((JLabel) o).getText();
-        } else {
-            return o.toString();
-        }
-    }
-
     /**
      * Check whether user is about to operate on data outside of the download area.
      * Request confirmation if he is.
