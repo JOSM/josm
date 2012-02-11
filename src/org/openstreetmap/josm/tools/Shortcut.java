@@ -137,9 +137,12 @@ public class Shortcut {
      * FOR PREF PANE ONLY
      */
     public void setAssignedUser(boolean assignedUser) {
-        this.reset = (!this.assignedUser && assignedUser);
+        this.reset = (this.assignedUser || reset) && !assignedUser;
         if (assignedUser) {
             assignedDefault = false;
+        } else if (reset) {
+            assignedKey = requestedKey;
+            assignedModifier = findModifier(requestedGroup, null);
         }
         this.assignedUser = assignedUser;
     }
@@ -171,17 +174,21 @@ public class Shortcut {
         this.assignedUser = Boolean.parseBoolean(s.get(6));
     }
 
-    private void saveDefault() {
+    private void saveDefault(int modifier) {
         Main.pref.getCollection("shortcut.entry."+shortText, Arrays.asList(new String[]{longText,
-        String.valueOf(requestedKey), String.valueOf(requestedGroup), String.valueOf(assignedKey),
-        String.valueOf(assignedModifier), String.valueOf(true), String.valueOf(false)}));
+        String.valueOf(requestedKey), String.valueOf(requestedGroup), String.valueOf(requestedKey),
+        String.valueOf(modifier), String.valueOf(true), String.valueOf(false)}));
     }
 
     // get a string that can be put into the preferences
     private boolean save() {
-        return Main.pref.putCollection("shortcut.entry."+shortText, Arrays.asList(new String[]{longText,
-        String.valueOf(requestedKey), String.valueOf(requestedGroup), String.valueOf(assignedKey),
-        String.valueOf(assignedModifier), String.valueOf(assignedDefault), String.valueOf(assignedUser)}));
+        if (getAutomatic() || getReset() || !getAssignedUser()) {
+            return Main.pref.putCollection("shortcut.entry."+shortText, null);
+        } else {
+            return Main.pref.putCollection("shortcut.entry."+shortText, Arrays.asList(new String[]{longText,
+            String.valueOf(requestedKey), String.valueOf(requestedGroup), String.valueOf(assignedKey),
+            String.valueOf(assignedModifier), String.valueOf(assignedDefault), String.valueOf(assignedUser)}));
+        }
     }
 
     private boolean isSame(Shortcut other) {
@@ -346,9 +353,7 @@ public class Shortcut {
     public static boolean savePrefs() {
         boolean changed = false;
         for (Shortcut sc : shortcuts.values()) {
-            if (!sc.getAutomatic() && !sc.getReset() && sc.getAssignedUser()) {
-                changed = changed | sc.save();
-            }
+            changed = changed | sc.save();
         }
         return changed;
     }
@@ -426,20 +431,8 @@ public class Shortcut {
         return registerShortcut(shortText, longText, requestedKey, requestedGroup, null, null);
     }
 
-    // and now the workhorse. same parameters as above, just one more: if originalShortcut is not null and
-    // is different from the shortcut that will be assigned, a popup warning will be displayed to the user.
-    // This is used when registering shortcuts that have been visible to the user before (read: have been
-    // read from the preferences file). New shortcuts will never warn, even when they land on some funny
-    // random fallback key like Ctrl+Alt+Shift+Z for "File Open..." <g>
-    private static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup, Integer modifier,
-            Shortcut originalShortcut) {
-        doInit();
-        if (shortcuts.containsKey(shortText)) { // a re-register? maybe a sc already read from the preferences?
-            Shortcut sc = shortcuts.get(shortText);
-            sc.setLongText(longText); // or set by the platformHook, in this case the original longText doesn't match the real action
-            return sc;
-        }
-        Integer defaultModifier = getGroupModifier(requestedGroup + GROUPS_DEFAULT);
+    private static int findModifier(int group, Integer modifier) {
+        Integer defaultModifier = getGroupModifier(group + GROUPS_DEFAULT);
         if(modifier != null) {
             if(modifier == SHIFT_DEFAULT) {
                 defaultModifier |= KeyEvent.SHIFT_DOWN_MASK;
@@ -449,6 +442,24 @@ public class Shortcut {
         }
         else if (defaultModifier == null) { // garbage in, no shortcut out
             defaultModifier = getGroupModifier(GROUP_NONE + GROUPS_DEFAULT);
+        }
+        return defaultModifier;
+    }
+
+    // and now the workhorse. same parameters as above, just one more: if originalShortcut is not null and
+    // is different from the shortcut that will be assigned, a popup warning will be displayed to the user.
+    // This is used when registering shortcuts that have been visible to the user before (read: have been
+    // read from the preferences file). New shortcuts will never warn, even when they land on some funny
+    // random fallback key like Ctrl+Alt+Shift+Z for "File Open..." <g>
+    private static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup, Integer modifier,
+            Shortcut originalShortcut) {
+        doInit();
+        Integer defaultModifier = findModifier(requestedGroup, modifier);
+        if (shortcuts.containsKey(shortText)) { // a re-register? maybe a sc already read from the preferences?
+            Shortcut sc = shortcuts.get(shortText);
+            sc.setLongText(longText); // or set by the platformHook, in this case the original longText doesn't match the real action
+            sc.saveDefault(defaultModifier);
+            return sc;
         }
         Shortcut conflictsWith = null;
         Shortcut potentialShortcut = findShortcut(requestedKey, defaultModifier);
@@ -482,7 +493,7 @@ public class Shortcut {
             potentialShortcut = new Shortcut(shortText, longText, requestedKey, requestedGroup, requestedKey, defaultModifier, true, false);
         }
 
-        potentialShortcut.saveDefault();
+        potentialShortcut.saveDefault(defaultModifier);
         shortcuts.put(shortText, potentialShortcut);
         return potentialShortcut;
     }
