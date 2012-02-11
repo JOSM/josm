@@ -112,6 +112,7 @@ public class WikiReader {
     private String readFromTrac(BufferedReader in) throws IOException {
         boolean inside = false;
         boolean transl = false;
+        boolean skip = false;
         String b = "";
         for (String line = in.readLine(); line != null; line = in.readLine()) {
             if (line.contains("<div id=\"searchable\">")) {
@@ -127,9 +128,9 @@ public class WikiReader {
             } else if (line.contains("<div id=\"attachments\">")) {
                 inside = false;
             } else if (line.contains("<div class=\"trac-modifiedby\">")) {
-                continue;
+                skip = true;
             }
-            if (inside && !transl) {
+            if (inside && !transl && !skip) {
                 // add a border="0" attribute to images, otherwise the internal help browser
                 // will render a thick  border around images inside an <a> element
                 //
@@ -138,6 +139,9 @@ public class WikiReader {
                         + "\n";
             } else if (transl && line.contains("</div>")) {
                 transl = false;
+            }
+            if (line.contains("</div>")) {
+                skip = false;
             }
         }
         if (b.indexOf("      Describe ") >= 0
