@@ -68,6 +68,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Geometry;
 
 /**
  * Mapmode to add nodes, create and extend ways.
@@ -97,6 +98,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     private Shortcut extraShortcut;
     private Shortcut backspaceShortcut;
+    private int snappingKeyCode;
     
     private JCheckBoxMenuItem snapCheckboxMenuItem;
     
@@ -109,7 +111,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // Add extra shortcut N
         extraShortcut = Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT);
         Main.registerActionShortcut(this, extraShortcut);
-        
+
+        snappingKeyCode = Shortcut.registerShortcut("mapmode:drawanglesnapping", tr("Mode: Draw Angle snapping"), KeyEvent.VK_TAB, Shortcut.GROUP_EDIT)
+                .getKeyStroke().getKeyCode();
         snapCheckboxMenuItem = MainMenu.addWithCheckbox(Main.main.menu.editMenu, new SnapChangeAction(),  MainMenu.WINDOW_MENU_GROUP.VOLATILE);
         snapHelper.setMenuCheckBox(snapCheckboxMenuItem);
         cursorJoinNode = ImageProvider.getCursor("crosshair", "joinnode");
@@ -223,7 +227,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private KeyEvent releaseEvent;
     private Timer timer;
     void processKeyEvent(KeyEvent e) {
-        if (e.getKeyCode() != KeyEvent.VK_TAB) return;
+        if (e.getKeyCode() != snappingKeyCode) return;
         //e.consume(); // ticket #7250 -  TAB should work in other windows
 
         if (e.getID() == KeyEvent.KEY_PRESSED) {
@@ -249,12 +253,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
     
     private void doKeyPressEvent(KeyEvent e) {
-        if (e.getKeyCode() != KeyEvent.VK_TAB) return;
+        if (e.getKeyCode() != snappingKeyCode) return;
         snapHelper.setFixedMode();
         computeHelperLine(); redrawIfRequired();
     }
     private void doKeyReleaseEvent(KeyEvent e) {
-        if (e.getKeyCode() != KeyEvent.VK_TAB) return;
+        if (e.getKeyCode() != snappingKeyCode) return;
         snapHelper.unFixOrTurnOff();
         computeHelperLine(); redrawIfRequired();
     }
@@ -413,6 +417,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     // Insert the node into all the nearby way segments
                     List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(
                             Main.map.mapView.getPoint(n), OsmPrimitive.isSelectablePredicate);
+                    if (snapHelper.isActive()) { // 
+                        tryToMoveNodeOnIntersection(wss,n);
+                    }
                     insertNodeIntoAllNearbySegments(wss, n, newSelection, cmds, replacedWays, reuseWays);
                     }
         }
@@ -951,6 +958,17 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     static double det(double a, double b, double c, double d) {
         return a * d - b * c;
     }
+
+    private void tryToMoveNodeOnIntersection(List<WaySegment> wss, Node n) {
+        if (wss.isEmpty()) return;
+        WaySegment ws = wss.get(0);
+        EastNorth p1=ws.getFirstNode().getEastNorth();
+        EastNorth p2=ws.getSecondNode().getEastNorth();
+	if (snapHelper.dir2!=null && currentBaseNode!=null) {
+            EastNorth xPoint = Geometry.getSegmentSegmentIntersection(p1, p2, snapHelper.dir2, currentBaseNode.getEastNorth());
+            if (xPoint!=null) n.setEastNorth(xPoint);
+        }
+    }
 /**
      * Takes the data from computeHelperLine to determine which ways/nodes should be highlighted
      * (if feature enabled). Also sets the target cursor if appropriate.
@@ -1446,6 +1464,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                         init(); enableSnapping();
                     }
                }));
+               add(new AbstractAction(tr("Disable")) {
+                public void actionPerformed(ActionEvent e) {
+                    saveAngles("180");
+                    init(); enableSnapping();
+                }
+               });
                add(new AbstractAction(tr("0,90,...")) {
                 public void actionPerformed(ActionEvent e) {
                     saveAngles("0","90");
