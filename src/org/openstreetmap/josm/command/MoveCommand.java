@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.Icon;
 
 import javax.swing.JLabel;
 
@@ -130,8 +131,14 @@ public class MoveCommand extends Command {
         }
     }
 
-    @Override public JLabel getDescription() {
-        return new JLabel(trn("Move {0} node", "Move {0} nodes", nodes.size(), nodes.size()), ImageProvider.get("data", "node"), JLabel.HORIZONTAL);
+    @Override
+    public String getDescriptionText() {
+        return trn("Move {0} node", "Move {0} nodes", nodes.size(), nodes.size());
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get("data", "node");
     }
 
     @Override

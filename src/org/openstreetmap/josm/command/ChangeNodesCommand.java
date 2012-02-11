@@ -5,8 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.List;
-
-import javax.swing.JLabel;
+import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
@@ -45,10 +44,13 @@ public class ChangeNodesCommand extends Command {
         modified.add(way);
     }
 
-    @Override public JLabel getDescription() {
-        String msg = tr("Changed nodes of {0}", way.getDisplayName(DefaultNameFormatter.getInstance()));
-        return new JLabel(msg,
-                        ImageProvider.get(OsmPrimitiveType.WAY),
-                        JLabel.HORIZONTAL);
+    @Override
+    public String getDescriptionText() {
+        return tr("Changed nodes of {0}", way.getDisplayName(DefaultNameFormatter.getInstance()));
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get(OsmPrimitiveType.WAY);
     }
 }

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import javax.swing.JLabel;
+import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -122,8 +122,13 @@ public abstract class TransformNodesCommand extends Command {
     }
 
     @Override
-    public JLabel getDescription() {
-        return new JLabel(trn("Transform {0} node", "Transform {0} nodes", nodes.size(), nodes.size()), ImageProvider.get("data", "node"), JLabel.HORIZONTAL);
+    public String getDescriptionText() {
+        return trn("Transform {0} node", "Transform {0} nodes", nodes.size(), nodes.size());
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get("data", "node");
     }
 
     /**

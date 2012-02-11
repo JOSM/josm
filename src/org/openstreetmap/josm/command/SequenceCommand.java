@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import javax.swing.Icon;
 
 import javax.swing.JLabel;
 
@@ -86,8 +87,14 @@ public class SequenceCommand extends Command {
         }
     }
 
-    @Override public JLabel getDescription() {
-        return new JLabel(tr("Sequence")+": "+name, ImageProvider.get("data", "sequence"), JLabel.HORIZONTAL);
+    @Override
+    public String getDescriptionText() {
+        return tr("Sequence: {0}", name);
+    }
+
+    @Override
+    public Icon getDescriptionIcon() {
+        return ImageProvider.get("data", "sequence");
     }
 
     @Override

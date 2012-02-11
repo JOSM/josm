@@ -48,7 +48,7 @@ public class RedoAction extends JosmAction implements OsmDataLayer.CommandQueueL
         } else {
             putValue(NAME, tr("Redo ..."));
             setTooltip(tr("Redo {0}",
-                    Main.main.undoRedo.redoCommands.getFirst().getDescrpitionText()));
+                    Main.main.undoRedo.redoCommands.getFirst().getDescriptionText()));
         }
     }
 }
