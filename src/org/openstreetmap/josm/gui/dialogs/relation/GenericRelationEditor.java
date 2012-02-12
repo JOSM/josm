@@ -140,7 +140,6 @@ public class GenericRelationEditor extends RelationEditor  {
         //
         if (relation != null) {
             tagEditorPanel.getModel().initFromPrimitive(relation);
-            //this.tagEditorModel.initFromPrimitive(relation);
             this.memberTableModel.populate(relation);
             if (!getLayer().data.getRelations().contains(relation)) {
                 // treat it as a new relation if it doesn't exist in the
@@ -976,7 +975,7 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SHORT_DESCRIPTION, tr("Sort the relation members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort"));
             putValue(NAME, tr("Sort"));
-            //    Shortcut.registerShortcut("relationeditor:sort", tr("Relation Editor: Sort"), KeyEvent.VK_HOME, Shortcut.GROUP_MNEMONIC)
+            //    Shortcut.register Shortcut("relationeditor:sort", tr("Relation Editor: Sort"), KeyEvent.VK_HOME, Shortcut.GROUP_MNEMONIC)
             updateEnabledState();
         }
 
@@ -998,7 +997,7 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SHORT_DESCRIPTION, tr("Reverse the order of the relation members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "reverse"));
             putValue(NAME, tr("Reverse"));
-            //   Shortcut.registerShortcut("relationeditor:reverse", tr("Relation Editor: Reverse"), KeyEvent.VK_END, Shortcut.GROUP_MNEMONIC)
+            //   Shortcut.register Shortcut("relationeditor:reverse", tr("Relation Editor: Reverse"), KeyEvent.VK_END, Shortcut.GROUP_MNEMONIC)
             updateEnabledState();
         }
 
@@ -1431,7 +1430,7 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SHORT_DESCRIPTION, tr("Download selected incomplete members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
             putValue(NAME, tr("Download Members"));
-        //  Shortcut.registerShortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"), KeyEvent.VK_K, Shortcut.GROUP_MNEMONIC);
+        //  Shortcut.register Shortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"), KeyEvent.VK_K, Shortcut.GROUP_MNEMONIC);
             updateEnabledState();
         }
 
