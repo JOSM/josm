@@ -81,27 +81,14 @@ public class AutoScaleAction extends JosmAction {
     private static int getModeShortcut(String mode) {
         int shortcut = -1;
 
-        if (mode.equals("data")) {
-            shortcut = KeyEvent.VK_1;
-        }
-        if (mode.equals("layer")) {
-            shortcut = KeyEvent.VK_2;
-        }
-        if (mode.equals("selection")) {
-            shortcut = KeyEvent.VK_3;
-        }
-        if (mode.equals("conflict")) {
-            shortcut = KeyEvent.VK_4;
-        }
-        if (mode.equals("download")) {
-            shortcut = KeyEvent.VK_5;
-        }
-        if (mode.equals("previous")) {
-            shortcut = KeyEvent.VK_8;
-        }
-        if (mode.equals("next")) {
-            shortcut = KeyEvent.VK_9;
-        }
+        /* leave as single line for shortcut overview parsing! */
+        if (mode.equals("data")) { shortcut = KeyEvent.VK_1; }
+        else if (mode.equals("layer")) { shortcut = KeyEvent.VK_2; }
+        else if (mode.equals("selection")) { shortcut = KeyEvent.VK_3; }
+        else if (mode.equals("conflict")) { shortcut = KeyEvent.VK_4; }
+        else if (mode.equals("download")) { shortcut = KeyEvent.VK_5; }
+        else if (mode.equals("previous")) { shortcut = KeyEvent.VK_8; }
+        else if (mode.equals("next")) { shortcut = KeyEvent.VK_9; }
 
         return shortcut;
     }
