@@ -265,6 +265,7 @@ public class Preferences {
         return new File(getPreferencesDirFile(), "preferences.xml");
     }
 
+    /* remove end of 2012 */
     public File getOldPreferenceFile() {
         return new File(getPreferencesDirFile(), "preferences");
     }
@@ -906,6 +907,7 @@ public class Preferences {
             return Collections.emptyList();
     }
 
+    /* remove this workaround end of 2012, replace by direct access to structure */
     synchronized private List<String> getCollectionInternal(String key) {
         List<String> prop = collectionProperties.get(key);
         if (prop != null)
@@ -948,11 +950,11 @@ public class Preferences {
                 valueCopy = new ArrayList<String>(value);
                 if (valueCopy.contains(null)) throw new RuntimeException("Error: Null as list element in preference setting (key '"+key+"')");
                 collectionProperties.put(key, Collections.unmodifiableList(valueCopy));
-                try {
-                    save();
-                } catch(IOException e){
-                    System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
-                }
+            }
+            try {
+                save();
+            } catch(IOException e){
+                System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
             }
         }
         // Call outside of synchronized section in case some listener wait for other thread that wait for preference lock
@@ -1026,6 +1028,7 @@ public class Preferences {
             return Collections.emptyList();
     }
 
+    /* remove this workaround end of 2012 and replace by direct array access */
     synchronized private List<List<String>> getArrayInternal(String key) {
         List<List<String>> prop = arrayProperties.get(key);
         if (prop != null)
@@ -1077,11 +1080,11 @@ public class Preferences {
                     valueCopy.add(Collections.unmodifiableList(lstCopy));
                 }
                 arrayProperties.put(key, Collections.unmodifiableList(valueCopy));
-                try {
-                    save();
-                } catch(IOException e){
-                    System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
-                }
+            }
+            try {
+                save();
+            } catch(IOException e){
+                System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
             }
         }
         // Call outside of synchronized section in case some listener wait for other thread that wait for preference lock
@@ -1122,6 +1125,7 @@ public class Preferences {
             return def;
     }
 
+    /* remove this workaround end of 2012 and use direct access to proper variable */
     private synchronized List<Map<String, String>> getListOfStructsInternal(String key) {
         List<Map<String, String>> prop = listOfStructsProperties.get(key);
         if (prop != null)
@@ -1176,11 +1180,11 @@ public class Preferences {
                     valueCopy.add(Collections.unmodifiableMap(mapCopy));
                 }
                 listOfStructsProperties.put(key, Collections.unmodifiableList(valueCopy));
-                try {
-                    save();
-                } catch(IOException e){
-                    System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
-                }
+            }
+            try {
+                save();
+            } catch(IOException e){
+                System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
             }
         }
         // Call outside of synchronized section in case some listener wait for other thread that wait for preference lock
@@ -1219,10 +1223,6 @@ public class Preferences {
 
     /**
      * Get a list of hashes which are represented by a struct-like class.
-     * It reads lines of the form
-     *  > key.0=prop:val \u001e prop:val \u001e ... \u001e prop:val
-     *  > ...
-     *  > key.N=prop:val \u001e prop:val \u001e ... \u001e prop:val
      * Possible properties are given by fields of the class klass that have
      * the @pref annotation.
      * Default constructor is used to initialize the struct objects, properties
@@ -1641,6 +1641,7 @@ public class Preferences {
             String s = defaults.get(key);
             /* don't save default values */
             if(s == null || !s.equals(r)) {
+                /* TODO: remove old format exception end of 2012 */
                 if(r.contains("\u001e"))
                 {
                     b.append("  <list key='");
