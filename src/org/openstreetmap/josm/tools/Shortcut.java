@@ -304,7 +304,11 @@ public class Shortcut {
      * for use with {@see #setMnemonic} only!
      */
     public static final int GROUP_MNEMONIC = 6;
-    public static final int GROUP__MAX = 7;
+    /**
+     * for direct access, with alt modifier.
+     */
+    public static final int GROUP_DIRECT2 = 7;
+    public static final int GROUP__MAX = 8;
     public static final int GROUP_RESERVED = 1000;
     public static final int GROUPS_DEFAULT = 0;
     public static final int GROUPS_ALT1 = GROUP__MAX;

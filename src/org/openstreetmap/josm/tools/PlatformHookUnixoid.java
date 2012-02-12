@@ -56,6 +56,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         setupGroup(groups, load, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_LAYER,   KeyEvent.ALT_DOWN_MASK);
         setupGroup(groups, load, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_DIRECT,  0);
         setupGroup(groups, load, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_MNEMONIC,KeyEvent.ALT_DOWN_MASK);
+        setupGroup(groups, load, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_DIRECT2, KeyEvent.ALT_DOWN_MASK);
 
         setupGroup(groups, load, Shortcut.GROUPS_ALT1+Shortcut.GROUP_NONE,       -1);
         setupGroup(groups, load, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY,     KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
@@ -64,6 +65,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         setupGroup(groups, load, Shortcut.GROUPS_ALT1+Shortcut.GROUP_LAYER,      KeyEvent.ALT_DOWN_MASK  | KeyEvent.SHIFT_DOWN_MASK);
         setupGroup(groups, load, Shortcut.GROUPS_ALT1+Shortcut.GROUP_DIRECT,     KeyEvent.SHIFT_DOWN_MASK);
         setupGroup(groups, load, Shortcut.GROUPS_ALT1+Shortcut.GROUP_MNEMONIC,   KeyEvent.ALT_DOWN_MASK);
+        setupGroup(groups, load, Shortcut.GROUPS_ALT1+Shortcut.GROUP_DIRECT2,    KeyEvent.ALT_DOWN_MASK  | KeyEvent.SHIFT_DOWN_MASK);
 
         setupGroup(groups, load, Shortcut.GROUPS_ALT2+Shortcut.GROUP_NONE,       -1);
         setupGroup(groups, load, Shortcut.GROUPS_ALT2+Shortcut.GROUP_HOTKEY,     KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK);
@@ -72,6 +74,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         setupGroup(groups, load, Shortcut.GROUPS_ALT2+Shortcut.GROUP_LAYER,      KeyEvent.SHIFT_DOWN_MASK);
         setupGroup(groups, load, Shortcut.GROUPS_ALT2+Shortcut.GROUP_DIRECT,     KeyEvent.CTRL_DOWN_MASK);
         setupGroup(groups, load, Shortcut.GROUPS_ALT2+Shortcut.GROUP_MNEMONIC,   KeyEvent.ALT_DOWN_MASK);
+        setupGroup(groups, load, Shortcut.GROUPS_ALT2+Shortcut.GROUP_DIRECT2,    KeyEvent.ALT_DOWN_MASK  | KeyEvent.CTRL_DOWN_MASK);
 
         return groups;
     }
