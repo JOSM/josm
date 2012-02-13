@@ -972,10 +972,13 @@ public class GenericRelationEditor extends RelationEditor  {
 
     class SortAction extends AbstractAction implements TableModelListener {
         public SortAction() {
-            putValue(SHORT_DESCRIPTION, tr("Sort the relation members"));
+            String tooltip = tr("Sort the relation members");
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort"));
             putValue(NAME, tr("Sort"));
-            //    Shortcut.register Shortcut("relationeditor:sort", tr("Relation Editor: Sort"), KeyEvent.VK_HOME, Shortcut.GROUP_MNEMONIC)
+            Shortcut sc = Shortcut.registerShortcut("relationeditor:sort", tr("Relation Editor: Sort"),
+                KeyEvent.VK_END, Shortcut.GROUP_DIRECT2);
+            sc.setAccelerator(this);
+            putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
             updateEnabledState();
         }
 
@@ -997,7 +1000,8 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SHORT_DESCRIPTION, tr("Reverse the order of the relation members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "reverse"));
             putValue(NAME, tr("Reverse"));
-            //   Shortcut.register Shortcut("relationeditor:reverse", tr("Relation Editor: Reverse"), KeyEvent.VK_END, Shortcut.GROUP_MNEMONIC)
+        //  Shortcut.register Shortcut("relationeditor:reverse", tr("Relation Editor: Reverse"),
+        //      KeyEvent.VK_END, Shortcut.GROUP_DIRECT2)
             updateEnabledState();
         }
 
@@ -1016,13 +1020,13 @@ public class GenericRelationEditor extends RelationEditor  {
 
     class MoveUpAction extends AbstractAction implements ListSelectionListener {
         public MoveUpAction() {
-            putValue(SHORT_DESCRIPTION, tr("Move the currently selected members up"));
+            String tooltip = tr("Move the currently selected members up");
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "moveup"));
             // putValue(NAME, tr("Move Up"));
-            putValue(ACCELERATOR_KEY,
-                Shortcut.registerShortcut("relationeditor:moveup", tr("Relation Editor: Move Up"), KeyEvent.VK_UP, Shortcut.GROUP_MNEMONIC)
-                    .getKeyStroke()
-            );
+            Shortcut sc = Shortcut.registerShortcut("relationeditor:moveup", tr("Relation Editor: Move Up"),
+                KeyEvent.VK_UP, Shortcut.GROUP_DIRECT2);
+            sc.setAccelerator(this);
+            putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
             setEnabled(false);
         }
 
@@ -1037,13 +1041,13 @@ public class GenericRelationEditor extends RelationEditor  {
 
     class MoveDownAction extends AbstractAction implements ListSelectionListener {
         public MoveDownAction() {
-            putValue(SHORT_DESCRIPTION, tr("Move the currently selected members down"));
+            String tooltip = tr("Move the currently selected members down");
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "movedown"));
             // putValue(NAME, tr("Move Down"));
-            putValue(ACCELERATOR_KEY,
-                Shortcut.registerShortcut("relationeditor:movedown", tr("Relation Editor: Move Down"), KeyEvent.VK_DOWN, Shortcut.GROUP_MNEMONIC)
-                    .getKeyStroke()
-            );
+            Shortcut sc = Shortcut.registerShortcut("relationeditor:movedown", tr("Relation Editor: Move Down"),
+                KeyEvent.VK_DOWN, Shortcut.GROUP_DIRECT2);
+            sc.setAccelerator(this);
+            putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
             setEnabled(false);
         }
 
@@ -1058,12 +1062,13 @@ public class GenericRelationEditor extends RelationEditor  {
 
     class RemoveAction extends AbstractAction implements ListSelectionListener {
         public RemoveAction() {
-            putValue(SHORT_DESCRIPTION, tr("Remove the currently selected members from this relation"));
+            String tooltip = tr("Remove the currently selected members from this relation");
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "remove"));
             putValue(NAME, tr("Remove"));
-            putValue(ACCELERATOR_KEY,
-                 Shortcut.registerShortcut("relationeditor:remove", tr("Relation Editor: Remove"), KeyEvent.VK_DELETE,
-                    Shortcut.GROUP_MNEMONIC).getKeyStroke());
+            Shortcut sc = Shortcut.registerShortcut("relationeditor:remove", tr("Relation Editor: Remove"),
+                KeyEvent.VK_DELETE, Shortcut.GROUP_DIRECT2);
+            sc.setAccelerator(this);
+            putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
             setEnabled(false);
         }
 
@@ -1394,14 +1399,13 @@ public class GenericRelationEditor extends RelationEditor  {
 
     class DownloadIncompleteMembersAction extends AbstractAction implements TableModelListener {
         public DownloadIncompleteMembersAction() {
-            putValue(SHORT_DESCRIPTION, tr("Download all incomplete members"));
+            String tooltip = tr("Download all incomplete members");
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincomplete"));
             putValue(NAME, tr("Download Members"));
-            putValue(ACCELERATOR_KEY,
-                Shortcut.registerShortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"), KeyEvent.VK_HOME, Shortcut.GROUP_MNEMONIC)
-                    .getKeyStroke()
-            );
-                
+            Shortcut sc = Shortcut.registerShortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"),
+                KeyEvent.VK_HOME, Shortcut.GROUP_DIRECT2);
+            sc.setAccelerator(this);
+            putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
             updateEnabledState();
         }
 
@@ -1430,7 +1434,8 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SHORT_DESCRIPTION, tr("Download selected incomplete members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
             putValue(NAME, tr("Download Members"));
-        //  Shortcut.register Shortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"), KeyEvent.VK_K, Shortcut.GROUP_MNEMONIC);
+        //  Shortcut.register Shortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"),
+        //      KeyEvent.VK_K, Shortcut.GROUP_DIRECT2)
             updateEnabledState();
         }
 

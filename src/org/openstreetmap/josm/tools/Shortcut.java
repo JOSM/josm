@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
@@ -211,6 +212,14 @@ public class Shortcut {
             button.setMnemonic(KeyEvent.getKeyText(assignedKey).charAt(0)); //getKeyStroke().getKeyChar() seems not to work here
         }
     }
+    /**
+     * use this to set a actions's accelerator
+     */
+    public void setAccelerator(AbstractAction action) {
+        if (getKeyStroke() != null) {
+            action.putValue(AbstractAction.ACCELERATOR_KEY, getKeyStroke());
+        }
+    }
 
     /**
      * use this to get a human readable text for your shortcut
@@ -308,7 +317,11 @@ public class Shortcut {
      * for direct access, with alt modifier.
      */
     public static final int GROUP_DIRECT2 = 7;
-    public static final int GROUP__MAX = 8;
+    /**
+     * for direct access, remaining modifiers.
+     */
+    public static final int GROUP_DIRECT3 = 8;
+    public static final int GROUP__MAX = 9;
     public static final int GROUP_RESERVED = 1000;
     public static final int GROUPS_DEFAULT = 0;
     public static final int GROUPS_ALT1 = GROUP__MAX;
