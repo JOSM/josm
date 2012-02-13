@@ -25,7 +25,7 @@ public class UpdateModifiedAction extends UpdateSelectionAction {
                 "updatemodified",
                 tr("Updates the currently modified objects from the server (re-downloads data)"),
                 Shortcut.registerShortcut("file:updatemodified",
-                        tr("Update modified"), KeyEvent.VK_M,
+                        tr("File: {0}", tr("Update modified")), KeyEvent.VK_M,
                         Shortcut.GROUPS_ALT2+Shortcut.GROUP_HOTKEY),
                         true);
         putValue("help", ht("/Action/UpdateModified"));

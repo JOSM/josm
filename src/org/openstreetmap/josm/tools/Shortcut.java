@@ -449,7 +449,7 @@ public class Shortcut {
     }
 
     private static int findModifier(int group, Integer modifier) {
-        Integer defaultModifier = getGroupModifier(group + GROUPS_DEFAULT);
+        Integer defaultModifier = getGroupModifier(group);
         if(modifier != null) {
             if(modifier == SHIFT_DEFAULT) {
                 defaultModifier |= KeyEvent.SHIFT_DOWN_MASK;
@@ -483,13 +483,13 @@ public class Shortcut {
         if (potentialShortcut != null) { // 3 stage conflict handling
             conflictsWith = potentialShortcut;
             defaultModifier = getGroupModifier(requestedGroup + GROUPS_ALT1);
-            if (defaultModifier == null) { // garbage in, no shortcurt out
+            if (defaultModifier == null) { // garbage in, no shortcut out
                 defaultModifier = getGroupModifier(GROUP_NONE + GROUPS_DEFAULT);
             }
             potentialShortcut = findShortcut(requestedKey, defaultModifier);
             if (potentialShortcut != null) {
                 defaultModifier = getGroupModifier(requestedGroup + GROUPS_ALT2);
-                if (defaultModifier == null) { // garbage in, no shortcurt out
+                if (defaultModifier == null) { // garbage in, no shortcut out
                     defaultModifier = getGroupModifier(GROUP_NONE + GROUPS_DEFAULT);
                 }
                 potentialShortcut = findShortcut(requestedKey, defaultModifier);
