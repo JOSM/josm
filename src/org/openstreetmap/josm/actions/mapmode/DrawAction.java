@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions.mapmode;
 
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenuItem;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 import static org.openstreetmap.josm.tools.I18n.marktr;
@@ -12,6 +13,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
+import java.awt.MenuItem;
 import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.Toolkit;
@@ -114,10 +116,21 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         snappingKeyCode = Shortcut.registerShortcut("mapmode:drawanglesnapping", tr("Mode: Draw Angle snapping"), KeyEvent.VK_TAB, Shortcut.GROUP_EDIT)
                 .getKeyStroke().getKeyCode();
-        snapCheckboxMenuItem = MainMenu.addWithCheckbox(Main.main.menu.editMenu, new SnapChangeAction(),  MainMenu.WINDOW_MENU_GROUP.VOLATILE);
+        addMenuItem();
         snapHelper.setMenuCheckBox(snapCheckboxMenuItem);
         cursorJoinNode = ImageProvider.getCursor("crosshair", "joinnode");
         cursorJoinWay = ImageProvider.getCursor("crosshair", "joinway");
+    }
+
+    private void addMenuItem() {
+        int n=Main.main.menu.editMenu.getItemCount();
+        for (int i=n-1;i>0;i--) {
+            JMenuItem item = Main.main.menu.editMenu.getItem(i);
+            if (item!=null && item.getAction() !=null && item.getAction() instanceof SnapChangeAction) {
+                Main.main.menu.editMenu.remove(i); 
+            }
+        }
+        snapCheckboxMenuItem = MainMenu.addWithCheckbox(Main.main.menu.editMenu, new SnapChangeAction(),  MainMenu.WINDOW_MENU_GROUP.VOLATILE);
     }
 
     /**
