@@ -321,11 +321,10 @@ public class Shortcut {
      * for direct access, remaining modifiers.
      */
     public static final int GROUP_DIRECT3 = 8;
-    public static final int GROUP__MAX = 9;
     public static final int GROUP_RESERVED = 1000;
     public static final int GROUPS_DEFAULT = 0;
-    public static final int GROUPS_ALT1 = GROUP__MAX;
-    public static final int GROUPS_ALT2 = GROUP__MAX * 2;
+    public static final int GROUPS_ALT1 = 100;
+    public static final int GROUPS_ALT2 = 200;
 
     // bootstrap
     private static boolean initdone = false;
