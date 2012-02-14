@@ -71,7 +71,7 @@ public class SaveLayersDialog extends JDialog {
      */
     protected void build() {
         WindowGeometry geometry = WindowGeometry.centerOnScreen(new Dimension(600,300));
-        geometry.apply(this);
+        geometry.applySafe(this);
         getContentPane().setLayout(new BorderLayout());
 
         model = new SaveLayersModel();

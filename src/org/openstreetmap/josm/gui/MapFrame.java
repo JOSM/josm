@@ -478,10 +478,10 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     }
 
     /**
-     * Returns the current width of the (possibly resized) toggle dialog area
+     * Remember the current width of the (possibly resized) toggle dialog area
      */
-    public int getToggleDlgWidth() {
-        return dialogsPanel.getWidth();
+    public void rememberToggleDialogWidth() {
+        Main.pref.putInteger("toggleDialogs.width", dialogsPanel.getWidth());
     }
 
     /**

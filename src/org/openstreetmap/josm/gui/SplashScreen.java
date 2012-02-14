@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressRenderer;
 import org.openstreetmap.josm.gui.progress.SwingRenderingProgressMonitor;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * Show a splash screen so the user knows what is happening during startup.
@@ -57,6 +58,7 @@ public class SplashScreen extends JFrame {
         JLabel logo = new JLabel(ImageProvider.get("logo.png"));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridheight = 2;
+        gbc.insets = new Insets(0, 0, 0, 70);
         innerContentPane.add(logo, gbc);
 
         // Add the name of this application
@@ -91,8 +93,7 @@ public class SplashScreen extends JFrame {
 
         pack();
 
-        // Center the splash screen
-        setLocationRelativeTo(null);
+        WindowGeometry.centerOnScreen(this, "gui.geometry");
 
         // Add ability to hide splash screen by clicking it
         addMouseListener(new MouseAdapter() {

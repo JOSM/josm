@@ -50,6 +50,8 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.WindowGeometry;
+import org.openstreetmap.josm.tools.WindowGeometry.WindowGeometryException;
 
 /**
  * This class is a toggle dialog that can be turned on and off.
@@ -506,12 +508,9 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 }
             });
 
-            String bounds = Main.pref.get(preferencePrefix+".bounds",null);
-            if (bounds != null) {
-                String[] b = bounds.split(",");
-                setBounds(getDetachedGeometry(new Rectangle(
-                        Integer.parseInt(b[0]),Integer.parseInt(b[1]),Integer.parseInt(b[2]),Integer.parseInt(b[3]))));
-            } else {
+            try {
+                new WindowGeometry(preferencePrefix+".geometry").applySafe(this);
+            } catch (WindowGeometryException e) {
                 ToggleDialog.this.setPreferredSize(ToggleDialog.this.getDefaultDetachedSize());
                 pack();
                 setLocationRelativeTo(Main.parent);
@@ -522,7 +521,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
         protected void rememberGeometry() {
             if (detachedDialog != null) {
-                Main.pref.put(preferencePrefix+".bounds", detachedDialog.getX()+","+detachedDialog.getY()+","+detachedDialog.getWidth()+","+detachedDialog.getHeight());
+                new WindowGeometry(detachedDialog).remember(preferencePrefix+".geometry");
             }
         }
     }

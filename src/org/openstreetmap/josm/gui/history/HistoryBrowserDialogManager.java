@@ -73,7 +73,7 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
 
     public void placeOnScreen(HistoryBrowserDialog dialog) {
         WindowGeometry geometry = WindowGeometry.centerOnScreen(new Dimension(800,500));
-        geometry.apply(dialog);
+        geometry.applySafe(dialog);
         Point p = dialog.getLocation();
         while(hasDialogWithCloseUpperLeftCorner(p)) {
             p.x +=20;

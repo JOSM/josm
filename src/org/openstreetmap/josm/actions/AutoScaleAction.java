@@ -213,7 +213,7 @@ public class AutoScaleAction extends JosmAction {
             v.enlargeBoundingBox();
         }
         else if (mode.equals("download")) {
-            if (Main.pref.hasKey("osm-download.bounds")) {
+            if (!Main.pref.get("osm-download.bounds").isEmpty()) {
                 try {
                     v.visit(new Bounds(Main.pref.get("osm-download.bounds"), ";"));
                 } catch (Exception e) {

@@ -333,9 +333,10 @@ public class Preferences {
         return locations;
     }
 
+ /*   @Deprecated
     synchronized public boolean hasKey(final String key) {
         return properties.containsKey(key);
-    }
+    }*/
 
     /**
      * Get settings value for a certain key.
@@ -637,6 +638,7 @@ public class Preferences {
                 properties.put("expert", "true");
             }
         }
+        removeObsolete();
     }
 
     public void init(boolean reset){
@@ -1725,5 +1727,25 @@ public class Preferences {
         }
         b.append("</preferences>\n");
         return b.toString();
+    }
+
+    /**
+     * Removes obsolete preference settings. If you throw out a once-used preference
+     * setting, add it to the list here with an expiry date (written as comment). If you
+     * see something with an expiry date in the past, remove it from the list.
+     */
+    public void removeObsolete() {
+        String[] obsolete = {
+                "edit.make-parallel-way-action.snap-threshold",  // 10/2011 - replaced by snap-threshold-percent. Can be removed mid 2012
+        };
+        for (String key : obsolete) {
+            boolean removed = false;
+            if(properties.containsKey(key)) { properties.remove(key); removed = true; }
+            if(collectionProperties.containsKey(key)) { collectionProperties.remove(key); removed = true; }
+            if(arrayProperties.containsKey(key)) { arrayProperties.remove(key); removed = true; }
+            if(listOfStructsProperties.containsKey(key)) { listOfStructsProperties.remove(key); removed = true; }
+            if(removed)
+                System.out.println(tr("Preference setting {0} has been removed since it is no longer used.", key));
+        }
     }
 }

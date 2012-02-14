@@ -36,9 +36,11 @@ public class LanguagePreference implements PreferenceSetting {
 
     public void addGui(final PreferenceTabbedPane gui) {
         model = new LanguageComboBoxModel();
+        // Selecting the language BEFORE the JComboBox listens to model changes speed up initialization by ~35ms (see #7386)
+        // See http://stackoverflow.com/questions/3194958/fast-replacement-for-jcombobox-basiccomboboxui 
+        model.selectLanguage(Main.pref.get("language"));
         langCombo = new JComboBox(model);
         langCombo.setRenderer(new LanguageCellRenderer(langCombo.getRenderer()));
-        model.selectLanguage(Main.pref.get("language"));
 
         LafPreference lafPreference = gui.getSetting(LafPreference.class);
         final JPanel panel = lafPreference.panel;
