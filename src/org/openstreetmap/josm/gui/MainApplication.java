@@ -64,7 +64,7 @@ public class MainApplication extends Main {
         super();
         mainFrame.setContentPane(contentPanePrivate);
         mainFrame.setJMenuBar(menu);
-        mainFrame.setBounds(bounds);
+        geometry.applySafe(mainFrame);
         LinkedList<Image> l = new LinkedList<Image>();
         l.add(ImageProvider.get("logo_16x16x32").getImage());
         l.add(ImageProvider.get("logo_16x16x8").getImage());
@@ -73,7 +73,6 @@ public class MainApplication extends Main {
         l.add(ImageProvider.get("logo_48x48x32").getImage());
         l.add(ImageProvider.get("logo_48x48x8").getImage());
         l.add(ImageProvider.get("logo").getImage());
-        //mainFrame.setIconImage(ImageProvider.get("logo").getImage());
         mainFrame.setIconImages(l);
         mainFrame.addWindowListener(new WindowAdapter(){
             @Override public void windowClosing(final WindowEvent arg0) {
@@ -246,7 +245,6 @@ public class MainApplication extends Main {
 
         monitor.indeterminateSubTask(tr("Setting defaults"));
         preConstructorInit(args);
-        removeObsoletePreferences();
 
         monitor.indeterminateSubTask(tr("Creating main GUI"));
         JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
@@ -317,25 +315,6 @@ public class MainApplication extends Main {
             // Repaint manager is registered so late for a reason - there is lots of violation during startup process but they don't seem to break anything and are difficult to fix
             System.out.println("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
-        }
-
-    }
-
-    /**
-     * Removes obsolete preference settings. If you throw out a once-used preference
-     * setting, add it to the list here with an expiry date (written as comment). If you
-     * see something with an expiry date in the past, remove it from the list.
-     */
-    public static void removeObsoletePreferences() {
-
-        String[] obsolete = {
-                "edit.make-parallel-way-action.snap-threshold"  // 10/2011 - replaced by snap-threshold-percent. Can be removed mid 2012
-        };
-        for (String key : obsolete) {
-            if (Main.pref.hasKey(key)) {
-                Main.pref.removeFromCollection(key, Main.pref.get(key));
-                System.out.println(tr("Preference setting {0} has been removed since it is no longer used.", key));
-            }
         }
     }
 }

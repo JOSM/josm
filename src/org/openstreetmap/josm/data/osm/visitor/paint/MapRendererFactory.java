@@ -114,21 +114,6 @@ public class MapRendererFactory {
 
     private MapRendererFactory() {
         registerDefaultRenderers();
-        boolean drawWireframe = false;
-        if (Main.pref.hasKey("draw.wireframe")) {
-            drawWireframe = Main.pref.getBoolean("draw.wireframe",false);
-            /*
-             * transition 05/2011 - 'draw.wireframe' isn't supported anymore. Remove
-             * it from the preferences.
-             * Can be removed after ~ 01/2012
-             */
-            Main.pref.put("draw.wireframe", null);
-        }
-        if (drawWireframe){
-            activate(WireframeMapRenderer.class);
-            return;
-        }
-
         String rendererClassName = Main.pref.get(PREF_KEY_RENDERER_CLASS_NAME, null);
         if (rendererClassName != null) {
             activateMapRenderer(rendererClassName);

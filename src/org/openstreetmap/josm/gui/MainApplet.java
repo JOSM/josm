@@ -49,7 +49,6 @@ public class MainApplet extends JApplet {
         private MainCaller() {
             setContentPane(contentPanePrivate);
             setJMenuBar(menu);
-            setBounds(bounds);
         }
     }
 

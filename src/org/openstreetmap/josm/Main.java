@@ -4,11 +4,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
@@ -89,6 +86,7 @@ import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.WindowGeometry;
 
 abstract public class Main {
 
@@ -420,7 +418,7 @@ abstract public class Main {
 
     public static final JPanel panel = new JPanel(new BorderLayout());
 
-    protected static Rectangle bounds;
+    protected static WindowGeometry geometry;
     protected static int windowState = JFrame.NORMAL;
 
     private final CommandQueueListener redoUndoListener = new CommandQueueListener(){
@@ -473,48 +471,9 @@ abstract public class Main {
             CoordinateFormat.setCoordinateFormat(CoordinateFormat.DECIMAL_DEGREES);
         }
 
-        Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
-        String geometry = null;
-        if (args.containsKey("geometry")) {
-            geometry = args.get("geometry").iterator().next();
-        } else {
-            geometry = Main.pref.get("gui.geometry");
-        }
-        if (geometry.length() != 0) {
-            final Matcher m = Pattern.compile("(\\d+)x(\\d+)(([+-])(\\d+)([+-])(\\d+))?").matcher(geometry);
-            if (m.matches()) {
-                int w = Integer.valueOf(m.group(1));
-                int h = Integer.valueOf(m.group(2));
-                int x = 0, y = 0;
-                if (m.group(3) != null) {
-                    x = Integer.valueOf(m.group(5));
-                    y = Integer.valueOf(m.group(7));
-                    if (m.group(4).equals("-")) {
-                        x = screenDimension.width - x - w;
-                    }
-                    if (m.group(6).equals("-")) {
-                        y = screenDimension.height - y - h;
-                    }
-                }
-                // copied from WindowsGeometry.applySafe()
-                if (x > Toolkit.getDefaultToolkit().getScreenSize().width - 10) {
-                    x = 0;
-                }
-                if (y > Toolkit.getDefaultToolkit().getScreenSize().height - 10) {
-                    y = 0;
-                }
-                bounds = new Rectangle(x,y,w,h);
-                if(!Main.pref.get("gui.geometry").equals(geometry)) {
-                    // remember this geometry
-                    Main.pref.put("gui.geometry", geometry);
-                }
-            } else {
-                System.out.println("Ignoring malformed geometry: "+geometry);
-            }
-        }
-        if (bounds == null) {
-            bounds = !args.containsKey("no-maximize") ? new Rectangle(0,0,screenDimension.width,screenDimension.height) : new Rectangle(1000,740);
-        }
+        geometry = WindowGeometry.mainWindow("gui.geometry",
+            (args.containsKey("geometry") ? args.get("geometry").iterator().next() : null),
+            !args.containsKey("no-maximize"));
     }
 
     public void postConstructorProcessCmdLine(Map<String, Collection<String>> args) {
@@ -607,7 +566,11 @@ abstract public class Main {
 
     public static boolean exitJosm(boolean exit) {
         if (Main.saveUnsavedModifications()) {
-            Main.saveGuiGeometry();
+            geometry.remember("gui.geometry");
+            if (map  != null) {
+                map.rememberToggleDialogWidth();
+            }
+            pref.put("gui.maximized", (windowState & JFrame.MAXIMIZED_BOTH) != 0);
             // Remove all layers because somebody may rely on layerRemoved events (like AutosaveTask)
             if (Main.isDisplayingMapView()) {
                 Collection<Layer> layers = new ArrayList<Layer>(Main.map.mapView.getAllLayers());
@@ -713,84 +676,37 @@ abstract public class Main {
         }
     }
 
-    static public void saveGuiGeometry() {
-        // save the current window geometry and the width of the toggle dialog area
-        String newGeometry = "";
-        String newToggleDlgWidth = null;
-        try {
-            Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
-            int width = (int)bounds.getWidth();
-            int height = (int)bounds.getHeight();
-            int x = (int)bounds.getX();
-            int y = (int)bounds.getY();
-            if (width > screenDimension.width) {
-                width = screenDimension.width;
-            }
-            if (height > screenDimension.height) {
-                width = screenDimension.height;
-            }
-            if (x < 0) {
-                x = 0;
-            }
-            if (y < 0) {
-                y = 0;
-            }
-            newGeometry = width + "x" + height + "+" + x + "+" + y;
-
-            if (map  != null) {
-                newToggleDlgWidth = Integer.toString(map.getToggleDlgWidth());
-                if (newToggleDlgWidth.equals(Integer.toString(MapFrame.DEF_TOGGLE_DLG_WIDTH))) {
-                    newToggleDlgWidth = "";
-                }
-            }
-        }
-        catch (Exception e) {
-            System.out.println("Failed to get GUI geometry: " + e);
-            e.printStackTrace();
-        }
-        boolean maximized = (windowState & JFrame.MAXIMIZED_BOTH) != 0;
-        // Main.debug("Main window: saving geometry \"" + newGeometry + "\" " + (maximized?"maximized":"normal"));
-        pref.put("gui.maximized", maximized);
-        pref.put("gui.geometry", newGeometry);
-        if (newToggleDlgWidth != null) {
-            pref.put("toggleDialogs.width", newToggleDlgWidth);
-        }
-    }
     private static class WindowPositionSizeListener extends WindowAdapter implements
     ComponentListener {
-
         @Override
         public void windowStateChanged(WindowEvent e) {
             Main.windowState = e.getNewState();
-            // Main.debug("Main window state changed to " + Main.windowState);
         }
 
+        @Override
         public void componentHidden(ComponentEvent e) {
         }
 
+        @Override
         public void componentMoved(ComponentEvent e) {
             handleComponentEvent(e);
         }
 
+        @Override
         public void componentResized(ComponentEvent e) {
             handleComponentEvent(e);
         }
 
+        @Override
         public void componentShown(ComponentEvent e) {
         }
 
         private void handleComponentEvent(ComponentEvent e) {
             Component c = e.getComponent();
-            if (c instanceof JFrame) {
-                if (Main.windowState == JFrame.NORMAL) {
-                    Main.bounds = ((JFrame) c).getBounds();
-                    // Main.debug("Main window: new geometry " + Main.bounds);
-                } else {
-                    // Main.debug("Main window state is " + Main.windowState);
-                }
+            if (c instanceof JFrame && c.isVisible() && Main.windowState == JFrame.NORMAL) {
+                Main.geometry = new WindowGeometry((JFrame) c);
             }
         }
-
     }
     public static void addListener() {
         parent.addComponentListener(new WindowPositionSizeListener());

@@ -74,7 +74,7 @@ public class CredentialDialog extends JDialog {
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
-            WindowGeometry.centerInWindow(Main.parent, new Dimension(350,300)).apply(this);
+            WindowGeometry.centerInWindow(Main.parent, new Dimension(350,300)).applySafe(this);
         }
         super.setVisible(visible);
     }

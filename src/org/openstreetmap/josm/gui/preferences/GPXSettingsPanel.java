@@ -296,8 +296,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
      */
     public void loadPreferences () {
         makeAutoMarkers.setSelected(Main.pref.getBoolean("marker.makeautomarkers", true));
-        if(layerName!=null && !Main.pref.hasKey("draw.rawgps.lines."+layerName)
-                && !Main.pref.hasKey("draw.rawgps.lines.local."+layerName)){
+        if(layerName!=null && Main.pref.get("draw.rawgps.lines."+layerName).isEmpty()
+                && Main.pref.get("draw.rawgps.lines.local."+layerName).isEmpty()){
             // no line preferences for layer is found
             drawRawGpsLinesGlobal.setSelected(true);
         } else {
@@ -322,7 +322,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         largeGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.large",layerName, false));
         drawRawGpsLinesActionListener.actionPerformed(null);
 
-        if(layerName!=null && !Main.pref.hasKey("draw.rawgps.colors."+layerName)) {
+        if(layerName!=null && Main.pref.get("draw.rawgps.colors."+layerName).isEmpty()) {
             colorTypeGlobal.setSelected(true);
             colorDynamic.setSelected(false);
             colorDynamic.setEnabled(false);

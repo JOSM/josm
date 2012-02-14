@@ -137,6 +137,37 @@ public class WindowGeometry {
         this.extent = other.extent;
     }
 
+    static public WindowGeometry mainWindow(String preferenceKey, String arg, boolean maximize) {
+        Dimension screenDimension = getScreenSize(null);
+        if (arg != null) {
+            final Matcher m = Pattern.compile("(\\d+)x(\\d+)(([+-])(\\d+)([+-])(\\d+))?").matcher(arg);
+            if (m.matches()) {
+                int w = Integer.valueOf(m.group(1));
+                int h = Integer.valueOf(m.group(2));
+                int x = 0, y = 0;
+                if (m.group(3) != null) {
+                    x = Integer.valueOf(m.group(5));
+                    y = Integer.valueOf(m.group(7));
+                    if (m.group(4).equals("-")) {
+                        x = screenDimension.width - x - w;
+                    }
+                    if (m.group(6).equals("-")) {
+                        y = screenDimension.height - y - h;
+                    }
+                }
+                return new WindowGeometry(new Point(x,y), new Dimension(w,h));
+            } else {
+                System.out.println(tr("Ignoring malformed geometry: {0}", arg));
+            }
+        }
+        WindowGeometry def;
+        if(maximize)
+            def = new WindowGeometry(new Point(0,0), screenDimension);
+        else
+            def = new WindowGeometry(new Point(0,0), new Dimension(1000, 740));
+        return new WindowGeometry(preferenceKey, def);
+    }
+
     /**
      * Creates a window geometry from the values kept in the preference store under the
      * key <code>preferenceKey</code>
@@ -162,7 +193,6 @@ public class WindowGeometry {
         try {
             initFromPreferences(preferenceKey);
         } catch(WindowGeometryException e) {
-            //            System.out.println(tr("Warning: Failed to restore window geometry from key ''{0}''. Falling back to default geometry. Details: {1}", preferenceKey, e.getMessage()));
             initFromWindowGeometry(defaultGeometry);
         }
     }
@@ -200,40 +230,25 @@ public class WindowGeometry {
     }
 
     /**
-     * Applies this geometry to a window
-     *
+     * Center window on screen. When preferenceKey is given, the window is centered
+     * on the screen where the corresponding window is.
+     * 
      * @param window the window
+     * @param preferenceKey the key to get size and position from
      */
-    public void apply(Window window) {
-        window.setLocation(topLeft);
-        window.setSize(extent);
+    public static void centerOnScreen(Window window, String preferenceKey) {
+        Dimension dim = getScreenSize(preferenceKey);
+        Dimension size = window.getSize();
+        window.setLocation(new Point((dim.width-size.width)/2,(dim.height-size.height)/2));
     }
 
-    /**
-     * Applies this geometry to a window. Makes sure that the window is not placed outside
-     * of the coordinate range of the current screen.
-     *
-     * @param window the window
-     */
-    public void applySafe(Window window) {
-        Point p = new Point(topLeft);
-        if (p.x < 0 || p.x > Toolkit.getDefaultToolkit().getScreenSize().width - 10) {
-            p.x  = 0;
-        }
-        if (p.y < 0 || p.y > Toolkit.getDefaultToolkit().getScreenSize().height - 10) {
-            p.y = 0;
-        }
-        window.setLocation(p);
-        window.setSize(extent);
-    }
-    
     /**
      * Applies this geometry to a window. Makes sure that the window is not
      * placed outside of the coordinate range of all available screens.
      * 
      * @param window the window
      */
-    public void applySafeMultiScreen(Window window) {
+    public void applySafe(Window window) {
         Point p = new Point(topLeft);
 
         Rectangle virtualBounds = new Rectangle();
@@ -262,6 +277,17 @@ public class WindowGeometry {
 
         window.setLocation(p);
         window.setSize(extent);
+    }
+
+    /**
+     * Find the size of the screen the for given coordinates. Use first screen,
+     * when no coordinates are stored or null is passed.
+     * 
+     * @param preferenceKey the key to get size and position from
+     */
+    public static Dimension getScreenSize(String preferenceKey) {
+        /* TODO: implement this function properly */
+        return Toolkit.getDefaultToolkit().getScreenSize();
     }
 
     public String toString() {

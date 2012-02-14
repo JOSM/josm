@@ -18,7 +18,7 @@ public abstract class AbstractProperty<T> {
     }
 
     public boolean isSet() {
-        return Main.pref.hasKey(key);
+        return !Main.pref.get(key).isEmpty();
     }
 
     public abstract T getDefaultValue();

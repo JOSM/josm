@@ -188,7 +188,7 @@ public class CacheFiles {
      */
     public void setExpire(int amount, boolean force) {
         String key = "cache." + ident + "." + "expire";
-        if(Main.pref.hasKey(key) && !force)
+        if(!Main.pref.get(key).isEmpty() && !force)
             return;
 
         this.expire = amount > 0 ? amount : EXPIRE_NEVER;
@@ -202,7 +202,7 @@ public class CacheFiles {
      */
     public void setMaxSize(int amount, boolean force) {
         String key = "cache." + ident + "." + "maxsize";
-        if(Main.pref.hasKey(key) && !force)
+        if(!Main.pref.get(key).isEmpty() && !force)
             return;
 
         this.maxsize = amount > 0 ? amount : -1;

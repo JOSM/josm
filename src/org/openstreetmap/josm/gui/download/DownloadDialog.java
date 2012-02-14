@@ -327,7 +327,7 @@ public class DownloadDialog extends JDialog  {
             );
             boundingBoxChanged(currentBounds,null);
         }
-        else if (Main.pref.hasKey("osm-download.bounds")) {
+        else if (!Main.pref.get("osm-download.bounds").isEmpty()) {
             // read the bounding box from the preferences
             try {
                 currentBounds = new Bounds(Main.pref.get("osm-download.bounds"), ";");
