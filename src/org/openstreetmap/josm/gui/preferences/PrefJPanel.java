@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
+
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
@@ -102,10 +104,11 @@ public class PrefJPanel extends JPanel {
     
     private static Map<Integer, String> setKeyList() {
         Map<Integer, String> list = new LinkedHashMap<Integer, String>();
+        String unknown = Toolkit.getProperty("AWT.unknown", "Unknown");
         // I hate this, but I found no alternative...
         for (int i = 0; i < 65534; i++) {
             String s = KeyEvent.getKeyText(i);
-            if (s != null && s.length() > 0 && !s.contains("Unknown")) {
+            if (s != null && s.length() > 0 && !s.contains(unknown)) {
                 list.put(Integer.valueOf(i), s);
                 //System.out.println(i+": "+s);
             }
