@@ -10,6 +10,7 @@ import java.awt.Toolkit;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.HashMap;
@@ -105,12 +106,19 @@ public class PrefJPanel extends JPanel {
     private static Map<Integer, String> setKeyList() {
         Map<Integer, String> list = new LinkedHashMap<Integer, String>();
         String unknown = Toolkit.getProperty("AWT.unknown", "Unknown");
-        // I hate this, but I found no alternative...
-        for (int i = 0; i < 65534; i++) {
-            String s = KeyEvent.getKeyText(i);
-            if (s != null && s.length() > 0 && !s.contains(unknown)) {
-                list.put(Integer.valueOf(i), s);
-                //System.out.println(i+": "+s);
+        // Assume all known keys are declared in KeyEvent as "public static int VK_*"
+        for (Field field : KeyEvent.class.getFields()) {
+            if (field.getName().startsWith("VK_")) {
+                try {
+                    int i = field.getInt(null);
+                    String s = KeyEvent.getKeyText(i);
+                    if (s != null && s.length() > 0 && !s.contains(unknown)) {
+                        list.put(Integer.valueOf(i), s);
+                        //System.out.println(i+": "+s);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
         list.put(Integer.valueOf(-1), "");
