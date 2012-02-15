@@ -1681,7 +1681,7 @@ public class GenericRelationEditor extends RelationEditor  {
     class PasteTagsAction extends AbstractAction {
 
         public PasteTagsAction() {
-            registerCopyPasteAction(this, "PASTE_TAGS", Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT).getKeyStroke());
+            registerCopyPasteAction(this, "PASTE_TAGS", Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.GROUP_MENU+Shortcut.GROUPS_ALT1).getKeyStroke());
         }
 
         @Override

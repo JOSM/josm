@@ -33,7 +33,8 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
     public PasteTagsAction() {
         super(tr("Paste Tags"), "pastetags",
                 tr("Apply tags of contents of paste buffer to all selected items."),
-                Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT), true);
+                Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")),
+                KeyEvent.VK_V, Shortcut.GROUP_MENU+Shortcut.GROUPS_ALT1), true);
         Main.pasteBuffer.addPasteBufferChangedListener(this);
         putValue("help", ht("/Action/PasteTags"));
     }
