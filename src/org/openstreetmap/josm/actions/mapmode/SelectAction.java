@@ -212,10 +212,16 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             final OsmPrimitive osm = it.hasNext() ? it.next() : null;
 
             if(dragInProgress()) {
-                c = ctrl ? "merge" : "move";
-                if(osm != null && osm instanceof Node && ctrl) {
-                    c += "_to_node";
+                // only consider merge if ctrl is pressed and there are nodes in
+                // the selection that could be merged
+                if(!ctrl || getCurrentDataSet().getSelectedNodes().isEmpty()) {
+                    c = "move";
+                    break;
                 }
+                // only show merge to node cursor if nearby node and that node is currently
+                // not being dragged
+                final boolean hasTarget = osm != null && osm instanceof Node && !osm.isSelected();
+                c = hasTarget ? "merge_to_node" : "merge";
                 break;
             }
 
@@ -309,11 +315,13 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         if(!drawTargetHighlight || mode != Mode.move || c.isEmpty())
             return needsRepaint;
 
+        // CTRL toggles selection, but if while dragging CTRL means merge
+        final boolean isToggleMode = ctrl && !dragInProgress();
         for(OsmPrimitive x : c) {
             // only highlight primitives that will change the selection
             // when clicked. I.e. don't highlight selected elements unless
             // we are in toggle mode.
-            if(ctrl || !x.isSelected()) {
+            if(isToggleMode || !x.isSelected()) {
                 x.setHighlighted(true);
                 oldHighlights.add(x);
             }
@@ -343,12 +351,11 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     public void mouseDragged(MouseEvent e) {
         if (!mv.isActiveLayerVisible())
             return;
-        
+
         // Swing sends random mouseDragged events when closing dialogs by double-clicking their top-left icon on Windows
         // Ignore such false events to prevent issues like #7078
-        if (mouseDownButton == MouseEvent.BUTTON1 && mouseReleaseTime > mouseDownTime) {
+        if (mouseDownButton == MouseEvent.BUTTON1 && mouseReleaseTime > mouseDownTime)
             return;
-        }
 
         cancelDrawMode = true;
         if (mode == Mode.select)
@@ -367,7 +374,8 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         if (mode == Mode.move) {
             // If ctrl is pressed we are in merge mode. Look for a nearby node,
             // highlight it and adjust the cursor accordingly.
-            final OsmPrimitive p = ctrl ? (OsmPrimitive)findNodeToMergeTo(e) : null;
+            final boolean canMerge = ctrl && !getCurrentDataSet().getSelectedNodes().isEmpty();
+            final OsmPrimitive p = canMerge ? (OsmPrimitive)findNodeToMergeTo(e) : null;
             boolean needsRepaint = removeHighlighting();
             if(p != null) {
                 p.setHighlighted(true);
@@ -375,6 +383,9 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                 needsRepaint = true;
             }
             mv.setNewCursor(getCursor(MapView.asColl(p)), this);
+            // also update the stored mouse event, so we can display the correct cursor
+            // when dragging a node onto another one and then press CTRL to merge
+            oldEvent = e;
             if(needsRepaint) {
                 mv.repaint();
             }
@@ -635,7 +646,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
      * sets the mapmode according to key modifiers and if there are any
      * selectables nearby. Everything has to be pre-determined for this
      * function; its main purpose is to centralize what the modifiers do.
-     * @param nearSelectables
+     * @param hasSelectionNearby
      */
     private void determineMapMode(boolean hasSelectionNearby) {
         if (shift && ctrl) {
@@ -934,9 +945,11 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     public String getModeHelpText() {
         if (mode == Mode.select)
             return tr("Release the mouse button to select the objects in the rectangle.");
-        else if (mode == Mode.move)
-            return tr("Release the mouse button to stop moving. Ctrl to merge with nearest node.");
-        else if (mode == Mode.rotate)
+        else if (mode == Mode.move) {
+            final boolean canMerge = !getCurrentDataSet().getSelectedNodes().isEmpty();
+            final String mergeHelp = canMerge ? (" " + tr("Ctrl to merge with nearest node.")) : "";
+            return tr("Release the mouse button to stop moving.") + mergeHelp;
+        } else if (mode == Mode.rotate)
             return tr("Release the mouse button to stop rotating.");
         else if (mode == Mode.scale)
             return tr("Release the mouse button to stop scaling.");
