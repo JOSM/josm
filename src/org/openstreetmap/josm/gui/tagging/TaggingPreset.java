@@ -66,7 +66,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
-import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference.PresetPrefMigration;
+import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference.PresetPrefHelper;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
@@ -1239,7 +1239,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public static LinkedList<String> getPresetSources() {
         LinkedList<String> sources = new LinkedList<String>();
 
-        for (SourceEntry e : (new PresetPrefMigration()).get()) {
+        for (SourceEntry e : (new PresetPrefHelper()).get()) {
             sources.add(e.url);
         }
 
