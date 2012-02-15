@@ -80,14 +80,14 @@ public class MapPaintPreference implements PreferenceSetting {
 
         @Override
         public Collection<? extends SourceEntry> getInitialSourcesList() {
-            return MapPaintPrefMigration.INSTANCE.get();
+            return MapPaintPrefHelper.INSTANCE.get();
         }
 
         @Override
         public boolean finish() {
             List<SourceEntry> activeStyles = activeSourcesModel.getSources();
 
-            boolean changed = MapPaintPrefMigration.INSTANCE.put(activeStyles);
+            boolean changed = MapPaintPrefHelper.INSTANCE.put(activeStyles);
 
             if (tblIconPaths != null) {
                 List<String> iconPaths = iconPathsModel.getIconPaths();
@@ -105,7 +105,7 @@ public class MapPaintPreference implements PreferenceSetting {
 
         @Override
         public Collection<ExtendedSourceEntry> getDefault() {
-            return MapPaintPrefMigration.INSTANCE.getDefault();
+            return MapPaintPrefHelper.INSTANCE.getDefault();
         }
 
         @Override
@@ -169,41 +169,21 @@ public class MapPaintPreference implements PreferenceSetting {
         MapPaintStyles.readFromPreferences();
     }
 
-    public static class MapPaintPrefMigration extends SourceEditor.SourcePrefMigration {
+    public static class MapPaintPrefHelper extends SourceEditor.SourcePrefHelper {
 
-        public final static MapPaintPrefMigration INSTANCE = new MapPaintPrefMigration();
+        public final static MapPaintPrefHelper INSTANCE = new MapPaintPrefHelper();
 
-        public MapPaintPrefMigration() {
-            super("mappaint.style.sources",
-                    "mappaint.style.enable-defaults",
-                    "mappaint.style.sources-list");
+        public MapPaintPrefHelper() {
+            super("mappaint.style.sources-list");
         }
 
         @Override
         public List<SourceEntry> get() {
             List<SourceEntry> ls = super.get();
-            if (adapt_elemstyles_xml(ls)) {
-                put(ls);
-            }
             if (insertNewDefaults(ls)) {
                 put(ls);
             }
             return ls;
-        }
-
-        /**
-         * The internal path of elemstyles.xml has changed, this
-         * can be removed when a few months have passed.
-         */
-        private boolean adapt_elemstyles_xml(List<SourceEntry> ls) {
-            boolean changed = false;
-            for (SourceEntry se : ls) {
-                if (se.url.equals("resource://data/elemstyles.xml")) {
-                    se.url = "resource://styles/standard/elemstyles.xml";
-                    changed = true;
-                }
-            }
-            return changed;
         }
 
         /**

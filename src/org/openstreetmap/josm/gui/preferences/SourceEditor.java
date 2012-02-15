@@ -1416,44 +1416,11 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
+    abstract public static class SourcePrefHelper {
 
-    /**
-     * Convert mappaint and preset source preferences from a simple list to
-     * array with one line for each source entry.
-     *
-     * MapPaint:
-     *
-     *    Old format
-     *      key: mappaint.style.sources
-     *      value: list of "<name>=<url>" pairs. The "<name>=" part is optional.
-     *          The style is always active.
-     *      default: empty list
-     *
-     *      key: mappaint.style.enable-defaults
-     *      value: if true, the default style "resource://data/elemstyles.xml" should
-     *          be loaded.
-     *      default: true
-     *
-     *    New format
-     *      key: mappaint.style.sources-list
-     *      value: each line is a list with entries: url, name, shortdescription, active
-     *      default:
-     *          One line: "resource://data/elemstyles.xml", "standard", tr("Internal Style"), true
-     *
-     * Tagging Preset:
-     *
-     *      the same, but "name" and "active" are not needed and omitted
-     *
-     */
-    abstract public static class SourcePrefMigration {
-
-        private final String oldPref;
-        private final String oldPrefEnableDefaults;
         private final String pref;
 
-        public SourcePrefMigration(String oldPref, String oldPrefEnableDefaults, String pref) {
-            this.oldPref = oldPref;
-            this.oldPrefEnableDefaults = oldPrefEnableDefaults;
+        public SourcePrefHelper(String pref) {
             this.pref = pref;
         }
 
@@ -1464,68 +1431,11 @@ public abstract class SourceEditor extends JPanel {
         abstract public SourceEntry deserialize(List<String> entryStr);
 
         public List<SourceEntry> get() {
-            List<SourceEntry> entries = readNewFormatImpl();
-            if (entries == null) {
-
-                entries = readOldFormat();
-                put(entries);
-                return entries;
-            }
-            return entries;
-        }
-
-        public boolean put(Collection<? extends SourceEntry> entries) {
-            boolean changed = false;
-            if (entries.isEmpty()) {
-                changed |= Main.pref.put(pref + "._empty_", true);
-                changed |= Main.pref.putArray(pref, null);
-            } else {
-                Collection<Collection<String>> setting = new ArrayList<Collection<String>>();
-                for (SourceEntry e : entries) {
-                    setting.add(serialize(e));
-                }
-                changed |= Main.pref.put(pref + "._empty_", null);
-                changed |= Main.pref.putArray(pref, setting);
-            }
-            return changed;
-        }
-
-        public List<SourceEntry> readOldFormat() {
-            List<SourceEntry> result = new ArrayList<SourceEntry>();
-            if (Main.pref.getBoolean(oldPrefEnableDefaults, true)) {
-                result.addAll(getDefault());
-            }
-
-            List<String> lines = new LinkedList<String>(Main.pref.getCollection(oldPref));
-            for (String line : lines) {
-                String[] a = null;
-                if (line.indexOf("=") >= 0) {
-                    a = line.split("=", 2);
-                } else {
-                    a = new String[] { null, line };
-                }
-                result.add(new SourceEntry(a[1], a[0], null, true));
-            }
-
-            return result;
-        }
-
-        public Collection<? extends SourceEntry> readNewFormat() {
-            List<SourceEntry> entries = readNewFormatImpl();
-            if (entries == null)
-                return getDefault();
-            return entries;
-        }
-
-        private List<SourceEntry> readNewFormatImpl() {
-            List<SourceEntry> entries = new ArrayList<SourceEntry>();
             Collection<Collection<String>> mappaintSrc = Main.pref.getArray(pref, null);
-            if (mappaintSrc == null || mappaintSrc.isEmpty()) {
-                if (Main.pref.getBoolean(pref + "._empty_", false))
-                    return Collections.<SourceEntry>emptyList();
-                return null;
-            }
+            if (mappaintSrc == null)
+                return new ArrayList<SourceEntry>(getDefault());
 
+            List<SourceEntry> entries = new ArrayList<SourceEntry>();
             for (Collection<String> sourcePref : mappaintSrc) {
                 SourceEntry e = deserialize(new ArrayList<String>(sourcePref));
                 if (e != null) {
@@ -1533,6 +1443,14 @@ public abstract class SourceEditor extends JPanel {
                 }
             }
             return entries;
+        }
+
+        public boolean put(Collection<? extends SourceEntry> entries) {
+            Collection<Collection<String>> setting = new ArrayList<Collection<String>>();
+            for (SourceEntry e : entries) {
+                setting.add(serialize(e));
+            }
+            return Main.pref.putArray(pref, setting);
         }
     }
 

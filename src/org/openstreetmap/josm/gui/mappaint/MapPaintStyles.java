@@ -21,7 +21,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
-import org.openstreetmap.josm.gui.preferences.MapPaintPreference.MapPaintPrefMigration;
+import org.openstreetmap.josm.gui.preferences.MapPaintPreference.MapPaintPrefHelper;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.MirroredInputStream;
@@ -66,9 +66,9 @@ public class MapPaintStyles {
 
     /**
      * IconReference is used to remember the associated style source for
-     * each icon URL. 
+     * each icon URL.
      * This is necessary because image URLs can be paths relative
-     * to the source file and we have cascading of properties from different 
+     * to the source file and we have cascading of properties from different
      * source files.
      */
     public static class IconReference {
@@ -166,7 +166,7 @@ public class MapPaintStyles {
     public static void readFromPreferences() {
         styles.clear();
 
-        Collection<? extends SourceEntry> sourceEntries = MapPaintPrefMigration.INSTANCE.get();
+        Collection<? extends SourceEntry> sourceEntries = MapPaintPrefHelper.INSTANCE.get();
 
         for (SourceEntry entry : sourceEntries) {
             StyleSource source = fromSourceEntry(entry);
@@ -304,7 +304,7 @@ public class MapPaintStyles {
             data.set(row + delta, t1);
         }
         styles.setStyleSources(data);
-        MapPaintPrefMigration.INSTANCE.put(data);
+        MapPaintPrefHelper.INSTANCE.put(data);
         fireMapPaintSylesUpdated();
         styles.clearCached();
         Main.map.mapView.repaint();
@@ -330,7 +330,7 @@ public class MapPaintStyles {
             StyleSource s = data.get(p);
             s.active = !s.active;
         }
-        MapPaintPrefMigration.INSTANCE.put(data);
+        MapPaintPrefHelper.INSTANCE.put(data);
         if (sel.length == 1) {
             fireMapPaintStyleEntryUpdated(sel[0]);
         } else {
@@ -345,7 +345,7 @@ public class MapPaintStyles {
         if (source != null) {
             styles.add(source);
             source.loadStyleSource();
-            MapPaintPrefMigration.INSTANCE.put(styles.getStyleSources());
+            MapPaintPrefHelper.INSTANCE.put(styles.getStyleSources());
             fireMapPaintSylesUpdated();
             styles.clearCached();
             Main.map.mapView.repaint();

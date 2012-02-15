@@ -178,14 +178,14 @@ public class TaggingPresetPreference implements PreferenceSetting {
 
         @Override
         public Collection<? extends SourceEntry> getInitialSourcesList() {
-            return PresetPrefMigration.INSTANCE.get();
+            return PresetPrefHelper.INSTANCE.get();
         }
 
         @Override
         public boolean finish() {
             List<SourceEntry> activeStyles = activeSourcesModel.getSources();
 
-            boolean changed = PresetPrefMigration.INSTANCE.put(activeStyles);
+            boolean changed = PresetPrefHelper.INSTANCE.put(activeStyles);
 
             if (tblIconPaths != null) {
                 List<String> iconPaths = iconPathsModel.getIconPaths();
@@ -203,7 +203,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
 
         @Override
         public Collection<ExtendedSourceEntry> getDefault() {
-            return PresetPrefMigration.INSTANCE.getDefault();
+            return PresetPrefHelper.INSTANCE.getDefault();
         }
 
         @Override
@@ -296,40 +296,12 @@ public class TaggingPresetPreference implements PreferenceSetting {
         }
     }
 
-    public static class PresetPrefMigration extends SourceEditor.SourcePrefMigration {
+    public static class PresetPrefHelper extends SourceEditor.SourcePrefHelper {
 
-        public final static PresetPrefMigration INSTANCE = new PresetPrefMigration();
+        public final static PresetPrefHelper INSTANCE = new PresetPrefHelper();
 
-        public PresetPrefMigration() {
-            super("taggingpreset.sources",
-                    "taggingpreset.enable-defaults",
-                    "taggingpreset.sources-list");
-        }
-
-        @Override
-        public List<SourceEntry> get() {
-            List<SourceEntry> ls = new ArrayList<SourceEntry>(super.get());
-            if (removeDeprecated(ls)) {
-                put(ls);
-            }
-            return ls;
-        }
-
-        /**
-         * FIXME: The internal path of elemstyles.xml has changed, this
-         * can be removed in summer 2011.
-         */
-        private boolean removeDeprecated(List<SourceEntry> ls) {
-            boolean changed = false;
-            Iterator<SourceEntry> it = ls.iterator();
-            while (it.hasNext()) {
-                SourceEntry se = it.next();
-                if (se.url.equals("resource://data/elemstyles.xml")) {
-                    it.remove();
-                    changed = true;
-                }
-            }
-            return changed;
+        public PresetPrefHelper() {
+            super("taggingpreset.sources-list");
         }
 
         @Override
