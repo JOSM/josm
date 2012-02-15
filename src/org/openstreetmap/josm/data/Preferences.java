@@ -273,7 +273,7 @@ public class Preferences {
     public File getPluginsDirectory() {
         return new File(getPreferencesDirFile(), "plugins");
     }
-    
+
     public File getCacheDirectory() {
         if (cacheDirFile != null)
             return cacheDirFile;
@@ -675,7 +675,7 @@ public class Preferences {
             if (!preferenceFile.exists()) {
                 File oldPreferenceFile = getOldPreferenceFile();
                 if (!oldPreferenceFile.exists()) {
-                    System.out.println(tr("Warning: Missing preference file ''{0}''. Creating a default preference file.", preferenceFile.getAbsoluteFile()));
+                    System.out.println(tr("Info: Missing preference file ''{0}''. Creating a default preference file.", preferenceFile.getAbsoluteFile()));
                     resetToDefault();
                     save();
                 } else {
