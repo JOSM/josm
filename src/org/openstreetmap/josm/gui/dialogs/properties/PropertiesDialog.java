@@ -6,11 +6,14 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.Dialog.ModalityType;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -32,11 +35,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -84,8 +87,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
-import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -301,8 +304,17 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         final JOptionPane optionPane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
             @Override public void selectInitialValue() {
-                values.requestFocusInWindow();
-                values.getEditor().selectAll();
+                // save unix system selection (middle mouse paste)
+                Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
+                if(sysSel != null) {
+                    Transferable old = sysSel.getContents(null);
+                    values.requestFocusInWindow();
+                    values.getEditor().selectAll();
+                    sysSel.setContents(old, null);
+                } else {
+                    values.requestFocusInWindow();
+                    values.getEditor().selectAll();
+                }
             }
         };
         final JDialog dlg = optionPane.createDialog(Main.parent, trn("Change value?", "Change values?", m.size()));
@@ -497,8 +509,17 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION){
             @Override public void selectInitialValue() {
-                keys.requestFocusInWindow();
-                keys.getEditor().selectAll();
+                // save unix system selection (middle mouse paste)
+                Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
+                if(sysSel != null) {
+                    Transferable old = sysSel.getContents(null);
+                    keys.requestFocusInWindow();
+                    keys.getEditor().selectAll();
+                    sysSel.setContents(old, null);
+                } else {
+                    keys.requestFocusInWindow();
+                    keys.getEditor().selectAll();
+                }
             }
         };
         JDialog dialog = pane.createDialog(Main.parent, tr("Add value?"));
@@ -632,7 +653,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     public PropertiesDialog(MapFrame mapFrame) {
         super(tr("Properties/Memberships"), "propertiesdialog", tr("Properties for selected objects."),
                 Shortcut.registerShortcut("subwindow:properties", tr("Toggle: {0}", tr("Properties/Memberships")), KeyEvent.VK_P,
-                        Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150, true);
+                        Shortcut.GROUP_LAYER+Shortcut.GROUPS_ALT1), 150, true);
 
         // setting up the properties table
         propertyMenu = new JPopupMenu();
@@ -1039,7 +1060,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         public DeleteAction() {
             super(tr("Delete"), "dialogs/delete", tr("Delete the selected key in all objects"),
                     Shortcut.registerShortcut("properties:delete", tr("Delete Properties"), KeyEvent.VK_D,
-                            Shortcut.GROUP_MNEMONIC), false);
+                            Shortcut.GROUP_DIRECT3+Shortcut.GROUPS_ALT1), false);
             updateEnabledState();
         }
 
@@ -1140,7 +1161,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         public AddAction() {
             super(tr("Add"), "dialogs/add", tr("Add a new key/value pair to all objects"),
                     Shortcut.registerShortcut("properties:add", tr("Add Property"), KeyEvent.VK_A,
-                            Shortcut.GROUP_MNEMONIC), false);
+                            Shortcut.GROUP_DIRECT2), false);
         }
 
         @Override
@@ -1153,7 +1174,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         public EditAction() {
             super(tr("Edit"), "dialogs/edit", tr("Edit the value of the selected key for all objects"),
                     Shortcut.registerShortcut("properties:edit", tr("Edit Properties"), KeyEvent.VK_S,
-                            Shortcut.GROUP_MNEMONIC), false);
+                            Shortcut.GROUP_DIRECT2), false);
             updateEnabledState();
         }
 

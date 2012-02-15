@@ -67,7 +67,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
     public UserListDialog() {
         super(tr("Authors"), "userlist", tr("Open a list of people working on the selected objects."),
-                Shortcut.registerShortcut("subwindow:authors", tr("Toggle: {0}", tr("Authors")), KeyEvent.VK_A, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
+                Shortcut.registerShortcut("subwindow:authors", tr("Toggle: {0}", tr("Authors")), KeyEvent.VK_A, Shortcut.GROUP_LAYER+Shortcut.GROUPS_ALT1), 150);
 
         build();
     }
