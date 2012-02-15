@@ -41,7 +41,7 @@ public class AddWayHandler extends RequestHandler {
         Main.main.undoRedo.add(new SequenceCommand(tr("Add way"), commands));
         Main.main.getCurrentDataSet().setSelected(way);
         if (Main.pref.getBoolean(LoadAndZoomHandler.changeViewportPermissionKey, LoadAndZoomHandler.changeViewportPermissionDefault)) {
-            new AutoScaleAction("selection").actionPerformed(null);
+            AutoScaleAction.autoScale("selection");
         } else {
             Main.map.mapView.repaint();
         }
