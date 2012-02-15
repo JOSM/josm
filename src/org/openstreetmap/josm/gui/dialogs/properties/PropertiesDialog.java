@@ -6,11 +6,14 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.Dialog.ModalityType;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -32,11 +35,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -84,8 +87,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
-import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -301,8 +304,17 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         final JOptionPane optionPane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
             @Override public void selectInitialValue() {
+                // save unix system selection (middle mouse paste)
+                Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
+                if(sysSel != null) {
+                    Transferable old = sysSel.getContents(null);
                 values.requestFocusInWindow();
                 values.getEditor().selectAll();
+                    sysSel.setContents(old, null);
+                } else {
+                    values.requestFocusInWindow();
+                    values.getEditor().selectAll();
+                }
             }
         };
         final JDialog dlg = optionPane.createDialog(Main.parent, trn("Change value?", "Change values?", m.size()));
@@ -497,8 +509,17 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION){
             @Override public void selectInitialValue() {
+                // save unix system selection (middle mouse paste)
+                Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
+                if(sysSel != null) {
+                    Transferable old = sysSel.getContents(null);
                 keys.requestFocusInWindow();
                 keys.getEditor().selectAll();
+                    sysSel.setContents(old, null);
+                } else {
+                    keys.requestFocusInWindow();
+                    keys.getEditor().selectAll();
+                }
             }
         };
         JDialog dialog = pane.createDialog(Main.parent, tr("Add value?"));

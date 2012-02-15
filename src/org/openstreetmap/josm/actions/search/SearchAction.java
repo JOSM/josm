@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.actions.search;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
-import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionParser;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
@@ -34,15 +33,16 @@ import javax.swing.text.BadLocationException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ActionParameter;
-import org.openstreetmap.josm.actions.ActionParameter.SearchSettingsActionParameter;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
+import org.openstreetmap.josm.actions.ActionParameter.SearchSettingsActionParameter;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
+import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionParser;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Property;
@@ -210,8 +210,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         JLabel label = new JLabel( initialValues instanceof Filter ? tr("Filter string:") : tr("Search string:"));
         final HistoryComboBox hcbSearchString = new HistoryComboBox();
         hcbSearchString.setText(initialValues.text);
-        hcbSearchString.getEditor().selectAll();
-        hcbSearchString.getEditor().getEditorComponent().requestFocusInWindow();
         hcbSearchString.setToolTipText(tr("Enter the search expression"));
         // we have to reverse the history, because ComboBoxHistory will reverse it again
         // in addElement()
@@ -250,7 +248,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         {
             left.add(allElements, GBC.eol());
             left.add(regexSearch, GBC.eol());
-            left.add(addOnToolbar, GBC.eol()); 
+            left.add(addOnToolbar, GBC.eol());
         }
 
         final JPanel right;
@@ -308,15 +306,15 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         initialValues.caseSensitive = caseSensitive.isSelected();
         initialValues.allElements = allElements.isSelected();
         initialValues.regexSearch = regexSearch.isSelected();
-        
+
         if (addOnToolbar.isSelected()) {
-            ToolbarPreferences.ActionDefinition aDef = 
+            ToolbarPreferences.ActionDefinition aDef =
                     new ToolbarPreferences.ActionDefinition(Main.main.menu.search);
             aDef.getParameters().put("searchExpression", initialValues);
             // parametrized action definition is now composed
             ActionParser actionParser = new ToolbarPreferences.ActionParser(null);
             String res = actionParser.saveAction(aDef);
-            
+
             Collection<String> t = new LinkedList<String>(ToolbarPreferences.getToolString());
             // add custom search button to toolbar preferences
             if (!t.contains(res)) t.add(res);

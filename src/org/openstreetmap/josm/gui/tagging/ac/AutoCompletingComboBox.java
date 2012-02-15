@@ -2,6 +2,9 @@
 package org.openstreetmap.josm.gui.tagging.ac;
 
 import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Collection;
@@ -27,7 +30,7 @@ import org.openstreetmap.josm.Main;
 public class AutoCompletingComboBox extends JComboBox {
 
     private boolean autocompleteEnabled = true;
-    
+
     private int maxTextLength = -1;
 
     /**
@@ -52,9 +55,8 @@ public class AutoCompletingComboBox extends JComboBox {
         @Override public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
             if (selecting || (offs == 0 && str.equals(getText(0, getLength()))))
                 return;
-            if (maxTextLength > -1 && str.length()+getLength() > maxTextLength) {
+            if (maxTextLength > -1 && str.length()+getLength() > maxTextLength)
                 return;
-            }
             boolean initial = (offs == 0 && getLength() == 0 && str.length() > 1);
             super.insertString(offs, str, a);
 
@@ -109,8 +111,15 @@ public class AutoCompletingComboBox extends JComboBox {
                 }
             }
             JTextComponent editor = (JTextComponent)comboBox.getEditor().getEditorComponent();
-            editor.setSelectionStart(start);
-            editor.setSelectionEnd(end);
+            // save unix system selection (middle mouse paste)
+            Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
+            if(sysSel != null) {
+                Transferable old = sysSel.getContents(null);
+                editor.select(start, end);
+                sysSel.setContents(old, null);
+            } else {
+                editor.select(start, end);
+            }
         }
 
         private void setSelectedItem(Object item) {
@@ -124,9 +133,8 @@ public class AutoCompletingComboBox extends JComboBox {
             AutoCompletionListItem bestItem = null;
             for (int i = 0, n = model.getSize(); i < n; i++) {
                 AutoCompletionListItem currentItem = (AutoCompletionListItem) model.getElementAt(i);
-                if (currentItem.getValue().equals(pattern)) {
+                if (currentItem.getValue().equals(pattern))
                     return currentItem;
-                }
                 if (!match && currentItem.getValue().startsWith(pattern)) {
                     if (bestItem == null || currentItem.getPriority().compareTo(bestItem.getPriority()) > 0) {
                         bestItem = currentItem;
@@ -146,14 +154,22 @@ public class AutoCompletingComboBox extends JComboBox {
                     public void focusLost(FocusEvent e) {
                     }
                     public void focusGained(FocusEvent e) {
+                        // save unix system selection (middle mouse paste)
+                        Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
+                        if(sysSel != null) {
+                            Transferable old = sysSel.getContents(null);
                         editor.selectAll();
+                            sysSel.setContents(old, null);
+                        } else {
+                            editor.selectAll();
+                        }
                     }
                 }
         );
         int maxsize=Math.max(getMaximumRowCount(),java.awt.Toolkit.getDefaultToolkit().getScreenSize().height/getPreferredSize().height - 1);
         setMaximumRowCount(maxsize);
     }
-    
+
     public void setMaxTextLength(int length)
     {
         this.maxTextLength = length;
@@ -211,7 +227,11 @@ public class AutoCompletingComboBox extends JComboBox {
         for (String elem : elems) {
             model.addElement(new AutoCompletionListItem(elem, AutoCompletionItemPritority.UNKNOWN));
         }
+        // disable autocomplete to prevent unnecessary actions in
+        // AutoCompletingComboBoxDocument#insertString
+        autocompleteEnabled = false;
         this.getEditor().setItem(oldValue);
+        autocompleteEnabled = true;
     }
 
     /**
