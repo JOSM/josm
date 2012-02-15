@@ -1,0 +1,15 @@
+#!/bin/sh
+
+for x in $(find images/ -name "*.png"); do
+	echo "Processing ${x}"
+	identify -quiet -verbose "${x}" | grep "alpha: 1-bit" > /dev/null
+	if [ "$?" -ne "0" ]; then
+		# non-1-bit-alpha image, process normally
+		optipng -o7 -quiet "${x}"
+	else
+		# disable color type reduction because that will break
+		# transparency for the images in JOSM using the current
+		# image loading method (see #1576)
+		optipng -nc -o7 -quiet "${x}"
+	fi
+done

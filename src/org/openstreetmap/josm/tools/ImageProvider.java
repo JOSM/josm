@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
@@ -50,6 +51,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
+
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGException;
 import com.kitfox.svg.SVGUniverse;
@@ -399,8 +401,11 @@ public class ImageProvider {
                     SVGDiagram svg = getSvgUniverse().getDiagram(uri);
                     return svg == null ? null : new ImageResource(svg);
                 case OTHER:
-                    Image img = Toolkit.getDefaultToolkit().createImage(is.getFile().toURI().toURL());
-                    return img == null ? null : new ImageResource(img, false);
+                    BufferedImage img = null;
+                    try {
+                        img = ImageIO.read(is.getFile().toURI().toURL());
+                    } catch (IOException e) {}
+                    return img == null ? null : new ImageResource(img, true);
                 default:
                     throw new AssertionError();
             }
@@ -465,7 +470,10 @@ public class ImageProvider {
                                 offs += l;
                                 size -= l;
                             }
-                            Image img = Toolkit.getDefaultToolkit().createImage(buf);
+                            BufferedImage img = null;
+                            try {
+                                img = ImageIO.read(new ByteArrayInputStream(buf));
+                            } catch (IOException e) {}
                             return img == null ? null : new ImageResource(img, false);
                         default:
                             throw new AssertionError();
@@ -496,8 +504,11 @@ public class ImageProvider {
                 SVGDiagram svg = getSvgUniverse().getDiagram(uri);
                 return svg == null ? null : new ImageResource(svg);
             case OTHER:
-                Image img = Toolkit.getDefaultToolkit().createImage(path);
-                return img == null ? null : new ImageResource(img, false);
+                BufferedImage img = null;
+                try {
+                    img = ImageIO.read(path);
+                } catch (IOException e) {}
+                return img == null ? null : new ImageResource(img, true);
             default:
                 throw new AssertionError();
         }
