@@ -632,7 +632,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     public PropertiesDialog(MapFrame mapFrame) {
         super(tr("Properties/Memberships"), "propertiesdialog", tr("Properties for selected objects."),
                 Shortcut.registerShortcut("subwindow:properties", tr("Toggle: {0}", tr("Properties/Memberships")), KeyEvent.VK_P,
-                        Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150, true);
+                        Shortcut.GROUP_LAYER+Shortcut.GROUPS_ALT1), 150, true);
 
         // setting up the properties table
         propertyMenu = new JPopupMenu();
@@ -1039,7 +1039,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         public DeleteAction() {
             super(tr("Delete"), "dialogs/delete", tr("Delete the selected key in all objects"),
                     Shortcut.registerShortcut("properties:delete", tr("Delete Properties"), KeyEvent.VK_D,
-                            Shortcut.GROUP_MNEMONIC), false);
+                            Shortcut.GROUP_DIRECT3+Shortcut.GROUPS_ALT1), false);
             updateEnabledState();
         }
 
@@ -1140,7 +1140,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         public AddAction() {
             super(tr("Add"), "dialogs/add", tr("Add a new key/value pair to all objects"),
                     Shortcut.registerShortcut("properties:add", tr("Add Property"), KeyEvent.VK_A,
-                            Shortcut.GROUP_MNEMONIC), false);
+                            Shortcut.GROUP_DIRECT2), false);
         }
 
         @Override
@@ -1153,7 +1153,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         public EditAction() {
             super(tr("Edit"), "dialogs/edit", tr("Edit the value of the selected key for all objects"),
                     Shortcut.registerShortcut("properties:edit", tr("Edit Properties"), KeyEvent.VK_S,
-                            Shortcut.GROUP_MNEMONIC), false);
+                            Shortcut.GROUP_DIRECT2), false);
             updateEnabledState();
         }
 
