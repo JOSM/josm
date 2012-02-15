@@ -158,7 +158,7 @@ public class AutoCompletingComboBox extends JComboBox {
                         Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
                         if(sysSel != null) {
                             Transferable old = sysSel.getContents(null);
-                        editor.selectAll();
+                            editor.selectAll();
                             sysSel.setContents(old, null);
                         } else {
                             editor.selectAll();

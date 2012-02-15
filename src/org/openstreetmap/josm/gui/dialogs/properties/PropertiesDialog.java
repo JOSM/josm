@@ -308,8 +308,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
                 if(sysSel != null) {
                     Transferable old = sysSel.getContents(null);
-                values.requestFocusInWindow();
-                values.getEditor().selectAll();
+                    values.requestFocusInWindow();
+                    values.getEditor().selectAll();
                     sysSel.setContents(old, null);
                 } else {
                     values.requestFocusInWindow();
@@ -513,8 +513,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
                 if(sysSel != null) {
                     Transferable old = sysSel.getContents(null);
-                keys.requestFocusInWindow();
-                keys.getEditor().selectAll();
+                    keys.requestFocusInWindow();
+                    keys.getEditor().selectAll();
                     sysSel.setContents(old, null);
                 } else {
                     keys.requestFocusInWindow();
