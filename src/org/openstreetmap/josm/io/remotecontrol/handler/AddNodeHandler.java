@@ -61,7 +61,7 @@ public class AddNodeHandler extends RequestHandler {
         Main.main.undoRedo.add(new AddCommand(nnew));
         Main.main.getCurrentDataSet().setSelected(nnew);
         if (Main.pref.getBoolean(LoadAndZoomHandler.changeViewportPermissionKey, LoadAndZoomHandler.changeViewportPermissionDefault)) {
-            new AutoScaleAction("selection").actionPerformed(null);
+            AutoScaleAction.autoScale("selection");
         } else {
             Main.map.mapView.repaint();
         }

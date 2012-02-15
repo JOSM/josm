@@ -172,7 +172,7 @@ public class LoadAndZoomHandler extends RequestHandler
                     }
                     ds.setSelected(newSel);
                     if (Main.pref.getBoolean(changeViewportPermissionKey, changeViewportPermissionDefault)) {
-                        new AutoScaleAction("selection").actionPerformed(null);
+                        AutoScaleAction.autoScale("selection");
                     }
                     if (Main.map != null && Main.map.relationListDialog != null) {
                         Main.map.relationListDialog.selectRelations(null); // unselect all relations to fix #7342
