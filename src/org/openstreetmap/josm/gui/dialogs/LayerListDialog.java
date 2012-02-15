@@ -161,7 +161,8 @@ public class LayerListDialog extends ToggleDialog {
      */
     protected LayerListDialog(MapFrame mapFrame) {
         super(tr("Layers"), "layerlist", tr("Open a list of all loaded layers."),
-                Shortcut.registerShortcut("subwindow:layers", tr("Toggle: {0}", tr("Layers")), KeyEvent.VK_L, Shortcut.GROUP_LAYER), 100, true);
+                Shortcut.registerShortcut("subwindow:layers", tr("Toggle: {0}", tr("Layers")), KeyEvent.VK_L,
+                Shortcut.GROUPS_ALT1+Shortcut.GROUP_LAYER), 100, true);
 
         // create the models
         //

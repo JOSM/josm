@@ -36,7 +36,9 @@ import org.openstreetmap.josm.tools.UrlLabel;
 public class AboutAction extends JosmAction {
 
     public AboutAction() {
-        super(tr("About"), "about", tr("Display the about screen."), Shortcut.registerShortcut("system:about", tr("About"), KeyEvent.VK_F1, Shortcut.GROUP_DIRECT, Shortcut.SHIFT_DEFAULT), true);
+        super(tr("About"), "about", tr("Display the about screen."),
+            Shortcut.registerShortcut("system:about", tr("About"),
+            KeyEvent.VK_F1, Shortcut.GROUP_DIRECT+Shortcut.GROUPS_ALT1), true);
     }
 
     public void actionPerformed(ActionEvent e) {

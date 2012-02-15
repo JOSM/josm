@@ -33,8 +33,8 @@ public class JumpToMarkerActions {
         private WeakReference<Layer> lastLayer;
 
         public JumpToNextMarker(JumpToMarkerLayer layer) {
-            putValue(ACCELERATOR_KEY, Shortcut.registerShortcut("core_multikey:nextMarker", tr("Multikey: {0}", tr("Next marker")),
-            KeyEvent.VK_J, Shortcut.GROUP_DIRECT, KeyEvent.ALT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK).getKeyStroke());
+            Shortcut.registerShortcut("core_multikey:nextMarker", tr("Multikey: {0}", tr("Next marker")),
+                KeyEvent.VK_J, Shortcut.GROUP_DIRECT2+Shortcut.GROUPS_ALT2).setAccelerator(this);
             putValue(SHORT_DESCRIPTION, tr("Jump to next marker"));
             putValue(NAME, tr("Jump to next marker"));
 
@@ -60,7 +60,6 @@ public class JumpToMarkerActions {
                 }
             }
         }
-
 
         private void execute(Layer l) {
             ((JumpToMarkerLayer)l).jumpToNextMarker();
@@ -90,8 +89,8 @@ public class JumpToMarkerActions {
         public JumpToPreviousMarker(JumpToMarkerLayer layer) {
             this.layer = (Layer)layer;
 
-            putValue(ACCELERATOR_KEY, Shortcut.registerShortcut("core_multikey:previousMarker", tr("Multikey: {0}",
-            tr("Previos marker")), KeyEvent.VK_P, Shortcut.GROUP_DIRECT, KeyEvent.ALT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK).getKeyStroke());
+            Shortcut.registerShortcut("core_multikey:previousMarker", tr("Multikey: {0}", tr("Previos marker")),
+                KeyEvent.VK_P, Shortcut.GROUP_DIRECT2+Shortcut.GROUPS_ALT2).setAccelerator(this);
             putValue(SHORT_DESCRIPTION, tr("Jump to previous marker"));
             putValue(NAME, tr("Jump to previous marker"));
         }
@@ -133,8 +132,5 @@ public class JumpToMarkerActions {
             else
                 return null;
         }
-
     }
-
-
 }
