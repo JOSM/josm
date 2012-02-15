@@ -25,8 +25,8 @@ public final class AddNodeAction extends JosmAction {
 
     public AddNodeAction() {
         super(tr("Add Node..."), "addnode", tr("Add a node by entering latitude / longitude or easting / northing."),
-                Shortcut.registerShortcut("addnode", tr("Edit: {0}", tr("Add Node...")), KeyEvent.VK_D, Shortcut.GROUP_EDIT,
-                        Shortcut.SHIFT_DEFAULT), true);
+                Shortcut.registerShortcut("addnode", tr("Edit: {0}", tr("Add Node...")),
+                        KeyEvent.VK_D, Shortcut.GROUP_EDIT+Shortcut.GROUPS_ALT1), true);
         putValue("help", ht("/Action/AddNode"));
     }
 

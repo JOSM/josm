@@ -280,7 +280,7 @@ public class WindowGeometry {
     }
 
     /**
-     * Find the size of the screen the for given coordinates. Use first screen,
+     * Find the size of the screen for given coordinates. Use first screen,
      * when no coordinates are stored or null is passed.
      * 
      * @param preferenceKey the key to get size and position from

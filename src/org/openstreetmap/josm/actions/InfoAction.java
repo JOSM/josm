@@ -18,12 +18,11 @@ public class InfoAction extends JosmAction {
 
     public InfoAction() {
         super(tr("Advanced info"), "about",
-                tr("Display advanced object information about OSM nodes, ways, or relations."),
-                Shortcut.registerShortcut("core:info",
-                tr("Advanced info"), KeyEvent.VK_I, Shortcut.GROUP_HOTKEY), false);
+            tr("Display advanced object information about OSM nodes, ways, or relations."),
+            Shortcut.registerShortcut("core:info",
+                tr("Advanced info"), KeyEvent.VK_I, Shortcut.GROUP_HOTKEY),
+            true, "action/info", true);
         putValue("help", ht("/Action/InfoAboutElements"));
-        putValue("toolbar", "action/info");
-        Main.toolbar.register(this);
     }
 
     @Override

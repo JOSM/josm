@@ -27,8 +27,8 @@ public abstract class AbstractInfoAction extends JosmAction {
         super(installAdapters);
     }
 
-    public AbstractInfoAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register) {
-        super(name, iconName, tooltip, shortcut, register);
+    public AbstractInfoAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register, String toolbarId, boolean installAdapters) {
+        super(name, iconName, tooltip, shortcut, register, toolbarId, installAdapters);
     }
 
     /**
