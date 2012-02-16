@@ -14,24 +14,8 @@ public class UnselectAllAction extends JosmAction {
 
     public UnselectAllAction() {
         super(tr("Unselect All"), "unselectall", tr("Unselect all objects."),
-                Shortcut.registerShortcut("edit:unselectall", tr("Edit: {0}", tr("Unselect All")), KeyEvent.VK_U, Shortcut.GROUP_EDIT), true);
-        // this is not really GROUP_EDIT, but users really would complain if the yhad to reconfigure because we put
-        // the correct group in
-
-        // Add extra shortcut C-S-a
-        Main.registerActionShortcut(this, Shortcut.registerShortcut("edit:unselectallfocus", tr("Edit: {0}", tr("Unselect All (Focus)")),
-                KeyEvent.VK_A, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT));
-
-
-
-        // Add extra shortcut ESCAPE
-        /*
-         * FIXME: this isn't optimal. In a better world the mapmode actions
-         * would be able to capture keyboard events and react accordingly. But
-         * for now this is a reasonable approximation.
-         */
-        Main.registerActionShortcut(this, Shortcut.registerShortcut("edit:unselectallescape", tr("Edit: {0}", tr("Unselect All (Escape)")),
-                KeyEvent.VK_ESCAPE, Shortcut.GROUP_DIRECT));
+            Shortcut.registerShortcut("edit:unselectall", tr("Edit: {0}",
+            tr("Unselect All")), KeyEvent.VK_ESCAPE, Shortcut.GROUP_DIRECT), true);
 
         putValue("help", ht("/Action/UnselectAll"));
     }

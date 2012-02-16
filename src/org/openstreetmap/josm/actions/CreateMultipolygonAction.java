@@ -47,8 +47,8 @@ public class CreateMultipolygonAction extends JosmAction {
 
     public CreateMultipolygonAction() {
         super(tr("Create multipolygon"), "multipoly_create", tr("Create multipolygon."),
-                Shortcut.registerShortcut("tools:multipoly", tr("Tool: {0}", tr("Create multipolygon")),
-                        KeyEvent.VK_A, Shortcut.GROUP_DIRECT, KeyEvent.ALT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK ), true);
+            Shortcut.registerShortcut("tools:multipoly", tr("Tool: {0}", tr("Create multipolygon")),
+            KeyEvent.VK_A, Shortcut.GROUP_MENU+Shortcut.GROUPS_ALT2), true);
     }
     /**
      * The action button has been clicked
