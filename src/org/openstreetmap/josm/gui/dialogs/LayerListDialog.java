@@ -51,7 +51,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.DuplicateLayerAction;
 import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
@@ -793,19 +792,40 @@ public class LayerListDialog extends ToggleDialog {
             updateEnabledState();
         }
 
+        private void duplicate(Layer layer) {
+            if (Main.map == null || Main.map.mapView == null)
+                return;
+
+            List<String> layerNames = new ArrayList<String>();
+            for (Layer l: Main.map.mapView.getAllLayers()) {
+                layerNames.add(l.getName());
+            }
+            if (layer instanceof OsmDataLayer) {
+                OsmDataLayer oldLayer = (OsmDataLayer)layer;
+                // Translators: "Copy of {layer name}"
+                String newName = tr("Copy of {0}", oldLayer.getName());
+                int i = 2;
+                while (layerNames.contains(newName)) {
+                    // Translators: "Copy {number} of {layer name}"
+                    newName = tr("Copy {1} of {0}", oldLayer.getName(), i);
+                    i++;
+                }
+                Main.main.addLayer(new OsmDataLayer(oldLayer.data.clone(), newName, null));
+            }
+        }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             if (layer != null) {
-                new DuplicateLayerAction().duplicate(layer);
+                duplicate(layer);
             } else {
-                Layer selectedLayer = getModel().getSelectedLayers().get(0);
-                new DuplicateLayerAction().duplicate(selectedLayer);
+                duplicate(getModel().getSelectedLayers().get(0));
             }
         }
 
         protected boolean isActiveLayer(Layer layer) {
-            if (Main.map == null) return false;
-            if (Main.map.mapView == null) return false;
+            if (Main.map == null || Main.map.mapView == null)
+                return false;
             return Main.map.mapView.getActiveLayer() == layer;
         }
 
@@ -813,12 +833,12 @@ public class LayerListDialog extends ToggleDialog {
         public void updateEnabledState() {
             if (layer == null) {
                 if (getModel().getSelectedLayers().size() == 1) {
-                    setEnabled(DuplicateLayerAction.canDuplicate(getModel().getSelectedLayers().get(0)));
+                    setEnabled(getModel().getSelectedLayers().get(0) instanceof OsmDataLayer);
                 } else {
                     setEnabled(false);
                 }
             } else {
-                setEnabled(DuplicateLayerAction.canDuplicate(layer));
+                setEnabled(layer instanceof OsmDataLayer);
             }
         }
     }
