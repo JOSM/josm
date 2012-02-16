@@ -17,7 +17,6 @@ import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.ImageProvider.SanitizeMode;
 import org.openstreetmap.josm.tools.Utils;
 
 public class AreaElemStyle extends ElemStyle
@@ -44,7 +43,7 @@ public class AreaElemStyle extends ElemStyle
 
         IconReference iconRef = c.get("fill-image", null, IconReference.class);
         if (iconRef != null) {
-            ImageIcon icon = MapPaintStyles.getIcon(iconRef, -1, -1, SanitizeMode.MAKE_BUFFEREDIMAGE);
+            ImageIcon icon = MapPaintStyles.getIcon(iconRef, -1, -1);
             if (icon != null) {
                 if (!(icon.getImage() instanceof BufferedImage))
                     throw new RuntimeException();
