@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Arrays;
+import java.util.List;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -24,13 +25,33 @@ public class WayConnectedToArea extends Test {
             return;
         }
 
-        for (OsmPrimitive p : w.firstNode().getReferrers()) {
-            testForError(w, w.firstNode(), p);
+        boolean hasway = false;
+        List<OsmPrimitive> r = w.firstNode().getReferrers();
+        for (OsmPrimitive p : r) {
+            if(p != w && p.hasKey("highway")) {
+                hasway = true;
+                break;
+            }
         }
-        for (OsmPrimitive p : w.lastNode().getReferrers()) {
-            testForError(w, w.lastNode(), p);
+        if(!hasway)
+        {
+            for (OsmPrimitive p : r) {
+                testForError(w, w.firstNode(), p);
+            }
         }
-
+        hasway = false;
+        r = w.lastNode().getReferrers();
+        for (OsmPrimitive p : r) {
+            if(p != w && p.hasKey("highway")) {
+                hasway = true;
+                break;
+            }
+        }
+        if(!hasway) {
+            for (OsmPrimitive p : r) {
+                testForError(w, w.lastNode(), p);
+            }
+        }
     }
 
     private void testForError(Way w, Node wayNode, OsmPrimitive p) {
