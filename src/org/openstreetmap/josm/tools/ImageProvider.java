@@ -84,12 +84,6 @@ public class ImageProvider {
         OTHER   // everything else, e.g. png, gif (must be supported by Java)
     }
 
-    public static enum SanitizeMode {
-        OFF,                // never sanitize the image
-        ALWAYS,             // always copy to a new BufferedImage
-        MAKE_BUFFEREDIMAGE  // make sure the returned image is instance of BufferedImage
-    }
-
     protected Collection<String> dirs;
     protected String id;
     protected String subdir;
@@ -99,7 +93,6 @@ public class ImageProvider {
     protected int height = -1;
     protected int maxWidth = -1;
     protected int maxHeight = -1;
-    protected SanitizeMode sanitize;
     protected boolean optional;
 
     private static SVGUniverse svgUniverse;
@@ -207,14 +200,6 @@ public class ImageProvider {
     }
 
     /**
-     * Set true, if the image should be repainted to a new BufferedImage in order to work around certain issues.
-     */
-    public ImageProvider setSanitize(SanitizeMode sanitize) {
-        this.sanitize = sanitize;
-        return this;
-    }
-
-    /**
      * The image URL comes from user data and the image may be missing.
      *
      * Set true, if JOSM should *not* throw a RuntimeException in case the image cannot be located.
@@ -239,9 +224,9 @@ public class ImageProvider {
             }
         }
         if (maxWidth != -1 || maxHeight != -1)
-            return ir.getImageIconBounded(new Dimension(maxWidth, maxHeight), sanitize);
+            return ir.getImageIconBounded(new Dimension(maxWidth, maxHeight));
         else
-            return ir.getImageIcon(new Dimension(width, height), sanitize);
+            return ir.getImageIcon(new Dimension(width, height));
     }
 
     /**
@@ -291,10 +276,9 @@ public class ImageProvider {
                             : URLDecoder.decode(data, "utf-8").getBytes();
                     if (mediatype != null && mediatype.contains("image/svg+xml")) {
                         URI uri = getSvgUniverse().loadSVG(new StringReader(new String(bytes)), name);
-                        SVGDiagram svg = getSvgUniverse().getDiagram(uri);
-                        return new ImageResource(svg);
+                        return new ImageResource(getSvgUniverse().getDiagram(uri));
                     } else {
-                        return new ImageResource(new ImageIcon(bytes).getImage(), true);
+                        return new ImageResource(new ImageIcon(bytes).getImage());
                     }
                 }
             }
@@ -405,7 +389,7 @@ public class ImageProvider {
                     try {
                         img = ImageIO.read(is.getFile().toURI().toURL());
                     } catch (IOException e) {}
-                    return img == null ? null : new ImageResource(img, true);
+                    return img == null ? null : new ImageResource(img);
                 default:
                     throw new AssertionError();
             }
@@ -474,7 +458,7 @@ public class ImageProvider {
                             try {
                                 img = ImageIO.read(new ByteArrayInputStream(buf));
                             } catch (IOException e) {}
-                            return img == null ? null : new ImageResource(img, false);
+                            return img == null ? null : new ImageResource(img);
                         default:
                             throw new AssertionError();
                     }
@@ -508,7 +492,7 @@ public class ImageProvider {
                 try {
                     img = ImageIO.read(path);
                 } catch (IOException e) {}
-                return img == null ? null : new ImageResource(img, true);
+                return img == null ? null : new ImageResource(img);
             default:
                 throw new AssertionError();
         }
@@ -764,15 +748,6 @@ public class ImageProvider {
     public static ImageIcon get(OsmPrimitiveType type) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(type, "type");
         return get("data", type.getAPIName());
-    }
-
-    public static BufferedImage sanitize(Image img) {
-        (new ImageIcon(img)).getImage(); // load competely
-        int width = img.getWidth(null);
-        int height = img.getHeight(null);
-        BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        result.getGraphics().drawImage(img, 0, 0, null);
-        return result;
     }
 
     public static Image createImageFromSvg(SVGDiagram svg, Dimension dim) {

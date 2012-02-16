@@ -26,7 +26,6 @@ import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ImageProvider.SanitizeMode;
 
 /**
  * This class manages the ElemStyles instance. The object you get with
@@ -88,10 +87,6 @@ public class MapPaintStyles {
     }
 
     public static ImageIcon getIcon(IconReference ref, int width, int height) {
-        return getIcon(ref, width, height, SanitizeMode.OFF);
-    }
-
-    public static ImageIcon getIcon(IconReference ref, int width, int height, SanitizeMode sanitize) {
         final String namespace = ref.source.getPrefName();
         ImageIcon i = new ImageProvider(ref.iconName)
                 .setDirs(getIconSourceDirs(ref.source))
@@ -99,7 +94,6 @@ public class MapPaintStyles {
                 .setArchive(ref.source.zipIcons)
                 .setWidth(width)
                 .setHeight(height)
-                .setSanitize(sanitize)
                 .setOptional(true).get();
         if(i == null)
         {
@@ -107,10 +101,6 @@ public class MapPaintStyles {
             return null;
         }
         return i;
-    }
-
-    public static ImageIcon getNoIcon_Icon(StyleSource source) {
-        return getNoIcon_Icon(source, SanitizeMode.OFF);
     }
 
     /**
@@ -121,12 +111,11 @@ public class MapPaintStyles {
      *   - josm's default icon
      *  can be null if the defaults are turned off by user
      */
-    public static ImageIcon getNoIcon_Icon(StyleSource source, SanitizeMode sanitize) {
+    public static ImageIcon getNoIcon_Icon(StyleSource source) {
         return new ImageProvider("misc/no_icon.png")
                 .setDirs(getIconSourceDirs(source))
                 .setId("mappaint."+source.getPrefName())
                 .setArchive(source.zipIcons)
-                .setSanitize(sanitize)
                 .setOptional(true).get();
     }
 

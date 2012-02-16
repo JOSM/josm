@@ -333,11 +333,6 @@ public class Preferences {
         return locations;
     }
 
-    @Deprecated
-    synchronized public boolean hasKey(final String key) {
-        return properties.containsKey(key);
-    }
-
     /**
      * Get settings value for a certain key.
      * @param key the identifier for the setting
