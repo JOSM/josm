@@ -21,11 +21,11 @@ class ImageResource {
     /**
      * Caches the image data for resized versions of the same image.
      */
-    private HashMap<Dimension, Image> imgCache = new HashMap<Dimension, Image>();
+    private HashMap<Dimension, BufferedImage> imgCache = new HashMap<Dimension, BufferedImage>();
     private SVGDiagram svg;
     public static final Dimension DEFAULT_DIMENSION = new Dimension(-1, -1);
  
-    public ImageResource(Image img) {
+    public ImageResource(BufferedImage img) {
         CheckParameterUtil.ensureParameterNotNull(img);
         imgCache.put(DEFAULT_DIMENSION, img);
     }
@@ -48,7 +48,7 @@ class ImageResource {
     public ImageIcon getImageIcon(Dimension dim) {
         if (dim.width < -1 || dim.width == 0 || dim.height < -1 || dim.height == 0)
             throw new IllegalArgumentException();
-        Image img = imgCache.get(dim);
+        BufferedImage img = imgCache.get(dim);
         if (img != null) {
             return new ImageIcon(img);
         }
@@ -57,7 +57,7 @@ class ImageResource {
             imgCache.put(dim, img);
             return new ImageIcon(img);
         } else {
-            Image base = imgCache.get(DEFAULT_DIMENSION);
+            BufferedImage base = imgCache.get(DEFAULT_DIMENSION);
             if (base == null) throw new AssertionError();
             
             int width = dim.width;
@@ -68,7 +68,9 @@ class ImageResource {
             } else if (height == -1) {
                 height = icon.getIconHeight() * width / icon.getIconWidth();
             }
-            img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            Image i = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            img.getGraphics().drawImage(i, 0, 0, null);
             imgCache.put(dim, img);
             return new ImageIcon(img);
         }
@@ -90,7 +92,7 @@ class ImageResource {
             realWidth = svg.getWidth();
             realHeight = svg.getHeight();
         } else {
-            Image base = imgCache.get(DEFAULT_DIMENSION);
+            BufferedImage base = imgCache.get(DEFAULT_DIMENSION);
             if (base == null) throw new AssertionError();
             ImageIcon icon = new ImageIcon(base);
             realWidth = icon.getIconWidth();
