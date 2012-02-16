@@ -127,7 +127,9 @@ public class SelectionListDialog extends ToggleDialog  {
 
     public SelectionListDialog() {
         super(tr("Selection"), "selectionlist", tr("Open a selection list window."),
-                Shortcut.registerShortcut("subwindow:selection", tr("Toggle: {0}", tr("Current Selection")), KeyEvent.VK_T, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT),
+                Shortcut.registerShortcut("subwindow:selection", tr("Toggle: {0}",
+                tr("Current Selection")), KeyEvent.VK_T, Shortcut.GROUP_LAYER+
+                Shortcut.GROUPS_ALT1),
                 150, // default height
                 true // default is "show dialog"
         );
@@ -144,7 +146,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
         lstPrimitives.addMouseListener(new SelectionPopupMenuLauncher());
         lstPrimitives.addMouseListener(new DblClickHandler());
-        
+
         popupMenu = new SelectionPopup(lstPrimitives);
     }
 
@@ -224,7 +226,7 @@ public class SelectionListDialog extends ToggleDialog  {
     public JMenuItem addPopupMenuAction(Action a) {
         return popupMenu.add(a);
     }
-    
+
     public void addPopupMenuListener(PopupMenuListener l) {
         popupMenu.addPopupMenuListener(l);
     }
@@ -232,11 +234,11 @@ public class SelectionListDialog extends ToggleDialog  {
     public void removePopupMenuListener(PopupMenuListener l) {
         popupMenu.addPopupMenuListener(l);
     }
-    
+
     public Collection<OsmPrimitive> getSelectedPrimitives() {
         return model.getSelected();
     }
-    
+
     /**
      * Updates the dialog title with a summary of the current JOSM selection
      */

@@ -45,7 +45,8 @@ public class ValidateAction extends JosmAction {
      */
     public ValidateAction() {
         super(tr("Validation"), "dialogs/validator", tr("Performs the data validation"),
-                Shortcut.registerShortcut("tools:validate", tr("Tool: {0}", tr("Validation")), KeyEvent.VK_V, Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), true);
+            Shortcut.registerShortcut("tools:validate", tr("Tool: {0}", tr("Validation")),
+            KeyEvent.VK_V, Shortcut.GROUP_EDIT+Shortcut.GROUPS_ALT1), true);
     }
 
     public void actionPerformed(ActionEvent ev) {

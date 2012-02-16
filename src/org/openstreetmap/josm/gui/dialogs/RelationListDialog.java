@@ -87,8 +87,8 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      */
     public RelationListDialog() {
         super(tr("Relations"), "relationlist", tr("Open a list of all relations."),
-                Shortcut.registerShortcut("subwindow:relations", tr("Toggle: {0}", tr("Relations")), KeyEvent.VK_R,
-                        Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
+                Shortcut.registerShortcut("subwindow:relations", tr("Toggle: {0}", tr("Relations")),
+                KeyEvent.VK_R, Shortcut.GROUP_LAYER+Shortcut.GROUPS_ALT1), 150);
 
         // create the list of relations
         //
@@ -141,8 +141,8 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }));
 
         // activate DEL in the list of relations
-        displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "deleteRelation");
-        displaylist.getActionMap().put("deleteRelation", deleteAction);
+        //displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "deleteRelation");
+        //displaylist.getActionMap().put("deleteRelation", deleteAction);
 
         popupMenu = new RelationDialogPopupMenu(displaylist);
     }
