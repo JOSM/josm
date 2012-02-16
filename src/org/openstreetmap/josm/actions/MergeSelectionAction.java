@@ -21,7 +21,7 @@ public class MergeSelectionAction extends AbstractMergeAction {
     public MergeSelectionAction() {
         super(tr("Merge selection"), "dialogs/mergedown", tr("Merge the currently selected objects into another layer"),
             Shortcut.registerShortcut("system:mergeselection", tr("Edit: {0}", tr("Merge selection")),
-            KeyEvent.VK_M, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT),
+            KeyEvent.VK_M, Shortcut.GROUP_MENU+Shortcut.GROUPS_ALT1),
             true /* register */
         );
         putValue("help", ht("/Action/MergeSelection"));
