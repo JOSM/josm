@@ -72,7 +72,9 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
 
     public CommandStackDialog(final MapFrame mapFrame) {
         super(tr("Command Stack"), "commandstack", tr("Open a list of all commands (undo buffer)."),
-                Shortcut.registerShortcut("subwindow:commandstack", tr("Toggle: {0}", tr("Command Stack")), KeyEvent.VK_O, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 100, true);
+                Shortcut.registerShortcut("subwindow:commandstack", tr("Toggle: {0}",
+                tr("Command Stack")), KeyEvent.VK_O, Shortcut.GROUP_LAYER
+                +Shortcut.GROUPS_ALT1), 100, true);
         undoTree.addMouseListener(new PopupMenuHandler());
         undoTree.setRootVisible(false);
         undoTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);

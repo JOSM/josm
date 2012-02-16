@@ -22,7 +22,8 @@ public class ViewportFollowToggleAction extends JosmAction {
                 tr("Viewport Following"),
                 "viewport-follow",
                 tr("Enable/disable automatic moving of the map view to last placed node"),
-                Shortcut.registerShortcut("menu:view:viewportfollow", tr("Toggle Viewport Following"),KeyEvent.VK_F, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT),
+                Shortcut.registerShortcut("menu:view:viewportfollow", tr("Toggle Viewport Following"),
+                KeyEvent.VK_F, Shortcut.GROUP_MENU+Shortcut.GROUPS_ALT1),
                 true /* register shortcut */
         );
         putValue("help", ht("/Action/ViewportFollowing"));
