@@ -102,7 +102,7 @@ public class PrefJPanel extends JPanel {
     // A list of keys to present the user. Sadly this really is a list of keys Java knows about,
     // not a list of real physical keys. If someone knows how to get that list?
     private static Map<Integer, String> keyList = setKeyList();
-    
+
     private static Map<Integer, String> setKeyList() {
         Map<Integer, String> list = new LinkedHashMap<Integer, String>();
         String unknown = Toolkit.getProperty("AWT.unknown", "Unknown");
@@ -124,7 +124,7 @@ public class PrefJPanel extends JPanel {
         list.put(Integer.valueOf(-1), "");
         return list;
     }
-    
+
     private JComboBox bxPrim1 = new JComboBox();
     private JComboBox bxPrim2 = new JComboBox();
     private JComboBox bxPrim3 = new JComboBox();
@@ -144,9 +144,9 @@ public class PrefJPanel extends JPanel {
     private JCheckBox cbDefault = new JCheckBox();
     private JCheckBox cbDisable = new JCheckBox();
     private JComboBox tfKey = new JComboBox();
-    
+
     JTable shortcutTable = new JTable();
-    
+
     private JTextField filterField = new JTextField();
 
     /** Creates new form prefJPanel */
@@ -218,7 +218,7 @@ public class PrefJPanel extends JPanel {
         listScrollPane.setViewportView(shortcutTable);
 
         listPane.add(listScrollPane);
-        
+
         shortcutTab.add(listPane);
 
         // and here follows the edit area. I won't object to someone re-designing it, it looks, um, "minimalistic" ;)
@@ -238,8 +238,8 @@ public class PrefJPanel extends JPanel {
         tfKey.setModel(new DefaultComboBoxModel(keyList.values().toArray()));
         cbMeta.setAction(action);
         cbMeta.setText(META); // see above for why no tr()
-        
-        
+
+
         shortcutEditPane.add(cbDefault);
         shortcutEditPane.add(new JLabel());
         shortcutEditPane.add(cbShift);
@@ -265,12 +265,12 @@ public class PrefJPanel extends JPanel {
 
         editGroupPane.setBorder(BorderFactory.createTitledBorder(tr("Edit Shortcuts")));
         editGroupPane.setLayout(new java.awt.GridLayout(3, 5));
-        
+
         JComboBox[] bxArray = new JComboBox[] {
                     bxPrim1,bxSec1,bxTer1,bxPrim2,bxSec2,bxTer2,
                     bxPrim3,bxSec3,bxTer3,bxPrim4,bxSec4,bxTer4};
-        for (JComboBox bxi: bxArray) bxi.setModel(new DefaultComboBoxModel(modifList)); 
-        
+        for (JComboBox bxi: bxArray) bxi.setModel(new DefaultComboBoxModel(modifList));
+
         editGroupPane.add(new JLabel(tr("Primary modifier:")));
         editGroupPane.add(bxPrim1);
         editGroupPane.add(new JLabel(tr("Secondary modifier:")));
@@ -309,7 +309,7 @@ public class PrefJPanel extends JPanel {
         subwindowGroupPane.add(bxTer4);
 
         initbx();
-        for (JComboBox bxi: bxArray) bxi.setAction(action2); 
+        for (JComboBox bxi: bxArray) bxi.setAction(action2);
 
         modifierTab.add(subwindowGroupPane);
 
@@ -339,7 +339,7 @@ public class PrefJPanel extends JPanel {
         pnl.setMaximumSize(new Dimension(300,10));
         return pnl;
     }
-    
+
     private void disableAllModifierCheckboxes() {
         cbDefault.setEnabled(false);
         cbDisable.setEnabled(false);
@@ -480,7 +480,7 @@ public class PrefJPanel extends JPanel {
         }
     }
 
-    
+
      class FilterFieldAdapter implements DocumentListener {
         public void filter() {
             String expr = filterField.getText().trim();
@@ -491,7 +491,7 @@ public class PrefJPanel extends JPanel {
                 if (expr == null) {
                     sorter.setRowFilter(null);
                 } else {
-                    // split search string on whitespace, do case-insensitive AND search 
+                    // split search string on whitespace, do case-insensitive AND search
                     ArrayList<RowFilter<Object, Object>> andFilters = new ArrayList<RowFilter<Object, Object>>();
                     for (String word : expr.split("\\s+")) {
                         andFilters.add(RowFilter.regexFilter("(?i)" + word));
@@ -507,5 +507,5 @@ public class PrefJPanel extends JPanel {
         public void insertUpdate(DocumentEvent arg0) {  filter(); }
         public void removeUpdate(DocumentEvent arg0) { filter(); }
     }
-    
+
 }

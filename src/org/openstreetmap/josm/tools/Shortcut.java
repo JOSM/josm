@@ -570,4 +570,9 @@ public class Shortcut {
         if (sc == null) return null;
         return sc.getKeyStroke();
     }
+
+    public boolean isEvent(KeyEvent e) {
+        return getKeyStroke() != null && getKeyStroke().equals(
+        KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers()));
+    }
 }
