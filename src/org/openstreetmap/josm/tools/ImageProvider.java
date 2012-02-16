@@ -278,7 +278,9 @@ public class ImageProvider {
                         URI uri = getSvgUniverse().loadSVG(new StringReader(new String(bytes)), name);
                         return new ImageResource(getSvgUniverse().getDiagram(uri));
                     } else {
-                        return new ImageResource(new ImageIcon(bytes).getImage());
+                        try {
+                            return new ImageResource(ImageIO.read(new ByteArrayInputStream(bytes)));
+                        } catch (IOException e) {}
                     }
                 }
             }
@@ -750,7 +752,7 @@ public class ImageProvider {
         return get("data", type.getAPIName());
     }
 
-    public static Image createImageFromSvg(SVGDiagram svg, Dimension dim) {
+    public static BufferedImage createImageFromSvg(SVGDiagram svg, Dimension dim) {
         float realWidth = svg.getWidth();
         float realHeight = svg.getHeight();
         int width = Math.round(realWidth);
@@ -771,8 +773,8 @@ public class ImageProvider {
             scaleX = scaleY = (double) height / realHeight;
             width = (int) Math.round(realWidth * scaleX);
         }
-        Image img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = ((BufferedImage) img).createGraphics();
+        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = img.createGraphics();
         g.setClip(0, 0, width, height);
         if (scaleX != null) {
             g.scale(scaleX, scaleY);
