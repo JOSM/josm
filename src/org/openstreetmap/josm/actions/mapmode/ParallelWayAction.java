@@ -125,8 +125,8 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
     public ParallelWayAction(MapFrame mapFrame) {
         super(tr("Parallel"), "parallel", tr("Make parallel copies of ways"),
             Shortcut.registerShortcut("mapmode:parallel", tr("Mode: {0}",
-            tr("Parallel")), KeyEvent.VK_P, Shortcut.GROUP_EDIT,
-            Shortcut.SHIFT_DEFAULT), mapFrame, ImageProvider.getCursor("normal",
+            tr("Parallel")), KeyEvent.VK_P, Shortcut.GROUP_EDIT+
+            Shortcut.GROUPS_ALT1), mapFrame, ImageProvider.getCursor("normal",
             "parallel"));
         putValue("help", ht("/Action/Parallel"));
         mv = mapFrame.mapView;
