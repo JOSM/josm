@@ -91,7 +91,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         untaggedWayColor = PaintColors.UNTAGGED_WAY.get();
         incompleteColor = PaintColors.INCOMPLETE_WAY.get();
         backgroundColor = PaintColors.BACKGROUND.get();
-        highlightColor = PaintColors.HIGHLIGHT.get();
+        highlightColor = PaintColors.HIGHLIGHT_WIREFRAME.get();
         taggedColor = PaintColors.TAGGED.get();
         connectionColor = PaintColors.CONNECTION.get();
 

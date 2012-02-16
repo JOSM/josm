@@ -26,6 +26,7 @@ public enum PaintColors implements ColorKey {
     INCOMPLETE_WAY(marktr("incomplete way"), new Color(0,0,96)), // darker blue
     BACKGROUND(marktr("background"), Color.BLACK),
     HIGHLIGHT(marktr("highlight"), SELECTED.get()),
+    HIGHLIGHT_WIREFRAME(marktr("highlight wireframe"), Color.orange),
 
     UNTAGGED(marktr("untagged"),Color.GRAY),
     TEXT(marktr("text"), Color.WHITE),
