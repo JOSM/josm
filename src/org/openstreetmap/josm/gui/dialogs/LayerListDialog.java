@@ -442,8 +442,8 @@ public class LayerListDialog extends ToggleDialog {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "showhide"));
             putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the selected layer."));
             putValue("help", HelpUtil.ht("/Dialog/LayerList#ShowHideLayer"));
-            putValue(ACCELERATOR_KEY, Shortcut.registerShortcut("core_multikey:showHideLayer", tr("Multikey: {0}",
-            tr("Show/hide layer")), KeyEvent.VK_S, Shortcut.GROUP_DIRECT, KeyEvent.SHIFT_DOWN_MASK).getKeyStroke());
+            Shortcut.registerShortcut("core_multikey:showHideLayer", tr("Multikey: {0}",
+            tr("Show/hide layer")), KeyEvent.VK_S, Shortcut.GROUP_DIRECT+Shortcut.GROUPS_ALT1).setAccelerator(this);
             if (init) {
                 updateEnabledState();
             }
@@ -630,8 +630,8 @@ public class LayerListDialog extends ToggleDialog {
         public ActivateLayerAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "activate"));
             putValue(SHORT_DESCRIPTION, tr("Activate the selected layer"));
-            putValue(ACCELERATOR_KEY, Shortcut.registerShortcut("core_multikey:activateLayer", tr("Multikey: {0}",
-            tr("Activate layer")), KeyEvent.VK_A, Shortcut.GROUP_DIRECT, KeyEvent.SHIFT_DOWN_MASK).getKeyStroke());
+            Shortcut.registerShortcut("core_multikey:activateLayer", tr("Multikey: {0}",
+            tr("Activate layer")), KeyEvent.VK_A, Shortcut.GROUP_DIRECT+Shortcut.GROUPS_ALT1).setAccelerator(this);
             putValue("help", HelpUtil.ht("/Dialog/LayerList#ActivateLayer"));
         }
 
