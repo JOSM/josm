@@ -68,7 +68,8 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
     public FilterDialog(){
         super(tr("Filter"), "filter", tr("Filter objects and hide/disable them."),
-                Shortcut.registerShortcut("subwindow:filter", tr("Toggle: {0}", tr("Filter")), KeyEvent.VK_F, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 162);
+                Shortcut.registerShortcut("subwindow:filter", tr("Toggle: {0}", tr("Filter")),
+                KeyEvent.VK_F, Shortcut.GROUP_LAYER+Shortcut.GROUPS_ALT1), 162);
         build();
 
         MultikeyActionsHandler.getInstance().addAction(new EnableFilterAction());
@@ -88,16 +89,18 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         Main.map.mapView.repaint();
     }
 
-    private static final KeyStroke ENABLE_FILTER_SHORTCUT
-    = Shortcut.registerShortcut("core_multikey:enableFilter", tr("Multikey: {0}", tr("Enable filter")), KeyEvent.VK_E, Shortcut.GROUP_DIRECT, KeyEvent.CTRL_DOWN_MASK|KeyEvent.ALT_DOWN_MASK).getKeyStroke();
+    private static final Shortcut ENABLE_FILTER_SHORTCUT
+    = Shortcut.registerShortcut("core_multikey:enableFilter", tr("Multikey: {0}", tr("Enable filter")),
+    KeyEvent.VK_E, Shortcut.GROUP_DIRECT2+Shortcut.GROUPS_ALT2);
 
-    private static final KeyStroke HIDING_FILTER_SHORTCUT
-    = Shortcut.registerShortcut("core_multikey:hidingFilter", tr("Multikey: {0}", tr("Hide filter")), KeyEvent.VK_H, Shortcut.GROUP_DIRECT, KeyEvent.CTRL_DOWN_MASK|KeyEvent.ALT_DOWN_MASK).getKeyStroke();
+    private static final Shortcut HIDING_FILTER_SHORTCUT
+    = Shortcut.registerShortcut("core_multikey:hidingFilter", tr("Multikey: {0}", tr("Hide filter")),
+    KeyEvent.VK_H, Shortcut.GROUP_DIRECT2+Shortcut.GROUPS_ALT2);
 
 
     protected final String[] columnToolTips = {
-            tr("Enable filter ({0}+{1})", KeyEvent.getKeyModifiersText(ENABLE_FILTER_SHORTCUT.getModifiers()), KeyEvent.getKeyText(ENABLE_FILTER_SHORTCUT.getKeyCode())),
-            tr("Hiding filter ({0}+{1})", KeyEvent.getKeyModifiersText(HIDING_FILTER_SHORTCUT.getModifiers()), KeyEvent.getKeyText(HIDING_FILTER_SHORTCUT.getKeyCode())),
+            Main.platform.makeTooltip(tr("Enable filter"), ENABLE_FILTER_SHORTCUT),
+            Main.platform.makeTooltip(tr("Hiding filter"), HIDING_FILTER_SHORTCUT),
             null,
             tr("Inverse filter"),
             tr("Filter mode")
@@ -333,7 +336,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
         EnableFilterAction() {
             putValue(SHORT_DESCRIPTION, tr("Enable filter"));
-            putValue(ACCELERATOR_KEY, ENABLE_FILTER_SHORTCUT);
+            ENABLE_FILTER_SHORTCUT.setAccelerator(this);
         }
 
         @Override
@@ -352,7 +355,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
         public HidingFilterAction() {
             putValue(SHORT_DESCRIPTION, tr("Hiding filter"));
-            putValue(ACCELERATOR_KEY, HIDING_FILTER_SHORTCUT);
+            HIDING_FILTER_SHORTCUT.setAccelerator(this);
         }
 
         @Override
