@@ -108,7 +108,8 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
      */
     public ConflictDialog() {
         super(tr("Conflict"), "conflict", tr("Resolve conflicts."),
-                Shortcut.registerShortcut("subwindow:conflict", tr("Toggle: {0}", tr("Conflict")), KeyEvent.VK_C, Shortcut.GROUP_LAYER), 100);
+                Shortcut.registerShortcut("subwindow:conflict", tr("Toggle: {0}", tr("Conflict")),
+                KeyEvent.VK_C, Shortcut.GROUP_LAYER+Shortcut.GROUPS_ALT1), 100);
 
         build();
         refreshView();
