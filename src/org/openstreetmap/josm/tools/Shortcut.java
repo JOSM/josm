@@ -155,11 +155,6 @@ public class Shortcut {
         return null;
     }
 
-    private boolean isSame(int isKey, int isModifier) {
-        // -1 --- an unassigned shortcut is different from any other shortcut
-        return( isKey == assignedKey && isModifier == assignedModifier && assignedModifier != getGroupModifier(NONE));
-    }
-
     // create a shortcut object from an string as saved in the preferences
     private Shortcut(String prefString) {
         ArrayList<String> s = (new ArrayList<String>(Main.pref.getCollection(prefString)));
@@ -190,15 +185,21 @@ public class Shortcut {
         }
     }
 
-    private boolean isSame(Shortcut other) {
-        return assignedKey == other.assignedKey && assignedModifier == other.assignedModifier;
+    private boolean isSame(int isKey, int isModifier) {
+        // an unassigned shortcut is different from any other shortcut
+        return isKey == assignedKey && isModifier == assignedModifier && assignedModifier != getGroupModifier(NONE);
+    }
+
+    public boolean isEvent(KeyEvent e) {
+        return getKeyStroke() != null && getKeyStroke().equals(
+        KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers()));
     }
 
     /**
      * use this to set a menu's mnemonic
      */
     public void setMnemonic(JMenu menu) {
-        if (requestedGroup == GROUP_MNEMONIC && assignedModifier == getGroupModifier(requestedGroup + GROUPS_DEFAULT) && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
+        if (assignedModifier == getGroupModifier(MNEMONIC) && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
             menu.setMnemonic(KeyEvent.getKeyText(assignedKey).charAt(0)); //getKeyStroke().getKeyChar() seems not to work here
         }
     }
@@ -206,7 +207,7 @@ public class Shortcut {
      * use this to set a buttons's mnemonic
      */
     public void setMnemonic(AbstractButton button) {
-        if (requestedGroup == GROUP_MNEMONIC && assignedModifier == getGroupModifier(requestedGroup + GROUPS_DEFAULT) && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
+        if (assignedModifier == getGroupModifier(MNEMONIC)  && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
             button.setMnemonic(KeyEvent.getKeyText(assignedKey).charAt(0)); //getKeyStroke().getKeyChar() seems not to work here
         }
     }
@@ -247,7 +248,7 @@ public class Shortcut {
 
     // check if something collides with an existing shortcut
     private static Shortcut findShortcut(int requestedKey, int modifier) {
-        if (modifier == getGroupModifier(GROUP_NONE))
+        if (modifier == getGroupModifier(NONE))
             return null;
         for (Shortcut sc : shortcuts.values()) {
             if (sc.isSame(requestedKey, modifier))
@@ -282,6 +283,12 @@ public class Shortcut {
     public static final int CTRL_SHIFT = 5009;
     public static final int ALT_CTRL_SHIFT = 5010;
 
+    /* for reassignment */
+    private static int[] mods = {ALT_CTRL, ALT_SHIFT, CTRL_SHIFT, ALT_CTRL_SHIFT};
+    private static int[] keys = {KeyEvent.VK_F1, KeyEvent.VK_F2, KeyEvent.VK_F3, KeyEvent.VK_F4,
+                                 KeyEvent.VK_F5, KeyEvent.VK_F6, KeyEvent.VK_F7, KeyEvent.VK_F8,
+                                 KeyEvent.VK_F9, KeyEvent.VK_F10, KeyEvent.VK_F11, KeyEvent.VK_F12};
+
     /* old */
     @Deprecated public static final int GROUP_NONE = 0;
     @Deprecated public static final int GROUP_HOTKEY = 1;
@@ -296,6 +303,9 @@ public class Shortcut {
     @Deprecated public static final int GROUPS_ALT1 = 100;
     @Deprecated public static final int GROUPS_ALT2 = 200;
     @Deprecated public static final int SHIFT_DEFAULT = 1;
+    @Deprecated public static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup, int modifier) {
+        return registerShortcut(shortText, longText, requestedKey, requestedGroup, modifier);
+    }
 
     // bootstrap
     private static boolean initdone = false;
@@ -347,25 +357,29 @@ public class Shortcut {
         // (1) System reserved shortcuts
         Main.platform.initSystemShortcuts();
         // (2) User defined shortcuts
-        LinkedList<Shortcut> shortcuts = new LinkedList<Shortcut>();
+        LinkedList<Shortcut> newshortcuts = new LinkedList<Shortcut>();
         for(String s : Main.pref.getAllPrefixCollectionKeys("shortcut.entry.")) {
-            shortcuts.add(new Shortcut(s));
+            newshortcuts.add(new Shortcut(s));
         }
-        for(Shortcut sc : shortcuts) {
-            if (sc.getAssignedUser()) {
-                registerShortcut(sc);
+
+        for(Shortcut sc : newshortcuts) {
+            if (sc.getAssignedUser()
+            && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
+                shortcuts.put(sc.getShortText(), sc);
             }
         }
         // Shortcuts at their default values
-        for(Shortcut sc : shortcuts) {
-            if (!sc.getAssignedUser() && sc.getAssignedDefault()) {
-                registerShortcut(sc);
+        for(Shortcut sc : newshortcuts) {
+            if (!sc.getAssignedUser() && sc.getAssignedDefault()
+            && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
+                shortcuts.put(sc.getShortText(), sc);
             }
         }
         // Shortcuts that were automatically moved
-        for(Shortcut sc : shortcuts) {
-            if (!sc.getAssignedUser() && !sc.getAssignedDefault()) {
-                registerShortcut(sc);
+        for(Shortcut sc : newshortcuts) {
+            if (!sc.getAssignedUser() && !sc.getAssignedDefault()
+            && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
+                shortcuts.put(sc.getShortText(), sc);
             }
         }
     }
@@ -377,6 +391,21 @@ public class Shortcut {
         return m;
     }
 
+    private static int findModifier(int group, Integer modifier) {
+        Integer defaultModifier = getGroupModifier(group);
+        if(modifier != null) {
+            if(modifier == SHIFT_DEFAULT) {
+                defaultModifier |= KeyEvent.SHIFT_DOWN_MASK;
+            } else {
+                defaultModifier = modifier;
+            }
+        }
+        else if (defaultModifier == null) { // garbage in, no shortcut out
+            defaultModifier = getGroupModifier(NONE);
+        }
+        return defaultModifier;
+    }
+
     // shutdown handling
     public static boolean savePrefs() {
         boolean changed = false;
@@ -384,18 +413,6 @@ public class Shortcut {
             changed = changed | sc.save();
         }
         return changed;
-    }
-
-    // this is used to register a shortcut that was read from the preferences
-    private static void registerShortcut(Shortcut sc) {
-        // put a user configured shortcut in as-is -- unless there's a conflict
-        if(sc.getAssignedUser() && findShortcut(sc.getAssignedKey(),
-                sc.getAssignedModifier()) == null) {
-            shortcuts.put(sc.getShortText(), sc);
-        } else {
-            registerShortcut(sc.getShortText(), sc.getLongText(), sc.getRequestedKey(),
-                    sc.getRequestedGroup(), sc.getAssignedModifier(), sc);
-        }
     }
 
     /**
@@ -430,61 +447,14 @@ public class Shortcut {
      * use something the user will recognize...
      * @param requestedKey the key you'd prefer. Use a {@link KeyEvent KeyEvent.VK_*} constant here.
      * @param requestedGroup the group this shortcut fits best. This will determine the
-     * modifiers your shortcut will get assigned. Use the {@code GROUP_*}
-     * constants defined above.
-     * @param modifier to register a {@code ctrl+shift} command, use {@see #SHIFT_DEFAULT}.
-     */
-    @Deprecated
-    public static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup, int modifier) {
-        return registerShortcut(shortText, longText, requestedKey, requestedGroup, modifier, null);
-    }
-
-    /**
-     * Register a shortcut.
-     *
-     * Here you get your shortcuts from. The parameters are:
-     *
-     * @param shortText an ID. re-use a {@code "system:*"} ID if possible, else use something unique.
-     * {@code "menu:*"} is reserved for menu mnemonics, {@code "core:*"} is reserved for
-     * actions that are part of JOSM's core. Use something like
-     * {@code <pluginname>+":"+<actionname>}.
-     * @param longText this will be displayed in the shortcut preferences dialog. Better
-     * use something the user will recognize...
-     * @param requestedKey the key you'd prefer. Use a {@link KeyEvent KeyEvent.VK_*} constant here.
-     * @param requestedGroup the group this shortcut fits best. This will determine the
-     * modifiers your shortcut will get assigned. Use the {@code GROUP_*}
-     * constants defined above.
+     * modifiers your shortcut will get assigned. Use the constants defined above.
      */
     public static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup) {
-        return registerShortcut(shortText, longText, requestedKey, requestedGroup, null, null);
+        return registerShortcut(shortText, longText, requestedKey, requestedGroup);
     }
 
-    private static int findModifier(int group, Integer modifier) {
-        Integer defaultModifier = getGroupModifier(group);
-        if(modifier != null) {
-            if(modifier == SHIFT_DEFAULT) {
-                defaultModifier |= KeyEvent.SHIFT_DOWN_MASK;
-            } else {
-                defaultModifier = modifier;
-            }
-        }
-        else if (defaultModifier == null) { // garbage in, no shortcut out
-            defaultModifier = getGroupModifier(NONE);
-        }
-        return defaultModifier;
-    }
-
-    private static int[] mods = {ALT_CTRL, ALT_SHIFT, CTRL_SHIFT, ALT_CTRL_SHIFT};
-    private static int[] keys = {KeyEvent.VK_F1, KeyEvent.VK_F2, KeyEvent.VK_F3, KeyEvent.VK_F4,
-                                 KeyEvent.VK_F5, KeyEvent.VK_F6, KeyEvent.VK_F7, KeyEvent.VK_F8,
-                                 KeyEvent.VK_F9, KeyEvent.VK_F10, KeyEvent.VK_F11, KeyEvent.VK_F12};
-    // and now the workhorse. same parameters as above, just one more: if originalShortcut is not null and
-    // is different from the shortcut that will be assigned, a popup warning will be displayed to the user.
-    // This is used when registering shortcuts that have been visible to the user before (read: have been
-    // read from the preferences file). New shortcuts will never warn, even when they land on some funny
-    // random fallback key like Ctrl+Alt+Shift+Z for "File Open..." <g>
-    private static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup, Integer modifier,
-            Shortcut originalShortcut) {
+    // and now the workhorse. same parameters as above, just one more
+    private static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup, Integer modifier) {
         doInit();
         Integer defaultModifier = findModifier(requestedGroup, modifier);
         if (shortcuts.containsKey(shortText)) { // a re-register? maybe a sc already read from the preferences?
@@ -555,10 +525,5 @@ public class Shortcut {
         Shortcut sc = shortcuts.get("system:cut");
         if (sc == null) return null;
         return sc.getKeyStroke();
-    }
-
-    public boolean isEvent(KeyEvent e) {
-        return getKeyStroke() != null && getKeyStroke().equals(
-        KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers()));
     }
 }
