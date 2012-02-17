@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
+import org.openstreetmap.josm.gui.preferences.map.MapPreference;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -166,7 +167,7 @@ public class PreferenceDialog extends JDialog {
     }
 
     public void selectMapPaintPreferenceTab() {
-        tpPreferences.setSelectedComponent(tpPreferences.map);
-        tpPreferences.mapcontent.setSelectedIndex(1);
+        tpPreferences.selectTabByPref(MapPreference.class);
+        tpPreferences.getMapPreference().mapcontent.setSelectedIndex(1);
     }
 }

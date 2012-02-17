@@ -6,34 +6,47 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagLayout;
-import java.awt.ScrollPane;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComponent;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
 import org.openstreetmap.josm.gui.preferences.advanced.AdvancedPreference;
+import org.openstreetmap.josm.gui.preferences.display.ColorPreference;
+import org.openstreetmap.josm.gui.preferences.display.DisplayPreference;
+import org.openstreetmap.josm.gui.preferences.display.DrawingPreference;
+import org.openstreetmap.josm.gui.preferences.display.LafPreference;
+import org.openstreetmap.josm.gui.preferences.display.LanguagePreference;
+import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
+import org.openstreetmap.josm.gui.preferences.map.BackupPreference;
+import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
+import org.openstreetmap.josm.gui.preferences.map.MapPreference;
+import org.openstreetmap.josm.gui.preferences.map.ProjectionPreference;
+import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
+import org.openstreetmap.josm.gui.preferences.shortcut.ShortcutPreference;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -41,7 +54,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author imi
  */
-public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListener, ExpertModeChangeListener {
+public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListener, ExpertModeChangeListener, ChangeListener {
     /**
      * Allows PreferenceSettings to do validation of entered values when ok was pressed.
      * If data is invalid then event can return false to cancel closing of preferences dialog.
@@ -54,28 +67,73 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
          */
         boolean validatePreferences();
     }
+    
+    private static interface PreferenceTab {
+        public TabPreferenceSetting getTabPreferenceSetting();
+        public Component getComponent();
+    }
+    
+    public static class PreferencePanel extends JPanel implements PreferenceTab {
+        private final TabPreferenceSetting preferenceSetting;
 
-    private static class TabData {
-        public String icon;
-        public JComponent tab;
-        public String toolTip;
-        public boolean isExpert;
+        private PreferencePanel(TabPreferenceSetting preferenceSetting) {
+            super(new GridBagLayout());
+            CheckParameterUtil.ensureParameterNotNull(preferenceSetting);
+            this.preferenceSetting = preferenceSetting;
+            buildPanel();
+        }
+        
+        protected void buildPanel() {
+            setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+            add(new JLabel(preferenceSetting.getTitle()), GBC.eol().insets(0,5,0,10).anchor(GBC.NORTHWEST));
+
+            JLabel descLabel = new JLabel("<html>"+preferenceSetting.getDescription()+"</html>");
+            descLabel.setFont(descLabel.getFont().deriveFont(Font.ITALIC));
+            add(descLabel, GBC.eol().insets(5,0,5,20).fill(GBC.HORIZONTAL));
+        }
+
+        @Override
+        public final TabPreferenceSetting getTabPreferenceSetting() {
+            return preferenceSetting;
+        }
+
+        @Override
+        public Component getComponent() {
+            return this;
+        }
+    }
+
+    public static class PreferenceScrollPane extends JScrollPane implements PreferenceTab {
+        private final TabPreferenceSetting preferenceSetting;
+
+        private PreferenceScrollPane(Component view, TabPreferenceSetting preferenceSetting) {
+            super(view);
+            this.preferenceSetting = preferenceSetting;
+        }
+
+        private PreferenceScrollPane(PreferencePanel preferencePanel) {
+            super(preferencePanel.getComponent());
+            this.preferenceSetting = preferencePanel.getTabPreferenceSetting();
+        }
+
+        @Override
+        public final TabPreferenceSetting getTabPreferenceSetting() {
+            return preferenceSetting;
+        }
+
+        @Override
+        public Component getComponent() {
+            return this;
+        }
     }
 
     // all created tabs
-    private final List<TabData> tabs = new ArrayList<TabData>();
+    private final List<PreferenceTab> tabs = new ArrayList<PreferenceTab>();
     private final static Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<PreferenceSettingFactory>();
     private final List<PreferenceSetting> settings = new ArrayList<PreferenceSetting>();
-
-    // some common tabs
-    public final JPanel display = createPreferenceTab("display", tr("Display Settings"), tr("Various settings that influence the visual representation of the whole program."));
-    public final JPanel connection = createPreferenceTab("connection", I18n.tr("Connection Settings"), I18n.tr("Connection Settings for the OSM server."),false);
-    public final JPanel map = createPreferenceTab("map", I18n.tr("Map Settings"), I18n.tr("Settings for the map projection and data interpretation."));
-    public final JPanel audio = createPreferenceTab("audio", I18n.tr("Audio Settings"), I18n.tr("Settings for the audio player and audio markers."));
-    public final JPanel plugins = createPreferenceTab("plugin", tr("Plugins"), tr("Configure available plugins."), false);
-
-    public final javax.swing.JTabbedPane displaycontent = new javax.swing.JTabbedPane();
-    public final javax.swing.JTabbedPane mapcontent = new javax.swing.JTabbedPane();
+    
+    // distinct list of tabs that have been initialized (we do not initialize tabs until they are displayed to speed up dialog startup)
+    private final List<PreferenceSetting> settingsInitialized = new ArrayList<PreferenceSetting>();
 
     List<ValidationListener> validationListeners = new ArrayList<ValidationListener>();
 
@@ -89,75 +147,77 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
     }
 
     /**
-     * Construct a JPanel for the preference settings. Layout is GridBagLayout
-     * and a centered title label and the description are added. The panel
-     * will be shown inside a {@link ScrollPane}
-     * @param icon The name of the icon.
-     * @param title The title of this preference tab.
-     * @param desc A description in one sentence for this tab. Will be displayed
-     *      italic under the title.
+     * Construct a PreferencePanel for the preference settings. Layout is GridBagLayout
+     * and a centered title label and the description are added.
      * @return The created panel ready to add other controls.
      */
-    public JPanel createPreferenceTab(String icon, String title, String desc) {
-        return createPreferenceTab(icon, title, desc, false);
-    }
-
-    public JPanel createPreferenceTab(String icon, String title, String desc, boolean inScrollPane) {
-        return createPreferenceTab(icon, title, desc, inScrollPane, false);
+    public PreferencePanel createPreferenceTab(TabPreferenceSetting caller) {
+        return createPreferenceTab(caller, false);
     }
 
     /**
-     * Construct a JPanel for the preference settings. Layout is GridBagLayout
+     * Construct a PreferencePanel for the preference settings. Layout is GridBagLayout
      * and a centered title label and the description are added.
-     * @param icon The name of the icon.
-     * @param title The title of this preference tab.
-     * @param desc A description in one sentence for this tab. Will be displayed
-     *      italic under the title.
      * @param inScrollPane if <code>true</code> the added tab will show scroll bars
      *        if the panel content is larger than the available space
      * @return The created panel ready to add other controls.
      */
-    public JPanel createPreferenceTab(String icon, String title, String desc, boolean inScrollPane, boolean isExpert) {
-        JPanel p = new JPanel(new GridBagLayout());
-        p.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-        p.add(new JLabel(title), GBC.eol().insets(0,5,0,10).anchor(GBC.NORTHWEST));
+    public PreferencePanel createPreferenceTab(TabPreferenceSetting caller, boolean inScrollPane) {
+        CheckParameterUtil.ensureParameterNotNull(caller);
+        PreferencePanel p = new PreferencePanel(caller);
 
-        JLabel descLabel = new JLabel("<html>"+desc+"</html>");
-        descLabel.setFont(descLabel.getFont().deriveFont(Font.ITALIC));
-        p.add(descLabel, GBC.eol().insets(5,0,5,20).fill(GBC.HORIZONTAL));
-
-        JComponent tab = p;
+        PreferenceTab tab = p;
         if (inScrollPane) {
-            JScrollPane sp = new JScrollPane(p);
+            PreferenceScrollPane sp = new PreferenceScrollPane(p);
             tab = sp;
         }
-        TabData data = new TabData();
-        data.icon = icon;
-        data.tab = tab;
-        data.isExpert = isExpert;
-        data.toolTip = "<html>"+desc+"</html>";
-        tabs.add(data);
+        tabs.add(tab);
         return p;
     }
 
-    public void selectTabByName(String name) {
-        for (TabData data : tabs) {
-            if (data.icon.equals(name)) {
-                Component c = data.tab;
-                if (c != null) {
-                    setSelectedComponent(c);
+    private static interface TabIdentifier {
+        public boolean identify(TabPreferenceSetting tps, Object param);
+    }
+    
+    private void selectTabBy(TabIdentifier method, Object param) {
+        for (int i=0; i<getTabCount(); i++) {
+            Component c = getComponentAt(i);
+            if (c instanceof PreferenceTab) {
+                PreferenceTab tab = (PreferenceTab) c;
+                if (method.identify(tab.getTabPreferenceSetting(), param)) {
+                    setSelectedIndex(i);
+                    return;
                 }
-                return;
             }
         }
     }
+    
+    public void selectTabByName(String name) {
+        selectTabBy(new TabIdentifier(){
+            @Override
+            public boolean identify(TabPreferenceSetting tps, Object name) {
+                return tps.getIconName().equals(name);
+            }}, name);
+    }
 
-    protected PluginPreference getPluginPreference() {
-        for (PreferenceSetting setting: settings) {
-            if (setting instanceof PluginPreference)
-                return (PluginPreference) setting;
-        }
-        return null;
+    public void selectTabByPref(Class<? extends TabPreferenceSetting> clazz) {
+        selectTabBy(new TabIdentifier(){
+            @Override
+            public boolean identify(TabPreferenceSetting tps, Object clazz) {
+                return tps.getClass().isAssignableFrom((Class<?>) clazz);
+            }}, clazz);
+    }
+    
+    public final DisplayPreference getDisplayPreference() {
+        return getSetting(DisplayPreference.class);
+    }
+    
+    public final MapPreference getMapPreference() {
+        return getSetting(MapPreference.class);
+    }
+    
+    public final PluginPreference getPluginPreference() {
+        return getSetting(PluginPreference.class);
     }
 
     public void savePreferences() {
@@ -247,6 +307,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
     public PreferenceTabbedPane() {
         super(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
         super.addMouseWheelListener(this);
+        super.getModel().addChangeListener(this);
         ExpertToggleAction.addExpertModeChangeListener(this);
     }
 
@@ -257,39 +318,76 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                 settings.add(setting);
             }
         }
-
-        display.add(displaycontent, GBC.eol().fill(GBC.BOTH));
-        map.add(mapcontent, GBC.eol().fill(GBC.BOTH));
+/*
         for (Iterator<PreferenceSetting> it = settings.iterator(); it.hasNext();) {
             try {
-                PreferenceSetting settings = it.next();
-                settings.addGui(this);
+                PreferenceSetting ps = it.next();
+                long start = System.currentTimeMillis();
+                ps.addGui(this);
+                System.out.println(ps.getClass()+" -> "+(System.currentTimeMillis()-start));
             } catch (SecurityException e) {
                 it.remove();
             } catch (Throwable e) {
-                /* allow to change most settings even if e.g. a plugin fails */
+                // allow to change most settings even if e.g. a plugin fails
                 BugReportExceptionHandler.handleException(e);
             }
-        }
+        }*/
         addGUITabs(false);
     }
 
+    private void addGUITabsForSetting(Icon icon, TabPreferenceSetting tps) {
+        for (PreferenceTab tab : tabs) {
+            if (tab.getTabPreferenceSetting().equals(tps)) {
+                insertGUITabsForSetting(icon, tps, getTabCount());
+            }
+        }
+    }
+    
+    private void insertGUITabsForSetting(Icon icon, TabPreferenceSetting tps, int index) {
+        int position = index;
+        for (PreferenceTab tab : tabs) {
+            if (tab.getTabPreferenceSetting().equals(tps)) {
+                insertTab(null, icon, tab.getComponent(), tps.getTooltip(), position++);
+            }
+        }
+    }
+    
     private void addGUITabs(boolean clear) {
         boolean expert = ExpertToggleAction.isExpert();
         Component sel = getSelectedComponent();
         if (clear) {
             removeAll();
         }
-        for (TabData data : tabs) {
-            if (expert || !data.isExpert) {
-                addTab(null, ImageProvider.get("preferences", data.icon), data.tab, data.toolTip);
+        // Inspect each tab setting
+        for (PreferenceSetting setting : settings) {
+            if (setting instanceof TabPreferenceSetting) {
+                TabPreferenceSetting tps = (TabPreferenceSetting) setting;
+                if (expert || !tps.isExpert()) {
+                    // Get icon
+                    ImageIcon icon = ImageProvider.get("preferences", tps.getIconName());
+                    if (settingsInitialized.contains(tps)) {
+                        // If it has been initialized, add corresponding tab(s)
+                        addGUITabsForSetting(icon, tps);
+                    } else {
+                        // If it has not been initialized, create an empty tab with only icon and tooltip
+                        addTab(null, icon, new PreferencePanel(tps), tps.getTooltip());
+                    }
+                }
             }
         }
+        /*for (PreferenceTab tab : tabs) {
+            TabPreferenceSetting s = tab.getTabPreferenceSetting();
+            if (expert || !s.isExpert()) {
+                addTab(null, ImageProvider.get("preferences", s.getIconName()), tab.getComponent(), "<html>"+s.getTooltip()+"</html>");
+            }
+        }*/
         try {
-            setSelectedComponent(sel);
+            if (sel != null) {
+                setSelectedComponent(sel);
+            }
         } catch (IllegalArgumentException e) {}
     }
-
+    
     @Override
     public void expertChanged(boolean isExpert) {
         addGUITabs(true);
@@ -310,11 +408,13 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
 
     static {
         // order is important!
+        settingsFactory.add(new DisplayPreference.Factory());
         settingsFactory.add(new DrawingPreference.Factory());
         settingsFactory.add(new ColorPreference.Factory());
         settingsFactory.add(new LafPreference.Factory());
         settingsFactory.add(new LanguagePreference.Factory());
         settingsFactory.add(new ServerAccessPreference.Factory());
+        settingsFactory.add(new MapPreference.Factory());
         settingsFactory.add(new ProjectionPreference.Factory());
         settingsFactory.add(new MapPaintPreference.Factory());
         settingsFactory.add(new TaggingPresetPreference.Factory());
@@ -353,5 +453,45 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
 
         // select new tab
         super.setSelectedIndex(newTab);
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        int index = getSelectedIndex();
+        Component sel = getSelectedComponent();
+        if (index > -1 && sel instanceof PreferenceTab) {
+            PreferenceTab tab = (PreferenceTab) sel;
+            TabPreferenceSetting preferenceSettings = tab.getTabPreferenceSetting();
+            //System.out.println(preferenceSettings);
+            if (!settingsInitialized.contains(preferenceSettings)) {
+                try {
+                    //System.out.println("adding GUI for "+preferenceSettings);
+                    getModel().removeChangeListener(this);
+                    preferenceSettings.addGui(this);
+                    // Add GUI for sub preferences
+                    for (PreferenceSetting setting : settings) {
+                        if (setting instanceof SubPreferenceSetting) {
+                            SubPreferenceSetting sps = (SubPreferenceSetting) setting;
+                            if (sps.getTabPreferenceSetting(this) == preferenceSettings) {
+                                //System.out.println("adding GUI for "+sps);
+                                sps.addGui(this);
+                            }
+                        }
+                    }
+                    Icon icon = getIconAt(index);
+                    remove(index);
+                    insertGUITabsForSetting(icon, preferenceSettings, index);
+                    setSelectedIndex(index);
+                } catch (SecurityException ex) {
+                    ex.printStackTrace();
+                } catch (Throwable ex) {
+                    // allow to change most settings even if e.g. a plugin fails
+                    BugReportExceptionHandler.handleException(ex);
+                } finally {
+                    settingsInitialized.add(preferenceSettings);
+                    getModel().addChangeListener(this);
+                }
+            }
+        }
     }
 }

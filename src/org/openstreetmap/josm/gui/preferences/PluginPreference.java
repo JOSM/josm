@@ -42,6 +42,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.PreferencePanel;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginListPanel;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginPreferencesModel;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginUpdatePolicyPanel;
@@ -53,11 +54,15 @@ import org.openstreetmap.josm.plugins.ReadRemotePluginInformationTask;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-public class PluginPreference implements PreferenceSetting {
+public class PluginPreference extends DefaultTabPreferenceSetting {
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
             return new PluginPreference();
         }
+    }
+    
+    private PluginPreference() {
+        super("plugin", tr("Plugins"), tr("Configure available plugins."));
     }
 
     public static String buildDownloadSummary(PluginDownloadTask task) {
@@ -177,9 +182,10 @@ public class PluginPreference implements PreferenceSetting {
         gc.weighty = 1.0;
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.BOTH;
-        gui.plugins.add(buildContentPanel(), gc);
+        PreferencePanel plugins = gui.createPreferenceTab(this);
+        plugins.add(buildContentPanel(), gc);
         pnlPluginPreferences.refreshView();
-        gui.addChangeListener(new PluginPreferenceActivationListener(gui.plugins));
+        gui.addChangeListener(new PluginPreferenceActivationListener(plugins));
     }
 
     private void configureSites() {

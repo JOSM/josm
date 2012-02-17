@@ -17,12 +17,16 @@ import org.openstreetmap.josm.gui.preferences.server.AuthenticationPreferencesPa
 import org.openstreetmap.josm.gui.preferences.server.OsmApiUrlInputPanel;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
-public class ServerAccessPreference implements PreferenceSetting {
+public class ServerAccessPreference extends DefaultTabPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
             return new ServerAccessPreference();
         }
+    }
+    
+    private ServerAccessPreference() {
+        super("connection", tr("Connection Settings"), tr("Connection Settings for the OSM server."));
     }
 
     private OsmApiUrlInputPanel pnlApiUrlPreferences;
@@ -108,7 +112,7 @@ public class ServerAccessPreference implements PreferenceSetting {
         gc.weightx = 1.0;
         gc.weighty = 1.0;
         gc.anchor = GridBagConstraints.NORTHWEST;
-        gui.connection.add(buildContentPanel(), gc);
+        gui.createPreferenceTab(this).add(buildContentPanel(), gc);
 
         initFromPreferences();
     }

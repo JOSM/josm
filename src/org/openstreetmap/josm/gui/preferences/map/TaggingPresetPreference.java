@@ -1,5 +1,5 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
-package org.openstreetmap.josm.gui.preferences;
+package org.openstreetmap.josm.gui.preferences.map;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -27,8 +26,16 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
+import org.openstreetmap.josm.gui.preferences.SourceEditor;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
+import org.openstreetmap.josm.gui.preferences.SourceEntry;
+import org.openstreetmap.josm.gui.preferences.SourceProvider;
+import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSeparator;
@@ -37,12 +44,16 @@ import org.openstreetmap.josm.tools.GBC;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-public class TaggingPresetPreference implements PreferenceSetting {
+public class TaggingPresetPreference implements SubPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
             return new TaggingPresetPreference();
         }
+    }
+    
+    private TaggingPresetPreference() {
+        super();
     }
 
     private static final List<SourceProvider> presetSourceProviders = new ArrayList<SourceProvider>();
@@ -151,15 +162,15 @@ public class TaggingPresetPreference implements PreferenceSetting {
         panel.add(sortMenu, GBC.eol().insets(5,5,5,0));
         sources = new TaggingPresetSourceEditor();
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
-        gui.mapcontent.addTab(tr("Tagging Presets"), panel);
+        gui.getMapPreference().mapcontent.addTab(tr("Tagging Presets"), panel);
 
         // this defers loading of tagging preset sources to the first time the tab
         // with the tagging presets is selected by the user
         //
-        gui.mapcontent.addChangeListener(
+        gui.getMapPreference().mapcontent.addChangeListener(
                 new ChangeListener() {
                     public void stateChanged(ChangeEvent e) {
-                        if (gui.mapcontent.getSelectedComponent() == panel) {
+                        if (gui.getMapPreference().mapcontent.getSelectedComponent() == panel) {
                             sources.initiallyLoadAvailableSources();
                         }
                     }
@@ -325,5 +336,15 @@ public class TaggingPresetPreference implements PreferenceSetting {
             String shortdescription = entryStr.get(1);
             return new SourceEntry(url, null, shortdescription, true);
         }
+    }
+
+    @Override
+    public boolean isExpert() {
+        return false;
+    }
+
+    @Override
+    public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
+        return gui.getMapPreference();
     }
 }

@@ -1,5 +1,5 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
-package org.openstreetmap.josm.gui.preferences;
+package org.openstreetmap.josm.gui.preferences.display;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -40,10 +40,15 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 
-public class ColorPreference implements PreferenceSetting {
+public class ColorPreference implements SubPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
@@ -233,7 +238,7 @@ public class ColorPreference implements PreferenceSetting {
         buttonPanel.add(defaultSet, GBC.std().insets(5,5,5,0));
         buttonPanel.add(defaultAll, GBC.std().insets(0,5,0,0));
         buttonPanel.add(remove, GBC.std().insets(0,5,0,0));
-        gui.displaycontent.addTab(tr("Colors"), panel);
+        gui.getDisplayPreference().displaycontent.addTab(tr("Colors"), panel);
     }
 
     Boolean isRemoveColor(int row)
@@ -270,7 +275,17 @@ public class ColorPreference implements PreferenceSetting {
                 }
             }
         }
-        org.openstreetmap.josm.gui.layer.OsmDataLayer.createHatchTexture();
+        OsmDataLayer.createHatchTexture();
         return ret;
+    }
+
+    @Override
+    public boolean isExpert() {
+        return false;
+    }
+
+    @Override
+    public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
+        return gui.getDisplayPreference();
     }
 }

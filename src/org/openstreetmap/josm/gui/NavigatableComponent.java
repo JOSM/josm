@@ -41,7 +41,7 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.help.Helpful;
-import org.openstreetmap.josm.gui.preferences.ProjectionPreference;
+import org.openstreetmap.josm.gui.preferences.map.ProjectionPreference;
 import org.openstreetmap.josm.tools.Predicate;
 
 /**

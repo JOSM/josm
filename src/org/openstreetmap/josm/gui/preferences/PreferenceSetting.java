@@ -13,4 +13,10 @@ public interface PreferenceSetting {
      * Return true when restart is required.
      */
     boolean ok();
+    
+    /**
+     * Called to know if the preferences tab has only to be displayed in expert mode.
+     * @return true if the tab has only to be displayed in expert mode, false otherwise.
+     */
+    public boolean isExpert();
 }

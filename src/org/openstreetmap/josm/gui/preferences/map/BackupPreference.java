@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.preferences;
+package org.openstreetmap.josm.gui.preferences.map;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -18,11 +18,15 @@ import javax.swing.JTextField;
 
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.GBC;
 
-public class BackupPreference implements PreferenceSetting {
+public class BackupPreference implements SubPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
         @Override
@@ -96,7 +100,7 @@ public class BackupPreference implements PreferenceSetting {
         sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-        gui.mapcontent.addTab(tr("File backup"), null, sp, tr("Configure whether to create backup files"));
+        gui.getMapPreference().mapcontent.addTab(tr("File backup"), null, sp, tr("Configure whether to create backup files"));
     }
 
     @Override
@@ -108,5 +112,15 @@ public class BackupPreference implements PreferenceSetting {
         restartRequired |= AutosaveTask.PROP_INTERVAL.parseAndPut(autosaveInterval.getText());
         AutosaveTask.PROP_FILES_PER_LAYER.parseAndPut(backupPerLayer.getText());
         return restartRequired;
+    }
+
+    @Override
+    public boolean isExpert() {
+        return false;
+    }
+
+    @Override
+    public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
+        return gui.getMapPreference();
     }
 }

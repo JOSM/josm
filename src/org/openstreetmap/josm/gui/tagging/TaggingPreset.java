@@ -66,7 +66,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
-import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference.PresetPrefHelper;
+import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference.PresetPrefHelper;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;

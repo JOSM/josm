@@ -409,7 +409,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         return new Settings(rootActionsNode);
     }
 
-    public class Settings implements PreferenceSetting {
+    public class Settings extends DefaultTabPreferenceSetting {
 
         private final class Move implements ActionListener {
             public void actionPerformed(ActionEvent e) {
@@ -496,6 +496,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private String movingComponent;
 
         public Settings(DefaultMutableTreeNode rootActionsNode) {
+            super("toolbar", tr("Toolbar customization"), tr("Customize the elements on the toolbar."));
             actionsTreeModel = new DefaultTreeModel(rootActionsNode);
             actionsTree = new JTree(actionsTreeModel);
         }
@@ -765,8 +766,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             actionParametersPanel.add(actionParametersTable, GBC.eol().fill(GBC.BOTH).insets(0, 0, 0, 10));
             actionParametersPanel.setVisible(false);
 
-            JPanel panel = gui.createPreferenceTab("toolbar", tr("Toolbar customization"),
-                    tr("Customize the elements on the toolbar."), false);
+            JPanel panel = gui.createPreferenceTab(this);
             panel.add(p, GBC.eol().fill(GBC.BOTH));
             panel.add(actionParametersPanel, GBC.eol().fill(GBC.HORIZONTAL));
             selected.removeAllElements();
