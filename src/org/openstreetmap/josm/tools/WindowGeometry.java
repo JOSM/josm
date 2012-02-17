@@ -293,7 +293,7 @@ public class WindowGeometry {
             GraphicsDevice gd = gs[j];
             GraphicsConfiguration[] gc = gd.getConfigurations();
             for (int i = 0; i < gc.length; i++) {
-System.out.println("-- " + j + " " + i + " " + gc[i].getBounds());
+//System.out.println("-- " + j + " " + i + " " + gc[i].getBounds());
             }
         }
         /* TODO: implement this function properly */
