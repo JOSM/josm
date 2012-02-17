@@ -86,7 +86,7 @@ public class UploadAction extends JosmAction{
 
     public UploadAction() {
         super(tr("Upload data"), "upload", tr("Upload all changes in the active data layer to the OSM server"),
-                Shortcut.registerShortcut("file:upload", tr("File: {0}", tr("Upload data")), KeyEvent.VK_UP, Shortcut.GROUP_HOTKEY+Shortcu.GROUPS_ALT1), true);
+                Shortcut.registerShortcut("file:upload", tr("File: {0}", tr("Upload data")), KeyEvent.VK_UP, Shortcut.GROUP_HOTKEY+Shortcut.GROUPS_ALT1), true);
         putValue("help", ht("/Action/Upload"));
     }
 
