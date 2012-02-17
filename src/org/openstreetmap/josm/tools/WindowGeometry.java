@@ -286,6 +286,16 @@ public class WindowGeometry {
      * @param preferenceKey the key to get size and position from
      */
     public static Dimension getScreenSize(String preferenceKey) {
+        GraphicsEnvironment ge = GraphicsEnvironment
+                .getLocalGraphicsEnvironment();
+        GraphicsDevice[] gs = ge.getScreenDevices();
+        for (int j = 0; j < gs.length; j++) {
+            GraphicsDevice gd = gs[j];
+            GraphicsConfiguration[] gc = gd.getConfigurations();
+            for (int i = 0; i < gc.length; i++) {
+System.out.println("-- " + j + " " + i + " " + gc[i].getBounds());
+            }
+        }
         /* TODO: implement this function properly */
         return Toolkit.getDefaultToolkit().getScreenSize();
     }
