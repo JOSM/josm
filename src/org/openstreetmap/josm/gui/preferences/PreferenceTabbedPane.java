@@ -318,20 +318,6 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                 settings.add(setting);
             }
         }
-/*
-        for (Iterator<PreferenceSetting> it = settings.iterator(); it.hasNext();) {
-            try {
-                PreferenceSetting ps = it.next();
-                long start = System.currentTimeMillis();
-                ps.addGui(this);
-                System.out.println(ps.getClass()+" -> "+(System.currentTimeMillis()-start));
-            } catch (SecurityException e) {
-                it.remove();
-            } catch (Throwable e) {
-                // allow to change most settings even if e.g. a plugin fails
-                BugReportExceptionHandler.handleException(e);
-            }
-        }*/
         addGUITabs(false);
     }
 
@@ -364,7 +350,8 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                 TabPreferenceSetting tps = (TabPreferenceSetting) setting;
                 if (expert || !tps.isExpert()) {
                     // Get icon
-                    ImageIcon icon = ImageProvider.get("preferences", tps.getIconName());
+                    String iconName = tps.getIconName();
+                    ImageIcon icon = iconName != null && iconName.length() > 0 ? ImageProvider.get("preferences", iconName) : null;
                     if (settingsInitialized.contains(tps)) {
                         // If it has been initialized, add corresponding tab(s)
                         addGUITabsForSetting(icon, tps);
@@ -375,12 +362,6 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                 }
             }
         }
-        /*for (PreferenceTab tab : tabs) {
-            TabPreferenceSetting s = tab.getTabPreferenceSetting();
-            if (expert || !s.isExpert()) {
-                addTab(null, ImageProvider.get("preferences", s.getIconName()), tab.getComponent(), "<html>"+s.getTooltip()+"</html>");
-            }
-        }*/
         try {
             if (sel != null) {
                 setSelectedComponent(sel);
