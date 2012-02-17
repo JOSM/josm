@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.preferences;
+package org.openstreetmap.josm.gui.preferences.display;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -19,10 +19,15 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 
-public class LanguagePreference implements PreferenceSetting {
+public class LanguagePreference implements SubPreferenceSetting {
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
             return new LanguagePreference();
@@ -105,5 +110,15 @@ public class LanguagePreference implements PreferenceSetting {
                     l == null ? tr("Default (Auto determined)") : l.getDisplayName(l),
                             index, isSelected, cellHasFocus);
         }
+    }
+
+    @Override
+    public boolean isExpert() {
+        return false;
+    }
+
+    @Override
+    public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
+        return gui.getDisplayPreference();
     }
 }

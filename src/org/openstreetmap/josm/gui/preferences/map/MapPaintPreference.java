@@ -1,5 +1,5 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
-package org.openstreetmap.josm.gui.preferences;
+package org.openstreetmap.josm.gui.preferences.map;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -19,12 +19,20 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.preferences.SourceEditor;
+import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
+import org.openstreetmap.josm.gui.preferences.SourceEntry;
+import org.openstreetmap.josm.gui.preferences.SourceProvider;
+import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
-public class MapPaintPreference implements PreferenceSetting {
+public class MapPaintPreference implements SubPreferenceSetting {
     private SourceEditor sources;
     private JCheckBox enableIconDefault;
 
@@ -54,15 +62,15 @@ public class MapPaintPreference implements PreferenceSetting {
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
         panel.add(enableIconDefault, GBC.eol().insets(11,2,5,0));
 
-        gui.mapcontent.addTab(tr("Map Paint Styles"), panel);
+        gui.getMapPreference().mapcontent.addTab(tr("Map Paint Styles"), panel);
 
         // this defers loading of style sources to the first time the tab
         // with the map paint preferences is selected by the user
         //
-        gui.mapcontent.addChangeListener(
+        gui.getMapPreference().mapcontent.addChangeListener(
                 new ChangeListener() {
                     public void stateChanged(ChangeEvent e) {
-                        if (gui.mapcontent.getSelectedComponent() == panel) {
+                        if (gui.getMapPreference().mapcontent.getSelectedComponent() == panel) {
                             sources.initiallyLoadAvailableSources();
                         }
                     }
@@ -261,5 +269,15 @@ public class MapPaintPreference implements PreferenceSetting {
             boolean active = Boolean.parseBoolean(entryStr.get(3));
             return new SourceEntry(url, name, shortdescription, active);
         }
+    }
+
+    @Override
+    public boolean isExpert() {
+        return false;
+    }
+
+    @Override
+    public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
+        return gui.getMapPreference();
     }
 }

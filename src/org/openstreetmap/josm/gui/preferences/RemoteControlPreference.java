@@ -33,13 +33,17 @@ import org.openstreetmap.josm.tools.GBC;
  *
  * @author Frederik Ramm
  */
-public class RemoteControlPreference implements PreferenceSetting
+public class RemoteControlPreference extends DefaultTabPreferenceSetting
 {
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {
             return new RemoteControlPreference();
         }
+    }
+    
+    private RemoteControlPreference() {
+        super("remotecontrol", tr("Remote Control"), tr("Settings for the remote control feature."));
     }
 
     private JCheckBox enableRemoteControl;
@@ -56,7 +60,7 @@ public class RemoteControlPreference implements PreferenceSetting
 
     public void addGui(final PreferenceTabbedPane gui) {
 
-        JPanel remote = gui.createPreferenceTab("remotecontrol", tr("Remote Control"), tr("Settings for the remote control feature."));
+        JPanel remote = gui.createPreferenceTab(this);
 
         remote.add(enableRemoteControl = new JCheckBox(tr("Enable remote control"), RemoteControl.PROP_REMOTECONTROL_ENABLED.get()), GBC.eol());
 

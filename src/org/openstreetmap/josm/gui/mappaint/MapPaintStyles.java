@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.mappaint;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,7 +20,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
-import org.openstreetmap.josm.gui.preferences.MapPaintPreference.MapPaintPrefHelper;
+import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference.MapPaintPrefHelper;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.MirroredInputStream;

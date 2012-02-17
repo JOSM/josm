@@ -1,5 +1,5 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
-package org.openstreetmap.josm.gui.preferences;
+package org.openstreetmap.josm.gui.preferences.map;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -28,10 +28,15 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionSubPrefs;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 
-public class ProjectionPreference implements PreferenceSetting {
+public class ProjectionPreference implements SubPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
@@ -135,7 +140,7 @@ public class ProjectionPreference implements PreferenceSetting {
         projPanel.add(GBC.glue(1,1), GBC.std().fill(GBC.HORIZONTAL).weight(1.0, 1.0));
 
         JScrollPane scrollpane = new JScrollPane(projPanel);
-        gui.mapcontent.addTab(tr("Map Projection"), scrollpane);
+        gui.getMapPreference().mapcontent.addTab(tr("Map Projection"), scrollpane);
 
         updateMeta(Main.getProjection());
     }
@@ -286,5 +291,15 @@ public class ProjectionPreference implements PreferenceSetting {
                 selectedProjectionChanged(proj);
             }
         });
+    }
+
+    @Override
+    public boolean isExpert() {
+        return false;
+    }
+
+    @Override
+    public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
+        return gui.getMapPreference();
     }
 }

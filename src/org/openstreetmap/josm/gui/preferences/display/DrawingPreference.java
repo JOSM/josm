@@ -1,9 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
-package org.openstreetmap.josm.gui.preferences;
+package org.openstreetmap.josm.gui.preferences.display;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,9 +16,14 @@ import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.tools.GBC;
 
-public class DrawingPreference implements PreferenceSetting {
+public class DrawingPreference implements SubPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
@@ -43,14 +47,14 @@ public class DrawingPreference implements PreferenceSetting {
     private JCheckBox outlineOnly = new JCheckBox(tr("Draw only outlines of areas"));
 
     public void addGui(PreferenceTabbedPane gui) {
-        gui.display.setPreferredSize(new Dimension(400,600));
+        //gui.display.setPreferredSize(new Dimension(400,600));
         gpxPanel = new GPXSettingsPanel();
         gui.addValidationListener(gpxPanel);
         JPanel panel = gpxPanel;
 
         JScrollPane scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
-        gui.displaycontent.addTab(tr("GPS Points"), scrollpane);
+        gui.getDisplayPreference().displaycontent.addTab(tr("GPS Points"), scrollpane);
         panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
@@ -130,7 +134,7 @@ public class DrawingPreference implements PreferenceSetting {
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
         scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
-        gui.displaycontent.addTab(tr("OSM Data"), scrollpane);
+        gui.getDisplayPreference().displaycontent.addTab(tr("OSM Data"), scrollpane);
     }
 
     public boolean ok() {
@@ -156,5 +160,15 @@ public class DrawingPreference implements PreferenceSetting {
         }
         Main.pref.putInteger("mappaint.node.virtual-size", vn);
         return false;
+    }
+
+    @Override
+    public boolean isExpert() {
+        return false;
+    }
+
+    @Override
+    public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
+        return gui.getDisplayPreference();
     }
 }

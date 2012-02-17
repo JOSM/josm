@@ -24,13 +24,18 @@ import org.openstreetmap.josm.tools.GBC;
  *
  * @author frsantos
  */
-public class ValidatorPreference implements PreferenceSetting {
+public class ValidatorPreference extends DefaultTabPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {
             return new ValidatorPreference();
         }
+    }
+    
+    private ValidatorPreference() {
+        super("validator", tr("Data validator"), 
+                tr("An OSM data validator that checks for common errors made by users and editor programs."));
     }
 
     /** The preferences prefix */
@@ -111,8 +116,7 @@ public class ValidatorPreference implements PreferenceSetting {
         JScrollPane testPane = new JScrollPane(testPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         testPane.setBorder(null);
 
-        String description = tr("An OSM data validator that checks for common errors made by users and editor programs.");
-        JPanel tab = gui.createPreferenceTab("validator", tr("Data validator"), description);
+        JPanel tab = gui.createPreferenceTab(this);
         tab.add(testPane, GBC.eol().fill(GBC.BOTH));
         tab.add(GBC.glue(0,10), a);
     }

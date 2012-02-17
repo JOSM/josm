@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.preferences;
+package org.openstreetmap.josm.gui.preferences.imagery;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -75,6 +75,10 @@ import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
+import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.io.imagery.HTMLGrabber;
 import org.openstreetmap.josm.io.imagery.OffsetServer;
 import org.openstreetmap.josm.io.imagery.OsmosnimkiOffsetServer;
@@ -82,13 +86,18 @@ import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-public class ImageryPreference implements PreferenceSetting {
+public class ImageryPreference extends DefaultTabPreferenceSetting {
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {
             return new ImageryPreference();
         }
     }
+    
+    private ImageryPreference() {
+        super("imagery", tr("Imagery Preferences"), tr("Modify list of imagery layers displayed in the Imagery menu"));
+    }
+    
     private ImageryProvidersPanel imageryProviders;
     private ImageryLayerInfo layerInfo;
 
@@ -268,7 +277,7 @@ public class ImageryPreference implements PreferenceSetting {
 
     @Override
     public void addGui(final PreferenceTabbedPane gui) {
-        JPanel p = gui.createPreferenceTab("imagery", tr("Imagery Preferences"), tr("Modify list of imagery layers displayed in the Imagery menu"));
+        JPanel p = gui.createPreferenceTab(this);
         JTabbedPane pane = new JTabbedPane();
         layerInfo = new ImageryLayerInfo(ImageryLayerInfo.instance);
         imageryProviders = new ImageryProvidersPanel(gui, layerInfo);
