@@ -227,7 +227,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
      * @return the list of plugins waiting for update or download
      */
     public List<PluginInformation> getPluginsScheduledForUpdateOrDownload() {
-        return model.getPluginsScheduledForUpdateOrDownload();
+        return model != null ? model.getPluginsScheduledForUpdateOrDownload() : null;
     }
 
     public boolean ok() {
