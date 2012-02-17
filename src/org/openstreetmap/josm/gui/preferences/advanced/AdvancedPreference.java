@@ -42,6 +42,7 @@ import org.openstreetmap.josm.data.Preferences.MapListSetting;
 import org.openstreetmap.josm.data.Preferences.Setting;
 import org.openstreetmap.josm.data.Preferences.StringSetting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
@@ -49,12 +50,21 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 
-public class AdvancedPreference implements PreferenceSetting {
+public class AdvancedPreference extends DefaultTabPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
             return new AdvancedPreference();
         }
+    }
+    
+    private AdvancedPreference() {
+        super("advanced", tr("Advanced Preferences"), tr("Setting Preference entries directly. Use with caution!"));
+    }
+
+    @Override
+    public boolean isExpert() {
+        return true;
     }
 
     public static class PrefEntry implements Comparable<PrefEntry> {
@@ -117,8 +127,7 @@ public class AdvancedPreference implements PreferenceSetting {
     protected JTextField txtFilter;
 
     public void addGui(final PreferenceTabbedPane gui) {
-        JPanel p = gui.createPreferenceTab("advanced", tr("Advanced Preferences"),
-                tr("Setting Preference entries directly. Use with caution!"), false, true);
+        JPanel p = gui.createPreferenceTab(this);
 
         txtFilter = new JTextField();
         JLabel lbFilter = new JLabel(tr("Search: "));
