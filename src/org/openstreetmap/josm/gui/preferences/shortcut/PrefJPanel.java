@@ -125,18 +125,6 @@ public class PrefJPanel extends JPanel {
         return list;
     }
 
-    private JComboBox bxPrim1 = new JComboBox();
-    private JComboBox bxPrim2 = new JComboBox();
-    private JComboBox bxPrim3 = new JComboBox();
-    private JComboBox bxPrim4 = new JComboBox();
-    private JComboBox bxSec1 = new JComboBox();
-    private JComboBox bxSec2 = new JComboBox();
-    private JComboBox bxSec3 = new JComboBox();
-    private JComboBox bxSec4 = new JComboBox();
-    private JComboBox bxTer1 = new JComboBox();
-    private JComboBox bxTer2 = new JComboBox();
-    private JComboBox bxTer3 = new JComboBox();
-    private JComboBox bxTer4 = new JComboBox();
     private JCheckBox cbAlt = new JCheckBox();
     private JCheckBox cbCtrl = new JCheckBox();
     private JCheckBox cbMeta = new JCheckBox();
@@ -157,21 +145,14 @@ public class PrefJPanel extends JPanel {
     }
 
     private void initComponents() {
-        JPanel editGroupPane = new JPanel();
-        JPanel hotkeyGroupPane = new JPanel();
-
         JPanel listPane = new JPanel();
         JScrollPane listScrollPane = new JScrollPane();
-        JPanel menuGroupPane = new JPanel();
-        JPanel modifierTab = new JPanel();
         JTabbedPane prefTabPane = new JTabbedPane();
         JPanel shortcutEditPane = new JPanel();
         JPanel shortcutTab = new JPanel();
-        JPanel subwindowGroupPane = new JPanel();
         JPanel infoTab = new JPanel();
 
         CbAction action = new CbAction(this);
-        BxAction action2 = new BxAction();
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -182,24 +163,21 @@ public class PrefJPanel extends JPanel {
         editor.setContentType("text/html");
         editor.setText(
                 tr("<h1><a name=\"top\">Keyboard Shortcuts</a></h1>")+
+                tr("<br>")+
                 tr("<p>Please note that shortcut keys are assigned to the actions when JOSM is started. So you need to <b>restart</b> "
-                        +"JOSM to see your changes.</p>")+
-                        tr("<p>Furthermore, the shortcuts are activated when the actions are assigned to a menu entry of a button for the first "
-                                +"time. So some of your changes may become active even without restart --- but also without collision handling. "
-                                +"This is another reason to <b>restart</b> JOSM after making any changes here.</p>")+
-                                tr("<p>You may notice that the key selection list on the next page lists all keys that exist on all kinds of keyboards "
-                                        +"Java knows about, not just those keys that exist on your keyboard. Please only use values that correspond to "
-                                        +"a real key on your keyboard. If your keyboard has no ''Copy'' key (PC keyboard do not have them, Sun keyboards do), "
-                                        +"then do not use it. Also there are ''keys'' listed that correspond to a shortcut on your keyboard (e.g. '':''/Colon). "
-                                        +"Please do not use them either, use the base key ('';''/Semicolon on US keyboards, ''.''/Period on German keyboards, etc.) "
-                                        +"instead. Not doing so may result in conflicts, as there is no way for JOSM to know that Ctrl+Shift+; and Ctrl+: "
-                                        +"actually is the same thing on an US keyboard.</p>")+
-                                        tr("<h1>Modifier Groups</h1>")+
-                                        tr("<p>The last page lists the modifier keys JOSM will automatically assign to shortcuts. For every of the four kinds "
-                                                +"of shortcuts there are three alternatives. JOSM will try those alternatives in the listed order when managing a "
-                                                +"conflict. If all alternatives result in shortcuts that are already taken, it will assign a random shortcut "
-                                                +"instead.</p>")+
-                                                tr("<p>The pseudo-modifier ''disabled'' will disable the shortcut when encountered.</p>")
+                    +"JOSM to see your changes.</p>")+
+                tr("<br>")+
+                tr("<p>Furthermore, the shortcuts are activated when the actions are assigned to a menu entry of a button for the first "
+                    +"time. So some of your changes may become active even without restart --- but also without collision handling. "
+                    +"This is another reason to <b>restart</b> JOSM after making any changes here.</p>")+
+                tr("<br>")+
+                tr("<p>You may notice that the key selection list on the next page lists all keys that exist on all kinds of keyboards "
+                    +"Java knows about, not just those keys that exist on your keyboard. Please only use values that correspond to "
+                    +"a real key on your keyboard. If your keyboard has no ''Copy'' key (PC keyboard do not have them, Sun keyboards do), "
+                    +"then do not use it. Also there are ''keys'' listed that correspond to a shortcut on your keyboard (e.g. '':''/Colon). "
+                    +"Please do not use them either, use the base key ('';''/Semicolon on US keyboards, ''.''/Period on German keyboards, etc.) "
+                    +"instead. Not doing so may result in conflicts, as there is no way for JOSM to know that Ctrl+Shift+; and Ctrl+: "
+                    +"actually is the same thing on an US keyboard.</p>")
         );
         editor.setCaretPosition(0); // scroll up
         prefTabPane.addTab(tr("Read First"), new JScrollPane(editor));
@@ -239,7 +217,6 @@ public class PrefJPanel extends JPanel {
         cbMeta.setAction(action);
         cbMeta.setText(META); // see above for why no tr()
 
-
         shortcutEditPane.add(cbDefault);
         shortcutEditPane.add(new JLabel());
         shortcutEditPane.add(cbShift);
@@ -257,63 +234,6 @@ public class PrefJPanel extends JPanel {
         shortcutTab.add(shortcutEditPane);
 
         prefTabPane.addTab(tr("Keyboard Shortcuts"), shortcutTab);
-
-        // next is the modfier group tab.
-        // Would be a nice array if I had done it by hand. But then, it would be finished next year or so...
-        modifierTab.setLayout(new java.awt.GridLayout(0, 1));
-        JScrollPane modifierScroller = new JScrollPane(modifierTab);
-
-        editGroupPane.setBorder(BorderFactory.createTitledBorder(tr("Edit Shortcuts")));
-        editGroupPane.setLayout(new java.awt.GridLayout(3, 5));
-
-        JComboBox[] bxArray = new JComboBox[] {
-                    bxPrim1,bxSec1,bxTer1,bxPrim2,bxSec2,bxTer2,
-                    bxPrim3,bxSec3,bxTer3,bxPrim4,bxSec4,bxTer4};
-        for (JComboBox bxi: bxArray) bxi.setModel(new DefaultComboBoxModel(modifList));
-
-        editGroupPane.add(new JLabel(tr("Primary modifier:")));
-        editGroupPane.add(bxPrim1);
-        editGroupPane.add(new JLabel(tr("Secondary modifier:")));
-        editGroupPane.add(bxSec1);
-        editGroupPane.add(new JLabel(tr("Tertiary modifier:")));
-        editGroupPane.add(bxTer1);
-        modifierTab.add(editGroupPane);
-
-        menuGroupPane.setBorder(BorderFactory.createTitledBorder(tr("Menu Shortcuts")));
-        menuGroupPane.setLayout(new java.awt.GridLayout(3, 5));
-        menuGroupPane.add(new JLabel(tr("Primary modifier:")));
-        menuGroupPane.add(bxPrim2);
-        menuGroupPane.add(new JLabel(tr("Secondary modifier:")));
-        menuGroupPane.add(bxSec2);
-        menuGroupPane.add(new JLabel(tr("Tertiary modifier:")));
-        menuGroupPane.add(bxTer2);
-        modifierTab.add(menuGroupPane);
-
-        hotkeyGroupPane.setBorder(BorderFactory.createTitledBorder(tr("Hotkey Shortcuts")));
-        hotkeyGroupPane.setLayout(new java.awt.GridLayout(3, 5));
-        hotkeyGroupPane.add(new JLabel(tr("Primary modifier:")));
-        hotkeyGroupPane.add(bxPrim3);
-        hotkeyGroupPane.add(new JLabel((tr("Secondary modifier:"))));
-        hotkeyGroupPane.add(bxSec3);
-        hotkeyGroupPane.add(new JLabel(tr("Tertiary modifier:")));
-        hotkeyGroupPane.add(bxTer3);
-        modifierTab.add(hotkeyGroupPane);
-
-        subwindowGroupPane.setBorder(BorderFactory.createTitledBorder(tr("Subwindow Shortcuts")));
-        subwindowGroupPane.setLayout(new java.awt.GridLayout(3, 5));
-        subwindowGroupPane.add(new JLabel(tr("Primary modifier:")));
-        subwindowGroupPane.add(bxPrim4);
-        subwindowGroupPane.add(new JLabel(tr("Secondary modifier:")));
-        subwindowGroupPane.add(bxSec4);
-        subwindowGroupPane.add(new JLabel(tr("Tertiary modifier:")));
-        subwindowGroupPane.add(bxTer4);
-
-        initbx();
-        for (JComboBox bxi: bxArray) bxi.setAction(action2);
-
-        modifierTab.add(subwindowGroupPane);
-
-        prefTabPane.addTab(tr("Modifier Groups"), modifierScroller);
 
         add(prefTabPane);
     }
@@ -432,56 +352,7 @@ public class PrefJPanel extends JPanel {
         }
     }
 
-    // this handles the modifier groups
-    private class BxAction extends AbstractAction {
-        public void actionPerformed(java.awt.event.ActionEvent e) {
-            Main.pref.putInteger("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_EDIT),    modifInts[bxPrim1.getSelectedIndex()]);
-            Main.pref.putInteger("shortcut.groups."+(Shortcut.GROUPS_ALT1   +Shortcut.GROUP_EDIT),    modifInts[ bxSec1.getSelectedIndex()]);
-            Main.pref.putInteger("shortcut.groups."+(Shortcut.GROUPS_ALT2   +Shortcut.GROUP_EDIT),    modifInts[ bxTer1.getSelectedIndex()]);
-
-            Main.pref.putInteger("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_MENU),    modifInts[bxPrim2.getSelectedIndex()]);
-            Main.pref.putInteger("shortcut.groups."+(Shortcut.GROUPS_ALT1   +Shortcut.GROUP_MENU),    modifInts[ bxSec2.getSelectedIndex()]);
-            Main.pref.putInteger("shortcut.groups."+(Shortcut.GROUPS_ALT2   +Shortcut.GROUP_MENU),    modifInts[ bxTer2.getSelectedIndex()]);
-
-            Main.pref.putInteger("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_HOTKEY),  modifInts[bxPrim3.getSelectedIndex()]);
-            Main.pref.putInteger("shortcut.groups."+(Shortcut.GROUPS_ALT1   +Shortcut.GROUP_HOTKEY),  modifInts[ bxSec3.getSelectedIndex()]);
-            Main.pref.putInteger("shortcut.groups."+(Shortcut.GROUPS_ALT2   +Shortcut.GROUP_HOTKEY),  modifInts[ bxTer3.getSelectedIndex()]);
-
-            Main.pref.putInteger("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_LAYER),   modifInts[bxPrim4.getSelectedIndex()]);
-            Main.pref.putInteger("shortcut.groups."+(Shortcut.GROUPS_ALT1   +Shortcut.GROUP_LAYER),   modifInts[ bxSec4.getSelectedIndex()]);
-            Main.pref.putInteger("shortcut.groups."+(Shortcut.GROUPS_ALT2   +Shortcut.GROUP_LAYER),   modifInts[ bxTer4.getSelectedIndex()]);
-        }
-    }
-
-    private void initbx() {
-        HashMap<Integer, Integer> groups = Main.platform.initShortcutGroups(false);
-        setBx(bxPrim1, groups, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_EDIT);
-        setBx(bxSec1,  groups, Shortcut.GROUPS_ALT1   +Shortcut.GROUP_EDIT);
-        setBx(bxTer1,  groups, Shortcut.GROUPS_ALT2   +Shortcut.GROUP_EDIT);
-
-        setBx(bxPrim2, groups, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_MENU);
-        setBx(bxSec2,  groups, Shortcut.GROUPS_ALT1   +Shortcut.GROUP_MENU);
-        setBx(bxTer2,  groups, Shortcut.GROUPS_ALT2   +Shortcut.GROUP_MENU);
-
-        setBx(bxPrim3, groups, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_HOTKEY);
-        setBx(bxSec3,  groups, Shortcut.GROUPS_ALT1   +Shortcut.GROUP_HOTKEY);
-        setBx(bxTer3,  groups, Shortcut.GROUPS_ALT2   +Shortcut.GROUP_HOTKEY);
-
-        setBx(bxPrim4, groups, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_LAYER);
-        setBx(bxSec4,  groups, Shortcut.GROUPS_ALT1   +Shortcut.GROUP_LAYER);
-        setBx(bxTer4,  groups, Shortcut.GROUPS_ALT2   +Shortcut.GROUP_LAYER);
-    }
-    private void setBx(JComboBox bx, HashMap<Integer, Integer> groups, int key) {
-        int target = Main.pref.getInteger("shortcut.groups."+key, groups.get(key));
-        for (int i = 0; i < modifInts.length; i++) {
-            if (modifInts[i] == target) {
-                bx.setSelectedIndex(i);
-            }
-        }
-    }
-
-
-     class FilterFieldAdapter implements DocumentListener {
+    class FilterFieldAdapter implements DocumentListener {
         public void filter() {
             String expr = filterField.getText().trim();
             if (expr.length()==0) { expr=null; }

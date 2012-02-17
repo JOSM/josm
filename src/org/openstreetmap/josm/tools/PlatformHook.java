@@ -53,21 +53,6 @@ public interface PlatformHook {
     public void openUrl(String url) throws IOException;
 
     /**
-      * The initShortcutGroups hook will be called by the
-      * Shortcut class if it detects that there are no
-      * groups in teh config file. So that will happen
-      * once on each JOSM installation only.
-      *
-      * Please note that ShorCut will load its config on demand,
-      * that is, at the moment the first shortcut is registered.
-      *
-      * In this hook, you have to fill the preferences with
-      * data, not the internal structures! Also, do not try
-      * to register any shortcuts from within.
-      */
-    public HashMap<Integer, Integer> initShortcutGroups(boolean load);
-
-    /**
       * The initSystemShortcuts hook will be called by the
       * Shortcut class after the modifier groups have been read
       * from the config, but before any shortcuts are read from
