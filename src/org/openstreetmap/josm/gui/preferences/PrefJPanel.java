@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.preferences.shortcut;
+package org.openstreetmap.josm.gui.preferences;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;

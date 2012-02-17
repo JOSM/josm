@@ -36,8 +36,6 @@ import org.openstreetmap.josm.Main;
  *
  */
 public class Shortcut {
-    @Deprecated
-    public static final int SHIFT_DEFAULT = 1;
     private String shortText;        // the unique ID of the shortcut
     private String longText;         // a human readable description that will be shown in the preferences
     private int requestedKey;        // the key, the caller requested
@@ -159,7 +157,7 @@ public class Shortcut {
 
     private boolean isSame(int isKey, int isModifier) {
         // -1 --- an unassigned shortcut is different from any other shortcut
-        return( isKey == assignedKey && isModifier == assignedModifier && assignedModifier != getGroupModifier(GROUP_NONE));
+        return( isKey == assignedKey && isModifier == assignedModifier && assignedModifier != getGroupModifier(NONE));
     }
 
     // create a shortcut object from an string as saved in the preferences
@@ -175,10 +173,10 @@ public class Shortcut {
         this.assignedUser = Boolean.parseBoolean(s.get(6));
     }
 
-    private void saveDefault(int modifier) {
+    private void saveDefault() {
         Main.pref.getCollection("shortcut.entry."+shortText, Arrays.asList(new String[]{longText,
         String.valueOf(requestedKey), String.valueOf(requestedGroup), String.valueOf(requestedKey),
-        String.valueOf(modifier), String.valueOf(true), String.valueOf(false)}));
+        String.valueOf(getGroupModifier(requestedGroup)), String.valueOf(true), String.valueOf(false)}));
     }
 
     // get a string that can be put into the preferences
@@ -245,7 +243,7 @@ public class Shortcut {
     private static Map<String, Shortcut> shortcuts = new LinkedHashMap<String, Shortcut>();
 
     // and here our modifier groups
-    private static Map<Integer, Integer> groups;
+    private static Map<Integer, Integer> groups= new HashMap<Integer, Integer>();
 
     // check if something collides with an existing shortcut
     private static Shortcut findShortcut(int requestedKey, int modifier) {
@@ -272,66 +270,80 @@ public class Shortcut {
         return l;
     }
 
-    // try to find an unused shortcut
-    private static Shortcut findRandomShortcut(String shortText, String longText, int requestedKey, int requestedGroup) {
-        int[] mods = {getGroupModifier(requestedGroup + GROUPS_DEFAULT), getGroupModifier(requestedGroup + GROUPS_ALT1), getGroupModifier(requestedGroup + GROUPS_ALT2)};
-        for (int m : mods) {
-            for (int k = KeyEvent.VK_A; k < KeyEvent.VK_Z; k++) { // we'll limit ourself to 100% safe keys
-                if ( findShortcut(k, m) == null )
-                    return new Shortcut(shortText, longText, requestedKey, requestedGroup, k, m, false, false);
-            }
-        }
-        return new Shortcut(shortText, longText, requestedKey, requestedGroup, requestedKey, getGroupModifier(GROUP_NONE), false, false);
-    }
+    public static final int NONE = 5000;
+    public static final int MNEMONIC = 5001;
+    public static final int RESERVED = 5002;
+    public static final int DIRECT = 5003;
+    public static final int ALT = 5004;
+    public static final int SHIFT = 5005;
+    public static final int CTRL = 5006;
+    public static final int ALT_SHIFT = 5007;
+    public static final int ALT_CTRL = 5008;
+    public static final int CTRL_SHIFT = 5009;
+    public static final int ALT_CTRL_SHIFT = 5010;
 
-    // use these constants to request shortcuts
-    /**
-     * no shortcut.
-     */
-    public static final int GROUP_NONE = 0;
-    /**
-     * a button action, will use another modifier than MENU on system with a meta key.
-     */
-    public static final int GROUP_HOTKEY = 1;
-    /**
-     * a menu action, e.g. "ctrl-e" (export).
-     */
-    public static final int GROUP_MENU = 2;
-    /**
-     * direct edit key, e.g. "a" (add).
-     */
-    public static final int GROUP_EDIT = 3;
-    /**
-     * toggle one of the right-hand-side windows, e.g. "alt-l" (layers).
-     */
-    public static final int GROUP_LAYER = 4;
-    /**
-     * for non-letter keys, preferable without modifier, e.g. F5.
-     */
-    public static final int GROUP_DIRECT = 5;
-    /**
-     * for use with {@see #setMnemonic} only!
-     */
-    public static final int GROUP_MNEMONIC = 6;
-    /**
-     * for direct access, with alt modifier.
-     */
-    public static final int GROUP_DIRECT2 = 7;
-    /**
-     * for direct access, remaining modifiers.
-     */
-    public static final int GROUP_DIRECT3 = 8;
-    public static final int GROUP_RESERVED = 1000;
-    public static final int GROUPS_DEFAULT = 0;
-    public static final int GROUPS_ALT1 = 100;
-    public static final int GROUPS_ALT2 = 200;
+    /* old */
+    @Deprecated public static final int GROUP_NONE = 0;
+    @Deprecated public static final int GROUP_HOTKEY = 1;
+    @Deprecated public static final int GROUP_MENU = 2;
+    @Deprecated public static final int GROUP_EDIT = 3;
+    @Deprecated public static final int GROUP_LAYER = 4;
+    @Deprecated public static final int GROUP_DIRECT = 5;
+    @Deprecated public static final int GROUP_MNEMONIC = 6;
+    @Deprecated public static final int GROUP_DIRECT2 = 7;
+    @Deprecated public static final int GROUP_DIRECT3 = 8;
+    @Deprecated public static final int GROUPS_DEFAULT = 0;
+    @Deprecated public static final int GROUPS_ALT1 = 100;
+    @Deprecated public static final int GROUPS_ALT2 = 200;
+    @Deprecated public static final int SHIFT_DEFAULT = 1;
 
     // bootstrap
     private static boolean initdone = false;
     private static void doInit() {
         if (initdone) return;
         initdone = true;
-        groups = Main.platform.initShortcutGroups(true);
+        groups.put(NONE, -1);
+        groups.put(MNEMONIC, KeyEvent.ALT_DOWN_MASK);
+        groups.put(DIRECT, 0);
+        groups.put(ALT, KeyEvent.ALT_DOWN_MASK);
+        groups.put(SHIFT, KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(CTRL, KeyEvent.CTRL_DOWN_MASK);
+        groups.put(ALT_SHIFT, KeyEvent.ALT_DOWN_MASK|KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(ALT_CTRL, KeyEvent.ALT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK);
+        groups.put(CTRL_SHIFT, KeyEvent.CTRL_DOWN_MASK|KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(ALT_CTRL_SHIFT, KeyEvent.ALT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK|KeyEvent.SHIFT_DOWN_MASK);
+
+        /* old */
+        groups.put(GROUPS_DEFAULT+GROUP_NONE,    -1);
+        groups.put(GROUPS_DEFAULT+GROUP_HOTKEY,  KeyEvent.CTRL_DOWN_MASK);
+        groups.put(GROUPS_DEFAULT+GROUP_MENU,    KeyEvent.CTRL_DOWN_MASK);
+        groups.put(GROUPS_DEFAULT+GROUP_EDIT,    0);
+        groups.put(GROUPS_DEFAULT+GROUP_LAYER,   KeyEvent.ALT_DOWN_MASK);
+        groups.put(GROUPS_DEFAULT+GROUP_DIRECT,  0);
+        groups.put(GROUPS_DEFAULT+GROUP_MNEMONIC,KeyEvent.ALT_DOWN_MASK);
+        groups.put(GROUPS_DEFAULT+GROUP_DIRECT2, KeyEvent.ALT_DOWN_MASK);
+        groups.put(GROUPS_DEFAULT+GROUP_DIRECT3, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+
+        groups.put(GROUPS_ALT1+GROUP_NONE,       -1);
+        groups.put(GROUPS_ALT1+GROUP_HOTKEY,     KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(GROUPS_ALT1+GROUP_MENU,       KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(GROUPS_ALT1+GROUP_EDIT,       KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(GROUPS_ALT1+GROUP_LAYER,      KeyEvent.ALT_DOWN_MASK  | KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(GROUPS_ALT1+GROUP_DIRECT,     KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(GROUPS_ALT1+GROUP_MNEMONIC,   KeyEvent.ALT_DOWN_MASK);
+        groups.put(GROUPS_ALT1+GROUP_DIRECT2,    KeyEvent.ALT_DOWN_MASK  | KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(GROUPS_ALT1+GROUP_DIRECT3,    KeyEvent.ALT_DOWN_MASK  | KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+
+        groups.put(GROUPS_ALT2+GROUP_NONE,       -1);
+        groups.put(GROUPS_ALT2+GROUP_HOTKEY,     KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK);
+        groups.put(GROUPS_ALT2+GROUP_MENU,       KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK);
+        groups.put(GROUPS_ALT2+GROUP_EDIT,       KeyEvent.ALT_DOWN_MASK  | KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(GROUPS_ALT2+GROUP_LAYER,      KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(GROUPS_ALT2+GROUP_DIRECT,     KeyEvent.CTRL_DOWN_MASK);
+        groups.put(GROUPS_ALT2+GROUP_MNEMONIC,   KeyEvent.ALT_DOWN_MASK);
+        groups.put(GROUPS_ALT2+GROUP_DIRECT2,    KeyEvent.ALT_DOWN_MASK  | KeyEvent.CTRL_DOWN_MASK);
+        groups.put(GROUPS_ALT2+GROUP_DIRECT3,    KeyEvent.META_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK);
+
         // (1) System reserved shortcuts
         Main.platform.initSystemShortcuts();
         // (2) User defined shortcuts
@@ -400,7 +412,7 @@ public class Shortcut {
             System.err.println("CONFLICT WITH SYSTEM KEY "+shortText);
             return null;
         }
-        potentialShortcut = new Shortcut(shortText, longText, key, GROUP_RESERVED, key, modifier, true, false);
+        potentialShortcut = new Shortcut(shortText, longText, key, RESERVED, key, modifier, true, false);
         shortcuts.put(shortText, potentialShortcut);
         return potentialShortcut;
     }
@@ -457,11 +469,15 @@ public class Shortcut {
             }
         }
         else if (defaultModifier == null) { // garbage in, no shortcut out
-            defaultModifier = getGroupModifier(GROUP_NONE + GROUPS_DEFAULT);
+            defaultModifier = getGroupModifier(NONE);
         }
         return defaultModifier;
     }
 
+    private static int[] mods = {ALT_CTRL, ALT_SHIFT, CTRL_SHIFT, ALT_CTRL_SHIFT};
+    private static int[] keys = {KeyEvent.VK_F1, KeyEvent.VK_F2, KeyEvent.VK_F3, KeyEvent.VK_F4,
+                                 KeyEvent.VK_F5, KeyEvent.VK_F6, KeyEvent.VK_F7, KeyEvent.VK_F8,
+                                 KeyEvent.VK_F9, KeyEvent.VK_F10, KeyEvent.VK_F11, KeyEvent.VK_F12};
     // and now the workhorse. same parameters as above, just one more: if originalShortcut is not null and
     // is different from the shortcut that will be assigned, a popup warning will be displayed to the user.
     // This is used when registering shortcuts that have been visible to the user before (read: have been
@@ -474,62 +490,32 @@ public class Shortcut {
         if (shortcuts.containsKey(shortText)) { // a re-register? maybe a sc already read from the preferences?
             Shortcut sc = shortcuts.get(shortText);
             sc.setLongText(longText); // or set by the platformHook, in this case the original longText doesn't match the real action
-            sc.saveDefault(defaultModifier);
+            sc.saveDefault();
             return sc;
         }
-        Shortcut conflictsWith = null;
-        Shortcut potentialShortcut = findShortcut(requestedKey, defaultModifier);
-        if (potentialShortcut != null) { // 3 stage conflict handling
-            conflictsWith = potentialShortcut;
-            defaultModifier = getGroupModifier(requestedGroup + GROUPS_ALT1);
-            if (defaultModifier == null) { // garbage in, no shortcut out
-                defaultModifier = getGroupModifier(GROUP_NONE + GROUPS_DEFAULT);
-            }
-            potentialShortcut = findShortcut(requestedKey, defaultModifier);
-            if (potentialShortcut != null) {
-                defaultModifier = getGroupModifier(requestedGroup + GROUPS_ALT2);
-                if (defaultModifier == null) { // garbage in, no shortcut out
-                    defaultModifier = getGroupModifier(GROUP_NONE + GROUPS_DEFAULT);
+        Shortcut conflict = findShortcut(requestedKey, defaultModifier);
+        if (conflict != null) {
+            for (int m : mods) {
+                for (int k : keys) {
+                    int newmodifier = getGroupModifier(m);
+                    if ( findShortcut(k, m) == null ) {
+                        Shortcut newsc = new Shortcut(shortText, longText, requestedKey, m, k, newmodifier, false, false);
+                        System.out.println(tr("Silent shortcut conflict: ''{0}'' moved by ''{1}'' to ''{2}''.",
+                            shortText, conflict.getShortText(), newsc.getKeyText()));
+                        newsc.saveDefault();
+                        shortcuts.put(shortText, newsc);
+                        return newsc;
+                    }
                 }
-                potentialShortcut = findShortcut(requestedKey, defaultModifier);
-                if (potentialShortcut != null) { // if all 3 modifiers for a group are used, we give up
-                    potentialShortcut = findRandomShortcut(shortText, longText, requestedKey, requestedGroup);
-                } else {
-                    potentialShortcut = new Shortcut(shortText, longText, requestedKey, requestedGroup, requestedKey, defaultModifier, false, false);
-                }
-            } else {
-                potentialShortcut = new Shortcut(shortText, longText, requestedKey, requestedGroup, requestedKey, defaultModifier, false, false);
-            }
-            if (originalShortcut != null && !originalShortcut.isSame(potentialShortcut)) {
-                displayWarning(conflictsWith, potentialShortcut, shortText, longText);
-            } else if (originalShortcut == null) {
-                System.out.println("Silent shortcut conflict: '"+shortText+"' moved by '"+conflictsWith.getShortText()+"' to '"+potentialShortcut.getKeyText()+"'.");
             }
         } else {
-            potentialShortcut = new Shortcut(shortText, longText, requestedKey, requestedGroup, requestedKey, defaultModifier, true, false);
+            Shortcut newsc = new Shortcut(shortText, longText, requestedKey, requestedGroup, requestedKey, defaultModifier, true, false);
+            newsc.saveDefault();
+            shortcuts.put(shortText, newsc);
+            return newsc;
         }
 
-        potentialShortcut.saveDefault(defaultModifier);
-        shortcuts.put(shortText, potentialShortcut);
-        return potentialShortcut;
-    }
-
-    // a lengthy warning message
-    private static void displayWarning(Shortcut conflictsWith, Shortcut potentialShortcut, String shortText, String longText) {
-        JOptionPane.showMessageDialog(Main.parent,
-                tr("Setting the keyboard shortcut ''{0}'' for the action ''{1}'' ({2}) failed\n"+
-                        "because the shortcut is already taken by the action ''{3}'' ({4}).\n\n",
-                        conflictsWith.getKeyText(), longText, shortText,
-                        conflictsWith.getLongText(), conflictsWith.getShortText())+
-                        (potentialShortcut.getKeyText().equals("") ?
-                                tr("This action will have no shortcut.\n\n")
-                                :
-                                    tr("Using the shortcut ''{0}'' instead.\n\n", potentialShortcut.getKeyText())
-                                )+
-                                tr("(Hint: You can edit the shortcuts in the preferences.)"),
-                                tr("Error"),
-                                JOptionPane.ERROR_MESSAGE
-                );
+        return null;
     }
 
     /**

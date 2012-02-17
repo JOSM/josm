@@ -38,50 +38,6 @@ public class PlatformHookUnixoid implements PlatformHook {
         }
     }
 
-    protected void setupGroup(HashMap<Integer, Integer> groups, boolean load, int group, int value) {
-        if(load)
-            groups.put(group, Main.pref.getInteger("shortcut.groups."+group, value));
-        else
-            groups.put(group, value);
-    }
-
-    @Override
-    public HashMap<Integer, Integer>  initShortcutGroups(boolean load) {
-        HashMap<Integer, Integer> groups = new HashMap<Integer, Integer>();
-
-        setupGroup(groups, load, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_NONE,    -1);
-        setupGroup(groups, load, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_HOTKEY,  KeyEvent.CTRL_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_MENU,    KeyEvent.CTRL_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_EDIT,    0);
-        setupGroup(groups, load, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_LAYER,   KeyEvent.ALT_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_DIRECT,  0);
-        setupGroup(groups, load, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_MNEMONIC,KeyEvent.ALT_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_DIRECT2, KeyEvent.ALT_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_DIRECT3, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
-
-        setupGroup(groups, load, Shortcut.GROUPS_ALT1+Shortcut.GROUP_NONE,       -1);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY,     KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT1+Shortcut.GROUP_MENU,       KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT1+Shortcut.GROUP_EDIT,       KeyEvent.SHIFT_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT1+Shortcut.GROUP_LAYER,      KeyEvent.ALT_DOWN_MASK  | KeyEvent.SHIFT_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT1+Shortcut.GROUP_DIRECT,     KeyEvent.SHIFT_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT1+Shortcut.GROUP_MNEMONIC,   KeyEvent.ALT_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT1+Shortcut.GROUP_DIRECT2,    KeyEvent.ALT_DOWN_MASK  | KeyEvent.SHIFT_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT1+Shortcut.GROUP_DIRECT3,    KeyEvent.ALT_DOWN_MASK  | KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
-
-        setupGroup(groups, load, Shortcut.GROUPS_ALT2+Shortcut.GROUP_NONE,       -1);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT2+Shortcut.GROUP_HOTKEY,     KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT2+Shortcut.GROUP_MENU,       KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT2+Shortcut.GROUP_EDIT,       KeyEvent.ALT_DOWN_MASK  | KeyEvent.SHIFT_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT2+Shortcut.GROUP_LAYER,      KeyEvent.SHIFT_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT2+Shortcut.GROUP_DIRECT,     KeyEvent.CTRL_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT2+Shortcut.GROUP_MNEMONIC,   KeyEvent.ALT_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT2+Shortcut.GROUP_DIRECT2,    KeyEvent.ALT_DOWN_MASK  | KeyEvent.CTRL_DOWN_MASK);
-        setupGroup(groups, load, Shortcut.GROUPS_ALT2+Shortcut.GROUP_DIRECT3,    KeyEvent.META_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK);
-
-        return groups;
-    }
-
     @Override
     public void initSystemShortcuts() {
         // TODO: Insert system shortcuts here. See Windows and especially OSX to see how to.
