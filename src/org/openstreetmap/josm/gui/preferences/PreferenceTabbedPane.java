@@ -229,7 +229,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         final PluginPreference preference = getPluginPreference();
         final List<PluginInformation> toDownload = preference.getPluginsScheduledForUpdateOrDownload();
         final PluginDownloadTask task;
-        if (! toDownload.isEmpty()) {
+        if (toDownload != null && ! toDownload.isEmpty()) {
             task = new PluginDownloadTask(this, toDownload, tr("Download plugins"));
         } else {
             task = null;
@@ -246,7 +246,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                     }
                 }
 
-                for (PreferenceSetting setting : settings) {
+                for (PreferenceSetting setting : settingsInitialized) {
                     if (setting.ok()) {
                         requiresRestart = true;
                     }
@@ -462,10 +462,8 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         if (index > -1 && sel instanceof PreferenceTab) {
             PreferenceTab tab = (PreferenceTab) sel;
             TabPreferenceSetting preferenceSettings = tab.getTabPreferenceSetting();
-            //System.out.println(preferenceSettings);
             if (!settingsInitialized.contains(preferenceSettings)) {
                 try {
-                    //System.out.println("adding GUI for "+preferenceSettings);
                     getModel().removeChangeListener(this);
                     preferenceSettings.addGui(this);
                     // Add GUI for sub preferences
@@ -473,8 +471,15 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                         if (setting instanceof SubPreferenceSetting) {
                             SubPreferenceSetting sps = (SubPreferenceSetting) setting;
                             if (sps.getTabPreferenceSetting(this) == preferenceSettings) {
-                                //System.out.println("adding GUI for "+sps);
-                                sps.addGui(this);
+                                try {
+                                    sps.addGui(this);
+                                } catch (SecurityException ex) {
+                                    ex.printStackTrace();
+                                } catch (Throwable ex) {
+                                    BugReportExceptionHandler.handleException(ex);
+                                } finally {
+                                    settingsInitialized.add(sps);
+                                }
                             }
                         }
                     }
