@@ -67,9 +67,9 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
         super(tr("Rectified Image..."),
                 "OLmarker",
                 tr("Download Rectified Images From Various Services"),
-                Shortcut.registerShortcut("wms:rectimg",
-                        tr("WMS: {0}", tr("Rectified Image...")),
-                        KeyEvent.VK_R, Shortcut.GROUP_NONE),
+                Shortcut.registerShortcut("imagery:rectimg",
+                        tr("Imagery: {0}", tr("Rectified Image...")),
+                        KeyEvent.CHAR_UNDEFINED, Shortcut.NONE),
                 true
         );
 
