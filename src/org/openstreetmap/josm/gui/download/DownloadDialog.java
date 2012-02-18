@@ -133,7 +133,7 @@ public class DownloadDialog extends JDialog  {
                 +"Unselect to download into the currently active data layer.</html>"));
 
         cbStartup = new JCheckBox(tr("Open this dialog on startup"));
-        cbStartup.setToolTipText(tr("<html>Autostart Download from OSM dialog every time JOSM is started.<br>You can open it manually from File menu or by Ctrl-Shift-D</html>"));
+        cbStartup.setToolTipText(tr("<html>Autostart ''Download from OSM'' dialog every time JOSM is started.<br>You can open it manually from File menu or toolbar</html>"));
         cbStartup.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                  Main.pref.put("download.autorun", cbStartup.isSelected());
