@@ -30,7 +30,7 @@ public class ShortcutPreference extends DefaultTabPreferenceSetting {
         // icon original filename: keyboard.png
         // icon original size: 128x128
         // modifications: icon was cropped, then resized
-        super("shortcuts", tr("Shortcut Preferences"), tr("Changing keyboard shortcuts manually."));
+        super("shortcuts", tr("Keyboard Shortcuts"), tr("Changing keyboard shortcuts manually."));
     }
 
     public void addGui(PreferenceTabbedPane gui) {
