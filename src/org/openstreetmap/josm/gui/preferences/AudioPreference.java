@@ -3,13 +3,15 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GridBagLayout;
+
 import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.PreferencePanel;
 import org.openstreetmap.josm.tools.GBC;
 
 /*
@@ -53,7 +55,7 @@ public class AudioPreference extends DefaultTabPreferenceSetting {
     private JTextField audioCalibration = new JTextField(8);
 
     public void addGui(PreferenceTabbedPane gui) {
-        PreferencePanel audio = gui.createPreferenceTab(this);
+        JPanel audio = new JPanel(new GridBagLayout());
         
         // audioMenuVisible
         audioMenuVisible.setSelected(! Main.pref.getBoolean("audio.menuinvisible"));
@@ -118,6 +120,8 @@ public class AudioPreference extends DefaultTabPreferenceSetting {
         audio.add(audioCalibration, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 
         audio.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
+
+        createPreferenceTabWithScrollPane(gui, audio);
     }
 
     public boolean ok() {

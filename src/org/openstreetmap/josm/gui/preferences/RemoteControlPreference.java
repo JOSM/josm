@@ -60,7 +60,7 @@ public class RemoteControlPreference extends DefaultTabPreferenceSetting
 
     public void addGui(final PreferenceTabbedPane gui) {
 
-        JPanel remote = gui.createPreferenceTab(this);
+        JPanel remote = new JPanel(new GridBagLayout());
 
         remote.add(enableRemoteControl = new JCheckBox(tr("Enable remote control"), RemoteControl.PROP_REMOTECONTROL_ENABLED.get()), GBC.eol());
 
@@ -122,6 +122,7 @@ public class RemoteControlPreference extends DefaultTabPreferenceSetting
         };
         enableRemoteControl.addActionListener(remoteControlEnabled);
         remoteControlEnabled.actionPerformed(null);
+        createPreferenceTabWithScrollPane(gui, remote);
     }
 
     public boolean ok() {
