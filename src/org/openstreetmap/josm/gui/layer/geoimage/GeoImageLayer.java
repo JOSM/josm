@@ -725,7 +725,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             @Override public void mouseReleased(MouseEvent ev) {
                 if (ev.getButton() != MouseEvent.BUTTON1)
                     return;
-                if (!isVisible())
+                if (data == null || !isVisible())
                     return;
 
                 for (int i = data.size() - 1; i >= 0; --i) {
