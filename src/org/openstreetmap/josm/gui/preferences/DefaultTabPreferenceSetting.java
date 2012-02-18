@@ -1,6 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences;
 
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import org.openstreetmap.josm.tools.GBC;
+
 public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetting implements TabPreferenceSetting {
 
     private final String iconName;
@@ -44,5 +49,17 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
     @Override
     public String getTitle() {
         return title;
+    }
+    
+    protected final void createPreferenceTabWithScrollPane(PreferenceTabbedPane gui, JPanel panel) {
+        GBC a = GBC.eol().insets(-5,0,0,0);
+        a.anchor = GBC.EAST;
+        
+        JScrollPane scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setBorder(null);
+
+        JPanel tab = gui.createPreferenceTab(this);
+        tab.add(scrollPane, GBC.eol().fill(GBC.BOTH));
+        tab.add(GBC.glue(0,10), a);
     }
 }

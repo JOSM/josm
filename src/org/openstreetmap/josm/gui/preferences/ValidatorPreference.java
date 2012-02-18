@@ -12,7 +12,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -113,12 +112,7 @@ public class ValidatorPreference extends DefaultTabPreferenceSetting {
             test.addGui(testPanel);
         }
 
-        JScrollPane testPane = new JScrollPane(testPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        testPane.setBorder(null);
-
-        JPanel tab = gui.createPreferenceTab(this);
-        tab.add(testPane, GBC.eol().fill(GBC.BOTH));
-        tab.add(GBC.glue(0,10), a);
+        createPreferenceTabWithScrollPane(gui, testPanel);
     }
 
     @Override
