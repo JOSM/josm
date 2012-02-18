@@ -4862,6 +4862,16 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="addr:postcode" text="Post code" default="" delete_if_empty="true" />
             <text key="website" text="Website" default="" delete_if_empty="true" />
         </item>
+        <item name="Neighbourhood" icon="presets/places.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:place=neighbourhood" />
+            <label text="Edit Neighbourhood" />
+            <space />
+            <key key="place" value="neighbourhood" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
+            <text key="population" text="Population" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+        </item>
         <separator/>
         <item name="Locality" icon="presets/locality.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=locality"
