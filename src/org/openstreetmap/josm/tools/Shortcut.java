@@ -304,7 +304,7 @@ public class Shortcut {
     @Deprecated public static final int GROUPS_ALT2 = 200;
     @Deprecated public static final int SHIFT_DEFAULT = 1;
     @Deprecated public static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup, int modifier) {
-        return registerShortcut(shortText, longText, requestedKey, requestedGroup, modifier);
+        return registerShortcut(shortText, longText, requestedKey, requestedGroup, new Integer(modifier));
     }
 
     // bootstrap
@@ -406,6 +406,17 @@ public class Shortcut {
         return defaultModifier;
     }
 
+/*  NEW function: 
+    private static int findModifier(int group, Integer modifier) {
+        if(modifier == null) {
+            modifier = getGroupModifier(group);
+            if (modifier == null) { // garbage in, no shortcut out
+                modifier = getGroupModifier(NONE);
+            }
+        }
+        return modifier;
+    }*/
+
     // shutdown handling
     public static boolean savePrefs() {
         boolean changed = false;
@@ -450,7 +461,7 @@ public class Shortcut {
      * modifiers your shortcut will get assigned. Use the constants defined above.
      */
     public static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup) {
-        return registerShortcut(shortText, longText, requestedKey, requestedGroup);
+        return registerShortcut(shortText, longText, requestedKey, requestedGroup, null);
     }
 
     // and now the workhorse. same parameters as above, just one more

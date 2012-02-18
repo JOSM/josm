@@ -208,7 +208,6 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
 
         Shortcut.registerSystemShortcut("view:zoomin", "reserved", KeyEvent.VK_ADD, KeyEvent.META_DOWN_MASK); // Zoom in
         Shortcut.registerSystemShortcut("view:zoomout", "reserved", KeyEvent.VK_SUBTRACT, KeyEvent.META_DOWN_MASK); // Zoom out
-
     }
     @Override
     public String makeTooltip(String name, Shortcut sc) {
