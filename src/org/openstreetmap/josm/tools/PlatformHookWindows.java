@@ -14,10 +14,12 @@ import org.openstreetmap.josm.Main;
   * see PlatformHook.java
   */
 public class PlatformHookWindows extends PlatformHookUnixoid implements PlatformHook {
+    @Override
     public void openUrl(String url) throws IOException {
         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
     }
 
+    @Override
     public void initSystemShortcuts() {
         // This list if far from complete!
         Shortcut.registerSystemShortcut("system:exit", tr("unused"), KeyEvent.VK_F4, KeyEvent.ALT_DOWN_MASK).setAutomatic(); // items with automatic shortcuts will not be added to the menu bar at all
@@ -29,6 +31,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         Shortcut.registerSystemShortcut("system:help", tr("unused"), KeyEvent.VK_F1, 0);
     }
 
+    @Override
     public String getDefaultStyle()
     {
         return "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
