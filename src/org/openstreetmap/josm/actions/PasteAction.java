@@ -31,7 +31,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
 
     public PasteAction() {
         super(tr("Paste"), "paste", tr("Paste contents of paste buffer."),
-                Shortcut.registerShortcut("system:paste", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_V, Shortcut.GROUP_MENU), true);
+                Shortcut.registerShortcut("system:paste", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_V, Shortcut.CTRL), true);
         putValue("help", ht("/Action/Paste"));
         Main.pasteBuffer.addPasteBufferChangedListener(this);
     }

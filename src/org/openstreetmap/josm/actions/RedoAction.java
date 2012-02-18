@@ -23,7 +23,7 @@ public class RedoAction extends JosmAction implements OsmDataLayer.CommandQueueL
      */
     public RedoAction() {
         super(tr("Redo"), "redo", tr("Redo the last undone action."),
-                Shortcut.registerShortcut("system:redo", tr("Edit: {0}", tr("Redo")), KeyEvent.VK_Y, Shortcut.GROUP_MENU), true);
+                Shortcut.registerShortcut("system:redo", tr("Edit: {0}", tr("Redo")), KeyEvent.VK_Y, Shortcut.CTRL), true);
         setEnabled(false);
         putValue("help", ht("/Action/Redo"));
     }

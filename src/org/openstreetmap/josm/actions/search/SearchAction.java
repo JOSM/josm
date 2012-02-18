@@ -120,7 +120,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
     public SearchAction() {
         super(tr("Search..."), "dialogs/search", tr("Search for objects."),
-                Shortcut.registerShortcut("system:find", tr("Search..."), KeyEvent.VK_F, Shortcut.GROUP_HOTKEY), true);
+                Shortcut.registerShortcut("system:find", tr("Search..."), KeyEvent.VK_F, Shortcut.CTRL), true);
         putValue("help", ht("/Action/Search"));
     }
 

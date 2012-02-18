@@ -15,7 +15,7 @@ public class UnselectAllAction extends JosmAction {
     public UnselectAllAction() {
         super(tr("Unselect All"), "unselectall", tr("Unselect all objects."),
             Shortcut.registerShortcut("edit:unselectall", tr("Edit: {0}",
-            tr("Unselect All")), KeyEvent.VK_ESCAPE, Shortcut.GROUP_DIRECT), true);
+            tr("Unselect All")), KeyEvent.VK_ESCAPE, Shortcut.DIRECT), true);
 
         putValue("help", ht("/Action/UnselectAll"));
     }

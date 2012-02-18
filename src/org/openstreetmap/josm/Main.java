@@ -271,7 +271,7 @@ abstract public class Main {
         contentPanePrivate.add(toolbar.control, BorderLayout.NORTH);
 
         registerActionShortcut(menu.help, Shortcut.registerShortcut("system:help", tr("Help"),
-                KeyEvent.VK_F1, Shortcut.GROUP_DIRECT));
+                KeyEvent.VK_F1, Shortcut.DIRECT));
 
         if (initListener != null) {
             initListener.updateStatus(tr("Initializing presets"));

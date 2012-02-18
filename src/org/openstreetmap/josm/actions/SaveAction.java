@@ -26,7 +26,7 @@ public class SaveAction extends SaveActionBase {
      */
     public SaveAction() {
         super(tr("Save"), "save", tr("Save the current data."),
-                Shortcut.registerShortcut("system:save", tr("File: {0}", tr("Save")), KeyEvent.VK_S, Shortcut.GROUP_MENU));
+                Shortcut.registerShortcut("system:save", tr("File: {0}", tr("Save")), KeyEvent.VK_S, Shortcut.CTRL));
         putValue("help", ht("/Action/Save"));
     }
 

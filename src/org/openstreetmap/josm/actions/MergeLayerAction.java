@@ -19,7 +19,7 @@ public class MergeLayerAction extends AbstractMergeAction {
         super(tr("Merge layer"), "dialogs/mergedown",
             tr("Merge the current layer into another layer"),
             Shortcut.registerShortcut("system:merge", tr("Edit: {0}",
-            tr("Merge")), KeyEvent.VK_M, Shortcut.GROUP_MENU),
+            tr("Merge")), KeyEvent.VK_M, Shortcut.CTRL),
             true, "action/mergelayer", true);
         putValue("help", ht("/Action/MergeLayer"));
     }

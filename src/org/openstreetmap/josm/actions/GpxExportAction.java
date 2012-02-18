@@ -28,7 +28,7 @@ public class GpxExportAction extends DiskAccessAction {
 
     public GpxExportAction() {
         super(tr("Export to GPX..."), "exportgpx", tr("Export the data to GPX file."),
-                Shortcut.registerShortcut("file:exportgpx", tr("Export to GPX..."), KeyEvent.VK_E, Shortcut.GROUP_MENU));
+                Shortcut.registerShortcut("file:exportgpx", tr("Export to GPX..."), KeyEvent.VK_E, Shortcut.CTRL));
         putValue("help", ht("/Action/GpxExport"));
     }
 

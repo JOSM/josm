@@ -49,13 +49,13 @@ public class MoveAction extends JosmAction {
     private static Shortcut calltosupermustbefirststatementinconstructor(Direction dir) {
         Shortcut sc;
         if        (dir == Direction.UP)   {
-            sc = Shortcut.registerShortcut("core:moveup",    tr("Move objects {0}", tr("up")), KeyEvent.VK_UP,    Shortcut.GROUPS_ALT1+Shortcut.GROUP_DIRECT);
+            sc = Shortcut.registerShortcut("core:moveup",    tr("Move objects {0}", tr("up")), KeyEvent.VK_UP,    Shortcut.SHIFT);
         } else if (dir == Direction.DOWN)  {
-            sc = Shortcut.registerShortcut("core:movedown",  tr("Move objects {0}", tr("down")), KeyEvent.VK_DOWN,  Shortcut.GROUPS_ALT1+Shortcut.GROUP_DIRECT);
+            sc = Shortcut.registerShortcut("core:movedown",  tr("Move objects {0}", tr("down")), KeyEvent.VK_DOWN,  Shortcut.SHIFT);
         } else if (dir == Direction.LEFT)  {
-            sc = Shortcut.registerShortcut("core:moveleft",  tr("Move objects {0}", tr("left")), KeyEvent.VK_LEFT,  Shortcut.GROUPS_ALT1+Shortcut.GROUP_DIRECT);
+            sc = Shortcut.registerShortcut("core:moveleft",  tr("Move objects {0}", tr("left")), KeyEvent.VK_LEFT,  Shortcut.SHIFT);
         } else { //dir == Direction.RIGHT) {
-            sc = Shortcut.registerShortcut("core:moveright", tr("Move objects {0}", tr("right")), KeyEvent.VK_RIGHT, Shortcut.GROUPS_ALT1+Shortcut.GROUP_DIRECT);
+            sc = Shortcut.registerShortcut("core:moveright", tr("Move objects {0}", tr("right")), KeyEvent.VK_RIGHT, Shortcut.SHIFT);
         }
         return sc;
     }

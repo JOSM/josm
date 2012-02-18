@@ -149,7 +149,7 @@ public class LayerListDialog extends ToggleDialog {
 
         for(int i=0; i < 10; i++) {
             visibilityToggleShortcuts[i] = Shortcut.registerShortcut("subwindow:layers:toggleLayer" + (i+1),
-                    tr("Toggle visibility of layer: {0}", (i+1)), k[i], Shortcut.GROUP_LAYER);
+                    tr("Toggle visibility of layer: {0}", (i+1)), k[i], Shortcut.ALT);
             visibilityToggleActions[i] = new ToggleLayerIndexVisibility(i);
             Main.registerActionShortcut(visibilityToggleActions[i], visibilityToggleShortcuts[i]);
         }
@@ -161,7 +161,7 @@ public class LayerListDialog extends ToggleDialog {
     protected LayerListDialog(MapFrame mapFrame) {
         super(tr("Layers"), "layerlist", tr("Open a list of all loaded layers."),
                 Shortcut.registerShortcut("subwindow:layers", tr("Toggle: {0}", tr("Layers")), KeyEvent.VK_L,
-                Shortcut.GROUPS_ALT1+Shortcut.GROUP_LAYER), 100, true);
+                Shortcut.ALT_SHIFT), 100, true);
 
         // create the models
         //
@@ -442,7 +442,7 @@ public class LayerListDialog extends ToggleDialog {
             putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the selected layer."));
             putValue("help", HelpUtil.ht("/Dialog/LayerList#ShowHideLayer"));
             Shortcut.registerShortcut("core_multikey:showHideLayer", tr("Multikey: {0}",
-            tr("Show/hide layer")), KeyEvent.VK_S, Shortcut.GROUP_DIRECT+Shortcut.GROUPS_ALT1).setAccelerator(this);
+            tr("Show/hide layer")), KeyEvent.VK_S, Shortcut.SHIFT).setAccelerator(this);
             if (init) {
                 updateEnabledState();
             }
@@ -630,7 +630,7 @@ public class LayerListDialog extends ToggleDialog {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "activate"));
             putValue(SHORT_DESCRIPTION, tr("Activate the selected layer"));
             Shortcut.registerShortcut("core_multikey:activateLayer", tr("Multikey: {0}",
-            tr("Activate layer")), KeyEvent.VK_A, Shortcut.GROUP_DIRECT+Shortcut.GROUPS_ALT1).setAccelerator(this);
+            tr("Activate layer")), KeyEvent.VK_A, Shortcut.SHIFT).setAccelerator(this);
             putValue("help", HelpUtil.ht("/Dialog/LayerList#ActivateLayer"));
         }
 

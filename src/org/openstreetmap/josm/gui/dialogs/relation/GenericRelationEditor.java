@@ -976,7 +976,7 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort"));
             putValue(NAME, tr("Sort"));
             Shortcut sc = Shortcut.registerShortcut("relationeditor:sort", tr("Relation Editor: Sort"),
-                KeyEvent.VK_END, Shortcut.GROUP_DIRECT2);
+                KeyEvent.VK_END, Shortcut.ALT);
             sc.setAccelerator(this);
             putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
             updateEnabledState();
@@ -1001,7 +1001,7 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "reverse"));
             putValue(NAME, tr("Reverse"));
         //  Shortcut.register Shortcut("relationeditor:reverse", tr("Relation Editor: Reverse"),
-        //      KeyEvent.VK_END, Shortcut.GROUP_DIRECT2)
+        //      KeyEvent.VK_END, Shortcut.ALT)
             updateEnabledState();
         }
 
@@ -1024,7 +1024,7 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "moveup"));
             // putValue(NAME, tr("Move Up"));
             Shortcut sc = Shortcut.registerShortcut("relationeditor:moveup", tr("Relation Editor: Move Up"),
-                KeyEvent.VK_UP, Shortcut.GROUP_DIRECT2);
+                KeyEvent.VK_UP, Shortcut.ALT);
             sc.setAccelerator(this);
             putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
             setEnabled(false);
@@ -1045,7 +1045,7 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "movedown"));
             // putValue(NAME, tr("Move Down"));
             Shortcut sc = Shortcut.registerShortcut("relationeditor:movedown", tr("Relation Editor: Move Down"),
-                KeyEvent.VK_DOWN, Shortcut.GROUP_DIRECT2);
+                KeyEvent.VK_DOWN, Shortcut.ALT);
             sc.setAccelerator(this);
             putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
             setEnabled(false);
@@ -1066,7 +1066,7 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "remove"));
             putValue(NAME, tr("Remove"));
             Shortcut sc = Shortcut.registerShortcut("relationeditor:remove", tr("Relation Editor: Remove"),
-                KeyEvent.VK_DELETE, Shortcut.GROUP_DIRECT2);
+                KeyEvent.VK_DELETE, Shortcut.ALT);
             sc.setAccelerator(this);
             putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
             setEnabled(false);
@@ -1403,7 +1403,7 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincomplete"));
             putValue(NAME, tr("Download Members"));
             Shortcut sc = Shortcut.registerShortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"),
-                KeyEvent.VK_HOME, Shortcut.GROUP_DIRECT2);
+                KeyEvent.VK_HOME, Shortcut.ALT);
             sc.setAccelerator(this);
             putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
             updateEnabledState();
@@ -1435,7 +1435,7 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
             putValue(NAME, tr("Download Members"));
         //  Shortcut.register Shortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"),
-        //      KeyEvent.VK_K, Shortcut.GROUP_DIRECT2)
+        //      KeyEvent.VK_K, Shortcut.ALT)
             updateEnabledState();
         }
 
@@ -1681,7 +1681,7 @@ public class GenericRelationEditor extends RelationEditor  {
     class PasteTagsAction extends AbstractAction {
 
         public PasteTagsAction() {
-            registerCopyPasteAction(this, "PASTE_TAGS", Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.GROUP_MENU+Shortcut.GROUPS_ALT1).getKeyStroke());
+            registerCopyPasteAction(this, "PASTE_TAGS", Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.CTRL_SHIFT).getKeyStroke());
         }
 
         @Override

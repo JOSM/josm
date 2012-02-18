@@ -39,7 +39,7 @@ public class FollowLineAction extends JosmAction {
                 tr("Continues drawing a line that shares nodes with another line."),
                 Shortcut.registerShortcut("tools:followline", tr(
                 "Tool: {0}", tr("Follow")),
-                KeyEvent.VK_F, Shortcut.GROUP_EDIT), true);
+                KeyEvent.VK_F, Shortcut.DIRECT), true);
     }
 
     @Override

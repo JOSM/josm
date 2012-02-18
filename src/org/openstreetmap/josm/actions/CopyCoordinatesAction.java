@@ -17,7 +17,7 @@ public class CopyCoordinatesAction extends JosmAction {
         super(tr("Copy Coordinates"), null,
                 tr("Copy coordinates of selected nodes to clipboard."),
                 Shortcut.registerShortcut("copy:coordinates", tr("Edit: {0}", tr("Copy Coordinates")),
-                KeyEvent.VK_C, Shortcut.GROUP_MENU+Shortcut.GROUPS_ALT1),
+                KeyEvent.VK_C, Shortcut.CTRL_SHIFT),
                 false);
         putValue("toolbar", "copy/coordinates");
     }

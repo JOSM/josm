@@ -105,11 +105,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     public DrawAction(MapFrame mapFrame) {
         super(tr("Draw"), "node/autonode", tr("Draw nodes"),
-            Shortcut.registerShortcut("mapmode:draw", tr("Mode: {0}", tr("Draw")), KeyEvent.VK_A, Shortcut.GROUP_EDIT),
+            Shortcut.registerShortcut("mapmode:draw", tr("Mode: {0}", tr("Draw")), KeyEvent.VK_A, Shortcut.DIRECT),
             mapFrame, ImageProvider.getCursor("crosshair", null));
 
         snappingShortcut = Shortcut.registerShortcut("mapmode:drawanglesnapping",
-            tr("Mode: Draw Angle snapping"), KeyEvent.VK_TAB, Shortcut.GROUP_EDIT);
+            tr("Mode: Draw Angle snapping"), KeyEvent.VK_TAB, Shortcut.DIRECT);
         addMenuItem();
         snapHelper.setMenuCheckBox(snapCheckboxMenuItem);
         cursorJoinNode = ImageProvider.getCursor("crosshair", "joinnode");
@@ -173,7 +173,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         });
         Main.map.statusLine.getAnglePanel().addMouseListener(snapHelper.anglePopupListener);
         backspaceShortcut = Shortcut.registerShortcut("mapmode:backspace",
-            tr("Backspace in Add mode"), KeyEvent.VK_BACK_SPACE, Shortcut.GROUP_EDIT);
+            tr("Backspace in Add mode"), KeyEvent.VK_BACK_SPACE, Shortcut.DIRECT);
         Main.registerActionShortcut(new BackSpaceAction(), backspaceShortcut);
 
         Main.map.mapView.addMouseListener(this);

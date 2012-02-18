@@ -95,7 +95,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
                 "delete",
                 tr("Delete nodes or ways."),
                 Shortcut.registerShortcut("mapmode:delete", tr("Mode: {0}",tr("Delete")),
-                KeyEvent.VK_DELETE, Shortcut.GROUP_DIRECT+Shortcut.GROUPS_ALT2),
+                KeyEvent.VK_DELETE, Shortcut.CTRL),
                 mapFrame,
                 ImageProvider.getCursor("normal", "delete"));
     }

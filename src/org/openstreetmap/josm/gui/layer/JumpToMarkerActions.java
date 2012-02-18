@@ -34,7 +34,7 @@ public class JumpToMarkerActions {
 
         public JumpToNextMarker(JumpToMarkerLayer layer) {
             Shortcut.registerShortcut("core_multikey:nextMarker", tr("Multikey: {0}", tr("Next marker")),
-                KeyEvent.VK_J, Shortcut.GROUP_DIRECT2+Shortcut.GROUPS_ALT2).setAccelerator(this);
+                KeyEvent.VK_J, Shortcut.ALT_CTRL).setAccelerator(this);
             putValue(SHORT_DESCRIPTION, tr("Jump to next marker"));
             putValue(NAME, tr("Jump to next marker"));
 
@@ -90,7 +90,7 @@ public class JumpToMarkerActions {
             this.layer = (Layer)layer;
 
             Shortcut.registerShortcut("core_multikey:previousMarker", tr("Multikey: {0}", tr("Previos marker")),
-                KeyEvent.VK_P, Shortcut.GROUP_DIRECT2+Shortcut.GROUPS_ALT2).setAccelerator(this);
+                KeyEvent.VK_P, Shortcut.ALT_CTRL).setAccelerator(this);
             putValue(SHORT_DESCRIPTION, tr("Jump to previous marker"));
             putValue(NAME, tr("Jump to previous marker"));
         }
