@@ -26,7 +26,7 @@ public class WireframeToggleAction extends JosmAction {
                 tr("Wireframe View"),
                 null, /* no icon */
                 tr("Enable/disable rendering the map as wireframe only"),
-                Shortcut.registerShortcut("menu:view:wireframe", tr("Toggle Wireframe view"),KeyEvent.VK_W, Shortcut.GROUP_MENU),
+                Shortcut.registerShortcut("menu:view:wireframe", tr("Toggle Wireframe view"),KeyEvent.VK_W, Shortcut.CTRL),
                 false /* register toolbar */
         );
         putValue("toolbar", "wireframe"); 

@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class DownloadAction extends JosmAction {
     public DownloadAction() {
         super(tr("Download from OSM..."), "download", tr("Download map data from the OSM server."),
-                Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM...")), KeyEvent.VK_DOWN, Shortcut.GROUP_HOTKEY+Shortcut.GROUPS_ALT1), true);
+                Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM...")), KeyEvent.VK_DOWN, Shortcut.CTRL_SHIFT), true);
         putValue("help", ht("/Action/Download"));
     }
 

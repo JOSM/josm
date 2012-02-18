@@ -514,7 +514,7 @@ public class MainMenu extends JMenuBar {
 
         current = helpMenu.add(help); // FIXME why is help not a JosmAction?
         current.setAccelerator(Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1,
-                Shortcut.GROUP_DIRECT).getKeyStroke());
+                Shortcut.DIRECT).getKeyStroke());
         add(helpMenu, about);
 
 

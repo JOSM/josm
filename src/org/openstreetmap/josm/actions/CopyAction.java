@@ -22,7 +22,7 @@ public final class CopyAction extends JosmAction {
     public CopyAction() {
         super(tr("Copy"), "copy",
                 tr("Copy selected objects to paste buffer."),
-                Shortcut.registerShortcut("system:copy", tr("Edit: {0}", tr("Copy")), KeyEvent.VK_C, Shortcut.GROUP_MENU), true);
+                Shortcut.registerShortcut("system:copy", tr("Edit: {0}", tr("Copy")), KeyEvent.VK_C, Shortcut.CTRL), true);
         putValue("help", ht("/Action/Copy"));
     }
 

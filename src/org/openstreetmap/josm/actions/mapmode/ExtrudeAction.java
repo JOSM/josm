@@ -126,7 +126,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      */
     public ExtrudeAction(MapFrame mapFrame) {
         super(tr("Extrude"), "extrude/extrude", tr("Create areas"),
-                Shortcut.registerShortcut("mapmode:extrude", tr("Mode: {0}", tr("Extrude")), KeyEvent.VK_X, Shortcut.GROUP_EDIT),
+                Shortcut.registerShortcut("mapmode:extrude", tr("Mode: {0}", tr("Extrude")), KeyEvent.VK_X, Shortcut.DIRECT),
                 mapFrame,
                 ImageProvider.getCursor("normal", "rectangle"));
         putValue("help", ht("/Action/Extrude"));

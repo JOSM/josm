@@ -58,7 +58,7 @@ public class DownloadPrimitiveAction extends JosmAction {
 
     public DownloadPrimitiveAction() {
         super(tr("Download object..."), "downloadprimitive", tr("Download OSM object by ID."),
-                Shortcut.registerShortcut("system:download_primitive", tr("File: {0}", tr("Download object...")), KeyEvent.VK_O, Shortcut.GROUP_MENU + Shortcut.GROUPS_ALT1), true);
+                Shortcut.registerShortcut("system:download_primitive", tr("File: {0}", tr("Download object...")), KeyEvent.VK_O, Shortcut.CTRL_SHIFT), true);
         putValue("help", ht("/Action/DownloadObject"));
     }
 

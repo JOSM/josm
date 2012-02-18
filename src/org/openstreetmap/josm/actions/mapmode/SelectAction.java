@@ -156,7 +156,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
      */
     public SelectAction(MapFrame mapFrame) {
         super(tr("Select"), "move/move", tr("Select, move, scale and rotate objects"),
-                Shortcut.registerShortcut("mapmode:select", tr("Mode: {0}", tr("Select")), KeyEvent.VK_S, Shortcut.GROUP_EDIT),
+                Shortcut.registerShortcut("mapmode:select", tr("Mode: {0}", tr("Select")), KeyEvent.VK_S, Shortcut.DIRECT),
                 mapFrame,
                 ImageProvider.getCursor("normal", "selection"));
         mv = mapFrame.mapView;

@@ -60,7 +60,7 @@ public class PurgeAction extends JosmAction {
         /* translator note: other expressions for "purge" might be "forget", "clean", "obliterate", "prune" */
         super(tr("Purge..."), "purge",  tr("Forget objects but do not delete them on server when uploading."),
                 Shortcut.registerShortcut("system:purge", tr("Edit: {0}", tr("Purge")),
-                KeyEvent.VK_P, Shortcut.GROUP_MENU+Shortcut.GROUPS_ALT1),
+                KeyEvent.VK_P, Shortcut.CTRL_SHIFT),
                 true);
         putValue("help", HelpUtil.ht("/Action/Purge"));
     }

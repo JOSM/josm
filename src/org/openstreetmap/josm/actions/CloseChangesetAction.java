@@ -36,7 +36,7 @@ public class CloseChangesetAction extends JosmAction{
             tr("Closes open changesets"),
             Shortcut.registerShortcut("system:closechangeset",
                 tr("File: {0}", tr("Closes open changesets")),
-                KeyEvent.VK_Q, Shortcut.GROUPS_ALT2+Shortcut.GROUP_HOTKEY),
+                KeyEvent.VK_Q, Shortcut.ALT_CTRL),
             true
         );
         putValue("help", ht("/Action/CloseChangeset"));

@@ -80,32 +80,32 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
 
         if (contentPane != null) {
             contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                Shortcut.registerShortcut("system:movefocusright", tr("Map: {0}", tr("Move right")), KeyEvent.VK_RIGHT, Shortcut.GROUP_HOTKEY).getKeyStroke(),
+                Shortcut.registerShortcut("system:movefocusright", tr("Map: {0}", tr("Move right")), KeyEvent.VK_RIGHT, Shortcut.CTRL).getKeyStroke(),
                 "MapMover.Zoomer.right");
             contentPane.getActionMap().put("MapMover.Zoomer.right", new ZoomerAction("right"));
 
             contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                Shortcut.registerShortcut("system:movefocusleft", tr("Map: {0}", tr("Move left")), KeyEvent.VK_LEFT, Shortcut.GROUP_HOTKEY).getKeyStroke(),
+                Shortcut.registerShortcut("system:movefocusleft", tr("Map: {0}", tr("Move left")), KeyEvent.VK_LEFT, Shortcut.CTRL).getKeyStroke(),
                 "MapMover.Zoomer.left");
             contentPane.getActionMap().put("MapMover.Zoomer.left", new ZoomerAction("left"));
 
             contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                Shortcut.registerShortcut("system:movefocusup", tr("Map: {0}", tr("Move up")), KeyEvent.VK_UP, Shortcut.GROUP_HOTKEY).getKeyStroke(),
+                Shortcut.registerShortcut("system:movefocusup", tr("Map: {0}", tr("Move up")), KeyEvent.VK_UP, Shortcut.CTRL).getKeyStroke(),
                 "MapMover.Zoomer.up");
             contentPane.getActionMap().put("MapMover.Zoomer.up", new ZoomerAction("up"));
 
             contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                Shortcut.registerShortcut("system:movefocusdown", tr("Map: {0}", tr("Move down")), KeyEvent.VK_DOWN, Shortcut.GROUP_HOTKEY).getKeyStroke(),
+                Shortcut.registerShortcut("system:movefocusdown", tr("Map: {0}", tr("Move down")), KeyEvent.VK_DOWN, Shortcut.CTRL).getKeyStroke(),
                 "MapMover.Zoomer.down");
             contentPane.getActionMap().put("MapMover.Zoomer.down", new ZoomerAction("down"));
 
             contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                Shortcut.registerShortcut("view:zoominalternate", tr("Map: {0}", tr("Zoom in")), KeyEvent.VK_COMMA, Shortcut.GROUP_HOTKEY).getKeyStroke(),
+                Shortcut.registerShortcut("view:zoominalternate", tr("Map: {0}", tr("Zoom in")), KeyEvent.VK_COMMA, Shortcut.CTRL).getKeyStroke(),
                 "MapMover.Zoomer.in");
             contentPane.getActionMap().put("MapMover.Zoomer.in", new ZoomerAction(","));
 
             contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                Shortcut.registerShortcut("view:zoomoutalternate", tr("Map: {0}", tr("Zoom out")), KeyEvent.VK_PERIOD, Shortcut.GROUP_HOTKEY).getKeyStroke(),
+                Shortcut.registerShortcut("view:zoomoutalternate", tr("Map: {0}", tr("Zoom out")), KeyEvent.VK_PERIOD, Shortcut.CTRL).getKeyStroke(),
                 "MapMover.Zoomer.out");
             contentPane.getActionMap().put("MapMover.Zoomer.out", new ZoomerAction("."));
         }

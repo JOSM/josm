@@ -50,7 +50,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 tr("Move nodes so all angles are 90 or 180 degrees"),
                 Shortcut.registerShortcut("tools:orthogonalize", tr("Tool: {0}", tr("Orthogonalize Shape")),
                         KeyEvent.VK_Q,
-                        Shortcut.GROUP_EDIT), true);
+                        Shortcut.DIRECT), true);
         putValue("help", ht("/Action/OrthogonalizeShape"));
     }
 
@@ -82,7 +82,7 @@ public final class OrthogonalizeAction extends JosmAction {
                     tr("Undo orthogonalization for certain nodes"),
                     Shortcut.registerShortcut("tools:orthogonalizeUndo", tr("Tool: {0}", tr("Orthogonalize Shape / Undo")),
                             KeyEvent.VK_Q,
-                            Shortcut.GROUP_EDIT+Shortcut.GROUPS_ALT1),
+                            Shortcut.SHIFT),
                     true, "action/orthogonalize/undo", true);
         }
         public void actionPerformed(ActionEvent e) {

@@ -307,7 +307,7 @@ public class JoinAreasAction extends JosmAction {
     public JoinAreasAction() {
         super(tr("Join overlapping Areas"), "joinareas", tr("Joins areas that overlap each other"),
         Shortcut.registerShortcut("tools:joinareas", tr("Tool: {0}", tr("Join overlapping Areas")),
-            KeyEvent.VK_J, Shortcut.GROUP_EDIT+Shortcut.GROUPS_ALT1), true);
+            KeyEvent.VK_J, Shortcut.SHIFT), true);
     }
 
     /**

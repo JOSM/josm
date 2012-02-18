@@ -13,7 +13,7 @@ public class AudioSlowerAction extends AudioFastSlowAction {
 
     public AudioSlowerAction() {
         super(trc("audio", "Slower"), "audio-slower", trc("audio", "Slower Forward"),
-        Shortcut.registerShortcut("audio:slower", tr("Audio: {0}", trc("audio", "Slower")), KeyEvent.VK_F4, Shortcut.GROUP_DIRECT), true);
+        Shortcut.registerShortcut("audio:slower", tr("Audio: {0}", trc("audio", "Slower")), KeyEvent.VK_F4, Shortcut.DIRECT), true);
         this.putValue("help", ht("/Action/AudioSlower"));
     }
 }

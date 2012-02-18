@@ -24,7 +24,7 @@ public class SaveAsAction extends SaveActionBase {
     public SaveAsAction() {
         super(tr("Save As..."), "save_as", tr("Save the current data to a new file."),
             Shortcut.registerShortcut("system:saveas", tr("File: {0}", tr("Save As...")),
-            KeyEvent.VK_S, Shortcut.GROUP_MENU+Shortcut.GROUPS_ALT1));
+            KeyEvent.VK_S, Shortcut.CTRL_SHIFT));
         putValue("help", ht("/Action/SaveAs"));
     }
 

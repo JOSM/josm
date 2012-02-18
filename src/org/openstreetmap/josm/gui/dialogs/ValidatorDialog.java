@@ -86,7 +86,7 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
     public ValidatorDialog() {
         super(tr("Validation Results"), "validator", tr("Open the validation window."),
                 Shortcut.registerShortcut("subwindow:validator", tr("Toggle: {0}", tr("Validation results")),
-                        KeyEvent.VK_V, Shortcut.GROUP_LAYER+Shortcut.GROUPS_ALT1), 150);
+                        KeyEvent.VK_V, Shortcut.ALT_SHIFT), 150);
 
         popupMenu = new JPopupMenu();
 

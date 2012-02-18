@@ -69,7 +69,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     public FilterDialog(){
         super(tr("Filter"), "filter", tr("Filter objects and hide/disable them."),
                 Shortcut.registerShortcut("subwindow:filter", tr("Toggle: {0}", tr("Filter")),
-                KeyEvent.VK_F, Shortcut.GROUP_LAYER+Shortcut.GROUPS_ALT1), 162);
+                KeyEvent.VK_F, Shortcut.ALT_SHIFT), 162);
         build();
 
         MultikeyActionsHandler.getInstance().addAction(new EnableFilterAction());
@@ -91,11 +91,11 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
     private static final Shortcut ENABLE_FILTER_SHORTCUT
     = Shortcut.registerShortcut("core_multikey:enableFilter", tr("Multikey: {0}", tr("Enable filter")),
-    KeyEvent.VK_E, Shortcut.GROUP_DIRECT2+Shortcut.GROUPS_ALT2);
+    KeyEvent.VK_E, Shortcut.ALT_CTRL);
 
     private static final Shortcut HIDING_FILTER_SHORTCUT
     = Shortcut.registerShortcut("core_multikey:hidingFilter", tr("Multikey: {0}", tr("Hide filter")),
-    KeyEvent.VK_H, Shortcut.GROUP_DIRECT2+Shortcut.GROUPS_ALT2);
+    KeyEvent.VK_H, Shortcut.ALT_CTRL);
 
 
     protected final String[] columnToolTips = {
