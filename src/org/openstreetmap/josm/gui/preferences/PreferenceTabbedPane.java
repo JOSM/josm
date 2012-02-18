@@ -67,12 +67,12 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
          */
         boolean validatePreferences();
     }
-    
+
     private static interface PreferenceTab {
         public TabPreferenceSetting getTabPreferenceSetting();
         public Component getComponent();
     }
-    
+
     public static class PreferencePanel extends JPanel implements PreferenceTab {
         private final TabPreferenceSetting preferenceSetting;
 
@@ -82,7 +82,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
             this.preferenceSetting = preferenceSetting;
             buildPanel();
         }
-        
+
         protected void buildPanel() {
             setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
             add(new JLabel(preferenceSetting.getTitle()), GBC.eol().insets(0,5,0,10).anchor(GBC.NORTHWEST));
@@ -131,7 +131,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
     private final List<PreferenceTab> tabs = new ArrayList<PreferenceTab>();
     private final static Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<PreferenceSettingFactory>();
     private final List<PreferenceSetting> settings = new ArrayList<PreferenceSetting>();
-    
+
     // distinct list of tabs that have been initialized (we do not initialize tabs until they are displayed to speed up dialog startup)
     private final List<PreferenceSetting> settingsInitialized = new ArrayList<PreferenceSetting>();
 
@@ -178,7 +178,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
     private static interface TabIdentifier {
         public boolean identify(TabPreferenceSetting tps, Object param);
     }
-    
+
     private void selectTabBy(TabIdentifier method, Object param) {
         for (int i=0; i<getTabCount(); i++) {
             Component c = getComponentAt(i);
@@ -191,7 +191,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
             }
         }
     }
-    
+
     public void selectTabByName(String name) {
         selectTabBy(new TabIdentifier(){
             @Override
@@ -207,17 +207,21 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                 return tps.getClass().isAssignableFrom((Class<?>) clazz);
             }}, clazz);
     }
-    
+
     public final DisplayPreference getDisplayPreference() {
         return getSetting(DisplayPreference.class);
     }
-    
+
     public final MapPreference getMapPreference() {
         return getSetting(MapPreference.class);
     }
-    
+
     public final PluginPreference getPluginPreference() {
         return getSetting(PluginPreference.class);
+    }
+
+    public final ImageryPreference getImageryPreference() {
+        return getSetting(ImageryPreference.class);
     }
 
     public void savePreferences() {
@@ -328,7 +332,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
             }
         }
     }
-    
+
     private void insertGUITabsForSetting(Icon icon, TabPreferenceSetting tps, int index) {
         int position = index;
         for (PreferenceTab tab : tabs) {
@@ -337,7 +341,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
             }
         }
     }
-    
+
     private void addGUITabs(boolean clear) {
         boolean expert = ExpertToggleAction.isExpert();
         Component sel = getSelectedComponent();
@@ -368,7 +372,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
             }
         } catch (IllegalArgumentException e) {}
     }
-    
+
     @Override
     public void expertChanged(boolean isExpert) {
         addGUITabs(true);

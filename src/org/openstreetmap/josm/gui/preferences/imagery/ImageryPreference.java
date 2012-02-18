@@ -93,11 +93,11 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
             return new ImageryPreference();
         }
     }
-    
+
     private ImageryPreference() {
         super("imagery", tr("Imagery Preferences"), tr("Modify list of imagery layers displayed in the Imagery menu"));
     }
-    
+
     private ImageryProvidersPanel imageryProviders;
     private ImageryLayerInfo layerInfo;
 
