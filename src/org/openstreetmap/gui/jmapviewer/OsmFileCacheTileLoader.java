@@ -476,13 +476,38 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
         this.cacheDirBase = dir.getAbsolutePath();
     }
     
+    public static interface TileClearController {
+
+        void initClearDir(File dir);
+
+        void initClearFiles(File[] files);
+
+        boolean cancel();
+
+        void fileDeleted(File file);
+
+        void clearFinished();
+    }
+    
     public void clearCache(TileSource source) {
+        clearCache(source, null);
+    }
+    
+    public void clearCache(TileSource source, TileClearController controller) {
         File dir = getSourceCacheDir(source);
-        if (dir.isDirectory()) {
-            for (File file : dir.listFiles()) {
-                file.delete();
+        if (dir != null) {
+            if (controller != null) controller.initClearDir(dir);
+            if (dir.isDirectory()) {
+                File[] files = dir.listFiles();
+                if (controller != null) controller.initClearFiles(files);
+                for (File file : files) {
+                    if (controller != null && controller.cancel()) return;
+                    file.delete();
+                    if (controller != null) controller.fileDeleted(file);
+                }
             }
+            dir.delete();
         }
-        dir.delete();
+        if (controller != null) controller.clearFinished();
     }
 }
