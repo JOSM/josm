@@ -19,8 +19,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,6 +44,7 @@ import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JobDispatcher;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
+import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader.TileClearController;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
@@ -63,11 +70,16 @@ import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
+import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
 import org.openstreetmap.josm.io.CacheCustomContent;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Class that displays a slippy map layer.
@@ -136,12 +148,53 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     {
         return tileCache;
     }
+    
+    private class TmsTileClearController implements TileClearController, CancelListener {
 
-    void clearTileCache()
+        private final ProgressMonitor monitor;
+        private boolean cancel = false;
+        
+        public TmsTileClearController(ProgressMonitor monitor) {
+            this.monitor = monitor;
+            this.monitor.addCancelListener(this);
+        }
+
+        @Override
+        public void initClearDir(File dir) {
+        }
+
+        @Override
+        public void initClearFiles(File[] files) {
+            monitor.setTicksCount(files.length);
+            monitor.setTicks(0);
+        }
+
+        @Override
+        public boolean cancel() {
+            return cancel;
+        }
+
+        @Override
+        public void fileDeleted(File file) {
+            monitor.setTicks(monitor.getTicks()+1);
+        }
+
+        @Override
+        public void clearFinished() {
+            monitor.finishTask();
+        }
+
+        @Override
+        public void operationCanceled() {
+            cancel = true;
+        }
+    }
+
+    void clearTileCache(ProgressMonitor monitor)
     {
         tileCache.clear();
         if (tileLoader instanceof OsmFileCacheTileLoader) {
-            ((OsmFileCacheTileLoader)tileLoader).clearCache(tileSource);
+            ((OsmFileCacheTileLoader)tileLoader).clearCache(tileSource, new TmsTileClearController(monitor));
         }
     }
 
@@ -511,7 +564,23 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 new AbstractAction(tr("Flush Tile Cache")) {
                     @Override
                     public void actionPerformed(ActionEvent ae) {
-                        clearTileCache();
+                        new PleaseWaitRunnable(tr("Flush Tile Cache")) {
+                            
+                            @Override
+                            protected void realRun() throws SAXException, IOException,
+                                    OsmTransferException {
+                                clearTileCache(getProgressMonitor());
+                            }
+                            
+                            @Override
+                            protected void finish() {
+                            }
+                            
+                            @Override
+                            protected void cancel() {
+                            }
+                        }.run();
+                        
                     }
                 }));
         // end of adding menu commands
