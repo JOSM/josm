@@ -27,7 +27,6 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -147,44 +146,11 @@ public class PrefJPanel extends JPanel {
     private void initComponents() {
         JPanel listPane = new JPanel();
         JScrollPane listScrollPane = new JScrollPane();
-        JTabbedPane prefTabPane = new JTabbedPane();
         JPanel shortcutEditPane = new JPanel();
-        JPanel shortcutTab = new JPanel();
-        JPanel infoTab = new JPanel();
 
         CbAction action = new CbAction(this);
-
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-        // If someone wants to move this text into some resource, feel free.
-        infoTab.setLayout(new BoxLayout(shortcutTab, BoxLayout.Y_AXIS));
-        JEditorPane editor = new JEditorPane();
-        editor.setEditable(false);
-        editor.setContentType("text/html");
-        editor.setText(
-                tr("<h1><a name=\"top\">Keyboard Shortcuts</a></h1>")+
-                tr("<br>")+
-                tr("<p>Please note that shortcut keys are assigned to the actions when JOSM is started. So you need to <b>restart</b> "
-                    +"JOSM to see your changes.</p>")+
-                tr("<br>")+
-                tr("<p>Furthermore, the shortcuts are activated when the actions are assigned to a menu entry of a button for the first "
-                    +"time. So some of your changes may become active even without restart --- but also without collision handling. "
-                    +"This is another reason to <b>restart</b> JOSM after making any changes here.</p>")+
-                tr("<br>")+
-                tr("<p>You may notice that the key selection list on the next page lists all keys that exist on all kinds of keyboards "
-                    +"Java knows about, not just those keys that exist on your keyboard. Please only use values that correspond to "
-                    +"a real key on your keyboard. If your keyboard has no ''Copy'' key (PC keyboard do not have them, Sun keyboards do), "
-                    +"then do not use it. Also there are ''keys'' listed that correspond to a shortcut on your keyboard (e.g. '':''/Colon). "
-                    +"Please do not use them either, use the base key ('';''/Semicolon on US keyboards, ''.''/Period on German keyboards, etc.) "
-                    +"instead. Not doing so may result in conflicts, as there is no way for JOSM to know that Ctrl+Shift+; and Ctrl+: "
-                    +"actually is the same thing on an US keyboard.</p>")
-        );
-        editor.setCaretPosition(0); // scroll up
-        prefTabPane.addTab(tr("Read First"), new JScrollPane(editor));
-
-        shortcutTab.setLayout(new BoxLayout(shortcutTab, BoxLayout.Y_AXIS));
-
-        shortcutTab.add(buildFilterPanel());
+        add(buildFilterPanel());
         listPane.setLayout(new java.awt.GridLayout());
 
         // This is the list of shortcuts:
@@ -197,7 +163,7 @@ public class PrefJPanel extends JPanel {
 
         listPane.add(listScrollPane);
 
-        shortcutTab.add(listPane);
+        add(listPane);
 
         // and here follows the edit area. I won't object to someone re-designing it, it looks, um, "minimalistic" ;)
         shortcutEditPane.setLayout(new java.awt.GridLayout(5, 2));
@@ -231,11 +197,7 @@ public class PrefJPanel extends JPanel {
 
         action.actionPerformed(null); // init checkboxes
 
-        shortcutTab.add(shortcutEditPane);
-
-        prefTabPane.addTab(tr("Keyboard Shortcuts"), shortcutTab);
-
-        add(prefTabPane);
+        add(shortcutEditPane);
     }
 
     private JPanel buildFilterPanel() {
