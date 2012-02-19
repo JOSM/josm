@@ -45,8 +45,8 @@ public class PlatformHookUnixoid implements PlatformHook {
         // TODO: Insert system shortcuts here. See Windows and especially OSX to see how to.
         for(int i = KeyEvent.VK_F1; i <= KeyEvent.VK_F12; ++i)
             Shortcut.registerSystemShortcut("screen:toogle"+i, tr("reserved"), i, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
-        Shortcut.registerSystemShortcut("system:reset", tr("reserved"), VK_DELETE, CTRL_DOWN_MASK | ALT_DOWN_MASK).setAutomatic();
-        Shortcut.registerSystemShortcut("system:resetX", tr("reserved"), VK_BACKSPACE, CTRL_DOWN_MASK | ALT_DOWN_MASK).setAutomatic();
+        Shortcut.registerSystemShortcut("system:reset", tr("reserved"), KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
+        Shortcut.registerSystemShortcut("system:resetX", tr("reserved"), KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
     }
     /**
      * This should work for all platforms. Yeah, should.
