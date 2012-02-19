@@ -95,10 +95,10 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         Shortcut.registerSystemShortcut("apple-reserved-19", tr("reserved"), KeyEvent.VK_F6, KeyEvent.CTRL_DOWN_MASK).setAutomatic(); // Move focus to the first (or next) panel. See Accessibility Overview.
         Shortcut.registerSystemShortcut("apple-reserved-20", tr("reserved"), KeyEvent.VK_F6, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK).setAutomatic(); // Move focus to the previous panel. See Accessibility Overview.
         Shortcut.registerSystemShortcut("apple-reserved-21", tr("reserved"), KeyEvent.VK_F7, KeyEvent.CTRL_DOWN_MASK).setAutomatic(); // Temporarily override the current keyboard access mode in windows and dialogs. See Accessibility Overview.
-        Shortcut.registerSystemShortcut("apple-reserved-22", tr("reserved"), KeyEvent.VK_F9, 0).setAutomatic(); // Tile or untile all open windows.
-        Shortcut.registerSystemShortcut("apple-reserved-23", tr("reserved"), KeyEvent.VK_F10, 0).setAutomatic(); // Tile or untile all open windows in the currently active application.
-        Shortcut.registerSystemShortcut("apple-reserved-24", tr("reserved"), KeyEvent.VK_F11, 0).setAutomatic(); // Hide or show all open windows.
-        Shortcut.registerSystemShortcut("apple-reserved-25", tr("reserved"), KeyEvent.VK_F12, 0).setAutomatic(); // Hide or display Dashboard.
+        //Shortcut.registerSystemShortcut("apple-reserved-22", tr("reserved"), KeyEvent.VK_F9, 0).setAutomatic(); // Tile or untile all open windows.
+        //Shortcut.registerSystemShortcut("apple-reserved-23", tr("reserved"), KeyEvent.VK_F10, 0).setAutomatic(); // Tile or untile all open windows in the currently active application.
+        //Shortcut.registerSystemShortcut("apple-reserved-24", tr("reserved"), KeyEvent.VK_F11, 0).setAutomatic(); // Hide or show all open windows.
+        //Shortcut.registerSystemShortcut("apple-reserved-25", tr("reserved"), KeyEvent.VK_F12, 0).setAutomatic(); // Hide or display Dashboard.
         Shortcut.registerSystemShortcut("apple-reserved-26", tr("reserved"), KeyEvent.VK_DEAD_GRAVE, KeyEvent.META_DOWN_MASK).setAutomatic(); // Activate the next open window in the frontmost application. See "Window Layering."
         Shortcut.registerSystemShortcut("apple-reserved-27", tr("reserved"), KeyEvent.VK_DEAD_GRAVE, KeyEvent.META_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK).setAutomatic(); // Activate the previous open window in the frontmost application. See "Window Layering."
         Shortcut.registerSystemShortcut("apple-reserved-28", tr("reserved"), KeyEvent.VK_DEAD_GRAVE, KeyEvent.META_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic(); // Move focus to the window drawer.
