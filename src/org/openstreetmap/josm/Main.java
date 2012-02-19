@@ -381,10 +381,7 @@ abstract public class Main {
     }
 
     public static void registerActionShortcut(Action action, Shortcut shortcut) {
-        registerActionShortcut(action, shortcut.getKeyStroke());
-    }
-
-    public static void registerActionShortcut(Action action, KeyStroke keyStroke) {
+        KeyStroke keyStroke = shortcut.getKeyStroke();
         if (keyStroke == null)
             return;
 
@@ -410,7 +407,6 @@ abstract public class Main {
         contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(shortcut.getKeyStroke());
         contentPanePrivate.getActionMap().remove(action);
     }
-
 
     ///////////////////////////////////////////////////////////////////////////
     //  Implementation part
