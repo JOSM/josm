@@ -1,6 +1,10 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.preferences;
 
+/**
+ * Base interface of Preferences settings, should not be directly implemented, 
+ * see {@link TabPreferenceSetting} and {@link SubPreferenceSetting}.
+ */
 public interface PreferenceSetting {
     /**
      * Add the GUI elements to the dialog. The elements should be initialized after
