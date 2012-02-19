@@ -7,7 +7,9 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +20,8 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -42,6 +46,8 @@ import org.xml.sax.SAXException;
  * @author imi
  */
 public class OpenFileAction extends DiskAccessAction {
+
+    public static final ExtensionFileFilter urlFileFilter = new ExtensionFileFilter("url", "url", tr("URL Files") + " (*.url)");
 
     /**
      * Create an open action. The name is "Open a file".
@@ -236,6 +242,7 @@ public class OpenFileAction extends DiskAccessAction {
                 // find appropriate importer
                 MultiMap<FileImporter, File> importerMap = new MultiMap<FileImporter, File>();
                 List<File> filesWithUnknownImporter = new LinkedList<File>();
+                List<File> urlFiles = new LinkedList<File>();
                 FILES: for (File f : files) {
                     for (FileImporter importer : ExtensionFileFilter.importers) {
                         if (importer.acceptFile(f)) {
@@ -243,7 +250,11 @@ public class OpenFileAction extends DiskAccessAction {
                             continue FILES;
                         }
                     }
-                    filesWithUnknownImporter.add(f);
+                    if (urlFileFilter.accept(f)) {
+                        urlFiles.add(f);
+                    } else {
+                        filesWithUnknownImporter.add(f);
+                    }
                 }
                 if (!filesWithUnknownImporter.isEmpty()) {
                     alertFilesWithUnknownImporter(filesWithUnknownImporter);
@@ -270,6 +281,23 @@ public class OpenFileAction extends DiskAccessAction {
                         for (File f : failedFiles) {
                             failedAll.add(f.getCanonicalPath());
                         }
+                    }
+                }
+                
+                for (File urlFile: urlFiles) {
+                    try {
+                        BufferedReader reader = new BufferedReader(new FileReader(urlFile));
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            Matcher m = Pattern.compile(".*(http://.*)").matcher(line);
+                            if (m.matches()) {
+                                String url = m.group(1);
+                                Main.main.menu.openLocation.openUrl(false, url);
+                            }
+                        }
+                        reader.close();
+                    } catch (Exception e) {
+                        System.err.println(e.getMessage());
                     }
                 }
 
