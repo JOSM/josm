@@ -1,6 +1,11 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.preferences;
 
+/**
+ * Preference settings, that display a top level tab.
+ *
+ * This preference setting's addGui method is called after the user clicked the tab.
+ */
 public interface TabPreferenceSetting extends PreferenceSetting {
     
     /**
