@@ -479,7 +479,7 @@ public class Shortcut {
             for (int m : mods) {
                 for (int k : keys) {
                     int newmodifier = getGroupModifier(m);
-                    if ( findShortcut(k, m) == null ) {
+                    if ( findShortcut(k, newmodifier) == null ) {
                         Shortcut newsc = new Shortcut(shortText, longText, requestedKey, m, k, newmodifier, false, false);
                         System.out.println(tr("Silent shortcut conflict: ''{0}'' moved by ''{1}'' to ''{2}''.",
                             shortText, conflict.getShortText(), newsc.getKeyText()));
