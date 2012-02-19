@@ -23,6 +23,7 @@ import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction.MultikeyInfo;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public class MultikeyActionsHandler {
 
@@ -39,7 +40,7 @@ public class MultikeyActionsHandler {
             if (lastAction != null && e.getID() == KeyEvent.KEY_PRESSED) {
                 int index = getIndex(e.getKeyCode());
                 if (index >= 0) {
-                    lastAction.action.executeMultikeyAction(index, e.getKeyCode() == lastAction.shortcut.getKeyCode());
+                    lastAction.action.executeMultikeyAction(index, e.getKeyCode() == lastAction.shortcut.getKeyStroke().getKeyCode());
                 }
                 lastAction = null;
                 Main.map.statusLine.resetHelpText(STATUS_BAR_ID);
@@ -63,11 +64,11 @@ public class MultikeyActionsHandler {
     private class MyAction extends AbstractAction {
 
         final MultikeyShortcutAction action;
-        final KeyStroke shortcut;
+        final Shortcut shortcut;
 
         MyAction(MultikeyShortcutAction action) {
             this.action = action;
-            this.shortcut = (KeyStroke) action.getValue(ACCELERATOR_KEY);
+            this.shortcut = action.getMultikeyShortcut();
         }
 
         @Override
@@ -101,7 +102,6 @@ public class MultikeyActionsHandler {
                 MultikeyActionsHandler.this.lastAction = null;
             }
         }
-
     }
 
     private long lastTimestamp;
@@ -142,7 +142,7 @@ public class MultikeyActionsHandler {
                 pnTitle.add(lbTitle);
                 layers.add(pnTitle);
 
-                char repeatKey = (char) action.shortcut.getKeyCode();
+                char repeatKey = (char) action.shortcut.getKeyStroke().getKeyCode();
                 boolean repeatKeyUsed = false;
 
 
@@ -152,7 +152,7 @@ public class MultikeyActionsHandler {
                         repeatKeyUsed = true;
                     }
 
-                    JMenuItem item = new JMenuItem(formatMenuText(action.shortcut, String.valueOf(info.getShortcut()), info.getDescription()));
+                    JMenuItem item = new JMenuItem(formatMenuText(action.shortcut.getKeyStroke(), String.valueOf(info.getShortcut()), info.getDescription()));
                     item.setMnemonic(info.getShortcut());
                     item.addActionListener(new ActionListener() {
                         @Override
@@ -166,10 +166,10 @@ public class MultikeyActionsHandler {
                 if (!repeatKeyUsed) {
                     MultikeyInfo lastLayer = action.action.getLastMultikeyAction();
                     if (lastLayer != null) {
-                        JMenuItem repeateItem = new JMenuItem(formatMenuText(action.shortcut,
-                                KeyEvent.getKeyText(action.shortcut.getKeyCode()),
+                        JMenuItem repeateItem = new JMenuItem(formatMenuText(action.shortcut.getKeyStroke(),
+                                KeyEvent.getKeyText(action.shortcut.getKeyStroke().getKeyCode()),
                                 "Repeat " + lastLayer.getDescription()));
-                        repeateItem.setMnemonic(action.shortcut.getKeyCode());
+                        repeateItem.setMnemonic(action.shortcut.getKeyStroke().getKeyCode());
                         repeateItem.addActionListener(new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
@@ -200,11 +200,9 @@ public class MultikeyActionsHandler {
     }
 
     public void addAction(MultikeyShortcutAction action) {
-        if (!(action.getValue(Action.ACCELERATOR_KEY) instanceof KeyStroke))
-            throw new IllegalArgumentException("Action must have shortcut set");
-        MyAction myAction = new MyAction(action);
-        Main.registerActionShortcut(myAction, myAction.shortcut);
+        if(action.getMultikeyShortcut() != null) {
+            MyAction myAction = new MyAction(action);
+            Main.registerActionShortcut(myAction, myAction.shortcut);
+        }
     }
-
-
 }

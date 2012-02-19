@@ -431,6 +431,7 @@ public class LayerListDialog extends ToggleDialog {
     public final class ShowHideLayerAction extends AbstractAction implements IEnabledStateUpdating, LayerAction, MultikeyShortcutAction {
 
         private WeakReference<Layer> lastLayer;
+        private Shortcut multikeyShortcut;
 
         /**
          * Creates a {@see ShowHideLayerAction} which will toggle the visibility of
@@ -441,8 +442,8 @@ public class LayerListDialog extends ToggleDialog {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "showhide"));
             putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the selected layer."));
             putValue("help", HelpUtil.ht("/Dialog/LayerList#ShowHideLayer"));
-            Shortcut.registerShortcut("core_multikey:showHideLayer", tr("Multikey: {0}",
-            tr("Show/hide layer")), KeyEvent.VK_S, Shortcut.SHIFT).setAccelerator(this);
+            multikeyShortcut = Shortcut.registerShortcut("core_multikey:showHideLayer", tr("Multikey: {0}",
+            tr("Show/hide layer")), KeyEvent.VK_S, Shortcut.SHIFT);
             if (init) {
                 updateEnabledState();
             }
@@ -450,6 +451,11 @@ public class LayerListDialog extends ToggleDialog {
 
         public ShowHideLayerAction() {
             this(true);
+        }
+
+        @Override
+        public Shortcut getMultikeyShortcut() {
+            return multikeyShortcut;
         }
 
         @Override
@@ -617,6 +623,7 @@ public class LayerListDialog extends ToggleDialog {
 
     public final class ActivateLayerAction extends AbstractAction implements IEnabledStateUpdating, MapView.LayerChangeListener, MultikeyShortcutAction{
         private  Layer layer;
+        private Shortcut multikeyShortcut;
 
         public ActivateLayerAction(Layer layer) {
             this();
@@ -629,9 +636,14 @@ public class LayerListDialog extends ToggleDialog {
         public ActivateLayerAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "activate"));
             putValue(SHORT_DESCRIPTION, tr("Activate the selected layer"));
-            Shortcut.registerShortcut("core_multikey:activateLayer", tr("Multikey: {0}",
-            tr("Activate layer")), KeyEvent.VK_A, Shortcut.SHIFT).setAccelerator(this);
+            multikeyShortcut = Shortcut.registerShortcut("core_multikey:activateLayer", tr("Multikey: {0}",
+            tr("Activate layer")), KeyEvent.VK_A, Shortcut.SHIFT);
             putValue("help", HelpUtil.ht("/Dialog/LayerList#ActivateLayer"));
+        }
+
+        @Override
+        public Shortcut getMultikeyShortcut() {
+            return multikeyShortcut;
         }
 
         @Override

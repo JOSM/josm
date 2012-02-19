@@ -336,7 +336,11 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
         EnableFilterAction() {
             putValue(SHORT_DESCRIPTION, tr("Enable filter"));
-            ENABLE_FILTER_SHORTCUT.setAccelerator(this);
+        }
+
+        @Override
+        public Shortcut getMultikeyShortcut() {
+            return ENABLE_FILTER_SHORTCUT;
         }
 
         @Override
@@ -355,7 +359,11 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
         public HidingFilterAction() {
             putValue(SHORT_DESCRIPTION, tr("Hiding filter"));
-            HIDING_FILTER_SHORTCUT.setAccelerator(this);
+        }
+
+        @Override
+        public Shortcut getMultikeyShortcut() {
+            return HIDING_FILTER_SHORTCUT;
         }
 
         @Override
