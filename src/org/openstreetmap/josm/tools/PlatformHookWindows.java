@@ -50,7 +50,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         // Shortcuts with setAutomatic(): items with automatic shortcuts will not be added to the menu bar at all
 
         // Don't know why Ctrl-Alt-Del isn't even listed on official Microsoft support page
-        Shortcut.registerSystemShortcut("microsoft-reserved-00", tr("reserved"), VK_DELETE, CTRL_DOWN_MASK | ALT_DOWN_MASK).setAutomatic();
+        Shortcut.registerSystemShortcut("system:reset", tr("reserved"), VK_DELETE, CTRL_DOWN_MASK | ALT_DOWN_MASK).setAutomatic();
 
         // Ease of Access keyboard shortcuts
         Shortcut.registerSystemShortcut("microsoft-reserved-01", tr("reserved"), VK_PRINTSCREEN, ALT_DOWN_MASK | SHIFT_DOWN_MASK).setAutomatic(); // Turn High Contrast on or off

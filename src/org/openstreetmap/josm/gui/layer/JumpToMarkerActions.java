@@ -31,14 +31,20 @@ public class JumpToMarkerActions {
 
         private final Layer layer;
         private WeakReference<Layer> lastLayer;
+        private Shortcut multikeyShortcut;
 
         public JumpToNextMarker(JumpToMarkerLayer layer) {
-            Shortcut.registerShortcut("core_multikey:nextMarker", tr("Multikey: {0}", tr("Next marker")),
-                KeyEvent.VK_J, Shortcut.ALT_CTRL).setAccelerator(this);
+            multikeyShortcut = Shortcut.registerShortcut("core_multikey:nextMarker", tr("Multikey: {0}", tr("Next marker")),
+                KeyEvent.VK_J, Shortcut.ALT_CTRL);
             putValue(SHORT_DESCRIPTION, tr("Jump to next marker"));
             putValue(NAME, tr("Jump to next marker"));
 
             this.layer = (Layer)layer;
+        }
+
+        @Override
+        public Shortcut getMultikeyShortcut() {
+            return multikeyShortcut;
         }
 
         @Override
@@ -85,6 +91,7 @@ public class JumpToMarkerActions {
 
         private WeakReference<Layer> lastLayer;
         private final Layer layer;
+        private Shortcut multikeyShortcut;
 
         public JumpToPreviousMarker(JumpToMarkerLayer layer) {
             this.layer = (Layer)layer;
@@ -93,6 +100,11 @@ public class JumpToMarkerActions {
                 KeyEvent.VK_P, Shortcut.ALT_CTRL).setAccelerator(this);
             putValue(SHORT_DESCRIPTION, tr("Jump to previous marker"));
             putValue(NAME, tr("Jump to previous marker"));
+        }
+
+        @Override
+        public Shortcut getMultikeyShortcut() {
+            return multikeyShortcut;
         }
 
         @Override

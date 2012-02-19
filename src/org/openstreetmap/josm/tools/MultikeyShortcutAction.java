@@ -34,6 +34,8 @@ public interface MultikeyShortcutAction extends Action {
         }
     }
 
+    public Shortcut getMultikeyShortcut();
+
     void executeMultikeyAction(int index, boolean repeatLastAction);
     List<MultikeyInfo> getMultikeyCombinations();
     MultikeyInfo getLastMultikeyAction();
