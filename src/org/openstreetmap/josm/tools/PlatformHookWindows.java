@@ -62,15 +62,15 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         Shortcut.registerSystemShortcut("system:copy", tr("reserved"), VK_C, CTRL_DOWN_MASK);                // Copy the selected item
         Shortcut.registerSystemShortcut("system:cut", tr("reserved"), VK_X, CTRL_DOWN_MASK);                 // Cut the selected item
         Shortcut.registerSystemShortcut("system:paste", tr("reserved"), VK_V, CTRL_DOWN_MASK);               // Paste the selected item
-        Shortcut.registerSystemShortcut("system:undo", tr("reserved"), VK_Z, CTRL_DOWN_MASK);                    // Undo an action
-        Shortcut.registerSystemShortcut("system:redo", tr("reserved"), VK_Y, CTRL_DOWN_MASK);                    // Redo an action
+        Shortcut.registerSystemShortcut("system:undo", tr("reserved"), VK_Z, CTRL_DOWN_MASK);                // Undo an action
+        Shortcut.registerSystemShortcut("system:redo", tr("reserved"), VK_Y, CTRL_DOWN_MASK);                // Redo an action
         //Shortcut.registerSystemCut("microsoft-reserved-10", "reserved", VK_DELETE, 0);                  // Delete the selected item and move it to the Recycle Bin
         //Shortcut.registerSystemCut("microsoft-reserved-11", "reserved", VK_DELETE, SHIFT_DOWN_MASK);    // Delete the selected item without moving it to the Recycle Bin first
         //Shortcut.registerSystemCut("system:rename", tr("reserved"), VK_F2, 0);                          // Rename the selected item
-        Shortcut.registerSystemShortcut("microsoft-reserved-13", tr("reserved"), VK_RIGHT, CTRL_DOWN_MASK).setAutomatic();  // Move the cursor to the beginning of the next word
-        Shortcut.registerSystemShortcut("microsoft-reserved-14", tr("reserved"), VK_LEFT, CTRL_DOWN_MASK).setAutomatic();   // Move the cursor to the beginning of the previous word
-        Shortcut.registerSystemShortcut("microsoft-reserved-15", tr("reserved"), VK_DOWN, CTRL_DOWN_MASK).setAutomatic();   // Move the cursor to the beginning of the next paragraph
-        Shortcut.registerSystemShortcut("microsoft-reserved-16", tr("reserved"), VK_UP, CTRL_DOWN_MASK).setAutomatic();     // Move the cursor to the beginning of the previous paragraph
+        Shortcut.registerSystemShortcut("system:movefocusright", tr("reserved"), VK_RIGHT, CTRL_DOWN_MASK);  // Move the cursor to the beginning of the next word
+        Shortcut.registerSystemShortcut("system:movefocusleft", tr("reserved"), VK_LEFT, CTRL_DOWN_MASK);    // Move the cursor to the beginning of the previous word
+        Shortcut.registerSystemShortcut("system:movefocusdown", tr("reserved"), VK_DOWN, CTRL_DOWN_MASK);    // Move the cursor to the beginning of the next paragraph
+        Shortcut.registerSystemShortcut("system:movefocusup", tr("reserved"), VK_UP, CTRL_DOWN_MASK);        // Move the cursor to the beginning of the previous paragraph
         //Shortcut.registerSystemCut("microsoft-reserved-17", tr("reserved"), VK_RIGHT, CTRL_DOWN_MASK | SHIFT_DOWN_MASK); // Select a block of text
         //Shortcut.registerSystemCut("microsoft-reserved-18", tr("reserved"), VK_LEFT, CTRL_DOWN_MASK | SHIFT_DOWN_MASK);  // Select a block of text
         //Shortcut.registerSystemCut("microsoft-reserved-19", tr("reserved"), VK_DOWN, CTRL_DOWN_MASK | SHIFT_DOWN_MASK);  // Select a block of text
