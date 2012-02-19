@@ -289,24 +289,6 @@ public class Shortcut {
                                  KeyEvent.VK_F5, KeyEvent.VK_F6, KeyEvent.VK_F7, KeyEvent.VK_F8,
                                  KeyEvent.VK_F9, KeyEvent.VK_F10, KeyEvent.VK_F11, KeyEvent.VK_F12};
 
-    /* old */
-    @Deprecated public static final int GROUP_NONE = 0;
-    @Deprecated public static final int GROUP_HOTKEY = 1;
-    @Deprecated public static final int GROUP_MENU = 2;
-    @Deprecated public static final int GROUP_EDIT = 3;
-    @Deprecated public static final int GROUP_LAYER = 4;
-    @Deprecated public static final int GROUP_DIRECT = 5;
-    @Deprecated public static final int GROUP_MNEMONIC = 6;
-    @Deprecated public static final int GROUP_DIRECT2 = 7;
-    @Deprecated public static final int GROUP_DIRECT3 = 8;
-    @Deprecated public static final int GROUPS_DEFAULT = 0;
-    @Deprecated public static final int GROUPS_ALT1 = 100;
-    @Deprecated public static final int GROUPS_ALT2 = 200;
-    @Deprecated public static final int SHIFT_DEFAULT = 1;
-    @Deprecated public static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup, int modifier) {
-        return registerShortcut(shortText, longText, requestedKey, requestedGroup, new Integer(modifier));
-    }
-
     // bootstrap
     private static boolean initdone = false;
     private static void doInit() {
@@ -322,37 +304,6 @@ public class Shortcut {
         groups.put(ALT_CTRL, KeyEvent.ALT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK);
         groups.put(CTRL_SHIFT, KeyEvent.CTRL_DOWN_MASK|KeyEvent.SHIFT_DOWN_MASK);
         groups.put(ALT_CTRL_SHIFT, KeyEvent.ALT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK|KeyEvent.SHIFT_DOWN_MASK);
-
-        /* old */
-        groups.put(GROUPS_DEFAULT+GROUP_NONE,    -1);
-        groups.put(GROUPS_DEFAULT+GROUP_HOTKEY,  KeyEvent.CTRL_DOWN_MASK);
-        groups.put(GROUPS_DEFAULT+GROUP_MENU,    KeyEvent.CTRL_DOWN_MASK);
-        groups.put(GROUPS_DEFAULT+GROUP_EDIT,    0);
-        groups.put(GROUPS_DEFAULT+GROUP_LAYER,   KeyEvent.ALT_DOWN_MASK);
-        groups.put(GROUPS_DEFAULT+GROUP_DIRECT,  0);
-        groups.put(GROUPS_DEFAULT+GROUP_MNEMONIC,KeyEvent.ALT_DOWN_MASK);
-        groups.put(GROUPS_DEFAULT+GROUP_DIRECT2, KeyEvent.ALT_DOWN_MASK);
-        groups.put(GROUPS_DEFAULT+GROUP_DIRECT3, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
-
-        groups.put(GROUPS_ALT1+GROUP_NONE,       -1);
-        groups.put(GROUPS_ALT1+GROUP_HOTKEY,     KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
-        groups.put(GROUPS_ALT1+GROUP_MENU,       KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
-        groups.put(GROUPS_ALT1+GROUP_EDIT,       KeyEvent.SHIFT_DOWN_MASK);
-        groups.put(GROUPS_ALT1+GROUP_LAYER,      KeyEvent.ALT_DOWN_MASK  | KeyEvent.SHIFT_DOWN_MASK);
-        groups.put(GROUPS_ALT1+GROUP_DIRECT,     KeyEvent.SHIFT_DOWN_MASK);
-        groups.put(GROUPS_ALT1+GROUP_MNEMONIC,   KeyEvent.ALT_DOWN_MASK);
-        groups.put(GROUPS_ALT1+GROUP_DIRECT2,    KeyEvent.ALT_DOWN_MASK  | KeyEvent.SHIFT_DOWN_MASK);
-        groups.put(GROUPS_ALT1+GROUP_DIRECT3,    KeyEvent.ALT_DOWN_MASK  | KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
-
-        groups.put(GROUPS_ALT2+GROUP_NONE,       -1);
-        groups.put(GROUPS_ALT2+GROUP_HOTKEY,     KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK);
-        groups.put(GROUPS_ALT2+GROUP_MENU,       KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK);
-        groups.put(GROUPS_ALT2+GROUP_EDIT,       KeyEvent.ALT_DOWN_MASK  | KeyEvent.SHIFT_DOWN_MASK);
-        groups.put(GROUPS_ALT2+GROUP_LAYER,      KeyEvent.SHIFT_DOWN_MASK);
-        groups.put(GROUPS_ALT2+GROUP_DIRECT,     KeyEvent.CTRL_DOWN_MASK);
-        groups.put(GROUPS_ALT2+GROUP_MNEMONIC,   KeyEvent.ALT_DOWN_MASK);
-        groups.put(GROUPS_ALT2+GROUP_DIRECT2,    KeyEvent.ALT_DOWN_MASK  | KeyEvent.CTRL_DOWN_MASK);
-        groups.put(GROUPS_ALT2+GROUP_DIRECT3,    KeyEvent.META_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK);
 
         // (1) System reserved shortcuts
         Main.platform.initSystemShortcuts();
@@ -392,22 +343,6 @@ public class Shortcut {
     }
 
     private static int findModifier(int group, Integer modifier) {
-        Integer defaultModifier = getGroupModifier(group);
-        if(modifier != null) {
-            if(modifier == SHIFT_DEFAULT) {
-                defaultModifier |= KeyEvent.SHIFT_DOWN_MASK;
-            } else {
-                defaultModifier = modifier;
-            }
-        }
-        else if (defaultModifier == null) { // garbage in, no shortcut out
-            defaultModifier = getGroupModifier(NONE);
-        }
-        return defaultModifier;
-    }
-
-/*  NEW function: 
-    private static int findModifier(int group, Integer modifier) {
         if(modifier == null) {
             modifier = getGroupModifier(group);
             if (modifier == null) { // garbage in, no shortcut out
@@ -415,7 +350,7 @@ public class Shortcut {
             }
         }
         return modifier;
-    }*/
+    }
 
     // shutdown handling
     public static boolean savePrefs() {
