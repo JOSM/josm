@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
+import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -38,6 +39,8 @@ public class CoordinateInfoViewer extends JPanel {
     private LatLonViewer referenceLatLonViewer;
     /** the info panel for coordinates for the node in role CURRENT_POINT_IN_TIME */
     private LatLonViewer currentLatLonViewer;
+    /** the info panel for distance between the two coordinates */
+    private DistanceViewer distanceViewer;
 
     protected void build() {
         setLayout(new GridBagLayout());
@@ -82,6 +85,16 @@ public class CoordinateInfoViewer extends JPanel {
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.NORTHWEST;
         add(currentLatLonViewer = new LatLonViewer(model, PointInTimeType.CURRENT_POINT_IN_TIME), gc);
+
+        // --------------------
+        // the distance panel
+        gc.gridx = 0;
+        gc.gridy = 2;
+        gc.gridwidth = 2;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.weightx = 1.0;
+        gc.weighty = 0.0;
+        add(distanceViewer = new DistanceViewer(model), gc);
     }
 
     /**
@@ -109,6 +122,9 @@ public class CoordinateInfoViewer extends JPanel {
         if (referenceLatLonViewer != null) {
             model.deleteObserver(referenceLatLonViewer);
         }
+        if (distanceViewer != null) {
+            model.deleteObserver(distanceViewer);
+        }
     }
 
     protected void registerAsObserver(HistoryBrowserModel model) {
@@ -123,6 +139,9 @@ public class CoordinateInfoViewer extends JPanel {
         }
         if (referenceLatLonViewer != null) {
             model.addObserver(referenceLatLonViewer);
+        }
+        if (distanceViewer != null) {
+            model.addObserver(distanceViewer);
         }
     }
 
@@ -258,6 +277,59 @@ public class CoordinateInfoViewer extends JPanel {
 
         public void update(Observable o, Object arg) {
             refresh();
+        }
+    }
+    
+    private static class DistanceViewer extends LatLonViewer {
+
+        private JLabel lblDistance;
+        
+        public DistanceViewer(HistoryBrowserModel model) {
+            super(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
+        }
+
+        protected void build() {
+            setLayout(new GridBagLayout());
+            setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+            GridBagConstraints gc = new GridBagConstraints();
+
+            // --------
+            gc.gridx = 0;
+            gc.gridy = 0;
+            gc.fill = GridBagConstraints.NONE;
+            gc.weightx = 0.0;
+            gc.insets = new Insets(5,5,5,5);
+            gc.anchor = GridBagConstraints.NORTHWEST;
+            add(new JLabel(tr("Distance: ")), gc);
+
+            // --------
+            gc.gridx = 1;
+            gc.gridy = 0;
+            gc.fill = GridBagConstraints.HORIZONTAL;
+            gc.weightx = 1.0;
+            add(lblDistance = new JLabel(), gc);
+            lblDistance.setBackground(Color.WHITE);
+            lblDistance.setOpaque(true);
+            lblDistance.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+        }
+
+        protected void refresh() {
+            HistoryOsmPrimitive p = getPrimitive();
+            HistoryOsmPrimitive opposite = getOppositePrimitive();
+            if (p == null || ! ( p instanceof HistoryNode)) return;
+            if (opposite == null || ! (opposite instanceof HistoryNode)) return;
+            HistoryNode node = (HistoryNode) p;
+            HistoryNode oppositeNode = (HistoryNode) opposite;
+
+            // update distance
+            //
+            double distance = node.getCoords().greatCircleDistance(oppositeNode.getCoords());
+            if (distance > 0) {
+                lblDistance.setBackground(BGCOLOR_DIFFERENCE);
+            } else {
+                lblDistance.setBackground(Color.WHITE);
+            }
+            lblDistance.setText(NavigatableComponent.getDistText(distance));
         }
     }
 }
