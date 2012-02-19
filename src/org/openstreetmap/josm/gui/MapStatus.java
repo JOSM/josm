@@ -16,7 +16,6 @@ import java.awt.Point;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
-import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -31,9 +30,7 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -50,7 +47,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor.ProgressMonitorDialog;
-import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -278,7 +274,7 @@ public class MapStatus extends JPanel implements Helpful {
                                         }
                                     }
 
-                                    // Set the text label in the bottom status bar 
+                                    // Set the text label in the bottom status bar
                                     // "if mouse moved only" was added to stop heap growing
                                     if (!mouseNotMoved) statusBarElementUpdate(ms);
 
@@ -717,11 +713,10 @@ public class MapStatus extends JPanel implements Helpful {
         add(helpText, GBC.std().insets(3,0,0,0).fill(GBC.HORIZONTAL));
 
         progressBar.setMaximum(PleaseWaitProgressMonitor.PROGRESS_BAR_MAX);
-        {
-            GBC gbc = GBC.eol();
-            gbc.ipadx = 100;
-            add(progressBar,gbc);
-        }
+        progressBar.setVisible(false);
+        GBC gbc = GBC.eol();
+        gbc.ipadx = 100;
+        add(progressBar,gbc);
         progressBar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
