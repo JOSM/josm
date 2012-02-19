@@ -64,8 +64,8 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         Shortcut.registerSystemShortcut("system:paste", tr("reserved"), VK_V, CTRL_DOWN_MASK);               // Paste the selected item
         Shortcut.registerSystemShortcut("system:undo", tr("reserved"), VK_Z, CTRL_DOWN_MASK);                // Undo an action
         Shortcut.registerSystemShortcut("system:redo", tr("reserved"), VK_Y, CTRL_DOWN_MASK);                // Redo an action
-        //Shortcut.registerSystemCut("microsoft-reserved-10", "reserved", VK_DELETE, 0);                  // Delete the selected item and move it to the Recycle Bin
-        //Shortcut.registerSystemCut("microsoft-reserved-11", "reserved", VK_DELETE, SHIFT_DOWN_MASK);    // Delete the selected item without moving it to the Recycle Bin first
+        //Shortcut.registerSystemCut("microsoft-reserved-10", tr("reserved"), VK_DELETE, 0);                  // Delete the selected item and move it to the Recycle Bin
+        //Shortcut.registerSystemCut("microsoft-reserved-11", tr("reserved"), VK_DELETE, SHIFT_DOWN_MASK);    // Delete the selected item without moving it to the Recycle Bin first
         //Shortcut.registerSystemCut("system:rename", tr("reserved"), VK_F2, 0);                          // Rename the selected item
         Shortcut.registerSystemShortcut("system:movefocusright", tr("reserved"), VK_RIGHT, CTRL_DOWN_MASK);  // Move the cursor to the beginning of the next word
         Shortcut.registerSystemShortcut("system:movefocusleft", tr("reserved"), VK_LEFT, CTRL_DOWN_MASK);    // Move the cursor to the beginning of the previous word
@@ -98,7 +98,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         //Shortcut.registerSystemCut("microsoft-reserved-41", tr("reserved"), VK_F4, 0);                  // Display the address bar list in Windows Explorer
         Shortcut.registerSystemShortcut("microsoft-reserved-42", tr("reserved"), VK_F10, SHIFT_DOWN_MASK);   // Display the shortcut menu for the selected item
         Shortcut.registerSystemShortcut("microsoft-reserved-43", tr("reserved"), VK_ESCAPE, CTRL_DOWN_MASK).setAutomatic(); // Open the Start menu
-        Shortcut.registerSystemShortcut("microsoft-reserved-44", tr("reserved"), VK_F10, 0);                 // Activate the menu bar in the active program
+        //Shortcut.registerSystemShortcut("microsoft-reserved-44", tr("reserved"), VK_F10, 0);                 // Activate the menu bar in the active program
         //Shortcut.registerSystemCut("microsoft-reserved-45", tr("reserved"), VK_RIGHT, 0);               // Open the next menu to the right, or open a submenu
         //Shortcut.registerSystemCut("microsoft-reserved-46", tr("reserved"), VK_LEFT, 0);                // Open the next menu to the left, or close a submenu
         //Shortcut.registerSystemCut("microsoft-reserved-47", tr("reserved"), VK_F5, 0);                  // Refresh the active window
