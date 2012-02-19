@@ -8,11 +8,14 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
@@ -23,6 +26,7 @@ import java.util.concurrent.Future;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -32,6 +36,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
@@ -44,7 +50,7 @@ import org.openstreetmap.josm.gui.progress.SwingRenderingProgressMonitor;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
-public class SaveLayersDialog extends JDialog {
+public class SaveLayersDialog extends JDialog implements TableModelListener {
     static public enum UserAction {
         /**
          * save/upload layers was successful, proceed with operation
@@ -75,16 +81,19 @@ public class SaveLayersDialog extends JDialog {
         getContentPane().setLayout(new BorderLayout());
 
         model = new SaveLayersModel();
-        SaveLayersTable table;
-        JScrollPane pane = new JScrollPane(table = new SaveLayersTable(model));
+        SaveLayersTable table = new SaveLayersTable(model);
+        JScrollPane pane = new JScrollPane(table);
         model.addPropertyChangeListener(table);
+        table.getModel().addTableModelListener(this);
+
         getContentPane().add(pane, BorderLayout.CENTER);
         getContentPane().add(buildButtonRow(), BorderLayout.SOUTH);
-        table.getTableHeader().setPreferredSize(new Dimension(table.getTableHeader().getWidth(), 40));
 
         addWindowListener(new WindowClosingAdapter());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     }
+
+    private SideButton saveAndProceedActionButton = null;
 
     /**
      * builds the button row
@@ -97,7 +106,7 @@ public class SaveLayersDialog extends JDialog {
 
         saveAndProceedAction = new SaveAndProceedAction();
         model.addPropertyChangeListener(saveAndProceedAction);
-        pnl.add(new SideButton(saveAndProceedAction));
+        pnl.add(saveAndProceedActionButton = new SideButton(saveAndProceedAction));
 
         discardAndProceedAction = new DiscardAndProceedAction();
         model.addPropertyChangeListener(discardAndProceedAction);
@@ -326,13 +335,13 @@ public class SaveLayersDialog extends JDialog {
         }
 
         public void initForDiscardAndExit() {
-            putValue(NAME, tr("Discard and Exit"));
+            putValue(NAME, tr("Exit now!"));
             putValue(SHORT_DESCRIPTION, tr("Exit JOSM without saving. Unsaved changes are lost."));
             putValue(SMALL_ICON, ImageProvider.get("exit"));
         }
 
         public void initForDiscardAndDelete() {
-            putValue(NAME, tr("Discard and Delete"));
+            putValue(NAME, tr("Delete now!"));
             putValue(SHORT_DESCRIPTION, tr("Delete layers without saving. Unsaved changes are lost."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
         }
@@ -352,21 +361,47 @@ public class SaveLayersDialog extends JDialog {
         }
     }
 
-    class SaveAndProceedAction extends AbstractAction implements PropertyChangeListener {
+    final class SaveAndProceedAction extends AbstractAction implements PropertyChangeListener {
+        private static final int is = 24; // icon size
+        private static final String BASE_ICON = "BASE_ICON";
+        private final Image save = ImageProvider.get("save").getImage();
+        private final Image upld = ImageProvider.get("upload").getImage();
+        private final Image saveDis = new BufferedImage(is, is, BufferedImage.TYPE_4BYTE_ABGR);
+        private final Image upldDis = new BufferedImage(is, is, BufferedImage.TYPE_4BYTE_ABGR);
+
         public SaveAndProceedAction() {
+            // get disabled versions of icons
+            new JLabel(ImageProvider.get("save")).getDisabledIcon().paintIcon(new JPanel(), saveDis.getGraphics(), 0, 0);
+            new JLabel(ImageProvider.get("upload")).getDisabledIcon().paintIcon(new JPanel(), upldDis.getGraphics(), 0, 0);
             initForSaveAndExit();
         }
 
         public void initForSaveAndExit() {
-            putValue(NAME, tr("Save/Upload and Exit"));
+            putValue(NAME, tr("Perform actions before exiting"));
             putValue(SHORT_DESCRIPTION, tr("Exit JOSM with saving. Unsaved changes are uploaded and/or saved."));
-            putValue(SMALL_ICON, ImageProvider.get("exit"));
+            putValue(BASE_ICON, ImageProvider.get("exit"));
+            redrawIcon();
         }
 
         public void initForSaveAndDelete() {
-            putValue(NAME, tr("Save/Upload and Delete"));
+            putValue(NAME, tr("Perform actions before deleting"));
             putValue(SHORT_DESCRIPTION, tr("Save/Upload layers before deleting. Unsaved changes are not lost."));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+            putValue(BASE_ICON, ImageProvider.get("dialogs", "delete"));
+            redrawIcon();
+        }
+
+        public void redrawIcon() {
+            try { // Can fail if model is not yet setup properly
+                Image base = ((ImageIcon) getValue(BASE_ICON)).getImage();
+                BufferedImage newIco = new BufferedImage(is*3, is, BufferedImage.TYPE_4BYTE_ABGR);
+                Graphics2D g = newIco.createGraphics();
+                g.drawImage(model.getLayersToUpload().isEmpty() ? upldDis : upld, is*0, 0, is, is, null);
+                g.drawImage(model.getLayersToSave().isEmpty()   ? saveDis : save, is*1, 0, is, is, null);
+                g.drawImage(base,                                                 is*2, 0, is, is, null);
+                putValue(SMALL_ICON, new ImageIcon(newIco));
+            } catch(Exception e) {
+                putValue(SMALL_ICON, getValue(BASE_ICON));
+            }
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -544,5 +579,14 @@ public class SaveLayersDialog extends JDialog {
             }
             canceled = true;
         }
+    }
+
+    @Override
+    public void tableChanged(TableModelEvent arg0) {
+        boolean dis = model.getLayersToSave().isEmpty() && model.getLayersToUpload().isEmpty();
+        if(saveAndProceedActionButton != null) {
+            saveAndProceedActionButton.setEnabled(!dis);
+        }
+        saveAndProceedAction.redrawIcon();
     }
 }

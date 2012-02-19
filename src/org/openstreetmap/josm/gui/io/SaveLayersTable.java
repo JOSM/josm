@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
+import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -12,6 +13,9 @@ class SaveLayersTable extends JTable implements PropertyChangeListener {
     public SaveLayersTable(SaveLayersModel model) {
         super(model, new SaveLayersTableColumnModel());
         putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        super.setRowHeight(39);
+        super.getTableHeader().setPreferredSize(new Dimension(super.getTableHeader().getWidth(), 24));
+        super.getTableHeader().setReorderingAllowed(false);
     }
 
     public void propertyChange(PropertyChangeEvent evt) {

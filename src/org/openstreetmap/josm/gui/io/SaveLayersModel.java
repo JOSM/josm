@@ -24,6 +24,10 @@ public class SaveLayersModel extends DefaultTableModel {
     private Mode mode;
     private PropertyChangeSupport support;
 
+    // keep in sync with how the columns are ordered in SaveLayersTableColumnModel#build
+    private static final int columnFilename = 0;
+    private static final int columnActions = 2;
+
     public SaveLayersModel() {
         mode = Mode.EDITING_DATA;
         support = new PropertyChangeSupport(this);
@@ -82,18 +86,21 @@ public class SaveLayersModel extends DefaultTableModel {
 
     @Override
     public boolean isCellEditable(int row, int column) {
-        return column == 3 || column == 4 || column == 5;
+        return column == columnFilename || column == columnActions;
     }
 
     @Override
     public void setValueAt(Object value, int row, int column) {
         switch(column) {
-            case 3 /* file name */:
-                this.layerInfo.get(row).setFile((File)value);
-                this.layerInfo.get(row).setDoSaveToFile(true);
-                break;
-            case 4 /* upload */: this.layerInfo.get(row).setDoUploadToServer((Boolean)value);break;
-            case 5 /* save */: this.layerInfo.get(row).setDoSaveToFile((Boolean)value);break;
+        case columnFilename:
+            this.layerInfo.get(row).setFile((File)value);
+            this.layerInfo.get(row).setDoSaveToFile(true);
+            break;
+        case columnActions:
+            boolean[] values = (boolean[]) value;
+            this.layerInfo.get(row).setDoUploadToServer(values[0]);
+            this.layerInfo.get(row).setDoSaveToFile(values[1]);
+            break;
         }
         fireTableDataChanged();
     }
@@ -103,7 +110,7 @@ public class SaveLayersModel extends DefaultTableModel {
     }
 
     public List<SaveLayerInfo> getLayersWithoutFilesAndSaveRequest() {
-        List<SaveLayerInfo> ret =new ArrayList<SaveLayerInfo>();
+        List<SaveLayerInfo> ret = new ArrayList<SaveLayerInfo>();
         for (SaveLayerInfo info: layerInfo) {
             if (info.isDoSaveToFile() && info.getFile() == null) {
                 ret.add(info);
@@ -214,5 +221,4 @@ public class SaveLayersModel extends DefaultTableModel {
         }
         return ret;
     }
-
 }
