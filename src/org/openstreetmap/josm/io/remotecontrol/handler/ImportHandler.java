@@ -3,7 +3,9 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.HashMap;
 
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
@@ -22,7 +24,7 @@ public class ImportHandler extends RequestHandler {
     protected void handleRequest() throws RequestHandlerErrorException {
         try {
             DownloadTask osmTask = new DownloadOsmTask();
-            osmTask.loadUrl(false, URLDecoder.decode(args.get("url"), "UTF-8"), null);
+            osmTask.loadUrl(false, args.get("url"), null);
         } catch (Exception ex) {
             System.out.println("RemoteControl: Error parsing import remote control request:");
             ex.printStackTrace();
@@ -47,5 +49,43 @@ public class ImportHandler extends RequestHandler {
     {
         return new PermissionPrefWithDefault(permissionKey, permissionDefault,
                 "RemoteControl: import forbidden by preferences");
+    }
+
+    @Override
+    protected void parseArgs() {
+        HashMap<String, String> args = new HashMap<String, String>();
+        if (request.indexOf('?') != -1) {
+            String query = request.substring(request.indexOf('?') + 1);
+            if (query.indexOf("url=") == 0) {
+                args.put("url", decodeURL(query.substring(4)));
+            } else {
+                int urlIdx = query.indexOf("&url=");
+                if (urlIdx != -1) {
+                    String url = query.substring(urlIdx + 1);
+                    args.put("url", decodeURL(query.substring(urlIdx + 5)));
+                    query = query.substring(0, urlIdx);
+                } else {
+                    if (query.indexOf('#') != -1) {
+                        query = query.substring(0, query.indexOf('#'));
+                    }
+                }
+                String[] params = query.split("&", -1);
+                for (String param : params) {
+                    int eq = param.indexOf('=');
+                    if (eq != -1) {
+                        args.put(param.substring(0, eq), param.substring(eq + 1));
+                    }
+                }
+            }
+        }
+        this.args = args;
+    }
+
+    private String decodeURL(String url) {
+        try {
+            return URLDecoder.decode(url, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException();
+        }
     }
 }

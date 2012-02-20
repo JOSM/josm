@@ -54,61 +54,40 @@ public class ImageryHandler extends RequestHandler {
     }
 
     @Override
-    public void parseArgs() {
-        StringTokenizer st = new StringTokenizer(request, "&?");
+    protected void parseArgs() {
         HashMap<String, String> args = new HashMap<String, String>();
-        // skip first element which is the command
-        if(st.hasMoreTokens()) {
-            st.nextToken();
-        }
-        while (st.hasMoreTokens()) {
-            String param = st.nextToken();
-            int eq = param.indexOf("=");
-            if (eq > -1)
-            {
-                String key = param.substring(0, eq);
-                /* "url=" terminates normal parameters
-                 * and will be handled separately
-                 */
-                if("url".equals(key)) {
-                    break;
+        if (request.indexOf('?') != -1) {
+            String query = request.substring(request.indexOf('?') + 1);
+            if (query.indexOf("url=") == 0) {
+                args.put("url", decodeURL(query.substring(4)));
+            } else {
+                int urlIdx = query.indexOf("&url=");
+                if (urlIdx != -1) {
+                    String url = query.substring(urlIdx + 1);
+                    args.put("url", decodeURL(query.substring(urlIdx + 5)));
+                    query = query.substring(0, urlIdx);
+                } else {
+                    if (query.indexOf('#') != -1) {
+                        query = query.substring(0, query.indexOf('#'));
+                    }
                 }
-
-                String value = param.substring(eq + 1);
-                // urldecode all normal values
-                try {
-                    value = URLDecoder.decode(value, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                args.put(key,
-                        value);
-            }
-        }
-        // url as second or later parameter
-        int urlpos = request.indexOf("&url=");
-        // url as first (and only) parameter
-        if(urlpos < 0) {
-            urlpos = request.indexOf("?url=");
-        }
-        // url found?
-        if(urlpos >= 0) {
-            // URL value
-            String value = request.substring(urlpos + 5);
-            // allow skipping URL decoding with urldecode=false
-            String urldecode = args.get("urldecode");
-            if((urldecode == null) || (Boolean.valueOf(urldecode) == true))
-            {
-                try {
-                    value = URLDecoder.decode(value, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                String[] params = query.split("&", -1);
+                for (String param : params) {
+                    int eq = param.indexOf('=');
+                    if (eq != -1) {
+                        args.put(param.substring(0, eq), param.substring(eq + 1));
+                    }
                 }
             }
-            args.put("url", value);
         }
         this.args = args;
+    }
+
+    private String decodeURL(String url) {
+        try {
+            return URLDecoder.decode(url, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException();
+        }
     }
 }
