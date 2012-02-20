@@ -55,9 +55,10 @@ public class OsmUrlToBounds {
                 Double maxlon = Double.parseDouble(s);
                 b = new Bounds(new LatLon(minlat, minlon), new LatLon(maxlat, maxlon));
             } else {
+                String z = map.get("zoom");
                 b = positionToBounds(parseDouble(map, "lat"),
                         parseDouble(map, "lon"),
-                        Integer.parseInt(map.get("zoom")));
+                        z == null ? 18 : Integer.parseInt(z));
             }
         } catch (NumberFormatException x) {
             x.printStackTrace();
