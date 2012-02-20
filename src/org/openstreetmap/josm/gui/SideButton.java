@@ -3,11 +3,13 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -22,10 +24,12 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class SideButton extends JButton {
+    private final static int iconHeight = 20;
+
     public SideButton(Action action)
     {
         super(action);
-        fixIcon();
+        fixIcon(action);
         doStyle();
     }
 
@@ -34,7 +38,7 @@ public class SideButton extends JButton {
         super(action);
         if(!usename)
             setText(null);
-        fixIcon();
+        fixIcon(action);
         doStyle();
     }
 
@@ -45,18 +49,34 @@ public class SideButton extends JButton {
         doStyle();
     }
 
-    void fixIcon() {
-        Icon i = getIcon();
-        if(i != null && i instanceof ImageIcon)
-        {
-            Image im = ((ImageIcon) i).getImage();
-            setIcon(new ImageIcon(im.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+    void fixIcon(Action action) {
+        // need to listen for changes, so that putValue() that are called after the
+        // SideButton is constructed get the proper icon size
+        if(action != null) {
+            action.addPropertyChangeListener(new PropertyChangeListener() {
+                @Override
+                public void propertyChange(PropertyChangeEvent evt) {
+                    if(evt.getPropertyName() == javax.swing.Action.SMALL_ICON) {
+                        fixIcon(null);
+                    }
+                }
+            });
         }
+        Icon i = getIcon();
+        if(i != null && i instanceof ImageIcon && i.getIconHeight() != iconHeight) {
+            setIcon(getScaledImage(((ImageIcon) i).getImage()));
+        }
+    }
+
+    /** scales the given image proportionally so that the height is "iconHeight" **/
+    private static ImageIcon getScaledImage(Image im) {
+        int newWidth = im.getWidth(null) *  iconHeight / im.getHeight(null);
+        return new ImageIcon(im.getScaledInstance(newWidth, iconHeight, Image.SCALE_SMOOTH));
     }
 
     public static ImageIcon makeIcon(String imagename) {
         Image im = ImageProvider.get("dialogs", imagename).getImage();
-        return new ImageIcon(im.getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+        return getScaledImage(im);
     }
 
     public SideButton(String imagename, String property, String tooltip, ActionListener actionListener)
