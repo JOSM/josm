@@ -64,16 +64,7 @@ public class ShortcutPreference extends DefaultTabPreferenceSetting {
             return columnNames[col];
         }
         public Object getValueAt(int row, int col) {
-            Shortcut sc = data.get(row);
-            if (col == 0)
-                return sc.getLongText();
-            else if (col == 1)
-                return sc.getKeyText();
-            else
-                // This is a kind of hack that allows the actions on the editing controls
-                // to access the underlying shortcut object without introducing another
-                // method. I opted to stay within the interface.
-                return sc;
+            return data.get(row);
         }
         @Override
         public boolean isCellEditable(int row, int col) {
