@@ -20,7 +20,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @author Bodo Meissner
  */
 public abstract class RequestHandler {
-    
+
     public static final String globalConfirmationKey = "remotecontrol.always-confirm";
     public static final boolean globalConfirmationDefault = false;
     public static final String loadInNewLayerKey = "remotecontrol.new-layer";
@@ -154,16 +154,19 @@ public abstract class RequestHandler {
      * Can be overridden by subclass.
      */
     protected void parseArgs() {
-        StringTokenizer st = new StringTokenizer(this.request, "&?");
         HashMap<String, String> args = new HashMap<String, String>();
-        // ignore first token which is the command
-        if(st.hasMoreTokens()) st.nextToken();
-        while (st.hasMoreTokens()) {
-            String param = st.nextToken();
-            int eq = param.indexOf("=");
-            if (eq > -1)
-                args.put(param.substring(0, eq),
-                         param.substring(eq + 1));
+        if (this.request.indexOf('?') != -1) {
+            String query = this.request.substring(this.request.indexOf('?') + 1);
+            if (query.indexOf('#') != -1) {
+                query = query.substring(0, query.indexOf('#'));
+            }
+            String[] params = query.split("&", -1);
+            for (String param : params) {
+                int eq = param.indexOf('=');
+                if (eq != -1) {
+                    args.put(param.substring(0, eq), param.substring(eq + 1));
+                }
+            }
         }
         this.args = args;
     }
@@ -236,7 +239,7 @@ public abstract class RequestHandler {
             super(message);
         }
     }
-    
+
     public static class RequestHandlerForbiddenException extends RequestHandlerException {
         private static final long serialVersionUID = 2263904699747115423L;
     }
