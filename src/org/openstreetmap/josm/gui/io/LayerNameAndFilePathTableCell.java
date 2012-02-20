@@ -172,7 +172,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
             // remove ellipsis, if present
             t = hasEllipsis ? t.substring(ellipsis.length()) : t;
             // cut next block, and re-add ellipsis
-            t = ellipsis + t.split(separator, 2)[1];
+            t = ellipsis + t.substring(t.indexOf(separator) + 1);
             hasEllipsis = true;
         }
         return t;
