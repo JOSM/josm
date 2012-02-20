@@ -7,8 +7,6 @@ import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
 /**
  * Manager class for remote control operations.
  *
- * To allow API there is a @see getVersion() method.
- *
  * IMPORTANT! increment the minor version on compatible API extensions
  * and increment the major version and set minor to 0 on incompatible changes.
  */
@@ -19,12 +17,6 @@ public class RemoteControl
      * it should not start the server.
      */
     public static final BooleanProperty PROP_REMOTECONTROL_ENABLED = new BooleanProperty("remotecontrol.enabled", false);
-
-    /** API version
-     * IMPORTANT! update the version number on API changes.
-     */
-    static final int apiMajorVersion = 1;
-    static final int apiMinorVersion = 0;
 
     /**
      * RemoteControl HTTP protocol version. Change minor number for compatible
@@ -42,11 +34,12 @@ public class RemoteControl
      * to avoid ClassNotFound errors with old versions of remotecontrol.
      *
      * @return array of integer version numbers:
-     *    apiMajorVersion, apiMinorVersion, protocolMajorVersion, protocolMajorVersion
+     *    apiMajorVersion (obsolete), apiMinorVersion (obsolete), protocolMajorVersion, protocolMajorVersion
      */
+    @Deprecated
     public int[] getVersion()
     {
-        int versions[] = {apiMajorVersion, apiMinorVersion, protocolMajorVersion, protocolMajorVersion};
+        int versions[] = {1, 0, protocolMajorVersion, protocolMajorVersion};
         return versions;
     }
 
