@@ -1,12 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.shortcut;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
@@ -39,6 +42,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumnModel;
 
 import javax.swing.table.TableRowSorter;
 import org.openstreetmap.josm.Main;
@@ -143,6 +148,41 @@ public class PrefJPanel extends JPanel {
         initComponents();
     }
 
+    private static class ShortcutTableCellRenderer extends DefaultTableCellRenderer {
+
+        private boolean name;
+
+        public ShortcutTableCellRenderer(boolean name) {
+            this.name = name;
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean
+                isSelected, boolean hasFocus, int row, int column) {
+            if(value instanceof Shortcut)
+            {
+                Shortcut sc = (Shortcut) value;
+                JLabel label = (JLabel) super.getTableCellRendererComponent(
+                    table, name ? sc.getLongText() : sc.getKeyText(), isSelected, hasFocus, row, column);
+                label.setBackground(Main.pref.getUIColor("Table.background"));
+                if (isSelected) {
+                    label.setForeground(Main.pref.getUIColor("Table.foreground"));
+                }
+                if(sc.getAssignedUser()) {
+                    label.setBackground(Main.pref.getColor(
+                            marktr("Shortcut Background: User"),
+                            new Color(200,255,200)));
+                } else if(!sc.getAssignedDefault()) {
+                    label.setBackground(Main.pref.getColor(
+                            marktr("Shortcut Background: Modified"),
+                            new Color(255,255,200)));
+                }
+                return label;
+            }
+            return null;
+        }
+    }
+
     private void initComponents() {
         JPanel listPane = new JPanel();
         JScrollPane listScrollPane = new JScrollPane();
@@ -159,6 +199,9 @@ public class PrefJPanel extends JPanel {
         shortcutTable.setFillsViewportHeight(true);
         shortcutTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         shortcutTable.setAutoCreateRowSorter(true);
+        TableColumnModel mod = shortcutTable.getColumnModel();
+        mod.getColumn(0).setCellRenderer(new ShortcutTableCellRenderer(true));
+        mod.getColumn(1).setCellRenderer(new ShortcutTableCellRenderer(false));
         listScrollPane.setViewportView(shortcutTable);
 
         listPane.add(listScrollPane);
@@ -267,7 +310,7 @@ public class PrefJPanel extends JPanel {
                     panel.cbDefault.setEnabled(true);
                     actionPerformed(null);
                 }
-                model.fireTableCellUpdated(row, 1);
+                model.fireTableRowsUpdated(row, row);
             } else {
                 panel.disableAllModifierCheckboxes();
                 panel.tfKey.setEnabled(false);
