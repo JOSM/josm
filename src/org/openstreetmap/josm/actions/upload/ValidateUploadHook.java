@@ -1,6 +1,7 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.actions.upload;
 
+import java.awt.Dimension;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
@@ -128,6 +129,7 @@ public class ValidateUploadHook implements UploadHook
                 + tr("Informational warnings, expect many false entries.")+"</td></tr>"
                 + "</table>"
         );
+        pnlMessage.setPreferredSize(new Dimension(500, 150));
         p.add(pnlMessage, GBC.eol());
         p.add(new JScrollPane(errorPanel), GBC.eol().fill(GBC.BOTH));
 
