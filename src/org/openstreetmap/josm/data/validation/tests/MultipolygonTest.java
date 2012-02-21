@@ -117,6 +117,7 @@ public class MultipolygonTest extends Test {
     public void visit(Way w) {
         if (!w.isClosed() && ElemStyles.hasAreaElemStyle(w, false)) {
             List<Node> nodes = w.getNodes();
+            if (nodes.size()<1) return; // fix zero nodes bug
             errors.add(new TestError(this, Severity.WARNING, tr("Area style way is not closed"), NOT_CLOSED,
                     Collections.singletonList(w), Arrays.asList(nodes.get(0), nodes.get(nodes.size() - 1))));
         }
@@ -196,6 +197,7 @@ public class MultipolygonTest extends Test {
 
             List<Node> openNodes = new LinkedList<Node>();
             for (List<Node> w : nonClosedWays) {
+                if (w.size()<1) continue;
                 openNodes.add(w.get(0));
                 openNodes.add(w.get(w.size() - 1));
             }
