@@ -16,7 +16,7 @@ public class DownloadOsmUrlTask extends DownloadOsmTask {
     @Override
     public boolean acceptsUrl(String url) {
         return url != null && (
-                url.matches("http://www\\.openstreetmap\\.org/\\?lat=.*&lon=.*&zoom=.*")
+                url.matches("http://www\\.openstreetmap\\.org/\\?lat=.*&lon=.*")
                 );
     }
 }
