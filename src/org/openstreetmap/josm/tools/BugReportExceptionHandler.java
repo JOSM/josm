@@ -142,7 +142,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                                 p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")), GBC.eop());
                             }
 
-                            JTextArea info = new JTextArea(text, 20, 60);
+                            JTextArea info = new JTextArea(text, 18, 60);
                             info.setCaretPosition(0);
                             info.setEditable(false);
                             p.add(new JScrollPane(info), GBC.eop());

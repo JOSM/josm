@@ -119,7 +119,7 @@ public class MainMenu extends JMenuBar {
     public final OpenFileAction openFile = new OpenFileAction();
     public final RecentlyOpenedFilesMenu recentlyOpened = new RecentlyOpenedFilesMenu();
     public final OpenLocationAction openLocation = new OpenLocationAction();
-    public final JosmAction save = new SaveAction();
+    public final JosmAction save = SaveAction.getInstance();
     public final JosmAction saveAs = new SaveAsAction();
     public JosmAction sessionLoad;
     public JosmAction sessionSaveAs;
