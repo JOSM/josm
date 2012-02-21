@@ -18,9 +18,9 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -34,8 +34,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import org.w3c.dom.Element;
-
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -45,6 +43,7 @@ import org.openstreetmap.josm.io.OsmWriterFactory;
 import org.openstreetmap.josm.io.session.SessionWriter.ExportSupport;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.w3c.dom.Element;
 
 public class OsmDataSessionExporter implements SessionLayerExporter {
 
@@ -74,7 +73,7 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
         }
 
         public void actionPerformed(ActionEvent e) {
-            new SaveAction().doSave(layer);
+            SaveAction.getInstance().doSave(layer);
             updateEnabledState();
         }
 

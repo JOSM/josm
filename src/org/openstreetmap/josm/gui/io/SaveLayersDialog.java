@@ -28,6 +28,7 @@ import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -43,7 +44,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.SwingRenderingProgressMonitor;
@@ -93,7 +93,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     }
 
-    private SideButton saveAndProceedActionButton = null;
+    private JButton saveAndProceedActionButton = null;
 
     /**
      * builds the button row
@@ -106,14 +106,14 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
         saveAndProceedAction = new SaveAndProceedAction();
         model.addPropertyChangeListener(saveAndProceedAction);
-        pnl.add(saveAndProceedActionButton = new SideButton(saveAndProceedAction));
+        pnl.add(saveAndProceedActionButton = new JButton(saveAndProceedAction));
 
         discardAndProceedAction = new DiscardAndProceedAction();
         model.addPropertyChangeListener(discardAndProceedAction);
-        pnl.add(new SideButton(discardAndProceedAction));
+        pnl.add(new JButton(discardAndProceedAction));
 
         cancelAction = new CancelAction();
-        pnl.add(new SideButton(cancelAction));
+        pnl.add(new JButton(cancelAction));
 
         JPanel pnl2 = new JPanel();
         pnl2.setLayout(new BorderLayout());

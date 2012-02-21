@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -32,9 +33,8 @@ public abstract class SaveActionBase extends DiskAccessAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled()) {
+        if (!isEnabled())
             return;
-        }
         boolean saved = doSave();
         if (saved) {
             addToFileOpenHistory();
@@ -59,13 +59,13 @@ public abstract class SaveActionBase extends DiskAccessAction {
         return doInternalSave(layer, file);
     }
 
-    public boolean doSave(Layer layer, File file) {
+    public static boolean doSave(Layer layer, File file) {
         if(!checkSaveConditions(layer))
             return false;
         return doInternalSave(layer, file);
     }
 
-    private boolean doInternalSave(Layer layer, File file) {
+    private static boolean doInternalSave(Layer layer, File file) {
         if (file == null)
             return false;
 
@@ -103,7 +103,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
      * there is no conflict etc.)
      * @return <code>true</code>, if it is safe to save.
      */
-    public boolean checkSaveConditions(Layer layer) {
+    public static boolean checkSaveConditions(Layer layer) {
         if (layer instanceof GpxLayer)
             return ((GpxLayer)layer).data != null;
         else if (layer instanceof OsmDataLayer)  {
@@ -152,7 +152,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
      *
      * @return <code>true</code>, if a save result in an empty data set.
      */
-    private boolean isDataSetEmpty(OsmDataLayer layer) {
+    private static boolean isDataSetEmpty(OsmDataLayer layer) {
         for (OsmPrimitive osm : layer.data.allNonDeletedPrimitives())
             if (!osm.isDeleted() || !osm.isNewOrUndeleted())
                 return false;

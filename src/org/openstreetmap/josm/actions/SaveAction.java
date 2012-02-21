@@ -1,8 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -19,16 +19,22 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class SaveAction extends SaveActionBase {
+    private static SaveAction instance = new SaveAction();
 
     /**
      * Construct the action with "Save" as label.
      * @param layer Save this layer.
      */
-    public SaveAction() {
+    private SaveAction() {
         super(tr("Save"), "save", tr("Save the current data."),
                 Shortcut.registerShortcut("system:save", tr("File: {0}", tr("Save")), KeyEvent.VK_S, Shortcut.CTRL));
         putValue("help", ht("/Action/Save"));
     }
+
+    public static SaveAction getInstance() {
+        return instance;
+    }
+
 
     @Override public File getFile(Layer layer) {
         File f = layer.getAssociatedFile();
