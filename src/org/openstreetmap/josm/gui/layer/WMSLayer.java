@@ -56,7 +56,6 @@ import org.openstreetmap.josm.data.imagery.types.ObjectFactory;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
-import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
@@ -1029,7 +1028,8 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     public boolean isProjectionSupported(Projection proj) {
         List<String> serverProjections = info.getServerProjections();
         return serverProjections.contains(proj.toCode().toUpperCase())
-                || (proj instanceof Mercator && serverProjections.contains("EPSG:4326"));
+                || ("EPSG:3857".equals(proj.toCode()) && (serverProjections.contains("EPSG:4326") || serverProjections.contains("CRS:84")))
+                || ("EPSG:4326".equals(proj.toCode()) && serverProjections.contains("CRS:84"));
     }
 
     @Override

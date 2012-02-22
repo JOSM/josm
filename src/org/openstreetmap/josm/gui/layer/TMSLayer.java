@@ -65,8 +65,6 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
-import org.openstreetmap.josm.data.projection.Epsg4326;
-import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
@@ -1446,7 +1444,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     @Override
     public boolean isProjectionSupported(Projection proj) {
-        return proj instanceof Mercator || proj instanceof Epsg4326;
+        return "EPSG:3857".equals(proj.toCode()) || "EPSG:4326".equals(proj.toCode());
     }
 
     @Override

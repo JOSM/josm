@@ -30,7 +30,6 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.GeorefImage.State;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
-import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -85,7 +84,7 @@ public class WMSGrabber extends Grabber {
     protected URL getURL(double w, double s,double e,double n,
             int wi, int ht) throws MalformedURLException {
         String myProj = Main.getProjection().toCode();
-        if (!info.getServerProjections().contains(myProj) && (Main.getProjection() instanceof Mercator)) {
+        if (!info.getServerProjections().contains(myProj) && "EPSG:3857".equals(Main.getProjection().toCode())) {
             LatLon sw = Main.getProjection().eastNorth2latlon(new EastNorth(w, s));
             LatLon ne = Main.getProjection().eastNorth2latlon(new EastNorth(e, n));
             myProj = "EPSG:4326";
@@ -98,7 +97,7 @@ public class WMSGrabber extends Grabber {
             myProj = "CRS:84";
         }
 
-        // Bounding box coordinats have to be switched for WMS 1.3.0 EPSG:4326.
+        // Bounding box coordinates have to be switched for WMS 1.3.0 EPSG:4326.
         //
         // Background:
         //
