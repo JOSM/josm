@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -1090,6 +1091,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         List<OsmPrimitive> nearestList = new ArrayList<OsmPrimitive>();
         Set<Way> wset = new HashSet<Way>();
 
+        // add nearby ways
         for (List<WaySegment> wss : getNearestWaySegmentsImpl(p, predicate).values()) {
             for (WaySegment ws : wss) {
                 if (wset.add(ws.way)) {
@@ -1097,9 +1099,23 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 }
             }
         }
+        
+        // add nearby nodes
         for (List<Node> nlist : getNearestNodesImpl(p, predicate).values()) {
             nearestList.addAll(nlist);
         }
+        
+        // add parent relations of nearby nodes and ways
+        Set<OsmPrimitive> parentRelations = new HashSet<OsmPrimitive>();
+        for (OsmPrimitive o : nearestList) {
+            for (OsmPrimitive r : o.getReferrers()) {
+                if (r instanceof Relation && predicate.evaluate(r)) {
+                    parentRelations.add(r);
+                }
+            }
+        }
+        nearestList.addAll(parentRelations);
+        
         if (ignore != null) {
             nearestList.removeAll(ignore);
         }
