@@ -26,15 +26,30 @@ public class WindowGeometry {
 
     /**
      * Replies a window geometry object for a window with a specific size which is
-     * centered on screen
+     * centered on screen, where main window is
      *
      * @param extent  the size
      * @return the geometry object
      */
     static public WindowGeometry centerOnScreen(Dimension extent) {
+        return centerOnScreen(extent, "gui.geometry");
+    }
+
+    /**
+     * Replies a window geometry object for a window with a specific size which is
+     * centered on screen where the corresponding window is.
+     *
+     * @param extent  the size
+     * @param preferenceKey the key to get window size and position from, null value format
+     * for whole virtual screen
+     * @return the geometry object
+     */
+    static public WindowGeometry centerOnScreen(Dimension extent, String preferenceKey) {
+        Rectangle size = preferenceKey != null ? getScreenInfo(preferenceKey)
+            : getFullScreenInfo();
         Point topLeft = new Point(
-                Math.max(0, (Toolkit.getDefaultToolkit().getScreenSize().width - extent.width) /2),
-                Math.max(0, (Toolkit.getDefaultToolkit().getScreenSize().height - extent.height) /2)
+                size.x + Math.max(0, (size.width - extent.width) /2),
+                size.y + Math.max(0, (size.height - extent.height) /2)
         );
         return new WindowGeometry(topLeft, extent);
     }
@@ -94,6 +109,15 @@ public class WindowGeometry {
     }
 
     /**
+     *
+     * @param rect the position
+     */
+    public WindowGeometry(Rectangle rect) {
+        this.topLeft = rect.getLocation();
+        this.extent = rect.getSize();
+    }
+
+    /**
      * Creates a window geometry from the position and the size of a window.
      *
      * @param window the window
@@ -138,21 +162,21 @@ public class WindowGeometry {
     }
 
     static public WindowGeometry mainWindow(String preferenceKey, String arg, boolean maximize) {
-        Dimension screenDimension = getScreenSize(null);
+        Rectangle screenDimension = getScreenInfo("gui.geometry");
         if (arg != null) {
             final Matcher m = Pattern.compile("(\\d+)x(\\d+)(([+-])(\\d+)([+-])(\\d+))?").matcher(arg);
             if (m.matches()) {
                 int w = Integer.valueOf(m.group(1));
                 int h = Integer.valueOf(m.group(2));
-                int x = 0, y = 0;
+                int x = screenDimension.x, y = screenDimension.y;
                 if (m.group(3) != null) {
                     x = Integer.valueOf(m.group(5));
                     y = Integer.valueOf(m.group(7));
                     if (m.group(4).equals("-")) {
-                        x = screenDimension.width - x - w;
+                        x = screenDimension.x + screenDimension.width - x - w;
                     }
                     if (m.group(6).equals("-")) {
-                        y = screenDimension.height - y - h;
+                        y = screenDimension.y + screenDimension.height - y - h;
                     }
                 }
                 return new WindowGeometry(new Point(x,y), new Dimension(w,h));
@@ -162,9 +186,9 @@ public class WindowGeometry {
         }
         WindowGeometry def;
         if(maximize)
-            def = new WindowGeometry(new Point(0,0), screenDimension);
+            def = new WindowGeometry(screenDimension);
         else
-            def = new WindowGeometry(new Point(0,0), new Dimension(1000, 740));
+            def = new WindowGeometry(screenDimension.getLocation(), new Dimension(1000, 740));
         return new WindowGeometry(preferenceKey, def);
     }
 
@@ -229,17 +253,8 @@ public class WindowGeometry {
         return extent;
     }
 
-    /**
-     * Center window on screen. When preferenceKey is given, the window is centered
-     * on the screen where the corresponding window is.
-     * 
-     * @param window the window
-     * @param preferenceKey the key to get size and position from
-     */
-    public static void centerOnScreen(Window window, String preferenceKey) {
-        Dimension dim = getScreenSize(preferenceKey);
-        Dimension size = window.getSize();
-        window.setLocation(new Point((dim.width-size.width)/2,(dim.height-size.height)/2));
+    private Rectangle getRectangle() {
+        return new Rectangle(topLeft, extent);
     }
 
     /**
@@ -280,24 +295,41 @@ public class WindowGeometry {
     }
 
     /**
-     * Find the size of the screen for given coordinates. Use first screen,
+     * Find the size and position of the screen for given coordinates. Use first screen,
      * when no coordinates are stored or null is passed.
      * 
      * @param preferenceKey the key to get size and position from
      */
-    public static Dimension getScreenSize(String preferenceKey) {
+    public static Rectangle getScreenInfo(String preferenceKey) {
+        Rectangle g = new WindowGeometry(preferenceKey,
+            /* default: something on screen 1 */
+            new WindowGeometry(new Point(0,0), new Dimension(10,10))).getRectangle();
         GraphicsEnvironment ge = GraphicsEnvironment
                 .getLocalGraphicsEnvironment();
         GraphicsDevice[] gs = ge.getScreenDevices();
+        int intersect = 0;
+        Rectangle bounds = null;
         for (int j = 0; j < gs.length; j++) {
             GraphicsDevice gd = gs[j];
             GraphicsConfiguration[] gc = gd.getConfigurations();
             for (int i = 0; i < gc.length; i++) {
-//System.out.println("-- " + j + " " + i + " " + gc[i].getBounds());
+                Rectangle b = gc[i].getBounds();
+                Rectangle is = b.intersection(g);
+                int s = is.width*is.height;
+                if(bounds == null || intersect < s) {
+                    intersect = s;
+                    bounds = b;
+                }
             }
         }
-        /* TODO: implement this function properly */
-        return Toolkit.getDefaultToolkit().getScreenSize();
+        return bounds;
+    }
+
+    /**
+     * Find the size of the full virtual screen.
+     */
+    public static Rectangle getFullScreenInfo() {
+        return new Rectangle(new Point(0,0), Toolkit.getDefaultToolkit().getScreenSize());
     }
 
     public String toString() {
