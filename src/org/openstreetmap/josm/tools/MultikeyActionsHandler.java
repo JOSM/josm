@@ -8,6 +8,8 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -30,6 +32,8 @@ public class MultikeyActionsHandler {
     private static final long DIALOG_DELAY = 1000;
     private static final String STATUS_BAR_ID = new String("multikeyShortcut");
 
+    private Map<MultikeyShortcutAction, MyAction> myActions = new HashMap<MultikeyShortcutAction,MyAction>();
+            
     private class MyKeyEventDispatcher implements KeyEventDispatcher {
         @Override
         public boolean dispatchKeyEvent(KeyEvent e) {
@@ -202,7 +206,17 @@ public class MultikeyActionsHandler {
     public void addAction(MultikeyShortcutAction action) {
         if(action.getMultikeyShortcut() != null) {
             MyAction myAction = new MyAction(action);
+            myActions.put(action, myAction);
             Main.registerActionShortcut(myAction, myAction.shortcut);
+        }
+    }
+    
+    // unregister action and its shortcut completely
+    public void removeAction(MultikeyShortcutAction action) {
+        MyAction a = myActions.get(action);
+        if (a!=null) {
+            Main.unregisterActionShortcut(a, a.shortcut);
+            myActions.remove(a);
         }
     }
 }
