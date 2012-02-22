@@ -65,15 +65,18 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     private SideButton upButton;
     private SideButton downButton;
 
+    private EnableFilterAction enableFilterAction;
+    private HidingFilterAction hidingFilterAction;
 
     public FilterDialog(){
         super(tr("Filter"), "filter", tr("Filter objects and hide/disable them."),
                 Shortcut.registerShortcut("subwindow:filter", tr("Toggle: {0}", tr("Filter")),
                 KeyEvent.VK_F, Shortcut.ALT_SHIFT), 162);
         build();
-
-        MultikeyActionsHandler.getInstance().addAction(new EnableFilterAction());
-        MultikeyActionsHandler.getInstance().addAction(new HidingFilterAction());
+        enableFilterAction = new EnableFilterAction();
+        hidingFilterAction = new HidingFilterAction();
+        MultikeyActionsHandler.getInstance().addAction(enableFilterAction);
+        MultikeyActionsHandler.getInstance().addAction(hidingFilterAction);
     }
 
     @Override
@@ -194,6 +197,13 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         }));
     }
 
+    @Override
+    public void destroy() {
+        MultikeyActionsHandler.getInstance().removeAction(enableFilterAction);
+        MultikeyActionsHandler.getInstance().removeAction(hidingFilterAction);
+        super.destroy();
+    }
+    
     static class StringRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {

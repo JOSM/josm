@@ -22,9 +22,19 @@ public class JumpToMarkerActions {
         void jumpToPreviousMarker();
     }
 
+    private static JumpToNextMarker jumpToNextMarkerAction;
+    private static JumpToPreviousMarker jumpToPreviousMarkerAction;
+            
     public static void initialize() {
-        MultikeyActionsHandler.getInstance().addAction(new JumpToNextMarker(null));
-        MultikeyActionsHandler.getInstance().addAction(new JumpToPreviousMarker(null));
+        jumpToNextMarkerAction = new JumpToNextMarker(null);
+        jumpToPreviousMarkerAction = new JumpToPreviousMarker(null);
+        MultikeyActionsHandler.getInstance().addAction(jumpToNextMarkerAction);
+        MultikeyActionsHandler.getInstance().addAction(jumpToPreviousMarkerAction);
+    }
+    
+    public static void unregisterActions() {
+        MultikeyActionsHandler.getInstance().removeAction(jumpToNextMarkerAction);
+        MultikeyActionsHandler.getInstance().removeAction(jumpToPreviousMarkerAction);
     }
 
     public static final class JumpToNextMarker extends AbstractAction implements MultikeyShortcutAction {

@@ -89,9 +89,6 @@ public class LayerListDialog extends ToggleDialog {
             throw new IllegalStateException("Dialog was already created");
         instance = new LayerListDialog(mapFrame);
 
-        MultikeyActionsHandler.getInstance().addAction(instance.new ShowHideLayerAction(false));
-        MultikeyActionsHandler.getInstance().addAction(instance.new ActivateLayerAction());
-        JumpToMarkerActions.initialize();
     }
 
     /**
@@ -119,7 +116,8 @@ public class LayerListDialog extends ToggleDialog {
     private SideButton opacityButton;
 
     ActivateLayerAction activateLayerAction;
-
+    ShowHideLayerAction showHideLayerAction;
+    
     //TODO This duplicates ShowHide actions functionality
     /** stores which layer index to toggle and executes the ShowHide action if the layer is present */
     private final class ToggleLayerIndexVisibility extends AbstractAction {
@@ -239,10 +237,14 @@ public class LayerListDialog extends ToggleDialog {
         // -- activate action
         activateLayerAction = new ActivateLayerAction();
         activateLayerAction.updateEnabledState();
+        MultikeyActionsHandler.getInstance().addAction(activateLayerAction);
         adaptTo(activateLayerAction, selectionModel);
+    
+        JumpToMarkerActions.initialize();
 
         // -- show hide action
-        ShowHideLayerAction showHideLayerAction = new ShowHideLayerAction();
+        showHideLayerAction = new ShowHideLayerAction();
+        MultikeyActionsHandler.getInstance().addAction(showHideLayerAction);
         adaptTo(showHideLayerAction, selectionModel);
 
         //-- layer opacity action
@@ -344,6 +346,9 @@ public class LayerListDialog extends ToggleDialog {
         for(int i=0; i < 10; i++) {
             Main.unregisterActionShortcut(visibilityToggleActions[i], visibilityToggleShortcuts[i]);
         }
+        MultikeyActionsHandler.getInstance().removeAction(activateLayerAction);
+        MultikeyActionsHandler.getInstance().removeAction(showHideLayerAction);
+        JumpToMarkerActions.unregisterActions();
         super.destroy();
         instance = null;
     }
