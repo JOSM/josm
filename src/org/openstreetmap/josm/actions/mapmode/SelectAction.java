@@ -604,11 +604,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                     osm = mv.getNearestNodeOrWay(p, OsmPrimitive.isSelectablePredicate, true);
                 }
             } else {
-                if (osm instanceof Node) {
-                    cycleList = new LinkedList<OsmPrimitive>(mv.getNearestNodes(p, OsmPrimitive.isSelectablePredicate));
-                } else if (osm instanceof Way) {
-                    cycleList = new LinkedList<OsmPrimitive>(mv.getNearestWays(p, OsmPrimitive.isSelectablePredicate));
-                }
+                cycleList = mv.getAllNearest(p, OsmPrimitive.isSelectablePredicate);
 
                 if (cycleList.size() > 1) {
                     cyclePrims = false;
