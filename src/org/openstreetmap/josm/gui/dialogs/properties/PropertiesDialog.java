@@ -826,7 +826,20 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         if(!top) {
             bothTables.add(presets, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2));
         }
-
+        
+        // Open edit dialog whe enter pressed in tables
+        propertyTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),"onTableEnter");
+        propertyTable.getActionMap().put("onTableEnter",editAction);
+        membershipTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),"onTableEnter");
+        membershipTable.getActionMap().put("onTableEnter",editAction);
+        
+        // Open add property dialog when INS is pressed in tables
+        propertyTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0),"onTableInsert");
+        propertyTable.getActionMap().put("onTableInsert",addAction);
+                
         // -- add action and shortcut
         this.btnAdd = new SideButton(addAction);
         btnAdd.setFocusable(true);
