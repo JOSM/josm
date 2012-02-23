@@ -80,4 +80,11 @@ abstract public class AbstractProjection implements Projection {
         return "EPSG:" + getEpsgCode();
     }
     
+    protected static final double convertMinuteSecond(double minute, double second) {
+        return (minute/60.0) + (second/3600.0);
+    }
+    
+    protected static final double convertDegreeMinuteSecond(double degree, double minute, double second) {
+        return degree + convertMinuteSecond(minute, second);
+    }
 }
