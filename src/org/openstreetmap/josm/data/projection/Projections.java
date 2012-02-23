@@ -24,6 +24,8 @@ public class Projections {
                 new UTM(),
                 // regional - alphabetical order by country name
                 new GaussKrueger(),
+                new BelgianLambert1972(),
+                new BelgianLambert2008(),
                 new LambertEST(),
                 new Lambert(),
                 new Lambert93(),
