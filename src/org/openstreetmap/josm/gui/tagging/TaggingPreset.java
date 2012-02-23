@@ -650,7 +650,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 // default is set and all items were unset
                 if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                     // selected osm primitives are untagged or filling default feature is enabled
-                    combo.setSelectedItem(def);
+                    combo.setSelectedItem(lhm.get(def).display_value);
                 } else {
                     // selected osm primitives are tagged and filling default feature is disabled
                     combo.setSelectedItem("");
