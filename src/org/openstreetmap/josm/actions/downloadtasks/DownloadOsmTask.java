@@ -6,6 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.Future;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -34,6 +36,8 @@ public class DownloadOsmTask extends AbstractDownloadTask {
     protected DownloadTask downloadTask;
     
     protected OsmDataLayer targetLayer;
+    
+    protected String newLayerName = null;
 
     protected void rememberDownloadedData(DataSet ds) {
         this.downloadedData = ds;
@@ -63,6 +67,9 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 new OsmServerLocationReader(url),
                 progressMonitor);
         currentBounds = null;
+        // Extract .osm filename from URL to set the new layer name
+        Matcher matcher = Pattern.compile("http://.*/(.*\\.osm)").matcher(url);
+        newLayerName = matcher.matches() ? matcher.group(1) : null;
         return Main.worker.submit(downloadTask);
     }
     
@@ -149,8 +156,15 @@ public class DownloadOsmTask extends AbstractDownloadTask {
             return null;
         }
         
+        protected OsmDataLayer createNewLayer(String layerName) {
+            if (layerName == null || layerName.isEmpty()) {
+                layerName = OsmDataLayer.createNewName();
+            }
+            return new OsmDataLayer(dataSet, layerName, null);
+        }
+        
         protected OsmDataLayer createNewLayer() {
-            return new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
+            return createNewLayer(null);
         }
 
         @Override protected void finish() {
@@ -171,7 +185,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 // the user explicitly wants a new layer, we don't have any layer at all
                 // or it is not clear which layer to merge to
                 //
-                targetLayer = createNewLayer();
+                targetLayer = createNewLayer(newLayerName);
                 final boolean isDisplayingMapView = Main.isDisplayingMapView();
 
                 Main.main.addLayer(targetLayer);
