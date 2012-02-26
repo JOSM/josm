@@ -116,6 +116,10 @@ public class OsmReader extends AbstractReader {
             throwException(tr("Unsupported version: {0}", v));
         }
         ds.setVersion(v);
+        String upload = parser.getAttributeValue(null, "upload");
+        if (upload != null) {
+            ds.setUploadDiscouraged(!Boolean.parseBoolean(upload));
+        }
         String generator = parser.getAttributeValue(null, "generator");
         Long uploadChangesetId = null;
         if (parser.getAttributeValue(null, "upload-changeset") != null) {

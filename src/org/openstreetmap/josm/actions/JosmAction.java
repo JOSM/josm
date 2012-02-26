@@ -122,7 +122,9 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
     }
 
     public void setTooltip(String tooltip) {
-        putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
+        if (tooltip != null) {
+            putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
+        }
     }
 
     /**

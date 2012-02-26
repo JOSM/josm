@@ -87,6 +87,11 @@ public class UploadSelectionAction extends JosmAction{
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
+        if (getEditLayer().isUploadDiscouraged()) {
+            if (UploadAction.warnUploadDiscouraged(getEditLayer())) {
+                return;
+            }
+        }
         UploadHullBuilder builder = new UploadHullBuilder();
         UploadSelectionDialog dialog = new UploadSelectionDialog();
         Collection<OsmPrimitive> modifiedCandidates = getModifiedPrimitives(getEditLayer().data.getSelected());

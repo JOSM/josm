@@ -4,10 +4,13 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -18,11 +21,13 @@ import org.openstreetmap.josm.actions.upload.UploadHook;
 import org.openstreetmap.josm.actions.upload.ValidateUploadHook;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.io.UploadPrimitivesTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -103,7 +108,7 @@ public class UploadAction extends JosmAction{
         return checkPreUploadConditions(layer, new APIDataSet(layer.data));
     }
 
-    protected void alertUnresolvedConflicts(OsmDataLayer layer) {
+    protected static void alertUnresolvedConflicts(OsmDataLayer layer) {
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
                 tr("<html>The data to be uploaded participates in unresolved conflicts of layer ''{0}''.<br>"
@@ -114,10 +119,38 @@ public class UploadAction extends JosmAction{
                 HelpUtil.ht("/Action/Upload#PrimitivesParticipateInConflicts")
         );
     }
+    
+    /**
+     * returns true if the user wants to cancel, false if they
+     * want to continue
+     */
+    public static final boolean warnUploadDiscouraged(OsmDataLayer layer) {
+        ExtendedDialog dlg = new ExtendedDialog(Main.parent,
+                tr("Upload discouraged"),
+                new String[] {tr("Cancel"), tr("Continue")});
+        dlg.setContent("<html>" +
+                tr("You are about to upload data from the layer ''{0}''.<br /><br />"+
+                        "Sending data from this layer is <b>strongly discouraged</b>. If you continue,<br />"+
+                        "it may require you subsequently have to revert your changes, or force other contributors to.<br /><br />"+
+                        "Are you sure you want to continue?", layer.getName())+
+                "</html>");
+        dlg.setButtonIcons(new Icon[] {
+                ImageProvider.get("cancel"),
+                ImageProvider.overlay(
+                        ImageProvider.get("upload"),
+                        new ImageIcon(ImageProvider.get("warning-small").getImage().getScaledInstance(10 , 10, Image.SCALE_SMOOTH)),
+                        ImageProvider.OverlayPosition.SOUTHEAST)});
+        dlg.setToolTipTexts(new String[] {
+                tr("Cancel"),
+                tr("Ignore this hint and upload anyway")});
+        dlg.setIcon(JOptionPane.WARNING_MESSAGE);
+        dlg.setCancelButton(1);
+        return dlg.showDialog().getValue() != 2;
+    }
 
     /**
      * Check whether the preconditions are met to upload data in <code>apiData</code>.
-     * Makes sure primitives in <code>apiData</code> don't participate in conflicts and
+     * Makes sure upload is allowed, primitives in <code>apiData</code> don't participate in conflicts and
      * runs the installed {@see UploadHook}s.
      *
      * @param layer the source layer of the data to be uploaded
@@ -125,6 +158,11 @@ public class UploadAction extends JosmAction{
      * @return true, if the preconditions are met; false, otherwise
      */
     public boolean checkPreUploadConditions(OsmDataLayer layer, APIDataSet apiData) {
+        if (layer.isUploadDiscouraged()) {
+            if (warnUploadDiscouraged(layer)) {
+                return false;
+            }
+        }
         ConflictCollection conflicts = layer.getConflicts();
         if (apiData.participatesInConflict(conflicts)) {
             alertUnresolvedConflicts(layer);
