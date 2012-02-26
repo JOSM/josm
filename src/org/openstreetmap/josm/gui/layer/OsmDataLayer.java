@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
@@ -20,6 +21,7 @@ import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +31,7 @@ import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -36,7 +39,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
+import org.openstreetmap.josm.actions.ToggleUploadDiscouragedLayerAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -213,12 +218,23 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         DataSet.addSelectionListener(this);
     }
 
+    protected Icon getBaseIcon() {
+        return ImageProvider.get("layer", "osmdata_small");
+    }
+    
     /**
      * TODO: @return Return a dynamic drawn icon of the map data. The icon is
      *         updated by a background thread to not disturb the running programm.
      */
     @Override public Icon getIcon() {
-        return ImageProvider.get("layer", "osmdata_small");
+        Icon baseIcon = getBaseIcon();
+        if (isUploadDiscouraged()) {
+            return ImageProvider.overlay(baseIcon,
+                    new ImageIcon(ImageProvider.get("warning-small").getImage().getScaledInstance(8, 8, Image.SCALE_SMOOTH)),
+                    ImageProvider.OverlayPosition.SOUTHEAST);
+        } else {
+            return baseIcon;
+        }
     }
 
     /**
@@ -394,7 +410,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
 
 
     @Override public boolean isMergable(final Layer other) {
-        return other instanceof OsmDataLayer;
+        return other instanceof OsmDataLayer && (isUploadDiscouraged() == ((OsmDataLayer)other).isUploadDiscouraged());
     }
 
     @Override public void visitBoundingBox(final BoundingXYVisitor v) {
@@ -456,7 +472,10 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         p.add(new JLabel(nodeText, ImageProvider.get("data", "node"), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));
         p.add(new JLabel(wayText, ImageProvider.get("data", "way"), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));
         p.add(new JLabel(relationText, ImageProvider.get("data", "relation"), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));
-        p.add(new JLabel(tr("API version: {0}", (data.getVersion() != null) ? data.getVersion() : tr("unset"))));
+        p.add(new JLabel(tr("API version: {0}", (data.getVersion() != null) ? data.getVersion() : tr("unset"))), GBC.eop().insets(15,0,0,0));
+        if (isUploadDiscouraged()) {
+            p.add(new JLabel(tr("Upload is discouraged")), GBC.eop().insets(15,0,0,0));
+        }
 
         return p;
     }
@@ -474,7 +493,8 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                 new ConsistencyTestAction(),
                 SeparatorLayerAction.INSTANCE,
                 new LayerListPopup.InfoAction(this)};
-        return new Action[]{
+        ArrayList<Action> actions = new ArrayList<Action>();
+        actions.addAll(Arrays.asList(new Action[]{
                 LayerListDialog.getInstance().createActivateLayerAction(this),
                 LayerListDialog.getInstance().createShowHideLayerAction(),
                 LayerListDialog.getInstance().createDeleteLayerAction(),
@@ -485,10 +505,15 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                 new LayerGpxExportAction(this),
                 new ConvertToGpxLayerAction(),
                 SeparatorLayerAction.INSTANCE,
-                new RenameLayerAction(getAssociatedFile(), this),
+                new RenameLayerAction(getAssociatedFile(), this)}));
+        if (ExpertToggleAction.isExpert() && Main.pref.getBoolean("data.layer.upload_discouragement.menu_item", false)) {
+            actions.add(new ToggleUploadDiscouragedLayerAction(this));
+        }
+        actions.addAll(Arrays.asList(new Action[]{
                 new ConsistencyTestAction(),
                 SeparatorLayerAction.INSTANCE,
-                new LayerListPopup.InfoAction(this)};
+                new LayerListPopup.InfoAction(this)}));
+        return actions.toArray(new Action[0]);
     }
 
     public static GpxData toGpxData(DataSet data, File file) {
@@ -700,5 +725,13 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
          * No reprojection required. The dataset itself is registered as projection
          * change listener and already got notified.
          */
+    }
+
+    public final boolean isUploadDiscouraged() {
+        return data.isUploadDiscouraged();
+    }
+
+    public final void setUploadDiscouraged(boolean uploadDiscouraged) {
+        data.setUploadDiscouraged(uploadDiscouraged);
     }
 }

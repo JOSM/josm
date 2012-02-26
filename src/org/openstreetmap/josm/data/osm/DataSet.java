@@ -124,6 +124,8 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
     private final List<AbstractDatasetChangedEvent> cachedEvents = new ArrayList<AbstractDatasetChangedEvent>();
 
     private int highlightUpdateCount;
+    
+    private boolean uploadDiscouraged = false;
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private final Object selectionLock = new Object();
@@ -204,6 +206,14 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
      */
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public final boolean isUploadDiscouraged() {
+        return uploadDiscouraged;
+    }
+
+    public final void setUploadDiscouraged(boolean uploadDiscouraged) {
+        this.uploadDiscouraged = uploadDiscouraged;
     }
 
     /*

@@ -73,10 +73,7 @@ public class OsmExporter extends FileExporter {
             OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
             layer.data.getReadLock().lock();
             try {
-                w.header();
-                w.writeDataSources(layer.data);
-                w.writeContent(layer.data);
-                w.footer();
+                w.writeLayer(layer);
                 w.close();
             } finally {
                 layer.data.getReadLock().unlock();

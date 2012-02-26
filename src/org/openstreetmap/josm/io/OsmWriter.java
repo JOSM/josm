@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.DateUtils;
 
 /**
@@ -61,9 +62,16 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     }
 
     public void header() {
+        header(null);
+    }
+    public void header(Boolean upload) {
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
         out.print("<osm version='");
         out.print(version);
+        if (upload != null) {
+            out.print("' upload='");
+            out.print(upload);
+        }
         out.println("' generator='JOSM'>");
     }
     public void footer() {
@@ -81,6 +89,13 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         result.addAll(primitives);
         Collections.sort(result, byIdComparator);
         return result;
+    }
+    
+    public void writeLayer(OsmDataLayer layer) {
+        header(!layer.isUploadDiscouraged());
+        writeDataSources(layer.data);
+        writeContent(layer.data);
+        footer();
     }
 
     public void writeContent(DataSet ds) {
