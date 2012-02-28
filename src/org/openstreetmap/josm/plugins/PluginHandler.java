@@ -313,7 +313,7 @@ public class PluginHandler {
         }
 
         if (policy.equals("always")) {
-            if ("pluginmanager.time-based-update.policy".equals(togglePreferenceKey)) {
+            if ("pluginmanager.version-based-update.policy".equals(togglePreferenceKey)) {
                 System.out.println(tr("Running plugin update after JOSM upgrade. Automatic update at startup is enabled."));
             } else if ("pluginmanager.time-based-update.policy".equals(togglePreferenceKey)) {
                 System.out.println(tr("Running plugin update after elapsed update interval. Automatic update at startup is disabled."));
