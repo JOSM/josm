@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -50,6 +51,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
@@ -60,7 +62,7 @@ import org.xml.sax.SAXException;
  *
  * @author frsantos
  */
-public class ValidatorDialog extends ToggleDialog implements ActionListener, SelectionChangedListener, LayerChangeListener {
+public class ValidatorDialog extends ToggleDialog implements SelectionChangedListener, LayerChangeListener {
     /** Serializable ID */
     private static final long serialVersionUID = 2952292777351992696L;
 
@@ -104,20 +106,49 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
         tree.addTreeSelectionListener(new SelectionWatch());
 
         List<SideButton> buttons = new LinkedList<SideButton>();
-        selectButton = new SideButton(marktr("Select"), "select", "Validator",
-                tr("Set the selected elements on the map to the selected items in the list above."), this);
+
+        selectButton = new SideButton(new AbstractAction() {
+            {
+                putValue(NAME, marktr("Select"));
+                putValue(SHORT_DESCRIPTION,  tr("Set the selected elements on the map to the selected items in the list above."));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs","select"));
+            }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setSelectedItems();
+            }
+        });
         selectButton.setEnabled(false);
         buttons.add(selectButton);
 
         buttons.add(new SideButton(Main.main.validator.validateAction));
 
-        fixButton = new SideButton(marktr("Fix"), "fix", "Validator", tr("Fix the selected issue."), this);
+        fixButton = new SideButton(new AbstractAction() {
+            {
+                putValue(NAME, marktr("Fix"));
+                putValue(SHORT_DESCRIPTION,  tr("Fix the selected issue."));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs","fix"));
+            }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fixErrors(e);
+            }
+        });
         fixButton.setEnabled(false);
         buttons.add(fixButton);
 
         if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
-            ignoreButton = new SideButton(marktr("Ignore"), "delete", "Validator",
-                    tr("Ignore the selected issue next time."), this);
+            ignoreButton = new SideButton(new AbstractAction() {
+                {
+                    putValue(NAME, marktr("Ignore"));
+                    putValue(SHORT_DESCRIPTION,  tr("Ignore the selected issue next time."));
+                    putValue(SMALL_ICON, ImageProvider.get("dialogs","fix"));
+                }
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    ignoreErrors(e);
+                }
+            });
             ignoreButton.setEnabled(false);
             buttons.add(ignoreButton);
         } else {
@@ -331,18 +362,6 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
             }
         }
         Main.main.getCurrentDataSet().setSelected(sel);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        String actionCommand = e.getActionCommand();
-        if (actionCommand.equals("Select")) {
-            setSelectedItems();
-        } else if (actionCommand.equals("Fix")) {
-            fixErrors(e);
-        } else if (actionCommand.equals("Ignore")) {
-            ignoreErrors(e);
-        }
     }
 
     /**

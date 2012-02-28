@@ -133,11 +133,11 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         displaylist.addListSelectionListener(selectAction);
 
         createLayout(displaylist, true, Arrays.asList(new SideButton[] {
-            new SideButton(newAction, false),
-            new SideButton(editAction, false),
-            new SideButton(duplicateAction, false),
-            new SideButton(deleteAction, false),
-            new SideButton(selectAction, false)
+                new SideButton(newAction, false),
+                new SideButton(editAction, false),
+                new SideButton(duplicateAction, false),
+                new SideButton(deleteAction, false),
+                new SideButton(selectAction, false)
         }));
 
         // activate DEL in the list of relations
@@ -281,7 +281,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     class EditAction extends AbstractAction implements ListSelectionListener{
         public EditAction() {
             putValue(SHORT_DESCRIPTION,tr( "Open an editor for the selected relation"));
-            //putValue(NAME, tr("Edit"));
+            putValue(NAME, tr("Edit"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
             setEnabled(false);
         }
@@ -322,7 +322,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         public DeleteAction() {
             putValue(SHORT_DESCRIPTION,tr("Delete the selected relation"));
-            //putValue(NAME, tr("Delete"));
+            putValue(NAME, tr("Delete"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             setEnabled(false);
         }
@@ -333,13 +333,12 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             org.openstreetmap.josm.actions.mapmode.DeleteAction.deleteRelation(
                     Main.main.getEditLayer(),
                     toDelete
-            );
+                    );
         }
 
         public void actionPerformed(ActionEvent e) {
-            if (!isEnabled()) {
+            if (!isEnabled())
                 return;
-            }
             List<Relation> toDelete = new LinkedList<Relation>();
             for (int i : displaylist.getSelectedIndices()) {
                 toDelete.add(model.getRelation(i));
@@ -362,7 +361,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     static class NewAction extends AbstractAction implements LayerChangeListener{
         public NewAction() {
             putValue(SHORT_DESCRIPTION,tr("Create a new relation"));
-            //putValue(NAME, tr("New"));
+            putValue(NAME, tr("New"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "addrelation"));
             updateEnabledState();
         }
@@ -400,7 +399,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         public DuplicateAction() {
             putValue(SHORT_DESCRIPTION, tr("Create a copy of this relation and open it in another editor window"));
             putValue(SMALL_ICON, ImageProvider.get("duplicate"));
-            //putValue(NAME, tr("Duplicate"));
+            putValue(NAME, tr("Duplicate"));
             updateEnabledState();
         }
 
@@ -411,7 +410,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                     Main.main.getEditLayer(),
                     copy,
                     null /* no selected members */
-            );
+                    );
             editor.setVisible(true);
         }
 
@@ -536,7 +535,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             Main.worker.submit(new DownloadRelationTask(
                     model.getSelectedNonNewRelations(),
                     Main.map.mapView.getEditLayer())
-            );
+                    );
         }
     }
 
@@ -569,7 +568,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                     rels,
                     buildSetOfIncompleteMembers(rels),
                     Main.map.mapView.getEditLayer()
-            ));
+                    ));
         }
 
         protected void updateEnabledState() {
@@ -602,7 +601,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             Collections.sort(
                     relations,
                     DefaultNameFormatter.getInstance().getRelationComparator()
-            );
+                    );
         }
 
         private boolean isValid(Relation r) {
@@ -793,7 +792,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         public RelationDialogPopupMenu(JList list) {
             super(list);
-            
+
             // -- download members action
             //
             add(new DownloadMembersAction());
@@ -831,7 +830,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     public void removePopupMenuListener(PopupMenuListener l) {
         popupMenu.addPopupMenuListener(l);
     }
-    
+
     public Collection<Relation> getSelectedRelations() {
         return model.getSelectedRelations();
     }

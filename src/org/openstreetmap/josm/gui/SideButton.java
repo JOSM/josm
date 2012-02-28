@@ -36,10 +36,11 @@ public class SideButton extends JButton {
     public SideButton(Action action, boolean usename)
     {
         super(action);
-        if(!usename)
+        if(!usename) {
             setText(null);
-        fixIcon(action);
-        doStyle();
+            fixIcon(action);
+            doStyle();
+        }
     }
 
     public SideButton(Action action, String imagename)
@@ -79,6 +80,8 @@ public class SideButton extends JButton {
         return getScaledImage(im);
     }
 
+    // Used constructor with Action
+    @Deprecated
     public SideButton(String imagename, String property, String tooltip, ActionListener actionListener)
     {
         super(makeIcon(imagename));
@@ -87,6 +90,9 @@ public class SideButton extends JButton {
         addActionListener(actionListener);
         setToolTipText(tooltip);
     }
+
+    // Used constructor with Action
+    @Deprecated
     public SideButton(String name, String imagename, String property, String tooltip, Shortcut shortcut, ActionListener actionListener)
     {
         super(tr(name), makeIcon(imagename));
@@ -99,6 +105,9 @@ public class SideButton extends JButton {
         }
         setup(name, property, tooltip, actionListener);
     }
+
+    // Used constructor with Action
+    @Deprecated
     public SideButton(String name, String imagename, String property, String tooltip, ActionListener actionListener)
     {
         super(tr(name), makeIcon(imagename));

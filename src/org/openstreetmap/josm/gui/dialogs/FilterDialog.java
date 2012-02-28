@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -47,6 +46,7 @@ import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.MultikeyActionsHandler;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -140,19 +140,27 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         userTable.setDefaultRenderer(Boolean.class, new BooleanRenderer());
         userTable.setDefaultRenderer(String.class, new StringRenderer());
 
-        addButton = new SideButton(marktr("Add"), "add", "SelectionList", tr("Add filter."),
-                new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
+        addButton = new SideButton(new AbstractAction() {
+            {
+                putValue(NAME, marktr("Add"));
+                putValue(SHORT_DESCRIPTION,  tr("Add filter."));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs","add"));
+            }
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 Filter filter = (Filter)SearchAction.showSearchDialog(new Filter());
                 if(filter != null){
                     filterModel.addFilter(filter);
                 }
+            }});
+        editButton = new SideButton(new AbstractAction() {
+            {
+                putValue(NAME, marktr("Edit"));
+                putValue(SHORT_DESCRIPTION, tr("Edit filter."));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
             }
-        });
-
-        editButton = new SideButton(marktr("Edit"), "edit", "SelectionList", tr("Edit filter."),
-                new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectionModel().getMinSelectionIndex();
                 if(index < 0) return;
                 Filter f = filterModel.getFilter(index);
@@ -162,29 +170,42 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
                 }
             }
         });
-
-        deleteButton = new SideButton(marktr("Delete"), "delete", "SelectionList", tr("Delete filter."),
-                new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
+        deleteButton = new SideButton(new AbstractAction() {
+            {
+                putValue(NAME, marktr("Delete"));
+                putValue(SHORT_DESCRIPTION, tr("Delete filter."));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+            }
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectionModel().getMinSelectionIndex();
                 if(index < 0) return;
                 filterModel.removeFilter(index);
             }
         });
-
-        upButton = new SideButton(marktr("Up"), "up", "SelectionList", tr("Move filter up."),
-                new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
+        upButton = new SideButton(new AbstractAction() {
+            {
+                putValue(NAME, marktr("Up"));
+                putValue(SHORT_DESCRIPTION, tr("Move filter up."));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs", "up"));
+            }
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectionModel().getMinSelectionIndex();
                 if(index < 0) return;
                 filterModel.moveUpFilter(index);
                 userTable.getSelectionModel().setSelectionInterval(index-1, index-1);
             }
-        });
 
-        downButton = new SideButton(marktr("Down"), "down", "SelectionList", tr("Move filter down."),
-                new ActionListener(){
-            public void actionPerformed(ActionEvent evt){
+        });
+        downButton = new SideButton(new AbstractAction() {
+            {
+                putValue(NAME, marktr("Down"));
+                putValue(SHORT_DESCRIPTION, tr("Move filter down."));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs", "down"));
+            }
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectionModel().getMinSelectionIndex();
                 if(index < 0) return;
                 filterModel.moveDownFilter(index);

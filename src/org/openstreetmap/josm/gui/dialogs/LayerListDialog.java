@@ -117,7 +117,7 @@ public class LayerListDialog extends ToggleDialog {
 
     ActivateLayerAction activateLayerAction;
     ShowHideLayerAction showHideLayerAction;
-    
+
     //TODO This duplicates ShowHide actions functionality
     /** stores which layer index to toggle and executes the ShowHide action if the layer is present */
     private final class ToggleLayerIndexVisibility extends AbstractAction {
@@ -159,7 +159,7 @@ public class LayerListDialog extends ToggleDialog {
     protected LayerListDialog(MapFrame mapFrame) {
         super(tr("Layers"), "layerlist", tr("Open a list of all loaded layers."),
                 Shortcut.registerShortcut("subwindow:layers", tr("Toggle: {0}", tr("Layers")), KeyEvent.VK_L,
-                Shortcut.ALT_SHIFT), 100, true);
+                        Shortcut.ALT_SHIFT), 100, true);
 
         // create the models
         //
@@ -239,7 +239,7 @@ public class LayerListDialog extends ToggleDialog {
         activateLayerAction.updateEnabledState();
         MultikeyActionsHandler.getInstance().addAction(activateLayerAction);
         adaptTo(activateLayerAction, selectionModel);
-    
+
         JumpToMarkerActions.initialize();
 
         // -- show hide action
@@ -444,11 +444,12 @@ public class LayerListDialog extends ToggleDialog {
          *
          */
         public ShowHideLayerAction(boolean init) {
+            putValue(NAME, tr("Show/hide"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "showhide"));
             putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the selected layer."));
             putValue("help", HelpUtil.ht("/Dialog/LayerList#ShowHideLayer"));
             multikeyShortcut = Shortcut.registerShortcut("core_multikey:showHideLayer", tr("Multikey: {0}",
-            tr("Show/hide layer")), KeyEvent.VK_S, Shortcut.SHIFT);
+                    tr("Show/hide layer")), KeyEvent.VK_S, Shortcut.SHIFT);
             if (init) {
                 updateEnabledState();
             }
@@ -548,6 +549,7 @@ public class LayerListDialog extends ToggleDialog {
          *
          */
         public LayerOpacityAction() {
+            putValue(NAME, tr("Opacity"));
             putValue(SHORT_DESCRIPTION, tr("Adjust opacity of the layer."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/layerlist", "transparency"));
             updateEnabledState();
@@ -639,10 +641,11 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         public ActivateLayerAction() {
+            putValue(NAME, tr("Activate"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "activate"));
             putValue(SHORT_DESCRIPTION, tr("Activate the selected layer"));
             multikeyShortcut = Shortcut.registerShortcut("core_multikey:activateLayer", tr("Multikey: {0}",
-            tr("Activate layer")), KeyEvent.VK_A, Shortcut.SHIFT);
+                    tr("Activate layer")), KeyEvent.VK_A, Shortcut.SHIFT);
             putValue("help", HelpUtil.ht("/Dialog/LayerList#ActivateLayer"));
         }
 
@@ -736,6 +739,7 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         public MergeAction() {
+            putValue(NAME, tr("Merge"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "mergedown"));
             putValue(SHORT_DESCRIPTION, tr("Merge this layer into another layer"));
             putValue("help", HelpUtil.ht("/Dialog/LayerList#MergeLayer"));
@@ -798,11 +802,11 @@ public class LayerListDialog extends ToggleDialog {
             this();
             CheckParameterUtil.ensureParameterNotNull(layer, "layer");
             this.layer = layer;
-            putValue(NAME, tr("Duplicate"));
             updateEnabledState();
         }
 
         public DuplicateAction() {
+            putValue(NAME, tr("Duplicate"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "duplicatelayer"));
             putValue(SHORT_DESCRIPTION, tr("Duplicate this layer"));
             putValue("help", HelpUtil.ht("/Dialog/LayerList#DuplicateLayer"));
@@ -1032,6 +1036,7 @@ public class LayerListDialog extends ToggleDialog {
      */
     class MoveUpAction extends AbstractAction implements  IEnabledStateUpdating{
         public MoveUpAction() {
+            putValue(NAME, tr("Move up"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "up"));
             putValue(SHORT_DESCRIPTION, tr("Move the selected layer one row up."));
             updateEnabledState();
@@ -1053,6 +1058,7 @@ public class LayerListDialog extends ToggleDialog {
      */
     class MoveDownAction extends AbstractAction implements IEnabledStateUpdating {
         public MoveDownAction() {
+            putValue(NAME, tr("Move down"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "down"));
             putValue(SHORT_DESCRIPTION, tr("Move the selected layer one row down."));
             updateEnabledState();
