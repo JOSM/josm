@@ -213,13 +213,22 @@ public class ImageProvider {
      * Execute the image request.
      */
     public ImageIcon get() {
+        return get(true);
+    }
+    
+    /**
+     * Execute the image request.
+     */
+    public ImageIcon get(boolean warn) {
         ImageResource ir = getIfAvailableImpl();
         if (ir == null) {
             if (!optional) {
                 String ext = name.indexOf('.') != -1 ? "" : ".???";
                 throw new RuntimeException(tr("Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.", name + ext));
             } else {
-                System.out.println(tr("Failed to locate image ''{0}''", name));
+                if (warn) {
+                    System.out.println(tr("Failed to locate image ''{0}''", name));
+                }
                 return null;
             }
         }
