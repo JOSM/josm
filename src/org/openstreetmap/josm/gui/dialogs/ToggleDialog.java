@@ -23,8 +23,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -34,19 +35,23 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.data.preferences.ParametrizedEnumProperty;
 import org.openstreetmap.josm.gui.MainMenu;
+import org.openstreetmap.josm.gui.ShowHideButtonListener;
+import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.help.Helpful;
-import org.openstreetmap.josm.gui.ShowHideButtonListener;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -58,6 +63,26 @@ import org.openstreetmap.josm.tools.WindowGeometry.WindowGeometryException;
  *
  */
 public class ToggleDialog extends JPanel implements ShowHideButtonListener, Helpful, AWTEventListener {
+
+    public enum ButtonHiddingType {
+        ALWAYS_SHOWN, ALWAYS_HIDDEN, DYNAMIC
+    }
+
+    private final ParametrizedEnumProperty<ButtonHiddingType> PROP_BUTTON_HIDING = new ParametrizedEnumProperty<ToggleDialog.ButtonHiddingType>(ButtonHiddingType.class, ButtonHiddingType.DYNAMIC) {
+        @Override
+        protected String getKey(String... params) {
+            return preferencePrefix + ".buttonhiding";
+        }
+        @Override
+        protected ButtonHiddingType parse(String s) {
+            try {
+                return super.parse(s);
+            } catch (IllegalArgumentException e) {
+                // Legacy settings
+                return Boolean.parseBoolean(s)?ButtonHiddingType.DYNAMIC:ButtonHiddingType.ALWAYS_HIDDEN;
+            }
+        }
+    };
 
     /** The action to toggle this dialog */
     protected ToggleDialogAction toggleAction;
@@ -86,7 +111,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     /**
      * Indicates whether dynamic button hiding is active or not.
      */
-    protected boolean isButtonHiding;
+    protected ButtonHiddingType buttonHiding;
 
     /** the preferred height if the toggle dialog is expanded */
     private int preferredHeight;
@@ -102,6 +127,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     protected JToggleButton button;
     private JPanel buttonsPanel;
+    private List<javax.swing.Action> buttonActions = new ArrayList<javax.swing.Action>();
 
     /** holds the menu entry in the windows menu. Required to properly
      * toggle the checkbox on show/hide
@@ -142,7 +168,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         isShowing = Main.pref.getBoolean(preferencePrefix+".visible", defShow);
         isDocked = Main.pref.getBoolean(preferencePrefix+".docked", true);
         isCollapsed = Main.pref.getBoolean(preferencePrefix+".minimized", false);
-        isButtonHiding = Main.pref.getBoolean(preferencePrefix+".buttonhiding", true);
+        buttonHiding = PROP_BUTTON_HIDING.get();
 
         /** show the minimize button */
         titleBar = new TitleBar(name, iconName);
@@ -415,20 +441,66 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                                 dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
                             }
                         }
+
+                        private void maybeShowPopup(MouseEvent e) {
+                            if (e.isPopupTrigger()) {
+                                JPopupMenu menu = new JPopupMenu();
+                                JMenu buttonHidingMenu = new JMenu(tr("Side buttons"));
+                                JRadioButtonMenuItem alwaysShown = new JRadioButtonMenuItem(new AbstractAction(tr("Always shown")) {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        setIsButtonHiding(ButtonHiddingType.ALWAYS_SHOWN);
+                                    }
+                                });
+                                JRadioButtonMenuItem dynamic = new JRadioButtonMenuItem(new AbstractAction(tr("Dynamic")) {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        setIsButtonHiding(ButtonHiddingType.DYNAMIC);
+                                    }
+                                });
+                                JRadioButtonMenuItem alwaysHidden = new JRadioButtonMenuItem(new AbstractAction(tr("Always hidden")) {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        setIsButtonHiding(ButtonHiddingType.ALWAYS_HIDDEN);
+                                    }
+                                });
+                                alwaysShown.setSelected(buttonHiding == ButtonHiddingType.ALWAYS_SHOWN);
+                                dynamic.setSelected(buttonHiding == ButtonHiddingType.DYNAMIC);
+                                alwaysHidden.setSelected(buttonHiding == ButtonHiddingType.ALWAYS_HIDDEN);
+                                buttonHidingMenu.add(alwaysShown);
+                                buttonHidingMenu.add(dynamic);
+                                buttonHidingMenu.add(alwaysHidden);
+                                menu.add(buttonHidingMenu);
+                                for (javax.swing.Action action: buttonActions) {
+                                    menu.add(action);
+                                }
+                                menu.show(TitleBar.this, e.getX(), e.getY());
+                            }
+                        }
+
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            maybeShowPopup(e);
+                        }
+
+                        @Override
+                        public void mouseReleased(MouseEvent e) {
+                            maybeShowPopup(e);
+                        }
                     }
-            );
+                    );
 
             if(Main.pref.getBoolean("dialog.dynamic.buttons", true)) {
-                buttonsHide = new JButton(ImageProvider.get("misc", isButtonHiding ? "buttonhide" : "buttonshow"));
+                buttonsHide = new JButton(ImageProvider.get("misc", buttonHiding != ButtonHiddingType.ALWAYS_SHOWN ? "buttonhide" : "buttonshow"));
                 buttonsHide.setToolTipText(tr("Toggle dynamic buttons"));
                 buttonsHide.setBorder(BorderFactory.createEmptyBorder());
                 buttonsHide.addActionListener(
-                    new ActionListener(){
-                        public void actionPerformed(ActionEvent e) {
-                            setIsButtonHiding(!isButtonHiding);
+                        new ActionListener(){
+                            public void actionPerformed(ActionEvent e) {
+                                setIsButtonHiding(buttonHiding == ButtonHiddingType.ALWAYS_SHOWN?ButtonHiddingType.DYNAMIC:ButtonHiddingType.ALWAYS_SHOWN);
+                            }
                         }
-                    }
-                );
+                        );
                 add(buttonsHide);
             }
 
@@ -443,7 +515,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                             dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
                         }
                     }
-            );
+                    );
             add(sticky);
 
             // show the close button
@@ -458,7 +530,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                             hideNotify();
                         }
                     }
-            );
+                    );
             add(close);
             setToolTipText(tr("Click to minimize/maximize the panel content"));
             setTitle(toggleDialogName);
@@ -577,7 +649,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     protected void setIsDocked(boolean val) {
         if(buttonsPanel != null && buttonsHide != null) {
-            buttonsPanel.setVisible(val ? !isButtonHiding : true);
+            buttonsPanel.setVisible(val ? buttonHiding == ButtonHiddingType.ALWAYS_SHOWN : true);
         }
         isDocked = val;
         Main.pref.put(preferencePrefix+".docked", val);
@@ -590,10 +662,11 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         stateChanged();
     }
 
-    protected void setIsButtonHiding(boolean val) {
-        isButtonHiding = val;
-        Main.pref.put(preferencePrefix+".buttonhiding", val);
-        buttonsHide.setIcon(ImageProvider.get("misc", val ? "buttonhide" : "buttonshow"));
+    protected void setIsButtonHiding(ButtonHiddingType val) {
+        buttonHiding = val;
+        PROP_BUTTON_HIDING.put(val);
+        buttonsHide.setIcon(ImageProvider.get("misc", val != ButtonHiddingType.ALWAYS_SHOWN ? "buttonhide" : "buttonshow"));
+        buttonsPanel.setVisible(val != ButtonHiddingType.ALWAYS_HIDDEN);
         stateChanged();
     }
 
@@ -640,7 +713,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     public JToggleButton getButton() {
         return button;
     }
-    
+
     /***
      * The following methods are intended to be overridden, in order to customize
      * the toggle dialog behavior.
@@ -678,18 +751,26 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     }
 
     protected Component createLayout(Component data, boolean scroll, Collection<SideButton> buttons) {
-        if(scroll)
+        if(scroll) {
             data = new JScrollPane(data);
+        }
         add(data, BorderLayout.CENTER);
         if(buttons != null && buttons.size() != 0) {
             buttonsPanel = new JPanel(Main.pref.getBoolean("dialog.align.left", false)
-                ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1,buttons.size()));
-            for(SideButton button : buttons)
+                    ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1,buttons.size()));
+            for(SideButton button : buttons) {
                 buttonsPanel.add(button);
+                javax.swing.Action action = button.getAction();
+                if (action != null) {
+                    buttonActions.add(action);
+                } else {
+                    System.err.println("Button " + button + " doesn't have action defined");
+                }
+            }
             add(buttonsPanel, BorderLayout.SOUTH);
             if(Main.pref.getBoolean("dialog.dynamic.buttons", true)) {
                 Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_MOTION_EVENT_MASK);
-                buttonsPanel.setVisible(!isButtonHiding || !isDocked);
+                buttonsPanel.setVisible(buttonHiding == ButtonHiddingType.ALWAYS_SHOWN || !isDocked);
             }
         } else if(buttonsHide != null) {
             buttonsHide.setVisible(false);
@@ -699,7 +780,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     @Override
     public void eventDispatched(AWTEvent event) {
-        if(isShowing() && !isCollapsed && isDocked && isButtonHiding) {
+        if(isShowing() && !isCollapsed && isDocked && buttonHiding == ButtonHiddingType.DYNAMIC) {
             Rectangle b = this.getBounds();
             b.setLocation(getLocationOnScreen());
             if (b.contains(((MouseEvent)event).getLocationOnScreen())) {
