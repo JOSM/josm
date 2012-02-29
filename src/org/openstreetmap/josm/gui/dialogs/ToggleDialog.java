@@ -666,7 +666,9 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         buttonHiding = val;
         PROP_BUTTON_HIDING.put(val);
         buttonsHide.setIcon(ImageProvider.get("misc", val != ButtonHiddingType.ALWAYS_SHOWN ? "buttonhide" : "buttonshow"));
-        buttonsPanel.setVisible(val != ButtonHiddingType.ALWAYS_HIDDEN);
+        if (buttonsPanel != null) {
+            buttonsPanel.setVisible(val != ButtonHiddingType.ALWAYS_HIDDEN);
+        }
         stateChanged();
     }
 
