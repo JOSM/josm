@@ -85,8 +85,8 @@ public class MapPaintDialog extends ToggleDialog {
 
     public MapPaintDialog() {
         super(tr("Map Paint Styles"), "mapstyle", tr("configure the map painting style"),
-            Shortcut.registerShortcut("subwindow:mappaint", tr("Toggle: {0}", tr("MapPaint")),
-            KeyEvent.VK_M, Shortcut.ALT_SHIFT), 150);
+                Shortcut.registerShortcut("subwindow:mappaint", tr("Toggle: {0}", tr("MapPaint")),
+                        KeyEvent.VK_M, Shortcut.ALT_SHIFT), 150);
         build();
     }
 
@@ -143,10 +143,10 @@ public class MapPaintDialog extends ToggleDialog {
         selectionModel.addListSelectionListener(downAction);
 
         createLayout(p, true, Arrays.asList(new SideButton[] {
-                new SideButton(onoffAction),
-                new SideButton(upAction),
-                new SideButton(downAction),
-                new SideButton(new LaunchMapPaintPreferencesAction())
+                new SideButton(onoffAction, false),
+                new SideButton(upAction, false),
+                new SideButton(downAction, false),
+                new SideButton(new LaunchMapPaintPreferencesAction(), false)
         }));
     }
 
@@ -295,6 +295,7 @@ public class MapPaintDialog extends ToggleDialog {
 
     protected class OnOffAction extends AbstractAction implements ListSelectionListener {
         public OnOffAction() {
+            putValue(NAME, tr("On/Off"));
             putValue(SHORT_DESCRIPTION, tr("Turn selected styles on or off"));
             putValue(SMALL_ICON, ImageProvider.get("apply"));
             updateEnabledState();
@@ -329,6 +330,7 @@ public class MapPaintDialog extends ToggleDialog {
 
         public MoveUpDownAction(boolean isDown) {
             increment = isDown ? 1 : -1;
+            putValue(NAME, isDown?tr("Down"):tr("Up"));
             putValue(SMALL_ICON, isDown ? ImageProvider.get("dialogs", "down") : ImageProvider.get("dialogs", "up"));
             putValue(SHORT_DESCRIPTION, isDown ? tr("Move the selected entry one row down.") : tr("Move the selected entry one row up."));
             updateEnabledState();
@@ -361,6 +363,7 @@ public class MapPaintDialog extends ToggleDialog {
      */
     static class LaunchMapPaintPreferencesAction extends AbstractAction {
         public LaunchMapPaintPreferencesAction() {
+            putValue(NAME, tr("Preferences"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "mappaintpreference"));
         }
 

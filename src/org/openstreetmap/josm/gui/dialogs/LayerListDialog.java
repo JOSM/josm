@@ -250,7 +250,7 @@ public class LayerListDialog extends ToggleDialog {
         //-- layer opacity action
         LayerOpacityAction layerOpacityAction = new LayerOpacityAction();
         adaptTo(layerOpacityAction, selectionModel);
-        opacityButton = new SideButton(layerOpacityAction);
+        opacityButton = new SideButton(layerOpacityAction, false);
 
         // -- merge layer action
         MergeAction mergeLayerAction = new MergeAction();
@@ -268,13 +268,13 @@ public class LayerListDialog extends ToggleDialog {
         adaptTo(deleteLayerAction, selectionModel);
 
         createLayout(layerList, true, Arrays.asList(new SideButton[] {
-                new SideButton(moveUpAction),
-                new SideButton(moveDownAction),
-                new SideButton(activateLayerAction),
-                new SideButton(showHideLayerAction),
+                new SideButton(moveUpAction, false),
+                new SideButton(moveDownAction, false),
+                new SideButton(activateLayerAction, false),
+                new SideButton(showHideLayerAction, false),
                 opacityButton,
-                new SideButton(mergeLayerAction),
-                new SideButton(duplicateLayerAction),
+                new SideButton(mergeLayerAction, false),
+                new SideButton(duplicateLayerAction, false),
                 new SideButton(deleteLayerAction, false)
         }));
 
