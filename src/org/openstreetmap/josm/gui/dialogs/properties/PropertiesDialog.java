@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -45,6 +46,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.InputMap;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -58,6 +60,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuListener;
@@ -839,7 +842,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0),"onTableInsert");
         propertyTable.getActionMap().put("onTableInsert",addAction);
-                
+        
+        //  unassign some standard shortcuts for JTable to allow upload / download
+        InputMap inputMap=SwingUtilities.getUIInputMap(propertyTable,JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_UP,InputEvent.CTRL_MASK|InputEvent.SHIFT_MASK));
+        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,InputEvent.CTRL_MASK|InputEvent.SHIFT_MASK));
+        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_UP,InputEvent.ALT_MASK|InputEvent.SHIFT_MASK));
+        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,InputEvent.ALT_MASK|InputEvent.SHIFT_MASK));
+        SwingUtilities.replaceUIInputMap(propertyTable,JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT,inputMap);
+        
         // -- add action and shortcut
         this.btnAdd = new SideButton(addAction);
         btnAdd.setFocusable(true);
