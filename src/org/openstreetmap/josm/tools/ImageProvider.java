@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -215,19 +216,37 @@ public class ImageProvider {
     public ImageIcon get() {
         return get(true);
     }
-    
+
     /**
      * Execute the image request.
+     * @param warn If the requested image has been set as optional and is not found, prints an error message on System.err.
      */
     public ImageIcon get(boolean warn) {
-        ImageResource ir = getIfAvailableImpl();
+        return get(warn, null);
+    }
+
+    /**
+     * Execute the image request.
+     * @param additionalClassLoaders A collection of additional class loaders to search image for.
+     */
+    public ImageIcon get(Collection<ClassLoader> additionalClassLoaders) {
+        return get(true, additionalClassLoaders);
+    }
+
+    /**
+     * Execute the image request.
+     * @param warn If the requested image has been set as optional and is not found, prints an error message on System.err.
+     * @param additionalClassLoaders A collection of additional class loaders to search image for.
+     */
+    public ImageIcon get(boolean warn, Collection<ClassLoader> additionalClassLoaders) {
+        ImageResource ir = getIfAvailableImpl(additionalClassLoaders);
         if (ir == null) {
             if (!optional) {
                 String ext = name.indexOf('.') != -1 ? "" : ".???";
                 throw new RuntimeException(tr("Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.", name + ext));
             } else {
                 if (warn) {
-                    System.out.println(tr("Failed to locate image ''{0}''", name));
+                    System.err.println(tr("Failed to locate image ''{0}''", name));
                 }
                 return null;
             }
@@ -269,7 +288,7 @@ public class ImageProvider {
     private static final Pattern dataUrlPattern = Pattern.compile(
             "^data:([a-zA-Z]+/[a-zA-Z+]+)?(;base64)?,(.+)$");
 
-    private ImageResource getIfAvailableImpl() {
+    private ImageResource getIfAvailableImpl(Collection<ClassLoader> additionalClassLoaders) {
         if (name == null)
             return null;
 
@@ -370,7 +389,7 @@ public class ImageProvider {
                         // index the cache by the name of the icon we're looking for
                         // and don't bother to create a URL unless we're actually
                         // creating the image.
-                        URL path = getImageUrl(full_name, dirs);
+                        URL path = getImageUrl(full_name, dirs, additionalClassLoaders);
                         if (path == null) {
                             continue;
                         }
@@ -509,10 +528,14 @@ public class ImageProvider {
         }
     }
 
-    private static URL getImageUrl(String path, String name) {
+    private static URL getImageUrl(String path, String name, Collection<ClassLoader> additionalClassLoaders) {
         if (path != null && path.startsWith("resource://")) {
             String p = path.substring("resource://".length());
-            for (ClassLoader source : PluginHandler.getResourceClassLoaders()) {
+            Collection<ClassLoader> classLoaders = new ArrayList<ClassLoader>(PluginHandler.getResourceClassLoaders());
+            if (additionalClassLoaders != null) {
+                classLoaders.addAll(additionalClassLoaders);
+            }
+            for (ClassLoader source : classLoaders) {
                 URL res;
                 if ((res = source.getResource(p + name)) != null)
                     return res;
@@ -528,14 +551,14 @@ public class ImageProvider {
         return null;
     }
 
-    private static URL getImageUrl(String imageName, Collection<String> dirs) {
+    private static URL getImageUrl(String imageName, Collection<String> dirs, Collection<ClassLoader> additionalClassLoaders) {
         URL u = null;
 
         // Try passed directories first
         if (dirs != null) {
             for (String name : dirs) {
                 try {
-                    u = getImageUrl(name, imageName);
+                    u = getImageUrl(name, imageName, additionalClassLoaders);
                     if (u != null)
                         return u;
                 } catch (SecurityException e) {
@@ -549,7 +572,7 @@ public class ImageProvider {
         // Try user-preference directory
         String dir = Main.pref.getPreferencesDir() + "images";
         try {
-            u = getImageUrl(dir, imageName);
+            u = getImageUrl(dir, imageName, additionalClassLoaders);
             if (u != null)
                 return u;
         } catch (SecurityException e) {
@@ -559,21 +582,21 @@ public class ImageProvider {
         }
 
         // Absolute path?
-        u = getImageUrl(null, imageName);
+        u = getImageUrl(null, imageName, additionalClassLoaders);
         if (u != null)
             return u;
 
         // Try plugins and josm classloader
-        u = getImageUrl("resource://images/", imageName);
+        u = getImageUrl("resource://images/", imageName, additionalClassLoaders);
         if (u != null)
             return u;
 
         // Try all other resource directories
         for (String location : Main.pref.getAllPossiblePreferenceDirs()) {
-            u = getImageUrl(location + "images", imageName);
+            u = getImageUrl(location + "images", imageName, additionalClassLoaders);
             if (u != null)
                 return u;
-            u = getImageUrl(location, imageName);
+            u = getImageUrl(location, imageName, additionalClassLoaders);
             if (u != null)
                 return u;
         }
