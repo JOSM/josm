@@ -100,7 +100,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     public ValidatorDialog validatorDialog;
     public SelectionListDialog selectionListDialog;
     public PropertiesDialog propertiesDialog;
-    
+
     /**
      * The panel list of all toggle dialog icons. To add new toggle dialog actions, use addToggleDialog
      * instead of adding directly to this list.
@@ -109,10 +109,10 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     private final DialogsPanel dialogsPanel;
 
     public final ButtonGroup toolGroup = new ButtonGroup();
-    
+
     private List<IconToggleButton> allDialogButtons = new ArrayList<IconToggleButton>();
     private List<IconToggleButton> allMapModeButtons = new ArrayList<IconToggleButton>();
-    
+
     private final ListAllButtonsAction listAllDialogsAction = new ListAllButtonsAction(allDialogButtons);
     private final ListAllButtonsAction listAllMapModesAction = new ListAllButtonsAction(allMapModeButtons);
     private final JButton listAllToggleDialogsButton = new JButton(listAllDialogsAction);
@@ -360,7 +360,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         listAllMapModesButton.setBorder(null);
         listAllMapModesButton.setFont(listAllMapModesButton.getFont().deriveFont(Font.PLAIN));
         jb.add(listAllMapModesButton);
-        
+
         if(Main.pref.getBoolean("sidetoolbar.togglevisible", true)) {
             jb.addSeparator(new Dimension(0,18));
             toolBarToggle.setAlignmentX(0.5f);
@@ -413,8 +413,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
         private JButton button;
         private Collection<? extends HideableButton> buttons;
-        
-                
+
+
         public ListAllButtonsAction(Collection<? extends HideableButton> buttons) {
             this.buttons = buttons;
             putValue(NAME, ">>");
@@ -458,11 +458,11 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         }
         toolBarToggle.repaint();
         for (IconToggleButton b : allMapModeButtons) {
-             b.applyButtonHiddenPreferences();
+            b.applyButtonHiddenPreferences();
         }
         toolBarActions.repaint();
     }
-    
+
     /**
      * Replies the instance of a toggle dialog of type <code>type</code> managed by this
      * map frame
@@ -539,8 +539,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         }
         // invalidate repaint cache
         Main.map.mapView.preferenceChanged(null);
-        
-        // After all listeners notice new layer, some buttons will be disabled/enabled 
+
+        // After all listeners notice new layer, some buttons will be disabled/enabled
         // and possibly need to be hidden/shown.
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -548,14 +548,14 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
             }
         });
     }
-    
+
 
     private MapMode getLastMapMode(Layer newLayer) {
         MapMode mode = lastMapMode.get(newLayer);
         if (mode == null) {
             // if no action is selected - try to select default action
             Action defaultMode = getDefaultButtonAction();
-            if (defaultMode instanceof MapMode & ((MapMode)defaultMode).layerIsSupported(newLayer)) {
+            if (defaultMode instanceof MapMode && ((MapMode)defaultMode).layerIsSupported(newLayer)) {
                 mode = (MapMode) defaultMode;
             }
         }
