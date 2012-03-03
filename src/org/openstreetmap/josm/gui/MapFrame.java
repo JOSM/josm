@@ -94,12 +94,18 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      */
     public MapStatus statusLine;
 
+    // Toggle dialogs
     public ConflictDialog conflictDialog;
     public FilterDialog filterDialog;
     public RelationListDialog relationListDialog;
     public ValidatorDialog validatorDialog;
     public SelectionListDialog selectionListDialog;
     public PropertiesDialog propertiesDialog;
+
+    // Map modes
+    private final MapMode mapModeSelect;
+    private final MapMode mapModeDraw;
+    private final MapMode mapModeZoom;
 
     /**
      * The panel list of all toggle dialog icons. To add new toggle dialog actions, use addToggleDialog
@@ -139,9 +145,9 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
         // toolbar
         toolBarActions.setFloatable(false);
-        addMapMode(new IconToggleButton(new SelectAction(this)));
-        addMapMode(new IconToggleButton(new DrawAction(this)));
-        addMapMode(new IconToggleButton(new ZoomAction(this)));
+        addMapMode(new IconToggleButton(mapModeSelect = new SelectAction(this)));
+        addMapMode(new IconToggleButton(mapModeDraw = new DrawAction(this)));
+        addMapMode(new IconToggleButton(mapModeZoom = new ZoomAction(this)));
         addMapMode(new IconToggleButton(new DeleteAction(this), true));
         addMapMode(new IconToggleButton(new ParallelWayAction(this), true));
         addMapMode(new IconToggleButton(new ExtrudeAction(this), true));
@@ -207,19 +213,25 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         MapView.addLayerChangeListener(this);
     }
 
-    public void selectSelectTool(boolean onlyIfModeless) {
+    public boolean selectSelectTool(boolean onlyIfModeless) {
         if(onlyIfModeless && !Main.pref.getBoolean("modeless", false))
-            return;
+            return false;
 
-        selectMapMode((MapMode)getDefaultButtonAction());
+        return selectMapMode(mapModeSelect);
     }
 
     public void selectDrawTool(boolean onlyIfModeless) {
         if(onlyIfModeless && !Main.pref.getBoolean("modeless", false))
             return;
 
-        Action drawAction = ((AbstractButton)toolBarActions.getComponent(1)).getAction();
-        selectMapMode((MapMode)drawAction);
+        selectMapMode(mapModeDraw);
+    }
+
+    public boolean selectZoomTool(boolean onlyIfModeless) {
+        if(onlyIfModeless && !Main.pref.getBoolean("modeless", false))
+            return false;
+
+        return selectMapMode(mapModeZoom);
     }
 
     /**
@@ -317,9 +329,10 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      * if new map mode is correct mode for current layer and does not change mode
      * in such cases.
      * @param mapMode   The new mode to set.
+     * @return
      */
-    public void selectMapMode(MapMode newMapMode) {
-        selectMapMode(newMapMode, mapView.getActiveLayer());
+    public boolean selectMapMode(MapMode newMapMode) {
+        return selectMapMode(newMapMode, mapView.getActiveLayer());
     }
 
     /**
@@ -327,14 +340,15 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      * Pass newly selected layer to this method.
      * @param newMapMode
      * @param newLayer
+     * @return True if mode is really selected
      */
-    public void selectMapMode(MapMode newMapMode, Layer newLayer) {
+    public boolean selectMapMode(MapMode newMapMode, Layer newLayer) {
         if (newMapMode == null || !newMapMode.layerIsSupported(newLayer))
-            return;
+            return false;
 
         MapMode oldMapMode = this.mapMode;
         if (newMapMode == oldMapMode)
-            return;
+            return true;
         if (oldMapMode != null) {
             oldMapMode.exitMode();
         }
@@ -342,6 +356,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         newMapMode.enterMode();
         lastMapMode.put(newLayer, newMapMode);
         fireMapModeChanged(oldMapMode, newMapMode);
+        return true;
     }
 
     /**
