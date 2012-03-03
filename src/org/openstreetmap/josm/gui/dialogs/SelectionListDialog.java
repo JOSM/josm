@@ -764,6 +764,7 @@ public class SelectionListDialog extends ToggleDialog  {
             int nodes = 0;
             int relations = 0;
             for (OsmPrimitive o : sel) {
+                if (! o.isSelectable()) continue; // skip unselectable primitives
                 if (o instanceof Way) {
                     ways++;
                 } else if (o instanceof Node) {
@@ -785,6 +786,10 @@ public class SelectionListDialog extends ToggleDialog  {
                 text.append(text.length() > 0 ? ", " : "")
                 .append(trn("{0} relation", "{0} relations", relations, relations));
             }
+            if(ways + nodes + relations == 0) {
+                text.append(tr("Unselectable now"));
+                this.sel=new ArrayList<OsmPrimitive>(); // empty selection
+            }            
             if(ways + nodes + relations == 1)
             {
                 text.append(": ");
