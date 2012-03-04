@@ -290,7 +290,7 @@ public class SplitWayAction extends JosmAction {
 
         Iterator<List<Node>> chunkIt = wayChunks.iterator();
         Collection<String> nowarnroles = Main.pref.getCollection("way.split.roles.nowarn",
-        Arrays.asList(new String[]{"outer", "inner", "forward", "backward"}));
+                Arrays.asList("outer", "inner", "forward", "backward", "north", "south", "east", "west"));
 
         // First, change the original way
         Way changedWay = new Way(way);
