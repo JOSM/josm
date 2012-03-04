@@ -32,6 +32,30 @@ abstract public class AbstractProjection implements Projection {
     protected double lon_0 = 0.0;   /* central meridian */
     protected double k_0 = 1.0;     /* general scale factor */
     protected NTV2GridShiftFile nadgrids = null;
+    
+    public final Ellipsoid getEllipsoid() {
+        return ellps;
+    }
+
+    public final Datum getDatum() {
+        return datum;
+    }
+
+    public final double getFalseEasting() {
+        return x_0;
+    }
+
+    public final double getFalseNorthing() {
+        return y_0;
+    }
+
+    public final double getCentralMeridian() {
+        return lon_0;
+    }
+
+    public final double getScaleFactor() {
+        return k_0;
+    }
 
     @Override
     public EastNorth latlon2eastNorth(LatLon ll) {
