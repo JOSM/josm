@@ -140,7 +140,7 @@ public class SearchCompiler {
                 String rangeS = " " + tokenizer.readTextOrNumber() + " "; // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
                 String[] rangeA = rangeS.split("/");
                 if (rangeA.length == 1)
-                    return new KeyValue(keyword, rangeS, regexSearch, caseSensitive);
+                    return new KeyValue(keyword, rangeS.trim(), regexSearch, caseSensitive);
                 else if (rangeA.length == 2) {
                     String rangeA1 = rangeA[0].trim();
                     String rangeA2 = rangeA[1].trim();
