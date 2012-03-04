@@ -41,6 +41,10 @@ abstract public class AbstractProjection implements Projection {
         return datum;
     }
 
+    public final Proj getProj() {
+        return proj;
+    }
+
     public final double getFalseEasting() {
         return x_0;
     }

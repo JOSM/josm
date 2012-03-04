@@ -16,7 +16,32 @@ public class LambertConformalConic implements Proj {
     
     protected Ellipsoid ellps;
     protected double e;
+    
+    public static abstract class Parameters {
+        public final double latitudeOrigin;
+        public Parameters(double latitudeOrigin) {
+            this.latitudeOrigin = latitudeOrigin;
+        }
+    };
+    
+    public static class Parameters1SP extends Parameters {
+        public Parameters1SP(double latitudeOrigin) {
+            super(latitudeOrigin);
+        }
+    }
 
+    public static class Parameters2SP extends Parameters {
+        public final double standardParallel1;
+        public final double standardParallel2;
+        public Parameters2SP(double latitudeOrigin, double standardParallel1, double standardParallel2) {
+            super(latitudeOrigin);
+            this.standardParallel1 = standardParallel1;
+            this.standardParallel2 = standardParallel2;
+        }
+    }
+
+    private Parameters params;
+    
     /**
      * projection exponent
      */
@@ -52,6 +77,7 @@ public class LambertConformalConic implements Proj {
      * @param lat_2 latitude of second standard parallel (in degrees)
      */
     public void updateParameters2SP(Ellipsoid ellps, double lat_0, double lat_1, double lat_2) {
+        this.params = new Parameters2SP(lat_0, lat_1, lat_2);
         this.ellps = ellps;
         this.e = ellps.e;
         
@@ -74,6 +100,7 @@ public class LambertConformalConic implements Proj {
      * @param lat_0 latitude of natural origin (in degrees)
      */
     public void updateParameters1SP(Ellipsoid ellps, double lat_0) {
+        this.params = new Parameters1SP(lat_0);
         this.ellps = ellps;
         this.e = ellps.e;
         final double lat_0_rad = toRadians(lat_0);
@@ -95,6 +122,7 @@ public class LambertConformalConic implements Proj {
      * @param r0 see field r0
      */
     public void updateParametersDirect(Ellipsoid ellps, double n, double F, double r0) {
+        this.params = null;
         this.ellps = ellps;
         this.e = ellps.e;
         this.n = n;
@@ -148,4 +176,7 @@ public class LambertConformalConic implements Proj {
         return new double[] { phi, lambda };
     }
     
+    public final Parameters getParameters() {
+        return params;
+    }
 }
