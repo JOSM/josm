@@ -21,6 +21,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.MapQuestOpenAerialTileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.MapQuestOsmTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 
 /**
@@ -81,7 +83,7 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
             }
         });
         JComboBox tileSourceSelector = new JComboBox(new TileSource[] { new OsmTileSource.Mapnik(),
-                new OsmTileSource.CycleMap(), new BingAerialTileSource() });
+                new OsmTileSource.CycleMap(), new BingAerialTileSource(), new MapQuestOsmTileSource(), new MapQuestOpenAerialTileSource() });
         tileSourceSelector.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 map.setTileSource((TileSource) e.getItem());
