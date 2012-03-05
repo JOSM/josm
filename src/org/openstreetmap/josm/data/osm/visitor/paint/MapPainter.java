@@ -46,11 +46,11 @@ import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.HorizontalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.VerticalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.MapImage;
-import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
 import org.openstreetmap.josm.gui.mappaint.TextElement;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 public class MapPainter {
 
@@ -819,8 +819,9 @@ public class MapPainter {
                         //                        new Rectangle(polygon.xpoints[0], polygon.ypoints[0], fillImage.getWidth(), fillImage.getHeight()));
                         new Rectangle(0, 0, fillImage.img.getWidth(null), fillImage.img.getHeight(null)));
                 g.setPaint(texture);
-                if (fillImage.alpha != 1f) {
-                    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fillImage.alpha));
+                Float alpha = Utils.color_int2float(fillImage.alpha);
+                if (alpha != 1f) {
+                    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
                 }
                 g.fill(area);
                 g.setPaintMode();
