@@ -3,7 +3,6 @@ package org.openstreetmap.gui.jmapviewer.tilesources;
 public class OsmTileSource {
 
     public static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
-    public static final String MAP_OSMA = "http://tah.openstreetmap.org/Tiles";
 
     public static class Mapnik extends AbstractOsmTileSource {
         public Mapnik() {
@@ -41,41 +40,6 @@ public class OsmTileSource {
 
         public TileUpdate getTileUpdate() {
             return TileUpdate.LastModified;
-        }
-    }
-
-    public static abstract class OsmaSource extends AbstractOsmTileSource {
-        String osmaSuffix;
-
-        public OsmaSource(String name, String osmaSuffix) {
-            super(name, MAP_OSMA);
-            this.osmaSuffix = osmaSuffix;
-        }
-
-        @Override
-        public int getMaxZoom() {
-            return 17;
-        }
-
-        @Override
-        public String getBaseUrl() {
-            return MAP_OSMA + "/" + osmaSuffix;
-        }
-
-        public TileUpdate getTileUpdate() {
-            return TileUpdate.IfModifiedSince;
-        }
-    }
-
-    public static class TilesAtHome extends OsmaSource {
-        public TilesAtHome() {
-            super("TilesAtHome", "tile");
-        }
-    }
-
-    public static class Maplint extends OsmaSource {
-        public Maplint() {
-            super("Maplint", "maplint");
         }
     }
 }
