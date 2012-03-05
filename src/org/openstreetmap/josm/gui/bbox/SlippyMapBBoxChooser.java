@@ -32,6 +32,8 @@ import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.MapQuestOpenAerialTileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.MapQuestOsmTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -103,9 +105,10 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         static final HashSet<String> existingSlippyMapUrls = new HashSet<String>();
         static {
             // Urls that already exist in the slippymap chooser and shouldn't be copied from TMS layer list
-            existingSlippyMapUrls.add("http://tile.openstreetmap.org/");
-            existingSlippyMapUrls.add("http://tah.openstreetmap.org/Tiles/tile/");
-            existingSlippyMapUrls.add("http://tile.opencyclemap.org/cycle/");
+            existingSlippyMapUrls.add("http://tile.openstreetmap.org/{zoom}/{x}/{y}.png");      // Mapnik
+            existingSlippyMapUrls.add("http://tile.opencyclemap.org/cycle/{zoom}/{x}/{y}.png"); // Cyclemap
+            existingSlippyMapUrls.add("http://otile{switch:1,2,3,4}.mqcdn.com/tiles/1.0.0/osm/{zoom}/{x}/{y}.png"); // MapQuest-OSM
+            existingSlippyMapUrls.add("http://oatile{switch:1,2,3,4}.mqcdn.com/tiles/1.0.0/sat/{zoom}/{x}/{y}.png"); // MapQuest Open Aerial
         }
 
         @Override
@@ -154,7 +157,9 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
             public List<TileSource> getTileSources() {
                 return Arrays.<TileSource>asList(
                         new RenamedSourceDecorator(new OsmTileSource.Mapnik(), "Mapnik"),
-                        new RenamedSourceDecorator(new OsmTileSource.CycleMap(), "Cyclemap")
+                        new RenamedSourceDecorator(new OsmTileSource.CycleMap(), "Cyclemap"),
+                        new RenamedSourceDecorator(new MapQuestOsmTileSource(), "MapQuest-OSM"),
+                        new RenamedSourceDecorator(new MapQuestOpenAerialTileSource(), "MapQuest Open Aerial")
                         );
             }
         });
