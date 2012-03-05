@@ -154,7 +154,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
             public List<TileSource> getTileSources() {
                 return Arrays.<TileSource>asList(
                         new RenamedSourceDecorator(new OsmTileSource.Mapnik(), "Mapnik"),
-                        new RenamedSourceDecorator(new OsmTileSource.TilesAtHome(), "Osmarender"),
                         new RenamedSourceDecorator(new OsmTileSource.CycleMap(), "Cyclemap")
                         );
             }
