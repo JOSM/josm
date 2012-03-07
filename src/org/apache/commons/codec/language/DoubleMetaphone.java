@@ -23,16 +23,12 @@ import org.apache.commons.codec.StringEncoder;
 /**
  * Encodes a string into a double metaphone value.
  * This Implementation is based on the algorithm by <CITE>Lawrence Philips</CITE>.
- * <ul>
- * <li>Original Article: <a 
- * href="http://www.cuj.com/documents/s=8038/cuj0006philips/">
- * http://www.cuj.com/documents/s=8038/cuj0006philips/</a></li>
- * <li>Original Source Code: <a href="ftp://ftp.cuj.com/pub/2000/1806/philips.zip">
- * ftp://ftp.cuj.com/pub/2000/1806/philips.zip</a></li>
- * </ul>
- * 
+ *
+ * @see <a href="http://drdobbs.com/184401251?pgno=2">Original Article</a>
+ * @see <a href="http://en.wikipedia.org/wiki/Metaphone">http://en.wikipedia.org/wiki/Metaphone</a>
+ *
  * @author Apache Software Foundation
- * @version $Id: DoubleMetaphone.java 1157192 2011-08-12 17:27:38Z ggregory $
+ * @version $Id: DoubleMetaphone.java 1298173 2012-03-07 22:30:48Z tn $
  */
 public class DoubleMetaphone implements StringEncoder {
 
