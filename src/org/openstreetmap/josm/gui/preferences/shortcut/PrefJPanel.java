@@ -367,6 +367,7 @@ public class PrefJPanel extends JPanel {
                 if (expr == null) {
                     sorter.setRowFilter(null);
                 } else {
+                    expr = expr.replace("+", "\\+");
                     // split search string on whitespace, do case-insensitive AND search
                     ArrayList<RowFilter<Object, Object>> andFilters = new ArrayList<RowFilter<Object, Object>>();
                     for (String word : expr.split("\\s+")) {
@@ -374,6 +375,7 @@ public class PrefJPanel extends JPanel {
                     }
                     sorter.setRowFilter(RowFilter.andFilter(andFilters));
                 }
+                model.fireTableDataChanged();
             }
             catch (PatternSyntaxException ex) { }
             catch (ClassCastException ex2) { /* eliminate warning */  }
