@@ -120,7 +120,7 @@ public class MainMenu extends JMenuBar {
     public final RecentlyOpenedFilesMenu recentlyOpened = new RecentlyOpenedFilesMenu();
     public final OpenLocationAction openLocation = new OpenLocationAction();
     public final JosmAction save = SaveAction.getInstance();
-    public final JosmAction saveAs = new SaveAsAction();
+    public final JosmAction saveAs = SaveAsAction.getInstance();
     public JosmAction sessionLoad;
     public JosmAction sessionSaveAs;
     public final JosmAction gpxExport = new GpxExportAction();

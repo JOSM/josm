@@ -16,7 +16,8 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class SaveAsAction extends SaveActionBase {
-
+    private static SaveAsAction instance = new SaveAsAction();
+    
     /**
      * Construct the action with "Save" as label.
      * @param layer Save this layer.
@@ -26,6 +27,10 @@ public class SaveAsAction extends SaveActionBase {
             Shortcut.registerShortcut("system:saveas", tr("File: {0}", tr("Save As...")),
             KeyEvent.VK_S, Shortcut.CTRL_SHIFT));
         putValue("help", ht("/Action/SaveAs"));
+    }
+    
+    public static SaveAsAction getInstance() {
+        return instance;
     }
 
     @Override protected File getFile(Layer layer) {

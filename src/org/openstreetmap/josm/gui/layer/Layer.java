@@ -380,7 +380,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
         }
 
         public void actionPerformed(ActionEvent e) {
-            new SaveAsAction().doSave(layer);
+            SaveAsAction.getInstance().doSave(layer);
         }
     }
 
