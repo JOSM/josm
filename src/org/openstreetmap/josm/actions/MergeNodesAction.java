@@ -214,10 +214,9 @@ public class MergeNodesAction extends JosmAction {
                     };
                     HelpAwareOptionPane.showOptionDialog(
                             Main.parent,
-                            tr(
-                                    "Cannot merge nodes: Would have to delete way ''{0}'' which is still used.",
-                                    w.getDisplayName(DefaultNameFormatter.getInstance())
-                            ),
+                            tr("Cannot merge nodes: Would have to delete way {0} which is still used by {1}",
+                                DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(w),
+                                DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(w.getReferrers())),
                             tr("Warning"),
                             JOptionPane.WARNING_MESSAGE,
                             null, /* no icon */

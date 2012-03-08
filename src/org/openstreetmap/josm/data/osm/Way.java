@@ -13,6 +13,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.CopyList;
 import org.openstreetmap.josm.tools.Pair;
 
@@ -507,14 +508,19 @@ public final class Way extends OsmPrimitive implements IWay {
             Node[] nodes = this.nodes;
             for (Node n: nodes) {
                 if (n.getDataSet() != dataSet)
-                    throw new DataIntegrityProblemException("Nodes in way must be in the same dataset");
+                    throw new DataIntegrityProblemException("Nodes in way must be in the same dataset",
+                            tr("Nodes in way must be in the same dataset"));
                 if (n.isDeleted())
-                    throw new DataIntegrityProblemException("Deleted node referenced: " + toString());
+                    throw new DataIntegrityProblemException("Deleted node referenced: " + toString(),
+                            "<html>" + tr("Deleted node referenced by {0}", DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(this)) + "</html>");
             }
             if (Main.pref.getBoolean("debug.checkNullCoor", true)) {
                 for (Node n: nodes) {
                     if (!n.isIncomplete() && (n.getCoor() == null || n.getEastNorth() == null))
-                        throw new DataIntegrityProblemException("Complete node with null coordinates: " + toString() + n.get3892DebugInfo());
+                        throw new DataIntegrityProblemException("Complete node with null coordinates: " + toString() + n.get3892DebugInfo(),
+                                "<html>" + tr("Complete node {0} with null coordinates in way {1}",
+                                DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(n),
+                                DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(this)) + "</html>");
                 }
             }
         }

@@ -176,23 +176,16 @@ abstract public class Command extends PseudoCommand {
      */
     public static boolean checkAndConfirmOutlyingOperation(String operation,
             String dialogTitle, String outsideDialogMessage, String incompleteDialogMessage,
-            Area area, Collection<? extends OsmPrimitive> primitives, OsmPrimitive ignore) {
+            Area area, Collection<? extends OsmPrimitive> primitives,
+            Collection<? extends OsmPrimitive> ignore) {
         boolean outside = false;
         boolean incomplete = false;
-        if (area != null) {
-            for (OsmPrimitive osm : primitives) {
-                if (osm.isIncomplete()) {
-                    incomplete = true;
-                } else if (isOutlying(osm, area)
-                        && (ignore == null || !ignore.equals(osm))) {
-                    outside = true;
-                }
-            }
-        } else {
-            for (OsmPrimitive osm : primitives) {
-                if (osm.isIncomplete()) {
-                    incomplete = true;
-                }
+        for (OsmPrimitive osm : primitives) {
+            if (osm.isIncomplete()) {
+                incomplete = true;
+            } else if (area != null && isOutlying(osm, area)
+                    && (ignore == null || !ignore.contains(osm))) {
+                outside = true;
             }
         }
         if (outside) {

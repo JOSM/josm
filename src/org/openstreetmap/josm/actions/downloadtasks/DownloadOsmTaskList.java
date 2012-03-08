@@ -159,19 +159,20 @@ public class DownloadOsmTaskList {
                                 ),
         };
 
-        String message = "<html>"
-                + trn("There is {0} object in your local dataset which "
-                        + "might be deleted on the server. If you later try to delete or "
-                        + "update this the server is likely to report a conflict.",
-                        "There are {0} objects in your local dataset which "
-                                + "might be deleted on the server. If you later try to delete or "
-                                + "update them the server is likely to report a conflict.", potentiallyDeleted.size(), potentiallyDeleted.size())
-                                + "<br>"
-                                + trn("Click <strong>{0}</strong> to check the state of this object on the server.",
-                                        "Click <strong>{0}</strong> to check the state of these objects on the server.",
-                                        potentiallyDeleted.size(),
-                                        options[0].text) + "<br>"
-                                        + tr("Click <strong>{0}</strong> to ignore." + "</html>", options[1].text);
+        String message = "<html>" + trn(
+                "There is {0} object in your local dataset which "
+                + "might be deleted on the server.<br>If you later try to delete or "
+                + "update this the server is likely to report a conflict.",
+                "There are {0} objects in your local dataset which "
+                + "might be deleted on the server.<br>If you later try to delete or "
+                + "update them the server is likely to report a conflict.",
+                potentiallyDeleted.size(), potentiallyDeleted.size())
+                + "<br>"
+                + trn("Click <strong>{0}</strong> to check the state of this object on the server.",
+                "Click <strong>{0}</strong> to check the state of these objects on the server.",
+                potentiallyDeleted.size(),
+                options[0].text) + "<br>"
+                + tr("Click <strong>{0}</strong> to ignore." + "</html>", options[1].text);
 
         int ret = HelpAwareOptionPane.showOptionDialog(
                 Main.parent,

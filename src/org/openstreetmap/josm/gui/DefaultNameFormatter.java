@@ -8,6 +8,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -22,6 +23,7 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
@@ -706,5 +708,19 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
         sb.append("</html>");
         return sb.toString();
+    }
+
+    public String formatAsHtmlUnorderedList(Collection<? extends OsmPrimitive> primitives) {
+        StringBuilder sb = new StringBuilder(1024);
+        sb.append("<ul>");
+        for (OsmPrimitive i : primitives) {
+            sb.append("<li>").append(i.getDisplayName(this)).append("</li>");
+        }
+        sb.append("</ul>");
+        return sb.toString();
+    }
+
+    public String formatAsHtmlUnorderedList(OsmPrimitive... primitives) {
+        return formatAsHtmlUnorderedList(Arrays.asList(primitives));
     }
 }
