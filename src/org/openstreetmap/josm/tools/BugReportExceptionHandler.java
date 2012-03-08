@@ -125,11 +125,11 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                             p.add(new JMultilineLabel(
                                     tr("You have encountered an error in JOSM. Before you file a bug report " +
                                             "make sure you have updated to the latest version of JOSM here:")), GBC.eol());
-                            p.add(new UrlLabel("http://josm.openstreetmap.de/#Download"), GBC.eop().insets(8,0,0,0));
+                            p.add(new UrlLabel("http://josm.openstreetmap.de/#Download",2), GBC.eop().insets(8,0,0,0));
                             p.add(new JMultilineLabel(
                                     tr("You should also update your plugins. If neither of those help please " +
                                             "file a bug report in our bugtracker using this link:")), GBC.eol());
-                            p.add(new UrlLabel(url.toString(), "http://josm.openstreetmap.de/josmticket?..."), GBC.eop().insets(8,0,0,0));
+                            p.add(new UrlLabel(url.toString(), "http://josm.openstreetmap.de/josmticket?...",2), GBC.eop().insets(8,0,0,0));
                             p.add(new JMultilineLabel(
                                     tr("There the error information provided below should already be " +
                                             "filled in for you. Please include information on how to reproduce " +
@@ -137,7 +137,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                             p.add(new JMultilineLabel(
                                     tr("Alternatively, if that does not work you can manually fill in the information " +
                                             "below at this URL:")), GBC.eol());
-                            p.add(new UrlLabel("http://josm.openstreetmap.de/newticket"), GBC.eop().insets(8,0,0,0));
+                            p.add(new UrlLabel("http://josm.openstreetmap.de/newticket",2), GBC.eop().insets(8,0,0,0));
                             if (Utils.copyToClipboard(text)) {
                                 p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")), GBC.eop());
                             }

@@ -11,8 +11,10 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
+import java.awt.KeyboardFocusManager;
 import java.awt.MenuItem;
 import java.awt.Point;
 import java.awt.Stroke;
@@ -38,11 +40,7 @@ import java.util.Map;
 import java.util.Set;
 
 import java.util.TreeSet;
-import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
-
-import javax.swing.JPopupMenu;
-import javax.swing.Timer;
+import javax.swing.*;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.AddCommand;
@@ -223,6 +221,17 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if(Main.map == null || Main.map.mapView == null || !Main.map.mapView.isActiveLayerDrawable())
             return;
         if (event instanceof KeyEvent) {
+            Component focused = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+            Component wantedFocus = Main.map.mapView.getParent();
+            boolean foundMapViewAncestor=false;
+            while (focused!=null) {
+                if (focused==wantedFocus) {
+                    foundMapViewAncestor=true;
+                }
+                focused = focused.getParent();
+            }
+            // we accept only events that come from map or toggle dialogs, not from menu and dialogs
+            if (!foundMapViewAncestor) return;
             processKeyEvent((KeyEvent) event);
         } //  toggle angle snapping
         updateKeyModifiers((InputEvent) event);
@@ -237,7 +246,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private KeyEvent releaseEvent;
     private Timer timer;
     void processKeyEvent(KeyEvent e) {
-        if (!snappingShortcut.isEvent(e))
+        if (!snappingShortcut.isEvent(e) && !getShortcut().isEvent(e))
             return;
 
         if (e.getID() == KeyEvent.KEY_PRESSED) {
@@ -260,15 +269,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     private void doKeyPressEvent(KeyEvent e) {
-        if (!snappingShortcut.isEvent(e))
-            return;
         snapHelper.setFixedMode();
         computeHelperLine();
         redrawIfRequired();
     }
     private void doKeyReleaseEvent(KeyEvent e) {
-        if (!snappingShortcut.isEvent(e))
-            return;
         snapHelper.unFixOrTurnOff();
         computeHelperLine();
         redrawIfRequired();

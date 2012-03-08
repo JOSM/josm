@@ -853,7 +853,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 url = href;
             }
             if (url != null) {
-                p.add(new UrlLabel(url, locale_text), GBC.eol().anchor(GBC.WEST));
+                p.add(new UrlLabel(url, locale_text, 2), GBC.eol().anchor(GBC.WEST));
             }
             return false;
         }

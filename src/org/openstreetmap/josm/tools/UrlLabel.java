@@ -1,54 +1,57 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import javax.swing.JEditorPane;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Label that contains a clickable link.
  * @author Imi
+ * 5050: Simplifications by Zverikk included by akks
  */
-public class UrlLabel extends JEditorPane implements HyperlinkListener, MouseListener {
+public class UrlLabel extends JLabel implements MouseListener {
 
     private String url = "";
     private String description = "";
+    private int fontPlus;
 
     public UrlLabel() {
-        addHyperlinkListener(this);
         addMouseListener(this);
-        setEditable(false);
-        setOpaque(false);
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
     public UrlLabel(String url) {
-        this (url, url);
+        this (url, url, 0);
+    }
+    
+    public UrlLabel(String url, int fontPlus) {
+        this (url, url, fontPlus);
     }
 
     public UrlLabel(String url, String description) {
+        this (url, url, 0);
+    }
+    
+    public UrlLabel(String url, String description, int fontPlus) {
         this();
         setUrl(url);
         setDescription(description);
+        this.fontPlus = fontPlus;
+        if (fontPlus!=0) setFont(getFont().deriveFont(0, getFont().getSize()+fontPlus));
         refresh();
     }
 
     protected void refresh() {
-        setContentType("text/html");
         if (url != null) {
             setText("<html><a href=\""+url+"\">"+description+"</a></html>");
         } else {
             setText("<html>" + description + "</html>");
         }
         setToolTipText(String.format("<html>%s<br/>%s</html>",url, tr("Right click = copy to clipboard")));
-    }
-
-    public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            OpenBrowser.displayUrl(url);
-        }
     }
 
     /**
@@ -74,19 +77,20 @@ public class UrlLabel extends JEditorPane implements HyperlinkListener, MouseLis
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {    }
+    public void mouseClicked(MouseEvent e) {
+        if( SwingUtilities.isLeftMouseButton(e) ) {
+            OpenBrowser.displayUrl(url);
+        } else if( SwingUtilities.isRightMouseButton(e) ) {
+            Utils.copyToClipboard(url);
+        }
+    }
     @Override
     public void mousePressed(MouseEvent e) {    }
     @Override
     public void mouseEntered(MouseEvent e) {    }
     @Override
     public void mouseExited(MouseEvent e) {    }
-
     @Override
-    public void mouseReleased(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON3) {
-            Utils.copyToClipboard(url);
-        }
-    }
+    public void mouseReleased(MouseEvent e) {    }
 
 }
