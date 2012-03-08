@@ -43,7 +43,6 @@ import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor.ProgressMonitorDialog;
@@ -544,7 +543,7 @@ public class MapStatus extends JPanel implements Helpful {
 
             final JLabel l = new JLabel(
                     "<html>" +text.toString() + "</html>",
-                    ImageProvider.get(OsmPrimitiveType.from(osm)),
+                    ImageProvider.get(osm.getDisplayType()),
                     JLabel.HORIZONTAL
                     ) {
                 // This is necessary so the label updates its colors when the

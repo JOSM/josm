@@ -838,7 +838,7 @@ public class GpxLayer extends Layer {
                     new JLabel(
                             tr("<html>Upload of unprocessed GPS data as map data is considered harmful.<br>If you want to upload traces, look here:</html>")),
                             GBC.eol());
-            msg.add(new UrlLabel(tr("http://www.openstreetmap.org/traces")), GBC.eop());
+            msg.add(new UrlLabel(tr("http://www.openstreetmap.org/traces"),2), GBC.eop());
             if (!ConditionalOptionPaneUtil.showConfirmationDialog("convert_to_data", Main.parent, msg, tr("Warning"),
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, JOptionPane.OK_OPTION))
                 return;

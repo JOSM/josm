@@ -1,12 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
+import java.awt.*;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -47,12 +44,12 @@ public class VersionInfoPanel extends JPanel implements Observer{
         pnl1.add(lblInfo, BorderLayout.CENTER);
 
         pnlUserAndChangeset = new JPanel();
-        pnlUserAndChangeset.setLayout(new FlowLayout(FlowLayout.LEFT));
-        lblUser = new UrlLabel();
+        pnlUserAndChangeset.setLayout(new GridLayout(2,2));
+        lblUser = new UrlLabel("", 2);
         pnlUserAndChangeset.add(new JLabel(tr("User:")));
         pnlUserAndChangeset.add(lblUser);
         pnlUserAndChangeset.add(new JLabel(tr("Changeset:")));
-        lblChangeset = new UrlLabel();
+        lblChangeset = new UrlLabel("", 2);
         pnlUserAndChangeset.add(lblChangeset);
 
         setLayout(new GridBagLayout());
