@@ -28,7 +28,7 @@ public class ElemStyles {
 
     private boolean defaultNodes, defaultLines;
     private int defaultNodesIdx, defaultLinesIdx;
-    
+
     public ElemStyles()
     {
         styleSources = new ArrayList<StyleSource>();
@@ -316,9 +316,9 @@ public class ElemStyles {
                 NodeElemStyle nodeStyle = NodeElemStyle.create(env);
                 if (nodeStyle != null) {
                     sl.add(nodeStyle);
-                    addIfNotNull(sl, BoxTextElemStyle.create(env, nodeStyle.getBox()));
+                    addIfNotNull(sl, BoxTextElemStyle.create(env, nodeStyle.getBoxProvider()));
                 } else {
-                    addIfNotNull(sl, BoxTextElemStyle.create(env, NodeElemStyle.SIMPLE_NODE_ELEMSTYLE.getBox()));
+                    addIfNotNull(sl, BoxTextElemStyle.create(env, NodeElemStyle.SIMPLE_NODE_ELEMSTYLE.getBoxProvider()));
                 }
             } else if (osm instanceof Relation) {
                 if (((Relation)osm).isMultipolygon()) {

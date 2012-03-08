@@ -459,7 +459,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     /**
      * Draw the component.
      */
-    @Override public void paint(Graphics g) {
+    @Override public synchronized void paint(Graphics g) {
         if (BugReportExceptionHandler.exceptionHandlingInProgress())
             return;
 
@@ -832,7 +832,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         }
     }
 
-    public void preferenceChanged(PreferenceChangeEvent e) {
+    public synchronized void preferenceChanged(PreferenceChangeEvent e) {
         paintPreferencesChanged = true;
     }
 

@@ -4,9 +4,6 @@ package org.openstreetmap.josm.gui.mappaint;
 import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
-
-import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -26,10 +23,10 @@ public class AreaElemStyle extends ElemStyle
      * an arbitrary color value sampled from the fillImage
      */
     public Color color;
-    public MapImage<BufferedImage> fillImage;
+    public MapImage fillImage;
     public TextElement text;
 
-    protected AreaElemStyle(Cascade c, Color color, MapImage<BufferedImage> fillImage, TextElement text) {
+    protected AreaElemStyle(Cascade c, Color color, MapImage fillImage, TextElement text) {
         super(c, -1000f);
         CheckParameterUtil.ensureParameterNotNull(color);
         this.color = color;
@@ -38,27 +35,22 @@ public class AreaElemStyle extends ElemStyle
     }
 
     public static AreaElemStyle create(Cascade c) {
-        MapImage<BufferedImage> fillImage = null;
+        MapImage fillImage = null;
         Color color = null;
 
         IconReference iconRef = c.get("fill-image", null, IconReference.class);
         if (iconRef != null) {
-            ImageIcon icon = MapPaintStyles.getIcon(iconRef, -1, -1);
-            if (icon != null) {
-                if (!(icon.getImage() instanceof BufferedImage))
-                    throw new RuntimeException();
-                fillImage = new MapImage<BufferedImage>(iconRef.iconName, iconRef.source);
-                fillImage.img = (BufferedImage) icon.getImage();
+            fillImage = new MapImage(iconRef.iconName, iconRef.source);
+            fillImage.getImage();
 
-                color = new Color(fillImage.img.getRGB(
-                        fillImage.img.getWidth() / 2, fillImage.img.getHeight() / 2)
-                );
+            color = new Color(fillImage.getImage().getRGB(
+                    fillImage.getWidth() / 2, fillImage.getHeight() / 2)
+            );
 
-                fillImage.alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fill-image-alpha", 255))));
-                Integer pAlpha = Utils.color_float2int(c.get("fill-opacity", null, float.class));
-                if (pAlpha != null) {
-                    fillImage.alpha = pAlpha;
-                }
+            fillImage.alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fill-image-alpha", 255))));
+            Integer pAlpha = Utils.color_float2int(c.get("fill-opacity", null, float.class));
+            if (pAlpha != null) {
+                fillImage.alpha = pAlpha;
             }
         } else {
             color = c.get("fill-color", null, Color.class);
@@ -77,7 +69,7 @@ public class AreaElemStyle extends ElemStyle
         if (textPos == null || Utils.equal(textPos.val, "center")) {
             text = TextElement.create(c, PaintColors.AREA_TEXT.get(), true);
         }
-        
+
         if (color != null)
             return new AreaElemStyle(c, color, fillImage, text);
         else

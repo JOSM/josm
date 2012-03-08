@@ -21,7 +21,6 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -737,8 +736,9 @@ public class MapPainter {
          *       left-below   center-below    right-below
          *
          */
+        Rectangle box = bs.getBox();
         if (bs.hAlign == HorizontalTextAlignment.RIGHT) {
-            x += bs.box.x + bs.box.width + 2;
+            x += box.x + box.width + 2;
         } else {
             FontRenderContext frc = g.getFontRenderContext();
             Rectangle2D bounds = text.font.getStringBounds(s, frc);
@@ -746,23 +746,23 @@ public class MapPainter {
             if (bs.hAlign == HorizontalTextAlignment.CENTER) {
                 x -= textWidth / 2;
             } else if (bs.hAlign == HorizontalTextAlignment.LEFT) {
-                x -= - bs.box.x + 4 + textWidth;
+                x -= - box.x + 4 + textWidth;
             } else throw new AssertionError();
         }
 
         if (bs.vAlign == VerticalTextAlignment.BOTTOM) {
-            y += bs.box.y + bs.box.height;
+            y += box.y + box.height;
         } else {
             FontRenderContext frc = g.getFontRenderContext();
             LineMetrics metrics = text.font.getLineMetrics(s, frc);
             if (bs.vAlign == VerticalTextAlignment.ABOVE) {
-                y -= - bs.box.y + metrics.getDescent();
+                y -= - box.y + metrics.getDescent();
             } else if (bs.vAlign == VerticalTextAlignment.TOP) {
-                y -= - bs.box.y - metrics.getAscent();
+                y -= - box.y - metrics.getAscent();
             } else if (bs.vAlign == VerticalTextAlignment.CENTER) {
                 y += (metrics.getAscent() - metrics.getDescent()) / 2;
             } else if (bs.vAlign == VerticalTextAlignment.BELOW) {
-                y += bs.box.y + bs.box.height + metrics.getAscent() + 2;
+                y += box.y + box.height + metrics.getAscent() + 2;
             } else throw new AssertionError();
         }
         if (inactive || n.isDisabled()) {
@@ -802,11 +802,11 @@ public class MapPainter {
         return path;
     }
 
-    public void drawArea(Way w, Color color, MapImage<BufferedImage> fillImage, TextElement text) {
+    public void drawArea(Way w, Color color, MapImage fillImage, TextElement text) {
         drawArea(w, getPath(w), color, fillImage, text);
     }
 
-    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage<BufferedImage> fillImage, TextElement text) {
+    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, TextElement text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());
 
@@ -815,9 +815,9 @@ public class MapPainter {
                 g.setColor(color);
                 g.fill(area);
             } else {
-                TexturePaint texture = new TexturePaint(fillImage.img,
+                TexturePaint texture = new TexturePaint(fillImage.getImage(),
                         //                        new Rectangle(polygon.xpoints[0], polygon.ypoints[0], fillImage.getWidth(), fillImage.getHeight()));
-                        new Rectangle(0, 0, fillImage.img.getWidth(null), fillImage.img.getHeight(null)));
+                        new Rectangle(0, 0, fillImage.getWidth(), fillImage.getHeight()));
                 g.setPaint(texture);
                 Float alpha = Utils.color_int2float(fillImage.alpha);
                 if (alpha != 1f) {
@@ -872,7 +872,7 @@ public class MapPainter {
         }
     }
 
-    public void drawArea(Relation r, Color color, MapImage<BufferedImage> fillImage, TextElement text) {
+    public void drawArea(Relation r, Color color, MapImage fillImage, TextElement text) {
         Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);
         if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
             for (PolyData pd : multipolygon.getCombinedPolygons()) {
@@ -914,7 +914,7 @@ public class MapPainter {
         }
     }
 
-    public void drawRestriction(Relation r, MapImage<Image> icon) {
+    public void drawRestriction(Relation r, MapImage icon) {
         Way fromWay = null;
         Way toWay = null;
         OsmPrimitive via = null;
@@ -1085,7 +1085,7 @@ public class MapPainter {
             iconAngle = 270-fromAngleDeg;
         }
 
-        drawRestriction(inactive || r.isDisabled() ? icon.getDisabled() : icon.img,
+        drawRestriction(inactive || r.isDisabled() ? icon.getDisabled() : icon.getImage(),
                 pVia, vx, vx2, vy, vy2, iconAngle, r.isSelected());
     }
 
