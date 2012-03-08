@@ -1,8 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,59 +42,22 @@ public class WikiReader {
         return readNormal(in);
     }
 
-    public String readLang(String text) {
+    public String readLang(String text) throws IOException {
         String languageCode = LanguageInfo.getWikiLanguagePrefix();
-        String url = baseurl + "/wiki/" + languageCode + text;
-        String res = "";
-        InputStream in = null;
-        try {
-            in = new URL(url).openStream();
-            res = readFromTrac(new BufferedReader(new InputStreamReader(in, "utf-8")));
-        } catch (IOException ioe) {
-            System.out.println(tr("Warning: failed to read MOTD from ''{0}''. Exception was: {1}", url, ioe
-                    .toString()));
-        } catch(SecurityException e) {
-            System.out.println(tr(
-                    "Warning: failed to read MOTD from ''{0}'' for security reasons. Exception was: {1}", url, e
-                    .toString()));
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                }
-            }
+        String res = readLang(new URL(baseurl + "/wiki/" + languageCode + text));
+        if (res.isEmpty() && !languageCode.isEmpty()) {
+            res = readLang(new URL(baseurl + "/wiki/" + text));
         }
-        if (res.length() == 0 && languageCode.length() != 0) {
-            url = baseurl + "/wiki/" + text;
-            try {
-                in = new URL(url).openStream();
-            } catch (IOException e) {
-                System.out.println(tr("Warning: failed to read MOTD from ''{0}''. Exception was: {1}", url, e
-                        .toString()));
-                return res;
-            } catch (SecurityException e) {
-                System.out.println(tr(
-                        "Warning: failed to read MOTD from ''{0}'' for security reasons. Exception was: {1}", url, e
-                        .toString()));
-                return res;
-            }
-            try {
-                res = readFromTrac(new BufferedReader(new InputStreamReader(in, "utf-8")));
-            } catch (IOException ioe) {
-                System.out.println(tr("Warning: failed to read MOTD from ''{0}''. Exception was: {1}", url, ioe
-                        .toString()));
-                return res;
-            } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (IOException e) {
-                    }
-                }
-            }
+        if (res.isEmpty()) {
+            throw new IOException(text + " does not exist");
+        } else {
+            return res;
         }
-        return res;
+    }
+
+    private String readLang(URL url) throws IOException {
+        InputStream in = url.openStream();
+        return readFromTrac(new BufferedReader(new InputStreamReader(in, "utf-8")));
     }
 
     private String readNormal(BufferedReader in) throws IOException {

@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.regex.Matcher;
@@ -56,7 +57,7 @@ public class GettingStarted extends JPanel {
     /**
      * Grabs current MOTD from cache or webpage and parses it.
      */
-    private static class MotdContent extends CacheCustomContent<RuntimeException> {
+    private static class MotdContent extends CacheCustomContent<IOException> {
         public MotdContent() {
             super("motd.html", CacheCustomContent.INTERVAL_DAILY);
         }
@@ -69,12 +70,8 @@ public class GettingStarted extends JPanel {
          * @see org.openstreetmap.josm.io.CacheCustomContent#updateData()
          */
         @Override
-        protected byte[] updateData() {
+        protected byte[] updateData() throws IOException {
             String motd = new WikiReader().readLang("StartupPage");
-            if (motd.length() == 0) {
-                motd = "<html>" + STYLE + "<h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
-                + "</h1>\n<h2 align=\"center\">(" + tr("Message of the day not available") + ")</h2></html>";
-            }
             // Save this to prefs in case JOSM is updated so MOTD can be refreshed
             Main.pref.putInteger("cache.motd.html.version", myVersion);
             Main.pref.put("cache.motd.html.lang", myLang);
@@ -117,12 +114,20 @@ public class GettingStarted extends JPanel {
 
         // Asynchronously get MOTD to speed-up JOSM startup
         Thread t = new Thread(new Runnable() {
+            @Override
             public void run() {
-                if (content.length() == 0 && Main.pref.getBoolean("help.displaymotd", true)) {
-                    content = new MotdContent().updateIfRequiredString();
+                if (content.isEmpty() && Main.pref.getBoolean("help.displaymotd", true)) {
+                    try {
+                        content = new MotdContent().updateIfRequiredString();
+                    } catch (IOException ex) {
+                        System.out.println(tr("Warning: failed to read MOTD. Exception was: {1}", ex.toString()));
+                        content = "<html>" + STYLE + "<h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
+                                + "</h1>\n<h2 align=\"center\">(" + tr("Message of the day not available") + ")</h2></html>";
+                    }
                 }
 
                 EventQueue.invokeLater(new Runnable() {
+                    @Override
                     public void run() {
                         lg.setText(fixImageLinks(content));
                         // lg.moveCaretPosition(0);
