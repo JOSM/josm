@@ -97,6 +97,8 @@ public class ImageProvider {
     protected int maxWidth = -1;
     protected int maxHeight = -1;
     protected boolean optional;
+    protected boolean suppressWarnings;
+    protected Collection<ClassLoader> additionalClassLoaders;
 
     private static SVGUniverse svgUniverse;
 
@@ -219,41 +221,34 @@ public class ImageProvider {
     }
 
     /**
+     * Suppresses warning on the command line in case the image cannot be found.
+     *
+     * In combination with setOptional(true);
+     */
+    public ImageProvider setSuppressWarning(boolean suppressWarnings) {
+        this.suppressWarnings = suppressWarnings;
+        return this;
+    }
+
+    /**
+     * Add a collection of additional class loaders to search image for.
+     */
+    public ImageProvider setAdditionalClassLoaders(Collection<ClassLoader> additionalClassLoaders) {
+        this.additionalClassLoaders = additionalClassLoaders;
+        return this;
+    }
+
+    /**
      * Execute the image request.
      */
     public ImageIcon get() {
-        return get(true);
-    }
-
-    /**
-     * Execute the image request.
-     * @param warn If the requested image has been set as optional and is not found, prints an error message on System.err.
-     */
-    public ImageIcon get(boolean warn) {
-        return get(warn, null);
-    }
-
-    /**
-     * Execute the image request.
-     * @param additionalClassLoaders A collection of additional class loaders to search image for.
-     */
-    public ImageIcon get(Collection<ClassLoader> additionalClassLoaders) {
-        return get(true, additionalClassLoaders);
-    }
-
-    /**
-     * Execute the image request.
-     * @param warn If the requested image has been set as optional and is not found, prints an error message on System.err.
-     * @param additionalClassLoaders A collection of additional class loaders to search image for.
-     */
-    public ImageIcon get(boolean warn, Collection<ClassLoader> additionalClassLoaders) {
         ImageResource ir = getIfAvailableImpl(additionalClassLoaders);
         if (ir == null) {
             if (!optional) {
                 String ext = name.indexOf('.') != -1 ? "" : ".???";
                 throw new RuntimeException(tr("Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.", name + ext));
             } else {
-                if (warn) {
+                if (!suppressWarnings) {
                     System.err.println(tr("Failed to locate image ''{0}''", name));
                 }
                 return null;
