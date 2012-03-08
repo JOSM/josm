@@ -18,7 +18,10 @@ import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
@@ -187,9 +190,19 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
         if (p == null) throw e;
         if (p.isDeleted()) {
             // we tried to delete an already deleted primitive.
-            //
-            System.out.println(tr("Warning: object ''{0}'' is already deleted on the server. Skipping this object and retrying to upload.", p.getDisplayName(DefaultNameFormatter.getInstance())));
-            monitor.appendLogMessage(tr("Object ''{0}'' is already deleted. Skipping object in upload.",p.getDisplayName(DefaultNameFormatter.getInstance())));
+            final String msg;
+            final String displayName = p.getDisplayName(DefaultNameFormatter.getInstance());
+            if (p instanceof Node) {
+                msg = tr("Node ''{0}'' is already deleted. Skipping object in upload.", displayName);
+            } else if (p instanceof Way) {
+                msg = tr("Way ''{0}'' is already deleted. Skipping object in upload.", displayName);
+            } else if (p instanceof Relation) {
+                msg = tr("Relation ''{0}'' is already deleted. Skipping object in upload.", displayName);
+            } else {
+                msg = tr("Object ''{0}'' is already deleted. Skipping object in upload.", displayName);
+            }
+            monitor.appendLogMessage(msg);
+            System.out.println(tr("Warning: {0}", msg));
             processedPrimitives.addAll(writer.getProcessedPrimitives());
             processedPrimitives.add(p);
             toUpload.removeProcessed(processedPrimitives);

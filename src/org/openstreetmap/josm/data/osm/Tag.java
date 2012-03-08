@@ -78,18 +78,6 @@ public class Tag {
         return this.key.equals(key);
     }
 
-    /**
-     * Normalizes the key and the value of the tag by
-     * <ul>
-     *   <li>removing leading and trailing white space</li>
-     * <ul>
-     *
-     */
-    public void normalize() {
-        key = key.trim();
-        value = value.trim();
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
