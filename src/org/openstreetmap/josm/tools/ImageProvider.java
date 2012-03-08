@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -102,6 +104,12 @@ public class ImageProvider {
      * The icon cache
      */
     private static Map<String, ImageResource> cache = new HashMap<String, ImageResource>();
+
+    private final static ExecutorService imageFetcher = Executors.newSingleThreadExecutor();
+
+    public interface ImageCallback {
+        void finished(ImageIcon result);
+    }
 
     /**
      * @param subdir    Subdirectory the image lies in.
@@ -255,6 +263,34 @@ public class ImageProvider {
             return ir.getImageIconBounded(new Dimension(maxWidth, maxHeight));
         else
             return ir.getImageIcon(new Dimension(width, height));
+    }
+
+    /**
+     * Load the image in a background thread.
+     *
+     * This method returns immediately and runs the image request
+     * asynchronously.
+     *
+     * @param callback is called, when the image is ready. This can happen
+     * before the call to getInBackground returns or it may be invoked some
+     * time (seconds) later.
+     * If no image is available, a null value is returned to callback (just
+     * like ImageProvider.get).
+     */
+    public void getInBackground(final ImageCallback callback) {
+        if (name.startsWith("http://") || name.startsWith("wiki://")) {
+            Runnable fetch = new Runnable() {
+                @Override
+                public void run() {
+                    ImageIcon result = get();
+                    callback.finished(result);
+                }
+            };
+            imageFetcher.submit(fetch);
+        } else {
+            ImageIcon result = get();
+            callback.finished(result);
+        }
     }
 
     /**

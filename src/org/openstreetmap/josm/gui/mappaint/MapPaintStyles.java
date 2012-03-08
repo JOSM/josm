@@ -118,7 +118,7 @@ public class MapPaintStyles {
                 .setOptional(true).get();
     }
 
-    private static List<String> getIconSourceDirs(StyleSource source) {
+    public static List<String> getIconSourceDirs(StyleSource source) {
         List<String> dirs = new LinkedList<String>();
 
         String sourceDir = source.getLocalSourceDir();

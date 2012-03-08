@@ -1,10 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import java.awt.Image;
-
-import javax.swing.ImageIcon;
-
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
@@ -16,9 +12,9 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
  */
 public class LinePatternElemStyle extends ElemStyle {
 
-    public MapImage<Image> pattern;
+    public MapImage pattern;
 
-    public LinePatternElemStyle(Cascade c, MapImage<Image> pattern) {
+    public LinePatternElemStyle(Cascade c, MapImage pattern) {
         super(c, -1f);
         this.pattern = pattern;
     }
@@ -29,18 +25,14 @@ public class LinePatternElemStyle extends ElemStyle {
         IconReference iconRef = c.get("pattern-image", null, IconReference.class);
         if (iconRef == null)
             return null;
-        ImageIcon icon = MapPaintStyles.getIcon(iconRef, -1, -1);
-        if (icon == null)
-            return null;
-        MapImage<Image> pattern = new MapImage<Image>(iconRef.iconName, iconRef.source);
-        pattern.img = icon.getImage();
+        MapImage pattern = new MapImage(iconRef.iconName, iconRef.source);
         return new LinePatternElemStyle(c, pattern);
     }
 
     @Override
     public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, MapPainter painter, boolean selected, boolean member) {
         Way w = (Way)primitive;
-        painter.drawLinePattern(w, pattern.img);
+        painter.drawLinePattern(w, pattern.getImage());
     }
 
     @Override

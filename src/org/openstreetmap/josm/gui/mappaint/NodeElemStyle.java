@@ -5,11 +5,8 @@ import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Stroke;
-
-import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -19,6 +16,8 @@ import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
+import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.BoxProvider;
+import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.SimpleBoxProvider;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -26,10 +25,8 @@ import org.openstreetmap.josm.tools.Utils;
  * applies for Nodes and turn restriction relations
  */
 public class NodeElemStyle extends ElemStyle {
-    public MapImage<Image> mapImage;
+    public MapImage mapImage;
     public Symbol symbol;
-
-    private ImageIcon disabledIcon;
 
     public enum SymbolShape { SQUARE, CIRCLE, TRIANGLE, PENTAGON, HEXAGON, HEPTAGON, OCTAGON, NONAGON, DECAGON }
 
@@ -94,7 +91,7 @@ public class NodeElemStyle extends ElemStyle {
     public static final StyleList DEFAULT_NODE_STYLELIST = new StyleList(NodeElemStyle.SIMPLE_NODE_ELEMSTYLE);
     public static final StyleList DEFAULT_NODE_STYLELIST_TEXT = new StyleList(NodeElemStyle.SIMPLE_NODE_ELEMSTYLE, BoxTextElemStyle.SIMPLE_NODE_TEXT_ELEMSTYLE);
 
-    protected NodeElemStyle(Cascade c, MapImage<Image> mapImage, Symbol symbol) {
+    protected NodeElemStyle(Cascade c, MapImage mapImage, Symbol symbol) {
         super(c, 1000f);
         this.mapImage = mapImage;
         this.symbol = symbol;
@@ -107,7 +104,7 @@ public class NodeElemStyle extends ElemStyle {
     private static NodeElemStyle create(Environment env, boolean allowDefault) {
         Cascade c = env.mc.getCascade(env.layer);
 
-        MapImage<Image> mapImage = createIcon(env);
+        MapImage mapImage = createIcon(env);
         Symbol symbol = null;
         if (mapImage == null) {
             symbol = createSymbol(env);
@@ -121,11 +118,11 @@ public class NodeElemStyle extends ElemStyle {
         return new NodeElemStyle(c, mapImage, symbol);
     }
 
-    private static MapImage<Image> createIcon(Environment env) {
+    private static MapImage createIcon(Environment env) {
         Cascade c = env.mc.getCascade(env.layer);
         Cascade c_def = env.mc.getCascade("default");
 
-        IconReference iconRef = c.get("icon-image", null, IconReference.class);
+        final IconReference iconRef = c.get("icon-image", null, IconReference.class);
         if (iconRef == null)
             return null;
 
@@ -144,20 +141,15 @@ public class NodeElemStyle extends ElemStyle {
         int width = widthF == null ? -1 : Math.round(widthF);
         int height = heightF == null ? -1 : Math.round(heightF);
 
-        MapImage<Image> mapImage = new MapImage<Image>(iconRef.iconName, iconRef.source);
+        final MapImage mapImage = new MapImage(iconRef.iconName, iconRef.source);
 
-        ImageIcon icon = MapPaintStyles.getIcon(iconRef, width, height);
-        if (icon == null) {
-            mapImage.img = MapPaintStyles.getNoIcon_Icon(iconRef.source).getImage();
-        } else {
-            mapImage.img = icon.getImage();
-            mapImage.alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.icon-image-alpha", 255))));
-            Integer pAlpha = Utils.color_float2int(c.get("icon-opacity", null, float.class));
-            if (pAlpha != null) {
-                mapImage.alpha = pAlpha;
-            }
-            mapImage.width = width;
-            mapImage.height = height;
+        mapImage.width = width;
+        mapImage.height = height;
+
+        mapImage.alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.icon-image-alpha", 255))));
+        Integer pAlpha = Utils.color_float2int(c.get("icon-opacity", null, float.class));
+        if (pAlpha != null) {
+            mapImage.alpha = pAlpha;
         }
         return mapImage;
     }
@@ -242,7 +234,7 @@ public class NodeElemStyle extends ElemStyle {
         if (primitive instanceof Node) {
             Node n = (Node) primitive;
             if (mapImage != null && painter.isShowIcons()) {
-                painter.drawNodeIcon(n, (painter.isInactiveMode() || n.isDisabled()) ? mapImage.getDisabled() : mapImage.img,
+                painter.drawNodeIcon(n, (painter.isInactiveMode() || n.isDisabled()) ? mapImage.getDisabled() : mapImage.getImage(),
                         Utils.color_int2float(mapImage.alpha), selected, member);
             } else if (symbol != null) {
                 Color fillColor = symbol.fillColor;
@@ -308,12 +300,11 @@ public class NodeElemStyle extends ElemStyle {
         }
     }
 
-    public Rectangle getBox() {
+    public BoxProvider getBoxProvider() {
         if (mapImage != null) {
-            int w = mapImage.img.getWidth(null), h = mapImage.img.getHeight(null);
-            return new Rectangle(-w/2, -h/2, w, h);
+            return mapImage.getBoxProvider();
         } else if (symbol != null) {
-            return new Rectangle(-symbol.size/2, -symbol.size/2, symbol.size, symbol.size);
+            return new SimpleBoxProvider(new Rectangle(-symbol.size/2, -symbol.size/2, symbol.size, symbol.size));
         } else {
             // This is only executed once, so no performance concerns.
             // However, it would be better, if the settings could be changed at runtime.
@@ -323,7 +314,7 @@ public class NodeElemStyle extends ElemStyle {
                     Main.pref.getInteger("mappaint.node.connection-size", 5),
                     Main.pref.getInteger("mappaint.node.tagged-size", 3)
             );
-            return new Rectangle(-size/2, -size/2, size, size);
+            return new SimpleBoxProvider(new Rectangle(-size/2, -size/2, size, size));
         }
     }
 
