@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -383,7 +384,7 @@ public class DuplicateNode extends Test {
             target = nodes.iterator().next();
         }
 
-        if (DeleteCommand.checkAndConfirmOutlyingDelete(Main.main.getCurrentDataSet().getDataSourceArea(), nodes, target))
+        if (DeleteCommand.checkAndConfirmOutlyingDelete(Main.main.getCurrentDataSet().getDataSourceArea(), nodes, Collections.singleton(target)))
             return MergeNodesAction.mergeNodes(Main.main.getEditLayer(), nodes, target);
 
         return null;// undoRedo handling done in mergeNodes

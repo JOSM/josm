@@ -357,7 +357,8 @@ public class DeleteCommand extends Command {
             primitivesToDelete.addAll(nodesToDelete);
         }
 
-        if (!silent && !checkAndConfirmOutlyingDelete(layer, primitivesToDelete, null))
+        if (!silent && !checkAndConfirmOutlyingDelete(layer,
+                primitivesToDelete, Utils.filteredCollection(primitivesToDelete, Way.class)))
             return null;
 
         waysToBeChanged.addAll(OsmPrimitive.getFilteredSet(OsmPrimitive.getReferrer(primitivesToDelete), Way.class));
@@ -453,11 +454,11 @@ public class DeleteCommand extends Command {
         }
     }
 
-    public static boolean checkAndConfirmOutlyingDelete(OsmDataLayer layer, Collection<? extends OsmPrimitive> primitives, OsmPrimitive ignore) {
+    public static boolean checkAndConfirmOutlyingDelete(OsmDataLayer layer, Collection<? extends OsmPrimitive> primitives, Collection<? extends OsmPrimitive> ignore) {
         return checkAndConfirmOutlyingDelete(layer.data.getDataSourceArea(), primitives, ignore);
     }
 
-    public static boolean checkAndConfirmOutlyingDelete(Area area, Collection<? extends OsmPrimitive> primitives, OsmPrimitive ignore) {
+    public static boolean checkAndConfirmOutlyingDelete(Area area, Collection<? extends OsmPrimitive> primitives, Collection<? extends OsmPrimitive> ignore) {
         return Command.checkAndConfirmOutlyingOperation("delete",
                 tr("Delete confirmation"),
                 tr("You are about to delete nodes outside of the area you have downloaded."
