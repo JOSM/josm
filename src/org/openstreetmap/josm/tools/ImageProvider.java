@@ -225,7 +225,7 @@ public class ImageProvider {
      *
      * In combination with setOptional(true);
      */
-    public ImageProvider setSuppressWarning(boolean suppressWarnings) {
+    public ImageProvider setSuppressWarnings(boolean suppressWarnings) {
         this.suppressWarnings = suppressWarnings;
         return this;
     }
