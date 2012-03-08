@@ -6,14 +6,16 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * TagCollection is a collection of tags which can be used to manipulate
@@ -711,25 +713,25 @@ public class TagCollection implements Iterable<Tag> {
 
         // See #7201 combining ways screws up the order of ref tags
         Set<String> originalValues = getValues(key);
-        if (originalValues.size() == 1)
+        if (originalValues.size() == 1) {
             return originalValues.iterator().next();
-
-        StringBuilder buffer = new StringBuilder();
-        Set<String> valSet = new HashSet<String>();
-        for (String vs : originalValues) {
-            valSet.addAll(Arrays.asList(vs.split(";")));
         }
-        List<String> values = new ArrayList<String>(valSet);
+
+        Set<String> values = new LinkedHashSet<String>();
+        Map<String, Collection<String>> originalSplitValues = new LinkedHashMap<String, Collection<String>>();
+        for (String v : originalValues) {
+            List<String> vs = Arrays.asList(v.split(";\\s*"));
+            originalSplitValues.put(v, vs);
+            values.addAll(vs);
+        }
         values.remove("");
-        Collections.sort(values);
-        Iterator<String> iter = values.iterator();
-        while (iter.hasNext()) {
-            buffer.append(iter.next());
-            if (iter.hasNext()) {
-                buffer.append(";");
+        // try to retain an already existing key if it contains all needed values (remove this if it causes performance problems)
+        for (Entry<String, Collection<String>> i : originalSplitValues.entrySet()) {
+            if (i.getValue().containsAll(values)) {
+                return i.getKey();
             }
         }
-        return buffer.toString();
+        return Utils.join(";", values);
     }
 
     @Override
