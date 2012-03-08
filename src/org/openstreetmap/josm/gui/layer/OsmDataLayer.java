@@ -328,7 +328,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         } catch (DataIntegrityProblemException e) {
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    e.getMessage(),
+                    e.getHtmlMessage() != null ? e.getHtmlMessage() : e.getMessage(),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );

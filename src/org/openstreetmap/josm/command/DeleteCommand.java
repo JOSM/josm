@@ -473,12 +473,6 @@ public class DeleteCommand extends Command {
     }
 
     private static boolean confirmRelationDeletion(Collection<Relation> relations) {
-        String relationString = "<ul>";
-        for(Relation r:relations) {
-            relationString += "<li>"+DefaultNameFormatter.getInstance().format(r) + "</li>";
-        }
-        relationString += "</ul>";
-        
         JPanel msg = new JPanel(new GridBagLayout());
         msg.add(new JLabel("<html>" + trn(
                 "You are about to delete {0} relation: {1}"
@@ -491,7 +485,8 @@ public class DeleteCommand extends Command {
                 + "This step is rarely necessary and cannot be undone easily after being uploaded to the server."
                 + "<br/>"
                 + "Do you really want to delete?",
-                relations.size(), relations.size(), relationString) + "</html>"));
+                relations.size(), relations.size(), DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(relations))
+                + "</html>"));
         boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
                 "delete_relations",
                 Main.parent,
