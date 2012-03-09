@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -175,7 +176,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
 
         public SearchKeywordRow addKeyword(String displayText, final String insertText, String description, String... examples) {
-            JLabel label = new JLabel("<html><style>td{border:1px solid gray;}</style><table><tr><td>" + displayText + "</td></tr></table></html>");
+            JLabel label = new JLabel("<html>"
+                    + "<style>td{border:1px solid gray; font-weight:normal;}</style>"
+                    + "<table><tr><td>" + displayText + "</td></tr></table></html>");
             add(label);
             if (description != null || examples.length > 0) {
                 label.setToolTipText("<html>"
@@ -184,6 +187,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                         + "</html>");
             }
             if (insertText != null) {
+                label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 label.addMouseListener(new MouseAdapter() {
 
                     @Override
@@ -374,8 +378,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     private static void buildHintsNew(JPanel right, HistoryComboBox hcbSearchString) {
         right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("basic examples"))
-                .addKeyword(tr("Baker Street"), tr("Baker Street"), tr("''Baker'' and ''Street'' in any key"))
-                .addKeyword(tr("\"Baker Street\""), tr("\"Baker Street\""), tr("''Baker Street'' in any key"))
+                .addKeyword(tr("Baker Street"), null, tr("''Baker'' and ''Street'' in any key"))
+                .addKeyword(tr("\"Baker Street\""), "\"\"", tr("''Baker Street'' in any key"))
                 , GBC.eol());
         right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("basics"))
@@ -392,8 +396,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("<i>expr</i> | <i>expr</i>", "| ", tr("logical or (at least one expression has to be satisfied)"))
                 .addKeyword("<i>expr</i> OR <i>expr</i>", "OR ", tr("logical or (at least one expression has to be satisfied)"))
                 .addKeyword("-<i>expr</i>", null, tr("logical not"))
-                .addKeyword("(<i>expr</i>)", null, tr("use parenthesis to group expressions"))
-                .addKeyword("\"key\"=\"value\"", null, tr("to quote operators.<br>Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."), "\"addr:street\"")
+                .addKeyword("(<i>expr</i>)", "()", tr("use parenthesis to group expressions"))
+                .addKeyword("\"key\"=\"value\"", "\"\"=\"\"", tr("to quote operators.<br>Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."), "\"addr:street\"")
                 , GBC.eol());
 
         if (Main.pref.getBoolean("expert", false)) {
