@@ -23,8 +23,6 @@ import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.StringEncoder;
 
 /**
- * THIS CLASS LIVES IN THE TEST DIRECTORY UNTIL IT IS FULLY BAKED. 
- * 
  * Encodes a string into a NYSIIS value. NYSIIS is an encoding used to relate similar names, but can also be used as a
  * general purpose scheme to find word with similar phonemes.
  *
@@ -63,10 +61,10 @@ import org.apache.commons.codec.StringEncoder;
  * 9. Add original first character of name as first character of key
  * </pre></p>
  *
- * @see <a href="http://en.wikipedia.org/wiki/NYSIIS">http://en.wikipedia.org/wiki/NYSIIS</a>
- * @see <a href="http://www.dropby.com/NYSIIS.html">http://www.dropby.com/NYSIIS.html</a>
+ * @see <a href="http://en.wikipedia.org/wiki/NYSIIS">NYSIIS on Wikipedia</a>
+ * @see <a href="http://www.dropby.com/NYSIIS.html">NYSIIS on dropby.com</a>
  * @see Soundex
- * @version $Id: Nysiis.java 1298958 2012-03-09 18:22:09Z tn $
+ * @version $Id: Nysiis.java 1298975 2012-03-09 18:46:26Z ggregory $
  */
 public class Nysiis implements StringEncoder {
 
