@@ -1166,18 +1166,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
      */
     public void mergeFrom(DataSet from) {
         if (from != null) {
-            for (Node n : from.getNodes()) {
-                from.removePrimitive(n);
-                addPrimitive(n);
-            }
-            for (Way w : from.getWays()) {
-                from.removePrimitive(w);
-                addPrimitive(w);
-            }
-            for (Relation r : from.getRelations()) {
-                from.removePrimitive(r);
-                addPrimitive(r);
-            }
+            new DataSetMerger(this, from).merge();
             dataSources.addAll(from.dataSources);
             from.dataSources.clear();
         }
