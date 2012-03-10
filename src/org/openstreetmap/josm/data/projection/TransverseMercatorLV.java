@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
+import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 
 /**
  * LKS-92/ Latvia TM projection. Based on data from spatialreference.org.
@@ -17,15 +18,20 @@ public class TransverseMercatorLV extends AbstractProjection {
 
     public TransverseMercatorLV() {
         ellps = Ellipsoid.GRS80;
-        proj = new org.openstreetmap.josm.data.projection.proj.TransverseMercator(ellps);
+        proj = new org.openstreetmap.josm.data.projection.proj.TransverseMercator();
+        try {
+            proj.initialize(new ProjParameters() {{ ellps = TransverseMercatorLV.this.ellps; }});
+        } catch (ProjectionConfigurationException e) {
+            throw new RuntimeException(e);
+        }
         datum = GRS80Datum.INSTANCE;
         lon_0 = 24;
         x_0 = 500000;
         y_0 = -6000000;
         k_0 = 0.9996;
     }
-    
-    @Override 
+
+    @Override
     public String toString() {
         return tr("LKS-92 (Latvia TM)");
     }

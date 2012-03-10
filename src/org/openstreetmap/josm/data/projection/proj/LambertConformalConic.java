@@ -6,6 +6,7 @@ import static java.lang.Math.*;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.projection.Ellipsoid;
+import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
 /**
  * Implementation of the Lambert Conformal Conic projection.
@@ -13,17 +14,17 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
  * @author Pieren
  */
 public class LambertConformalConic implements Proj {
-    
+
     protected Ellipsoid ellps;
     protected double e;
-    
+
     public static abstract class Parameters {
         public final double latitudeOrigin;
         public Parameters(double latitudeOrigin) {
             this.latitudeOrigin = latitudeOrigin;
         }
     };
-    
+
     public static class Parameters1SP extends Parameters {
         public Parameters1SP(double latitudeOrigin) {
             super(latitudeOrigin);
@@ -41,7 +42,7 @@ public class LambertConformalConic implements Proj {
     }
 
     private Parameters params;
-    
+
     /**
      * projection exponent
      */
@@ -51,63 +52,67 @@ public class LambertConformalConic implements Proj {
      */
     protected double F;
     /**
-     * radius of the parallel of latitude of the false origin (2SP) or at 
+     * radius of the parallel of latitude of the false origin (2SP) or at
      * natural origin (1SP)
      */
-    protected double r0; 
-    
+    protected double r0;
+
     /**
      * precision in iterative schema
      */
     protected static final double epsilon = 1e-12;
 
-    /**
-     * Constructor.
-     * Call one of the updateParameters... methods for initialization.
-     */
-    public LambertConformalConic() {
+    @Override
+    public void initialize(ProjParameters params) throws ProjectionConfigurationException {
+        ellps = params.ellps;
+        e = ellps.e;
+        if (params.lcc_n != null && params.lcc_F != null && params.lcc_r0 != null) {
+            initializeDirect(params.lcc_n, params.lcc_F, params.lcc_r0);
+        } else {
+            if (params.lat_0 == null)
+                throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", "lat_0"));
+            if (params.lat_1 != null && params.lat_2 != null) {
+                initialize2SP(params.lat_0, params.lat_1, params.lat_2);
+            } else {
+                initialize1SP(params.lat_0);
+            }
+        }
     }
 
     /**
      * Initialize for LCC with 2 standard parallels.
-     * 
-     * @param ellps the ellipsoid
+     *
      * @param lat_0 latitude of false origin (in degrees)
      * @param lat_1 latitude of first standard parallel (in degrees)
      * @param lat_2 latitude of second standard parallel (in degrees)
      */
-    public void updateParameters2SP(Ellipsoid ellps, double lat_0, double lat_1, double lat_2) {
+    private void initialize2SP(double lat_0, double lat_1, double lat_2) {
         this.params = new Parameters2SP(lat_0, lat_1, lat_2);
-        this.ellps = ellps;
-        this.e = ellps.e;
-        
+
         final double m1 = m(toRadians(lat_1));
         final double m2 = m(toRadians(lat_2));
-        
+
         final double t1 = t(toRadians(lat_1));
         final double t2 = t(toRadians(lat_2));
         final double tf = t(toRadians(lat_0));
-        
+
         n  = (log(m1) - log(m2)) / (log(t1) - log(t2));
         F  = m1 / (n * pow(t1, n));
         r0 = F * pow(tf, n);
     }
-    
+
     /**
      * Initialize for LCC with 1 standard parallel.
-     * 
-     * @param ellps the ellipsoid
+     *
      * @param lat_0 latitude of natural origin (in degrees)
      */
-    public void updateParameters1SP(Ellipsoid ellps, double lat_0) {
+    private void initialize1SP(double lat_0) {
         this.params = new Parameters1SP(lat_0);
-        this.ellps = ellps;
-        this.e = ellps.e;
         final double lat_0_rad = toRadians(lat_0);
-        
+
         final double m0 = m(lat_0_rad);
         final double t0 = t(lat_0_rad);
-        
+
         n = sin(lat_0_rad);
         F  = m0 / (n * pow(t0, n));
         r0 = F * pow(t0, n);
@@ -115,16 +120,13 @@ public class LambertConformalConic implements Proj {
 
     /**
      * Initialize LCC by providing the projection parameters directly.
-     * 
-     * @param ellps the ellipsoid
+     *
      * @param n see field n
      * @param F see field F
      * @param r0 see field r0
      */
-    public void updateParametersDirect(Ellipsoid ellps, double n, double F, double r0) {
+    private void initializeDirect(double n, double F, double r0) {
         this.params = null;
-        this.ellps = ellps;
-        this.e = ellps.e;
         this.n = n;
         this.F = F;
         this.r0 = r0;
@@ -144,7 +146,7 @@ public class LambertConformalConic implements Proj {
     protected double m(double lat_rad) {
         return cos(lat_rad) / (sqrt(1 - e * e * pow(sin(lat_rad), 2)));
     }
-    
+
     @Override
     public String getName() {
         return tr("Lambert Conformal Conic");
@@ -165,7 +167,7 @@ public class LambertConformalConic implements Proj {
         double Y = r0 - r*cos(gamma);
         return new double[] { X, Y };
     }
-    
+
     @Override
     public double[] invproject(double east, double north) {
         double r = sqrt(pow(east,2) + pow(north-r0, 2));
@@ -175,7 +177,7 @@ public class LambertConformalConic implements Proj {
         double phi = ellps.latitude(latIso, e, epsilon);
         return new double[] { phi, lambda };
     }
-    
+
     public final Parameters getParameters() {
         return params;
     }

@@ -6,23 +6,19 @@ import static java.lang.Math.*;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.projection.Ellipsoid;
+import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
 /**
  * Transverse Mercator projection.
  *
  * @author Dirk Stöcker
  * code based on JavaScript from Chuck Taylor
- * 
+ *
  */
 public class TransverseMercator implements Proj {
 
     protected double a, b;
 
-    public TransverseMercator(Ellipsoid ellps) {
-        this.a = ellps.a;
-        this.b = ellps.b;
-    }
-    
     @Override
     public String getName() {
         return tr("Transverse Mercator");
@@ -33,6 +29,12 @@ public class TransverseMercator implements Proj {
         return "tmerc";
     }
 
+    @Override
+    public void initialize(ProjParameters params) throws ProjectionConfigurationException {
+        this.a = params.ellps.a;
+        this.b = params.ellps.b;
+    }
+
     /**
      * Converts a latitude/longitude pair to x and y coordinates in the
      * Transverse Mercator projection.  Note that Transverse Mercator is not
@@ -40,7 +42,7 @@ public class TransverseMercator implements Proj {
      *
      * Reference: Hoffmann-Wellenhof, B., Lichtenegger, H., and Collins, J.,
      * GPS: Theory and Practice, 3rd ed.  New York: Springer-Verlag Wien, 1994.
-     * 
+     *
      * @param phi Latitude of the point, in radians
      * @param lambda Longitude of the point, in radians
      * @return A 2-element array containing the x and y coordinates
@@ -48,7 +50,7 @@ public class TransverseMercator implements Proj {
      */
     @Override
     public double[] project(double phi, double lambda) {
-        
+
         /* Precalculate ep2 */
         double ep2 = (pow(a, 2.0) - pow(b, 2.0)) / pow(b, 2.0);
 
@@ -104,7 +106,7 @@ public class TransverseMercator implements Proj {
      *
      * Reference: Hoffmann-Wellenhof, B., Lichtenegger, H., and Collins, J.,
      *   GPS: Theory and Practice, 3rd ed.  New York: Springer-Verlag Wien, 1994.
-     * 
+     *
      * Remarks:
      *   The local variables Nf, nuf2, tf, and tf2 serve the same purpose as
      *   N, nu2, t, and t2 in MapLatLonToXY, but they are computed with respect
@@ -112,7 +114,7 @@ public class TransverseMercator implements Proj {
      *
      *   x1frac, x2frac, x2poly, x3poly, etc. are to enhance readability and
      *   to optimize computations.
-     * 
+     *
      * @param x The easting of the point, in meters, divided by the semi major axis of the ellipsoid
      * @param y The northing of the point, in meters, divided by the semi major axis of the ellipsoid
      * @return A 2-element containing the latitude and longitude
@@ -189,7 +191,7 @@ public class TransverseMercator implements Proj {
                         + x5frac * x5poly * pow(x, 5.0)
                         + x7frac * x7poly * pow(x, 7.0) };
     }
-    
+
     /**
      * ArcLengthOfMeridian
      *
@@ -198,7 +200,7 @@ public class TransverseMercator implements Proj {
      *
      * Reference: Hoffmann-Wellenhof, B., Lichtenegger, H., and Collins, J.,
      * GPS: Theory and Practice, 3rd ed.  New York: Springer-Verlag Wien, 1994.
-     * 
+     *
      * @param phi Latitude of the point, in radians
      * @return The ellipsoidal distance of the point from the equator
      *         (in meters, divided by the semi major axis of the ellipsoid)
@@ -233,7 +235,7 @@ public class TransverseMercator implements Proj {
                     + (delta * sin(6.0 * phi))
                     + (epsilon * sin(8.0 * phi)));
     }
-        
+
     /**
      * FootpointLatitude
      *
@@ -242,7 +244,7 @@ public class TransverseMercator implements Proj {
      *
      * Reference: Hoffmann-Wellenhof, B., Lichtenegger, H., and Collins, J.,
      *   GPS: Theory and Practice, 3rd ed.  New York: Springer-Verlag Wien, 1994.
-     * 
+     *
      * @param y northing coordinate, in meters, divided by the semi major axis of the ellipsoid
      * @return The footpoint latitude, in radians
      */
@@ -279,5 +281,5 @@ public class TransverseMercator implements Proj {
             + (delta_ * sin(6.0 * y_))
             + (epsilon_ * sin(8.0 * y_));
     }
-    
+
 }

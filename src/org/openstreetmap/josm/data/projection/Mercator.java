@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
+import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 
 /**
  * Mercator Projection
@@ -24,16 +25,21 @@ public class Mercator extends AbstractProjection {
         ellps = Ellipsoid.WGS84;
         datum = WGS84Datum.INSTANCE;
         proj = new org.openstreetmap.josm.data.projection.proj.Mercator();
+        try {
+            proj.initialize(new ProjParameters());
+        } catch (ProjectionConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @Override 
+    @Override
     public String toString() {
         return tr("Mercator");
     }
 
     @Override
     public Integer getEpsgCode() {
-        /* initially they used 3785 but that has been superseded, 
+        /* initially they used 3785 but that has been superseded,
          * see http://www.epsg-registry.org/ */
         return 3857;
     }

@@ -17,6 +17,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.proj.LambertConformalConic;
+import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -95,8 +96,8 @@ public class Lambert extends AbstractProjection implements ProjectionSubPrefs {
         }
         updateParameters(DEFAULT_ZONE);
     }
-    
-    private void updateParameters(int layoutZone) {
+
+    private void updateParameters(final int layoutZone) {
         this.layoutZone = layoutZone;
         ellps = Ellipsoid.clarke;
         datum = null; // no datum needed, we have a shift file
@@ -106,11 +107,20 @@ public class Lambert extends AbstractProjection implements ProjectionSubPrefs {
         if (proj == null) {
             proj = new LambertConformalConic();
         }
-        ((LambertConformalConic)proj).updateParametersDirect(
-                Ellipsoid.clarke, n[layoutZone], c[layoutZone] / ellps.a, y_fs[layoutZone] / ellps.a);
+        proj = new LambertConformalConic();
+        try {
+            proj.initialize(new ProjParameters() {{
+                ellps = Lambert.this.ellps;
+                lcc_n = n[layoutZone];
+                lcc_F = c[layoutZone] / ellps.a;
+                lcc_r0 = y_fs[layoutZone] / ellps.a;
+            }});
+        } catch (ProjectionConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @Override 
+    @Override
     public String toString() {
         return tr("Lambert 4 Zones (France)");
     }

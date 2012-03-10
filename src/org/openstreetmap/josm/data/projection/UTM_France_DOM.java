@@ -18,12 +18,13 @@ import org.openstreetmap.josm.data.projection.datum.Datum;
 import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
 import org.openstreetmap.josm.data.projection.datum.SevenParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.ThreeParameterDatum;
+import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
  * This class implements all projections for French departements in the Caribbean Sea and
  * Indian Ocean using the UTM transvers Mercator projection and specific geodesic settings (7 parameters transformation algorithm).
- * 
+ *
  */
 public class UTM_France_DOM extends AbstractProjection implements ProjectionSubPrefs {
 
@@ -74,12 +75,17 @@ public class UTM_France_DOM extends AbstractProjection implements ProjectionSubP
     public UTM_France_DOM() {
         updateParameters(DEFAULT_GEODESIC);
     }
-    
+
     public void updateParameters(int currentGeodesic) {
         this.currentGeodesic = currentGeodesic;
         datum = utmDatums[currentGeodesic];
         ellps = datum.getEllipsoid();
-        proj = new org.openstreetmap.josm.data.projection.proj.TransverseMercator(ellps);
+        proj = new org.openstreetmap.josm.data.projection.proj.TransverseMercator();
+        try {
+            proj.initialize(new ProjParameters() {{ ellps = UTM_France_DOM.this.ellps; }});
+        } catch (ProjectionConfigurationException e) {
+            throw new RuntimeException(e);
+        }
         isNorth = currentGeodesic != 3;
         zone = utmZones[currentGeodesic];
         x_0 = 500000;
@@ -87,12 +93,12 @@ public class UTM_France_DOM extends AbstractProjection implements ProjectionSubP
         lon_0 = 6 * zone - 183;
         k_0 = 0.9996;
     }
-    
+
     public int getCurrentGeodesic() {
         return currentGeodesic;
     }
 
-    @Override 
+    @Override
     public String toString() {
         return tr("UTM France (DOM)");
     }
