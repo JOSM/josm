@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.GBC;
 
 /**
  * This class implements all projections for French departements in the Caribbean Sea and
- * Indian Ocean using the UTM transvers Mercator projection and specific geodesic settings (7 parameters transformation algorithm).
+ * Indian Ocean using the UTM transvers Mercator projection and specific geodesic settings.
  *
  */
 public class UTM_France_DOM extends AbstractProjection implements ProjectionSubPrefs {
