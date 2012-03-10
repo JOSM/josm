@@ -8,35 +8,36 @@
 package org.openstreetmap.josm.data.projection;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * the reference ellipsoids
  */
 public class Ellipsoid {
     /**
-     * Clarke's ellipsoid (NTF system)
+     * Clarke 1880 IGN (French national geographic institute)
      */
-    public static final Ellipsoid clarke = new Ellipsoid(6378249.2, 6356515.0);
+    public static final Ellipsoid clarkeIGN = Ellipsoid.create_a_b(6378249.2, 6356515.0);
     /**
      * Hayford's ellipsoid 1909 (ED50 system)
      * Proj.4 code: intl
      */
-    public static final Ellipsoid hayford =
-        new Ellipsoid(6378388.0, 6356911.9461);
+    public static final Ellipsoid hayford = Ellipsoid.create_a_rf(6378388.0, 297.0);
     /**
      * GRS80 ellipsoid
      */
-    public static final Ellipsoid GRS80 = new Ellipsoid(6378137.0, 6356752.3141);
+    public static final Ellipsoid GRS80 = Ellipsoid.create_a_rf(6378137.0, 298.257222101);
 
     /**
      * WGS84 ellipsoid
      */
-    public static final Ellipsoid WGS84 = new Ellipsoid(6378137.0, 6356752.3142);
+    public static final Ellipsoid WGS84 = Ellipsoid.create_a_rf(6378137.0, 298.257223563);
 
     /**
      * Bessel 1841 ellipsoid
      */
-    public static final Ellipsoid Bessel1841 = new Ellipsoid(6377397.155, 6356078.962822);
+    public static final Ellipsoid Bessel1841 = Ellipsoid.create_a_rf(6377397.155, 299.1528128);
 
     /**
      * half long axis
@@ -61,17 +62,70 @@ public class Ellipsoid {
     public final double eb2;
 
     /**
-     * create a new ellipsoid and precompute its parameters
+     * private constructur - use one of the create_* methods
      *
-     * @param a ellipsoid long axis (in meters)
-     * @param b ellipsoid short axis (in meters)
+     * @param a semimajor radius of the ellipsoid axis
+     * @param b semiminor radius of the ellipsoid axis
+     * @param e first eccentricity of the ellipsoid ( = sqrt((a*a - b*b)/(a*a)))
+     * @param e2 first eccentricity squared
+     * @param eb2 square of the second eccentricity
      */
-    public Ellipsoid(double a, double b) {
+    private Ellipsoid(double a, double b, double e, double e2, double eb2) {
         this.a = a;
         this.b = b;
-        e2 = (a*a - b*b) / (a*a);
-        e = Math.sqrt(e2);
-        eb2 = e2 / (1.0 - e2);
+        this.e = e;
+        this.e2 = e2;
+        this.eb2 = eb2;
+    }
+
+    /**
+     * create a new ellipsoid
+     *
+     * @param a semimajor radius of the ellipsoid axis (in meters)
+     * @param b semiminor radius of the ellipsoid axis (in meters)
+     */
+    public static Ellipsoid create_a_b(double a, double b) {
+        double e2 = (a*a - b*b) / (a*a);
+        double e = Math.sqrt(e2);
+        double eb2 = e2 / (1.0 - e2);
+        return new Ellipsoid(a, b, e, e2, eb2);
+    }
+
+    /**
+     * create a new ellipsoid
+     *
+     * @param a semimajor radius of the ellipsoid axis (in meters)
+     * @param es first eccentricity squared
+     */
+    public static Ellipsoid create_a_es(double a, double es) {
+        double b = a * Math.sqrt(1.0 - es);
+        double e = Math.sqrt(es);
+        double eb2 = es / (1.0 - es);
+        return new Ellipsoid(a, b, e, es, eb2);
+    }
+
+    /**
+     * create a new ellipsoid
+     *
+     * @param a semimajor radius of the ellipsoid axis (in meters)
+     * @param f flattening ( = (a - b) / a)
+     */
+    public static Ellipsoid create_a_f(double a, double f) {
+        double b = a * (1.0 - f);
+        double e2 = f * (2 - f);
+        double e = Math.sqrt(e2);
+        double eb2 = e2 / (1.0 - e2);
+        return new Ellipsoid(a, b, e, e2, eb2);
+    }
+
+    /**
+     * create a new ellipsoid
+     *
+     * @param a semimajor radius of the ellipsoid axis (in meters)
+     * @param rf inverse flattening
+     */
+    public static Ellipsoid create_a_rf(double a, double rf) {
+        return create_a_f(a, 1.0 / rf);
     }
 
     /**

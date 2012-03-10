@@ -99,7 +99,7 @@ public class Lambert extends AbstractProjection implements ProjectionSubPrefs {
 
     private void updateParameters(final int layoutZone) {
         this.layoutZone = layoutZone;
-        ellps = Ellipsoid.clarke;
+        ellps = Ellipsoid.clarkeIGN;
         datum = null; // no datum needed, we have a shift file
         nadgrids = ntf_rgf93Grid;
         x_0 = x_0s[layoutZone];
