@@ -6,11 +6,12 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
 import org.openstreetmap.josm.data.projection.proj.LambertConformalConic;
+import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 
 /**
  * Lambert 93 projection as specified by the IGN
  * in this document http://professionnels.ign.fr/DISPLAY/000/526/702/5267026/NTG_87.pdf
- * @author Don-vip 
+ * @author Don-vip
  *
  */
 public class Lambert93 extends AbstractProjection {
@@ -21,13 +22,19 @@ public class Lambert93 extends AbstractProjection {
         x_0 =  700000;
         y_0 = 6600000;
         lon_0 = 3;
-        double lat_0 = 46.50;
-        double lat_1 = 44.00;
-        double lat_2 = 49.00;
         proj = new LambertConformalConic();
-        ((LambertConformalConic)proj).updateParameters2SP(ellps, lat_0, lat_1, lat_2);
+        try {
+            proj.initialize(new ProjParameters() {{
+                ellps = Lambert93.this.ellps;
+                lat_0 = 46.50;
+                lat_1 = 44.00;
+                lat_2 = 49.00;
+            }});
+        } catch (ProjectionConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
-    
+
     @Override
     public String getCacheDirectoryName() {
         return "lambert93";
@@ -44,7 +51,7 @@ public class Lambert93 extends AbstractProjection {
     public Integer getEpsgCode() {
         return 2154;
     }
-    
+
     @Override
     public String toString() {
         return tr("Lambert 93 (France)");

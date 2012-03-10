@@ -19,6 +19,7 @@ import javax.swing.JRadioButton;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
+import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -47,7 +48,12 @@ public class UTM extends AbstractProjection implements ProjectionSubPrefs {
 
     public UTM(int zone, Hemisphere hemisphere, boolean offset) {
         ellps = Ellipsoid.GRS80;
-        proj = new org.openstreetmap.josm.data.projection.proj.TransverseMercator(ellps);
+        proj = new org.openstreetmap.josm.data.projection.proj.TransverseMercator();
+        try {
+            proj.initialize(new ProjParameters() {{ ellps = UTM.this.ellps; }});
+        } catch (ProjectionConfigurationException e) {
+            throw new RuntimeException(e);
+        }
         datum = GRS80Datum.INSTANCE;
         updateParameters(zone, hemisphere, offset);
     }

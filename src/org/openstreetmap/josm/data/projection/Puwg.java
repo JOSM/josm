@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
+import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -25,9 +26,9 @@ import org.openstreetmap.josm.tools.GBC;
  * @author steelman
  */
 public class Puwg extends AbstractProjection implements ProjectionSubPrefs {
-    
+
     public static final int DEFAULT_ZONE = 0;
-    
+
     private int zone;
 
     static PuwgData[] Zones = new PuwgData[] {
@@ -44,11 +45,16 @@ public class Puwg extends AbstractProjection implements ProjectionSubPrefs {
 
     public Puwg(int zone) {
         ellps = Ellipsoid.GRS80;
-        proj = new org.openstreetmap.josm.data.projection.proj.TransverseMercator(ellps);
+        proj = new org.openstreetmap.josm.data.projection.proj.TransverseMercator();
+        try {
+            proj.initialize(new ProjParameters() {{ ellps = Puwg.this.ellps; }});
+        } catch (ProjectionConfigurationException e) {
+            throw new RuntimeException(e);
+        }
         datum = GRS80Datum.INSTANCE;
         updateParameters(zone);
     }
-    
+
     public void updateParameters(int zone) {
         this.zone = zone;
         PuwgData z = Zones[zone];
@@ -58,7 +64,7 @@ public class Puwg extends AbstractProjection implements ProjectionSubPrefs {
         k_0 = z.getPuwgScaleFactor();
     }
 
-    @Override 
+    @Override
     public String toString() {
         return tr("PUWG (Poland)");
     }
@@ -175,7 +181,7 @@ class Epsg2180 implements PuwgData {
     public Integer getEpsgCode() {
         return 2180;
     }
-    
+
     @Override
     public String toCode() {
         return "EPSG:" + getEpsgCode();

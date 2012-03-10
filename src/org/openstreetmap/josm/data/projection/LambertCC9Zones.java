@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
 import org.openstreetmap.josm.data.projection.proj.LambertConformalConic;
+import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -48,20 +49,26 @@ public class LambertCC9Zones extends AbstractProjection implements ProjectionSub
         updateParameters(layoutZone);
     }
 
-    public void updateParameters(int layoutZone) {
+    public void updateParameters(final int layoutZone) {
         ellps = Ellipsoid.GRS80;
         datum = GRS80Datum.INSTANCE;
         this.layoutZone = layoutZone;
         x_0 = 1700000;
         y_0 = (layoutZone+1) * 1000000 + 200000;
         lon_0 = 3;
-        double lat_0 = 42 + layoutZone;
-        double lat_1 = 41.25 + layoutZone;
-        double lat_2 = 42.75 + layoutZone;
         if (proj == null) {
             proj = new LambertConformalConic();
         }
-        ((LambertConformalConic)proj).updateParameters2SP(ellps, lat_0, lat_1, lat_2);
+        try {
+            proj.initialize(new ProjParameters() {{
+                ellps = LambertCC9Zones.this.ellps;
+                lat_0 = 42.0 + layoutZone;
+                lat_1 = 41.25 + layoutZone;
+                lat_2 = 42.75 + layoutZone;
+            }});
+        } catch (ProjectionConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

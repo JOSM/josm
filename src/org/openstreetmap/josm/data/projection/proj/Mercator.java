@@ -5,11 +5,13 @@ import static java.lang.Math.*;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
+
 /**
  * Mercator Projection.
  */
 public class Mercator implements Proj {
-    
+
     @Override
     public String getName() {
         return tr("Mercator");
@@ -18,6 +20,10 @@ public class Mercator implements Proj {
     @Override
     public String getProj4Id() {
         return "merc";
+    }
+
+    @Override
+    public void initialize(ProjParameters params) throws ProjectionConfigurationException {
     }
 
     @Override

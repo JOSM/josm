@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
+import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 
 /**
@@ -18,12 +19,17 @@ public class Epsg3008 extends AbstractProjection {
 
     public Epsg3008() {
         ellps = Ellipsoid.GRS80;
-        proj = new TransverseMercator(ellps);
+        proj = new org.openstreetmap.josm.data.projection.proj.TransverseMercator();
+        try {
+            proj.initialize(new ProjParameters() {{ ellps = Epsg3008.this.ellps; }});
+        } catch (ProjectionConfigurationException e) {
+            throw new RuntimeException(e);
+        }
         datum = GRS80Datum.INSTANCE;
         lon_0 = 13.5;
         x_0 = 150000;
     }
-    
+
     @Override
     public String toString() {
         return tr("SWEREF99 13 30 / EPSG:3008 (Sweden)");

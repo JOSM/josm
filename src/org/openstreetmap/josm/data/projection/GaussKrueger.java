@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -63,7 +64,12 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
         //datum = new SevenParameterDatum(
         //        tr("Deutsches Hauptdreiecksnetz"), null, ellps,
         //        598.1, 73.7, 418.2, 0.202, 0.045, -2.455, 6.70);
-        proj = new TransverseMercator(ellps);
+        proj = new TransverseMercator();
+        try {
+            proj.initialize(new ProjParameters() {{ ellps = GaussKrueger.this.ellps; }});
+        } catch (ProjectionConfigurationException e) {
+            throw new RuntimeException(e);
+        }
         x_0 = 1000000 * zone + 500000;
         lon_0 = 3 * zone;
     }

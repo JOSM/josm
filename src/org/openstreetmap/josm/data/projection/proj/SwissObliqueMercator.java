@@ -6,6 +6,7 @@ import static java.lang.Math.*;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.projection.Ellipsoid;
+import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
 /**
  * Projection for the SwissGrid CH1903 / L03, see http://de.wikipedia.org/wiki/Swiss_Grid.
@@ -18,20 +19,23 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
  */
 public class SwissObliqueMercator implements Proj {
 
-    private final Ellipsoid ellps;
+    private Ellipsoid ellps;
     private double kR;
     private double alpha;
     private double b0;
     private double K;
-    
+
     private static final double EPSILON = 1e-11;
-    
-    public SwissObliqueMercator(Ellipsoid ellps, double lat_0) {
-        this.ellps = ellps;
-        updateParameters(lat_0);
+
+    @Override
+    public void initialize(ProjParameters params) throws ProjectionConfigurationException {
+        if (params.lat_0 == null)
+            throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", "lat_0"));
+        ellps = params.ellps;
+        initialize(params.lat_0);
     }
 
-    public void updateParameters(double lat_0) {
+    private void initialize(double lat_0) {
         double phi0 = toRadians(lat_0);
         kR = sqrt(1 - ellps.e2) / (1 - (ellps.e2 * pow(sin(phi0), 2)));
         alpha = sqrt(1 + (ellps.eb2 * pow(cos(phi0), 4)));
@@ -40,7 +44,7 @@ public class SwissObliqueMercator implements Proj {
             * log(tan(PI / 4 + phi0 / 2)) + alpha * ellps.e / 2
             * log((1 + ellps.e * sin(phi0)) / (1 - ellps.e * sin(phi0)));
     }
-    
+
     @Override
     public String getName() {
         return tr("Swiss Oblique Mercator");
@@ -93,5 +97,5 @@ public class SwissObliqueMercator implements Proj {
         }
         return new double[] { phi, lambda };
     }
-    
+
 }
