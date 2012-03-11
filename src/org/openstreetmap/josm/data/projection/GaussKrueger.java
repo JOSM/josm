@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.datum.NTV2Datum;
+import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFile;
 import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 import org.openstreetmap.josm.tools.GBC;
@@ -59,7 +61,7 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
     private void updateParameters(int zone) {
         this.zone = zone;
         ellps = Ellipsoid.Bessel1841;
-        nadgrids = BETA2007;
+        datum = new NTV2Datum("BETA2007", null, ellps, BETA2007);
         ////less acurrate datum (errors up to 3m):
         //datum = new SevenParameterDatum(
         //        tr("Deutsches Hauptdreiecksnetz"), null, ellps,

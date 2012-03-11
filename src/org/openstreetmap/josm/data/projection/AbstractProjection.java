@@ -19,8 +19,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
  *
  * Subclasses of AbstractProjection must set ellps and proj to a non-null value.
  * In addition, either datum or nadgrid has to be initialized to some value.
- *
- * FIXME: nadgrids should probably be implemented as a Datum
  */
 abstract public class AbstractProjection implements Projection {
 
@@ -31,8 +29,7 @@ abstract public class AbstractProjection implements Projection {
     protected double y_0 = 0.0;     /* false northing (in meters) */
     protected double lon_0 = 0.0;   /* central meridian */
     protected double k_0 = 1.0;     /* general scale factor */
-    protected NTV2GridShiftFile nadgrids = null;
-    
+
     public final Ellipsoid getEllipsoid() {
         return ellps;
     }
@@ -63,13 +60,7 @@ abstract public class AbstractProjection implements Projection {
 
     @Override
     public EastNorth latlon2eastNorth(LatLon ll) {
-        if (nadgrids != null) {
-            NTV2GridShift gs = new NTV2GridShift(ll);
-            nadgrids.gridShiftReverse(gs);
-            ll = new LatLon(ll.lat()+gs.getLatShiftDegrees(), ll.lon()+gs.getLonShiftPositiveEastDegrees());
-        } else {
-            ll = datum.fromWGS84(ll);
-        }
+        ll = datum.fromWGS84(ll);
         double[] en = proj.project(Math.toRadians(ll.lat()), Math.toRadians(ll.lon() - lon_0));
         return new EastNorth(ellps.a * k_0 * en[0] + x_0, ellps.a * k_0 * en[1] + y_0);
     }
@@ -78,14 +69,7 @@ abstract public class AbstractProjection implements Projection {
     public LatLon eastNorth2latlon(EastNorth en) {
         double[] latlon_rad = proj.invproject((en.east() - x_0) / ellps.a / k_0, (en.north() - y_0) / ellps.a / k_0);
         LatLon ll = new LatLon(Math.toDegrees(latlon_rad[0]), Math.toDegrees(latlon_rad[1]) + lon_0);
-        if (nadgrids != null) {
-            NTV2GridShift gs = new NTV2GridShift(ll);
-            nadgrids.gridShiftForward(gs);
-            ll = new LatLon(ll.lat()+gs.getLatShiftDegrees(), ll.lon()+gs.getLonShiftPositiveEastDegrees());
-        } else {
-            ll = datum.toWGS84(ll);
-        }
-        return ll;
+        return datum.toWGS84(ll);
     }
 
     @Override
@@ -93,7 +77,7 @@ abstract public class AbstractProjection implements Projection {
         // this will set the map scaler to about 1000 m
         return 10;
     }
-    
+
     /**
      * @return The EPSG Code of this CRS, null if it doesn't have one.
      */
@@ -107,11 +91,11 @@ abstract public class AbstractProjection implements Projection {
     public String toCode() {
         return "EPSG:" + getEpsgCode();
     }
-    
+
     protected static final double convertMinuteSecond(double minute, double second) {
         return (minute/60.0) + (second/3600.0);
     }
-    
+
     protected static final double convertDegreeMinuteSecond(double degree, double minute, double second) {
         return degree + convertMinuteSecond(minute, second);
     }
