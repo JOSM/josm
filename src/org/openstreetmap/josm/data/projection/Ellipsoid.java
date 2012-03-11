@@ -8,8 +8,6 @@
 package org.openstreetmap.josm.data.projection;
 
 import org.openstreetmap.josm.data.coor.LatLon;
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * the reference ellipsoids
@@ -126,6 +124,11 @@ public class Ellipsoid {
      */
     public static Ellipsoid create_a_rf(double a, double rf) {
         return create_a_f(a, 1.0 / rf);
+    }
+
+    @Override
+    public String toString() {
+        return "Ellipsoid{a="+a+", b="+b+"}";
     }
 
     /**
