@@ -116,8 +116,13 @@ public class Preferences {
         public AbstractSetting(T value) {
             this.value = value;
         }
+        @Override
         public T getValue() {
             return value;
+        }
+        @Override
+        public String toString() {
+            return value.toString();
         }
     }
 

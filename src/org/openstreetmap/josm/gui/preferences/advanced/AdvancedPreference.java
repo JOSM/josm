@@ -116,8 +116,14 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
             isDefault = true;
         }
 
+        @Override
         public int compareTo(PrefEntry other) {
             return key.compareTo(other.key);
+        }
+
+        @Override
+        public String toString() {
+            return value.toString();
         }
     }
 
