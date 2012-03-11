@@ -121,6 +121,10 @@ public class PreferenceDialog extends JDialog {
         tpPreferences.selectTabByName(name);
     }
 
+    public void selectPreferencesTabByClass(Class<? extends TabPreferenceSetting> clazz) {
+        tpPreferences.selectTabByPref(clazz);
+    }
+
     class CancelAction extends AbstractAction {
         public CancelAction() {
             putValue(NAME, tr("Cancel"));
