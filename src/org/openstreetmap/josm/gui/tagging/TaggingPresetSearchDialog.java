@@ -35,6 +35,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -51,7 +53,7 @@ import org.openstreetmap.josm.gui.tagging.TaggingPreset.Role;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.Roles;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.Text;
 
-public class TaggingPresetSearchDialog extends ExtendedDialog {
+public class TaggingPresetSearchDialog extends ExtendedDialog implements SelectionChangedListener {
 
     private static final int CLASSIFICATION_IN_FAVORITES = 300;
     private static final int CLASSIFICATION_NAME_MATCH = 300;
@@ -204,12 +206,13 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
     private JCheckBox ckOnlyApplicable;
     private JCheckBox ckSearchInTags;
     private final EnumSet<PresetType> typesInSelection = EnumSet.noneOf(PresetType.class);
+    private boolean typesInSelectionDirty = true;
     private final List<PresetClasification> classifications = new ArrayList<PresetClasification>();
     private ResultListModel lsResultModel = new ResultListModel();
 
     private TaggingPresetSearchDialog() {
         super(Main.parent, tr("Presets"), new String[] {tr("Select"), tr("Cancel")});
-        getTypesInSelection();
+        DataSet.addSelectionListener(this);
 
         for (TaggingPreset preset: TaggingPresetPreference.taggingPresets) {
             if (preset instanceof TaggingPresetSeparator || preset instanceof TaggingPresetMenu) {
@@ -220,13 +223,23 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
         }
 
         build();
-        filterPresets("");
+        filterPresets();
+    }
+
+    @Override
+    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        typesInSelectionDirty = true;
     }
 
     @Override
     public ExtendedDialog showDialog() {
-        super.showDialog();
+
+        ckOnlyApplicable.setEnabled(!getTypesInSelection().isEmpty());
+        ckOnlyApplicable.setSelected(!getTypesInSelection().isEmpty() && ONLY_APPLICABLE.get());
         edSearchText.setText("");
+        filterPresets();
+
+        super.showDialog();
         lsResult.getSelectionModel().clearSelection();
         return this;
     }
@@ -240,18 +253,18 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                filterPresets(edSearchText.getText());
+                filterPresets();
             }
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                filterPresets(edSearchText.getText());
+                filterPresets();
 
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                filterPresets(edSearchText.getText());
+                filterPresets();
 
             }
         });
@@ -301,19 +314,12 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
         ckOnlyApplicable = new JCheckBox();
         ckOnlyApplicable.setText(tr("Show only applicable to selection"));
         pnChecks.add(ckOnlyApplicable);
-
-        if (typesInSelection.isEmpty()) {
-            ckOnlyApplicable.setSelected(false);
-            ckOnlyApplicable.setEnabled(false);
-        } else {
-            ckOnlyApplicable.setSelected(ONLY_APPLICABLE.get());
-            ckOnlyApplicable.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    filterPresets(edSearchText.getText());
-                }
-            });
-        }
+        ckOnlyApplicable.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                filterPresets();
+            }
+        });
 
         ckSearchInTags = new JCheckBox();
         ckSearchInTags.setText(tr("Search in tags"));
@@ -321,7 +327,7 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
         ckSearchInTags.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                filterPresets(edSearchText.getText());
+                filterPresets();
             }
         });
         pnChecks.add(ckSearchInTags);
@@ -351,9 +357,9 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
      *
      * @param text
      */
-    private void filterPresets(String text) {
+    private void filterPresets() {
         //TODO Save favorites to file
-        text = text.toLowerCase();
+        String text = edSearchText.getText().toLowerCase();
 
         String[] groupWords;
         String[] nameWords;
@@ -378,7 +384,7 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
                 if (onlyApplicable && preset.types != null) {
                     boolean found = false;
                     for (PresetType type: preset.types) {
-                        if (typesInSelection.contains(type)) {
+                        if (getTypesInSelection().contains(type)) {
                             found = true;
                             break;
                         }
@@ -426,20 +432,26 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
         }
     }
 
-
-    private void getTypesInSelection() {
-        for (OsmPrimitive primitive: Main.main.getCurrentDataSet().getSelected()) {
-            if (primitive instanceof Node) {
-                typesInSelection.add(PresetType.NODE);
-            } else if (primitive instanceof Way) {
-                typesInSelection.add(PresetType.WAY);
-                if (((Way)primitive).isClosed()) {
-                    typesInSelection.add(PresetType.CLOSEDWAY);
+    private EnumSet<PresetType> getTypesInSelection() {
+        if (typesInSelectionDirty) {
+            synchronized (typesInSelection) {
+                typesInSelectionDirty = false;
+                typesInSelection.clear();
+                for (OsmPrimitive primitive : Main.main.getCurrentDataSet().getSelected()) {
+                    if (primitive instanceof Node) {
+                        typesInSelection.add(PresetType.NODE);
+                    } else if (primitive instanceof Way) {
+                        typesInSelection.add(PresetType.WAY);
+                        if (((Way) primitive).isClosed()) {
+                            typesInSelection.add(PresetType.CLOSEDWAY);
+                        }
+                    } else if (primitive instanceof Relation) {
+                        typesInSelection.add(PresetType.RELATION);
+                    }
                 }
-            } else if (primitive instanceof Relation) {
-                typesInSelection.add(PresetType.RELATION);
             }
         }
+        return typesInSelection;
     }
 
     @Override
