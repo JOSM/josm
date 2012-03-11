@@ -64,7 +64,7 @@ public class ShortcutPreference extends DefaultTabPreferenceSetting {
             return columnNames[col];
         }
         public Object getValueAt(int row, int col) {
-            return data.get(row);
+            return (col==0)?  data.get(row).getLongText() : data.get(row);
         }
         @Override
         public boolean isCellEditable(int row, int col) {
