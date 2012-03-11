@@ -16,7 +16,6 @@ import java.awt.event.KeyEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.HashMap;
 import java.util.Map;
 
 import java.util.regex.PatternSyntaxException;
@@ -26,7 +25,6 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -148,41 +146,39 @@ public class PrefJPanel extends JPanel {
         initComponents();
     }
 
-    private static class ShortcutTableCellRenderer extends DefaultTableCellRenderer {
+    private class ShortcutTableCellRenderer extends DefaultTableCellRenderer {
 
         private boolean name;
 
         public ShortcutTableCellRenderer(boolean name) {
             this.name = name;
         }
-
+        
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean
                 isSelected, boolean hasFocus, int row, int column) {
-            if(value instanceof Shortcut)
-            {
-                Shortcut sc = (Shortcut) value;
-                JLabel label = (JLabel) super.getTableCellRendererComponent(
-                    table, name ? sc.getLongText() : sc.getKeyText(), isSelected, hasFocus, row, column);
-                label.setBackground(Main.pref.getUIColor("Table.background"));
-                if (isSelected) {
-                    label.setForeground(Main.pref.getUIColor("Table.foreground"));
-                }
-                if(sc.getAssignedUser()) {
-                    label.setBackground(Main.pref.getColor(
-                            marktr("Shortcut Background: User"),
-                            new Color(200,255,200)));
-                } else if(!sc.getAssignedDefault()) {
-                    label.setBackground(Main.pref.getColor(
-                            marktr("Shortcut Background: Modified"),
-                            new Color(255,255,200)));
-                }
-                return label;
+            int row1 = shortcutTable.convertRowIndexToModel(row);
+            Shortcut sc = (Shortcut)model.getValueAt(row1, -1);
+            if (sc==null) return null;
+            JLabel label = (JLabel) super.getTableCellRendererComponent(
+                table, name ? sc.getLongText() : sc.getKeyText(), isSelected, hasFocus, row, column);
+            label.setBackground(Main.pref.getUIColor("Table.background"));
+            if (isSelected) {
+                label.setForeground(Main.pref.getUIColor("Table.foreground"));
             }
-            return null;
+            if(sc.getAssignedUser()) {
+                label.setBackground(Main.pref.getColor(
+                        marktr("Shortcut Background: User"),
+                        new Color(200,255,200)));
+            } else if(!sc.getAssignedDefault()) {
+                label.setBackground(Main.pref.getColor(
+                        marktr("Shortcut Background: Modified"),
+                        new Color(255,255,200)));
+            }
+            return label;
         }
     }
-
+    
     private void initComponents() {
         JPanel listPane = new JPanel();
         JScrollPane listScrollPane = new JScrollPane();
