@@ -17,7 +17,7 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.openstreetmap.josm.data.projection;
+package org.openstreetmap.josm.data.projection.datum;
 
 /**
  * A set of static utility methods for reading the NTv2 file format

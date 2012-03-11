@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.datum.NTV2Datum;
+import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFile;
 import org.openstreetmap.josm.data.projection.proj.LambertConformalConic;
 import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.tools.GBC;
@@ -100,8 +102,7 @@ public class Lambert extends AbstractProjection implements ProjectionSubPrefs {
     private void updateParameters(final int layoutZone) {
         this.layoutZone = layoutZone;
         ellps = Ellipsoid.clarkeIGN;
-        datum = null; // no datum needed, we have a shift file
-        nadgrids = ntf_rgf93Grid;
+        datum = new NTV2Datum("ntf_rgf93Grid", null, ellps, ntf_rgf93Grid);
         x_0 = x_0s[layoutZone];
         lon_0 = 2.0 + 20.0 / 60 + 14.025 / 3600; // 0 grade Paris
         if (proj == null) {

@@ -23,8 +23,11 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.Utils;
@@ -53,6 +56,7 @@ public class ProjectionRegressionTest {
     }
 
     public static void main(String[] args) throws IOException, FileNotFoundException {
+        setUp();
         Map<String, Projection> allCodes = new LinkedHashMap<String, Projection>();
         List<Projection> projs = Projections.getProjections();
         for (Projection p: projs) {
@@ -141,6 +145,11 @@ public class ProjectionRegressionTest {
         double a = Double.parseDouble(fields[1]);
         double b = Double.parseDouble(fields[2]);
         return Pair.create(a, b);
+    }
+
+    @BeforeClass
+    public static void setUp() {
+        Main.pref = new Preferences();
     }
 
     @Test
