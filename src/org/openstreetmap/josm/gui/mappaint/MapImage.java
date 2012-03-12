@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 public class MapImage {
     /**
-     * ImageIcon can chage while the image is loading.
+     * ImageIcon can change while the image is loading.
      */
     private BufferedImage img;
 
@@ -43,6 +43,8 @@ public class MapImage {
     public Image getDisabled() {
         if (disabledImg != null)
             return disabledImg;
+        if (img == null)
+            getImage(); // fix #7498 ?
         return disabledImg = GrayFilter.createDisabledImage(img);
     }
 
