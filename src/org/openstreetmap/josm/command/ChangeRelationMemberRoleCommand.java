@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 
 import javax.swing.Icon;
+
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -39,9 +40,8 @@ public class ChangeRelationMemberRoleCommand extends Command {
     }
 
     @Override public boolean executeCommand() {
-        if (position < 0 || position >= relation.getMembersCount()) {
+        if (position < 0 || position >= relation.getMembersCount())
             return false;
-        }
 
         oldRole = relation.getMember(position).getRole();
         if (newRole.equals(oldRole)) return true;
@@ -70,6 +70,6 @@ public class ChangeRelationMemberRoleCommand extends Command {
 
     @Override
     public Icon getDescriptionIcon() {
-        return ImageProvider.get(OsmPrimitiveType.from(relation));
+        return ImageProvider.get(relation.getDisplayType());
     }
 }

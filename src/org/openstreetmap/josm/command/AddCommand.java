@@ -73,7 +73,7 @@ public class AddCommand extends Command {
 
     @Override
     public Icon getDescriptionIcon() {
-        return ImageProvider.get(OsmPrimitiveType.from(osm));
+        return ImageProvider.get(osm.getDisplayType());
     }
 
     @Override
