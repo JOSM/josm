@@ -146,12 +146,12 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         } else {
             c = DeleteCommand.delete(getEditLayer(),getCurrentDataSet().getSelected(), !alt /* also delete nodes in way */);
         }
+        // if c is null, an error occurred or the user aborted. Don't do anything in that case.
         if (c != null) {
             Main.main.undoRedo.add(c);
+            getCurrentDataSet().setSelected();
+            Main.map.repaint();
         }
-
-        getCurrentDataSet().setSelected();
-        Main.map.repaint();
     }
 
     @Override public void mouseDragged(MouseEvent e) {
