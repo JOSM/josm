@@ -302,11 +302,11 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         if(mode == Mode.move && setupVirtual(e)) {
             DataSet ds = getCurrentDataSet();
             if (ds != null) {
-                ds.setHighlightedVirtualNodes(virtualWays);
+                if(drawTargetHighlight) ds.setHighlightedVirtualNodes(virtualWays);
             }
             mv.setNewCursor(SelectActionCursor.virtual_node.cursor(), this);
             // don't highlight anything else if a virtual node will be
-            return true;
+            return drawTargetHighlight; // if no highlighting, repaint is not needed
         }
 
         mv.setNewCursor(getCursor(c), this);
