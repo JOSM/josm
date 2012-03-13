@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.Main;
@@ -180,7 +181,7 @@ public class ChangePropertyCommand extends Command {
                     break;
                 }
             }
-            
+
             if (allnull) {
                 text = tr("Deleted {0} properties for {1} objects", tags.size(), objects.size());
             } else
@@ -205,7 +206,7 @@ public class ChangePropertyCommand extends Command {
                 }
 
                 @Override public Icon getDescriptionIcon() {
-                    return ImageProvider.get(OsmPrimitiveType.from(osm));
+                    return ImageProvider.get(osm.getDisplayType());
                 }
 
                 @Override public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {

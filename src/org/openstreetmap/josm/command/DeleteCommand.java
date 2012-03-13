@@ -1,12 +1,12 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.command;
 
-import java.awt.GridBagLayout;
-import java.awt.geom.Area;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.GridBagLayout;
+import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,12 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+
 import javax.swing.Icon;
-
 import javax.swing.JLabel;
-
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SplitWayAction;
 import org.openstreetmap.josm.data.osm.Node;
@@ -159,7 +159,7 @@ public class DeleteCommand extends Command {
 
     @Override
     public String getDescriptionText() {
-           if (toDelete.size() == 1) {
+        if (toDelete.size() == 1) {
             OsmPrimitive primitive = toDelete.iterator().next();
             String msg = "";
             switch(OsmPrimitiveType.from(primitive)) {
@@ -188,15 +188,13 @@ public class DeleteCommand extends Command {
 
     @Override
     public Icon getDescriptionIcon() {
-        if (toDelete.size() == 1) {
-            return ImageProvider.get(OsmPrimitiveType.from(toDelete.iterator().next()));
-        }
+        if (toDelete.size() == 1)
+            return ImageProvider.get(toDelete.iterator().next().getDisplayType());
         Set<OsmPrimitiveType> typesToDelete = getTypesToDelete();
-        if (typesToDelete.size() > 1) {
+        if (typesToDelete.size() > 1)
             return ImageProvider.get("data", "object");
-        } else {
+        else
             return ImageProvider.get(typesToDelete.iterator().next());
-        }
     }
 
     @Override public Collection<PseudoCommand> getChildren() {
@@ -212,7 +210,7 @@ public class DeleteCommand extends Command {
                     }
 
                     @Override public Icon getDescriptionIcon() {
-                        return ImageProvider.get(OsmPrimitiveType.from(osm));
+                        return ImageProvider.get(osm.getDisplayType());
                     }
 
                     @Override public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
@@ -344,9 +342,8 @@ public class DeleteCommand extends Command {
         Set<OsmPrimitive> primitivesToDelete = new HashSet<OsmPrimitive>(selection);
 
         Collection<Relation> relationsToDelete = Utils.filteredCollection(primitivesToDelete, Relation.class);
-        if(!relationsToDelete.isEmpty() && !silent && !confirmRelationDeletion(relationsToDelete)) {
+        if(!relationsToDelete.isEmpty() && !silent && !confirmRelationDeletion(relationsToDelete))
             return null;
-        }
 
         Collection<Way> waysToBeChanged = new HashSet<Way>();
 

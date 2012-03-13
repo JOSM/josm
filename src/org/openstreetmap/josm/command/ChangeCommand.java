@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
+
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -61,6 +62,6 @@ public class ChangeCommand extends Command {
 
     @Override
     public Icon getDescriptionIcon() {
-        return ImageProvider.get(OsmPrimitiveType.from(osm));
+        return ImageProvider.get(osm.getDisplayType());
     }
 }

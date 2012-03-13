@@ -4,13 +4,13 @@ package org.openstreetmap.josm.command;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
+
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -69,6 +69,6 @@ public class ConflictAddCommand extends Command {
 
     @Override
     public Icon getDescriptionIcon() {
-        return ImageProvider.get(OsmPrimitiveType.from(conflict.getMy()));
+        return ImageProvider.get(conflict.getMy().getDisplayType());
     }
 }
