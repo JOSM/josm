@@ -12,8 +12,6 @@ import org.openstreetmap.josm.io.remotecontrol.RequestProcessor;
 public class VersionHandler extends RequestHandler {
 
     public static final String command = "version";
-    public static final String permissionKey = "remotecontrol.permission.read-protocolversion";
-    public static final boolean permissionDefault = true;
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException,
@@ -21,7 +19,7 @@ public class VersionHandler extends RequestHandler {
         content = RequestProcessor.PROTOCOLVERSION;
         contentType = "application/json";
         if (args.containsKey("jsonp")) {
-            content = args.get("jsonp")+ " && " + args.get("jsonp") + "(" + content + ")";
+            content = args.get("jsonp") + " && " + args.get("jsonp") + "(" + content + ")";
         }
     }
 
@@ -31,9 +29,12 @@ public class VersionHandler extends RequestHandler {
     }
 
     @Override
-    public PermissionPrefWithDefault getPermissionPref()
-    {
-        return new PermissionPrefWithDefault(permissionKey, permissionDefault,
-                "RemoteControl: /version forbidden by preferences");
+    public PermissionPrefWithDefault getPermissionPref() {
+        return PermissionPrefWithDefault.READ_PROTOCOL_VERSION;
+    }
+
+    @Override
+    public String[] getMandatoryParams() {
+        return null;
     }
 }

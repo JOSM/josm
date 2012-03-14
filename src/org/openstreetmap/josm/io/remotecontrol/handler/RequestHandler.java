@@ -3,10 +3,10 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.swing.JOptionPane;
 
@@ -49,8 +49,8 @@ public abstract class RequestHandler {
      */
     public final void handle() throws RequestHandlerForbiddenException, RequestHandlerBadRequestException, RequestHandlerErrorException
     {
-        checkPermission();
         checkMandatoryParams();
+        checkPermission();
         handleRequest();
     }
 
@@ -85,19 +85,9 @@ public abstract class RequestHandler {
      *
      * @return the preference name and error message or null
      */
-    public PermissionPrefWithDefault getPermissionPref()
-    {
-        /* Example:
-        return new PermissionPrefWithDefault("fooobar.remotecontrol",
-        true
-        "RemoteControl: foobar forbidden by preferences");
-        */
-        return null;
-    }
+    abstract public PermissionPrefWithDefault getPermissionPref();
 
-    public String[] getMandatoryParams() {
-        return null;
-    }
+    abstract public String[] getMandatoryParams();
 
     /**
      * Check permissions in preferences and display error message
@@ -118,8 +108,9 @@ public abstract class RequestHandler {
         if((permissionPref != null) && (permissionPref.pref != null))
         {
             if (!Main.pref.getBoolean(permissionPref.pref, permissionPref.defaultVal)) {
-                System.out.println(permissionPref.message);
-                throw new RequestHandlerForbiddenException();
+                String err = MessageFormat.format("RemoteControl: ''{0}'' forbidden by preferences", myCommand);
+                System.out.println(err);
+                throw new RequestHandlerForbiddenException(err);
             }
         }
 
@@ -132,7 +123,8 @@ public abstract class RequestHandler {
                 "<br>" + tr("Do you want to allow this?"),
                 tr("Confirm Remote Control action"),
                 JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
-                    throw new RequestHandlerForbiddenException();
+                    String err = MessageFormat.format("RemoteControl: ''{0}'' forbidden by user''s choice", myCommand);
+                    throw new RequestHandlerForbiddenException(err);
             }
         }
     }
@@ -177,8 +169,7 @@ public abstract class RequestHandler {
 
         List<String> missingKeys = new LinkedList<String>();
         boolean error = false;
-        for (int i = 0; i < mandatory.length; ++i) {
-            String key = mandatory[i];
+        for (String key : mandatory) {
             String value = args.get(key);
             if ((value == null) || (value.length() == 0)) {
                 error = true;
@@ -242,5 +233,9 @@ public abstract class RequestHandler {
 
     public static class RequestHandlerForbiddenException extends RequestHandlerException {
         private static final long serialVersionUID = 2263904699747115423L;
+
+        public RequestHandlerForbiddenException(String message) {
+            super(message);
+        }
     }
 }

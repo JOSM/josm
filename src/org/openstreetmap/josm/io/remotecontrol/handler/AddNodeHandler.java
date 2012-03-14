@@ -17,8 +17,6 @@ import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 public class AddNodeHandler extends RequestHandler {
 
     public static final String command = "add_node";
-    public static final String permissionKey = "remotecontrol.permission.create-objects";
-    public static final boolean permissionDefault = false;
 
     @Override
     protected void handleRequest() {
@@ -38,8 +36,7 @@ public class AddNodeHandler extends RequestHandler {
 
     @Override
     public PermissionPrefWithDefault getPermissionPref() {
-        return new PermissionPrefWithDefault(permissionKey, permissionDefault,
-                "RemoteControl: creating objects forbidden by preferences");
+        return PermissionPrefWithDefault.CREATE_OBJECTS;
     }
 
     /**
@@ -60,7 +57,7 @@ public class AddNodeHandler extends RequestHandler {
         // Now execute the commands to add this node.
         Main.main.undoRedo.add(new AddCommand(nnew));
         Main.main.getCurrentDataSet().setSelected(nnew);
-        if (Main.pref.getBoolean(LoadAndZoomHandler.changeViewportPermissionKey, LoadAndZoomHandler.changeViewportPermissionDefault)) {
+        if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
             AutoScaleAction.autoScale("selection");
         } else {
             Main.map.mapView.repaint();

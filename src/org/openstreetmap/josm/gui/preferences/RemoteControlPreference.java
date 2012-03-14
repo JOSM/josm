@@ -8,6 +8,9 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -15,17 +18,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
-import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
-import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
-import org.openstreetmap.josm.io.remotecontrol.handler.ImageryHandler;
-import org.openstreetmap.josm.io.remotecontrol.handler.ImportHandler;
-import org.openstreetmap.josm.io.remotecontrol.handler.LoadAndZoomHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
-import org.openstreetmap.josm.io.remotecontrol.handler.VersionHandler;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -33,34 +31,45 @@ import org.openstreetmap.josm.tools.GBC;
  *
  * @author Frederik Ramm
  */
-public class RemoteControlPreference extends DefaultTabPreferenceSetting
-{
+public class RemoteControlPreference extends DefaultTabPreferenceSetting {
+
     public static class Factory implements PreferenceSettingFactory {
+
         @Override
         public PreferenceSetting createPreferenceSetting() {
             return new RemoteControlPreference();
         }
     }
-    
+
     private RemoteControlPreference() {
         super("remotecontrol", tr("Remote Control"), tr("Settings for the remote control feature."));
+        for (PermissionPrefWithDefault p : PermissionPrefWithDefault.getPermissionPrefs()) {
+            JCheckBox cb = new JCheckBox(p.preferenceText);
+            cb.setSelected(p.isAllowed());
+            prefs.put(p, cb);
+        }
     }
-
+    private final Map<PermissionPrefWithDefault, JCheckBox> prefs =
+            new LinkedHashMap<PermissionPrefWithDefault, JCheckBox>();
     private JCheckBox enableRemoteControl;
-
-    private JCheckBox permissionLoadData = new JCheckBox(tr("Load data from API"));
-    private JCheckBox permissionImportData = new JCheckBox(tr("Import data from URL"));
-    private JCheckBox permissionLoadImagery = new JCheckBox(tr("Load imagery layers"));
-    private JCheckBox permissionCreateObjects = new JCheckBox(tr("Create new objects"));
-    private JCheckBox permissionChangeSelection = new JCheckBox(tr("Change the selection"));
-    private JCheckBox permissionChangeViewport = new JCheckBox(tr("Change the viewport"));
-    private JCheckBox permissionReadProtocolversion = new JCheckBox(tr("Read protocol version"));
     private JCheckBox loadInNewLayer = new JCheckBox(tr("Download objects to new layer"));
     private JCheckBox alwaysAskUserConfirm = new JCheckBox(tr("Confirm all Remote Control actions manually"));
 
+    @Override
     public void addGui(final PreferenceTabbedPane gui) {
 
         JPanel remote = new JPanel(new GridBagLayout());
+
+        final JLabel descLabel = new JLabel("<html>"
+                + tr("Allows JOSM to be controlled from other applications, e.g. from a web browser.")
+                + "</html>");
+        descLabel.setFont(descLabel.getFont().deriveFont(Font.PLAIN));
+        remote.add(descLabel, GBC.eol().insets(5, 5, 0, 10).fill(GBC.HORIZONTAL));
+
+        final JLabel portLabel = new JLabel("<html>" + tr("JOSM will always listen at <b>port 8111</b> on localhost. "
+                + "<br>This port is not configurable because it is referenced by external applications talking to JOSM.") + "</html>");
+        portLabel.setFont(portLabel.getFont().deriveFont(Font.PLAIN));
+        remote.add(portLabel, GBC.eol().insets(5, 5, 0, 10).fill(GBC.HORIZONTAL));
 
         remote.add(enableRemoteControl = new JCheckBox(tr("Enable remote control"), RemoteControl.PROP_REMOTECONTROL_ENABLED.get()), GBC.eol());
 
@@ -70,53 +79,27 @@ public class RemoteControlPreference extends DefaultTabPreferenceSetting
 
         remote.add(wrapper, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 5, 5, 5));
 
-        final JLabel descLabel = new JLabel("<html>"+
-                tr("The remote control feature allows JOSM to be controlled from other applications, e.g. from a web browser.")
-                + "</html>");
-        wrapper.add(descLabel, GBC.eol().insets(5,5,0,10).fill(GBC.HORIZONTAL));
-        descLabel.setFont(descLabel.getFont().deriveFont(Font.PLAIN));
-
         wrapper.add(new JLabel(tr("Permitted actions:")), GBC.eol());
         int INDENT = 15;
-        wrapper.add(permissionLoadData, GBC.eol().insets(INDENT,5,0,0).fill(GBC.HORIZONTAL));
-        wrapper.add(permissionImportData, GBC.eol().insets(INDENT,5,0,0).fill(GBC.HORIZONTAL));
-        wrapper.add(permissionLoadImagery, GBC.eol().insets(INDENT,5,0,0).fill(GBC.HORIZONTAL));
-        wrapper.add(permissionChangeSelection, GBC.eol().insets(INDENT,5,0,0).fill(GBC.HORIZONTAL));
-        wrapper.add(permissionChangeViewport, GBC.eol().insets(INDENT,5,0,0).fill(GBC.HORIZONTAL));
-        wrapper.add(permissionCreateObjects, GBC.eol().insets(INDENT,5,0,0).fill(GBC.HORIZONTAL));
-        wrapper.add(permissionReadProtocolversion, GBC.eol().insets(INDENT,5,0,0).fill(GBC.HORIZONTAL));
+        for (JCheckBox p : prefs.values()) {
+            wrapper.add(p, GBC.eol().insets(INDENT, 5, 0, 0).fill(GBC.HORIZONTAL));
+        }
 
         wrapper.add(new JSeparator(), GBC.eop().fill(GBC.HORIZONTAL).insets(15, 5, 15, 5));
-
         wrapper.add(loadInNewLayer, GBC.eol().fill(GBC.HORIZONTAL));
-
         wrapper.add(alwaysAskUserConfirm, GBC.eol().fill(GBC.HORIZONTAL));
-
-        final JLabel portLabel = new JLabel("<html>"+tr("JOSM will always listen at port 8111 on localhost. " +
-                "This port is not configurable because it is referenced by external applications talking to JOSM.") + "</html>");
-        portLabel.setFont(portLabel.getFont().deriveFont(Font.PLAIN));
-
-        wrapper.add(portLabel, GBC.eol().insets(5,5,0,10).fill(GBC.HORIZONTAL));
 
         remote.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
 
-        permissionLoadData.setSelected(Main.pref.getBoolean(LoadAndZoomHandler.loadDataPermissionKey, LoadAndZoomHandler.loadDataPermissionDefault));
-        permissionImportData.setSelected(Main.pref.getBoolean(ImportHandler.permissionKey, ImportHandler.permissionDefault));
-        permissionLoadImagery.setSelected(Main.pref.getBoolean(ImageryHandler.permissionKey, ImageryHandler.permissionDefault));
-        permissionChangeSelection.setSelected(Main.pref.getBoolean(LoadAndZoomHandler.changeSelectionPermissionKey, LoadAndZoomHandler.changeSelectionPermissionDefault));
-        permissionChangeViewport.setSelected(Main.pref.getBoolean(LoadAndZoomHandler.changeViewportPermissionKey, LoadAndZoomHandler.changeViewportPermissionDefault));
-        permissionCreateObjects.setSelected(Main.pref.getBoolean(AddNodeHandler.permissionKey, AddNodeHandler.permissionDefault));
-        permissionReadProtocolversion.setSelected(Main.pref.getBoolean(VersionHandler.permissionKey, VersionHandler.permissionDefault));
         loadInNewLayer.setSelected(Main.pref.getBoolean(RequestHandler.loadInNewLayerKey, RequestHandler.loadInNewLayerDefault));
         alwaysAskUserConfirm.setSelected(Main.pref.getBoolean(RequestHandler.globalConfirmationKey, RequestHandler.globalConfirmationDefault));
 
         ActionListener remoteControlEnabled = new ActionListener() {
+
+            @Override
             public void actionPerformed(ActionEvent e) {
-                boolean enabled = enableRemoteControl.isSelected();
                 GuiHelper.setEnabledRec(wrapper, enableRemoteControl.isSelected());
                 // 'setEnabled(false)' does not work for JLabel with html text, so do it manually
-                portLabel.setForeground(enabled ? UIManager.getColor("Label.foreground") : UIManager.getColor("Label.disabledForeground"));
-                descLabel.setForeground(enabled ? UIManager.getColor("Label.foreground") : UIManager.getColor("Label.disabledForeground"));
                 // FIXME: use QuadStateCheckBox to make checkboxes unset when disabled
             }
         };
@@ -125,17 +108,14 @@ public class RemoteControlPreference extends DefaultTabPreferenceSetting
         createPreferenceTabWithScrollPane(gui, remote);
     }
 
+    @Override
     public boolean ok() {
         boolean enabled = enableRemoteControl.isSelected();
         boolean changed = RemoteControl.PROP_REMOTECONTROL_ENABLED.put(enabled);
         if (enabled) {
-            Main.pref.put(LoadAndZoomHandler.loadDataPermissionKey, permissionLoadData.isSelected());
-            Main.pref.put(ImportHandler.permissionKey, permissionImportData.isSelected());
-            Main.pref.put(ImageryHandler.permissionKey, permissionLoadImagery.isSelected());
-            Main.pref.put(LoadAndZoomHandler.changeSelectionPermissionKey, permissionChangeSelection.isSelected());
-            Main.pref.put(LoadAndZoomHandler.changeViewportPermissionKey, permissionChangeViewport.isSelected());
-            Main.pref.put(AddNodeHandler.permissionKey, permissionCreateObjects.isSelected());
-            Main.pref.put(VersionHandler.permissionKey, permissionReadProtocolversion.isSelected());
+            for (Entry<PermissionPrefWithDefault, JCheckBox> p : prefs.entrySet()) {
+                Main.pref.put(p.getKey().pref, p.getValue().isSelected());
+            }
             Main.pref.put(RequestHandler.loadInNewLayerKey, loadInNewLayer.isSelected());
             Main.pref.put(RequestHandler.globalConfirmationKey, alwaysAskUserConfirm.isSelected());
         }

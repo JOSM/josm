@@ -12,6 +12,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 
 /**
  * Adds a way to the current dataset. For instance, {@code /add_way?way=lat1,lon2;lat2,lon2}.
@@ -40,7 +41,7 @@ public class AddWayHandler extends RequestHandler {
         commands.add(new AddCommand(way));
         Main.main.undoRedo.add(new SequenceCommand(tr("Add way"), commands));
         Main.main.getCurrentDataSet().setSelected(way);
-        if (Main.pref.getBoolean(LoadAndZoomHandler.changeViewportPermissionKey, LoadAndZoomHandler.changeViewportPermissionDefault)) {
+        if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
             AutoScaleAction.autoScale("selection");
         } else {
             Main.map.mapView.repaint();
@@ -50,5 +51,10 @@ public class AddWayHandler extends RequestHandler {
     @Override
     public String getPermissionMessage() {
         return tr("Remote Control has been asked to create a new way.");
+    }
+
+    @Override
+    public PermissionPrefWithDefault getPermissionPref() {
+        return PermissionPrefWithDefault.CREATE_OBJECTS;
     }
 }

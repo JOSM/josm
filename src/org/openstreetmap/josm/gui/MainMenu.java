@@ -100,6 +100,7 @@ import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.gui.io.RecentlyOpenedFilesMenu;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.mappaint.MapPaintMenu;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSearchAction;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -428,6 +429,7 @@ public class MainMenu extends JMenuBar {
         wireframe.setAccelerator(wireFrameToggleAction.getShortcut().getKeyStroke());
         wireFrameToggleAction.addButtonModel(wireframe.getModel());
 
+        viewMenu.add(new MapPaintMenu());
         viewMenu.addSeparator();
         add(viewMenu, new ZoomInAction());
         add(viewMenu, new ZoomOutAction());

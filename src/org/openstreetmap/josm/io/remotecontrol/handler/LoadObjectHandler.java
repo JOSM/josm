@@ -4,10 +4,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DownloadPrimitiveAction;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 
 /**
  * Loads OSM primitives using their ID
@@ -25,7 +25,7 @@ public class LoadObjectHandler extends RequestHandler {
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException, RequestHandlerBadRequestException {
-        if (!Main.pref.getBoolean(LoadAndZoomHandler.loadDataPermissionKey, LoadAndZoomHandler.loadDataPermissionDefault)) {
+        if (!PermissionPrefWithDefault.LOAD_DATA.isAllowed()) {
             System.out.println("RemoteControl: download forbidden by preferences");
         }
         List<PrimitiveId> ps = new LinkedList<PrimitiveId>();
@@ -40,5 +40,10 @@ public class LoadObjectHandler extends RequestHandler {
     @Override
     public String getPermissionMessage() {
         return tr("Remote Control has been asked to load objects (specified by their id) from the API.");
+    }
+
+    @Override
+    public PermissionPrefWithDefault getPermissionPref() {
+        return PermissionPrefWithDefault.LOAD_DATA;
     }
 }

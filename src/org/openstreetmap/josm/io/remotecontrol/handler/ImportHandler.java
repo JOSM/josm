@@ -17,8 +17,6 @@ import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 public class ImportHandler extends RequestHandler {
 
     public static final String command = "import";
-    public static final String permissionKey = "remotecontrol.permission.import";
-    public static final boolean permissionDefault = true;
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException {
@@ -33,22 +31,19 @@ public class ImportHandler extends RequestHandler {
     }
 
     @Override
-    public String[] getMandatoryParams()
-    {
-        return new String[] { "url" };
+    public String[] getMandatoryParams() {
+        return new String[]{"url"};
     }
 
     @Override
     public String getPermissionMessage() {
-        return tr("Remote Control has been asked to import data from the following URL:") +
-        "<br>" + request;
+        return tr("Remote Control has been asked to import data from the following URL:")
+                + "<br>" + request;
     }
 
     @Override
-    public PermissionPrefWithDefault getPermissionPref()
-    {
-        return new PermissionPrefWithDefault(permissionKey, permissionDefault,
-                "RemoteControl: import forbidden by preferences");
+    public PermissionPrefWithDefault getPermissionPref() {
+        return PermissionPrefWithDefault.IMPORT_DATA;
     }
 
     @Override
