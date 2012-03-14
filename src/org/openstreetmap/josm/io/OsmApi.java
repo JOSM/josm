@@ -566,6 +566,8 @@ public class OsmApi extends OsmConnection {
                 URL url = new URL(new URL(getBaseUrl()), urlSuffix);
                 System.out.print(requestMethod + " " + url + "... ");
                 activeConnection = (HttpURLConnection)url.openConnection();
+                // fix #5369, see http://www.tikalk.com/java/forums/httpurlconnection-disable-keep-alive
+                activeConnection.setRequestProperty("Connection", "close");
                 activeConnection.setConnectTimeout(fastFail ? 1000 : Main.pref.getInteger("socket.timeout.connect",15)*1000);
                 if (fastFail) {
                     activeConnection.setReadTimeout(1000);
