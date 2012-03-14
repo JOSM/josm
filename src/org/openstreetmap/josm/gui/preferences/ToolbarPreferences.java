@@ -368,20 +368,22 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
     private static class ToolbarPopupMenu extends JPopupMenu {
         public ToolbarPopupMenu(final ActionDefinition action) {
-            
-            add(tr("Remove from toolbar",action.getDisplayName()))
-                    .addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            Collection<String> t = new LinkedList<String>(getToolString());
-                            ActionParser parser = new ActionParser(null);
-                            // get text definition of current action
-                            String res = parser.saveAction(action);
-                            // remove the button from toolbar preferences
-                            t.remove( res );
-                            Main.pref.putCollection("toolbar", t);
-                            Main.toolbar.refreshToolbarControl();                
-                        }
-            });
+
+            if(action != null) {
+                add(tr("Remove from toolbar",action.getDisplayName()))
+                        .addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                Collection<String> t = new LinkedList<String>(getToolString());
+                                ActionParser parser = new ActionParser(null);
+                                // get text definition of current action
+                                String res = parser.saveAction(action);
+                                // remove the button from toolbar preferences
+                                t.remove( res );
+                                Main.pref.putCollection("toolbar", t);
+                                Main.toolbar.refreshToolbarControl();
+                            }
+                });
+            }
             
             add(tr("Configure toolbar")).addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -800,6 +802,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
     public ToolbarPreferences() {
         control.setFloatable(false);
+        control.addMouseListener(new PopupMenuLauncher(new ToolbarPopupMenu(null)));
     }
 
     private void loadAction(DefaultMutableTreeNode node, MenuElement menu) {
