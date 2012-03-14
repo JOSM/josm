@@ -171,6 +171,9 @@ public class MemberTable extends JTable implements IMemberModelListener {
             MapView.addLayerChangeListener(zoomToGap);
             getSelectionModel().addListSelectionListener(zoomToGap);
             popupMenu.add(zoomToGap);
+            popupMenu.addSeparator();
+            popupMenu.add(new SelectPreviousGapAction());
+            popupMenu.add(new SelectNextGapAction());
         }
         return popupMenu;
     }
@@ -246,6 +249,44 @@ public class MemberTable extends JTable implements IMemberModelListener {
 
         public void layerRemoved(Layer oldLayer) {
             updateEnabledState();
+        }
+    }
+
+    private class SelectPreviousGapAction extends AbstractAction {
+
+        public SelectPreviousGapAction() {
+            putValue(NAME, tr("Select previous Gap"));
+            putValue(SHORT_DESCRIPTION, tr("Select the previous relation member which gives rise to a gap"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int i = getSelectedRow() - 1;
+            while (i >= 0 && getMemberTableModel().getWayConnection(i).linkPrev) {
+                i--;
+            }
+            if (i >= 0) {
+                getSelectionModel().setSelectionInterval(i, i);
+            }
+        }
+    }
+
+    private class SelectNextGapAction extends AbstractAction {
+
+        public SelectNextGapAction() {
+            putValue(NAME, tr("Select next Gap"));
+            putValue(SHORT_DESCRIPTION, tr("Select the next relation member which gives rise to a gap"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int i = getSelectedRow() + 1;
+            while (i < getRowCount() && getMemberTableModel().getWayConnection(i).linkNext) {
+                i++;
+            }
+            if (i < getRowCount()) {
+                getSelectionModel().setSelectionInterval(i, i);
+            }
         }
     }
 
