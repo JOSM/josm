@@ -2425,12 +2425,6 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="shop" v="organic"/>
-		<icon annotate="true" src="shop/groceries/fruits.png"/>
-		<area colour="shop#00005f"/>
-	</rule>
-
-	<rule>
 		<condition k="shop" v="optician"/>
 		<icon annotate="true" src="shop/optician.png"/>
 		<area colour="shop#00005f"/>

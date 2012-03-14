@@ -71,6 +71,11 @@ public class DeprecatedTags extends Test {
         checks.add(new DeprecationCheck(2113).
                 test("power_rating").
                 alternative("generator:output"));
+        // from http://wiki.openstreetmap.org/wiki/Tag:shop%3Dorganic
+        checks.add(new DeprecationCheck(2114).
+                testAndRemove("shop", "organic").
+                add("shop", "supermarket").
+                add("organic", "only"));
     }
 
     public void visit(OsmPrimitive p) {
