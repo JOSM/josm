@@ -33,6 +33,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
+import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.TaggingPresetNameTemplateList;
 
@@ -348,6 +349,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     private final Comparator<Relation> relationComparator = new Comparator<Relation>() {
+        private final AlphanumComparator ALPHANUM_COMPARATOR = new AlphanumComparator();
         @Override
         public int compare(Relation r1, Relation r2) {
             //TODO This doesn't work correctly with formatHooks
@@ -369,43 +371,15 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 String type1 = getRelationTypeName(r1);
                 String type2 = getRelationTypeName(r2);
 
-                int comp = type1.compareTo(type2);
+                int comp = ALPHANUM_COMPARATOR.compare(type1, type2);
                 if (comp != 0)
                     return comp;
 
                 String name1 = getRelationName(r1);
                 String name2 = getRelationName(r2);
 
-                if (name1 == null && name2 == null)
-                    return (r1.getUniqueId() > r2.getUniqueId())?1:-1;
-                else if (name1 == null)
-                    return -1;
-                else if (name2 == null)
-                    return 1;
-                else if (!name1.isEmpty() && !name2.isEmpty() && Character.isDigit(name1.charAt(0)) && Character.isDigit(name2.charAt(0))) {
-                    //Compare numerically
-                    String ln1 = getLeadingNumber(name1);
-                    String ln2 = getLeadingNumber(name2);
-
-                    comp = Long.valueOf(ln1).compareTo(Long.valueOf(ln2));
-                    if (comp != 0)
-                        return comp;
-
-                    // put 1 before 0001
-                    comp = ln1.compareTo(ln2);
-                    if (comp != 0)
-                        return comp;
-
-                    comp = name1.substring(ln1.length()).compareTo(name2.substring(ln2.length()));
-                    if (comp != 0)
-                        return comp;
-                } else {
-                    comp = name1.compareToIgnoreCase(name2);
-                    if (comp != 0)
-                        return comp;
-                }
+                return ALPHANUM_COMPARATOR.compare(name1, name2);
             }
-
 
             if (r1.getMembersCount() != r2.getMembersCount())
                 return (r1.getMembersCount() > r2.getMembersCount())?1:-1;
