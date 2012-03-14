@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -25,7 +26,6 @@ import javax.swing.Action;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -33,6 +33,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -54,6 +58,7 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
+import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -79,6 +84,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     /** the delete action */
     private DeleteAction deleteAction;
     private NewAction newAction;
+    private AddToRelation addToRelation;
     /** the popup menu */
     private RelationDialogPopupMenu popupMenu;
 
@@ -144,6 +150,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         //displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "deleteRelation");
         //displaylist.getActionMap().put("deleteRelation", deleteAction);
 
+        addToRelation = new AddToRelation();
         popupMenu = new RelationDialogPopupMenu(displaylist);
     }
 
@@ -151,12 +158,14 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         MapView.addLayerChangeListener(newAction);
         newAction.updateEnabledState();
         DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT);
+        DataSet.addSelectionListener(addToRelation);
         dataChanged(null);
     }
 
     @Override public void hideNotify() {
         MapView.removeLayerChangeListener(newAction);
         DatasetEventManager.getInstance().removeDatasetListener(this);
+        DataSet.removeSelectionListener(addToRelation);
     }
 
     /**
@@ -580,6 +589,40 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
     }
 
+    class AddToRelation extends AbstractAction implements ListSelectionListener, SelectionChangedListener {
+
+        public AddToRelation() {
+            super("", ImageProvider.get("dialogs/conflict", "copyendright"));
+            putValue(SHORT_DESCRIPTION, tr("Add all objects selected in the current dataset after the last member"));
+            setEnabled(false);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Collection<Command> cmds = new LinkedList<Command>();
+            for (Relation orig : getSelectedRelations()) {
+                Command c = GenericRelationEditor.addPrimitivesToRelation(orig, Main.main.getCurrentDataSet().getSelected());
+                if (c != null) {
+                    cmds.add(c);
+                }
+            }
+            if (!cmds.isEmpty()) {
+                Main.main.undoRedo.add(new SequenceCommand(tr("Add selection to relation"), cmds));
+            }
+        }
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            putValue(NAME, trn("Add selection to {0} relation", "Add selection to {0} relations",
+                    getSelectedRelations().size(), getSelectedRelations().size()));
+        }
+
+        @Override
+        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+            setEnabled(newSelection != null && !newSelection.isEmpty());
+        }
+    }
+
     /**
      * The list model for the list of relations displayed in the relation list
      * dialog.
@@ -794,24 +837,24 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             super(list);
 
             // -- download members action
-            //
             add(new DownloadMembersAction());
 
             // -- download incomplete members action
-            //
             add(new DownloadSelectedIncompleteMembersAction());
 
             addSeparator();
 
             // -- select members action
-            //
             add(new SelectMembersAction(false));
             add(new SelectMembersAction(true));
 
             // -- select action
-            //
             add(new SelectAction(false));
             add(new SelectAction(true));
+
+            addSeparator();
+
+            add(addToRelation);
         }
     }
 
