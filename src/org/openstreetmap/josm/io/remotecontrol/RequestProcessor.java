@@ -12,12 +12,10 @@ import java.io.Writer;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddWayHandler;
@@ -25,6 +23,7 @@ import org.openstreetmap.josm.io.remotecontrol.handler.ImageryHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.ImportHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadAndZoomHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadObjectHandler;
+import org.openstreetmap.josm.io.remotecontrol.handler.OpenFileHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerErrorException;
@@ -116,16 +115,15 @@ public class RequestProcessor extends Thread {
 
     /** Add default request handlers */
     static {
-        addRequestHandlerClass(LoadAndZoomHandler.command,
-                LoadAndZoomHandler.class, true);
-        addRequestHandlerClass(LoadAndZoomHandler.command2,
-                LoadAndZoomHandler.class, true);
+        addRequestHandlerClass(LoadAndZoomHandler.command, LoadAndZoomHandler.class, true);
+        addRequestHandlerClass(LoadAndZoomHandler.command2, LoadAndZoomHandler.class, true);
         addRequestHandlerClass(ImageryHandler.command, ImageryHandler.class, true);
         addRequestHandlerClass(AddNodeHandler.command, AddNodeHandler.class, true);
         addRequestHandlerClass(AddWayHandler.command, AddWayHandler.class, true);
         addRequestHandlerClass(ImportHandler.command, ImportHandler.class, true);
         addRequestHandlerClass(VersionHandler.command, VersionHandler.class, true);
         addRequestHandlerClass(LoadObjectHandler.command, LoadObjectHandler.class, true);
+        addRequestHandlerClass(OpenFileHandler.command, OpenFileHandler.class, true);
     }
 
     /**
@@ -202,7 +200,6 @@ public class RequestProcessor extends Thread {
                 try {
                     handler.setCommand(command);
                     handler.setUrl(url);
-                    handler.checkPermission();
                     handler.handle();
                     sendHeader(out, "200 OK", handler.getContentType(), false);
                     out.write("Content-length: " + handler.getContent().length()
@@ -215,7 +212,7 @@ public class RequestProcessor extends Thread {
                 } catch (RequestHandlerBadRequestException ex) {
                     sendBadRequest(out, ex.getMessage());
                 } catch (RequestHandlerForbiddenException ex) {
-                    sendForbidden(out);
+                    sendForbidden(out, ex.getMessage());
                 }
             }
 
@@ -280,13 +277,16 @@ public class RequestProcessor extends Thread {
      * @throws IOException
      *             If the error can not be written
      */
-    private void sendForbidden(Writer out) throws IOException {
+    private void sendForbidden(Writer out, String help) throws IOException {
         sendHeader(out, "403 Forbidden", "text/html", true);
         out.write("<HTML>\r\n");
         out.write("<HEAD><TITLE>Forbidden</TITLE>\r\n");
         out.write("</HEAD>\r\n");
         out.write("<BODY>");
         out.write("<H1>HTTP Error 403: Forbidden</h2>\r\n");
+        if (help != null) {
+            out.write(help);
+        }
         out.write("</BODY></HTML>\r\n");
         out.flush();
     }

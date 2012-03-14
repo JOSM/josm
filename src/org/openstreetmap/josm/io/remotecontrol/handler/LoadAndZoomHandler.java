@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
+import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -33,13 +34,6 @@ public class LoadAndZoomHandler extends RequestHandler
 {
     public static final String command = "load_and_zoom";
     public static final String command2 = "zoom";
-
-    public static final String loadDataPermissionKey = "remotecontrol.permission.load-data";
-    public static final boolean loadDataPermissionDefault = true;
-    public static final String changeSelectionPermissionKey = "remotecontrol.permission.change-selection";
-    public static final boolean changeSelectionPermissionDefault = true;
-    public static final String changeViewportPermissionKey = "remotecontrol.permission.change-viewport";
-    public static final boolean changeViewportPermissionDefault = true;
 
     @Override
     public String getPermissionMessage()
@@ -71,7 +65,7 @@ public class LoadAndZoomHandler extends RequestHandler
 
             if(command.equals(myCommand))
             {
-                if (!Main.pref.getBoolean(loadDataPermissionKey, loadDataPermissionDefault))
+                if (!PermissionPrefWithDefault.LOAD_DATA.isAllowed())
                 {
                     System.out.println("RemoteControl: download forbidden by preferences");
                 }
@@ -130,7 +124,7 @@ public class LoadAndZoomHandler extends RequestHandler
             });
         }
 
-        if (args.containsKey("select") && Main.pref.getBoolean(changeSelectionPermissionKey, changeSelectionPermissionDefault)) {
+        if (args.containsKey("select") && PermissionPrefWithDefault.CHANGE_SELECTION.isAllowed()) {
             // select objects after downloading, zoom to selection.
             final String selection = args.get("select");
             Main.worker.execute(new Runnable() {
@@ -171,7 +165,7 @@ public class LoadAndZoomHandler extends RequestHandler
                         }
                     }
                     ds.setSelected(newSel);
-                    if (Main.pref.getBoolean(changeViewportPermissionKey, changeViewportPermissionDefault)) {
+                    if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
                         AutoScaleAction.autoScale("selection");
                     }
                     if (Main.map != null && Main.map.relationListDialog != null) {
@@ -181,7 +175,7 @@ public class LoadAndZoomHandler extends RequestHandler
                     }
                 }
             });
-        } else if (Main.pref.getBoolean(changeViewportPermissionKey, changeViewportPermissionDefault)) {
+        } else if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
             // after downloading, zoom to downloaded area.
             zoom(minlat, maxlat, minlon, maxlon);
         }
@@ -230,5 +224,10 @@ public class LoadAndZoomHandler extends RequestHandler
                 }
             });
         }
+    }
+
+    @Override
+    public PermissionPrefWithDefault getPermissionPref() {
+        return null;
     }
 }
