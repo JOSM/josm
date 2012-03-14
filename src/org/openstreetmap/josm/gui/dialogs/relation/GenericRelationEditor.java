@@ -46,6 +46,7 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.PasteTagsAction.TagPaster;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.ConflictAddCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -687,55 +688,74 @@ public class GenericRelationEditor extends RelationEditor  {
         }
     }
 
-    static class AddAbortException extends Exception  {
+    static class AddAbortException extends Exception {
     }
 
-    abstract class  AddFromSelectionAction extends AbstractAction {
+    static boolean confirmAddingPrimtive(OsmPrimitive primitive) throws AddAbortException {
+        String msg = tr("<html>This relation already has one or more members referring to<br>"
+                + "the object ''{0}''<br>"
+                + "<br>"
+                + "Do you really want to add another relation member?</html>",
+                primitive.getDisplayName(DefaultNameFormatter.getInstance())
+            );
+        int ret = ConditionalOptionPaneUtil.showOptionDialog(
+                "add_primitive_to_relation",
+                Main.parent,
+                msg,
+                tr("Multiple members referring to same object."),
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                null
+        );
+        switch(ret) {
+        case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION : return true;
+        case JOptionPane.YES_OPTION: return true;
+        case JOptionPane.NO_OPTION: return false;
+        case JOptionPane.CLOSED_OPTION: return false;
+        case JOptionPane.CANCEL_OPTION: throw new AddAbortException();
+        }
+        // should not happen
+        return false;
+    }
+
+    static void warnOfCircularReferences(OsmPrimitive primitive) {
+        String msg = tr("<html>You are trying to add a relation to itself.<br>"
+                + "<br>"
+                + "This creates circular references and is therefore discouraged.<br>"
+                + "Skipping relation ''{0}''.</html>",
+                primitive.getDisplayName(DefaultNameFormatter.getInstance()));
+        JOptionPane.showMessageDialog(
+                Main.parent,
+                msg,
+                tr("Warning"),
+                JOptionPane.WARNING_MESSAGE);
+    }
+
+    public static Command addPrimitivesToRelation(final Relation orig, Collection<? extends OsmPrimitive> primitivesToAdd) {
+        try {
+            Relation relation = new Relation(orig);
+            boolean modified = false;
+            for (OsmPrimitive p : primitivesToAdd) {
+                if (p instanceof Relation && orig != null && orig.equals(p)) {
+                    warnOfCircularReferences(p);
+                    continue;
+                } else if (MemberTableModel.hasMembersReferringTo(relation.getMembers(), Collections.singleton(p))
+                        && !confirmAddingPrimtive(p)) {
+                    continue;
+                }
+                relation.addMember(new RelationMember("", p));
+                modified = true;
+            }
+            return modified ? new ChangeCommand(orig, relation) : null;
+        } catch (AddAbortException ign) {
+            return null;
+        }
+    }
+
+    abstract class AddFromSelectionAction extends AbstractAction {
         protected boolean isPotentialDuplicate(OsmPrimitive primitive) {
             return memberTableModel.hasMembersReferringTo(Collections.singleton(primitive));
-        }
-
-        protected boolean confirmAddingPrimtive(OsmPrimitive primitive)  throws AddAbortException {
-            String msg = tr("<html>This relation already has one or more members referring to<br>"
-                    + "the object ''{0}''<br>"
-                    + "<br>"
-                    + "Do you really want to add another relation member?</html>",
-                    primitive.getDisplayName(DefaultNameFormatter.getInstance())
-            );
-            int ret = ConditionalOptionPaneUtil.showOptionDialog(
-                    "add_primitive_to_relation",
-                    Main.parent,
-                    msg,
-                    tr("Multiple members referring to same object."),
-                    JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.WARNING_MESSAGE,
-                    null,
-                    null
-            );
-            switch(ret) {
-            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION : return true;
-            case JOptionPane.YES_OPTION: return true;
-            case JOptionPane.NO_OPTION: return false;
-            case JOptionPane.CLOSED_OPTION: return false;
-            case JOptionPane.CANCEL_OPTION: throw new AddAbortException();
-            }
-            // should not happen
-            return false;
-        }
-
-        protected void warnOfCircularReferences(OsmPrimitive primitive) {
-            String msg = tr("<html>You are trying to add a relation to itself.<br>"
-                    + "<br>"
-                    + "This creates circular references and is therefore discouraged.<br>"
-                    + "Skipping relation ''{0}''.</html>",
-                    primitive.getDisplayName(DefaultNameFormatter.getInstance())
-            );
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    msg,
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-            );
         }
 
         protected List<OsmPrimitive> filterConfirmedPrimitives(List<OsmPrimitive> primitives) throws AddAbortException {

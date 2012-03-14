@@ -559,6 +559,32 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     /**
+     * Replies true if there is at least one relation member given as {@code members}
+     * which refers to at least on the primitives in {@code primitives}.
+     *
+     * @param members the members
+     * @param primitives the collection of primitives
+     * @return true if there is at least one relation member in this model
+     * which refers to at least on the primitives in <code>primitives</code>; false
+     * otherwise
+     */
+    public static boolean hasMembersReferringTo(Collection<RelationMember> members, Collection<OsmPrimitive> primitives) {
+        if (primitives == null || primitives.isEmpty()) {
+            return false;
+        }
+        HashSet<OsmPrimitive> referrers = new HashSet<OsmPrimitive>();
+        for (RelationMember member : members) {
+            referrers.add(member.getMember());
+        }
+        for (OsmPrimitive referred : primitives) {
+            if (referrers.contains(referred)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Replies true if there is at least one relation member in this model
      * which refers to at least on the primitives in <code>primitives</code>.
      *
@@ -568,19 +594,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * otherwise
      */
     public boolean hasMembersReferringTo(Collection<OsmPrimitive> primitives) {
-        if (primitives == null || primitives.isEmpty())
-            return false;
-        HashSet<OsmPrimitive> referrers = new HashSet<OsmPrimitive>();
-        for(RelationMember member : members) {
-            referrers.add(member.getMember());
-        }
-        Iterator<OsmPrimitive> it = primitives.iterator();
-        while(it.hasNext()) {
-            OsmPrimitive referred = it.next();
-            if (referrers.contains(referred))
-                return true;
-        }
-        return false;
+        return hasMembersReferringTo(members, primitives);
     }
 
     /**
