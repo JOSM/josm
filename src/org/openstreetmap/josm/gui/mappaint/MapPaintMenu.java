@@ -4,14 +4,15 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.gui.dialogs.MapPaintDialog;
+import org.openstreetmap.josm.gui.dialogs.MapPaintDialog.LaunchMapPaintPreferencesAction;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
+import org.openstreetmap.josm.gui.util.StayOpenCheckBoxMenuItem;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
@@ -28,7 +29,7 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
                 putValue("toolbar", "mappaint/" + style.getDisplayString());
                 Main.toolbar.register(this);
             }
-            this.button = new JCheckBoxMenuItem(this);
+            this.button = new StayOpenCheckBoxMenuItem(this);
             this.style = style;
             updateButton();
         }
@@ -56,7 +57,13 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
             setEnabled(Main.map != null && Main.main.getEditLayer() != null);
         }
     }
-    private Map<String, MapPaintAction> actions = new HashMap<String, MapPaintAction>();
+    private final Map<String, MapPaintAction> actions = new HashMap<String, MapPaintAction>();
+    private final LaunchMapPaintPreferencesAction mapPaintPreferencesAction = new MapPaintDialog.LaunchMapPaintPreferencesAction() {
+
+        {
+            putValue("toolbar", "mappaintpreference");
+        }
+    };
 
     public MapPaintMenu() {
         super(tr("Map Paint Styles"));
@@ -66,26 +73,20 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
 
     @Override
     public void mapPaintStylesUpdated() {
-        final Set<String> actionsToRemove = new HashSet<String>(actions.keySet());
+        removeAll();
         for (StyleSource style : MapPaintStyles.getStyles().getStyleSources()) {
             final String k = style.getDisplayString();
             MapPaintAction a = actions.get(k);
             if (a == null) {
-                a = new MapPaintAction(style);
+                actions.put(k, a = new MapPaintAction(style));
                 add(a.getButton());
-                actions.put(k, a);
             } else {
+                add(a.getButton());
                 a.updateButton();
-                actionsToRemove.remove(k);
             }
         }
-        for (String k : actionsToRemove) {
-            final MapPaintAction a = actions.get(k);
-            if (a != null) {
-                remove(a.getButton());
-                actions.remove(k);
-            }
-        }
+        addSeparator();
+        add(mapPaintPreferencesAction);
     }
 
     @Override
