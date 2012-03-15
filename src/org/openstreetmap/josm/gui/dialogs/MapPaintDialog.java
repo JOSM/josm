@@ -361,7 +361,7 @@ public class MapPaintDialog extends ToggleDialog {
     /**
      * Opens preferences window and selects the mappaint tab.
      */
-    static class LaunchMapPaintPreferencesAction extends AbstractAction {
+    public static class LaunchMapPaintPreferencesAction extends AbstractAction {
         public LaunchMapPaintPreferencesAction() {
             putValue(NAME, tr("Preferences"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "mappaintpreference"));
