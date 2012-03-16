@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.gui.actionsupport.AlignImageryPanel;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -43,6 +44,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         if (!isEnabled()) return;
         try {
             Main.main.addLayer(ImageryLayer.create(info));
+            AlignImageryPanel.addNagPanelIfNeeded();
         } catch (IllegalArgumentException ex) {
             if (ex.getMessage() == null || ex.getMessage().isEmpty()) {
                 throw ex;
