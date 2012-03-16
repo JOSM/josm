@@ -48,6 +48,8 @@ import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.ParallelWayAction;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.actions.mapmode.ZoomAction;
+import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.ChangesetDialog;
 import org.openstreetmap.josm.gui.dialogs.CommandStackDialog;
@@ -396,20 +398,46 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
             jb.add(listAllToggleDialogsButton);
         }
 
-        if(Main.pref.getBoolean("sidetoolbar.visible", true))
-        {
-            if(Main.pref.getBoolean("sidetoolbar.scrollable", true)) {
-                final ScrollViewport svp = new ScrollViewport(jb, ScrollViewport.VERTICAL_DIRECTION);
-                panel.add(svp, BorderLayout.WEST);
-                jb.addMouseWheelListener(new MouseWheelListener() {
-                    public void mouseWheelMoved(MouseWheelEvent e) {
-                        svp.scroll(0,e.getUnitsToScroll() * 5);
+        final Component toToggle;
+        if (Main.pref.getBoolean("sidetoolbar.scrollable", true)) {
+            final ScrollViewport svp = new ScrollViewport(jb, ScrollViewport.VERTICAL_DIRECTION);
+            toToggle = svp;
+            panel.add(svp, BorderLayout.WEST);
+            jb.addMouseWheelListener(new MouseWheelListener() {
+
+                public void mouseWheelMoved(MouseWheelEvent e) {
+                    svp.scroll(0, e.getUnitsToScroll() * 5);
+                }
+            });
+        } else {
+            toToggle = jb;
+            panel.add(jb, BorderLayout.WEST);
+        }
+        toToggle.setVisible(Main.pref.getBoolean("sidetoolbar.visible", true));
+
+        jb.addMouseListener(new PopupMenuLauncher(new JPopupMenu() {
+
+            {
+                add(new AbstractAction(tr("Hide edit toolbar")) {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Main.pref.put("sidetoolbar.visible", false);
                     }
                 });
-            } else {
-                panel.add(jb, BorderLayout.WEST);
             }
-        }
+        }));
+
+        Main.pref.addPreferenceChangeListener(new Preferences.PreferenceChangedListener() {
+
+            @Override
+            public void preferenceChanged(PreferenceChangeEvent e) {
+                if ("sidetoolbar.visible".equals(e.getKey())) {
+                    toToggle.setVisible(Main.pref.getBoolean("sidetoolbar.visible"));
+                }
+            }
+        });
+
         if (statusLine != null && Main.pref.getBoolean("statusline.visible", true)) {
             panel.add(statusLine, BorderLayout.SOUTH);
         }

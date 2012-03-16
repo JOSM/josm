@@ -90,6 +90,7 @@ import org.openstreetmap.josm.actions.WireframeToggleAction;
 import org.openstreetmap.josm.actions.ZoomInAction;
 import org.openstreetmap.josm.actions.ZoomOutAction;
 import org.openstreetmap.josm.actions.OrthogonalizeAction.Undo;
+import org.openstreetmap.josm.actions.PreferenceToggleAction;
 import org.openstreetmap.josm.actions.audio.AudioBackAction;
 import org.openstreetmap.josm.actions.audio.AudioFasterAction;
 import org.openstreetmap.josm.actions.audio.AudioFwdAction;
@@ -514,6 +515,9 @@ public class MainMenu extends JMenuBar {
         add(viewMenu, historyinfo);
         add(viewMenu, historyinfoweb);
         viewMenu.addSeparator();
+        viewMenu.add(new PreferenceToggleAction(tr("Edit toolbar"),
+                tr("Toggles the visibility of the edit toolbar (i.e., the vertical tool)"),
+                "sidetoolbar.visible", true).getCheckbox());
         // -- expert mode toggle action
         final JCheckBoxMenuItem expertItem = new JCheckBoxMenuItem(ExpertToggleAction.getInstance());
         viewMenu.add(expertItem);
