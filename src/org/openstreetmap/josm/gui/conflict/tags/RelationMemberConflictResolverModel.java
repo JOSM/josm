@@ -81,8 +81,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
 
     @Override
     public int getRowCount() {
-        if (decisions == null) return 0;
-        return decisions.size();
+        return getNumDecisions();
     }
 
     @Override
@@ -183,7 +182,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * @return the number of decisions managed by this model
      */
     public int getNumDecisions() {
-        return  getRowCount();
+        return decisions == null ? 0 : decisions.size();
     }
 
     /**

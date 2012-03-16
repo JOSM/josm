@@ -178,7 +178,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
     }
 
     public int getNumDecisions() {
-        return getRowCount();
+        return decisions == null ? 0 : decisions.size();
     }
 
     //TODO Should this method work with all decisions or only with displayed decisions? For MergeNodes it should be
