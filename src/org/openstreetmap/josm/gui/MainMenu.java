@@ -256,22 +256,52 @@ public class MainMenu extends JMenuBar {
     };
 
     /**
-     * Add a JosmAction to a menu.
+     * Add a JosmAction at the end of a menu.
      *
      * This method handles all the shortcut handling. It also makes sure that actions that are
-     * handled by the OS are not duplicated on the menu. Menu item will be added at the end of
-     * the menu.
-     * @param menu to add the action to
-     * @param the action that should get a menu item
+     * handled by the OS are not duplicated on the menu.
+     * @param menu the menu to add the action to
+     * @param action the action that should get a menu item
+     * @return the created menu item
      */
     public static JMenuItem add(JMenu menu, JosmAction action) {
         return add(menu, action, false);
     }
 
+    /**
+     * Add a JosmAction at the end of a menu.
+     *
+     * This method handles all the shortcut handling. It also makes sure that actions that are
+     * handled by the OS are not duplicated on the menu.
+     * @param menu the menu to add the action to
+     * @param action the action that should get a menu item
+     * @param isExpert whether the entry should only be visible if the expert mode is activated
+     * @return the created menu item
+     */
     public static JMenuItem add(JMenu menu, JosmAction action, boolean isExpert) {
+        return add(menu, action, isExpert, null);
+    }
+
+    /**
+     * Add a JosmAction at the end of a menu.
+     *
+     * This method handles all the shortcut handling. It also makes sure that actions that are
+     * handled by the OS are not duplicated on the menu.
+     * @param menu the menu to add the action to
+     * @param action the action that should get a menu item
+     * @param isExpert whether the entry should only be visible if the expert mode is activated
+     * @param index  an integer specifying the position at which to add the action
+     * @return the created menu item
+     */
+    public static JMenuItem add(JMenu menu, JosmAction action, boolean isExpert, Integer index) {
         if (action.getShortcut().getAutomatic())
             return null;
-        JMenuItem menuitem = menu.add(action);
+        final JMenuItem menuitem;
+        if (index == null) {
+            menuitem = menu.add(action);
+        } else {
+            menuitem = menu.insert(action, index);
+        }
         if (isExpert) {
             ExpertToggleAction.addVisibilitySwitcher(menuitem);
         }
@@ -283,12 +313,34 @@ public class MainMenu extends JMenuBar {
     }
 
     /**
+     * Add the JosmAction {@code actionToBeInserted} directly below {@code existingMenuEntryAction}.
+     *
+     * This method handles all the shortcut handling. It also makes sure that actions that are
+     * handled by the OS are not duplicated on the menu.
+     * @param menu the menu to add the action to
+     * @param actionToBeInserted the action that should get a menu item directly below {@code existingMenuEntryAction}
+     * @param isExpert whether the entry should only be visible if the expert mode is activated
+     * @param existingMenuEntryAction an action already added to the menu {@code menu}, the action {@code actionToBeInserted} is added directly below
+     * @return the created menu item
+     */
+    public static JMenuItem addAfter(JMenu menu, JosmAction actionToBeInserted, boolean isExpert, JosmAction existingMenuEntryAction) {
+        int i = 0;
+        for (Component c : menu.getMenuComponents()) {
+            if (c instanceof JMenuItem && ((JMenuItem) c).getAction() == existingMenuEntryAction) {
+                break;
+            }
+            i++;
+        }
+        return add(menu, actionToBeInserted, isExpert, i + 1);
+    }
+
+    /**
      * Add a JosmAction to a menu.
      *
      * This method handles all the shortcut handling. It also makes sure that actions that are
      * handled by the OS are not duplicated on the menu.
      * @param menu to add the action to
-     * @param the action that should get a menu item
+     * @param action the action that should get a menu item
      * @param group the item should be added to. Groups are split by a separator.
      *        0 is the first group, -1 will add the item to the end.
      */
@@ -308,7 +360,7 @@ public class MainMenu extends JMenuBar {
      * Add a JosmAction to a menu and automatically prints accelerator if available.
      * Also adds a checkbox that may be toggled.
      * @param menu to add the action to
-     * @param the action that should get a menu item
+     * @param action the action that should get a menu item
      * @param group the item should be added to. Groups are split by a separator. Use
      *        one of the enums that are defined for some of the menus to tell in which
      *        group the item should go.
