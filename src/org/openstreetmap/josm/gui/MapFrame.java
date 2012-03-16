@@ -4,9 +4,11 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -64,6 +66,7 @@ import org.openstreetmap.josm.gui.dialogs.properties.PropertiesDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.Destroyable;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * One Map frame with one dataset behind. This is the container gui class whose
@@ -112,6 +115,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      * instead of adding directly to this list.
      */
     private List<ToggleDialog> allDialogs = new ArrayList<ToggleDialog>();
+    private final JPanel leftPanel;
     private final DialogsPanel dialogsPanel;
 
     public final ButtonGroup toolGroup = new ButtonGroup();
@@ -139,10 +143,16 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         setSize(400,400);
         setLayout(new BorderLayout());
 
+        
         mapView = new MapView(contentPane);
 
         new FileDrop(mapView);
-
+        
+        leftPanel = new JPanel(); 
+        leftPanel.setLayout(new GridBagLayout());
+        
+        leftPanel.add(mapView, GBC.std().fill()); 
+ 	
         // toolbar
         toolBarActions.setFloatable(false);
         addMapMode(new IconToggleButton(mapModeSelect = new SelectAction(this)));
@@ -157,7 +167,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
         dialogsPanel = new DialogsPanel(splitPane);
-        splitPane.setLeftComponent(mapView);
+        splitPane.setLeftComponent(leftPanel);
         splitPane.setRightComponent(dialogsPanel);
 
         /**
@@ -497,6 +507,45 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      */
     public void rememberToggleDialogWidth() {
         Main.pref.putInteger("toggleDialogs.width", dialogsPanel.getWidth());
+    }
+    
+     /*
+     * Remove panel from top of MapView by class
+     */
+     public void removeTopPanel(Class<?> type) {
+        int n = leftPanel.getComponentCount();
+        for (int i=0; i<n; i++) {
+            Component c = leftPanel.getComponent(i);
+            if (type.isInstance(c)) {
+                leftPanel.remove(i);
+                leftPanel.doLayout();
+//                repaint();
+                return;
+            }
+        }
+    }
+    
+    /*
+    * Find panel on top of MapView by class
+    */
+    public <T> T getTopPanel(Class<T> type) {
+        int n = leftPanel.getComponentCount();
+        for (int i=0; i<n; i++) {
+            Component c = leftPanel.getComponent(i);
+            if (type.isInstance(c)) {
+                return type.cast(c);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Add component @param c on top of MapView
+     */
+    public void addTopPanel(Component c) {
+        leftPanel.add(c, GBC.eol().fill(GBC.HORIZONTAL), leftPanel.getComponentCount()-1);
+        leftPanel.doLayout();
+        c.doLayout();
     }
 
     /**
