@@ -17,6 +17,8 @@
 
 package org.apache.commons.codec.binary;
 
+import static org.apache.commons.codec.binary.BaseNCodec.EOF;
+
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,9 +56,10 @@ public class BaseNCodecInputStream extends FilterInputStream {
             r = read(singleByte, 0, 1);
         }
         if (r > 0) {
-            return singleByte[0] < 0 ? 256 + singleByte[0] : singleByte[0];
+            final byte b = singleByte[0];
+            return b < 0 ? 256 + b : b;
         }
-        return -1;
+        return EOF;
     }
 
     /**
