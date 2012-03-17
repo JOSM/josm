@@ -8,6 +8,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.Main;
@@ -180,13 +181,18 @@ public class LoadAndZoomHandler extends RequestHandler
             zoom(minlat, maxlat, minlon, maxlon);
         }
 
-        /*
-         * parse addtags parameters
-         * Example URL (part):
-         * addtags=wikipedia:de%3DResidenzschloss Dresden|name:en%3DDresden Castle
-         */
+        addTags(args);
+
+    }
+
+    /*
+     * parse addtags parameters Example URL (part):
+     * addtags=wikipedia:de%3DResidenzschloss Dresden|name:en%3DDresden Castle
+     */
+    static void addTags(final Map<String, String> args) {
         if (args.containsKey("addtags")) {
             Main.worker.execute(new Runnable() {
+
                 public void run() {
                     String[] tags = null;
                     try {
@@ -195,7 +201,7 @@ public class LoadAndZoomHandler extends RequestHandler
                         throw new RuntimeException();
                     }
                     String[][] keyValue = new String[tags.length][2];
-                    for (int i = 0; i<tags.length; i++) {
+                    for (int i = 0; i < tags.length; i++) {
                         keyValue[i] = tags[i].split("=");
 
                         keyValue[i][0] = keyValue[i][0];
@@ -206,7 +212,6 @@ public class LoadAndZoomHandler extends RequestHandler
                 }
             });
         }
-
     }
 
     protected void zoom(double minlat, double maxlat, double minlon, double maxlon) {
