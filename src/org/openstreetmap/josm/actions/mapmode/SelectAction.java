@@ -267,6 +267,27 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         return true;
     }
 
+    private boolean repaintIfRequired(HashSet<OsmPrimitive> newHighlights) {
+        if(!drawTargetHighlight)
+            return false;
+
+        boolean needsRepaint = false;
+        for(OsmPrimitive x : newHighlights) {
+            if(oldHighlights.contains(x)) {
+                continue;
+            }
+            needsRepaint = true;
+            x.setHighlighted(true);
+        }
+        oldHighlights.removeAll(newHighlights);
+        for(OsmPrimitive x : oldHighlights) {
+            x.setHighlighted(false);
+            needsRepaint = true;
+        }
+        oldHighlights = newHighlights;
+        return needsRepaint;
+    }
+
     /**
      * handles adding highlights and updating the cursor for the given mouse event.
      * Please note that the highlighting for merging while moving is handled via mouseDragged.
@@ -285,35 +306,31 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
      * @return true if repaint is required
      */
     private boolean giveUserFeedback(MouseEvent e, int modifiers) {
-        boolean needsRepaint = false;
-
         Collection<OsmPrimitive> c = MapView.asColl(
                 mv.getNearestNodeOrWay(e.getPoint(), OsmPrimitive.isSelectablePredicate, true));
 
         updateKeyModifiers(modifiers);
         determineMapMode(!c.isEmpty());
 
-        if(drawTargetHighlight) {
-            needsRepaint = removeHighlighting();
-        }
+        HashSet<OsmPrimitive> newHighlights = new HashSet<OsmPrimitive>();
 
         virtualWays.clear();
         virtualNode = null;
         if(mode == Mode.move && setupVirtual(e)) {
             DataSet ds = getCurrentDataSet();
-            if (ds != null) {
-                if(drawTargetHighlight) ds.setHighlightedVirtualNodes(virtualWays);
+            if (ds != null && drawTargetHighlight) {
+                ds.setHighlightedVirtualNodes(virtualWays);
             }
             mv.setNewCursor(SelectActionCursor.virtual_node.cursor(), this);
             // don't highlight anything else if a virtual node will be
-            return drawTargetHighlight; // if no highlighting, repaint is not needed
+            return repaintIfRequired(newHighlights);
         }
 
         mv.setNewCursor(getCursor(c), this);
 
         // return early if there can't be any highlights
         if(!drawTargetHighlight || mode != Mode.move || c.isEmpty())
-            return needsRepaint;
+            return repaintIfRequired(newHighlights);
 
         // CTRL toggles selection, but if while dragging CTRL means merge
         final boolean isToggleMode = ctrl && !dragInProgress();
@@ -322,11 +339,10 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             // when clicked. I.e. don't highlight selected elements unless
             // we are in toggle mode.
             if(isToggleMode || !x.isSelected()) {
-                x.setHighlighted(true);
-                oldHighlights.add(x);
+                newHighlights.add(x);
             }
         }
-        return needsRepaint || !oldHighlights.isEmpty();
+        return repaintIfRequired(newHighlights);
     }
 
     /**
