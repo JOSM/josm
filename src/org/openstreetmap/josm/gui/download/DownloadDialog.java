@@ -65,29 +65,26 @@ public class DownloadDialog extends JDialog  {
         return instance;
     }
 
-    private final List<DownloadSelection> downloadSelections = new ArrayList<DownloadSelection>();
-    private final JTabbedPane tpDownloadAreaSelectors = new JTabbedPane();
-    private JCheckBox cbNewLayer;
-    private JCheckBox cbStartup;
-    private final JLabel sizeCheck = new JLabel();
-    private Bounds currentBounds = null;
-    private boolean canceled;
+    protected final List<DownloadSelection> downloadSelections = new ArrayList<DownloadSelection>();
+    protected final JTabbedPane tpDownloadAreaSelectors = new JTabbedPane();
+    protected JCheckBox cbNewLayer;
+    protected JCheckBox cbStartup;
+    protected final JLabel sizeCheck = new JLabel();
+    protected Bounds currentBounds = null;
+    protected boolean canceled;
 
-    private JCheckBox cbDownloadOsmData;
-    private JCheckBox cbDownloadGpxData;
+    protected JCheckBox cbDownloadOsmData;
+    protected JCheckBox cbDownloadGpxData;
     /** the download action and button */
     private DownloadAction actDownload;
-    private SideButton btnDownload;
+    protected SideButton btnDownload;
 
     private void makeCheckBoxRespondToEnter(JCheckBox cb) {
         cb.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "doDownload");
         cb.getActionMap().put("doDownload", actDownload);
     }
 
-    public JPanel buildMainPanel() {
-        // generic constraints used by different components
-        GridBagConstraints gridBagConstraints;
-
+    protected JPanel buildMainPanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new GridBagLayout());
 
@@ -99,6 +96,8 @@ public class DownloadDialog extends JDialog  {
         cbDownloadGpxData = new JCheckBox(tr("Raw GPS data"));
         cbDownloadGpxData.setToolTipText(tr("Select to download GPS traces in the selected download area."));
         pnl.add(cbDownloadGpxData,  GBC.eol().insets(5,5,1,5));
+
+        buildMainPanelAboveDownloadSelections(pnl);
 
         // predefined download selections
         downloadSelections.add(new SlippyMapChooser());
@@ -387,6 +386,9 @@ public class DownloadDialog extends JDialog  {
 
     protected void setCanceled(boolean canceled) {
         this.canceled = canceled;
+    }
+
+    protected void buildMainPanelAboveDownloadSelections(JPanel pnl) {
     }
 
     class CancelAction extends AbstractAction {
