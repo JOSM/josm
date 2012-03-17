@@ -42,11 +42,15 @@ public abstract class OsmServerReader extends OsmConnection {
     protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException  {
         try {
             api.initialize(progressMonitor);
-            urlStr = api.getBaseUrl() + urlStr;
+            urlStr = urlStr.startsWith("http") ? urlStr : (getBaseUrl() + urlStr);
             return getInputStreamRaw(urlStr, progressMonitor);
         } finally {
             progressMonitor.invalidate();
         }
+    }
+
+    protected String getBaseUrl() {
+        return api.getBaseUrl();
     }
 
     protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException {

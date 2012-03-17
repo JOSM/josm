@@ -47,11 +47,18 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         return downloadedData;
     }
 
+    @Override
     public Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
+        return download(new BoundingBoxDownloader(downloadArea), newLayer, downloadArea, progressMonitor);
+    }
 
-        downloadTask = new DownloadTask(newLayer,
-                new BoundingBoxDownloader(downloadArea), progressMonitor);
-        currentBounds = new Bounds(downloadArea);
+    public Future<?> download(OsmServerReader reader, boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
+        return download(new DownloadTask(newLayer, reader, progressMonitor), downloadArea);
+    }
+
+    protected Future<?> download(DownloadTask downloadTask, Bounds downloadArea) {
+        this.downloadTask = downloadTask;
+        this.currentBounds = new Bounds(downloadArea);
         // We need submit instead of execute so we can wait for it to finish and get the error
         // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
         return Main.worker.submit(downloadTask);

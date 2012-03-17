@@ -17,11 +17,11 @@ public class BoundingBoxDownloader extends OsmServerReader {
     /**
      * The boundings of the desired map data.
      */
-    private final double lat1;
-    private final double lon1;
-    private final double lat2;
-    private final double lon2;
-    private final boolean crosses180th;
+    protected final double lat1;
+    protected final double lon1;
+    protected final double lat2;
+    protected final double lon2;
+    protected final boolean crosses180th;
 
     public BoundingBoxDownloader(Bounds downloadArea) {
         this.lat1 = downloadArea.getMin().lat();
@@ -100,6 +100,10 @@ public class BoundingBoxDownloader extends OsmServerReader {
         }
     }
 
+    protected String getRequestForBbox(double lon1, double lat1, double lon2, double lat2) {
+        return "map?bbox=" + lon1 + "," + lat1 + "," + lon2 + "," + lat2;
+    }
+
     /**
      * Read the data from the osm server address.
      * @return A data set containing all data retrieved from that url
@@ -113,12 +117,12 @@ public class BoundingBoxDownloader extends OsmServerReader {
             progressMonitor.indeterminateSubTask(null);
             if (crosses180th) {
                 // API 0.6 does not support requests crossing the 180th meridian, so make two requests
-                in = getInputStream("map?bbox="+lon1+","+lat1+",180.0,"+lat2, progressMonitor.createSubTaskMonitor(9, false));
+                in = getInputStream(getRequestForBbox(lon1, lat1, 180.0, lat2), progressMonitor.createSubTaskMonitor(9, false));
                 if (in == null)
                     return null;
                 ds = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
 
-                in = getInputStream("map?bbox=-180.0,"+lat1+","+lon2+","+lat2, progressMonitor.createSubTaskMonitor(9, false));
+                in = getInputStream(getRequestForBbox(-180.0, lat1, lon2, lat2), progressMonitor.createSubTaskMonitor(9, false));
                 if (in == null)
                     return null;
                 DataSet ds2 = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
@@ -128,7 +132,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
                 
             } else {
                 // Simple request
-                in = getInputStream("map?bbox="+lon1+","+lat1+","+lon2+","+lat2, progressMonitor.createSubTaskMonitor(9, false));
+                in = getInputStream(getRequestForBbox(lon1, lat1, lon2, lat2), progressMonitor.createSubTaskMonitor(9, false));
                 if (in == null)
                     return null;
                 ds = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
