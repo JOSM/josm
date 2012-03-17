@@ -35,6 +35,7 @@ public class LoadObjectHandler extends RequestHandler {
         boolean newLayer = isLoadInNewLayer();
         boolean relationMembers = Boolean.parseBoolean(args.get("relation_members"));
         DownloadPrimitiveAction.processItems(newLayer, ps, true, relationMembers);
+        LoadAndZoomHandler.addTags(args);
     }
 
     @Override
