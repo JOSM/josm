@@ -1,19 +1,16 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.actions.mapmode;
 
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenuItem;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
-import static org.openstreetmap.josm.tools.I18n.marktr;
-import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
-import java.awt.MenuItem;
 import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.Toolkit;
@@ -37,7 +34,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.swing.AbstractAction;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.Timer;
@@ -65,11 +65,11 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.Geometry;
 
 /**
  * Mapmode to add nodes, create and extend ways.
@@ -83,7 +83,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     private Node mouseOnExistingNode;
     private Set<Way> mouseOnExistingWays = new HashSet<Way>();
+    // old highlights store which primitives are currently highlighted. This
+    // is true, even if target highlighting is disabled since the status bar
+    // derives its information from this list as well.
     private Set<OsmPrimitive> oldHighlights = new HashSet<OsmPrimitive>();
+    // new highlights contains a list of primitives that should be highlighted
+    // but haven’t been so far. The idea is to compare old and new and only
+    // repaint if there are changes.
+    private Set<OsmPrimitive> newHighlights = new HashSet<OsmPrimitive>();
     private boolean drawHelperLine;
     private boolean wayIsFinished = false;
     private boolean drawTargetHighlight;
@@ -131,21 +138,44 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      */
     private void redrawIfRequired() {
         updateStatusLine();
+        // repaint required if the helper line is active.
+        boolean needsRepaint = drawHelperLine && !wayIsFinished;
+        // move newHighlights to oldHighlights; only update changed primitives
+        for(OsmPrimitive x : newHighlights) {
+            if(oldHighlights.contains(x)) {
+                continue;
+            }
+            needsRepaint = true;
+            x.setHighlighted(true);
+        }
+        oldHighlights.removeAll(newHighlights);
+        for(OsmPrimitive x : oldHighlights) {
+            x.setHighlighted(false);
+            needsRepaint = true;
+        }
+        oldHighlights = newHighlights;
+
         if ((!drawHelperLine || wayIsFinished) && !drawTargetHighlight)
             return;
+
         // update selection to reflect which way being modified
         if (currentBaseNode != null && getCurrentDataSet().getSelected().isEmpty() == false) {
             Way continueFrom = getWayForNode(currentBaseNode);
-            if (alt && continueFrom != null) {
+            if (alt && continueFrom != null && (!currentBaseNode.isSelected() || continueFrom.isSelected())) {
                 getCurrentDataSet().beginUpdate(); // to prevent the selection listener to screw around with the state
                 getCurrentDataSet().addSelected(currentBaseNode);
                 getCurrentDataSet().clearSelection(continueFrom);
                 getCurrentDataSet().endUpdate();
-            } else if (!alt && continueFrom != null) {
+                needsRepaint = true;
+            } else if (!alt && continueFrom != null && !continueFrom.isSelected()) {
                 getCurrentDataSet().addSelected(continueFrom);
+                needsRepaint = true;
             }
         }
-        Main.map.mapView.repaint();
+
+        if(needsRepaint) {
+            Main.map.mapView.repaint();
+        }
     }
 
     @Override
@@ -227,7 +257,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         updateKeyModifiers((InputEvent) event);
         computeHelperLine();
         addHighlighting();
-        redrawIfRequired();
     }
 
     // events for crossplatform key holding processing
@@ -277,7 +306,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return;
         computeHelperLine();
         addHighlighting();
-        redrawIfRequired();
     }
 
     private void tryAgain(MouseEvent e) {
@@ -302,7 +330,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // Redraw to remove the helper line stub
         computeHelperLine();
         removeHighlighting();
-        redrawIfRequired();
     }
 
     private Point rightClickPressPos;
@@ -578,7 +605,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         };
         computeHelperLine();
         removeHighlighting();
-        redrawIfRequired();
     }
 
     private void insertNodeIntoAllNearbySegments(List<WaySegment> wss, Node n, Collection<OsmPrimitive> newSelection, Collection<Command> cmds, ArrayList<Way> replacedWays, ArrayList<Way> reuseWays) {
@@ -706,7 +732,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         computeHelperLine();
         addHighlighting();
-        redrawIfRequired();
     }
 
     /**
@@ -722,9 +747,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             currentBaseNode = null;
             return;
         }
-
-        double distance = -1;
-        double angle = -1;
 
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
 
@@ -971,13 +993,22 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
     /**
      * Takes the data from computeHelperLine to determine which ways/nodes should be highlighted
-     * (if feature enabled). Also sets the target cursor if appropriate.
+     * (if feature enabled). Also sets the target cursor if appropriate. It adds the to-be-
+     * highlighted primitives to newHighlights but does not actually highlight them. This work is
+     * done in redrawIfRequired. This means, calling addHighlighting() without redrawIfRequired()
+     * will leave the data in an inconsistent state.
+     * 
+     * The status bar derives its information from oldHighlights, so in order to update the status
+     * bar both addHighlighting() and repaintIfRequired() are needed, since former fills newHighlights
+     * and latter processes them into oldHighlights.
      */
     private void addHighlighting() {
-        removeHighlighting();
+        newHighlights = new HashSet<OsmPrimitive>();
+
         // if ctrl key is held ("no join"), don't highlight anything
         if (ctrl) {
             Main.map.mapView.setNewCursor(cursor, this);
+            redrawIfRequired();
             return;
         }
 
@@ -989,38 +1020,29 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         if (mouseOnExistingNode != null) {
             Main.map.mapView.setNewCursor(cursorJoinNode, this);
-            // We also need this list for the statusbar help text
-            oldHighlights.add(mouseOnExistingNode);
-            if(drawTargetHighlight) {
-                mouseOnExistingNode.setHighlighted(true);
-        }
+            newHighlights.add(mouseOnExistingNode);
+            redrawIfRequired();
             return;
         }
 
         // Insert the node into all the nearby way segments
         if (mouseOnExistingWays.size() == 0) {
             Main.map.mapView.setNewCursor(cursor, this);
+            redrawIfRequired();
             return;
         }
 
         Main.map.mapView.setNewCursor(cursorJoinWay, this);
-
-        // We also need this list for the statusbar help text
-        oldHighlights.addAll(mouseOnExistingWays);
-        if (!drawTargetHighlight) return;
-        for (Way w : mouseOnExistingWays) {
-            w.setHighlighted(true);
-        }
+        newHighlights.addAll(mouseOnExistingWays);
+        redrawIfRequired();
     }
 
     /**
-     * Removes target highlighting from primitives
+     * Removes target highlighting from primitives. Issues repaint if required.
      */
     private void removeHighlighting() {
-        for(OsmPrimitive prim : oldHighlights) {
-            prim.setHighlighted(false);
-        }
-        oldHighlights = new HashSet<OsmPrimitive>();
+        newHighlights = new HashSet<OsmPrimitive>();
+        redrawIfRequired();
     }
 
     public void paint(Graphics2D g, MapView mv, Bounds box) {
@@ -1040,9 +1062,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if (!snapHelper.isActive()) { // else use color and stoke from  snapHelper.draw
             g2.setColor(selectedColor);
             g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        } else if (!snapHelper.drawConstructionGeometry) {
+        } else if (!snapHelper.drawConstructionGeometry)
             return;
-        }
         GeneralPath b = new GeneralPath();
         Point p1=mv.getPoint(currentBaseNode);
         Point p2=mv.getPoint(currentMouseEastNorth);
@@ -1168,8 +1189,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                         n=(Node) p; // found one node
                         wayIsFinished=false;
                     }  else {
-                    // if more than 1 node were affected by previous command,
-                    // we have no way to continue, so we forget about found node
+                        // if more than 1 node were affected by previous command,
+                        // we have no way to continue, so we forget about found node
                         n=null;
                         break;
                     }
@@ -1177,7 +1198,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
             // select last added node - maybe we will continue drawing from it
             if (n!=null) getCurrentDataSet().addSelected(n);
-       }
+        }
     }
 
     private class SnapHelper {
@@ -1615,7 +1636,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         @Override
         public void actionPerformed(ActionEvent e) {
-               if (snapHelper!=null) snapHelper.toggleSnapping();
+            if (snapHelper!=null) snapHelper.toggleSnapping();
         }
     }
 }
