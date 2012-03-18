@@ -507,11 +507,11 @@ public abstract class SourceEditor extends JPanel {
             return isMapPaint && columnIndex == 0;
         }
 
-        Class<?>[] columnClasses = {Boolean.class, SourceEntry.class};
-
         @Override
         public Class<?> getColumnClass(int column) {
-            return isMapPaint ? columnClasses[column] : SourceEntry.class;
+            if (isMapPaint && column == 0)
+                return Boolean.class;
+            else return SourceEntry.class;
         }
 
         @Override
@@ -614,7 +614,7 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
-    public static class ExtendedSourceEntry extends SourceEntry {
+    public static class ExtendedSourceEntry extends SourceEntry implements Comparable<ExtendedSourceEntry> {
         public String simpleFileName;
         public String version;
         public String author;
@@ -634,26 +634,47 @@ public abstract class SourceEditor extends JPanel {
             return title == null ? simpleFileName : title;
         }
 
+        private void appendRow(StringBuilder s, String th, String td) {
+            s.append("<tr><th>").append(th).append("</th><td>").append(td).append("</td</tr>");
+        }
+
         public String getTooltip() {
-            String s = tr("Short Description: {0}", getDisplayName()) + "<br>" + tr("URL: {0}", url);
+            StringBuilder s = new StringBuilder();
+            appendRow(s, tr("Short Description:"), getDisplayName());
+            appendRow(s, tr("URL:"), url);
             if (author != null) {
-                s += "<br>" + tr("Author: {0}", author);
+                appendRow(s, tr("Author:"), author);
             }
             if (link != null) {
-                s += "<br>" + tr("Webpage: {0}", link);
+                appendRow(s, tr("Webpage:"), link);
             }
             if (description != null) {
-                s += "<br>" + tr("Description: {0}", description);
+                appendRow(s, tr("Description:"), description);
             }
             if (version != null) {
-                s += "<br>" + tr("Version: {0}", version);
+                appendRow(s, tr("Version:"), version);
             }
-            return "<html>" + s + "</html>";
+            return "<html><style>th{text-align:right}td{width:400px}</style>"
+                    + "<table>" + s + "</table></html>";
         }
 
         @Override
         public String toString() {
-            return "<html><b>" + getDisplayName() + "</b> (" + url + ")</html>";
+            return "<html><b>" + getDisplayName() + "</b>"
+                    + (author == null ? "" : " <span color=\"gray\">" + tr("by {0}", author) + "</color>")
+                    + "</html>";
+        }
+
+        @Override
+        public int compareTo(ExtendedSourceEntry o) {
+            if (url.startsWith("resource") && !o.url.startsWith("resource")) {
+                return -1;
+            }
+            if (o.url.startsWith("resource")) {
+                return 1;
+            } else {
+                return getDisplayName().compareToIgnoreCase(o.getDisplayName());
+            }
         }
     }
 
@@ -1227,6 +1248,7 @@ public abstract class SourceEditor extends JPanel {
 
         @Override
         protected void finish() {
+            Collections.sort(sources);
             availableSourcesModel.setSources(sources);
         }
     }
@@ -1247,11 +1269,11 @@ public abstract class SourceEditor extends JPanel {
                 return null;
             StringBuilder s = new StringBuilder("<html><b>");
             if (entry.title != null) {
-                s.append(entry.title).append("</b> (");
+                s.append(entry.title).append("</b> <span color=\"gray\">");
             }
             s.append(entry.url);
             if (entry.title != null) {
-                s.append(")");
+                s.append("</span>");
             }
             s.append("</html>");
             return s.toString();
