@@ -57,6 +57,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * set would have to be checked.
      */
     private Set<OsmPrimitive> oldHighlights = new HashSet<OsmPrimitive>();
+    private WaySegment oldHighlightedWaySegment = null;
 
     private boolean drawTargetHighlight;
 
@@ -193,36 +194,45 @@ public class DeleteAction extends MapMode implements AWTEventListener {
             return;
 
         Set<OsmPrimitive> newHighlights = new HashSet<OsmPrimitive>();
-
         DeleteParameters parameters = getDeleteParameters(e, modifiers);
 
         if(parameters.mode == DeleteMode.segment) {
             // deleting segments is the only action not working on OsmPrimitives
             // so we have to handle them separately.
-            DataSet ds = getCurrentDataSet();
-            if(ds != null) {
-                ds.setHighlightedWaySegments(Collections.singleton(parameters.nearestSegment));
-            }
+            repaintIfRequired(newHighlights, parameters.nearestSegment);
         } else {
             // don't call buildDeleteCommands for DeleteMode.segment because it doesn't support
             // silent operation and SplitWayAction will show dialogs. A lot.
             Command delCmd = buildDeleteCommands(e, modifiers, true);
-            if(delCmd == null) {
-                repaintIfRequired(newHighlights);
-                return;
+            if(delCmd != null) {
+                // all other cases delete OsmPrimitives directly, so we can
+                // safely do the following
+                for(OsmPrimitive osm : delCmd.getParticipatingPrimitives()) {
+                    newHighlights.add(osm);
+                }
             }
-
-            // all other cases delete OsmPrimitives directly, so we can
-            // safely do the following
-            for(OsmPrimitive osm : delCmd.getParticipatingPrimitives()) {
-                newHighlights.add(osm);
-            }
+            repaintIfRequired(newHighlights, null);
         }
-        repaintIfRequired(newHighlights);
     }
 
-    private void repaintIfRequired(Set<OsmPrimitive> newHighlights) {
+    private void repaintIfRequired(Set<OsmPrimitive> newHighlights, WaySegment newHighlightedWaySegment) {
         boolean needsRepaint = false;
+        DataSet ds = getCurrentDataSet();
+
+        if(newHighlightedWaySegment == null && oldHighlightedWaySegment != null) {
+            if(ds != null) {
+                ds.clearHighlightedWaySegments();
+                needsRepaint = true;
+            }
+            oldHighlightedWaySegment = null;
+        } else if(newHighlightedWaySegment != null && !newHighlightedWaySegment.equals(oldHighlightedWaySegment)) {
+            if(ds != null) {
+                ds.setHighlightedWaySegments(Collections.singleton(newHighlightedWaySegment));
+                needsRepaint = true;
+            }
+            oldHighlightedWaySegment = newHighlightedWaySegment;
+        }
+
         for(OsmPrimitive x : newHighlights) {
             if(oldHighlights.contains(x)) {
                 continue;
