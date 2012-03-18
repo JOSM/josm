@@ -140,22 +140,25 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         updateStatusLine();
         // repaint required if the helper line is active.
         boolean needsRepaint = drawHelperLine && !wayIsFinished;
-        // move newHighlights to oldHighlights; only update changed primitives
-        for(OsmPrimitive x : newHighlights) {
-            if(oldHighlights.contains(x)) {
-                continue;
+        if(drawTargetHighlight) {
+            // move newHighlights to oldHighlights; only update changed primitives
+            for(OsmPrimitive x : newHighlights) {
+                if(oldHighlights.contains(x)) {
+                    continue;
+                }
+                x.setHighlighted(true);
+                needsRepaint = true;
             }
-            needsRepaint = true;
-            x.setHighlighted(true);
+            oldHighlights.removeAll(newHighlights);
+            for(OsmPrimitive x : oldHighlights) {
+                x.setHighlighted(false);
+                needsRepaint = true;
+            }
         }
-        oldHighlights.removeAll(newHighlights);
-        for(OsmPrimitive x : oldHighlights) {
-            x.setHighlighted(false);
-            needsRepaint = true;
-        }
+        // required in order to print correct help text
         oldHighlights = newHighlights;
 
-        if ((!drawHelperLine || wayIsFinished) && !drawTargetHighlight)
+        if (!needsRepaint && !drawTargetHighlight)
             return false;
 
         // update selection to reflect which way being modified
