@@ -191,7 +191,8 @@ public class DeleteAction extends MapMode implements AWTEventListener {
     private void addHighlighting(MouseEvent e, int modifiers) {
         if(!drawTargetHighlight)
             return;
-        removeHighlighting();
+
+        Set<OsmPrimitive> newHighlights = new HashSet<OsmPrimitive>();
 
         DeleteParameters parameters = getDeleteParameters(e, modifiers);
 
@@ -207,18 +208,37 @@ public class DeleteAction extends MapMode implements AWTEventListener {
             // silent operation and SplitWayAction will show dialogs. A lot.
             Command delCmd = buildDeleteCommands(e, modifiers, true);
             if(delCmd == null) {
-                Main.map.mapView.repaint();
+                repaintIfRequired(newHighlights);
                 return;
             }
 
             // all other cases delete OsmPrimitives directly, so we can
             // safely do the following
             for(OsmPrimitive osm : delCmd.getParticipatingPrimitives()) {
-                osm.setHighlighted(true);
-                oldHighlights.add(osm);
+                newHighlights.add(osm);
             }
         }
-        Main.map.mapView.repaint();
+        repaintIfRequired(newHighlights);
+    }
+
+    private void repaintIfRequired(Set<OsmPrimitive> newHighlights) {
+        boolean needsRepaint = false;
+        for(OsmPrimitive x : newHighlights) {
+            if(oldHighlights.contains(x)) {
+                continue;
+            }
+            needsRepaint = true;
+            x.setHighlighted(true);
+        }
+        oldHighlights.removeAll(newHighlights);
+        for(OsmPrimitive x : oldHighlights) {
+            x.setHighlighted(false);
+            needsRepaint = true;
+        }
+        oldHighlights = newHighlights;
+        if(needsRepaint) {
+            Main.map.mapView.repaint();
+        }
     }
 
     /**
@@ -283,7 +303,6 @@ public class DeleteAction extends MapMode implements AWTEventListener {
 
         getCurrentDataSet().setSelected();
         giveUserFeedback(e);
-        Main.map.mapView.repaint();
     }
 
     @Override public String getModeHelpText() {
@@ -317,7 +336,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
             // cmd can be null if the user cancels dialogs DialogCommand displays
             Main.main.undoRedo.add(cmd);
             if (getCurrentDataSet().getSelectedRelations().contains(toDelete)) {
-            	getCurrentDataSet().toggleSelected(toDelete);
+                getCurrentDataSet().toggleSelected(toDelete);
             }
             RelationDialogManager.getRelationDialogManager().close(layer, toDelete);
         }
