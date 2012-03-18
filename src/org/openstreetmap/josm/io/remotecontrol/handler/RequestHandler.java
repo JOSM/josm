@@ -3,6 +3,8 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -141,26 +143,31 @@ public abstract class RequestHandler {
 
     /**
      * Parse the request parameters as key=value pairs.
-     * The result will be stored in this.args.
+     * The result will be stored in {@code this.args}.
      *
      * Can be overridden by subclass.
      */
     protected void parseArgs() {
-        HashMap<String, String> args = new HashMap<String, String>();
-        if (this.request.indexOf('?') != -1) {
-            String query = this.request.substring(this.request.indexOf('?') + 1);
-            if (query.indexOf('#') != -1) {
-                query = query.substring(0, query.indexOf('#'));
-            }
-            String[] params = query.split("&", -1);
-            for (String param : params) {
-                int eq = param.indexOf('=');
-                if (eq != -1) {
-                    args.put(param.substring(0, eq), param.substring(eq + 1));
+        try {
+            String req = URLDecoder.decode(this.request, "UTF-8");
+            HashMap<String, String> args = new HashMap<String, String>();
+            if (req.indexOf('?') != -1) {
+                String query = req.substring(req.indexOf('?') + 1);
+                if (query.indexOf('#') != -1) {
+                    query = query.substring(0, query.indexOf('#'));
+                }
+                String[] params = query.split("&", -1);
+                for (String param : params) {
+                    int eq = param.indexOf('=');
+                    if (eq != -1) {
+                        args.put(param.substring(0, eq), param.substring(eq + 1));
+                    }
                 }
             }
+            this.args = args;
+        } catch (UnsupportedEncodingException ex) {
+            throw new IllegalStateException(ex);
         }
-        this.args = args;
     }
 
     void checkMandatoryParams() throws RequestHandlerBadRequestException {
