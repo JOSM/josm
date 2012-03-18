@@ -136,7 +136,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     /**
      * Checks if a map redraw is required and does so if needed. Also updates the status bar
      */
-    private void redrawIfRequired() {
+    private boolean redrawIfRequired() {
         updateStatusLine();
         // repaint required if the helper line is active.
         boolean needsRepaint = drawHelperLine && !wayIsFinished;
@@ -156,7 +156,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         oldHighlights = newHighlights;
 
         if ((!drawHelperLine || wayIsFinished) && !drawTargetHighlight)
-            return;
+            return false;
 
         // update selection to reflect which way being modified
         if (currentBaseNode != null && getCurrentDataSet().getSelected().isEmpty() == false) {
@@ -176,6 +176,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if(needsRepaint) {
             Main.map.mapView.repaint();
         }
+        return needsRepaint;
     }
 
     @Override
@@ -863,7 +864,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return;
         mousePos = e.getPoint();
         snapHelper.noSnapNow();
-        Main.map.mapView.repaint();
+        boolean repaintIssued = removeHighlighting();
+        // force repaint in case snapHelper needs one. If removeHighlighting
+        // caused one already, don’t do it again.
+        if(!repaintIssued) {
+            Main.map.mapView.repaint();
+        }
     }
 
     /**
@@ -1039,10 +1045,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     /**
      * Removes target highlighting from primitives. Issues repaint if required.
+     * Returns true if a repaint has been issued.
      */
-    private void removeHighlighting() {
+    private boolean removeHighlighting() {
         newHighlights = new HashSet<OsmPrimitive>();
-        redrawIfRequired();
+        return redrawIfRequired();
     }
 
     public void paint(Graphics2D g, MapView mv, Bounds box) {
