@@ -190,7 +190,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         selectedColor =PaintColors.SELECTED.get();
         drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
-        wayIsFinished = true;
+
+        // determine if selection is suitable to continue drawing. If it
+        // isn't, set wayIsFinished to true to avoid superfluous repaints.
+        determineCurrentBaseNodeAndPreviousNode(getCurrentDataSet().getSelected());
+        wayIsFinished = currentBaseNode == null;
+
         snapHelper.init();
         snapCheckboxMenuItem.getAction().setEnabled(true);
 
