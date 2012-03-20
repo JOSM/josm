@@ -76,6 +76,10 @@ public class DeprecatedTags extends Test {
                 testAndRemove("shop", "organic").
                 add("shop", "supermarket").
                 add("organic", "only"));
+        // from http://wiki.openstreetmap.org/wiki/Key:bicycle_parking
+        checks.add(new DeprecationCheck(2115).
+                testAndRemove("bicycle_parking", "sheffield").
+                add("bicycle_parking", "stands"));
     }
 
     public void visit(OsmPrimitive p) {
