@@ -30,9 +30,9 @@ import java.io.InputStream;
  */
 public class BaseNCodecInputStream extends FilterInputStream {
 
-    private final boolean doEncode;
-
     private final BaseNCodec baseNCodec;
+
+    private final boolean doEncode;
 
     private final byte[] singleByte = new byte[1];
 
@@ -42,6 +42,31 @@ public class BaseNCodecInputStream extends FilterInputStream {
         this.baseNCodec = baseNCodec;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return <code>0</code> if the {@link InputStream} has reached <code>EOF</code>,
+     * <code>1</code> otherwise
+     */
+    public int available() throws IOException {
+        // Note: the logic is similar to the InflaterInputStream:
+        //       as long as we have not reached EOF, indicate that there is more
+        //       data available. As we do not know for sure how much data is left,
+        //       just return 1 as a safe guess.
+
+        // use the EOF flag of the underlying codec instance
+        return baseNCodec.eof ? 0 : 1;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @return false
+     */
+    @Override
+    public boolean markSupported() {
+        return false; // not an easy job to support marks
+    }
     /**
      * Reads one <code>byte</code> from this input stream.
      * 
@@ -124,14 +149,31 @@ public class BaseNCodecInputStream extends FilterInputStream {
             return readLen;
         }
     }
+
     /**
      * {@inheritDoc}
-     * 
-     * @return false
+     *
+     * @throws IllegalArgumentException if the provided skip length is negative
      */
     @Override
-    public boolean markSupported() {
-        return false; // not an easy job to support marks
-    }
+    public long skip(long n) throws IOException {
+        if (n < 0) {
+            throw new IllegalArgumentException("Negative skip length: " + n);
+        }
 
+        // skip in chunks of 512 bytes
+        final byte[] b = new byte[512];
+        long todo = n;
+
+        while (todo > 0) {
+            int len = (int) Math.min(b.length, todo);
+            len = this.read(b, 0, len);
+            if (len == EOF) {
+                break;
+            }
+            todo -= len;
+        }
+
+        return n - todo;
+    }
 }
