@@ -208,7 +208,6 @@ public class NmeaReader {
             rd.close();
             currentTrack.add(ps.waypoints);
             data.tracks.add(new ImmutableGpxTrack(currentTrack, Collections.<String, Object>emptyMap()));
-            data.recalculateBounds();
 
         } catch (final IOException e) {
             // TODO tell user about the problem?

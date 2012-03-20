@@ -82,7 +82,13 @@ public class GpxData extends WithAttributes {
         return !hasRoutePoints() && !hasTrackPoints() && waypoints.isEmpty();
     }
 
-    // FIXME might perhaps use visitor pattern?
+    /**
+     * calculates the bounding box of available data and returns it.
+     * The bounds are not stored internally, but recalculated every time
+     * this function is called.
+     * 
+     * FIXME might perhaps use visitor pattern?
+     */
     public Bounds recalculateBounds() {
         Bounds bounds = null;
         for (WayPoint wpt : waypoints) {
