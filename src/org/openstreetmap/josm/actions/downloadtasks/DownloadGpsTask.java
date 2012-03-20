@@ -102,7 +102,6 @@ public class DownloadGpsTask extends AbstractDownloadTask {
                 return;
             if (rawData == null)
                 return;
-            rawData.recalculateBounds();
             String name = tr("Downloaded GPX Data");
             GpxLayer layer = new GpxLayer(rawData, name);
             Layer x = findMergeLayer();
