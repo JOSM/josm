@@ -91,7 +91,7 @@ public class CredentialsManager implements CredentialsAgent {
 
     @Override
     public void store(RequestorType requestorType, String host, PasswordAuthentication credentials) throws CredentialsAgentException {
-        if (requestorType == RequestorType.SERVER && OsmApi.getOsmApi().getHost().equals(host)) {
+        if (requestorType == RequestorType.SERVER && Utils.equal(OsmApi.getOsmApi().getHost(), host)) {
             String username = credentials.getUserName();
             if(username != null && !username.trim().isEmpty()) {
                 JosmUserIdentityManager.getInstance().setPartiallyIdentified(username);

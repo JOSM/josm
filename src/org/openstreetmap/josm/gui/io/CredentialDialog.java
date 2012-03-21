@@ -37,13 +37,14 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class CredentialDialog extends JDialog {
 
     static public CredentialDialog getOsmApiCredentialDialog(String username, String password, String host, String saveUsernameAndPasswordCheckboxText) {
         CredentialDialog dialog = new CredentialDialog(saveUsernameAndPasswordCheckboxText);
-        if(OsmApi.getOsmApi().getHost().equals(host)) {
+        if (Utils.equal(OsmApi.getOsmApi().getHost(), host)) {
             dialog.prepareForOsmApiCredentials(username, password);
         } else {
             dialog.prepareForOtherHostCredentials(username, password, host);
