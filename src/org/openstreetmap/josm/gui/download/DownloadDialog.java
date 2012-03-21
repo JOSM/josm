@@ -11,7 +11,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -97,6 +96,7 @@ public class DownloadDialog extends JDialog  {
         cbDownloadGpxData.setToolTipText(tr("Select to download GPS traces in the selected download area."));
         pnl.add(cbDownloadGpxData,  GBC.eol().insets(5,5,1,5));
 
+        // hook for subclasses
         buildMainPanelAboveDownloadSelections(pnl);
 
         // predefined download selections
