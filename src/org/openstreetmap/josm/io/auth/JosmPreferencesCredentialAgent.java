@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is the default credentials agent in JOSM. It keeps username and password for both
@@ -33,7 +34,7 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
         String password;
         switch(requestorType) {
         case SERVER:
-            if(OsmApi.getOsmApi().getHost().equals(host)) {
+            if (Utils.equal(OsmApi.getOsmApi().getHost(), host)) {
                 user = Main.pref.get("osm-server.username", null);
                 password = Main.pref.get("osm-server.password", null);
             } else if(host != null) {
@@ -65,7 +66,7 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
             return;
         switch(requestorType) {
         case SERVER:
-            if(OsmApi.getOsmApi().getHost().equals(host)) {
+            if (Utils.equal(OsmApi.getOsmApi().getHost(), host)) {
                 Main.pref.put("osm-server.username", credentials.getUserName());
                 if (credentials.getPassword() == null) {
                     Main.pref.put("osm-server.password", null);
