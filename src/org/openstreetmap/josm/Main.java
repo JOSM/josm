@@ -542,7 +542,7 @@ abstract public class Main {
         SaveLayersDialog dialog = new SaveLayersDialog(Main.parent);
         List<OsmDataLayer> layersWithUnmodifiedChanges = new ArrayList<OsmDataLayer>();
         for (OsmDataLayer l: Main.map.mapView.getLayersOfType(OsmDataLayer.class)) {
-            if (l.requiresSaveToFile() || l.requiresUploadToServer()) {
+            if ((l.requiresSaveToFile() || l.requiresUploadToServer()) && l.data.isModified()) {
                 layersWithUnmodifiedChanges.add(l);
             }
         }
