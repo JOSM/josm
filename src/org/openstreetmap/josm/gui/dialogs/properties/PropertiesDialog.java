@@ -533,7 +533,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             return;
         String key = keys.getEditor().getItem().toString().trim();
         String value = values.getEditor().getItem().toString().trim();
-        if (value.equals(""))
+        if (key.isEmpty() || value.isEmpty())
             return;
         lastAddKey = key;
         lastAddValue = value;
