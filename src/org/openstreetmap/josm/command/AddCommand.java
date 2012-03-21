@@ -48,6 +48,7 @@ public class AddCommand extends Command {
 
     @Override public boolean executeCommand() {
         getLayer().data.addPrimitive(osm);
+        osm.setModified(true);
         return true;
     }
 
