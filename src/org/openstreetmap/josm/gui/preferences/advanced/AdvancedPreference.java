@@ -2,7 +2,9 @@
 package org.openstreetmap.josm.gui.preferences.advanced;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -11,9 +13,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -22,6 +27,7 @@ import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -31,10 +37,12 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.ListListSetting;
 import org.openstreetmap.josm.data.Preferences.ListSetting;
@@ -42,6 +50,7 @@ import org.openstreetmap.josm.data.Preferences.MapListSetting;
 import org.openstreetmap.josm.data.Preferences.Setting;
 import org.openstreetmap.josm.data.Preferences.StringSetting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.actionsupport.LogShowDialog;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -57,7 +66,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
             return new AdvancedPreference();
         }
     }
-    
+
     private AdvancedPreference() {
         super("advanced", tr("Advanced Preferences"), tr("Setting Preference entries directly. Use with caution!"));
     }
@@ -109,7 +118,11 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
         public boolean isChanged() {
             return changed;
         }
-
+    
+        private void markAsChanged() {
+            changed = true;
+        }
+    
         public void reset() {
             value = defaultValue;
             changed = true;
@@ -154,12 +167,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
                 applyFilter();
             }
         });
-
-        Map<String, Setting> orig = Main.pref.getAllSettings();
-        Map<String, Setting> defaults = Main.pref.getAllDefaults();
-        orig.remove("osm-server.password");
-        defaults.remove("osm-server.password");
-        prepareData(orig, defaults);
+        readPreferences(Main.pref);
         model = new AllSettingsTableModel();
         applyFilter();
 
@@ -197,6 +205,85 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
             }
         });
 
+        JButton read = new JButton(tr("Read from file"));
+        p.add(read, GBC.std().insets(5,5,0,0));
+        read.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                File[] files = askUserForCustomSettingsFiles(false, tr("Open JOSM customization file"));
+                if (files.length==0) return;
+                
+                Preferences tmpPrefs = CustomConfigurator.clonePreferences(Main.pref);
+                
+                StringBuilder log = new StringBuilder();
+                log.append("<html>");
+                for (File f: files) {
+                    CustomConfigurator.readXML(f, tmpPrefs);
+                    log.append(CustomConfigurator.getLog());
+                }
+                //try { Main.pref.save();  } catch (IOException ex) { }
+                log.append("</html>");
+                String msg = log.toString().replace("\n", "<br/>");
+                
+                new LogShowDialog(tr("Import log"), tr("<html>Here is file import summary. <br/>"
+                        + "You can reject preferences changes by pressing \"Cancel\" in preferences dialog <br/>"
+                        + "To activate some changes JOSM restart may be needed.</html>"), msg).showDialog();
+                
+                //JOptionPane.showMessageDialog(Main.parent,
+                //   tr("Installed plugins and some changes in preferences will start to work after JOSM restart"), tr("Warning"), JOptionPane.WARNING_MESSAGE);
+
+                readPreferences(tmpPrefs);
+                // sorting after modification - first modified, then non-default, then default entries
+                Collections.sort(data, new Comparator<PrefEntry>() {
+                    @Override
+                    public int compare(PrefEntry o1, PrefEntry o2) {
+                        if (o1.changed && !o2.changed) return -1;
+                        if (o2.changed && !o1.changed) return 1;
+                        if (!(o1.isDefault) && o2.isDefault) return -1;
+                        if (!(o2.isDefault) && o1.isDefault) return 1;
+                        return o1.key.compareTo(o2.key);
+                    }
+                  });
+
+                applyFilter();
+                ((AllSettingsTableModel) list.getModel()).fireTableDataChanged();
+            }
+
+        });
+        
+        JButton export = new JButton(tr("Export selected items"));
+        p.add(export, GBC.std().insets(5,5,0,0));
+        export.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> keys = new ArrayList<String>();
+                boolean hasLists = false;
+                for (int row : list.getSelectedRows()) {
+                    PrefEntry p = (PrefEntry) model.getValueAt(row, -1);
+                    if (!p.isDefault()) {
+                        // preferences with default values are not saved
+                        if (!(p.getValue() instanceof StringSetting)) hasLists=true; // => append and replace differs
+                        keys.add(p.getKey());
+                    }
+                }
+                if (keys.size()==0) {
+                     JOptionPane.showMessageDialog(Main.parent,
+                        tr("Please select some preference keys not marked as default"), tr("Warning"), JOptionPane.WARNING_MESSAGE);
+                     return;
+                }
+
+                File[] files = askUserForCustomSettingsFiles(true, tr("Export preferences keys to JOSM customization file"));
+                if (files.length==0) return;
+                
+                int answer = 0;
+                if (hasLists) { 
+                    answer = JOptionPane.showOptionDialog(Main.parent, tr("What to with preference lists when this file is to be imported?"), tr("Question"),
+                       JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, 
+                        null, new String[]{"Append preferences from file to existing values","Replace existing values"},0);
+                }
+                CustomConfigurator.exportPreferencesKeysToFile(files[0].getAbsolutePath(), answer==0, keys);
+            }
+        });
+
+
         list.addMouseListener(new MouseAdapter(){
             @Override public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -206,20 +293,76 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
         });
     }
 
-    private void prepareData(Map<String, Setting> orig, Map<String, Setting> defaults) {
+    private void readPreferences(Preferences tmpPrefs) {
+        Map<String, Setting> loaded;
+        Map<String, Setting> orig = Main.pref.getAllSettings();
+        Map<String, Setting> defaults = tmpPrefs.getAllDefaults();
+        orig.remove("osm-server.password");
+        defaults.remove("osm-server.password");
+        if (tmpPrefs != Main.pref) {
+            loaded = tmpPrefs.getAllSettings();
+        } else {
+            loaded = orig;
+        }
+        prepareData(loaded, orig, defaults);
+    }
+    
+    private File[] askUserForCustomSettingsFiles(boolean saveFileFlag, String title) {
+        String dir = Main.pref.get("customsettings.lastDirectory");
+        if (dir.length()==0) dir =".";
+        
+        JFileChooser fc = new JFileChooser(dir);
+        fc.setDialogTitle(title);
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.isDirectory() || f.getName().toLowerCase().endsWith(".xml");
+            }
+            @Override
+            public String getDescription() {
+                return tr("JOSM custom settings files (*.xml)");
+            }
+            });
+        
+            fc.setMultiSelectionEnabled(!saveFileFlag);
+            int result = saveFileFlag? fc.showSaveDialog(Main.parent) : fc.showOpenDialog(Main.parent);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                if (!fc.getCurrentDirectory().getAbsolutePath().equals(dir)) {
+                    Main.pref.put("customsettings.lastDirectory", fc.getCurrentDirectory().getAbsolutePath());
+                }
+                File sel[] = fc.isMultiSelectionEnabled() ? fc.getSelectedFiles() : (new File[]{fc.getSelectedFile()});
+                if (sel.length==1 && !sel[0].getName().contains(".")) sel[0]=new File(sel[0].getAbsolutePath()+".xml");
+                return sel;
+            } 
+            return new File[0];
+    }
+            
+    private void prepareData(Map<String, Setting> loaded, Map<String, Setting> orig, Map<String, Setting> defaults) {
         data = new ArrayList<PrefEntry>();
-        for (Entry<String, Setting> e : orig.entrySet()) {
+        for (Entry<String, Setting> e : loaded.entrySet()) {
             Setting value = e.getValue();
+            Setting old = orig.get(e.getKey());
             Setting def = defaults.get(e.getKey());
             if (def == null) {
                 def = value.getNullInstance();
             }
             PrefEntry en = new PrefEntry(e.getKey(), value, def, false);
+            // after changes we have nondefault value. Value is changed if is not equal to old value
+            if ( !Preferences.isEqual(old, value) ) {
+                en.markAsChanged();
+            }
             data.add(en);
         }
         for (Entry<String, Setting> e : defaults.entrySet()) {
-            if (!orig.containsKey(e.getKey())) {
+            if (!loaded.containsKey(e.getKey())) {
                 PrefEntry en = new PrefEntry(e.getKey(), e.getValue(), e.getValue(), true);
+                // after changes we have default value. So, value is changed if old value is not default
+                Setting old = orig.get(e.getKey());
+                if ( old!=null ) {
+                    en.markAsChanged();
+                }
                 data.add(en);
             }
         }
@@ -263,6 +406,15 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
     }
 
     private static class SettingCellRenderer extends DefaultTableCellRenderer {
+        private Color backgroundColor = Main.pref.getUIColor("Table.background");
+        private Color changedColor = Main.pref.getColor(
+                         marktr("Advanced Background: Changed"),
+                         new Color(200,255,200));
+        private Color foregroundColor = Main.pref.getUIColor("Table.foreground");
+        private Color nonDefaultColor = Main.pref.getColor(
+                            marktr("Advanced Background: NonDefalut"),
+                            new Color(255,255,200));
+        
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             if (value == null)
@@ -271,9 +423,20 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
             Setting setting = pe.getValue();
             Object val = setting.getValue();
             String display = val != null ? val.toString() : "<html><i>&lt;"+tr("unset")+"&gt;</i></html>";
-
+            
             JLabel label = (JLabel)super.getTableCellRendererComponent(table,
                     display, isSelected, hasFocus, row, column);
+
+            label.setBackground(backgroundColor);
+            if (isSelected) {
+                label.setForeground(foregroundColor);
+            }
+            if(pe.isChanged()) {
+                label.setBackground(changedColor);
+            } else if(!pe.isDefault()) {
+                label.setBackground(nonDefaultColor);
+            }
+
             if (!pe.isDefault()) {
                 label.setFont(label.getFont().deriveFont(Font.BOLD));
             }

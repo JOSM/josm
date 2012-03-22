@@ -1748,4 +1748,22 @@ public class Preferences {
                 System.out.println(tr("Preference setting {0} has been removed since it is no longer used.", key));
         }
     }
+
+    public static boolean isEqual(Setting a, Setting b) {
+        if (a==null && b==null) return true;
+        if (a==null) return false;
+        if (b==null) return false;
+        if (a==b) return true;
+        
+        if (a instanceof StringSetting) 
+            return (a.getValue().equals(b.getValue()));
+        if (a instanceof ListSetting) 
+            return equalCollection((Collection<String>) a.getValue(), (Collection<String>) b.getValue());
+        if (a instanceof ListListSetting) 
+            return equalArray((Collection<Collection<String>>) a.getValue(), (Collection<List<String>>) b.getValue());
+        if (a instanceof MapListSetting) 
+            return equalListOfStructs((Collection<Map<String, String>>) a.getValue(), (Collection<Map<String, String>>) b.getValue());
+        return a.equals(b);
+    }
+
 }
