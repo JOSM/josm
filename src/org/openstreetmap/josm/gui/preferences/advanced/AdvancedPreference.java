@@ -301,6 +301,9 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
         defaults.remove("osm-server.password");
         if (tmpPrefs != Main.pref) {
             loaded = tmpPrefs.getAllSettings();
+            // plugins preference keys may be changed directly later, after plugins are downloaded
+            // so we do not want to show it in the table as "changed" now
+            loaded.put("plugins", orig.get("plugins"));
         } else {
             loaded = orig;
         }

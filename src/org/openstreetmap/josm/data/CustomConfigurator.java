@@ -309,16 +309,30 @@ public class CustomConfigurator {
 
     
     public static void pluginOperation(String install, String uninstall, String delete)  {
-        final List<String> installList = Arrays.asList(install.toLowerCase().split(";"));
-        final List<String> removeList = Arrays.asList(uninstall.toLowerCase().split(";"));
-        final List<String> deleteList = Arrays.asList(delete.toLowerCase().split(";"));
+        final List<String> installList = new ArrayList<String>();
+        final List<String> removeList = new ArrayList<String>();
+        final List<String> deleteList = new ArrayList<String>();
+        Collections.addAll(installList, install.toLowerCase().split(";"));
+        Collections.addAll(removeList, uninstall.toLowerCase().split(";"));
+        Collections.addAll(deleteList, delete.toLowerCase().split(";"));
+        installList.remove("");removeList.remove("");deleteList.remove("");
+        
+        if (!installList.isEmpty()) {
+            log("Plugins install: "+installList);
+        }
+        if (!removeList.isEmpty()) {
+            log("Plugins turn off: "+removeList);
+        }
+        if (!deleteList.isEmpty()) {
+            log("Plugins delete: "+deleteList);
+        }
 
         final ReadLocalPluginInformationTask task = new ReadLocalPluginInformationTask();
         Runnable r = new Runnable() {
             public void run() {
                 if (task.isCanceled()) return;
                 synchronized (CustomConfigurator.class) { 
-                try { // proceed only after ll other tasks were finished
+                try { // proceed only after all other tasks were finished
                     while (busy) CustomConfigurator.class.wait();
                 } catch (InterruptedException ex) { }
                         
@@ -350,6 +364,7 @@ public class CustomConfigurator {
                                 pls.remove(pi.name);
                                 new File(Main.pref.getPluginsDirectory(),pi.name+".jar").deleteOnExit();
                             }
+                            System.out.println(pls);
                             Main.pref.putCollection("plugins",pls);
                         }
                 });
@@ -575,7 +590,6 @@ public class CustomConfigurator {
             String install = elem.getAttribute("install");
             String uninstall = elem.getAttribute("remove");
             String delete = elem.getAttribute("delete");
-            log("PLUGIN: install %s, remove %s, delete %s", install, uninstall, delete);
             pluginOperation(install, uninstall, delete);
         }
         
