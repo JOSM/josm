@@ -4,6 +4,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.LinkedList;
 import java.util.List;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DownloadPrimitiveAction;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
@@ -28,14 +29,21 @@ public class LoadObjectHandler extends RequestHandler {
         if (!PermissionPrefWithDefault.LOAD_DATA.isAllowed()) {
             System.out.println("RemoteControl: download forbidden by preferences");
         }
-        List<PrimitiveId> ps = new LinkedList<PrimitiveId>();
+        final List<PrimitiveId> ps = new LinkedList<PrimitiveId>();
         for (String i : args.get("objects").split(",\\s*")) {
             ps.add(SimplePrimitiveId.fromString(i));
         }
         boolean newLayer = isLoadInNewLayer();
         boolean relationMembers = Boolean.parseBoolean(args.get("relation_members"));
         DownloadPrimitiveAction.processItems(newLayer, ps, true, relationMembers);
-        LoadAndZoomHandler.addTags(args);
+        Main.worker.submit(new Runnable() {
+
+            @Override
+            public void run() {
+                Main.main.getCurrentDataSet().setSelected(ps);
+                LoadAndZoomHandler.addTags(args);
+            }
+        });
     }
 
     @Override
