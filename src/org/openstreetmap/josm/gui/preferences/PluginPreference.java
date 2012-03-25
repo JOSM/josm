@@ -184,7 +184,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
         gc.fill = GridBagConstraints.BOTH;
         PreferencePanel plugins = gui.createPreferenceTab(this);
         plugins.add(buildContentPanel(), gc);
-        pnlPluginPreferences.refreshView();
+        //pnlPluginPreferences.refreshView(); // fix #7541, refreshView() will be called when the first tab will be selected
         gui.addChangeListener(new PluginPreferenceActivationListener(plugins));
     }
 
@@ -421,7 +421,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
 
         public void stateChanged(ChangeEvent e) {
             JTabbedPane tp = (JTabbedPane)e.getSource();
-            if (tp.getSelectedComponent() == pane) {
+            if (tp.getSelectedComponent() == pane && !pluginPreferencesActivated) {
                 readLocalPluginInformation();
                 pluginPreferencesActivated = true;
             }
