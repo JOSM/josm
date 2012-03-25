@@ -4,6 +4,7 @@ package org.openstreetmap.josm.plugins;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -54,6 +55,8 @@ public class PluginInformation {
     public ImageIcon icon;
     public List<URL> libraries = new LinkedList<URL>();
     public final Map<String, String> attr = new TreeMap<String, String>();
+    
+    private static final ImageIcon emptyIcon = new ImageIcon(new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB));
 
     /**
      * Creates a plugin information object by reading the plugin information from
@@ -446,7 +449,7 @@ public class PluginInformation {
 
     public ImageIcon getScaledIcon() {
         if (icon == null)
-            return null;
+            return emptyIcon;
         return new ImageIcon(icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
     }
 }

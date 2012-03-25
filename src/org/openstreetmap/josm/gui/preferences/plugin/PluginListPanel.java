@@ -2,17 +2,22 @@
 package org.openstreetmap.josm.gui.preferences.plugin;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
@@ -21,6 +26,7 @@ import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
+import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
@@ -81,6 +87,91 @@ public class PluginListPanel extends VerticallyScrollablePanel{
         );
         add(hint, gbc);
     }
+    
+    /**
+     * A plugin checkbox.
+     *
+     */
+    private class JPluginCheckBox extends JCheckBox {
+        public final PluginInformation pi;
+        public JPluginCheckBox(final PluginInformation pi, boolean selected) {
+            this.pi = pi;
+            setSelected(selected);
+            setToolTipText(formatCheckboxTooltipText(pi));
+            addActionListener(new PluginCbActionListener(this));
+        }
+    }
+    
+    /**
+     * Listener called when the user selects/unselects a plugin checkbox.
+     *
+     */
+    private class PluginCbActionListener implements ActionListener {
+        private final JPluginCheckBox cb;
+        public PluginCbActionListener(JPluginCheckBox cb) {
+            this.cb = cb;
+        }
+        public void actionPerformed(ActionEvent e) {
+            // Select/unselect corresponding plugin in the model
+            model.setPluginSelected(cb.pi.getName(), cb.isSelected());
+            // Does the newly selected plugin require other plugins ?
+            if (cb.isSelected() && cb.pi.requires != null) {
+                // Select required plugins
+                for (String s : cb.pi.requires.split(";")) {
+                    model.setPluginSelected(s.trim(), true);
+                }
+                // Alert user if plugin requirements are not met
+                PluginHandler.checkRequiredPluginsPreconditions(PluginListPanel.this, model.getAvailablePlugins(), cb.pi);
+            }
+            // If the plugin has been unselected, was it required by other plugins still selected ?
+            else if (!cb.isSelected()) {
+                Set<String> otherPlugins = new HashSet<String>();
+                for (PluginInformation pi : model.getAvailablePlugins()) {
+                    if (!pi.equals(cb.pi) && pi.requires != null && model.isSelectedPlugin(pi.getName())) {
+                        for (String s : pi.requires.split(";")) {
+                            if (s.trim().equals(cb.pi.getName())) {
+                                otherPlugins.add(pi.getName()); 
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!otherPlugins.isEmpty()) {
+                    alertPluginStillRequired(PluginListPanel.this, cb.pi.getName(), otherPlugins);
+                }
+            }
+        }
+    };
+    
+
+    /**
+     * Alerts the user if an unselected plugin is still required by another plugins
+     *
+     * @param parent The parent Component used to display error popup
+     * @param plugin the plugin
+     * @param otherPlugins the other plugins
+     */
+    private static void alertPluginStillRequired(Component parent, String plugin, Set<String> otherPlugins) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<html>");
+        sb.append(trn("Plugin {0} is still required by this plugin:",
+                "Plugin {0} is still required by these {1} plugins:",
+                otherPlugins.size(),
+                plugin,
+                otherPlugins.size()
+        ));
+        sb.append("<ul>");
+        for (String p: otherPlugins) {
+            sb.append("<li>").append(p).append("</li>");
+        }
+        sb.append("</ul>").append("</html>");
+        JOptionPane.showMessageDialog(
+                parent,
+                sb.toString(),
+                tr("Warning"),
+                JOptionPane.WARNING_MESSAGE
+        );
+    }
 
     public void refreshView() {
         final Rectangle visibleRect = getVisibleRect();
@@ -104,16 +195,13 @@ public class PluginListPanel extends VerticallyScrollablePanel{
             String remoteversion = formatPluginRemoteVersion(pi);
             String localversion = formatPluginLocalVersion(model.getPluginInformation(pi.getName()));
 
-            final JCheckBox cbPlugin = new JCheckBox();
-            cbPlugin.setSelected(selected);
-            cbPlugin.setToolTipText(formatCheckboxTooltipText(pi));
-            cbPlugin.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e) {
-                    model.setPluginSelected(pi.getName(), cbPlugin.isSelected());
-                }
-            });
+            JPluginCheckBox cbPlugin = new JPluginCheckBox(pi, selected);
+            String pluginText = tr("{0}: Version {1} (local: {2})", pi.getName(), remoteversion, localversion);
+            if (pi.requires != null && !pi.requires.isEmpty()) {
+                pluginText += tr(" (requires: {0})", pi.requires);
+            }
             JLabel lblPlugin = new JLabel(
-                    tr("{0}: Version {1} (local: {2})", pi.getName(), remoteversion, localversion),
+                    pluginText,
                     pi.getScaledIcon(),
                     SwingConstants.LEFT);
 
