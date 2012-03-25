@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -33,8 +32,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -184,8 +181,8 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
         gc.fill = GridBagConstraints.BOTH;
         PreferencePanel plugins = gui.createPreferenceTab(this);
         plugins.add(buildContentPanel(), gc);
-        //pnlPluginPreferences.refreshView(); // fix #7541, refreshView() will be called when the first tab will be selected
-        gui.addChangeListener(new PluginPreferenceActivationListener(plugins));
+        readLocalPluginInformation();
+        pluginPreferencesActivated = true;
     }
 
     private void configureSites() {
@@ -405,26 +402,6 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
 
         public void actionPerformed(ActionEvent e) {
             configureSites();
-        }
-    }
-
-    /**
-     * Listens to the activation of the plugin preferences tab. On activation it
-     * reloads plugin information from the local file system.
-     *
-     */
-    class PluginPreferenceActivationListener implements ChangeListener {
-        private Component pane;
-        public PluginPreferenceActivationListener(Component preferencesPane) {
-            pane = preferencesPane;
-        }
-
-        public void stateChanged(ChangeEvent e) {
-            JTabbedPane tp = (JTabbedPane)e.getSource();
-            if (tp.getSelectedComponent() == pane && !pluginPreferencesActivated) {
-                readLocalPluginInformation();
-                pluginPreferencesActivated = true;
-            }
         }
     }
 

@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -13,9 +14,10 @@ import java.util.List;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent.EventType;
+import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
@@ -26,8 +28,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
     private PluginPreferencesModel model;
 
     public PluginListPanel() {
-        model = new PluginPreferencesModel();
-        setLayout(new GridBagLayout());
+        this(new PluginPreferencesModel());
     }
 
     public PluginListPanel(PluginPreferencesModel model) {
@@ -82,6 +83,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
     }
 
     public void refreshView() {
+        final Rectangle visibleRect = getVisibleRect();
         List<PluginInformation> displayedPlugins = model.getDisplayedPlugins();
         removeAll();
 
@@ -144,5 +146,13 @@ public class PluginListPanel extends VerticallyScrollablePanel{
         }
         revalidate();
         repaint();
+        if (visibleRect != null && visibleRect.width > 0 && visibleRect.height > 0) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    scrollRectToVisible(visibleRect);
+                }
+            });
+        }
     }
 }
