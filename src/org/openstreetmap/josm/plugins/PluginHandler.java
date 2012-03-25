@@ -5,11 +5,11 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -174,9 +174,10 @@ public class PluginHandler {
      *
      * Also notifies the user about removed deprecated plugins
      *
+     * @param parent The parent Component used to display warning popup
      * @param plugins the collection of plugins
      */
-    private static void filterDeprecatedPlugins(Window parent, Collection<String> plugins) {
+    private static void filterDeprecatedPlugins(Component parent, Collection<String> plugins) {
         Set<DeprecatedPlugin> removedPlugins = new TreeSet<DeprecatedPlugin>();
         for (DeprecatedPlugin depr : DEPRECATED_PLUGINS) {
             if (plugins.contains(depr.name)) {
@@ -225,7 +226,7 @@ public class PluginHandler {
      *
      * @param plugins the collection of plugins
      */
-    private static void filterUnmaintainedPlugins(Window parent, Collection<String> plugins) {
+    private static void filterUnmaintainedPlugins(Component parent, Collection<String> plugins) {
         for (String unmaintained : UNMAINTAINED_PLUGINS) {
             if (!plugins.contains(unmaintained)) {
                 continue;
@@ -246,11 +247,11 @@ public class PluginHandler {
      * JOSM was updated to a new version since the last plugin updates or
      * if the plugins were last updated a long time ago.
      *
-     * @param parent the parent window relative to which the confirmation dialog
+     * @param parent the parent component relative to which the confirmation dialog
      * is to be displayed
      * @return true if a plugin update should be run; false, otherwise
      */
-    public static boolean checkAndConfirmPluginUpdate(Window parent) {
+    public static boolean checkAndConfirmPluginUpdate(Component parent) {
         String message = null;
         String togglePreferenceKey = null;
         int v = Version.getInstance().getVersion();
@@ -354,10 +355,11 @@ public class PluginHandler {
     /**
      * Alerts the user if a plugin required by another plugin is missing
      *
+     * @param parent The parent Component used to display error popup
      * @param plugin the plugin
      * @param missingRequiredPlugin the missing required plugin
      */
-    private static void alertMissingRequiredPlugin(Window parent, String plugin, Set<String> missingRequiredPlugin) {
+    private static void alertMissingRequiredPlugin(Component parent, String plugin, Set<String> missingRequiredPlugin) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(trn("Plugin {0} requires a plugin which was not found. The missing plugin is:",
@@ -379,7 +381,7 @@ public class PluginHandler {
         );
     }
 
-    private static void alertJOSMUpdateRequired(Window parent, String plugin, int requiredVersion) {
+    private static void alertJOSMUpdateRequired(Component parent, String plugin, int requiredVersion) {
         HelpAwareOptionPane.showOptionDialog(
                 parent,
                 tr("<html>Plugin {0} requires JOSM version {1}. The current JOSM version is {2}.<br>"
@@ -397,11 +399,12 @@ public class PluginHandler {
      * current JOSM version must be compatible with the plugin and no other plugins this plugin
      * depends on should be missing.
      *
+     * @param parent The parent Component used to display error popup
      * @param plugins the collection of all loaded plugins
      * @param plugin the plugin for which preconditions are checked
      * @return true, if the preconditions are met; false otherwise
      */
-    public static boolean checkLoadPreconditions(Window parent, Collection<PluginInformation> plugins, PluginInformation plugin) {
+    public static boolean checkLoadPreconditions(Component parent, Collection<PluginInformation> plugins, PluginInformation plugin) {
 
         // make sure the plugin is compatible with the current JOSM version
         //
@@ -410,6 +413,20 @@ public class PluginHandler {
             alertJOSMUpdateRequired(parent, plugin.name, plugin.localmainversion);
             return false;
         }
+
+        return checkRequiredPluginsPreconditions(parent, plugins, plugin);
+    }
+
+    /**
+     * Checks if required plugins preconditions for loading the plugin <code>plugin</code> are met.
+     * No other plugins this plugin depends on should be missing.
+     *
+     * @param parent The parent Component used to display error popup
+     * @param plugins the collection of all loaded plugins
+     * @param plugin the plugin for which preconditions are checked
+     * @return true, if the preconditions are met; false otherwise
+     */
+    public static boolean checkRequiredPluginsPreconditions(Component parent, Collection<PluginInformation> plugins, PluginInformation plugin) {
 
         // make sure the dependencies to other plugins are not broken
         //
@@ -468,7 +485,7 @@ public class PluginHandler {
      * @param plugin the plugin
      * @param pluginClassLoader the plugin class loader
      */
-    public static void loadPlugin(Window parent, PluginInformation plugin, ClassLoader pluginClassLoader) {
+    public static void loadPlugin(Component parent, PluginInformation plugin, ClassLoader pluginClassLoader) {
         String msg = tr("Could not load plugin {0}. Delete from preferences?", plugin.name);
         try {
             Class<?> klass = plugin.loadClass(pluginClassLoader);
@@ -498,7 +515,7 @@ public class PluginHandler {
      * @param plugins the list of plugins
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      */
-    public static void loadPlugins(Window parent,Collection<PluginInformation> plugins, ProgressMonitor monitor) {
+    public static void loadPlugins(Component parent,Collection<PluginInformation> plugins, ProgressMonitor monitor) {
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -547,7 +564,7 @@ public class PluginHandler {
      * @param plugins the collection of plugins
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      */
-    public static void loadEarlyPlugins(Window parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
+    public static void loadEarlyPlugins(Component parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
         List<PluginInformation> earlyPlugins = new ArrayList<PluginInformation>(plugins.size());
         for (PluginInformation pi: plugins) {
             if (pi.early) {
@@ -564,7 +581,7 @@ public class PluginHandler {
      * @param plugins the collection of plugins
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      */
-    public static void loadLatePlugins(Window parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
+    public static void loadLatePlugins(Component parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
         List<PluginInformation> latePlugins = new ArrayList<PluginInformation>(plugins.size());
         for (PluginInformation pi: plugins) {
             if (!pi.early) {
@@ -609,7 +626,7 @@ public class PluginHandler {
         }
     }
 
-    private static void alertMissingPluginInformation(Window parent, Collection<String> plugins) {
+    private static void alertMissingPluginInformation(Component parent, Collection<String> plugins) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(trn("JOSM could not find information about the following plugin:",
@@ -641,7 +658,7 @@ public class PluginHandler {
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      * @return the set of plugins to load (as set of plugin names)
      */
-    public static List<PluginInformation> buildListOfPluginsToLoad(Window parent, ProgressMonitor monitor) {
+    public static List<PluginInformation> buildListOfPluginsToLoad(Component parent, ProgressMonitor monitor) {
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -674,7 +691,7 @@ public class PluginHandler {
         }
     }
 
-    private static void alertFailedPluginUpdate(Window parent, Collection<PluginInformation> plugins) {
+    private static void alertFailedPluginUpdate(Component parent, Collection<PluginInformation> plugins) {
         StringBuffer sb = new StringBuffer();
         sb.append("<html>");
         sb.append(trn(
@@ -706,12 +723,12 @@ public class PluginHandler {
     /**
      * Updates the plugins in <code>plugins</code>.
      *
-     * @param parent the parent window for message boxes
+     * @param parent the parent component for message boxes
      * @param plugins the collection of plugins to update. Must not be null.
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      * @throws IllegalArgumentException thrown if plugins is null
      */
-    public static List<PluginInformation>  updatePlugins(Window parent,
+    public static List<PluginInformation>  updatePlugins(Component parent,
             List<PluginInformation> plugins, ProgressMonitor monitor)
             throws IllegalArgumentException{
         CheckParameterUtil.ensureParameterNotNull(plugins, "plugins");
@@ -796,7 +813,7 @@ public class PluginHandler {
      * @param name the plugin name
      * @return true, if the plugin shall be disabled; false, otherwise
      */
-    public static boolean confirmDisablePlugin(Window parent, String reason, String name) {
+    public static boolean confirmDisablePlugin(Component parent, String reason, String name) {
         ButtonSpec [] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Disable plugin"),

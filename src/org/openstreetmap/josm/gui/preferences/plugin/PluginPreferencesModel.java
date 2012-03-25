@@ -293,6 +293,15 @@ public class PluginPreferencesModel extends Observable{
         }
         return ret;
     }
+    
+    /**
+     * Replies the set of all available plugins.
+     *
+     * @return the set of all available plugins
+     */
+    public List<PluginInformation> getAvailablePlugins() {
+        return new LinkedList<PluginInformation>(availablePlugins);
+    }
 
     /**
      * Replies the set of plugin names which have been added by the user to
