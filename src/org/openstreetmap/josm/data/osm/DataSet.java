@@ -36,6 +36,7 @@ import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.Predicate;
@@ -1165,8 +1166,16 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
      * @param from The source DataSet
      */
     public void mergeFrom(DataSet from) {
+    	mergeFrom(from, null);
+    }
+    
+    /**
+     * Moves all primitives and datasources from DataSet "from" to this DataSet
+     * @param from The source DataSet
+     */
+    public void mergeFrom(DataSet from, ProgressMonitor progressMonitor) {
         if (from != null) {
-            new DataSetMerger(this, from).merge();
+            new DataSetMerger(this, from).merge(progressMonitor);
             dataSources.addAll(from.dataSources);
             from.dataSources.clear();
         }
