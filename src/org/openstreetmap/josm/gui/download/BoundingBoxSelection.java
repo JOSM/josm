@@ -329,10 +329,10 @@ public class BoundingBoxSelection implements DownloadSelection {
         protected Bounds build() {
             double minlon, minlat, maxlon,maxlat;
             try {
-                minlon = Double.parseDouble(latlon[0].getText().trim());
-                minlat = Double.parseDouble(latlon[1].getText().trim());
-                maxlon = Double.parseDouble(latlon[2].getText().trim());
-                maxlat = Double.parseDouble(latlon[3].getText().trim());
+                minlat = Double.parseDouble(latlon[0].getText().trim());
+                minlon = Double.parseDouble(latlon[1].getText().trim());
+                maxlat = Double.parseDouble(latlon[2].getText().trim());
+                maxlon = Double.parseDouble(latlon[3].getText().trim());
             } catch(NumberFormatException e) {
                 return null;
             }
@@ -343,7 +343,7 @@ public class BoundingBoxSelection implements DownloadSelection {
                 return null;
             if (minlat > maxlat)
                 return null;
-            return new Bounds(minlon,minlat,maxlon,maxlat);
+            return new Bounds(minlat,minlon,maxlat,maxlon);
         }
 
         protected void refreshBounds() {
