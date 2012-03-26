@@ -31,7 +31,7 @@ public abstract class AbstractReader {
     /**
      * The dataset to add parsed objects to.
      */
-    protected final DataSet ds = new DataSet();
+    protected DataSet ds = new DataSet();
 
     protected Changeset uploadChangeset;
 
