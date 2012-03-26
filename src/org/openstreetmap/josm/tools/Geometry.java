@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.tools;
 
 import java.awt.geom.Line2D;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -581,6 +583,38 @@ public class Geometry {
         }
 
         return result;
+    }
+    
+    public static EastNorth getCentroid(List<Node> nodes) {
+        // Compute the centroid of nodes
+
+        BigDecimal area = new BigDecimal(0);
+        BigDecimal north = new BigDecimal(0);
+        BigDecimal east = new BigDecimal(0);
+
+        // See http://en.wikipedia.org/w/index.php?title=Centroid&oldid=294224857#Centroid_of_polygon for the equation used here
+        for (int i = 0; i < nodes.size(); i++) {
+            EastNorth n0 = nodes.get(i).getEastNorth();
+            EastNorth n1 = nodes.get((i+1) % nodes.size()).getEastNorth();
+
+            BigDecimal x0 = new BigDecimal(n0.east());
+            BigDecimal y0 = new BigDecimal(n0.north());
+            BigDecimal x1 = new BigDecimal(n1.east());
+            BigDecimal y1 = new BigDecimal(n1.north());
+
+            BigDecimal k = x0.multiply(y1, MathContext.DECIMAL128).subtract(y0.multiply(x1, MathContext.DECIMAL128));
+
+            area = area.add(k, MathContext.DECIMAL128);
+            east = east.add(k.multiply(x0.add(x1, MathContext.DECIMAL128), MathContext.DECIMAL128));
+            north = north.add(k.multiply(y0.add(y1, MathContext.DECIMAL128), MathContext.DECIMAL128));
+        }
+
+        BigDecimal d = new BigDecimal(3, MathContext.DECIMAL128); // 1/2 * 6 = 3
+        area  = area.multiply(d, MathContext.DECIMAL128);
+        north = north.divide(area, MathContext.DECIMAL128);
+        east = east.divide(area, MathContext.DECIMAL128);
+
+        return new EastNorth(east.doubleValue(), north.doubleValue());
     }
 
     /**
