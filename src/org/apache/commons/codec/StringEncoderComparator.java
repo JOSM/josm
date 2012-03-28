@@ -25,7 +25,7 @@ import java.util.Comparator;
  * as Soundex.
  * 
  * @author Apache Software Foundation
- * @version $Id: StringEncoderComparator.java 1306465 2012-03-28 16:59:17Z ggregory $
+ * @version $Id: StringEncoderComparator.java 1306487 2012-03-28 17:35:58Z sebb $
  */
 public class StringEncoderComparator implements Comparator {
 
@@ -68,6 +68,7 @@ public class StringEncoderComparator implements Comparator {
      * @return the Comparable.compareTo() return code or 0 if an encoding error was caught.
      * @see Comparable
      */
+    @Override
     public int compare(Object o1, Object o2) {
 
         int compareCode = 0;

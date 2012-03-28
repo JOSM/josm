@@ -65,7 +65,7 @@ import org.apache.commons.codec.StringEncoder;
  * @see <a href="http://www.dropby.com/NYSIIS.html">NYSIIS on dropby.com</a>
  * @see Soundex
  * @since 1.7
- * @version $Id: Nysiis.java 1306455 2012-03-28 16:25:28Z ggregory $
+ * @version $Id: Nysiis.java 1306487 2012-03-28 17:35:58Z sebb $
  */
 public class Nysiis implements StringEncoder {
 
@@ -206,6 +206,7 @@ public class Nysiis implements StringEncoder {
      * @throws IllegalArgumentException
      *            if a character is not mapped
      */
+    @Override
     public Object encode(Object obj) throws EncoderException {
         if (!(obj instanceof String)) {
             throw new EncoderException("Parameter supplied to Nysiis encode is not of type java.lang.String");
@@ -222,6 +223,7 @@ public class Nysiis implements StringEncoder {
      * @throws IllegalArgumentException
      *            if a character is not mapped
      */
+    @Override
     public String encode(String str) {
         return this.nysiis(str);
     }

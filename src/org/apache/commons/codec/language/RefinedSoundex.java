@@ -26,7 +26,7 @@ import org.apache.commons.codec.StringEncoder;
  * <CITE>Margaret Odell</CITE> and <CITE>Robert Russell</CITE>.
  * 
  * @author Apache Software Foundation
- * @version $Id: RefinedSoundex.java 1306455 2012-03-28 16:25:28Z ggregory $
+ * @version $Id: RefinedSoundex.java 1306487 2012-03-28 17:35:58Z sebb $
  */
 public class RefinedSoundex implements StringEncoder {
 
@@ -128,6 +128,7 @@ public class RefinedSoundex implements StringEncoder {
      * @throws EncoderException
      *                  if the parameter supplied is not of type java.lang.String
      */
+    @Override
     public Object encode(Object obj) throws EncoderException {
         if (!(obj instanceof String)) {
             throw new EncoderException("Parameter supplied to RefinedSoundex encode is not of type java.lang.String");
@@ -142,6 +143,7 @@ public class RefinedSoundex implements StringEncoder {
      *                  A String object to encode
      * @return A Soundex code corresponding to the String supplied
      */
+    @Override
     public String encode(String str) {
         return soundex(str);
     }

@@ -46,7 +46,7 @@ import org.apache.commons.codec.StringEncoder;
  * 
  * @author Apache Software Foundation
  * @since 1.3
- * @version $Id: QCodec.java 1306455 2012-03-28 16:25:28Z ggregory $
+ * @version $Id: QCodec.java 1306487 2012-03-28 17:35:58Z sebb $
  */
 public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder {
     /**
@@ -242,6 +242,7 @@ public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * @throws EncoderException
      *                  thrown if a failure condition is encountered during the encoding process.
      */
+    @Override
     public String encode(String str) throws EncoderException {
         if (str == null) {
             return null;
@@ -261,6 +262,7 @@ public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * @throws DecoderException
      *                  A decoder exception is thrown if a failure condition is encountered during the decode process.
      */
+    @Override
     public String decode(String str) throws DecoderException {
         if (str == null) {
             return null;
@@ -282,6 +284,7 @@ public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * @throws EncoderException
      *                  thrown if a failure condition is encountered during the encoding process.
      */
+    @Override
     public Object encode(Object obj) throws EncoderException {
         if (obj == null) {
             return null;
@@ -307,6 +310,7 @@ public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      *                  Thrown if the argument is not a <code>String</code>. Thrown if a failure condition is
      *                  encountered during the decode process.
      */
+    @Override
     public Object decode(Object obj) throws DecoderException {
         if (obj == null) {
             return null;

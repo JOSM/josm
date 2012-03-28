@@ -38,7 +38,7 @@ import org.apache.commons.codec.StringEncoder;
  * </p>
  * 
  * @author Apache Software Foundation
- * @version $Id: Metaphone.java 1306466 2012-03-28 17:02:20Z ggregory $
+ * @version $Id: Metaphone.java 1306487 2012-03-28 17:35:58Z sebb $
  */
 public class Metaphone implements StringEncoder {
 
@@ -363,6 +363,7 @@ public class Metaphone implements StringEncoder {
      * @throws EncoderException if the parameter supplied is not
      *                          of type java.lang.String
      */
+    @Override
     public Object encode(Object obj) throws EncoderException {
         if (!(obj instanceof String)) {
             throw new EncoderException("Parameter supplied to Metaphone encode is not of type java.lang.String"); 
@@ -376,6 +377,7 @@ public class Metaphone implements StringEncoder {
      * @param str String object to encode
      * @return The metaphone code corresponding to the String supplied
      */
+    @Override
     public String encode(String str) {
         return metaphone(str);   
     }

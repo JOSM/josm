@@ -28,7 +28,7 @@ import org.apache.commons.codec.StringEncoder;
  * @see <a href="http://en.wikipedia.org/wiki/Metaphone">http://en.wikipedia.org/wiki/Metaphone</a>
  *
  * @author Apache Software Foundation
- * @version $Id: DoubleMetaphone.java 1306424 2012-03-28 15:32:48Z ggregory $
+ * @version $Id: DoubleMetaphone.java 1306487 2012-03-28 17:35:58Z sebb $
  */
 public class DoubleMetaphone implements StringEncoder {
 
@@ -194,6 +194,7 @@ public class DoubleMetaphone implements StringEncoder {
      * @return An encoded Object (will be of type String)
      * @throws EncoderException encode parameter is not of type String
      */
+    @Override
     public Object encode(Object obj) throws EncoderException {
         if (!(obj instanceof String)) {
             throw new EncoderException("DoubleMetaphone encode parameter is not of type String"); 
@@ -207,6 +208,7 @@ public class DoubleMetaphone implements StringEncoder {
      * @param value String to encode
      * @return An encoded String
      */
+    @Override
     public String encode(String value) {
         return doubleMetaphone(value);   
     }
