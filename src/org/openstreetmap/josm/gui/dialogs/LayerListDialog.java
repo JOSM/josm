@@ -266,6 +266,11 @@ public class LayerListDialog extends ToggleDialog {
         DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
         layerList.getActionMap().put("deleteLayer", deleteLayerAction);
         adaptTo(deleteLayerAction, selectionModel);
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),"delete"
+                );
+        getActionMap().put("delete", deleteLayerAction);
+
 
         createLayout(layerList, true, Arrays.asList(new SideButton[] {
                 new SideButton(moveUpAction, false),
@@ -591,7 +596,13 @@ public class LayerListDialog extends ToggleDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             slider.setValue((int)Math.round(getOpacity()*100));
-            popup.show(opacityButton, 0, opacityButton.getHeight());
+            if (e.getSource() == opacityButton) {
+                popup.show(opacityButton, 0, opacityButton.getHeight());
+            } else {
+                // Action can be trigger either by opacity button or by popup menu (in case toggle buttons are hidden).
+                // In that case, show it in the middle of screen (because opacityButton is not visible)
+                popup.show(Main.parent, Main.parent.getWidth() / 2, (Main.parent.getHeight() - popup.getHeight()) / 2);
+            }
         }
 
         @Override
