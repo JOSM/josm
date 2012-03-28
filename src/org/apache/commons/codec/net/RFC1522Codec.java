@@ -43,7 +43,7 @@ import org.apache.commons.codec.binary.StringUtils;
  * 
  * @author Apache Software Foundation
  * @since 1.3
- * @version $Id: RFC1522Codec.java 1306421 2012-03-28 15:31:08Z ggregory $
+ * @version $Id: RFC1522Codec.java 1306466 2012-03-28 17:02:20Z ggregory $
  */
 abstract class RFC1522Codec {
     
@@ -140,7 +140,7 @@ abstract class RFC1522Codec {
         if (text == null) {
             return null;
         }
-        if ((!text.startsWith(PREFIX)) || (!text.endsWith(POSTFIX))) {
+        if (!text.startsWith(PREFIX) || !text.endsWith(POSTFIX)) {
             throw new DecoderException("RFC 1522 violation: malformed encoded content");
         }
         int terminator = text.length() - 2;
