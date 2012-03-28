@@ -46,7 +46,7 @@ import java.math.BigInteger;
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
  * @author Apache Software Foundation
  * @since 1.0
- * @version $Revision: 1306424 $
+ * @version $Revision: 1306465 $
  */
 public class Base64 extends BaseNCodec {
 
@@ -477,6 +477,7 @@ public class Base64 extends BaseNCodec {
      *         {@code false}, otherwise
      * @deprecated 1.5 Use {@link #isBase64(byte[])}, will be removed in 2.0.
      */
+    @Deprecated
     public static boolean isArrayByteBase64(byte[] arrayOctet) {
         return isBase64(arrayOctet);
     }
