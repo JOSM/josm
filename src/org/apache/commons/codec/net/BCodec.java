@@ -18,8 +18,10 @@
 package org.apache.commons.codec.net;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 
-import org.apache.commons.codec.CharEncoding;
+import org.apache.commons.codec.Charsets;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.StringDecoder;
@@ -43,19 +45,19 @@ import org.apache.commons.codec.binary.Base64;
  * 
  * @author Apache Software Foundation
  * @since 1.3
- * @version $Id: BCodec.java 1157192 2011-08-12 17:27:38Z ggregory $
+ * @version $Id: BCodec.java 1306415 2012-03-28 15:28:13Z ggregory $
  */
 public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder {
     /**
      * The default charset used for string decoding and encoding.
      */
-    private final String charset;
+    private final Charset charset;
 
     /**
      * Default constructor.
      */
     public BCodec() {
-        this(CharEncoding.UTF_8);
+        this(Charsets.UTF_8);
     }
 
     /**
@@ -64,11 +66,24 @@ public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * @param charset
      *                  the default string charset to use.
      * 
-     * @see <a href="http://download.oracle.com/javase/1.5.0/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
+     * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      */
-    public BCodec(final String charset) {
-        super();
+    public BCodec(final Charset charset) {
         this.charset = charset;
+    }
+
+    /**
+     * Constructor which allows for the selection of a default charset
+     * 
+     * @param charsetName
+     *                  the default charset to use.
+     * @throws UnsupportedCharsetException
+     *             If the named charset is unavailable
+     * @since 1.7 throws UnsupportedCharsetException if the named charset is unavailable
+     * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
+     */
+    public BCodec(final String charsetName) {
+        this(Charset.forName(charsetName));
     }
 
     @Override
@@ -104,12 +119,31 @@ public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * @throws EncoderException
      *                  thrown if a failure condition is encountered during the encoding process.
      */
+    public String encode(final String value, final Charset charset) throws EncoderException {
+        if (value == null) {
+            return null;
+        }
+        return encodeText(value, charset);
+    }
+
+    /**
+     * Encodes a string into its Base64 form using the specified charset. Unsafe characters are escaped.
+     * 
+     * @param value
+     *                  string to convert to Base64 form
+     * @param charset
+     *                  the charset for <code>value</code>
+     * @return Base64 string
+     * 
+     * @throws EncoderException
+     *                  thrown if a failure condition is encountered during the encoding process.
+     */
     public String encode(final String value, final String charset) throws EncoderException {
         if (value == null) {
             return null;
         }
         try {
-            return encodeText(value, charset);
+            return this.encodeText(value, charset);
         } catch (UnsupportedEncodingException e) {
             throw new EncoderException(e.getMessage(), e);
         }
@@ -129,7 +163,7 @@ public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder
         if (value == null) {
             return null;
         }
-        return encode(value, getDefaultCharset());
+        return encode(value, this.getCharset());
     }
 
     /**
@@ -147,7 +181,7 @@ public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder
             return null;
         }
         try {
-            return decodeText(value);
+            return this.decodeText(value);
         } catch (UnsupportedEncodingException e) {
             throw new DecoderException(e.getMessage(), e);
         }
@@ -201,11 +235,21 @@ public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder
     }
 
     /**
-     * The default charset used for string decoding and encoding.
+     * Gets the default charset name used for string decoding and encoding.
      * 
-     * @return the default string charset.
+     * @return the default charset name
+     * @since 1.7
+     */
+    public Charset getCharset() {
+        return this.charset;
+    }
+
+    /**
+     * Gets the default charset name used for string decoding and encoding.
+     * 
+     * @return the default charset name
      */
     public String getDefaultCharset() {
-        return this.charset;
+        return this.charset.name();
     }
 }
