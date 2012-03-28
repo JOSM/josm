@@ -43,7 +43,7 @@ import org.apache.commons.codec.binary.StringUtils;
  * 
  * @author Apache Software Foundation
  * @since 1.3
- * @version $Id: RFC1522Codec.java 1306415 2012-03-28 15:28:13Z ggregory $
+ * @version $Id: RFC1522Codec.java 1306421 2012-03-28 15:31:08Z ggregory $
  */
 abstract class RFC1522Codec {
     
@@ -127,7 +127,7 @@ abstract class RFC1522Codec {
      * {@link #doEncoding(byte [])} method of a concrete class to perform the specific decoding.
      * 
      * @param text a string to decode
-     * @return A new decoded String or <code>null</code> if the input is <code>null</code>.
+     * @return A new decoded String or {@code null} if the input is {@code null}.
      * 
      * @throws DecoderException thrown if there is an error condition during the decoding 
      *  process.

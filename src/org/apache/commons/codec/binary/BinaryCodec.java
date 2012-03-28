@@ -30,7 +30,7 @@ import org.apache.commons.codec.EncoderException;
  * 
  * @author Apache Software Foundation
  * @since 1.3
- * @version $Id: BinaryCodec.java 1157192 2011-08-12 17:27:38Z ggregory $
+ * @version $Id: BinaryCodec.java 1306423 2012-03-28 15:32:09Z ggregory $
  */
 public class BinaryCodec implements BinaryDecoder, BinaryEncoder {
     /*
@@ -211,11 +211,11 @@ public class BinaryCodec implements BinaryDecoder, BinaryEncoder {
     }
 
     /**
-     * Returns <code>true</code> if the given array is <code>null</code> or empty (size 0.)
+     * Returns {@code true} if the given array is {@code null} or empty (size 0.)
      * 
      * @param array
      *            the source array
-     * @return <code>true</code> if the given array is <code>null</code> or empty (size 0.)
+     * @return {@code true} if the given array is {@code null} or empty (size 0.)
      */
     private static boolean isEmpty(byte[] array) {
         return array == null || array.length == 0;

@@ -22,7 +22,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.BitSet;
 
-import org.apache.commons.codec.CharEncoding;
+import org.apache.commons.codec.Charsets;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.StringDecoder;
@@ -46,7 +46,7 @@ import org.apache.commons.codec.StringEncoder;
  * 
  * @author Apache Software Foundation
  * @since 1.3
- * @version $Id: QCodec.java 1306415 2012-03-28 15:28:13Z ggregory $
+ * @version $Id: QCodec.java 1306438 2012-03-28 15:44:28Z ggregory $
  */
 public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder {
     /**
@@ -112,7 +112,7 @@ public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * Default constructor.
      */
     public QCodec() {
-        this(CharEncoding.UTF_8);
+        this(Charsets.UTF_8);
     }
 
     /**
@@ -341,7 +341,7 @@ public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder
     /**
      * Tests if optional transformation of SPACE characters is to be used
      * 
-     * @return <code>true</code> if SPACE characters are to be transformed, <code>false</code> otherwise
+     * @return {@code true} if SPACE characters are to be transformed, {@code false} otherwise
      */
     public boolean isEncodeBlanks() {
         return this.encodeBlanks;
@@ -351,7 +351,7 @@ public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * Defines whether optional transformation of SPACE characters is to be used
      * 
      * @param b
-     *                  <code>true</code> if SPACE characters are to be transformed, <code>false</code> otherwise
+     *                  {@code true} if SPACE characters are to be transformed, {@code false} otherwise
      */
     public void setEncodeBlanks(boolean b) {
         this.encodeBlanks = b;

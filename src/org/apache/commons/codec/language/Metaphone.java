@@ -38,7 +38,7 @@ import org.apache.commons.codec.StringEncoder;
  * </p>
  * 
  * @author Apache Software Foundation
- * @version $Id: Metaphone.java 1157192 2011-08-12 17:27:38Z ggregory $
+ * @version $Id: Metaphone.java 1306424 2012-03-28 15:32:48Z ggregory $
  */
 public class Metaphone implements StringEncoder {
 
@@ -385,8 +385,8 @@ public class Metaphone implements StringEncoder {
      *
      * @param str1 First of two strings to compare
      * @param str2 Second of two strings to compare
-     * @return <code>true</code> if the metaphones of these strings are identical, 
-     *        <code>false</code> otherwise.
+     * @return {@code true} if the metaphones of these strings are identical, 
+     *        {@code false} otherwise.
      */
     public boolean isMetaphoneEqual(String str1, String str2) {
         return metaphone(str1).equals(metaphone(str2));

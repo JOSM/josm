@@ -33,7 +33,7 @@ import org.apache.commons.codec.EncoderException;
  * 
  * @since 1.1
  * @author Apache Software Foundation
- * @version $Id: Hex.java 1306398 2012-03-28 15:09:19Z ggregory $
+ * @version $Id: Hex.java 1306424 2012-03-28 15:32:48Z ggregory $
  */
 public class Hex implements BinaryEncoder, BinaryDecoder {
 
@@ -115,7 +115,7 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
      * @param data
      *            a byte[] to convert to Hex characters
      * @param toLowerCase
-     *            <code>true</code> converts to lowercase, <code>false</code> to uppercase
+     *            {@code true} converts to lowercase, {@code false} to uppercase
      * @return A char[] containing hexadecimal characters
      * @since 1.4
      */
