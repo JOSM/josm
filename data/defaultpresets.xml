@@ -2132,9 +2132,11 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Bicycle Parking" />
             <key key="amenity" value="bicycle_parking" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="capacity" text="Capacity" default="" delete_if_empty="true" />
-            <combo key="bicycle_parking" text="Type" values="anchors,ground_slots,informal,lockers,shed,stands,wall_loops" default="" delete_if_empty="true" />
+            <combo key="bicycle_parking" text="Type" values="anchors,building,ground_slots,informal,lockers,shed,stands,wall_loops" default="" delete_if_empty="true" />
             <check key="covered" text="Covered" default="off" delete_if_empty="true" />
+            <check key="supervised" text="Supervised" default="off" delete_if_empty="true" />
         </item>
         <item name="Bike Dealer" icon="presets/bike.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bicycle"
