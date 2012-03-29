@@ -528,8 +528,11 @@ public class MapStatus extends JPanel implements Helpful {
                 name = "<i><b>"+ name + "*</b></i>";
             }
             text.append(name);
-
-            if (!osm.isNew()) {
+            
+            boolean idShown = Main.pref.getBoolean("osm-primitives.showid");
+            // fix #7557 - do not show ID twice
+            
+            if (!osm.isNew() && !idShown) {
                 text.append(" [id="+osm.getId()+"]");
             }
 
