@@ -202,7 +202,7 @@ public class XmlObjectParser implements Iterable<Object> {
                     {
                         fieldName = "set" + fieldName.substring(0,1).toUpperCase() + fieldName.substring(1);
                     }
-                    Method[] methods = c.getClass().getDeclaredMethods();
+                    Method[] methods = c.getClass().getMethods();
                     for (Method m : methods) {
                         if (m.getName().equals(fieldName) && m.getParameterTypes().length == 1) {
                             m.invoke(c, new Object[]{getValueForClass(m.getParameterTypes()[0], value)});
