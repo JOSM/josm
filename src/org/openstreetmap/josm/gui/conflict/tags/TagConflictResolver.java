@@ -27,7 +27,7 @@ public class TagConflictResolver extends JPanel {
 
     /** the model for the tag conflict resolver */
     private TagConflictResolverModel model;
-    /** selects wheter only tags with conflicts are displayed */
+    /** selects whether only tags with conflicts are displayed */
     private JCheckBox cbShowTagsWithConflictsOnly;
     private JCheckBox cbShowTagsWithMultiValuesOnly;
 
@@ -40,8 +40,10 @@ public class TagConflictResolver extends JPanel {
         gc.weighty = 1.0;
         gc.weightx = 1.0;
         gc.anchor = GridBagConstraints.LINE_START;
+        gc.gridwidth = 2;
         pnl.add(new JLabel(tr("<html>Please select the values to keep for the following tags.</html>")), gc);
 
+        gc.gridwidth = 1;
         gc.gridy = 1;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weighty = 0.0;

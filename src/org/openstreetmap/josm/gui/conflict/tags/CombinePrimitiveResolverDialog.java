@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.conflict.tags;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -15,6 +16,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,23 +31,33 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.corrector.UserCancelException;
+import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Utils.Function;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * This dialog helps to resolve conflicts occurring when ways are combined or
  * nodes are merged.
+ *
+ * Usage: {@link #launchIfNecessary} followed by {@link #buildResolutionCommands}.
+ *
+ * Prior to {@link #launchIfNecessary}, the following usage sequence was needed:
  *
  * There is a singleton instance of this dialog which can be retrieved using
  * {@see #getInstance()}.
@@ -81,7 +93,9 @@ public class CombinePrimitiveResolverDialog extends JDialog {
      * Replies the unique instance of the dialog
      *
      * @return the unique instance of the dialog
+     * @deprecated use {@link #launchIfNecessary} instead.
      */
+    @Deprecated
     public static CombinePrimitiveResolverDialog getInstance() {
         if (instance == null) {
             instance = new CombinePrimitiveResolverDialog(Main.parent);
@@ -419,5 +433,97 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                 }
             }
         }
+    }
+
+    public static List<Command> launchIfNecessary(
+            final TagCollection tagsOfPrimitives,
+            final Collection<? extends OsmPrimitive> primitives,
+            final Collection<? extends OsmPrimitive> targetPrimitives) throws UserCancelException {
+
+        final TagCollection completeWayTags = new TagCollection(tagsOfPrimitives);
+        TagConflictResolutionUtil.combineTigerTags(completeWayTags);
+        TagConflictResolutionUtil.normalizeTagCollectionBeforeEditing(completeWayTags, primitives);
+        final TagCollection tagsToEdit = new TagCollection(completeWayTags);
+        TagConflictResolutionUtil.completeTagCollectionForEditing(tagsToEdit);
+
+        final CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
+
+        dialog.getTagConflictResolverModel().populate(tagsToEdit, completeWayTags.getKeysWithMultipleValues());
+
+        final Set<Relation> parentRelations = OsmPrimitive.getParentRelations(primitives);
+        dialog.getRelationMemberConflictResolverModel().populate(parentRelations, primitives);
+        dialog.prepareDefaultDecisions();
+
+        // show information dialog to non-experts
+        if (!completeWayTags.isApplicableToPrimitive() && !ExpertToggleAction.isExpert()) {
+            String conflicts = Utils.joinAsHtmlUnorderedList(Utils.transform(completeWayTags.getKeysWithMultipleValues(), new Function<String, String>() {
+
+                @Override
+                public String apply(String key) {
+                    return tr("{0} ({1})", key, Utils.join(tr(", "), Utils.transform(completeWayTags.getValues(key), new Function<String, String>() {
+
+                        @Override
+                        public String apply(String x) {
+                            return x == null || x.isEmpty() ? tr("<i>missing</i>") : x;
+                        }
+                    })));
+                }
+            }));
+            String msg = tr("You are about to combine {0} objects, "
+                    + "but the following tags are used conflictingly:<br/>{1}"
+                    + "If these objects are combined, the resulting object may have unwanted tags.<br/>"
+                    + "If you want to continue, you are shown a dialog to fix the conflicting tags.<br/><br/>"
+                    + "Do you want to continue?",
+                    primitives.size(), conflicts);
+            if (!ConditionalOptionPaneUtil.showConfirmationDialog(
+                    "combine_tags",
+                    Main.parent,
+                    "<html>" + msg + "</html>",
+                    tr("Combine confirmation"),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    JOptionPane.YES_OPTION)) {
+                throw new UserCancelException();
+            }
+        }
+
+        if (!parentRelations.isEmpty() && !ExpertToggleAction.isExpert()) {
+            String msg = trn("You are about to combine {1} objects, "
+                    + "which are part of {0} relation:<br/>{2}"
+                    + "Combining these objects may break this relation. If you are unsure, please cancel this operation.<br/>"
+                    + "If you want to continue, you are shown a dialog to decide how to adapt the relation.<br/><br/>"
+                    + "Do you want to continue?",
+                    "You are about to combine {1} objects, "
+                    + "which are part of {0} relations:<br/>{2}"
+                    + "Combining these objects may break these relations. If you are unsure, please cancel this operation.<br/>"
+                    + "If you want to continue, you are shown a dialog to decide how to adapt the relations.<br/><br/>"
+                    + "Do you want to continue?",
+                    parentRelations.size(), parentRelations.size(), primitives.size(),
+                    DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(parentRelations));
+            if (!ConditionalOptionPaneUtil.showConfirmationDialog(
+                    "combine_tags",
+                    Main.parent,
+                    "<html>" + msg + "</html>",
+                    tr("Combine confirmation"),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    JOptionPane.YES_OPTION)) {
+                throw new UserCancelException();
+            }
+        }
+
+        // resolve tag conflicts if necessary
+        if (!completeWayTags.isApplicableToPrimitive() || !parentRelations.isEmpty()) {
+            dialog.setVisible(true);
+            if (dialog.isCanceled()) {
+                throw new UserCancelException();
+            }
+        }
+        List<Command> cmds = new LinkedList<Command>();
+        for (OsmPrimitive i : targetPrimitives) {
+            dialog.setTargetPrimitive(i);
+            cmds.addAll(dialog.buildResolutionCommands());
+        }
+        return cmds;
     }
 }

@@ -1134,4 +1134,16 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         return condition.match(this);
     }
 
+    /**
+     * Replies the set of referring relations
+     *
+     * @return the set of referring relations
+     */
+    public static Set<Relation> getParentRelations(Collection<? extends OsmPrimitive> primitives) {
+        HashSet<Relation> ret = new HashSet<Relation>();
+        for (OsmPrimitive w : primitives) {
+            ret.addAll(OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class));
+        }
+        return ret;
+    }
 }

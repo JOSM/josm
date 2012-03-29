@@ -36,6 +36,8 @@ import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.TaggingPresetNameTemplateList;
+import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Utils.Function;
 
 /**
  * This is the default implementation of a {@see NameFormatter} for names of {@see OsmPrimitive}s.
@@ -685,13 +687,13 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     public String formatAsHtmlUnorderedList(Collection<? extends OsmPrimitive> primitives) {
-        StringBuilder sb = new StringBuilder(1024);
-        sb.append("<ul>");
-        for (OsmPrimitive i : primitives) {
-            sb.append("<li>").append(i.getDisplayName(this)).append("</li>");
-        }
-        sb.append("</ul>");
-        return sb.toString();
+        return Utils.joinAsHtmlUnorderedList(Utils.transform(primitives, new Function<OsmPrimitive, String>() {
+
+            @Override
+            public String apply(OsmPrimitive x) {
+                return x.getDisplayName(DefaultNameFormatter.this);
+            }
+        }));
     }
 
     public String formatAsHtmlUnorderedList(OsmPrimitive... primitives) {
