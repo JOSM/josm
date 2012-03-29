@@ -4,6 +4,7 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
+import java.util.Iterator;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 
@@ -12,10 +13,30 @@ import org.openstreetmap.josm.actions.ExtensionFileFilter;
  */
 public class AllFormatsImporter extends FileImporter {
     public AllFormatsImporter() {
-        super(new ExtensionFileFilter("osm,xml,osm.gz,osm.bz2,osm.bz,osc,gpx,gpx.gz,nmea,nme,nma,log,txt,wms,jpg", "", tr("All Formats")
-                    + " (*.gpx *.osm *.nmea *.jpg ...)"));
+        super(new ExtensionFileFilter(getAllExtensions(), "", tr("All Formats")
+                + " (*.gpx *.osm *.nmea *.jpg ...)"));
     }
+
     @Override public boolean acceptFile(File pathname) {
         return false;
+    }
+
+    /**
+     * Builds list of all supported extensions by the registered FileImporters.
+     * @return String comma separated list of supported file extensions
+     */
+    private static String getAllExtensions() {
+        Iterator<FileImporter> imp = ExtensionFileFilter.importers.iterator();
+        StringBuilder ext = new StringBuilder();
+        while(imp.hasNext()) {
+            FileImporter fi = imp.next();
+            if(fi instanceof AllFormatsImporter) {
+                continue;
+            }
+            ext.append(fi.filter.getExtensions());
+            ext.append(",");
+        }
+        // remove last comma
+        return ext.substring(0, ext.length()-1).toString();
     }
 }

@@ -88,7 +88,23 @@ public class ExtensionFileFilter extends FileFilter {
                         return o1.getDescription().compareTo(o2.getDescription());
                     }
                 }
-                );
+        );
+    }
+
+    /**
+     * Updates the {@see AllFormatsImporter} that is contained in the importers list. If
+     * you do not use the importers variable directly, you don’t need to call this.
+     * 
+     *  Updating the AllFormatsImporter is required when plugins add new importers that
+     *  support new file extensions. The old AllFormatsImporter doesn’t include the new
+     *  extensions and thus will not display these files.
+     */
+    public static void updateAllFormatsImporter() {
+        for(int i=0; i < importers.size(); i++) {
+            if(importers.get(i) instanceof AllFormatsImporter) {
+                importers.set(i, new AllFormatsImporter());
+            }
+        }
     }
 
     /**
@@ -99,6 +115,7 @@ public class ExtensionFileFilter extends FileFilter {
      * @return an ordered list of {@see ExtensionFileFilter}s for importing.
      */
     public static List<ExtensionFileFilter> getImportExtensionFileFilters() {
+        updateAllFormatsImporter();
         LinkedList<ExtensionFileFilter> filters = new LinkedList<ExtensionFileFilter>();
         for (FileImporter importer : importers) {
             filters.add(importer.filter);
@@ -198,7 +215,7 @@ public class ExtensionFileFilter extends FileFilter {
         for (String ext : extensions.split(","))
             if (name.endsWith("."+ext))
                 return true;
-                return false;
+        return false;
     }
 
     @Override public boolean accept(File pathname) {
@@ -209,6 +226,10 @@ public class ExtensionFileFilter extends FileFilter {
 
     @Override public String getDescription() {
         return description;
+    }
+
+    public String getExtensions() {
+        return extensions;
     }
 
     public String getDefaultExtension() {
