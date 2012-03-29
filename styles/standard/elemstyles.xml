@@ -3635,6 +3635,11 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="entrance"/>
+		<icon annotate="true" src="vehicle/entrance.png"/>
+	</rule>
+
+	<rule>
 		<condition k="area" b="yes"/>
 		<area colour="area#ffffff" priority="-10000"/>
 	</rule>
