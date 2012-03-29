@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui.actionsupport;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +18,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.GBC;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
@@ -29,14 +32,12 @@ import org.openstreetmap.josm.tools.UrlLabel;
 public class AlignImageryPanel extends JPanel {
     private static final String PREF = "imagery.offsetnagging";
 
-    public AlignImageryPanel() {
+    public AlignImageryPanel(boolean oneLine) {
         super();
         
         Font font = getFont().deriveFont(Font.PLAIN, 14.0f);
         JLabel nagLabel = new JLabel(tr("Aerial imagery might be misaligned. Please check its offset using GPS tracks!"));
         UrlLabel detailsList = new UrlLabel(tr("http://wiki.openstreetmap.org/wiki/Using_Imagery"), tr("Details..."));
-        double w = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-        if (w<1300) detailsList.setDescription("Read more");
         nagLabel.setFont(font);
         detailsList.setFont(font);
         
@@ -55,13 +56,16 @@ public class AlignImageryPanel extends JPanel {
             }
         });
         
-        BoxLayout box = new BoxLayout(this, BoxLayout.X_AXIS);
-        setLayout(box);
-        add(nagLabel);
-        add(Box.createHorizontalStrut(12));
-        add(detailsList);
-        add(Box.createHorizontalGlue());
-        add(closeButton);
+        setLayout(new GridBagLayout());
+        if (!oneLine) { // tune for small screens
+            add(nagLabel, GBC.std(1, 1).fill());
+            add(detailsList, GBC.std(1, 2).fill());
+            add(closeButton, GBC.std(2, 1).span(1,2).anchor(GBC.EAST));
+        } else {
+            add(nagLabel, GBC.std(1,1).fill());
+            add(detailsList, GBC.std(2,1).fill());
+            add(closeButton, GBC.std(3,1).anchor(GBC.EAST));
+        }
 //        setBorder(new EmptyBorder(12, 12, 12, 12));
         setBorder(new CompoundBorder(new EtchedBorder(EtchedBorder.LOWERED), new EmptyBorder(12, 12, 12, 12)));
         setBackground(new Color(224, 236, 249));
@@ -70,7 +74,8 @@ public class AlignImageryPanel extends JPanel {
     public static void addNagPanelIfNeeded() {
         if( Main.map != null && !Main.pref.getBoolean("expert") && Main.pref.getBoolean(PREF, true) ) {
             if (Main.map.getTopPanel(AlignImageryPanel.class) == null) {
-                AlignImageryPanel p = new AlignImageryPanel();
+                double w = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+                AlignImageryPanel p = new AlignImageryPanel(w>1300);
                 Main.map.addTopPanel(p);
             }
         }
