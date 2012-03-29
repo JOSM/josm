@@ -1,9 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.combineTigerTags;
-import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.completeTagCollectionForEditing;
-import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.normalizeTagCollectionBeforeEditing;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -33,7 +30,6 @@ import org.openstreetmap.josm.corrector.ReverseWayTagCorrector;
 import org.openstreetmap.josm.corrector.UserCancelException;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -92,19 +88,6 @@ public class CombineWayAction extends JosmAction {
             }
         }
         return targetWay;
-    }
-
-    /**
-     * Replies the set of referring relations
-     *
-     * @return the set of referring relations
-     */
-    public static Set<Relation> getParentRelations(Collection<Way> ways) {
-        HashSet<Relation> ret = new HashSet<Relation>();
-        for (Way w: ways) {
-            ret.addAll(OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class));
-        }
-        return ret;
     }
 
     /**
@@ -193,36 +176,14 @@ public class CombineWayAction extends JosmAction {
         Way modifiedTargetWay = new Way(targetWay);
         modifiedTargetWay.setNodes(path);
 
-        TagCollection completeWayTags = new TagCollection(wayTags);
-        combineTigerTags(completeWayTags);
-        normalizeTagCollectionBeforeEditing(completeWayTags, ways);
-        TagCollection tagsToEdit = new TagCollection(completeWayTags);
-        completeTagCollectionForEditing(tagsToEdit);
-
-        CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
-        dialog.getTagConflictResolverModel().populate(tagsToEdit, completeWayTags.getKeysWithMultipleValues());
-        dialog.setTargetPrimitive(targetWay);
-        Set<Relation> parentRelations = getParentRelations(ways);
-        dialog.getRelationMemberConflictResolverModel().populate(
-                parentRelations,
-                ways
-        );
-        dialog.prepareDefaultDecisions();
-
-        // resolve tag conflicts if necessary
-        //
-        if (!completeWayTags.isApplicableToPrimitive() || !parentRelations.isEmpty()) {
-            dialog.setVisible(true);
-            if (dialog.isCanceled())
-                throw new UserCancelException();
-        }
+        List<Command> resolution = CombinePrimitiveResolverDialog.launchIfNecessary(wayTags, ways, Collections.singleton(targetWay));
 
         LinkedList<Command> cmds = new LinkedList<Command>();
         LinkedList<Way> deletedWays = new LinkedList<Way>(ways);
         deletedWays.remove(targetWay);
 
         cmds.add(new ChangeCommand(targetWay, modifiedTargetWay));
-        cmds.addAll(dialog.buildResolutionCommands());
+        cmds.addAll(resolution);
         cmds.add(new DeleteCommand(deletedWays));
         final SequenceCommand sequenceCommand = new SequenceCommand(tr("Combine {0} ways", ways.size()), cmds);
 

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
  * Basic utils, that can be useful in different parts of the program.
@@ -163,6 +164,16 @@ public class Utils {
             }
         }
         return s.toString();
+    }
+
+    public static String joinAsHtmlUnorderedList(Collection<?> values) {
+        StringBuilder sb = new StringBuilder(1024);
+        sb.append("<ul>");
+        for (Object i : values) {
+            sb.append("<li>").append(i).append("</li>");
+        }
+        sb.append("</ul>");
+        return sb.toString();
     }
 
     /**
@@ -422,7 +433,7 @@ public class Utils {
      * @param f a function that transforms objects of {@code A} to objects of {@code B}
      * @return the transformed unmodifiable collection
      */
-    public static <A, B> Collection<B> transform(final Collection<A> c, final Function<A, B> f) {
+    public static <A, B> Collection<B> transform(final Collection<? extends A> c, final Function<A, B> f) {
         return new Collection<B>() {
 
             @Override
@@ -459,7 +470,7 @@ public class Utils {
             public Iterator<B> iterator() {
                 return new Iterator<B>() {
 
-                    private Iterator<A> it = c.iterator();
+                    private Iterator<? extends A> it = c.iterator();
 
                     @Override
                     public boolean hasNext() {

@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +22,7 @@ import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.corrector.UserCancelException;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -32,7 +34,6 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
-import org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -255,68 +256,52 @@ public class MergeNodesAction extends JosmAction {
     public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode, Node targetLocationNode) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         CheckParameterUtil.ensureParameterNotNull(targetNode, "targetNode");
-        if (nodes == null)
+        if (nodes == null) {
             return null;
+        }
 
         Set<RelationToChildReference> relationToNodeReferences = RelationToChildReference.getRelationToChildReferences(nodes);
 
-        // build the tag collection
-        //
-        TagCollection nodeTags = TagCollection.unionOfAllPrimitives(nodes);
-        TagConflictResolutionUtil.combineTigerTags(nodeTags);
-        TagConflictResolutionUtil.normalizeTagCollectionBeforeEditing(nodeTags, nodes);
-        TagCollection nodeTagsToEdit = new TagCollection(nodeTags);
-        TagConflictResolutionUtil.completeTagCollectionForEditing(nodeTagsToEdit);
+        try {
+            TagCollection nodeTags = TagCollection.unionOfAllPrimitives(nodes);
+            List<Command> resultion = CombinePrimitiveResolverDialog.launchIfNecessary(nodeTags, nodes, Collections.singleton(targetNode));
+            LinkedList<Command> cmds = new LinkedList<Command>();
 
-        // launch a conflict resolution dialog, if necessary
-        //
-        CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
-        dialog.getTagConflictResolverModel().populate(nodeTagsToEdit, nodeTags.getKeysWithMultipleValues());
-        dialog.getRelationMemberConflictResolverModel().populate(relationToNodeReferences);
-        dialog.setTargetPrimitive(targetNode);
-        dialog.prepareDefaultDecisions();
-        // conflict resolution is necessary if there are conflicts in the merged tags
-        // or if at least one of the merged nodes is referred to by a relation
-        //
-        if (! nodeTags.isApplicableToPrimitive() || relationToNodeReferences.size() > 1) {
-            dialog.setVisible(true);
-            if (dialog.isCanceled())
+            // the nodes we will have to delete
+            //
+            Collection<Node> nodesToDelete = new HashSet<Node>(nodes);
+            nodesToDelete.remove(targetNode);
+
+            // fix the ways referring to at least one of the merged nodes
+            //
+            Collection<Way> waysToDelete = new HashSet<Way>();
+            List<Command> wayFixCommands = fixParentWays(
+                    nodesToDelete,
+                    targetNode);
+            if (wayFixCommands == null) {
                 return null;
-        }
-        LinkedList<Command> cmds = new LinkedList<Command>();
+            }
+            cmds.addAll(wayFixCommands);
 
-        // the nodes we will have to delete
-        //
-        Collection<Node> nodesToDelete = new HashSet<Node>(nodes);
-        nodesToDelete.remove(targetNode);
-
-        // fix the ways referring to at least one of the merged nodes
-        //
-        Collection<Way> waysToDelete= new HashSet<Way>();
-        List<Command> wayFixCommands = fixParentWays(
-                nodesToDelete,
-                targetNode
-        );
-        if (wayFixCommands == null)
+            // build the commands
+            //
+            if (targetNode != targetLocationNode) {
+                Node newTargetNode = new Node(targetNode);
+                newTargetNode.setCoor(targetLocationNode.getCoor());
+                cmds.add(new ChangeCommand(targetNode, newTargetNode));
+            }
+            cmds.addAll(resultion);
+            if (!nodesToDelete.isEmpty()) {
+                cmds.add(new DeleteCommand(nodesToDelete));
+            }
+            if (!waysToDelete.isEmpty()) {
+                cmds.add(new DeleteCommand(waysToDelete));
+            }
+            Command cmd = new SequenceCommand(tr("Merge {0} nodes", nodes.size()), cmds);
+            return cmd;
+        } catch (UserCancelException ex) {
             return null;
-        cmds.addAll(wayFixCommands);
-
-        // build the commands
-        //
-        if (targetNode != targetLocationNode) {
-            Node newTargetNode = new Node(targetNode);
-            newTargetNode.setCoor(targetLocationNode.getCoor());
-            cmds.add(new ChangeCommand(targetNode, newTargetNode));
         }
-        cmds.addAll(dialog.buildResolutionCommands());
-        if (!nodesToDelete.isEmpty()) {
-            cmds.add(new DeleteCommand(nodesToDelete));
-        }
-        if (!waysToDelete.isEmpty()) {
-            cmds.add(new DeleteCommand(waysToDelete));
-        }
-        Command cmd = new SequenceCommand(tr("Merge {0} nodes", nodes.size()), cmds);
-        return cmd;
     }
 
     @Override

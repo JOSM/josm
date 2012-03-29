@@ -42,7 +42,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
-import org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -537,43 +536,18 @@ public class JoinAreasAction extends JosmAction {
             ways.addAll(pol.innerWays);
         }
 
-        if (ways.size() < 2)
+        if (ways.size() < 2) {
             return true;
+        }
 
-        //mostly copied from CombineWayAction.java.
         TagCollection wayTags = TagCollection.unionOfAllPrimitives(ways);
-        TagCollection completeWayTags = new TagCollection(wayTags);
-        TagConflictResolutionUtil.combineTigerTags(completeWayTags);
-        TagConflictResolutionUtil.normalizeTagCollectionBeforeEditing(completeWayTags, ways);
-        TagCollection tagsToEdit = new TagCollection(completeWayTags);
-        TagConflictResolutionUtil.completeTagCollectionForEditing(tagsToEdit);
-
-        CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
-        dialog.getTagConflictResolverModel().populate(tagsToEdit, completeWayTags.getKeysWithMultipleValues());
-        dialog.setTargetPrimitive(ways.get(0));
-        Collection<Relation> parentRelations = CombineWayAction.getParentRelations(ways);
-        parentRelations = filterOwnMultipolygonRelations(parentRelations, polygons);
-        dialog.getRelationMemberConflictResolverModel().populate(
-                parentRelations,
-                ways
-        );
-        dialog.prepareDefaultDecisions();
-
-        // resolve tag conflicts if necessary
-        //
-        if (!completeWayTags.isApplicableToPrimitive() || !parentRelations.isEmpty()) {
-            dialog.setVisible(true);
-            if (dialog.isCanceled())
-                return false;
+        try {
+            cmds.addAll(CombinePrimitiveResolverDialog.launchIfNecessary(wayTags, ways, ways));
+            commitCommands(marktr("Fix tag conflicts"));
+            return true;
+        } catch (UserCancelException ex) {
+            return false;
         }
-
-        for (Way way : ways) {
-            dialog.setTargetPrimitive(way);
-            cmds.addAll(dialog.buildResolutionCommands());
-        }
-
-        commitCommands(marktr("Fix tag conflicts"));
-        return true;
     }
 
     /**
@@ -1208,7 +1182,7 @@ public class JoinAreasAction extends JosmAction {
         Set<Way> processedOuterWays = new LinkedHashSet<Way>();
         Set<Way> processedInnerWays = new LinkedHashSet<Way>();
 
-        for (Relation r : CombineWayAction.getParentRelations(selectedWays)) {
+        for (Relation r : OsmPrimitive.getParentRelations(selectedWays)) {
             if (r.isDeleted() || !r.isMultipolygon()) {
                 continue;
             }
