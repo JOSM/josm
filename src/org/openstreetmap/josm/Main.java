@@ -246,6 +246,21 @@ abstract public class Main {
         }
         platform.startupHook();
 
+        if (initListener != null) {
+            initListener.updateStatus(tr("Building main menu"));
+        }
+        contentPanePrivate.add(panel, BorderLayout.CENTER);
+        panel.add(gettingStarted, BorderLayout.CENTER);
+        menu = new MainMenu();
+
+        undoRedo.addCommandQueueListener(redoUndoListener);
+
+        // creating toolbar
+        contentPanePrivate.add(toolbar.control, BorderLayout.NORTH);
+
+        registerActionShortcut(menu.help, Shortcut.registerShortcut("system:help", tr("Help"),
+                KeyEvent.VK_F1, Shortcut.DIRECT));
+
         // contains several initialization tasks to be executed (in parallel) by a ExecutorService
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
 
@@ -264,29 +279,6 @@ abstract public class Main {
                 } catch (Exception x) {
                     // ignore any exception here.
                 }
-                return null;
-            }
-        });
-
-        tasks.add(new Callable<Void>() {
-
-            @Override
-            public Void call() throws Exception {
-                if (initListener != null) {
-                    initListener.updateStatus(tr("Building main menu"));
-                }
-                contentPanePrivate.add(panel, BorderLayout.CENTER);
-                panel.add(gettingStarted, BorderLayout.CENTER);
-                menu = new MainMenu();
-
-                undoRedo.addCommandQueueListener(redoUndoListener);
-
-                // creating toolbar
-                contentPanePrivate.add(toolbar.control, BorderLayout.NORTH);
-
-                registerActionShortcut(menu.help, Shortcut.registerShortcut("system:help", tr("Help"),
-                        KeyEvent.VK_F1, Shortcut.DIRECT));
-
                 return null;
             }
         });
