@@ -21,10 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.Action;
 import javax.swing.InputMap;
@@ -147,9 +147,9 @@ abstract public class Main {
     /**
      * The main menu bar at top of screen.
      */
-    public final MainMenu menu;
+    public MainMenu menu;
 
-    public final OsmValidator validator;
+    public OsmValidator validator;
     /**
      * The MOTD Layer.
      */
@@ -246,53 +246,105 @@ abstract public class Main {
         }
         platform.startupHook();
 
-        // We try to establish an API connection early, so that any API
-        // capabilities are already known to the editor instance. However
-        // if it goes wrong that's not critical at this stage.
-        if (initListener != null) {
-            initListener.updateStatus(tr("Initializing OSM API"));
-        }
+        // contains several initialization tasks to be executed (in parallel) by a ExecutorService
+        List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
+
+        tasks.add(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                // We try to establish an API connection early, so that any API
+                // capabilities are already known to the editor instance. However
+                // if it goes wrong that's not critical at this stage.
+                if (initListener != null) {
+                    initListener.updateStatus(tr("Initializing OSM API"));
+                }
+                try {
+                    OsmApi.getOsmApi().initialize(null, true);
+                } catch (Exception x) {
+                    // ignore any exception here.
+                }
+                return null;
+            }
+        });
+
+        tasks.add(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                if (initListener != null) {
+                    initListener.updateStatus(tr("Building main menu"));
+                }
+                contentPanePrivate.add(panel, BorderLayout.CENTER);
+                panel.add(gettingStarted, BorderLayout.CENTER);
+                menu = new MainMenu();
+
+                undoRedo.addCommandQueueListener(redoUndoListener);
+
+                // creating toolbar
+                contentPanePrivate.add(toolbar.control, BorderLayout.NORTH);
+
+                registerActionShortcut(menu.help, Shortcut.registerShortcut("system:help", tr("Help"),
+                        KeyEvent.VK_F1, Shortcut.DIRECT));
+
+                return null;
+            }
+        });
+
+        tasks.add(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                if (initListener != null) {
+                    initListener.updateStatus(tr("Initializing presets"));
+                }
+                TaggingPresetPreference.initialize();
+                return null;
+            }
+        });
+
+        tasks.add(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                if (initListener != null) {
+                    initListener.updateStatus(tr("Initializing map styles"));
+                }
+                MapPaintPreference.initialize();
+                return null;
+            }
+        });
+
+        tasks.add(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                if (initListener != null) {
+                    initListener.updateStatus(tr("Loading imagery preferences"));
+                }
+                ImageryPreference.initialize();
+                return null;
+            }
+        });
+
+        tasks.add(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                if (initListener != null) {
+                    initListener.updateStatus(tr("Initializing validator"));
+                }
+                validator = new OsmValidator();
+                MapView.addLayerChangeListener(validator);
+                return null;
+            }
+        });
+
         try {
-            OsmApi.getOsmApi().initialize(null, true);
-        } catch (Exception x) {
-            // ignore any exception here.
+            Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()).invokeAll(tasks);
+        } catch (InterruptedException ex) {
+            throw new RuntimeException(ex);
         }
-
-        if (initListener != null) {
-            initListener.updateStatus(tr("Building main menu"));
-        }
-        contentPanePrivate.add(panel, BorderLayout.CENTER);
-        panel.add(gettingStarted, BorderLayout.CENTER);
-        menu = new MainMenu();
-
-        undoRedo.addCommandQueueListener(redoUndoListener);
-
-        // creating toolbar
-        contentPanePrivate.add(toolbar.control, BorderLayout.NORTH);
-
-        registerActionShortcut(menu.help, Shortcut.registerShortcut("system:help", tr("Help"),
-                KeyEvent.VK_F1, Shortcut.DIRECT));
-
-        if (initListener != null) {
-            initListener.updateStatus(tr("Initializing presets"));
-        }
-        TaggingPresetPreference.initialize();
-
-        if (initListener != null) {
-            initListener.updateStatus(tr("Initializing map styles"));
-        }
-        MapPaintPreference.initialize();
-
-        if (initListener != null) {
-            initListener.updateStatus(tr("Loading imagery preferences"));
-        }
-        ImageryPreference.initialize();
-
-        if (initListener != null) {
-            initListener.updateStatus(tr("Initializing validator"));
-        }
-        validator = new OsmValidator();
-        MapView.addLayerChangeListener(validator);
 
         // hooks for the jmapviewer component
         FeatureAdapter.registerBrowserAdapter(new FeatureAdapter.BrowserAdapter() {
