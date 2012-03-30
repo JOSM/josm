@@ -133,7 +133,7 @@ public class XmlObjectParser implements Iterable<Object> {
                     throwException(e);
                 }
                 for (int i = 0; i < a.getLength(); ++i) {
-                    setValue(a.getQName(i), a.getValue(i));
+                    setValue(mapping.get(qname), a.getQName(i), a.getValue(i));
                 }
                 if (mapping.get(qname).onStart) {
                     report();
@@ -146,8 +146,8 @@ public class XmlObjectParser implements Iterable<Object> {
         @Override public void endElement(String ns, String lname, String qname) throws SAXException {
             if (mapping.containsKey(qname) && !mapping.get(qname).onStart) {
                 report();
-            } else if (characters != null && !current.isEmpty()) {
-                setValue(qname, characters.toString().trim());
+            } else if (mapping.containsKey(qname) && characters != null && !current.isEmpty()) {
+                setValue(mapping.get(qname), qname, characters.toString().trim());
                 characters  = new StringBuilder(64);
             }
         }
@@ -170,44 +170,31 @@ public class XmlObjectParser implements Iterable<Object> {
             return value;
         }
 
-        private void setValue(String fieldName, String value) throws SAXException {
+        private void setValue(Entry entry, String fieldName, String value) throws SAXException {
+            if (entry == null) {
+                throw new NullPointerException("entry cannot be null");
+            }
             if (fieldName.equals("class") || fieldName.equals("default") || fieldName.equals("throw") || fieldName.equals("new") || fieldName.equals("null")) {
                 fieldName += "_";
             }
             try {
                 Object c = current.peek();
-                Field f = null;
-                try {
-                    f = c.getClass().getField(fieldName);
-                } catch (NoSuchFieldException e) {
-                    if(fieldName.startsWith(lang))
-                    {
-                        String locfieldName = "locale_" +
-                                fieldName.substring(lang.length());
-                        try {
-                            f = c.getClass().getField(locfieldName);
-                        } catch (NoSuchFieldException ex) {
-                        }
-                    }
+                Field f = entry.getField(fieldName);
+                if (f == null && fieldName.startsWith(lang)) {
+                    f = entry.getField("locale_" + fieldName.substring(lang.length()));
                 }
-                if (f != null && Modifier.isPublic(f.getModifiers())) {
+                if (f != null && Modifier.isPublic(f.getModifiers()) && String.class.equals(f.getType())) {
                     f.set(c, getValueForClass(f.getType(), value));
                 } else {
-                    if(fieldName.startsWith(lang))
-                    {
+                    if (fieldName.startsWith(lang)) {
                         int l = lang.length();
-                        fieldName = "set" + fieldName.substring(l,l+1).toUpperCase() + fieldName.substring(l+1);
+                        fieldName = "set" + fieldName.substring(l, l + 1).toUpperCase() + fieldName.substring(l + 1);
+                    } else {
+                        fieldName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
                     }
-                    else
-                    {
-                        fieldName = "set" + fieldName.substring(0,1).toUpperCase() + fieldName.substring(1);
-                    }
-                    Method[] methods = c.getClass().getMethods();
-                    for (Method m : methods) {
-                        if (m.getName().equals(fieldName) && m.getParameterTypes().length == 1) {
-                            m.invoke(c, new Object[]{getValueForClass(m.getParameterTypes()[0], value)});
-                            return;
-                        }
+                    Method m = entry.getMethod(fieldName);
+                    if (m != null) {
+                        m.invoke(c, new Object[]{getValueForClass(m.getParameterTypes()[0], value)});
                     }
                 }
             } catch (Exception e) {
@@ -239,11 +226,43 @@ public class XmlObjectParser implements Iterable<Object> {
         Class<?> klass;
         boolean onStart;
         boolean both;
+        private final Map<String, Field> fields = new HashMap<String, Field>();
+        private final Map<String, Method> methods = new HashMap<String, Method>();
+
         public Entry(Class<?> klass, boolean onStart, boolean both) {
-            super();
             this.klass = klass;
             this.onStart = onStart;
             this.both = both;
+        }
+
+        Field getField(String s) {
+            if (fields.containsKey(s)) {
+                return fields.get(s);
+            } else {
+                try {
+                    Field f = klass.getField(s);
+                    fields.put(s, f);
+                    return f;
+                } catch (NoSuchFieldException ex) {
+                    fields.put(s, null);
+                    return null;
+                }
+            }
+        }
+
+        Method getMethod(String s) {
+            if (methods.containsKey(s)) {
+                return methods.get(s);
+            } else {
+                for (Method m : klass.getMethods()) {
+                    if (m.getName().equals(s) && m.getParameterTypes().length == 1) {
+                        methods.put(s, m);
+                        return m;
+                    }
+                }
+                methods.put(s, null);
+                return null;
+            }
         }
     }
 

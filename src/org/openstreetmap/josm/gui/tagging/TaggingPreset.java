@@ -1069,11 +1069,14 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         putValue(Action.SMALL_ICON, icon);
     }
 
-    /**
-     * Called from the XML parser to set the types this preset affects
-     */
+    // cache the parsing of types using a LRU cache (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
+    private static final Map<String,EnumSet<PresetType>> typeCache =
+            new LinkedHashMap<String, EnumSet<PresetType>>(16, 1.1f, true);
 
     static public EnumSet<PresetType> getType(String types) throws SAXException {
+        if (typeCache.containsKey(types)) {
+            return typeCache.get(types);
+        }
         EnumSet<PresetType> result = EnumSet.noneOf(PresetType.class);
         for (String type : Arrays.asList(types.split(","))) {
             try {
@@ -1083,9 +1086,13 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 throw new SAXException(tr("Unknown type: {0}", type));
             }
         }
+        typeCache.put(types, result);
         return result;
     }
 
+    /*
+     * Called from the XML parser to set the types this preset affects.
+     */
     public void setType(String types) throws SAXException {
         this.types = getType(types);
     }
