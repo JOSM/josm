@@ -75,12 +75,15 @@ public class MapStatus extends JPanel implements Helpful {
      * a fixed text content to the right of the image.
      */
     static class ImageLabel extends JPanel {
+        static Color backColor = Color.decode("#b8cfe5");
+        static Color backColorActive = Color.decode("#aaff5e");
+            
         private JLabel tf;
         private int chars;
         public ImageLabel(String img, String tooltip, int chars) {
             super();
             setLayout(new GridBagLayout());
-            setBackground(Color.decode("#b8cfe5"));
+            setBackground(backColor);
             add(new JLabel(ImageProvider.get("statusline/"+img+".png")), GBC.std().anchor(GBC.WEST).insets(0,1,1,0));
             add(tf = new JLabel(), GBC.std().fill(GBC.BOTH).anchor(GBC.WEST).insets(2,1,1,0));
             setToolTipText(tooltip);
@@ -786,5 +789,8 @@ public class MapStatus extends JPanel implements Helpful {
     }
     public void setDist(double dist) {
         distText.setText(dist < 0 ? "--" : NavigatableComponent.getDistText(dist));
+    }
+    public void activateAnglePanel(boolean activeFlag) {
+        angleText.setBackground(activeFlag ? ImageLabel.backColorActive : ImageLabel.backColor);
     }
 }
