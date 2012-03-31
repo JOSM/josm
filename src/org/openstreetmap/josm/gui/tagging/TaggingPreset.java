@@ -1058,6 +1058,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * and the 16x16 icons for SMALL_ICON.
      */
     public void setIcon(final String iconName) {
+        final File zipIcons = this.zipIcons;
         Main.worker.submit(new Runnable() {
 
             @Override
