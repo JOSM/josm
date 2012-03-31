@@ -21,14 +21,27 @@ public class XmlWriter {
         out.flush();
     }
 
+    public static String encode(String unencoded) {
+        return encode(unencoded, false);
+    }
+
     /**
      * Encode the given string in XML1.0 format.
      * Optimized to fast pass strings that don't need encoding (normal case).
+     *
+     * @param unencoded the unencoded input string
+     * @param keepApos true if apostrophe sign should stay as it is (in order to work around
+     * a Java bug that renders
+     *     new JLabel("<html>&apos;</html>")
+     * literally as 6 character string, see #7558)
      */
-    public static String encode(String unencoded) {
+    public static String encode(String unencoded, boolean keepApos) {
         StringBuilder buffer = null;
         for (int i = 0; i < unencoded.length(); ++i) {
-            String encS = XmlWriter.encoding.get(unencoded.charAt(i));
+            String encS = null;
+            if (!keepApos || unencoded.charAt(i) != '\'') {
+                encS = XmlWriter.encoding.get(unencoded.charAt(i));
+            }
             if (encS != null) {
                 if (buffer == null) {
                     buffer = new StringBuilder(unencoded.substring(0,i));

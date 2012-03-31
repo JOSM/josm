@@ -440,7 +440,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
                     if (p != null) {
                         User user = p.getUser();
                         if (user != null)
-                            return "<html>" + XmlWriter.encode(user.getName()) + " <font color=gray>(" + user.getId() + ")</font></html>";
+                            return "<html>" + XmlWriter.encode(user.getName(), true) + " <font color=gray>(" + user.getId() + ")</font></html>";
                     }
                     return null;
                 }
