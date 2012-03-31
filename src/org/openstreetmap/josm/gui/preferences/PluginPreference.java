@@ -36,6 +36,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -284,6 +285,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                         public void run() {
                             model.updateAvailablePlugins(task.getAvailabePlugins());
                             pnlPluginPreferences.refreshView();
+                            Main.pref.putInteger("pluginmanager.version", Version.getInstance().getVersion()); // fix #7030
                         }
                     });
                 }
