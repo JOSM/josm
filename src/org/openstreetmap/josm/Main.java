@@ -513,7 +513,7 @@ abstract public class Main {
 
         geometry = WindowGeometry.mainWindow("gui.geometry",
             (args.containsKey("geometry") ? args.get("geometry").iterator().next() : null),
-            !args.containsKey("no-maximize"));
+            !args.containsKey("no-maximize") && Main.pref.getBoolean("gui.maximized", false));
     }
 
     public void postConstructorProcessCmdLine(Map<String, Collection<String>> args) {
