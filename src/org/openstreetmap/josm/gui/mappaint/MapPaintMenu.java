@@ -48,6 +48,10 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
             return button;
         }
 
+        public void setStyle(StyleSource style) {
+            this.style = style;
+        }
+
         @Override
         public void updateEnabledState() {
             setEnabled(Main.map != null && Main.main.getEditLayer() != null);
@@ -77,6 +81,7 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
                 actions.put(k, a = new MapPaintAction(style));
                 add(a.getButton());
             } else {
+                a.setStyle(style);
                 add(a.getButton());
                 a.updateButton();
             }
