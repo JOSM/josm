@@ -113,25 +113,21 @@ public class ChangePropertyCommand extends Command {
             super.executeCommand(); // save old
 
             for (OsmPrimitive osm : objects) {
-                boolean modified = false;
-
-                 // loop over all tags
+                // loop over all tags
                 for (Map.Entry<String, String> tag : this.tags.entrySet()) {
                     String oldVal = osm.get(tag.getKey());
                     String newVal = tag.getValue();
 
                     if (newVal == null || newVal.isEmpty()) {
-                        if (oldVal != null) {
+                        if (oldVal != null)
                             osm.remove(tag.getKey());
-                            modified = true;
-                        }
                     }
                     else if (oldVal == null || !newVal.equals(oldVal))
                         osm.put(tag.getKey(), newVal);
-                        modified = true;
                 }
-                if (modified)
-                    osm.setModified(true);
+                // init() only keeps modified primitives. Therefore the modified
+                // bit can be set without further checks.
+                osm.setModified(true);
             }
             return true;
         }
