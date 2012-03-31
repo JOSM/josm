@@ -1268,6 +1268,12 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="misc/landmark/power.png"/>
 	</rule>
 
+        <rule>
+		<condition k="power" v="transformer"/>
+		<icon annotate="true" src="misc/landmark/power/transformer.png"/>
+		<area colour="power#eeeeee"/>
+	</rule>
+
     <!-- power_source is depricated by the wiki, but still in use -->
 	<rule>
 		<condition k="power_source" v="wind"/>
