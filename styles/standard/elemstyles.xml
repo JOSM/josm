@@ -1518,6 +1518,7 @@ For external files the <rules> should have following elements:
 		<condition k="leisure" v="track"/>
 		<icon annotate="true" src="sport/track.png"/>
 		<area colour="leisure#c7f1a3" closed="true"/>
+		<line width="2" colour="leisure#c7f1a3"/>
 	</rule>
 
 	<rule>

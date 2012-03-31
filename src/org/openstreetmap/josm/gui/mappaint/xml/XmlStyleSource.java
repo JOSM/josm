@@ -165,13 +165,14 @@ public class XmlStyleSource extends StyleSource {
     private void get(OsmPrimitive primitive, boolean closed, WayPrototypesRecord p, Double scale, MultiCascade mc) {
         String lineIdx = null;
         HashMap<String, LinemodPrototype> overlayMap = new HashMap<String, LinemodPrototype>();
+        boolean isNotArea = OsmUtils.isFalse(primitive.get("area"));
         for (String key : primitive.keySet()) {
             String val = primitive.get(key);
             AreaPrototype styleArea;
             LinePrototype styleLine;
             LinemodPrototype styleLinemod;
             String idx = "n" + key + "=" + val;
-            if ((styleArea = areas.get(idx)) != null && (closed || !styleArea.closed)) {
+            if ((styleArea = areas.get(idx)) != null && (closed || !styleArea.closed) && !isNotArea) {
                 p.area = update(p.area, styleArea, scale, mc);
             }
             if ((styleLine = lines.get(idx)) != null) {
@@ -186,7 +187,7 @@ public class XmlStyleSource extends StyleSource {
                 }
             }
             idx = "b" + key + "=" + OsmUtils.getNamedOsmBoolean(val);
-            if ((styleArea = areas.get(idx)) != null && (closed || !styleArea.closed)) {
+            if ((styleArea = areas.get(idx)) != null && (closed || !styleArea.closed) && !isNotArea) {
                 p.area = update(p.area, styleArea, scale, mc);
             }
             if ((styleLine = lines.get(idx)) != null) {
@@ -201,7 +202,7 @@ public class XmlStyleSource extends StyleSource {
                 }
             }
             idx = "x" + key;
-            if ((styleArea = areas.get(idx)) != null && (closed || !styleArea.closed)) {
+            if ((styleArea = areas.get(idx)) != null && (closed || !styleArea.closed) && !isNotArea) {
                 p.area = update(p.area, styleArea, scale, mc);
             }
             if ((styleLine = lines.get(idx)) != null) {
@@ -217,7 +218,7 @@ public class XmlStyleSource extends StyleSource {
             }
         }
         for (AreaPrototype s : areasList) {
-            if ((closed || !s.closed) && s.check(primitive)) {
+            if ((closed || !s.closed) && !isNotArea && s.check(primitive)) {
                 p.area = update(p.area, s, scale, mc);
             }
         }
