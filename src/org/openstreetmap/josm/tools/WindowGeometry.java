@@ -181,14 +181,18 @@ public class WindowGeometry {
                 }
                 return new WindowGeometry(new Point(x,y), new Dimension(w,h));
             } else {
-                System.out.println(tr("Ignoring malformed geometry: {0}", arg));
+                Main.warn(tr("Ignoring malformed geometry: {0}", arg));
             }
         }
         WindowGeometry def;
-        if(maximize)
+        if(maximize) {
             def = new WindowGeometry(screenDimension);
-        else
-            def = new WindowGeometry(screenDimension.getLocation(), new Dimension(1000, 740));
+        } else {
+            Point p = screenDimension.getLocation();
+            p.x += (screenDimension.width-1000)/2;
+            p.y += (screenDimension.height-740)/2;
+            def = new WindowGeometry(p, new Dimension(1000, 740));
+        }
         return new WindowGeometry(preferenceKey, def);
     }
 
@@ -314,11 +318,32 @@ public class WindowGeometry {
             GraphicsConfiguration[] gc = gd.getConfigurations();
             for (int i = 0; i < gc.length; i++) {
                 Rectangle b = gc[i].getBounds();
-                Rectangle is = b.intersection(g);
-                int s = is.width*is.height;
-                if(bounds == null || intersect < s) {
-                    intersect = s;
-                    bounds = b;
+                if(b.width/b.height >= 3) /* multiscreen with wrong definition */
+                {
+                    b.width /= 2;
+                    Rectangle is = b.intersection(g);
+                    int s = is.width*is.height;
+                    if(bounds == null || intersect < s) {
+                        intersect = s;
+                        bounds = b;
+                    }
+                    b = new Rectangle(b);
+                    b.x += b.width;
+                    is = b.intersection(g);
+                    s = is.width*is.height;
+                    if(bounds == null || intersect < s) {
+                        intersect = s;
+                        bounds = b;
+                    }
+                }
+                else
+                {
+                    Rectangle is = b.intersection(g);
+                    int s = is.width*is.height;
+                    if(bounds == null || intersect < s) {
+                        intersect = s;
+                        bounds = b;
+                    }
                 }
             }
         }
