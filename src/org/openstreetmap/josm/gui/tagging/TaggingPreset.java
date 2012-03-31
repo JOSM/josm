@@ -1049,24 +1049,31 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public String getRawName() {
         return group != null ? group.getRawName() + "/" + name : name;
     }
-    /**
-     * Called from the XML parser to set the icon
+
+    /*
+     * Called from the XML parser to set the icon.
+     * This task is performed in the background in order to speedup startup.
      *
      * FIXME for Java 1.6 - use 24x24 icons for LARGE_ICON_KEY (button bar)
      * and the 16x16 icons for SMALL_ICON.
      */
-    public void setIcon(String iconName) {
-        Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
-        ImageIcon icon = new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true).get();
-        if (icon == null)
-        {
-            System.out.println("Could not get presets icon " + iconName);
-            icon = new ImageIcon(iconName);
-        }
-        if (Math.max(icon.getIconHeight(), icon.getIconWidth()) != 16) {
-            icon = new ImageIcon(icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-        }
-        putValue(Action.SMALL_ICON, icon);
+    public void setIcon(final String iconName) {
+        Main.worker.submit(new Runnable() {
+
+            @Override
+            public void run() {
+                final Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
+                ImageIcon icon = new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true).get();
+                if (icon == null) {
+                    System.out.println("Could not get presets icon " + iconName);
+                    icon = new ImageIcon(iconName);
+                }
+                if (Math.max(icon.getIconHeight(), icon.getIconWidth()) != 16) {
+                    icon = new ImageIcon(icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+                }
+                putValue(Action.SMALL_ICON, icon);
+            }
+        });
     }
 
     // cache the parsing of types using a LRU cache (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
