@@ -144,6 +144,11 @@ public class PluginHandler {
     }
 
     final public static String [] UNMAINTAINED_PLUGINS = new String[] {"gpsbabelgui", "Intersect_way"};
+    
+    /**
+     * Default time-based update interval, in days (pluginmanager.time-based-update.interval)
+     */
+    public static final int DEFAULT_TIME_BASED_UPDATE_INTERVAL = 30;
 
     /**
      * All installed and loaded plugins (resp. their main classes)
@@ -267,7 +272,7 @@ public class PluginHandler {
         }  else {
             long tim = System.currentTimeMillis();
             long last = Main.pref.getLong("pluginmanager.lastupdate", 0);
-            Integer maxTime = Main.pref.getInteger("pluginmanager.time-based-update.interval", 60);
+            Integer maxTime = Main.pref.getInteger("pluginmanager.time-based-update.interval", DEFAULT_TIME_BASED_UPDATE_INTERVAL);
             long d = (tim - last) / (24 * 60 * 60 * 1000l);
             if ((last <= 0) || (maxTime <= 0)) {
                 Main.pref.put("pluginmanager.lastupdate", Long.toString(tim));
