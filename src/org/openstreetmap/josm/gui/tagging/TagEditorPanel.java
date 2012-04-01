@@ -5,9 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.EnumSet;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -180,13 +178,9 @@ public class TagEditorPanel extends JPanel {
     }
 
     private void updatePresets() {
-        Map<String, Map<String, Integer>> valuesCount = new HashMap<String, Map<String,Integer>>();
-        for (Entry<String, String> entry: model.getTags().entrySet()) {
-            Map<String, Integer> values = new HashMap<String, Integer>();
-            values.put(entry.getValue(), 1);
-            valuesCount.put(entry.getKey(), values);
-        }
-        presetListPanel.updatePresets(0, 0, 1, 0, valuesCount, presetHandler);
+        presetListPanel.updatePresets(
+                EnumSet.of(TaggingPreset.PresetType.RELATION),
+                model.getTags(), presetHandler);
         validate();
     }
 }

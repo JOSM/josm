@@ -87,6 +87,7 @@
 	<complexType name="key">
 		<attribute name="key" type="string" use="required" />
 		<attribute name="value" type="string" />
+		<attribute name="match" type="string" />
 	</complexType>
 
 
@@ -114,9 +115,8 @@
 		<attribute name="text" type="string" />
 		<attribute name="text_context" type="string" />
 		<attribute name="default" type="string" />
-		<attribute name="delete_if_empty" type="boolean" />
 		<attribute name="use_last_as_default" type="tns:last_default" />
-		<attribute name="required" type="boolean" />
+		<attribute name="match" type="tns:match" />
 
 		<attribute name="type" use="prohibited" />
 		<attribute name="name" use="prohibited" />
@@ -139,8 +139,7 @@
 		<attribute name="default" type="string" />
 		<attribute name="use_last_as_default" type="tns:last_default" />
 		<attribute name="editable" type="boolean" />
-		<attribute name="delete_if_empty" type="boolean" />
-		<attribute name="required" type="boolean" />
+		<attribute name="match" type="tns:match" />
 
 		<attribute name="type" use="prohibited" />
 		<attribute name="value" use="prohibited" />
@@ -160,8 +159,7 @@
 		<attribute name="default" type="string" />
 		<attribute name="use_last_as_default" type="tns:last_default" />
 		<attribute name="delimiter" type="string" />
-		<attribute name="delete_if_empty" type="boolean" />
-		<attribute name="required" type="boolean" />
+		<attribute name="match" type="tns:match" />
 
 		<attribute name="type" use="prohibited" />
 		<attribute name="value" use="prohibited" />
@@ -176,9 +174,9 @@
 		<attribute name="text" type="string" />
 		<attribute name="text_context" type="string" />
 		<attribute name="default" type="tns:check_default" />
-		<attribute name="required" type="boolean" />
 		<attribute name="value_on" type="string" />
 		<attribute name="value_off" type="string" />
+		<attribute name="match" type="tns:match" />
 
 		<attribute name="name" use="prohibited" />
 		<attribute name="type" use="prohibited" />
@@ -198,6 +196,15 @@
 			<enumeration value="true" />
 			<enumeration value="false" />
 			<enumeration value="force" />
+		</restriction>
+	</simpleType>
+
+	<simpleType name="match">
+		<restriction base="string">
+			<enumeration value="none" />
+			<enumeration value="key" />
+			<enumeration value="key!" />
+			<enumeration value="keyvalue" />
 		</restriction>
 	</simpleType>
 
