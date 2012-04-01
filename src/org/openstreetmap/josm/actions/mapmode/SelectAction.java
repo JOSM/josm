@@ -83,6 +83,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         scale("scale", null),
         rotate("rotate", null),
         merge("crosshair", null),
+        lasso("normal", "rope"),
         merge_to_node("crosshair", "joinnode"),
         move(Cursor.MOVE_CURSOR);
 
@@ -97,6 +98,8 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             return c;
         }
     }
+
+    private boolean lassoMode = false;
 
     // Cache previous mouse event (needed when only the modifier keys are
     // pressed but the mouse isn't moved)
@@ -171,8 +174,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         super.enterMode();
         mv.addMouseListener(this);
         mv.addMouseMotionListener(this);
-        mv.setVirtualNodesEnabled(
-                Main.pref.getInteger("mappaint.node.virtual-size", 8) != 0);
+        mv.setVirtualNodesEnabled(Main.pref.getInteger("mappaint.node.virtual-size", 8) != 0);
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
         // This is required to update the cursors when ctrl/shift/alt is pressed
         try {
@@ -240,7 +242,11 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             c = "scale";
             break;
         case select:
-            c = "rect" + (shift ? "_add" : (ctrl ? "_rm" : ""));
+            if (lassoMode) {
+                c = "lasso";
+            } else {
+                c = "rect" + (shift ? "_add" : (ctrl ? "_rm" : ""));
+            }
             break;
         }
         return SelectActionCursor.valueOf(c).cursor();
@@ -726,7 +732,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             break;
         case select:
         default:
-            selectionManager.register(mv);
+            selectionManager.register(mv, lassoMode);
             selectionManager.mousePressed(e);
             break;
         }
@@ -824,7 +830,8 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
 
     public void selectionEnded(Rectangle r, MouseEvent e) {
         updateKeyModifiers(e);
-        selectPrims(selectionManager.getObjectsInRectangle(r, alt), e, true, true);
+        mv.repaint();
+        selectPrims(selectionManager.getSelectedObjects(alt), e, true, true);
     }
 
     /**
@@ -972,5 +979,11 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     @Override
     public boolean layerIsSupported(Layer l) {
         return l instanceof OsmDataLayer;
+    }
+
+    public void setLassoMode(boolean lassoMode) {
+        System.out.println(lassoMode);
+        this.selectionManager.setLassoMode(lassoMode);
+        this.lassoMode = lassoMode;
     }
 }

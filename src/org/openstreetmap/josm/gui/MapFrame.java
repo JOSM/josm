@@ -40,6 +40,7 @@ import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.LassoModeAction;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.mapmode.ExtrudeAction;
@@ -108,7 +109,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     public PropertiesDialog propertiesDialog;
 
     // Map modes
-    private final MapMode mapModeSelect;
+    public final SelectAction mapModeSelect;
     private final MapMode mapModeDraw;
     private final MapMode mapModeZoom;
 
@@ -158,6 +159,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         // toolbar
         toolBarActions.setFloatable(false);
         addMapMode(new IconToggleButton(mapModeSelect = new SelectAction(this)));
+        addMapMode(new IconToggleButton(new LassoModeAction(), true));
         addMapMode(new IconToggleButton(mapModeDraw = new DrawAction(this)));
         addMapMode(new IconToggleButton(mapModeZoom = new ZoomAction(this)));
         addMapMode(new IconToggleButton(new DeleteAction(this), true));

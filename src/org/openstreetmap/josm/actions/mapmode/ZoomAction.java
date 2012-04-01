@@ -59,7 +59,7 @@ public class ZoomAction extends MapMode implements SelectionEnded {
 
     @Override public void enterMode() {
         super.enterMode();
-        selectionManager.register(Main.map.mapView);
+        selectionManager.register(Main.map.mapView, false);
     }
 
     @Override public void exitMode() {
