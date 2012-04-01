@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
@@ -96,6 +97,9 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      */
     private boolean aspectRatio;
 
+    private boolean lassoMode;
+    private Polygon lasso = new Polygon();
+
     /**
      * Create a new SelectionManager.
      *
@@ -115,7 +119,8 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      * Register itself at the given event source.
      * @param eventSource The emitter of the mouse events.
      */
-    public void register(NavigatableComponent eventSource) {
+    public void register(NavigatableComponent eventSource, boolean lassoMode) {
+       this.lassoMode = lassoMode;
         eventSource.addMouseListener(this);
         eventSource.addMouseMotionListener(this);
         selectionEndedListener.addPropertyChangeListener(this);
@@ -146,6 +151,9 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
     public void mousePressed(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
             mousePosStart = mousePos = e.getPoint();
+
+            lasso.reset();
+            lasso.addPoint(mousePosStart.x, mousePosStart.y);
         }
     }
 
@@ -159,12 +167,18 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
             if (mousePosStart == null) {
                 mousePosStart = mousePos = e.getPoint();
             }
-            paintRect();
+            if (!lassoMode) {
+                paintRect();
+            }
         }
 
         if (buttonPressed == MouseEvent.BUTTON1_DOWN_MASK) {
             mousePos = e.getPoint();
-            paintRect();
+            if (lassoMode) {
+                paintLasso();
+            } else {
+                paintRect();
+            }
         } else if (buttonPressed == (MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK)) {
             mousePosStart.x += e.getX()-mousePos.x;
             mousePosStart.y += e.getY()-mousePos.y;
@@ -181,10 +195,17 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
             return;
         if (mousePos == null || mousePosStart == null)
             return; // injected release from outside
-
         // disable the selection rect
-        paintRect();
-        Rectangle r = getSelectionRectangle();
+        Rectangle r;
+        if (!lassoMode) {
+            paintRect();
+            r = getSelectionRectangle();
+
+            lasso = rectToPolygon(r);
+        } else {
+            lasso.addPoint(mousePos.x, mousePos.y);
+            r = lasso.getBounds();
+        }
         mousePosStart = null;
         mousePos = null;
 
@@ -206,6 +227,21 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 
         Rectangle r = getSelectionRectangle();
         g.drawRect(r.x,r.y,r.width,r.height);
+    }
+
+    private void paintLasso() {
+        if (mousePos == null || mousePosStart == null || mousePos == mousePosStart) {
+            return;
+        }
+
+        Graphics g = nc.getGraphics();
+        g.setColor(Color.WHITE);
+
+        int lastPosX = lasso.xpoints[lasso.npoints - 1];
+        int lastPosY = lasso.ypoints[lasso.npoints - 1];
+        g.drawLine(lastPosX, lastPosY, mousePos.x, mousePos.y);
+
+        lasso.addPoint(mousePos.x, mousePos.y);
     }
 
     /**
@@ -260,19 +296,25 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
     }
 
     /**
-     * Return a list of all objects in the rectangle, respecting the different
+     * Return a list of all objects in the selection, respecting the different
      * modifier.
-     * @param alt Whether the alt key was pressed, which means select all objects
-     *      that are touched, instead those which are completly covered.
+     *
+     * @param alt Whether the alt key was pressed, which means select all
+     * objects that are touched, instead those which are completely covered.
      */
-    public Collection<OsmPrimitive> getObjectsInRectangle(Rectangle r, boolean alt) {
+    public Collection<OsmPrimitive> getSelectedObjects(boolean alt) {
+
         Collection<OsmPrimitive> selection = new LinkedList<OsmPrimitive>();
 
         // whether user only clicked, not dragged.
-        boolean clicked = r.width <= 2 && r.height <= 2;
-        Point center = new Point(r.x+r.width/2, r.y+r.height/2);
+        boolean clicked = false;
+        Rectangle bounding = lasso.getBounds();
+        if (bounding.height <= 2 && bounding.width <= 2) {
+            clicked = true;
+        }
 
         if (clicked) {
+            Point center = new Point(lasso.xpoints[0], lasso.ypoints[0]);
             OsmPrimitive osm = nc.getNearestNodeOrWay(center, OsmPrimitive.isSelectablePredicate, false);
             if (osm != null) {
                 selection.add(osm);
@@ -280,7 +322,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         } else {
             // nodes
             for (Node n : nc.getCurrentDataSet().getNodes()) {
-                if (n.isSelectable() && r.contains(nc.getPoint(n))) {
+                if (n.isSelectable() && lasso.contains(nc.getPoint(n))) {
                     selection.add(n);
                 }
             }
@@ -292,7 +334,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
                 }
                 if (alt) {
                     for (Node n : w.getNodes()) {
-                        if (!n.isIncomplete() && r.contains(nc.getPoint(n))) {
+                        if (!n.isIncomplete() && lasso.contains(nc.getPoint(n))) {
                             selection.add(w);
                             break;
                         }
@@ -300,7 +342,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
                 } else {
                     boolean allIn = true;
                     for (Node n : w.getNodes()) {
-                        if (!n.isIncomplete() && !r.contains(nc.getPoint(n))) {
+                        if (!n.isIncomplete() && !lasso.contains(nc.getPoint(n))) {
                             allIn = false;
                             break;
                         }
@@ -312,6 +354,21 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
             }
         }
         return selection;
+    }
+
+    private Polygon rectToPolygon(Rectangle r) {
+        Polygon poly = new Polygon();
+
+        poly.addPoint(r.x, r.y);
+        poly.addPoint(r.x, r.y + r.height);
+        poly.addPoint(r.x + r.width, r.y + r.height);
+        poly.addPoint(r.x + r.width, r.y);
+
+        return poly;
+    }
+
+    public void setLassoMode(boolean lassoMode) {
+        this.lassoMode = lassoMode;
     }
 
     public void mouseClicked(MouseEvent e) {}
