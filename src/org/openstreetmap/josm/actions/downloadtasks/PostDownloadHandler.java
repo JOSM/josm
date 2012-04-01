@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
@@ -80,24 +81,28 @@ public class PostDownloadHandler implements Runnable {
         // just one error object?
         //
         if (errors.size() == 1) {
-            Object error = errors.iterator().next();
-            if (error instanceof Exception) {
-                ExceptionDialogUtil.explainException((Exception)error);
-                return;
-            }
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    error.toString(),
-                    tr("Error during download"),
-                    JOptionPane.ERROR_MESSAGE);
+            final Object error = errors.iterator().next();
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (error instanceof Exception) {
+                        ExceptionDialogUtil.explainException((Exception)error);
+                    } else {
+                        JOptionPane.showMessageDialog(
+                                Main.parent,
+                                error.toString(),
+                                tr("Error during download"),
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
             return;
-
         }
 
         // multiple error object? prepare a HTML list
         //
         if (!errors.isEmpty()) {
-            StringBuffer sb = new StringBuffer();
+            final StringBuffer sb = new StringBuffer();
             for (Object error:errors) {
                 if (error instanceof String) {
                     sb.append("<li>").append(error).append("</li>").append("<br>");
@@ -108,11 +113,16 @@ public class PostDownloadHandler implements Runnable {
             sb.insert(0, "<html><ul>");
             sb.append("</ul></html>");
 
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    sb.toString(),
-                    tr("Errors during download"),
-                    JOptionPane.ERROR_MESSAGE);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            sb.toString(),
+                            tr("Errors during download"),
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            });
             return;
         }
     }
