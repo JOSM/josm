@@ -24,13 +24,14 @@ label: simple static text label
 key: fixed key/value pair to be set
   key: key to set
   value: value to set
+  match: none/key/key!/keyvalue (default is "ketvalue", see below for more information)
 
 text: text box
   key: key to set
   text: fixed label to display
-  default: default string to display
-  delete_if_empty: true/false
-  use_last_as_default: true/false/force
+  default: default string to display (defaults to "")
+  use_last_as_default: true/false/force (default is "false")
+  match: none/key/key!/keyvalue (default is "none", see below for more information)
 
 combo: combo box, with multiple choices and possible to enter free form text
   key: key to set
@@ -45,9 +46,9 @@ combo: combo box, with multiple choices and possible to enter free form text
                         <short_description>first description</short_description>
                                 ...
                         <short_description>last description</short_description>
-  default: default string to display
-  delete_if_empty: true/false
-  use_last_as_default: true/false/force
+  default: default string to display (defaults to "")
+  use_last_as_default: true/false/force (default is "false")
+  match: none/key/key!/keyvalue (default is none, see below for more information)
 
 multiselect: list of values from which zero or more can be selected
   key: key to set
@@ -65,17 +66,17 @@ multiselect: list of values from which zero or more can be selected
                         <short_description>first description</short_description>
                                 ...
                         <short_description>last description</short_description>
-  default: default string to display
-  delete_if_empty: true/false
-  use_last_as_default: true/false/force
+  default: default string to display (defaults to "")
+  use_last_as_default: true/false/force (default is "false")
+  match: none/key/key!/keyvalue (default is "none", see below for more information)
 
 check: checkbox
   key: key to set
   text: fixed label to display
   default: ticked on/off
-  delete_if_empty: true/false
   value_on: the value to set when checked (default is "yes")
-  value_off: the value to set when unchecked (default is 'no')
+  value_off: the value to set when unchecked (default is "no")
+  match: none/key/key!/keyvalue (default is "none", see below for more information)
 
 role: type to specify possible roles in relations
   key: the role name used in relation
@@ -102,6 +103,14 @@ for this. The context should be a meaningful short description to help translato
 In JOSM internally all "name", "text" and "display_values" are translated when
 no specific translation has been given in XML file. When no "display_values"
 are supplied, then "values" will be treated as "display_values" and translated instead.
+
+The match attribute allows to change the matching process, i.e., determining whether
+the tags of an OSM object fit into this preset.
+ - none: neutral, i.e., do not consider this item for matching
+ - key: positive if key matches, neutral otherwise
+ - key!: positive if key matches, negative otherwise
+ - keyvalue: positive if key and value matches, negative otherwise
+Note that for a match, at least one positive and no negative is required.
 -->
   <group name="Highways" icon="presets/way_secondary.png">
     <group name="Streets" icon="presets/way_secondary.png">

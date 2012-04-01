@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -103,6 +104,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.TaggingPreset.PresetType;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
@@ -260,16 +262,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 Component c = super.getListCellRendererComponent(list, value,
                         index, isSelected, cellHasFocus);
                 if (c instanceof JLabel) {
-                    String str = null;
-                    str=((AutoCompletionListItem) value).getValue();
-                    if (valueCount.containsKey(objKey)){
-                        Map<String, Integer> m=valueCount.get(objKey);
+                    String str = ((AutoCompletionListItem) value).getValue();
+                    if (valueCount.containsKey(objKey)) {
+                        Map<String, Integer> m = valueCount.get(objKey);
                         if (m.containsKey(str)) {
-                            str+="("+m.get(str)+")";
-                            c.setFont(c.getFont().deriveFont(Font.ITALIC+Font.BOLD));
+                            str = tr("{0} ({1})", str, m.get(str));
+                            c.setFont(c.getFont().deriveFont(Font.ITALIC + Font.BOLD));
                         }
                     }
-                    ((JLabel)c).setText(str);
+                    ((JLabel) c).setText(str);
                 }
                 return c;
             }
@@ -946,45 +947,37 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         // re-load property data
         propertyData.setRowCount(0);
-        int nodes = 0;
-        int ways = 0;
-        int relations = 0;
-        int closedways = 0;
 
-        Map<String, Integer> keyCount = new HashMap<String, Integer>();
+        final Map<String, Integer> keyCount = new HashMap<String, Integer>();
+        final Map<String, String> tags = new HashMap<String, String>();
         valueCount.clear();
+        EnumSet<PresetType> types = EnumSet.noneOf(TaggingPreset.PresetType.class);
         for (OsmPrimitive osm : newSelection) {
-            if(osm instanceof Node) {
-                ++nodes;
-            } else if(osm instanceof Relation) {
-                ++relations;
-            } else if(((Way)osm).isClosed()) {
-                ++closedways;
-            } else {
-                ++ways;
-            }
-            for (String key: osm.keySet()) {
+            types.add(PresetType.forPrimitive(osm));
+            for (String key : osm.keySet()) {
                 String value = osm.get(key);
                 keyCount.put(key, keyCount.containsKey(key) ? keyCount.get(key) + 1 : 1);
                 if (valueCount.containsKey(key)) {
                     Map<String, Integer> v = valueCount.get(key);
-                    v.put(value, v.containsKey(value)? v.get(value) + 1 : 1 );
+                    v.put(value, v.containsKey(value) ? v.get(value) + 1 : 1);
                 } else {
-                    TreeMap<String,Integer> v = new TreeMap<String, Integer>();
+                    TreeMap<String, Integer> v = new TreeMap<String, Integer>();
                     v.put(value, 1);
                     valueCount.put(key, v);
                 }
             }
         }
         for (Entry<String, Map<String, Integer>> e : valueCount.entrySet()) {
-            int count=0;
-            for (Entry<String, Integer> e1: e.getValue().entrySet()) {
-                count+=e1.getValue();
+            int count = 0;
+            for (Entry<String, Integer> e1 : e.getValue().entrySet()) {
+                count += e1.getValue();
             }
             if (count < newSelection.size()) {
-                e.getValue().put("", newSelection.size()-count);
+                e.getValue().put("", newSelection.size() - count);
             }
             propertyData.addRow(new Object[]{e.getKey(), e.getValue()});
+            tags.put(e.getKey(), e.getValue().size() == 1
+                    ? e.getValue().keySet().iterator().next() : tr("<different>"));
         }
 
         membershipData.setRowCount(0);
@@ -1025,7 +1018,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             membershipData.addRow(new Object[]{r, roles.get(r)});
         }
 
-        presets.updatePresets(nodes, ways, relations, closedways, valueCount, presetHandler);
+        presets.updatePresets(types, tags, presetHandler);
 
         membershipTable.getTableHeader().setVisible(membershipData.getRowCount() > 0);
         membershipTable.setVisible(membershipData.getRowCount() > 0);

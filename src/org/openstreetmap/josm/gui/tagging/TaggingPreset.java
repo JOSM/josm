@@ -107,6 +107,67 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String getName() {
             return name().toLowerCase();
         }
+
+        public static PresetType forPrimitive(OsmPrimitive p) {
+            return forPrimitiveType(p.getDisplayType());
+        }
+
+        public static PresetType forPrimitiveType(org.openstreetmap.josm.data.osm.OsmPrimitiveType type) {
+            switch (type) {
+                case NODE:
+                    return NODE;
+                case WAY:
+                    return WAY;
+                case CLOSEDWAY:
+                    return CLOSEDWAY;
+                case RELATION:
+                    return RELATION;
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+    }
+
+    /**
+     * Enum denoting how a match (see {@link Item#matches}) is performed.
+     */
+    private enum MatchType {
+
+        /**
+         * Neutral, i.e., do not consider this item for matching.
+         */
+        NONE("none"),
+        /**
+         * Positive if key matches, neutral otherwise.
+         */
+        KEY("key"),
+        /**
+         * Positive if key matches, negative otherwise.
+         */
+        KEY_REQUIRED("key!"),
+        /**
+         * Positive if key and value matches, negative otherwise.
+         */
+        KEY_VALUE("keyvalue");
+
+        private final String value;
+
+        private MatchType(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public static MatchType ofString(String type) {
+            for (MatchType i : EnumSet.allOf(MatchType.class)) {
+                if (i.getValue().equals(type)) {
+                    return i;
+                }
+            }
+            throw new IllegalArgumentException(type + " is not allowed");
+        }
     }
 
     public static final int DIALOG_ANSWER_APPLY = 1;
@@ -139,6 +200,14 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         boolean requestFocusInWindow() {
             return false;
         }
+
+        /**
+         * Tests whether the tags match this item.
+         * Note that for a match, at least one positive and no negative is required.
+         * @param tags the tags of an {@link OsmPrimitive}
+         * @return {@code true} if matches (positive), {@code null} if neutral, {@code false} if mismatches (negative).
+         */
+        abstract Boolean matches(Map<String, String> tags);
     }
 
     public static class Usage {
@@ -247,8 +316,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String default_;
         public String originalValue;
         public String use_last_as_default = "false";
-        public boolean delete_if_empty = false;
-        public boolean required = false;
+        public String match = MatchType.NONE.getValue();
 
         private JComponent value;
 
@@ -315,15 +383,26 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     if (v.equals(originalValue) || (originalValue == null && v.length() == 0))
                         return;
 
-                    if (delete_if_empty && v.length() == 0) {
-                        v = null;
-                    }
                     changedTags.add(new Tag(key, v));
         }
 
         @Override
         boolean requestFocusInWindow() {
             return value.requestFocusInWindow();
+        }
+
+        @Override
+        Boolean matches(Map<String, String> tags) {
+            switch (MatchType.ofString(match)) {
+                case NONE:
+                    return null;
+                case KEY:
+                    return tags.containsKey(key) ? true : null;
+                case KEY_REQUIRED:
+                    return tags.containsKey(key);
+                default:
+                    throw new IllegalArgumentException("key_value matching not supported for <text>: " + text);
+            }
         }
     }
 
@@ -336,7 +415,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String value_on = OsmUtils.trueval;
         public String value_off = OsmUtils.falseval;
         public boolean default_ = false; // only used for tagless objects
-        public boolean required = false;
+        public String match = MatchType.NONE.getValue();
 
         private QuadStateCheckBox check;
         private QuadStateCheckBox.State initialState;
@@ -410,6 +489,22 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                             null));
         }
         @Override boolean requestFocusInWindow() {return check.requestFocusInWindow();}
+
+        @Override
+        Boolean matches(Map<String, String> tags) {
+            switch (MatchType.ofString(match)) {
+                case NONE:
+                    return null;
+                case KEY:
+                    return tags.containsKey(key) ? true : null;
+                case KEY_REQUIRED:
+                    return tags.containsKey(key);
+                case KEY_VALUE:
+                    return value_off.equals(tags.get(key)) || value_on.equals(tags.get(key));
+                default:
+                    throw new IllegalStateException();
+            }
+        }
     }
 
     public static abstract class ComboMultiSelect extends Item {
@@ -426,9 +521,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String locale_short_descriptions;
         public String default_;
         public String delimiter = ";";
-        public boolean delete_if_empty = false;
         public String use_last_as_default = "false";
-        public boolean required = false;
+        public String match = MatchType.NONE.getValue();
 
         protected List<String> short_description_list;
         protected JComponent component;
@@ -439,6 +533,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         protected abstract Object getSelectedItem();
         protected abstract void addToPanelAnchor(JPanel p, String def, String[] display_array);
 
+        protected char getDelChar() {
+            return delimiter.isEmpty() ? ';' : delimiter.charAt(0);
+        }
+
         @Override
         public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
 
@@ -446,10 +544,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             usage = determineTextUsage(sel, key);
             String def = default_;
 
-            char delChar = ';';
-            if (!delimiter.isEmpty()) {
-                delChar = delimiter.charAt(0);
-            }
+            char delChar = getDelChar();
 
             String[] value_array = splitEscaped(delChar, values);
             String[] display_array;
@@ -551,9 +646,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             } else if (value.equals(originalValue.toString()))
                 return;
 
-            if (delete_if_empty && value.length() == 0) {
-                value = null;
-            }
             if (!"false".equals(use_last_as_default)) {
                 lastValue.put(key, value);
             }
@@ -606,6 +698,23 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     return lbl;
                 }
             };
+        }
+
+        @Override
+        Boolean matches(Map<String, String> tags) {
+            switch (MatchType.ofString(match)) {
+                case NONE:
+                    return null;
+                case KEY:
+                    return tags.containsKey(key) ? true : null;
+                case KEY_REQUIRED:
+                    return tags.containsKey(key);
+                case KEY_VALUE:
+                    return tags.containsKey(key)
+                            && Arrays.asList(splitEscaped(getDelChar(), values)).contains(tags.get(key));
+                default:
+                    throw new IllegalStateException();
+            }
         }
     }
 
@@ -827,6 +936,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         @Override
         public void addCommands(List<Tag> changedTags) {
         }
+
+        @Override
+        Boolean matches(Map<String, String> tags) {
+            return null;
+        }
     }
 
     public static class Link extends Item {
@@ -861,6 +975,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         @Override
         public void addCommands(List<Tag> changedTags) {
         }
+
+        @Override
+        Boolean matches(Map<String, String> tags) {
+            return null;
+        }
     }
 
     public static class Role {
@@ -870,7 +989,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String text_context;
         public String locale_text;
 
-        public boolean required=false;
+        public boolean required = false;
         public long count = 0;
 
         public void setType(String types) throws SAXException {
@@ -955,6 +1074,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         @Override
         public void addCommands(List<Tag> changedTags) {
         }
+
+        @Override
+        Boolean matches(Map<String, String> tags) {
+            return null;
+        }
     }
 
     public static class Optional extends Item {
@@ -971,6 +1095,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         @Override
         public void addCommands(List<Tag> changedTags) {
         }
+
+        @Override
+        Boolean matches(Map<String, String> tags) {
+            return null;
+        }
     }
 
     public static class Space extends Item {
@@ -984,12 +1113,18 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         @Override
         public void addCommands(List<Tag> changedTags) {
         }
+
+        @Override
+        Boolean matches(Map<String, String> tags) {
+            return null;
+        }
     }
 
     public static class Key extends Item {
 
         public String key;
         public String value;
+        public String match = MatchType.KEY_VALUE.getValue();
 
         @Override
         public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
@@ -999,6 +1134,22 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         @Override
         public void addCommands(List<Tag> changedTags) {
             changedTags.add(new Tag(key, value));
+        }
+
+        @Override
+        Boolean matches(Map<String, String> tags) {
+            switch (MatchType.ofString(match)) {
+                case NONE:
+                    return null;
+                case KEY:
+                    return tags.containsKey(key) ? true : null;
+                case KEY_REQUIRED:
+                    return tags.containsKey(key);
+                case KEY_VALUE:
+                    return value.equals(tags.get(key));
+                default:
+                    throw new IllegalStateException();
+            }
         }
     }
 
@@ -1499,5 +1650,23 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     @Override
     public String toString() {
         return (types == null?"":types) + " " + name;
+    }
+
+    public boolean matches(Collection<PresetType> t, Map<String, String> tags) {
+        if (!isShowable()) {
+            return false;
+        } else if (t != null && types != null && !types.containsAll(t)) {
+            return false;
+        }
+        boolean atLeastOnePositiveMatch = false;
+        for (Item item : data) {
+            Boolean m = item.matches(tags);
+            if (m != null && !m) {
+                return false;
+            } else if (m != null) {
+                atLeastOnePositiveMatch = true;
+            }
+        }
+        return atLeastOnePositiveMatch;
     }
 }

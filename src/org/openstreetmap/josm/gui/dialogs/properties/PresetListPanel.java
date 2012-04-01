@@ -10,7 +10,6 @@ import java.awt.event.MouseListener;
 import java.awt.font.TextAttribute;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -23,10 +22,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset.Check;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset.Combo;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.PresetType;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset.Text;
 import org.openstreetmap.josm.tools.GBC;
 
 public class PresetListPanel extends JPanel {
@@ -81,71 +77,26 @@ public class PresetListPanel extends JPanel {
         public void mouseReleased(MouseEvent arg0) {}
     }
 
-    public void updatePresets(int nodes, int ways, int relations, int closedways, Map<String, Map<String, Integer>> valueCount, PresetHandler presetHandler)  {
+    public void updatePresets(final Collection<PresetType> types, final Map<String, String> tags, PresetHandler presetHandler) {
 
         removeAll();
-        int total = nodes+ways+relations+closedways;
-        if(total == 0) {
+        if (types.isEmpty()) {
             setVisible(false);
             return;
         }
 
-        for(TaggingPreset t : TaggingPresetPreference.taggingPresets) {
-            if(
-                    (       t.types == null
-                            || (relations > 0 && t.types.contains(PresetType.RELATION))
-                            || (nodes > 0 && t.types.contains(PresetType.NODE))
-                            || (ways+closedways > 0 && t.types.contains(PresetType.WAY))
-                            || (closedways > 0 && t.types.contains(PresetType.CLOSEDWAY))
-                    )
-                    && t.isShowable())
-            {
-                int found = 0;
-                for(TaggingPreset.Item i : t.data) {
-                    if(i instanceof TaggingPreset.Key) {
-                        String val = ((TaggingPreset.Key)i).value;
-                        String key = ((TaggingPreset.Key)i).key;
-                        // we subtract 100 if not found and add 1 if found
-                        found -= 100;
-                        if(key == null || !valueCount.containsKey(key)) {
-                            continue;
-                        }
-
-                        Map<String, Integer> v = valueCount.get(key);
-                        if(v.size() == 1 && val != null && v.containsKey(val) && v.get(val) == total) {
-                            found += 101;
-                        }
-                    } else {
-                        String key = null;
-                        if ((i instanceof Text) && ((Text)i).required) {
-                            key = ((Text)i).key;
-                        } else if ((i instanceof Combo) && ((Combo)i).required) {
-                            key = ((Combo)i).key;
-                        } else if ((i instanceof Check) && ((Check)i).required) {
-                            key = ((Check)i).key;
-                        }
-                        if (key != null) {
-                            if (valueCount.get(key) != null) {
-                                found += 1;
-                            } else {
-                                found -= 100;
-                            }
-                        }
-                    }
-                }
-
-                if(found <= 0) {
-                    continue;
-                }
-
-                JLabel lbl = new JLabel(t.getName() + " …");
-                lbl.setIcon((Icon) t.getValue(Action.SMALL_ICON));
-                lbl.addMouseListener(new PresetLabelML(lbl, t, presetHandler));
-                add(lbl, GBC.eol().fill(GBC.HORIZONTAL));
+        for (TaggingPreset t : TaggingPresetPreference.taggingPresets) {
+            if (!t.matches(types, tags)) {
+                continue;
             }
+
+            JLabel lbl = new JLabel(t.getName() + " …");
+            lbl.setIcon((Icon) t.getValue(Action.SMALL_ICON));
+            lbl.addMouseListener(new PresetLabelML(lbl, t, presetHandler));
+            add(lbl, GBC.eol().fill(GBC.HORIZONTAL));
         }
 
-        if(getComponentCount() > 0) {
+        if (getComponentCount() > 0) {
             setVisible(true);
             // This ensures the presets are exactly as high as needed.
             int height = getComponentCount() * getComponent(0).getHeight();
@@ -156,5 +107,4 @@ public class PresetListPanel extends JPanel {
             setVisible(false);
         }
     }
-
 }
