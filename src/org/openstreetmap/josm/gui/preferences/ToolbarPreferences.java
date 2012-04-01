@@ -16,6 +16,8 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -944,13 +946,25 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             if (action.isSeparator()) {
                 control.addSeparator();
             } else {
-                JButton b = control.add(action.getParametrizedAction());
+                final JButton b = control.add(action.getParametrizedAction());
                 String tt = action.getDisplayTooltip();
                 if (tt != null && !tt.isEmpty())
                     b.setToolTipText(tt);
                 Icon i = action.getDisplayIcon();
-                if (i != null)
+                if (i != null) {
                     b.setIcon(i);
+                } else {
+                    // hide action text if an icon is set later (necessary for delayed/background image loading)
+                    action.getParametrizedAction().addPropertyChangeListener(new PropertyChangeListener() {
+
+                        @Override
+                        public void propertyChange(PropertyChangeEvent evt) {
+                            if (Action.SMALL_ICON.equals(evt.getPropertyName())) {
+                                b.setHideActionText(evt.getNewValue() != null);
+                            }
+                        }
+                    });
+                }
                 b.addMouseListener(new PopupMenuLauncher( new ToolbarPopupMenu(action)));
             }
         }
