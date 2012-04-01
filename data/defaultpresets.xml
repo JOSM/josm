@@ -3324,7 +3324,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <optional>
                 <combo key="display" text="Display" values="analog,digital,sundial,unorthodox" values_context="display" default="" delete_if_empty="true" />
                 <combo key="support" text="Support" values="pole,wall_mounted,billboard,ground" default="" delete_if_empty="true" />
-                <combo key="visibility" text="Visibility/readability" values="house,street,area" display_values="(up to 5m),(up to 20m),(more than 20m)" default="" delete_if_empty="true" />
+                <combo key="visibility" text="Visibility/readability" values="house,street,area" display_values="house (up to 5m),street (up to 20m),area (more than 20m)" default="" delete_if_empty="true" />
                 <check key="date" text="Shows current date" default="off" delete_if_empty="true" />
                 <check key="thermometer" text="Shows temperature" default="off" delete_if_empty="true" />
                 <check key="barometer" text="Shows barometric pressure" default="off" delete_if_empty="true" />
