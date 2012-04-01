@@ -76,6 +76,7 @@ import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlObjectParser;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
 import org.openstreetmap.josm.tools.template_engine.TemplateEntry;
@@ -267,6 +268,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String display_value;
         public String short_description;
         public String icon;
+        public String locale_display_value;
+        public String locale_short_description;
 
         public String getListDisplay() {
             if (value.equals(DIFFERENT))
@@ -275,16 +278,14 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             if (value.equals(""))
                 return "&nbsp;";
 
-            StringBuilder res = new StringBuilder("<b>");
-            if (display_value != null) {
-                res.append(display_value);
-            } else {
-                res.append(value);
-            }
+            final StringBuilder res = new StringBuilder("<b>");
+            final String displ = Utils.firstNonNull(locale_display_value, tr(display_value), tr(value));
+            res.append(displ);
             res.append("</b>");
-            if (short_description != null) {
+            final String descr = Utils.firstNonNull(locale_short_description, tr(short_description));
+            if (descr != null) {
                 // wrap in table to restrict the text width
-                res.append("<div style=\"width:300px; padding:0 0 5px 5px\">").append(short_description).append("</div>");
+                res.append("<div style=\"width:300px; padding:0 0 5px 5px\">").append(descr).append("</div>");
             }
             return res.toString();
         }
@@ -298,12 +299,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
         public PresetListEntry(String value) {
             this.value = value;
-            this.display_value = value;
-        }
-
-        public PresetListEntry(String value, String display_value) {
-            this.value = value;
-            this.display_value = display_value;
         }
 
         // toString is mainly used to initialize the Editor
@@ -592,26 +587,15 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
 
         private String[] initListEntriesFromAttributes() {
-
             char delChar = getDelChar();
 
             String[] value_array = splitEscaped(delChar, values);
-            String[] display_array;
-            String[] short_descriptions_array = null;
 
-            if (locale_display_values != null) {
-                display_array = splitEscaped(delChar, locale_display_values);
-            } else if (display_values != null) {
-                display_array = splitEscaped(delChar, display_values);
-            } else {
-                display_array = value_array;
-            }
+            final String displ = Utils.firstNonNull(locale_display_values, display_values);
+            String[] display_array = displ == null ? value_array : splitEscaped(delChar, displ);
 
-            if (locale_short_descriptions != null) {
-                short_descriptions_array = splitEscaped(delChar, locale_short_descriptions);
-            } else if (short_descriptions != null) {
-                short_descriptions_array = splitEscaped(delChar, short_descriptions);
-            }
+            final String descr = Utils.firstNonNull(locale_short_descriptions, short_descriptions);
+            String[] short_descriptions_array = descr == null ? null : splitEscaped(delChar, descr);
 
             if (display_array.length != value_array.length) {
                 System.err.println(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''display_values'' must be the same as in ''values''", key, text));

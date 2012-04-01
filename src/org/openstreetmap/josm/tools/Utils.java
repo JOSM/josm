@@ -62,9 +62,18 @@ public class Utils {
         return null;
     }
 
-	public static <T> Collection<T> filter(Collection<? extends T> collection, Predicate<? super T> predicate) {
-		return new FilteredCollection<T>(collection, predicate);
-	}
+    public static <T> Collection<T> filter(Collection<? extends T> collection, Predicate<? super T> predicate) {
+        return new FilteredCollection<T>(collection, predicate);
+    }
+
+    public static <T> T firstNonNull(T... items) {
+        for (T i : items) {
+            if (i != null) {
+                return i;
+            }
+        }
+        return null;
+    }
 
     /**
      * Filter a collection by (sub)class.
