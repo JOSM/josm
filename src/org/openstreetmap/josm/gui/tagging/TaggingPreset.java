@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
@@ -71,7 +72,6 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -262,10 +262,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return returnValue;
     }
 
-    protected static class PresetListEntry {
-        String value;
-        String display_value;
-        String short_description;
+    public static class PresetListEntry {
+        public String value;
+        public String display_value;
+        public String short_description;
+        public String icon;
 
         public String getListDisplay() {
             if (value.equals(DIFFERENT))
@@ -283,9 +284,16 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             res.append("</b>");
             if (short_description != null) {
                 // wrap in table to restrict the text width
-                res.append("<br><table><td width='232'>(").append(short_description).append(")</td></table>");
+                res.append("<div style=\"width:300px; padding:0 0 5px 5px\">").append(short_description).append("</div>");
             }
             return res.toString();
+        }
+
+        public ImageIcon getIcon() {
+            return icon == null ? null : ImageProvider.getIfAvailable(icon);
+        }
+
+        public PresetListEntry() {
         }
 
         public PresetListEntry(String value) {
@@ -303,7 +311,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String toString() {
             if (value.equals(DIFFERENT))
                 return DIFFERENT;
-            return display_value.replaceAll("<.*>", ""); // remove additional markup, e.g. <br>
+            return display_value == null ? value : display_value.replaceAll("<.*>", ""); // remove additional markup, e.g. <br>
         }
     }
 
@@ -524,9 +532,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String use_last_as_default = "false";
         public String match = MatchType.NONE.getValue();
 
-        protected List<String> short_description_list;
         protected JComponent component;
-        protected Map<String, PresetListEntry> lhm;
+        protected Map<String, PresetListEntry> lhm = new LinkedHashMap<String, PresetListEntry>();
         protected Usage usage;
         protected Object originalValue;
 
@@ -542,7 +549,49 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
             // find out if our key is already used in the selection.
             usage = determineTextUsage(sel, key);
-            String def = default_;
+
+            String[] display_array;
+            if (lhm.isEmpty()) {
+                display_array = initListEntriesFromAttributes();
+            } else {
+                if (values != null) {
+                    System.err.println(tr("Warning in tagging preset \"{0}-{1}\": "
+                            + "Ignoring ''{2}'' attribute as ''{3}'' elements are given.",
+                            key, text, "values", "list_entry"));
+                }
+                if (display_values != null || locale_display_values != null) {
+                    System.err.println(tr("Warning in tagging preset \"{0}-{1}\": "
+                            + "Ignoring ''{2}'' attribute as ''{3}'' elements are given.",
+                            key, text, "display_values", "list_entry"));
+                }
+                if (short_descriptions != null || locale_short_descriptions != null) {
+                    System.err.println(tr("Warning in tagging preset \"{0}-{1}\": "
+                            + "Ignoring ''{2}'' attribute as ''{3}'' elements are given.",
+                            key, text, "short_descriptions", "list_entry"));
+                }
+                display_array = new String[lhm.values().size()];
+                int i = 0;
+                for (PresetListEntry e : lhm.values()) {
+                    display_array[i++] = e.display_value;
+                }
+            }
+
+            if (locale_text == null) {
+                if (text_context != null) {
+                    locale_text = trc(text_context, fixPresetString(text));
+                } else {
+                    locale_text = tr(fixPresetString(text));
+                }
+            }
+            p.add(new JLabel(locale_text + ":"), GBC.std().insets(0, 0, 10, 0));
+
+            addToPanelAnchor(p, default_, display_array);
+
+            return true;
+
+        }
+
+        private String[] initListEntriesFromAttributes() {
 
             char delChar = getDelChar();
 
@@ -562,12 +611,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 short_descriptions_array = splitEscaped(delChar, locale_short_descriptions);
             } else if (short_descriptions != null) {
                 short_descriptions_array = splitEscaped(delChar, short_descriptions);
-            } else if (short_description_list != null) {
-                short_descriptions_array = short_description_list.toArray(new String[0]);
-            }
-
-            if (!"false".equals(use_last_as_default) && def == null && lastValue.containsKey(key)) {
-                def = lastValue.get(key);
             }
 
             if (display_array.length != value_array.length) {
@@ -580,7 +623,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 short_descriptions_array = null;
             }
 
-            lhm = new LinkedHashMap<String, PresetListEntry>();
             if (!usage.hasUniqueValue() && !usage.unused()) {
                 lhm.put(DIFFERENT, new PresetListEntry(DIFFERENT));
             }
@@ -596,19 +638,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                         lhm.put(value_array[i], e);
             }
 
-            if (locale_text == null) {
-                if (text_context != null) {
-                    locale_text = trc(text_context, fixPresetString(text));
-                } else {
-                    locale_text = tr(fixPresetString(text));
-                }
-            }
-            p.add(new JLabel(locale_text + ":"), GBC.std().insets(0, 0, 10, 0));
-
-            addToPanelAnchor(p, def, display_array);
-
-            return true;
-
+            return display_array;
         }
 
         protected String getDisplayIfNull(String display) {
@@ -652,11 +682,14 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             changedTags.add(new Tag(key, value));
         }
 
-        public void setShort_description(String s) {
-            if (short_description_list == null) {
-                short_description_list = new ArrayList<String>();
+        public void addListEntry(PresetListEntry e) {
+            lhm.put(e.value, e);
+        }
+
+        public void addListEntries(Collection<PresetListEntry> e) {
+            for (PresetListEntry i : e) {
+                addListEntry(i);
             }
-            short_description_list.add(tr(s));
         }
 
         @Override
@@ -667,7 +700,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         protected ListCellRenderer getListCellRenderer() {
             return new ListCellRenderer() {
 
-                HtmlPanel lbl = new HtmlPanel();
+                JLabel lbl = new JLabel();
                 JComponent dummy = new JComponent() {
                 };
 
@@ -686,8 +719,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     }
 
                     PresetListEntry item = (PresetListEntry) value;
-                    String s = item.getListDisplay();
-                    lbl.setText(s);
+                    lbl.setOpaque(true);
+                    lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
+                    lbl.setText("<html>" + item.getListDisplay() + "</html>");
+                    lbl.setIcon(item.getIcon());
                     lbl.setEnabled(list.isEnabled());
                     // We do not want the editor to have the maximum height of all
                     // entries. Return a dummy with bogus height.
@@ -1291,9 +1326,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         parser.map("label", Label.class);
         parser.map("space", Space.class);
         parser.map("key", Key.class);
+        parser.map("list_entry", PresetListEntry.class);
         LinkedList<TaggingPreset> all = new LinkedList<TaggingPreset>();
         TaggingPresetMenu lastmenu = null;
         Roles lastrole = null;
+        List<PresetListEntry> listEntries = new LinkedList<PresetListEntry>();
 
         if (validate) {
             parser.startWithValidation(in, "http://josm.openstreetmap.de/tagging-preset-1.0", "resource://data/tagging-preset.xsd");
@@ -1327,18 +1364,23 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 all.add(tp);
                 lastrole = null;
             } else {
-                if(all.size() != 0) {
-                    if(o instanceof Roles) {
-                        all.getLast().data.add((Item)o);
+                if (all.size() != 0) {
+                    if (o instanceof Roles) {
+                        all.getLast().data.add((Item) o);
                         lastrole = (Roles) o;
-                    }
-                    else if(o instanceof Role) {
-                        if(lastrole == null)
+                    } else if (o instanceof Role) {
+                        if (lastrole == null) {
                             throw new SAXException(tr("Preset role element without parent"));
+                        }
                         lastrole.roles.add((Role) o);
-                    }
-                    else {
-                        all.getLast().data.add((Item)o);
+                    } else if (o instanceof PresetListEntry) {
+                        listEntries.add((PresetListEntry) o);
+                    } else {
+                        all.getLast().data.add((Item) o);
+                        if (o instanceof ComboMultiSelect) {
+                            ((ComboMultiSelect) o).addListEntries(listEntries);
+                        }
+                        listEntries = new LinkedList<PresetListEntry>();
                         lastrole = null;
                     }
                 } else

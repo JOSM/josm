@@ -125,15 +125,22 @@
 		<anyAttribute processContents="skip" />
 	</complexType>
 
+        <complexType name="list_entry">
+		<attribute name="value" type="string" use="required" />
+		<attribute name="display_value" type="string" />
+		<attribute name="short_description" type="string" />
+		<attribute name="icon" type="string" />
+	</complexType>
+
 	<complexType name="combo">
+		<!-- use either list_entry's or a combination of values/display_values -->
 		<sequence>
-			<element name="short_description" type="string" minOccurs="0"
-				maxOccurs="unbounded" />
+			<element name="list_entry" type="tns:list_entry" minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
 		<attribute name="key" type="string" use="required" />
 		<attribute name="text" type="string" />
 		<attribute name="text_context" type="string" />
-		<attribute name="values" type="string" use="required" />
+		<attribute name="values" type="string" />
 		<attribute name="values_context" type="string" />
 		<attribute name="display_values" type="string" />
 		<attribute name="default" type="string" />
