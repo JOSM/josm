@@ -11,7 +11,7 @@ public class LassoModeAction extends MapMode {
     public LassoModeAction() {
         super(tr("Lasso Mode"),
                 "rope",
-                tr("Toggle Lasso Mode (in contrast to Rectangle Mode)"),
+                tr("Lasso selection mode: select objects within a hand-drawn region"),
                 null,
                 null);
     }
