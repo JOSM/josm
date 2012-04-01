@@ -27,8 +27,7 @@ import org.apache.commons.codec.StringEncoder;
  * @see <a href="http://drdobbs.com/184401251?pgno=2">Original Article</a>
  * @see <a href="http://en.wikipedia.org/wiki/Metaphone">http://en.wikipedia.org/wiki/Metaphone</a>
  *
- * @author Apache Software Foundation
- * @version $Id: DoubleMetaphone.java 1306487 2012-03-28 17:35:58Z sebb $
+ * @version $Id: DoubleMetaphone.java 1308156 2012-04-01 16:56:10Z ggregory $
  */
 public class DoubleMetaphone implements StringEncoder {
 

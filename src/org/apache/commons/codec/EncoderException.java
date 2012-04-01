@@ -22,8 +22,7 @@ package org.apache.commons.codec;
  * {@link Encoder} encounters a encoding specific exception such as invalid data, inability to calculate a checksum,
  * characters outside of the expected range.
  * 
- * @author Apache Software Foundation
- * @version $Id: EncoderException.java 1306421 2012-03-28 15:31:08Z ggregory $
+ * @version $Id: EncoderException.java 1308156 2012-04-01 16:56:10Z ggregory $
  */
 public class EncoderException extends Exception {
 

@@ -41,9 +41,8 @@ import org.apache.commons.codec.binary.StringUtils;
  * Message Header Extensions for Non-ASCII Text</a>
  * </p>
  * 
- * @author Apache Software Foundation
  * @since 1.3
- * @version $Id: RFC1522Codec.java 1306466 2012-03-28 17:02:20Z ggregory $
+ * @version $Id: RFC1522Codec.java 1308156 2012-04-01 16:56:10Z ggregory $
  */
 abstract class RFC1522Codec {
     

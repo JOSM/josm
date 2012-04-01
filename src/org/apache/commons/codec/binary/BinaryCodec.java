@@ -28,9 +28,8 @@ import org.apache.commons.codec.EncoderException;
  * TODO: may want to add more bit vector functions like and/or/xor/nand 
  * TODO: also might be good to generate boolean[] from byte[] et cetera.
  * 
- * @author Apache Software Foundation
  * @since 1.3
- * @version $Id: BinaryCodec.java 1306423 2012-03-28 15:32:09Z ggregory $
+ * @version $Id: BinaryCodec.java 1308156 2012-04-01 16:56:10Z ggregory $
  */
 public class BinaryCodec implements BinaryDecoder, BinaryEncoder {
     /*

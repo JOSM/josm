@@ -43,9 +43,8 @@ import org.apache.commons.codec.binary.Base64;
  * @see <a href="http://www.ietf.org/rfc/rfc1522.txt">MIME (Multipurpose Internet Mail Extensions) Part Two: Message
  *          Header Extensions for Non-ASCII Text</a>
  * 
- * @author Apache Software Foundation
  * @since 1.3
- * @version $Id: BCodec.java 1306487 2012-03-28 17:35:58Z sebb $
+ * @version $Id: BCodec.java 1308156 2012-04-01 16:56:10Z ggregory $
  */
 public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder {
     /**

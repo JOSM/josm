@@ -37,8 +37,7 @@ import org.apache.commons.codec.StringEncoder;
  * For more information, see <a href="https://issues.apache.org/jira/browse/CODEC-57">CODEC-57</a>.
  * </p>
  * 
- * @author Apache Software Foundation
- * @version $Id: Metaphone.java 1306487 2012-03-28 17:35:58Z sebb $
+ * @version $Id: Metaphone.java 1308156 2012-04-01 16:56:10Z ggregory $
  */
 public class Metaphone implements StringEncoder {
 

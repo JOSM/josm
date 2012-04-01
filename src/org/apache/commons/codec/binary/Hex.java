@@ -32,8 +32,7 @@ import org.apache.commons.codec.EncoderException;
  * {@link #DEFAULT_CHARSET_NAME}
  * 
  * @since 1.1
- * @author Apache Software Foundation
- * @version $Id: Hex.java 1306487 2012-03-28 17:35:58Z sebb $
+ * @version $Id: Hex.java 1308156 2012-04-01 16:56:10Z ggregory $
  */
 public class Hex implements BinaryEncoder, BinaryDecoder {
 

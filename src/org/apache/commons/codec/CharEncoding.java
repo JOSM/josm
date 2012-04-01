@@ -48,9 +48,8 @@ package org.apache.commons.codec;
  * foreseen that [codec] would be made to depend on [lang].
  * 
  * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
- * @author Apache Software Foundation
  * @since 1.4
- * @version $Id: CharEncoding.java 1306415 2012-03-28 15:28:13Z ggregory $
+ * @version $Id: CharEncoding.java 1308156 2012-04-01 16:56:10Z ggregory $
  */
 public class CharEncoding {
     /**
