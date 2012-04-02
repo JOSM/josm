@@ -44,7 +44,7 @@ import org.apache.commons.codec.binary.Base64;
  *          Header Extensions for Non-ASCII Text</a>
  * 
  * @since 1.3
- * @version $Id: BCodec.java 1308156 2012-04-01 16:56:10Z ggregory $
+ * @version $Id: BCodec.java 1308315 2012-04-02 12:07:27Z ggregory $
  */
 public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder {
     /**
