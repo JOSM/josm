@@ -60,14 +60,26 @@ public class BaseNCodecInputStream extends FilterInputStream {
     }
 
     /**
+     * Marks the current position in this input stream.
+     * <p>The {@link #mark} method of {@link BaseNCodecInputStream} does nothing.</p>
+     *
+     * @param readLimit the maximum limit of bytes that can be read before the mark position becomes invalid.
+     *  @since 1.7
+     */
+    @Override
+    public synchronized void mark(int readLimit) {
+    }
+
+    /**
      * {@inheritDoc}
-     * 
-     * @return false
+     *
+     * @return always returns <code>false</code>
      */
     @Override
     public boolean markSupported() {
         return false; // not an easy job to support marks
     }
+
     /**
      * Reads one <code>byte</code> from this input stream.
      * 
@@ -149,6 +161,18 @@ public class BaseNCodecInputStream extends FilterInputStream {
             }
             return readLen;
         }
+    }
+
+    /**
+     * Repositions this stream to the position at the time the mark method was last called on this input stream.
+     * <p>The {@link #reset} method of {@link BaseNCodecInputStream} does nothing except throw an {@link IOException}.</p>
+     *
+     * @throws IOException if this method is invoked
+     * @since 1.7
+     */
+    @Override
+    public synchronized void reset() throws IOException {
+        throw new IOException("mark/reset not supported");
     }
 
     /**
