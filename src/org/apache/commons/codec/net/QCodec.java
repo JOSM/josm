@@ -45,7 +45,7 @@ import org.apache.commons.codec.StringEncoder;
  *          Header Extensions for Non-ASCII Text</a>
  * 
  * @since 1.3
- * @version $Id: QCodec.java 1308315 2012-04-02 12:07:27Z ggregory $
+ * @version $Id: QCodec.java 1309093 2012-04-03 18:44:55Z sebb $
  */
 public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder {
     /**
@@ -121,6 +121,7 @@ public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      *                  the default string charset to use.
      * 
      * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
+     * @since 1.7
      */
     public QCodec(final Charset charset) {
         super();
@@ -200,6 +201,7 @@ public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * 
      * @throws EncoderException
      *                  thrown if a failure condition is encountered during the encoding process.
+     * @since 1.7
      */
     public String encode(final String str, final Charset charset) throws EncoderException {
         if (str == null) {
