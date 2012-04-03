@@ -122,9 +122,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 case CLOSEDWAY:
                     return CLOSEDWAY;
                 case RELATION:
+                case MULTIPOLYGON:
                     return RELATION;
                 default:
-                    throw new IllegalArgumentException();
+                    throw new IllegalArgumentException("Unexpected primitive type: " + type);
             }
         }
     }
