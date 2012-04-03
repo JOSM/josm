@@ -982,7 +982,6 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     }
 
     public void setLassoMode(boolean lassoMode) {
-        System.out.println(lassoMode);
         this.selectionManager.setLassoMode(lassoMode);
         this.lassoMode = lassoMode;
     }
