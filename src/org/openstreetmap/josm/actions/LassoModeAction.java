@@ -18,17 +18,17 @@ public class LassoModeAction extends MapMode {
 
     @Override
     public void enterMode() {
-        super.enterMode();
         if (Main.map != null) {
             Main.map.mapModeSelect.setLassoMode(true);
             Main.map.mapModeSelect.enterMode();
         }
+        super.enterMode();
     }
 
     @Override
     public void exitMode() {
-        super.exitMode();
         Main.map.mapModeSelect.setLassoMode(false);
         Main.map.mapModeSelect.exitMode();
+        super.exitMode();
     }
 }
