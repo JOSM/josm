@@ -303,7 +303,10 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
             loaded = tmpPrefs.getAllSettings();
             // plugins preference keys may be changed directly later, after plugins are downloaded
             // so we do not want to show it in the table as "changed" now
-            loaded.put("plugins", orig.get("plugins"));
+            Setting pluginSetting = orig.get("plugins");
+            if (pluginSetting!=null) {
+                loaded.put("plugins", pluginSetting);
+            }
         } else {
             loaded = orig;
         }
