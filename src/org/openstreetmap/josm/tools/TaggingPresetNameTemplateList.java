@@ -38,7 +38,7 @@ public class TaggingPresetNameTemplateList {
     public TaggingPreset findPresetTemplate(OsmPrimitive primitive) {
 
         for (TaggingPreset t : presetsWithPattern) {
-            if (t.matches(EnumSet.of(PresetType.forPrimitive(primitive)), primitive.getKeys())) {
+            if (t.matches(EnumSet.of(PresetType.forPrimitive(primitive)), primitive.getKeys(), false)) {
                 return t;
             }
         }
