@@ -86,7 +86,7 @@ public class PresetListPanel extends JPanel {
         }
 
         for (TaggingPreset t : TaggingPresetPreference.taggingPresets) {
-            if (!t.matches(types, tags)) {
+            if (!t.matches(types, tags, true)) {
                 continue;
             }
 
