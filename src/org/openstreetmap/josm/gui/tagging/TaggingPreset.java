@@ -280,13 +280,13 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 return "&nbsp;";
 
             final StringBuilder res = new StringBuilder("<b>");
-            final String displ = Utils.firstNonNull(locale_display_value, tr(display_value), tr(value));
-            res.append(displ);
+            res.append(getDisplayValue(true));
             res.append("</b>");
-            final String descr = Utils.firstNonNull(locale_short_description, tr(short_description));
-            if (descr != null) {
+            if (getShortDescription(true) != null) {
                 // wrap in table to restrict the text width
-                res.append("<div style=\"width:300px; padding:0 0 5px 5px\">").append(descr).append("</div>");
+                res.append("<div style=\"width:300px; padding:0 0 5px 5px\">");
+                res.append(getShortDescription(true));
+                res.append("</div>");
             }
             return res.toString();
         }
@@ -300,6 +300,18 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
         public PresetListEntry(String value) {
             this.value = value;
+        }
+
+        public String getDisplayValue(boolean translated) {
+            return translated
+                    ? Utils.firstNonNull(locale_display_value, tr(display_value), tr(value))
+                    : Utils.firstNonNull(display_value, value);
+        }
+
+        public String getShortDescription(boolean translated) {
+            return translated
+                    ? Utils.firstNonNull(locale_short_description, tr(short_description))
+                    : short_description;
         }
 
         // toString is mainly used to initialize the Editor
@@ -568,7 +580,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 display_array = new String[lhm.values().size()];
                 int i = 0;
                 for (PresetListEntry e : lhm.values()) {
-                    display_array[i++] = e.display_value;
+                    display_array[i++] = e.getDisplayValue(true);
                 }
             }
 
@@ -779,7 +791,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 // default is set and all items were unset
                 if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                     // selected osm primitives are untagged or filling default feature is enabled
-                    combo.setSelectedItem(lhm.get(def).display_value);
+                    combo.setSelectedItem(lhm.get(def).getDisplayValue(true));
                 } else {
                     // selected osm primitives are tagged and filling default feature is disabled
                     combo.setSelectedItem("");
