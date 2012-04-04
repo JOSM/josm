@@ -227,7 +227,7 @@ public class CustomConfigurator {
 
         try {
             String toXML = Main.pref.toXML(true);
-            InputStream is = new ByteArrayInputStream(toXML.getBytes());
+            InputStream is = new ByteArrayInputStream(toXML.getBytes("UTF-8"));
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             builderFactory.setValidating(false);
             builderFactory.setNamespaceAware(false);
@@ -421,6 +421,8 @@ public class CustomConfigurator {
             InputStream is = null;
             try {
                 is = new BufferedInputStream(new FileInputStream(file));
+                String fileDir = file.getParentFile().getAbsolutePath();
+                if (fileDir!=null) engine.eval("scriptDir='"+normalizeDirName(fileDir) +"';");
                 DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
                 builderFactory.setValidating(false);
                 builderFactory.setNamespaceAware(true);
@@ -447,6 +449,9 @@ public class CustomConfigurator {
                 CustomConfigurator.summary = new StringBuilder();
                 engine = new ScriptEngineManager().getEngineByName("rhino");
                 engine.eval("API={}; API.pref={}; API.fragments={};");
+                
+                engine.eval("homeDir='"+normalizeDirName(Main.pref.getPreferencesDir()) +"';");
+                engine.eval("josmVersion="+Version.getInstance().getVersion()+";");
                 String className =  CustomConfigurator.class.getName();
                 engine.eval("API.messageBox="+className+".messageBox");
                 engine.eval("API.askText=function(text) { return String("+className+".askForText(text));}");
@@ -678,7 +683,7 @@ public class CustomConfigurator {
          * subsititute ${expression} = expression evaluated by JavaScript
          */
         private String evalVars(String s) {
-            Pattern p = Pattern.compile("\\$\\{(.*)\\}");
+            Pattern p = Pattern.compile("\\$\\{([^\\}]*)\\}");
             Matcher mr =  p.matcher(s);
             StringBuffer sb = new StringBuffer();
             while (mr.find()) {
@@ -712,6 +717,12 @@ public class CustomConfigurator {
             } 
 
             return tmpPref;
+        }
+
+        private String normalizeDirName(String dir) {
+            String s = dir.replace("\\", "/");
+            if (s.endsWith("/")) s=s.substring(0,s.length()-1);
+            return s;
         }
 
 
