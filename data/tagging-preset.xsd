@@ -228,7 +228,6 @@
 		<attribute name="requisite" type="tns:role_requisite" />
 		<attribute name="type" type="string" />
 		<attribute name="count" type="integer" />
-		<attribute name="required" type="boolean" />
 	</complexType>
 
 	<simpleType name="role_requisite">
