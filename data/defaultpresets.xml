@@ -15,8 +15,11 @@ item:
   - relative to the icon path
   - URL's are also supported to allow remote icons (are cached locally)
   type: the data types - way,node,relation,closedway (separated by comma)
+  name_template: define custom formatting for OSM primitives
+                 see http://josm.openstreetmap.de/wiki/NameTemplate
 
 link: link to the relating map features website
+  href: the URL
 
 label: simple static text label
   text: the text to display
@@ -58,8 +61,8 @@ multiselect: list of values from which zero or more can be selected
   display_values: delimiter-separated list of values to be displayed instead of the
                   database values, order and number must be equal to values
   short_descriptions: delimiter-separated list of texts to be displayed below each
-                     display_value. (Only if it is not possible to describe
-                     the entry in 2-3 words.) Instead of a separated list
+                      display_value. (Only if it is not possible to describe
+                      the entry in 2-3 words.) Instead of a separated list
   instead using values, display_values and short_descriptions, the following form is also supported:
     <list_item value="" display_value="' short_description="" icon=""/>
   default: default string to display (defaults to "")
@@ -77,17 +80,17 @@ check: checkbox
 role: type to specify possible roles in relations
   key: the role name used in relation
   text: fixed label to display
-  requisite: "optional" or "required" (default is optional)
+  requisite: optional/required (default is "optional")
   count: how often can the role occur (if not given unlimited number is assumed)
   type: the data types - way,node,relation,closedway (separated by comma)
 
-For external files the <presets> should have following elements:
-- author           the author of the preset
-- version          a version number of some sort (e.g. creation date)
-- description      what is your preset meant to be
-- shortdescription very short description
-- link             a link to a helpful website (optional)
-- The fields description, shortdescription and link may also be localized (e.g. de.link)
+ presets: For external files <presets> should have following attributes:
+   author: the author of the preset
+   version: a version number of some sort (e.g. creation date)
+   description: what is your preset meant to be
+   shortdescription: very short description
+   link: a link to a helpful website (optional)
+ The fields description, shortdescription and link may also be localized (e.g. de.link)
 
 See also http://josm.openstreetmap.de/wiki/TaggingPresets.
 
