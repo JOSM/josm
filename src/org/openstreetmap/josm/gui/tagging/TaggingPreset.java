@@ -1691,10 +1691,14 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return (types == null?"":types) + " " + name;
     }
 
+    public boolean typeMatches(Collection<PresetType> t) {
+        return t == null || types == null || types.containsAll(t);
+    }
+
     public boolean matches(Collection<PresetType> t, Map<String, String> tags, boolean onlyShowable) {
         if (onlyShowable && !isShowable()) {
             return false;
-        } else if (t != null && types != null && !types.containsAll(t)) {
+        } else if (!typeMatches(t)) {
             return false;
         }
         boolean atLeastOnePositiveMatch = false;

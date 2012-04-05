@@ -1,7 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import java.util.EnumSet;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,8 +39,17 @@ public class TaggingPresetNameTemplateList {
     public TaggingPreset findPresetTemplate(OsmPrimitive primitive) {
 
         for (TaggingPreset t : presetsWithPattern) {
-            if (t.matches(EnumSet.of(PresetType.forPrimitive(primitive)), primitive.getKeys(), false)) {
-                return t;
+            Collection<PresetType> type = Collections.singleton(PresetType.forPrimitive(primitive));
+            if (t.typeMatches(type)) {
+                if (t.nameTemplateFilter != null) {
+                    if (t.nameTemplateFilter.match(primitive))
+                        return t;
+                    else {
+                        continue;
+                    }
+                } else if (t.matches(type, primitive.getKeys(), false)) {
+                    return t;
+                }
             }
         }
         return null;
