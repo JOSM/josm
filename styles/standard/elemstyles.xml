@@ -2096,7 +2096,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="amenity" v="bench"/>
-		<area colour="amenity_light#f7efb7"/>
+		<line colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="leisure/bench.png"/>
 	</rule>
 
