@@ -122,8 +122,8 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
     /* interface HistoryDataSetListener                                                   */
     /* ---------------------------------------------------------------------------------- */
     public void historyUpdated(HistoryDataSet source, PrimitiveId primitiveId) {
-        if (primitiveId == null || primitiveId.equals(browser.getHistory().getPrimitmiveId())) {
-            browser.populate(source.getHistory(browser.getHistory().getPrimitmiveId()));
+        if (primitiveId == null || primitiveId.equals(browser.getHistory().getPrimitiveId())) {
+            browser.populate(source.getHistory(browser.getHistory().getPrimitiveId()));
         }
     }
 

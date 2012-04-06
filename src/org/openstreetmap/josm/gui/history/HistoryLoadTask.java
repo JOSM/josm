@@ -119,7 +119,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      */
     public HistoryLoadTask add(History history) {
         CheckParameterUtil.ensureParameterNotNull(history, "history");
-        toLoad.add(history.getPrimitmiveId());
+        toLoad.add(history.getPrimitiveId());
         return this;
     }
 

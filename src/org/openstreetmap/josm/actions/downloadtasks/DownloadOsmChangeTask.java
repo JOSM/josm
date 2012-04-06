@@ -2,8 +2,10 @@ package org.openstreetmap.josm.actions.downloadtasks;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.Main;
@@ -82,7 +84,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                 return; // user canceled download or error occurred
             try {
                 // A changeset does not contain all referred primitives, this is the list of incomplete ones
-                List<OsmPrimitive> toLoad = new ArrayList<OsmPrimitive>();
+                Set<OsmPrimitive> toLoad = new HashSet<OsmPrimitive>();
                 // For each incomplete primitive, we'll have to get its state at date it was referred
                 List<Pair<OsmPrimitive, Date>> toMonitor = new ArrayList<Pair<OsmPrimitive, Date>>();
                 for (OsmPrimitive p : downloadedData.allNonDeletedPrimitives()) {
@@ -94,8 +96,9 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                                 break;
                             }
                         }
-                        toLoad.add(p);
-                        toMonitor.add(new Pair<OsmPrimitive, Date>(p, timestamp));
+                        if (toLoad.add(p)) {
+                            toMonitor.add(new Pair<OsmPrimitive, Date>(p, timestamp));
+                        }
                     }
                 }
                 if (isCanceled()) return;
@@ -150,7 +153,11 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                         }
 
                         data.setUser(hp.getUser());
-                        data.setVisible(hp.isVisible());
+                        try {
+                            data.setVisible(hp.isVisible());
+                        } catch (IllegalStateException e) {
+                            System.err.println("Cannot change visibility for "+pair.a+": "+e.getMessage());
+                        }
                         data.setTimestamp(hp.getTimestamp());
                         data.setKeys(hp.getTags());
                         data.setOsmId(hp.getChangesetId(), (int) hp.getVersion());
