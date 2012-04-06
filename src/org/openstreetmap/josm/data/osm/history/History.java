@@ -159,7 +159,7 @@ public class History{
      *
      * @return the primitive id
      */
-    public PrimitiveId getPrimitmiveId() {
+    public PrimitiveId getPrimitiveId() {
         return new SimplePrimitiveId(id, type);
     }
 
