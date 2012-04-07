@@ -266,6 +266,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     public static class PresetListEntry {
         public String value;
+        public String value_context;
         public String display_value;
         public String short_description;
         public String icon;
@@ -304,7 +305,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
         public String getDisplayValue(boolean translated) {
             return translated
-                    ? Utils.firstNonNull(locale_display_value, tr(display_value), tr(value))
+                    ? Utils.firstNonNull(locale_display_value, tr(display_value), trc(value_context, value))
                     : Utils.firstNonNull(display_value, value);
         }
 
@@ -580,16 +581,15 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 display_array = new String[lhm.values().size()];
                 int i = 0;
                 for (PresetListEntry e : lhm.values()) {
+                    if (e.value_context == null) {
+                        e.value_context = values_context;
+                    }
                     display_array[i++] = e.getDisplayValue(true);
                 }
             }
 
             if (locale_text == null) {
-                if (text_context != null) {
-                    locale_text = trc(text_context, fixPresetString(text));
-                } else {
-                    locale_text = tr(fixPresetString(text));
-                }
+                locale_text = trc(text_context, fixPresetString(text));
             }
             p.add(new JLabel(locale_text + ":"), GBC.std().insets(0, 0, 10, 0));
 
@@ -624,15 +624,16 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 lhm.put(DIFFERENT, new PresetListEntry(DIFFERENT));
             }
             for (int i = 0; i < value_array.length; i++) {
-                PresetListEntry e = new PresetListEntry(value_array[i]);
-                e.display_value = (locale_display_values == null)
-                        ? (values_context == null ? tr(fixPresetString(display_array[i]))
-                                : trc(values_context, fixPresetString(display_array[i]))) : display_array[i];
-                        if (short_descriptions_array != null) {
-                            e.short_description = locale_short_descriptions == null ? tr(fixPresetString(short_descriptions_array[i]))
-                                    : fixPresetString(short_descriptions_array[i]);
-                        }
-                        lhm.put(value_array[i], e);
+                final PresetListEntry e = new PresetListEntry(value_array[i]);
+                e.locale_display_value = locale_display_values != null
+                        ? display_array[i]
+                        : trc(values_context, fixPresetString(display_array[i]));
+                if (short_descriptions_array != null) {
+                    e.locale_short_description = locale_short_descriptions != null
+                            ? short_descriptions_array[i]
+                            : tr(fixPresetString(short_descriptions_array[i]));
+                }
+                lhm.put(value_array[i], e);
             }
 
             // as addToPanel may be called several times, set String to null to avoid "Ignoring * attribute as * elements are given"
