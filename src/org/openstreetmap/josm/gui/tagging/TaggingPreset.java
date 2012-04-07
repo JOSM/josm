@@ -635,6 +635,13 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                         lhm.put(value_array[i], e);
             }
 
+            // as addToPanel may be called several times, set String to null to avoid "Ignoring * attribute as * elements are given"
+            values = null;
+            display_values = null;
+            locale_display_values = null;
+            short_descriptions = null;
+            locale_short_descriptions = null;
+
             return display_array;
         }
 
@@ -922,7 +929,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      *      must be escaped within one entry
      * @param s the string
      */
-    private static String[] splitEscaped(char delemiter, String s) {
+    private static String[] splitEscaped(char delimiter, String s) {
         List<String> result = new ArrayList<String>();
         boolean backslash = false;
         StringBuilder item = new StringBuilder();
@@ -933,7 +940,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 backslash = false;
             } else if (ch == '\\') {
                 backslash = true;
-            } else if (ch == delemiter) {
+            } else if (ch == delimiter) {
                 result.add(item.toString());
                 item.setLength(0);
             } else {
