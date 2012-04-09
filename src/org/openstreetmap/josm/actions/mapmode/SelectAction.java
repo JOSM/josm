@@ -965,7 +965,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         if (mode == Mode.select)
             return tr("Release the mouse button to select the objects in the rectangle.");
         else if (mode == Mode.move) {
-            final boolean canMerge = !getCurrentDataSet().getSelectedNodes().isEmpty();
+            final boolean canMerge = getCurrentDataSet()!=null && !getCurrentDataSet().getSelectedNodes().isEmpty();
             final String mergeHelp = canMerge ? (" " + tr("Ctrl to merge with nearest node.")) : "";
             return tr("Release the mouse button to stop moving.") + mergeHelp;
         } else if (mode == Mode.rotate)
