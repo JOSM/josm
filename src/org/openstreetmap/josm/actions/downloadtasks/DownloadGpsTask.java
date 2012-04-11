@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.util.concurrent.Future;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -30,6 +32,11 @@ public class DownloadGpsTask extends AbstractDownloadTask {
 
     private static final String PATTERN_TRACKPOINTS_BBOX = "http://.*/api/0.6/trackpoints\\?bbox=.*,.*,.*,.*";
 
+    private static final String PATTERN_EXTERNAL_GPX_SCRIPT = "http://.*exportgpx.*";
+    private static final String PATTERN_EXTERNAL_GPX_FILE = "http://.*/(.*\\.gpx)";
+
+    protected String newLayerName = null;
+
     public Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
         downloadTask = new DownloadTask(newLayer,
                 new BoundingBoxDownloader(downloadArea), progressMonitor);
@@ -39,9 +46,12 @@ public class DownloadGpsTask extends AbstractDownloadTask {
     }
 
     public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
-        if (url != null && url.matches(PATTERN_TRACE_ID)) {
+        if (url != null && (url.matches(PATTERN_TRACE_ID) || url.matches(PATTERN_EXTERNAL_GPX_SCRIPT) || url.matches(PATTERN_EXTERNAL_GPX_FILE))) {
             downloadTask = new DownloadTask(newLayer,
                     new OsmServerLocationReader(url), progressMonitor);
+            // Extract .gpx filename from URL to set the new layer name
+            Matcher matcher = Pattern.compile(PATTERN_EXTERNAL_GPX_FILE).matcher(url);
+            newLayerName = matcher.matches() ? matcher.group(1) : null;
             // We need submit instead of execute so we can wait for it to finish and get the error
             // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
             return Main.worker.submit(downloadTask);
@@ -61,7 +71,8 @@ public class DownloadGpsTask extends AbstractDownloadTask {
      */
     @Override
     public boolean acceptsUrl(String url) {
-        return url != null && (url.matches(PATTERN_TRACE_ID) || url.matches(PATTERN_TRACKPOINTS_BBOX));
+        return url != null && (url.matches(PATTERN_TRACE_ID) || url.matches(PATTERN_TRACKPOINTS_BBOX)
+                || url.matches(PATTERN_EXTERNAL_GPX_SCRIPT) || url.matches(PATTERN_EXTERNAL_GPX_FILE));
     }
 
     public void cancel() {
@@ -102,7 +113,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
                 return;
             if (rawData == null)
                 return;
-            String name = tr("Downloaded GPX Data");
+            String name = newLayerName != null ? newLayerName : tr("Downloaded GPX Data");
             GpxLayer layer = new GpxLayer(rawData, name);
             Layer x = findMergeLayer();
             if (newLayer || x == null) {
