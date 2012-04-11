@@ -291,6 +291,13 @@ abstract public class Main {
                     initListener.updateStatus(tr("Initializing presets"));
                 }
                 TaggingPresetPreference.initialize();
+                // some validator tests require the presets to be initialized
+                // TODO remove this dependency for parallel initialization
+                if (initListener != null) {
+                    initListener.updateStatus(tr("Initializing validator"));
+                }
+                validator = new OsmValidator();
+                MapView.addLayerChangeListener(validator);
                 return null;
             }
         });
@@ -315,19 +322,6 @@ abstract public class Main {
                     initListener.updateStatus(tr("Loading imagery preferences"));
                 }
                 ImageryPreference.initialize();
-                return null;
-            }
-        });
-
-        tasks.add(new Callable<Void>() {
-
-            @Override
-            public Void call() throws Exception {
-                if (initListener != null) {
-                    initListener.updateStatus(tr("Initializing validator"));
-                }
-                validator = new OsmValidator();
-                MapView.addLayerChangeListener(validator);
                 return null;
             }
         });
