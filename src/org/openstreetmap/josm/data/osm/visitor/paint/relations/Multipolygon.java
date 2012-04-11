@@ -220,7 +220,9 @@ public class Multipolygon {
                     poly.lineTo(p.getX(), p.getY());
                 }
             }
-            poly.closePath();
+            if (!initial) { // fix #7593
+                poly.closePath();
+            }
             for (PolyData inner : inners) {
                 appendInner(inner.poly);
             }
@@ -277,9 +279,9 @@ public class Multipolygon {
             return wayIds;
         }
         
-        private void resetNodes() {
+        private void resetNodes(DataSet dataSet) {
             if (!nodes.isEmpty()) {
-                DataSet ds = null;
+                DataSet ds = dataSet;
                 // Find DataSet (can be null for several nodes when undoing nodes creation, see #7162)
                 for (Iterator<Node> it = nodes.iterator(); it.hasNext() && ds == null; ) {
                     ds = it.next().getDataSet();
@@ -330,12 +332,12 @@ public class Multipolygon {
             boolean innerChanged = false;
             for (PolyData inner : inners) {
                 if (inner.wayIds.contains(wayId)) {
-                    inner.resetNodes();
+                    inner.resetNodes(event.getDataset());
                     innerChanged = true;
                 }
             }
             if (wayIds.contains(wayId) || innerChanged) {
-                resetNodes();
+                resetNodes(event.getDataset());
             }
         }
     }
