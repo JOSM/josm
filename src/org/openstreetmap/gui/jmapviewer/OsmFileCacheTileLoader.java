@@ -256,6 +256,9 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
             FileInputStream fin = null;
             try {
                 tileFile = getTileFile();
+                if (!tileFile.exists())
+                    return false;
+
                 loadTagsFromFile();
                 if ("no-tile".equals(tile.getValue("tile-info")))
                 {
