@@ -125,8 +125,9 @@
 		<anyAttribute processContents="skip" />
 	</complexType>
 
-        <complexType name="list_entry">
+	<complexType name="list_entry">
 		<attribute name="value" type="string" use="required" />
+		<attribute name="value_context" type="string" />
 		<attribute name="display_value" type="string" />
 		<attribute name="short_description" type="string" />
 		<attribute name="icon" type="string" />
