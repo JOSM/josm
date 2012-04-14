@@ -104,19 +104,7 @@ public class SearchCompiler {
 
         @Override
         public Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError {
-            if ("id".equals(keyword))
-                return new Id(tokenizer);
-            else if ("version".equals(keyword))
-                return new Version(tokenizer);
-            else if ("changeset".equals(keyword))
-                return new ChangesetId(tokenizer);
-            else if ("nodes".equals(keyword))
-                return new NodeCountRange(tokenizer);
-            else if ("tags".equals(keyword))
-                return new TagCountRange(tokenizer);
-            else if ("areasize".equals(keyword))
-                return new AreaSize(tokenizer);
-            else if ("modified".equals(keyword))
+            if ("modified".equals(keyword))
                 return new Modified();
             else if ("selected".equals(keyword))
                 return new Selected();
@@ -136,23 +124,37 @@ public class SearchCompiler {
                 return new InView(false);
             else if ("allinview".equals(keyword))
                 return new InView(true);
-            else if ("timestamp".equals(keyword)) {
-                String rangeS = " " + tokenizer.readTextOrNumber() + " "; // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
-                String[] rangeA = rangeS.split("/");
-                if (rangeA.length == 1)
-                    return new KeyValue(keyword, rangeS.trim(), regexSearch, caseSensitive);
-                else if (rangeA.length == 2) {
-                    String rangeA1 = rangeA[0].trim();
-                    String rangeA2 = rangeA[1].trim();
-                    long minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime(); // if min timestap is empty: use lowest possible date
-                    long maxDate = rangeA2.isEmpty() ? new Date().getTime() : DateUtils.fromString(rangeA2).getTime(); // if max timestamp is empty: use "now"
-                    return new TimestampRange(minDate, maxDate);
-                } else
-                    /*
-                     * I18n: Don't translate timestamp keyword
-                     */ throw new ParseError(tr("Expecting <i>min</i>/<i>max</i> after ''timestamp''"));
-            } else
-                return null;
+            else if (tokenizer != null) {
+                if ("id".equals(keyword))
+                    return new Id(tokenizer);
+                else if ("version".equals(keyword))
+                    return new Version(tokenizer);
+                else if ("changeset".equals(keyword))
+                    return new ChangesetId(tokenizer);
+                else if ("nodes".equals(keyword))
+                    return new NodeCountRange(tokenizer);
+                else if ("tags".equals(keyword))
+                    return new TagCountRange(tokenizer);
+                else if ("areasize".equals(keyword))
+                    return new AreaSize(tokenizer);
+                else if ("timestamp".equals(keyword)) {
+                    String rangeS = " " + tokenizer.readTextOrNumber() + " "; // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
+                    String[] rangeA = rangeS.split("/");
+                    if (rangeA.length == 1)
+                        return new KeyValue(keyword, rangeS.trim(), regexSearch, caseSensitive);
+                    else if (rangeA.length == 2) {
+                        String rangeA1 = rangeA[0].trim();
+                        String rangeA2 = rangeA[1].trim();
+                        long minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime(); // if min timestap is empty: use lowest possible date
+                        long maxDate = rangeA2.isEmpty() ? new Date().getTime() : DateUtils.fromString(rangeA2).getTime(); // if max timestamp is empty: use "now"
+                        return new TimestampRange(minDate, maxDate);
+                    } else
+                        /*
+                         * I18n: Don't translate timestamp keyword
+                         */ throw new ParseError(tr("Expecting <i>min</i>/<i>max</i> after ''timestamp''"));
+                }
+            }
+            return null;
         }
 
         @Override
