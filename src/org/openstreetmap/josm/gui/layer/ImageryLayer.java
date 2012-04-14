@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
@@ -22,6 +23,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 
@@ -33,6 +35,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.io.imagery.OffsetServer;
 import org.openstreetmap.josm.io.imagery.OsmosnimkiOffsetServer;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -204,6 +207,7 @@ public abstract class ImageryLayer extends Layer {
         }
         subMenu.add(new JSeparator());
         boolean hasBookmarks = false;
+        int menuItemHeight = 0;
         for (OffsetBookmark b : OffsetBookmark.allBookmarks) {
             if (!b.isUsable(this)) {
                 continue;
@@ -213,7 +217,16 @@ public abstract class ImageryLayer extends Layer {
                 item.setSelected(true);
             }
             subMenu.add(item);
+            menuItemHeight = item.getPreferredSize().height;
             hasBookmarks = true;
+        }
+        if (menuItemHeight > 0) {
+        	int scrollcount = (Toolkit.getDefaultToolkit().getScreenSize().height / menuItemHeight) - 1;
+        	if (subMenu instanceof JMenu) {
+        		MenuScroller.setScrollerFor((JMenu) subMenu, scrollcount);
+        	} else if (subMenu instanceof JPopupMenu) {
+        		MenuScroller.setScrollerFor((JPopupMenu)subMenu, scrollcount);
+        	}
         }
         return (hasBookmarks || offsetServerSupported) ? subMenu : adjustMenuItem;
     }
