@@ -320,7 +320,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String toString() {
             if (value.equals(DIFFERENT))
                 return DIFFERENT;
-            return display_value == null ? value : display_value.replaceAll("<.*>", ""); // remove additional markup, e.g. <br>
+            return getDisplayValue(true).replaceAll("<.*>", ""); // remove additional markup, e.g. <br>
         }
     }
 
@@ -591,7 +591,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             if (locale_text == null) {
                 locale_text = trc(text_context, fixPresetString(text));
             }
-            p.add(new JLabel(locale_text + ":"), GBC.std().insets(0, 0, 10, 0));
+            p.add(new JLabel(tr("{0}:", locale_text)), GBC.std().insets(0, 0, 10, 0));
 
             addToPanelAnchor(p, default_, display_array);
 
@@ -634,6 +634,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                             : tr(fixPresetString(short_descriptions_array[i]));
                 }
                 lhm.put(value_array[i], e);
+                display_array[i] = e.getDisplayValue(true);
             }
 
             // as addToPanel may be called several times, set String to null to avoid "Ignoring * attribute as * elements are given"
@@ -664,6 +665,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     String k = lhm.get(key).toString();
                     if (k != null && k.equals(display)) {
                         value = key;
+                        break;
                     }
                 }
                 if (value == null) {
