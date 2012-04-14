@@ -221,12 +221,12 @@ public abstract class ImageryLayer extends Layer {
             hasBookmarks = true;
         }
         if (menuItemHeight > 0) {
-        	int scrollcount = (Toolkit.getDefaultToolkit().getScreenSize().height / menuItemHeight) - 1;
-        	if (subMenu instanceof JMenu) {
-        		MenuScroller.setScrollerFor((JMenu) subMenu, scrollcount);
-        	} else if (subMenu instanceof JPopupMenu) {
-        		MenuScroller.setScrollerFor((JPopupMenu)subMenu, scrollcount);
-        	}
+            int scrollcount = (Toolkit.getDefaultToolkit().getScreenSize().height / menuItemHeight) - 1;
+            if (subMenu instanceof JMenu) {
+                MenuScroller.setScrollerFor((JMenu) subMenu, scrollcount);
+            } else if (subMenu instanceof JPopupMenu) {
+                MenuScroller.setScrollerFor((JPopupMenu)subMenu, scrollcount);
+            }
         }
         return (hasBookmarks || offsetServerSupported) ? subMenu : adjustMenuItem;
     }
