@@ -3693,7 +3693,7 @@ For external files the <rules> should have following elements:
 
 	<rule> 
 		<condition k="note"/> 
-		<icon annotate="true" src="misc/note.png" priority="-10000"/>
+		<icon annotate="true" src="misc/note.png" priority="-100000"/>
 	</rule> 
 
 <!--public_transport tags --> 

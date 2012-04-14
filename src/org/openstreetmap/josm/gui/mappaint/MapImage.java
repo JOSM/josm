@@ -171,4 +171,8 @@ public class MapImage {
         return hash;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 }
