@@ -139,7 +139,7 @@ public class RequestProcessor extends Thread {
                     request.getInputStream()), "ASCII");
 
             StringBuffer requestLine = new StringBuffer();
-            while (requestLine.length() < 1024) {
+            while (requestLine.length() < 1024 * 1024) {
                 int c = in.read();
                 if (c == '\r' || c == '\n')
                     break;
