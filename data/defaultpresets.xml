@@ -545,30 +545,30 @@ Note that for a match, at least one positive and no negative is required.
             <check key="toll" text="Toll" default="off"  />
             <check key="noexit" text="No exit (cul-de-sac)" default="off"  />
             <label text="Transport mode restrictions" />
-            <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" />
-            <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,no" />
-            <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" />
+            <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
+            <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,no" match="key" />
+            <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" match="key" />
             <label text="Vehicles per type" />
-            <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no"  />
-            <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,no"  />
-            <combo key="motor_vehicle" text="Motor vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no"  />
-            <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
-            <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
-            <combo key="goods" text="Light Commercial Vehicles (goods)" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
-            <combo key="hgv" text="Heavy Goods Vehicles (hgv)" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
+            <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
+            <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,no" match="key" />
+            <combo key="motor_vehicle" text="Motor vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
+            <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
+            <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
+            <combo key="goods" text="Light Commercial Vehicles (goods)" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
+            <combo key="hgv" text="Heavy Goods Vehicles (hgv)" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
             <label text="Vehicles per use" />
-            <combo key="agricultural" text="Agricultural" values="yes,official,designated,destination,permissive,private,no" />
-            <combo key="emergency" text="Emergency vehicles"  values="yes,official,designated,destination,permissive,private,no" />
-            <combo key="hov" text="High-occupancy vehicles (hov)"  values="yes,official,designated,destination,permissive,private,no" />
-            <combo key="psv" text="Public Service Vehicles (psv)"   values="yes,official,designated,destination,permissive,private,no" />
+            <combo key="agricultural" text="Agricultural" values="yes,official,designated,destination,permissive,private,no" match="key" />
+            <combo key="emergency" text="Emergency vehicles" values="yes,official,designated,destination,permissive,private,no" match="key" />
+            <combo key="hov" text="High-occupancy vehicles (hov)" values="yes,official,designated,destination,permissive,private,no" match="key" />
+            <combo key="psv" text="Public Service Vehicles (psv)" values="yes,official,designated,destination,permissive,private,no" match="key" />
             <text key="maxspeed" text="Max. speed (km/h)" />
-            <text key="minspeed" text="Min. speed (km/h)" />
-            <text key="maxweight" text="Max. weight (tonnes)" />
-            <text key="maxaxleload" text="Max. axleload (tonnes)" />
-            <text key="maxheight" text="Max. height (meters)" />
-            <text key="maxwidth" text="Max. width (meters)" />
-            <text key="maxlength" text="Max. length (meters)" />
-            <combo key="overtaking" text="Overtaking" values="yes,both,forward,backward,no" />
+            <text key="minspeed" text="Min. speed (km/h)" match="key" />
+            <text key="maxweight" text="Max. weight (tonnes)" match="key" />
+            <text key="maxaxleload" text="Max. axleload (tonnes)" match="key" />
+            <text key="maxheight" text="Max. height (meters)" match="key" />
+            <text key="maxwidth" text="Max. width (meters)" match="key" />
+            <text key="maxlength" text="Max. length (meters)" match="key" />
+            <combo key="overtaking" text="Overtaking" values="yes,both,forward,backward,no" match="key" />
         </item>
         <separator/>
         <item name="Roundabout" icon="presets/roundabout.png" type="closedway">
@@ -3835,7 +3835,7 @@ Note that for a match, at least one positive and no negative is required.
                   pl.href="http://wiki.openstreetmap.org/wiki/PL:Key:building"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building" />
             <label text="Edit Building" />
-            <combo key="building" text="Building" values="yes,roof,garage,industrial,church,school,hangar,commercial,farm,transportation,greenhouse,office,university" default="yes" />
+            <combo key="building" text="Building" values="yes,roof,garage,industrial,church,school,hangar,commercial,farm,transportation,greenhouse,office,university" default="yes" match="keyvalue" />
             <text key="name" text="Name" />
         </item>
         <item name="Residential Building" icon="styles/standard/misc/landmark/building.png" type="node,closedway,relation">
@@ -3849,7 +3849,7 @@ Note that for a match, at least one positive and no negative is required.
                   pl.href="http://wiki.openstreetmap.org/wiki/PL:Key:building"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building" />
             <label text="Edit Residential Building" />
-            <combo key="building" text="Building" values="residential,apartments,house,hut,terrace,detached,roof" default="residential" />
+            <combo key="building" text="Building" values="residential,apartments,house,hut,terrace,detached,roof" default="residential" match="keyvalue" />
             <text key="name" text="Name" />
         </item>
         <item name="Tower" icon="presets/tower.png" type="node,closedway">
@@ -5232,13 +5232,13 @@ Note that for a match, at least one positive and no negative is required.
                   de.href="http://wiki.openstreetmap.org/wiki/Proposed_features/De:Hausnummern" />
             <label text="Edit Address Information" />
             <space />
-            <text key="addr:housenumber" text="House number" />
+            <text key="addr:housenumber" text="House number" match="key" />
             <optional>
-                <text key="addr:housename" text="House name" />
-                <text key="addr:street" text="Street name" use_last_as_default="force" />
-                <text key="addr:city" text="City name" use_last_as_default="force" />
-                <text key="addr:postcode" text="Post code" use_last_as_default="force" />
-                <combo key="addr:country" text="Country code" values="AT,CH,DE,FR,GB,IT,US" use_last_as_default="force" />
+                <text key="addr:housename" text="House name" match="key" />
+                <text key="addr:street" text="Street name" use_last_as_default="force" match="key" />
+                <text key="addr:city" text="City name" use_last_as_default="force" match="key" />
+                <text key="addr:postcode" text="Post code" use_last_as_default="force" match="key" />
+                <combo key="addr:country" text="Country code" values="AT,CH,DE,FR,GB,IT,US" use_last_as_default="force" match="key" />
             </optional>
         </item>
         <item name="Address Interpolation" icon="presets/interpolation.png" type="way">
@@ -5246,16 +5246,16 @@ Note that for a match, at least one positive and no negative is required.
                  de.href="http://wiki.openstreetmap.org/wiki/Proposed_features/De:Hausnummern" />
             <label text="Edit Address Interpolation" />
             <space />
-            <combo key="addr:interpolation" text="Numbering scheme" values="odd,even,all,alphabetic" default="odd" />
+            <combo key="addr:interpolation" text="Numbering scheme" values="odd,even,all,alphabetic" default="odd" match="key" />
         </item>
         <item name="Contact (common schema)" icon="presets/contact.png" type="node,way,closedway,relation">
             <label text="Edit Contact information" />
             <space />
-            <text key="phone" text="Phone Number" />
-            <text key="fax" text="Fax Number" />
+            <text key="phone" text="Phone Number" match="key" />
+            <text key="fax" text="Fax Number" match="key" />
             <space />
-            <text key="website" text="Website" />
-            <text key="email" text="Email Address" />
+            <text key="website" text="Website" match="key" />
+            <text key="email" text="Email Address" match="key" />
             <space />
             <text key="wikipedia" text="Wikipedia" />
             <text key="image" text="Image" />
@@ -5263,11 +5263,11 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Contact (schema with 'contact:*' prefix)" icon="presets/contact.png" type="node,way,closedway,relation">
             <label text="Edit Contact information (new schema)" />
             <space />
-            <text key="contact:phone" text="Phone Number" />
-            <text key="contact:fax" text="Fax Number" />
+            <text key="contact:phone" text="Phone Number" match="key" />
+            <text key="contact:fax" text="Fax Number" match="key" />
             <space />
-            <text key="contact:website" text="Website" />
-            <text key="contact:email" text="Email Address" />
+            <text key="contact:website" text="Website" match="key" />
+            <text key="contact:email" text="Email Address" match="key" />
             <space />
             <text key="wikipedia" text="Wikipedia" />
             <text key="image" text="Image" />
