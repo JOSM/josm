@@ -3633,7 +3633,7 @@ For external files the <rules> should have following elements:
 
 <!--annotation tags -->
 
-<!--"work in progress" tags -->
+<!-- building/entrance/address -->
 
 	<rule>
 		<condition k="building"/>
@@ -3641,14 +3641,39 @@ For external files the <rules> should have following elements:
 		<area colour="building#cb9999" priority="-10000"/>
 	</rule>
 
-	<rule>
-		<condition k="entrance"/>
-		<icon annotate="true" src="vehicle/entrance.png"/>
-	</rule>
+    <rule>
+        <condition k="building" v="entrance" />
+        <icon annotate="true" src="misc/entrance-yes.png" priority="100"/>
+    </rule>
 
-	<rule>
-		<condition k="area" b="yes"/>
-		<area colour="area#ffffff" priority="-10000"/>
+    <rule>
+        <condition k="entrance" v="yes" />
+        <icon annotate="true" src="misc/entrance-yes.png"/>
+    </rule>
+
+    <rule>
+        <condition k="entrance" v="main" />
+        <icon annotate="true" src="misc/entrance-main.png"/>
+    </rule>
+
+    <rule>
+        <condition k="entrance" v="service" />
+        <icon annotate="true" src="misc/entrance-service.png"/>
+    </rule>
+
+    <rule>
+        <condition k="entrance" v="exit" />
+        <icon annotate="true" src="misc/entrance-exit.png"/>
+    </rule>
+
+    <rule>
+        <condition k="entrance" v="emergency" />
+        <icon annotate="true" src="misc/entrance-emergency.png"/>
+    </rule>
+
+    <rule>
+        <condition k="area" b="yes"/>
+        <area colour="area#ffffff" priority="-10000"/>
 	</rule>
 
 	<rule>
@@ -3679,11 +3704,13 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="addr:interpolation" v="alphabetic"/>
 		<line width="1" realwidth="1" dashed="1,1" colour="address#1C86EE"/>
-	</rule>
+    </rule>
 
-	<rule> 
-		<condition k="fixme"/> 
-		<icon annotate="true" src="misc/fixme.png" priority="10000"/>
+<!--"work in progress" tags -->
+
+    <rule> 
+        <condition k="fixme"/>
+        <icon annotate="true" src="misc/fixme.png" priority="10000"/>
 	</rule> 
 
 	<rule> 
