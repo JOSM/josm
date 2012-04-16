@@ -601,10 +601,9 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Initialized by checkDirectionTagged()
      */
     static {
-        // FIXME: incline=\"-*\" search pattern does not work.
-        String reversedDirectionDefault = "oneway=\"-1\" | incline=down | incline=\"-*\"";
+        String reversedDirectionDefault = "oneway=\"-1\"";
 
-        String directionDefault = "oneway? | incline=* | aerialway=* | "+
+        String directionDefault = "oneway? | aerialway=* | "+
                 "waterway=stream | waterway=river | waterway=canal | waterway=drain | waterway=rapids | "+
                 "\"piste:type\"=downhill | \"piste:type\"=sled | man_made=\"piste:halfpipe\" | "+
                 "junction=roundabout";
