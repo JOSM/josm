@@ -1062,6 +1062,7 @@ public class PluginHandler {
                     JTextArea a = new JTextArea(10, 40);
                     a.setEditable(false);
                     a.setText(b.toString());
+                    a.setCaretPosition(0);
                     JOptionPane.showMessageDialog(Main.parent, new JScrollPane(a), tr("Plugin information"),
                             JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -1075,6 +1076,7 @@ public class PluginHandler {
             description.setWrapStyleWord(true);
             description.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
             description.setBackground(UIManager.getColor("Panel.background"));
+            description.setCaretPosition(0);
 
             pluginTab.add(description, GBC.eop().fill(GBC.HORIZONTAL));
         }
