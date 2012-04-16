@@ -44,22 +44,30 @@ public class AboutAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         JTabbedPane about = new JTabbedPane();
 
+        Version version = Version.getInstance();
+
         JTextArea readme = new JTextArea();
         readme.setEditable(false);
         readme.setText(Version.loadResourceFile(Main.class.getResource("/README")));
+        readme.setCaretPosition(0);
+
+        JTextArea revision = new JTextArea();
+        revision.setEditable(false);
+        revision.setText(version.getReleaseAttributes());
+        revision.setCaretPosition(0);
 
         JTextArea contribution = new JTextArea();
         contribution.setEditable(false);
         contribution.setText(Version.loadResourceFile(Main.class.getResource("/CONTRIBUTION")));
+        contribution.setCaretPosition(0);
 
         JTextArea license = new JTextArea();
         license.setEditable(false);
         license.setText(Version.loadResourceFile(Main.class.getResource("/LICENSE")));
-
-        Version version = Version.getInstance();
+        license.setCaretPosition(0);
 
         JPanel info = new JPanel(new GridBagLayout());
-        JLabel caption = new JLabel("JOSM - " + tr("Java OpenStreetMap Editor"));
+        JLabel caption = new JLabel("JOSM – " + tr("Java OpenStreetMap Editor"));
         caption.setFont(new Font("Helvetica", Font.BOLD, 20));
         info.add(caption, GBC.eol().fill(GBC.HORIZONTAL).insets(10,0,0,0));
         info.add(GBC.glue(0,10), GBC.eol());
@@ -75,9 +83,6 @@ public class AboutAction extends JosmAction {
         info.add(new JLabel(tr("Bug Reports")), GBC.std().insets(10,0,10,0));
         info.add(new UrlLabel("http://josm.openstreetmap.de/newticket",2), GBC.eol().fill(GBC.HORIZONTAL));
 
-        JTextArea revision = new JTextArea();
-        revision.setEditable(false);
-        revision.setText(version.getReleaseAttributes());
         about.addTab(tr("Info"), info);
         about.addTab(tr("Readme"), createScrollPane(readme));
         about.addTab(tr("Revision"), createScrollPane(revision));
