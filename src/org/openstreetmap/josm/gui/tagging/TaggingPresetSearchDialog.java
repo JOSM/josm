@@ -44,14 +44,11 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset.Check;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset.Combo;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.Item;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.Key;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.PresetType;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.Role;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.Roles;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset.Text;
 
 public class TaggingPresetSearchDialog extends ExtendedDialog implements SelectionChangedListener {
 
@@ -121,21 +118,14 @@ public class TaggingPresetSearchDialog extends ExtendedDialog implements Selecti
                 names.add(word);
             }
             for (Item item: preset.data) {
-                if (item instanceof Check) {
-                    tags.add(((Check)item).key.toLowerCase());
-                } else if (item instanceof Combo) {
+                if (item instanceof TaggingPreset.KeyedItem) {
+                    tags.add(((TaggingPreset.KeyedItem) item).key);
                     // Should combo values also be added?
-                    tags.add(((Combo)item).key);
-                } else if (item instanceof Key) {
-                    tags.add(((Key) item).key);
-                    String value = ((Key) item).value;
-                    if (value != null) {
-                        tags.add(value);
+                    if (item instanceof Key && ((Key) item).value != null) {
+                        tags.add(((Key) item).value);
                     }
-                } else if (item instanceof Text) {
-                    tags.add(((Text) item).key);
                 } else if (item instanceof Roles) {
-                    for (Role role: ((Roles) item).roles) {
+                    for (Role role : ((Roles) item).roles) {
                         tags.add(role.key);
                     }
                 }
