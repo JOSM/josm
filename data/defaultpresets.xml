@@ -568,6 +568,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="maxheight" text="Max. height (meters)" />
             <text key="maxwidth" text="Max. width (meters)" />
             <text key="maxlength" text="Max. length (meters)" />
+            <combo key="overtaking" text="Overtaking" values="yes,both,forward,backward,no" />
         </item>
         <separator/>
         <item name="Roundabout" icon="presets/roundabout.png" type="closedway">
