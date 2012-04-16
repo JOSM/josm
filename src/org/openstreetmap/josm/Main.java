@@ -327,8 +327,11 @@ abstract public class Main {
         });
 
         try {
-            Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()).invokeAll(tasks);
-        } catch (InterruptedException ex) {
+            for (Future<Void> i : Executors.newFixedThreadPool(
+                    Runtime.getRuntime().availableProcessors()).invokeAll(tasks)) {
+                i.get();
+            }
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
 
@@ -623,7 +626,7 @@ abstract public class Main {
 
     /**
      * The type of a command line parameter, to be used in switch statements.
-     * @see paramType
+     * @see #paramType
      */
     private enum DownloadParamType { httpUrl, fileUrl, bounds, fileName }
 
@@ -680,8 +683,8 @@ abstract public class Main {
      * Download area specified as Bounds value.
      * @param rawGps Flag to download raw GPS tracks
      * @param b The bounds value
-     * @see downloadFromParamBounds(final boolean rawGps, String s)
-     * @see downloadFromParamHttp
+     * @see #downloadFromParamBounds(boolean, String)
+     * @see #downloadFromParamHttp
      */
     private static void downloadFromParamBounds(final boolean rawGps, Bounds b) {
         DownloadTask task = rawGps ? new DownloadGpsTask() : new DownloadOsmTask();
