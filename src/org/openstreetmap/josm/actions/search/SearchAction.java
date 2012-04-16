@@ -256,7 +256,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
 
         final JPanel right;
-        if (Main.pref.getBoolean("dialog.search.new", false)) {
+        if (Main.pref.getBoolean("dialog.search.new", true)) {
             right = new JPanel(new GridBagLayout());
             buildHintsNew(right, hcbSearchString);
         } else {
