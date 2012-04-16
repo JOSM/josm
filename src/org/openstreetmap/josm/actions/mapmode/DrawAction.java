@@ -1390,7 +1390,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     double de, dn, l, phi;
                     e0 = p0.east();
                     n0 = p0.north();
-                    buildLabelText(nearestAngle);
+                    buildLabelText((nearestAngle<=180) ? nearestAngle : nearestAngle-360);
 
                     phi = (nearestAngle + activeBaseHeading) * Math.PI / 180;
                     // (pe,pn) - direction of snapping line
