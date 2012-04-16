@@ -1193,6 +1193,13 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=retaining_wall" />
             <key key="barrier" value="retaining_wall" />
         </item> <!-- retaining_wall -->
+        <item name="Ditch" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=ditch" />
+            <key key="barrier" value="ditch" />
+            <optional>
+                <text key="width" text="Width (meters)" />
+            </optional>
+        </item> <!-- ditch -->
         <separator/>
 
         <!-- *** access *** -->
