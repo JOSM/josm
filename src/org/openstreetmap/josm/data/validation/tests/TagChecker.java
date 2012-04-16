@@ -154,7 +154,7 @@ public class TagChecker extends Test
     }
 
     @Override
-    public void initialize() throws Exception {
+    public void initialize() throws IOException {
         initializeData();
         initializePresets();
     }
@@ -285,9 +285,8 @@ public class TagChecker extends Test
     /**
      * Reads the presets data.
      *
-     * @throws Exception
      */
-    public static void initializePresets() throws Exception {
+    public static void initializePresets() {
 
         if (!Main.pref.getBoolean(PREF_CHECK_VALUES, true))
             return;
@@ -307,24 +306,10 @@ public class TagChecker extends Test
                 presetsValueData.putVoid(a);
             }
             for (TaggingPreset p : presets) {
-                for(TaggingPreset.Item i : p.data) {
-                    if (i instanceof TaggingPreset.Combo) {
-                        TaggingPreset.Combo combo = (TaggingPreset.Combo) i;
-                        if (combo.values != null) {
-                            for(String value : combo.values.split(",")) {
-                                presetsValueData.put(combo.key, value);
-                            }
-                        }
-                    } else if (i instanceof TaggingPreset.Key) {
-                        TaggingPreset.Key k = (TaggingPreset.Key) i;
-                        presetsValueData.put(k.key, k.value);
-                    } else if (i instanceof TaggingPreset.Text) {
-                        TaggingPreset.Text k = (TaggingPreset.Text) i;
-                        presetsValueData.putVoid(k.key);
-                    } else if (i instanceof TaggingPreset.Check) {
-                        TaggingPreset.Check k = (TaggingPreset.Check) i;
-                        presetsValueData.put(k.key, "yes");
-                        presetsValueData.put(k.key, "no");
+                for (TaggingPreset.Item i : p.data) {
+                    if (i instanceof TaggingPreset.KeyedItem) {
+                        TaggingPreset.KeyedItem ky = (TaggingPreset.KeyedItem) i;
+                        presetsValueData.putAll(ky.key, ky.getValues());
                     }
                 }
             }

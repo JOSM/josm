@@ -148,36 +148,12 @@ public class AutoCompletionManager implements DataSetListener {
     public static void cachePresets(Collection<TaggingPreset> presets) {
         for (final TaggingPreset p : presets) {
             for (TaggingPreset.Item item : p.data) {
-                if (item instanceof TaggingPreset.Check) {
-                    TaggingPreset.Check ch = (TaggingPreset.Check) item;
-                    if (ch.key == null) {
+                if (item instanceof TaggingPreset.KeyedItem) {
+                    TaggingPreset.KeyedItem ki = (TaggingPreset.KeyedItem) item;
+                    if (ki.key == null) {
                         continue;
                     }
-                    presetTagCache.put(ch.key, OsmUtils.falseval);
-                    presetTagCache.put(ch.key, OsmUtils.trueval);
-                } else if (item instanceof TaggingPreset.Combo) {
-                    TaggingPreset.Combo co = (TaggingPreset.Combo) item;
-                    if (co.key == null || co.values == null) {
-                        continue;
-                    }
-                    for (String value : co.values.split(",")) {
-                        presetTagCache.put(co.key, value);
-                    }
-                } else if (item instanceof TaggingPreset.Key) {
-                    TaggingPreset.Key ky = (TaggingPreset.Key) item;
-                    if (ky.key == null || ky.value == null) {
-                        continue;
-                    }
-                    presetTagCache.put(ky.key, ky.value);
-                } else if (item instanceof TaggingPreset.Text) {
-                    TaggingPreset.Text tt = (TaggingPreset.Text) item;
-                    if (tt.key == null) {
-                        continue;
-                    }
-                    presetTagCache.putVoid(tt.key);
-                    if (tt.default_ != null && !tt.default_.equals("")) {
-                        presetTagCache.put(tt.key, tt.default_);
-                    }
+                    presetTagCache.putAll(ki.key, ki.getValues());
                 } else if (item instanceof TaggingPreset.Roles) {
                     TaggingPreset.Roles r = (TaggingPreset.Roles) item;
                     for (TaggingPreset.Role i : r.roles) {
@@ -265,7 +241,7 @@ public class AutoCompletionManager implements DataSetListener {
      * values for some given tags
      *
      * @param list the list to populate
-     * @param key the tag keys
+     * @param keys the tag keys
      */
     public void populateWithTagValues(AutoCompletionList list, List<String> keys) {
         for (String key : keys) {

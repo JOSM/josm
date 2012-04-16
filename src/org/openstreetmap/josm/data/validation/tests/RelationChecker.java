@@ -45,7 +45,7 @@ public class RelationChecker extends Test {
     }
 
     @Override
-    public void initialize() throws Exception {
+    public void initialize() {
         initializePresets();
     }
 
