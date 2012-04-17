@@ -590,4 +590,32 @@ public final class Way extends OsmPrimitive implements IWay {
         }
         return length;
     }
+
+    /**
+     * Tests if this way is a oneway.
+     * @return {@code 1} if the way is a oneway, {@code -1} if the way is a reversed oneway,
+     * {@code 0} otherwise.
+     */
+    public int isOneway() {
+        String oneway = get("oneway");
+        if (oneway != null) {
+            if ("-1".equals(oneway)) {
+                return -1;
+            } else {
+                Boolean isOneway = OsmUtils.getOsmBoolean(oneway);
+                if (isOneway != null && isOneway) {
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+
+    public Node firstNode(boolean respectOneway) {
+        return !respectOneway || isOneway() != -1 ? firstNode() : lastNode();
+    }
+
+    public Node lastNode(boolean respectOneway) {
+        return !respectOneway || isOneway() != -1 ? lastNode() : firstNode();
+    }
 }

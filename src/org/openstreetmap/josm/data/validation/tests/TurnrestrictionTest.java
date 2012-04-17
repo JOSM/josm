@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -34,6 +33,7 @@ public class TurnrestrictionTest extends Test {
     protected static final int TO_VIA_WAY = 1812;
     protected static final int MIX_VIA = 1813;
     protected static final int UNCONNECTED_VIA = 1814;
+    protected static final int SUPERFLUOUS = 1815;
 
     public TurnrestrictionTest() {
         super(tr("Turnrestrictions"), tr("This test checks if turnrestrictions are valid"));
@@ -136,18 +136,21 @@ public class TurnrestrictionTest extends Test {
             return;
         }
 
-        Node viaNode;
         if (via.get(0) instanceof Node) {
-            viaNode = (Node) via.get(0);
-            Way viaPseudoWay = new Way();
+            final Node viaNode = (Node) via.get(0);
+            final Way viaPseudoWay = new Way();
             viaPseudoWay.addNode(viaNode);
             checkIfConnected(fromWay, viaPseudoWay,
                     tr("The \"from\" way does not start or end at a \"via\" node"), FROM_VIA_NODE);
+            if (toWay.isOneway() != 0 && viaNode.equals(toWay.lastNode(true))) {
+                errors.add(new TestError(this, Severity.WARNING, tr("Superfluous turnrestriction as \"to\" way is oneway"), SUPERFLUOUS, r));
+                return;
+            }
             checkIfConnected(viaPseudoWay, toWay,
                     tr("The \"to\" way does not start or end at a \"via\" node"), TO_VIA_NODE);
         } else {
             // check if consecutive ways are connected: from/via[0], via[i-1]/via[i], via[last]/to
-            checkIfConnected(fromWay, (Way) via.get(0), 
+            checkIfConnected(fromWay, (Way) via.get(0),
                     tr("The \"from\" and the first \"via\" way are not connected."), FROM_VIA_WAY);
             if (via.size() > 1) {
                 for (int i = 1; i < via.size(); i++) {
@@ -157,6 +160,10 @@ public class TurnrestrictionTest extends Test {
                             tr("The \"via\" ways are not connected."), UNCONNECTED_VIA);
                 }
             }
+            if (toWay.isOneway() != 0 && ((Way) via.get(via.size() - 1)).isFirstLastNode(toWay.lastNode(true))) {
+                errors.add(new TestError(this, Severity.WARNING, tr("Superfluous turnrestriction as \"to\" way is oneway"), SUPERFLUOUS, r));
+                return;
+            }
             checkIfConnected((Way) via.get(via.size() - 1), toWay, 
                     tr("The last \"via\" and the \"to\" way are not connected."), TO_VIA_WAY);
 
@@ -164,21 +171,16 @@ public class TurnrestrictionTest extends Test {
     }
 
     private void checkIfConnected(Way previous, Way current, String msg, int code) {
-        int onewayPrevious = isOneway(previous);
-        int onewayCurrent = isOneway(current);
-        Node endPrevious = onewayPrevious != -1 ? previous.lastNode() : previous.firstNode();
-        Node startCurrent = onewayCurrent != -1 ? current.firstNode() : current.lastNode();
-        //System.out.println(previous.getUniqueId() + " -- " + current.getUniqueId() + ": " + onewayPrevious + "/" + onewayCurrent + " " + endPrevious.getUniqueId() + "/" + startCurrent.getUniqueId());
         boolean c;
-        if (onewayPrevious != 0 && onewayCurrent != 0) {
+        if (previous.isOneway() != 0 && current.isOneway() != 0) {
             // both oneways: end/start node must be equal
-            c = endPrevious.equals(startCurrent);
-        } else if (onewayPrevious != 0) {
+            c = previous.lastNode(true).equals(current.firstNode(true));
+        } else if (previous.isOneway() != 0) {
             // previous way is oneway: end of previous must be start/end of current
-            c = current.isFirstLastNode(endPrevious);
-        } else if (onewayCurrent != 0) {
+            c = current.isFirstLastNode(previous.lastNode(true));
+        } else if (current.isOneway() != 0) {
             // current way is oneway: start of current must be start/end of previous
-            c = previous.isFirstLastNode(startCurrent);
+            c = previous.isFirstLastNode(current.firstNode(true));
         } else {
             // otherwise: start/end of previous must be start/end of current
             c = current.isFirstLastNode(previous.firstNode()) || current.isFirstLastNode(previous.lastNode());
@@ -186,20 +188,5 @@ public class TurnrestrictionTest extends Test {
         if (!c) {
             errors.add(new TestError(this, Severity.ERROR, msg, code, Arrays.asList(previous, current)));
         }
-    }
-
-    private static int isOneway(Way w) {
-        String onewayviastr = w.get("oneway");
-        if (onewayviastr != null) {
-            if ("-1".equals(onewayviastr)) {
-                return -1;
-            } else {
-                Boolean onewayvia = OsmUtils.getOsmBoolean(onewayviastr);
-                if (onewayvia != null && onewayvia) {
-                    return 1;
-                }
-            }
-        }
-        return 0;
     }
 }
