@@ -20,9 +20,11 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -52,6 +54,7 @@ import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
@@ -104,7 +107,8 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         tree = new ValidatorTreePanel();
         tree.addMouseListener(new ClickWatch());
         tree.addTreeSelectionListener(new SelectionWatch());
-
+        InputMapUtils.unassignCtrlShiftUpDown(tree, JComponent.WHEN_FOCUSED);
+                
         List<SideButton> buttons = new LinkedList<SideButton>();
 
         selectButton = new SideButton(new AbstractAction() {
@@ -118,6 +122,8 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 setSelectedItems();
             }
         });
+        InputMapUtils.addEnterAction(tree, selectButton.getAction());
+        
         selectButton.setEnabled(false);
         buttons.add(selectButton);
 

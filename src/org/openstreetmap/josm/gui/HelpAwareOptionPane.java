@@ -17,6 +17,7 @@ import javax.swing.*;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class HelpAwareOptionPane {
@@ -107,8 +108,7 @@ public class HelpAwareOptionPane {
             }
         };
         b.addActionListener(a);
-        b.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "enter");
-        b.getActionMap().put("enter", a);
+        InputMapUtils.enableEnter(b);
         return b;
     }
 

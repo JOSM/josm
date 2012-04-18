@@ -64,6 +64,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.MultikeyActionsHandler;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction.MultikeyInfo;
@@ -270,8 +271,18 @@ public class LayerListDialog extends ToggleDialog {
                 KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),"delete"
                 );
         getActionMap().put("delete", deleteLayerAction);
-
-
+        
+        // Activate layer on Enter key press
+        InputMapUtils.addEnterAction(layerList, new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                activateLayerAction.actionPerformed(null);
+                layerList.requestFocus();
+            }
+        });
+        
+        // Show/Activate layer on Enter key press
+        InputMapUtils.addSpacebarAction(layerList, showHideLayerAction);
+        
         createLayout(layerList, true, Arrays.asList(new SideButton[] {
                 new SideButton(moveUpAction, false),
                 new SideButton(moveDownAction, false),

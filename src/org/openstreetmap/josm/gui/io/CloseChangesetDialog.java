@@ -31,6 +31,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -73,9 +74,7 @@ public class CloseChangesetDialog extends JDialog {
         CloseAction closeAction = new CloseAction();
         lstOpenChangesets.addListSelectionListener(closeAction);
         pnl.add(btnCloseChangesets = new SideButton(closeAction));
-        btnCloseChangesets.setFocusable(true);
-        btnCloseChangesets.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "enter");
-        btnCloseChangesets.getActionMap().put("enter",closeAction);
+        InputMapUtils.enableEnter(btnCloseChangesets);
 
         // -- cancel action
         SideButton btn;

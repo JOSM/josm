@@ -47,6 +47,7 @@ import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.MultikeyActionsHandler;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -210,6 +211,26 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
                 if(index < 0) return;
                 filterModel.moveDownFilter(index);
                 userTable.getSelectionModel().setSelectionInterval(index+1, index+1);
+            }
+        });
+        
+        // Toggle filter "enabled" on Enter
+        InputMapUtils.addEnterAction(userTable, new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                int index = userTable.getSelectedRow();
+                if (index<0) return;
+                Filter filter = filterModel.getFilter(index);
+                filterModel.setValueAt(!filter.enable, index, FilterTableModel.COL_ENABLED);
+            }
+        });
+
+        // Toggle filter "hiding" on Spacebar
+        InputMapUtils.addSpacebarAction(userTable, new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                int index = userTable.getSelectedRow();
+                if (index<0) return;
+                Filter filter = filterModel.getFilter(index);
+                filterModel.setValueAt(!filter.hiding, index, FilterTableModel.COL_HIDING);
             }
         });
 

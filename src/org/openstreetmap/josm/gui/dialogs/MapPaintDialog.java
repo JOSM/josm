@@ -68,6 +68,7 @@ import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -141,7 +142,11 @@ public class MapPaintDialog extends ToggleDialog {
         selectionModel.addListSelectionListener(reloadAction);
         selectionModel.addListSelectionListener(upAction);
         selectionModel.addListSelectionListener(downAction);
-
+        
+        // Toggle style on Enter and Spacebar
+        InputMapUtils.addEnterAction(tblStyles, onoffAction);
+        InputMapUtils.addSpacebarAction(tblStyles, onoffAction);
+        
         createLayout(p, true, Arrays.asList(new SideButton[] {
                 new SideButton(onoffAction, false),
                 new SideButton(upAction, false),
