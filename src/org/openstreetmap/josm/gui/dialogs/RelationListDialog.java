@@ -24,8 +24,10 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -64,6 +66,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -150,8 +153,17 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         //displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "deleteRelation");
         //displaylist.getActionMap().put("deleteRelation", deleteAction);
 
+        InputMapUtils.unassignCtrlShiftUpDown(displaylist, JComponent.WHEN_FOCUSED);
+        
+        // Select relation on Ctrl-Enter
+        InputMapUtils.addEnterAction(displaylist, selectAction);
+
         addToRelation = new AddToRelation();
         popupMenu = new RelationDialogPopupMenu(displaylist);
+
+        // Edit relation on Ctrl-Enter
+        displaylist.getActionMap().put("edit", editAction);
+        displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_MASK), "edit");
     }
 
     @Override public void showNotify() {

@@ -44,6 +44,7 @@ import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -153,9 +154,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         UploadAction uploadAction = new UploadAction();
         pnl.add(btnUpload = new SideButton(uploadAction));
         btnUpload.setFocusable(true);
-        InputMap inputMap = btnUpload.getInputMap();
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "doUpload");
-        btnUpload.getActionMap().put("doUpload", uploadAction);
+        InputMapUtils.enableEnter(btnUpload);
 
         // -- cancel button
         CancelAction cancelAction = new CancelAction();

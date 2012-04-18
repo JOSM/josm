@@ -111,6 +111,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -845,18 +846,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyTable.getActionMap().put("onTableInsert",addAction);
         
         //  unassign some standard shortcuts for JTable to allow upload / download
-        InputMap inputMap=SwingUtilities.getUIInputMap(propertyTable,JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_UP,InputEvent.CTRL_MASK|InputEvent.SHIFT_MASK));
-        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,InputEvent.CTRL_MASK|InputEvent.SHIFT_MASK));
-        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_UP,InputEvent.ALT_MASK|InputEvent.SHIFT_MASK));
-        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,InputEvent.ALT_MASK|InputEvent.SHIFT_MASK));
-        SwingUtilities.replaceUIInputMap(propertyTable,JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT,inputMap);
+        InputMapUtils.unassignCtrlShiftUpDown(propertyTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         
         // -- add action and shortcut
         this.btnAdd = new SideButton(addAction);
-        btnAdd.setFocusable(true);
-        btnAdd.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "onEnter");
-        btnAdd.getActionMap().put("onEnter", addAction);
+        InputMapUtils.enableEnter(this.btnAdd);
 
         // -- edit action
         //

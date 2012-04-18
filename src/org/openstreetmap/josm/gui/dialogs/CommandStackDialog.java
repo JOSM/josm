@@ -19,6 +19,7 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -47,6 +48,7 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -82,7 +84,8 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         undoTree.setCellRenderer(new CommandCellRenderer());
         undoSelectionListener = new UndoRedoSelectionListener(undoTree);
         undoTree.getSelectionModel().addTreeSelectionListener(undoSelectionListener);
-
+        InputMapUtils.unassignCtrlShiftUpDown(undoTree, JComponent.WHEN_FOCUSED);
+        
         redoTree.addMouseListener(new PopupMenuHandler());
         redoTree.setRootVisible(false);
         redoTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -118,6 +121,9 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             new SideButton(undoAction),
             new SideButton(redoAction)
         }));
+        
+        InputMapUtils.addEnterAction(undoTree, selectAction);
+        InputMapUtils.addEnterAction(redoTree, selectAction);
     }
 
     private static class CommandCellRenderer extends DefaultTreeCellRenderer {

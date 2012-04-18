@@ -41,6 +41,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -162,9 +163,8 @@ public class DownloadDialog extends JDialog  {
 
         // -- download button
         pnl.add(btnDownload = new SideButton(actDownload = new DownloadAction()));
-        btnDownload.setFocusable(true);
-        btnDownload.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "download");
-        btnDownload.getActionMap().put("download",actDownload);
+        InputMapUtils.enableEnter(btnDownload);
+        
         makeCheckBoxRespondToEnter(cbDownloadGpxData);
         makeCheckBoxRespondToEnter(cbDownloadOsmData);
         makeCheckBoxRespondToEnter(cbNewLayer);
@@ -173,9 +173,7 @@ public class DownloadDialog extends JDialog  {
         SideButton btnCancel;
         CancelAction actCancel = new CancelAction();
         pnl.add(btnCancel = new SideButton(actCancel));
-        btnCancel.setFocusable(true);
-        btnCancel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "enter");
-        btnCancel.getActionMap().put("enter",actCancel);
+        InputMapUtils.enableEnter(btnCancel);
 
         // -- cancel on ESC
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "cancel");
@@ -184,9 +182,7 @@ public class DownloadDialog extends JDialog  {
         // -- help button
         SideButton btnHelp;
         pnl.add(btnHelp = new SideButton(new ContextSensitiveHelpAction(ht("/Action/Download"))));
-        btnHelp.setFocusable(true);
-        btnHelp.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "enter");
-        btnHelp.getActionMap().put("enter",btnHelp.getAction());
+        InputMapUtils.enableEnter(btnHelp);
 
         return pnl;
     }

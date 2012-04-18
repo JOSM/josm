@@ -71,6 +71,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -147,6 +148,7 @@ public class SelectionListDialog extends ToggleDialog  {
         lstPrimitives.addMouseListener(new DblClickHandler());
 
         popupMenu = new SelectionPopup(lstPrimitives);
+        InputMapUtils.addEnterAction(lstPrimitives, actZoomToListSelection);
     }
 
     @Override

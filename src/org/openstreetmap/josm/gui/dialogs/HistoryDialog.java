@@ -42,6 +42,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.history.HistoryLoadTask;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -106,6 +107,10 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         //
         historyTable.getSelectionModel().addListSelectionListener(showHistoryAction);
         historyTable.getSelectionModel().addListSelectionListener(reloadAction);
+        
+        // Show history dialog on Enter/Spacebar
+        InputMapUtils.addEnterAction(historyTable, showHistoryAction);
+        InputMapUtils.addSpacebarAction(historyTable, showHistoryAction);
     }
 
     @Override
