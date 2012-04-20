@@ -23,7 +23,7 @@ import java.util.Random;
  * 
  * TODO: Can Base64 be reused?
  * 
- * @version $Id: B64.java 1328426 2012-04-20 15:52:23Z ggregory $
+ * @version $Id: B64.java 1328443 2012-04-20 16:38:07Z ggregory $
  * @since 1.7
  */
 class B64 {

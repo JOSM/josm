@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  * into the Public Domain.
  * </p>
  * 
- * @version $Id: Sha2Crypt.java 1328426 2012-04-20 15:52:23Z ggregory $
+ * @version $Id: Sha2Crypt.java 1328443 2012-04-20 16:38:07Z ggregory $
  * @since 1.7
  */
 public class Sha2Crypt {

@@ -33,7 +33,7 @@ import org.apache.commons.codec.Charsets;
  * This class is slightly incompatible if the given salt contains characters
  * that are not part of the allowed range [a-zA-Z0-9./].
  *
- * @version $Id: UnixCrypt.java 1328426 2012-04-20 15:52:23Z ggregory $
+ * @version $Id: UnixCrypt.java 1328443 2012-04-20 16:38:07Z ggregory $
  * @since 1.7
  */
 public class UnixCrypt {

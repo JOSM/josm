@@ -39,7 +39,7 @@ import org.apache.commons.codec.Charsets;
  * The C style comments are from the original C code, the ones with "//" from me.
  * </p>
  * 
- * @version $Id: Md5Crypt.java 1328425 2012-04-20 15:51:50Z ggregory $
+ * @version $Id: Md5Crypt.java 1328443 2012-04-20 16:38:07Z ggregory $
  * @since 1.7
  */
 public class Md5Crypt {
