@@ -216,7 +216,7 @@ public class CustomProjection extends AbstractProjection implements ProjectionSu
             return Double.parseDouble(doubleStr);
         } catch (NumberFormatException e) {
             throw new ProjectionConfigurationException(
-                    tr("Unable to parse value of ''{0}'' parameter ''{0}'' as number.", parameterName, doubleStr));
+                    tr("Unable to parse value ''{1}'' of parameter ''{0}'' as number.", parameterName, doubleStr));
         }
     }
 
@@ -275,7 +275,7 @@ public class CustomProjection extends AbstractProjection implements ProjectionSu
         }
         if (!s.isEmpty()) {
             throw new ProjectionConfigurationException(
-                    tr("Unable to parse value of ''{0}'' parameter ''{0}'' as coordinate value.", parameterName, angleStr));
+                    tr("Unable to parse value ''{1}'' of parameter ''{0}'' as coordinate value.", parameterName, angleStr));
         }
         return value;
     }
