@@ -415,14 +415,20 @@ public class CustomConfigurator {
         
         
         ScriptEngine engine ;
-        
+
         public void openAndReadXML(File file) {
             log("-- Reading custom preferences from " + file.getAbsolutePath() + " --");
-            InputStream is = null;
             try {
-                is = new BufferedInputStream(new FileInputStream(file));
                 String fileDir = file.getParentFile().getAbsolutePath();
                 if (fileDir!=null) engine.eval("scriptDir='"+normalizeDirName(fileDir) +"';");
+                openAndReadXML(new BufferedInputStream(new FileInputStream(file)));
+            } catch (Exception ex) {
+                log("Error reading custom preferences: " + ex.getMessage());
+            }
+        }
+
+        public void openAndReadXML(InputStream is) {
+            try {
                 DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
                 builderFactory.setValidating(false);
                 builderFactory.setNamespaceAware(true);

@@ -12,6 +12,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.net.Authenticator;
 import java.net.ProxySelector;
+import java.net.URL;
 import java.security.AllPermission;
 import java.security.CodeSource;
 import java.security.PermissionCollection;
@@ -30,6 +31,7 @@ import javax.swing.SwingUtilities;
 import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.AutosaveTask;
+import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
@@ -102,6 +104,7 @@ public class MainApplication extends Main {
                 "\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
                 "\t--[no-]maximize                           "+tr("Launch in maximized mode")+"\n"+
                 "\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
+                "\t--load-preferences=<url-to-xml>           "+tr("Changes preferences according to the XML file")+"\n\n"+
                 "\t--set=<key>=<value>                       "+tr("Set preference key to value")+"\n\n"+
                 "\t--language=<language>                     "+tr("Set the language")+"\n\n"+
                 tr("options provided as Java system properties")+":\n"+
@@ -201,6 +204,22 @@ public class MainApplication extends Main {
         }
         Main.pref.updateSystemProperties();
 
+        JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
+        Main.parent = mainFrame;
+
+        if (args.containsKey("load-preferences")) {
+            CustomConfigurator.XMLCommandProcessor config = new CustomConfigurator.XMLCommandProcessor(Main.pref);
+            for (String i : args.get("load-preferences")) {
+                System.out.println("Reading preferences from " + i);
+                try {
+                    URL url = new URL(i);
+                    config.openAndReadXML(url.openStream());
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+
         if (args.containsKey("set")) {
             for (String i : args.get("set")) {
                 String[] kv = i.split("=", 2);
@@ -247,8 +266,6 @@ public class MainApplication extends Main {
         preConstructorInit(args);
 
         monitor.indeterminateSubTask(tr("Creating main GUI"));
-        JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
-        Main.parent = mainFrame;
         Main.addListener();
         final Main main = new MainApplication(mainFrame);
 
