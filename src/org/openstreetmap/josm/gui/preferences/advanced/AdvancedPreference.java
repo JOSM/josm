@@ -274,10 +274,11 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
                 if (files.length==0) return;
                 
                 int answer = 0;
-                if (hasLists) { 
-                    answer = JOptionPane.showOptionDialog(Main.parent, tr("What to with preference lists when this file is to be imported?"), tr("Question"),
-                       JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, 
-                        null, new String[]{"Append preferences from file to existing values","Replace existing values"},0);
+                if (hasLists) {
+                    answer = JOptionPane.showOptionDialog(
+                            Main.parent, tr("What to do with preference lists when this file is to be imported?"), tr("Question"),
+                            JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                            new String[]{tr("Append preferences from file to existing values"), tr("Replace existing values")}, 0);
                 }
                 CustomConfigurator.exportPreferencesKeysToFile(files[0].getAbsolutePath(), answer==0, keys);
             }
