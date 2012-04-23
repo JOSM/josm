@@ -36,10 +36,10 @@ import org.apache.commons.codec.Charsets;
  * Conversion to Kotlin and from there to Java in 2012.
  * </p>
  * <p>
- * The C style comments are from the original C code, the ones with "//" from me.
+ * The C style comments are from the original C code, the ones with "//" from the port.
  * </p>
  * 
- * @version $Id: Md5Crypt.java 1328443 2012-04-20 16:38:07Z ggregory $
+ * @version $Id: Md5Crypt.java 1329207 2012-04-23 12:26:56Z ggregory $
  * @since 1.7
  */
 public class Md5Crypt {
