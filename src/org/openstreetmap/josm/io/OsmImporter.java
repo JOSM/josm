@@ -50,12 +50,17 @@ public class OsmImporter extends FileImporter {
 
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
+        FileInputStream in = null;
         try {
-            FileInputStream in = new FileInputStream(file);
+            in = new FileInputStream(file);
             importData(in, file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             throw new IOException(tr("File ''{0}'' does not exist.", file.getName()));
+        } finally {
+            if (in != null) {
+                in.close();
+            }
         }
     }
 
