@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Utils;
 
 public interface Expression {
@@ -113,6 +114,14 @@ public interface Expression {
                     return null;
                 }
                 return c;
+            }
+
+            public Color html2color(String html) {
+                return ColorHelper.html2color(html);
+            }
+
+            public String color2html(Color c) {
+                return ColorHelper.color2html(c);
             }
 
             public float red(Color c) {

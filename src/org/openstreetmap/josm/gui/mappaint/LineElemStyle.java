@@ -32,12 +32,12 @@ public class LineElemStyle extends ElemStyle {
     private BasicStroke line;
     public Color color;
     public Color dashesBackground;
-    public int offset;
+    public float offset;
     public float realWidth; // the real width of this line in meter
 
     private BasicStroke dashesLine;
 
-    protected LineElemStyle(Cascade c, BasicStroke line, Color color, BasicStroke dashesLine, Color dashesBackground, int offset, float realWidth) {
+    protected LineElemStyle(Cascade c, BasicStroke line, Color color, BasicStroke dashesLine, Color dashesBackground, float offset, float realWidth) {
         super(c, 0f);
         this.line = line;
         this.color = color;
@@ -48,11 +48,29 @@ public class LineElemStyle extends ElemStyle {
     }
 
     public static LineElemStyle createLine(Environment env) {
-        return createImpl(env, false);
+        return createImpl(env, "");
+    }
+
+    public static LineElemStyle createLeftCasing(Environment env) {
+        LineElemStyle leftCasing = createImpl(env, "left-casing-");
+        if (leftCasing != null) {
+            leftCasing.z_index += -90;
+            leftCasing.isModifier = true;
+        }
+        return leftCasing;
+    }
+
+    public static LineElemStyle createRightCasing(Environment env) {
+        LineElemStyle rightCasing = createImpl(env, "right-casing-");
+        if (rightCasing != null) {
+            rightCasing.z_index += -90;
+            rightCasing.isModifier = true;
+        }
+        return rightCasing;
     }
 
     public static LineElemStyle createCasing(Environment env) {
-        LineElemStyle casing =  createImpl(env, true);
+        LineElemStyle casing = createImpl(env, "casing-");
         if (casing != null) {
             casing.z_index += -100;
             casing.isModifier = true;
@@ -60,22 +78,15 @@ public class LineElemStyle extends ElemStyle {
         return casing;
     }
 
-    private static LineElemStyle createImpl(Environment env, boolean casing) {
+    private static LineElemStyle createImpl(Environment env, String prefix) {
         Cascade c = env.mc.getCascade(env.layer);
         Cascade c_def = env.mc.getCascade("default");
 
-        String prefix = casing ? "casing-" : "";
-
-        Float width;
-        if (casing) {
-            Float widthOnDefault = getWidth(c_def, "width", null);
-            Float widthLine = getWidth(c, "width", widthOnDefault);
-            width = getWidth(c, "casing-width", widthLine);
-        } else {
-            Float widthOnDefault = getWidth(c_def, "width", null);
-            width = getWidth(c, "width", widthOnDefault);
+        Float widthOnDefault = getWidth(c_def, "width", null);
+        Float width = getWidth(c, "width", widthOnDefault);
+        if (!prefix.isEmpty()) {
+            width = getWidth(c, prefix + "width", width);
         }
-
         if (width == null)
             return null;
 
@@ -96,8 +107,37 @@ public class LineElemStyle extends ElemStyle {
             }
         }
 
+        Float offsetOnDefault = getWidth(c_def, "offset", null);
+        Float offset = getWidth(c, "offset", offsetOnDefault);
+        if (offset == null) {
+            offset = 0f;
+        }
+        if (!prefix.isEmpty()) {
+            Float base_width = getWidth(c, "width", widthOnDefault);
+            Float base_offset = offset;
+            if (base_width == null || base_width < 2f) {
+                base_width = 2f;
+            }
+            /* pre-calculate an offset */
+            if (prefix.startsWith("left") || prefix.startsWith("right")) {
+                offset = base_width/2 + width/2;
+            } else {
+                offset = 0f;
+            }
+            /* overwrites (e.g. "4") or adjusts (e.g. "+4") a prefixed -offset */
+            if (getWidth(c, prefix + "offset", offset) != null) {
+                offset = getWidth(c, prefix + "offset", offset);
+            }
+            /* flip sign for the right-casing-offset */
+            if (prefix.startsWith("right")) {
+                offset *= -1f;
+            }
+            /* use base_offset as the reference center */
+            offset += base_offset;
+        }
+
         Color color = c.get(prefix + "color", null, Color.class);
-        if (!casing && color == null) {
+        if (prefix.isEmpty() && color == null) {
             color = c.get("fill-color", null, Color.class);
         }
         if (color == null) {
@@ -176,8 +216,6 @@ public class LineElemStyle extends ElemStyle {
         BasicStroke line = new BasicStroke(width, cap, join, miterlimit, dashes, dashesOffset);
         BasicStroke dashesLine = null;
 
-        float offset = c.get("offset", 0f, Float.class);
-
         if (dashes != null && dashesBackground != null) {
             float[] dashes2 = new float[dashes.length];
             System.arraycopy(dashes, 0, dashes2, 1, dashes.length - 1);
@@ -185,7 +223,7 @@ public class LineElemStyle extends ElemStyle {
             dashesLine = new BasicStroke(width, cap, join, miterlimit, dashes2, dashes2[0] + dashesOffset);
         }
 
-        return new LineElemStyle(c, line, color, dashesLine, dashesBackground, (int) offset, realWidth);
+        return new LineElemStyle(c, line, color, dashesLine, dashesBackground, offset, realWidth);
     }
 
     @Override
@@ -272,7 +310,7 @@ public class LineElemStyle extends ElemStyle {
         hash = 29 * hash + color.hashCode();
         hash = 29 * hash + (dashesLine != null ? dashesLine.hashCode() : 0);
         hash = 29 * hash + (dashesBackground != null ? dashesBackground.hashCode() : 0);
-        hash = 29 * hash + offset;
+        hash = 29 * hash + Float.floatToIntBits(offset);
         hash = 29 * hash + Float.floatToIntBits(realWidth);
         return hash;
     }

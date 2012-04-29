@@ -310,6 +310,8 @@ public class ElemStyles {
                 addIfNotNull(sl, AreaElemStyle.create(c));
                 addIfNotNull(sl, LinePatternElemStyle.create(env));
                 addIfNotNull(sl, LineElemStyle.createLine(env));
+                addIfNotNull(sl, LineElemStyle.createLeftCasing(env));
+                addIfNotNull(sl, LineElemStyle.createRightCasing(env));
                 addIfNotNull(sl, LineElemStyle.createCasing(env));
                 addIfNotNull(sl, LineTextElemStyle.create(env));
             } else if (osm instanceof Node) {
@@ -346,9 +348,8 @@ public class ElemStyles {
      * Draw a default node symbol for nodes that have no style?
      */
     private boolean isDefaultNodes() {
-        if (defaultNodesIdx == cacheIdx) {
+        if (defaultNodesIdx == cacheIdx)
             return defaultNodes;
-        }
         defaultNodes = fromCanvas("default-points", true, Boolean.class);
         defaultNodesIdx = cacheIdx;
         return defaultNodes;
@@ -358,9 +359,8 @@ public class ElemStyles {
      * Draw a default line for ways that do not have an own line style?
      */
     private boolean isDefaultLines() {
-        if (defaultLinesIdx == cacheIdx) {
+        if (defaultLinesIdx == cacheIdx)
             return defaultLines;
-        }
         defaultLines = fromCanvas("default-lines", true, Boolean.class);
         defaultLinesIdx = cacheIdx;
         return defaultLines;
@@ -419,13 +419,11 @@ public class ElemStyles {
      * @return first AreaElemStyle found or {@code null}.
      */
     public static AreaElemStyle getAreaElemStyle(OsmPrimitive p, boolean pretendWayIsClosed) {
-        if (MapPaintStyles.getStyles() == null) {
+        if (MapPaintStyles.getStyles() == null)
             return null;
-        }
         for (ElemStyle s : MapPaintStyles.getStyles().generateStyles(p, 1.0, null, pretendWayIsClosed).a) {
-            if (s instanceof AreaElemStyle) {
+            if (s instanceof AreaElemStyle)
                 return (AreaElemStyle) s;
-            }
         }
         return null;
     }
