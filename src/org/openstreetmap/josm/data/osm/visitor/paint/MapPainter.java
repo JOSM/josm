@@ -126,7 +126,7 @@ public class MapPainter {
      *              e.g. oneway street or waterway
      * @param onewayReversed for oneway=-1 and similar
      */
-    public void drawWay(Way way, Color color, BasicStroke line, BasicStroke dashes, Color dashedColor, int offset,
+    public void drawWay(Way way, Color color, BasicStroke line, BasicStroke dashes, Color dashedColor, float offset,
             boolean showOrientation, boolean showHeadArrowOnly,
             boolean showOneway, boolean onewayReversed) {
 
@@ -258,7 +258,7 @@ public class MapPainter {
     public class OffsetIterator implements Iterator<Point> {
 
         private List<Node> nodes;
-        private int offset;
+        private float offset;
         private int idx;
 
         private Point prev = null;
@@ -268,7 +268,7 @@ public class MapPainter {
          */
         private int x_prev0, y_prev0;
 
-        public OffsetIterator(List<Node> nodes, int offset) {
+        public OffsetIterator(List<Node> nodes, float offset) {
             this.nodes = nodes;
             this.offset = offset;
             idx = 0;
@@ -281,7 +281,7 @@ public class MapPainter {
 
         @Override
         public Point next() {
-            if (offset == 0) return nc.getPoint(nodes.get(idx++));
+            if (Math.abs(offset) < 0.1f) return nc.getPoint(nodes.get(idx++));
 
             Point current = nc.getPoint(nodes.get(idx));
 
@@ -860,7 +860,7 @@ public class MapPainter {
 
             if ((pb.width >= nb.getWidth() && pb.height >= nb.getHeight()) && // quick check
                     area.contains(centeredNBounds) // slow but nice
-                    ) {
+            ) {
                 g.setColor(text.color);
                 Font defaultFont = g.getFont();
                 g.setFont (text.font);
