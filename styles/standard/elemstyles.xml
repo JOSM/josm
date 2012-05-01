@@ -272,7 +272,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="maxspeed"/>
-		<icon src="vehicle/restriction/speed.png"/>
+		<icon src="vehicle/restriction/speed.png" priority="-100"/>
 	</rule>
 
 	<rule>
