@@ -947,6 +947,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * @param s the string
      */
     private static String[] splitEscaped(char delimiter, String s) {
+        if (s == null) {
+            return new String[0];
+        }
         List<String> result = new ArrayList<String>();
         boolean backslash = false;
         StringBuilder item = new StringBuilder();
