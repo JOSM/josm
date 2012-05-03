@@ -37,7 +37,14 @@ import org.apache.commons.codec.StringEncoder;
  * For more information, see <a href="https://issues.apache.org/jira/browse/CODEC-57">CODEC-57</a>.
  * </p>
  * 
- * @version $Id: Metaphone.java 1308315 2012-04-02 12:07:27Z ggregory $
+ * This class is conditionally thread-safe.
+ * The instance field {@link #maxCodeLen} is mutable {@link #setMaxCodeLen(int)}
+ * but is not volatile, and accesses are not synchronised.
+ * If an instance of the class is shared between threads, the caller needs to ensure that suitable synchronisation
+ * is used to ensure safe publication of the value between threads, and must not invoke {@link #setMaxCodeLen(int)}
+ * after initial setup. 
+ * 
+ * @version $Id: Metaphone.java 1333397 2012-05-03 10:21:11Z sebb $
  */
 public class Metaphone implements StringEncoder {
 

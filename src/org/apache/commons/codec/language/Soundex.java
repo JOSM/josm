@@ -24,7 +24,10 @@ import org.apache.commons.codec.StringEncoder;
  * Encodes a string into a Soundex value. Soundex is an encoding used to relate similar names, but can also be used as a
  * general purpose scheme to find word with similar phonemes.
  * 
- * @version $Id: Soundex.java 1308315 2012-04-02 12:07:27Z ggregory $
+ * This class is thread-safe.
+ * Although not strictly immutable, the {@link #maxLength} field is not actually used.
+ * 
+ * @version $Id: Soundex.java 1333397 2012-05-03 10:21:11Z sebb $
  */
 public class Soundex implements StringEncoder {
 

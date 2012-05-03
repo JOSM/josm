@@ -23,7 +23,9 @@ import org.apache.commons.codec.Charsets;
  * 
  * See {@link #crypt(String, String)} for further details.
  * 
- * @version $Id: Crypt.java 1328443 2012-04-20 16:38:07Z ggregory $
+ * This class is immutable and thread-safe.
+ * 
+ * @version $Id: Crypt.java 1333397 2012-05-03 10:21:11Z sebb $
  * @since 1.7
  */
 public class Crypt {

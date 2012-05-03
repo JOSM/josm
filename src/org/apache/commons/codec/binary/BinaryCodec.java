@@ -25,11 +25,13 @@ import org.apache.commons.codec.EncoderException;
 /**
  * Converts between byte arrays and strings of "0"s and "1"s.
  * 
+ * This class is immutable and thread-safe.
+ * 
  * TODO: may want to add more bit vector functions like and/or/xor/nand 
  * TODO: also might be good to generate boolean[] from byte[] et cetera.
  * 
  * @since 1.3
- * @version $Id: BinaryCodec.java 1309096 2012-04-03 18:54:06Z sebb $
+ * @version $Id: BinaryCodec.java 1333397 2012-05-03 10:21:11Z sebb $
  */
 public class BinaryCodec implements BinaryDecoder, BinaryEncoder {
     /*

@@ -40,11 +40,13 @@ import org.apache.commons.codec.binary.Base64;
  * handling software.
  * </p>
  * 
+ * This class is immutable and thread-safe.
+ * 
  * @see <a href="http://www.ietf.org/rfc/rfc1522.txt">MIME (Multipurpose Internet Mail Extensions) Part Two: Message
  *          Header Extensions for Non-ASCII Text</a>
  * 
  * @since 1.3
- * @version $Id: BCodec.java 1309093 2012-04-03 18:44:55Z sebb $
+ * @version $Id: BCodec.java 1333397 2012-05-03 10:21:11Z sebb $
  */
 public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder {
     /**

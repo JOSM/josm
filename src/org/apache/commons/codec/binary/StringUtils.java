@@ -27,9 +27,11 @@ import org.apache.commons.codec.Charsets;
  * Converts String to and from bytes using the encodings required by the Java specification. These encodings are specified in <a
  * href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
  * 
+ * This class is immutable and thread-safe.
+ *
  * @see CharEncoding
  * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
- * @version $Id: StringUtils.java 1308315 2012-04-02 12:07:27Z ggregory $
+ * @version $Id: StringUtils.java 1333397 2012-05-03 10:21:11Z sebb $
  * @since 1.4
  */
 public class StringUtils {

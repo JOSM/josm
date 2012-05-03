@@ -24,7 +24,9 @@ import java.util.Comparator;
  * Soundex, Metaphone, etc. This class can come in handy if one need to sort Strings by an encoded form of a name such
  * as Soundex.
  * 
- * @version $Id: StringEncoderComparator.java 1308315 2012-04-02 12:07:27Z ggregory $
+ * This class is immutable and thread-safe.
+ * 
+ * @version $Id: StringEncoderComparator.java 1333397 2012-05-03 10:21:11Z sebb $
  */
 public class StringEncoderComparator implements Comparator {
 
