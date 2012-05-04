@@ -9,7 +9,8 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
@@ -138,10 +139,12 @@ public class DownloadPrimitiveAction extends JosmAction {
             .addComponent(help)
         );
 
-        cbType.addActionListener(new ActionListener() {
+        cbType.addItemListener(new ItemListener() {
 
             @Override
-            public void actionPerformed(ActionEvent ae) {
+            public void itemStateChanged(ItemEvent e) {
+                tfId.setType(cbType.getType());
+                tfId.performValidation();
                 referrers.setText(cbType.getType() == OsmPrimitiveType.NODE
                         ? tr("Download referrers (parent relations and ways)")
                         : tr("Download referrers (parent relations)"));
@@ -185,11 +188,11 @@ public class DownloadPrimitiveAction extends JosmAction {
         Main.pref.put("download.newlayer", layer.isSelected());
 
         tfId.setType(cbType.getType());
-        if(tfId.readOsmIds()==false) {
+        if(!tfId.readOsmIds()) {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Invalid ID list specified\n"
-                    + " Cannot download object."),
+                    + "Cannot download object."),
                     tr("Information"),
                     JOptionPane.INFORMATION_MESSAGE
             );

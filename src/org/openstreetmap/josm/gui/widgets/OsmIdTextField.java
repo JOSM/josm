@@ -29,10 +29,6 @@ public class OsmIdTextField extends JTextField {
         validator.type = type;
     }
 
-    public long getOsmId() {
-        return validator.getOsmId();
-    }
-
     /**
      * Get entered ID list - supports "1,2,3" "1 2   ,3" or even "1 2 3 v2 6 v8"
      * @return list of id's
@@ -45,6 +41,9 @@ public class OsmIdTextField extends JTextField {
         return validator.readOsmIds();
     }
 
+    public void performValidation() {
+        validator.validate();
+    }
 
     /**
      * Validator for a changeset ID entered in a {@see JTextComponent}.
@@ -65,7 +64,7 @@ public class OsmIdTextField extends JTextField {
 
         @Override
         public boolean isValid() {
-            return getOsmId() > 0 || readOsmIds() != false;
+            return readOsmIds();
         }
 
         @Override
@@ -77,19 +76,6 @@ public class OsmIdTextField extends JTextField {
             }
         }
 
-        public long getOsmId() {
-            String value  = getComponent().getText();
-            if (value == null || value.trim().length() == 0) return 0;
-            try {
-                long osmId = Long.parseLong(value.trim());
-                if (osmId > 0) 
-                    return osmId;
-                return 0;
-            } catch(NumberFormatException e) {
-                return 0;
-            }
-        }
-        
         public boolean readOsmIds() {
             String value = getComponent().getText();
             char c;
@@ -109,13 +95,17 @@ public class OsmIdTextField extends JTextField {
                     try {
                         ids.add(SimplePrimitiveId.fromString(s));
                     } catch (IllegalArgumentException ex) {
-                        if (type == OsmPrimitiveType.NODE) {
-                            ids.add(new SimplePrimitiveId(Long.parseLong(s), OsmPrimitiveType.NODE));
-                        } else if (type == OsmPrimitiveType.WAY) {
-                            ids.add(new SimplePrimitiveId(Long.parseLong(s), OsmPrimitiveType.WAY));
-                        } else if (type == OsmPrimitiveType.RELATION) {
-                            ids.add(new SimplePrimitiveId(Long.parseLong(s), OsmPrimitiveType.RELATION));
-                        } else {
+                        try {
+                            if (type == OsmPrimitiveType.NODE) {
+                                ids.add(new SimplePrimitiveId(Long.parseLong(s), OsmPrimitiveType.NODE));
+                            } else if (type == OsmPrimitiveType.WAY) {
+                                ids.add(new SimplePrimitiveId(Long.parseLong(s), OsmPrimitiveType.WAY));
+                            } else if (type == OsmPrimitiveType.RELATION) {
+                                ids.add(new SimplePrimitiveId(Long.parseLong(s), OsmPrimitiveType.RELATION));
+                            } else {
+                                return false;
+                            }
+                        } catch (IllegalArgumentException ex2) {
                             return false;
                         }
                     }
