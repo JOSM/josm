@@ -34,7 +34,7 @@ import org.apache.commons.codec.StringEncoder;
  * is used to ensure safe publication of the value between threads, and must not invoke {@link #setMaxCodeLen(int)}
  * after initial setup. 
  * 
- * @version $Id: DoubleMetaphone.java 1333397 2012-05-03 10:21:11Z sebb $
+ * @version $Id: DoubleMetaphone.java 1333721 2012-05-04 01:06:10Z sebb $
  */
 public class DoubleMetaphone implements StringEncoder {
 
@@ -1035,8 +1035,8 @@ public class DoubleMetaphone implements StringEncoder {
      */
     public class DoubleMetaphoneResult {
 
-        private final StringBuffer primary = new StringBuffer(getMaxCodeLen());
-        private final StringBuffer alternate = new StringBuffer(getMaxCodeLen());
+        private final StringBuilder primary = new StringBuilder(getMaxCodeLen());
+        private final StringBuilder alternate = new StringBuilder(getMaxCodeLen());
         private final int maxLength;
 
         public DoubleMetaphoneResult(int maxLength) {

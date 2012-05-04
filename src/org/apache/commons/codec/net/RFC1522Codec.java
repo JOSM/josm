@@ -44,7 +44,7 @@ import org.apache.commons.codec.binary.StringUtils;
  * This class is immutable and thread-safe.
  * 
  * @since 1.3
- * @version $Id: RFC1522Codec.java 1333397 2012-05-03 10:21:11Z sebb $
+ * @version $Id: RFC1522Codec.java 1333721 2012-05-04 01:06:10Z sebb $
  */
 abstract class RFC1522Codec {
     
@@ -84,7 +84,7 @@ abstract class RFC1522Codec {
         if (text == null) {
             return null;
         }
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(PREFIX); 
         buffer.append(charset);
         buffer.append(SEP);

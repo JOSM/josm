@@ -27,7 +27,7 @@ import org.apache.commons.codec.StringEncoder;
  * 
  * This class is immutable and thread-safe.
  * 
- * @version $Id: RefinedSoundex.java 1333397 2012-05-03 10:21:11Z sebb $
+ * @version $Id: RefinedSoundex.java 1333721 2012-05-04 01:06:10Z sebb $
  */
 public class RefinedSoundex implements StringEncoder {
 
@@ -181,7 +181,7 @@ public class RefinedSoundex implements StringEncoder {
             return str;
         }
 
-        StringBuffer sBuf = new StringBuffer();
+        StringBuilder sBuf = new StringBuilder();
         sBuf.append(str.charAt(0));
 
         char last, current;

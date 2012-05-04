@@ -67,7 +67,7 @@ import org.apache.commons.codec.StringEncoder;
  * @see <a href="http://www.dropby.com/NYSIIS.html">NYSIIS on dropby.com</a>
  * @see Soundex
  * @since 1.7
- * @version $Id: Nysiis.java 1333397 2012-05-03 10:21:11Z sebb $
+ * @version $Id: Nysiis.java 1333721 2012-05-04 01:06:10Z sebb $
  */
 public class Nysiis implements StringEncoder {
 
@@ -272,7 +272,7 @@ public class Nysiis implements StringEncoder {
         str = PAT_DT_ETC.matcher(str).replaceFirst("D");
 
         // First character of key = first character of name.
-        StringBuffer key = new StringBuffer(str.length());
+        StringBuilder key = new StringBuilder(str.length());
         key.append(str.charAt(0));
 
         // Transcode remaining characters, incrementing by one character each time
