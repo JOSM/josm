@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * 
  * This class is immutable and thread-safe.
  * 
- * @version $Id: Sha2Crypt.java 1333397 2012-05-03 10:21:11Z sebb $
+ * @version $Id: Sha2Crypt.java 1333705 2012-05-04 00:44:49Z sebb $
  * @since 1.7
  */
 public class Sha2Crypt {
@@ -139,7 +139,7 @@ public class Sha2Crypt {
             throw new IllegalArgumentException("Invalid salt value: " + salt);
         }
         if (m.group(3) != null) {
-            rounds = Integer.valueOf(m.group(3));
+            rounds = Integer.parseInt(m.group(3));
             rounds = Math.max(ROUNDS_MIN, Math.min(ROUNDS_MAX, rounds));
             roundsCustom = true;
         }
