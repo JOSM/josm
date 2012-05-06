@@ -151,7 +151,7 @@ public class MergeNodesAction extends JosmAction {
      * @param candidates the collection of candidate nodes
      * @return the selected target node
      */
-    public static Node selectTargetNode(List<Node> candidates) {
+    public static Node selectTargetNode(Collection<Node> candidates) {
         Node targetNode = null;
         Node lastNode = null;
         for (Node n : candidates) {
@@ -240,7 +240,12 @@ public class MergeNodesAction extends JosmAction {
     }
 
     public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode) {
-        return mergeNodes(layer, nodes, targetNode, targetNode);
+        if (nodes == null) {
+            return null;
+        }
+        Set<Node> allNodes = new HashSet<Node>(nodes);
+        allNodes.add(targetNode);
+        return mergeNodes(layer, nodes, selectTargetNode(allNodes), targetNode);
     }
 
     /**
