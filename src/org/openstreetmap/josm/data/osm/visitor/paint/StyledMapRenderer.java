@@ -27,7 +27,7 @@ import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 
 /**
  * <p>A map renderer which renders a map according to style rules in a set of style sheets.</p>
- * 
+ *
  */
 public class StyledMapRenderer extends AbstractMapRenderer{
 
@@ -38,8 +38,8 @@ public class StyledMapRenderer extends AbstractMapRenderer{
 
     private static int FLAG_NORMAL = 0;
     private static int FLAG_DISABLED = 1;
-    private static int FLAG_SELECTED = 2;
-    private static int FLAG_MEMBER_OF_SELECTED = 4;
+    private static int FLAG_MEMBER_OF_SELECTED = 2;
+    private static int FLAG_SELECTED = 4;
 
     private static class StyleRecord implements Comparable<StyleRecord> {
         final ElemStyle style;
@@ -58,22 +58,21 @@ public class StyledMapRenderer extends AbstractMapRenderer{
                 return -1;
             if ((this.flags & FLAG_DISABLED) == 0 && (other.flags & FLAG_DISABLED) != 0)
                 return 1;
-            float z_index1 = this.style.z_index;
-            if ((this.flags & FLAG_SELECTED) != 0) {
-                z_index1 += 700f;
-            } else if ((this.flags & FLAG_MEMBER_OF_SELECTED) != 0) {
-                z_index1 += 600f;
-            }
-            float z_index2 = other.style.z_index;
-            if ((other.flags & FLAG_SELECTED) != 0) {
-                z_index2 += 700f;
-            } else if ((other.flags & FLAG_MEMBER_OF_SELECTED) != 0) {
-                z_index2 += 600f;
-            }
 
-            int d1 = Float.compare(z_index1, z_index2);
-            if (d1 != 0)
-                return d1;
+            int d0 = Float.compare(this.style.major_z_index, other.style.major_z_index);
+            if (d0 != 0)
+                return d0;
+
+            // selected on top of member of selected on top of unselected
+            // FLAG_DISABLED bit is the same at this point
+            if (this.flags > other.flags)
+                return 1;
+            if (this.flags < other.flags)
+                return -1;
+
+            int dz = Float.compare(this.style.z_index, other.style.z_index);
+            if (dz != 0)
+                return dz;
 
             // simple node on top of icons and shapes
             if (this.style == NodeElemStyle.SIMPLE_NODE_ELEMSTYLE && other.style != NodeElemStyle.SIMPLE_NODE_ELEMSTYLE)

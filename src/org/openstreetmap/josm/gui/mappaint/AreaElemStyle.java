@@ -27,7 +27,7 @@ public class AreaElemStyle extends ElemStyle
     public TextElement text;
 
     protected AreaElemStyle(Cascade c, Color color, MapImage fillImage, TextElement text) {
-        super(c, -1000f);
+        super(c, 1f);
         CheckParameterUtil.ensureParameterNotNull(color);
         this.color = color;
         this.fillImage = fillImage;

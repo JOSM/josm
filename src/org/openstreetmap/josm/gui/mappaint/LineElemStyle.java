@@ -39,20 +39,22 @@ public class LineElemStyle extends ElemStyle {
     private BasicStroke dashesLine;
 
     protected enum LineType {
-        NORMAL(""),
-        CASING("casing-"),
-        LEFT_CASING("left-casing-"),
-        RIGHT_CASING("right-casing-");
+        NORMAL("", 3f),
+        CASING("casing-", 2f),
+        LEFT_CASING("left-casing-", 2.1f),
+        RIGHT_CASING("right-casing-", 2.1f);
 
-        public String prefix;
+        public final String prefix;
+        public final float default_major_z_index;
 
-        LineType(String prefix) {
+        LineType(String prefix, float default_major_z_index) {
             this.prefix = prefix;
+            this.default_major_z_index = default_major_z_index;
         }
     }
 
-    protected LineElemStyle(Cascade c, BasicStroke line, Color color, BasicStroke dashesLine, Color dashesBackground, float offset, float realWidth) {
-        super(c, 0f);
+    protected LineElemStyle(Cascade c, float default_major_z_index, BasicStroke line, Color color, BasicStroke dashesLine, Color dashesBackground, float offset, float realWidth) {
+        super(c, default_major_z_index);
         this.line = line;
         this.color = color;
         this.dashesLine = dashesLine;
@@ -68,7 +70,6 @@ public class LineElemStyle extends ElemStyle {
     public static LineElemStyle createLeftCasing(Environment env) {
         LineElemStyle leftCasing = createImpl(env, LineType.LEFT_CASING);
         if (leftCasing != null) {
-            leftCasing.z_index += -90;
             leftCasing.isModifier = true;
         }
         return leftCasing;
@@ -77,7 +78,6 @@ public class LineElemStyle extends ElemStyle {
     public static LineElemStyle createRightCasing(Environment env) {
         LineElemStyle rightCasing = createImpl(env, LineType.RIGHT_CASING);
         if (rightCasing != null) {
-            rightCasing.z_index += -90;
             rightCasing.isModifier = true;
         }
         return rightCasing;
@@ -86,7 +86,6 @@ public class LineElemStyle extends ElemStyle {
     public static LineElemStyle createCasing(Environment env) {
         LineElemStyle casing = createImpl(env, LineType.CASING);
         if (casing != null) {
-            casing.z_index += -100;
             casing.isModifier = true;
         }
         return casing;
@@ -262,7 +261,7 @@ public class LineElemStyle extends ElemStyle {
             dashesLine = new BasicStroke(width, cap, join, miterlimit, dashes2, dashes2[0] + dashesOffset);
         }
 
-        return new LineElemStyle(c, line, color, dashesLine, dashesBackground, offset, realWidth);
+        return new LineElemStyle(c, type.default_major_z_index, line, color, dashesLine, dashesBackground, offset, realWidth);
     }
 
     @Override

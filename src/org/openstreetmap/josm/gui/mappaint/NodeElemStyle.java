@@ -14,11 +14,10 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
-import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.BoxProvider;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.SimpleBoxProvider;
-import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
+import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -84,24 +83,24 @@ public class NodeElemStyle extends ElemStyle {
     static {
         MultiCascade mc = new MultiCascade();
         Cascade c = mc.getOrCreateCascade("default");
-        SIMPLE_NODE_ELEMSTYLE = create(new Environment(null, mc, "default", null), true);
+        SIMPLE_NODE_ELEMSTYLE = create(new Environment(null, mc, "default", null), 4.1f, true);
         if (SIMPLE_NODE_ELEMSTYLE == null) throw new AssertionError();
     }
 
     public static final StyleList DEFAULT_NODE_STYLELIST = new StyleList(NodeElemStyle.SIMPLE_NODE_ELEMSTYLE);
     public static final StyleList DEFAULT_NODE_STYLELIST_TEXT = new StyleList(NodeElemStyle.SIMPLE_NODE_ELEMSTYLE, BoxTextElemStyle.SIMPLE_NODE_TEXT_ELEMSTYLE);
 
-    protected NodeElemStyle(Cascade c, MapImage mapImage, Symbol symbol) {
-        super(c, 1000f);
+    protected NodeElemStyle(Cascade c, MapImage mapImage, Symbol symbol, float default_major_z_index) {
+        super(c, default_major_z_index);
         this.mapImage = mapImage;
         this.symbol = symbol;
     }
 
     public static NodeElemStyle create(Environment env) {
-        return create(env, false);
+        return create(env, 4f, false);
     }
 
-    private static NodeElemStyle create(Environment env, boolean allowDefault) {
+    private static NodeElemStyle create(Environment env, float default_major_z_index, boolean allowDefault) {
         Cascade c = env.mc.getCascade(env.layer);
 
         MapImage mapImage = createIcon(env);
@@ -115,7 +114,7 @@ public class NodeElemStyle extends ElemStyle {
         // have to allocate a node element style.
         if (!allowDefault && symbol == null && mapImage == null) return null;
 
-        return new NodeElemStyle(c, mapImage, symbol);
+        return new NodeElemStyle(c, mapImage, symbol, default_major_z_index);
     }
 
     private static MapImage createIcon(Environment env) {
@@ -301,11 +300,11 @@ public class NodeElemStyle extends ElemStyle {
     }
 
     public BoxProvider getBoxProvider() {
-        if (mapImage != null) {
+        if (mapImage != null)
             return mapImage.getBoxProvider();
-        } else if (symbol != null) {
+        else if (symbol != null)
             return new SimpleBoxProvider(new Rectangle(-symbol.size/2, -symbol.size/2, symbol.size, symbol.size));
-        } else {
+        else {
             // This is only executed once, so no performance concerns.
             // However, it would be better, if the settings could be changed at runtime.
             int size = Utils.max(

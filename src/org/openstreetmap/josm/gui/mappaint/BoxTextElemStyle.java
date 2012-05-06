@@ -89,7 +89,7 @@ public class BoxTextElemStyle extends ElemStyle {
     public VerticalTextAlignment vAlign;
 
     public BoxTextElemStyle(Cascade c, TextElement text, BoxProvider boxProvider, Rectangle box, HorizontalTextAlignment hAlign, VerticalTextAlignment vAlign) {
-        super(c, 2000f);
+        super(c, 5f);
         CheckParameterUtil.ensureParameterNotNull(text);
         CheckParameterUtil.ensureParameterNotNull(hAlign);
         CheckParameterUtil.ensureParameterNotNull(vAlign);
@@ -196,9 +196,9 @@ public class BoxTextElemStyle extends ElemStyle {
         if (!text.equals(other.text)) return false;
         if (boxProvider != null) {
             if (!boxProvider.equals(other.boxProvider)) return false;
-        } else if (other.boxProvider != null) {
+        } else if (other.boxProvider != null)
             return false;
-        } else {
+        else {
             if (!box.equals(other.box)) return false;
         }
         if (hAlign != other.hAlign) return false;
