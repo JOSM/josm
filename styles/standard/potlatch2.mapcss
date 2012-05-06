@@ -58,7 +58,7 @@ way[highway=trunk],way[highway=trunk_link],
 way[highway=primary],way[highway=primary_link],
 way[highway=secondary],way[highway=secondary_link],
 way[highway=tertiary],way[highway=tertiary_link],
-way[highway=residential],way[highway=unclassified]  { z-index: 5; text: auto; text-color: black; font-size: 12; text-position: line; text-offset: 10; text-halo-color: white; text-halo-radius: 2; linecap: round; casing-linecap: round }
+way[highway=residential],way[highway=unclassified]  { z-index: 5; text: auto; text-color: black; font-size: 12; text-position: line; text-halo-color: white; text-halo-radius: 2; linecap: round; casing-linecap: round }
 way[highway=motorway],way[highway=motorway_link]    { z-index: 9; color: #809BC0; width: 7; casing-color: #1e375a; casing-width: 1; }
 way[highway=trunk],way[highway=trunk_link]          { z-index: 9; color: #7FC97F; width: 7; casing-color: #245424; casing-width: 1; }
 way[highway=primary],way[highway=primary_link]      { z-index: 8; color: #E46D71; width: 7; casing-color: #651316; casing-width: 1; }
@@ -131,9 +131,9 @@ way[waterway][tunnel=yes]                {z-index: 5; dashes: 8,4;}
 
 /* Aeroways */
 
-area[aeroway=aerodrome]:closed
+way[aeroway=aerodrome]:closed
     { z-index: 3; color: #bb44bb; width: 3; casing-color: #66066;  casing-width: 1;  }
-area|z-15[aeroway=aerodrome]:closed
+way|z-15[aeroway=aerodrome]:closed
     { z-index: 3; fill-color: #bb99bb;  fill-opacity: 0.5;}
 way[aeroway=taxiway]!:closed { z-index: 8; color: #999999; width: 3; casing-color: #aa66aa; casing-width: 2; }
 area[aeroway=taxiway]:closed { z-index: 8; color: #bb99bb; width: 3; fill-color: #ccaacc; }
@@ -221,7 +221,7 @@ aera[amenity=school]:closed { color: yellow; fill-color: yellow; fill-opacity: 0
 node[amenity=bar] { icon-image: icons/food_bar.n.16.png; text-offset:0; text: auto; font-size: 10; z-index: 20; }
 node[amenity=cafe] { icon-image: icons/food_cafe.n.16.png; text-offset:0; text: auto; font-size: 10; z-index: 20; }
 node[amenity=fast_food] { icon-image: icons/food_fastfood.n.16.png; z-index: 20; }
-node[amenity=pub] { icon-image: icons/food_pub.n.16.png; text-offset: 15; text: auto; font-size: 10; z-index: 20; }
+node[amenity=pub] { icon-image: icons/food_pub.n.16.png; text-offset: 0; text: auto; font-size: 10; z-index: 20; }
 node[amenity=restaurant] { icon-image: icons/food_restaurant.n.16.png; text-offset:0; text: auto; font-size: 10; z-index: 20; }
 node[amenity=hospital] { icon-image: icons/health_hospital.n.16.png; z-index: 20; }
 node[amenity=pharmacy] { icon-image: icons/health_pharmacy.n.16.png; z-index: 20; }
