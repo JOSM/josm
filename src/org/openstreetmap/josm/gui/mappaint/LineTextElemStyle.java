@@ -9,11 +9,11 @@ import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.tools.Utils;
 
 public class LineTextElemStyle extends ElemStyle {
-    
+
     private TextElement text;
 
     protected LineTextElemStyle(Cascade c, TextElement text) {
-        super(c, 2f);
+        super(c, 4.9f);
         this.text = text;
     }
     public static LineTextElemStyle create(Environment env) {

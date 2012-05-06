@@ -15,7 +15,7 @@ public class LinePatternElemStyle extends ElemStyle {
     public MapImage pattern;
 
     public LinePatternElemStyle(Cascade c, MapImage pattern) {
-        super(c, -1f);
+        super(c, 2.9f);
         this.pattern = pattern;
     }
 
