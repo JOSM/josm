@@ -37,6 +37,19 @@ public class LineElemStyle extends ElemStyle {
 
     private BasicStroke dashesLine;
 
+    protected enum LineType {
+        NORMAL(""),
+        CASING("casing-"),
+        LEFT_CASING("left-casing-"),
+        RIGHT_CASING("right-casing");
+
+        public String prefix;
+
+        LineType(String prefix) {
+            this.prefix = prefix;
+        }
+    }
+
     protected LineElemStyle(Cascade c, BasicStroke line, Color color, BasicStroke dashesLine, Color dashesBackground, float offset, float realWidth) {
         super(c, 0f);
         this.line = line;
@@ -48,11 +61,11 @@ public class LineElemStyle extends ElemStyle {
     }
 
     public static LineElemStyle createLine(Environment env) {
-        return createImpl(env, "");
+        return createImpl(env, LineType.NORMAL);
     }
 
     public static LineElemStyle createLeftCasing(Environment env) {
-        LineElemStyle leftCasing = createImpl(env, "left-casing-");
+        LineElemStyle leftCasing = createImpl(env, LineType.LEFT_CASING);
         if (leftCasing != null) {
             leftCasing.z_index += -90;
             leftCasing.isModifier = true;
@@ -61,7 +74,7 @@ public class LineElemStyle extends ElemStyle {
     }
 
     public static LineElemStyle createRightCasing(Environment env) {
-        LineElemStyle rightCasing = createImpl(env, "right-casing-");
+        LineElemStyle rightCasing = createImpl(env, LineType.RIGHT_CASING);
         if (rightCasing != null) {
             rightCasing.z_index += -90;
             rightCasing.isModifier = true;
@@ -70,7 +83,7 @@ public class LineElemStyle extends ElemStyle {
     }
 
     public static LineElemStyle createCasing(Environment env) {
-        LineElemStyle casing = createImpl(env, "casing-");
+        LineElemStyle casing = createImpl(env, LineType.CASING);
         if (casing != null) {
             casing.z_index += -100;
             casing.isModifier = true;
@@ -78,19 +91,18 @@ public class LineElemStyle extends ElemStyle {
         return casing;
     }
 
-    private static LineElemStyle createImpl(Environment env, String prefix) {
+    private static LineElemStyle createImpl(Environment env, LineType type) {
         Cascade c = env.mc.getCascade(env.layer);
         Cascade c_def = env.mc.getCascade("default");
-
         Float widthOnDefault = getWidth(c_def, "width", null);
         Float width = getWidth(c, "width", widthOnDefault);
-        if (!prefix.isEmpty()) {
-            width = getWidth(c, prefix + "width", width);
+        if (type != LineType.NORMAL) {
+            width = getWidth(c, type.prefix + "width", width);
         }
         if (width == null)
             return null;
 
-        float realWidth = c.get(prefix + "real-width", 0f, Float.class);
+        float realWidth = c.get(type.prefix + "real_width", 0f, Float.class);
         if (realWidth > 0 && MapPaintSettings.INSTANCE.isUseRealWidth()) {
 
             /* if we have a "width" tag, try use it */
@@ -112,32 +124,32 @@ public class LineElemStyle extends ElemStyle {
         if (offset == null) {
             offset = 0f;
         }
-        if (!prefix.isEmpty()) {
-            Float base_width = getWidth(c, "width", widthOnDefault);
-            Float base_offset = offset;
-            if (base_width == null || base_width < 2f) {
-                base_width = 2f;
-            }
+        if (type != LineType.NORMAL) {
             /* pre-calculate an offset */
-            if (prefix.startsWith("left") || prefix.startsWith("right")) {
+            Float base_offset = offset;
+            if (type == LineType.LEFT_CASING || type == LineType.RIGHT_CASING) {
+                Float base_width = getWidth(c, "width", widthOnDefault);
+                if (base_width == null || base_width < 2f) {
+                    base_width = 2f;
+                }
                 offset = base_width/2 + width/2;
             } else {
                 offset = 0f;
             }
             /* overwrites (e.g. "4") or adjusts (e.g. "+4") a prefixed -offset */
-            if (getWidth(c, prefix + "offset", offset) != null) {
-                offset = getWidth(c, prefix + "offset", offset);
+            if (getWidth(c, type.prefix + "offset", offset) != null) {
+                offset = getWidth(c, type.prefix + "offset", offset);
             }
             /* flip sign for the right-casing-offset */
-            if (prefix.startsWith("right")) {
+            if (type == LineType.RIGHT_CASING) {
                 offset *= -1f;
             }
             /* use base_offset as the reference center */
             offset += base_offset;
         }
 
-        Color color = c.get(prefix + "color", null, Color.class);
-        if (prefix.isEmpty() && color == null) {
+        Color color = c.get(type.prefix + "color", null, Color.class);
+        if (type == LineType.NORMAL && color == null) {
             color = c.get("fill-color", null, Color.class);
         }
         if (color == null) {
@@ -151,7 +163,7 @@ public class LineElemStyle extends ElemStyle {
         }
         color = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
 
-        float[] dashes = c.get(prefix + "dashes", null, float[].class);
+        float[] dashes = c.get(type.prefix + "dashes", null, float[].class);
         if (dashes != null) {
             boolean hasPositive = false;
             for (float f : dashes) {
@@ -167,10 +179,10 @@ public class LineElemStyle extends ElemStyle {
                 dashes = null;
             }
         }
-        float dashesOffset = c.get(prefix + "dashes-offset", 0f, Float.class);
-        Color dashesBackground = c.get(prefix + "dashes-background-color", null, Color.class);
+        float dashesOffset = c.get(type.prefix + "dashes-offset", 0f, Float.class);
+        Color dashesBackground = c.get(type.prefix + "dashes-background-color", null, Color.class);
         if (dashesBackground != null) {
-            pAlpha = Utils.color_float2int(c.get(prefix + "dashes-background-opacity", null, Float.class));
+            pAlpha = Utils.color_float2int(c.get(type.prefix + "dashes-background-opacity", null, Float.class));
             if (pAlpha != null) {
                 alpha = pAlpha;
             }
@@ -179,7 +191,7 @@ public class LineElemStyle extends ElemStyle {
         }
 
         Integer cap = null;
-        Keyword capKW = c.get(prefix + "linecap", null, Keyword.class);
+        Keyword capKW = c.get(type.prefix + "linecap", null, Keyword.class);
         if (capKW != null) {
             if (equal(capKW.val, "none")) {
                 cap = BasicStroke.CAP_BUTT;
@@ -194,7 +206,7 @@ public class LineElemStyle extends ElemStyle {
         }
 
         Integer join = null;
-        Keyword joinKW = c.get(prefix + "linejoin", null, Keyword.class);
+        Keyword joinKW = c.get(type.prefix + "linejoin", null, Keyword.class);
         if (joinKW != null) {
             if (equal(joinKW.val, "round")) {
                 join = BasicStroke.JOIN_ROUND;
@@ -208,7 +220,7 @@ public class LineElemStyle extends ElemStyle {
             join = BasicStroke.JOIN_ROUND;
         }
 
-        float miterlimit = c.get(prefix + "miterlimit", 10f, Float.class);
+        float miterlimit = c.get(type.prefix + "miterlimit", 10f, Float.class);
         if (miterlimit < 1f) {
             miterlimit = 10f;
         }
@@ -234,8 +246,8 @@ public class LineElemStyle extends ElemStyle {
         (even if the tag is negated as in oneway=false) or the way is selected */
         boolean showOrientation = !isModifier && (selected || paintSettings.isShowDirectionArrow()) && !paintSettings.isUseRealWidth();
         boolean showOneway = !isModifier && !selected &&
-        !paintSettings.isUseRealWidth() &&
-        paintSettings.isShowOnewayArrow() && w.hasDirectionKeys();
+                !paintSettings.isUseRealWidth() &&
+                paintSettings.isShowOnewayArrow() && w.hasDirectionKeys();
         boolean onewayReversed = w.reversedDirection();
         /* head only takes over control if the option is true,
         the direction should be shown at all and not only because it's selected */
