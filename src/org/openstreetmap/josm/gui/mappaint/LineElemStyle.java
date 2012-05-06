@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.RelativeFloat;
 import org.openstreetmap.josm.tools.Utils;
 
 public class LineElemStyle extends ElemStyle {
@@ -94,10 +95,39 @@ public class LineElemStyle extends ElemStyle {
     private static LineElemStyle createImpl(Environment env, LineType type) {
         Cascade c = env.mc.getCascade(env.layer);
         Cascade c_def = env.mc.getCascade("default");
-        Float widthOnDefault = getWidth(c_def, "width", null);
-        Float width = getWidth(c, "width", widthOnDefault);
-        if (type != LineType.NORMAL) {
-            width = getWidth(c, type.prefix + "width", width);
+        Float width;
+        switch (type) {
+            case NORMAL:
+            {
+                Float widthOnDefault = getWidth(c_def, "width", null);
+                width = getWidth(c, "width", widthOnDefault);
+                break;
+            }
+            case CASING:
+            {
+                Float casingWidth = c.get(type.prefix + "width", null, Float.class, true);
+                if (casingWidth == null) {
+                    RelativeFloat rel_casingWidth = c.get(type.prefix + "width", null, RelativeFloat.class, true);
+                    if (rel_casingWidth != null) {
+                        casingWidth = rel_casingWidth.val / 2;
+                    }
+                }
+                if (casingWidth == null)
+                    return null;
+                Float widthOnDefault = getWidth(c_def, "width", null);
+                width = getWidth(c, "width", widthOnDefault);
+                if (width == null) {
+                    width = 0f;
+                }
+                width += 2 * casingWidth;
+                break;
+            }
+            case LEFT_CASING:
+            case RIGHT_CASING:
+                width = getWidth(c, type.prefix + "width", null);
+                break;
+            default:
+                throw new AssertionError();
         }
         if (width == null)
             return null;
@@ -119,33 +149,30 @@ public class LineElemStyle extends ElemStyle {
             }
         }
 
-        Float offsetOnDefault = getWidth(c_def, "offset", null);
-        Float offset = getWidth(c, "offset", offsetOnDefault);
-        if (offset == null) {
-            offset = 0f;
-        }
-        if (type != LineType.NORMAL) {
-            /* pre-calculate an offset */
-            Float base_offset = offset;
-            if (type == LineType.LEFT_CASING || type == LineType.RIGHT_CASING) {
-                Float base_width = getWidth(c, "width", widthOnDefault);
-                if (base_width == null || base_width < 2f) {
-                    base_width = 2f;
+        Float offset = c.get("offset", 0f, Float.class);
+        switch (type) {
+            case NORMAL:
+                break;
+            case CASING:
+                offset += c.get(type.prefix + "offset", 0f, Float.class);
+                break;
+            case LEFT_CASING:
+            case RIGHT_CASING:
+            {
+                Float baseWidthOnDefault = getWidth(c_def, "width", null);
+                Float baseWidth = getWidth(c, "width", baseWidthOnDefault);
+                if (baseWidth == null || baseWidth < 2f) {
+                    baseWidth = 2f;
                 }
-                offset = base_width/2 + width/2;
-            } else {
-                offset = 0f;
+                float casingOffset = c.get(type.prefix + "offset", 0f, Float.class);
+                casingOffset += baseWidth / 2 + width / 2;
+                /* flip sign for the right-casing-offset */
+                if (type == LineType.RIGHT_CASING) {
+                    casingOffset *= -1f;
+                }
+                offset += casingOffset;
+                break;
             }
-            /* overwrites (e.g. "4") or adjusts (e.g. "+4") a prefixed -offset */
-            if (getWidth(c, type.prefix + "offset", offset) != null) {
-                offset = getWidth(c, type.prefix + "offset", offset);
-            }
-            /* flip sign for the right-casing-offset */
-            if (type == LineType.RIGHT_CASING) {
-                offset *= -1f;
-            }
-            /* use base_offset as the reference center */
-            offset += base_offset;
         }
 
         Color color = c.get(type.prefix + "color", null, Color.class);
