@@ -41,7 +41,7 @@ public class LineElemStyle extends ElemStyle {
         NORMAL(""),
         CASING("casing-"),
         LEFT_CASING("left-casing-"),
-        RIGHT_CASING("right-casing");
+        RIGHT_CASING("right-casing-");
 
         public String prefix;
 
