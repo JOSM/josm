@@ -30,8 +30,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EventObject;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -667,14 +669,12 @@ public abstract class SourceEditor extends JPanel {
 
         @Override
         public int compareTo(ExtendedSourceEntry o) {
-            if (url.startsWith("resource") && !o.url.startsWith("resource")) {
+            if (url.startsWith("resource") && !o.url.startsWith("resource"))
                 return -1;
-            }
-            if (o.url.startsWith("resource")) {
+            if (o.url.startsWith("resource"))
                 return 1;
-            } else {
+            else
                 return getDisplayName().compareToIgnoreCase(o.getDisplayName());
-            }
         }
     }
 
@@ -1439,39 +1439,59 @@ public abstract class SourceEditor extends JPanel {
 
     abstract public static class SourcePrefHelper {
 
+        private final String prefOld;
         private final String pref;
 
-        public SourcePrefHelper(String pref) {
+        public SourcePrefHelper(String pref, String prefOld) {
             this.pref = pref;
+            this.prefOld = prefOld;
         }
 
         abstract public Collection<ExtendedSourceEntry> getDefault();
 
-        abstract public Collection<String> serialize(SourceEntry entry);
+        abstract public Map<String, String> serialize(SourceEntry entry);
 
-        abstract public SourceEntry deserialize(List<String> entryStr);
+        abstract public SourceEntry deserialize(Map<String, String> entryStr);
+
+        // migration can be removed end 2012
+        abstract public Map<String, String> migrate(Collection<String> old);
 
         public List<SourceEntry> get() {
-            Collection<Collection<String>> mappaintSrc = Main.pref.getArray(pref, null);
-            if (mappaintSrc == null)
+
+            boolean migration = false;
+            Collection<Map<String, String>> src = Main.pref.getListOfStructs(pref, (Collection<Map<String, String>>) null);
+            if (src == null) {
+                Collection<Collection<String>> srcOldPrefFormat = Main.pref.getArray(prefOld, null);
+                if (srcOldPrefFormat != null) {
+                    migration = true;
+                    src = new ArrayList<Map<String, String>>();
+                    for (Collection<String> p : srcOldPrefFormat) {
+                        src.add(migrate(p));
+                    }
+                }
+            }
+            if (src == null)
                 return new ArrayList<SourceEntry>(getDefault());
 
             List<SourceEntry> entries = new ArrayList<SourceEntry>();
-            for (Collection<String> sourcePref : mappaintSrc) {
-                SourceEntry e = deserialize(new ArrayList<String>(sourcePref));
+            for (Map<String, String> sourcePref : src) {
+                SourceEntry e = deserialize(new HashMap<String, String>(sourcePref));
                 if (e != null) {
                     entries.add(e);
                 }
+            }
+            if (migration) {
+                put(entries);
             }
             return entries;
         }
 
         public boolean put(Collection<? extends SourceEntry> entries) {
-            Collection<Collection<String>> setting = new ArrayList<Collection<String>>();
+            Collection<Map<String, String>> setting = new ArrayList<Map<String, String>>();
             for (SourceEntry e : entries) {
                 setting.add(serialize(e));
             }
-            return Main.pref.putArray(pref, setting);
+            return Main.pref.putListOfStructs(pref, setting);
         }
     }
 

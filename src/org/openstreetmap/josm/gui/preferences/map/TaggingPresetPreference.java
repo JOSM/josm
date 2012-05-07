@@ -7,11 +7,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagLayout;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -29,13 +29,13 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
 import org.openstreetmap.josm.gui.preferences.SourceEditor;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.SourceProvider;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSeparator;
@@ -51,7 +51,7 @@ public class TaggingPresetPreference implements SubPreferenceSetting {
             return new TaggingPresetPreference();
         }
     }
-    
+
     private TaggingPresetPreference() {
         super();
     }
@@ -312,7 +312,7 @@ public class TaggingPresetPreference implements SubPreferenceSetting {
         public final static PresetPrefHelper INSTANCE = new PresetPrefHelper();
 
         public PresetPrefHelper() {
-            super("taggingpreset.sources-list");
+            super("taggingpreset.entries", "taggingpreset.sources-list");
         }
 
         @Override
@@ -324,18 +324,29 @@ public class TaggingPresetPreference implements SubPreferenceSetting {
         }
 
         @Override
-        public Collection<String> serialize(SourceEntry entry) {
-            return Arrays.asList(new String[] {entry.url, entry.title == null ? "" : entry.title});
+        public Map<String, String> serialize(SourceEntry entry) {
+            Map<String, String> res = new HashMap<String, String>();
+            res.put("url", entry.url);
+            res.put("title", entry.title == null ? "" : entry.title);
+            return res;
         }
 
         @Override
-        public SourceEntry deserialize(List<String> entryStr) {
+        public SourceEntry deserialize(Map<String, String> s) {
+            return new SourceEntry(s.get("url"), null, s.get("title"), true);
+        }
+
+        @Override
+        public Map<String, String> migrate(Collection<String> old) {
+            List<String> entryStr = new ArrayList<String>(old);
             if (entryStr.size() < 2)
                 return null;
-            String url = entryStr.get(0);
-            String shortdescription = entryStr.get(1);
-            return new SourceEntry(url, null, shortdescription, true);
+            Map<String, String> res = new HashMap<String, String>();
+            res.put("url", entryStr.get(0));
+            res.put("title", entryStr.get(1));
+            return res;
         }
+
     }
 
     @Override
