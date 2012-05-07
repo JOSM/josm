@@ -25,12 +25,13 @@ abstract public class StyleSource extends SourceEntry {
     public File zipIcons;
 
     private ImageIcon imageIcon;
+    private long lastMTime = 0l;
 
     /******
      * The following fields is additional information found in the header
      * of the source file.
      */
-    
+
     public String icon;
 
     public StyleSource(String url, String name, String title) {
@@ -103,4 +104,14 @@ abstract public class StyleSource extends SourceEntry {
     public Color getBackgroundColorOverride() {
         return null;
     }
+
+    public long getLastMTime() {
+        return lastMTime;
+    }
+
+    public void setLastMTime(long lastMTime) {
+        this.lastMTime = lastMTime;
+    }
+
+
 }

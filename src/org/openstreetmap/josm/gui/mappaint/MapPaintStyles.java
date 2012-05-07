@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.mappaint;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,8 +21,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
-import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference.MapPaintPrefHelper;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
+import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference.MapPaintPrefHelper;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -164,8 +165,13 @@ public class MapPaintStyles {
         }
         for (StyleSource source : styles.getStyleSources()) {
             source.loadStyleSource();
+            if (Main.pref.getBoolean("mappaint.auto_reload_local_styles", true)) {
+                if (source.isLocal()) {
+                    File f = new File(source.url);
+                    source.setLastMTime(f.lastModified());
+                }
+            }
         }
-
         fireMapPaintSylesUpdated();
     }
 

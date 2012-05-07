@@ -49,4 +49,10 @@ public class LineTextElemStyle extends ElemStyle {
     public int hashCode() {
         return text.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "LineTextElemStyle{" + super.toString() + "text=" + text + "}";
+    }
+
 }

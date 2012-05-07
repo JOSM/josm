@@ -237,7 +237,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 lastMEvent = e;
             }
         });
-        
+
         // Add Multipolygon cache to layer listeners
         addLayerChangeListener(MultipolygonCache.getInstance());
     }
@@ -729,7 +729,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         for (Enumeration<AbstractButton> e = Main.map.toolGroup.getElements() ; e.hasMoreElements() ;) {
             AbstractButton button = e.nextElement();
             MapMode mode = (MapMode)button.getAction();
-            boolean isLayerSupported = mode.layerIsSupported(layer); 
+            boolean isLayerSupported = mode.layerIsSupported(layer);
             button.setEnabled(isLayerSupported);
             // Also update associated shortcut (fix #6876)
             if (isLayerSupported) {
