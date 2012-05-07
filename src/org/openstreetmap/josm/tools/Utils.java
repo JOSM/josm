@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
  * Basic utils, that can be useful in different parts of the program.
@@ -326,7 +325,19 @@ public class Utils {
      * @return string clipboard contents if available, {@code null} otherwise.
      */
     public static String getClipboardContent() {
-        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable t = null;
+        for (int tries = 0; t == null && tries < 10; tries++) {
+            try {
+                t = clipboard.getContents(null);
+            } catch (IllegalStateException e) { 
+                // Clipboard currently unavailable. On some platforms, the system clipboard is unavailable while it is accessed by another application.
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ex) {
+                }
+            }
+        }
         try {
             if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 String text = (String) t.getTransferData(DataFlavor.stringFlavor);
