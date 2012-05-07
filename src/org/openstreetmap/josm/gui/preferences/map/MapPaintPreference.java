@@ -8,7 +8,9 @@ import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
@@ -23,11 +25,11 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SourceEditor;
-import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.SourceProvider;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
@@ -182,7 +184,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
         public final static MapPaintPrefHelper INSTANCE = new MapPaintPrefHelper();
 
         public MapPaintPrefHelper() {
-            super("mappaint.style.sources-list");
+            super("mappaint.style.entries", "mappaint.style.sources-list");
         }
 
         @Override
@@ -250,24 +252,33 @@ public class MapPaintPreference implements SubPreferenceSetting {
         }
 
         @Override
-        public Collection<String> serialize(SourceEntry entry) {
-            return Arrays.asList(new String[] {
-                    entry.url,
-                    entry.name == null ? "" : entry.name,
-                            entry.title == null ? "" : entry.title,
-                                    Boolean.toString(entry.active)
-            });
+        public Map<String, String> serialize(SourceEntry entry) {
+            Map<String, String> res = new HashMap<String, String>();
+            res.put("url", entry.url);
+            res.put("title", entry.title == null ? "" : entry.title);
+            res.put("active", Boolean.toString(entry.active));
+            if (entry.name != null) {
+                res.put("ptoken", entry.name);
+            }
+            return res;
         }
 
         @Override
-        public SourceEntry deserialize(List<String> entryStr) {
+        public SourceEntry deserialize(Map<String, String> s) {
+            return new SourceEntry(s.get("url"), s.get("ptoken"), s.get("title"), Boolean.parseBoolean(s.get("active")));
+        }
+
+        @Override
+        public Map<String, String> migrate(Collection<String> old) {
+            List<String> entryStr = new ArrayList<String>(old);
             if (entryStr.size() < 4)
                 return null;
-            String url = entryStr.get(0);
-            String name = entryStr.get(1);
-            String shortdescription = entryStr.get(2);
-            boolean active = Boolean.parseBoolean(entryStr.get(3));
-            return new SourceEntry(url, name, shortdescription, active);
+            Map<String, String> res = new HashMap<String, String>();
+            res.put("url", entryStr.get(0));
+            res.put("ptoken", entryStr.get(1));
+            res.put("title", entryStr.get(2));
+            res.put("active", entryStr.get(3));
+            return res;
         }
     }
 

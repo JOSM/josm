@@ -41,10 +41,10 @@ public class SourceEntry {
      */
     public boolean active;
 
-    public SourceEntry(String url, String name, String shortdescription, Boolean active) {
+    public SourceEntry(String url, String name, String title, Boolean active) {
         this.url = url;
         this.name = equal(name, "") ? null : name;
-        this.title = equal(shortdescription, "") ? null : shortdescription;
+        this.title = equal(title, "") ? null : title;
         this.active = active;
     }
 
