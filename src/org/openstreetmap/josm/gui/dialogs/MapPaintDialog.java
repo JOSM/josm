@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -10,10 +11,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -60,6 +64,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintStyleLoader;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.preferences.PreferenceDialog;
@@ -142,11 +147,11 @@ public class MapPaintDialog extends ToggleDialog {
         selectionModel.addListSelectionListener(reloadAction);
         selectionModel.addListSelectionListener(upAction);
         selectionModel.addListSelectionListener(downAction);
-        
+
         // Toggle style on Enter and Spacebar
         InputMapUtils.addEnterAction(tblStyles, onoffAction);
         InputMapUtils.addSpacebarAction(tblStyles, onoffAction);
-        
+
         createLayout(p, true, Arrays.asList(new SideButton[] {
                 new SideButton(onoffAction, false),
                 new SideButton(upAction, false),
@@ -172,16 +177,88 @@ public class MapPaintDialog extends ToggleDialog {
         }
     }
 
+    /**
+     * Reload local styles when they have been changed in an external editor.
+     *
+     * Checks file modification time when an WindowEvent is invoked. Because
+     * any dialog window can get activated, when switching to another app and back,
+     * we have to register listeners to all windows in JOSM.
+     */
+    protected static class ReloadWindowListener extends WindowAdapter {
+
+        private static ReloadWindowListener INSTANCE;
+
+        public static ReloadWindowListener getInstance() {
+            if (INSTANCE == null) {
+                INSTANCE = new ReloadWindowListener();
+            }
+            return INSTANCE;
+        }
+
+        public static void setup() {
+            for (Window w : Window.getWindows()) {
+                if (w.isShowing()) {
+                    w.addWindowListener(getInstance());
+                }
+            }
+        }
+
+        public static void teardown() {
+            for (Window w : Window.getWindows()) {
+                w.removeWindowListener(getInstance());
+            }
+        }
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+            if (e.getOppositeWindow() == null) { // we come from a native window, e.g. editor
+                // reload local styles, if necessary
+                List<StyleSource> toReload = new ArrayList<StyleSource>();
+                for (StyleSource s : MapPaintStyles.getStyles().getStyleSources()) {
+                    if (s.isLocal()) {
+                        File f = new File(s.url);
+                        long mtime = f.lastModified();
+                        if (mtime > s.getLastMTime()) {
+                            toReload.add(s);
+                            s.setLastMTime(mtime);
+                        }
+                    }
+                }
+                if (!toReload.isEmpty()) {
+                    System.out.println(trn("Reloading {0} map style.", "Reloading {0} map styles.", toReload.size(), toReload.size()));
+                    Main.worker.submit(new MapPaintStyleLoader(toReload));
+                }
+            }
+        }
+
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+            // set up windows that have been created in the meantime
+            for (Window w : Window.getWindows()) {
+                w.removeWindowListener(getInstance());
+                if (w.isShowing()) {
+                    w.addWindowListener(getInstance());
+                }
+            }
+        }
+    }
+
     @Override
     public void showNotify() {
         MapPaintStyles.addMapPaintSylesUpdateListener(model);
         Main.main.menu.wireFrameToggleAction.addButtonModel(cbWireframe.getModel());
+        if (Main.pref.getBoolean("mappaint.auto_reload_local_styles", true)) {
+            ReloadWindowListener.setup();
+        }
     }
 
     @Override
     public void hideNotify() {
         Main.main.menu.wireFrameToggleAction.removeButtonModel(cbWireframe.getModel());
         MapPaintStyles.removeMapPaintSylesUpdateListener(model);
+        if (Main.pref.getBoolean("mappaint.auto_reload_local_styles", true)) {
+            ReloadWindowListener.teardown();
+        }
     }
 
     protected class StylesModel extends AbstractTableModel implements MapPaintSylesUpdateListener {
