@@ -716,10 +716,12 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     break;
                 case CANCEL:
                 {
-                    for (ImageEntry ie : yLayer.data) {
-                        ie.tmp = null;
+                    if (yLayer != null) {
+                        for (ImageEntry ie : yLayer.data) {
+                            ie.tmp = null;
+                        }
+                        yLayer.updateBufferAndRepaint();
                     }
-                    yLayer.updateBufferAndRepaint();
                     break;
                 }
                 case AGAIN:
