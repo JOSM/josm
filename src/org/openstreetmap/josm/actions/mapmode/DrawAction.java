@@ -150,7 +150,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return false;
 
         // update selection to reflect which way being modified
-        if (currentBaseNode != null && getCurrentDataSet().getSelected().isEmpty() == false) {
+        if (currentBaseNode != null && getCurrentDataSet() != null && getCurrentDataSet().getSelected().isEmpty() == false) {
             Way continueFrom = getWayForNode(currentBaseNode);
             if (alt && continueFrom != null && (!currentBaseNode.isSelected() || continueFrom.isSelected())) {
                 getCurrentDataSet().beginUpdate(); // to prevent the selection listener to screw around with the state
