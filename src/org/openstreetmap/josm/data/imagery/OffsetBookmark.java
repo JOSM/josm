@@ -12,33 +12,29 @@ import java.util.ListIterator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.projection.Mercator;
-import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.data.projection.ProjectionInfo;
-import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 
 public class OffsetBookmark {
     public static final List<OffsetBookmark> allBookmarks = new ArrayList<OffsetBookmark>();
 
-    public Projection proj;
+    public String projectionCode;
     public String layerName;
     public String name;
     public double dx, dy;
     public double centerX, centerY;
 
     public boolean isUsable(ImageryLayer layer) {
-        if (proj == null) return false;
-        if (!Main.getProjection().toCode().equals(proj.toCode())) return false;
+        if (projectionCode == null) return false;
+        if (!Main.getProjection().toCode().equals(projectionCode)) return false;
         return layer.getInfo().getName().equals(layerName);
     }
 
-    public OffsetBookmark(Projection proj, String layerName, String name, double dx, double dy) {
-        this(proj, layerName, name, dx, dy, 0, 0);
+    public OffsetBookmark(String projectionCode, String layerName, String name, double dx, double dy) {
+        this(projectionCode, layerName, name, dx, dy, 0, 0);
     }
 
-    public OffsetBookmark(Projection proj, String layerName, String name, double dx, double dy, double centerX, double centerY) {
-        this.proj = proj;
+    public OffsetBookmark(String projectionCode, String layerName, String name, double dx, double dy, double centerX, double centerY) {
+        this.projectionCode = projectionCode;
         this.layerName = layerName;
         this.name = name;
         this.dx = dx;
@@ -49,16 +45,7 @@ public class OffsetBookmark {
 
     public OffsetBookmark(Collection<String> list) {
         ArrayList<String> array = new ArrayList<String>(list);
-        String projectionStr = array.get(0);
-        proj = ProjectionInfo.getProjectionByCode(projectionStr);
-        if (proj == null) {
-            for (Projection proj : Projections.getProjections()) {
-                if (proj.getCacheDirectoryName().equals(projectionStr)) {
-                    this.proj = proj;
-                    break;
-                }
-            }
-        }
+        this.projectionCode = array.get(0);
         this.layerName = array.get(1);
         this.name = array.get(2);
         this.dx = Double.valueOf(array.get(3));
@@ -67,20 +54,15 @@ public class OffsetBookmark {
             this.centerX = Double.valueOf(array.get(5));
             this.centerY = Double.valueOf(array.get(6));
         }
-        // Mercator scale factor migration
-        if (proj instanceof Mercator && Math.abs(this.dx) < 1E-3 && Math.abs(this.dy) < 1E-3) {
-            this.dx *= 6378137;
-            this.dy *= 6378137;
-        }
-        if (proj == null) {
-            System.err.println(tr("Projection ''{0}'' is not found, bookmark ''{1}'' is not usable", projectionStr, name));
+        if (projectionCode == null) {
+            System.err.println(tr("Projection ''{0}'' is not found, bookmark ''{1}'' is not usable", projectionCode, name));
         }
     }
 
     public ArrayList<String> getInfoArray() {
         ArrayList<String> res = new ArrayList<String>(7);
-        if (proj != null) {
-            res.add(proj.toCode());
+        if (projectionCode != null) {
+            res.add(projectionCode);
         } else {
             res.add("");
         }
@@ -126,7 +108,7 @@ public class OffsetBookmark {
             center = new LatLon(0,0);
         }
         OffsetBookmark nb = new OffsetBookmark(
-                Main.getProjection(), layer.getInfo().getName(),
+                Main.getProjection().toCode(), layer.getInfo().getName(),
                 name, layer.getDx(), layer.getDy(), center.lon(), center.lat());
         for (ListIterator<OffsetBookmark> it = allBookmarks.listIterator();it.hasNext();) {
             OffsetBookmark b = it.next();
