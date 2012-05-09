@@ -1,8 +1,9 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
-package org.openstreetmap.josm.gui.preferences.map;
+package org.openstreetmap.josm.gui.preferences.projection;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -84,6 +85,8 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private JPanel projSubPrefPanel;
     private JPanel projSubPrefPanelWrapper = new JPanel(new GridBagLayout());
 
+    private JLabel projectionCodeLabel;
+    private Component projectionCodeGlue;
     private JLabel projectionCode = new JLabel();
     private JLabel bounds = new JLabel();
 
@@ -121,8 +124,8 @@ public class ProjectionPreference implements SubPreferenceSetting {
         projPanel.add(new JLabel(tr("Projection method")), GBC.std().insets(5,5,0,5));
         projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(projectionCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
-        projPanel.add(new JLabel(tr("Projection code")), GBC.std().insets(25,5,0,5));
-        projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(projectionCodeLabel = new JLabel(tr("Projection code")), GBC.std().insets(25,5,0,5));
+        projPanel.add(projectionCodeGlue = GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(projectionCode, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
         projPanel.add(new JLabel(tr("Bounds")), GBC.std().insets(25,5,0,5));
         projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
@@ -151,6 +154,10 @@ public class ProjectionPreference implements SubPreferenceSetting {
         Bounds b = proj.getWorldBoundsLatLon();
         CoordinateFormat cf = CoordinateFormat.getDefaultFormat();
         bounds.setText(b.getMin().latToString(cf)+"; "+b.getMin().lonToString(cf)+" : "+b.getMax().latToString(cf)+"; "+b.getMax().lonToString(cf));
+        boolean hideCode = proj instanceof SubPrefsOptions && !((SubPrefsOptions) proj).showProjectionCode();
+        projectionCodeLabel.setVisible(!hideCode);
+        projectionCodeGlue.setVisible(!hideCode);
+        projectionCode.setVisible(!hideCode);
     }
 
     public boolean ok() {

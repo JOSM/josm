@@ -18,6 +18,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is an abstract class for a validator on a text component.
@@ -40,15 +41,18 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
      * we don't know yet
      */
     private Boolean valid = null;
+    // remember the message
+    private String msg;
 
     protected void feedbackInvalid(String msg) {
-        if (valid == null || valid) {
+        if (valid == null || valid || !Utils.equal(msg, this.msg)) {
             // only provide feedback if the validity has changed. This avoids
             // unnecessary UI updates.
             tc.setBorder(ERROR_BORDER);
             tc.setBackground(ERROR_BACKGROUND);
             tc.setToolTipText(msg);
             valid = false;
+            this.msg = msg;
         }
     }
 
@@ -57,13 +61,14 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     }
 
     protected void feedbackValid(String msg) {
-        if (valid == null || !valid) {
+        if (valid == null || !valid || !Utils.equal(msg, this.msg)) {
             // only provide feedback if the validity has changed. This avoids
             // unnecessary UI updates.
             tc.setBorder(UIManager.getBorder("TextField.border"));
             tc.setBackground(UIManager.getColor("TextField.background"));
             tc.setToolTipText(msg == null ? "" : msg);
             valid = true;
+            this.msg = msg;
         }
     }
 
@@ -91,10 +96,18 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
      * This can be useful if the enter key stroke needs to be forwarded to the default button in a dialog.
      */
     public AbstractTextComponentValidator(JTextComponent tc, boolean addActionListener) throws IllegalArgumentException {
+        this(tc, true, true, addActionListener);
+    }
+
+    public AbstractTextComponentValidator(JTextComponent tc, boolean addFocusListener, boolean addDocumentListener, boolean addActionListener) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(tc, "tc");
         this.tc = tc;
-        tc.addFocusListener(this);
-        tc.getDocument().addDocumentListener(this);
+        if (addFocusListener) {
+            tc.addFocusListener(this);
+        }
+        if (addDocumentListener) {
+            tc.getDocument().addDocumentListener(this);
+        }
         if (addActionListener) {
             if (tc instanceof JTextField) {
                 JTextField tf = (JTextField)tc;

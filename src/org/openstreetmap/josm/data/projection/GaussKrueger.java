@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -13,11 +12,10 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.NTV2Datum;
-import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFile;
+import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 import org.openstreetmap.josm.tools.GBC;
@@ -34,8 +32,6 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
         new Bounds(new LatLon(-5, 12.5), new LatLon(85, 17.5)),
     };
 
-    private static NTV2GridShiftFile BETA2007 = null;
-
     private static String[] zones = { "2", "3", "4", "5" };
 
     public GaussKrueger() {
@@ -43,25 +39,13 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
     }
 
     public GaussKrueger(int zone) {
-        if (BETA2007 == null) {
-            try {
-                String gridFileName = "BETA2007.gsb";
-                InputStream is = Main.class.getResourceAsStream("/data/"+gridFileName);
-                if (is == null)
-                    throw new RuntimeException(tr("Error: failed to open input stream for resource ''/data/{0}''.", gridFileName));
-                BETA2007 = new NTV2GridShiftFile();
-                BETA2007.loadGridShiftFile(is, false);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
         updateParameters(zone);
     }
 
     private void updateParameters(int zone) {
         this.zone = zone;
         ellps = Ellipsoid.Bessel1841;
-        datum = new NTV2Datum("BETA2007", null, ellps, BETA2007);
+        datum = new NTV2Datum("BETA2007", null, ellps, NTV2GridShiftFileWrapper.BETA2007);
         ////less acurrate datum (errors up to 3m):
         //datum = new SevenParameterDatum(
         //        tr("Deutsches Hauptdreiecksnetz"), null, ellps,

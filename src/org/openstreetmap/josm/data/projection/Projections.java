@@ -10,12 +10,12 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.Datum;
+import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
 import org.openstreetmap.josm.data.projection.proj.LambertConformalConic;
 import org.openstreetmap.josm.data.projection.proj.Proj;
 import org.openstreetmap.josm.data.projection.proj.SwissObliqueMercator;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Class to handle projections
@@ -48,7 +48,7 @@ public class Projections {
 
     static {
         if (Main.pref.getBoolean("customprojection")) {
-            addProjection(new CustomProjection());
+            addProjection(new CustomProjectionPrefGui());
         }
     }
 
@@ -85,6 +85,7 @@ public class Projections {
     private static Map<String, Ellipsoid> ellipsoids = new HashMap<String, Ellipsoid>();
     private static Map<String, Class<? extends Proj>> projs = new HashMap<String, Class<? extends Proj>>();
     private static Map<String, Datum> datums = new HashMap<String, Datum>();
+    private static Map<String, NTV2GridShiftFileWrapper> nadgrids = new HashMap<String, NTV2GridShiftFileWrapper>();
 
     static {
         ellipsoids.put("intl", Ellipsoid.hayford);
@@ -98,6 +99,9 @@ public class Projections {
         projs.put("tmerc", TransverseMercator.class);
 
         datums.put("WGS84", WGS84Datum.INSTANCE);
+
+        nadgrids.put("BETA2007.gsb", NTV2GridShiftFileWrapper.BETA2007);
+        nadgrids.put("ntf_r93_b.gsb", NTV2GridShiftFileWrapper.ntf_rgf93);
     }
 
     public static Ellipsoid getEllipsoid(String id) {
@@ -120,5 +124,9 @@ public class Projections {
 
     public static Datum getDatum(String id) {
         return datums.get(id);
+    }
+
+    public static NTV2GridShiftFileWrapper getNadgrids(String id) {
+        return nadgrids.get(id);
     }
 }
