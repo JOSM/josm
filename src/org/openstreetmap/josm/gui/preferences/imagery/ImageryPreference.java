@@ -929,7 +929,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
             add.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    OffsetBookmark b = new OffsetBookmark(Main.getProjection(),"","",0,0);
+                    OffsetBookmark b = new OffsetBookmark(Main.getProjection().toCode(),"","",0,0);
                     model.addRow(b);
                 }
             });
@@ -987,8 +987,8 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
                 OffsetBookmark info = bookmarks.get(row);
                 switch (column) {
                 case 0:
-                    if (info.proj == null) return "";
-                    return info.proj.toString();
+                    if (info.projectionCode == null) return "";
+                    return info.projectionCode.toString();
                 case 1:
                     return info.layerName;
                 case 2:
