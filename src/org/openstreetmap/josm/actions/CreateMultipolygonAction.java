@@ -6,16 +6,20 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.Set;
+import java.util.TreeSet;
 import javax.swing.JOptionPane;
 
 import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
+import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -98,7 +102,7 @@ public class CreateMultipolygonAction extends JosmAction {
 
         } else {
             //Just add the relation
-            List<Command> list = this.removeTagsFromInnerWays(relation);
+            List<Command> list = this.removeTagsFromWaysIfNeeded(relation);
             list.add(new AddCommand(relation));
             Main.main.undoRedo.add(new SequenceCommand(tr("Create multipolygon"), list));
             // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
@@ -172,54 +176,112 @@ public class CreateMultipolygonAction extends JosmAction {
         return rel;
     }
 
+    static public final List<String> DEFAULT_LINEAR_TAGS = Arrays.asList(new String[] {"barrier", "source"});
+
     /**
-     * This method removes tags/value pairs from inner ways that are present in relation or outer ways.
+     * This method removes tags/value pairs from inner and outer ways and put them on relation if necessary
+     * Function was extended in reltoolbox plugin by Zverikk and copied back to the core 
      * @param relation
      */
-    private List<Command> removeTagsFromInnerWays(Relation relation) {
-        Map<String, String> values = new HashMap<String, String>();
+    private List<Command> removeTagsFromWaysIfNeeded( Relation relation ) {
+	Map<String, String> values = new HashMap<String, String>();
 
-        if (relation.hasKeys()){
-            for(String key: relation.keySet()) {
-                values.put(key, relation.get(key));
-            }
-        }
+	if( relation.hasKeys() ) {
+	    for( String key : relation.keySet() ) {
+		values.put(key, relation.get(key));
+	    }
+	}
 
-        List<Way> innerWays = new ArrayList<Way>();
+	List<Way> innerWays = new ArrayList<Way>();
+	List<Way> outerWays = new ArrayList<Way>();
 
-        for (RelationMember m: relation.getMembers()) {
+	Set<String> conflictingKeys = new TreeSet<String>();
 
-            if (m.hasRole() && m.getRole() == "inner" && m.isWay() && m.getWay().hasKeys()) {
-                innerWays.add(m.getWay());
-            }
+	for( RelationMember m : relation.getMembers() ) {
 
-            if (m.hasRole() && m.getRole() == "outer" && m.isWay() && m.getWay().hasKeys()) {
-                Way way = m.getWay();
-                for (String key: way.keySet()) {
-                    if (!values.containsKey(key)) { //relation values take precedence
-                        values.put(key, way.get(key));
-                    }
-                }
-            }
-        }
+	    if( m.hasRole() && "inner".equals(m.getRole()) && m.isWay() && m.getWay().hasKeys() ) {
+		innerWays.add(m.getWay());
+	    }
 
-        List<Command> commands = new ArrayList<Command>();
+	    if( m.hasRole() && "outer".equals(m.getRole()) && m.isWay() && m.getWay().hasKeys() ) {
+		Way way = m.getWay();
+		outerWays.add(way);
+                
+		for( String key : way.keySet() ) {
+		    if( !values.containsKey(key) ) { //relation values take precedence
+			values.put(key, way.get(key));
+		    } else if( !relation.hasKey(key) && !values.get(key).equals(way.get(key)) ) {
+			conflictingKeys.add(key);
+		    }
+		}
+	    }
+	}
 
-        for(String key: values.keySet()) {
-            List<OsmPrimitive> affectedWays = new ArrayList<OsmPrimitive>();
-            String value = values.get(key);
+	// filter out empty key conflicts - we need second iteration
+	if( !Main.pref.getBoolean("multipoly.alltags", false) )
+	    for( RelationMember m : relation.getMembers() )
+		if( m.hasRole() && m.getRole().equals("outer") && m.isWay() )
+		    for( String key : values.keySet() )
+			if( !m.getWay().hasKey(key) && !relation.hasKey(key) )
+			    conflictingKeys.add(key);
 
-            for (Way way: innerWays) {
-                if (value.equals(way.get(key))) {
-                    affectedWays.add(way);
-                }
-            }
+	for( String key : conflictingKeys )
+	    values.remove(key);
 
-            if (affectedWays.size() > 0) {
-                commands.add(new ChangePropertyCommand(affectedWays, key, null));
-            }
-        }
+	for( String linearTag : Main.pref.getCollection("multipoly.lineartagstokeep", DEFAULT_LINEAR_TAGS) )
+	    values.remove(linearTag);
 
-        return commands;
+	if( values.containsKey("natural") && values.get("natural").equals("coastline") )
+	    values.remove("natural");
+
+	values.put("area", "yes");
+
+	List<Command> commands = new ArrayList<Command>();
+	boolean moveTags = Main.pref.getBoolean("multipoly.movetags", true);
+
+	for( String key : values.keySet() ) {
+	    List<OsmPrimitive> affectedWays = new ArrayList<OsmPrimitive>();
+	    String value = values.get(key);
+
+	    for( Way way : innerWays ) {
+		if( way.hasKey(key) && (value.equals(way.get(key))) ) {
+		    affectedWays.add(way);
+		}
+	    }
+
+	    if( moveTags ) {
+		// remove duplicated tags from outer ways
+		for( Way way : outerWays ) {
+		    if( way.hasKey(key) ) {
+			affectedWays.add(way);
+		    }
+		}
+	    }
+
+	    if( affectedWays.size() > 0 ) {
+                // reset key tag on affected ways
+		commands.add(new ChangePropertyCommand(affectedWays, key, null));
+	    }
+	}
+
+	if( moveTags ) {
+	    // add those tag values to the relation
+
+	    boolean fixed = false;
+	    Relation r2 = new Relation(relation);
+	    for( String key : values.keySet() ) {
+		if( !r2.hasKey(key) && !key.equals("area") ) {
+		    if( relation.isNew() )
+			relation.put(key, values.get(key));
+		    else
+			r2.put(key, values.get(key));
+		    fixed = true;
+		}
+	    }
+	    if( fixed && !relation.isNew() )
+		commands.add(new ChangeCommand(relation, r2));
+	}
+
+	return commands;
     }
 }
