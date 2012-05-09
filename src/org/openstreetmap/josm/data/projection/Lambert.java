@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.NTV2Datum;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFile;
+import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.proj.LambertConformalConic;
 import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.tools.GBC;
@@ -76,33 +77,14 @@ public class Lambert extends AbstractProjection implements ProjectionSubPrefs {
 
     private int layoutZone;
 
-    private static NTV2GridShiftFile ntf_rgf93Grid = null;
-
-    public static NTV2GridShiftFile getNtf_rgf93Grid() {
-        return ntf_rgf93Grid;
-    }
-
     public Lambert() {
-        if (ntf_rgf93Grid == null) {
-            try {
-                String gridFileName = "ntf_r93_b.gsb";
-                InputStream is = Main.class.getResourceAsStream("/data/"+gridFileName);
-                if (is == null) {
-                    throw new RuntimeException(tr("Error: failed to open input stream for resource ''/data/{0}''. Cannot load NTF<->RGF93 grid", gridFileName));
-                }
-                ntf_rgf93Grid = new NTV2GridShiftFile();
-                ntf_rgf93Grid.loadGridShiftFile(is, false);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
         updateParameters(DEFAULT_ZONE);
     }
 
     private void updateParameters(final int layoutZone) {
         this.layoutZone = layoutZone;
         ellps = Ellipsoid.clarkeIGN;
-        datum = new NTV2Datum("ntf_rgf93Grid", null, ellps, ntf_rgf93Grid);
+        datum = new NTV2Datum("ntf_rgf93Grid", null, ellps, NTV2GridShiftFileWrapper.ntf_rgf93);
         x_0 = x_0s[layoutZone];
         lon_0 = 2.0 + 20.0 / 60 + 14.025 / 3600; // 0 grade Paris
         if (proj == null) {

@@ -9,9 +9,9 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
  */
 public class NTV2Datum extends AbstractDatum {
 
-    protected NTV2GridShiftFile nadgrids;
+    protected NTV2GridShiftFileWrapper nadgrids;
 
-    public NTV2Datum(String name, String proj4Id, Ellipsoid ellps, NTV2GridShiftFile nadgrids) {
+    public NTV2Datum(String name, String proj4Id, Ellipsoid ellps, NTV2GridShiftFileWrapper nadgrids) {
         super(name, proj4Id, ellps);
         this.nadgrids = nadgrids;
     }
@@ -19,14 +19,14 @@ public class NTV2Datum extends AbstractDatum {
     @Override
     public LatLon toWGS84(LatLon ll) {
         NTV2GridShift gs = new NTV2GridShift(ll);
-        nadgrids.gridShiftForward(gs);
+        nadgrids.getShiftFile().gridShiftForward(gs);
         return new LatLon(ll.lat() + gs.getLatShiftDegrees(), ll.lon() + gs.getLonShiftPositiveEastDegrees());
     }
 
     @Override
     public LatLon fromWGS84(LatLon ll) {
         NTV2GridShift gs = new NTV2GridShift(ll);
-        nadgrids.gridShiftReverse(gs);
+        nadgrids.getShiftFile().gridShiftReverse(gs);
         return new LatLon(ll.lat() + gs.getLatShiftDegrees(), ll.lon() + gs.getLonShiftPositiveEastDegrees());
     }
 }

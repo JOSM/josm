@@ -3,25 +3,22 @@ package org.openstreetmap.josm.data.projection;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.GridBagLayout;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.CentricDatum;
 import org.openstreetmap.josm.data.projection.datum.Datum;
+import org.openstreetmap.josm.data.projection.datum.NTV2Datum;
+import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.datum.SevenParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.ThreeParameterDatum;
+import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
 import org.openstreetmap.josm.data.projection.proj.Proj;
 import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.tools.Utils;
@@ -31,17 +28,27 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * Inspired by PROJ.4 and Proj4J.
  */
-public class CustomProjection extends AbstractProjection implements ProjectionSubPrefs {
+public class CustomProjection extends AbstractProjection {
 
-    private String pref = "";
+    /**
+     * pref String that defines the projection
+     *
+     * null means fall back mode (Mercator)
+     */
+    protected String pref = null;
 
-    public void update(String pref) {
-        try {
+    public void update(String pref) throws ProjectionConfigurationException {
+        if (pref == null) {
+            this.pref = null;
+            ellps = Ellipsoid.WGS84;
+            datum = WGS84Datum.INSTANCE;
+            proj = new org.openstreetmap.josm.data.projection.proj.Mercator();
+        } else {
             Map<String, String> parameters = new HashMap<String, String>();
             String[] parts = pref.trim().split("\\s+");
             for (int i = 0; i < parts.length; i++) {
                 String part = parts[i];
-                if (part.charAt(0) != '+')
+                if (part.isEmpty() || part.charAt(0) != '+')
                     throw new ProjectionConfigurationException(tr("Parameter must begin with a ''+'' sign (found ''{0}'')", part));
                 Matcher m = Pattern.compile("\\+([a-zA-Z0-9_]+)(=(.*))?").matcher(part);
                 if (m.matches()) {
@@ -73,10 +80,8 @@ public class CustomProjection extends AbstractProjection implements ProjectionSu
             if (s != null) {
                 this.k_0 = parseDouble(s, "k_0");
             }
-        } catch (ProjectionConfigurationException e) {
-            System.err.println(e.toString()); // FIXME
+            this.pref = pref;
         }
-        this.pref = pref;
     }
 
     public Ellipsoid parseEllipsoid(Map<String, String> parameters) throws ProjectionConfigurationException {
@@ -120,6 +125,14 @@ public class CustomProjection extends AbstractProjection implements ProjectionSu
     }
 
     public Datum parseDatum(Map<String, String> parameters, Ellipsoid ellps) throws ProjectionConfigurationException {
+        String nadgridsId = parameters.get("nadgrids");
+        if (nadgridsId != null) {
+            NTV2GridShiftFileWrapper nadgrids = Projections.getNadgrids(nadgridsId);
+            if (nadgrids == null)
+                throw new ProjectionConfigurationException(tr("Grid shift file ''{0}'' for option +nadgrids not supported.", nadgridsId));
+            return new NTV2Datum(nadgridsId, null, ellps, nadgrids);
+        }
+
         String towgs84 = parameters.get("towgs84");
         if (towgs84 != null)
             return parseToWGS84(towgs84, ellps);
@@ -297,12 +310,12 @@ public class CustomProjection extends AbstractProjection implements ProjectionSu
 
     @Override
     public String toCode() {
-        return Utils.md5Hex(pref).substring(0, 10);
+        return "proj:" + (pref == null ? "ERROR" : pref);
     }
 
     @Override
     public String getCacheDirectoryName() {
-        return toCode();
+        return "proj-"+Utils.md5Hex(pref == null ? "" : pref).substring(0, 4);
     }
 
     @Override
@@ -316,36 +329,4 @@ public class CustomProjection extends AbstractProjection implements ProjectionSu
     public String toString() {
         return tr("Custom Projection (from PROJ.4 string)");
     }
-
-    @Override
-    public void setupPreferencePanel(JPanel p, ActionListener listener) {
-        JTextField input = new JTextField(pref, 50);
-        p.setLayout(new GridBagLayout());
-        p.add(input);
-    }
-
-    @Override
-    public Collection<String> getPreferences(JPanel p) {
-        Object prefTf = p.getComponent(0);
-        if (!(prefTf instanceof JTextField))
-            return null;
-        String pref = ((JTextField) prefTf).getText();
-        return Collections.singleton(pref);
-    }
-
-    @Override
-    public void setPreferences(Collection<String> args) {
-        update(args.iterator().next());
-    }
-
-    @Override
-    public String[] allCodes() {
-        return new String[0];
-    }
-
-    @Override
-    public Collection<String> getPreferencesFromCode(String code) {
-        return null;
-    }
-
 }
