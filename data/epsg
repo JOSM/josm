@@ -1,0 +1,4 @@
+# WGS 84 / Pseudo-Mercator
+<3857> +proj=josm:smerc +ellps=WGS84 +datum=WGS84 +bounds=-180.0,-85.05112877980659,180.0,85.05112877980659  <>
+# WGS 84
+<4326> +proj=longlat +ellps=WGS84 +datum=WGS84 +bounds=-180,-90,180,90  <>
