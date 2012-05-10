@@ -19,7 +19,7 @@ public class Mercator implements Proj {
 
     @Override
     public String getProj4Id() {
-        return "merc";
+        return null; // "merc" is ellipsoidal Mercator projection in PROJ.4
     }
 
     @Override
