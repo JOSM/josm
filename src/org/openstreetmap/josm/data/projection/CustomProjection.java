@@ -40,6 +40,7 @@ public class CustomProjection extends AbstractProjection {
      * null means fall back mode (Mercator)
      */
     protected String pref = null;
+    protected Bounds bounds;
 
     protected static class Param {
         public String key;
@@ -62,10 +63,17 @@ public class CustomProjection extends AbstractProjection {
         public final static Param lat_0 = new Param("lat_0", true);
         public final static Param lat_1 = new Param("lat_1", true);
         public final static Param lat_2 = new Param("lat_2", true);
+        public final static Param wktext = new Param("wktext", false);  // ignored
+        public final static Param units = new Param("units", true);     // ignored
+        public final static Param no_defs = new Param("no_defs", false);
+        public final static Param init = new Param("init", true);
+        // JOSM extension, not present in PROJ.4
+        public final static Param bounds = new Param("bounds", true);
 
         public final static Set<Param> params = new HashSet<Param>(Arrays.asList(
                 x_0, y_0, lon_0, k_0, ellps, a, es, rf, f, b, datum, towgs84,
-                nadgrids, proj, lat_0, lat_1, lat_2
+                nadgrids, proj, lat_0, lat_1, lat_2, wktext, units, no_defs, 
+                init, bounds
         ));
 
         public final static Map<String, Param> paramsByKey = new HashMap<String, Param>();
@@ -82,38 +90,16 @@ public class CustomProjection extends AbstractProjection {
     }
 
     public void update(String pref) throws ProjectionConfigurationException {
+        this.pref = pref;
         if (pref == null) {
-            this.pref = null;
             ellps = Ellipsoid.WGS84;
             datum = WGS84Datum.INSTANCE;
             proj = new org.openstreetmap.josm.data.projection.proj.Mercator();
+            bounds = new Bounds(
+                    new LatLon(-85.05112877980659, -180.0),
+                    new LatLon(85.05112877980659, 180.0));
         } else {
-            Map<String, String> parameters = new HashMap<String, String>();
-            String[] parts = pref.trim().split("\\s+");
-            if (pref.trim().isEmpty()) {
-                parts = new String[0];
-            }
-            for (int i = 0; i < parts.length; i++) {
-                String part = parts[i];
-                if (part.isEmpty() || part.charAt(0) != '+')
-                    throw new ProjectionConfigurationException(tr("Parameter must begin with a ''+'' sign (found ''{0}'')", part));
-                Matcher m = Pattern.compile("\\+([a-zA-Z0-9_]+)(=(.*))?").matcher(part);
-                if (m.matches()) {
-                    String key = m.group(1);
-                    String value = null;
-                    if (m.groupCount() >= 3) {
-                        value = m.group(3);
-                    }
-                    if (!Param.paramsByKey.containsKey(key))
-                        throw new ProjectionConfigurationException(tr("Unkown parameter: ''{0}''.", key));
-                    if (Param.paramsByKey.get(key).hasValue && value == null)
-                        throw new ProjectionConfigurationException(tr("Value expected for parameter ''{0}''.", key));
-                    if (!Param.paramsByKey.get(key).hasValue && value != null)
-                        throw new ProjectionConfigurationException(tr("No value expected for parameter ''{0}''.", key));
-                    parameters.put(key, value);
-                } else
-                    throw new ProjectionConfigurationException(tr("Unexpected parameter format (''{0}'')", part));
-            }
+            Map<String, String> parameters = parseParameterList(pref);
             ellps = parseEllipsoid(parameters);
             datum = parseDatum(parameters, ellps);
             proj = parseProjection(parameters, ellps);
@@ -123,18 +109,78 @@ public class CustomProjection extends AbstractProjection {
             }
             s = parameters.get(Param.y_0.key);
             if (s != null) {
-                this.y_0 = parseDouble(s, Param.x_0.key);
+                this.y_0 = parseDouble(s, Param.y_0.key);
             }
             s = parameters.get(Param.lon_0.key);
             if (s != null) {
-                this.lon_0 = parseAngle(s, Param.x_0.key);
+                this.lon_0 = parseAngle(s, Param.lon_0.key);
             }
             s = parameters.get(Param.k_0.key);
             if (s != null) {
-                this.k_0 = parseDouble(s, Param.x_0.key);
+                this.k_0 = parseDouble(s, Param.k_0.key);
             }
-            this.pref = pref;
+            s = parameters.get(Param.bounds.key);
+            if (s != null) {
+                this.bounds = parseBounds(s);
+            }
         }
+    }
+
+    private Map<String, String> parseParameterList(String pref) throws ProjectionConfigurationException {
+        Map<String, String> parameters = new HashMap<String, String>();
+        String[] parts = pref.trim().split("\\s+");
+        if (pref.trim().isEmpty()) {
+            parts = new String[0];
+        }
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i];
+            if (part.isEmpty() || part.charAt(0) != '+')
+                throw new ProjectionConfigurationException(tr("Parameter must begin with a ''+'' character (found ''{0}'')", part));
+            Matcher m = Pattern.compile("\\+([a-zA-Z0-9_]+)(=(.*))?").matcher(part);
+            if (m.matches()) {
+                String key = m.group(1);
+                // alias
+                if (key.equals("k")) {
+                    key = Param.k_0.key;
+                }
+                String value = null;
+                if (m.groupCount() >= 3) {
+                    value = m.group(3);
+                    // same aliases
+                    if (key.equals(Param.proj.key)) {
+                        if (value.equals("longlat") || value.equals("latlon") || value.equals("latlong")) {
+                            value = "lonlat";
+                        }
+                    }
+                }
+                if (!Param.paramsByKey.containsKey(key))
+                    throw new ProjectionConfigurationException(tr("Unkown parameter: ''{0}''.", key));
+                if (Param.paramsByKey.get(key).hasValue && value == null)
+                    throw new ProjectionConfigurationException(tr("Value expected for parameter ''{0}''.", key));
+                if (!Param.paramsByKey.get(key).hasValue && value != null)
+                    throw new ProjectionConfigurationException(tr("No value expected for parameter ''{0}''.", key));
+                parameters.put(key, value);
+            } else
+                throw new ProjectionConfigurationException(tr("Unexpected parameter format (''{0}'')", part));
+        }
+        // recursive resolution of +init includes
+        String initKey = parameters.get(Param.init.key);
+        if (initKey != null) {
+            String init = Projections.getInit(initKey);
+            if (init == null)
+                throw new ProjectionConfigurationException(tr("Value ''{0}'' for option +init not supported.", initKey));
+            Map<String, String> initp = null;
+            try {
+                initp = parseParameterList(init);
+            } catch (ProjectionConfigurationException ex) {
+                throw new ProjectionConfigurationException(tr(initKey+": "+ex.getMessage()));
+            }
+            for (Map.Entry<String, String> e : parameters.entrySet()) {
+                initp.put(e.getKey(), e.getValue());
+            }
+            return initp;
+        }
+        return parameters;
     }
 
     public Ellipsoid parseEllipsoid(Map<String, String> parameters) throws ProjectionConfigurationException {
@@ -173,6 +219,8 @@ public class CustomProjection extends AbstractProjection {
                 parameters.containsKey(Param.f.key) ||
                 parameters.containsKey(Param.b.key))
             throw new ProjectionConfigurationException(tr("Combination of ellipsoid parameters is not supported."));
+        if (parameters.containsKey(Param.no_defs.key))
+            throw new ProjectionConfigurationException(tr("Ellipsoid required (+ellps=* or +a=*, +b=*)"));
         // nothing specified, use WGS84 as default
         return Ellipsoid.WGS84;
     }
@@ -180,7 +228,7 @@ public class CustomProjection extends AbstractProjection {
     public Datum parseDatum(Map<String, String> parameters, Ellipsoid ellps) throws ProjectionConfigurationException {
         String nadgridsId = parameters.get(Param.nadgrids.key);
         if (nadgridsId != null) {
-            NTV2GridShiftFileWrapper nadgrids = Projections.getNadgrids(nadgridsId);
+            NTV2GridShiftFileWrapper nadgrids = Projections.getNTV2Grid(nadgridsId);
             if (nadgrids == null)
                 throw new ProjectionConfigurationException(tr("Grid shift file ''{0}'' for option +nadgrids not supported.", nadgridsId));
             return new NTV2Datum(nadgridsId, null, ellps, nadgrids);
@@ -195,8 +243,10 @@ public class CustomProjection extends AbstractProjection {
             Datum datum = Projections.getDatum(datumId);
             if (datum == null) throw new ProjectionConfigurationException(tr("Unkown datum identifier: ''{0}''", datumId));
             return datum;
-        } else
-            return new CentricDatum(null, null, ellps);
+        }
+        if (parameters.containsKey(Param.no_defs.key))
+            throw new ProjectionConfigurationException(tr("Datum required (+datum=*, +towgs84=* or +nadgirds=*)"));
+        return new CentricDatum(null, null, ellps);
     }
 
     public Datum parseToWGS84(String paramList, Ellipsoid ellps) throws ProjectionConfigurationException {
@@ -266,7 +316,16 @@ public class CustomProjection extends AbstractProjection {
         }
         proj.initialize(projParams);
         return proj;
+    }
 
+    public Bounds parseBounds(String boundsStr) throws ProjectionConfigurationException {
+        String[] numStr = boundsStr.split(",");
+        if (numStr.length != 4)
+            throw new ProjectionConfigurationException(tr("Unexpected number of arguments for parameter ''+bounds'' (must be 4)"));
+        return new Bounds(parseAngle(numStr[1], "minlat (+bounds)"),
+                parseAngle(numStr[0], "minlon (+bounds)"),
+                parseAngle(numStr[3], "maxlat (+bounds)"),
+                parseAngle(numStr[2], "maxlon (+bounds)"));
     }
 
     public double parseDouble(Map<String, String> parameters, String parameterName) throws ProjectionConfigurationException {
@@ -373,9 +432,10 @@ public class CustomProjection extends AbstractProjection {
 
     @Override
     public Bounds getWorldBoundsLatLon() {
+        if (bounds != null) return bounds;
         return new Bounds(
-            new LatLon(-85.05112877980659, -180.0),
-            new LatLon(85.05112877980659, 180.0)); // FIXME
+            new LatLon(-90.0, -180.0),
+            new LatLon(90.0, 180.0));
     }
 
     @Override

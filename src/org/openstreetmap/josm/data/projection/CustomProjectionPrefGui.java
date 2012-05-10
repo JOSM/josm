@@ -9,8 +9,10 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,10 +21,14 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.plaf.basic.BasicComboBoxEditor;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.projection.SubPrefsOptions;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
+import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -32,21 +38,38 @@ public class CustomProjectionPrefGui extends CustomProjection implements Project
 
     @Override
     public void setupPreferencePanel(JPanel p, ActionListener listener) {
-        JPanel inner = new PreferencePanel();
+        JPanel inner = new PreferencePanel(listener);
         p.setLayout(new GridBagLayout());
         p.add(inner, GBC.std().fill(GBC.HORIZONTAL));
     }
 
     private class PreferencePanel extends JPanel {
 
-        public final JTextField input;
+        public JTextField input;
+        private HistoryComboBox cbInput;
 
-        public PreferencePanel() {
-            input = new JTextField(pref == null ? "" : pref, 30);
-            build();
+        public PreferencePanel(ActionListener listener) {
+            build(listener);
         }
 
-        private void build() {
+        private void build(final ActionListener listener) {
+            input = new JTextField(30);
+            cbInput = new HistoryComboBox();
+            cbInput.setPrototypeDisplayValue(new AutoCompletionListItem("xxxx"));
+            cbInput.setEditor(new BasicComboBoxEditor() {
+                @Override
+                protected JTextField createEditorComponent() {
+                    return input;
+                }
+            });
+            Collection<String> samples = Arrays.asList(
+                    "+proj=lonlat +ellps=WGS84 +datum=WGS84 +bounds=-180,-90,180,90",
+                    "+proj=tmerc +lat_0=0 +lon_0=9 +k_0=1 +x_0=3500000 +y_0=0 +ellps=bessel +nadgrids=BETA2007.gsb");
+            List<String> inputHistory = new LinkedList<String>(Main.pref.getCollection("projection.custom.value.history", samples));
+            Collections.reverse(inputHistory);
+            cbInput.setPossibleItems(inputHistory);
+            cbInput.setText(pref == null ? "" : pref);
+
             final HtmlPanel errorsPanel = new HtmlPanel();
             errorsPanel.setVisible(false);
             final JLabel valStatus = new JLabel();
@@ -63,6 +86,7 @@ public class CustomProjectionPrefGui extends CustomProjection implements Project
                     } else {
                         feedbackValid(tr("Projection configuration is valid."));
                     }
+                    listener.actionPerformed(null);
                 }
 
                 @Override
@@ -108,7 +132,7 @@ public class CustomProjectionPrefGui extends CustomProjection implements Project
 
             this.setLayout(new GridBagLayout());
             JPanel p2 = new JPanel(new GridBagLayout());
-            p2.add(input, GBC.std().fill(GBC.HORIZONTAL).insets(0, 20, 5, 5));
+            p2.add(cbInput, GBC.std().fill(GBC.HORIZONTAL).insets(0, 20, 5, 5));
             p2.add(btnCheck, GBC.eol().insets(0, 20, 0, 5));
             this.add(p2, GBC.eol().fill(GBC.HORIZONTAL));
             p2 = new JPanel(new GridBagLayout());
@@ -119,6 +143,11 @@ public class CustomProjectionPrefGui extends CustomProjection implements Project
             p2.add(btnInfo, GBC.std().insets(0, 20, 0, 0));
             p2.add(GBC.glue(1, 0), GBC.eol().fill(GBC.HORIZONTAL));
             this.add(p2, GBC.eol().fill(GBC.HORIZONTAL));
+        }
+
+        public void rememberHistory() {
+            cbInput.addCurrentItemToHistory();
+            Main.pref.putCollection("projection.custom.value.history", cbInput.getHistory());
         }
     }
 
@@ -149,6 +178,7 @@ public class CustomProjectionPrefGui extends CustomProjection implements Project
             s.append("<b>+nadgrids=...</b> - <i>"+tr("NTv2 grid file")+"</i><br>");
             s.append("&nbsp;&nbsp;&nbsp;&nbsp;"+tr("Build-in:")+" ");
             s.append(listKeys(Projections.nadgrids)+"<br>");
+            s.append("<b>+bounds=</b>minlon,minlat,maxlon,maxlat - <i>"+tr("Projection bounds (in degrees)")+"</i><br>");
 
             HtmlPanel info = new HtmlPanel(s.toString());
             return info;
@@ -165,6 +195,7 @@ public class CustomProjectionPrefGui extends CustomProjection implements Project
     public Collection<String> getPreferences(JPanel p) {
         PreferencePanel prefPanel = (PreferencePanel) p.getComponent(0);
         String pref = prefPanel.input.getText();
+        prefPanel.rememberHistory();
         return Collections.singleton(pref);
     }
 

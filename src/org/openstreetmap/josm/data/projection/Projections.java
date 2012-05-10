@@ -1,10 +1,16 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.projection;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -19,6 +25,7 @@ import org.openstreetmap.josm.data.projection.proj.Proj;
 import org.openstreetmap.josm.data.projection.proj.ProjFactory;
 import org.openstreetmap.josm.data.projection.proj.SwissObliqueMercator;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
+import org.openstreetmap.josm.io.MirroredInputStream;
 
 /**
  * Class to handle projections
@@ -79,14 +86,15 @@ public class Projections {
      *
      * should be compatible to PROJ.4
      */
-    public static Map<String, Ellipsoid> ellipsoids = new HashMap<String, Ellipsoid>();
     public static Map<String, ProjFactory> projs = new HashMap<String, ProjFactory>();
+    public static Map<String, Ellipsoid> ellipsoids = new HashMap<String, Ellipsoid>();
     public static Map<String, Datum> datums = new HashMap<String, Datum>();
     public static Map<String, NTV2GridShiftFileWrapper> nadgrids = new HashMap<String, NTV2GridShiftFileWrapper>();
+    public static Map<String, String> inits = new HashMap<String, String>();
 
     static {
         registerBaseProjection("lonlat", LonLat.class, "core");
-        registerBaseProjection("merc", org.openstreetmap.josm.data.projection.proj.Mercator.class, "core");
+        registerBaseProjection("josm:smerc", org.openstreetmap.josm.data.projection.proj.Mercator.class, "core");
         registerBaseProjection("lcc", LambertConformalConic.class, "core");
         registerBaseProjection("somerc", SwissObliqueMercator.class, "core");
         registerBaseProjection("tmerc", TransverseMercator.class, "core");
@@ -100,6 +108,8 @@ public class Projections {
 
         nadgrids.put("BETA2007.gsb", NTV2GridShiftFileWrapper.BETA2007);
         nadgrids.put("ntf_r93_b.gsb", NTV2GridShiftFileWrapper.ntf_rgf93);
+
+        loadInits();
     }
 
     /**
@@ -133,7 +143,36 @@ public class Projections {
         return datums.get(id);
     }
 
-    public static NTV2GridShiftFileWrapper getNadgrids(String id) {
+    public static NTV2GridShiftFileWrapper getNTV2Grid(String id) {
         return nadgrids.get(id);
+    }
+
+    public static String getInit(String id) {
+        return inits.get(id);
+    }
+
+    /**
+     * Load +init "presets" from file
+     */
+    private static void loadInits() {
+        Pattern epsgPattern = Pattern.compile("\\A<(\\d+)>(.*)<>\\Z");
+        try {
+            InputStream in = new MirroredInputStream("resource://data/epsg");
+            BufferedReader r = new BufferedReader(new InputStreamReader(in));
+            String line;
+            while ((line = r.readLine()) != null) {
+                line = line.trim();
+                if (!line.startsWith("#")) {
+                    Matcher m = epsgPattern.matcher(line);
+                    if (m.matches()) {
+                        inits.put("epsg:" + m.group(1), m.group(2).trim());
+                    } else {
+                        System.err.println("Warning: failed to parse line from the epsg projection definition: "+line);
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException();
+        }
     }
 }
