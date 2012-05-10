@@ -12,8 +12,11 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.Datum;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
+import org.openstreetmap.josm.data.projection.proj.ClassProjFactory;
 import org.openstreetmap.josm.data.projection.proj.LambertConformalConic;
+import org.openstreetmap.josm.data.projection.proj.LonLat;
 import org.openstreetmap.josm.data.projection.proj.Proj;
+import org.openstreetmap.josm.data.projection.proj.ProjFactory;
 import org.openstreetmap.josm.data.projection.proj.SwissObliqueMercator;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 
@@ -44,13 +47,8 @@ public class Projections {
                 new TransverseMercatorLV(), // LV
                 new Puwg(),                 // PL
                 new Epsg3008(),             // SE
+                new CustomProjectionPrefGui()
         }));
-
-    static {
-        if (Main.pref.getBoolean("customprojection")) {
-            addProjection(new CustomProjectionPrefGui());
-        }
-    }
 
     public static ArrayList<Projection> getProjections() {
         return allProjections;
@@ -81,22 +79,22 @@ public class Projections {
      *
      * should be compatible to PROJ.4
      */
-
-    private static Map<String, Ellipsoid> ellipsoids = new HashMap<String, Ellipsoid>();
-    private static Map<String, Class<? extends Proj>> projs = new HashMap<String, Class<? extends Proj>>();
-    private static Map<String, Datum> datums = new HashMap<String, Datum>();
-    private static Map<String, NTV2GridShiftFileWrapper> nadgrids = new HashMap<String, NTV2GridShiftFileWrapper>();
+    public static Map<String, Ellipsoid> ellipsoids = new HashMap<String, Ellipsoid>();
+    public static Map<String, ProjFactory> projs = new HashMap<String, ProjFactory>();
+    public static Map<String, Datum> datums = new HashMap<String, Datum>();
+    public static Map<String, NTV2GridShiftFileWrapper> nadgrids = new HashMap<String, NTV2GridShiftFileWrapper>();
 
     static {
+        registerBaseProjection("lonlat", LonLat.class, "core");
+        registerBaseProjection("merc", org.openstreetmap.josm.data.projection.proj.Mercator.class, "core");
+        registerBaseProjection("lcc", LambertConformalConic.class, "core");
+        registerBaseProjection("somerc", SwissObliqueMercator.class, "core");
+        registerBaseProjection("tmerc", TransverseMercator.class, "core");
+
         ellipsoids.put("intl", Ellipsoid.hayford);
         ellipsoids.put("GRS80", Ellipsoid.GRS80);
         ellipsoids.put("WGS84", Ellipsoid.WGS84);
         ellipsoids.put("bessel", Ellipsoid.Bessel1841);
-
-        projs.put("merc", org.openstreetmap.josm.data.projection.proj.Mercator.class);
-        projs.put("lcc", LambertConformalConic.class);
-        projs.put("somerc", SwissObliqueMercator.class);
-        projs.put("tmerc", TransverseMercator.class);
 
         datums.put("WGS84", WGS84Datum.INSTANCE);
 
@@ -104,22 +102,31 @@ public class Projections {
         nadgrids.put("ntf_r93_b.gsb", NTV2GridShiftFileWrapper.ntf_rgf93);
     }
 
-    public static Ellipsoid getEllipsoid(String id) {
-        return ellipsoids.get(id);
+    /**
+     * Plugins can register additional base projections.
+     *
+     * @param id The "official" PROJ.4 id. In case the projection is not supported
+     * by PROJ.4, use some prefix, e.g. josm:myproj or gdal:otherproj.
+     * @param fac The base projection factory.
+     * @param origin Multiple plugins may implement the same base projection.
+     * Provide plugin name or similar string, so it be differentiated.
+     */
+    public static void registerBaseProjection(String id, ProjFactory fac, String origin) {
+        projs.put(id, fac);
     }
 
-    public static Proj getProjection(String id) {
-        Class<? extends Proj> projClass = projs.get(id);
-        if (projClass == null) return null;
-        Proj proj = null;
-        try {
-            proj = projClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        return proj;
+    public static void registerBaseProjection(String id, Class<? extends Proj> projClass, String origin) {
+        registerBaseProjection(id, new ClassProjFactory(projClass), origin);
+    }
+
+    public static Proj getBaseProjection(String id) {
+        ProjFactory fac = projs.get(id);
+        if (fac == null) return null;
+        return fac.createInstance();
+    }
+
+    public static Ellipsoid getEllipsoid(String id) {
+        return ellipsoids.get(id);
     }
 
     public static Datum getDatum(String id) {
