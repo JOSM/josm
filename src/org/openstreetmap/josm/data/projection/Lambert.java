@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -13,11 +12,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.NTV2Datum;
-import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFile;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.proj.LambertConformalConic;
 import org.openstreetmap.josm.data.projection.proj.ProjParameters;
@@ -28,29 +25,45 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Lambert conic conform 4 zones using the French geodetic system NTF.
  * This newer version uses the grid translation NTF<->RGF93 provided by IGN for a submillimetric accuracy.
  * (RGF93 is the French geodetic system similar to WGS84 but not mathematically equal)
+ *
+ * Source: http://professionnels.ign.fr/DISPLAY/000/526/700/5267002/transformation.pdf
  * @author Pieren
  */
 public class Lambert extends AbstractProjection implements ProjectionSubPrefs {
-    /**
-     * Lambert I, II, III, and IV projection exponents
-     */
-    private static final double n[] = { 0.7604059656, 0.7289686274, 0.6959127966, 0.6712679322 };
 
     /**
-     * Lambert I, II, III, and IV projection constants
+     * Lambert I, II, III, and IV latitude origin
      */
-    private static final double c[] = { 11603796.98, 11745793.39, 11947992.52, 12136281.99 };
+    private static final double lat_0s[] = { 49.5, 46.8, 44.1, 42.165 };
+    
+    /**
+     * Lambert I, II, III, and IV latitude of first standard parallel
+     */
+    private static final double lat_1s[] = { 
+            convertDegreeMinuteSecond(48, 35, 54.682), 
+            convertDegreeMinuteSecond(45, 53, 56.108),
+            convertDegreeMinuteSecond(43, 11, 57.449),
+            convertDegreeMinuteSecond(41, 33, 37.396)};
+    
+    /**
+     * Lambert I, II, III, and IV latitude of second standard parallel
+     */
+    private static final double lat_2s[] = {
+            convertDegreeMinuteSecond(50, 23, 45.282),
+            convertDegreeMinuteSecond(47, 41, 45.652),
+            convertDegreeMinuteSecond(44, 59, 45.938),
+            convertDegreeMinuteSecond(42, 46, 3.588)};
 
     /**
      * Lambert I, II, III, and IV false east
      */
     private static final double x_0s[] = { 600000.0, 600000.0, 600000.0, 234.358 };
-
+    
     /**
      * Lambert I, II, III, and IV false north
      */
-    private static final double y_fs[] = { 5657616.674, 6199695.768, 6791905.085, 7239161.542 };
-
+    private static final double y_0s[] = { 200000.0, 200000.0, 200000.0, 185861.369 };
+    
     /**
      * France is divided in 4 Lambert projection zones (1,2,3 + 4th for Corsica)
      */
@@ -86,6 +99,7 @@ public class Lambert extends AbstractProjection implements ProjectionSubPrefs {
         ellps = Ellipsoid.clarkeIGN;
         datum = new NTV2Datum("ntf_rgf93Grid", null, ellps, NTV2GridShiftFileWrapper.ntf_rgf93);
         x_0 = x_0s[layoutZone];
+        y_0 = y_0s[layoutZone];
         lon_0 = 2.0 + 20.0 / 60 + 14.025 / 3600; // 0 grade Paris
         if (proj == null) {
             proj = new LambertConformalConic();
@@ -94,9 +108,9 @@ public class Lambert extends AbstractProjection implements ProjectionSubPrefs {
         try {
             proj.initialize(new ProjParameters() {{
                 ellps = Lambert.this.ellps;
-                lcc_n = n[layoutZone];
-                lcc_F = c[layoutZone] / ellps.a;
-                lcc_r0 = y_fs[layoutZone] / ellps.a;
+                lat_0 = lat_0s[layoutZone];
+                lat_1 = lat_1s[layoutZone];
+                lat_2 = lat_2s[layoutZone];
             }});
         } catch (ProjectionConfigurationException e) {
             throw new RuntimeException(e);
