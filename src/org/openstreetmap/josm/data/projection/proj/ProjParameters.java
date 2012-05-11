@@ -14,9 +14,4 @@ public class ProjParameters {
     public Double lat_1;
     public Double lat_2;
 
-    /* for LambertConformalConic */
-    public Double lcc_n;
-    public Double lcc_F;
-    public Double lcc_r0;
-
 }

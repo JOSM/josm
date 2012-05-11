@@ -66,16 +66,12 @@ public class LambertConformalConic implements Proj {
     public void initialize(ProjParameters params) throws ProjectionConfigurationException {
         ellps = params.ellps;
         e = ellps.e;
-        if (params.lcc_n != null && params.lcc_F != null && params.lcc_r0 != null) {
-            initializeDirect(params.lcc_n, params.lcc_F, params.lcc_r0);
+        if (params.lat_0 == null)
+            throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", "lat_0"));
+        if (params.lat_1 != null && params.lat_2 != null) {
+            initialize2SP(params.lat_0, params.lat_1, params.lat_2);
         } else {
-            if (params.lat_0 == null)
-                throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", "lat_0"));
-            if (params.lat_1 != null && params.lat_2 != null) {
-                initialize2SP(params.lat_0, params.lat_1, params.lat_2);
-            } else {
-                initialize1SP(params.lat_0);
-            }
+            initialize1SP(params.lat_0);
         }
     }
 
@@ -116,20 +112,6 @@ public class LambertConformalConic implements Proj {
         n = sin(lat_0_rad);
         F  = m0 / (n * pow(t0, n));
         r0 = F * pow(t0, n);
-    }
-
-    /**
-     * Initialize LCC by providing the projection parameters directly.
-     *
-     * @param n see field n
-     * @param F see field F
-     * @param r0 see field r0
-     */
-    private void initializeDirect(double n, double F, double r0) {
-        this.params = null;
-        this.n = n;
-        this.F = F;
-        this.r0 = r0;
     }
 
     /**
