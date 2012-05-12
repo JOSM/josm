@@ -4,13 +4,10 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -21,12 +18,12 @@ import org.openstreetmap.josm.actions.upload.UploadHook;
 import org.openstreetmap.josm.actions.upload.ValidateUploadHook;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
-import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.io.UploadPrimitivesTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -125,27 +122,14 @@ public class UploadAction extends JosmAction{
      * want to continue
      */
     public static final boolean warnUploadDiscouraged(OsmDataLayer layer) {
-        ExtendedDialog dlg = new ExtendedDialog(Main.parent,
-                tr("Upload discouraged"),
-                new String[] {tr("Cancel"), tr("Continue")});
-        dlg.setContent("<html>" +
+        return GuiHelper.warnUser(tr("Upload discouraged"),
+                "<html>" +
                 tr("You are about to upload data from the layer ''{0}''.<br /><br />"+
-                        "Sending data from this layer is <b>strongly discouraged</b>. If you continue,<br />"+
-                        "it may require you subsequently have to revert your changes, or force other contributors to.<br /><br />"+
-                        "Are you sure you want to continue?", layer.getName())+
-                "</html>");
-        dlg.setButtonIcons(new Icon[] {
-                ImageProvider.get("cancel"),
-                ImageProvider.overlay(
-                        ImageProvider.get("upload"),
-                        new ImageIcon(ImageProvider.get("warning-small").getImage().getScaledInstance(10 , 10, Image.SCALE_SMOOTH)),
-                        ImageProvider.OverlayPosition.SOUTHEAST)});
-        dlg.setToolTipTexts(new String[] {
-                tr("Cancel"),
-                tr("Ignore this hint and upload anyway")});
-        dlg.setIcon(JOptionPane.WARNING_MESSAGE);
-        dlg.setCancelButton(1);
-        return dlg.showDialog().getValue() != 2;
+                    "Sending data from this layer is <b>strongly discouraged</b>. If you continue,<br />"+
+                    "it may require you subsequently have to revert your changes, or force other contributors to.<br /><br />"+
+                    "Are you sure you want to continue?", layer.getName())+
+                "</html>",
+                ImageProvider.get("upload"), tr("Ignore this hint and upload anyway"));
     }
 
     /**

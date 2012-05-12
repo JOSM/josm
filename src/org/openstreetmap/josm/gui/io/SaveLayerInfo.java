@@ -30,7 +30,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
         this.doSaveToFile = layer.requiresSaveToFile();
-        this.doUploadToServer = layer.requiresUploadToServer();
+        this.doUploadToServer = layer.requiresUploadToServer() && !layer.isUploadDiscouraged();
         this.file = layer.getAssociatedFile();
     }
 
