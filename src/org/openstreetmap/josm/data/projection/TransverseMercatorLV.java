@@ -55,6 +55,6 @@ public class TransverseMercatorLV extends AbstractProjection {
     public Bounds getWorldBoundsLatLon() {
         return new Bounds(
                 new LatLon(-90.0, -180.0),
-                new LatLon(90.0, 180.0));
+                new LatLon(90.0, 180.0), false);
     }
 }

@@ -99,11 +99,11 @@ public class UTM extends AbstractProjection {
         if (hemisphere == Hemisphere.North)
             return new Bounds(
                     new LatLon(-5.0, getUtmCentralMeridianDeg(getzone())-5.0),
-                    new LatLon(85.0, getUtmCentralMeridianDeg(getzone())+5.0));
+                    new LatLon(85.0, getUtmCentralMeridianDeg(getzone())+5.0), false);
         else
             return new Bounds(
                     new LatLon(-85.0, getUtmCentralMeridianDeg(getzone())-5.0),
-                    new LatLon(5.0, getUtmCentralMeridianDeg(getzone())+5.0));
+                    new LatLon(5.0, getUtmCentralMeridianDeg(getzone())+5.0), false);
     }
 
 }

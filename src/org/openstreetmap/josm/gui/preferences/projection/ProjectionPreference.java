@@ -197,7 +197,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         projectionCode.setText(proj.toCode());
         Bounds b = proj.getWorldBoundsLatLon();
         CoordinateFormat cf = CoordinateFormat.getDefaultFormat();
-        bounds.setText(b.getMin().latToString(cf)+"; "+b.getMin().lonToString(cf)+" : "+b.getMax().latToString(cf)+"; "+b.getMax().lonToString(cf));
+        bounds.setText(b.getMin().lonToString(cf)+", "+b.getMin().latToString(cf)+" : "+b.getMax().lonToString(cf)+", "+b.getMax().latToString(cf));
         boolean showCode = true;
         if (pc instanceof SubPrefsOptions) {
             showCode = ((SubPrefsOptions) pc).showProjectionCode();

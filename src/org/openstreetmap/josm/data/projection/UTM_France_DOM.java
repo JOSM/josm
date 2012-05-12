@@ -18,11 +18,11 @@ import org.openstreetmap.josm.data.projection.proj.ProjParameters;
  */
 public class UTM_France_DOM extends AbstractProjection {
 
-    private final static Bounds FortMarigotBounds = new Bounds( new LatLon(17.6,-63.25), new LatLon(18.5,-62.5));
-    private final static Bounds SainteAnneBounds = new Bounds( new LatLon(15.8,-61.9), new LatLon(16.6,-60.9));
-    private final static Bounds MartiniqueBounds = new Bounds( new LatLon(14.25,-61.25), new LatLon(15.025,-60.725));
-    private final static Bounds ReunionBounds = new Bounds( new LatLon(-25.92,37.58), new LatLon(-10.6, 58.27));
-    private final static Bounds GuyaneBounds = new Bounds( new LatLon(2.16 , -54.0), new LatLon(9.06 , -49.62));
+    private final static Bounds FortMarigotBounds = new Bounds( new LatLon(17.6,-63.25), new LatLon(18.5,-62.5), false);
+    private final static Bounds SainteAnneBounds = new Bounds( new LatLon(15.8,-61.9), new LatLon(16.6,-60.9), false);
+    private final static Bounds MartiniqueBounds = new Bounds( new LatLon(14.25,-61.25), new LatLon(15.025,-60.725), false);
+    private final static Bounds ReunionBounds = new Bounds( new LatLon(-25.92,37.58), new LatLon(-10.6, 58.27), false);
+    private final static Bounds GuyaneBounds = new Bounds( new LatLon(2.16 , -54.0), new LatLon(9.06 , -49.62), false);
     private final static Bounds[] utmBounds = { FortMarigotBounds, SainteAnneBounds, MartiniqueBounds, ReunionBounds, GuyaneBounds };
 
     private final static Integer FortMarigotEPSG = 2969;

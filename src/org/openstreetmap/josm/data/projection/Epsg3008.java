@@ -53,8 +53,8 @@ public class Epsg3008 extends AbstractProjection {
     @Override
     public Bounds getWorldBoundsLatLon() {
         return new Bounds(
-                new LatLon(55.2, 12.1),     // new LatLon(-90.0, -180.0),
-                new LatLon(62.26, 14.65));  // new LatLon(90.0, 180.0));
+                new LatLon(55.2, 12.1),
+                new LatLon(62.26, 14.65), false);
     }
 
 }

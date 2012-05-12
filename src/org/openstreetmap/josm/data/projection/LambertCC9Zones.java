@@ -89,7 +89,8 @@ public class LambertCC9Zones extends AbstractProjection {
         double medLatZone = cMinLatZonesDegree + (layoutZone+1);
         return new Bounds(
                 new LatLon(Math.max(medLatZone - 1.0 - cMaxOverlappingZones, cMinLatZonesDegree), -5.5),
-                new LatLon(Math.min(medLatZone + 1.0 + cMaxOverlappingZones, Math.toDegrees(cMaxLatZonesRadian)), 10.2));
+                new LatLon(Math.min(medLatZone + 1.0 + cMaxOverlappingZones, Math.toDegrees(cMaxLatZonesRadian)), 10.2),
+                false);
     }
 
     public int getLayoutZone() {

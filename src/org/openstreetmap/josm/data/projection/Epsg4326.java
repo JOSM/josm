@@ -43,7 +43,7 @@ public class Epsg4326 implements Projection {
     {
         return new Bounds(
                 new LatLon(-90.0, -180.0),
-                new LatLon(90.0, 180.0));
+                new LatLon(90.0, 180.0), false);
     }
 
     public double getDefaultZoomInPPD() {
