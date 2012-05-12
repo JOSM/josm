@@ -3,16 +3,16 @@ package org.openstreetmap.josm.data.projection;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 
 public class ProjectionInfo {
-    private static HashMap<String, ProjectionChoice> allCodesPC;
-    private static HashMap<String, Projection> allCodes;
+    private static Map<String, ProjectionChoice> allCodesPC = new HashMap<String, ProjectionChoice>();
+    private static Map<String, Projection> allCodes = new HashMap<String, Projection>();
 
     static {
-        allCodes = new HashMap<String, Projection>();
         for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
             for (String code : pc.allCodes()) {
                 allCodesPC.put(code, pc);

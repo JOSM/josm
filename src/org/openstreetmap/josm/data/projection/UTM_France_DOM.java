@@ -60,6 +60,8 @@ public class UTM_France_DOM extends AbstractProjection {
     }
 
     public UTM_France_DOM(int currentGeodesic) {
+        if (currentGeodesic < 0 || currentGeodesic >= 5)
+            throw new IllegalArgumentException();
         this.currentGeodesic = currentGeodesic;
         datum = utmDatums[currentGeodesic];
         ellps = datum.getEllipsoid();

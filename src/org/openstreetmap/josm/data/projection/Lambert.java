@@ -95,6 +95,8 @@ public class Lambert extends AbstractProjection {
     }
 
     public Lambert(final int layoutZone) {
+        if (layoutZone < 0 || layoutZone >= 4)
+            throw new IllegalArgumentException();
         this.layoutZone = layoutZone;
         ellps = Ellipsoid.clarkeIGN;
         datum = new NTV2Datum("ntf_rgf93Grid", null, ellps, NTV2GridShiftFileWrapper.ntf_rgf93);

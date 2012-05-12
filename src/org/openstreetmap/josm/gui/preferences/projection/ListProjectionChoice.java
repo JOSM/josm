@@ -45,20 +45,18 @@ abstract public class ListProjectionChoice extends AbstractProjectionChoice {
     /**
      * Convert 0-based index to preference value.
      */
-    abstract protected int indexToZone(int index);
+    abstract protected String indexToZone(int index);
 
     /**
      * Convert preference value to 0-based index.
      */
-    abstract protected int zoneToIndex(int zone);
+    abstract protected int zoneToIndex(String zone);
 
     @Override
     public void setPreferences(Collection<String> args) {
-        Integer zone = null;
+        String zone = null;
         if (args != null && args.size() >= 1) {
-            try {
-                zone = Integer.parseInt(args.iterator().next());
-            } catch(NumberFormatException e) {}
+            zone = args.iterator().next();
         }
         int index;
         if (zone == null) {
@@ -100,7 +98,7 @@ abstract public class ListProjectionChoice extends AbstractProjectionChoice {
     public Collection<String> getPreferences(JPanel panel) {
         CBPanel p = (CBPanel) panel;
         int index = p.prefcb.getSelectedIndex();
-        return Collections.singleton(Integer.toString(indexToZone(index)));
+        return Collections.singleton(indexToZone(index));
     }
 
 }
