@@ -3,27 +3,17 @@ package org.openstreetmap.josm.data.projection;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.GridBagLayout;
-import java.awt.event.ActionListener;
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.NTV2Datum;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
-import org.openstreetmap.josm.tools.GBC;
 
-public class GaussKrueger extends AbstractProjection implements ProjectionSubPrefs {
+public class GaussKrueger extends AbstractProjection {
 
     public static final int DEFAULT_ZONE = 2;
-    private int zone;
+    private final int zone;
 
     private static Bounds[] bounds = {
         new Bounds(new LatLon(-5, 3.5), new LatLon(85, 8.5)),
@@ -32,17 +22,13 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
         new Bounds(new LatLon(-5, 12.5), new LatLon(85, 17.5)),
     };
 
-    private static String[] zones = { "2", "3", "4", "5" };
-
     public GaussKrueger() {
         this(DEFAULT_ZONE);
     }
 
     public GaussKrueger(int zone) {
-        updateParameters(zone);
-    }
-
-    private void updateParameters(int zone) {
+        if (zone < 2 || zone > 5)
+            throw new IllegalArgumentException();
         this.zone = zone;
         ellps = Ellipsoid.Bessel1841;
         datum = new NTV2Datum("BETA2007", null, ellps, NTV2GridShiftFileWrapper.BETA2007);
@@ -62,7 +48,7 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
 
     @Override
     public String toString() {
-        return tr("Gau\u00DF-Kr\u00FCger");
+        return tr("Gau\u00DF-Kr\u00FCger Zone {0}", zone);
     }
 
     @Override
@@ -78,71 +64,6 @@ public class GaussKrueger extends AbstractProjection implements ProjectionSubPre
     @Override
     public Bounds getWorldBoundsLatLon() {
         return bounds[zone-2];
-    }
-
-    @Override
-    public void setupPreferencePanel(JPanel p, ActionListener listener) {
-        JComboBox prefcb = new JComboBox(zones);
-
-        prefcb.setSelectedIndex(zone-2);
-        p.setLayout(new GridBagLayout());
-        p.add(new JLabel(tr("GK Zone")), GBC.std().insets(5,5,0,5));
-        p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
-        /* Note: we use component position 2 below to find this again */
-        p.add(prefcb, GBC.eop().fill(GBC.HORIZONTAL));
-        p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
-
-        if (listener != null) {
-            prefcb.addActionListener(listener);
-        }
-    }
-
-    @Override
-    public Collection<String> getPreferences(JPanel p) {
-        Object prefcb = p.getComponent(2);
-        if(!(prefcb instanceof JComboBox))
-            return null;
-        int zone = ((JComboBox)prefcb).getSelectedIndex();
-        return Collections.singleton(Integer.toString(zone+2));
-    }
-
-    @Override
-    public void setPreferences(Collection<String> args) {
-        int zone = DEFAULT_ZONE;
-        if (args != null) {
-            try {
-                for(String s : args)
-                {
-                    zone = Integer.parseInt(s);
-                    if(zone < 2 || zone > 5) {
-                        zone = DEFAULT_ZONE;
-                    }
-                    break;
-                }
-            } catch(NumberFormatException e) {}
-        }
-        updateParameters(zone);
-    }
-
-    @Override
-    public String[] allCodes() {
-        String[] zones = new String[4];
-        for (int zone = 2; zone <= 5; zone++) {
-            zones[zone-2] = "EPSG:" + (31464 + zone);
-        }
-        return zones;
-    }
-
-    @Override
-    public Collection<String> getPreferencesFromCode(String code)
-    {
-        //zone 2 = EPSG:31466 up to zone 5 = EPSG:31469
-        for (int zone = 2; zone <= 5; zone++) {
-            String epsg = "EPSG:" + (31464 + zone);
-            if (epsg.equals(code))
-                return Collections.singleton(String.valueOf(zone));
-        }
-        return null;
     }
 
 }

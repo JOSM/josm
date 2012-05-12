@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Source: http://professionnels.ign.fr/DISPLAY/000/526/700/5267002/transformation.pdf
  * @author Pieren
  */
-public class Lambert extends AbstractProjection implements ProjectionSubPrefs {
+public class Lambert extends AbstractProjection {
 
     /**
      * Lambert I, II, III, and IV latitude origin
@@ -91,10 +91,10 @@ public class Lambert extends AbstractProjection implements ProjectionSubPrefs {
     private int layoutZone;
 
     public Lambert() {
-        updateParameters(DEFAULT_ZONE);
+        this(DEFAULT_ZONE);
     }
 
-    private void updateParameters(final int layoutZone) {
+    public Lambert(final int layoutZone) {
         this.layoutZone = layoutZone;
         ellps = Ellipsoid.clarkeIGN;
         datum = new NTV2Datum("ntf_rgf93Grid", null, ellps, NTV2GridShiftFileWrapper.ntf_rgf93);
@@ -148,80 +148,6 @@ public class Lambert extends AbstractProjection implements ProjectionSubPrefs {
 
     public int getLayoutZone() {
         return layoutZone;
-    }
-
-    public static String[] lambert4zones = {
-        tr("{0} ({1} to {2} degrees)", 1,"51.30","48.15"),
-        tr("{0} ({1} to {2} degrees)", 2,"48.15","45.45"),
-        tr("{0} ({1} to {2} degrees)", 3,"45.45","42.76"),
-        tr("{0} (Corsica)", 4)
-    };
-
-    @Override
-    public void setupPreferencePanel(JPanel p, ActionListener listener) {
-        JComboBox prefcb = new JComboBox(lambert4zones);
-
-        prefcb.setSelectedIndex(layoutZone);
-        p.setLayout(new GridBagLayout());
-        p.add(new JLabel(tr("Lambert CC Zone")), GBC.std().insets(5,5,0,5));
-        p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
-        /* Note: we use component position 2 below to find this again */
-        p.add(prefcb, GBC.eop().fill(GBC.HORIZONTAL));
-        p.add(new JLabel(ImageProvider.get("data/projection", "Departements_Lambert4Zones.png")), GBC.eol().fill(GBC.HORIZONTAL));
-        p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
-
-        if (listener != null) {
-            prefcb.addActionListener(listener);
-        }
-    }
-
-    @Override
-    public Collection<String> getPreferences(JPanel p) {
-        Object prefcb = p.getComponent(2);
-        if(!(prefcb instanceof JComboBox))
-            return null;
-        layoutZone = ((JComboBox)prefcb).getSelectedIndex();
-        return Collections.singleton(Integer.toString(layoutZone+1));
-    }
-
-    @Override
-    public void setPreferences(Collection<String> args) {
-        int layoutZone = DEFAULT_ZONE;
-        if (args != null) {
-            try {
-                for(String s : args)
-                {
-                    layoutZone = Integer.parseInt(s)-1;
-                    if(layoutZone < 0 || layoutZone > 3) {
-                        layoutZone = DEFAULT_ZONE;
-                    }
-                    break;
-                }
-            } catch(NumberFormatException e) {}
-        }
-        updateParameters(layoutZone);
-    }
-
-    @Override
-    public String[] allCodes() {
-        String[] zones = new String[4];
-        for (int zone = 0; zone < 4; zone++) {
-            zones[zone] = "EPSG:"+(27561+zone);
-        }
-        return zones;
-    }
-
-    @Override
-    public Collection<String> getPreferencesFromCode(String code) {
-        if (code.startsWith("EPSG:2756") && code.length() == 10) {
-            try {
-                String zonestring = code.substring(9);
-                int zoneval = Integer.parseInt(zonestring);
-                if(zoneval >= 1 && zoneval <= 4)
-                    return Collections.singleton(zonestring);
-            } catch(NumberFormatException e) {}
-        }
-        return null;
     }
 
 }

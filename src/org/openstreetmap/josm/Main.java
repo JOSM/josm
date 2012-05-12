@@ -815,8 +815,9 @@ abstract public class Main {
     public static void setProjection(Projection p) {
         CheckParameterUtil.ensureParameterNotNull(p);
         Projection oldValue = proj;
+        Bounds b = (Main.map != null && Main.map.mapView != null) ? Main.map.mapView.getRealBounds() : null;
         proj = p;
-        fireProjectionChanged(oldValue, proj);
+        fireProjectionChanged(oldValue, proj, b);
     }
 
     /*
@@ -826,7 +827,7 @@ abstract public class Main {
      */
     private static final ArrayList<WeakReference<ProjectionChangeListener>> listeners = new ArrayList<WeakReference<ProjectionChangeListener>>();
 
-    private static void fireProjectionChanged(Projection oldValue, Projection newValue) {
+    private static void fireProjectionChanged(Projection oldValue, Projection newValue, Bounds oldBounds) {
         if (newValue == null ^ oldValue == null
                 || (newValue != null && oldValue != null && !Utils.equal(newValue.toCode(), oldValue.toCode()))) {
 
@@ -842,11 +843,8 @@ abstract public class Main {
                     listener.projectionChanged(oldValue, newValue);
                 }
             }
-            if (newValue != null) {
-                Bounds b = (Main.map != null && Main.map.mapView != null) ? Main.map.mapView.getRealBounds() : null;
-                if (b != null){
-                    Main.map.mapView.zoomTo(b);
-                }
+            if (newValue != null && oldBounds != null) {
+                Main.map.mapView.zoomTo(oldBounds);
             }
             /* TODO - remove layers with fixed projection */
         }

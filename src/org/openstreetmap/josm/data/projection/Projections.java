@@ -5,8 +5,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -32,44 +30,6 @@ import org.openstreetmap.josm.io.MirroredInputStream;
  *
  */
 public class Projections {
-    /**
-     * List of all available projections.
-     */
-    private static ArrayList<Projection> allProjections =
-        new ArrayList<Projection>(Arrays.asList(new Projection[] {
-                // global projections
-                new Epsg4326(),
-                new Mercator(),
-                new UTM(),
-                // regional - alphabetical order by country code
-                new BelgianLambert1972(),   // BE
-                new BelgianLambert2008(),   // BE
-                new SwissGrid(),            // CH
-                new GaussKrueger(),         // DE
-                new LambertEST(),           // EE
-                new Lambert(),              // FR
-                new Lambert93(),            // FR
-                new LambertCC9Zones(),      // FR
-                new UTM_France_DOM(),       // FR
-                new TransverseMercatorLV(), // LV
-                new Puwg(),                 // PL
-                new Epsg3008(),             // SE
-                new CustomProjectionPrefGui()
-        }));
-
-    public static ArrayList<Projection> getProjections() {
-        return allProjections;
-    }
-
-    /**
-     * Adds a new projection to the list of known projections.
-     *
-     * For Plugins authors: make sure your plugin is an early plugin, i.e. put
-     * Plugin-Early=true in your Manifest.
-     */
-    public static void addProjection(Projection proj) {
-        allProjections.add(proj);
-    }
 
     public static EastNorth project(LatLon ll) {
         if (ll == null) return null;

@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.preferences.projection;
 
 /**
- * ProjectionSubPrefs can implement this interface to set some additional options
+ * ProjectionChoice can implement this interface to set some additional options
  */
 public interface SubPrefsOptions {
 

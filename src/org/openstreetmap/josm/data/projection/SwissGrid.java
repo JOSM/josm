@@ -3,20 +3,11 @@ package org.openstreetmap.josm.data.projection;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.event.ActionListener;
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.swing.Box;
-import javax.swing.JPanel;
-
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.ThreeParameterDatum;
 import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.data.projection.proj.SwissObliqueMercator;
-import org.openstreetmap.josm.gui.widgets.HtmlPanel;
-import org.openstreetmap.josm.tools.GBC;
 
 /**
  * SwissGrid CH1903 / L03, see http://de.wikipedia.org/wiki/Swiss_Grid.
@@ -30,7 +21,7 @@ import org.openstreetmap.josm.tools.GBC;
  * This projection does not have any parameters, it only implements
  * ProjectionSubPrefs to show a warning that the grid file correction is not done.
  */
-public class SwissGrid extends AbstractProjection implements ProjectionSubPrefs {
+public class SwissGrid extends AbstractProjection {
 
     public SwissGrid() {
         ellps = Ellipsoid.Bessel1841;
@@ -74,30 +65,4 @@ public class SwissGrid extends AbstractProjection implements ProjectionSubPrefs 
         return new Bounds(new LatLon(45.7, 5.7), new LatLon(47.9, 10.6));
     }
 
-    @Override
-    public void setupPreferencePanel(JPanel p, ActionListener listener) {
-        p.add(new HtmlPanel(tr("<i>CH1903 / LV03 (without local corrections)</i>")), GBC.eol().fill(GBC.HORIZONTAL));
-        p.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
-    }
-
-    @Override
-    public void setPreferences(Collection<String> args) {
-    }
-
-    @Override
-    public Collection<String> getPreferences(JPanel p) {
-        return Collections.singletonList("CH1903");
-    }
-
-    @Override
-    public String[] allCodes() {
-        return new String[] { "EPSG:21781" };
-    }
-
-    @Override
-    public Collection<String> getPreferencesFromCode(String code) {
-        if ("EPSG:21781".equals(code))
-            return Collections.singletonList("CH1903");
-        return null;
-    }
 }

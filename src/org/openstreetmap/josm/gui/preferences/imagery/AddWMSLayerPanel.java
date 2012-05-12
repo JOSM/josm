@@ -53,11 +53,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
-import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.data.projection.ProjectionSubPrefs;
-import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.w3c.dom.Document;
@@ -491,14 +490,8 @@ public class AddWMSLayerPanel extends JPanel {
     }
 
     private boolean isProjSupported(String crs) {
-        for (Projection proj : Projections.getProjections()) {
-            if (proj instanceof ProjectionSubPrefs) {
-                if (((ProjectionSubPrefs) proj).getPreferencesFromCode(crs) == null)
-                    return true;
-            } else {
-                if (proj.toCode().equals(crs))
-                    return true;
-            }
+        for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
+            if (pc.getPreferencesFromCode(crs) != null) return true;
         }
         return false;
     }
