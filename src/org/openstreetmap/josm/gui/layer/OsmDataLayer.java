@@ -301,6 +301,9 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     @Override public void mergeFrom(final Layer from) {
         final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Merging layers"));
         monitor.setCancelable(false);
+        if (from instanceof OsmDataLayer && ((OsmDataLayer)from).isUploadDiscouraged()) {
+            setUploadDiscouraged(true);
+        }
         mergeFrom(((OsmDataLayer)from).data, monitor);
         monitor.close();
     }
@@ -410,7 +413,8 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
 
 
     @Override public boolean isMergable(final Layer other) {
-        return other instanceof OsmDataLayer && (isUploadDiscouraged() == ((OsmDataLayer)other).isUploadDiscouraged());
+        // isUploadDiscouraged commented to allow merging between normal layers and discouraged layers with a warning (see #7684) 
+        return other instanceof OsmDataLayer;// && (isUploadDiscouraged() == ((OsmDataLayer)other).isUploadDiscouraged());
     }
 
     @Override public void visitBoundingBox(final BoundingXYVisitor v) {

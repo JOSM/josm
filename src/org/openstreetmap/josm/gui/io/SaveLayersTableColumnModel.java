@@ -36,13 +36,17 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
             SaveLayerInfo info = (SaveLayerInfo)value;
             StringBuilder sb = new StringBuilder();
             sb.append("<html>");
-            if (info.getLayer().requiresUploadToServer()) {
+            if (info.getLayer().requiresUploadToServer() && !info.getLayer().isUploadDiscouraged()) {
                 add(needsUpload, defaultCellStyle);
                 sb.append(tr("Layer ''{0}'' has modifications which should be uploaded to the server.", info.getName()));
 
             } else {
                 add(pnlEmpty, defaultCellStyle);
-                sb.append(tr("Layer ''{0}'' has no modifications to be uploaded.", info.getName()));
+                if (info.getLayer().requiresUploadToServer()) {
+                    sb.append(tr("Layer ''{0}'' has modifications which are discouraged to be uploaded.", info.getName()));
+                } else {
+                    sb.append(tr("Layer ''{0}'' has no modifications to be uploaded.", info.getName()));
+                }
             }
             sb.append("<br/>");
 

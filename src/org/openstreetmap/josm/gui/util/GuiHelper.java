@@ -1,10 +1,20 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.util;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Image;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * basic gui utils
@@ -31,6 +41,28 @@ public class GuiHelper {
         } else {
             SwingUtilities.invokeLater(task);
         }
+    }
+    
+    /**
+     * returns true if the user wants to cancel, false if they
+     * want to continue
+     */
+    public static final boolean warnUser(String title, String content, ImageIcon baseActionIcon, String continueToolTip) {
+        ExtendedDialog dlg = new ExtendedDialog(Main.parent,
+                title, new String[] {tr("Cancel"), tr("Continue")});
+        dlg.setContent(content);
+        dlg.setButtonIcons(new Icon[] {
+                ImageProvider.get("cancel"),
+                ImageProvider.overlay(
+                        ImageProvider.get("upload"),
+                        new ImageIcon(ImageProvider.get("warning-small").getImage().getScaledInstance(10 , 10, Image.SCALE_SMOOTH)),
+                        ImageProvider.OverlayPosition.SOUTHEAST)});
+        dlg.setToolTipTexts(new String[] {
+                tr("Cancel"),
+                continueToolTip});
+        dlg.setIcon(JOptionPane.WARNING_MESSAGE);
+        dlg.setCancelButton(1);
+        return dlg.showDialog().getValue() != 2;
     }
 
 }

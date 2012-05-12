@@ -6,11 +6,16 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class MergeLayerAction extends AbstractMergeAction {
@@ -24,20 +29,39 @@ public class MergeLayerAction extends AbstractMergeAction {
         putValue("help", ht("/Action/MergeLayer"));
     }
 
-    public void merge(List<Layer> sourceLayers) {
-        Layer targetLayer = askTargetLayer(sourceLayers);
+    protected void doMerge(List<Layer> targetLayers, final Collection<Layer> sourceLayers) {
+        final Layer targetLayer = askTargetLayer(targetLayers);
         if (targetLayer == null)
             return;
-        for (Layer l: sourceLayers) {
-            if (l != targetLayer) {
-                targetLayer.mergeFrom(l);
-                Main.map.mapView.removeLayer(l);
+        Main.worker.submit(new Runnable() {
+            @Override
+            public void run() {
+                boolean layerMerged = false;
+                for (Layer sourceLayer: sourceLayers) {
+                    if (sourceLayer != null && sourceLayer != targetLayer) {
+                        if (sourceLayer instanceof OsmDataLayer && targetLayer instanceof OsmDataLayer
+                                && ((OsmDataLayer)sourceLayer).isUploadDiscouraged() != ((OsmDataLayer)targetLayer).isUploadDiscouraged()) {
+                            if (warnMergingUploadDiscouragedLayers(sourceLayer, targetLayer)) {
+                                break;
+                            }
+                        }
+                        targetLayer.mergeFrom(sourceLayer);
+                        Main.map.mapView.removeLayer(sourceLayer);
+                        layerMerged = true;
+                    }
+                }
+                if (layerMerged) {
+                    Main.map.mapView.setActiveLayer(targetLayer);
+                }
             }
-        }
-        Main.map.mapView.setActiveLayer(targetLayer);
+        });
+    }
+    
+    public void merge(List<Layer> sourceLayers) {
+        doMerge(sourceLayers, sourceLayers);
     }
 
-    public void merge(final Layer sourceLayer) {
+    public void merge(Layer sourceLayer) {
         if (sourceLayer == null)
             return;
         List<Layer> targetLayers = LayerListDialog.getInstance().getModel().getPossibleMergeTargets(sourceLayer);
@@ -45,17 +69,7 @@ public class MergeLayerAction extends AbstractMergeAction {
             warnNoTargetLayersForSourceLayer(sourceLayer);
             return;
         }
-        final Layer targetLayer = askTargetLayer(targetLayers);
-        if (targetLayer == null)
-            return;
-        Main.worker.submit(new Runnable() {
-            @Override
-            public void run() {
-                targetLayer.mergeFrom(sourceLayer);
-                Main.map.mapView.removeLayer(sourceLayer);
-                Main.map.mapView.setActiveLayer(targetLayer);
-            }
-        });
+        doMerge(targetLayers, Collections.singleton(sourceLayer));
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -72,5 +86,21 @@ public class MergeLayerAction extends AbstractMergeAction {
             return;
         }
         setEnabled(!LayerListDialog.getInstance().getModel().getPossibleMergeTargets(getEditLayer()).isEmpty());
+    }
+    
+    /**
+     * returns true if the user wants to cancel, false if they want to continue
+     */
+    public static final boolean warnMergingUploadDiscouragedLayers(Layer sourceLayer, Layer targetLayer) {
+        return GuiHelper.warnUser(tr("Merging layers with different upload policies"),
+                "<html>" +
+                tr("You are about to merge data between layers ''{0}'' and ''{1}''.<br /><br />"+
+                        "These layers have different upload policies and should not been merged as it.<br />"+
+                        "Merging them will result to enforce the stricter policy (upload discouraged) to ''{1}''.<br /><br />"+
+                        "<b>This is not the recommended way of merging such data</b>.<br />"+
+                        "You should instead check and merge each object, one by one, by using ''<i>Merge selection</i>''.<br /><br />"+
+                        "Are you sure you want to continue?", sourceLayer.getName(), targetLayer.getName(), targetLayer.getName())+
+                "</html>",
+                ImageProvider.get("dialogs", "mergedown"), tr("Ignore this hint and merge anyway"));
     }
 }

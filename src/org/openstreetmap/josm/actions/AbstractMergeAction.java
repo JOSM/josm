@@ -82,7 +82,7 @@ public abstract class AbstractMergeAction extends JosmAction {
 
     protected void warnNoTargetLayersForSourceLayer(Layer sourceLayer) {
         JOptionPane.showMessageDialog(Main.parent,
-                tr("<html>There are no layers the source layer<br>''{0}''<br>could be merged to.</html>"),
+                tr("<html>There are no layers the source layer<br>''{0}''<br>could be merged to.</html>", sourceLayer.getName()),
                 tr("No target layers"), JOptionPane.WARNING_MESSAGE);
     }
 }
