@@ -12,7 +12,7 @@ import org.openstreetmap.josm.data.projection.Puwg;
 public class PuwgProjectionChoice extends ListProjectionChoice implements Alias {
 
     public PuwgProjectionChoice() {
-        super("core:puwg", tr("PUWG (Poland)"), Puwg.Zones, tr("PUWG Zone"));
+        super("core:puwg", tr("PUWG (Poland)"), Puwg.zones, tr("PUWG Zone"));
     }
 
     @Override
@@ -22,16 +22,16 @@ public class PuwgProjectionChoice extends ListProjectionChoice implements Alias 
 
     @Override
     public String[] allCodes() {
-        String[] zones = new String[Puwg.Zones.length];
-        for (int zone = 0; zone < Puwg.Zones.length; zone++) {
-            zones[zone] = Puwg.Zones[zone].toCode();
+        String[] zones = new String[Puwg.zones.length];
+        for (int index = 0; index < Puwg.zones.length; index++) {
+            zones[index] = Puwg.zones[index].toCode();
         }
         return zones;
     }
 
     @Override
     public Collection<String> getPreferencesFromCode(String code) {
-        for (Puwg.PuwgData p : Puwg.Zones) {
+        for (Puwg.PuwgData p : Puwg.zones) {
             if (code.equals(p.toCode()))
                 return Collections.singleton(code);
         }
@@ -44,13 +44,18 @@ public class PuwgProjectionChoice extends ListProjectionChoice implements Alias 
     }
 
     @Override
-    protected int indexToZone(int index) {
-        return index;
+    protected String indexToZone(int index) {
+        return Puwg.zones[index].toCode();
     }
 
     @Override
-    protected int zoneToIndex(int zone) {
-        return zone;
+    protected int zoneToIndex(String zone) {
+        for (int i=0; i<Puwg.zones.length; i++) {
+            if (zone.equals(Puwg.zones[i].toCode())) {
+                return i;
+            }
+        }
+        return defaultIndex;
     }
 
 }

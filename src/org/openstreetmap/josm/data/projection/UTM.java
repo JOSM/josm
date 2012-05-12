@@ -23,16 +23,13 @@ public class UTM extends AbstractProjection {
     private static final Hemisphere DEFAULT_HEMISPHERE = Hemisphere.North;
     private Hemisphere hemisphere;
 
-    /**
-     * Applies an additional false easting of 3000000 m if true.
-     */
-    private boolean offset;
-
     public UTM() {
-        this(DEFAULT_ZONE, DEFAULT_HEMISPHERE, false);
+        this(DEFAULT_ZONE, DEFAULT_HEMISPHERE);
     }
 
-    public UTM(int zone, Hemisphere hemisphere, boolean offset) {
+    public UTM(int zone, Hemisphere hemisphere) {
+        if (zone < 1 || zone > 60)
+            throw new IllegalArgumentException();
         ellps = Ellipsoid.WGS84;
         proj = new org.openstreetmap.josm.data.projection.proj.TransverseMercator();
         try {
@@ -43,8 +40,7 @@ public class UTM extends AbstractProjection {
         datum = WGS84Datum.INSTANCE;
         this.zone = zone;
         this.hemisphere = hemisphere;
-        this.offset = offset;
-        x_0 = 500000 + (offset ? 3000000 : 0);
+        x_0 = 500000;
         y_0 = hemisphere == Hemisphere.North ? 0 : 10000000;
         lon_0 = getUtmCentralMeridianDeg(zone);
         k_0 = 0.9996;
@@ -80,7 +76,7 @@ public class UTM extends AbstractProjection {
 
     @Override
     public Integer getEpsgCode() {
-        return ((offset?325800:32600) + getzone() + (hemisphere == Hemisphere.South?100:0));
+        return (32600 + getzone() + (hemisphere == Hemisphere.South?100:0));
     }
 
     @Override

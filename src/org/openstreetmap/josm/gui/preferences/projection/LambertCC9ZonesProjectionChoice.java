@@ -75,13 +75,16 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice implem
     }
     
     @Override
-    protected int indexToZone(int index) {
-        return index + 1;
+    protected String indexToZone(int index) {
+        return Integer.toString(index + 1);
     }
 
     @Override
-    protected int zoneToIndex(int zone) {
-        return zone - 1;
+    protected int zoneToIndex(String zone) {
+        try {
+            return Integer.parseInt(zone) - 1;
+        } catch(NumberFormatException e) {}
+        return defaultIndex;
     }
 
     @Override

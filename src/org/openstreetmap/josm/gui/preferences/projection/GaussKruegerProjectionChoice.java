@@ -19,17 +19,20 @@ public class GaussKruegerProjectionChoice extends ListProjectionChoice implement
 
     @Override
     public Projection getProjection() {
-        return new GaussKrueger(indexToZone(index));
+        return new GaussKrueger(index + 2);
     }
 
     @Override
-    protected int indexToZone(int index) {
-        return index + 2;
+    protected String indexToZone(int index) {
+        return Integer.toString(index + 2);
     }
 
     @Override
-    protected int zoneToIndex(int zone) {
-        return zone - 2;
+    protected int zoneToIndex(String zone) {
+        try {
+            return Integer.parseInt(zone) - 2;
+        } catch(NumberFormatException e) {}
+        return defaultIndex;
     }
 
     @Override

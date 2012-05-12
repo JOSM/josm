@@ -21,7 +21,7 @@ public class Puwg extends AbstractProjection {
 
     private final int zone;
 
-    static public PuwgData[] Zones = new PuwgData[] {
+    static public PuwgData[] zones = new PuwgData[] {
         new Epsg2180(),
         new Epsg2176(),
         new Epsg2177(),
@@ -34,6 +34,8 @@ public class Puwg extends AbstractProjection {
     }
 
     public Puwg(int zone) {
+        if (zone < 0 || zone >= zones.length)
+            throw new IllegalArgumentException();
         ellps = Ellipsoid.GRS80;
         proj = new org.openstreetmap.josm.data.projection.proj.TransverseMercator();
         try {
@@ -43,7 +45,7 @@ public class Puwg extends AbstractProjection {
         }
         datum = GRS80Datum.INSTANCE;
         this.zone = zone;
-        PuwgData z = Zones[zone];
+        PuwgData z = zones[zone];
         x_0 = z.getPuwgFalseEasting();
         y_0 = z.getPuwgFalseNorthing();
         lon_0 = z.getPuwgCentralMeridianDeg();
@@ -57,7 +59,7 @@ public class Puwg extends AbstractProjection {
 
     @Override
     public Integer getEpsgCode() {
-        return Zones[zone].getEpsgCode();
+        return zones[zone].getEpsgCode();
     }
 
     @Override
@@ -67,12 +69,12 @@ public class Puwg extends AbstractProjection {
 
     @Override
     public String getCacheDirectoryName() {
-        return Zones[zone].getCacheDirectoryName();
+        return zones[zone].getCacheDirectoryName();
     }
 
     @Override
     public Bounds getWorldBoundsLatLon() {
-        return Zones[zone].getWorldBoundsLatLon();
+        return zones[zone].getWorldBoundsLatLon();
     }
 
     public interface PuwgData {

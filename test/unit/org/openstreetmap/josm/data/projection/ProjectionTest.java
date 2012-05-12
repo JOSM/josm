@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
-import java.util.Collections;
 import java.util.Random;
 
 import org.junit.Assert;
@@ -29,47 +28,37 @@ public class ProjectionTest {
             testProj(new LambertEST());
         }
 
-        Lambert lam = new Lambert();
-        for (int zone=1; zone<=4; ++zone) {
-            lam.setPreferences(Collections.singletonList(Integer.toString(zone)));
-            testProj(lam);
+        for (int i=0; i<=3; ++i) {
+            testProj(new Lambert(i));
         }
 
-        Puwg puwg = new Puwg();
-        for (PuwgData pd : Puwg.Zones) {
-            puwg.setPreferences(Collections.singletonList(pd.toCode()));
-            testProj(puwg);
+        for (int i=0; i<=4; ++i) {
+            testProj(new Puwg(i));
         }
 
         testProj(new SwissGrid());
 
-        UTM utm = new UTM();
         for (int i=0; i<=6; ++i) {
             int zone;
             if (i==0) {
-                zone = 0;
+                zone = 1;
             } else if (i==6) {
-                zone = 59;
+                zone = 60;
             } else {
-                zone = rand.nextInt(60);
+                zone = rand.nextInt(60) + 1;
             }
-            utm.setPreferences(Collections.singletonList(Integer.toString(zone)));
-            testProj(utm);
-
+            UTM.Hemisphere hem = rand.nextBoolean() ? UTM.Hemisphere.North : UTM.Hemisphere.South;
+            testProj(new UTM(zone, hem));
         }
 
         if (!"yes".equals(System.getProperty("suppressPermanentFailure"))) {
-            UTM_France_DOM utmFr = new UTM_France_DOM();
-            for (int zone=1; zone<=5; ++zone) {
-                utmFr.setPreferences(Collections.singletonList(Integer.toString(zone)));
-                testProj(utmFr);
+            for (int i=0; i<=4; ++i) {
+                testProj(new UTM_France_DOM(i));
             }
         }
 
-        LambertCC9Zones lamCC9 = new LambertCC9Zones();
-        for (int i=1; i<=9; ++i) {
-            lamCC9.setPreferences(Collections.singletonList(Integer.toString(i)));
-            testProj(lamCC9);
+        for (int i=0; i<=8; ++i) {
+            testProj(new LambertCC9Zones(i));
         }
 
         if (error) {

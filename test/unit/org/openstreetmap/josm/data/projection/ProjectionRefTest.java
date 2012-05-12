@@ -11,11 +11,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -28,38 +31,24 @@ import org.openstreetmap.josm.tools.Utils;
 public class ProjectionRefTest {
 
     /**
-     * create a list of epsg codes and bounds to be used by
+     * create a list of epsg codes and bounds to be used by the perl script
      * @param args
      */
     public static void main(String[] args) {
-        HashMap<String, Projection> allCodes = new LinkedHashMap<String, Projection>();
-        List<Projection> projs = Projections.getProjections();
-        for (Projection p: projs) {
-            if (p instanceof ProjectionSubPrefs) {
-                for (String code : ((ProjectionSubPrefs)p).allCodes()) {
-                    ProjectionSubPrefs projSub = recreateProj((ProjectionSubPrefs)p);
-                    Collection<String> prefs = projSub.getPreferencesFromCode(code);
-                    projSub.setPreferences(prefs);
-                    allCodes.put(code, projSub);
-                }
-            } else {
-                allCodes.put(p.toCode(), p);
+        Map<String, Projection> allCodes = new HashMap<String, Projection>();
+        for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
+            for (String code : pc.allCodes()) {
+                Collection<String> pref = pc.getPreferencesFromCode(code);
+                pc.setPreferences(pref);
+                Projection p = pc.getProjection();
+                allCodes.put(code, p);
             }
         }
         for (Entry<String, Projection> e : allCodes.entrySet()) {
             System.out.println(String.format("%s %s", e.getKey(), e.getValue().getWorldBoundsLatLon()));
         }
     }
-
-    private static ProjectionSubPrefs recreateProj(ProjectionSubPrefs proj) {
-        try {
-            return proj.getClass().newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                    tr("Cannot instantiate projection ''{0}''", proj.getClass().toString()), e);
-        }
-    }
-
+ 
     @Test
     public void test() throws IOException, FileNotFoundException {
         BufferedReader in = new BufferedReader(new FileReader("data_nodist/projection-reference-data.csv"));
