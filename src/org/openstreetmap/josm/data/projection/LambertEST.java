@@ -62,7 +62,7 @@ public class LambertEST extends AbstractProjection {
     {
         return new Bounds(
                 new LatLon(56.05, 21.64),
-                new LatLon(61.13, 28.58));
+                new LatLon(61.13, 28.58), false);
     }
 
 }

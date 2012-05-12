@@ -46,7 +46,7 @@ public class BelgianLambert1972 extends AbstractProjection {
     public Bounds getWorldBoundsLatLon() {
         return new Bounds(
                 new LatLon(49.51, 2.54),
-                new LatLon(51.50, 6.40));
+                new LatLon(51.50, 6.40), false);
     }
 
     @Override

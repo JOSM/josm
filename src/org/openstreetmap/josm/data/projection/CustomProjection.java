@@ -342,7 +342,7 @@ public class CustomProjection extends AbstractProjection {
         return new Bounds(parseAngle(numStr[1], "minlat (+bounds)"),
                 parseAngle(numStr[0], "minlon (+bounds)"),
                 parseAngle(numStr[3], "maxlat (+bounds)"),
-                parseAngle(numStr[2], "maxlon (+bounds)"));
+                parseAngle(numStr[2], "maxlon (+bounds)"), false);
     }
 
     public double parseDouble(Map<String, String> parameters, String parameterName) throws ProjectionConfigurationException {

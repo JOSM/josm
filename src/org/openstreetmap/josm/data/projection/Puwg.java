@@ -120,7 +120,7 @@ public class Puwg extends AbstractProjection {
         {
             return new Bounds(
                     new LatLon(49.00, 14.12),
-                    new LatLon(54.84, 24.15));
+                    new LatLon(54.84, 24.15), false);
         }
 
         @Override public double getPuwgCentralMeridianDeg() { return Epsg2180CentralMeridian; }
@@ -163,7 +163,7 @@ public class Puwg extends AbstractProjection {
         {
             return new Bounds(
                     new LatLon(49.00, (3 * getZone()) - 1.5),
-                    new LatLon(54.84, (3 * getZone()) + 1.5));
+                    new LatLon(54.84, (3 * getZone()) + 1.5), false);
         }
 
         @Override public double getPuwgCentralMeridianDeg() { return getZone() * 3.0; }

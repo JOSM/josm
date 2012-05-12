@@ -16,10 +16,10 @@ public class GaussKrueger extends AbstractProjection {
     private final int zone;
 
     private static Bounds[] bounds = {
-        new Bounds(new LatLon(-5, 3.5), new LatLon(85, 8.5)),
-        new Bounds(new LatLon(-5, 6.5), new LatLon(85, 11.5)),
-        new Bounds(new LatLon(-5, 9.5), new LatLon(85, 14.5)),
-        new Bounds(new LatLon(-5, 12.5), new LatLon(85, 17.5)),
+        new Bounds(new LatLon(-5, 3.5), new LatLon(85, 8.5), false),
+        new Bounds(new LatLon(-5, 6.5), new LatLon(85, 11.5), false),
+        new Bounds(new LatLon(-5, 9.5), new LatLon(85, 14.5), false),
+        new Bounds(new LatLon(-5, 12.5), new LatLon(85, 17.5), false),
     };
 
     public GaussKrueger() {

@@ -59,7 +59,7 @@ public class Mercator extends AbstractProjection {
     {
         return new Bounds(
                 new LatLon(-85.05112877980659, -180.0),
-                new LatLon(85.05112877980659, 180.0));
+                new LatLon(85.05112877980659, 180.0), false);
     }
 
 }

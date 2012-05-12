@@ -142,7 +142,8 @@ public class Lambert extends AbstractProjection {
     {
         Bounds b= new Bounds(
                 new LatLon(Math.max(zoneLimitsDegree[layoutZone][1] - cMaxOverlappingZonesDegree, Math.toDegrees(cMinLatZone1Radian)), Math.toDegrees(cMinLonZonesRadian)),
-                new LatLon(Math.min(zoneLimitsDegree[layoutZone][0] + cMaxOverlappingZonesDegree, Math.toDegrees(cMaxLatZone1Radian)), Math.toDegrees(cMaxLonZonesRadian)));
+                new LatLon(Math.min(zoneLimitsDegree[layoutZone][0] + cMaxOverlappingZonesDegree, Math.toDegrees(cMaxLatZone1Radian)), Math.toDegrees(cMaxLonZonesRadian)),
+                false);
         return b;
     }
 

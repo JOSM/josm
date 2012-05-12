@@ -62,7 +62,7 @@ public class SwissGrid extends AbstractProjection {
 
     @Override
     public Bounds getWorldBoundsLatLon() {
-        return new Bounds(new LatLon(45.7, 5.7), new LatLon(47.9, 10.6));
+        return new Bounds(new LatLon(45.7, 5.7), new LatLon(47.9, 10.6), false);
     }
 
 }

@@ -42,29 +42,64 @@ public class Bounds {
         this(min.lat(), min.lon(), max.lat(), max.lon());
     }
 
+    public Bounds(LatLon min, LatLon max, boolean roundToOsmPrecision) {
+        this(min.lat(), min.lon(), max.lat(), max.lon(), roundToOsmPrecision);
+    }
+
     public Bounds(LatLon b) {
+        this(b, true);
+    }
+    
+    public Bounds(LatLon b, boolean roundToOsmPrecision) {
         // Do not call this(b, b) to avoid GPX performance issue (see #7028) until roundToOsmPrecision() is improved
-        this.minLat = LatLon.roundToOsmPrecision(b.lat());
-        this.minLon = LatLon.roundToOsmPrecision(b.lon());
+        if (roundToOsmPrecision) {
+            this.minLat = LatLon.roundToOsmPrecision(b.lat());
+            this.minLon = LatLon.roundToOsmPrecision(b.lon());
+        } else {
+            this.minLat = b.lat();
+            this.minLon = b.lon();
+        }
         this.maxLat = this.minLat;
         this.maxLon = this.minLon;
     }
 
     public Bounds(double minlat, double minlon, double maxlat, double maxlon) {
-        this.minLat = LatLon.roundToOsmPrecision(minlat);
-        this.minLon = LatLon.roundToOsmPrecision(minlon);
-        this.maxLat = LatLon.roundToOsmPrecision(maxlat);
-        this.maxLon = LatLon.roundToOsmPrecision(maxlon);
+        this(minlat, minlon, maxlat, maxlon, true);
+    }
+
+    public Bounds(double minlat, double minlon, double maxlat, double maxlon, boolean roundToOsmPrecision) {
+        if (roundToOsmPrecision) {
+            this.minLat = LatLon.roundToOsmPrecision(minlat);
+            this.minLon = LatLon.roundToOsmPrecision(minlon);
+            this.maxLat = LatLon.roundToOsmPrecision(maxlat);
+            this.maxLon = LatLon.roundToOsmPrecision(maxlon);
+        } else {
+            this.minLat = minlat;
+            this.minLon = minlon;
+            this.maxLat = maxlat;
+            this.maxLon = maxlon;
+        }
     }
 
     public Bounds(double [] coords) {
+        this(coords, true);
+    }
+
+    public Bounds(double [] coords, boolean roundToOsmPrecision) {
         CheckParameterUtil.ensureParameterNotNull(coords, "coords");
         if (coords.length != 4)
             throw new IllegalArgumentException(MessageFormat.format("Expected array of length 4, got {0}", coords.length));
-        this.minLat = LatLon.roundToOsmPrecision(coords[0]);
-        this.minLon = LatLon.roundToOsmPrecision(coords[1]);
-        this.maxLat = LatLon.roundToOsmPrecision(coords[2]);
-        this.maxLon = LatLon.roundToOsmPrecision(coords[3]);
+        if (roundToOsmPrecision) {
+            this.minLat = LatLon.roundToOsmPrecision(coords[0]);
+            this.minLon = LatLon.roundToOsmPrecision(coords[1]);
+            this.maxLat = LatLon.roundToOsmPrecision(coords[2]);
+            this.maxLon = LatLon.roundToOsmPrecision(coords[3]);
+        } else {
+            this.minLat = coords[0];
+            this.minLon = coords[1];
+            this.maxLat = coords[2];
+            this.maxLon = coords[3];
+        }
     }
 
     public Bounds(String asString, String separator) throws IllegalArgumentException {
@@ -72,6 +107,10 @@ public class Bounds {
     }
 
     public Bounds(String asString, String separator, ParseMethod parseMethod) throws IllegalArgumentException {
+        this(asString, separator, parseMethod, true);
+    }
+
+    public Bounds(String asString, String separator, ParseMethod parseMethod, boolean roundToOsmPrecision) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(asString, "asString");
         String[] components = asString.split(separator);
         if (components.length != 4)
@@ -87,30 +126,30 @@ public class Bounds {
         
         switch (parseMethod) {
             case LEFT_BOTTOM_RIGHT_TOP:
-                this.minLat = initLat(values[1]);
-                this.minLon = initLon(values[0]);
-                this.maxLat = initLat(values[3]);
-                this.maxLon = initLon(values[2]);
+                this.minLat = initLat(values[1], roundToOsmPrecision);
+                this.minLon = initLon(values[0], roundToOsmPrecision);
+                this.maxLat = initLat(values[3], roundToOsmPrecision);
+                this.maxLon = initLon(values[2], roundToOsmPrecision);
                 break;
             case MINLAT_MINLON_MAXLAT_MAXLON:
             default:
-                this.minLat = initLat(values[0]);
-                this.minLon = initLon(values[1]);
-                this.maxLat = initLat(values[2]);
-                this.maxLon = initLon(values[3]);
+                this.minLat = initLat(values[0], roundToOsmPrecision);
+                this.minLon = initLon(values[1], roundToOsmPrecision);
+                this.maxLat = initLat(values[2], roundToOsmPrecision);
+                this.maxLon = initLon(values[3], roundToOsmPrecision);
         }
     }
     
-    protected static double initLat(double value) {
+    protected static double initLat(double value, boolean roundToOsmPrecision) {
         if (!LatLon.isValidLat(value))
             throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", value));
-        return LatLon.roundToOsmPrecision(value);
+        return roundToOsmPrecision ? LatLon.roundToOsmPrecision(value) : value;
     }
 
-    protected static double initLon(double value) {
+    protected static double initLon(double value, boolean roundToOsmPrecision) {
         if (!LatLon.isValidLon(value))
             throw new IllegalArgumentException(tr("Illegal longitude value ''{0}''", value));
-        return LatLon.roundToOsmPrecision(value);
+        return roundToOsmPrecision ? LatLon.roundToOsmPrecision(value) : value;
     }
 
     public Bounds(Bounds other) {
