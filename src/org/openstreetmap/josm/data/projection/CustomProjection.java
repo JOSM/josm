@@ -39,7 +39,7 @@ public class CustomProjection extends AbstractProjection {
      *
      * null means fall back mode (Mercator)
      */
-    protected String pref = null;
+    protected String pref;
     protected Bounds bounds;
 
     protected static class Param {
@@ -86,6 +86,23 @@ public class CustomProjection extends AbstractProjection {
         public Param(String key, boolean hasValue) {
             this.key = key;
             this.hasValue = hasValue;
+        }
+    }
+
+    public CustomProjection() {
+        this.pref = null;
+    }
+
+    public CustomProjection(String pref) {
+        try {
+            this.pref = pref;
+            update(pref);
+        } catch (ProjectionConfigurationException ex) {
+            try {
+                update(null);
+            } catch (ProjectionConfigurationException ex1) {
+                throw new RuntimeException();
+            }
         }
     }
 

@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.data.projection;
+package org.openstreetmap.josm.gui.preferences.projection;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -24,8 +24,11 @@ import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.projection.CustomProjection;
+import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.preferences.projection.SubPrefsOptions;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
@@ -34,25 +37,24 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
-public class CustomProjectionPrefGui extends CustomProjection implements ProjectionSubPrefs, SubPrefsOptions {
+public class CustomProjectionChoice extends AbstractProjectionChoice implements Alias, SubPrefsOptions {
 
-    @Override
-    public void setupPreferencePanel(JPanel p, ActionListener listener) {
-        JPanel inner = new PreferencePanel(listener);
-        p.setLayout(new GridBagLayout());
-        p.add(inner, GBC.std().fill(GBC.HORIZONTAL));
+    private String pref;
+
+    public CustomProjectionChoice() {
+        super("core:custom", tr("Custom Projection"));
     }
 
-    private class PreferencePanel extends JPanel {
+    private static class PreferencePanel extends JPanel {
 
         public JTextField input;
         private HistoryComboBox cbInput;
 
-        public PreferencePanel(ActionListener listener) {
-            build(listener);
+        public PreferencePanel(String initialText, ActionListener listener) {
+            build(initialText, listener);
         }
 
-        private void build(final ActionListener listener) {
+        private void build(String initialText, final ActionListener listener) {
             input = new JTextField(30);
             cbInput = new HistoryComboBox();
             cbInput.setPrototypeDisplayValue(new AutoCompletionListItem("xxxx"));
@@ -68,7 +70,7 @@ public class CustomProjectionPrefGui extends CustomProjection implements Project
             List<String> inputHistory = new LinkedList<String>(Main.pref.getCollection("projection.custom.value.history", samples));
             Collections.reverse(inputHistory);
             cbInput.setPossibleItems(inputHistory);
-            cbInput.setText(pref == null ? "" : pref);
+            cbInput.setText(initialText == null ? "" : initialText);
 
             final HtmlPanel errorsPanel = new HtmlPanel();
             errorsPanel.setVisible(false);
@@ -124,7 +126,7 @@ public class CustomProjectionPrefGui extends CustomProjection implements Project
             btnInfo.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    ParameterInfoDialog dlg = new ParameterInfoDialog();
+                    CustomProjectionChoice.ParameterInfoDialog dlg = new CustomProjectionChoice.ParameterInfoDialog();
                     dlg.showDialog();
                     dlg.toFront();
                 }
@@ -151,7 +153,7 @@ public class CustomProjectionPrefGui extends CustomProjection implements Project
         }
     }
 
-    public class ParameterInfoDialog extends ExtendedDialog {
+    public static class ParameterInfoDialog extends ExtendedDialog {
 
         public ParameterInfoDialog() {
             super(null, tr("Parameter information"), new String[] { tr("Close") }, false);
@@ -192,26 +194,28 @@ public class CustomProjectionPrefGui extends CustomProjection implements Project
     }
 
     @Override
-    public Collection<String> getPreferences(JPanel p) {
-        PreferencePanel prefPanel = (PreferencePanel) p.getComponent(0);
-        String pref = prefPanel.input.getText();
-        prefPanel.rememberHistory();
-        return Collections.singleton(pref);
+    public void setPreferences(Collection<String> args) {
+        if (args != null && !args.isEmpty()) {
+            pref = args.iterator().next();
+        }
     }
 
     @Override
-    public void setPreferences(Collection<String> args) {
-        try {
-            if (args == null || args.isEmpty()) throw new ProjectionConfigurationException();
-            update(args.iterator().next());
-        } catch (ProjectionConfigurationException ex) {
-            System.err.println("Error: Parsing of custom projection failed, falling back to Mercator. Error message is: "+ex.getMessage());
-            try {
-                update(null);
-            } catch (ProjectionConfigurationException ex1) {
-                throw new RuntimeException(ex1);
-            }
-        }
+    public Projection getProjection() {
+        return new CustomProjection(pref);
+    }
+
+    @Override
+    public JPanel getPreferencePanel(ActionListener listener) {
+        return new PreferencePanel(pref, listener);
+    }
+
+    @Override
+    public Collection<String> getPreferences(JPanel panel) {
+        PreferencePanel prefPanel = (PreferencePanel) panel;
+        String pref = prefPanel.input.getText();
+        prefPanel.rememberHistory();
+        return Collections.singleton(pref);
     }
 
     @Override
@@ -225,8 +229,12 @@ public class CustomProjectionPrefGui extends CustomProjection implements Project
     }
 
     @Override
+    public String getAlias() {
+        return "org.openstreetmap.josm.data.projection.CustomProjectionPrefGui";
+    }
+
+    @Override
     public boolean showProjectionCode() {
         return false;
     }
-
 }

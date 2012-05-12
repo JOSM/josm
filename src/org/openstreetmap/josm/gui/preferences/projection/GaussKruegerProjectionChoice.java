@@ -1,0 +1,61 @@
+// License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.gui.preferences.projection;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.util.Collection;
+import java.util.Collections;
+
+import org.openstreetmap.josm.data.projection.GaussKrueger;
+import org.openstreetmap.josm.data.projection.Projection;
+
+public class GaussKruegerProjectionChoice extends ListProjectionChoice implements Alias {
+
+    private static String[] zones = { "2", "3", "4", "5" };
+
+    public GaussKruegerProjectionChoice() {
+        super("core:gauss-krueger", tr("Gau\u00DF-Kr\u00FCger"), zones, tr("GK Zone"));
+    }
+
+    @Override
+    public Projection getProjection() {
+        return new GaussKrueger(indexToZone(index));
+    }
+
+    @Override
+    protected int indexToZone(int index) {
+        return index + 2;
+    }
+
+    @Override
+    protected int zoneToIndex(int zone) {
+        return zone - 2;
+    }
+
+    @Override
+    public String[] allCodes() {
+        String[] codes = new String[4];
+        for (int zone = 2; zone <= 5; zone++) {
+            codes[zone-2] = "EPSG:" + (31464 + zone);
+        }
+        return codes;
+    }
+
+    @Override
+    public Collection<String> getPreferencesFromCode(String code)
+    {
+        //zone 2 = EPSG:31466 up to zone 5 = EPSG:31469
+        for (int zone = 2; zone <= 5; zone++) {
+            String epsg = "EPSG:" + (31464 + zone);
+            if (epsg.equals(code))
+                return Collections.singleton(String.valueOf(zone));
+        }
+        return null;
+    }
+    
+    @Override
+    public String getAlias() {
+        return GaussKrueger.class.getName();
+    }
+
+}

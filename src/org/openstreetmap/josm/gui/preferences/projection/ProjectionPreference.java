@@ -9,6 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -22,19 +26,22 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.preferences.CollectionProperty;
-import org.openstreetmap.josm.data.preferences.ParametrizedCollectionProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.data.projection.BelgianLambert1972;
+import org.openstreetmap.josm.data.projection.BelgianLambert2008;
+import org.openstreetmap.josm.data.projection.Epsg3008;
+import org.openstreetmap.josm.data.projection.Epsg4326;
+import org.openstreetmap.josm.data.projection.Lambert93;
+import org.openstreetmap.josm.data.projection.LambertEST;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.data.projection.ProjectionSubPrefs;
-import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.data.projection.TransverseMercatorLV;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
-import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 
 public class ProjectionPreference implements SubPreferenceSetting {
@@ -45,17 +52,54 @@ public class ProjectionPreference implements SubPreferenceSetting {
         }
     }
 
-    private static final StringProperty PROP_PROJECTION = new StringProperty("projection", Mercator.class.getName());
+    private static List<ProjectionChoice> projectionChoices = new ArrayList<ProjectionChoice>();
+    private static Map<String, ProjectionChoice> projectionChoicesById = new HashMap<String, ProjectionChoice>();
+    private static Map<String, String> aliasNormalizer = new HashMap<String, String>();
+
+    public static ProjectionChoice mercator = new SingleProjectionChoice("core:mercator", new Mercator());
+    static {
+        // global projections
+        registerProjectionChoice("core:wgs84", new Epsg4326());
+        registerProjectionChoice(mercator);
+        registerProjectionChoice(new UTMProjectionChoice());
+        // regional - alphabetical order by country code
+        registerProjectionChoice("core:belambert1972", new BelgianLambert1972());   // BE
+        registerProjectionChoice("core:belambert2008", new BelgianLambert2008());   // BE
+        registerProjectionChoice(new SwissGridProjectionChoice());                  // CH
+        registerProjectionChoice(new GaussKruegerProjectionChoice());               // DE
+        registerProjectionChoice("core:lambertest", new LambertEST());              // EE
+        registerProjectionChoice(new LambertProjectionChoice());                    // FR
+        registerProjectionChoice("core:lambert93", new Lambert93());                // FR
+        registerProjectionChoice(new LambertCC9ZonesProjectionChoice());            // FR
+        registerProjectionChoice(new UTM_France_DOM_ProjectionChoice());            // FR
+        registerProjectionChoice("core:tmerclv", new TransverseMercatorLV());       // LV
+        registerProjectionChoice(new PuwgProjectionChoice());                       // PL
+        registerProjectionChoice("core:sweref99", new Epsg3008());                  // SE
+        registerProjectionChoice(new CustomProjectionChoice());
+    }
+
+    public static void registerProjectionChoice(ProjectionChoice c) {
+        projectionChoices.add(c);
+        projectionChoicesById.put(c.getId(), c);
+        aliasNormalizer.put(c.getId(), c.getId());
+        if (c instanceof Alias) {
+            String alias = ((Alias) c).getAlias();
+            projectionChoicesById.put(alias, c);
+            aliasNormalizer.put(alias, c.getId());
+        }
+    }
+
+    public static void registerProjectionChoice(String id, Projection projection) {
+        registerProjectionChoice(new SingleProjectionChoice(id, projection));
+    }
+
+    public static List<ProjectionChoice> getProjectionChoices() {
+        return Collections.unmodifiableList(projectionChoices);
+    }
+
+    private static final StringProperty PROP_PROJECTION = new StringProperty("projection", mercator.getId());
     private static final StringProperty PROP_COORDINATES = new StringProperty("coordinates", null);
     private static final CollectionProperty PROP_SUB_PROJECTION = new CollectionProperty("projection.sub", null);
-    private static final ParametrizedCollectionProperty PROP_PROJECTION_SUBPROJECTION = new ParametrizedCollectionProperty(null) {
-        @Override
-        protected String getKey(String... params) {
-            String name = params[0];
-            String sname = name.substring(name.lastIndexOf(".")+1);
-            return "projection.sub."+sname;
-        }
-    };
     public static final StringProperty PROP_SYSTEM_OF_MEASUREMENT = new StringProperty("system_of_measurement", "Metric");
     private static final String[] unitsValues = (new ArrayList<String>(NavigatableComponent.SYSTEMS_OF_MEASUREMENT.keySet())).toArray(new String[0]);
     private static final String[] unitsValuesTr = new String[unitsValues.length];
@@ -68,7 +112,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     /**
      * Combobox with all projections available
      */
-    private JComboBox projectionCombo = new JComboBox(Projections.getProjections().toArray());
+    private JComboBox projectionCombo = new JComboBox(projectionChoices.toArray());
 
     /**
      * Combobox with all coordinate display possibilities
@@ -103,7 +147,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     static private GBC projSubPrefPanelGBC = GBC.std().fill(GBC.BOTH).weight(1.0, 1.0);
 
     public void addGui(PreferenceTabbedPane gui) {
-        setupProjectionCombo();
+        ProjectionChoice pc = setupProjectionCombo();
 
         for (int i = 0; i < coordinatesCombo.getItemCount(); ++i) {
             if (((CoordinateFormat)coordinatesCombo.getItemAt(i)).name().equals(PROP_COORDINATES.get())) {
@@ -130,7 +174,6 @@ public class ProjectionPreference implements SubPreferenceSetting {
         projPanel.add(new JLabel(tr("Bounds")), GBC.std().insets(25,5,0,5));
         projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(bounds, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
-        projSubPrefPanelWrapper.add(projSubPrefPanel, projSubPrefPanelGBC);
         projPanel.add(projSubPrefPanelWrapper, GBC.eol().fill(GBC.HORIZONTAL).insets(20,5,5,5));
 
         projPanel.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0,5,0,10));
@@ -145,32 +188,33 @@ public class ProjectionPreference implements SubPreferenceSetting {
         JScrollPane scrollpane = new JScrollPane(projPanel);
         gui.getMapPreference().mapcontent.addTab(tr("Map Projection"), scrollpane);
 
-        updateMeta(Main.getProjection());
+        selectedProjectionChanged(pc);
     }
 
-    private void updateMeta(Projection proj)
-    {
+    private void updateMeta(ProjectionChoice pc) {
+        pc.setPreferences(pc.getPreferences(projSubPrefPanel));
+        Projection proj = pc.getProjection();
         projectionCode.setText(proj.toCode());
         Bounds b = proj.getWorldBoundsLatLon();
         CoordinateFormat cf = CoordinateFormat.getDefaultFormat();
         bounds.setText(b.getMin().latToString(cf)+"; "+b.getMin().lonToString(cf)+" : "+b.getMax().latToString(cf)+"; "+b.getMax().lonToString(cf));
-        boolean hideCode = proj instanceof SubPrefsOptions && !((SubPrefsOptions) proj).showProjectionCode();
-        projectionCodeLabel.setVisible(!hideCode);
-        projectionCodeGlue.setVisible(!hideCode);
-        projectionCode.setVisible(!hideCode);
+        boolean showCode = true;
+        if (pc instanceof SubPrefsOptions) {
+            showCode = ((SubPrefsOptions) pc).showProjectionCode();
+        }
+        projectionCodeLabel.setVisible(showCode);
+        projectionCodeGlue.setVisible(showCode);
+        projectionCode.setVisible(showCode);
     }
 
+    @Override
     public boolean ok() {
-        Projection proj = (Projection) projectionCombo.getSelectedItem();
+        ProjectionChoice pc = (ProjectionChoice) projectionCombo.getSelectedItem();
 
-        String projname = proj.getClass().getName();
-        Collection<String> prefs = null;
-        if(proj instanceof ProjectionSubPrefs) {
-            prefs = ((ProjectionSubPrefs) proj).getPreferences(projSubPrefPanel);
-        }
+        String id = pc.getId();
+        Collection<String> prefs = pc.getPreferences(projSubPrefPanel);
 
-        PROP_PROJECTION.put(projname);
-        setProjection(projname, prefs);
+        setProjection(id, prefs);
 
         if(PROP_COORDINATES.put(((CoordinateFormat)coordinatesCombo.getSelectedItem()).name())) {
             CoordinateFormat.setCoordinateFormat((CoordinateFormat)coordinatesCombo.getSelectedItem());
@@ -182,65 +226,30 @@ public class ProjectionPreference implements SubPreferenceSetting {
         return false;
     }
 
-    static public void setProjection()
-    {
+    static public void setProjection() {
         setProjection(PROP_PROJECTION.get(), PROP_SUB_PROJECTION.get());
     }
 
-    static public void setProjection(String name, Collection<String> coll)
-    {
-        Bounds b = (Main.map != null && Main.map.mapView != null) ? Main.map.mapView.getRealBounds() : null;
+    static public void setProjection(String id, Collection<String> pref) {
+        ProjectionChoice pc = projectionChoicesById.get(id);
 
-        Projection proj = null;
-        for (ClassLoader cl : PluginHandler.getResourceClassLoaders()) {
-            try {
-                proj = (Projection) Class.forName(name, true, cl).newInstance();
-            } catch (final Exception e) {
-            }
-            if (proj != null) {
-                break;
-            }
-        }
-        if (proj == null) {
+        if (pc == null) {
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("The projection {0} could not be activated. Using Mercator", name),
+                    tr("The projection {0} could not be activated. Using Mercator", id),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );
-            coll = null;
-            proj = new Mercator();
-            name = proj.getClass().getName();
-            PROP_PROJECTION.put(name);
+            pref = null;
+            pc = mercator;
         }
-        PROP_SUB_PROJECTION.put(coll);
-        PROP_PROJECTION_SUBPROJECTION.put(coll, name);
-        if (proj instanceof ProjectionSubPrefs) {
-            ((ProjectionSubPrefs) proj).setPreferences(coll);
-        }
-        Projection oldProj = Main.getProjection();
+        id = pc.getId();
+        PROP_PROJECTION.put(id);
+        PROP_SUB_PROJECTION.put(pref);
+        Main.pref.putCollection("projection.sub."+id, pref);
+        pc.setPreferences(pref);
+        Projection proj = pc.getProjection();
         Main.setProjection(proj);
-        if (b != null && (!proj.getClass().getName().equals(oldProj.getClass().getName()) || proj.hashCode() != oldProj.hashCode()))
-        {
-            Main.map.mapView.zoomTo(b);
-            /* TODO - remove layers with fixed projection */
-        }
-    }
-
-    private class SBPanel extends JPanel implements ActionListener
-    {
-        private ProjectionSubPrefs p;
-        public SBPanel(ProjectionSubPrefs pr)
-        {
-            super();
-            p = pr;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            p.setPreferences(p.getPreferences(this));
-            updateMeta(p);
-        }
     }
 
     /**
@@ -248,56 +257,66 @@ public class ProjectionPreference implements SubPreferenceSetting {
      * preferences
      * @param proj
      */
-    private void selectedProjectionChanged(Projection proj) {
-        if(!(proj instanceof ProjectionSubPrefs)) {
-            projSubPrefPanel = new JPanel();
-        } else {
-            ProjectionSubPrefs projPref = (ProjectionSubPrefs) proj;
-            projSubPrefPanel = new SBPanel(projPref);
-            projPref.setupPreferencePanel(projSubPrefPanel, (SBPanel)projSubPrefPanel);
-        }
-
+    private void selectedProjectionChanged(final ProjectionChoice pc) {
         // Don't try to update if we're still starting up
         int size = projPanel.getComponentCount();
         if(size < 1)
             return;
 
+        final ActionListener listener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateMeta(pc);
+            }
+        };
+
         // Replace old panel with new one
         projSubPrefPanelWrapper.removeAll();
+        projSubPrefPanel = pc.getPreferencePanel(listener);
         projSubPrefPanelWrapper.add(projSubPrefPanel, projSubPrefPanelGBC);
         projPanel.revalidate();
         projSubPrefPanel.repaint();
-        updateMeta(proj);
+        updateMeta(pc);
     }
 
     /**
      * Sets up projection combobox with default values and action listener
      */
-    private void setupProjectionCombo() {
-        boolean found = false;
+    private ProjectionChoice setupProjectionCombo() {
+        ProjectionChoice pc = null;
         for (int i = 0; i < projectionCombo.getItemCount(); ++i) {
-            Projection proj = (Projection)projectionCombo.getItemAt(i);
-            String name = proj.getClass().getName();
-            if(proj instanceof ProjectionSubPrefs) {
-                ((ProjectionSubPrefs) proj).setPreferences(PROP_PROJECTION_SUBPROJECTION.get(name));
-            }
-            if (name.equals(PROP_PROJECTION.get())) {
+            ProjectionChoice pc1 = (ProjectionChoice) projectionCombo.getItemAt(i);
+            pc1.setPreferences(getSubprojectionPreference(pc1));
+            if (pc1.getId().equals(aliasNormalizer.get(PROP_PROJECTION.get()))) {
                 projectionCombo.setSelectedIndex(i);
-                selectedProjectionChanged(proj);
-                found = true;
-                break;
+                selectedProjectionChanged(pc1);
+                pc = pc1;
             }
         }
-        if (!found)
+        // If the ProjectionChoice from the preferences is not available, it
+        // should have been set to Mercator at JOSM start.
+        if (pc == null)
             throw new RuntimeException("Couldn't find the current projection in the list of available projections!");
 
         projectionCombo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JComboBox cb = (JComboBox)e.getSource();
-                Projection proj = (Projection)cb.getSelectedItem();
-                selectedProjectionChanged(proj);
+                ProjectionChoice pc = (ProjectionChoice) projectionCombo.getSelectedItem();
+                selectedProjectionChanged(pc);
             }
         });
+        return pc;
+    }
+
+    private Collection<String> getSubprojectionPreference(ProjectionChoice pc) {
+        Collection<String> c1 = Main.pref.getCollection("projection.sub."+pc.getId(), null);
+        if (c1 != null)
+            return c1;
+        if (pc instanceof Alias) {
+            String alias = ((Alias) pc).getAlias();
+            String sname = alias.substring(alias.lastIndexOf(".")+1);
+            return Main.pref.getCollection("projection.sub."+sname, null);
+        }
+        return null;
     }
 
     @Override
