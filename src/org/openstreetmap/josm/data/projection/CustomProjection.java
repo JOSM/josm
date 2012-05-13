@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.projection.datum.CentricDatum;
 import org.openstreetmap.josm.data.projection.datum.Datum;
 import org.openstreetmap.josm.data.projection.datum.NTV2Datum;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
+import org.openstreetmap.josm.data.projection.datum.NullDatum;
 import org.openstreetmap.josm.data.projection.datum.SevenParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.ThreeParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
@@ -245,6 +246,11 @@ public class CustomProjection extends AbstractProjection {
     public Datum parseDatum(Map<String, String> parameters, Ellipsoid ellps) throws ProjectionConfigurationException {
         String nadgridsId = parameters.get(Param.nadgrids.key);
         if (nadgridsId != null) {
+            if (nadgridsId.startsWith("@")) {
+                nadgridsId = nadgridsId.substring(1);
+            }
+            if (nadgridsId.equals("null"))
+                return new NullDatum(null, ellps);
             NTV2GridShiftFileWrapper nadgrids = Projections.getNTV2Grid(nadgridsId);
             if (nadgrids == null)
                 throw new ProjectionConfigurationException(tr("Grid shift file ''{0}'' for option +nadgrids not supported.", nadgridsId));
@@ -279,6 +285,15 @@ public class CustomProjection extends AbstractProjection {
                 throw new ProjectionConfigurationException(tr("Unable to parse value of parameter ''towgs84'' (''{0}'')", numStr[i]));
             }
         }
+        boolean isCentric = true;
+        for (int i = 0; i<towgs84Param.size(); i++) {
+            if (towgs84Param.get(i) != 0.0) {
+                isCentric = false;
+                break;
+            }
+        }
+        if (isCentric)
+            return new CentricDatum(null, null, ellps);
         boolean is3Param = true;
         for (int i = 3; i<towgs84Param.size(); i++) {
             if (towgs84Param.get(i) != 0.0) {
@@ -286,25 +301,20 @@ public class CustomProjection extends AbstractProjection {
                 break;
             }
         }
-        Datum datum = null;
-        if (is3Param) {
-            datum = new ThreeParameterDatum(null, null, ellps,
+        if (is3Param)
+            return new ThreeParameterDatum(null, null, ellps,
                     towgs84Param.get(0),
                     towgs84Param.get(1),
-                    towgs84Param.get(2)
-            );
-        } else {
-            datum = new SevenParameterDatum(null, null, ellps,
+                    towgs84Param.get(2));
+        else
+            return new SevenParameterDatum(null, null, ellps,
                     towgs84Param.get(0),
                     towgs84Param.get(1),
                     towgs84Param.get(2),
                     towgs84Param.get(3),
                     towgs84Param.get(4),
                     towgs84Param.get(5),
-                    towgs84Param.get(6)
-            );
-        }
-        return datum;
+                    towgs84Param.get(6));
     }
 
     public Proj parseProjection(Map<String, String> parameters, Ellipsoid ellps) throws ProjectionConfigurationException {

@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
-import org.openstreetmap.josm.data.projection.datum.Datum;
-import org.openstreetmap.josm.data.projection.proj.Proj;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.datum.Datum;
+import org.openstreetmap.josm.data.projection.proj.Proj;
 
 /**
  * Implementation of the Projection interface that represents a coordinate reference system and delegates
