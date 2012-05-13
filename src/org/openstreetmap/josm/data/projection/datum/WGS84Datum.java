@@ -9,21 +9,11 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
 /**
  * WGS84 datum. Transformation from and to WGS84 datum is a no-op.
  */
-public class WGS84Datum extends AbstractDatum {
+public class WGS84Datum extends NullDatum {
 
     public static final WGS84Datum INSTANCE = new WGS84Datum();
 
     private WGS84Datum() {
-        super(tr("WGS84"), "WGS84", Ellipsoid.WGS84);
-    }
-
-    @Override
-    public LatLon fromWGS84(LatLon ll) {
-        return ll;
-    }
-
-    @Override
-    public LatLon toWGS84(LatLon ll) {
-        return ll;
+        super(tr("WGS84"), Ellipsoid.WGS84);
     }
 }

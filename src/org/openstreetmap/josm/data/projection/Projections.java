@@ -122,7 +122,7 @@ public class Projections {
             String line;
             while ((line = r.readLine()) != null) {
                 line = line.trim();
-                if (!line.startsWith("#")) {
+                if (!line.startsWith("#") && !line.isEmpty()) {
                     Matcher m = epsgPattern.matcher(line);
                     if (m.matches()) {
                         inits.put("epsg:" + m.group(1), m.group(2).trim());
