@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.projection.CustomProjection.Param;
 import org.openstreetmap.josm.data.projection.datum.CentricDatum;
 import org.openstreetmap.josm.data.projection.datum.Datum;
 import org.openstreetmap.josm.data.projection.datum.NTV2Datum;
@@ -43,48 +42,43 @@ public class CustomProjection extends AbstractProjection {
     protected String pref;
     protected Bounds bounds;
 
-    protected static class Param {
+    protected static enum Param {
+
+        x_0("x_0", true),
+        y_0("y_0", true),
+        lon_0("lon_0", true),
+        k_0("k_0", true),
+        ellps("ellps", true),
+        a("a", true),
+        es("es", true),
+        rf("rf", true),
+        f("f", true),
+        b("b", true),
+        datum("datum", true),
+        towgs84("towgs84", true),
+        nadgrids("nadgrids", true),
+        proj("proj", true),
+        lat_0("lat_0", true),
+        lat_1("lat_1", true),
+        lat_2("lat_2", true),
+        wktext("wktext", false),  // ignored
+        units("units", true),     // ignored
+        no_defs("no_defs", false),
+        init("init", true),
+        // JOSM extension, not present in PROJ.4
+        bounds("bounds", true);
+
         public String key;
         public boolean hasValue;
 
-        public final static Param x_0 = new Param("x_0", true);
-        public final static Param y_0 = new Param("y_0", true);
-        public final static Param lon_0 = new Param("lon_0", true);
-        public final static Param k_0 = new Param("k_0", true);
-        public final static Param ellps = new Param("ellps", true);
-        public final static Param a = new Param("a", true);
-        public final static Param es = new Param("es", true);
-        public final static Param rf = new Param("rf", true);
-        public final static Param f = new Param("f", true);
-        public final static Param b = new Param("b", true);
-        public final static Param datum = new Param("datum", true);
-        public final static Param towgs84 = new Param("towgs84", true);
-        public final static Param nadgrids = new Param("nadgrids", true);
-        public final static Param proj = new Param("proj", true);
-        public final static Param lat_0 = new Param("lat_0", true);
-        public final static Param lat_1 = new Param("lat_1", true);
-        public final static Param lat_2 = new Param("lat_2", true);
-        public final static Param wktext = new Param("wktext", false);  // ignored
-        public final static Param units = new Param("units", true);     // ignored
-        public final static Param no_defs = new Param("no_defs", false);
-        public final static Param init = new Param("init", true);
-        // JOSM extension, not present in PROJ.4
-        public final static Param bounds = new Param("bounds", true);
-
-        public final static Set<Param> params = new HashSet<Param>(Arrays.asList(
-                x_0, y_0, lon_0, k_0, ellps, a, es, rf, f, b, datum, towgs84,
-                nadgrids, proj, lat_0, lat_1, lat_2, wktext, units, no_defs, 
-                init, bounds
-        ));
-
         public final static Map<String, Param> paramsByKey = new HashMap<String, Param>();
         static {
-            for (Param p : params) {
+            for (Param p : Param.values()) {
                 paramsByKey.put(p.key, p);
             }
         }
 
-        public Param(String key, boolean hasValue) {
+        Param(String key, boolean hasValue) {
             this.key = key;
             this.hasValue = hasValue;
         }
@@ -115,7 +109,7 @@ public class CustomProjection extends AbstractProjection {
             proj = new org.openstreetmap.josm.data.projection.proj.Mercator();
             bounds = new Bounds(
                     new LatLon(-85.05112877980659, -180.0),
-                    new LatLon(85.05112877980659, 180.0));
+                    new LatLon(85.05112877980659, 180.0), true);
         } else {
             Map<String, String> parameters = parseParameterList(pref);
             ellps = parseEllipsoid(parameters);
@@ -383,29 +377,32 @@ public class CustomProjection extends AbstractProjection {
         }
         final String FLOAT = "(\\d+(\\.\\d*)?)";
         boolean dms = false;
+        double deg = 0.0, min = 0.0, sec = 0.0;
         // degrees
         m = Pattern.compile("^"+FLOAT+"d").matcher(s);
         if (m.find()) {
             s = s.substring(m.end());
-            value += Double.parseDouble(m.group(1));
+            deg = Double.parseDouble(m.group(1));
             dms = true;
         }
         // minutes
         m = Pattern.compile("^"+FLOAT+"'").matcher(s);
         if (m.find()) {
             s = s.substring(m.end());
-            value += Double.parseDouble(m.group(1)) / 60.0;
+            min = Double.parseDouble(m.group(1));
             dms = true;
         }
         // seconds
         m = Pattern.compile("^"+FLOAT+"\"").matcher(s);
         if (m.find()) {
             s = s.substring(m.end());
-            value += Double.parseDouble(m.group(1)) / 3600.0;
+            sec = Double.parseDouble(m.group(1));
             dms = true;
         }
         // plain number (in degrees)
-        if (!dms) {
+        if (dms) {
+            value = deg + (min/60.0) + (sec/3600.0);
+        } else {
             m = Pattern.compile("^"+FLOAT).matcher(s);
             if (m.find()) {
                 s = s.substring(m.end());
@@ -430,16 +427,6 @@ public class CustomProjection extends AbstractProjection {
                     tr("Unable to parse value ''{1}'' of parameter ''{0}'' as coordinate value.", parameterName, angleStr));
         }
         return value;
-    }
-
-    public void dump() {
-        System.err.println("x_0="+x_0);
-        System.err.println("y_0="+y_0);
-        System.err.println("lon_0="+lon_0);
-        System.err.println("k_0="+k_0);
-        System.err.println("ellps="+ellps);
-        System.err.println("proj="+proj);
-        System.err.println("datum="+datum);
     }
 
     @Override
