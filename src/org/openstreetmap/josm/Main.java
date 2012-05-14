@@ -638,7 +638,7 @@ abstract public class Main {
     private DownloadParamType paramType(String s) {
         if(s.startsWith("http:")) return DownloadParamType.httpUrl;
         if(s.startsWith("file:")) return DownloadParamType.fileUrl;
-        String coorPattern = "\\s*[0-9]+(\\.[0-9]+)?\\s*";
+        String coorPattern = "\\s*[+-]?[0-9]+(\\.[0-9]+)?\\s*";
         if(s.matches(coorPattern+"(,"+coorPattern+"){3}")) return DownloadParamType.bounds;
         // everything else must be a file name
         return DownloadParamType.fileName;
