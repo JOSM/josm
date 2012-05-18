@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
@@ -115,5 +117,26 @@ public abstract class Plugin {
         }
         in.close();
         out.close();
+    }
+
+    /**
+     * Get a class loader for loading resources from the plugin jar.
+     *
+     * This can be used to avoid getting a file from another plugin that
+     * happens to have a file with the same file name and path.
+     *
+     * Usage: Instead of
+     *   getClass().getResource("/resources/pluginProperties.properties");
+     * write
+     *   getPluginResourceClassLoader().getResource("resources/pluginProperties.properties");
+     *
+     * (Note the missing leading "/".)
+     */
+    public ClassLoader getPluginResourceClassLoader() {
+        File pluginDir = Main.pref.getPluginsDirectory();
+        File pluginJar = new File(pluginDir, info.name + ".jar");
+        URL pluginJarUrl = PluginInformation.fileToURL(pluginJar);
+        URLClassLoader pluginClassLoader = new URLClassLoader(new URL[] { pluginJarUrl } , Main.class.getClassLoader());
+        return pluginClassLoader;
     }
 }
