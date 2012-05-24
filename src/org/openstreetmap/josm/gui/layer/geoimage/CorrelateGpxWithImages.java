@@ -1249,7 +1249,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 curImg.tmp.setPos(prevWp.getCoor().interpolate(curWp.getCoor(), timeDiff));
                 curImg.tmp.setSpeed(speed);
                 if (curElevation != null && prevElevation != null) {
-                    curImg.setElevation(prevElevation + (curElevation - prevElevation) * timeDiff);
+                    curImg.tmp.setElevation(prevElevation + (curElevation - prevElevation) * timeDiff);
                 }
                 curImg.tmp.setGpsTime(new Date(curImg.getExifTime().getTime() - offset));
 
