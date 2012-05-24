@@ -55,13 +55,13 @@ import org.apache.commons.codec.binary.StringUtils;
  * for those applications that do not require quoted-printable line formatting (rules #3, #4, #5), for instance Q codec.
  * </p>
  * 
- * This class is immutable and thread-safe.
+ * <p>This class is immutable and thread-safe.</p>
  * 
  * @see <a href="http://www.ietf.org/rfc/rfc1521.txt"> RFC 1521 MIME (Multipurpose Internet Mail Extensions) Part One:
  *          Mechanisms for Specifying and Describing the Format of Internet Message Bodies </a>
  * 
  * @since 1.3
- * @version $Id: QuotedPrintableCodec.java 1333397 2012-05-03 10:21:11Z sebb $
+ * @version $Id: QuotedPrintableCodec.java 1342240 2012-05-24 13:03:14Z ggregory $
  */
 public class QuotedPrintableCodec implements BinaryEncoder, BinaryDecoder, StringEncoder, StringDecoder {
     /**

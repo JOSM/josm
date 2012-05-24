@@ -61,13 +61,13 @@ import org.apache.commons.codec.StringEncoder;
  * 9. Add original first character of name as first character of key
  * </pre></p>
  *
- * This class is immutable and thread-safe.
+ * <p>This class is immutable and thread-safe.</p>
  * 
  * @see <a href="http://en.wikipedia.org/wiki/NYSIIS">NYSIIS on Wikipedia</a>
  * @see <a href="http://www.dropby.com/NYSIIS.html">NYSIIS on dropby.com</a>
  * @see Soundex
  * @since 1.7
- * @version $Id: Nysiis.java 1333721 2012-05-04 01:06:10Z sebb $
+ * @version $Id: Nysiis.java 1342240 2012-05-24 13:03:14Z ggregory $
  */
 public class Nysiis implements StringEncoder {
 

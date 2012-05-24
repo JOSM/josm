@@ -41,10 +41,10 @@ import org.apache.commons.codec.binary.StringUtils;
  * Message Header Extensions for Non-ASCII Text</a>
  * </p>
  * 
- * This class is immutable and thread-safe.
+ * <p>This class is immutable and thread-safe.</p>
  * 
  * @since 1.3
- * @version $Id: RFC1522Codec.java 1333721 2012-05-04 01:06:10Z sebb $
+ * @version $Id: RFC1522Codec.java 1342240 2012-05-24 13:03:14Z ggregory $
  */
 abstract class RFC1522Codec {
     

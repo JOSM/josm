@@ -39,9 +39,9 @@ import org.apache.commons.codec.Charsets;
  * The C style comments are from the original C code, the ones with "//" from the port.
  * </p>
  * 
- * This class is immutable and thread-safe.
+ * <p>This class is immutable and thread-safe.</p>
  * 
- * @version $Id: Md5Crypt.java 1333397 2012-05-03 10:21:11Z sebb $
+ * @version $Id: Md5Crypt.java 1342240 2012-05-24 13:03:14Z ggregory $
  * @since 1.7
  */
 public class Md5Crypt {

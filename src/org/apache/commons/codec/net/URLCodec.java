@@ -46,10 +46,10 @@ import org.apache.commons.codec.binary.StringUtils;
  * 1.4 rely on the platform's default charset encoding.
  * </p>
  * 
- * This class is immutable and thread-safe.
+ * <p>This class is immutable and thread-safe.</p>
  * 
  * @since 1.2
- * @version $Id: URLCodec.java 1333397 2012-05-03 10:21:11Z sebb $
+ * @version $Id: URLCodec.java 1342240 2012-05-24 13:03:14Z ggregory $
  */
 public class URLCodec implements BinaryEncoder, BinaryDecoder, StringEncoder, StringDecoder {
     

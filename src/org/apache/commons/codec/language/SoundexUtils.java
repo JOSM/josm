@@ -23,9 +23,9 @@ import org.apache.commons.codec.StringEncoder;
 /**
  * Utility methods for {@link Soundex} and {@link RefinedSoundex} classes.
  * 
- * This class is immutable and thread-safe.
+ * <p>This class is immutable and thread-safe.</p>
  * 
- * @version $Id: SoundexUtils.java 1333397 2012-05-03 10:21:11Z sebb $
+ * @version $Id: SoundexUtils.java 1342240 2012-05-24 13:03:14Z ggregory $
  * @since 1.3
  */
 final class SoundexUtils {

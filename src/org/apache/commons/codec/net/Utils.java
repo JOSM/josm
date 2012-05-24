@@ -22,9 +22,9 @@ import org.apache.commons.codec.DecoderException;
 /**
  * Utility methods for this package.
  * 
- * This class is immutable and thread-safe.
+ * <p>This class is immutable and thread-safe.</p>
  * 
- * @version $Id: Utils.java 1333397 2012-05-03 10:21:11Z sebb $
+ * @version $Id: Utils.java 1342240 2012-05-24 13:03:14Z ggregory $
  * @since 1.4
  */
 class Utils {

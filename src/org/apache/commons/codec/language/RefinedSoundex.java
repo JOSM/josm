@@ -25,9 +25,9 @@ import org.apache.commons.codec.StringEncoder;
  * optimized for spell checking words. Soundex method originally developed by
  * <CITE>Margaret Odell</CITE> and <CITE>Robert Russell</CITE>.
  * 
- * This class is immutable and thread-safe.
+ * <p>This class is immutable and thread-safe.</p>
  * 
- * @version $Id: RefinedSoundex.java 1333721 2012-05-04 01:06:10Z sebb $
+ * @version $Id: RefinedSoundex.java 1342240 2012-05-24 13:03:14Z ggregory $
  */
 public class RefinedSoundex implements StringEncoder {
 
