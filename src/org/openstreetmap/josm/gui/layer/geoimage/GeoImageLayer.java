@@ -536,6 +536,16 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
 
         try {
+            double ele=dirGps.getDouble(GpsDirectory.TAG_GPS_ALTITUDE);
+            int d = dirGps.getInt(GpsDirectory.TAG_GPS_ALTITUDE_REF);
+            if (d == 1) {
+                ele *= -1;
+            }
+            e.setElevation(ele);
+        } catch (MetadataException ex) {
+        }
+
+        try {
             // longitude
 
             Rational[] components = dirGps.getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
@@ -595,7 +605,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 e.setPos(null);
             }
         } catch (Exception ex) { // (other exceptions, e.g. #5271)
-            System.err.println("Error when reading EXIF from file: "+ex);
+            System.err.println("Error reading EXIF from file: "+ex);
             e.setExifCoor(null);
             e.setPos(null);
         }
