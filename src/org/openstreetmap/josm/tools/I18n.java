@@ -345,6 +345,7 @@ public class I18n {
     {
         //languages.put("ar", PluralMode.MODE_AR);
         languages.put("bg", PluralMode.MODE_NOTONE);
+        languages.put("ca", PluralMode.MODE_NOTONE);
         languages.put("cs", PluralMode.MODE_CS);
         languages.put("da", PluralMode.MODE_NOTONE);
         languages.put("de", PluralMode.MODE_NOTONE);
