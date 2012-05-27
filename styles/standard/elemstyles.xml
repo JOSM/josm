@@ -715,18 +715,8 @@ For external files the <rules> should have following elements:
 <!-- traffic_calming tag -->
 
 	<rule>
-		<condition k="traffic_calming" v="bump"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
-	</rule>
-
-	<rule>
-		<condition k="traffic_calming" v="hump"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
-	</rule>
-
-	<rule>
-		<condition k="traffic_calming" v="table"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<condition k="traffic_calming"/>
+		<icon annotate="true" src="vehicle/traffic_calming.png" priority="-5"/>
 	</rule>
 
 	<rule>
