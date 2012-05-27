@@ -738,7 +738,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="junction" v="roundabout"/>
-		<area colour="roundabout#eeeeee" closed="true"/>
+		<line width="2" colour="roundabout#eeeeee"/>
 		<!-- tagging a node makes no real sense, a roundabout should be tagged with several nodes, or a highway=mini_roundabout should probably be used -->
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
