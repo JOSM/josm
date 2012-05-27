@@ -178,7 +178,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
             s.append(listKeys(Projections.datums)+"<br>");
             s.append("<b>+towgs84=...</b> - <i>"+tr("3 or 7 term datum transform parameters")+"</i><br>");
             s.append("<b>+nadgrids=...</b> - <i>"+tr("NTv2 grid file")+"</i><br>");
-            s.append("&nbsp;&nbsp;&nbsp;&nbsp;"+tr("Build-in:")+" ");
+            s.append("&nbsp;&nbsp;&nbsp;&nbsp;"+tr("Built-in:")+" ");
             s.append(listKeys(Projections.nadgrids)+"<br>");
             s.append("<b>+bounds=</b>minlon,minlat,maxlon,maxlat - <i>"+tr("Projection bounds (in degrees)")+"</i><br>");
 
