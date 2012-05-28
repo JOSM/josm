@@ -281,8 +281,16 @@ public class Tile {
         error_message = message;
     }
 
+    /**
+     * Puts the given key/value pair to the metadata of the tile.
+     * If value is null, the (possibly existing) key/value pair is removed from 
+     * the meta data.
+     * 
+     * @param key
+     * @param value 
+     */
     public void putValue(String key, String value) {
-        if (value == null || "".equals(value)) {
+        if (value == null || value.isEmpty()) {
             if (metadata != null) {
                 metadata.remove(key);
             }
