@@ -26,12 +26,12 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     /**
      * This flag shows, that the properties have been changed by the user
-     * and on upload the object will be send to the server
+     * and on upload the object will be send to the server.
      */
     protected static final int FLAG_MODIFIED = 1 << 0;
 
     /**
-     * The visible flag indicates, that an object is marked
+     * This flag is false, if the object is marked
      * as deleted on the server.
      */
     protected static final int FLAG_VISIBLE  = 1 << 1;
@@ -53,7 +53,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
     protected static final int FLAG_INCOMPLETE = 1 << 3;
 
     /**
-     * Put several boolean flag to one short int field to save memory.
+     * Put several boolean flags to one short int field to save memory.
      * Other bits of this field are used in subclasses.
      */
     protected volatile short flags = FLAG_VISIBLE;   // visible per default
@@ -66,7 +66,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * Unique identifier in OSM. This is used to identify objects on the server.
      * An id of 0 means an unknown id. The object has not been uploaded yet to
      * know what id it will get.
-     *
      */
     protected long id = 0;
 
