@@ -691,7 +691,6 @@ For external files the <rules> should have following elements:
     
 	<rule>
 		<condition k="highway" v="turning_circle"/>
-		<area colour="turningcircle#c0c0c0"/>
 		<icon annotate="true" src="vehicle/turning_circle.png"/>
 	</rule>
 
@@ -739,8 +738,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="junction" v="roundabout"/>
 		<line width="2" colour="roundabout#eeeeee"/>
-		<!-- tagging a node makes no real sense, a roundabout should be tagged with several nodes, or a highway=mini_roundabout should probably be used -->
-		<icon annotate="true" src="misc/deprecated.png"/>
+		<icon annotate="true" src="vehicle/restriction/roundabout_right.png"/>
 	</rule>
 
 <!-- cycleway tags -->
