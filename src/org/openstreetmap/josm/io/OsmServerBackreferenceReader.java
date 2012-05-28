@@ -202,7 +202,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * request.
      *
      * <ul>
-     *   <li>if this reader reads referers for an {@see Node}, referring ways are always
+     *   <li>if this reader reads referers for a {@see Node}, referring ways are always
      *     read individually from the server</li>
      *   <li>if this reader reads referers for an {@see Way} or a {@see Relation}, referring relations
      *    are only read fully if {@see #setReadFull(boolean)} is set to true.</li>
@@ -221,7 +221,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             Collection<Way> waysToCheck = new ArrayList<Way>(ds.getWays());
             if (isReadFull() ||primitiveType.equals(OsmPrimitiveType.NODE)) {
                 for (Way way: waysToCheck) {
-                    if (!way.isNew() && way.isIncomplete()) {
+                    if (!way.isNew() && way.hasIncompleteNodes()) {
                         OsmServerObjectReader reader = new OsmServerObjectReader(way.getId(), OsmPrimitiveType.from(way), true /* read full */);
                         DataSet wayDs = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
                         DataSetMerger visitor = new DataSetMerger(ds, wayDs);
@@ -232,7 +232,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             if (isReadFull()) {
                 Collection<Relation> relationsToCheck  = new ArrayList<Relation>(ds.getRelations());
                 for (Relation relation: relationsToCheck) {
-                    if (!relation.isNew() && relation.isIncomplete()) {
+                    if (!relation.isNew() && relation.hasIncompleteMembers()) {
                         OsmServerObjectReader reader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.from(relation), true /* read full */);
                         DataSet wayDs = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
                         DataSetMerger visitor = new DataSetMerger(ds, wayDs);
