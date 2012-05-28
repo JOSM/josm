@@ -571,7 +571,7 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="overtaking" text="Overtaking" values="yes,both,forward,backward,no" match="key" />
         </item>
         <separator/>
-        <item name="Roundabout" icon="presets/roundabout.png" type="closedway">
+        <item name="Roundabout" icon="presets/roundabout.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:junction=roundabout"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:junction=roundabout"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:junction=roundabout"

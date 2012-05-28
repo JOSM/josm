@@ -288,6 +288,12 @@ public final class Node extends OsmPrimitive implements INode {
     public void updatePosition() {
     }
 
+    /**
+     * Check whether this node connects 2 ways.
+     * 
+     * @return true if isReferredByWays(2) returns true
+     * @see #isReferredByWays(int) 
+     */
     public boolean isConnectionNode() {
         return isReferredByWays(2);
     }
