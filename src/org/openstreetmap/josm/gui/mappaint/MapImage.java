@@ -64,7 +64,8 @@ public class MapImage {
                     public void finished(ImageIcon result) {
                         synchronized (MapImage.this) {
                             if (result == null) {
-                                img = (BufferedImage) MapPaintStyles.getNoIcon_Icon(source).getImage();
+                                ImageIcon noIcon = MapPaintStyles.getNoIcon_Icon(source);
+                                img = noIcon == null ? null : (BufferedImage) noIcon.getImage();
                             } else {
                                 img = (BufferedImage) result.getImage();
                             }
