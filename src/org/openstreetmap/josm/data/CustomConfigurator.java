@@ -957,7 +957,7 @@ public class CustomConfigurator {
         log("Warning: Unknown default value of %s , skipped\n", key);
         JOptionPane.showMessageDialog(
                 Main.parent,
-                tr("<html>Settings file asks to append preferences to <b>{0}</b>,<br/> but it's default value is unknown at this moment.<br/> Please activate corresponding function manually and retry importing.", key),
+                tr("<html>Settings file asks to append preferences to <b>{0}</b>,<br/> but its default value is unknown at this moment.<br/> Please activate corresponding function manually and retry importing.", key),
                 tr("Warning"),
                 JOptionPane.WARNING_MESSAGE);
     }
