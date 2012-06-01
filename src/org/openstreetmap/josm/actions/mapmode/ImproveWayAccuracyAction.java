@@ -12,7 +12,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
-import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -80,10 +79,6 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     final private Cursor cursorImproveDelete;
     final private Cursor cursorImproveAddLock;
     final private Cursor cursorImproveLock;
-
-    private boolean shift = false;
-    private boolean ctrl = false;
-    private boolean alt = false;
 
     private final Color guideColor;
     private final BasicStroke selectTargetWayStroke;
@@ -508,17 +503,6 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     // -------------------------------------------------------------------------
     // Custom methods
     // -------------------------------------------------------------------------
-    /**
-     * Updates shift and ctrl key states
-     */
-    @Override
-    protected void updateKeyModifiers(InputEvent e) {
-        ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
-        // accept either Alt key (including AltGr)
-        alt = ((e.getModifiers() & (ActionEvent.ALT_MASK | InputEvent.ALT_GRAPH_MASK)) != 0);
-    }
-
     /**
      * Sets new cursor depending on state, mouse position
      */
