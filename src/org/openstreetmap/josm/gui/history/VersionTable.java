@@ -32,7 +32,8 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * VersionTable shows a list of version in a {@see History} of an {@see OsmPrimitive}.
+ * VersionTable shows a list of version in a {@link org.openstreetmap.josm.data.osm.history.History}
+ * of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive}.
  *
  */
 public class VersionTable extends JTable implements Observer{
