@@ -129,6 +129,19 @@ Build-Date: ${build.tstamp}
         <mkdir dir="build"/>
         <mkdir dir="dist"/>
     </target>
+    <target name="javadoc">
+        <javadoc destdir="javadoc" 
+                sourcepath="src"
+                packagenames="org.openstreetmap.josm.*,org.openstreetmap.gui.jmapviewer.*"
+                windowtitle="JOSM"
+                use="true"
+                linksource="true"
+                author="false">
+            <link href="http://docs.oracle.com/javase/6/docs/api"/>
+            <doctitle><![CDATA[<h2>JOSM - Javadoc</h2>]]></doctitle>
+            <bottom><![CDATA[<a href="http://josm.openstreetmap.de/">JOSM</a>]]></bottom>
+        </javadoc>
+    </target>
     <target name="clean">
         <delete dir="build"/>
         <delete dir="dist"/>
