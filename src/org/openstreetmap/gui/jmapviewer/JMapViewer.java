@@ -382,7 +382,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      *
      * @param mapPointX
      * @param mapPointY
-     * @return
+     * @return latitude / longitude
      */
     public Coordinate getPosition(int mapPointX, int mapPointY) {
         int x = center.x + mapPointX - getWidth() / 2;

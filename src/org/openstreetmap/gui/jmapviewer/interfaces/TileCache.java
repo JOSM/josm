@@ -18,6 +18,7 @@ public interface TileCache {
      * will be returned.
      *
      * @param source
+     *            the tile source
      * @param x
      *            tile number on the x axis of the tile to be retrieved
      * @param y
@@ -31,10 +32,10 @@ public interface TileCache {
 
     /**
      * Adds a tile to the cache. How long after adding a tile can be retrieved
-     * via {@link #getTile(int, int, int)} is unspecified and depends on the
+     * via {@link #getTile(TileSource, int, int, int)} is unspecified and depends on the
      * implementation.
      *
-     * @param tile
+     * @param tile the tile to be added
      */
     public void addTile(Tile tile);
 
