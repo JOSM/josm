@@ -184,7 +184,7 @@ abstract public class Main {
     public static PlatformHook platform;
 
     /**
-     * Wheather or not the java vm is openjdk
+     * Whether or not the java vm is openjdk
      * We use this to work around openjdk bugs
      */
     public static boolean isOpenjdk;
@@ -358,7 +358,7 @@ abstract public class Main {
     /**
      * Add a new layer to the map. If no map exists, create one.
      */
-    public final void addLayer(final Layer layer) {
+    public final synchronized void addLayer(final Layer layer) {
         if (map == null) {
             final MapFrame mapFrame = new MapFrame(contentPanePrivate);
             setMapFrame(mapFrame);
