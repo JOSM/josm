@@ -908,11 +908,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
 
         Collection<Node> nodesToMerge = new LinkedList<Node>(selNodes);
         nodesToMerge.add(target);
-        Command cmd = MergeNodesAction.mergeNodes(Main.main.getEditLayer(), nodesToMerge, target);
-        if (cmd != null) {
-            Main.main.undoRedo.add(cmd);
-            getCurrentDataSet().setSelected(target);
-        }
+        MergeNodesAction.doMergeNodes(Main.main.getEditLayer(), nodesToMerge, target);
     }
 
     /** tries to find a node to merge to when in move-merge mode for the current mouse

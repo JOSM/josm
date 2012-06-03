@@ -239,13 +239,28 @@ public class MergeNodesAction extends JosmAction {
         return cmds;
     }
 
-    public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode) {
+    public static void doMergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetLocationNode) {
+        if (nodes == null) {
+            return;
+        }
+        Set<Node> allNodes = new HashSet<Node>(nodes);
+        allNodes.add(targetLocationNode);
+        Node target = selectTargetNode(allNodes);
+
+        Command cmd = mergeNodes(layer, nodes, target, targetLocationNode);
+        if (cmd != null) {
+            Main.main.undoRedo.add(cmd);
+            getCurrentDataSet().setSelected(target);
+        }
+    }
+
+    public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetLocationNode) {
         if (nodes == null) {
             return null;
         }
         Set<Node> allNodes = new HashSet<Node>(nodes);
-        allNodes.add(targetNode);
-        return mergeNodes(layer, nodes, selectTargetNode(allNodes), targetNode);
+        allNodes.add(targetLocationNode);
+        return mergeNodes(layer, nodes, selectTargetNode(allNodes), targetLocationNode);
     }
 
     /**
