@@ -92,7 +92,7 @@ public class ExtensionFileFilter extends FileFilter {
     }
 
     /**
-     * Updates the {@see AllFormatsImporter} that is contained in the importers list. If
+     * Updates the {@link AllFormatsImporter} that is contained in the importers list. If
      * you do not use the importers variable directly, you don’t need to call this.
      * 
      *  Updating the AllFormatsImporter is required when plugins add new importers that
@@ -108,11 +108,11 @@ public class ExtensionFileFilter extends FileFilter {
     }
 
     /**
-     * Replies an ordered list of {@see ExtensionFileFilter}s for importing.
-     * The list is ordered according to their description, an {@see AllFormatsImporter}
+     * Replies an ordered list of {@link ExtensionFileFilter}s for importing.
+     * The list is ordered according to their description, an {@link AllFormatsImporter}
      * is append at the end.
      *
-     * @return an ordered list of {@see ExtensionFileFilter}s for importing.
+     * @return an ordered list of {@link ExtensionFileFilter}s for importing.
      */
     public static List<ExtensionFileFilter> getImportExtensionFileFilters() {
         updateAllFormatsImporter();
@@ -125,11 +125,11 @@ public class ExtensionFileFilter extends FileFilter {
     }
 
     /**
-     * Replies an ordered list of {@see ExtensionFileFilter}s for exporting.
-     * The list is ordered according to their description, an {@see AllFormatsImporter}
+     * Replies an ordered list of {@link ExtensionFileFilter}s for exporting.
+     * The list is ordered according to their description, an {@link AllFormatsImporter}
      * is append at the end.
      *
-     * @return an ordered list of {@see ExtensionFileFilter}s for exporting.
+     * @return an ordered list of {@link ExtensionFileFilter}s for exporting.
      */
     public static List<ExtensionFileFilter> getExportExtensionFileFilters() {
         LinkedList<ExtensionFileFilter> filters = new LinkedList<ExtensionFileFilter>();
@@ -144,10 +144,10 @@ public class ExtensionFileFilter extends FileFilter {
     }
 
     /**
-     * Replies the default {@see ExtensionFileFilter} for a given extension
+     * Replies the default {@link ExtensionFileFilter} for a given extension
      *
      * @param extension the extension
-     * @return the default {@see ExtensionFileFilter} for a given extension
+     * @return the default {@link ExtensionFileFilter} for a given extension
      */
     public static ExtensionFileFilter getDefaultImportExtensionFileFilter(String extension) {
         if (extension == null) return new AllFormatsImporter().filter;
@@ -159,10 +159,10 @@ public class ExtensionFileFilter extends FileFilter {
     }
 
     /**
-     * Replies the default {@see ExtensionFileFilter} for a given extension
+     * Replies the default {@link ExtensionFileFilter} for a given extension
      *
      * @param extension the extension
-     * @return the default {@see ExtensionFileFilter} for a given extension
+     * @return the default {@link ExtensionFileFilter} for a given extension
      */
     public static ExtensionFileFilter getDefaultExportExtensionFileFilter(String extension) {
         if (extension == null) return new AllFormatsImporter().filter;
@@ -174,7 +174,7 @@ public class ExtensionFileFilter extends FileFilter {
     }
 
     /**
-     * Applies the choosable {@see FileFilter} to a {@see JFileChooser} before using the
+     * Applies the choosable {@link FileFilter} to a {@link JFileChooser} before using the
      * file chooser for selecting a file for reading.
      *
      * @param fileChooser the file chooser
@@ -188,7 +188,7 @@ public class ExtensionFileFilter extends FileFilter {
     }
 
     /**
-     * Applies the choosable {@see FileFilter} to a {@see JFileChooser} before using the
+     * Applies the choosable {@link FileFilter} to a {@link JFileChooser} before using the
      * file chooser for selecting a file for writing.
      *
      * @param fileChooser the file chooser

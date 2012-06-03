@@ -16,16 +16,16 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 
 /**
- * This is the {@see TableModel} used in the tables of the {@see TagMerger}.
+ * This is the {@link TableModel} used in the tables of the {@link TagMerger}.
  *
- * The model can {@see #populate(OsmPrimitive, OsmPrimitive)} itself from the conflicts
- * in the tag sets of two {@see OsmPrimitive}s. Internally, it keeps a list of {@see TagMergeItem}s.
+ * The model can {@link #populate(OsmPrimitive, OsmPrimitive)} itself from the conflicts
+ * in the tag sets of two {@link OsmPrimitive}s. Internally, it keeps a list of {@link TagMergeItem}s.
  *
- *  {@see #decide(int, MergeDecisionType)} and {@see #decide(int[], MergeDecisionType)} can be used
+ *  {@link #decide(int, MergeDecisionType)} and {@link #decide(int[], MergeDecisionType)} can be used
  *  to remember a merge decision for a specific row in the model.
  *
- *  The model notifies {@see PropertyChangeListener}s about updates of the number of
- *  undecided tags (see {@see #PROP_NUM_UNDECIDED_TAGS}).
+ *  The model notifies {@link PropertyChangeListener}s about updates of the number of
+ *  undecided tags (see {@link #PROP_NUM_UNDECIDED_TAGS}).
  *
  */
 public class TagMergeModel extends DefaultTableModel {
@@ -61,7 +61,7 @@ public class TagMergeModel extends DefaultTableModel {
     }
 
     /**
-     * notifies {@see PropertyChangeListener}s about an update of {@see TagMergeModel#PROP_NUM_UNDECIDED_TAGS}
+     * notifies {@link PropertyChangeListener}s about an update of {@link TagMergeModel#PROP_NUM_UNDECIDED_TAGS}
 
      * @param oldValue the old value
      * @param newValue the new value
@@ -77,7 +77,7 @@ public class TagMergeModel extends DefaultTableModel {
 
     /**
      * refreshes the number of undecided tag conflicts after an update in the list of
-     * {@see TagMergeItem}s. Notifies {@see PropertyChangeListener} if necessary.
+     * {@link TagMergeItem}s. Notifies {@link PropertyChangeListener} if necessary.
      *
      */
     protected void refreshNumUndecidedTags() {
@@ -95,7 +95,7 @@ public class TagMergeModel extends DefaultTableModel {
 
     /**
      * Populate the model with conflicts between the tag sets of the two
-     * {@see OsmPrimitive} <code>my</code> and <code>their</code>.
+     * {@link OsmPrimitive} <code>my</code> and <code>their</code>.
      *
      * @param my  my primitive (i.e. the primitive from the local dataset)
      * @param their their primitive (i.e. the primitive from the server dataset)
@@ -120,7 +120,7 @@ public class TagMergeModel extends DefaultTableModel {
     }
 
     /**
-     * add a {@see TagMergeItem} to the model
+     * add a {@link TagMergeItem} to the model
      *
      * @param item the item
      */
@@ -138,7 +138,7 @@ public class TagMergeModel extends DefaultTableModel {
     }
 
     /**
-     * set the merge decision of the {@see TagMergeItem} in row <code>row</code>
+     * set the merge decision of the {@link TagMergeItem} in row <code>row</code>
      * to <code>decision</code>.
      *
      * @param row  the row
@@ -151,7 +151,7 @@ public class TagMergeModel extends DefaultTableModel {
     }
 
     /**
-     * set the merge decision of all {@see TagMergeItem} given by indices in <code>rows</code>
+     * set the merge decision of all {@link TagMergeItem} given by indices in <code>rows</code>
      * to <code>decision</code>.
      *
      * @param row  the array of row indices

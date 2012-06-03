@@ -28,7 +28,7 @@ import org.openstreetmap.josm.Main;
  *       shortcut objects from, manages shortcuts and shortcut collisions, and
  *       finally manages loading and saving shortcuts to/from the preferences.
  *
- * Action authors: You only need the {@see #registerShortcut} factory. Ignore everything
+ * Action authors: You only need the {@link #registerShortcut} factory. Ignore everything
  *                 else.
  *
  * All: Use only public methods that are also marked to be used. The others are

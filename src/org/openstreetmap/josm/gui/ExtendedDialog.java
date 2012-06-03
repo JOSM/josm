@@ -96,7 +96,7 @@ public class ExtendedDialog extends JDialog {
 
     /**
      * set to true if the content of the extended dialog should
-     * be placed in a {@see JScrollPane}
+     * be placed in a {@link JScrollPane}
      */
     private boolean placeContentInScrollPane;
 

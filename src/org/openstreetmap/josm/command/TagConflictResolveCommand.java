@@ -17,14 +17,14 @@ import org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeItem;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Represents a the resolution of a tag conflict in an {@see OsmPrimitive}
+ * Represents a the resolution of a tag conflict in an {@link OsmPrimitive}
  *
  */
 public class TagConflictResolveCommand extends ConflictResolveCommand {
     /** the conflict to resolve */
     private Conflict<? extends OsmPrimitive> conflict;
 
-    /** the list of merge decisions, represented as {@see TagMergeItem}s */
+    /** the list of merge decisions, represented as {@link TagMergeItem}s */
     private final List<TagMergeItem> mergeItems;
 
     /**
@@ -47,7 +47,7 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
      *
      * @param my  my primitive
      * @param their  their primitive
-     * @param mergeItems the list of merge decisions, represented as {@see TagMergeItem}s
+     * @param mergeItems the list of merge decisions, represented as {@link TagMergeItem}s
      */
     public TagConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict, List<TagMergeItem> mergeItems) {
         this.conflict = conflict;

@@ -21,7 +21,7 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
     private DataSet myDataset;
 
     /**
-     * Populates the model with the nodes in the two {@see Way}s <code>my</code> and
+     * Populates the model with the nodes in the two {@link Way}s <code>my</code> and
      * <code>their</code>.
      *
      * @param my  my way (i.e. the way in the local dataset)

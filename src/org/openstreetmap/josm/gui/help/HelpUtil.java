@@ -120,7 +120,7 @@ public class HelpUtil {
      *   <li>/De:Help if the  locale is a locale with language "de"</li>
      * </ul>
      *
-     * @param locale the locale. {@see Locale#ENGLISH} assumed, if null.
+     * @param locale the locale. {@link Locale#ENGLISH} assumed, if null.
      * @return the help topic prefix
      * @see #getHelpTopicPrefix(Locale)
      */
@@ -141,7 +141,7 @@ public class HelpUtil {
      * replies "/De:Help/Dialog/RelationEditor"
      *
      * @param topic the relative help topic. Home help topic assumed, if null.
-     * @param locale the locale. {@see Locale#ENGLISH} assumed, if null.
+     * @param locale the locale. {@link Locale#ENGLISH} assumed, if null.
      * @return the absolute, localized help topic
      */
     static public String buildAbsoluteHelpTopic(String topic, Locale locale) {
@@ -206,7 +206,7 @@ public class HelpUtil {
 
     /**
      * Replies the global help action, if available. Otherwise, creates an instance
-     * of {@see HelpAction}.
+     * of {@link HelpAction}.
      *
      * @return
      */

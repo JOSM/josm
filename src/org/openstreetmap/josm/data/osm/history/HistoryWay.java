@@ -65,7 +65,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
     }
 
     /**
-     * replies the ways type, i.e. {@see OsmPrimitiveType#WAY}
+     * replies the ways type, i.e. {@link OsmPrimitiveType#WAY}
      *
      * @return the ways type
      */

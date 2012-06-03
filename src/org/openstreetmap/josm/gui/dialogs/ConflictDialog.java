@@ -49,7 +49,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * This dialog displays the {@see ConflictCollection} of the active {@see OsmDataLayer} in a toggle
+ * This dialog displays the {@link ConflictCollection} of the active {@link OsmDataLayer} in a toggle
  * dialog on the right of the main frame.
  *
  */
@@ -272,7 +272,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     }
 
     /**
-     * The {@see ListModel} for conflicts
+     * The {@link ListModel} for conflicts
      *
      */
     class ConflictListModel implements ListModel {

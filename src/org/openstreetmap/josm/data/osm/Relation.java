@@ -377,10 +377,10 @@ public final class Relation extends OsmPrimitive implements IRelation {
     }
 
     /**
-     * Replies the set of  {@see OsmPrimitive}s referred to by at least one
+     * Replies the set of  {@link OsmPrimitive}s referred to by at least one
      * member of this relation
      *
-     * @return the set of  {@see OsmPrimitive}s referred to by at least one
+     * @return the set of  {@link OsmPrimitive}s referred to by at least one
      * member of this relation
      */
     public Set<OsmPrimitive> getMemberPrimitives() {

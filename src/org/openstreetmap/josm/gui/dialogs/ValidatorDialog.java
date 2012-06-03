@@ -534,7 +534,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     }
 
     /**
-     * Task for fixing a collection of {@see TestError}s. Can be run asynchronously.
+     * Task for fixing a collection of {@link TestError}s. Can be run asynchronously.
      *
      *
      */

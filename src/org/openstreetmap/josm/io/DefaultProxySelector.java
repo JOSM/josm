@@ -23,7 +23,7 @@ import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel.Proxy
  */
 public class DefaultProxySelector extends ProxySelector {
     /**
-     * The {@see ProxySelector} provided by the JDK will retrieve proxy information
+     * The {@link ProxySelector} provided by the JDK will retrieve proxy information
      * from the system settings, if the system property <tt>java.net.useSystemProxies</tt>
      * is defined <strong>at startup</strong>. It has no effect if the property is set
      * later by the application.
@@ -39,7 +39,7 @@ public class DefaultProxySelector extends ProxySelector {
     }
 
     /**
-     * The {@see ProxySelector} provided by the JDK will retrieve proxy information
+     * The {@link ProxySelector} provided by the JDK will retrieve proxy information
      * from the system settings, if the system property <tt>java.net.useSystemProxies</tt>
      * is defined <strong>at startup</strong>. If the property is set later by the application,
      * this has no effect.

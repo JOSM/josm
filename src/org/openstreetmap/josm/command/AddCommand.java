@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * A command that adds an osm primitive to a dataset. Keys cannot be added this
  * way.
  *
- * See {@see ChangeCommand} for comments on relation back references.
+ * See {@link ChangeCommand} for comments on relation back references.
  *
  * @author imi
  */

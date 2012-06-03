@@ -19,7 +19,7 @@ import org.openstreetmap.josm.Main;
 
 /**
  * This is a UI widget for resolving tag conflicts, i.e. differences of the tag values
- * of multiple {@see OsmPrimitive}s.
+ * of multiple {@link OsmPrimitive}s.
  *
  *
  */

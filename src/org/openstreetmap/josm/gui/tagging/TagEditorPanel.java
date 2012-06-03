@@ -22,7 +22,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * TagEditorPanel is a {@see JPanel} which can be embedded as UI component in
+ * TagEditorPanel is a {@link JPanel} which can be embedded as UI component in
  * UIs. It provides a spreadsheet like tabular control for editing tag names
  * and tag values. Two action buttons are placed on the left, one for adding
  * a new tag and one for deleting the currently selected tags.
@@ -119,7 +119,7 @@ public class TagEditorPanel extends JPanel {
 
     /**
      * Creates a new tag editor panel. The editor model is created
-     * internally and can be retrieved with {@see #getModel()}.
+     * internally and can be retrieved with {@link #getModel()}.
      */
     public TagEditorPanel(PresetHandler presetHandler) {
         this(null, presetHandler);

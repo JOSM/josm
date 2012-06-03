@@ -131,7 +131,7 @@ public class I18n {
      * <br/>
      * For example, {@code tr("JOSM''s default value is ''{0}''.", val)}.
      * <br/>
-     * Use {@see #trn} for distinguishing singular from plural text, i.e.,
+     * Use {@link #trn} for distinguishing singular from plural text, i.e.,
      * do not use {@code tr(size == 1 ? "singular" : "plural")} nor
      * {@code size == 1 ? tr("singular") : tr("plural")}
      *
@@ -633,7 +633,7 @@ public class I18n {
     }
 
     /**
-     * Sets the default locale (see {@see Locale#setDefault(Locale)} to the local
+     * Sets the default locale (see {@link Locale#setDefault(Locale)} to the local
      * given by <code>localName</code>.
      *
      * Ignored if localeName is null. If the locale with name <code>localName</code>

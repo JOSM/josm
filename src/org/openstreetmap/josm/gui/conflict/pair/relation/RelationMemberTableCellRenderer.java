@@ -21,7 +21,7 @@ import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * This is the {@see TableCellRenderer} used in the tables of {@see RelationMemberMerger}.
+ * This is the {@link TableCellRenderer} used in the tables of {@link RelationMemberMerger}.
  *
  */
 public  class RelationMemberTableCellRenderer extends JLabel implements TableCellRenderer {

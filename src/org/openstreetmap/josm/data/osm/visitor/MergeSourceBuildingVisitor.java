@@ -19,13 +19,13 @@ import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * MergeSourceBuildingVisitor helps to build the "hull" of a collection of {@see OsmPrimitive}s
+ * MergeSourceBuildingVisitor helps to build the "hull" of a collection of {@link OsmPrimitive}s
  * which shall be merged into another layer. The "hull" is slightly bigger than the original
  * collection. It includes, for instance the nodes of a way in the original collection even though
  * these nodes might not be present explicitly in the original collection. The "hull" also includes
- * incomplete {@see OsmPrimitive}s which are referred to by relations in the original collection. And
- * it turns {@see OsmPrimitive} referred to by {@see Relation}s in the original collection into
- * incomplete {@see OsmPrimitive}s in the "hull", if they are not themselves present in the
+ * incomplete {@link OsmPrimitive}s which are referred to by relations in the original collection. And
+ * it turns {@link OsmPrimitive} referred to by {@link Relation}s in the original collection into
+ * incomplete {@link OsmPrimitive}s in the "hull", if they are not themselves present in the
  * original collection.
  *
  */
@@ -37,7 +37,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
     /**
      * Creates the visitor. The visitor starts to build the "hull" from
      * the currently selected primitives in the dataset <code>selectionBase</code>,
-     * i.e. from {@see DataSet#getSelected()}.
+     * i.e. from {@link DataSet#getSelected()}.
      *
      * @param selectionBase the dataset. Must not be null.
      * @exception IllegalArgumentException thrown if selectionBase is null

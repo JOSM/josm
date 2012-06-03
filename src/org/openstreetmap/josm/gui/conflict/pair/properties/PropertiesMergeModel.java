@@ -22,14 +22,14 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * This is the model for resolving conflicts in the properties of the
- * {@see OsmPrimitive}s. In particular, it represents conflicts in the coordinates of {@see Node}s and
- * the deleted or visible state of {@see OsmPrimitive}s.
+ * {@link OsmPrimitive}s. In particular, it represents conflicts in the coordinates of {@link Node}s and
+ * the deleted or visible state of {@link OsmPrimitive}s.
  *
- * This model is an {@see Observable}. It notifies registered {@see Observer}s whenever the
+ * This model is an {@link Observable}. It notifies registered {@link Observer}s whenever the
  * internal state changes.
  *
- * This model also emits property changes for {@see #RESOLVED_COMPLETELY_PROP}. Property change
- * listeners may register themselves using {@see #addPropertyChangeListener(PropertyChangeListener)}.
+ * This model also emits property changes for {@link #RESOLVED_COMPLETELY_PROP}. Property change
+ * listeners may register themselves using {@link #addPropertyChangeListener(PropertyChangeListener)}.
  *
  * @see Node#getCoor()
  * @see OsmPrimitive#deleted
@@ -149,33 +149,33 @@ public class PropertiesMergeModel extends Observable {
     }
 
     /**
-     * replies the coordinates of my {@see OsmPrimitive}. null, if my primitive hasn't
-     * coordinates (i.e. because it is a {@see Way}).
+     * replies the coordinates of my {@link OsmPrimitive}. null, if my primitive hasn't
+     * coordinates (i.e. because it is a {@link Way}).
      *
-     * @return the coordinates of my {@see OsmPrimitive}. null, if my primitive hasn't
-     *  coordinates (i.e. because it is a {@see Way}).
+     * @return the coordinates of my {@link OsmPrimitive}. null, if my primitive hasn't
+     *  coordinates (i.e. because it is a {@link Way}).
      */
     public LatLon getMyCoords() {
         return myCoords;
     }
 
     /**
-     * replies the coordinates of their {@see OsmPrimitive}. null, if their primitive hasn't
-     * coordinates (i.e. because it is a {@see Way}).
+     * replies the coordinates of their {@link OsmPrimitive}. null, if their primitive hasn't
+     * coordinates (i.e. because it is a {@link Way}).
      *
-     * @return the coordinates of my {@see OsmPrimitive}. null, if my primitive hasn't
-     * coordinates (i.e. because it is a {@see Way}).
+     * @return the coordinates of my {@link OsmPrimitive}. null, if my primitive hasn't
+     * coordinates (i.e. because it is a {@link Way}).
      */
     public LatLon getTheirCoords() {
         return theirCoords;
     }
 
     /**
-     * replies the coordinates of the merged {@see OsmPrimitive}. null, if the current primitives
-     * have no coordinates or if the conflict is yet {@see MergeDecisionType#UNDECIDED}
+     * replies the coordinates of the merged {@link OsmPrimitive}. null, if the current primitives
+     * have no coordinates or if the conflict is yet {@link MergeDecisionType#UNDECIDED}
      *
-     * @return the coordinates of the merged {@see OsmPrimitive}. null, if the current primitives
-     * have no coordinates or if the conflict is yet {@see MergeDecisionType#UNDECIDED}
+     * @return the coordinates of the merged {@link OsmPrimitive}. null, if the current primitives
+     * have no coordinates or if the conflict is yet {@link MergeDecisionType#UNDECIDED}
      */
     public LatLon getMergedCoords() {
         switch(coordMergeDecision) {

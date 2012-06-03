@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * The {@see TableCellRenderer} for a list of relation members in {@see HistoryBrower}
+ * The {@link TableCellRenderer} for a list of relation members in {@link HistoryBrower}
  *
  *
  */

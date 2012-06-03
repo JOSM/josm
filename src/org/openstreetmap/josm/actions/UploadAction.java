@@ -135,7 +135,7 @@ public class UploadAction extends JosmAction{
     /**
      * Check whether the preconditions are met to upload data in <code>apiData</code>.
      * Makes sure upload is allowed, primitives in <code>apiData</code> don't participate in conflicts and
-     * runs the installed {@see UploadHook}s.
+     * runs the installed {@link UploadHook}s.
      *
      * @param layer the source layer of the data to be uploaded
      * @param apiData the data to be uploaded

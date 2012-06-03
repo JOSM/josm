@@ -60,12 +60,12 @@ public class GpxExportAction extends DiskAccessAction {
      * Exports a layer to a file. Launches a file chooser to request the user to enter a file name.
      *
      * <code>layer</code> must not be null. <code>layer</code> must be an instance of
-     * {@see OsmDataLayer} or {@see GpxLayer}.
+     * {@link OsmDataLayer} or {@link GpxLayer}.
      *
      * @param layer the layer
      * @exception IllegalArgumentException thrown if layer is null
-     * @exception IllegalArgumentException thrown if layer is neither an instance of {@see OsmDataLayer}
-     *  nor of {@see GpxLayer}
+     * @exception IllegalArgumentException thrown if layer is neither an instance of {@link OsmDataLayer}
+     *  nor of {@link GpxLayer}
      */
     public void export(Layer layer) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");

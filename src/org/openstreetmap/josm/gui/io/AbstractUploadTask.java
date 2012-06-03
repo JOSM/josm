@@ -50,7 +50,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
     }
 
     /**
-     * Synchronizes the local state of an {@see OsmPrimitive} with its state on the
+     * Synchronizes the local state of an {@link OsmPrimitive} with its state on the
      * server. The method uses an individual GET for the primitive.
      *
      * @param id the primitive ID
@@ -70,7 +70,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
     /**
      * Synchronizes the local state of the dataset with the state on the server.
      *
-     * Reuses the functionality of {@see UpdateDataAction}.
+     * Reuses the functionality of {@link UpdateDataAction}.
      *
      * @see UpdateDataAction#actionPerformed(ActionEvent)
      */
@@ -80,7 +80,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
     }
 
     /**
-     * Handles the case that a conflict in a specific {@see OsmPrimitive} was detected while
+     * Handles the case that a conflict in a specific {@link OsmPrimitive} was detected while
      * uploading
      *
      * @param primitiveType  the type of the primitive, either <code>node</code>, <code>way</code> or
@@ -146,7 +146,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
 
     /**
      * Handles the case that a conflict was detected while uploading where we don't
-     * know what {@see OsmPrimitive} actually caused the conflict (for whatever reason)
+     * know what {@link OsmPrimitive} actually caused the conflict (for whatever reason)
      *
      */
     protected void handleUploadConflictForUnknownConflict() {
@@ -188,7 +188,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
 
     /**
      * Handles the case that a conflict was detected while uploading where we don't
-     * know what {@see OsmPrimitive} actually caused the conflict (for whatever reason)
+     * know what {@link OsmPrimitive} actually caused the conflict (for whatever reason)
      *
      */
     protected void handleUploadConflictForClosedChangeset(long changesetId, Date d) {
@@ -285,7 +285,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
 
     /**
      * Handles an error which is caused by a delete request for an already deleted
-     * {@see OsmPrimitive} on the server, i.e. a HTTP response code of 410.
+     * {@link OsmPrimitive} on the server, i.e. a HTTP response code of 410.
      * Note that an <strong>update</strong> on an already deleted object results
      * in a 409, not a 410.
      *

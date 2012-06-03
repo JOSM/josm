@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
- * This is an extended dialog for resolving conflict between {@see OsmPrimitive}s.
+ * This is an extended dialog for resolving conflict between {@link OsmPrimitive}s.
  *
  */
 public class ConflictResolutionDialog extends JDialog implements PropertyChangeListener {

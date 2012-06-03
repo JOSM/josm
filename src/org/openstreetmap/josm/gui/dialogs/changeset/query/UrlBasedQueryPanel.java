@@ -139,7 +139,7 @@ public class UrlBasedQueryPanel extends JPanel {
     }
 
     /**
-     * Replies the {@see ChangesetQuery} specified in this panel. null, if no valid changeset query
+     * Replies the {@link ChangesetQuery} specified in this panel. null, if no valid changeset query
      * is specified.
      *
      * @return the changeset query

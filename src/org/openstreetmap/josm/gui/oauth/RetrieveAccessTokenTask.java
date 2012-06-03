@@ -34,7 +34,7 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
     /**
      * Creates the task
      *
-     * @param parent the parent component relative to which the {@see PleaseWaitRunnable}-Dialog
+     * @param parent the parent component relative to which the {@link PleaseWaitRunnable}-Dialog
      * is displayed
      * @param parameters the OAuth parameters. Must not be null.
      * @param requestToken the request token for which an Access Token is retrieved. Must not be null.

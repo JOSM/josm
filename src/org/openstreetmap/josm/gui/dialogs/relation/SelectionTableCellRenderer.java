@@ -14,7 +14,7 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * This is the {@see TableCellRenderer} used in {@see SelectionTable}.
+ * This is the {@link TableCellRenderer} used in {@link SelectionTable}.
  *
  */
 public  class SelectionTableCellRenderer extends JLabel implements TableCellRenderer {

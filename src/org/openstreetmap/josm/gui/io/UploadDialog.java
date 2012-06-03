@@ -307,9 +307,9 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
     }
 
     /**
-     * Replies the {@see UploadStrategySpecification} the user entered in the dialog.
+     * Replies the {@link UploadStrategySpecification} the user entered in the dialog.
      *
-     * @return the {@see UploadStrategySpecification} the user entered in the dialog.
+     * @return the {@link UploadStrategySpecification} the user entered in the dialog.
      */
     public UploadStrategySpecification getUploadStrategySpecification() {
         UploadStrategySpecification spec = pnlUploadStrategySelectionPanel.getUploadStrategySpecification();

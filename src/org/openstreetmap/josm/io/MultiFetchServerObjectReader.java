@@ -28,7 +28,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * Retrieves a set of {@see OsmPrimitive}s from an OSM server using the so called
+ * Retrieves a set of {@link OsmPrimitive}s from an OSM server using the so called
  * Multi Fetch API.
  *
  * Usage:
@@ -76,7 +76,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * Remembers an {@see OsmPrimitive}'s id. The id will
+     * Remembers an {@link OsmPrimitive}'s id. The id will
      * later be fetched as part of a Multi Get request.
      *
      * Ignore the id if it represents a new primitives.
@@ -93,8 +93,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * remembers an {@see OsmPrimitive}'s id. <code>ds</code> must include
-     * an {@see OsmPrimitive} with id=<code>id</code>. The id will
+     * remembers an {@link OsmPrimitive}'s id. <code>ds</code> must include
+     * an {@link OsmPrimitive} with id=<code>id</code>. The id will
      * later we fetched as part of a Multi Get request.
      *
      * Ignore the id if it id <= 0.
@@ -102,7 +102,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * @param ds  the dataset (must not be null)
      * @param id  the id
      * @exception IllegalArgumentException thrown, if ds is null
-     * @exception NoSuchElementException thrown, if ds doesn't include an {@see OsmPrimitive} with
+     * @exception NoSuchElementException thrown, if ds doesn't include an {@link OsmPrimitive} with
      *   id=<code>id</code>
      */
     protected void remember(DataSet ds, long id, OsmPrimitiveType type) throws IllegalArgumentException, NoSuchElementException{
@@ -134,7 +134,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * appends a {@see Node}s id to the list of ids which will be fetched from the server.
+     * appends a {@link Node}s id to the list of ids which will be fetched from the server.
      *
      * @param node  the node (ignored, if null)
      * @return this
@@ -147,7 +147,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * appends a {@see Way}s id and the list of ids of nodes the way refers to the list of ids which will be fetched from the server.
+     * appends a {@link Way}s id and the list of ids of nodes the way refers to the list of ids which will be fetched from the server.
      *
      * @param way the way (ignored, if null)
      * @return this
@@ -166,7 +166,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * appends a {@see Relation}s id to the list of ids which will be fetched from the server.
+     * appends a {@link Relation}s id to the list of ids which will be fetched from the server.
      *
      * @param relation  the relation (ignored, if null)
      * @return this
@@ -203,7 +203,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * appends a list of {@see OsmPrimitive} to the list of ids which will be fetched from the server.
+     * appends a list of {@link OsmPrimitive} to the list of ids which will be fetched from the server.
      *
      * @param primitives  the list of primitives (ignored, if null)
      * @return this
@@ -222,7 +222,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * extracts a subset of max {@see #MAX_IDS_PER_REQUEST} ids from <code>ids</code> and
+     * extracts a subset of max {@link #MAX_IDS_PER_REQUEST} ids from <code>ids</code> and
      * replies the subset. The extracted subset is removed from <code>ids</code>.
      *
      * @param ids a set of ids
@@ -247,7 +247,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
 
     /**
      * builds the Multi Get request string for a set of ids and a given
-     * {@see OsmPrimitiveType}.
+     * {@link OsmPrimitiveType}.
      *
      * @param type the type
      * @param idPackage  the package of ids
@@ -270,7 +270,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
 
     /**
      * builds the Multi Get request string for a single id and a given
-     * {@see OsmPrimitiveType}.
+     * {@link OsmPrimitiveType}.
      *
      * @param type the type
      * @param id the id
@@ -285,8 +285,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * invokes a Multi Get for a set of ids and a given {@see OsmPrimitiveType}.
-     * The retrieved primitives are merged to {@see #outputDataSet}.
+     * invokes a Multi Get for a set of ids and a given {@link OsmPrimitiveType}.
+     * The retrieved primitives are merged to {@link #outputDataSet}.
      *
      * @param type the type
      * @param pkg the package of ids
@@ -308,8 +308,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * invokes a Multi Get for a single id and a given {@see OsmPrimitiveType}.
-     * The retrieved primitive is merged to {@see #outputDataSet}.
+     * invokes a Multi Get for a single id and a given {@link OsmPrimitiveType}.
+     * The retrieved primitive is merged to {@link #outputDataSet}.
      *
      * @param type the type
      * @param id the id
@@ -332,8 +332,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * invokes a sequence of Multi Gets for individual ids in a set of ids and a given {@see OsmPrimitiveType}.
-     * The retrieved primitives are merged to {@see #outputDataSet}.
+     * invokes a sequence of Multi Gets for individual ids in a set of ids and a given {@link OsmPrimitiveType}.
+     * The retrieved primitives are merged to {@link #outputDataSet}.
      *
      * This method is used if one of the ids in pkg doesn't exist (the server replies with return code 404).
      * If the set is fetched with this method it is possible to find out which of the ids doesn't exist.
@@ -379,7 +379,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * merges the dataset <code>from</code> to {@see #outputDataSet}.
+     * merges the dataset <code>from</code> to {@link #outputDataSet}.
      *
      * @param from the other dataset
      *
@@ -390,7 +390,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * fetches a set of ids of a given {@see OsmPrimitiveType} from the server
+     * fetches a set of ids of a given {@link OsmPrimitiveType} from the server
      *
      * @param ids the set of ids
      * @param type the  type
@@ -422,13 +422,13 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * invokes one or more Multi Gets to fetch the {@see OsmPrimitive}s and replies
+     * invokes one or more Multi Gets to fetch the {@link OsmPrimitive}s and replies
      * the dataset of retrieved primitives. Note that the dataset includes non visible primitives too!
      * In contrast to a simple Get for a node, a way, or a relation, a Multi Get always replies
      * the latest version of the primitive (if any), even if the primitive is not visible (i.e. if
      * visible==false).
      *
-     * Invoke {@see #getMissingPrimitives()} to get a list of primitives which have not been
+     * Invoke {@link #getMissingPrimitives()} to get a list of primitives which have not been
      * found on  the server (the server response code was 404)
      *
      * @return the parsed data

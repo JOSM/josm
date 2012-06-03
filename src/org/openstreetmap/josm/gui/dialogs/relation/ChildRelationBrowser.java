@@ -63,7 +63,7 @@ public class ChildRelationBrowser extends JPanel {
     private OsmDataLayer layer;
 
     /**
-     * Replies the {@see OsmDataLayer} this editor is related to
+     * Replies the {@link OsmDataLayer} this editor is related to
      *
      * @return the osm data layer
      */
@@ -112,7 +112,7 @@ public class ChildRelationBrowser extends JPanel {
     /**
      * constructor
      *
-     * @param layer the {@see OsmDataLayer} this browser is related to. Must not be null.
+     * @param layer the {@link OsmDataLayer} this browser is related to. Must not be null.
      * @exception IllegalArgumentException thrown, if layer is null
      */
     public ChildRelationBrowser(OsmDataLayer layer) throws IllegalArgumentException {
@@ -125,7 +125,7 @@ public class ChildRelationBrowser extends JPanel {
     /**
      * constructor
      *
-     * @param layer the {@see OsmDataLayer} this browser is related to. Must not be null.
+     * @param layer the {@link OsmDataLayer} this browser is related to. Must not be null.
      * @param root the root relation
      * @exception IllegalArgumentException thrown, if layer is null
      */
@@ -156,7 +156,7 @@ public class ChildRelationBrowser extends JPanel {
     /**
      * replies the parent dialog this browser is embedded in
      *
-     * @return the parent dialog; null, if there is no {@see Dialog} as parent dialog
+     * @return the parent dialog; null, if there is no {@link Dialog} as parent dialog
      */
     protected Dialog getParentDialog() {
         Component c  = this;

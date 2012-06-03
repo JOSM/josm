@@ -54,9 +54,9 @@ public class LanguageInfo {
     /**
      * Replies the locale code used by JOSM for a given locale.
      *
-     * In most cases JOSM uses the 2-character ISO 639 language code ({@see Locale#getLanguage()}
+     * In most cases JOSM uses the 2-character ISO 639 language code ({@link Locale#getLanguage()}
      * to identify the locale of a localized resource, but in some cases it may use the
-     * programmatic name for locales, as replied by {@see Locale#toString()}.
+     * programmatic name for locales, as replied by {@link Locale#toString()}.
      *
      * @param locale the locale. Replies "en" if null.
      * @return the JOSM code for the given locale

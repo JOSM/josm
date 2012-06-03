@@ -147,7 +147,7 @@ public class HistoryDataSet implements LayerChangeListener{
     }
 
     /**
-     * merges the histories from the {@see HistoryDataSet} other in this history data set
+     * merges the histories from the {@link HistoryDataSet} other in this history data set
      *
      * @param other the other history data set. Ignored if null.
      */

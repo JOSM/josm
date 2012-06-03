@@ -81,7 +81,7 @@ public class HelpContentReader {
      * Reads help content from the input stream and prepares it to be rendered later
      * in the internal help browser.
      *
-     * Throws a {@see MissingHelpContentException} if the content read from the stream
+     * Throws a {@link MissingHelpContentException} if the content read from the stream
      * most likely represents a stub help page.
      *
      * @param in the input stream

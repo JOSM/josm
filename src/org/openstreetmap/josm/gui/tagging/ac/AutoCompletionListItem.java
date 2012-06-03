@@ -9,7 +9,7 @@ package org.openstreetmap.josm.gui.tagging.ac;
  *  The priority helps to sort the auto completion items according to their importance. For instance,
  *  in an auto completion list for tag names, standard tag names would be assigned a higher
  *  priority than arbitrary tag names present in the current data set. There are three priority levels,
- *  {@see AutoCompletionItemPritority}.
+ *  {@link AutoCompletionItemPritority}.
  *
  * The value is a string which will be displayed in the auto completion list.
  *

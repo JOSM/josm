@@ -124,7 +124,7 @@ public class OsmOAuthAuthorizationClient {
      * Submits a request for a Request Token to the Request Token Endpoint Url of the OAuth Service
      * Provider and replies the request token.
      *
-     * @param monitor a progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null
+     * @param monitor a progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
      * @return the OAuth Request Token
      * @throws OsmOAuthAuthorizationException thrown if something goes wrong when retrieving the request token
      */
@@ -154,9 +154,9 @@ public class OsmOAuthAuthorizationClient {
      * Submits a request for an Access Token to the Access Token Endpoint Url of the OAuth Service
      * Provider and replies the request token.
      *
-     * You must have requested a Request Token using {@see #getRequestToken(ProgressMonitor)} first.
+     * You must have requested a Request Token using {@link #getRequestToken(ProgressMonitor)} first.
      *
-     * @param monitor a progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null
+     * @param monitor a progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
      * @return the OAuth Access Token
      * @throws OsmOAuthAuthorizationException thrown if something goes wrong when retrieving the request token
      * @see #getRequestToken(ProgressMonitor)
@@ -524,7 +524,7 @@ public class OsmOAuthAuthorizationClient {
      * @param osmUserName the OSM user name. Must not be null.
      * @param osmPassword the OSM password. Must not be null.
      * @param privileges the set of privileges. Must not be null.
-     * @param monitor a progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null
+     * @param monitor a progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
      * @throws IllegalArgumentException thrown if requestToken is null
      * @throws IllegalArgumentException thrown if osmUserName is null
      * @throws IllegalArgumentException thrown if osmPassword is null

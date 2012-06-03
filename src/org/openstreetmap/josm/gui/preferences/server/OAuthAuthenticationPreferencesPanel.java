@@ -39,7 +39,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * showing the current Access Token Key and Access Token Secret, if the
  * user already has an Access Token.
  *
- * For initial authorisation see {@see OAuthAuthorisationWizard}.
+ * For initial authorisation see {@link OAuthAuthorisationWizard}.
  *
  */
 public class OAuthAuthenticationPreferencesPanel extends JPanel implements PropertyChangeListener {

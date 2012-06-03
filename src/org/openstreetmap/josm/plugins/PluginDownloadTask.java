@@ -29,8 +29,8 @@ import org.xml.sax.SAXException;
 /**
  * Asynchronous task for downloading a collection of plugins.
  *
- * When the task is finished {@see #getDownloadedPlugins()} replies the list of downloaded plugins
- * and {@see #getFailedPlugins()} replies the list of failed plugins.
+ * When the task is finished {@link #getDownloadedPlugins()} replies the list of downloaded plugins
+ * and {@link #getFailedPlugins()} replies the list of failed plugins.
  *
  */
 public class PluginDownloadTask extends PleaseWaitRunnable{
@@ -44,9 +44,9 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     /**
      * Creates the download task
      *
-     * @param parent the parent component relative to which the {@see PleaseWaitDialog} is displayed
+     * @param parent the parent component relative to which the {@link PleaseWaitDialog} is displayed
      * @param toUpdate a collection of plugin descriptions for plugins to update/download. Must not be null.
-     * @param title the title to display in the {@see PleaseWaitDialog}
+     * @param title the title to display in the {@link PleaseWaitDialog}
      * @throws IllegalArgumentException thrown if toUpdate is null
      */
     public PluginDownloadTask(Component parent, Collection<PluginInformation> toUpdate, String title) throws IllegalArgumentException{
@@ -58,9 +58,9 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     /**
      * Creates the task
      *
-     * @param monitor a progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null
+     * @param monitor a progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
      * @param toUpdate a collection of plugin descriptions for plugins to update/download. Must not be null.
-     * @param title the title to display in the {@see PleaseWaitDialog}
+     * @param title the title to display in the {@link PleaseWaitDialog}
      * @throws IllegalArgumentException thrown if toUpdate is null
      */
     public PluginDownloadTask(ProgressMonitor monitor, Collection<PluginInformation> toUpdate, String title) {

@@ -12,11 +12,11 @@ public interface DownloadTask {
      * Asynchronously launches the download task for a given bounding box.
      *
      * Set <code>progressMonitor</code> to null, if the task should create, open, and close a progress monitor.
-     * Set progressMonitor to {@see NullProgressMonitor#INSTANCE} if progress information is to
+     * Set progressMonitor to {@link NullProgressMonitor#INSTANCE} if progress information is to
      * be discarded.
      *
      * You can wait for the asynchronous download task to finish by synchronizing on the returned
-     * {@see Future}, but make sure not to freeze up JOSM. Example:
+     * {@link Future}, but make sure not to freeze up JOSM. Example:
      * <pre>
      *    Future<?> future = task.download(...);
      *    // DON'T run this on the Swing EDT or JOSM will freeze
@@ -52,7 +52,7 @@ public interface DownloadTask {
      * Asynchronously launches the download task for a given bounding URL.
      *
      * Set progressMonitor to null, if the task should create, open, and close a progress monitor.
-     * Set progressMonitor to {@see NullProgressMonitor#INSTANCE} if progress information is to
+     * Set progressMonitor to {@link NullProgressMonitor#INSTANCE} if progress information is to
      * be discarded.
 
      * @param newLayer newLayer true, if the data is to be downloaded into a new layer. If false, the task
@@ -75,7 +75,7 @@ public interface DownloadTask {
     /**
      * Replies the error objects of the task. Empty list, if no error messages are available.
      *
-     * Error objects are either {@see String}s with error messages or {@see Exception}s.
+     * Error objects are either {@link String}s with error messages or {@link Exception}s.
      *
      * @return the list of error objects
      */

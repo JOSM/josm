@@ -21,7 +21,7 @@ import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * This is the {@see TableCellRenderer} used in the node tables of {@see NodeListMerger}.
+ * This is the {@link TableCellRenderer} used in the node tables of {@link NodeListMerger}.
  *
  */
 public  class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {
@@ -39,7 +39,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
     }
 
     /**
-     * build the tool tip text for an {@see OsmPrimitive}. It consist of the formatted
+     * build the tool tip text for an {@link OsmPrimitive}. It consist of the formatted
      * key/value pairs for this primitive.
      *
      * @param primitive

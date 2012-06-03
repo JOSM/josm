@@ -40,7 +40,7 @@ import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.Utils.Function;
 
 /**
- * This is the default implementation of a {@see NameFormatter} for names of {@see OsmPrimitive}s.
+ * This is the default implementation of a {@link NameFormatter} for names of {@link OsmPrimitive}s.
  *
  */
 public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter {
@@ -99,7 +99,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * Replies the list of naming tags used in relations. The list is given (in this order) by:
      * <ul>
      *   <li>by the tag names in the preference <tt>relation.nameOrder</tt></li>
-     *   <li>by the default tags in {@see #DEFAULT_NAMING_TAGS_FOR_RELATIONS}
+     *   <li>by the default tags in {@link #DEFAULT_NAMING_TAGS_FOR_RELATIONS}
      * </ul>
      *
      * @return the list of naming tags used in relations
@@ -523,7 +523,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * Decorates the name of primitive with its id, if the preference
      * <tt>osm-primitives.showid</tt> is set.
      *
-     * The id is append to the {@see StringBuilder} passed in in <code>name</code>.
+     * The id is append to the {@link StringBuilder} passed in in <code>name</code>.
      *
      * @param name  the name without the id
      * @param primitive the primitive
@@ -604,7 +604,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     /**
-     * Formats a name for a {@see HistoryRelation})
+     * Formats a name for a {@link HistoryRelation})
      *
      * @param relation the relation
      * @return the name

@@ -56,7 +56,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * The panel which displays the content of a changeset in a scollable table.
  *
- * It listens to property change events for {@see ChangesetCacheManagerModel#CHANGESET_IN_DETAIL_VIEW_PROP}
+ * It listens to property change events for {@link ChangesetCacheManagerModel#CHANGESET_IN_DETAIL_VIEW_PROP}
  * and updates its view accordingly.
  *
  */

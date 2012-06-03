@@ -8,7 +8,7 @@ import javax.swing.table.TableColumn;
 
 
 /**
- * The {@see TableColumnModel} for the table with the list of nodes.
+ * The {@link TableColumnModel} for the table with the list of nodes.
  *
  *
  */

@@ -47,7 +47,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
 
     /**
      * Sets the changeset currently displayed in the detail view. Fires a property change event
-     * for the property {@see #CHANGESET_IN_DETAIL_VIEW_PROP} if necessary.
+     * for the property {@link #CHANGESET_IN_DETAIL_VIEW_PROP} if necessary.
      *
      * @param cs the changeset currently displayed in the detail view.
      */
@@ -117,7 +117,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
     /**
      * Selects the changeset displayed at row <code>row</code>
      *
-     * @param row the row. Ignored if < 0 or >= {@see #getRowCount()}
+     * @param row the row. Ignored if < 0 or >= {@link #getRowCount()}
      */
     public void setSelectedByIdx(int row) {
         if (row < 0 || row >= getRowCount()) return;

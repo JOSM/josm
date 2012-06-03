@@ -19,17 +19,17 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 /**
  * ChangesetCache is global in-memory cache for changesets downloaded from
  * an OSM API server. The unique instance is available as singleton, see
- * {@see #getInstance()}.
+ * {@link #getInstance()}.
  *
- * Clients interested in cache updates can register for {@see ChangesetCacheEvent}s
- * using {@see #addChangesetCacheListener(ChangesetCacheListener)}. They can use
- * {@see #removeChangesetCacheListener(ChangesetCacheListener)} to unregister as
+ * Clients interested in cache updates can register for {@link ChangesetCacheEvent}s
+ * using {@link #addChangesetCacheListener(ChangesetCacheListener)}. They can use
+ * {@link #removeChangesetCacheListener(ChangesetCacheListener)} to unregister as
  * cache event listener.
  *
- * The cache itself listens to {@see java.util.prefs.PreferenceChangeEvent}s. It
+ * The cache itself listens to {@link java.util.prefs.PreferenceChangeEvent}s. It
  * clears itself if the OSM API URL is changed in the preferences.
  *
- * {@see ChangesetCacheEvent}s are delivered on the EDT.
+ * {@link ChangesetCacheEvent}s are delivered on the EDT.
  *
  */
 public class ChangesetCache implements PreferenceChangedListener{
@@ -149,7 +149,7 @@ public class ChangesetCache implements PreferenceChangedListener{
 
     /**
      * Removes the changesets in <code>changesets</code> from the cache. A
-     * {@see ChangesetCacheEvent} is fired.
+     * {@link ChangesetCacheEvent} is fired.
      *
      * @param changesets the changesets to remove. Ignored if null.
      */

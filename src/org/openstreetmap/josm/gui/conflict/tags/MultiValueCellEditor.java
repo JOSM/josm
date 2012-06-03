@@ -26,10 +26,10 @@ import javax.swing.table.TableCellEditor;
  * to remove the tag.
  *
  * The editor responds intercepts some keys and interprets them as navigation keys. It
- * forwards navigation events to {@see NavigationListener}s registred with this editor.
- * You should register the parent table using this editor as {@see NavigationListener}.
+ * forwards navigation events to {@link NavigationListener}s registred with this editor.
+ * You should register the parent table using this editor as {@link NavigationListener}.
  *
- * {@see KeyEvent#VK_ENTER} and {@see KeyEvent#VK_TAB} trigger a {@see NavigationListener#gotoNextDecision()}.
+ * {@link KeyEvent#VK_ENTER} and {@link KeyEvent#VK_TAB} trigger a {@link NavigationListener#gotoNextDecision()}.
  */
 public class MultiValueCellEditor extends AbstractCellEditor implements TableCellEditor{
 

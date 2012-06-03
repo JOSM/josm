@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.history;
 
 /**
- * PointInTimeType enumerates two points in time in the {@see History} of an {@see OsmPrimitive}.
+ * PointInTimeType enumerates two points in time in the {@link History} of an {@link OsmPrimitive}.
  * @author karl
  *
  */

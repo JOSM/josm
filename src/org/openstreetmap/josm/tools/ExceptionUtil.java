@@ -437,7 +437,7 @@ public class ExceptionUtil {
     }
 
     /**
-     * Explains a {@see SecurityException} which has caused an {@see OsmTransferException}.
+     * Explains a {@link SecurityException} which has caused an {@link OsmTransferException}.
      * This is most likely happening when user tries to access the OSM API from within an
      * applet which wasn't loaded from the API server.
      *
@@ -460,7 +460,7 @@ public class ExceptionUtil {
     }
 
     /**
-     * Explains a {@see SocketException} which has caused an {@see OsmTransferException}.
+     * Explains a {@link SocketException} which has caused an {@link OsmTransferException}.
      * This is most likely because there's not connection to the Internet or because
      * the remote server is not reachable.
      *
@@ -476,7 +476,7 @@ public class ExceptionUtil {
     }
 
     /**
-     * Explains a {@see IOException} which has caused an {@see OsmTransferException}.
+     * Explains a {@link IOException} which has caused an {@link OsmTransferException}.
      * This is most likely happening when the communication with the remote server is
      * interrupted for any reason.
      *
@@ -494,7 +494,7 @@ public class ExceptionUtil {
     }
 
     /**
-     * Explains a {@see IllegalDataException} which has caused an {@see OsmTransferException}.
+     * Explains a {@link IllegalDataException} which has caused an {@link OsmTransferException}.
      * This is most likely happening when JOSM tries to load data in in an unsupported format.
      *
      * @param e the exception
@@ -509,7 +509,7 @@ public class ExceptionUtil {
     }
 
     /**
-     * Explains a {@see OsmApiException} which was thrown because of an internal server
+     * Explains a {@link OsmApiException} which was thrown because of an internal server
      * error in the OSM API server..
      *
      * @param e the exception
@@ -524,7 +524,7 @@ public class ExceptionUtil {
     }
 
     /**
-     * Explains a {@see OsmApiException} which was thrown because of a bad
+     * Explains a {@link OsmApiException} which was thrown because of a bad
      * request
      *
      * @param e the exception
@@ -547,7 +547,7 @@ public class ExceptionUtil {
     }
     
     /**
-     * Explains a {@see OsmApiException} which was thrown because of
+     * Explains a {@link OsmApiException} which was thrown because of
      * bandwidth limit exceeded (HTTP error 509) 
      *
      * @param e the exception
@@ -561,7 +561,7 @@ public class ExceptionUtil {
     
 
     /**
-     * Explains a {@see OsmApiException} which was thrown because a resource wasn't found.
+     * Explains a {@link OsmApiException} which was thrown because a resource wasn't found.
      *
      * @param e the exception
      */
@@ -578,7 +578,7 @@ public class ExceptionUtil {
     }
 
     /**
-     * Explains a {@see UnknownHostException} which has caused an {@see OsmTransferException}.
+     * Explains a {@link UnknownHostException} which has caused an {@link OsmTransferException}.
      * This is most likely happening when there is an error in the API URL or when
      * local DNS services are not working.
      *
@@ -624,9 +624,9 @@ public class ExceptionUtil {
     }
 
     /**
-     * Explains an {@see OsmTransferException} to the user.
+     * Explains an {@link OsmTransferException} to the user.
      *
-     * @param e the {@see OsmTransferException}
+     * @param e the {@link OsmTransferException}
      */
     public static String explainOsmTransferException(OsmTransferException e) {
         if (getNestedException(e, SecurityException.class) != null)
@@ -661,8 +661,8 @@ public class ExceptionUtil {
 
     /**
      * explains the case of an error due to a delete request on an already deleted
-     * {@see OsmPrimitive}, i.e. a HTTP response code 410, where we don't know which
-     * {@see OsmPrimitive} is causing the error.
+     * {@link OsmPrimitive}, i.e. a HTTP response code 410, where we don't know which
+     * {@link OsmPrimitive} is causing the error.
      *
      * @param e the exception
      */
@@ -679,9 +679,9 @@ public class ExceptionUtil {
     }
 
     /**
-     * Explains an {@see Exception} to the user.
+     * Explains an {@link Exception} to the user.
      *
-     * @param e the {@see Exception}
+     * @param e the {@link Exception}
      */
     public static String explainException(Exception e) {
         String msg = "";

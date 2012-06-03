@@ -52,7 +52,7 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
 
         /**
          * Replies true if the source for tag pasting is heterogeneous, i.e. if it doesn't consist of
-         * {@see OsmPrimitive}s of exactly one type
+         * {@link OsmPrimitive}s of exactly one type
          *
          * @return
          */
@@ -129,8 +129,8 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
         }
 
         /**
-         * Pastes the tags from a homogeneous source (i.e. the {@see Main#pasteBuffer}s selection consisting
-         * of one type of {@see OsmPrimitive}s only.
+         * Pastes the tags from a homogeneous source (i.e. the {@link Main#pasteBuffer}s selection consisting
+         * of one type of {@link OsmPrimitive}s only.
          *
          * Tags from a homogeneous source can be pasted to a heterogeneous target. All target primitives,
          * regardless of their type, receive the same tags.

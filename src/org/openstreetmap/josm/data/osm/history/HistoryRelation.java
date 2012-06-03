@@ -97,7 +97,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
     }
 
     /**
-     * replies the type, i.e. {@see OsmPrimitiveType#RELATION}
+     * replies the type, i.e. {@link OsmPrimitiveType#RELATION}
      *
      */
     @Override

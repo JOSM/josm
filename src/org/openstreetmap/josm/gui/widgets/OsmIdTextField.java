@@ -46,7 +46,7 @@ public class OsmIdTextField extends JTextField {
     }
 
     /**
-     * Validator for a changeset ID entered in a {@see JTextComponent}.
+     * Validator for a changeset ID entered in a {@link JTextComponent}.
      *
      */
     static private class OsmIdValidator extends AbstractTextComponentValidator {

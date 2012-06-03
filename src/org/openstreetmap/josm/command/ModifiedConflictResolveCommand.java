@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Represents a command for to set the modified flag {@see OsmPrimitive}
+ * Represents a command for to set the modified flag {@link OsmPrimitive}
  *
  *
  */

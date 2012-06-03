@@ -23,7 +23,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * UploadLayerTask uploads the data managed by an {@see OsmDataLayer} asynchronously.
+ * UploadLayerTask uploads the data managed by an {@link OsmDataLayer} asynchronously.
  *
  * <pre>
  *     ExecutorService executorService = ...
@@ -51,7 +51,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
      *
      * @param strategy the upload strategy specification
      * @param layer the layer. Must not be null.
-     * @param monitor  a progress monitor. If monitor is null, uses {@see NullProgressMonitor#INSTANCE}
+     * @param monitor  a progress monitor. If monitor is null, uses {@link NullProgressMonitor#INSTANCE}
      * @param changeset the changeset to be used
      * @throws IllegalArgumentException thrown, if layer is null
      * @throws IllegalArgumentException thrown if strategy is null

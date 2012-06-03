@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 /**
  * This is an asynchronous task for testing whether an URL points to an OSM API server.
  * It tries to retrieve a list of changesets from the given URL. If it succeeds, the method
- * {@see #isSuccess()} replies true, otherwise false.
+ * {@link #isSuccess()} replies true, otherwise false.
  *
  * Note: it fetches a list of changesets instead of the much smaller capabilities because - strangely enough -
  * an OSM server "http://x.y.y/api/0.6" not only responds to  "http://x.y.y/api/0.6/capabilities" but also
@@ -43,7 +43,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
     /**
      * Creates the task
      *
-     * @param parent the parent component relative to which the {@see PleaseWaitRunnable}-Dialog is displayed
+     * @param parent the parent component relative to which the {@link PleaseWaitRunnable}-Dialog is displayed
      * @param url the url. Must not be null.
      * @throws IllegalArgumentException thrown if url is null.
      */

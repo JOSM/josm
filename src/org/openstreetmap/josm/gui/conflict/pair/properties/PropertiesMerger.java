@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This class represents a UI component for resolving conflicts in some properties
- * of {@see OsmPrimitive}.
+ * of {@link OsmPrimitive}.
  *
  */
 public class PropertiesMerger extends JPanel implements Observer, IConflictResolver {

@@ -13,7 +13,7 @@ import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Represents a the resolution of a conflict between the coordinates of two {@see Node}s
+ * Represents a the resolution of a conflict between the coordinates of two {@link Node}s
  *
  */
 public class CoordinateConflictResolveCommand extends ConflictResolveCommand {

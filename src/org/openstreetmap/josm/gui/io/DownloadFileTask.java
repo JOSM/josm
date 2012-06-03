@@ -42,8 +42,8 @@ public class DownloadFileTask extends PleaseWaitRunnable{
     /**
      * Creates the download task
      *
-     * @param parent the parent component relative to which the {@see PleaseWaitDialog} is displayed
-     * @param title the title to display in the {@see PleaseWaitDialog}
+     * @param parent the parent component relative to which the {@link PleaseWaitDialog} is displayed
+     * @param title the title to display in the {@link PleaseWaitDialog}
      * @throws IllegalArgumentException thrown if toUpdate is null
      */
     public DownloadFileTask(Component parent, String address, File file, boolean mkdir, boolean unpack) {

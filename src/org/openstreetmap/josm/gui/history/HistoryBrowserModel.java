@@ -48,22 +48,22 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  * The model state consists of the following elements:
  * <ul>
- *   <li>the {@see History} of a specific {@see OsmPrimitive}</li>
- *   <li>a dedicated version in this {@see History} called the {@see PointInTimeType#REFERENCE_POINT_IN_TIME}</li>
- *   <li>another version in this {@see History} called the {@see PointInTimeType#CURRENT_POINT_IN_TIME}</li>
+ *   <li>the {@link History} of a specific {@link OsmPrimitive}</li>
+ *   <li>a dedicated version in this {@link History} called the {@link PointInTimeType#REFERENCE_POINT_IN_TIME}</li>
+ *   <li>another version in this {@link History} called the {@link PointInTimeType#CURRENT_POINT_IN_TIME}</li>
  * <ul>
- * {@see HistoryBrowser} always compares the {@see PointInTimeType#REFERENCE_POINT_IN_TIME} with the
- * {@see PointInTimeType#CURRENT_POINT_IN_TIME}.
+ * {@link HistoryBrowser} always compares the {@link PointInTimeType#REFERENCE_POINT_IN_TIME} with the
+ * {@link PointInTimeType#CURRENT_POINT_IN_TIME}.
 
- * This model provides various {@see TableModel}s for {@see JTable}s used in {@see HistoryBrowser}, for
+ * This model provides various {@link TableModel}s for {@link JTable}s used in {@link HistoryBrowser}, for
  * instance:
  * <ul>
- *  <li>{@see #getTagTableModel(PointInTimeType)} replies a {@see TableModel} for the tags of either of
+ *  <li>{@link #getTagTableModel(PointInTimeType)} replies a {@link TableModel} for the tags of either of
  *   the two selected versions</li>
- *  <li>{@see #getNodeListTableModel(PointInTimeType)} replies a {@see TableModel} for the list of nodes of
- *   the two selected versions (if the current history provides information about a {@see Way}</li>
- *  <li> {@see #getRelationMemberTableModel(PointInTimeType)} replies a {@see TableModel} for the list of relation
- *  members  of the two selected versions (if the current history provides information about a {@see Relation}</li>
+ *  <li>{@link #getNodeListTableModel(PointInTimeType)} replies a {@link TableModel} for the list of nodes of
+ *   the two selected versions (if the current history provides information about a {@link Way}</li>
+ *  <li> {@link #getRelationMemberTableModel(PointInTimeType)} replies a {@link TableModel} for the list of relation
+ *  members  of the two selected versions (if the current history provides information about a {@link Relation}</li>
  *  </ul>
  *
  * @see HistoryBrowser
@@ -75,7 +75,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     private HistoryOsmPrimitive current;
     /**
      * latest isn't a reference of history. It's a clone of the currently edited
-     * {@see OsmPrimitive} in the current edit layer.
+     * {@link OsmPrimitive} in the current edit layer.
      */
     private HistoryOsmPrimitive latest;
 
@@ -119,7 +119,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
 
     /**
      * Replies the current edit layer; null, if there isn't a current edit layer
-     * of type {@see OsmDataLayer}.
+     * of type {@link OsmDataLayer}.
      *
      * @return the current edit layer
      */
@@ -205,7 +205,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     }
 
     /**
-     * Replies the table model to be used in a {@see JTable} which
+     * Replies the table model to be used in a {@link JTable} which
      * shows the list of versions in this history.
      *
      * @return the table model
@@ -283,8 +283,8 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     }
 
     /**
-     * Sets the {@see HistoryOsmPrimitive} which plays the role of a reference point
-     * in time (see {@see PointInTimeType}).
+     * Sets the {@link HistoryOsmPrimitive} which plays the role of a reference point
+     * in time (see {@link PointInTimeType}).
      *
      * @param reference the reference history primitive. Must not be null.
      * @throws IllegalArgumentException thrown if reference is null
@@ -313,8 +313,8 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     }
 
     /**
-     * Sets the {@see HistoryOsmPrimitive} which plays the role of the current point
-     * in time (see {@see PointInTimeType}).
+     * Sets the {@link HistoryOsmPrimitive} which plays the role of the current point
+     * in time (see {@link PointInTimeType}).
      *
      * @param reference the reference history primitive. Must not be null.
      * @throws IllegalArgumentException thrown if reference is null
@@ -342,18 +342,18 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     }
 
     /**
-     * Replies the history OSM primitive for the {@see PointInTimeType#CURRENT_POINT_IN_TIME}
+     * Replies the history OSM primitive for the {@link PointInTimeType#CURRENT_POINT_IN_TIME}
      *
-     * @return the history OSM primitive for the {@see PointInTimeType#CURRENT_POINT_IN_TIME} (may be null)
+     * @return the history OSM primitive for the {@link PointInTimeType#CURRENT_POINT_IN_TIME} (may be null)
      */
     public HistoryOsmPrimitive getCurrentPointInTime() {
         return getPointInTime(PointInTimeType.CURRENT_POINT_IN_TIME);
     }
 
     /**
-     * Replies the history OSM primitive for the {@see PointInTimeType#REFERENCE_POINT_IN_TIME}
+     * Replies the history OSM primitive for the {@link PointInTimeType#REFERENCE_POINT_IN_TIME}
      *
-     * @return the history OSM primitive for the {@see PointInTimeType#REFERENCE_POINT_IN_TIME} (may be null)
+     * @return the history OSM primitive for the {@link PointInTimeType#REFERENCE_POINT_IN_TIME} (may be null)
      */
     public HistoryOsmPrimitive getReferencePointInTime() {
         return getPointInTime(PointInTimeType.REFERENCE_POINT_IN_TIME);
@@ -537,8 +537,8 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     }
 
     /**
-     * The table model for the tags of the version at {@see PointInTimeType#REFERENCE_POINT_IN_TIME}
-     * or {@see PointInTimeType#CURRENT_POINT_IN_TIME}
+     * The table model for the tags of the version at {@link PointInTimeType#REFERENCE_POINT_IN_TIME}
+     * or {@link PointInTimeType#CURRENT_POINT_IN_TIME}
      *
      */
     public class TagTableModel extends AbstractTableModel {
@@ -637,8 +637,8 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     }
 
     /**
-     * The table model for the relation members of the version at {@see PointInTimeType#REFERENCE_POINT_IN_TIME}
-     * or {@see PointInTimeType#CURRENT_POINT_IN_TIME}
+     * The table model for the relation members of the version at {@link PointInTimeType#REFERENCE_POINT_IN_TIME}
+     * or {@link PointInTimeType#CURRENT_POINT_IN_TIME}
      *
      */
 
@@ -864,7 +864,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     public void layerRemoved(Layer oldLayer) {}
 
     /**
-     * Creates a {@see HistoryOsmPrimitive} from a {@see OsmPrimitive}
+     * Creates a {@link HistoryOsmPrimitive} from a {@link OsmPrimitive}
      *
      */
     static class HistoryPrimitiveBuilder extends AbstractVisitor {

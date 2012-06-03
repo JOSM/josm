@@ -134,11 +134,11 @@ public class ChangesetDataSet {
     }
 
     /**
-     * Replies the {@see HistoryOsmPrimitive} with id <code>id</code> from this
+     * Replies the {@link HistoryOsmPrimitive} with id <code>id</code> from this
      * dataset. null, if there is no such primitive in the data set.
      *
      * @param id the id
-     * @return  the {@see HistoryOsmPrimitive} with id <code>id</code> from this
+     * @return  the {@link HistoryOsmPrimitive} with id <code>id</code> from this
      * dataset
      */
     public HistoryOsmPrimitive getPrimitive(PrimitiveId id) {

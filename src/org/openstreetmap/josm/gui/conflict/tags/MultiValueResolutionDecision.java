@@ -26,7 +26,7 @@ public class MultiValueResolutionDecision {
     private MultiValueDecisionType type;
     /** the collection of tags for which a decision is needed */
     private TagCollection  tags;
-    /** the selected value if {@see #type} is {@see MultiValueDecisionType#KEEP_ONE} */
+    /** the selected value if {@link #type} is {@link MultiValueDecisionType#KEEP_ONE} */
     private String value;
 
     /**
@@ -200,7 +200,7 @@ public class MultiValueResolutionDecision {
     }
 
     /**
-     * Applies the resolution to an {@see OsmPrimitive}
+     * Applies the resolution to an {@link OsmPrimitive}
      *
      * @param primitive the primitive
      * @throws IllegalStateException thrown if this resolution is not resolved yet

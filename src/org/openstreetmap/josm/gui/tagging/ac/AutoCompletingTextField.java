@@ -24,10 +24,10 @@ import org.openstreetmap.josm.gui.util.TableCellEditorSupport;
 
 /**
  * AutoCompletingTextField is an text field with autocompletion behaviour. It
- * can be used as table cell editor in {@see JTable}s.
+ * can be used as table cell editor in {@link JTable}s.
  *
- * Autocompletion is controlled by a list of {@see AutoCompletionListItem}s
- * managed in a {@see AutoCompletionList}.
+ * Autocompletion is controlled by a list of {@link AutoCompletionListItem}s
+ * managed in a {@link AutoCompletionList}.
  *
  *
  */

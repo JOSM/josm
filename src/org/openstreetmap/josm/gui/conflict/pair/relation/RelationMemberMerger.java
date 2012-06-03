@@ -12,7 +12,7 @@ import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.ListMerger;
 
 /**
- * A UI component for resolving conflicts in the member lists of two {@see Relation}
+ * A UI component for resolving conflicts in the member lists of two {@link Relation}
  */
 public class RelationMemberMerger extends ListMerger<RelationMember> implements IConflictResolver {
     @Override

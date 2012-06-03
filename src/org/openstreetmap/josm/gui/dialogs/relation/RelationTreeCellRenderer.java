@@ -14,7 +14,7 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * This is the cell renderer used in {@see RelationTree}.
+ * This is the cell renderer used in {@link RelationTree}.
  *
  *
  */

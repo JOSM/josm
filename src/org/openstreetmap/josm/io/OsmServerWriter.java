@@ -184,7 +184,7 @@ public class OsmServerWriter {
      * @param strategy the upload strategy. Must not be null.
      * @param primitives list of objects to send
      * @param changeset the changeset the data is uploaded to. Must not be null.
-     * @param monitor the progress monitor. If null, assumes {@see NullProgressMonitor#INSTANCE}
+     * @param monitor the progress monitor. If null, assumes {@link NullProgressMonitor#INSTANCE}
      * @throws IllegalArgumentException thrown if changeset is null
      * @throws IllegalArgumentException thrown if strategy is null
      * @throws OsmTransferException thrown if something goes wrong

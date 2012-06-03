@@ -20,15 +20,15 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * OsmServerBackreferenceReader fetches the primitives from the OSM server which
- * refer to a specific primitive. For a {@see Node}, ways and relations are retrieved
- * which refer to the node. For a {@see Way} or a {@see Relation}, only relations are
+ * refer to a specific primitive. For a {@link Node}, ways and relations are retrieved
+ * which refer to the node. For a {@link Way} or a {@link Relation}, only relations are
  * read.
  *
  * OsmServerBackreferenceReader uses the API calls <code>[node|way|relation]/#id/relations</code>
  * and  <code>node/#id/ways</code> to retrieve the referring primitives. The default behaviour
  * of these calls is to reply incomplete primitives only.
  *
- * If you set {@see #setReadFull(boolean)} to true this reader uses a {@see MultiFetchServerObjectReader}
+ * If you set {@link #setReadFull(boolean)} to true this reader uses a {@link MultiFetchServerObjectReader}
  * to complete incomplete primitives.
  *
  *
@@ -122,7 +122,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
     }
 
     /**
-     * Reads referring ways from the API server and replies them in a {@see DataSet}
+     * Reads referring ways from the API server and replies them in a {@link DataSet}
      *
      * @return the data set
      * @throws OsmTransferException
@@ -159,7 +159,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
     }
 
     /**
-     * Reads referring relations from the API server and replies them in a {@see DataSet}
+     * Reads referring relations from the API server and replies them in a {@link DataSet}
      *
      * @param progressMonitor the progress monitor
      * @return the data set
@@ -202,10 +202,10 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * request.
      *
      * <ul>
-     *   <li>if this reader reads referers for a {@see Node}, referring ways are always
+     *   <li>if this reader reads referers for a {@link Node}, referring ways are always
      *     read individually from the server</li>
-     *   <li>if this reader reads referers for an {@see Way} or a {@see Relation}, referring relations
-     *    are only read fully if {@see #setReadFull(boolean)} is set to true.</li>
+     *   <li>if this reader reads referers for an {@link Way} or a {@link Relation}, referring relations
+     *    are only read fully if {@link #setReadFull(boolean)} is set to true.</li>
      * </ul>
      *
      * The method replies the modified dataset.
@@ -248,9 +248,9 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
 
     /**
      * Reads the referring primitives from the OSM server, parses them and
-     * replies them as {@see DataSet}
+     * replies them as {@link DataSet}
      *
-     * @param progressMonitor the progress monitor. Set to {@see NullProgressMonitor#INSTANCE} if null.
+     * @param progressMonitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if null.
      * @return the dataset with the referring primitives
      * @exception OsmTransferException thrown if an error occurs while communicating with the server
      */

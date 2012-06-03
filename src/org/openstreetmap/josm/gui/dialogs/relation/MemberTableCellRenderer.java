@@ -12,7 +12,7 @@ import javax.swing.table.TableCellRenderer;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
- * This is the {@see TableCellRenderer} used in the tables of {@see RelationMemberMerger}.
+ * This is the {@link TableCellRenderer} used in the tables of {@link RelationMemberMerger}.
  *
  */
 public abstract class MemberTableCellRenderer extends JLabel implements TableCellRenderer {

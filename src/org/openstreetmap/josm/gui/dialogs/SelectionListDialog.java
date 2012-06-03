@@ -439,7 +439,7 @@ public class SelectionListDialog extends ToggleDialog  {
     /**
      * The list model for the list of OSM primitives in the current JOSM selection.
      *
-     * The model also maintains a history of the last {@see SelectionListModel#SELECTION_HISTORY_SIZE}
+     * The model also maintains a history of the last {@link SelectionListModel#SELECTION_HISTORY_SIZE}
      * JOSM selection.
      *
      */

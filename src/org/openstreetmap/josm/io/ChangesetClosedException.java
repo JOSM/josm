@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 /**
  * A ChangesetClosedException is thrown if the server replies with a HTTP
- * return code 409 (Conflict) with the error header {@see #ERROR_HEADER_PATTERN}.
+ * return code 409 (Conflict) with the error header {@link #ERROR_HEADER_PATTERN}.
  *
  * Depending on the context the exception is thrown in we have to react differently.
  * <ul>
@@ -49,10 +49,10 @@ public class ChangesetClosedException extends OsmTransferException {
     }
 
     /**
-     * Replies true if <code>errorHeader</code> matches with {@see #ERROR_HEADER_PATTERN}
+     * Replies true if <code>errorHeader</code> matches with {@link #ERROR_HEADER_PATTERN}
      *
      * @param errorHeader the error header
-     * @return true if <code>errorHeader</code> matches with {@see #ERROR_HEADER_PATTERN}
+     * @return true if <code>errorHeader</code> matches with {@link #ERROR_HEADER_PATTERN}
      */
     static public boolean errorHeaderMatchesPattern(String errorHeader) {
         if (errorHeader == null)

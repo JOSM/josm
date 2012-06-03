@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Represent a command for resolving conflicts in the member lists of two
- * {@see Relation}s.
+ * {@link Relation}s.
  *
  */
 public class RelationMemberConflictResolverCommand extends Command {

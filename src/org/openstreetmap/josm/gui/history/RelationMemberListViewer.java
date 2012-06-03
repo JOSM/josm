@@ -11,11 +11,11 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 /**
  * RelationMemberListViewer is a UI component which displays the  list of relation members of two
- * version of a {@see Relation} in a {@see History}.
+ * version of a {@link Relation} in a {@link History}.
  *
  * <ul>
- *   <li>on the left, it displays the list of relation members for the version at {@see PointInTimeType#REFERENCE_POINT_IN_TIME}</li>
- *   <li>on the right, it displays the list of relation members for the version at {@see PointInTimeType#CURRENT_POINT_IN_TIME}</li>
+ *   <li>on the left, it displays the list of relation members for the version at {@link PointInTimeType#REFERENCE_POINT_IN_TIME}</li>
+ *   <li>on the right, it displays the list of relation members for the version at {@link PointInTimeType#CURRENT_POINT_IN_TIME}</li>
  * </ul>
  *
  */

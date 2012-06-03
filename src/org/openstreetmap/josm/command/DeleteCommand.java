@@ -238,7 +238,7 @@ public class DeleteCommand extends Command {
      *
      * If a way is deleted, only the way and no nodes are deleted.
      *
-     * @param layer the {@see OsmDataLayer} in whose context primitives are deleted. Must not be null.
+     * @param layer the {@link OsmDataLayer} in whose context primitives are deleted. Must not be null.
      * @param selection The list of all object to be deleted.
      * @param silent  Set to true if the user should not be bugged with additional dialogs
      * @return command A command to perform the deletions, or null of there is nothing to delete.
@@ -269,7 +269,7 @@ public class DeleteCommand extends Command {
      * Replies the collection of nodes referred to by primitives in <code>primitivesToDelete</code> which
      * can be deleted too. A node can be deleted if
      * <ul>
-     *    <li>it is untagged (see {@see Node#isTagged()}</li>
+     *    <li>it is untagged (see {@link Node#isTagged()}</li>
      *    <li>it is not referred to by other non-deleted primitives outside of  <code>primitivesToDelete</code></li>
      * <ul>
      * @param layer  the layer in whose context primitives are deleted
@@ -309,7 +309,7 @@ public class DeleteCommand extends Command {
      * If this would cause ways with less than 2 nodes to be created, delete these ways instead. If
      * they are part of a relation, inform the user and do not delete.
      *
-     * @param layer the {@see OsmDataLayer} in whose context the primitives are deleted
+     * @param layer the {@link OsmDataLayer} in whose context the primitives are deleted
      * @param selection the objects to delete.
      * @param alsoDeleteNodesInWay <code>true</code> if nodes should be deleted as well
      * @return command a command to perform the deletions, or null if there is nothing to delete.
@@ -328,7 +328,7 @@ public class DeleteCommand extends Command {
      * If this would cause ways with less than 2 nodes to be created, delete these ways instead. If
      * they are part of a relation, inform the user and do not delete.
      *
-     * @param layer the {@see OsmDataLayer} in whose context the primitives are deleted
+     * @param layer the {@link OsmDataLayer} in whose context the primitives are deleted
      * @param selection the objects to delete.
      * @param alsoDeleteNodesInWay <code>true</code> if nodes should be deleted as well
      * @param silent set to true if the user should not be bugged with additional questions

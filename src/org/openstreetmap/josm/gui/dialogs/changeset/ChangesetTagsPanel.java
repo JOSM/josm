@@ -14,7 +14,7 @@ import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.TagTable;
 
 /**
- * This panel displays the tags of the currently selected changeset in the {@see ChangesetCacheManager}
+ * This panel displays the tags of the currently selected changeset in the {@link ChangesetCacheManager}
  *
  */
 public class ChangesetTagsPanel extends JPanel implements PropertyChangeListener{

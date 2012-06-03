@@ -43,7 +43,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This panel displays the properties of the currently selected changeset in the
- * {@see ChangesetCacheManager}.
+ * {@link ChangesetCacheManager}.
  *
  */
 public class ChangesetDetailPanel extends JPanel implements PropertyChangeListener{

@@ -881,7 +881,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
 
     /**
      * Synchronizes scrollbar adjustments between a set of
-     * {@see Adjustable}s. Whenever the adjustment of one of
+     * {@link Adjustable}s. Whenever the adjustment of one of
      * the registerd Adjustables is updated the adjustment of
      * the other registered Adjustables is adjusted too.
      *
@@ -900,7 +900,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         }
 
         /**
-         * registers an {@see Adjustable} for participation in synchronized
+         * registers an {@link Adjustable} for participation in synchronized
          * scrolling.
          *
          * @param adjustable the adjustable
@@ -916,7 +916,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         }
 
         /**
-         * event handler for {@see AdjustmentEvent}s
+         * event handler for {@link AdjustmentEvent}s
          *
          */
         public void adjustmentValueChanged(AdjustmentEvent e) {
@@ -959,12 +959,12 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         }
 
         /**
-         * wires a {@see JCheckBox} to  the adjustment synchronizer, in such a way  that:
+         * wires a {@link JCheckBox} to  the adjustment synchronizer, in such a way  that:
          * <li>
          *   <ol>state changes in the checkbox control whether the adjustable participates
          *      in synchronized adjustment</ol>
-         *   <ol>state changes in this {@see AdjustmentSynchronizer} are reflected in the
-         *      {@see JCheckBox}</ol>
+         *   <ol>state changes in this {@link AdjustmentSynchronizer} are reflected in the
+         *      {@link JCheckBox}</ol>
          * </li>
          *
          *

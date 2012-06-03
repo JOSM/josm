@@ -491,7 +491,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     /**
      * Set the given value to the given key. If key is null, does nothing. If value is null,
-     * removes the key and behaves like {@see #remove(String)}.
+     * removes the key and behaves like {@link #remove(String)}.
      *
      * @param key  The key, for which the value is to be set. Can be null, does nothing in this case.
      * @param value The value for the key. If null, removes the respective key/value pair.

@@ -22,7 +22,7 @@ import org.openstreetmap.josm.data.osm.RelationToChildReference;
 /**
  * This model manages a list of conflicting relation members.
  *
- * It can be used as {@see TableModel}.
+ * It can be used as {@link TableModel}.
  *
  *
  */
@@ -151,7 +151,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
 
     /**
      * Populates the model with the relation members represented as a collection of
-     * {@see RelationToChildReference}s.
+     * {@link RelationToChildReference}s.
      *
      * @param references the references. Empty list assumed if null.
      */
@@ -251,7 +251,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * Builds a collection of commands executing the decisions made in this model.
      *
      * @param newPrimitive the primitive which members shall refer to if the
-     * decision is {@see RelationMemberConflictDecisionType#REPLACE}
+     * decision is {@link RelationMemberConflictDecisionType#REPLACE}
      * @return a list of commands
      */
     public List<Command> buildResolutionCommands(OsmPrimitive newPrimitive) {
@@ -290,7 +290,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * to the decisions managed by this model.
      *
      * @param newPrimitive the primitive which members shall refer to if the
-     * decision is {@see RelationMemberConflictDecisionType#REPLACE}
+     * decision is {@link RelationMemberConflictDecisionType#REPLACE}
      *
      * @return the set of relations which have to be modified according
      * to the decisions managed by this model

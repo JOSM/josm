@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * An UI widget for displaying differences in the coordinates of two
- * {@see HistoryNode}s.
+ * {@link HistoryNode}s.
  *
  */
 public class CoordinateInfoViewer extends JPanel {
@@ -162,7 +162,7 @@ public class CoordinateInfoViewer extends JPanel {
 
     /**
      * A UI widgets which displays the Lan/Lon-coordinates of a
-     * {@see HistoryNode}.
+     * {@link HistoryNode}.
      *
      */
     private static class LatLonViewer extends JPanel implements Observer{

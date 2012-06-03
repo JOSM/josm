@@ -30,7 +30,7 @@ public class OpenBrowser {
     /**
      * @return <code>null</code> for success or a string in case of an error.
      * @throws IllegalStateException thrown if no platform is set to which opening the URL can be dispatched,
-     * {@see Main#platform}
+     * {@link Main#platform}
      */
     public static String displayUrl(URI uri) {
         if (Main.applet) {

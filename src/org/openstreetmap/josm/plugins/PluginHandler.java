@@ -518,7 +518,7 @@ public class PluginHandler {
      * memory.
      *
      * @param plugins the list of plugins
-     * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
+     * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      */
     public static void loadPlugins(Component parent,Collection<PluginInformation> plugins, ProgressMonitor monitor) {
         if (monitor == null) {
@@ -563,11 +563,11 @@ public class PluginHandler {
     }
 
     /**
-     * Loads plugins from <code>plugins</code> which have the flag {@see PluginInformation#early}
+     * Loads plugins from <code>plugins</code> which have the flag {@link PluginInformation#early}
      * set to true.
      *
      * @param plugins the collection of plugins
-     * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
+     * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      */
     public static void loadEarlyPlugins(Component parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
         List<PluginInformation> earlyPlugins = new ArrayList<PluginInformation>(plugins.size());
@@ -580,11 +580,11 @@ public class PluginHandler {
     }
 
     /**
-     * Loads plugins from <code>plugins</code> which have the flag {@see PluginInformation#early}
+     * Loads plugins from <code>plugins</code> which have the flag {@link PluginInformation#early}
      * set to false.
      *
      * @param plugins the collection of plugins
-     * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
+     * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      */
     public static void loadLatePlugins(Component parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
         List<PluginInformation> latePlugins = new ArrayList<PluginInformation>(plugins.size());
@@ -600,7 +600,7 @@ public class PluginHandler {
      * Loads locally available plugin information from local plugin jars and from cached
      * plugin lists.
      *
-     * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
+     * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      * @return the list of locally available plugin information
      *
      */
@@ -660,7 +660,7 @@ public class PluginHandler {
      * out. This involves user interaction. This method displays alert and confirmation
      * messages.
      *
-     * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
+     * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      * @return the set of plugins to load (as set of plugin names)
      */
     public static List<PluginInformation> buildListOfPluginsToLoad(Component parent, ProgressMonitor monitor) {
@@ -730,7 +730,7 @@ public class PluginHandler {
      *
      * @param parent the parent component for message boxes
      * @param plugins the collection of plugins to update. Must not be null.
-     * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
+     * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      * @throws IllegalArgumentException thrown if plugins is null
      */
     public static List<PluginInformation>  updatePlugins(Component parent,

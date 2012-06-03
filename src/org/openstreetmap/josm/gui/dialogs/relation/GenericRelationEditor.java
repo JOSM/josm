@@ -104,7 +104,7 @@ public class GenericRelationEditor extends RelationEditor  {
      *
      * If no relation is given, will create an editor for a new relation.
      *
-     * @param layer the {@see OsmDataLayer} the new or edited relation belongs to
+     * @param layer the {@link OsmDataLayer} the new or edited relation belongs to
      * @param relation relation to edit, or null to create a new one.
      * @param selectedMembers a collection of members which shall be selected initially
      */
@@ -424,7 +424,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     /**
-     * builds the {@see JSplitPane} which divides the editor in an upper and a lower half
+     * builds the {@link JSplitPane} which divides the editor in an upper and a lower half
      *
      * @return the split panel
      */

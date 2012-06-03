@@ -5,7 +5,7 @@ import java.util.Observable;
 
 /**
  * ChangesetCommentModel is an observable model for the changeset comment edited
- * in the {@see UploadDialog}.
+ * in the {@link UploadDialog}.
  *
  */
 public class ChangesetCommentModel extends Observable {

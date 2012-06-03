@@ -182,7 +182,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
     /**
      * Initializes the relation list dialog from a layer. If <code>layer</code> is null
-     * or if it isn't an {@see OsmDataLayer} the dialog is reset to an empty dialog.
+     * or if it isn't an {@link OsmDataLayer} the dialog is reset to an empty dialog.
      * Otherwise it is initialized with the list of non-deleted and visible relations
      * in the layer's dataset.
      *

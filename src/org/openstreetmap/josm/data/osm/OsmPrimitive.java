@@ -89,8 +89,8 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     protected static final int FLAG_HIGHLIGHTED = 1 << 9;
 
     /**
-     * Replies the sub-collection of {@see OsmPrimitive}s of type <code>type</code> present in
-     * another collection of {@see OsmPrimitive}s. The result collection is a list.
+     * Replies the sub-collection of {@link OsmPrimitive}s of type <code>type</code> present in
+     * another collection of {@link OsmPrimitive}s. The result collection is a list.
      *
      * If <code>list</code> is null, replies an empty list.
      *
@@ -111,8 +111,8 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     /**
-     * Replies the sub-collection of {@see OsmPrimitive}s of type <code>type</code> present in
-     * another collection of {@see OsmPrimitive}s. The result collection is a set.
+     * Replies the sub-collection of {@link OsmPrimitive}s of type <code>type</code> present in
+     * another collection of {@link OsmPrimitive}s. The result collection is a set.
      *
      * If <code>list</code> is null, replies an empty set.
      *
@@ -362,7 +362,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * incomplete is set to false. It's preferred to use copy constructor with clearId set to true instead
      * of calling this method.
      *
-     * <strong>Caution</strong>: Do not use this method on primitives which are already added to a {@see DataSet}.
+     * <strong>Caution</strong>: Do not use this method on primitives which are already added to a {@link DataSet}.
      *
      * @throws DataIntegrityProblemException If primitive was already added to the dataset
      */

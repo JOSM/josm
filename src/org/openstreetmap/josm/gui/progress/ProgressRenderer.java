@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.progress;
 
 /**
- * Swing components can implement this interface and use a {@see SwingRenderingProgressMonitor}
+ * Swing components can implement this interface and use a {@link SwingRenderingProgressMonitor}
  * to render progress information.
  *
  */

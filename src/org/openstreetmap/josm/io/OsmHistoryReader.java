@@ -31,9 +31,9 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Parser for OSM history data.
  *
- * It is slightly different from {@see OsmReader} because we don't build an internal graph of
- * {@see OsmPrimitive}s. We use objects derived from {@see HistoryOsmPrimitive} instead and we
- * keep the data in a dedicated {@see HistoryDataSet}.
+ * It is slightly different from {@link OsmReader} because we don't build an internal graph of
+ * {@link OsmPrimitive}s. We use objects derived from {@link HistoryOsmPrimitive} instead and we
+ * keep the data in a dedicated {@link HistoryDataSet}.
  *
  */
 public class OsmHistoryReader {

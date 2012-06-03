@@ -320,11 +320,11 @@ public class LayerListDialog extends ToggleDialog {
 
     /**
      * Wires <code>listener</code> to <code>listSelectionModel</code> in such a way, that
-     * <code>listener</code> receives a {@see IEnabledStateUpdating#updateEnabledState()}
-     * on every {@see ListSelectionEvent}.
+     * <code>listener</code> receives a {@link IEnabledStateUpdating#updateEnabledState()}
+     * on every {@link ListSelectionEvent}.
      *
      * @param listener  the listener
-     * @param listSelectionModel  the source emitting {@see ListSelectionEvent}s
+     * @param listSelectionModel  the source emitting {@link ListSelectionEvent}s
      */
     protected void adaptTo(final IEnabledStateUpdating listener, ListSelectionModel listSelectionModel) {
         listSelectionModel.addListSelectionListener(
@@ -339,11 +339,11 @@ public class LayerListDialog extends ToggleDialog {
 
     /**
      * Wires <code>listener</code> to <code>listModel</code> in such a way, that
-     * <code>listener</code> receives a {@see IEnabledStateUpdating#updateEnabledState()}
-     * on every {@see ListDataEvent}.
+     * <code>listener</code> receives a {@link IEnabledStateUpdating#updateEnabledState()}
+     * on every {@link ListDataEvent}.
      *
      * @param listener  the listener
-     * @param listSelectionModel  the source emitting {@see ListDataEvent}s
+     * @param listSelectionModel  the source emitting {@link ListDataEvent}s
      */
     protected void adaptTo(final IEnabledStateUpdating listener, LayerListModel listModel) {
         listModel.addTableModelListener(
@@ -374,7 +374,7 @@ public class LayerListDialog extends ToggleDialog {
      */
     public final class DeleteLayerAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
         /**
-         * Creates a {@see DeleteLayerAction} which will delete the currently
+         * Creates a {@link DeleteLayerAction} which will delete the currently
          * selected layers in the layer dialog.
          *
          */
@@ -455,7 +455,7 @@ public class LayerListDialog extends ToggleDialog {
         private Shortcut multikeyShortcut;
 
         /**
-         * Creates a {@see ShowHideLayerAction} which will toggle the visibility of
+         * Creates a {@link ShowHideLayerAction} which will toggle the visibility of
          * the currently selected layers
          *
          */
@@ -545,7 +545,7 @@ public class LayerListDialog extends ToggleDialog {
         private JSlider slider = new JSlider(JSlider.VERTICAL);
 
         /**
-         * Creates a {@see LayerOpacityAction} which allows to chenge the
+         * Creates a {@link LayerOpacityAction} which allows to chenge the
          * opacity of one or more layers.
          *
          * @param layer  the layer. Must not be null.
@@ -560,7 +560,7 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         /**
-         * Creates a {@see ShowHideLayerAction} which will toggle the visibility of
+         * Creates a {@link ShowHideLayerAction} which will toggle the visibility of
          * the currently selected layers
          *
          */
@@ -1098,7 +1098,7 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     /**
-     * Observer interface to be implemented by views using {@see LayerListModel}
+     * Observer interface to be implemented by views using {@link LayerListModel}
      *
      */
     public interface LayerListModelListener {
@@ -1110,15 +1110,15 @@ public class LayerListDialog extends ToggleDialog {
      * The layer list model. The model manages a list of layers and provides methods for
      * moving layers up and down, for toggling their visibility, and for activating a layer.
      *
-     * The model is a {@see TableModel} and it provides a {@see ListSelectionModel}. It expects
-     * to be configured with a {@see DefaultListSelectionModel}. The selection model is used
+     * The model is a {@link TableModel} and it provides a {@link ListSelectionModel}. It expects
+     * to be configured with a {@link DefaultListSelectionModel}. The selection model is used
      * to update the selection state of views depending on messages sent to the model.
      *
-     * The model manages a list of {@see LayerListModelListener} which are mainly notified if
+     * The model manages a list of {@link LayerListModelListener} which are mainly notified if
      * the model requires views to make a specific list entry visible.
      *
-     * It also listens to {@see PropertyChangeEvent}s of every {@see Layer} it manages, in particular to
-     * the properties {@see Layer#VISIBLE_PROP} and {@see Layer#NAME_PROP}.
+     * It also listens to {@link PropertyChangeEvent}s of every {@link Layer} it manages, in particular to
+     * the properties {@link Layer#VISIBLE_PROP} and {@link Layer#NAME_PROP}.
      */
     public class LayerListModel extends AbstractTableModel implements MapView.LayerChangeListener, PropertyChangeListener {
         /** manages list selection state*/
@@ -1181,7 +1181,7 @@ public class LayerListDialog extends ToggleDialog {
 
         /**
          * Populates the model with the current layers managed by
-         * {@see MapView}.
+         * {@link MapView}.
          *
          */
         public void populate() {
@@ -1245,7 +1245,7 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         /**
-         * Invoked if a layer managed by {@see MapView} is removed
+         * Invoked if a layer managed by {@link MapView} is removed
          *
          * @param layer the layer which is removed
          */
@@ -1264,7 +1264,7 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         /**
-         * Invoked when a layer managed by {@see MapView} is added
+         * Invoked when a layer managed by {@link MapView} is added
          *
          * @param layer the layer
          */
@@ -1405,10 +1405,10 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         /**
-         * Replies the list of layers currently managed by {@see MapView}.
+         * Replies the list of layers currently managed by {@link MapView}.
          * Never null, but can be empty.
          *
-         * @return the list of layers currently managed by {@see MapView}.
+         * @return the list of layers currently managed by {@link MapView}.
          * Never null, but can be empty.
          */
         public List<Layer> getLayers() {
@@ -1562,8 +1562,8 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     /**
-     * Creates a {@see ShowHideLayerAction} for <code>layer</code> in the
-     * context of this {@see LayerListDialog}.
+     * Creates a {@link ShowHideLayerAction} for <code>layer</code> in the
+     * context of this {@link LayerListDialog}.
      *
      * @param layer the layer
      * @return the action
@@ -1575,8 +1575,8 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     /**
-     * Creates a {@see DeleteLayerAction} for <code>layer</code> in the
-     * context of this {@see LayerListDialog}.
+     * Creates a {@link DeleteLayerAction} for <code>layer</code> in the
+     * context of this {@link LayerListDialog}.
      *
      * @param layer the layer
      * @return the action
@@ -1587,8 +1587,8 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     /**
-     * Creates a {@see ActivateLayerAction} for <code>layer</code> in the
-     * context of this {@see LayerListDialog}.
+     * Creates a {@link ActivateLayerAction} for <code>layer</code> in the
+     * context of this {@link LayerListDialog}.
      *
      * @param layer the layer
      * @return the action
@@ -1598,8 +1598,8 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     /**
-     * Creates a {@see MergeLayerAction} for <code>layer</code> in the
-     * context of this {@see LayerListDialog}.
+     * Creates a {@link MergeLayerAction} for <code>layer</code> in the
+     * context of this {@link LayerListDialog}.
      *
      * @param layer the layer
      * @return the action
