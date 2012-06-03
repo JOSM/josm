@@ -23,7 +23,7 @@ import org.xml.sax.SAXException;
 
 /**
  * The asynchronous task for fully downloading a collection of relations. Does a full download
- * for each relations and merges the relation into an {@see OsmDataLayer}
+ * for each relations and merges the relation into an {@link OsmDataLayer}
  *
  */
 public class DownloadRelationTask extends PleaseWaitRunnable {

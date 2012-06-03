@@ -299,7 +299,7 @@ public class OsmChangesetContentParser {
     /**
      * Parses the content
      *
-     * @param progressMonitor the progress monitor. Set to {@see NullProgressMonitor#INSTANCE}
+     * @param progressMonitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE}
      * if null
      * @return the parsed data
      * @throws OsmDataParsingException thrown if something went wrong. Check for chained

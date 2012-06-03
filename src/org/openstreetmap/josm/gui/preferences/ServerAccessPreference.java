@@ -40,7 +40,7 @@ public class ServerAccessPreference extends DefaultTabPreferenceSetting {
     /** panel for backup preferences */
 
     /**
-     * Embeds a vertically scrollable panel in a {@see JScrollPane}
+     * Embeds a vertically scrollable panel in a {@link JScrollPane}
      * @param panel the panel
      * @return the scroll pane
      */

@@ -130,8 +130,8 @@ public class ChangesetContentTableModel extends AbstractTableModel {
     }
 
     /**
-     * The type used internally to keep information about {@see HistoryOsmPrimitive}
-     * with their {@see ChangesetModificationType}.
+     * The type used internally to keep information about {@link HistoryOsmPrimitive}
+     * with their {@link ChangesetModificationType}.
      *
      */
     static private class ChangesetContentEntry implements ChangesetDataSetEntry{

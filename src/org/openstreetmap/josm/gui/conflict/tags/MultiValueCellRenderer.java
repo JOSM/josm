@@ -19,7 +19,7 @@ import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * This is a {@see TableCellRenderer} for {@see MultiValueResolutionDecision}s.
+ * This is a {@link TableCellRenderer} for {@link MultiValueResolutionDecision}s.
  *
  */
 public class MultiValueCellRenderer extends JLabel implements TableCellRenderer {

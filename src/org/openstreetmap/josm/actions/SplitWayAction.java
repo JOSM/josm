@@ -467,10 +467,10 @@ public class SplitWayAction extends JosmAction {
 
     /**
      * Splits the way {@code way} at the nodes in {@code atNodes} and replies
-     * the result of this process in an instance of {@see SplitWayResult}.
+     * the result of this process in an instance of {@link SplitWayResult}.
      *
      * Note that changes are not applied to the data yet. You have to
-     * submit the command in {@see SplitWayResult#getCommand()} first,
+     * submit the command in {@link SplitWayResult#getCommand()} first,
      * i.e. {@code Main.main.undoredo.add(result.getCommand())}.
      *
      * Replies null if the way couldn't be split at the given nodes.

@@ -30,10 +30,10 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * <tt>GET /api/0.6/user/details</tt> request, submitted with the user name and password
  * of the current user.
  *
- * The global JosmUserStateManager listens to {@see PreferenceChangeEvent}s and keeps track
+ * The global JosmUserStateManager listens to {@link PreferenceChangeEvent}s and keeps track
  * of what the current JOSM instance knows about the current user. Other subsystems can
  * let the global JosmUserStateManager know in case they fully identify the current user, see
- * {@see #setFullyIdentified(String, long)}.
+ * {@link #setFullyIdentified(String, long)}.
  *
  * The information kept by the JosmUserStateManager can be used to
  * <ul>
@@ -137,7 +137,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     }
 
     /**
-     * Replies the user name of the current JOSM user. null, if {@see #isAnonymous()} is true.
+     * Replies the user name of the current JOSM user. null, if {@link #isAnonymous()} is true.
      *
      * @return  the user name of the current JOSM user
      */
@@ -146,8 +146,8 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     }
 
     /**
-     * Replies the user id of the current JOSM user. 0, if {@see #isAnonymous()} or
-     * {@see #isPartiallyIdentified()} is true.
+     * Replies the user id of the current JOSM user. 0, if {@link #isAnonymous()} or
+     * {@link #isPartiallyIdentified()} is true.
      *
      * @return  the user id of the current JOSM user
      */
@@ -158,7 +158,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
 
     /**
      * Replies verified additional information about the current user if the user is
-     * {@see #isFullyIdentified()}.
+     * {@link #isFullyIdentified()}.
      *
      * @return verified additional information about the current user
      */
@@ -166,7 +166,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
         return userInfo;
     }
     /**
-     * Initializes the user identity manager from values in the {@see org.openstreetmap.josm.data.Preferences}
+     * Initializes the user identity manager from values in the {@link org.openstreetmap.josm.data.Preferences}
      */
     public void initFromPreferences() {
         String userName = CredentialsManager.getInstance().getUsername();

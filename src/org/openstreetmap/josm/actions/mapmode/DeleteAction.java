@@ -330,7 +330,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
 
     /**
      * Deletes the relation in the context of the given layer. Also notifies
-     * {@see RelationDialogManager} and {@see OsmDataLayer#fireDataChange()} events.
+     * {@link RelationDialogManager} and {@link OsmDataLayer#fireDataChange()} events.
      *
      * @param layer the layer in whose context the relation is deleted. Must not be null.
      * @param toDelete  the relation to be deleted. Must  not be null.

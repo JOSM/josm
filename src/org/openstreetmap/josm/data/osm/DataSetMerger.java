@@ -68,7 +68,7 @@ public class DataSetMerger {
      *
      * If other.id != 0 it tries to merge it with an corresponding primitive from
      * my dataset with the same id. If this is not possible a conflict is remembered
-     * in {@see #conflicts}.
+     * in {@link #conflicts}.
      *
      * If other.id == 0 it tries to find a primitive in my dataset with id == 0 which
      * is semantically equal. If it finds one it merges its technical attributes onto
@@ -369,20 +369,20 @@ public class DataSetMerger {
     }
 
     /**
-     * Runs the merge operation. Successfully merged {@see OsmPrimitive}s are in
-     * {@see #getMyDataSet()}.
+     * Runs the merge operation. Successfully merged {@link OsmPrimitive}s are in
+     * {@link #getMyDataSet()}.
      *
-     * See {@see #getConflicts()} for a map of conflicts after the merge operation.
+     * See {@link #getConflicts()} for a map of conflicts after the merge operation.
      */
     public void merge() {
         merge(null);
     }
 
     /**
-     * Runs the merge operation. Successfully merged {@see OsmPrimitive}s are in
-     * {@see #getMyDataSet()}.
+     * Runs the merge operation. Successfully merged {@link OsmPrimitive}s are in
+     * {@link #getMyDataSet()}.
      *
-     * See {@see #getConflicts()} for a map of conflicts after the merge operation.
+     * See {@link #getConflicts()} for a map of conflicts after the merge operation.
      */
     public void merge(ProgressMonitor progressMonitor) {
         if (sourceDataSet == null)

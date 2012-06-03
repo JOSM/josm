@@ -8,10 +8,10 @@ import java.util.Set;
 public class RelationToChildReference {
 
     /**
-     * Replies a set of all {@see RelationToChildReference}s for a given child primitive.
+     * Replies a set of all {@link RelationToChildReference}s for a given child primitive.
      *
      * @param child the child primitive
-     * @return  a set of all {@see RelationToChildReference}s for a given child primitive
+     * @return  a set of all {@link RelationToChildReference}s for a given child primitive
      */
     static public Set<RelationToChildReference> getRelationToChildReferences(OsmPrimitive child) {
         Set<Relation> parents = OsmPrimitive.getFilteredSet(child.getReferrers(), Relation.class);
@@ -27,10 +27,10 @@ public class RelationToChildReference {
     }
 
     /**
-     * Replies a set of all {@see RelationToChildReference}s for a collection of child primitives
+     * Replies a set of all {@link RelationToChildReference}s for a collection of child primitives
      *
      * @param children the collection of child primitives
-     * @return  a set of all {@see RelationToChildReference}s to the children in the collection of child
+     * @return  a set of all {@link RelationToChildReference}s to the children in the collection of child
      * primitives
      */
     static public Set<RelationToChildReference> getRelationToChildReferences(Collection<? extends OsmPrimitive> children) {

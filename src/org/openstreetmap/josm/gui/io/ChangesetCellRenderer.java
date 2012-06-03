@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * A {@see ListCellRenderer} for the list of changesets in the upload dialog.
+ * A {@link ListCellRenderer} for the list of changesets in the upload dialog.
  *
  *
  */

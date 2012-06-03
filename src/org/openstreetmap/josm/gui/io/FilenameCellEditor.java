@@ -25,8 +25,8 @@ import javax.swing.table.TableCellEditor;
 import org.openstreetmap.josm.actions.SaveActionBase;
 
 /**
- * This is a {@see TableCellEditor} for filenames. It provides a text input field and
- * a button for launchinig a {@see JFileChooser}.
+ * This is a {@link TableCellEditor} for filenames. It provides a text input field and
+ * a button for launchinig a {@link JFileChooser}.
  *
  *
  */

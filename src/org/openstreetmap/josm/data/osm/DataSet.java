@@ -378,8 +378,8 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
     /**
      * Removes a primitive from the dataset. This method only removes the
      * primitive form the respective collection of primitives managed
-     * by this dataset, i.e. from {@see #nodes}, {@see #ways}, or
-     * {@see #relations}. References from other primitives to this
+     * by this dataset, i.e. from {@link #nodes}, {@link #ways}, or
+     * {@link #relations}. References from other primitives to this
      * primitive are left unchanged.
      *
      * @param primitive the primitive
@@ -432,7 +432,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /**
-     * Notifies all registered {@see SelectionChangedListener} about the current selection in
+     * Notifies all registered {@link SelectionChangedListener} about the current selection in
      * this dataset.
      *
      */
@@ -583,7 +583,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
 
     /**
      * Sets the current selection to the primitives in <code>selection</code>.
-     * Notifies all {@see SelectionChangedListener} if <code>fireSelectionChangeEvent</code> is true.
+     * Notifies all {@link SelectionChangedListener} if <code>fireSelectionChangeEvent</code> is true.
      *
      * @param selection the selection
      * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
@@ -608,7 +608,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
 
     /**
      * Sets the current selection to the primitives in <code>selection</code>
-     * and notifies all {@see SelectionChangedListener}.
+     * and notifies all {@link SelectionChangedListener}.
      *
      * @param selection the selection
      */
@@ -627,7 +627,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
 
     /**
      * Adds   the primitives in <code>selection</code> to the current selection
-     * and notifies all {@see SelectionChangedListener}.
+     * and notifies all {@link SelectionChangedListener}.
      *
      * @param selection the selection
      */
@@ -641,7 +641,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
 
     /**
      * Adds the primitives in <code>selection</code> to the current selection.
-     * Notifies all {@see SelectionChangedListener} if <code>fireSelectionChangeEvent</code> is true.
+     * Notifies all {@link SelectionChangedListener} if <code>fireSelectionChangeEvent</code> is true.
      *
      * @param selection the selection
      * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
@@ -889,10 +889,10 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
 
     /**
      * Replies true if there is at least one primitive in this dataset with
-     * {@see OsmPrimitive#isModified()} == <code>true</code>.
+     * {@link OsmPrimitive#isModified()} == <code>true</code>.
      *
      * @return true if there is at least one primitive in this dataset with
-     * {@see OsmPrimitive#isModified()} == <code>true</code>.
+     * {@link OsmPrimitive#isModified()} == <code>true</code>.
      */
     public boolean isModified() {
         for (OsmPrimitive p: allPrimitives) {

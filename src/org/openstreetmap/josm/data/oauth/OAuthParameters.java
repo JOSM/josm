@@ -127,7 +127,7 @@ public class OAuthParameters {
     }
 
     /**
-     * Builds an {@see OAuthConsumer} based on these parameters
+     * Builds an {@link OAuthConsumer} based on these parameters
      *
      * @return the consumer
      */
@@ -137,7 +137,7 @@ public class OAuthParameters {
     }
 
     /**
-     * Builds an {@see OAuthProvider} based on these parameters and a OAuth consumer <code>consumer</code>.
+     * Builds an {@link OAuthProvider} based on these parameters and a OAuth consumer <code>consumer</code>.
      *
      * @param consumer the consumer. Must not be null.
      * @return the provider

@@ -23,11 +23,11 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * Base class helper for all Actions in JOSM. Just to make the life easier.
  *
- * A JosmAction is a {@see LayerChangeListener} and a {@see SelectionChangedListener}. Upon
- * a layer change event or a selection change event it invokes {@see #updateEnabled()}.
- * Subclasses can override {@see #updateEnabled()} in order to update the {@see #isEnabled()}-state
- * of a JosmAction depending on the {@see #getCurrentDataSet()} and the current layers
- * (see also {@see #getEditLayer()}).
+ * A JosmAction is a {@link LayerChangeListener} and a {@link SelectionChangedListener}. Upon
+ * a layer change event or a selection change event it invokes {@link #updateEnabled()}.
+ * Subclasses can override {@link #updateEnabled()} in order to update the {@link #isEnabled()}-state
+ * of a JosmAction depending on the {@link #getCurrentDataSet()} and the current layers
+ * (see also {@link #getEditLayer()}).
  *
  * destroy() from interface Destroyable is called e.g. for MapModes, when the last layer has
  * been removed and so the mapframe will be destroyed. For other JosmActions, destroy() may never
@@ -178,7 +178,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
 
     /**
      * Override in subclasses to init the enabled state of an action when it is
-     * created. Default behaviour is to call {@see #updateEnabledState()}
+     * created. Default behaviour is to call {@link #updateEnabledState()}
      *
      * @see #updateEnabledState()
      * @see #updateEnabledState(Collection)
@@ -191,7 +191,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
      * Override in subclasses to update the enabled state of the action when
      * something in the JOSM state changes, i.e. when a layer is removed or added.
      *
-     * See {@see #updateEnabledState(Collection)} to respond to changes in the collection
+     * See {@link #updateEnabledState(Collection)} to respond to changes in the collection
      * of selected primitives.
      *
      * Default behavior is empty.

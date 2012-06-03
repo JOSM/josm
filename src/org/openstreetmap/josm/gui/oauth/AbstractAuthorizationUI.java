@@ -51,7 +51,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel{
     }
 
     /**
-     * Replies the panel for entering advanced OAuth parameters (see {@see OAuthParameters})
+     * Replies the panel for entering advanced OAuth parameters (see {@link OAuthParameters})
      *
      * @return the panel for entering advanced OAuth parameters
      * @see #getOAuthParameters()
@@ -79,7 +79,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel{
     }
 
     /**
-     * Sets the current Access Token. This will fire a property change event for {@see #ACCESS_TOKEN_PROP}
+     * Sets the current Access Token. This will fire a property change event for {@link #ACCESS_TOKEN_PROP}
      * if the access token has changed
      *
      * @param accessToken the new access token. null, to clear the current access token

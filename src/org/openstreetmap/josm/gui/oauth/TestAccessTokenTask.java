@@ -50,7 +50,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     /**
      * Create the task
      *
-     * @param parent the parent component relative to which the  {@see PleaseWaitRunnable}-Dialog is displayed
+     * @param parent the parent component relative to which the  {@link PleaseWaitRunnable}-Dialog is displayed
      * @param apiUrl the API URL. Must not be null.
      * @param parameters the OAuth parameters. Must not be null.
      * @param accessToken the Access Token. Must not be null.

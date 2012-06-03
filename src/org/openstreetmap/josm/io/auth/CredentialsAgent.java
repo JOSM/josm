@@ -10,9 +10,9 @@ import org.openstreetmap.josm.data.oauth.OAuthToken;
 /**
  * A CredentialsAgent manages two credentials:
  * <ul>
- *   <li>the credential for {@see RequestorType#SERVER} which is equal to the OSM API credentials
+ *   <li>the credential for {@link RequestorType#SERVER} which is equal to the OSM API credentials
  *   in JOSM</li>
- *   <li>the credential for {@see RequestorType#PROXY} which is equal to the credentials for an
+ *   <li>the credential for {@link RequestorType#PROXY} which is equal to the credentials for an
  *   optional HTTP proxy server a user may use</li>
  *  </ul>
  *
@@ -23,7 +23,7 @@ public interface CredentialsAgent {
     /**
      * Looks up the credentials for a given type.
      *
-     * @param the type of service. {@see RequestorType#SERVER} for the OSM API server, {@see RequestorType#PROXY}
+     * @param the type of service. {@link RequestorType#SERVER} for the OSM API server, {@link RequestorType#PROXY}
      * for a proxy server
      * @return the credentials
      * @throws CredentialsAgentException thrown if a problem occurs in a implementation of this interface
@@ -33,7 +33,7 @@ public interface CredentialsAgent {
     /**
      * Saves the credentials in <code>credentials</code> for the given service type.
      *
-     * @param the type of service. {@see RequestorType#SERVER} for the OSM API server, {@see RequestorType#PROXY}
+     * @param the type of service. {@link RequestorType#SERVER} for the OSM API server, {@link RequestorType#PROXY}
      * for a proxy server
      * @param credentials the credentials
      * @throws CredentialsManagerException thrown if a problem occurs in a implementation of this interface
@@ -42,7 +42,7 @@ public interface CredentialsAgent {
 
     /**
      *
-     * @param requestorType  the type of service. {@see RequestorType#SERVER} for the OSM API server, {@see RequestorType#PROXY}
+     * @param requestorType  the type of service. {@link RequestorType#SERVER} for the OSM API server, {@link RequestorType#PROXY}
      * for a proxy server
      * @param noSuccessWithLastResponse true, if the last request with the supplied credentials failed; false otherwise.
      * If true, implementations of this interface are advised to prompt the user for new credentials.

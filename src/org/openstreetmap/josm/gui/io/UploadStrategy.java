@@ -57,7 +57,7 @@ public enum UploadStrategy {
      * First checks for the preference key <pre>osm-server.upload-strategy</pre>. If not
      * present, checks for the legacy preference key <pre>osm-server.atomic-upload</pre>.
      *
-     * If both are missing or if the preference value is illegal, {@see #DEFAULT_UPLOAD_STRATEGY}
+     * If both are missing or if the preference value is illegal, {@link #DEFAULT_UPLOAD_STRATEGY}
      * is replied.
      *
      * @return the upload strategy currently configured in the preferences.

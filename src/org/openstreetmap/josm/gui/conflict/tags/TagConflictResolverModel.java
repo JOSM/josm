@@ -164,9 +164,9 @@ public class TagConflictResolverModel extends DefaultTableModel {
     }
 
     /**
-     * Replies true if each {@see MultiValueResolutionDecision} is decided.
+     * Replies true if each {@link MultiValueResolutionDecision} is decided.
      *
-     * @return true if each {@see MultiValueResolutionDecision} is decided; false
+     * @return true if each {@link MultiValueResolutionDecision} is decided; false
      * otherwise
      */
     public boolean isResolvedCompletely() {

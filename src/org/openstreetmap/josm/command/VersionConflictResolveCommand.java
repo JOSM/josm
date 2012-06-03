@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Represents a command for resolving a version conflict between two {@see OsmPrimitive}
+ * Represents a command for resolving a version conflict between two {@link OsmPrimitive}
  *
  *
  */

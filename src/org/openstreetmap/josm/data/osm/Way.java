@@ -108,7 +108,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @param index the position
      * @return  the node at position <code>index</code>
      * @exception IndexOutOfBoundsException thrown if <code>index</code> < 0
-     * or <code>index</code> >= {@see #getNodesCount()}
+     * or <code>index</code> >= {@link #getNodesCount()}
      * @since 1862
      */
     public Node getNode(int index) {

@@ -533,7 +533,7 @@ public class Geometry {
      *
      * @param w the way to be checked.
      * @return true if and only if way is oriented clockwise.
-     * @throws IllegalArgumentException if way is not closed (see {@see Way#isClosed}).
+     * @throws IllegalArgumentException if way is not closed (see {@link Way#isClosed}).
      * @see http://paulbourke.net/geometry/polyarea/
      */
     public static boolean isClockwise(Way w) {

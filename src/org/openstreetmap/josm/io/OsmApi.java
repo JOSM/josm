@@ -58,7 +58,7 @@ public class OsmApi extends OsmConnection {
     private static HashMap<String, OsmApi> instances = new HashMap<String, OsmApi>();
 
     /**
-     * replies the {@see OsmApi} for a given server URL
+     * replies the {@link OsmApi} for a given server URL
      *
      * @param serverUrl  the server URL
      * @return the OsmApi
@@ -74,7 +74,7 @@ public class OsmApi extends OsmConnection {
         return api;
     }
     /**
-     * replies the {@see OsmApi} for the URL given by the preference <code>osm-server.url</code>
+     * replies the {@link OsmApi} for the URL given by the preference <code>osm-server.url</code>
      *
      * @return the OsmApi
      * @exception IllegalStateException thrown, if the preference <code>osm-server.url</code> is not set
@@ -386,7 +386,7 @@ public class OsmApi extends OsmConnection {
      * be null and id > 0 must be true.
      *
      * @param changeset the changeset to update. Must not be null.
-     * @param monitor the progress monitor. If null, uses the {@see NullProgressMonitor#INSTANCE}.
+     * @param monitor the progress monitor. If null, uses the {@link NullProgressMonitor#INSTANCE}.
      *
      * @throws OsmTransferException if something goes wrong.
      * @throws IllegalArgumentException if changeset is null
@@ -427,7 +427,7 @@ public class OsmApi extends OsmConnection {
      * succeeds.
      *
      * @param changeset the changeset to be closed. Must not be null. changeset.getId() > 0 required.
-     * @param monitor the progress monitor. If null, uses {@see NullProgressMonitor#INSTANCE}
+     * @param monitor the progress monitor. If null, uses {@link NullProgressMonitor#INSTANCE}
      *
      * @throws OsmTransferException if something goes wrong.
      * @throws IllegalArgumentException thrown if changeset is null

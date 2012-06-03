@@ -46,10 +46,10 @@ public class UpdateSelectionAction extends JosmAction {
     }
 
     /**
-     * Updates the data for for the {@see OsmPrimitive}s in <code>selection</code>
+     * Updates the data for for the {@link OsmPrimitive}s in <code>selection</code>
      * with the data currently kept on the server.
      *
-     * @param selection a collection of {@see OsmPrimitive}s to update
+     * @param selection a collection of {@link OsmPrimitive}s to update
      *
      */
     public void updatePrimitives(final Collection<OsmPrimitive> selection) {
@@ -58,10 +58,10 @@ public class UpdateSelectionAction extends JosmAction {
     }
 
     /**
-     * Updates the data for  the {@see OsmPrimitive}s with id <code>id</code>
+     * Updates the data for  the {@link OsmPrimitive}s with id <code>id</code>
      * with the data currently kept on the server.
      *
-     * @param id  the id of a primitive in the {@see DataSet} of the current edit layer. Must not be null.
+     * @param id  the id of a primitive in the {@link DataSet} of the current edit layer. Must not be null.
      * @throws IllegalArgumentException thrown if id is null
      * @exception IllegalStateException thrown if there is no primitive with <code>id</code> in
      *   the current dataset

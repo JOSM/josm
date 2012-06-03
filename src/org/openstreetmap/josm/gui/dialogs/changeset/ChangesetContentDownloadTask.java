@@ -86,7 +86,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
     /**
      * Creates a download task for a single changeset
      *
-     * @param parent the parent component for the {@see PleaseWaitDialog}. Must not be null.
+     * @param parent the parent component for the {@link PleaseWaitDialog}. Must not be null.
      * @param changesetId the changeset id. >0 required.
      * @throws IllegalArgumentException thrown if changesetId <= 0
      * @throws IllegalArgumentException thrown if parent is null
@@ -102,7 +102,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
      * Creates a download task for a collection of changesets. null values and id <=0 in
      * the collection are sillently discarded.
      *
-     * @param parent the parent component for the {@see PleaseWaitDialog}. Must not be null.
+     * @param parent the parent component for the {@link PleaseWaitDialog}. Must not be null.
      * @param changesetIds the changeset ids. Empty collection assumed, if null.
      * @throws IllegalArgumentException thrown if parent is null
      */
@@ -112,11 +112,11 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
     }
 
     /**
-     * Replies true if the local {@see ChangesetCache} already includes the changeset with
+     * Replies true if the local {@link ChangesetCache} already includes the changeset with
      * id <code>changesetId</code>.
      *
      * @param changesetId the changeset id
-     * @return true if the local {@see ChangesetCache} already includes the changeset with
+     * @return true if the local {@link ChangesetCache} already includes the changeset with
      * id <code>changesetId</code>
      */
     protected boolean isAvailableLocally(int changesetId) {

@@ -46,7 +46,7 @@ public class TagEditorModel extends AbstractTableModel {
      * Creates a new tag editor model. Internally allocates two selection models
      * for row selection and column selection.
      *
-     * To create a {@see JTable} with this model:
+     * To create a {@link JTable} with this model:
      * <pre>
      *    TagEditorModel model = new TagEditorModel();
      *    TagTable tbl  = new TagTabel(model);
@@ -440,9 +440,9 @@ public class TagEditorModel extends AbstractTableModel {
     }
 
     /**
-     * Replies the tags in this tag editor model as {@see TagCollection}.
+     * Replies the tags in this tag editor model as {@link TagCollection}.
      *
-     * @return the tags in this tag editor model as {@see TagCollection}
+     * @return the tags in this tag editor model as {@link TagCollection}
      */
     public TagCollection getTagCollection() {
         return TagCollection.from(getTags());

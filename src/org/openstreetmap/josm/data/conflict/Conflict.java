@@ -5,14 +5,14 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 
 /**
- * Represents a conflict between two {@see OsmPrimitive}s. It is represented as
- * a pair of {@see OsmPrimitive}s where one element of the pair has the role <em>my</em>
+ * Represents a conflict between two {@link OsmPrimitive}s. It is represented as
+ * a pair of {@link OsmPrimitive}s where one element of the pair has the role <em>my</em>
  * and the other has the role <em>their</em>.
  * <ul>
- *   <li><code>my</code> is the {@see OsmPrimitive} in the local dataset</li>
- *   <li><code>their</code> is the {@see OsmPrimitive} which caused the conflict when it
+ *   <li><code>my</code> is the {@link OsmPrimitive} in the local dataset</li>
+ *   <li><code>their</code> is the {@link OsmPrimitive} which caused the conflict when it
  *   it was tried to merge it onto <code>my</code>. <code>their</code> is usually the
- *   {@see OsmPrimitive} from the dataset in another layer or the one retrieved from the server.</li>
+ *   {@link OsmPrimitive} from the dataset in another layer or the one retrieved from the server.</li>
  * </ul>
  *
  *

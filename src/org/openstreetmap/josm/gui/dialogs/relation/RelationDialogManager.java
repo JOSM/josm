@@ -23,9 +23,9 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     static RelationDialogManager relationDialogManager;
 
     /**
-     * Replies the singleton {@see RelationDialogManager}
+     * Replies the singleton {@link RelationDialogManager}
      *
-     * @return the singleton {@see RelationDialogManager}
+     * @return the singleton {@link RelationDialogManager}
      */
     static public RelationDialogManager getRelationDialogManager() {
         if (RelationDialogManager.relationDialogManager == null) {
@@ -37,7 +37,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
 
     /**
      * Helper class for keeping the context of a relation editor. A relation editor
-     * is open for a specific relation managed by a specific {@see OsmDataLayer}
+     * is open for a specific relation managed by a specific {@link OsmDataLayer}
      *
      */
     static private class DialogContext {
@@ -101,7 +101,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     }
     /**
      * Register the relation editor for a relation managed by a
-     * {@see OsmDataLayer}.
+     * {@link OsmDataLayer}.
      *
      * @param layer the layer
      * @param relation the relation
@@ -223,11 +223,11 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     }
 
     /**
-     * Replies true, if there is another open {@see RelationEditor} whose
+     * Replies true, if there is another open {@link RelationEditor} whose
      * upper left corner is close to <code>p</code>.
      *
      * @param p  the reference point to check
-     * @return true, if there is another open {@see RelationEditor} whose
+     * @return true, if there is another open {@link RelationEditor} whose
      * upper left corner is close to <code>p</code>.
      */
     protected boolean hasEditorWithCloseUpperLeftCorner(Point p, RelationEditor thisEditor) {
@@ -244,7 +244,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     }
 
     /**
-     * Positions a {@see RelationEditor} on the screen. Tries to center it on the
+     * Positions a {@link RelationEditor} on the screen. Tries to center it on the
      * screen. If it hide another instance of an editor at the same position this
      * method tries to reposition <code>editor</code> by moving it slightly down and
      * slightly to the right.

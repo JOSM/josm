@@ -23,11 +23,11 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * This is an abstract class for a validator on a text component.
  *
- * Subclasses implement {@see #validate()}. {@see #validate()} is invoked whenever
+ * Subclasses implement {@link #validate()}. {@link #validate()} is invoked whenever
  * <ul>
- *   <li>the content of the text component changes (the validator is a {@see DocumentListener})</li>
- *   <li>the text component loses focus (the validator is a {@see FocusListener})</li>
- *   <li>the text component is a {@see JTextField} and an {@see ActionEvent} is detected</li>
+ *   <li>the content of the text component changes (the validator is a {@link DocumentListener})</li>
+ *   <li>the text component loses focus (the validator is a {@link FocusListener})</li>
+ *   <li>the text component is a {@link JTextField} and an {@link ActionEvent} is detected</li>
  * </ul>
  *
  *

@@ -133,7 +133,7 @@ public class HelpAwareOptionPane {
      * @param parentComponent the parent component
      * @param msg the message
      * @param title the title
-     * @param messageType the message type (see {@see JOptionPane})
+     * @param messageType the message type (see {@link JOptionPane})
      * @param icon the icon to display. Can be null.
      * @param options the list of options to display. Can be null.
      * @param defaultOption the default option. Can be null.

@@ -218,7 +218,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
             return true;
         if (!(obj instanceof HistoryOsmPrimitive))
             return false;
-        // equal semantics is valid for subclasses like {@see HistoryOsmNode} etc. too.
+        // equal semantics is valid for subclasses like {@link HistoryOsmNode} etc. too.
         // So, don't enforce equality of class.
         //
         //        if (getClass() != obj.getClass())

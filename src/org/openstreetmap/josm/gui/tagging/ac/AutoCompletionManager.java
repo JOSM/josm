@@ -204,7 +204,7 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     /**
-     * Populates the an {@see AutoCompletionList} with the currently cached
+     * Populates the an {@link AutoCompletionList} with the currently cached
      * member roles.
      *
      * @param list the list to populate
@@ -215,7 +215,7 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     /**
-     * Populates the an {@see AutoCompletionList} with the currently cached
+     * Populates the an {@link AutoCompletionList} with the currently cached
      * tag keys
      *
      * @param list the list to populate
@@ -226,7 +226,7 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     /**
-     * Populates the an {@see AutoCompletionList} with the currently cached
+     * Populates the an {@link AutoCompletionList} with the currently cached
      * values for a tag
      *
      * @param list the list to populate
@@ -237,7 +237,7 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     /**
-     * Populates the an {@see AutoCompletionList} with the currently cached
+     * Populates the an {@link AutoCompletionList} with the currently cached
      * values for some given tags
      *
      * @param list the list to populate

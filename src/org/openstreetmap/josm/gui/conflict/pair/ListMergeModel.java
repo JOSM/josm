@@ -38,25 +38,25 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
  *   <li>the list of <em>merged</em> entries</li>
  * </ol>
  *
- * A ListMergeModel is a factory for three {@see TableModel}s and three {@see ListSelectionModel}s:
+ * A ListMergeModel is a factory for three {@link TableModel}s and three {@link ListSelectionModel}s:
  * <ol>
- *   <li>the table model and the list selection for for a  {@see JTable} which shows my entries.
- *    See {@see #getMyTableModel()}</li> and {@see ListMergeModel#getMySelectionModel()}</li>
+ *   <li>the table model and the list selection for for a  {@link JTable} which shows my entries.
+ *    See {@link #getMyTableModel()}</li> and {@link ListMergeModel#getMySelectionModel()}</li>
  *   <li>dito for their entries and merged entries</li>
  * </ol>
  *
  * A ListMergeModel can be ''frozen''. If it's frozen, it doesn't accept additional merge
- * decisions. {@see PropertyChangeListener}s can register for property value changes of
- * {@see #PROP_FROZEN}.
+ * decisions. {@link PropertyChangeListener}s can register for property value changes of
+ * {@link #PROP_FROZEN}.
  *
  * ListMergeModel is an abstract class. Three methods have to be implemented by subclasses:
  * <ul>
- *   <li>{@see ListMergeModel#cloneEntryForMergedList(Object)} - clones an entry of type T</li>
- *   <li>{@see ListMergeModel#isEqualEntry(Object, Object)} - checks whether two entries are equals </li>
- *   <li>{@see ListMergeModel#setValueAt(DefaultTableModel, Object, int, int)} - handles values edited in
- *     a JTable, dispatched from {@see TableModel#setValueAt(Object, int, int)} </li>
+ *   <li>{@link ListMergeModel#cloneEntryForMergedList(Object)} - clones an entry of type T</li>
+ *   <li>{@link ListMergeModel#isEqualEntry(Object, Object)} - checks whether two entries are equals </li>
+ *   <li>{@link ListMergeModel#setValueAt(DefaultTableModel, Object, int, int)} - handles values edited in
+ *     a JTable, dispatched from {@link TableModel#setValueAt(Object, int, int)} </li>
  * </ul>
- * A ListMergeModel is used in combination with a {@see ListMerger}.
+ * A ListMergeModel is used in combination with a {@link ListMerger}.
  *
  * @param <T>  the type of the list entries
  * @see ListMerger
@@ -100,7 +100,7 @@ public abstract class ListMergeModel<T> extends Observable {
     public abstract boolean isEqualEntry(T e1, T e2);
 
     /**
-     * Handles method dispatches from {@see TableModel#setValueAt(Object, int, int)}.
+     * Handles method dispatches from {@link TableModel#setValueAt(Object, int, int)}.
      *
      * @param model the table model
      * @param value  the value to be set
@@ -544,10 +544,10 @@ public abstract class ListMergeModel<T> extends Observable {
     }
 
     /**
-     * This an adapter between a {@see JTable} and one of the three entry lists
-     * in the role {@see ListRole} managed by the {@see ListMergeModel}.
+     * This an adapter between a {@link JTable} and one of the three entry lists
+     * in the role {@link ListRole} managed by the {@link ListMergeModel}.
      *
-     * From the point of view of the {@see JTable} it is a {@see TableModel}.
+     * From the point of view of the {@link JTable} it is a {@link TableModel}.
      *
      * @param <T>
      * @see ListMergeModel#getMyTableModel()
@@ -594,11 +594,11 @@ public abstract class ListMergeModel<T> extends Observable {
         }
 
         /**
-         * replies true if the {@see ListRole} of this {@see EntriesTableModel}
-         * participates in the current {@see ComparePairType}
+         * replies true if the {@link ListRole} of this {@link EntriesTableModel}
+         * participates in the current {@link ComparePairType}
          *
-         * @return true, if the if the {@see ListRole} of this {@see EntriesTableModel}
-         * participates in the current {@see ComparePairType}
+         * @return true, if the if the {@link ListRole} of this {@link EntriesTableModel}
+         * participates in the current {@link ComparePairType}
          *
          * @see ComparePairListModel#getSelectedComparePair()
          */
@@ -610,13 +610,13 @@ public abstract class ListMergeModel<T> extends Observable {
 
         /**
          * replies true if the entry at <code>row</code> is equal to the entry at the
-         * same position in the opposite list of the current {@see ComparePairType}.
+         * same position in the opposite list of the current {@link ComparePairType}.
          *
          * @param row  the row number
          * @return true if the entry at <code>row</code> is equal to the entry at the
-         * same position in the opposite list of the current {@see ComparePairType}
+         * same position in the opposite list of the current {@link ComparePairType}
          * @exception IllegalStateException thrown, if this model is not participating in the
-         *   current  {@see ComparePairType}
+         *   current  {@link ComparePairType}
          * @see ComparePairType#getOppositeRole(ListRole)
          * @see #getRole()
          * @see #getOppositeEntries()
@@ -634,13 +634,13 @@ public abstract class ListMergeModel<T> extends Observable {
 
         /**
          * replies true if the entry at the current position is present in the opposite list
-         * of the current {@see ComparePairType}.
+         * of the current {@link ComparePairType}.
          *
          * @param row the current row
          * @return true if the entry at the current position is present in the opposite list
-         * of the current {@see ComparePairType}.
+         * of the current {@link ComparePairType}.
          * @exception IllegalStateException thrown, if this model is not participating in the
-         *   current  {@see ComparePairType}
+         *   current  {@link ComparePairType}
          * @see ComparePairType#getOppositeRole(ListRole)
          * @see #getRole()
          * @see #getOppositeEntries()
@@ -662,7 +662,7 @@ public abstract class ListMergeModel<T> extends Observable {
         }
 
         /**
-         * replies the opposite list of entries with respect to the current {@see ComparePairType}
+         * replies the opposite list of entries with respect to the current {@link ComparePairType}
          *
          * @return the opposite list of entries
          */
@@ -677,8 +677,8 @@ public abstract class ListMergeModel<T> extends Observable {
     }
 
     /**
-     * This is the selection model to be used in a {@see JTable} which displays
-     * an entry list managed by {@see ListMergeModel}.
+     * This is the selection model to be used in a {@link JTable} which displays
+     * an entry list managed by {@link ListMergeModel}.
      *
      * The model ensures that only rows displaying an entry in the entry list
      * can be selected. "Empty" rows can't be selected.

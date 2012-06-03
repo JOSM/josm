@@ -68,7 +68,7 @@ public class ReferringRelationsBrowserModel extends AbstractListModel {
     }
 
     /**
-     * Populates the browser with the list of referring relations in the {@see DataSet} ds.
+     * Populates the browser with the list of referring relations in the {@link DataSet} ds.
      *
      * @param ds the data set
      */

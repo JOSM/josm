@@ -13,11 +13,11 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 
 /**
- * This is a {@see TreeModel} which provides the hierarchical structure of {@see Relation}s
- * to a  {@see JTree}.
+ * This is a {@link TreeModel} which provides the hierarchical structure of {@link Relation}s
+ * to a  {@link JTree}.
  *
- * The model is initialized with a root relation or with a list of {@see RelationMember}s, see
- * {@see #populate(Relation)} and {@see #populate(List)} respectively.
+ * The model is initialized with a root relation or with a list of {@link RelationMember}s, see
+ * {@link #populate(Relation)} and {@link #populate(List)} respectively.
  *
  *
  */

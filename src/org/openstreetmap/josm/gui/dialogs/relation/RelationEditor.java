@@ -34,7 +34,7 @@ public abstract class RelationEditor extends ExtendedDialog {
 
     /**
      * Registers a relation editor class. Depending on the type of relation to be edited
-     * {@see #getEditor(OsmDataLayer, Relation, Collection)} will create an instance of
+     * {@link #getEditor(OsmDataLayer, Relation, Collection)} will create an instance of
      * this class.
      *
      * @param clazz the class
@@ -107,7 +107,7 @@ public abstract class RelationEditor extends ExtendedDialog {
     /**
      * Creates a new relation editor
      *
-     * @param layer  the {@see OsmDataLayer} in whose context a relation is edited. Must not be null.
+     * @param layer  the {@link OsmDataLayer} in whose context a relation is edited. Must not be null.
      * @param relation the relation. Can be null if a new relation is to be edited.
      * @param selectedMembers  a collection of members in <code>relation</code> which the editor
      * should display selected when the editor is first displayed on screen
@@ -149,7 +149,7 @@ public abstract class RelationEditor extends ExtendedDialog {
 
     /**
      * Sets the currently edited relation. Creates a snapshot of the current
-     * state of the relation. See {@see #getRelationSnapshot()}
+     * state of the relation. See {@link #getRelationSnapshot()}
      *
      * @param relation the relation
      */
@@ -164,10 +164,10 @@ public abstract class RelationEditor extends ExtendedDialog {
     }
 
     /**
-     * Replies the {@see OsmDataLayer} in whose context this relation editor is
+     * Replies the {@link OsmDataLayer} in whose context this relation editor is
      * open
      *
-     * @return the {@see OsmDataLayer} in whose context this relation editor is
+     * @return the {@link OsmDataLayer} in whose context this relation editor is
      * open
      */
     protected OsmDataLayer getLayer() {

@@ -27,9 +27,9 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Represents a collection of {@see OsmPrimitive}s which should be uploaded to the
+ * Represents a collection of {@link OsmPrimitive}s which should be uploaded to the
  * API.
- * The collection is derived from the modified primitives of an {@see DataSet} and it provides methods
+ * The collection is derived from the modified primitives of an {@link DataSet} and it provides methods
  * for sorting the objects in upload order.
  *
  */

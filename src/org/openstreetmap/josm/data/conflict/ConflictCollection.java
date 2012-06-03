@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * This is a collection of {@see Conflict}s. This collection is {@see Iterable}, i.e.
+ * This is a collection of {@link Conflict}s. This collection is {@link Iterable}, i.e.
  * it can be used in <code>for</code>-loops as follows:
  * <pre>
  *    ConflictCollection conflictCollection = ....
@@ -28,8 +28,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * This collection emits an event when the content of the collection changes. You can register
  * and unregister for these events using:
  * <ul>
- *   <li>{@see #addConflictListener(IConflictListener)}</li>
- *   <li>{@see #removeConflictListener(IConflictListener)}</li>
+ *   <li>{@link #addConflictListener(IConflictListener)}</li>
+ *   <li>{@link #removeConflictListener(IConflictListener)}</li>
  * </ul>
  */
 public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimitive>>{
@@ -107,7 +107,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
     }
 
     /**
-     * Adds a conflict for the pair of {@see OsmPrimitive}s given by <code>my</code> and
+     * Adds a conflict for the pair of {@link OsmPrimitive}s given by <code>my</code> and
      * <code>their</code>.
      *
      * @param my  my primitive
@@ -129,7 +129,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
     }
 
     /**
-     * removes the conflict registered for {@see OsmPrimitive} <code>my</code> if any
+     * removes the conflict registered for {@link OsmPrimitive} <code>my</code> if any
      *
      * @param my  the primitive
      */
@@ -144,11 +144,11 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
     }
 
     /**
-     * Replies the conflict for the {@see OsmPrimitive} <code>my</code>, null
+     * Replies the conflict for the {@link OsmPrimitive} <code>my</code>, null
      * if no such conflict exists.
      *
      * @param my  my primitive
-     * @return the conflict for the {@see OsmPrimitive} <code>my</code>, null
+     * @return the conflict for the {@link OsmPrimitive} <code>my</code>, null
      * if no such conflict exists.
      */
     public Conflict<?> getConflictForMy(OsmPrimitive my) {
@@ -159,11 +159,11 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
         return null;
     }
     /**
-     * Replies the conflict for the {@see OsmPrimitive} <code>their</code>, null
+     * Replies the conflict for the {@link OsmPrimitive} <code>their</code>, null
      * if no such conflict exists.
      *
      * @param my  my primitive
-     * @return the conflict for the {@see OsmPrimitive} <code>their</code>, null
+     * @return the conflict for the {@link OsmPrimitive} <code>their</code>, null
      * if no such conflict exists.
      */
     public Conflict<?> getConflictForTheir(OsmPrimitive their) {
@@ -205,7 +205,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
     }
 
     /**
-     * Removes any conflicts for the {@see OsmPrimitive} <code>my</code>.
+     * Removes any conflicts for the {@link OsmPrimitive} <code>my</code>.
      *
      * @param my the primitive
      */
@@ -219,7 +219,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
     }
 
     /**
-     * Removes any conflicts for the {@see OsmPrimitive} <code>their</code>.
+     * Removes any conflicts for the {@link OsmPrimitive} <code>their</code>.
      *
      * @param their the primitive
      */
@@ -276,10 +276,10 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
     }
 
     /**
-     * Replies the set of  {@see OsmPrimitive} which participate in the role
+     * Replies the set of  {@link OsmPrimitive} which participate in the role
      * of "my" in the conflicts managed by this collection.
      *
-     * @return the set of  {@see OsmPrimitive} which participate in the role
+     * @return the set of  {@link OsmPrimitive} which participate in the role
      * of "my" in the conflicts managed by this collection.
      */
     public Set<OsmPrimitive> getMyConflictParties() {
@@ -290,10 +290,10 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
         return ret;
     }
     /**
-     * Replies the set of  {@see OsmPrimitive} which participate in the role
+     * Replies the set of  {@link OsmPrimitive} which participate in the role
      * of "their" in the conflicts managed by this collection.
      *
-     * @return the set of  {@see OsmPrimitive} which participate in the role
+     * @return the set of  {@link OsmPrimitive} which participate in the role
      * of "their" in the conflicts managed by this collection.
      */
     public Set<OsmPrimitive> getTheirConflictParties() {

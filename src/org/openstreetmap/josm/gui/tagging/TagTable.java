@@ -539,9 +539,9 @@ public class TagTable extends JTable  {
      * to handle the client property <tt>terminateEditOnFocusLost</tt>.
      *
      * This implementation also checks whether focus is transferred to one of a list
-     * of dedicated components, see {@see TagTable#doNotStopCellEditingWhenFocused}.
-     * A typical example for such a component is a button in {@see TagEditorPanel}
-     * which isn't a child component of {@see TagTable} but which should respond to
+     * of dedicated components, see {@link TagTable#doNotStopCellEditingWhenFocused}.
+     * A typical example for such a component is a button in {@link TagEditorPanel}
+     * which isn't a child component of {@link TagTable} but which should respond to
      * to focus transfer in a similar way to a child of TagTable.
      *
      */

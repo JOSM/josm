@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.History;
 
 /**
- * HistoryBrowser is an UI component which displays history information about an {@see OsmPrimitive}.
+ * HistoryBrowser is an UI component which displays history information about an {@link OsmPrimitive}.
  *
  *
  */
@@ -32,10 +32,10 @@ public class HistoryBrowser extends JPanel {
     private VersionTable versionTable;
 
     /**
-     * embedds table in a {@see JScrollPane}
+     * embedds table in a {@link JScrollPane}
      *
      * @param table the table
-     * @return the {@see JScrollPane} with the embedded table
+     * @return the {@link JScrollPane} with the embedded table
      */
     protected JScrollPane embeddInScrollPane(JTable table) {
         JScrollPane pane = new JScrollPane(table);
@@ -60,7 +60,7 @@ public class HistoryBrowser extends JPanel {
 
     /**
      * creates the panel which shows information about two different versions
-     * of the same {@see OsmPrimitive}.
+     * of the same {@link OsmPrimitive}.
      *
      * @return the panel
      */
@@ -112,7 +112,7 @@ public class HistoryBrowser extends JPanel {
 
     /**
      * constructor
-     * @param history  the history of an {@see OsmPrimitive}
+     * @param history  the history of an {@link OsmPrimitive}
      */
     public HistoryBrowser(History history) {
         this();
@@ -120,7 +120,7 @@ public class HistoryBrowser extends JPanel {
     }
 
     /**
-     * populates the browser with the history of a specific {@see OsmPrimitive}
+     * populates the browser with the history of a specific {@link OsmPrimitive}
      *
      * @param history the history
      */
@@ -146,7 +146,7 @@ public class HistoryBrowser extends JPanel {
     }
 
     /**
-     * replies the {@see History} currently displayed by this browser
+     * replies the {@link History} currently displayed by this browser
      *
      * @return the current history
      */

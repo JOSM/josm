@@ -31,7 +31,7 @@ import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.tools.ImageProvider;
 /**
- * UI component for resolving conflicts in the tag sets of two {@see OsmPrimitive}s.
+ * UI component for resolving conflicts in the tag sets of two {@link OsmPrimitive}s.
  *
  */
 public class TagMerger extends JPanel implements IConflictResolver {
@@ -45,7 +45,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
     AdjustmentSynchronizer adjustmentSynchronizer;
 
     /**
-     * embeds table in a new {@see JScrollPane} and returns th scroll pane
+     * embeds table in a new {@link JScrollPane} and returns th scroll pane
      *
      * @param table the table
      * @return the scroll pane embedding the table
@@ -321,7 +321,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
 
     /**
      * Synchronizes scrollbar adjustments between a set of
-     * {@see Adjustable}s. Whenever the adjustment of one of
+     * {@link Adjustable}s. Whenever the adjustment of one of
      * the registerd Adjustables is updated the adjustment of
      * the other registered Adjustables is adjusted too.
      *
@@ -384,7 +384,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
 
     /**
      * Sets the currently selected tags in the table of merged tags to state
-     * {@see MergeDecisionType#UNDECIDED}
+     * {@link MergeDecisionType#UNDECIDED}
      *
      */
     class UndecideAction extends AbstractAction implements ListSelectionListener  {

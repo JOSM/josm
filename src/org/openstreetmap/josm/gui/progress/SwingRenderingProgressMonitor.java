@@ -10,7 +10,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * SwingRenderingProgressMonitor is progress monitor which delegates the rendering
- * of progress information to a {@see ProgressRenderer}.
+ * of progress information to a {@link ProgressRenderer}.
  * Methods of the progress renderer are always called on the Swing EDT.
  *
  */

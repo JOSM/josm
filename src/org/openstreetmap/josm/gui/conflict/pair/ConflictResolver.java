@@ -34,15 +34,15 @@ import org.openstreetmap.josm.gui.conflict.pair.tags.TagMerger;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * An UI component for resolving conflicts between two {@see OsmPrimitive}s.
+ * An UI component for resolving conflicts between two {@link OsmPrimitive}s.
  *
- * This component emits {@see PropertyChangeEvent}s for three properties:
+ * This component emits {@link PropertyChangeEvent}s for three properties:
  * <ul>
- *   <li>{@see #RESOLVED_COMPLETELY_PROP} - new value is <code>true</code>, if the conflict is
+ *   <li>{@link #RESOLVED_COMPLETELY_PROP} - new value is <code>true</code>, if the conflict is
  *   completely resolved</li>
- *   <li>{@see #MY_PRIMITIVE_PROP} - new value is the {@see OsmPrimitive} in the role of
+ *   <li>{@link #MY_PRIMITIVE_PROP} - new value is the {@link OsmPrimitive} in the role of
  *   my primitive</li>
- *   <li>{@see #THEIR_PRIMITIVE_PROP} - new value is the {@see OsmPrimitive} in the role of
+ *   <li>{@link #THEIR_PRIMITIVE_PROP} - new value is the {@link OsmPrimitive} in the role of
  *   their primitive</li>
  * </ul>
  *
@@ -53,16 +53,16 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     /* Property names                                                                         */
     /* -------------------------------------------------------------------------------------- */
     /** name of the property indicating whether all conflicts are resolved,
-     *  {@see #isResolvedCompletely()}
+     *  {@link #isResolvedCompletely()}
      */
     static public final String RESOLVED_COMPLETELY_PROP = ConflictResolver.class.getName() + ".resolvedCompletely";
     /**
-     * name of the property for the {@see OsmPrimitive} in the role "my"
+     * name of the property for the {@link OsmPrimitive} in the role "my"
      */
     static public final String MY_PRIMITIVE_PROP = ConflictResolver.class.getName() + ".myPrimitive";
 
     /**
-     * name of the property for the {@see OsmPrimitive} in the role "my"
+     * name of the property for the {@link OsmPrimitive} in the role "my"
      */
     static public final String THEIR_PRIMITIVE_PROP = ConflictResolver.class.getName() + ".theirPrimitive";
 
@@ -135,7 +135,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     }
 
     /**
-     * Sets the {@see OsmPrimitive} in the role "my"
+     * Sets the {@link OsmPrimitive} in the role "my"
      *
      * @param my the primitive in the role "my"
      */
@@ -148,7 +148,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     }
 
     /**
-     * Sets the {@see OsmPrimitive} in the role "their".
+     * Sets the {@link OsmPrimitive} in the role "their".
      *
      * @param their the primitive in the role "their"
      */
@@ -283,7 +283,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     }
 
     /**
-     * Updates the state of the property {@see #RESOLVED_COMPLETELY_PROP}
+     * Updates the state of the property {@link #RESOLVED_COMPLETELY_PROP}
      *
      */
     protected void updateResolvedCompletely() {

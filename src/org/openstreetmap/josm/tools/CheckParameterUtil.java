@@ -40,7 +40,7 @@ public class CheckParameterUtil {
     }
 
     /**
-     * Ensures that <code>id</code> is non-null primitive id of type {@see OsmPrimitiveType#NODE}
+     * Ensures that <code>id</code> is non-null primitive id of type {@link OsmPrimitiveType#NODE}
      *
      * @param id  the primitive  id
      * @param parameterName the name of the parameter to be checked

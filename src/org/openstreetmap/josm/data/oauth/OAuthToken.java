@@ -8,7 +8,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class OAuthToken {
 
     /**
-     * Creates an OAuthToken from the token currently managed by the {@see OAuthConsumer}.
+     * Creates an OAuthToken from the token currently managed by the {@link OAuthConsumer}.
      *
      * @param consumer the consumer
      * @return the token

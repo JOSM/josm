@@ -3,11 +3,11 @@ package org.openstreetmap.josm.gui.io;
 
 /**
  * An UploadStrategySpecification consists of the parameter describing the strategy
- * for uploading a collection of {@see OsmPrimitive}.
+ * for uploading a collection of {@link OsmPrimitive}.
  *
  * This includes:
  * <ul>
- * <li>a decision on which {@see UploadStrategy} to use</li>
+ * <li>a decision on which {@link UploadStrategy} to use</li>
  * <li>the upload chunk size</li>
  * <li>whether to close the changeset used after the upload</li>
  * </ul>

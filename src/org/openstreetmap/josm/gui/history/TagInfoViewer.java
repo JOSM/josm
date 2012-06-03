@@ -12,11 +12,11 @@ import javax.swing.ListSelectionModel;
 
 /**
  * TagInfoViewer is a UI component which displays the list of tags of two
- * version of a {@see OsmPrimitive} in a {@see History}.
+ * version of a {@link OsmPrimitive} in a {@link History}.
  *
  * <ul>
- *   <li>on the left, it displays the list of tags for the version at {@see PointInTimeType#REFERENCE_POINT_IN_TIME}</li>
- *   <li>on the right, it displays the list of tags for the version at {@see PointInTimeType#CURRENT_POINT_IN_TIME}</li>
+ *   <li>on the left, it displays the list of tags for the version at {@link PointInTimeType#REFERENCE_POINT_IN_TIME}</li>
+ *   <li>on the right, it displays the list of tags for the version at {@link PointInTimeType#CURRENT_POINT_IN_TIME}</li>
  * </ul>
  *
  */

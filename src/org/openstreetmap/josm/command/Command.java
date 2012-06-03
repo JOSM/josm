@@ -34,7 +34,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * Classes implementing Command modify a dataset in a specific way. A command is
  * one atomic action on a specific dataset, such as move or delete.
  *
- * The command remembers the {@see OsmDataLayer} it is operating on.
+ * The command remembers the {@link OsmDataLayer} it is operating on.
  *
  * @author imi
  */

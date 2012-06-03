@@ -20,7 +20,7 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 
 /**
  * This panel displays a summary of the objects to upload. It is displayed in
- * the upper part of the {@see UploadDialog}.
+ * the upper part of the {@link UploadDialog}.
  *
  */
 public class UploadedObjectsSummaryPanel extends JPanel {

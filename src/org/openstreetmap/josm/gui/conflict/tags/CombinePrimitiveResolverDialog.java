@@ -60,11 +60,11 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * Prior to {@link #launchIfNecessary}, the following usage sequence was needed:
  *
  * There is a singleton instance of this dialog which can be retrieved using
- * {@see #getInstance()}.
+ * {@link #getInstance()}.
  *
  * The dialog uses two models: one  for resolving tag conflicts, the other
  * for resolving conflicts in relation memberships. For both models there are accessors,
- * i.e {@see #getTagConflictResolverModel()} and {@see #getRelationMemberConflictResolverModel()}.
+ * i.e {@link #getTagConflictResolverModel()} and {@link #getRelationMemberConflictResolverModel()}.
  *
  * Models have to be <strong>populated</strong> before the dialog is launched. Example:
  * <pre>
@@ -75,12 +75,12 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * </pre>
  *
  * You should also set the target primitive which other primitives (ways or nodes) are
- * merged to, see {@see #setTargetPrimitive(OsmPrimitive)}.
+ * merged to, see {@link #setTargetPrimitive(OsmPrimitive)}.
  *
- * After the dialog is closed use {@see #isCanceled()} to check whether the user canceled
- * the dialog. If it wasn't canceled you may build a collection of {@see Command} objects
+ * After the dialog is closed use {@link #isCanceled()} to check whether the user canceled
+ * the dialog. If it wasn't canceled you may build a collection of {@link Command} objects
  * which reflect the conflict resolution decisions the user made in the dialog:
- * see {@see #buildResolutionCommands()}
+ * see {@link #buildResolutionCommands()}
  *
  *
  */

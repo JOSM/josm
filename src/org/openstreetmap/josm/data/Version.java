@@ -179,7 +179,7 @@ public class Version {
     }
 
     /**
-     * Replies the JOSM version. Replies {@see #JOSM_UNKNOWN_VERSION} if the version isn't known.
+     * Replies the JOSM version. Replies {@link #JOSM_UNKNOWN_VERSION} if the version isn't known.
      * @return the JOSM version
      */
     public int getVersion() {

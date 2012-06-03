@@ -186,7 +186,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
     /**
      * Listens to changes in the selected tile bounds, refreshes the map view and emits
-     * property change events for {@see BBoxChooser#BBOX_PROP}
+     * property change events for {@link BBoxChooser#BBOX_PROP}
      */
     class TileBoundsChangeListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent evt) {
@@ -202,7 +202,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
     /**
      * A panel for describing a rectangular area of OSM tiles at a given zoom level.
      *
-     * The panel emits PropertyChangeEvents for the property {@see TileGridInputPanel#TILE_BOUNDS_PROP}
+     * The panel emits PropertyChangeEvents for the property {@link TileGridInputPanel#TILE_BOUNDS_PROP}
      * when the user successfully enters a valid tile grid specification.
      *
      */

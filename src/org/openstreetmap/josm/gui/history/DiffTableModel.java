@@ -9,7 +9,7 @@ import javax.swing.table.AbstractTableModel;
 /**
  * Simple model storing "diff cells" in a list. Could probably have used a DefaultTableModel instead..
  *
- * {@see NodeListDiffTableCellRenderer}
+ * {@link NodeListDiffTableCellRenderer}
  */
 class DiffTableModel extends AbstractTableModel {
     private List<TwoColumnDiff.Item> rows;

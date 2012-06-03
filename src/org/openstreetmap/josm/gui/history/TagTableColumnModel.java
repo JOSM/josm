@@ -7,7 +7,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
 /**
- * The {@see TableColumnModel} for the table with the list of tags
+ * The {@link TableColumnModel} for the table with the list of tags
  *
  */
 public class TagTableColumnModel extends DefaultTableColumnModel{

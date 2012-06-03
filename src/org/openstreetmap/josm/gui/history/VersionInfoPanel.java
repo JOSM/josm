@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.UrlLabel;
 
 /**
  * VersionInfoPanel is an UI component which displays the basic properties of a version
- * of a {@see OsmPrimitive}.
+ * of a {@link OsmPrimitive}.
  *
  */
 public class VersionInfoPanel extends JPanel implements Observer{

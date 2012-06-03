@@ -13,7 +13,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * CredentialManager is a factory for the single credential agent used.
  *
- * Currently, it defaults to replying an instance of {@see JosmPreferencesCredentialAgent}.
+ * Currently, it defaults to replying an instance of {@link JosmPreferencesCredentialAgent}.
  *
  */
 public class CredentialsManager implements CredentialsAgent {

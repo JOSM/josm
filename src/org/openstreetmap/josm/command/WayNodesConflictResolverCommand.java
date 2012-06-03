@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Represent a command for resolving conflicts in the node list of two
- * {@see Way}s.
+ * {@link Way}s.
  *
  */
 public class WayNodesConflictResolverCommand extends ConflictResolveCommand {

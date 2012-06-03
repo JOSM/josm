@@ -598,7 +598,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     /**
-     * Selects all mebers which refer to {@see OsmPrimitive}s in the collections
+     * Selects all mebers which refer to {@link OsmPrimitive}s in the collections
      * <code>primitmives</code>. Does nothing is primitives is null.
      *
      * @param primitives the collection of primitives

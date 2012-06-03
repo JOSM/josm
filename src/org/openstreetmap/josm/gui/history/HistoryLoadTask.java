@@ -59,7 +59,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     /**
      * Creates a new task
      *
-     * @param parent the component to be used as reference to find the parent for {@see PleaseWaitDialog}.
+     * @param parent the component to be used as reference to find the parent for {@link PleaseWaitDialog}.
      * Must not be null.
      * @throws IllegalArgumentException thrown if parent is null
      */

@@ -32,7 +32,7 @@ public class RetrieveRequestTokenTask extends PleaseWaitRunnable {
     /**
      * Creates the task
      *
-     * @param parent the parent component relative to which the {@see PleaseWaitRunnable}-Dialog
+     * @param parent the parent component relative to which the {@link PleaseWaitRunnable}-Dialog
      * is displayed
      * @param parameters the OAuth parameters. Must not be null.
      * @throws IllegalArgumentException thrown if parameters is null.

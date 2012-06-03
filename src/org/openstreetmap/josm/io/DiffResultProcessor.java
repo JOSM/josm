@@ -69,7 +69,7 @@ public class DiffResultProcessor  {
      * Parse the response from a diff upload to the OSM API.
      *
      * @param diffUploadResponse the response. Must not be null.
-     * @param progressMonitor a progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null
+     * @param progressMonitor a progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
      * @throws IllegalArgumentException thrown if diffUploadRequest is null
      * @throws OsmDataParsingException thrown if the diffUploadRequest can't be parsed successfully
      *
@@ -104,7 +104,7 @@ public class DiffResultProcessor  {
      * and the id of the changeset to which they were uploaded.
      *
      * @param cs the current changeset. Ignored if null.
-     * @param monitor the progress monitor. Set to {@see NullProgressMonitor#INSTANCE} if null
+     * @param monitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if null
      * @return the collection of processed primitives
      */
     protected Set<IPrimitive> postProcess(Changeset cs, ProgressMonitor monitor) {

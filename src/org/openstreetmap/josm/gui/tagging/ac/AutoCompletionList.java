@@ -12,12 +12,12 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * AutoCompletionList manages a list of {@see AutoCompletionListItem}s.
+ * AutoCompletionList manages a list of {@link AutoCompletionListItem}s.
  *
  * The list is sorted, items with higher priority first, then according to lexicographic order
- * on the value of the {@see AutoCompletionListItem}.
+ * on the value of the {@link AutoCompletionListItem}.
  *
- * AutoCompletionList maintains two views on the list of {@see AutoCompletionListItem}s.
+ * AutoCompletionList maintains two views on the list of {@link AutoCompletionListItem}s.
  * <ol>
  *   <li>the bare, unfiltered view which includes all items</li>
  *   <li>a filtered view, which includes only items which match a current filter expression</li>
@@ -48,7 +48,7 @@ public class AutoCompletionList extends AbstractTableModel {
     }
 
     /**
-     * applies a filter expression to the list of {@see AutoCompletionListItem}s.
+     * applies a filter expression to the list of {@link AutoCompletionListItem}s.
      *
      * The matching criterion is a case insensitive substring match.
      *
@@ -246,7 +246,7 @@ public class AutoCompletionList extends AbstractTableModel {
 
     /**
      * replies the idx-th item from the list of filtered items
-     * @param idx the index; must be in the range 0<= idx < {@see #getFilteredSize()}
+     * @param idx the index; must be in the range 0<= idx < {@link #getFilteredSize()}
      * @return the item
      *
      * @exception IndexOutOfBoundsException thrown, if idx is out of bounds

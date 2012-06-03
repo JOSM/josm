@@ -115,7 +115,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
     }
 
     /**
-     * Validator for a changeset ID entered in a {@see JTextComponent}.
+     * Validator for a changeset ID entered in a {@link JTextComponent}.
      *
      */
     static private class ChangesetIdValidator extends AbstractTextComponentValidator {

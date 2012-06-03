@@ -322,7 +322,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * Determines the next active data layer according to the following
      * rules:
      * <ul>
-     *   <li>if there is at least one {@see OsmDataLayer} the first one
+     *   <li>if there is at least one {@link OsmDataLayer} the first one
      *     becomes active</li>
      *   <li>otherwise, the top most layer of any type becomes active</li>
      * </ul>
@@ -699,7 +699,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     /**
      * Sets the active layer to <code>layer</code>. If <code>layer</code> is an instance
-     * of {@see OsmDataLayer} also sets {@see #editLayer} to <code>layer</code>.
+     * of {@link OsmDataLayer} also sets {@link #editLayer} to <code>layer</code>.
      *
      * @param layer the layer to be activate; must be one of the layers in the list of layers
      * @exception IllegalArgumentException thrown if layer is not in the lis of layers

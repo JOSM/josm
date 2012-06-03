@@ -66,7 +66,7 @@ public class ChangesetQuery {
      * Restricts the query to changesets owned by the user with user name <code>username</code>.
      *
      * Caveat: for historical reasons the username might not be unique! It is recommended to use
-     * {@see #forUser(int)} to restrict the query to a specific user.
+     * {@link #forUser(int)} to restrict the query to a specific user.
      *
      * @param username the username. Must not be null.
      * @return the query object with the applied restriction
@@ -93,7 +93,7 @@ public class ChangesetQuery {
 
     /**
      * Replies the user name which this query is restricted to. null, if this query isn't
-     * restricted to a user name, i.e. if {@see #isRestrictedToPartiallyIdentifiedUser()} is false.
+     * restricted to a user name, i.e. if {@link #isRestrictedToPartiallyIdentifiedUser()} is false.
      *
      * @return the user name which this query is restricted to
      */
@@ -405,7 +405,7 @@ public class ChangesetQuery {
 
         /**
          * Parses the changeset query given as URL query parameters and replies a
-         * {@see ChangesetQuery}
+         * {@link ChangesetQuery}
          *
          * <code>query</code> is the query part of a API url for querying changesets,
          * see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_.2Fapi.2F0.6.2Fchangesets">OSM API</a>.

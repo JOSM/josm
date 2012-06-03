@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  * server.
  *
  * The  task only downloads the changeset properties without the changeset content. It
- * updates the global {@see ChangesetCache}.
+ * updates the global {@link ChangesetCache}.
  *
  */
 public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements ChangesetDownloadTask{
@@ -38,7 +38,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
     /**
      * Builds a download task from for a collection of changesets.
      *
-     * Ignores null values and changesets with {@see Changeset#isNew()} == true.
+     * Ignores null values and changesets with {@link Changeset#isNew()} == true.
      *
      * @param changesets the collection of changesets. Assumes an empty collection if null.
      * @return the download task
@@ -50,9 +50,9 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
     /**
      * Builds a download task from for a collection of changesets.
      *
-     * Ignores null values and changesets with {@see Changeset#isNew()} == true.
+     * Ignores null values and changesets with {@link Changeset#isNew()} == true.
      *
-     * @param parent the parent component relative to which the {@see PleaseWaitDialog} is displayed.
+     * @param parent the parent component relative to which the {@link PleaseWaitDialog} is displayed.
      * Must not be null.
      * @param changesets the collection of changesets. Assumes an empty collection if null.
      * @return the download task
@@ -100,8 +100,8 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
     }
 
     /**
-     * Creates the download task for a collection of changeset ids. Uses a {@see PleaseWaitDialog}
-     * whose parent is {@see Main#parent}.
+     * Creates the download task for a collection of changeset ids. Uses a {@link PleaseWaitDialog}
+     * whose parent is {@link Main#parent}.
      *
      * Null ids or or ids <= 0 in the id collection are ignored.
      *
@@ -114,12 +114,12 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
     }
 
     /**
-     * Creates the download task for a collection of changeset ids. Uses a {@see PleaseWaitDialog}
+     * Creates the download task for a collection of changeset ids. Uses a {@link PleaseWaitDialog}
      * whose parent is the parent window of <code>dialogParent</code>.
      *
      * Null ids or or ids <= 0 in the id collection are ignored.
      *
-     * @param dialogParent the parent reference component for the {@see PleaseWaitDialog}. Must not be null.
+     * @param dialogParent the parent reference component for the {@link PleaseWaitDialog}. Must not be null.
      * @param ids the collection of ids. Empty collection assumed if null.
      * @throws IllegalArgumentException thrown if dialogParent is null
      */
