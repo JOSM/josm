@@ -52,6 +52,8 @@ public class OverlappingAreas extends Test {
                         OVERLAPPING_AREAS, Collections.singletonList(w), overlaps));
             }
         }
+
+        super.endTest();
     }
 
 }

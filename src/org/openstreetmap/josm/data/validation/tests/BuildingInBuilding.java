@@ -98,6 +98,8 @@ public class BuildingInBuilding extends Test {
                         tr("Building inside building"), BUILDING_INSIDE_BUILDING, p));
             }
         }
+
+        super.endTest();
     }
 
     private boolean isInInnerWay(Way w, Way outer) {
