@@ -119,7 +119,10 @@ public class Test extends AbstractVisitor
 
     /**
      * Notification of the end of the test. The tester may perform additional
-     * actions and destroy the used structures
+     * actions and destroy the used structures.
+     * <p>
+     * If you override this method, don't forget to cleanup {@link #progressMonitor}
+     * (most overrides call {@code super.endTest()} to do this).
      */
     public void endTest() {
         progressMonitor.finishTask();

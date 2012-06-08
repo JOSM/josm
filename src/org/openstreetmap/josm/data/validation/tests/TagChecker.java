@@ -169,6 +169,13 @@ public class TagChecker extends Test
      * @throws IOException
      */
     private static void initializeData() throws IOException {
+        checkerData.clear();
+        ignoreDataStartsWith.clear();
+        ignoreDataEquals.clear();
+        ignoreDataEndsWith.clear();
+        ignoreDataKeyPair.clear();
+        ignoreDataTwoKeyPair.clear();
+
         spellCheckKeyData = new HashMap<String, String>();
         String sources = Main.pref.get( PREF_SOURCES, "");
         if (Main.pref.getBoolean(PREF_USE_DATA_FILE, true)) {

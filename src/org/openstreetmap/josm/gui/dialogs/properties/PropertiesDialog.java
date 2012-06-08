@@ -156,6 +156,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 int row = propertyTable.rowAtPoint(e.getPoint());
                 if (row > -1) {
                     propertyEdit(row);
+                } else {
+                    add();
                 }
             } else if (e.getSource() == membershipTable) {
                 int row = membershipTable.rowAtPoint(e.getPoint());
