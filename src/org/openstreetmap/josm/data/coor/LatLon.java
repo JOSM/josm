@@ -10,8 +10,6 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -34,6 +32,7 @@ public class LatLon extends Coordinate {
      * The API returns 7 decimals.
      */
     public static final double MAX_SERVER_PRECISION = 1e-7;
+    public static final double MAX_SERVER_INV_PRECISION = 1e7;
     public static final int    MAX_SERVER_DIGITS = 7;
 
     private static DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
@@ -264,20 +263,17 @@ public class LatLon extends Coordinate {
      * @return rounded value
      */
     public static double roundToOsmPrecision(double value) {
-        return Math.round(value / MAX_SERVER_PRECISION) * MAX_SERVER_PRECISION; // causes tiny rounding errors (see LatLonTest)
+        return Math.round(value * MAX_SERVER_INV_PRECISION) / MAX_SERVER_INV_PRECISION;
     }
 
     /**
-     * Returns the value rounded to OSM precisions, i.e. to
-     * LatLon.MAX_SERVER_PRECISION. The result is guaranteed to be exact, but at a great cost.
-     * This function is about 1000 times slower than roundToOsmPrecision(), use it with caution.
+     * Returns the value rounded to OSM precision. This function is now the same as
+     * {@link #roundToOsmPrecision(double)}, since the rounding error has been fixed.
      *
      * @return rounded value
      */
     public static double roundToOsmPrecisionStrict(double value) {
-        double absV = Math.abs(value);
-        int numOfDigits = MAX_SERVER_DIGITS + (absV < 1 ? 0 : (absV < 10 ? 1 : (absV < 100 ? 2 : 3)));
-        return BigDecimal.valueOf(value).round(new MathContext(numOfDigits)).doubleValue();
+        return roundToOsmPrecision(value);
     }
 
     /**
