@@ -35,7 +35,7 @@ public class PostDownloadHandler implements Runnable {
     /**
      * constructor
      * @param task the asynchronous download task
-     * @param future the future on which the completion of the download task can be synchronized
+     * @param futures the futures on which the completion of the download task can be synchronized
      */
     public PostDownloadHandler(DownloadTask task, Future<?> ... futures) {
         this.task = task;
@@ -49,7 +49,7 @@ public class PostDownloadHandler implements Runnable {
     /**
      * constructor
      * @param task the asynchronous download task
-     * @param future the future on which the completion of the download task can be synchronized
+     * @param futures the futures on which the completion of the download task can be synchronized
      */
     public PostDownloadHandler(DownloadTask task, List<Future<?>> futures) {
         this.task = task;

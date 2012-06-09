@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.MissingOAuthAccessTokenException;

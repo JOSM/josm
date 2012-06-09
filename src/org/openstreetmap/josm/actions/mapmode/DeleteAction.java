@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * An action that enables the user to delete nodes and other objects.
+ * A map mode that enables the user to delete nodes and other objects.
  *
  * The user can click on an object, which gets deleted if possible. When Ctrl is
  * pressed when releasing the button, the objects and all its references are
@@ -42,7 +42,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * is informed and nothing is deleted.
  *
  * If the user enters the mapmode and any object is selected, all selected
- * objects that can be deleted will.
+ * objects are deleted, if possible.
  *
  * @author imi
  */
@@ -161,7 +161,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
 
     /**
      * Listen to mouse move to be able to update the cursor (and highlights)
-     * @param MouseEvent The mouse event that has been captured
+     * @param e The mouse event that has been captured
      */
     @Override public void mouseMoved(MouseEvent e) {
         oldEvent = e;
@@ -255,8 +255,8 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * This function handles all work related to updating the cursor and
      * highlights
      *
-     * @param MouseEvent
-     * @param int modifiers
+     * @param e
+     * @param modifiers
      */
     private void updateCursor(MouseEvent e, int modifiers) {
         if (!Main.isDisplayingMapView())
@@ -329,8 +329,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
     }
 
     /**
-     * Deletes the relation in the context of the given layer. Also notifies
-     * {@link RelationDialogManager} and {@link OsmDataLayer#fireDataChange()} events.
+     * Deletes the relation in the context of the given layer.
      *
      * @param layer the layer in whose context the relation is deleted. Must not be null.
      * @param toDelete  the relation to be deleted. Must  not be null.
@@ -384,7 +383,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * This function takes any mouse event argument and builds the list of elements
      * that should be deleted but does not actually delete them.
      * @param e MouseEvent from which modifiers and position are taken
-     * @param int modifiers For explanation: @see updateCursor
+     * @param modifiers For explanation: @see updateCursor
      * @param silet Set to true if the user should not be bugged with additional
      *        dialogs
      * @return

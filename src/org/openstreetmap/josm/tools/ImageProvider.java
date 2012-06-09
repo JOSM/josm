@@ -114,8 +114,8 @@ public class ImageProvider {
     }
 
     /**
-     * @param subdir    Subdirectory the image lies in.
-     * @param name      The name of the image. If it does not end with '.png' or '.svg',
+     * @param subdir    subdirectory the image lies in
+     * @param name      the name of the image. If it does not end with '.png' or '.svg',
      *                  both extensions are tried.
      */
     public ImageProvider(String subdir, String name) {
@@ -136,7 +136,9 @@ public class ImageProvider {
     }
 
     /**
-     * An id used for caching. Id is not used for cache if name starts with http://. (URL is unique anyway.)
+     * Set an id used for caching.
+     * If name starts with <tt>http://</tt> Id is not used for the cache.
+     * (A URL is unique anyway.)
      */
     public ImageProvider setId(String id) {
         this.id = id;
@@ -144,7 +146,9 @@ public class ImageProvider {
     }
 
     /**
-     * A zip file where the image is located.
+     * Specify a zip file where the image is located.
+     *
+     * (optional)
      */
     public ImageProvider setArchive(File archive) {
         this.archive = archive;
@@ -152,7 +156,7 @@ public class ImageProvider {
     }
 
     /**
-     * The dimensions of the image.
+     * Set the dimensions of the image.
      *
      * If not specified, the original size of the image is used.
      * The width part of the dimension can be -1. Then it will only set the height but
@@ -165,7 +169,7 @@ public class ImageProvider {
     }
 
     /**
-     * see setSize
+     * @see #setSize
      */
     public ImageProvider setWidth(int width) {
         this.width = width;
@@ -173,7 +177,7 @@ public class ImageProvider {
     }
 
     /**
-     * see setSize
+     * @see #setSize
      */
     public ImageProvider setHeight(int height) {
         this.height = height;
@@ -181,7 +185,7 @@ public class ImageProvider {
     }
 
     /**
-     * The maximum size of the image.
+     * Limit the maximum size of the image.
      *
      * It will shrink the image if necessary, but keep the aspect ratio.
      * The given width or height can be -1 which means this direction is not bounded.
@@ -195,7 +199,7 @@ public class ImageProvider {
     }
 
     /**
-     * see setMaxSize
+     * @see #setMaxSize
      */
     public ImageProvider setMaxWidth(int maxWidth) {
         this.maxWidth = maxWidth;
@@ -203,7 +207,7 @@ public class ImageProvider {
     }
 
     /**
-     * see setMaxSize
+     * @see #setMaxSize
      */
     public ImageProvider setMaxHeight(int maxHeight) {
         this.maxHeight = maxHeight;
@@ -211,9 +215,13 @@ public class ImageProvider {
     }
 
     /**
-     * The image URL comes from user data and the image may be missing.
+     * Decide, if an exception should be thrown, when the image cannot be located.
      *
-     * Set true, if JOSM should *not* throw a RuntimeException in case the image cannot be located.
+     * Set to true, when the image URL comes from user data and the image may be missing.
+     *
+     * @param optional true, if JOSM should <b>not</b> throw a RuntimeException
+     * in case the image cannot be located.
+     * @return the current object, for convenience
      */
     public ImageProvider setOptional(boolean optional) {
         this.optional = optional;
@@ -240,6 +248,7 @@ public class ImageProvider {
 
     /**
      * Execute the image request.
+     * @return the requested image or null if the request failed
      */
     public ImageIcon get() {
         ImageResource ir = getIfAvailableImpl(additionalClassLoaders);
@@ -266,11 +275,10 @@ public class ImageProvider {
      * This method returns immediately and runs the image request
      * asynchronously.
      *
-     * @param callback is called, when the image is ready. This can happen
-     * before the call to getInBackground returns or it may be invoked some
-     * time (seconds) later.
-     * If no image is available, a null value is returned to callback (just
-     * like ImageProvider.get).
+     * @param callback a callback. It is called, when the image is ready.
+     * This can happen before the call to this method returns or it may be
+     * invoked some time (seconds) later. If no image is available, a null 
+     * value is returned to callback (just like {@link #get}).
      */
     public void getInBackground(final ImageCallback callback) {
         if (name.startsWith("http://") || name.startsWith("wiki://")) {
@@ -289,27 +297,38 @@ public class ImageProvider {
     }
 
     /**
-     * Return an image from the specified location. Throws a RuntimeException if
-     * the image cannot be located.
+     * Load an image with a given file name.
      *
-     * @param subdir The position of the directory, e.g. 'layer'
-     * @param name The icons name (with or without '.png' or '.svg' extension)
+     * @param subdir subdirectory the image lies in
+     * @param name The icon name (base name with or without '.png' or '.svg' extension)
      * @return The requested Image.
+     * @throws RuntimeException if the image cannot be located
      */
     public static ImageIcon get(String subdir, String name) {
         return new ImageProvider(subdir, name).get();
     }
 
+    /**
+     * @see #get(java.lang.String, java.lang.String)
+     */
     public static ImageIcon get(String name) {
         return new ImageProvider(name).get();
     }
 
-    public static ImageIcon getIfAvailable(String name) {
-        return new ImageProvider(name).setOptional(true).get();
-    }
-
+    /**
+     * Load an image with a given file name, but do not throw an exception
+     * when the image cannot be found.
+     * @see #get(java.lang.String, java.lang.String)
+     */
     public static ImageIcon getIfAvailable(String subdir, String name) {
         return new ImageProvider(subdir, name).setOptional(true).get();
+    }
+
+    /**
+     * @see #getIfAvailable(java.lang.String, java.lang.String) 
+     */
+    public static ImageIcon getIfAvailable(String name) {
+        return new ImageProvider(name).setOptional(true).get();
     }
 
     /**
@@ -690,21 +709,28 @@ public class ImageProvider {
     public static Cursor getCursor(String name, String overlay) {
         ImageIcon img = get("cursor", name);
         if (overlay != null) {
-            img = overlay(img, "cursor/modifier/" + overlay, OverlayPosition.SOUTHEAST);
+            img = overlay(img, ImageProvider.get("cursor/modifier/" + overlay), OverlayPosition.SOUTHEAST);
         }
         Cursor c = Toolkit.getDefaultToolkit().createCustomCursor(img.getImage(),
                 name.equals("crosshair") ? new Point(10, 10) : new Point(3, 2), "Cursor");
         return c;
     }
 
-    /**
-     * @return an icon that represent the overlay of the two given icons. The second icon is layed
-     * on the first relative to the given position.
-     */
+    @Deprecated
     public static ImageIcon overlay(Icon ground, String overlayImage, OverlayPosition pos) {
         return overlay(ground, ImageProvider.get(overlayImage), pos);
     }
 
+    /**
+     * Decorate one icon with an overlay icon.
+     *
+     * @param ground the base image
+     * @param overlay the overlay image (can be smaller than the base image)
+     * @param pos position of the overlay image inside the base image (positioned
+     * in one of the corners)
+     * @return an icon that represent the overlay of the two given icons. The second icon is layed
+     * on the first relative to the given position.
+     */
     public static ImageIcon overlay(Icon ground, Icon overlay, OverlayPosition pos) {
         GraphicsConfiguration conf = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
         .getDefaultConfiguration();
@@ -738,10 +764,7 @@ public class ImageProvider {
         return new ImageIcon(img);
     }
 
-    /*
-     * from: http://www.jidesoft.com/blog/2008/02/29/rotate-an-icon-in-java/ License:
-     * "feel free to use"
-     */
+    /** 90 degrees in radians units */
     final static double DEGREE_90 = 90.0 * Math.PI / 180.0;
 
     /**
@@ -749,7 +772,7 @@ public class ImageProvider {
      *
      * @param c The component to get properties useful for painting, e.g. the foreground or
      * background color.
-     * @param icon the image to be rotated.
+     * @param img the image to be rotated.
      * @param rotatedAngle the rotated angle, in degree, clockwise. It could be any double but we
      * will mod it with 360 before using it.
      *
@@ -810,7 +833,7 @@ public class ImageProvider {
      * @param type the type
      * @return the icon
      */
-    public static ImageIcon get(OsmPrimitiveType type) throws IllegalArgumentException {
+    public static ImageIcon get(OsmPrimitiveType type) {
         CheckParameterUtil.ensureParameterNotNull(type, "type");
         return get("data", type.getAPIName());
     }

@@ -41,20 +41,20 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 /**
  * General configurable dialog window.
  *
- * If dialog is modal, you can use getValue() to retrieve the
+ * If dialog is modal, you can use {@link #getValue()} to retrieve the
  * button index. Note that the user can close the dialog
  * by other means. This is usually equivalent to cancel action.
  *
- * For non-modal dialogs, buttonAction(int) can be overridden.
+ * For non-modal dialogs, {@link #buttonAction(int, ActionEvent)} can be overridden.
  *
  * There are various options, see below.
  *
  * Note: The button indices are counted from 1 and upwards.
- * So for getValue(), setDefaultButton(int) and setCancelButton(int) the
- * first button has index 1.
+ * So for {@link #getValue()}, {@link #setDefaultButton(int)} and 
+ * {@link #setCancelButton} the first button has index 1.
  * 
  * Simple example:
- * <code>
+ * <pre>
  *  ExtendedDialog ed = new ExtendedDialog(
  *          Main.parent, tr("Dialog Title"),
  *          new String[] {tr("Ok"), tr("Cancel")});
@@ -65,7 +65,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  *  if (ed.getValue() == 1) { // user clicked first button "Ok"
  *      // proceed...
  *  }
- * </code>
+ * </pre>
  */
 public class ExtendedDialog extends JDialog {
     private final boolean disposeOnClose;
@@ -170,8 +170,8 @@ public class ExtendedDialog extends JDialog {
     }
 
     /**
-     * Allows decorating the buttons with tooltips. Expects an String[] with translated
-     * tooltip texts.
+     * Allows decorating the buttons with tooltips. Expects a String array with
+     * translated tooltip texts.
      *
      * @param toolTipTexts the tool tip texts. Ignored, if null.
      */
@@ -223,7 +223,7 @@ public class ExtendedDialog extends JDialog {
 
     /**
      * Decorate the dialog with an icon that is shown on the left part of
-     * the window area. (Similar to how it is done in JOptionPane)
+     * the window area. (Similar to how it is done in {@link JOptionPane})
      */
     public ExtendedDialog setIcon(Icon icon) {
         this.icon = icon;
@@ -231,7 +231,7 @@ public class ExtendedDialog extends JDialog {
     }
 
     /**
-     * Convenience method to allow values that would be accepted by JOptionPane as messageType.
+     * Convenience method to allow values that would be accepted by {@link JOptionPane} as messageType.
      */
     public ExtendedDialog setIcon(int messageType) {
         switch (messageType) {
@@ -252,7 +252,7 @@ public class ExtendedDialog extends JDialog {
 
     /**
      * Show the dialog to the user. Call this after you have set all options
-     * for the dialog. You can retrieve the result using <code>getValue</code>
+     * for the dialog. You can retrieve the result using {@link #getValue()}.
      */
     public ExtendedDialog showDialog() {
         // Check if the user has set the dialog to not be shown again
@@ -272,8 +272,11 @@ public class ExtendedDialog extends JDialog {
     }
 
     /**
-     * @return int * The selected button. The count starts with 1.
-     *             * A return value of ExtendedDialog.DialogClosedOtherwise means the dialog has been closed otherwise.
+     * Retrieve the user choice after the dialog has been closed.
+     * 
+     * @return <ul> <li>The selected button. The count starts with 1.</li>
+     *              <li>A return value of {@link #DialogClosedOtherwise} means the dialog has been closed otherwise.</li>
+     *         </ul>
      */
     public int getValue() {
         return result;
@@ -282,7 +285,7 @@ public class ExtendedDialog extends JDialog {
     private boolean setupDone = false;
 
     /**
-     * This is called by showDialog().
+     * This is called by {@link #showDialog()}.
      * Only invoke from outside if you need to modify the contentPane
      */
     public void setupDialog() {
@@ -401,6 +404,7 @@ public class ExtendedDialog extends JDialog {
 
     /**
      * This gets performed whenever a button is clicked or activated
+     * @param buttonIndex the button index (first index is 0)
      * @param evt the button event
      */
     protected void buttonAction(int buttonIndex, ActionEvent evt) {
@@ -573,7 +577,7 @@ public class ExtendedDialog extends JDialog {
 
     /**
      * This function checks the state of the "Do not show again" checkbox and
-     * writes the corresponding pref
+     * writes the corresponding pref.
      */
     private void toggleSaveState() {
         if (!toggleable ||
