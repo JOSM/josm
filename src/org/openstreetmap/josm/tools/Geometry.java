@@ -31,11 +31,18 @@ public class Geometry {
     public enum PolygonIntersection {FIRST_INSIDE_SECOND, SECOND_INSIDE_FIRST, OUTSIDE, CROSSING}
 
     /**
-     * Will find all intersection and add nodes there for list of given ways. Handles self-intersections too.
-     * And make commands to add the intersection points to ways.
-     * @param List<Way> - a list of ways to test
-     * @return ArrayList<Node> List of new nodes
+     * Will find all intersection and add nodes there for list of given ways.
+     * Handles self-intersections too.
+     * And makes commands to add the intersection points to ways.
+     *
      * Prerequisite: no two nodes have the same coordinates.
+     * 
+     * @param ways  a list of ways to test
+     * @param test  if false, do not build list of Commands, just return nodes
+     * @param cmds  list of commands, typically empty when handed to this method.
+     *              Will be filled with commands that add intersection nodes to
+     *              the ways.
+     * @return list of new nodes
      */
     public static Set<Node> addIntersections(List<Way> ways, boolean test, List<Command> cmds) {
 
@@ -471,8 +478,16 @@ public class Geometry {
     }
 
     /**
-     * returns area of a closed way in square meters
+     * Returns area of a closed way in square meters.
      * (approximate(?), but should be OK for small areas)
+     *
+     * Relies on the current projection: Works correctly, when
+     * one unit in projected coordinates corresponds to one meter.
+     * This is true for most projections, but not for WGS84 and
+     * Mercator (EPSG:3857).
+     *
+     * @param way Way to measure, should be closed (first node is the same as last node)
+     * @return area of the closed way.
      */
     public static double closedWayArea(Way way) {
 
@@ -531,10 +546,11 @@ public class Geometry {
      * of the polygon using the formula {@code 2 * area = sum (X[n] * Y[n+1] - X[n+1] * Y[n])}.
      * If the area is negative the way is ordered in a clockwise direction.
      *
+     * See http://paulbourke.net/geometry/polyarea/
+     *
      * @param w the way to be checked.
      * @return true if and only if way is oriented clockwise.
      * @throws IllegalArgumentException if way is not closed (see {@link Way#isClosed}).
-     * @see http://paulbourke.net/geometry/polyarea/
      */
     public static boolean isClockwise(Way w) {
         if (!w.isClosed()) {

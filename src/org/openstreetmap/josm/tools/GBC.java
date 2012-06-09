@@ -97,7 +97,7 @@ public class GBC extends GridBagConstraints {
 
     /**
      * Specifies how to distribute extra horizontal space.
-     * @param weidhtx   Weight in horizontal direction
+     * @param weightx   Weight in horizontal direction
      * @param weighty   Weight in vertical direction
      * @return This constraint for chaining.
      */
@@ -113,6 +113,7 @@ public class GBC extends GridBagConstraints {
      *      horizontal strut.
      * @param y If higher than 0, this will be a vertical glue with y as minimum
      *      vertical strut.
+     * @return the glue component
      */
     public static Component glue(int x, int y) {
         short maxx = x > 0 ? Short.MAX_VALUE : 0;

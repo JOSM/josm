@@ -1,8 +1,9 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
-import java.util.Locale;
 import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.util.Locale;
 
 public class LanguageInfo {
 
@@ -80,7 +81,7 @@ public class LanguageInfo {
      *
      * In most cases JOSM and Java uses the same codes, but for some exceptions this is needed.
      *
-     * @param code the locale code.
+     * @param localeName the locale code.
      * @return the resulting locale
      */
     static public Locale getLocale(String localeName) {

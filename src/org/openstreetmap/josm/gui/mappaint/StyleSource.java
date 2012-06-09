@@ -88,7 +88,7 @@ abstract public class StyleSource extends SourceEntry {
             return getSourceIcon();
         else
             return ImageProvider.overlay(getSourceIcon(),
-                    "dialogs/mappaint/error_small",
+                    ImageProvider.get("dialogs/mappaint/error_small"),
                     ImageProvider.OverlayPosition.SOUTHEAST);
     }
 

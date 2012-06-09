@@ -83,7 +83,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * A layer holding data from a specific dataset.
+ * A layer that holds OSM data from a specific dataset.
  * The data can be fully edited.
  *
  * @author imi

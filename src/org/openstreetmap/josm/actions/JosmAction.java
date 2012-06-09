@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Destroyable;
@@ -24,8 +25,8 @@ import org.openstreetmap.josm.tools.Shortcut;
  * Base class helper for all Actions in JOSM. Just to make the life easier.
  *
  * A JosmAction is a {@link LayerChangeListener} and a {@link SelectionChangedListener}. Upon
- * a layer change event or a selection change event it invokes {@link #updateEnabled()}.
- * Subclasses can override {@link #updateEnabled()} in order to update the {@link #isEnabled()}-state
+ * a layer change event or a selection change event it invokes {@link #updateEnabledState()}.
+ * Subclasses can override {@link #updateEnabledState()} in order to update the {@link #isEnabled()}-state
  * of a JosmAction depending on the {@link #getCurrentDataSet()} and the current layers
  * (see also {@link #getEditLayer()}).
  *

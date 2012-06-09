@@ -32,7 +32,6 @@ public class WikiReader {
      * If the url is within the baseurl path, parse it as an trac wikipage and replace relative
      * pathes etc..
      *
-     * @return
      * @throws IOException Throws, if the page could not be loaded.
      */
     public String read(String url) throws IOException {

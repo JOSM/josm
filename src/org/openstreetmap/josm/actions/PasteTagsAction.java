@@ -1,5 +1,4 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
-// Author: David Earl
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
@@ -28,6 +27,14 @@ import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.gui.conflict.tags.PasteTagsConflictResolverDialog;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Action, to paste all tags from one primitive to another.
+ *
+ * It will take the primitive from the copy-paste buffer an apply all its tags
+ * to the selected primitive(s).
+ *
+ * @author David Earl
+ */
 public final class PasteTagsAction extends JosmAction implements PasteBufferChangedListener {
 
     public PasteTagsAction() {
@@ -53,8 +60,6 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
         /**
          * Replies true if the source for tag pasting is heterogeneous, i.e. if it doesn't consist of
          * {@link OsmPrimitive}s of exactly one type
-         *
-         * @return
          */
         protected boolean isHeteogeneousSource() {
             int count = 0;
@@ -129,13 +134,11 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
         }
 
         /**
-         * Pastes the tags from a homogeneous source (i.e. the {@link Main#pasteBuffer}s selection consisting
-         * of one type of {@link OsmPrimitive}s only.
+         * Pastes the tags from a homogeneous source (the {@link Main#pasteBuffer}s selection consisting
+         * of one type of {@link OsmPrimitive}s only).
          *
          * Tags from a homogeneous source can be pasted to a heterogeneous target. All target primitives,
          * regardless of their type, receive the same tags.
-         *
-         * @param targets the collection of target primitives
          */
         protected void pasteFromHomogeneousSource() {
             TagCollection tc = null;
@@ -165,11 +168,10 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
         }
 
         /**
-         * Replies true if there is at least one primitive of type <code>type</code> in the collection
-         * <code>selection</code>
+         * Replies true if there is at least one primitive of type <code>type</code> 
+         * is in the target collection
          *
          * @param <T>
-         * @param selection  the collection of primitives
          * @param type  the type to look for
          * @return true if there is at least one primitive of type <code>type</code> in the collection
          * <code>selection</code>
@@ -198,8 +200,6 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
         /**
          * Pastes the tags in the current selection of the paste buffer to a set of target
          * primitives.
-         *
-         * @param targets the collection of target primitives
          */
         protected void pasteFromHeterogeneousSource() {
             if (canPasteFromHeterogeneousSourceWithoutConflict(target)) {
