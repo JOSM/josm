@@ -737,7 +737,6 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="junction" v="roundabout"/>
-		<line width="2" colour="roundabout#eeeeee"/>
 		<icon annotate="true" src="vehicle/restriction/roundabout_right.png"/>
 	</rule>
 
