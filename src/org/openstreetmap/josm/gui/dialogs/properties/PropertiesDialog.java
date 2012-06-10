@@ -210,6 +210,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IN_EDT_CONSOLIDATED);
         SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
         MapView.addEditLayerChangeListener(this);
+        Main.registerActionShortcut(addAction);
+        Main.registerActionShortcut(editAction);
+        Main.registerActionShortcut(deleteAction);
         updateSelection();
     }
 
