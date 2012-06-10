@@ -421,6 +421,10 @@ abstract public class Main {
         RedirectInputMap.redirect(source, contentPanePrivate);
     }
 
+    public static void registerActionShortcut(JosmAction action) {
+        registerActionShortcut(action, action.getShortcut());
+    }
+
     public static void registerActionShortcut(Action action, Shortcut shortcut) {
         KeyStroke keyStroke = shortcut.getKeyStroke();
         if (keyStroke == null)
