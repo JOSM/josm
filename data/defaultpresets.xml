@@ -3375,6 +3375,15 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Waste Basket" />
             <key key="amenity" value="waste_basket" />
         </item>
+        <item name="Waste Disposal" icon="styles/standard/service/recycling/waste_disposal.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=waste_disposal"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=waste_basket"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=waste_disposal"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=waste_disposal"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=waste_disposal" />
+            <label text="Edit Waste Disposal" />
+            <key key="amenity" value="waste_disposal" />
+        </item>
         <separator/>
         <item name="Bench" icon="presets/bench.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bench"
