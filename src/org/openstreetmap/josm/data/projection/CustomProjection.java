@@ -4,12 +4,9 @@ package org.openstreetmap.josm.data.projection;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -339,7 +336,7 @@ public class CustomProjection extends AbstractProjection {
         return proj;
     }
 
-    public Bounds parseBounds(String boundsStr) throws ProjectionConfigurationException {
+    public static Bounds parseBounds(String boundsStr) throws ProjectionConfigurationException {
         String[] numStr = boundsStr.split(",");
         if (numStr.length != 4)
             throw new ProjectionConfigurationException(tr("Unexpected number of arguments for parameter ''+bounds'' (must be 4)"));
@@ -349,7 +346,7 @@ public class CustomProjection extends AbstractProjection {
                 parseAngle(numStr[2], "maxlon (+bounds)"), false);
     }
 
-    public double parseDouble(Map<String, String> parameters, String parameterName) throws ProjectionConfigurationException {
+    public static double parseDouble(Map<String, String> parameters, String parameterName) throws ProjectionConfigurationException {
         String doubleStr = parameters.get(parameterName);
         if (doubleStr == null && parameters.containsKey(parameterName))
             throw new ProjectionConfigurationException(
@@ -357,7 +354,7 @@ public class CustomProjection extends AbstractProjection {
         return parseDouble(doubleStr, parameterName);
     }
 
-    public double parseDouble(String doubleStr, String parameterName) throws ProjectionConfigurationException {
+    public static double parseDouble(String doubleStr, String parameterName) throws ProjectionConfigurationException {
         try {
             return Double.parseDouble(doubleStr);
         } catch (NumberFormatException e) {
@@ -366,7 +363,7 @@ public class CustomProjection extends AbstractProjection {
         }
     }
 
-    public double parseAngle(String angleStr, String parameterName) throws ProjectionConfigurationException {
+    public static double parseAngle(String angleStr, String parameterName) throws ProjectionConfigurationException {
         String s = angleStr;
         double value = 0;
         boolean neg = false;

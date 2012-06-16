@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -18,6 +17,7 @@ import java.security.CodeSource;
 import java.security.PermissionCollection;
 import java.security.Permissions;
 import java.security.Policy;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -27,6 +27,9 @@ import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
+
+import gnu.getopt.Getopt;
+import gnu.getopt.LongOpt;
 
 import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
 import org.openstreetmap.josm.Main;
@@ -94,7 +97,7 @@ public class MainApplication extends Main {
                 tr("usage")+":\n"+
                 "\tjava -jar josm.jar <options>...\n\n"+
                 tr("options")+":\n"+
-                "\t--help|-?|-h                              "+tr("Show this help")+"\n"+
+                "\t--help|-h                                 "+tr("Show this help")+"\n"+
                 "\t--geometry=widthxheight(+|-)x(+|-)y       "+tr("Standard unix geometry argument")+"\n"+
                 "\t[--download=]minlat,minlon,maxlat,maxlon  "+tr("Download the bounding box")+"\n"+
                 "\t[--download=]<url>                        "+tr("Download the location at the url (with lat=x&lon=y&zoom=z)")+"\n"+
@@ -124,28 +127,93 @@ public class MainApplication extends Main {
                 );
     }
 
-    private static Map<String, Collection<String>> buildCommandLineArgumentMap(String[] args) {
-        Map<String, Collection<String>> argMap = new HashMap<String, Collection<String>>();
-        for (String arg : args) {
-            if ("-h".equals(arg) || "-?".equals(arg)) {
-                arg = "--help";
-            } else if ("-v".equals(arg)) {
-                arg = "--version";
-            }
-            // handle simple arguments like file names, URLs, bounds
-            if (!arg.startsWith("--")) {
-                arg = "--download="+arg;
-            }
-            int i = arg.indexOf('=');
-            String key = i == -1 ? arg.substring(2) : arg.substring(2,i);
-            String value = i == -1 ? "" : arg.substring(i+1);
-            Collection<String> v = argMap.get(key);
-            if (v == null) {
-                v = new LinkedList<String>();
-            }
-            v.add(value);
-            argMap.put(key, v);
+    public enum Option {
+        HELP(false),
+        VERSION(false),
+        LANGUAGE(true),
+        RESET_PREFERENCES(false),
+        LOAD_PREFERENCES(true),
+        SET(true),
+        GEOMETRY(true),
+        NO_MAXIMIZE(false),
+        MAXIMIZE(false),
+        DOWNLOAD(true),
+        DOWNLOADGPS(true),
+        SELECTION(true);
+
+        private String name;
+        private boolean requiresArgument;
+
+        private Option(boolean requiresArgument) {
+            this.name = name().toLowerCase().replace("_", "-");
+            this.requiresArgument = requiresArgument;
         }
+
+        public String getName() {
+            return name;
+        }
+
+        public boolean requiresArgument() {
+            return requiresArgument;
+        }
+
+        public static Map<Option, Collection<String>> fromStringMap(Map<String, Collection<String>> opts) {
+            Map<Option, Collection<String>> res = new HashMap<Option, Collection<String>>();
+            for (Map.Entry<String, Collection<String>> e : opts.entrySet()) {
+                Option o = Option.valueOf(e.getKey().toUpperCase().replace("-", "_"));
+                if (o != null) {
+                    res.put(o, e.getValue());
+                }
+            }
+            return res;
+        }
+    }
+
+    private static Map<Option, Collection<String>> buildCommandLineArgumentMap(String[] args) {
+
+        List<LongOpt> los = new ArrayList<LongOpt>();
+        for (Option o : Option.values()) {
+            los.add(new LongOpt(o.getName(), o.requiresArgument() ? LongOpt.REQUIRED_ARGUMENT : LongOpt.NO_ARGUMENT, null, 0));
+        }
+
+        Getopt g = new Getopt("JOSM", args, "hv", los.toArray(new LongOpt[0]));
+
+        Map<Option, Collection<String>> argMap = new HashMap<Option, Collection<String>>();
+
+        int c;
+        while ((c = g.getopt()) != -1 ) {
+            Option opt = null;
+            switch (c) {
+                case 'h':
+                    opt = Option.HELP;
+                    break;
+                case 'v':
+                    opt = Option.VERSION;
+                    break;
+                case 0:
+                    opt = Option.values()[g.getLongind()];
+                    break;
+            }
+            if (opt != null) {
+                Collection<String> values = argMap.get(opt);
+                if (values == null) {
+                    values = new ArrayList<String>();
+                    argMap.put(opt, values);
+                }
+                values.add(g.getOptarg());
+            } else
+                throw new IllegalArgumentException();
+        }
+        // positional arguments are a shortcut for the --download ... option
+        for (int i = g.getOptind(); i < args.length; ++i) {
+            Collection<String> values = argMap.get(Option.DOWNLOAD);
+            if (values == null) {
+                values = new ArrayList<String>();
+                argMap.put(Option.DOWNLOAD, values);
+            }
+            values.add(args[i]);
+        }
+
         return argMap;
     }
 
@@ -185,20 +253,25 @@ public class MainApplication extends Main {
         Main.platform.preStartupHook();
 
         // construct argument table
-        final Map<String, Collection<String>> args = buildCommandLineArgumentMap(argArray);
+        Map<Option, Collection<String>> args = null;
+        try {
+            args = buildCommandLineArgumentMap(argArray);
+        } catch (IllegalArgumentException e) {
+            System.exit(1);
+        }
 
-        if (args.containsKey("version")) {
+        if (args.containsKey(Option.VERSION)) {
             System.out.println(Version.getInstance().getAgentString());
             System.exit(0);
         } else {
             System.out.println(Version.getInstance().getReleaseAttributes());
         }
 
-        Main.pref.init(args.containsKey("reset-preferences"));
+        Main.pref.init(args.containsKey(Option.RESET_PREFERENCES));
 
         // Check if passed as parameter
-        if (args.containsKey("language")) {
-            I18n.set(args.get("language").iterator().next());
+        if (args.containsKey(Option.LANGUAGE)) {
+            I18n.set(args.get(Option.LANGUAGE).iterator().next());
         } else {
             I18n.set(Main.pref.get("language", null));
         }
@@ -207,9 +280,9 @@ public class MainApplication extends Main {
         JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
         Main.parent = mainFrame;
 
-        if (args.containsKey("load-preferences")) {
+        if (args.containsKey(Option.LOAD_PREFERENCES)) {
             CustomConfigurator.XMLCommandProcessor config = new CustomConfigurator.XMLCommandProcessor(Main.pref);
-            for (String i : args.get("load-preferences")) {
+            for (String i : args.get(Option.LOAD_PREFERENCES)) {
                 System.out.println("Reading preferences from " + i);
                 try {
                     URL url = new URL(i);
@@ -220,8 +293,8 @@ public class MainApplication extends Main {
             }
         }
 
-        if (args.containsKey("set")) {
-            for (String i : args.get("set")) {
+        if (args.containsKey(Option.SET)) {
+            for (String i : args.get(Option.SET)) {
                 String[] kv = i.split("=", 2);
                 Main.pref.put(kv[0], "null".equals(kv[1]) ? null : kv[1]);
             }
@@ -233,7 +306,7 @@ public class MainApplication extends Main {
         OAuthAccessTokenHolder.getInstance().init(Main.pref, CredentialsManager.getInstance());
 
         // asking for help? show help and exit
-        if (args.containsKey("help")) {
+        if (args.containsKey(Option.HELP)) {
             showHelp();
             System.exit(0);
         }
@@ -277,7 +350,7 @@ public class MainApplication extends Main {
         mainFrame.setVisible(true);
 
         boolean maximized = Boolean.parseBoolean(Main.pref.get("gui.maximized"));
-        if ((!args.containsKey("no-maximize") && maximized) || args.containsKey("maximize")) {
+        if ((!args.containsKey(Option.NO_MAXIMIZE) && maximized) || args.containsKey(Option.MAXIMIZE)) {
             if (Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH)) {
                 // Main.debug("Main window maximized");
                 Main.windowState = JFrame.MAXIMIZED_BOTH;
@@ -291,6 +364,8 @@ public class MainApplication extends Main {
         if(main.menu.fullscreenToggleAction != null) {
             main.menu.fullscreenToggleAction.initial();
         }
+
+        final Map<Option, Collection<String>> args_final = args;
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -318,7 +393,7 @@ public class MainApplication extends Main {
                     autosaveTask.schedule();
                 }
 
-                main.postConstructorProcessCmdLine(args);
+                main.postConstructorProcessCmdLine(args_final);
 
                 DownloadDialog.autostartIfNeeded();
             }
