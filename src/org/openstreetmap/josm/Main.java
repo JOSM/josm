@@ -57,6 +57,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.GettingStarted;
+import org.openstreetmap.josm.gui.MainApplication.Option;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
@@ -473,7 +474,7 @@ abstract public class Main {
      * Should be called before the main constructor to setup some parameter stuff
      * @param args The parsed argument list.
      */
-    public static void preConstructorInit(Map<String, Collection<String>> args) {
+    public static void preConstructorInit(Map<Option, Collection<String>> args) {
         ProjectionPreference.setProjection();
 
         try {
@@ -513,14 +514,14 @@ abstract public class Main {
         }
 
         geometry = WindowGeometry.mainWindow("gui.geometry",
-            (args.containsKey("geometry") ? args.get("geometry").iterator().next() : null),
-            !args.containsKey("no-maximize") && Main.pref.getBoolean("gui.maximized", false));
+            (args.containsKey(Option.GEOMETRY) ? args.get(Option.GEOMETRY).iterator().next() : null),
+            !args.containsKey(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
     }
 
-    public void postConstructorProcessCmdLine(Map<String, Collection<String>> args) {
-        if (args.containsKey("download")) {
+    public void postConstructorProcessCmdLine(Map<Option, Collection<String>> args) {
+        if (args.containsKey(Option.DOWNLOAD)) {
             List<File> fileList = new ArrayList<File>();
-            for (String s : args.get("download")) {
+            for (String s : args.get(Option.DOWNLOAD)) {
                 File f = null;
                 switch(paramType(s)) {
                 case httpUrl:
@@ -555,8 +556,8 @@ abstract public class Main {
                 OpenFileAction.openFiles(fileList, true);
             }
         }
-        if (args.containsKey("downloadgps")) {
-            for (String s : args.get("downloadgps")) {
+        if (args.containsKey(Option.DOWNLOADGPS)) {
+            for (String s : args.get(Option.DOWNLOADGPS)) {
                 switch(paramType(s)) {
                 case httpUrl:
                     downloadFromParamHttp(true, s);
@@ -575,8 +576,8 @@ abstract public class Main {
                 }
             }
         }
-        if (args.containsKey("selection")) {
-            for (String s : args.get("selection")) {
+        if (args.containsKey(Option.SELECTION)) {
+            for (String s : args.get(Option.SELECTION)) {
                 SearchAction.search(s, SearchAction.SearchMode.add);
             }
         }

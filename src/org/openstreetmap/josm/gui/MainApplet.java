@@ -27,6 +27,7 @@ import javax.swing.JTextField;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.ServerSidePreferences;
+import org.openstreetmap.josm.gui.MainApplication.Option;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -126,11 +127,11 @@ public class MainApplet extends JApplet {
             }
         }
 
-        Main.preConstructorInit(args);
+        Main.preConstructorInit(Option.fromStringMap(args));
         Main.parent = frame;
         Main.addListener();
 
-        new MainCaller().postConstructorProcessCmdLine(args);
+        new MainCaller().postConstructorProcessCmdLine(Option.fromStringMap(args));
 
         MainMenu m = Main.main.menu; // shortcut
 
