@@ -290,7 +290,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         class BingAttributionData extends CacheCustomContent<IOException> {
 
             public BingAttributionData() {
-                super("bing.attribution.xml", CacheCustomContent.INTERVAL_WEEKLY);
+                super("bing.attribution.xml", CacheCustomContent.INTERVAL_HOURLY);
             }
 
             @Override
