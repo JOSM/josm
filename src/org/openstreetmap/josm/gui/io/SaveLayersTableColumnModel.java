@@ -18,14 +18,13 @@ import org.openstreetmap.josm.tools.GBC;
 
 class SaveLayersTableColumnModel extends DefaultTableColumnModel {
     /** small renderer class that handles the "should be uploaded/saved" texts. */
-    private static class RecommendedActionsTableCell extends JPanel implements TableCellRenderer {
+    private static class RecommendedActionsTableCell implements TableCellRenderer {
         private final static JPanel pnlEmpty = new JPanel();
         private final static JLabel needsUpload = new JLabel(tr("should be uploaded"));
         private final static JLabel needsSave = new JLabel(tr("should be saved"));
         private final static GBC defaultCellStyle = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);
 
         public RecommendedActionsTableCell() {
-            setLayout(new GridBagLayout());
             pnlEmpty.setPreferredSize(new Dimension(1, 19));
             needsUpload.setPreferredSize(new Dimension(needsUpload.getPreferredSize().width, 19));
             needsSave.setPreferredSize(new Dimension(needsSave.getPreferredSize().width, 19));
@@ -33,15 +32,16 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
+            JPanel panel = new JPanel(new GridBagLayout());
             SaveLayerInfo info = (SaveLayerInfo)value;
             StringBuilder sb = new StringBuilder();
             sb.append("<html>");
             if (info.getLayer().requiresUploadToServer() && !info.getLayer().isUploadDiscouraged()) {
-                add(needsUpload, defaultCellStyle);
+                panel.add(needsUpload, defaultCellStyle);
                 sb.append(tr("Layer ''{0}'' has modifications which should be uploaded to the server.", info.getName()));
 
             } else {
-                add(pnlEmpty, defaultCellStyle);
+                panel.add(pnlEmpty, defaultCellStyle);
                 if (info.getLayer().requiresUploadToServer()) {
                     sb.append(tr("Layer ''{0}'' has modifications which are discouraged to be uploaded.", info.getName()));
                 } else {
@@ -51,15 +51,15 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
             sb.append("<br/>");
 
             if (info.getLayer().requiresSaveToFile()) {
-                add(needsSave, defaultCellStyle);
+                panel.add(needsSave, defaultCellStyle);
                 sb.append(tr("Layer ''{0}'' has modifications which should be saved to its associated file ''{1}''.", info.getName(), info.getFile().toString()));
             } else {
-                add(pnlEmpty, defaultCellStyle);
+                panel.add(pnlEmpty, defaultCellStyle);
                 sb.append(tr("Layer ''{0}'' has no modifications to be saved.", info.getName()));
             }
             sb.append("</html>");
-            setToolTipText(sb.toString());
-            return this;
+            panel.setToolTipText(sb.toString());
+            return panel;
         }
     }
 
