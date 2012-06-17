@@ -96,6 +96,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private Shortcut snappingShortcut;
 
     private JCheckBoxMenuItem snapCheckboxMenuItem;
+    private boolean useRepeatedShortcut;
 
     public DrawAction(MapFrame mapFrame) {
         super(tr("Draw"), "node/autonode", tr("Draw nodes"),
@@ -252,7 +253,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return;
         if (event instanceof KeyEvent) {
             KeyEvent e = (KeyEvent) event;
-            if (snappingShortcut.isEvent(e) || getShortcut().isEvent(e)) {
+            if (snappingShortcut.isEvent(e) || (useRepeatedShortcut && getShortcut().isEvent(e))) {
                 Component focused = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
                 if (SwingUtilities.getWindowAncestor(focused) instanceof JFrame)
                     processKeyEvent(e);
@@ -269,7 +270,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private KeyEvent releaseEvent;
     private Timer timer;
     void processKeyEvent(KeyEvent e) {
-        if (!snappingShortcut.isEvent(e) && !getShortcut().isEvent(e)) 
+        if (!snappingShortcut.isEvent(e) && !(useRepeatedShortcut && getShortcut().isEvent(e))) 
             return;
         
         if (e.getID() == KeyEvent.KEY_PRESSED) {
@@ -1277,6 +1278,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             snapToProjections = Main.pref.getBoolean("draw.anglesnap.projectionsnap", true);
 
             showAngle = Main.pref.getBoolean("draw.anglesnap.showAngle", true);
+            useRepeatedShortcut = Main.pref.getBoolean("draw.anglesnap.toggleOnRepeatedA", true);
 
             normalStroke = new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
             snapHelperColor = Main.pref.getColor(marktr("draw angle snap"), Color.ORANGE);
@@ -1587,6 +1589,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         }
 
         MouseListener anglePopupListener = new PopupMenuLauncher( new JPopupMenu() {
+            JCheckBoxMenuItem repeatedCb = new JCheckBoxMenuItem(new AbstractAction(tr("Toggle snapping by {0}", getShortcut().getKeyText())){
+                public void actionPerformed(ActionEvent e) {
+                    boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
+                    Main.pref.put("draw.anglesnap.toggleOnRepeatedA", sel);
+                    init();
+                }
+            });
             JCheckBoxMenuItem helperCb = new JCheckBoxMenuItem(new AbstractAction(tr("Show helper geometry")){
                 public void actionPerformed(ActionEvent e) {
                     boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
@@ -1608,6 +1617,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             {
                 helperCb.setState(Main.pref.getBoolean("draw.anglesnap.drawConstructionGeometry",true));
                 projectionCb.setState(Main.pref.getBoolean("draw.anglesnap.projectionsnapgvff",true));
+                repeatedCb.setState(Main.pref.getBoolean("draw.anglesnap.toggleOnRepeatedA",true));
+                add(repeatedCb);
                 add(helperCb);
                 add(projectionCb);;
                 add(new AbstractAction(tr("Disable")) {
