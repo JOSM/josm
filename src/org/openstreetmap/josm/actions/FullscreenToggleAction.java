@@ -26,6 +26,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class FullscreenToggleAction extends JosmAction {
     private final List<ButtonModel> buttonModels = new ArrayList<ButtonModel>();
+    private boolean selected;
     private GraphicsDevice gd;
     private Rectangle prevBounds;
 
@@ -41,7 +42,7 @@ public class FullscreenToggleAction extends JosmAction {
         putValue("toolbar", "fullscreen");
         Main.toolbar.register(this);
         gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        putValue(SELECTED_KEY, Main.pref.getBoolean("draw.fullscreen", false));
+        selected = Main.pref.getBoolean("draw.fullscreen", false);
         notifySelectedState();
     }
 
@@ -59,23 +60,22 @@ public class FullscreenToggleAction extends JosmAction {
 
     protected void notifySelectedState() {
         for (ButtonModel model: buttonModels) {
-            if (model.isSelected() != isSelected()) {
-                model.setSelected(isSelected());
+            if (model.isSelected() != selected) {
+                model.setSelected(selected);
             }
         }
     }
 
     protected void toggleSelectedState() {
-        putValue(SELECTED_KEY, !isSelected());
-        Main.pref.put("draw.fullscreen", isSelected());
+        selected = !selected;
+        Main.pref.put("draw.fullscreen", selected);
         notifySelectedState();
         setMode();
     }
 
     public void initial() {
-        if (isSelected()) {
+        if(selected)
             setMode();
-        }
     }
 
     protected void setMode() {
@@ -90,42 +90,37 @@ public class FullscreenToggleAction extends JosmAction {
         }
 
         frame.dispose();
-        frame.setUndecorated(isSelected());
+        frame.setUndecorated(selected);
 
-        if (isSelected()) {
+        if (selected) {
             prevBounds = frame.getBounds();
             frame.setBounds(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
         }
 
         // we cannot use hw-exclusive fullscreen mode in MS-Win, as long
-        // as josm throws out modal dialogs, see here:
-        // http://forums.sun.com/thread.jspa?threadID=5351882 FIXME this url does not work anymore
+        // as josm throws out modal dialogs.
         //
         // the good thing is: fullscreen works without exclusive mode,
         // since windows (or java?) draws the undecorated window full-
         // screen by default (it's a simulated mode, but should be ok)
         String exclusive = Main.pref.get("draw.fullscreen.exclusive-mode", "auto");
         if ("true".equals(exclusive) || ("auto".equals(exclusive) && !(Main.platform instanceof PlatformHookWindows))) {
-            gd.setFullScreenWindow(isSelected() ? frame : null);
+            gd.setFullScreenWindow(selected ? frame : null);
         }
 
-        if (!isSelected() && prevBounds != null) {
+        if (!selected && prevBounds != null) {
             frame.setBounds(prevBounds);
         }
 
         for (Window wind : visibleWindows) {
             wind.setVisible(true);
         }
-        
+
         // Free F10 key to allow it to be used by plugins, even after full screen (see #7502)
-        frame.getJMenuBar().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "none"); 
+        frame.getJMenuBar().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "none");
     }
 
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState();
-    }
-    
-    public final boolean isSelected() {
-        return (Boolean)getValue(SELECTED_KEY);
     }
 }
