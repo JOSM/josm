@@ -107,6 +107,7 @@ public class PluginHandler {
             new DeprecatedPlugin("dumbutils", tr("replaced by new {0} plugin","utilsplugin2")),
             new DeprecatedPlugin("ImproveWayAccuracy", IN_CORE),
             new DeprecatedPlugin("Curves", tr("replaced by new {0} plugin","utilsplugin2")),
+            new DeprecatedPlugin("epsg31287", tr("replaced by new {0} plugin", "proj4j")),
         });
     }
 
