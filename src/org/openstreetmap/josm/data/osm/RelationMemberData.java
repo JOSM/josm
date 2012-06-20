@@ -58,4 +58,36 @@ public class RelationMemberData implements PrimitiveId {
     public boolean isNew() {
         return memberId <= 0;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (memberId ^ (memberId >>> 32));
+        result = prime * result
+                + ((memberType == null) ? 0 : memberType.hashCode());
+        result = prime * result + ((role == null) ? 0 : role.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        RelationMemberData other = (RelationMemberData) obj;
+        if (memberId != other.memberId)
+            return false;
+        if (memberType != other.memberType)
+            return false;
+        if (role == null) {
+            if (other.role != null)
+                return false;
+        } else if (!role.equals(other.role))
+            return false;
+        return true;
+    }
 }
