@@ -38,10 +38,10 @@ import org.apache.commons.codec.Charsets;
  * <p>
  * The C style comments are from the original C code, the ones with "//" from the port.
  * </p>
- * 
+ *
  * <p>This class is immutable and thread-safe.</p>
- * 
- * @version $Id: Md5Crypt.java 1342240 2012-05-24 13:03:14Z ggregory $
+ *
+ * @version $Id: Md5Crypt.java 1352268 2012-06-20 19:04:08Z ggregory $
  * @since 1.7
  */
 public class Md5Crypt {
@@ -92,10 +92,10 @@ public class Md5Crypt {
 
     /**
      * Generates an Apache htpasswd compatible "$apr1$" MD5 based hash value. *
-     * 
+     *
      * The algorithm is identical to the crypt(3) "$1$" one but produces different outputs due to the different salt
      * prefix.
-     * 
+     *
      * @param keyBytes
      *            The plaintext string that should be hashed.
      * @param salt
@@ -108,7 +108,7 @@ public class Md5Crypt {
 
     /**
      * Generates a libc6 crypt() compatible "$1$" hash value.
-     * 
+     *
      * See {@link Crypt#crypt(String, String)} for details.
      */
     public static String md5Crypt(final byte[] keyBytes) throws Exception {
@@ -117,9 +117,9 @@ public class Md5Crypt {
 
     /**
      * Generates a libc crypt() compatible "$1$" MD5 based hash value.
-     * 
+     *
      * See {@link Crypt#crypt(String, String)} for details.
-     * 
+     *
      * @param keyBytes
      *            The plaintext string that should be hashed.
      * @param salt
@@ -132,7 +132,7 @@ public class Md5Crypt {
 
     /**
      * Generates a libc6 crypt() "$1$" or Apache htpasswd "$apr1$" hash value.
-     * 
+     *
      * See {@link Crypt#crypt(String, String)} or {@link #apr1Crypt(String, String)} for details.
      */
     public static String md5Crypt(final byte[] keyBytes, final String salt, final String prefix) throws Exception {
