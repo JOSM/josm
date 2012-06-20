@@ -7,9 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.Map;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -109,7 +107,7 @@ public class UntaggedNode extends Test {
 
     @Override
     public Command fixError(TestError testError) {
-        return DeleteCommand.delete(Main.map.mapView.getEditLayer(), testError.getPrimitives());
+        return deletePrimitivesIfNeeded(testError.getPrimitives());
     }
 
     @Override

@@ -372,20 +372,30 @@ public class DuplicateNode extends Test {
         Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>(testError.getPrimitives());
         LinkedHashSet<Node> nodes = new LinkedHashSet<Node>(OsmPrimitive.getFilteredList(sel, Node.class));
 
-        // Use first existing node or first node if all nodes are new
-        Node target = null;
-        for (Node n: nodes) {
-            if (!n.isNew()) {
-                target = n;
-                break;
+        // Filter nodes that have already been deleted (see #5764 and #5773)
+        for (Iterator<Node> it = nodes.iterator(); it.hasNext();) {
+            if (it.next().isDeleted()) {
+                it.remove();
             }
         }
-        if (target == null) {
-            target = nodes.iterator().next();
-        }
 
-        if (DeleteCommand.checkAndConfirmOutlyingDelete(Main.main.getCurrentDataSet().getDataSourceArea(), nodes, Collections.singleton(target)))
-            return MergeNodesAction.mergeNodes(Main.main.getEditLayer(), nodes, target);
+        // Merge only if at least 2 nodes remain
+        if (nodes.size() >= 2) {
+            // Use first existing node or first node if all nodes are new
+            Node target = null;
+            for (Node n: nodes) {
+                if (!n.isNew()) {
+                    target = n;
+                    break;
+                }
+            }
+            if (target == null) {
+                target = nodes.iterator().next();
+            }
+    
+            if (DeleteCommand.checkAndConfirmOutlyingDelete(Main.main.getCurrentDataSet().getDataSourceArea(), nodes, Collections.singleton(target)))
+                return MergeNodesAction.mergeNodes(Main.main.getEditLayer(), nodes, target);
+        }
 
         return null;// undoRedo handling done in mergeNodes
     }

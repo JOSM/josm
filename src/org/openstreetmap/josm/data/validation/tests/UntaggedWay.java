@@ -10,7 +10,6 @@ import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -141,6 +140,6 @@ public class UntaggedWay extends Test
 
     @Override
     public Command fixError(TestError testError) {
-        return DeleteCommand.delete(Main.map.mapView.getEditLayer(), testError.getPrimitives());
+        return deletePrimitivesIfNeeded(testError.getPrimitives());
     }
 }

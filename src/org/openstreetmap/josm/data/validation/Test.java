@@ -11,7 +11,9 @@ import java.util.List;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -221,5 +223,25 @@ public class Test extends AbstractVisitor
 
     public boolean isCanceled() {
         return progressMonitor.isCanceled();
+    }
+    
+    /**
+     * Build a Delete command on all primitives that have not yet been deleted manually by user, or by another error fix.
+     * If all primitives have already been deleted, null is returned.
+     * @param primitives The primitives wanted for deletion
+     * @return a Delete command on all primitives that have not yet been deleted, or null otherwise
+     */
+    protected final Command deletePrimitivesIfNeeded(Collection<? extends OsmPrimitive> primitives) {
+        Collection<OsmPrimitive> primitivesToDelete = new ArrayList<OsmPrimitive>();
+        for (OsmPrimitive p : primitives) {
+            if (!p.isDeleted()) {
+                primitivesToDelete.add(p);
+            }
+        }
+        if (!primitivesToDelete.isEmpty()) {
+            return DeleteCommand.delete(Main.map.mapView.getEditLayer(), primitivesToDelete);
+        } else {
+            return null;
+        }
     }
 }
