@@ -12,12 +12,12 @@ public class RelationMemberListColumnModel extends DefaultTableColumnModel{
         TableColumn col = null;
         RelationMemberTableCellRenderer renderer = new RelationMemberTableCellRenderer();
 
-        // column 0 - Role
+        // column 0 - Row num
         col = new TableColumn(0);
         col.setHeaderValue("");
         col.setResizable(true);
-        col.setWidth(20);
-        col.setPreferredWidth(20);
+        col.setPreferredWidth(32);
+        col.setMaxWidth(40);    // Up to 5 digits
         col.setCellRenderer(renderer);
         addColumn(col);
 
