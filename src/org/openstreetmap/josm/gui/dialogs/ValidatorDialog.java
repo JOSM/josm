@@ -24,7 +24,6 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -569,14 +568,18 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                     monitor.subTask(tr("Fixing ({0}/{1}): ''{2}''", i, testErrors.size(),error.getMessage()));
                     if (this.canceled)
                         return;
-                    final Command fixCommand = error.getFix();
-                    if (fixCommand != null) {
-                        SwingUtilities.invokeAndWait(new Runnable() {
-                            @Override
-                            public void run() {
-                                Main.main.undoRedo.addNoRedraw(fixCommand);
-                            }
-                        });
+                    if (error.isFixable()) {
+                        final Command fixCommand = error.getFix();
+                        if (fixCommand != null) {
+                            SwingUtilities.invokeAndWait(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Main.main.undoRedo.addNoRedraw(fixCommand);
+                                }
+                            });
+                        }
+                        // It is wanted to ignore an error if it said fixable, even if fixCommand was null
+                        // This is to fix #5764 and #5773: a delete command, for example, may be null if all concerned primitives have already been deleted
                         error.setIgnored(true);
                     }
                     monitor.worked(1);
