@@ -48,7 +48,7 @@ public class UndoAction extends JosmAction implements OsmDataLayer.CommandQueueL
         } else {
             putValue(NAME, tr("Undo ..."));
             setTooltip(tr("Undo {0}",
-                    Main.main.undoRedo.commands.getFirst().getDescriptionText()));
+                    Main.main.undoRedo.commands.getLast().getDescriptionText()));
         }
     }
 }
