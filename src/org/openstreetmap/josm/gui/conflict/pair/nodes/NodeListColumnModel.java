@@ -17,8 +17,8 @@ public class NodeListColumnModel extends DefaultTableColumnModel {
         col = new TableColumn(0);
         col.setHeaderValue("");
         col.setResizable(true);
-        col.setWidth(30);
-        col.setPreferredWidth(30);
+        col.setPreferredWidth(32);
+        col.setMaxWidth(32);    // Up to 4 digits (OSM API capabilities -> waynodes maximum set to 2000)
         col.setCellRenderer(renderer);
         addColumn(col);
 
