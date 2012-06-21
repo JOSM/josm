@@ -72,7 +72,7 @@ public class CrossingWays extends Test {
         String railway1 = w.get("railway");
         boolean isSubway1 = "subway".equals(railway1);
         boolean isTram1 = "tram".equals(railway1);
-        boolean isBuilding = (w.get("building") != null);
+        boolean isBuilding = isBuilding(w);
         String waterway1 = w.get("waterway");
 
         if (w.get("highway") == null && w.get("waterway") == null
