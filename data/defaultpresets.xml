@@ -771,7 +771,7 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Bicycle"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Bicycle" />
             <label text="Edit Cycle Lane" />
-            <combo key="cycleway" text="Cycleway" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" />
+            <combo key="cycleway" text="Cycleway" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" match="key" />
             <combo key="cycleway:left" text="Cycleway left" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" />
             <combo key="cycleway:right" text="Cycleway right" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" />
             <check key="oneway:bicycle" text="Oneway (bicycle)" default="off" />
@@ -1009,7 +1009,7 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming"/>
             <label text="Edit Traffic Calming" />
-            <combo key="traffic_calming" text="Type" values="yes,bump,chicane,choker,cushion,hump,table" />
+            <combo key="traffic_calming" text="Type" values="yes,bump,chicane,choker,cushion,hump,table" match="key" />
         </item>
         <item name="Passing Place" icon="presets/passingplace.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=passing_place"
@@ -4157,7 +4157,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=line"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=line" />
             <label text="Edit Power Line" />
-            <combo key="power" text="Line type" values_context="Power Line" values="line,minor_line" default="line" />
+            <combo key="power" text="Line type" values_context="Power Line" values="line,minor_line" default="line" match="keyvalue" />
             <text key="operator" text="Operator" />
             <text key="ref" text="Line reference" />
             <!-- TODO: voltage values used are a mixture of power lines and railways - needs cleanup -->
@@ -4350,12 +4350,12 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Organic" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Key:organic" />
             <label text="Edit Organic/Bio" />
-            <combo text="Organic/Bio" key="organic" values="no,yes,only" />
+            <combo text="Organic/Bio" key="organic" values="no,yes,only" match="key" />
         </item>
         <item name="Fair Trade" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Key:fair_trade" />
             <label text="Edit Fair Trade" />
-            <combo text="Fair Trade" key="fair_trade" values="no,yes,only" />
+            <combo text="Fair Trade" key="fair_trade" values="no,yes,only" match="key" />
         </item>
         <separator/>
         <item name="Alcohol" icon="styles/standard/shop/beverages.png" type="node,closedway">
