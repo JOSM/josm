@@ -244,4 +244,14 @@ public class Test extends AbstractVisitor
             return null;
         }
     }
+
+    /**
+     * Determines if the specified primitive denotes a building.
+     * @param p The primitive to be tested
+     * @return True if building key is set and different from no,entrance
+     */
+    protected static final boolean isBuilding(OsmPrimitive p) {
+        String v = p.get("building");
+        return v != null && !v.equals("no") && !v.equals("entrance");
+    }
 }

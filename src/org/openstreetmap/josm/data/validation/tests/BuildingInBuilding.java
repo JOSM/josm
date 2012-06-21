@@ -120,8 +120,4 @@ public class BuildingInBuilding extends Test {
         }
         return false;
     }
-
-    private static boolean isBuilding(OsmPrimitive p) {
-        return "yes".equals(p.get("building"));
-    }
 }
