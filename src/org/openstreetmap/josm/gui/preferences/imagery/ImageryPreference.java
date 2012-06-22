@@ -85,6 +85,7 @@ import org.openstreetmap.josm.io.imagery.OsmosnimkiOffsetServer;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 public class ImageryPreference extends DefaultTabPreferenceSetting {
     public static class Factory implements PreferenceSettingFactory {
@@ -868,14 +869,14 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
         private boolean confirmEulaAcceptance(PreferenceTabbedPane gui, String eulaUrl) {
             URL url = null;
             try {
-                url = new URL(eulaUrl.replaceAll("\\{lang\\}", Locale.getDefault().toString()));
+                url = new URL(eulaUrl.replaceAll("\\{lang\\}", LanguageInfo.getWikiLanguagePrefix()));
                 JEditorPane htmlPane = null;
                 try {
                     htmlPane = new JEditorPane(url);
                 } catch (IOException e1) {
                     // give a second chance with a default Locale 'en'
                     try {
-                        url = new URL(eulaUrl.replaceAll("\\{lang\\}", "en"));
+                        url = new URL(eulaUrl.replaceAll("\\{lang\\}", ""));
                         htmlPane = new JEditorPane(url);
                     } catch (IOException e2) {
                         JOptionPane.showMessageDialog(gui ,tr("EULA license URL not available: {0}", eulaUrl));
