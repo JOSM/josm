@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.conflict;
 
+import java.util.Map;
+
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 
@@ -21,6 +23,9 @@ public class  Conflict<T extends OsmPrimitive> {
     private final T my;
     private final T their;
     private final boolean isMyDeleted;
+    
+    // mergedMap is only set if the conflict results from merging two layers
+    private Map<PrimitiveId, PrimitiveId> mergedMap;
 
     public Conflict(T my, T their) {
         this(my, their, false);
@@ -109,5 +114,13 @@ public class  Conflict<T extends OsmPrimitive> {
      */
     public boolean isMyDeleted() {
         return isMyDeleted;
+    }
+
+    public final Map<PrimitiveId, PrimitiveId> getMergedMap() {
+        return mergedMap;
+    }
+
+    public final void setMergedMap(Map<PrimitiveId, PrimitiveId> mergedMap) {
+        this.mergedMap = mergedMap;
     }
 }

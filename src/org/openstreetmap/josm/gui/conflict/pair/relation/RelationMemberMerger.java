@@ -47,7 +47,7 @@ public class RelationMemberMerger extends ListMerger<RelationMember> implements 
 
     public void populate(Conflict<? extends OsmPrimitive> conflict) {
         RelationMemberListMergeModel model = (RelationMemberListMergeModel)getModel();
-        model.populate((Relation)conflict.getMy(), (Relation)conflict.getTheir());
+        model.populate((Relation)conflict.getMy(), (Relation)conflict.getTheir(), conflict.getMergedMap());
     }
 
     public RelationMemberMerger() {

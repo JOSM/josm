@@ -14,21 +14,26 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * ListMergeModel is a model for interactively comparing and merging two list of entries
@@ -62,7 +67,7 @@ import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
  * @param <T>  the type of the list entries
  * @see ListMerger
  */
-public abstract class ListMergeModel<T> extends Observable {
+public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     public static final String FROZEN_PROP = ListMergeModel.class.getName() + ".frozen";
 
     private static final int MAX_DELETED_PRIMITIVE_IN_DIALOG = 5;
@@ -80,6 +85,9 @@ public abstract class ListMergeModel<T> extends Observable {
     private final List<PropertyChangeListener> listeners;
     private boolean isFrozen = false;
     private final ComparePairListModel comparePairListModel;
+    
+    private DataSet myDataset;
+    private Map<PrimitiveId, PrimitiveId> mergedMap;
 
     /**
      * Creates a clone of an entry of type T suitable to be included in the
@@ -117,7 +125,23 @@ public abstract class ListMergeModel<T> extends Observable {
      * @param entry
      * @return Primitive from my dataset referenced by entry
      */
-    protected abstract OsmPrimitive getMyPrimitive(T entry);
+    protected OsmPrimitive getMyPrimitive(T entry) {
+        return getMyPrimitiveDefault(entry);
+    }
+    
+    protected final OsmPrimitive getMyPrimitiveDefault(PrimitiveId entry) {
+        OsmPrimitive result = myDataset.getPrimitiveById(entry);
+        if (result == null && mergedMap != null) {
+            PrimitiveId id = mergedMap.get(entry);
+            if (id == null && entry instanceof OsmPrimitive) {
+                id = mergedMap.get(((OsmPrimitive)entry).getPrimitiveId());
+            }
+            if (id != null) {
+                result = myDataset.getPrimitiveById(id);
+            }
+        }
+        return result;
+    }
 
     protected void buildMyEntriesTableModel() {
         myEntriesTableModel = new EntriesTableModel(MY_ENTRIES);
@@ -309,6 +333,16 @@ public abstract class ListMergeModel<T> extends Observable {
     public void clearMerged() {
         getMergedEntries().clear();
         fireModelDataChanged();
+    }
+    
+    protected final void initPopulate(OsmPrimitive my, OsmPrimitive their, Map<PrimitiveId, PrimitiveId> mergedMap) {
+        CheckParameterUtil.ensureParameterNotNull(my, "my");
+        CheckParameterUtil.ensureParameterNotNull(their, "their");
+        this.myDataset = my.getDataSet();
+        this.mergedMap = mergedMap;
+        getMergedEntries().clear();
+        getMyEntries().clear();
+        getTheirEntries().clear();
     }
 
     protected void alertCopyFailedForDeletedPrimitives(List<PrimitiveId> deletedIds) {

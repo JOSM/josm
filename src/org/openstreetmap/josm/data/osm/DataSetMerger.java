@@ -134,6 +134,15 @@ public class DataSetMerger {
             return null;
         return targetDataSet.getPrimitiveById(targetId);
     }
+    
+    protected void addConflict(Conflict<?> c) {
+        c.setMergedMap(mergedMap);
+        conflicts.add(c);
+    }
+
+    protected void addConflict(OsmPrimitive my, OsmPrimitive their) {
+        addConflict(new Conflict<OsmPrimitive>(my, their));
+    }
 
     protected void fixIncomplete(Way other) {
         Way myWay = (Way)getMergeTarget(other);
@@ -187,7 +196,7 @@ public class DataSetMerger {
                         // If one of object referrers isn't going to be deleted,
                         // add a conflict and don't delete the object
                         if (!objectsToDelete.contains(referrer)) {
-                            conflicts.add(target, source);
+                            addConflict(target, source);
                             it.remove();
                             flag = true;
                             break;
@@ -234,7 +243,7 @@ public class DataSetMerger {
             if (targetNode != null) {
                 newNodes.add(targetNode);
                 if (targetNode.isDeleted() && !conflicts.hasConflictForMy(targetNode)) {
-                    conflicts.add(new Conflict<OsmPrimitive>(targetNode, sourceNode, true));
+                    addConflict(new Conflict<OsmPrimitive>(targetNode, sourceNode, true));
                     targetNode.setDeleted(false);
                 }
             } else
@@ -262,7 +271,7 @@ public class DataSetMerger {
             RelationMember newMember = new RelationMember(sourceMember.getRole(), targetMember);
             newMembers.add(newMember);
             if (targetMember.isDeleted() && !conflicts.hasConflictForMy(targetMember)) {
-                conflicts.add(new Conflict<OsmPrimitive>(targetMember, sourceMember.getMember(), true));
+                addConflict(new Conflict<OsmPrimitive>(targetMember, sourceMember.getMember(), true));
                 targetMember.setDeleted(false);
             }
         }
@@ -316,7 +325,7 @@ public class DataSetMerger {
             // If target dataset refers to the deleted primitive, conflict will be added in fixReferences method
             for (OsmPrimitive referrer: source.getReferrers()) {
                 if (targetDataSet.getPrimitiveById(referrer.getPrimitiveId()) == null) {
-                    conflicts.add(new Conflict<OsmPrimitive>(target, source, true));
+                    addConflict(new Conflict<OsmPrimitive>(target, source, true));
                     target.setDeleted(false);
                     break;
                 }
@@ -351,12 +360,12 @@ public class DataSetMerger {
             // target is modified and deleted state differs.
             // this have to be resolved manually.
             //
-            conflicts.add(target,source);
+            addConflict(target,source);
         } else if (! target.hasEqualSemanticAttributes(source)) {
             // target is modified and is not semantically equal with source. Can't automatically
             // resolve the differences
             // =>  create a conflict
-            conflicts.add(target,source);
+            addConflict(target,source);
         } else {
             // clone from other. mergeFrom will mainly copy
             // technical attributes like timestamp or user information. Semantic
