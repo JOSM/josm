@@ -39,6 +39,7 @@ import org.openstreetmap.josm.data.validation.tests.NodesDuplicatingWayTags;
 import org.openstreetmap.josm.data.validation.tests.NodesWithSameName;
 import org.openstreetmap.josm.data.validation.tests.OverlappingAreas;
 import org.openstreetmap.josm.data.validation.tests.OverlappingWays;
+import org.openstreetmap.josm.data.validation.tests.PowerLines;
 import org.openstreetmap.josm.data.validation.tests.RelationChecker;
 import org.openstreetmap.josm.data.validation.tests.SelfIntersectingWay;
 import org.openstreetmap.josm.data.validation.tests.SimilarNamedWays;
@@ -105,6 +106,7 @@ public class OsmValidator implements LayerChangeListener {
         OverlappingAreas.class, // ID 2201 .. 2299
         WayConnectedToArea.class, // ID 2301 .. 2399
         NodesDuplicatingWayTags.class, // ID 2401 .. 2499
+        PowerLines.class, // ID 2501 .. 2599
     };
 
     public OsmValidator() {
