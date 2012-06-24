@@ -704,7 +704,7 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public void updateEnabledState() {
-            GuiHelper.runInEDT(new Runnable() {
+            GuiHelper.runInEDTAndWait(new Runnable() {
                 @Override
                 public void run() {
                     if (layer == null) {

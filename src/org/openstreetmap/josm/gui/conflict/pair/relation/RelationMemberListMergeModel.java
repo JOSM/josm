@@ -4,12 +4,13 @@ package org.openstreetmap.josm.gui.conflict.pair.relation;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.command.RelationMemberConflictResolverCommand;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
@@ -20,7 +21,6 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  */
 public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>{
-    private DataSet myDataset;
 
     @Override
     public boolean isEqualEntry(RelationMember e1, RelationMember e2) {
@@ -59,19 +59,13 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
      *
      * @param my my relation. Must not be null.
      * @param their their relation. Must not be null.
+     * @param mergedMap The map of merged primitives if the conflict results from merging two layers
      *
      * @throws IllegalArgumentException if my is null
      * @throws IllegalArgumentException if their is null
      */
-    public void populate(Relation my, Relation their) {
-        this.myDataset = my.getDataSet();
-
-        CheckParameterUtil.ensureParameterNotNull(my, "my");
-        CheckParameterUtil.ensureParameterNotNull(their, "their");
-
-        getMergedEntries().clear();
-        getMyEntries().clear();
-        getTheirEntries().clear();
+    public void populate(Relation my, Relation their, Map<PrimitiveId, PrimitiveId> mergedMap) {
+        initPopulate(my, their, mergedMap);
 
         for (RelationMember n : my.getMembers()) {
             getMyEntries().add(n);
@@ -93,13 +87,12 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
 
     @Override
     protected RelationMember cloneEntryForMergedList(RelationMember entry) {
-        OsmPrimitive primitive = getMyPrimitive(entry);
-        return new RelationMember(entry.getRole(), primitive);
+        return new RelationMember(entry.getRole(), getMyPrimitive(entry));
     }
 
     @Override
     protected OsmPrimitive getMyPrimitive(RelationMember entry) {
-        return myDataset.getPrimitiveById(entry.getMember());
+        return getMyPrimitiveDefault(entry.getMember());
     }
 
     /**

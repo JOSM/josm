@@ -35,6 +35,7 @@ import javax.swing.JToggleButton;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -45,7 +46,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @param T  the type of the entries
  * @see ListMergeModel
  */
-public abstract class ListMerger<T> extends JPanel implements PropertyChangeListener, Observer {
+public abstract class ListMerger<T extends PrimitiveId> extends JPanel implements PropertyChangeListener, Observer {
     protected OsmPrimitivesTable myEntriesTable;
     protected OsmPrimitivesTable mergedEntriesTable;
     protected OsmPrimitivesTable theirEntriesTable;

@@ -4,21 +4,20 @@ package org.openstreetmap.josm.gui.conflict.pair.nodes;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.command.WayNodesConflictResolverCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.ListRole;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class NodeListMergeModel extends ListMergeModel<Node>{
-    private DataSet myDataset;
 
     /**
      * Populates the model with the nodes in the two {@link Way}s <code>my</code> and
@@ -26,17 +25,13 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
      *
      * @param my  my way (i.e. the way in the local dataset)
      * @param their their way (i.e. the way in the server dataset)
+     * @param mergedMap The map of merged primitives if the conflict results from merging two layers
      * @exception IllegalArgumentException thrown, if my is null
      * @exception IllegalArgumentException  thrown, if their is null
      */
-    public void populate(Way my, Way their) {
-        this.myDataset = my.getDataSet();
+    public void populate(Way my, Way their, Map<PrimitiveId, PrimitiveId> mergedMap) {
+        initPopulate(my, their, mergedMap);
 
-        CheckParameterUtil.ensureParameterNotNull(my, "my");
-        CheckParameterUtil.ensureParameterNotNull(their, "their");
-        getMergedEntries().clear();
-        getMyEntries().clear();
-        getTheirEntries().clear();
         for (Node n : my.getNodes()) {
             getMyEntries().add(n);
         }
@@ -84,10 +79,4 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
     protected Node cloneEntryForMergedList(Node entry) {
         return (Node) getMyPrimitive(entry);
     }
-
-    @Override
-    protected OsmPrimitive getMyPrimitive(Node entry) {
-        return myDataset.getPrimitiveById(entry);
-    }
-
 }
