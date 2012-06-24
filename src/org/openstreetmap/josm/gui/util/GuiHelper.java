@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Image;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -40,6 +41,20 @@ public class GuiHelper {
             task.run();
         } else {
             SwingUtilities.invokeLater(task);
+        }
+    }
+
+    public static void runInEDTAndWait(Runnable task) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            task.run();
+        } else {
+            try {
+                SwingUtilities.invokeAndWait(task);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
     }
     

@@ -44,8 +44,9 @@ import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 
-public class MemberTableModel extends AbstractTableModel implements TableModelListener, SelectionChangedListener, DataSetListener {
+public class MemberTableModel extends AbstractTableModel implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPrimitivesTableModel {
 
     /**
      * data of the table model: The list of members and the cached WayConnectionType of each member.
@@ -197,6 +198,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         members.add(rowIndex, newMember);
     }
 
+    @Override
     public OsmPrimitive getReferredPrimitive(int idx) {
         return members.get(idx).getMember();
     }
@@ -649,7 +651,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * @param linked_element already linked against element
      * @return the unlinked node if element is a way, the node itself if element is a node, null otherwise
      */
-    private static Node getUnusedNode(RelationMember element, RelationMember linked_element)
+    /*private static Node getUnusedNode(RelationMember element, RelationMember linked_element)
     {
         Node result = null;
 
@@ -676,7 +678,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         }
 
         return result;
-    }
+    }*/
 
     /*
      * Sort a collection of relation members by the way they are linked.

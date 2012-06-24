@@ -35,6 +35,7 @@ import javax.swing.JToggleButton;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -45,9 +46,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @see ListMergeModel
  */
 public abstract class ListMerger<T> extends JPanel implements PropertyChangeListener, Observer {
-    protected JTable myEntriesTable;
-    protected JTable mergedEntriesTable;
-    protected JTable theirEntriesTable;
+    protected OsmPrimitivesTable myEntriesTable;
+    protected OsmPrimitivesTable mergedEntriesTable;
+    protected OsmPrimitivesTable theirEntriesTable;
 
     protected ListMergeModel<T> model;
 
@@ -877,6 +878,12 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         lblTheirVersion.setText(
                 trn("Their version ({0} entry)", "Their version ({0} entries)", model.getTheirEntriesSize(), model.getTheirEntriesSize())
         );
+    }
+    
+    public void unlinkAsListener() {
+        myEntriesTable.unlinkAsListener();
+        mergedEntriesTable.unlinkAsListener();
+        theirEntriesTable.unlinkAsListener();
     }
 
     /**

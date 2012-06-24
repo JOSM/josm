@@ -77,6 +77,7 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.GBC;
@@ -385,10 +386,10 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                 numNewConflicts
         );
 
-        StringBuffer sb = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
         sb.append("<html>").append(msg1).append("</html>");
         if (numNewConflicts > 0) {
-            ButtonSpec[] options = new ButtonSpec[] {
+            final ButtonSpec[] options = new ButtonSpec[] {
                     new ButtonSpec(
                             tr("OK"),
                             ImageProvider.get("ok"),
@@ -396,18 +397,23 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                             null /* no specific help */
                     )
             };
-            HelpAwareOptionPane.showOptionDialog(
-                    Main.parent,
-                    sb.toString(),
-                    tr("Conflicts detected"),
-                    JOptionPane.WARNING_MESSAGE,
-                    null, /* no icon */
-                    options,
-                    options[0],
-                    ht("/Concepts/Conflict#WarningAboutDetectedConflicts")
-            );
-            Main.map.conflictDialog.unfurlDialog();
-            Main.map.repaint();
+            GuiHelper.runInEDT(new Runnable() {
+                @Override
+                public void run() {
+                    HelpAwareOptionPane.showOptionDialog(
+                            Main.parent,
+                            sb.toString(),
+                            tr("Conflicts detected"),
+                            JOptionPane.WARNING_MESSAGE,
+                            null, /* no icon */
+                            options,
+                            options[0],
+                            ht("/Concepts/Conflict#WarningAboutDetectedConflicts")
+                    );
+                    Main.map.conflictDialog.unfurlDialog();
+                    Main.map.repaint();
+                }
+            });
         }
     }
 

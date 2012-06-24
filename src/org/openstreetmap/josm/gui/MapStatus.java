@@ -46,6 +46,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor.ProgressMonitorDialog;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -756,15 +757,20 @@ public class MapStatus extends JPanel implements Helpful {
     public void setHelpText(String t) {
         setHelpText(null, t);
     }
-    public void setHelpText(Object id, String text)  {
+    public void setHelpText(Object id, final String text)  {
 
         StatusTextHistory entry = new StatusTextHistory(id, text);
 
         statusText.remove(entry);
         statusText.add(entry);
 
-        helpText.setText(text);
-        helpText.setToolTipText(text);
+        GuiHelper.runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                helpText.setText(text);
+                helpText.setToolTipText(text);
+            }
+        });
     }
     public void resetHelpText(Object id) {
         if (statusText.isEmpty())

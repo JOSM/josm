@@ -62,6 +62,7 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -703,16 +704,21 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public void updateEnabledState() {
-            if (layer == null) {
-                if (getModel().getSelectedLayers().size() != 1) {
-                    setEnabled(false);
-                    return;
+            GuiHelper.runInEDT(new Runnable() {
+                @Override
+                public void run() {
+                    if (layer == null) {
+                        if (getModel().getSelectedLayers().size() != 1) {
+                            setEnabled(false);
+                            return;
+                        }
+                        Layer selectedLayer = getModel().getSelectedLayers().get(0);
+                        setEnabled(!isActiveLayer(selectedLayer));
+                    } else {
+                        setEnabled(!isActiveLayer(layer));
+                    }
                 }
-                Layer selectedLayer = getModel().getSelectedLayers().get(0);
-                setEnabled(!isActiveLayer(selectedLayer));
-            } else {
-                setEnabled(!isActiveLayer(layer));
-            }
+            });
         }
 
         @Override
@@ -1254,14 +1260,19 @@ public class LayerListDialog extends ToggleDialog {
             if (layer == null)
                 return;
             layer.removePropertyChangeListener(this);
-            int size = getRowCount();
-            List<Integer> rows = getSelectedRows();
-            if (rows.isEmpty() && size > 0) {
-                selectionModel.setSelectionInterval(size-1, size-1);
-            }
-            fireTableDataChanged();
-            fireRefresh();
-            ensureActiveSelected();
+            final int size = getRowCount();
+            final List<Integer> rows = getSelectedRows();
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    if (rows.isEmpty() && size > 0) {
+                        selectionModel.setSelectionInterval(size-1, size-1);
+                    }
+                    fireTableDataChanged();
+                    fireRefresh();
+                    ensureActiveSelected();
+                }
+            });
         }
 
         /**
@@ -1425,10 +1436,11 @@ public class LayerListDialog extends ToggleDialog {
         protected void ensureActiveSelected() {
             if (getLayers().isEmpty())
                 return;
-            if (getActiveLayer() != null) {
+            final Layer activeLayer = getActiveLayer();
+            if (activeLayer != null) {
                 // there's an active layer - select it and make it
                 // visible
-                int idx = getLayers().indexOf(getActiveLayer());
+                int idx = getLayers().indexOf(activeLayer);
                 selectionModel.setSelectionInterval(idx, idx);
                 ensureSelectedIsVisible();
             } else {
@@ -1505,21 +1517,26 @@ public class LayerListDialog extends ToggleDialog {
         /* Interface LayerChangeListener                                                  */
         /* ------------------------------------------------------------------------------ */
         @Override
-        public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-            if (oldLayer != null) {
-                int idx = getLayers().indexOf(oldLayer);
-                if (idx >= 0) {
-                    fireTableRowsUpdated(idx,idx);
-                }
-            }
+        public void activeLayerChange(final Layer oldLayer, final Layer newLayer) {
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    if (oldLayer != null) {
+                        int idx = getLayers().indexOf(oldLayer);
+                        if (idx >= 0) {
+                            fireTableRowsUpdated(idx,idx);
+                        }
+                    }
 
-            if (newLayer != null) {
-                int idx = getLayers().indexOf(newLayer);
-                if (idx >= 0) {
-                    fireTableRowsUpdated(idx,idx);
+                    if (newLayer != null) {
+                        int idx = getLayers().indexOf(newLayer);
+                        if (idx >= 0) {
+                            fireTableRowsUpdated(idx,idx);
+                        }
+                    }
+                    ensureActiveSelected();
                 }
-            }
-            ensureActiveSelected();
+            });
         }
 
         @Override

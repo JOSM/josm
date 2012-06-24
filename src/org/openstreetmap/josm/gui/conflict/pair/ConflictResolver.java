@@ -337,4 +337,9 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     public boolean isResolvedCompletely() {
         return resolvedCompletely;
     }
+
+    public void unregisterListeners() {
+        nodeListMerger.unlinkAsListener();
+        relationMemberMerger.unlinkAsListener();
+    }
 }
