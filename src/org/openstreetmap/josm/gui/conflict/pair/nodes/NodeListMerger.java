@@ -1,15 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair.nodes;
 
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import java.util.List;
 
+import javax.swing.JScrollPane;
+
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.ListMerger;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
  * A UI component for resolving conflicts in the node lists of two {@link Way}s.
@@ -22,48 +25,59 @@ public class NodeListMerger extends ListMerger<Node> implements IConflictResolve
 
     @Override
     protected JScrollPane buildMyElementsTable() {
-        myEntriesTable  = new JTable(
+        myEntriesTable  = new NodeListTable(
+                "table.mynodes",
                 model.getMyTableModel(),
-                new NodeListColumnModel(
-                        new NodeListTableCellRenderer()
-                ),
                 model.getMySelectionModel()
         );
-        myEntriesTable.setName("table.mynodes");
-        myEntriesTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         return embeddInScrollPane(myEntriesTable);
     }
 
     @Override
     protected JScrollPane buildMergedElementsTable() {
-        mergedEntriesTable  = new JTable(
+        mergedEntriesTable  = new NodeListTable(
+                "table.mergednodes",
                 model.getMergedTableModel(),
-                new NodeListColumnModel(
-                        new NodeListTableCellRenderer()
-                ),
                 model.getMergedSelectionModel()
         );
-        mergedEntriesTable.setName("table.mergednodes");
-        mergedEntriesTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         return embeddInScrollPane(mergedEntriesTable);
     }
 
     @Override
     protected JScrollPane buildTheirElementsTable() {
-        theirEntriesTable  = new JTable(
+        theirEntriesTable  = new NodeListTable(
+                "table.theirnodes",
                 model.getTheirTableModel(),
-                new NodeListColumnModel(
-                        new NodeListTableCellRenderer()
-                ),
                 model.getTheirSelectionModel()
         );
-        theirEntriesTable.setName("table.theirnodes");
-        theirEntriesTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         return embeddInScrollPane(theirEntriesTable);
     }
 
     public void populate(Conflict<? extends OsmPrimitive> conflict) {
-        ((NodeListMergeModel)model).populate((Way)conflict.getMy(), (Way)conflict.getTheir());
+        Way myWay = (Way)conflict.getMy();
+        Way theirWay = (Way)conflict.getTheir();
+        ((NodeListMergeModel)model).populate(myWay, theirWay);
+        myEntriesTable.setLayer(findLayerFor(myWay));
+        theirEntriesTable.setLayer(findLayerFor(theirWay));
+    }
+    
+    protected OsmDataLayer findLayerFor(Way w) {
+        List<OsmDataLayer> layers = Main.map.mapView.getLayersOfType(OsmDataLayer.class);
+        // Find layer with same dataset
+        for (OsmDataLayer layer : layers) {
+            if (layer.data == w.getDataSet()) {
+                return layer;
+            }
+        }
+        // Conflict after merging layers: a dataset could be no more in any layer, try to find another layer with same primitive
+        for (OsmDataLayer layer : layers) {
+            for (Way way : layer.data.getWays()) {
+                if (way.getPrimitiveId().equals(w.getPrimitiveId())) {
+                    return layer;
+                }
+            }
+        }
+        return null;
     }
 
     public void deletePrimitive(boolean deleted) {

@@ -8,7 +8,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -99,6 +98,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
 
     private void unregisterListeners() {
         resolver.removePropertyChangeListener(applyResolutionAction);
+        resolver.unregisterListeners();
     }
 
     /**

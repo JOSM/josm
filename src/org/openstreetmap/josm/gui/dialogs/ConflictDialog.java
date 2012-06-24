@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -155,9 +156,14 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
      */
     public final void refreshView() {
         OsmDataLayer editLayer =  Main.main.getEditLayer();
-        conflicts = editLayer == null?new ConflictCollection():editLayer.getConflicts();
-        model.fireContentChanged();
-        updateTitle(conflicts.size());
+        conflicts = (editLayer == null ? new ConflictCollection() : editLayer.getConflicts());
+        GuiHelper.runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                model.fireContentChanged();
+                updateTitle(conflicts.size());
+            }
+        });
     }
 
     private void updateTitle(int conflictsCount) {

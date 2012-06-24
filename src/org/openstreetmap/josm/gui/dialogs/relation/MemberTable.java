@@ -7,8 +7,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -19,30 +17,23 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.actions.ZoomToAction;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
 
-public class MemberTable extends JTable implements IMemberModelListener {
+public class MemberTable extends OsmPrimitivesTable implements IMemberModelListener {
 
-    /**
-     * the data layer in whose context relation members are edited in this table
-     */
-    protected OsmDataLayer layer;
-
-    /** the popup menu */
-    protected JPopupMenu popupMenu;
-    private ZoomToAction zoomToAction;
+    /** the additional actions in popup menu */
     private ZoomToGapAction zoomToGap;
 
     /**
@@ -53,10 +44,9 @@ public class MemberTable extends JTable implements IMemberModelListener {
      */
     public MemberTable(OsmDataLayer layer, MemberTableModel model) {
         super(model, new MemberTableColumnModel(layer.data), model.getSelectionModel());
-        this.layer = layer;
+        setLayer(layer);
         model.addMemberModelListener(this);
         init();
-
     }
 
     /**
@@ -78,9 +68,24 @@ public class MemberTable extends JTable implements IMemberModelListener {
         //
         getActionMap().put("selectNextColumnCell", new SelectNextColumnCellAction());
         getActionMap().put("selectPreviousColumnCell", new SelectPreviousColumnCellAction());
-
-        addMouseListener(new PopupListener());
-        addMouseListener(new DblClickHandler());
+    }
+    
+    @Override
+    protected ZoomToAction buildZoomToAction() {
+        return new ZoomToAction(this);
+    }
+    
+    @Override
+    protected JPopupMenu buildPopupMenu() {
+        JPopupMenu menu = super.buildPopupMenu();
+        zoomToGap = new ZoomToGapAction();
+        MapView.addLayerChangeListener(zoomToGap);
+        getSelectionModel().addListSelectionListener(zoomToGap);
+        menu.add(zoomToGap);
+        menu.addSeparator();
+        menu.add(new SelectPreviousGapAction());
+        menu.add(new SelectNextGapAction());
+        return menu;
     }
 
     @Override
@@ -155,101 +160,10 @@ public class MemberTable extends JTable implements IMemberModelListener {
         }
     }
 
-    /**
-     * Replies the popup menu for this table
-     *
-     * @return the popup menu
-     */
-    protected JPopupMenu getPopUpMenu() {
-        if (popupMenu == null) {
-            popupMenu = new JPopupMenu();
-            zoomToAction = new ZoomToAction();
-            MapView.addLayerChangeListener(zoomToAction);
-            getSelectionModel().addListSelectionListener(zoomToAction);
-            popupMenu.add(zoomToAction);
-            zoomToGap = new ZoomToGapAction();
-            MapView.addLayerChangeListener(zoomToGap);
-            getSelectionModel().addListSelectionListener(zoomToGap);
-            popupMenu.add(zoomToGap);
-            popupMenu.addSeparator();
-            popupMenu.add(new SelectPreviousGapAction());
-            popupMenu.add(new SelectNextGapAction());
-        }
-        return popupMenu;
-    }
-
+    @Override
     public void unlinkAsListener() {
-        MapView.removeLayerChangeListener(zoomToAction);
+        super.unlinkAsListener();
         MapView.removeLayerChangeListener(zoomToGap);
-    }
-
-    class PopupListener extends MouseAdapter {
-        @Override
-        public void mousePressed(MouseEvent e) {
-            showPopup(e);
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            showPopup(e);
-        }
-
-        private void showPopup(MouseEvent e) {
-            if (e.isPopupTrigger()) {
-                getPopUpMenu().show(e.getComponent(), e.getX(), e.getY());
-            }
-        }
-    }
-
-    private class ZoomToAction extends AbstractAction implements LayerChangeListener, ListSelectionListener {
-        public ZoomToAction() {
-            putValue(NAME, tr("Zoom to"));
-            putValue(SHORT_DESCRIPTION, tr("Zoom to the object the first selected member refers to"));
-            updateEnabledState();
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            if (! isEnabled())
-                return;
-            int rows[] = getSelectedRows();
-            if (rows == null || rows.length == 0)
-                return;
-            int row = rows[0];
-            OsmPrimitive primitive = getMemberTableModel().getReferredPrimitive(row);
-            layer.data.setSelected(primitive);
-            AutoScaleAction.autoScale("selection");
-        }
-
-        protected void updateEnabledState() {
-            if (Main.main == null || Main.main.getEditLayer() != layer) {
-                setEnabled(false);
-                putValue(SHORT_DESCRIPTION, tr("Zooming disabled because layer of this relation is not active"));
-                return;
-            }
-            if (getSelectedRowCount() == 0) {
-                setEnabled(false);
-                putValue(SHORT_DESCRIPTION, tr("Zooming disabled because there is no selected member"));
-                return;
-            }
-            setEnabled(true);
-            putValue(SHORT_DESCRIPTION, tr("Zoom to the object the first selected member refers to"));
-        }
-
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
-        }
-
-        public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-            updateEnabledState();
-        }
-
-        public void layerAdded(Layer newLayer) {
-            updateEnabledState();
-        }
-
-        public void layerRemoved(Layer oldLayer) {
-            updateEnabledState();
-        }
     }
 
     private class SelectPreviousGapAction extends AbstractAction {
@@ -315,11 +229,11 @@ public class MemberTable extends JTable implements IMemberModelListener {
             WayConnectionType connectionType = getConnectionType();
             Way way = (Way) getMemberTableModel().getReferredPrimitive(getSelectedRows()[0]);
             if (!connectionType.linkPrev) {
-                layer.data.setSelected(WayConnectionType.Direction.FORWARD.equals(connectionType.direction)
+                getLayer().data.setSelected(WayConnectionType.Direction.FORWARD.equals(connectionType.direction)
                         ? way.firstNode() : way.lastNode());
                 AutoScaleAction.autoScale("selection");
             } else if (!connectionType.linkNext) {
-                layer.data.setSelected(WayConnectionType.Direction.FORWARD.equals(connectionType.direction)
+                getLayer().data.setSelected(WayConnectionType.Direction.FORWARD.equals(connectionType.direction)
                         ? way.lastNode() : way.firstNode());
                 AutoScaleAction.autoScale("selection");
             }
@@ -327,7 +241,7 @@ public class MemberTable extends JTable implements IMemberModelListener {
 
         private void updateEnabledState() {
             setEnabled(Main.main != null
-                    && Main.main.getEditLayer() == layer
+                    && Main.main.getEditLayer() == getLayer()
                     && getSelectedRowCount() == 1
                     && hasGap());
         }
@@ -355,35 +269,5 @@ public class MemberTable extends JTable implements IMemberModelListener {
 
     protected MemberTableModel getMemberTableModel() {
         return (MemberTableModel) getModel();
-    }
-
-    private class DblClickHandler extends MouseAdapter {
-
-        protected void setSelection(MouseEvent e) {
-            int row = rowAtPoint(e.getPoint());
-            if (row < 0) return;
-            OsmPrimitive primitive = getMemberTableModel().getReferredPrimitive(row);
-            getMemberTableModel().getLayer().data.setSelected(primitive.getPrimitiveId());
-        }
-
-        protected void addSelection(MouseEvent e) {
-            int row = rowAtPoint(e.getPoint());
-            if (row < 0) return;
-            OsmPrimitive primitive = getMemberTableModel().getReferredPrimitive(row);
-            getMemberTableModel().getSelectionModel().addSelectionInterval(row, row);
-            getMemberTableModel().getLayer().data.addSelected(primitive.getPrimitiveId());
-
-        }
-
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() > 1) {
-                if (e.isControlDown()) {
-                    addSelection(e);
-                } else {
-                    setSelection(e);
-                }
-            }
-        }
     }
 }

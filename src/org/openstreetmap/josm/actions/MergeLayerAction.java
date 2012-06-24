@@ -81,11 +81,16 @@ public class MergeLayerAction extends AbstractMergeAction {
 
     @Override
     protected void updateEnabledState() {
-        if (getEditLayer() == null) {
-            setEnabled(false);
-            return;
-        }
-        setEnabled(!LayerListDialog.getInstance().getModel().getPossibleMergeTargets(getEditLayer()).isEmpty());
+        GuiHelper.runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                if (getEditLayer() == null) {
+                    setEnabled(false);
+                    return;
+                }
+                setEnabled(!LayerListDialog.getInstance().getModel().getPossibleMergeTargets(getEditLayer()).isEmpty());
+            }
+        });
     }
     
     /**

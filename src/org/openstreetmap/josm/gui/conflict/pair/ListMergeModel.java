@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 
 /**
  * ListMergeModel is a model for interactively comparing and merging two list of entries
@@ -68,9 +69,9 @@ public abstract class ListMergeModel<T> extends Observable {
 
     protected HashMap<ListRole, ArrayList<T>> entries;
 
-    protected DefaultTableModel myEntriesTableModel;
-    protected DefaultTableModel theirEntriesTableModel;
-    protected DefaultTableModel mergedEntriesTableModel;
+    protected EntriesTableModel myEntriesTableModel;
+    protected EntriesTableModel theirEntriesTableModel;
+    protected EntriesTableModel mergedEntriesTableModel;
 
     protected EntriesSelectionModel myEntriesSelectionModel;
     protected EntriesSelectionModel theirEntriesSelectionModel;
@@ -209,15 +210,15 @@ public abstract class ListMergeModel<T> extends Observable {
         return isFrozen;
     }
 
-    public TableModel getMyTableModel() {
+    public OsmPrimitivesTableModel getMyTableModel() {
         return myEntriesTableModel;
     }
 
-    public TableModel getTheirTableModel() {
+    public OsmPrimitivesTableModel getTheirTableModel() {
         return theirEntriesTableModel;
     }
 
-    public TableModel getMergedTableModel() {
+    public OsmPrimitivesTableModel getMergedTableModel() {
         return mergedEntriesTableModel;
     }
 
@@ -534,9 +535,9 @@ public abstract class ListMergeModel<T> extends Observable {
      */
     protected boolean myAndTheirEntriesEqual() {
 
-        if (getMyEntries().size() != getTheirEntries().size())
+        if (getMyEntriesSize() != getTheirEntriesSize())
             return false;
-        for (int i=0; i < getMyEntries().size(); i++) {
+        for (int i=0; i < getMyEntriesSize(); i++) {
             if (! isEqualEntry(getMyEntries().get(i), getTheirEntries().get(i)))
                 return false;
         }
@@ -554,7 +555,7 @@ public abstract class ListMergeModel<T> extends Observable {
      * @see ListMergeModel#getTheirTableModel()
      * @see ListMergeModel#getMergedTableModel()
      */
-    public class EntriesTableModel extends DefaultTableModel {
+    public class EntriesTableModel extends DefaultTableModel implements OsmPrimitivesTableModel {
         private final ListRole role;
 
         /**
@@ -673,6 +674,11 @@ public abstract class ListMergeModel<T> extends Observable {
 
         public ListRole getRole() {
             return role;
+        }
+
+        @Override
+        public OsmPrimitive getReferredPrimitive(int idx) {
+            return (OsmPrimitive) getValueAt(idx, 1);
         }
     }
 
