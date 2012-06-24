@@ -92,6 +92,8 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
     protected void reset() {
         setBackground(ConflictColors.BGCOLOR.get());
         setForeground(ConflictColors.FGCOLOR.get());
+        setBorder(null);
+        setIcon(null);
         setToolTipText(null);
     }
 

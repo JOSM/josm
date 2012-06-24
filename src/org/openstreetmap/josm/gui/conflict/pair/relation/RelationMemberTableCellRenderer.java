@@ -152,31 +152,24 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
 
         RelationMember member = (RelationMember)value;
         reset();
-        if (value == null)
-            return this;
-
-        renderBackground(getModel(table), member, row, column, isSelected);
-        renderForeground(getModel(table), member, row, column, isSelected);
-        switch(column) {
-        case 0:
-            renderRowId(row);
-            break;
-        case 1:
-            if (member == null) {
-                renderEmptyRow();
-            } else {
+        if (member == null) {
+            renderEmptyRow();
+        } else {
+            renderBackground(getModel(table), member, row, column, isSelected);
+            renderForeground(getModel(table), member, row, column, isSelected);
+            switch(column) {
+            case 0:
+                renderRowId(row);
+                break;
+            case 1:
                 renderRole(member);
-            }
-            break;
-        case 2:
-            if (member == null) {
-                renderEmptyRow();
-            } else {
+                break;
+            case 2:
                 renderPrimitive(member);
+                break;
+            default:
+                // should not happen
             }
-            break;
-        default:
-            // should not happen
         }
         return this;
     }
