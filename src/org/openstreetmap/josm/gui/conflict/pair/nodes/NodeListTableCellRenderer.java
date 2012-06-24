@@ -92,6 +92,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
     protected void reset() {
         setBackground(ConflictColors.BGCOLOR.get());
         setForeground(ConflictColors.FGCOLOR.get());
+        setToolTipText(null);
     }
 
     /**
@@ -152,22 +153,20 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
 
         Node node = (Node)value;
         reset();
-        if (value == null)
-            return this;
-        switch(column) {
-        case 0:
-            renderRowId(getModel(table),row, isSelected);
-            break;
-        case 1:
-            if (node == null) {
-                renderEmptyRow();
-            } else {
+        if (node == null) {
+            renderEmptyRow();
+        } else {
+            switch(column) {
+            case 0:
+                renderRowId(getModel(table),row, isSelected);
+                break;
+            case 1:
                 renderNode(getModel(table), node, row, isSelected);
+                break;
+            default:
+                // should not happen
+                throw new RuntimeException(MessageFormat.format("Unexpected column index. Got {0}.", column));
             }
-            break;
-        default:
-            // should not happen
-            throw new RuntimeException(MessageFormat.format("Unexpected column index. Got {0}.", column));
         }
         return this;
     }
