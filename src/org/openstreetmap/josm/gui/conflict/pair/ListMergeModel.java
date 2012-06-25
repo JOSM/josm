@@ -125,11 +125,11 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      * @param entry
      * @return Primitive from my dataset referenced by entry
      */
-    protected OsmPrimitive getMyPrimitive(T entry) {
-        return getMyPrimitiveDefault(entry);
+    public OsmPrimitive getMyPrimitive(T entry) {
+        return getMyPrimitiveById(entry);
     }
     
-    protected final OsmPrimitive getMyPrimitiveDefault(PrimitiveId entry) {
+    public final OsmPrimitive getMyPrimitiveById(PrimitiveId entry) {
         OsmPrimitive result = myDataset.getPrimitiveById(entry);
         if (result == null && mergedMap != null) {
             PrimitiveId id = mergedMap.get(entry);

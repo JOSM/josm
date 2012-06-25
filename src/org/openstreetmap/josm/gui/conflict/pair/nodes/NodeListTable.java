@@ -1,19 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair.nodes;
 
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
 import org.openstreetmap.josm.actions.ZoomToAction;
-import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
+import org.openstreetmap.josm.gui.conflict.pair.PairTable;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 
-public class NodeListTable extends OsmPrimitivesTable {
+public class NodeListTable extends PairTable {
 
-    public NodeListTable(String name, OsmPrimitivesTableModel dm, ListSelectionModel sm) {
-        super(dm, new NodeListColumnModel(new NodeListTableCellRenderer()), sm);
-        setName(name);
-        setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+    public NodeListTable(String name, ListMergeModel<Node> model, OsmPrimitivesTableModel dm, ListSelectionModel sm) {
+        super(name, model, dm, new NodeListColumnModel(new NodeListTableCellRenderer()), sm);
     }
 
     @Override

@@ -91,8 +91,8 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
     }
 
     @Override
-    protected OsmPrimitive getMyPrimitive(RelationMember entry) {
-        return getMyPrimitiveDefault(entry.getMember());
+    public OsmPrimitive getMyPrimitive(RelationMember entry) {
+        return getMyPrimitiveById(entry.getMember());
     }
 
     /**

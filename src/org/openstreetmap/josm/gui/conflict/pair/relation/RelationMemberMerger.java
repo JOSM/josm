@@ -18,6 +18,7 @@ public class RelationMemberMerger extends ListMerger<RelationMember> implements 
     protected JScrollPane buildMyElementsTable() {
         myEntriesTable  = new RelationMemberTable(
                 "table.mymembers",
+                model,
                 model.getMyTableModel(),
                 model.getMySelectionModel()
         );
@@ -28,6 +29,7 @@ public class RelationMemberMerger extends ListMerger<RelationMember> implements 
     protected JScrollPane buildMergedElementsTable() {
         mergedEntriesTable  = new RelationMemberTable(
                 "table.mergedmembers",
+                model,
                 model.getMergedTableModel(),
                 model.getMergedSelectionModel()
         );
@@ -39,6 +41,7 @@ public class RelationMemberMerger extends ListMerger<RelationMember> implements 
     protected JScrollPane buildTheirElementsTable() {
         theirEntriesTable  = new RelationMemberTable(
                 "table.theirmembers",
+                model,
                 model.getTheirTableModel(),
                 model.getTheirSelectionModel()
         );
