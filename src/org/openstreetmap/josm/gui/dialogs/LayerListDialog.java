@@ -1479,12 +1479,15 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public Object getValueAt(int row, int col) {
-            switch (col) {
-            case 0: return getLayers().get(row) == getActiveLayer();
-            case 1: return getLayers().get(row);
-            case 2: return getLayers().get(row);
-            default: throw new RuntimeException();
+            if (row >= 0 && row < getLayers().size()) {
+                switch (col) {
+                case 0: return getLayers().get(row) == getActiveLayer();
+                case 1: return getLayers().get(row);
+                case 2: return getLayers().get(row);
+                default: throw new RuntimeException();
+                }
             }
+            return null;
         }
 
         @Override
