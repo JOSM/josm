@@ -70,6 +70,10 @@ public abstract class OsmPrimitivesTable extends JTable {
     public void unlinkAsListener() {
         MapView.removeLayerChangeListener(zoomToAction);
     }
+    
+    public OsmPrimitive getPrimitiveToZoomTo(int row, OsmDataLayer layer) {
+        return getOsmPrimitivesTableModel().getReferredPrimitive(row);
+    }
 
     protected class PopupListener extends MouseAdapter {
         @Override

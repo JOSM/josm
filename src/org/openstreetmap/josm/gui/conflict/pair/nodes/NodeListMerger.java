@@ -27,6 +27,7 @@ public class NodeListMerger extends ListMerger<Node> implements IConflictResolve
     protected JScrollPane buildMyElementsTable() {
         myEntriesTable  = new NodeListTable(
                 "table.mynodes",
+                model,
                 model.getMyTableModel(),
                 model.getMySelectionModel()
         );
@@ -37,6 +38,7 @@ public class NodeListMerger extends ListMerger<Node> implements IConflictResolve
     protected JScrollPane buildMergedElementsTable() {
         mergedEntriesTable  = new NodeListTable(
                 "table.mergednodes",
+                model,
                 model.getMergedTableModel(),
                 model.getMergedSelectionModel()
         );
@@ -47,6 +49,7 @@ public class NodeListMerger extends ListMerger<Node> implements IConflictResolve
     protected JScrollPane buildTheirElementsTable() {
         theirEntriesTable  = new NodeListTable(
                 "table.theirnodes",
+                model,
                 model.getTheirTableModel(),
                 model.getTheirSelectionModel()
         );
