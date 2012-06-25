@@ -35,7 +35,7 @@ import org.openstreetmap.josm.tools.GBC;
  * col.setCellEditor(aftc);
  */
 class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCellEditor {
-    protected JCheckBox[] checkBoxes = new JCheckBox[2];
+    protected final JCheckBox[] checkBoxes = new JCheckBox[2];
     private CopyOnWriteArrayList<CellEditorListener> listeners;
 
     private ActionListener al = new ActionListener() {
@@ -48,9 +48,9 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
         super();
         listeners = new CopyOnWriteArrayList<CellEditorListener>();
 
-        setLayout(new GridBagLayout());
         checkBoxes[0] = new JCheckBox(tr("Upload"));
         checkBoxes[1] = new JCheckBox(tr("Save"));
+        setLayout(new GridBagLayout());
 
         ActionMap am = getActionMap();
         for(int i=0; i<checkBoxes.length; i++) {
@@ -70,16 +70,18 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
     }
 
     protected void updateCheckboxes(Object v) {
-        boolean[] values;
-        if(v instanceof SaveLayerInfo) {
-            values = new boolean[2];
-            values[0] = ((SaveLayerInfo) v).isDoUploadToServer();
-            values[1] = ((SaveLayerInfo) v).isDoSaveToFile();
-        } else {
-            values = (boolean[]) v;
+        if (checkBoxes[0] != null && checkBoxes[1] != null) {
+            boolean[] values;
+            if(v instanceof SaveLayerInfo) {
+                values = new boolean[2];
+                values[0] = ((SaveLayerInfo) v).isDoUploadToServer();
+                values[1] = ((SaveLayerInfo) v).isDoSaveToFile();
+            } else {
+                values = (boolean[]) v;
+            }
+            checkBoxes[0].setSelected(values[0]);
+            checkBoxes[1].setSelected(values[1]);
         }
-        checkBoxes[0].setSelected(values[0]);
-        checkBoxes[1].setSelected(values[1]);
     }
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
