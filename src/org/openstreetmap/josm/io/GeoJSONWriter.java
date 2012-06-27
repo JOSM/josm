@@ -66,7 +66,7 @@ public class GeoJSONWriter implements Visitor {
     }
 
     protected String escape(String s) {
-        return s.replace("\"", "\\\"").replace("'", "\\'").replace("\n", "\\n");
+        return s.replace("\"", "\\\"").replace("\\", "\\\\").replace("\n", "\\n");
     }
 
     protected void appendPrimitive(OsmPrimitive p) {
