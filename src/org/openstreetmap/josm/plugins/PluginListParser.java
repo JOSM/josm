@@ -76,7 +76,7 @@ public class PluginListParser {
             for (String line = r.readLine(); line != null; line = r.readLine()) {
                 if (line.startsWith("\t")) {
                     line = line.substring(1);
-                    if (line.length() > 70) {
+                    while (line.length() > 70) {
                         manifest.append(line.substring(0, 70)).append("\n");
                         line = " " + line.substring(70);
                     }
