@@ -31,7 +31,7 @@ public class PluginListParser {
      * @return a plugin information object
      * @throws PluginListParseException
      */
-    protected PluginInformation createInfo(String name, String url, String manifest) throws PluginListParseException{
+    protected static PluginInformation createInfo(String name, String url, String manifest) throws PluginListParseException{
         try {
             return new PluginInformation(
                     new ByteArrayInputStream(manifest.getBytes("utf-8")),
@@ -83,17 +83,7 @@ public class PluginListParser {
                     manifest.append(line).append("\n");
                     continue;
                 }
-                if (name != null) {
-                    PluginInformation info = createInfo(name, url, manifest.toString());
-                    if (info != null) {
-                        for (PluginProxy plugin : PluginHandler.pluginList) {
-                            if (plugin.getPluginInformation().name.equals(info.getName())) {
-                                info.localversion = plugin.getPluginInformation().localversion;
-                            }
-                        }
-                        ret.add(info);
-                    }
-                }
+                addPluginInformation(ret, name, url, manifest.toString());
                 String x[] = line.split(";");
                 if(x.length != 2)
                   throw new IOException(tr("Illegal entry in plugin list."));
@@ -102,6 +92,15 @@ public class PluginListParser {
                 manifest = new StringBuilder();
 
             }
+            addPluginInformation(ret, name, url, manifest.toString());
+            return ret;
+        } catch (IOException e) {
+            throw new PluginListParseException(e);
+        }
+    }
+
+    private static void addPluginInformation(List<PluginInformation> ret, String name, String url, String manifest) {
+        try {
             if (name != null) {
                 PluginInformation info = createInfo(name, url, manifest.toString());
                 if (info != null) {
@@ -113,9 +112,9 @@ public class PluginListParser {
                     ret.add(info);
                 }
             }
-            return ret;
-        } catch (IOException e) {
-            throw new PluginListParseException(e);
+        } catch (PluginListParseException ex) {
+            ex.printStackTrace();
         }
     }
+
 }
