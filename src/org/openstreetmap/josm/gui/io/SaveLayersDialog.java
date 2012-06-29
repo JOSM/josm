@@ -76,7 +76,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
      * builds the GUI
      */
     protected void build() {
-        WindowGeometry geometry = WindowGeometry.centerOnScreen(new Dimension(600,300));
+        WindowGeometry geometry = WindowGeometry.centerOnScreen(new Dimension(650,300));
         geometry.applySafe(this);
         getContentPane().setLayout(new BorderLayout());
 
