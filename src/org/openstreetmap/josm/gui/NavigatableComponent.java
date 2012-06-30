@@ -383,18 +383,17 @@ public class NavigatableComponent extends JComponent implements Helpful {
             final double frames = milliseconds * fps / 1000;
             final EastNorth finalNewCenter = newCenter;
 
-            new Thread(
-                    new Runnable() {
-                        public void run() {
-                            for (int i=0; i<frames; i++)
-                            {
-                                // fixme - not use zoom history here
-                                zoomTo(oldCenter.interpolate(finalNewCenter, (i+1) / frames));
-                                try { Thread.sleep(1000 / fps); } catch (InterruptedException ex) { };
-                            }
-                        }
+            new Thread(){
+                @Override
+                public void run() {
+                    for (int i=0; i<frames; i++)
+                    {
+                        // fixme - not use zoom history here
+                        zoomTo(oldCenter.interpolate(finalNewCenter, (i+1) / frames));
+                        try { Thread.sleep(1000 / fps); } catch (InterruptedException ex) { };
                     }
-                    ).start();
+                }
+            }.start();
         }
     }
 
