@@ -70,8 +70,8 @@ public abstract class OsmPrimitivesTable extends JTable {
     public void unlinkAsListener() {
         MapView.removeLayerChangeListener(zoomToAction);
     }
-    
-    public OsmPrimitive getPrimitiveToZoomTo(int row, OsmDataLayer layer) {
+        
+    public OsmPrimitive getPrimitiveInLayer(int row, OsmDataLayer layer) {
         return getOsmPrimitivesTableModel().getReferredPrimitive(row);
     }
 
@@ -98,7 +98,7 @@ public abstract class OsmPrimitivesTable extends JTable {
         protected void setSelection(MouseEvent e) {
             int row = rowAtPoint(e.getPoint());
             if (row < 0) return;
-            OsmPrimitive primitive = getOsmPrimitivesTableModel().getReferredPrimitive(row);
+            OsmPrimitive primitive = getPrimitiveInLayer(row, layer);
             if (layer != null && primitive != null) {
                 layer.data.setSelected(primitive.getPrimitiveId());
             }
@@ -107,7 +107,7 @@ public abstract class OsmPrimitivesTable extends JTable {
         protected void addSelection(MouseEvent e) {
             int row = rowAtPoint(e.getPoint());
             if (row < 0) return;
-            OsmPrimitive primitive = getOsmPrimitivesTableModel().getReferredPrimitive(row);
+            OsmPrimitive primitive = getPrimitiveInLayer(row, layer);
             getSelectionModel().addSelectionInterval(row, row);
             if (layer != null && primitive != null) {
                 layer.data.addSelected(primitive.getPrimitiveId());

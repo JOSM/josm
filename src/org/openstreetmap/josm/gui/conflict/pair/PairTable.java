@@ -23,8 +23,8 @@ public abstract class PairTable extends OsmPrimitivesTable {
     }
 
     @Override
-    public OsmPrimitive getPrimitiveToZoomTo(int row, OsmDataLayer layer) {
-        OsmPrimitive result = super.getPrimitiveToZoomTo(row, layer);
+    public OsmPrimitive getPrimitiveInLayer(int row, OsmDataLayer layer) {
+        OsmPrimitive result = super.getPrimitiveInLayer(row, layer);
         if (model != null && result != null && layer != null && result.getDataSet() != layer.data) {
             result = model.getMyPrimitiveById(result);
         }

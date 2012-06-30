@@ -67,7 +67,7 @@ public class ZoomToAction extends AbstractAction implements LayerChangeListener,
             return;
         int row = rows[0];
         OsmDataLayer layer = this.table.getLayer();
-        OsmPrimitive primitive = this.table.getPrimitiveToZoomTo(row, layer);
+        OsmPrimitive primitive = this.table.getPrimitiveInLayer(row, layer);
         if (layer != null && primitive != null) {
             layer.data.setSelected(primitive);
             AutoScaleAction.autoScale("selection");
