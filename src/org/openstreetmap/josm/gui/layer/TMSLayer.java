@@ -702,14 +702,19 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
 
     /**
-     * Zoom out from map.
+     * Check if zooming out is allowed
      *
-     * @return    true, if zoom increasing was successfull, false othervise
+     * @return    true, if zooming out is allowed (currentZoomLevel > minZoomLevel)
      */
     public boolean zoomDecreaseAllowed() {
         return currentZoomLevel > this.getMinZoomLvl();
     }
     
+    /**
+     * Zoom out from map.
+     * 
+     * @return    true, if zoom increasing was successfull, false othervise
+     */
     public boolean decreaseZoomLevel() {
         //int minZoom = this.getMinZoomLvl();
         if (zoomDecreaseAllowed()) {
