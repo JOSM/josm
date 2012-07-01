@@ -130,7 +130,7 @@ public class LayerListDialog extends ToggleDialog {
         }
         @Override
         public void actionPerformed(ActionEvent e) {
-            final Layer l = model.getLayer(model.getRowCount() - layerIndex);
+            final Layer l = model.getLayer(model.getRowCount() - layerIndex - 1);
             if(l != null) {
                 l.toggleVisible();
             }
