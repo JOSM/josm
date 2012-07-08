@@ -303,6 +303,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String icon;
         public String locale_display_value;
         public String locale_short_description;
+        private final File zipIcons = TaggingPreset.zipIcons;
 
         public String getListDisplay() {
             if (value.equals(DIFFERENT))
@@ -324,7 +325,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
 
         public ImageIcon getIcon() {
-            return icon == null ? null : ImageProvider.getIfAvailable(icon);
+            return icon == null ? null : loadImageIcon(icon, zipIcons);
         }
 
         public PresetListEntry() {
@@ -1227,6 +1228,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return group != null ? group.getRawName() + "/" + name : name;
     }
 
+    protected static ImageIcon loadImageIcon(String iconName, File zipIcons) {
+        final Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
+        return new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true).get();
+    }
+
     /*
      * Called from the XML parser to set the icon.
      * This task is performed in the background in order to speedup startup.
@@ -1235,13 +1241,12 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * and the 16x16 icons for SMALL_ICON.
      */
     public void setIcon(final String iconName) {
-        final File zipIcons = this.zipIcons;
+        final File zipIcons = TaggingPreset.zipIcons;
         Main.worker.submit(new Runnable() {
 
             @Override
             public void run() {
-                final Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
-                ImageIcon icon = new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true).get();
+                ImageIcon icon = loadImageIcon(iconName, zipIcons);
                 if (icon == null) {
                     System.out.println("Could not get presets icon " + iconName);
                     icon = new ImageIcon(iconName);
@@ -1430,7 +1435,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                         JOptionPane.ERROR_MESSAGE
                         );
             }
-            zipIcons = null;
         }
         return allPresets;
     }
