@@ -143,13 +143,17 @@ public abstract class OsmServerReader extends OsmConnection {
         return stream;
     }
 
-    public abstract DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException;
+    public abstract DataSet parseOsm(final ProgressMonitor progressMonitor) throws OsmTransferException;
 
-    public DataSet parseOsmChange(ProgressMonitor progressMonitor) throws OsmTransferException {
+    public DataSet parseOsmChange(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
     }
     
-    public GpxData parseRawGps(ProgressMonitor progressMonitor) throws OsmTransferException {
+    public GpxData parseRawGps(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return null;
+    }
+
+    public DataSet parseOsmBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
     }
     

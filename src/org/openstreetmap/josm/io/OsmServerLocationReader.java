@@ -3,109 +3,118 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.tools.bzip2.CBZip2InputStream;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.xml.sax.SAXException;
 
 public class OsmServerLocationReader extends OsmServerReader {
 
-    String url;
+    protected final String url;
 
     public OsmServerLocationReader(String url) {
         this.url = url;
+    }
+
+    protected abstract class Parser<T> {
+        public InputStream in = null;
+        public abstract T parse() throws OsmTransferException, IllegalDataException, IOException, SAXException;
+    }
+
+    protected final <T> T doParse(Parser<T> parser, final ProgressMonitor progressMonitor) throws OsmTransferException {
+        progressMonitor.beginTask(tr("Contacting Server...", 10));
+        try {
+            return parser.parse();
+        } catch(OsmTransferException e) {
+            throw e;
+        } catch (Exception e) {
+            if (cancel)
+                return null;
+            throw new OsmTransferException(e);
+        } finally {
+            progressMonitor.finishTask();
+            try {
+                activeConnection = null;
+                if (parser.in != null) {
+                    parser.in.close();
+                    parser.in = null;
+                }
+            } catch(Exception e) {/* ignore it */}
+        }
     }
 
     /**
      * Method to download OSM files from somewhere
      */
     @Override
-    public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
-        InputStream in = null;
-        progressMonitor.beginTask(tr("Contacting Server...", 10));
-        try {
-            in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(9, false));
-            if (in == null)
-                return null;
-            progressMonitor.subTask(tr("Downloading OSM data..."));
-            return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
-        } catch(OsmTransferException e) {
-            throw e;
-        } catch (Exception e) {
-            if (cancel)
-                return null;
-            throw new OsmTransferException(e);
-        } finally {
-            progressMonitor.finishTask();
-            try {
-                activeConnection = null;
-                if (in != null) {
-                    in.close();
-                }
-            } catch(Exception e) {/* ignore it */}
-        }
+    public DataSet parseOsm(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return doParse(new Parser<DataSet>() {
+            @Override
+            public DataSet parse() throws OsmTransferException, IllegalDataException {
+                in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(9, false));
+                if (in == null)
+                    return null;
+                progressMonitor.subTask(tr("Downloading OSM data..."));
+                return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+            }
+        }, progressMonitor);
+    }
+
+    /**
+     * Method to download BZip2-compressed OSM files from somewhere
+     */
+    @Override
+    public DataSet parseOsmBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return doParse(new Parser<DataSet>() {
+            @Override
+            public DataSet parse() throws OsmTransferException, IllegalDataException, IOException {
+                in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(9, false));
+                if (in == null)
+                    return null;
+                CBZip2InputStream bzin = OsmBzip2Importer.getBZip2InputStream(in);
+                progressMonitor.subTask(tr("Downloading OSM data..."));
+                return OsmReader.parseDataSet(bzin, progressMonitor.createSubTaskMonitor(1, false));
+            }
+        }, progressMonitor);
     }
 
     /* (non-Javadoc)
      * @see org.openstreetmap.josm.io.OsmServerReader#parseOsmChange(org.openstreetmap.josm.gui.progress.ProgressMonitor)
      */
     @Override
-    public DataSet parseOsmChange(ProgressMonitor progressMonitor)
+    public DataSet parseOsmChange(final ProgressMonitor progressMonitor)
             throws OsmTransferException {
-        InputStream in = null;
-        progressMonitor.beginTask(tr("Contacting Server...", 10));
-        try {
-            in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(9, false));
-            if (in == null)
-                return null;
-            progressMonitor.subTask(tr("Downloading OSM data..."));
-            return OsmChangeReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
-        } catch(OsmTransferException e) {
-            throw e;
-        } catch (Exception e) {
-            if (cancel)
-                return null;
-            throw new OsmTransferException(e);
-        } finally {
-            progressMonitor.finishTask();
-            try {
-                activeConnection = null;
-                if (in != null) {
-                    in.close();
-                }
-            } catch(Exception e) {/* ignore it */}
-        }
+        return doParse(new Parser<DataSet>() {
+            @Override
+            public DataSet parse() throws OsmTransferException, IllegalDataException {
+                in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(9, false));
+                if (in == null)
+                    return null;
+                progressMonitor.subTask(tr("Downloading OSM data..."));
+                return OsmChangeReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+            }
+        }, progressMonitor);
     }
 
     @Override
-    public GpxData parseRawGps(ProgressMonitor progressMonitor) throws OsmTransferException {
-        InputStream in = null;
-        progressMonitor.beginTask(tr("Contacting Server...", 10));
-        try {
-            in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(1, true));
-            if (in == null)
-                return null;
-            progressMonitor.subTask(tr("Downloading OSM data..."));
-            GpxReader reader = new GpxReader(in);
-            reader.parse(false);
-            GpxData result = reader.data;
-            result.fromServer = true;
-            return result;
-        } catch(OsmTransferException e) {
-            throw e;
-        } catch (Exception e) {
-            if (cancel)
-                return null;
-            throw new OsmTransferException(e);
-        } finally {
-            progressMonitor.finishTask();
-            try {
-                activeConnection = null;
-                if (in != null) {
-                    in.close();
-                }
-            } catch(Exception e) {/* ignore it */}
-        }
+    public GpxData parseRawGps(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return doParse(new Parser<GpxData>() {
+            @Override
+            public GpxData parse() throws OsmTransferException, IllegalDataException, IOException, SAXException {
+                in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(1, true));
+                if (in == null)
+                    return null;
+                progressMonitor.subTask(tr("Downloading OSM data..."));
+                GpxReader reader = new GpxReader(in);
+                reader.parse(false);
+                GpxData result = reader.data;
+                result.fromServer = true;
+                return result;
+            }
+        }, progressMonitor);
     }
 }

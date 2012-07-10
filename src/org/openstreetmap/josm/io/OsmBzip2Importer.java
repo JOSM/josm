@@ -7,6 +7,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
@@ -21,14 +22,20 @@ public class OsmBzip2Importer extends OsmImporter {
 
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
-        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+        importData(getBZip2InputStream(new FileInputStream(file)), file);
+    }
+    
+    public static CBZip2InputStream getBZip2InputStream(InputStream in) throws IOException {
+        if (in == null) {
+            return null;
+        }
+        BufferedInputStream bis = new BufferedInputStream(in);
         int b = bis.read();
         if (b != 'B')
             throw new IOException(tr("Invalid bz2 file."));
         b = bis.read();
         if (b != 'Z')
             throw new IOException(tr("Invalid bz2 file."));
-        CBZip2InputStream in = new CBZip2InputStream(bis);
-        importData(in, file);
+        return new CBZip2InputStream(bis);
     }
 }
