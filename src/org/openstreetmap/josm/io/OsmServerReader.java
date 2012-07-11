@@ -63,6 +63,8 @@ public abstract class OsmServerReader extends OsmConnection {
             }
             try {
                 activeConnection = (HttpURLConnection)url.openConnection();
+                // fix #7640, see http://www.tikalk.com/java/forums/httpurlconnection-disable-keep-alive
+                activeConnection.setRequestProperty("Connection", "close");
             } catch(Exception e) {
                 throw new OsmTransferException(tr("Failed to open connection to API {0}.", url.toExternalForm()), e);
             }
