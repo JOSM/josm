@@ -764,7 +764,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             data = new JScrollPane(data);
         }
         add(data, BorderLayout.CENTER);
-        if (buttons != null && buttons.length > 0 && !buttons[0].isEmpty()) {
+        if (buttons != null && buttons.length > 0 && buttons[0] != null && !buttons[0].isEmpty()) {
             buttonsPanel = new JPanel(new GridLayout(buttons.length, 1));
             for (Collection<SideButton> buttonRow : buttons) {
                 final JPanel buttonRowPanel = new JPanel(Main.pref.getBoolean("dialog.align.left", false)
