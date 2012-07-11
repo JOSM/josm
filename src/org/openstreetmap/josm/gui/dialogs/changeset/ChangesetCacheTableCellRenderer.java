@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Date;
 
 import javax.swing.JLabel;
@@ -82,7 +82,7 @@ public class ChangesetCacheTableCellRenderer extends JLabel implements TableCell
         if (d == null) {
             setText("");
         } else {
-            setText(new SimpleDateFormat().format(d));
+            setText(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(d));
         }
         setToolTipText("");
     }

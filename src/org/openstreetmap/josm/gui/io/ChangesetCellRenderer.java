@@ -4,7 +4,7 @@ package org.openstreetmap.josm.gui.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -32,8 +32,7 @@ public class ChangesetCellRenderer extends JLabel implements ListCellRenderer {
         sb.append("<html>");
         sb.append("<strong>").append(tr("Changeset id:")).append("</strong>").append(cs.getId()).append("<br>");
         if (cs.getCreatedAt() != null) {
-            SimpleDateFormat df  =new SimpleDateFormat();
-            sb.append("<strong>").append(tr("Created at:")).append("</strong>").append(df.format(cs.getCreatedAt())).append("<br>");
+            sb.append("<strong>").append(tr("Created at:")).append("</strong>").append(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(cs.getCreatedAt())).append("<br>");
         }
         if (cs.get("comment") != null) {
             sb.append("<strong>").append(tr("Changeset comment:")).append("</strong>").append(cs.get("comment")).append("<br>");

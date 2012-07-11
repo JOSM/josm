@@ -10,7 +10,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -96,7 +96,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
             text = tr(
                     "<html>Version <strong>{0}</strong> created on <strong>{1}</strong></html>",
                     Long.toString(primitive.getVersion()),
-                    new SimpleDateFormat().format(primitive.getTimestamp())
+                    DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(primitive.getTimestamp())
                     );
         }
         return text;
