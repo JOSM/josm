@@ -754,30 +754,39 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     protected void stateChanged() {
     }
 
+    @SuppressWarnings("unchecked")
     protected Component createLayout(Component data, boolean scroll, Collection<SideButton> buttons) {
-        if(scroll) {
+        return createLayout(data, scroll, new Collection[]{buttons});
+    }
+
+    protected Component createLayout(Component data, boolean scroll, Collection<SideButton>... buttons) {
+        if (scroll) {
             data = new JScrollPane(data);
         }
         add(data, BorderLayout.CENTER);
-        if(buttons != null && buttons.size() != 0) {
-            buttonsPanel = new JPanel(Main.pref.getBoolean("dialog.align.left", false)
-                    ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1,buttons.size()));
-            for(SideButton button : buttons) {
-                buttonsPanel.add(button);
-                javax.swing.Action action = button.getAction();
-                if (action != null) {
-                    buttonActions.add(action);
-                } else {
-                    System.err.println("Button " + button + " doesn't have action defined");
-                    new Exception().printStackTrace();
+        if (buttons != null && buttons.length > 0 && !buttons[0].isEmpty()) {
+            buttonsPanel = new JPanel(new GridLayout(buttons.length, 1));
+            for (Collection<SideButton> buttonRow : buttons) {
+                final JPanel buttonRowPanel = new JPanel(Main.pref.getBoolean("dialog.align.left", false)
+                        ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1, buttonRow.size()));
+                buttonsPanel.add(buttonRowPanel);
+                for (SideButton button : buttonRow) {
+                    buttonRowPanel.add(button);
+                    javax.swing.Action action = button.getAction();
+                    if (action != null) {
+                        buttonActions.add(action);
+                    } else {
+                        System.err.println("Button " + button + " doesn't have action defined");
+                        new Exception().printStackTrace();
+                    }
                 }
             }
             add(buttonsPanel, BorderLayout.SOUTH);
-            if(Main.pref.getBoolean("dialog.dynamic.buttons", true)) {
+            if (Main.pref.getBoolean("dialog.dynamic.buttons", true)) {
                 Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_MOTION_EVENT_MASK);
                 buttonsPanel.setVisible(buttonHiding == ButtonHiddingType.ALWAYS_SHOWN || !isDocked);
             }
-        } else if(buttonsHide != null) {
+        } else if (buttonsHide != null) {
             buttonsHide.setVisible(false);
         }
         return data;
