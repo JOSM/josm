@@ -132,7 +132,7 @@ public class ExceptionUtil {
         Pair<OsmPrimitive, Collection<OsmPrimitive>> conflict = parsePreconditionFailed(e.getErrorHeader());
         if (conflict != null) {
             OsmPrimitive firstRefs = conflict.b.iterator().next();
-            Long objId = conflict.a.getId();
+            String objId = Long.toString(conflict.a.getId());
             Collection<Long> refIds= Utils.transform(conflict.b, new Utils.Function<OsmPrimitive, Long>() {
 
                 @Override
