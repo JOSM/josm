@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.net.HttpURLConnection;
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -195,7 +195,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
         String msg =  tr("<html>Uploading <strong>failed</strong> because you have been using<br>"
                 + "changeset {0} which was already closed at {1}.<br>"
                 + "Please upload again with a new or an existing open changeset.</html>",
-                changesetId, new SimpleDateFormat().format(d)
+                changesetId, DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(d)
         );
         JOptionPane.showMessageDialog(
                 Main.parent,

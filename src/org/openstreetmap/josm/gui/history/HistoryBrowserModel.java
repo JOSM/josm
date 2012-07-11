@@ -3,7 +3,7 @@ package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -432,7 +432,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             case 4: {
                     HistoryOsmPrimitive p = getPrimitive(row);
                     if (p != null)
-                        return new SimpleDateFormat().format(p.getTimestamp());
+                        return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(p.getTimestamp());
                     return null;
                 }
             case 5: {

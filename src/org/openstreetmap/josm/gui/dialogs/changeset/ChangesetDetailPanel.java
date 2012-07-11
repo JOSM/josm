@@ -14,7 +14,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -223,7 +223,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             msg = cs.getUser().getName();
         }
         tfUser.setText(msg);
-        SimpleDateFormat sdf = new SimpleDateFormat();
+        DateFormat sdf = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 
         tfCreatedOn.setText(cs.getCreatedAt() == null ? "" : sdf.format(cs.getCreatedAt()));
         tfClosedOn.setText(cs.getClosedAt() == null ? "" : sdf.format(cs.getClosedAt()));
