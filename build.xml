@@ -107,7 +107,10 @@ Build-Date: ${build.tstamp}
             <zipfileset dir="macosx" includes="JOSM.app/Contents/MacOS/JOSM" filemode="755"/>
         </zip>
     </target>
-    <target name="javacc">
+    <uptodate property="javacc.notRequired" targetfile="${mapcss.dir}/parsergen/MapCSSParser.java" >
+        <srcfiles dir="${mapcss.dir}" includes="MapCSSParser.jj"/>
+    </uptodate>
+    <target name="javacc" unless="javacc.notRequired">
         <mkdir dir="${mapcss.dir}/parsergen"/>
         <exec append="false" executable="java" failifexecutionfails="true">
             <arg value="-cp"/>
@@ -327,6 +330,14 @@ Build-Date: ${build.tstamp}
         <sourcePath path="${basedir}/src" />
         <class location="${basedir}/dist/josm-custom.jar" />
       </findbugs>
+    </target>
+    <target name="run" depends="dist">
+        <java jar="dist/josm-custom.jar" fork="true">
+            <arg value="--set=expert=true"/>
+            <arg value="--set=remotecontrol.enabled=true"/>
+            <arg value="--set=debug.edt-checker.enable=false"/>
+            <jvmarg value="-Djosm.home=/tmp/.josm/"/>
+        </java>
     </target>
 
 </project>
