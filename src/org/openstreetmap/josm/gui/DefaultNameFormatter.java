@@ -178,7 +178,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             } else {
                 preset.nameTemplate.appendText(name, node);
             }
-            name.append(" \u200E(").append(node.getCoor().latToString(CoordinateFormat.getDefaultFormat())).append(", ").append(node.getCoor().lonToString(CoordinateFormat.getDefaultFormat())).append(")");
+            if (node.getCoor() != null) {
+                name.append(" \u200E(").append(node.getCoor().latToString(CoordinateFormat.getDefaultFormat())).append(", ").append(node.getCoor().lonToString(CoordinateFormat.getDefaultFormat())).append(")");
+            }
         }
         decorateNameWithId(name, node);
 
