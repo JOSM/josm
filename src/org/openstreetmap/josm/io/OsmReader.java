@@ -177,7 +177,11 @@ public class OsmReader extends AbstractReader {
 
     protected Node parseNode() throws XMLStreamException {
         NodeData nd = new NodeData();
-        nd.setCoor(new LatLon(Double.parseDouble(parser.getAttributeValue(null, "lat")), Double.parseDouble(parser.getAttributeValue(null, "lon"))));
+        String lat = parser.getAttributeValue(null, "lat");
+        String lon = parser.getAttributeValue(null, "lon");
+        if (lat != null && lon != null) {
+            nd.setCoor(new LatLon(Double.parseDouble(lat), Double.parseDouble(lon)));
+        }
         readCommon(nd);
         Node n = new Node(nd.getId(), nd.getVersion());
         n.setVisible(nd.isVisible());
