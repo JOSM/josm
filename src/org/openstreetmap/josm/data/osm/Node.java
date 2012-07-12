@@ -177,7 +177,7 @@ public final class Node extends OsmPrimitive implements INode {
     @Override
     void setDataset(DataSet dataSet) {
         super.setDataset(dataSet);
-        if (!isIncomplete() && (getCoor() == null || getEastNorth() == null))
+        if (!isIncomplete() && isVisible() && (getCoor() == null || getEastNorth() == null))
             throw new DataIntegrityProblemException("Complete node with null coordinates: " + toString() + get3892DebugInfo());
     }
 

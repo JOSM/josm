@@ -135,7 +135,9 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     public void visit(INode n) {
         if (n.isIncomplete()) return;
         addCommon(n, "node");
-        out.print(" lat='"+n.getCoor().lat()+"' lon='"+n.getCoor().lon()+"'");
+        if (n.getCoor() != null) { 
+            out.print(" lat='"+n.getCoor().lat()+"' lon='"+n.getCoor().lon()+"'");
+        } 
         if (!withBody) {
             out.println("/>");
         } else {
