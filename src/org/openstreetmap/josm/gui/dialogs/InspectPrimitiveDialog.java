@@ -272,12 +272,14 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         }
 
         void addCoordinates(Node n) {
-            add(tr("Coordinates: "),
-                    Double.toString(n.getCoor().lat()), ", ",
-                    Double.toString(n.getCoor().lon()));
-            add(tr("Coordinates (projected): "),
-                    Double.toString(n.getEastNorth().east()), ", ",
-                    Double.toString(n.getEastNorth().north()));
+            if (n.getCoor() != null) {
+                add(tr("Coordinates: "),
+                        Double.toString(n.getCoor().lat()), ", ",
+                        Double.toString(n.getCoor().lon()));
+                add(tr("Coordinates (projected): "),
+                        Double.toString(n.getEastNorth().east()), ", ",
+                        Double.toString(n.getEastNorth().north()));
+            }
         }
 
         void addReferrers(StringBuilder s, OsmPrimitive o) {
