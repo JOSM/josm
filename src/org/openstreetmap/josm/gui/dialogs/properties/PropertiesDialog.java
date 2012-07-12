@@ -1484,7 +1484,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         @Override
         protected Collection<String> getString(OsmPrimitive p, String key) {
-            return Collections.singleton(p.get(key));
+            String v = p.get(key);
+            return v == null ? null : Collections.singleton(v);
         }
     }
 
