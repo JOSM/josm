@@ -24,8 +24,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -756,19 +757,26 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     protected void stateChanged() {
     }
 
-    @SuppressWarnings("unchecked")
     protected Component createLayout(Component data, boolean scroll, Collection<SideButton> buttons) {
-        return createLayout(data, scroll, Collections.singletonList(buttons));
+        return createLayout(data, scroll, buttons, (Collection<SideButton>[]) null);
     }
 
-    protected Component createLayout(Component data, boolean scroll, List<Collection<SideButton>> buttons) {
+    protected Component createLayout(Component data, boolean scroll, Collection<SideButton> firstButtons, Collection<SideButton>... nextButtons) {
         if (scroll) {
             data = new JScrollPane(data);
         }
+        LinkedList<Collection<SideButton>> buttons = new LinkedList<Collection<SideButton>>();
+        buttons.addFirst(firstButtons);
+        if (nextButtons != null) {
+            buttons.addAll(Arrays.asList(nextButtons));
+        }
         add(data, BorderLayout.CENTER);
-        if (buttons != null && buttons.size() > 0 && buttons.get(0) != null && !buttons.get(0).isEmpty()) {
+        if (buttons.size() > 0 && buttons.get(0) != null && !buttons.get(0).isEmpty()) {
             buttonsPanel = new JPanel(new GridLayout(buttons.size(), 1));
             for (Collection<SideButton> buttonRow : buttons) {
+                if (buttonRow == null) {
+                    continue;
+                }
                 final JPanel buttonRowPanel = new JPanel(Main.pref.getBoolean("dialog.align.left", false)
                         ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1, buttonRow.size()));
                 buttonsPanel.add(buttonRowPanel);
