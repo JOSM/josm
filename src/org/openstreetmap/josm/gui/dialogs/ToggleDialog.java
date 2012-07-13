@@ -25,6 +25,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -45,6 +46,7 @@ import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.preferences.ParametrizedEnumProperty;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.ShowHideButtonListener;
@@ -756,16 +758,16 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     @SuppressWarnings("unchecked")
     protected Component createLayout(Component data, boolean scroll, Collection<SideButton> buttons) {
-        return createLayout(data, scroll, new Collection[]{buttons});
+        return createLayout(data, scroll, Collections.singletonList(buttons));
     }
 
-    protected Component createLayout(Component data, boolean scroll, Collection<SideButton>... buttons) {
+    protected Component createLayout(Component data, boolean scroll, List<Collection<SideButton>> buttons) {
         if (scroll) {
             data = new JScrollPane(data);
         }
         add(data, BorderLayout.CENTER);
-        if (buttons != null && buttons.length > 0 && buttons[0] != null && !buttons[0].isEmpty()) {
-            buttonsPanel = new JPanel(new GridLayout(buttons.length, 1));
+        if (buttons != null && buttons.size() > 0 && buttons.get(0) != null && !buttons.get(0).isEmpty()) {
+            buttonsPanel = new JPanel(new GridLayout(buttons.size(), 1));
             for (Collection<SideButton> buttonRow : buttons) {
                 final JPanel buttonRowPanel = new JPanel(Main.pref.getBoolean("dialog.align.left", false)
                         ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1, buttonRow.size()));
