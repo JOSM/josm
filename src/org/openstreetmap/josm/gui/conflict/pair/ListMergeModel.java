@@ -30,6 +30,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
@@ -712,7 +713,15 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
 
         @Override
         public OsmPrimitive getReferredPrimitive(int idx) {
-            return (OsmPrimitive) getValueAt(idx, 1);
+            Object value = getValueAt(idx, 1);
+            if (value instanceof OsmPrimitive) {
+                return (OsmPrimitive) value;
+            } else if (value instanceof RelationMember) {
+                return ((RelationMember)value).getMember();
+            } else {
+                System.err.println("Unknown object type: "+value);
+                return null;
+            }
         }
     }
 
