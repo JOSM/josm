@@ -1,5 +1,3 @@
-/**************************************************************************
-/* Getopt.java -- Java port of GNU getopt from glibc 2.0.6
 /*
 /* Copyright (c) 1987-1997 Free Software Foundation, Inc.
 /* Java Port Copyright (c) 1998 by Aaron M. Renn (arenn@urbanophile.com)
@@ -586,8 +584,8 @@ Getopt(String progname, String[] argv, String optstring,
 static class OptI18n {
     public  OptI18n() {
         add("getopt.ambigious", tr("{0}: option ''{1}'' is ambiguous"));
-        add("getopt.arguments1", tr("{0}: option ''--{1}'' doesn't allow an argument"));
-        add("getopt.arguments2", tr("{0}: option ''{1}{2}'' doesn't allow an argument"));
+        add("getopt.arguments1", tr("{0}: option ''--{1}'' does not allow an argument"));
+        add("getopt.arguments2", tr("{0}: option ''{1}{2}'' does not allow an argument"));
         add("getopt.requires", tr("{0}: option ''{1}'' requires an argument"));
         add("getopt.unrecognized", tr("{0}: unrecognized option ''--{1}''"));
         add("getopt.unrecognized2", tr("{0}: unrecognized option ''{1}{2}''"));
