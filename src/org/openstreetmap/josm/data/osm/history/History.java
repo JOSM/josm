@@ -230,4 +230,18 @@ public class History{
     public OsmPrimitiveType getType() {
         return type;
     }
+
+    @Override
+    public String toString() {
+        String result = "History ["
+                + (type != null ? "type=" + type + ", " : "") + "id=" + id;
+        if (versions != null) {
+            result += ", versions=\n";
+            for (HistoryOsmPrimitive v : versions) {
+                result += "\t" + v + ",\n";
+            }
+        }
+        result += "]";
+        return result;
+    }
 }

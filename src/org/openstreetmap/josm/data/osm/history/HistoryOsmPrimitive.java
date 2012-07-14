@@ -230,4 +230,13 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [version=" + version + ", id=" + id + ", visible=" + visible + ", "
+                + (timestamp != null ? "timestamp=" + timestamp : "") + ", "
+                + (user != null ? "user=" + user + ", " : "") + "changesetId="
+                + changesetId
+                + "]";
+    }
 }
