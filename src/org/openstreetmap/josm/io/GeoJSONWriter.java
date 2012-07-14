@@ -103,6 +103,8 @@ public class GeoJSONWriter implements Visitor {
     }
 
     protected void appendCoord(LatLon c) {
-        out.append("[").append(c.lon()).append(", ").append(c.lat()).append("]");
+        if (c != null) {
+            out.append("[").append(c.lon()).append(", ").append(c.lat()).append("]");
+        }
     }
 }
