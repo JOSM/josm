@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 /**
@@ -24,7 +23,7 @@ public class VersionTableColumnModel extends DefaultTableColumnModel {
         col.setCellRenderer(new VersionTable.AlignedRenderer(SwingConstants.CENTER));
         col.setResizable(false);
         addColumn(col);
-        // column 1 - Reverence
+        // column 1 - Reference
         col = new TableColumn(1);
         col.setHeaderValue(tr("A"));
         col.setCellRenderer(bRenderer);
