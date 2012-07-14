@@ -17,7 +17,9 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -35,7 +37,12 @@ import javax.swing.JToggleButton;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -1022,5 +1029,34 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
             setParticipatingInSynchronizedScrolling(adjustable, true);
             view.setSelected(true);
         }
+    }
+    
+    protected final <P extends OsmPrimitive> OsmDataLayer findLayerFor(P primitive) {
+        if (primitive != null) {
+            List<OsmDataLayer> layers = Main.map.mapView.getLayersOfType(OsmDataLayer.class);
+            // Find layer with same dataset
+            for (OsmDataLayer layer : layers) {
+                if (layer.data == primitive.getDataSet()) {
+                    return layer;
+                }
+            }
+            // Conflict after merging layers: a dataset could be no more in any layer, try to find another layer with same primitive
+            for (OsmDataLayer layer : layers) {
+                final Collection<? extends OsmPrimitive> collection;
+                if (primitive instanceof Way) {
+                    collection = layer.data.getWays();
+                } else if (primitive instanceof Relation) {
+                    collection = layer.data.getRelations();
+                } else {
+                    collection = layer.data.allPrimitives();
+                }
+                for (OsmPrimitive p : collection) {
+                    if (p.getPrimitiveId().equals(primitive.getPrimitiveId())) {
+                        return layer;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }
