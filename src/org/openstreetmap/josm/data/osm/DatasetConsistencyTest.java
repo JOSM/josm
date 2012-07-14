@@ -69,7 +69,7 @@ public class DatasetConsistencyTest {
 
     public void checkCompleteNodesWithoutCoordinates() {
         for (Node node:dataSet.getNodes()) {
-            if (!node.isIncomplete() && !node.isDeleted() && (node.getCoor() == null || node.getEastNorth() == null)) {
+            if (!node.isIncomplete() && node.isVisible() && (node.getCoor() == null || node.getEastNorth() == null)) {
                 printError("COMPLETE WITHOUT COORDINATES", "%s is not incomplete but has null coordinates", node);
             }
         }
