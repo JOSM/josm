@@ -1,6 +1,9 @@
 Supplemental information for JOSM -- the Java OpenStreetMap Editor
 
-
+=============================================================================
+            I. Install & Launch
+=============================================================================
+    
 Installation notes
 ------------------
 To run JOSM, you need:
@@ -37,6 +40,9 @@ not the bin).
 
 MacOS users just click on the .jar file icon.
 
+=============================================================================
+            II. Development
+=============================================================================
 
 How to get the source code
 --------------------------
@@ -44,4 +50,81 @@ Download it directly from the subversion at
 https://josm.openstreetmap.de/svn/trunk. To use the command line subversion 
 client, type
 
-svn co https://josm.openstreetmap.de/svn/trunk
+svn co https://josm.openstreetmap.de/svn/trunk josm
+
+
+Files & directories
+-------------------
+This is an overview of the files and directories in the JOSM code repository:
+- build.xml                 ant build file (standard way to create a JOSM binary)
+- CONTRIBUTION              list of major code contributors
+- data/                     data files that will be included in the JOSM jar file
+    - *.gsb                 NTv2 grid files for projection support
+    - *.lang                translation data
+    - *.xsd                 xml schema files for validation of configuration files
+    - epsg                  list of projection definitions
+    - help-browser.css      CSS file for the help sites (HTML content is downloaded from the website 
+                            on demand, but displayed inside the programm in a Java web browser component.)
+    - ignoretags.cfg, tagchecker.cfg
+                            data files used by the JOSM validator feature
+- data_nodist/              data files that are useful for development, but not distributed
+    - exif-direction-example.jpg 
+                            sample image, that contains direction information in the EXIF header
+                            (keys: Exif.GPSInfo.GPSImgDirectionRef, Exif.GPSInfo.GPSImgDirection)
+    - filterTests.osm       used for unit testing of the filter feature
+                            (see test/unit/org/openstreetmap/josm/data/osm/FilterTest.java)
+    - Join_Areas_Tests.osm  some examples to test the 'join areas' feature
+    - mapcss/               sample map styles and corresponding data files for regression testing
+    - projection-reference-data.csv               
+                            reference data for projection tests
+                            (see test/unit/org/openstreetmap/josm/data/projection/ProjectionRefTest.java)
+    - projection-regression-test-data.csv         
+                            regression data for projection tests
+                            (see test/unit/org/openstreetmap/josm/data/projection/ProjectionRegressionTest.java)
+- geticons.pl               tool, to find all used icons and allows deleting unused icons
+- gpl-2.0.txt, gpl-3.0.txt  full text of the GNU General Public License
+- images/                   images distributed with the JOSM binary
+    - icons                 images for the Potlatch 2 style
+    - styles/standard       images for the main map style (external repository)
+- images_nodist/            images, which are not for distribution, but may be useful later (e.g. high 
+                            resolution and vector versions)
+- josm.jnlp                 Java Web Start launcher file (used on the website)
+- lib/                      libraries (directory is empty at the moment)
+- LICENSE                   the JOSM license terms
+- macosx/                   files needed to create the MacOS package
+- netbeans/                 preconfigured Netbeans project
+- optimize-images           short script to decrease size of PNG images
+- patches/                  patches for external libraries used in JOSM (see below)
+- README                    this file
+- src/                      the source code of the program
+- start.html                HTML page to run the applet version of JOSM
+- styles/                   map styles included in JOSM
+- sytles_nodist/            files needed for map style maintenance
+    - potlatch2/README      infos on how to update the Potlatch 2 style from upstream sources
+- test/                     automated software tests
+    - functional/           functional tests (source code)
+    - lib/                  libraries needed for (some of) the tests
+    - unit/                 unit tests (source code)
+- tools/                    libraries and tools that help in the development process
+    - animal-sniffer-ant-tasks-1.7.jar
+                            TODO: what is this?
+    - findbugs/             libs and config files for findbugs (automatically detects common bugs and potential
+                            problems in source code); can be launched as an ant target in build.xml
+    - javacc.jar            used in the build process to generate some .java files from a javacc source file
+                            (src/org/openstreetmap/josm/gui/mappaint/mapcss/MapCSSParser.jj)
+    - proguard.jar          optimize final binary jar - see build.xml (not used in production so far)
+
+The 'patches' directory
+-----------------------
+Some libraries that JOSM depends on, are patched for various reasons. The files in the patches directory can be used to roll back these customizations. This is useful in order to
+
+ * inspect the changes 
+ * update to a newer version of the library but keep the modifications
+
+You can use 'quilt' to manage the patches. E.g. the following command applies all of them: 
+
+ $ quilt push -a
+
+Of course, it is also possible to apply the patch files manually one by one.
+
+
