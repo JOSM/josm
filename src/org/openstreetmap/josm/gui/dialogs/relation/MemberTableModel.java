@@ -253,8 +253,10 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         int offset = 0;
         for (int row : selectedRows) {
             row -= offset;
-            members.remove(row);
-            offset++;
+            if (members.size() > row) {
+                members.remove(row);
+                offset++;
+            }
         }
         fireTableDataChanged();
     }
