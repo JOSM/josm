@@ -75,9 +75,13 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 progressMonitor);
         currentBounds = null;
         // Extract .osm filename from URL to set the new layer name
-        Matcher matcher = Pattern.compile("http://.*/(.*\\.osm)").matcher(url);
-        newLayerName = matcher.matches() ? matcher.group(1) : null;
+        extractOsmFilename("http://.*/(.*\\.osm)", url);
         return Main.worker.submit(downloadTask);
+    }
+    
+    protected final void extractOsmFilename(String pattern, String url) {
+        Matcher matcher = Pattern.compile(pattern).matcher(url);
+        newLayerName = matcher.matches() ? matcher.group(1) : null;
     }
     
     /* (non-Javadoc)
