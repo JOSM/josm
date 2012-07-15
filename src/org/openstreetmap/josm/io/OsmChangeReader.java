@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.InputStream;
+import java.util.Arrays;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -13,6 +14,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public class OsmChangeReader extends OsmReader {
 
+    public static final String[] ACTIONS = {"create", "modify", "delete"};
+    
     /**
      * constructor (for private and subclasses use only)
      *
@@ -45,12 +48,8 @@ public class OsmChangeReader extends OsmReader {
         while (parser.hasNext()) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
-                if (parser.getLocalName().equals("create")) {
-                    parseCreate();
-                } else if (parser.getLocalName().equals("modify")) {
-                    parseModify();
-                } else if (parser.getLocalName().equals("delete")) {
-                    parseDelete();
+                if (Arrays.asList(ACTIONS).contains(parser.getLocalName())) {
+                    parseCommon(parser.getLocalName());
                 } else {
                     parseUnknown();
                 }
@@ -60,19 +59,7 @@ public class OsmChangeReader extends OsmReader {
         }
     }
 
-    private void parseDelete() throws XMLStreamException {
-        parseCommon(true);
-    }
-
-    private void parseModify() throws XMLStreamException {
-        parseCommon(false);
-    }
-
-    private void parseCreate() throws XMLStreamException {
-        parseCommon(false);
-    }
-
-    private void parseCommon(boolean deletePrimitive) throws XMLStreamException {
+    private void parseCommon(String action) throws XMLStreamException {
         while (parser.hasNext()) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
@@ -86,8 +73,12 @@ public class OsmChangeReader extends OsmReader {
                 } else {
                     parseUnknown();
                 }
-                if (p != null && deletePrimitive) {
-                    p.setDeleted(true);
+                if (p != null && action != null) {
+                    if (action.equals("modify")) {
+                        p.setModified(true);
+                    } else if (action.equals("delete")) {
+                        p.setDeleted(true);
+                    }
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 return;

@@ -2,8 +2,6 @@
 package org.openstreetmap.josm.actions.downloadtasks;
 
 import java.util.concurrent.Future;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -48,8 +46,7 @@ public class DownloadOsmBzip2Task extends DownloadOsmTask {
         };
         currentBounds = null;
         // Extract .osm.bz/bz2 filename from URL to set the new layer name
-        Matcher matcher = Pattern.compile("http://.*/(.*\\.osm.bz2?)").matcher(url);
-        newLayerName = matcher.matches() ? matcher.group(1) : null;
+        extractOsmFilename("http://.*/(.*\\.osm.bz2?)", url);
         return Main.worker.submit(downloadTask);
     }
 }
