@@ -19,7 +19,7 @@ public class LineTextElemStyle extends ElemStyle {
     public static LineTextElemStyle create(Environment env) {
         Cascade c = env.mc.getCascade(env.layer);
 
-        Keyword textPos = c.get("text-position", null, Keyword.class);
+        Keyword textPos = c.get(TEXT_POSITION, null, Keyword.class);
         if (textPos != null && !Utils.equal(textPos.val, "line"))
             return null;
 

@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.RelativeFloat;
 
-abstract public class ElemStyle {
+abstract public class ElemStyle implements StyleKeys {
 
     public float major_z_index;
     public float z_index;
@@ -30,9 +30,9 @@ abstract public class ElemStyle {
 
     protected ElemStyle(Cascade c, float default_major_z_index) {
         major_z_index = c.get("major-z-index", default_major_z_index, Float.class);
-        z_index = c.get("z-index", 0f, Float.class);
-        object_z_index = c.get("object-z-index", 0f, Float.class);
-        isModifier = c.get("modifier", false, Boolean.class);
+        z_index = c.get(Z_INDEX, 0f, Float.class);
+        object_z_index = c.get(OBJECT_Z_INDEX, 0f, Float.class);
+        isModifier = c.get(MODIFIER, false, Boolean.class);
     }
 
     /**

@@ -21,10 +21,10 @@ public class LineElemStyle extends ElemStyle {
     public static LineElemStyle createSimpleLineStyle(Color color, boolean isAreaEdge) {
         MultiCascade mc = new MultiCascade();
         Cascade c = mc.getOrCreateCascade("default");
-        c.put("width", Keyword.DEFAULT);
-        c.put("color", color != null ? color : PaintColors.UNTAGGED.get());
+        c.put(WIDTH, Keyword.DEFAULT);
+        c.put(COLOR, color != null ? color : PaintColors.UNTAGGED.get());
         if (isAreaEdge) {
-            c.put("z-index", -3f);
+            c.put(Z_INDEX, -3f);
         }
         return createLine(new Environment(null, mc, "default", null));
     }
@@ -98,23 +98,23 @@ public class LineElemStyle extends ElemStyle {
         switch (type) {
             case NORMAL:
             {
-                Float widthOnDefault = getWidth(c_def, "width", null);
-                width = getWidth(c, "width", widthOnDefault);
+                Float widthOnDefault = getWidth(c_def, WIDTH, null);
+                width = getWidth(c, WIDTH, widthOnDefault);
                 break;
             }
             case CASING:
             {
-                Float casingWidth = c.get(type.prefix + "width", null, Float.class, true);
+                Float casingWidth = c.get(type.prefix + WIDTH, null, Float.class, true);
                 if (casingWidth == null) {
-                    RelativeFloat rel_casingWidth = c.get(type.prefix + "width", null, RelativeFloat.class, true);
+                    RelativeFloat rel_casingWidth = c.get(type.prefix + WIDTH, null, RelativeFloat.class, true);
                     if (rel_casingWidth != null) {
                         casingWidth = rel_casingWidth.val / 2;
                     }
                 }
                 if (casingWidth == null)
                     return null;
-                Float widthOnDefault = getWidth(c_def, "width", null);
-                width = getWidth(c, "width", widthOnDefault);
+                Float widthOnDefault = getWidth(c_def, WIDTH, null);
+                width = getWidth(c, WIDTH, widthOnDefault);
                 if (width == null) {
                     width = 0f;
                 }
@@ -123,7 +123,7 @@ public class LineElemStyle extends ElemStyle {
             }
             case LEFT_CASING:
             case RIGHT_CASING:
-                width = getWidth(c, type.prefix + "width", null);
+                width = getWidth(c, type.prefix + WIDTH, null);
                 break;
             default:
                 throw new AssertionError();
@@ -131,7 +131,7 @@ public class LineElemStyle extends ElemStyle {
         if (width == null)
             return null;
 
-        float realWidth = c.get(type.prefix + "real_width", 0f, Float.class);
+        float realWidth = c.get(type.prefix + REAL_WIDTH, 0f, Float.class);
         if (realWidth > 0 && MapPaintSettings.INSTANCE.isUseRealWidth()) {
 
             /* if we have a "width" tag, try use it */
@@ -148,22 +148,22 @@ public class LineElemStyle extends ElemStyle {
             }
         }
 
-        Float offset = c.get("offset", 0f, Float.class);
+        Float offset = c.get(OFFSET, 0f, Float.class);
         switch (type) {
             case NORMAL:
                 break;
             case CASING:
-                offset += c.get(type.prefix + "offset", 0f, Float.class);
+                offset += c.get(type.prefix + OFFSET, 0f, Float.class);
                 break;
             case LEFT_CASING:
             case RIGHT_CASING:
             {
-                Float baseWidthOnDefault = getWidth(c_def, "width", null);
-                Float baseWidth = getWidth(c, "width", baseWidthOnDefault);
+                Float baseWidthOnDefault = getWidth(c_def, WIDTH, null);
+                Float baseWidth = getWidth(c, WIDTH, baseWidthOnDefault);
                 if (baseWidth == null || baseWidth < 2f) {
                     baseWidth = 2f;
                 }
-                float casingOffset = c.get(type.prefix + "offset", 0f, Float.class);
+                float casingOffset = c.get(type.prefix + OFFSET, 0f, Float.class);
                 casingOffset += baseWidth / 2 + width / 2;
                 /* flip sign for the right-casing-offset */
                 if (type == LineType.RIGHT_CASING) {
@@ -174,22 +174,22 @@ public class LineElemStyle extends ElemStyle {
             }
         }
 
-        Color color = c.get(type.prefix + "color", null, Color.class);
+        Color color = c.get(type.prefix + COLOR, null, Color.class);
         if (type == LineType.NORMAL && color == null) {
-            color = c.get("fill-color", null, Color.class);
+            color = c.get(FILL_COLOR, null, Color.class);
         }
         if (color == null) {
             color = PaintColors.UNTAGGED.get();
         }
 
         int alpha = 255;
-        Integer pAlpha = Utils.color_float2int(c.get("opacity", null, Float.class));
+        Integer pAlpha = Utils.color_float2int(c.get(OPACITY, null, Float.class));
         if (pAlpha != null) {
             alpha = pAlpha;
         }
         color = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
 
-        float[] dashes = c.get(type.prefix + "dashes", null, float[].class);
+        float[] dashes = c.get(type.prefix + DASHES, null, float[].class);
         if (dashes != null) {
             boolean hasPositive = false;
             for (float f : dashes) {
@@ -205,10 +205,10 @@ public class LineElemStyle extends ElemStyle {
                 dashes = null;
             }
         }
-        float dashesOffset = c.get(type.prefix + "dashes-offset", 0f, Float.class);
-        Color dashesBackground = c.get(type.prefix + "dashes-background-color", null, Color.class);
+        float dashesOffset = c.get(type.prefix + DASHES_OFFSET, 0f, Float.class);
+        Color dashesBackground = c.get(type.prefix + DASHES_BACKGROUND_COLOR, null, Color.class);
         if (dashesBackground != null) {
-            pAlpha = Utils.color_float2int(c.get(type.prefix + "dashes-background-opacity", null, Float.class));
+            pAlpha = Utils.color_float2int(c.get(type.prefix + DASHES_BACKGROUND_OPACITY, null, Float.class));
             if (pAlpha != null) {
                 alpha = pAlpha;
             }

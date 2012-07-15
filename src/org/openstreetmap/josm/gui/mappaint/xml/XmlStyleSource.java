@@ -22,6 +22,7 @@ import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.Range;
+import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.io.MirroredInputStream;
@@ -30,7 +31,7 @@ import org.openstreetmap.josm.tools.XmlObjectParser;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-public class XmlStyleSource extends StyleSource {
+public class XmlStyleSource extends StyleSource implements StyleKeys {
 
     protected final HashMap<String, IconPrototype> icons = new HashMap<String, IconPrototype>();
     protected final HashMap<String, LinePrototype> lines = new HashMap<String, LinePrototype>();
@@ -285,13 +286,13 @@ public class XmlStyleSource extends StyleSource {
         if (osm instanceof Node || (osm instanceof Relation && "restriction".equals(osm.get("type")))) {
             IconPrototype icon = getNode(osm, (useMinMaxScale ? scale : null), mc);
             if (icon != null) {
-                def.put("icon-image", icon.icon);
+                def.put(ICON_IMAGE, icon.icon);
                 if (osm instanceof Node) {
                     if (icon.annotate != null) {
                         if (icon.annotate) {
-                            def.put("text", Keyword.AUTO);
+                            def.put(TEXT, Keyword.AUTO);
                         } else {
-                            def.remove("text");
+                            def.remove(TEXT);
                         }
                     }
                 }
@@ -300,19 +301,19 @@ public class XmlStyleSource extends StyleSource {
             WayPrototypesRecord p = new WayPrototypesRecord();
             get(osm, pretendWayIsClosed || !(osm instanceof Way) || ((Way) osm).isClosed(), p, (useMinMaxScale ? scale : null), mc);
             if (p.line != null) {
-                def.put("width", new Float(p.line.getWidth()));
-                def.putOrClear("real-width", p.line.realWidth != null ? new Float(p.line.realWidth) : null);
-                def.putOrClear("color", p.line.color);
+                def.put(WIDTH, new Float(p.line.getWidth()));
+                def.putOrClear(REAL_WIDTH, p.line.realWidth != null ? new Float(p.line.realWidth) : null);
+                def.putOrClear(COLOR, p.line.color);
                 if (p.line.color != null) {
                     int alpha = p.line.color.getAlpha();
                     if (alpha != 255) {
-                        def.put("opacity", Utils.color_int2float(alpha));
+                        def.put(OPACITY, Utils.color_int2float(alpha));
                     }
                 }
-                def.putOrClear("dashes", p.line.getDashed());
-                def.putOrClear("dashes-background-color", p.line.dashedColor);
+                def.putOrClear(DASHES, p.line.getDashed());
+                def.putOrClear(DASHES_BACKGROUND_COLOR, p.line.dashedColor);
             }
-            Float refWidth = def.get("width", null, Float.class);
+            Float refWidth = def.get(WIDTH, null, Float.class);
             if (refWidth != null && p.linemods != null) {
                 int numOver = 0, numUnder = 0;
 
@@ -324,24 +325,24 @@ public class XmlStyleSource extends StyleSource {
                     if (mod.over) {
                         String layer = String.format("over_%d", numOver);
                         c = mc.getOrCreateCascade(layer);
-                        c.put("object-z-index", new Float(numOver));
+                        c.put(OBJECT_Z_INDEX, new Float(numOver));
                         ++numOver;
                     } else {
                         String layer = String.format("under_%d", numUnder);
                         c = mc.getOrCreateCascade(layer);
-                        c.put("object-z-index", new Float(-numUnder));
+                        c.put(OBJECT_Z_INDEX, new Float(-numUnder));
                         ++numUnder;
                     }
-                    c.put("width", new Float(mod.getWidth(refWidth)));
-                    c.putOrClear("color", mod.color);
+                    c.put(WIDTH, new Float(mod.getWidth(refWidth)));
+                    c.putOrClear(COLOR, mod.color);
                     if (mod.color != null) {
                         int alpha = mod.color.getAlpha();
                         if (alpha != 255) {
-                            c.put("opacity", Utils.color_int2float(alpha));
+                            c.put(OPACITY, Utils.color_int2float(alpha));
                         }
                     }
-                    c.putOrClear("dashes", mod.getDashed());
-                    c.putOrClear("dashes-background-color", mod.dashedColor);
+                    c.putOrClear(DASHES, mod.getDashed());
+                    c.putOrClear(DASHES_BACKGROUND_COLOR, mod.dashedColor);
                 }
             }
             if (multipolyOuterWay != null) {
@@ -352,10 +353,10 @@ public class XmlStyleSource extends StyleSource {
                 }
             }
             if (p.area != null) {
-                def.putOrClear("fill-color", p.area.color);
-                def.putOrClear("text-position", Keyword.CENTER);
-                def.putOrClear("text", Keyword.AUTO);
-                def.remove("fill-image");
+                def.putOrClear(FILL_COLOR, p.area.color);
+                def.putOrClear(TEXT_POSITION, Keyword.CENTER);
+                def.putOrClear(TEXT, Keyword.AUTO);
+                def.remove(FILL_IMAGE);
             }
         }
     }

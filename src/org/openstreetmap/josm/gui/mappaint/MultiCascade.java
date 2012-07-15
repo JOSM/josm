@@ -13,7 +13,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * The range is (0,Infinity) at first and it shrinks in the process when
  * StyleSources apply zoom level dependent properties.
  */
-public class MultiCascade {
+public class MultiCascade implements StyleKeys {
 
     private Map<String, Cascade> layers;
     public Range range;
@@ -39,7 +39,7 @@ public class MultiCascade {
                 // Everything that is not on the default layer is assumed to
                 // be a modifier. Can be overridden in style definition.
                 if (!layer.equals("default") && !layer.equals("*")) {
-                    c.put("modifier", true);
+                    c.put(MODIFIER, true);
                 }
             }
             layers.put(layer, c);
@@ -60,7 +60,7 @@ public class MultiCascade {
         if (c == null) {
             c = new Cascade();
             if (!layer.equals("default") && !layer.equals("*")) {
-                c.put("modifier", true);
+                c.put(MODIFIER, true);
             }
         }
         return c;

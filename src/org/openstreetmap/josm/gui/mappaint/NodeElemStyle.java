@@ -121,7 +121,7 @@ public class NodeElemStyle extends ElemStyle {
         Cascade c = env.mc.getCascade(env.layer);
         Cascade c_def = env.mc.getCascade("default");
 
-        final IconReference iconRef = c.get("icon-image", null, IconReference.class);
+        final IconReference iconRef = c.get(ICON_IMAGE, null, IconReference.class);
         if (iconRef == null)
             return null;
 
