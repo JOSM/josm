@@ -38,7 +38,7 @@ public class AreaElemStyle extends ElemStyle
         MapImage fillImage = null;
         Color color = null;
 
-        IconReference iconRef = c.get("fill-image", null, IconReference.class);
+        IconReference iconRef = c.get(FILL_IMAGE, null, IconReference.class);
         if (iconRef != null) {
             fillImage = new MapImage(iconRef.iconName, iconRef.source);
             fillImage.getImage();
@@ -53,7 +53,7 @@ public class AreaElemStyle extends ElemStyle
                 fillImage.alpha = pAlpha;
             }
         } else {
-            color = c.get("fill-color", null, Color.class);
+            color = c.get(FILL_COLOR, null, Color.class);
             if (color != null) {
                 int alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
                 Integer pAlpha = Utils.color_float2int(c.get("fill-opacity", null, float.class));
@@ -65,7 +65,7 @@ public class AreaElemStyle extends ElemStyle
         }
 
         TextElement text = null;
-        Keyword textPos = c.get("text-position", null, Keyword.class);
+        Keyword textPos = c.get(TEXT_POSITION, null, Keyword.class);
         if (textPos == null || Utils.equal(textPos.val, "center")) {
             text = TextElement.create(c, PaintColors.AREA_TEXT.get(), true);
         }

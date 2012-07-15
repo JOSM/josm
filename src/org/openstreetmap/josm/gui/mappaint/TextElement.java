@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Represents the rendering style for a textual label placed somewhere on the map.
  *
  */
-public class TextElement {
+public class TextElement implements StyleKeys {
     static public final LabelCompositionStrategy AUTO_LABEL_COMPOSITION_STRATEGY = new DeriveLabelFromNameTagsCompositionStrategy();
 
     /** the strategy for building the actual label value for a given a {@link OsmPrimitive}.
@@ -84,7 +84,7 @@ public class TextElement {
          * If the cascade includes a TagKeyReference we will lookup the rendered label
          * from a tag value.
          */
-        TagKeyReference tkr = c.get("text", null, TagKeyReference.class, true);
+        TagKeyReference tkr = c.get(TEXT, null, TagKeyReference.class, true);
         if (tkr != null)
             return new TagLookupCompositionStrategy(tkr.key);
 
@@ -92,14 +92,14 @@ public class TextElement {
          * Check whether the label composition strategy is given by
          * a keyword
          */
-        Keyword keyword = c.get("text", null, Keyword.class, true);
+        Keyword keyword = c.get(TEXT, null, Keyword.class, true);
         if (equal(keyword, Keyword.AUTO))
             return AUTO_LABEL_COMPOSITION_STRATEGY;
 
         /*
          * Do we have a static text label?
          */
-        String text = c.get("text", null, String.class, true);
+        String text = c.get(TEXT, null, String.class, true);
         if (text != null)
             return new StaticLabelCompositionStrategy(text);
         return defaultAnnotate ? AUTO_LABEL_COMPOSITION_STRATEGY : null;

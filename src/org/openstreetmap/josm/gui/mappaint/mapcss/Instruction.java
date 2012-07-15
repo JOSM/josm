@@ -8,8 +8,9 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
+import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 
-abstract public class Instruction {
+abstract public class Instruction implements StyleKeys {
 
     public abstract void execute(Environment env);
 
@@ -34,7 +35,7 @@ abstract public class Instruction {
             this.key = key;
             if (val instanceof Expression.LiteralExpression) {
                 Object litValue = ((Expression.LiteralExpression) val).evaluate(null);
-                if (key.equals("text")) {
+                if (key.equals(TEXT)) {
                     /* Special case for declaration 'text: ...'
                      * 
                      * - Treat the value 'auto' as keyword.
@@ -71,7 +72,7 @@ abstract public class Instruction {
             } else {
                 value = val;
             }
-            if (key.equals("icon-image") || key.equals("fill-image") || key.equals("pattern-image")) {
+            if (key.equals(ICON_IMAGE) || key.equals(FILL_IMAGE) || key.equals("pattern-image")) {
                 if (value instanceof String) {
                     value = new IconReference((String) value, env.source);
                 }

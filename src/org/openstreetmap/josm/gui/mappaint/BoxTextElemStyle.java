@@ -161,7 +161,7 @@ public class BoxTextElemStyle extends ElemStyle {
     static {
         MultiCascade mc = new MultiCascade();
         Cascade c = mc.getOrCreateCascade("default");
-        c.put("text", Keyword.AUTO);
+        c.put(TEXT, Keyword.AUTO);
         Node n = new Node();
         n.put("name", "dummy");
         SIMPLE_NODE_TEXT_ELEMSTYLE = create(new Environment(n, mc, "default", null), NodeElemStyle.SIMPLE_NODE_ELEMSTYLE.getBoxProvider());
