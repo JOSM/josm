@@ -821,24 +821,24 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="waterway" v="canal"/>
-		<line width="2" colour="water#0000ff"/>
+		<line width="2" realwidth="2" colour="water#0000ff"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
 	<rule>
 		<condition k="waterway" v="stream"/>
-		<line width="1" colour="stream#6600cc"/>
+		<line width="1" realwidth="1" colour="stream#6600cc"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
 	<rule>
 		<condition k="waterway" v="ditch"/>
-		<line width="1" colour="water#0000ff"/>
+		<line width="1" realwidth="1" colour="water#0000ff"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 	<rule>
 		<condition k="waterway" v="drain"/>
-		<line width="1" colour="water#0000ff"/>
+		<line width="1" realwidth="1" colour="water#0000ff"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
@@ -1093,13 +1093,13 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="aeroway" v="runway"/>
-		<line width="3" colour="aeroway_dark#330000"/>
+		<line width="3" realwidth="10" colour="aeroway_dark#330000"/>
 		<icon annotate="true" src="transport/airport/runway.png"/>
 	</rule>
 
 	<rule>
 		<condition k="aeroway" v="taxiway"/>
-		<line width="2" colour="aeroway#660000"/>
+		<line width="2" realwidth="10" colour="aeroway#660000"/>
 		<icon annotate="true" src="transport/airport/taxiway.png"/>
 	</rule>
 
