@@ -41,6 +41,7 @@ public class OsmHistoryReader {
     private final InputStream in;
     private final HistoryDataSet data;
 
+    // FIXME: this class has many similarities with OsmChangesetContentParser.Parser and should be merged 
     private class Parser extends DefaultHandler {
 
         /** the current primitive to be read */
@@ -98,16 +99,16 @@ public class OsmHistoryReader {
             return l;
         }
 
-        protected Double getMandatoryAttributeDouble(Attributes attr, String name) throws SAXException{
+        protected Double getAttributeDouble(Attributes attr, String name) throws SAXException{
             String v = attr.getValue(name);
             if (v == null) {
-                throwException(tr("Missing mandatory attribute ''{0}''.", name));
+                return null;
             }
             double d = 0.0;
             try {
                 d = Double.parseDouble(v);
             } catch(NumberFormatException e) {
-                throwException(tr("Illegal value for mandatory attribute ''{0}'' of type double. Got ''{1}''.", name, v));
+                throwException(tr("Illegal value for attribute ''{0}'' of type double. Got ''{1}''.", name, v));
             }
             return d;
         }
@@ -153,10 +154,11 @@ public class OsmHistoryReader {
             Date timestamp = DateUtils.fromString(v);
             HistoryOsmPrimitive primitive = null;
             if (type.equals(OsmPrimitiveType.NODE)) {
-                double lat = getMandatoryAttributeDouble(atts, "lat");
-                double lon = getMandatoryAttributeDouble(atts, "lon");
+                Double lat = getAttributeDouble(atts, "lat");
+                Double lon = getAttributeDouble(atts, "lon");
+                LatLon coord = (lat != null && lon != null) ? new LatLon(lat,lon) : null;
                 primitive = new HistoryNode(
-                        id,version,visible,user,changesetId,timestamp, new LatLon(lat,lon)
+                        id,version,visible,user,changesetId,timestamp,coord
                 );
 
             } else if (type.equals(OsmPrimitiveType.WAY)) {
