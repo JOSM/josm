@@ -564,7 +564,15 @@ public class MapPainter {
         g.setPaintMode();
         if (selected || member)
         {
-            g.setColor(selected? selectedColor : relationSelectedColor);
+            Color color = null;
+            if (inactive || n.isDisabled()) {
+                color = inactiveColor;
+            } else if (selected) {
+                color = selectedColor;
+            } else {
+                color = relationSelectedColor;
+            }
+            g.setColor(color);
             g.drawRect(p.x-w/2-2, p.y-h/2-2, w+4, h+4);
         }
     }
@@ -861,7 +869,11 @@ public class MapPainter {
             if ((pb.width >= nb.getWidth() && pb.height >= nb.getHeight()) && // quick check
                     area.contains(centeredNBounds) // slow but nice
             ) {
-                g.setColor(text.color);
+                if (inactive || osm.isDisabled()) {
+                    g.setColor(inactiveColor);
+                } else {
+                    g.setColor(text.color);
+                }
                 Font defaultFont = g.getFont();
                 g.setFont (text.font);
                 g.drawString (name,
@@ -909,7 +921,7 @@ public class MapPainter {
         g.drawImage(smallImg, (int)(pVia.x+vx+vx2)-w/2, (int)(pVia.y+vy+vy2)-h/2, nc);
 
         if (selected) {
-            g.setColor(relationSelectedColor);
+            g.setColor(inactive ? inactiveColor : relationSelectedColor);
             g.drawRect((int)(pVia.x+vx+vx2)-w/2-2,(int)(pVia.y+vy+vy2)-h/2-2, w+4, h+4);
         }
     }
