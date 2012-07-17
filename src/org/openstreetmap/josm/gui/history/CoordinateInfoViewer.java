@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -255,24 +256,28 @@ public class CoordinateInfoViewer extends JPanel {
             HistoryNode node = (HistoryNode)p;
             HistoryNode oppositeNode = (HistoryNode) opposite;
 
+            LatLon coord = node.getCoords();
+            LatLon oppositeCoord = oppositeNode.getCoords();
+            
             // display the coordinates
             //
-            lblLat.setText(node.getCoords().latToString(CoordinateFormat.DECIMAL_DEGREES));
-            lblLon.setText(node.getCoords().lonToString(CoordinateFormat.DECIMAL_DEGREES));
+            lblLat.setText(coord != null ? coord.latToString(CoordinateFormat.DECIMAL_DEGREES) : tr("Deleted"));
+            lblLon.setText(coord != null ? coord.lonToString(CoordinateFormat.DECIMAL_DEGREES) : tr("Deleted"));
 
             // update background color to reflect differences in the coordinates
             //
-            if (node.getCoords().lat() == oppositeNode.getCoords().lat()) {
+            if (coord == oppositeCoord || 
+                    (coord != null && oppositeCoord != null && coord.lat() == oppositeCoord.lat())) {
                 lblLat.setBackground(Color.WHITE);
             } else {
                 lblLat.setBackground(BGCOLOR_DIFFERENCE);
             }
-            if (node.getCoords().lon() == oppositeNode.getCoords().lon()) {
+            if (coord == oppositeCoord || 
+                    (coord != null && oppositeCoord != null && coord.lon() == oppositeCoord.lon())) {
                 lblLon.setBackground(Color.WHITE);
             } else {
                 lblLon.setBackground(BGCOLOR_DIFFERENCE);
             }
-
         }
 
         public void update(Observable o, Object arg) {
@@ -321,15 +326,23 @@ public class CoordinateInfoViewer extends JPanel {
             HistoryNode node = (HistoryNode) p;
             HistoryNode oppositeNode = (HistoryNode) opposite;
 
+            LatLon coord = node.getCoords();
+            LatLon oppositeCoord = oppositeNode.getCoords();
+            
             // update distance
             //
-            double distance = node.getCoords().greatCircleDistance(oppositeNode.getCoords());
-            if (distance > 0) {
-                lblDistance.setBackground(BGCOLOR_DIFFERENCE);
+            if (coord != null && oppositeCoord != null) {
+                double distance = coord.greatCircleDistance(oppositeCoord);
+                if (distance > 0) {
+                    lblDistance.setBackground(BGCOLOR_DIFFERENCE);
+                } else {
+                    lblDistance.setBackground(Color.WHITE);
+                }
+                lblDistance.setText(NavigatableComponent.getDistText(distance));
             } else {
-                lblDistance.setBackground(Color.WHITE);
+                lblDistance.setBackground(coord != oppositeCoord ? BGCOLOR_DIFFERENCE : Color.WHITE);
+                lblDistance.setText(tr("Deleted"));
             }
-            lblDistance.setText(NavigatableComponent.getDistText(distance));
         }
     }
 }

@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
@@ -555,11 +556,14 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         } else {
             sb.append(name);
         }
-        sb.append(" (")
-        .append(node.getCoords().latToString(CoordinateFormat.getDefaultFormat()))
-        .append(", ")
-        .append(node.getCoords().lonToString(CoordinateFormat.getDefaultFormat()))
-        .append(")");
+        LatLon coord = node.getCoords();
+        if (coord != null) {
+            sb.append(" (")
+            .append(coord.latToString(CoordinateFormat.getDefaultFormat()))
+            .append(", ")
+            .append(coord.lonToString(CoordinateFormat.getDefaultFormat()))
+            .append(")");
+        }
         decorateNameWithId(sb, node);
         return sb.toString();
     }

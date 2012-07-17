@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.osm.User;
  *
  */
 public class HistoryNode extends HistoryOsmPrimitive {
-    /** the coordinates */
+    /** the coordinates. May be null for deleted nodes */
 
     private LatLon coords;
 
