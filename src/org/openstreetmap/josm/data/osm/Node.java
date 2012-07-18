@@ -33,16 +33,12 @@ public final class Node extends OsmPrimitive implements INode {
 
     @Override
     public final void setCoor(LatLon coor) {
-        if(coor != null){
-            updateCoor(coor, null);
-        }
+        updateCoor(coor, null);
     }
 
     @Override
     public final void setEastNorth(EastNorth eastNorth) {
-        if(eastNorth != null) {
-            updateCoor(null, eastNorth);
-        }
+        updateCoor(null, eastNorth);
     }
 
     private void updateCoor(LatLon coor, EastNorth eastNorth) {
@@ -112,8 +108,11 @@ public final class Node extends OsmPrimitive implements INode {
             this.lon = ll.lon();
             this.east = eastNorth.east();
             this.north = eastNorth.north();
-        } else
-            throw new IllegalArgumentException();
+        } else {
+            this.lat = Double.NaN;
+            this.lon = Double.NaN;
+            invalidateEastNorthCache();
+        }
     }
 
     protected Node(long id, boolean allowNegative) {
