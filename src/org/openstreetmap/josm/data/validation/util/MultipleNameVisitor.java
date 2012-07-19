@@ -1,7 +1,6 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.data.validation.util;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
@@ -19,22 +18,22 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class MultipleNameVisitor extends NameVisitor
 {
+    public static final int MULTIPLE_NAME_MAX_LENGTH = 80;
+    
     /** The class name of the combined primitives */
-    String multipleClassname;
+    private String multipleClassname;
     /* name to be displayed */
-    String displayName;
+    private String displayName;
     /** Size of the collection */
-    int size;
+    private int size;
 
     /**
      * Visits a collection of primitives
      * @param data The collection of primitives
      */
     public void visit(Collection<? extends OsmPrimitive> data) {
-        String multipleName = null;
+        String multipleName = "";
         String multiplePluralClassname = null;
-        String firstName = null;
-        boolean initializedname = false;
         size = data.size();
 
         multipleClassname = null;
@@ -43,15 +42,13 @@ public class MultipleNameVisitor extends NameVisitor
             if (name == null) {
                 name = osm.get("ref");
             }
-            if (!initializedname) {
-                multipleName = name; initializedname = true;
-            } else if (multipleName != null && (name == null  || !name.equals(multipleName))) {
-                multipleName = null;
+            if (name != null && !name.isEmpty() && multipleName.length() <= MULTIPLE_NAME_MAX_LENGTH) {
+                if (!multipleName.isEmpty()) {
+                    multipleName += ", ";
+                }
+                multipleName += name;
             }
 
-            if (firstName == null && name != null) {
-                firstName = name;
-            }
             osm.visit(this);
             if (multipleClassname == null) {
                 multipleClassname = className;
@@ -64,12 +61,15 @@ public class MultipleNameVisitor extends NameVisitor
 
         if (size == 1) {
             displayName = name;
-        } else if (multipleName != null) {
-            displayName = size + " " + trn(multipleClassname, multiplePluralClassname, size) + ": " + multipleName;
-        } else if (firstName != null) {
-            displayName = size + " " + trn(multipleClassname, multiplePluralClassname, size) + ": " + tr("{0}, ...", firstName);
         } else {
             displayName = size + " " + trn(multipleClassname, multiplePluralClassname, size);
+            if (!multipleName.isEmpty()) {
+                if (multipleName.length() <= MULTIPLE_NAME_MAX_LENGTH) {
+                    displayName += ": " + multipleName;
+                } else {
+                    displayName += ": " + multipleName.substring(0, MULTIPLE_NAME_MAX_LENGTH) + "...";
+                }
+            }
         }
     }
 
@@ -95,5 +95,10 @@ public class MultipleNameVisitor extends NameVisitor
             return icon;
         else
             return ImageProvider.get("data", multipleClassname);
+    }
+
+    @Override
+    public String toString() {
+        return getText();
     }
 }
