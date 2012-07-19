@@ -4,12 +4,12 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -38,7 +38,7 @@ public class UntaggedWay extends Test
     /** Untagged, but commented way error */
     protected static final int COMMENTED_WAY = 306;
 
-    private LinkedList<Way> multipolygonways;
+    private Set<Way> waysUsedInRelations;
 
     /** Ways that must have a name */
     public static final Set<String> NAMED_WAYS = new HashSet<String>();
@@ -50,6 +50,16 @@ public class UntaggedWay extends Test
         NAMED_WAYS.add( "tertiary" );
         NAMED_WAYS.add( "residential" );
         NAMED_WAYS.add( "pedestrian" ); ;
+    }
+    
+    /** Whitelist of roles allowed to reference an untagged way */
+    public static final Set<String> WHITELIST = new HashSet<String>();
+    static {
+        WHITELIST.add( "outer" );
+        WHITELIST.add( "inner" );
+        WHITELIST.add( "perimeter" );
+        WHITELIST.add( "edge" );
+        WHITELIST.add( "outline" );
     }
 
     /**
@@ -92,7 +102,7 @@ public class UntaggedWay extends Test
             }
         }
 
-        if (!w.isTagged() && !multipolygonways.contains(w)) {
+        if (!w.isTagged() && !waysUsedInRelations.contains(w)) {
             if (w.hasKeys()) {
                 errors.add(new TestError(this, Severity.WARNING, tr("Untagged ways (commented)"), COMMENTED_WAY, w));
             } else {
@@ -110,13 +120,15 @@ public class UntaggedWay extends Test
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        multipolygonways = new LinkedList<Way>();
+        waysUsedInRelations = new HashSet<Way>();
         for (Relation r : Main.main.getCurrentDataSet().getRelations()) {
-            if (r.isUsable() && r.isMultipolygon()) {
+            if (r.isUsable()) {
                 for (RelationMember m : r.getMembers()) {
-                    if (m.getMember() != null && m.getMember() instanceof Way &&
-                            m.getMember().isUsable() && !m.getMember().isTagged()) {
-                        multipolygonways.add((Way)m.getMember());
+                    if (r.isMultipolygon() || WHITELIST.contains(m.getRole())) {
+                        OsmPrimitive member = m.getMember();
+                        if (member != null && member instanceof Way && member.isUsable() && !member.isTagged()) {
+                            waysUsedInRelations.add((Way)member);
+                        }
                     }
                 }
             }
@@ -125,7 +137,7 @@ public class UntaggedWay extends Test
 
     @Override
     public void endTest() {
-        multipolygonways = null;
+        waysUsedInRelations = null;
         super.endTest();
     }
 
