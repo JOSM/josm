@@ -137,33 +137,33 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
            time to iterate through list twice, OTOH does not
            require changing the colour while painting... */
         for (final OsmPrimitive osm: data.searchRelations(bbox)) {
-            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isDisabledAndHidden()) {
+            if (osm.isDrawable() && !ds.isSelected(osm) && !osm.isDisabledAndHidden()) {
                 osm.visit(this);
             }
         }
 
         for (final OsmPrimitive osm:data.searchWays(bbox)){
-            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isDisabledAndHidden() && osm.isTagged()) {
+            if (osm.isDrawable() && !ds.isSelected(osm) && !osm.isDisabledAndHidden() && osm.isTagged()) {
                 osm.visit(this);
             }
         }
         displaySegments();
 
         for (final OsmPrimitive osm:data.searchWays(bbox)){
-            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isDisabledAndHidden() && !osm.isTagged()) {
+            if (osm.isDrawable() && !ds.isSelected(osm) && !osm.isDisabledAndHidden() && !osm.isTagged()) {
                 osm.visit(this);
             }
         }
         displaySegments();
         for (final OsmPrimitive osm : data.getSelected()) {
-            if (!osm.isDeleted()) {
+            if (osm.isDrawable()) {
                 osm.visit(this);
             }
         }
         displaySegments();
 
         for (final OsmPrimitive osm: data.searchNodes(bbox)) {
-            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isDisabledAndHidden())
+            if (osm.isDrawable() && !ds.isSelected(osm) && !osm.isDisabledAndHidden())
             {
                 osm.visit(this);
             }
@@ -343,7 +343,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         g.setColor(col);
 
         for (RelationMember m : r.getMembers()) {
-            if (m.getMember().isIncomplete() || m.getMember().isDeleted()) {
+            if (m.getMember().isIncomplete() || !m.getMember().isDrawable()) {
                 continue;
             }
 
@@ -360,7 +360,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
 
                 boolean first = true;
                 for (Node n : m.getWay().getNodes()) {
-                    if (n.isIncomplete() || n.isDeleted()) {
+                    if (!n.isDrawable()) {
                         continue;
                     }
                     Point p = nc.getPoint(n);
