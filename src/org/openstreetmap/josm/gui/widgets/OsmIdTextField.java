@@ -13,6 +13,7 @@ import javax.swing.text.JTextComponent;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * @author Matthias Julius
@@ -42,6 +43,12 @@ public class OsmIdTextField extends JTextField {
     }
 
     public void performValidation() {
+        validator.validate();
+    }
+
+    public void clearTextIfInvalid() {
+        if (!validator.isValid()) 
+            setText("");
         validator.validate();
     }
 
