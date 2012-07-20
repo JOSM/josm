@@ -180,6 +180,11 @@ public class DownloadPrimitiveAction extends JosmAction {
         dialog.setDefaultButton(1);
         dialog.configureContextsensitiveHelp("/Action/DownloadObject", true /* show help button */);
         cbType.setSelectedIndex(Main.pref.getInteger("downloadprimitive.lasttype", 0));
+        tfId.setType(cbType.getType());
+        if (Main.pref.getBoolean("downloadprimitive.autopaste", true)) { 
+            tryToPasteFromClipboard(tfId, cbType);
+        }
+        
         dialog.showDialog();
         if (dialog.getValue() != 1) return;
         Main.pref.putInteger("downloadprimitive.lasttype", cbType.getSelectedIndex());
@@ -308,5 +313,22 @@ public class DownloadPrimitiveAction extends JosmAction {
             .setButtonIcons(new String[] { "ok" })
             .setIcon(msgType)
             .setContent(p, false);
+    }
+
+    private void tryToPasteFromClipboard(OsmIdTextField tfId, OsmPrimitiveTypesComboBox cbType) {
+        String buf = Utils.getClipboardContent();
+        if (buf.contains("node")) cbType.setSelectedIndex(0);
+        if (buf.contains("way")) cbType.setSelectedIndex(1);
+        if (buf.contains("relation")) cbType.setSelectedIndex(2);
+        String[] res = buf.split("/");
+        String txt;
+        if (res.length>0) {
+            txt = res[res.length-1];
+            if (txt.isEmpty() && txt.length()>1) txt=res[res.length-2];
+        } else {
+            txt=buf;
+        }
+        tfId.setText(txt);
+        tfId.clearTextIfInvalid();
     }
 }
