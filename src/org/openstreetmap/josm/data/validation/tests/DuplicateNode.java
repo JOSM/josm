@@ -43,35 +43,44 @@ public class DuplicateNode extends Test {
 
         double precision = Main.pref.getDouble("validator.duplicatenodes.precision", 0.);
 
-        private LatLon RoundCoord(Node o) {
+        private LatLon roundCoord(LatLon coor) {
             return new LatLon(
-                    Math.round(o.getCoor().lat() / precision) * precision,
-                    Math.round(o.getCoor().lon() / precision) * precision
+                    Math.round(coor.lat() / precision) * precision,
+                    Math.round(coor.lon() / precision) * precision
                     );
         }
 
         @SuppressWarnings("unchecked")
         private LatLon getLatLon(Object o) {
             if (o instanceof Node) {
+                LatLon coor = ((Node) o).getCoor();
+                if (coor == null)
+                    return null;
                 if (precision==0)
-                    return ((Node) o).getCoor().getRoundedToOsmPrecision();
-                return RoundCoord((Node) o);
+                    return coor.getRoundedToOsmPrecision();
+                return roundCoord(coor);
             } else if (o instanceof List<?>) {
+                LatLon coor = ((List<Node>) o).get(0).getCoor();
+                if (coor == null)
+                    return null;
                 if (precision==0)
-                    return ((List<Node>) o).get(0).getCoor().getRoundedToOsmPrecision();
-                return RoundCoord(((List<Node>) o).get(0));
+                    return coor.getRoundedToOsmPrecision();
+                return roundCoord(coor);
             } else
                 throw new AssertionError();
         }
 
         @Override
         public boolean equals(Object k, Object t) {
-            return getLatLon(k).equals(getLatLon(t));
+            LatLon coorK = getLatLon(k);
+            LatLon coorT = getLatLon(t);
+            return coorK == coorT || (coorK != null && coorT != null && coorK.equals(coorT));
         }
 
         @Override
         public int getHashCode(Object k) {
-            return getLatLon(k).hashCode();
+            LatLon coorK = getLatLon(k);
+            return coorK == null ? 0 : coorK.hashCode();
         }
     }
 

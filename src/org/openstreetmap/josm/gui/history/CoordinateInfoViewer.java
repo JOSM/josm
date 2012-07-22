@@ -261,8 +261,8 @@ public class CoordinateInfoViewer extends JPanel {
             
             // display the coordinates
             //
-            lblLat.setText(coord != null ? coord.latToString(CoordinateFormat.DECIMAL_DEGREES) : tr("Deleted"));
-            lblLon.setText(coord != null ? coord.lonToString(CoordinateFormat.DECIMAL_DEGREES) : tr("Deleted"));
+            lblLat.setText(coord != null ? coord.latToString(CoordinateFormat.DECIMAL_DEGREES) : tr("(none)"));
+            lblLon.setText(coord != null ? coord.lonToString(CoordinateFormat.DECIMAL_DEGREES) : tr("(none)"));
 
             // update background color to reflect differences in the coordinates
             //
@@ -341,7 +341,7 @@ public class CoordinateInfoViewer extends JPanel {
                 lblDistance.setText(NavigatableComponent.getDistText(distance));
             } else {
                 lblDistance.setBackground(coord != oppositeCoord ? BGCOLOR_DIFFERENCE : Color.WHITE);
-                lblDistance.setText(tr("Deleted"));
+                lblDistance.setText(tr("(none)"));
             }
         }
     }
