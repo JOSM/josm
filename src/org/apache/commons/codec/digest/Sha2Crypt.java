@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  *
  * <p>This class is immutable and thread-safe.</p>
  *
- * @version $Id: Sha2Crypt.java 1352268 2012-06-20 19:04:08Z ggregory $
+ * @version $Id: Sha2Crypt.java 1364427 2012-07-22 20:27:39Z tn $
  * @since 1.7
  */
 public class Sha2Crypt {
@@ -412,8 +412,8 @@ public class Sha2Crypt {
         /*
          * Now we can construct the result string. It consists of three parts.
          */
-        StringBuilder buffer = new StringBuilder(saltPrefix + (roundsCustom ? ROUNDS_PREFIX + rounds + "$" : "")
-                + saltString + "$");
+        StringBuilder buffer = new StringBuilder(saltPrefix +
+                (roundsCustom ? ROUNDS_PREFIX + rounds + "$" : "") + saltString + "$");
 
         // e) the base-64 encoded final C digest. The encoding used is as
         // follows:

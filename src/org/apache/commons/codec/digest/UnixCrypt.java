@@ -35,7 +35,7 @@ import org.apache.commons.codec.Charsets;
  *
  * <p>This class is immutable and thread-safe.</p>
  *
- * @version $Id: UnixCrypt.java 1352268 2012-06-20 19:04:08Z ggregory $
+ * @version $Id: UnixCrypt.java 1364427 2012-07-22 20:27:39Z tn $
  * @since 1.7
  */
 public class UnixCrypt {
@@ -262,9 +262,9 @@ public class UnixCrypt {
         u = u ^ u << 16 ^ r ^ sArr[s];
         int t = v ^ v << 16 ^ r ^ sArr[s + 1];
         t = t >>> 4 | t << 28;
-        el ^= SPTRANS[1][t & 0x3f] | SPTRANS[3][t >>> 8 & 0x3f] | SPTRANS[5][t >>> 16 & 0x3f]
-                | SPTRANS[7][t >>> 24 & 0x3f] | SPTRANS[0][u & 0x3f] | SPTRANS[2][u >>> 8 & 0x3f]
-                | SPTRANS[4][u >>> 16 & 0x3f] | SPTRANS[6][u >>> 24 & 0x3f];
+        el ^= SPTRANS[1][t & 0x3f] | SPTRANS[3][t >>> 8 & 0x3f] | SPTRANS[5][t >>> 16 & 0x3f]   |
+                SPTRANS[7][t >>> 24 & 0x3f] | SPTRANS[0][u & 0x3f] | SPTRANS[2][u >>> 8 & 0x3f] |
+                SPTRANS[4][u >>> 16 & 0x3f] | SPTRANS[6][u >>> 24 & 0x3f];
         return el;
     }
 
