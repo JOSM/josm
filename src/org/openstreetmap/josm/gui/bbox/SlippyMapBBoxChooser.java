@@ -183,6 +183,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
 
     public SlippyMapBBoxChooser() {
         super();
+        TMSLayer.setMaxWorkers();
         cachedLoader = null;
         String cachePath = TMSLayer.PROP_TILECACHE_DIR.get();
         if (cachePath != null && !cachePath.isEmpty()) {

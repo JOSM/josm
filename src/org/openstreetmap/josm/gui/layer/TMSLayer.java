@@ -104,6 +104,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public static final IntegerProperty PROP_MAX_ZOOM_LVL = new IntegerProperty(PREFERENCE_PREFIX + ".max_zoom_lvl", DEFAULT_MAX_ZOOM);
     //public static final BooleanProperty PROP_DRAW_DEBUG = new BooleanProperty(PREFERENCE_PREFIX + ".draw_debug", false);
     public static final BooleanProperty PROP_ADD_TO_SLIPPYMAP_CHOOSER = new BooleanProperty(PREFERENCE_PREFIX + ".add_to_slippymap_chooser", true);
+    public static final IntegerProperty PROP_TMS_JOBS = new IntegerProperty("tmsloader.maxjobs", 25);
     public static final StringProperty PROP_TILECACHE_DIR;
 
     static {
@@ -120,7 +121,6 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     protected MemoryTileCache tileCache;
     protected TileSource tileSource;
     protected OsmTileLoader tileLoader;
-    JobDispatcher jobDispatcher = JobDispatcher.getInstance();
 
     HashSet<Tile> tileRequestsOutstanding = new HashSet<Tile>();
     @Override
@@ -440,10 +440,20 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         return intResult;
     }
 
+    /**
+     * Function to set the maximum number of workers for tile loading to the value defined
+     * in preferences.
+     */
+    static public void setMaxWorkers() {
+        JobDispatcher.getInstance().setMaxWorkers(PROP_TMS_JOBS.get());
+        JobDispatcher.getInstance().setLIFO(true);
+    }
+
     @SuppressWarnings("serial")
     public TMSLayer(ImageryInfo info) {
         super(info);
 
+        setMaxWorkers();
         if(!isProjectionSupported(Main.getProjection())) {
             JOptionPane.showMessageDialog(Main.parent,
                 tr("TMS layers do not support the projection {0}.\n{1}\n"
@@ -649,7 +659,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             Main.debug("zoomChanged(): " + currentZoomLevel);
         }*/
         needRedraw = true;
-        jobDispatcher.cancelOutstandingJobs();
+        JobDispatcher.getInstance().cancelOutstandingJobs();
         tileRequestsOutstanding.clear();
     }
 
@@ -777,8 +787,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         if (tileRequestsOutstanding.contains(tile))
             return false;
         tileRequestsOutstanding.add(tile);
-        jobDispatcher.addJob(tileLoader.createTileLoaderJob(tileSource,
-                tile.getXtile(), tile.getYtile(), tile.getZoom()));
+        JobDispatcher.getInstance().addJob(tileLoader.createTileLoaderJob(tile));
         return true;
     }
 
