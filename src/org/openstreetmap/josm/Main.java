@@ -95,7 +95,7 @@ abstract public class Main {
      * Replies true if JOSM currently displays a map view. False, if it doesn't, i.e. if
      * it only shows the MOTD panel.
      *
-     * @return true if JOSM currently displays a map view
+     * @return <code>true</code> if JOSM currently displays a map view
      */
     static public boolean isDisplayingMapView() {
         if (map == null) return false;
@@ -132,7 +132,7 @@ abstract public class Main {
      */
     public static MapFrame map;
     /**
-     * True, when in applet mode
+     * Set to <code>true</code>, when in applet mode
      */
     public static boolean applet = false;
 
@@ -375,9 +375,9 @@ abstract public class Main {
     }
 
     /**
-     * Replies true if there is an edit layer
+     * Replies <code>true</code> if there is an edit layer
      *
-     * @return true if there is an edit layer
+     * @return <code>true</code> if there is an edit layer
      */
     public boolean hasEditLayer() {
         if (getEditLayer() == null) return false;
@@ -387,7 +387,7 @@ abstract public class Main {
     /**
      * Replies the current edit layer
      *
-     * @return the current edit layer. null, if no current edit layer exists
+     * @return the current edit layer. <code>null</code>, if no current edit layer exists
      */
     public OsmDataLayer getEditLayer() {
         if (map == null) return null;
@@ -398,7 +398,7 @@ abstract public class Main {
     /**
      * Replies the current data set.
      *
-     * @return the current data set. null, if no current data set exists
+     * @return the current data set. <code>null</code>, if no current data set exists
      */
     public DataSet getCurrentDataSet() {
         if (!hasEditLayer()) return null;
@@ -408,7 +408,7 @@ abstract public class Main {
     /**
      * Returns the currently active  layer
      *
-     * @return the currently active layer. null, if currently no active layer exists
+     * @return the currently active layer. <code>null</code>, if currently no active layer exists
      */
     public Layer getActiveLayer() {
         if (map == null) return null;
@@ -806,7 +806,7 @@ abstract public class Main {
     /**
      * Replies the current projection.
      *
-     * @return
+     * @return the currently active projection
      */
     public static Projection getProjection() {
         return proj;
@@ -858,7 +858,7 @@ abstract public class Main {
     /**
      * Register a projection change listener
      *
-     * @param listener the listener. Ignored if null.
+     * @param listener the listener. Ignored if <code>null</code>.
      */
     public static void addProjectionChangeListener(ProjectionChangeListener listener) {
         if (listener == null) return;
@@ -874,7 +874,7 @@ abstract public class Main {
     /**
      * Removes a projection change listener
      *
-     * @param listener the listener. Ignored if null.
+     * @param listener the listener. Ignored if <code>null</code>.
      */
     public static void removeProjectionChangeListener(ProjectionChangeListener listener) {
         if (listener == null) return;
