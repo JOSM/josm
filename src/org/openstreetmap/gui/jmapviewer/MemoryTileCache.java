@@ -162,7 +162,7 @@ public class MemoryTileCache implements TileCache {
         /**
          * Add the element to the head of the list.
          *
-         * @param new element to be added
+         * @param element new element to be added
          */
         public synchronized void addFirst(CacheEntry element) {
             if (elementCount == 0) {
@@ -180,10 +180,9 @@ public class MemoryTileCache implements TileCache {
         }
 
         /**
-         * Removes the specified elemntent form the list.
+         * Removes the specified element from the list.
          *
-         * @param element
-         *            to be removed
+         * @param element element to be removed
          */
         public synchronized void removeEntry(CacheEntry element) {
             if (element.next != null) {

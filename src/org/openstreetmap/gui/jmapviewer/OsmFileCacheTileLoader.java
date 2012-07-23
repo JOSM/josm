@@ -26,7 +26,7 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -89,8 +89,8 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
     /**
      * Create a OSMFileCacheTileLoader with given cache directory.
      * If cacheDir is not set or invalid, IOException will be thrown.
-     * @param map
-     * @param cacheDir
+     * @param map the listener checking for tile load events (usually the map for display)
+     * @param cacheDir directory to store cached tiles
      */
     public OsmFileCacheTileLoader(TileLoaderListener map, File cacheDir) throws IOException  {
         super(map);
@@ -105,15 +105,15 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
     /**
      * Create a OSMFileCacheTileLoader with system property temp dir.
      * If not set an IOException will be thrown.
-     * @param map
+     * @param map the listener checking for tile load events (usually the map for display)
      */
     public OsmFileCacheTileLoader(TileLoaderListener map) throws SecurityException, IOException {
         this(map, getDefaultCacheDir());
     }
 
     @Override
-    public Runnable createTileLoaderJob(final TileSource source, final int tilex, final int tiley, final int zoom) {
-        return new FileLoadJob(source, tilex, tiley, zoom);
+    public TileJob createTileLoaderJob(final Tile tile) {
+        return new FileLoadJob(tile);
     }
 
     protected File getSourceCacheDir(TileSource source) {
@@ -127,42 +127,43 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
         return dir;
     }
     
-    protected class FileLoadJob implements Runnable {
+    protected class FileLoadJob implements TileJob {
         InputStream input = null;
 
-        int tilex, tiley, zoom;
         Tile tile;
-        TileSource source;
         File tileCacheDir;
         File tileFile = null;
         long fileAge = 0;
         boolean fileTilePainted = false;
 
-        public FileLoadJob(TileSource source, int tilex, int tiley, int zoom) {
-            this.source = source;
-            this.tilex = tilex;
-            this.tiley = tiley;
-            this.zoom = zoom;
+        public FileLoadJob(Tile tile) {
+            this.tile = tile;
+        }
+
+        public Tile getTile() {
+            return tile;
         }
 
         public void run() {
-            TileCache cache = listener.getTileCache();
-            synchronized (cache) {
-                tile = cache.getTile(source, tilex, tiley, zoom);
-                if (tile == null || (tile.isLoaded() && !tile.hasError()) || tile.loading)
+            synchronized (tile) {
+                if ((tile.isLoaded() && !tile.hasError()) || tile.isLoading())
                     return;
                 tile.loaded = false;
                 tile.error = false;
                 tile.loading = true;
             }
-            tileCacheDir = getSourceCacheDir(source);
-            if (loadTileFromFile())
+            tileCacheDir = getSourceCacheDir(tile.getSource());
+            if (loadTileFromFile()) {
                 return;
+            }
             if (fileTilePainted) {
-                Runnable job = new Runnable() {
+                TileJob job = new TileJob() {
 
                     public void run() {
                         loadOrUpdateTile();
+                    }
+                    public Tile getTile() {
+                        return tile;
                     }
                 };
                 JobDispatcher.getInstance().addJob(job);
@@ -173,10 +174,9 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 
         protected void loadOrUpdateTile() {
             try {
-                // log.finest("Loading tile from OSM: " + tile);
                 URLConnection urlConn = loadTileFromOsm(tile);
                 if (tileFile != null) {
-                    switch (source.getTileUpdate()) {
+                    switch (tile.getSource().getTileUpdate()) {
                     case IfModifiedSince:
                         urlConn.setIfModifiedSince(fileAge);
                         break;
@@ -190,10 +190,10 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
                         break;
                     }
                 }
-                if (source.getTileUpdate() == TileUpdate.ETag || source.getTileUpdate() == TileUpdate.IfNoneMatch) {
+                if (tile.getSource().getTileUpdate() == TileUpdate.ETag || tile.getSource().getTileUpdate() == TileUpdate.IfNoneMatch) {
                     String fileETag = tile.getValue("etag");
                     if (fileETag != null) {
-                        switch (source.getTileUpdate()) {
+                        switch (tile.getSource().getTileUpdate()) {
                         case IfNoneMatch:
                             urlConn.addRequestProperty("If-None-Match", fileETag);
                             break;
@@ -244,7 +244,10 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
                 tile.setError(e.getMessage());
                 listener.tileLoadingFinished(tile, false);
                 if (input == null) {
-                    System.err.println("failed loading " + zoom + "/" + tilex + "/" + tiley + " " + e.getMessage());
+                    try {
+                        System.err.println("Failed loading " + tile.getUrl() +": " + e.getMessage());
+                    } catch(IOException i) {
+                    }
                 }
             } finally {
                 tile.loading = false;
@@ -324,11 +327,11 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
          * Note: This does only work with servers providing the
          * <code>LastModified</code> header:
          * <ul>
-         * <li>{@link OsmTileLoader#MAP_OSMA} - supported</li>
-         * <li>{@link OsmTileLoader#MAP_MAPNIK} - not supported</li>
+         * <li>{@link tilesources.OsmTileSource.CycleMap} - supported</li>
+         * <li>{@link tilesources.OsmTileSource.Mapnik} - not supported</li>
          * </ul>
          *
-         * @param fileAge
+         * @param fileAge time of the 
          * @return <code>true</code> if the tile on the server is newer than the
          *         file
          * @throws IOException
@@ -367,7 +370,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
 
         protected File getTileFile() {
             return new File(tileCacheDir + "/" + tile.getZoom() + "_" + tile.getXtile() + "_" + tile.getYtile() + "."
-                    + source.getTileType());
+                    + tile.getSource().getTileType());
         }
 
         protected File getTagsFile() {
@@ -378,7 +381,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
         protected void saveTileToFile(byte[] rawData) {
             try {
                 FileOutputStream f = new FileOutputStream(tileCacheDir + "/" + tile.getZoom() + "_" + tile.getXtile()
-                        + "_" + tile.getYtile() + "." + source.getTileType());
+                        + "_" + tile.getYtile() + "." + tile.getSource().getTileType());
                 f.write(rawData);
                 f.close();
                 // System.out.println("Saved tile to file: " + tile);

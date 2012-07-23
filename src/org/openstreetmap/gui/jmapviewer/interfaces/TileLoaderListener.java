@@ -14,5 +14,11 @@ public interface TileLoaderListener {
      */
     public void tileLoadingFinished(Tile tile, boolean success);
 
+    /**
+     * Return the {@link TileCache} class containing {@link Tile}
+     * data for requested and loaded tiles
+     *
+     * @return tile information caching class
+     */
     public TileCache getTileCache();
 }

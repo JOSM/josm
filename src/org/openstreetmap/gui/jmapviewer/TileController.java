@@ -25,9 +25,9 @@ public class TileController {
      * retrieves a tile from the cache. If the tile is not present in the cache
      * a load job is added to the working queue of {@link JobThread}.
      *
-     * @param tilex
-     * @param tiley
-     * @param zoom
+     * @param tilex the X position of the tile
+     * @param tiley the Y position of the tile
+     * @param zoom the zoom level of the tile
      * @return specified tile from the cache or <code>null</code> if the tile
      *         was not found in the cache.
      */
@@ -42,7 +42,7 @@ public class TileController {
             tile.loadPlaceholderFromCache(tileCache);
         }
         if (!tile.isLoaded()) {
-            jobDispatcher.addJob(tileLoader.createTileLoaderJob(tileSource, tilex, tiley, zoom));
+            jobDispatcher.addJob(tileLoader.createTileLoaderJob(tile));
         }
         return tile;
     }

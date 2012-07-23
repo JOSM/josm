@@ -2,9 +2,11 @@ package org.openstreetmap.gui.jmapviewer;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
+
+import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 
 /**
  * A generic class that processes a list of {@link Runnable} one-by-one using
@@ -30,7 +32,7 @@ public class JobDispatcher {
         addWorkerThread().firstThread = true;
     }
 
-    protected BlockingQueue<Runnable> jobQueue = new LinkedBlockingQueue<Runnable>();
+    protected BlockingDeque<TileJob> jobQueue = new LinkedBlockingDeque<TileJob>();
 
     public static int WORKER_THREAD_MAX_COUNT = 8;
 
@@ -41,6 +43,11 @@ public class JobDispatcher {
      * ignores the timeout and will never terminate itself.
      */
     public static int WORKER_THREAD_TIMEOUT = 30;
+
+    /**
+     * Type of queue, FIFO if <code>false</code>, LIFO if <code>true</code>
+     */
+    protected boolean modeLIFO = false;
 
     /**
      * Total number of worker threads currently idle or active
@@ -64,8 +71,38 @@ public class JobDispatcher {
         jobQueue.clear();
     }
 
-    public void addJob(Runnable job) {
+    /**
+     * Function to set the maximum number of workers for tile loading.
+     */
+    static public void setMaxWorkers(int workers) {
+        WORKER_THREAD_MAX_COUNT = workers;
+    }
+
+    /**
+     * Function to set the LIFO/FIFO mode for tile loading job.
+     *
+     * @param lifo <code>true</code> for LIFO mode, <code>false</code> for FIFO mode
+     */
+    public void setLIFO(boolean lifo) {
+        modeLIFO = lifo;
+    }
+
+    /**
+     * Adds a job to the queue.
+     * Jobs for tiles already contained in the are ignored (using a <code>null</code> tile
+     * prevents skipping).
+     *
+     * @param job the the job to be added
+     */
+    public void addJob(TileJob job) {
         try {
+            if(job.getTile() != null) {
+                for(TileJob oldJob : jobQueue) {
+                    if(oldJob.getTile() == job.getTile()) {
+                        return;
+                    }
+                }
+            }
             jobQueue.put(job);
             if (workerThreadIdleCount == 0 && workerThreadCount < WORKER_THREAD_MAX_COUNT)
                 addWorkerThread();
@@ -107,10 +144,17 @@ public class JobDispatcher {
                     synchronized (instance) {
                         workerThreadIdleCount++;
                     }
-                    if (firstThread)
-                        job = jobQueue.take();
-                    else
-                        job = jobQueue.poll(WORKER_THREAD_TIMEOUT, TimeUnit.SECONDS);
+                    if(modeLIFO) {
+                        if (firstThread)
+                            job = jobQueue.takeLast();
+                        else
+                            job = jobQueue.pollLast(WORKER_THREAD_TIMEOUT, TimeUnit.SECONDS);
+                    } else {
+                        if (firstThread)
+                            job = jobQueue.take();
+                        else
+                            job = jobQueue.poll(WORKER_THREAD_TIMEOUT, TimeUnit.SECONDS);
+                    }
                 } catch (InterruptedException e1) {
                     return;
                 } finally {

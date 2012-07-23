@@ -28,8 +28,8 @@ public class OsmMercator {
      * Returns the absolut number of pixels in y or x, defined as: 2^Zoomlevel *
      * TILE_WIDTH where TILE_WIDTH is the width of a tile in pixels
      *
-     * @param aZoomlevel
-     * @return
+     * @param aZoomlevel zoom level to request pixel data
+     * @return number of pixels
      */
     public static int getMaxPixels(int aZoomlevel) {
         return TILE_SIZE * (1 << aZoomlevel);

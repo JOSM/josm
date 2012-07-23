@@ -660,11 +660,19 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     /**
      * Decreases the current zoom level by one
+     *
+     * @param mapPoint point to choose as center for new zoom level
      */
     public void zoomOut(Point mapPoint) {
         setZoom(zoom - 1, mapPoint);
     }
 
+    /**
+     * Set the zoom level and center point for display
+     *
+     * @param zoom new zoom level
+     * @param mapPoint point to choose as center for new zoom level
+     */
     public void setZoom(int zoom, Point mapPoint) {
         if (zoom > tileController.getTileSource().getMaxZoom() || zoom < tileController.getTileSource().getMinZoom()
                 || zoom == this.zoom)
@@ -677,6 +685,11 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         this.fireJMVEvent(new JMVCommandEvent(COMMAND.ZOOM, this));
     }
 
+    /**
+     * Set the zoom level
+     *
+     * @param zoom new zoom level
+     */
     public void setZoom(int zoom) {
         setZoom(zoom, new Point(getWidth() / 2, getHeight() / 2));
     }
@@ -858,12 +871,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         repaint();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener#getTileCache
-     * ()
+    /**
+     * Return tile information caching class
+     * @see TileLoaderListener#getTileCache()
      */
     public TileCache getTileCache() {
         return tileController.getTileCache();
@@ -876,14 +886,14 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     protected EventListenerList listenerList = new EventListenerList();
 
     /**
-     * @param listener to set
+     * @param listener listener to set
      */
     public void addJMVListener(JMapViewerEventListener listener) {
         listenerList.add(JMapViewerEventListener.class, listener);
     }
 
     /**
-     * @param listener to remove
+     * @param listener listener to remove
      */
     public void removeJMVListener(JMapViewerEventListener listener) {
         listenerList.remove(JMapViewerEventListener.class, listener);

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.HashMap;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -38,24 +38,20 @@ public class OsmTileLoader implements TileLoader {
         this.listener = listener;
     }
 
-    public Runnable createTileLoaderJob(final TileSource source, final int tilex, final int tiley, final int zoom) {
-        return new Runnable() {
+    public TileJob createTileLoaderJob(final Tile tile) {
+        return new TileJob() {
 
             InputStream input = null;
 
             public void run() {
-                TileCache cache = listener.getTileCache();
-                Tile tile;
-                synchronized (cache) {
-                    tile = cache.getTile(source, tilex, tiley, zoom);
-                    if (tile == null || (tile.isLoaded() && !tile.hasError()) || tile.loading)
+                synchronized (tile) {
+                    if ((tile.isLoaded() && !tile.hasError()) || tile.isLoading())
                         return;
                     tile.loaded = false;
                     tile.error = false;
                     tile.loading = true;
                 }
                 try {
-                    // Thread.sleep(500);
                     URLConnection conn = loadTileFromOsm(tile);
                     loadTileMetadata(tile, conn);
                     if ("no-tile".equals(tile.getValue("tile-info"))) {
@@ -72,7 +68,10 @@ public class OsmTileLoader implements TileLoader {
                     tile.setError(e.getMessage());
                     listener.tileLoadingFinished(tile, false);
                     if (input == null) {
-                        System.err.println("failed loading " + zoom + "/" + tilex + "/" + tiley + " " + e.getMessage());
+                        try {
+                            System.err.println("Failed loading " + tile.getUrl() +": " + e.getMessage());
+                        } catch(IOException i) {
+                        }
                     }
                 } finally {
                     tile.loading = false;
@@ -80,6 +79,9 @@ public class OsmTileLoader implements TileLoader {
                 }
             }
 
+            public Tile getTile() {
+                return tile;
+            }
         };
     }
 

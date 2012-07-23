@@ -14,7 +14,6 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
  * @author Stefan Zeller
  * @see JMapViewer#addMapRectangle(MapRectangle)
  * @see JMapViewer#getMapRectangleList()
- * @date 21.06.2009S
  */
 public interface MapRectangle {
 
@@ -32,8 +31,9 @@ public interface MapRectangle {
      * Paints the map rectangle on the map. The <code>topLeft</code> and
      * <code>bottomRight</code> are specifying the coordinates within <code>g</code>
      *
-     * @param g
-     * @param position
+     * @param g graphics structure for painting
+     * @param topLeft lop left edge of painting region
+     * @param bottomRight bottom right edge of painting region
      */
     public void paint(Graphics g, Point topLeft, Point bottomRight);
 }
