@@ -53,7 +53,7 @@ public class UploadSelectionAction extends JosmAction{
         if (getCurrentDataSet() == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getSelected());
+            updateEnabledState(getCurrentDataSet().getAllSelected());
         }
     }
 
@@ -94,7 +94,7 @@ public class UploadSelectionAction extends JosmAction{
         }
         UploadHullBuilder builder = new UploadHullBuilder();
         UploadSelectionDialog dialog = new UploadSelectionDialog();
-        Collection<OsmPrimitive> modifiedCandidates = getModifiedPrimitives(getEditLayer().data.getSelected());
+        Collection<OsmPrimitive> modifiedCandidates = getModifiedPrimitives(getEditLayer().data.getAllSelected());
         Collection<OsmPrimitive> deletedCandidates = getDeletedPrimitives(getEditLayer().data);
         if (modifiedCandidates.isEmpty() && deletedCandidates.isEmpty()) {
             JOptionPane.showMessageDialog(

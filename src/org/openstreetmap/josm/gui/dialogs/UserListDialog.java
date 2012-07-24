@@ -135,7 +135,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
         if (newLayer instanceof OsmDataLayer) {
-            refresh(((OsmDataLayer) newLayer).data.getSelected());
+            refresh(((OsmDataLayer) newLayer).data.getAllSelected());
         } else {
             refresh(null);
         }
@@ -164,7 +164,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         Main.worker.submit(new ContributorTermsUpdateRunnable());
         Layer layer = Main.main.getActiveLayer();
         if (layer instanceof OsmDataLayer) {
-            refresh(((OsmDataLayer)layer).data.getSelected());
+            refresh(((OsmDataLayer)layer).data.getAllSelected());
         }
 
     }
@@ -274,7 +274,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             Main.worker.submit(new ContributorTermsUpdateRunnable());
             Layer layer = Main.main.getActiveLayer();
             if (layer instanceof OsmDataLayer) {
-                refresh(((OsmDataLayer)layer).data.getSelected());
+                refresh(((OsmDataLayer)layer).data.getAllSelected());
             }
             setEnabled(false);
         }
@@ -389,7 +389,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             for (int index: rows) {
                 users.add(data.get(index).user);
             }
-            Collection<OsmPrimitive> selected = Main.main.getCurrentDataSet().getSelected();
+            Collection<OsmPrimitive> selected = Main.main.getCurrentDataSet().getAllSelected();
             Collection<OsmPrimitive> byUser = new LinkedList<OsmPrimitive>();
             for (OsmPrimitive p : selected) {
                 if (users.contains(p.getUser())) {

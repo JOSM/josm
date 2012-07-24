@@ -120,7 +120,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         if (Main.main.getCurrentDataSet() == null) {
             model.selectionChanged(null);
         } else {
-            model.selectionChanged(Main.main.getCurrentDataSet().getSelected());
+            model.selectionChanged(Main.main.getCurrentDataSet().getAllSelected());
         }
     }
 
@@ -196,7 +196,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
             data.clear();
             if (Main.main.getCurrentDataSet() == null)
                 return;
-            for (OsmPrimitive primitive: Main.main.getCurrentDataSet().getSelected()) {
+            for (OsmPrimitive primitive: Main.main.getCurrentDataSet().getAllSelected()) {
                 if (primitive.isNew()) {
                     continue;
                 }

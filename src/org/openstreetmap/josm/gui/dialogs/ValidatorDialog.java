@@ -167,7 +167,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         DataSet.addSelectionListener(this);
         DataSet ds = Main.main.getCurrentDataSet();
         if (ds != null) {
-            updateSelection(ds.getSelected());
+            updateSelection(ds.getAllSelected());
         }
         MapView.addLayerChangeListener(this);
         Layer activeLayer = Main.map.mapView.getActiveLayer();

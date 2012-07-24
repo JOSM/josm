@@ -437,7 +437,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
      *
      */
     public void fireSelectionChanged(){
-        Collection<? extends OsmPrimitive> currentSelection = getSelected();
+        Collection<? extends OsmPrimitive> currentSelection = getAllSelected();
         for (SelectionChangedListener l : selListeners) {
             l.selectionChanged(currentSelection);
         }
@@ -478,11 +478,21 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
 
     /**
      * Replies an unmodifiable collection of primitives currently selected
-     * in this dataset. May be empty, but not null.
+     * in this dataset, except deleted ones. May be empty, but not null.
      *
      * @return unmodifiable collection of primitives
      */
     public Collection<OsmPrimitive> getSelected() {
+        return new SubclassFilteredCollection<OsmPrimitive, OsmPrimitive>(getAllSelected(), OsmPrimitive.nonDeletedPredicate);
+    }
+    
+    /**
+     * Replies an unmodifiable collection of primitives currently selected
+     * in this dataset, including deleted ones. May be empty, but not null.
+     *
+     * @return unmodifiable collection of primitives
+     */
+    public Collection<OsmPrimitive> getAllSelected() {
         Collection<OsmPrimitive> currentList;
         synchronized (selectionLock) {
             if (selectionSnapshot == null) {

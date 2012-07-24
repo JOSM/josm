@@ -126,7 +126,7 @@ public class ChangesetDialog extends ToggleDialog{
         if (Main.main.getEditLayer() != null) {
             Main.main.getEditLayer().data.addDataSetListener(inActiveDataLayerModel);
             inActiveDataLayerModel.initFromDataSet(Main.main.getEditLayer().data);
-            inSelectionModel.initFromPrimitives(Main.main.getEditLayer().data.getSelected());
+            inSelectionModel.initFromPrimitives(Main.main.getEditLayer().data.getAllSelected());
         }
     }
 
@@ -233,7 +233,7 @@ public class ChangesetDialog extends ToggleDialog{
 
     protected void initWithCurrentData() {
         if (Main.main.getEditLayer() != null) {
-            inSelectionModel.initFromPrimitives(Main.main.getEditLayer().data.getSelected());
+            inSelectionModel.initFromPrimitives(Main.main.getEditLayer().data.getAllSelected());
             inActiveDataLayerModel.initFromDataSet(Main.main.getEditLayer().data);
         }
     }

@@ -51,7 +51,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
     }
 
     protected boolean isInSelectionBase(OsmPrimitive primitive) {
-        return selectionBase.getSelected().contains(primitive);
+        return selectionBase.getAllSelected().contains(primitive);
     }
 
     protected boolean isAlreadyRemembered(OsmPrimitive primitive) {
@@ -183,7 +183,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
     }
 
     public DataSet build() {
-        for (OsmPrimitive primitive: selectionBase.getSelected()) {
+        for (OsmPrimitive primitive: selectionBase.getAllSelected()) {
             primitive.visit(this);
         }
         buildHull();

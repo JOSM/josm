@@ -101,7 +101,7 @@ public class UpdateSelectionAction extends JosmAction {
         if (getCurrentDataSet() == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getSelected());
+            updateEnabledState(getCurrentDataSet().getAllSelected());
         }
     }
 
@@ -130,6 +130,6 @@ public class UpdateSelectionAction extends JosmAction {
     }
 
     public Collection<OsmPrimitive> getData() {
-        return getCurrentDataSet().getSelected();
+        return getCurrentDataSet().getAllSelected();
     }
 }
