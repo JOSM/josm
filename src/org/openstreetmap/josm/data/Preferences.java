@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,7 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -51,7 +52,6 @@ import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.XmlObjectParser;
 
 /**
  * This class holds all preferences for JOSM.
@@ -1438,9 +1438,24 @@ public class Preferences {
      *
      */
     public void updateSystemProperties() {
-        Properties sysProp = System.getProperties();
-        sysProp.put("http.agent", Version.getInstance().getAgentString());
-        System.setProperties(sysProp);
+        updateSystemProperty("http.agent", Version.getInstance().getAgentString());
+        updateSystemProperty("user.language", Main.pref.get("language"));
+        // Workaround to fix a Java bug.
+        // Force AWT toolkit to update its internal preferences (fix #3645).
+        // This ugly hack comes from Sun bug database: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6292739
+        try {
+            Field field = Toolkit.class.getDeclaredField("resources");
+            field.setAccessible(true);
+            field.set(null, ResourceBundle.getBundle("sun.awt.resources.awt"));
+        } catch (Exception e) {
+            // Ignore all exceptions
+        }
+    }
+    
+    private void updateSystemProperty(String key, String value) {
+        if (value != null) {
+            System.setProperty(key, value);
+        }
     }
 
     /**
