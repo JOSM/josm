@@ -88,7 +88,7 @@ public class PurgeAction extends JosmAction {
         if (!isEnabled())
             return;
 
-        Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
+        Collection<OsmPrimitive> sel = getCurrentDataSet().getAllSelected();
         layer = Main.map.mapView.getEditLayer();
 
         toPurge = new HashSet<OsmPrimitive>(sel);

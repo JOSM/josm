@@ -29,7 +29,7 @@ public class ChangesetInSelectionListModel extends ChangesetListModel implements
         if (newLayer == null) {
             setChangesets(null);
         } else {
-            initFromPrimitives((newLayer).data.getSelected());
+            initFromPrimitives((newLayer).data.getAllSelected());
         }
     }
 }

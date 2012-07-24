@@ -29,7 +29,7 @@ public class InfoAction extends JosmAction {
     public void actionPerformed(ActionEvent ae) {
         DataSet set = getCurrentDataSet();
 		if (set != null) {
-			new InspectPrimitiveDialog(set.getSelected(), Main.map.mapView.getEditLayer()).showDialog();
+			new InspectPrimitiveDialog(set.getAllSelected(), Main.map.mapView.getEditLayer()).showDialog();
 		}
     }
 
@@ -38,7 +38,7 @@ public class InfoAction extends JosmAction {
         if (getCurrentDataSet() == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getSelected());
+            updateEnabledState(getCurrentDataSet().getAllSelected());
         }
     }
 

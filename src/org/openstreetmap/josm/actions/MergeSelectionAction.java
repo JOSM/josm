@@ -39,7 +39,7 @@ public class MergeSelectionAction extends AbstractMergeAction {
         if (targetLayer == null)
             return;
         if (getEditLayer().isUploadDiscouraged() && targetLayer instanceof OsmDataLayer && !((OsmDataLayer)targetLayer).isUploadDiscouraged() 
-                && getEditLayer().data.getSelected().size() > 1) {
+                && getEditLayer().data.getAllSelected().size() > 1) {
             if (warnMergingUploadDiscouragedObjects(targetLayer)) {
                 return;
             }
@@ -49,7 +49,7 @@ public class MergeSelectionAction extends AbstractMergeAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (getEditLayer() == null || getEditLayer().data.getSelected().isEmpty())
+        if (getEditLayer() == null || getEditLayer().data.getAllSelected().isEmpty())
             return;
         mergeSelected(getEditLayer().data);
     }
@@ -59,7 +59,7 @@ public class MergeSelectionAction extends AbstractMergeAction {
         if (getCurrentDataSet() == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getSelected());
+            updateEnabledState(getCurrentDataSet().getAllSelected());
         }
     }
 

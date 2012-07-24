@@ -75,7 +75,7 @@ public class ValidateAction extends JosmAction {
 
         Collection<OsmPrimitive> selection;
         if (getSelectedItems) {
-            selection = Main.main.getCurrentDataSet().getSelected();
+            selection = Main.main.getCurrentDataSet().getAllSelected();
             if (selection.isEmpty()) {
                 selection = Main.main.getCurrentDataSet().allNonDeletedPrimitives();
                 lastSelection = null;

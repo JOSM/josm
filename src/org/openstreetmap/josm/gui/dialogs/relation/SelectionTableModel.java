@@ -63,7 +63,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
             cache.clear();
         }
         if (newLayer == layer) {
-            cache.addAll(((OsmDataLayer)newLayer).data.getSelected());
+            cache.addAll(((OsmDataLayer)newLayer).data.getAllSelected());
         }
         fireTableDataChanged();
     }
@@ -101,7 +101,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
      * @param layer  the data layer
      */
     protected void populateSelectedPrimitives(OsmDataLayer layer) {
-        selectionChanged(layer.data.getSelected());
+        selectionChanged(layer.data.getAllSelected());
     }
 
     /**

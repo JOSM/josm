@@ -30,7 +30,7 @@ public class HistoryInfoAction extends JosmAction {
 	public void actionPerformed(ActionEvent ae) {
 		DataSet set = getCurrentDataSet();
 		if (set != null) {
-			HistoryBrowserDialogManager.getInstance().showHistory(set.getSelected());
+			HistoryBrowserDialogManager.getInstance().showHistory(set.getAllSelected());
 		}
 	}
 
@@ -39,7 +39,7 @@ public class HistoryInfoAction extends JosmAction {
 		if (getCurrentDataSet() == null) {
 			setEnabled(false);
 		} else {
-			updateEnabledState(getCurrentDataSet().getSelected());
+			updateEnabledState(getCurrentDataSet().getAllSelected());
 		}
 	}
 

@@ -160,7 +160,7 @@ public class SelectionListDialog extends ToggleDialog  {
         // editLayerChanged also gets the selection history of the level
         model.editLayerChanged(null, Main.map.mapView.getEditLayer());
         if (Main.map.mapView.getEditLayer() != null) {
-            model.setJOSMSelection(Main.map.mapView.getEditLayer().data.getSelected());
+            model.setJOSMSelection(Main.map.mapView.getEditLayer().data.getAllSelected());
         }
         actSearch.updateEnabledState();
     }
@@ -663,7 +663,7 @@ public class SelectionListDialog extends ToggleDialog  {
                 history = null;
             } else {
                 history = newLayer.data.getSelectionHistory();
-                setJOSMSelection(newLayer.data.getSelected());
+                setJOSMSelection(newLayer.data.getAllSelected());
             }
         }
 

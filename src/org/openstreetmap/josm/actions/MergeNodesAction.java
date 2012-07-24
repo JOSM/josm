@@ -60,7 +60,7 @@ public class MergeNodesAction extends JosmAction {
     public void actionPerformed(ActionEvent event) {
         if (!isEnabled())
             return;
-        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
+        Collection<OsmPrimitive> selection = getCurrentDataSet().getAllSelected();
         List<Node> selectedNodes = OsmPrimitive.getFilteredList(selection, Node.class);
 
         if (selectedNodes.size() == 1) {
@@ -329,7 +329,7 @@ public class MergeNodesAction extends JosmAction {
         if (getCurrentDataSet() == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getSelected());
+            updateEnabledState(getCurrentDataSet().getAllSelected());
         }
     }
 

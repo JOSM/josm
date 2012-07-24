@@ -583,7 +583,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         //        }
 
         final DataSet ds = Main.main.getCurrentDataSet();
-        Collection<OsmPrimitive> sel = new HashSet<OsmPrimitive>(ds.getSelected());
+        Collection<OsmPrimitive> sel = new HashSet<OsmPrimitive>(ds.getAllSelected());
         int foundMatches = getSelection(s, sel, new Function(){
             public Boolean isSomething(OsmPrimitive o){
                 return ds.isSelected(o);
