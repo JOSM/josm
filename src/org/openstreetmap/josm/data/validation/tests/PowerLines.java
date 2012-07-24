@@ -25,6 +25,10 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.tools.Geometry;
 
+/**
+ * Checks for nodes in power lines/minor_lines that do not have a power=tower/pole tag.<br/>
+ * See #7812 for discussions about this test.
+ */
 public class PowerLines extends Test {
     
     protected static final int POWER_LINES = 2501;
@@ -53,7 +57,7 @@ public class PowerLines extends Test {
                 boolean canFix = false;
                 for (Node n : w.getNodes()) {
                     if (!isPowerTower(n)) {
-                        if (!w.isFirstLastNode(n) && !isPowerAllowed(n)) {
+                        if (!isPowerAllowed(n)) {
                             potentialErrors.add(new PowerLineError(n, w));
                             erroneous = true;
                         }
