@@ -19,10 +19,11 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public class NMEAImporter extends FileImporter {
 
+    public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
+            "nmea,nme,nma,log,txt", "nmea", tr("NMEA-0183 Files") + " (*.nmea *.nme *.nma *.log *.txt)");
+    
     public NMEAImporter() {
-        super(
-                new ExtensionFileFilter("nmea,nme,nma,log,txt", "nmea", tr("NMEA-0183 Files")
-                        + " (*.nmea *.nme *.nma *.log *.txt)"));
+        super(FILE_FILTER);
     }
 
     @Override public void importData(File file, ProgressMonitor progressMonitor) throws IOException {

@@ -21,6 +21,9 @@ import org.xml.sax.SAXException;
 
 public class GpxImporter extends FileImporter {
 
+    public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
+            "gpx,gpx.gz", "gpx", tr("GPX Files") + " (*.gpx *.gpx.gz)");
+    
     protected static class GpxImporterData {
         public GpxLayer gpxLayer;
         public MarkerLayer markerLayer;
@@ -28,7 +31,7 @@ public class GpxImporter extends FileImporter {
     }
 
     public GpxImporter() {
-        super(new ExtensionFileFilter("gpx,gpx.gz", "gpx", tr("GPX Files") + " (*.gpx *.gpx.gz)"));
+        super(FILE_FILTER);
     }
 
     @Override public void importData(File file, ProgressMonitor progressMonitor) throws IOException {

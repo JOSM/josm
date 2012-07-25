@@ -21,8 +21,11 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public class OsmChangeImporter extends FileImporter {
 
+    public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
+            "osc,osc.bz2,osc.bz,osc.gz", "osc", tr("OsmChange File") + " (*.osc *.osc.bz2 *.osc.bz *.osc.gz)");
+    
     public OsmChangeImporter() {
-        super(new ExtensionFileFilter("osc", "osc", tr("OsmChange File") + " (*.osc)"));
+        super(FILE_FILTER);
     }
 
     public OsmChangeImporter(ExtensionFileFilter filter) {
@@ -32,7 +35,15 @@ public class OsmChangeImporter extends FileImporter {
     @Override public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         try {
             FileInputStream in = new FileInputStream(file);
-            importData(in, file);
+            
+            if (file.getName().endsWith(".osc")) {
+                importData(in, file);
+            } else if (file.getName().endsWith(".gz")) {
+                importData(getGZipInputStream(in), file);
+            } else {
+                importData(getBZip2InputStream(in), file);
+            }
+            
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             throw new IOException(tr("File ''{0}'' does not exist.", file.getName()));

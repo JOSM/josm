@@ -24,7 +24,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 public class OsmExporter extends FileExporter {
 
     public OsmExporter() {
-        super(new ExtensionFileFilter("osm,xml", "osm", tr("OSM Server Files") + " (*.osm *.xml)"));
+        super(OsmImporter.FILE_FILTER);
     }
 
     public OsmExporter(ExtensionFileFilter filter) {
