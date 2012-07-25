@@ -93,7 +93,8 @@ public class MainApplication extends Main {
      */
     public static void showHelp() {
         // TODO: put in a platformHook for system that have no console by default
-        System.out.println(tr("Java OpenStreetMap Editor")+"\n\n"+
+        System.out.println(tr("Java OpenStreetMap Editor")+" ["
+                +Version.getInstance().getAgentString()+"]\n\n"+
                 tr("usage")+":\n"+
                 "\tjava -jar josm.jar <options>...\n\n"+
                 tr("options")+":\n"+
@@ -263,9 +264,9 @@ public class MainApplication extends Main {
         if (args.containsKey(Option.VERSION)) {
             System.out.println(Version.getInstance().getAgentString());
             System.exit(0);
-        } else {
-            System.out.println(Version.getInstance().getReleaseAttributes());
-        }
+        } //else {
+        //    System.out.println(Version.getInstance().getReleaseAttributes());
+        //}
 
         Main.pref.init(args.containsKey(Option.RESET_PREFERENCES));
 
