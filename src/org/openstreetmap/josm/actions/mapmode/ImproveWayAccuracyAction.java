@@ -586,9 +586,9 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     public void startImproving(Way targetWay) {
         state = State.improving;
 
-        List<OsmPrimitive> currentSelection = (List<OsmPrimitive>) getCurrentDataSet().getSelected();
+        Collection<OsmPrimitive> currentSelection = getCurrentDataSet().getSelected();
         if (currentSelection.size() != 1
-                || !currentSelection.get(0).equals(targetWay)) {
+                || !currentSelection.iterator().next().equals(targetWay)) {
             selectionChangedBlocked = true;
             getCurrentDataSet().clearSelection();
             getCurrentDataSet().setSelected(targetWay.getPrimitiveId());
