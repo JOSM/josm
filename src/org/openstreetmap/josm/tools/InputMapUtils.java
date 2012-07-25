@@ -29,7 +29,7 @@ public class InputMapUtils {
        */
       public static void enableEnter(JButton b) {
          b.setFocusable(true);
-         b.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_Q,0), "enter");
+         b.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
          b.getActionMap().put("enter",b.getAction());
       }
       
