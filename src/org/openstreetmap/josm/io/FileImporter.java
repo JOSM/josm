@@ -3,12 +3,16 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import javax.swing.JOptionPane;
 
+import org.apache.tools.bzip2.CBZip2InputStream;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -96,5 +100,25 @@ public abstract class FileImporter implements Comparable<FileImporter> {
     public int compareTo(FileImporter other) {
         return (new Double(this.getPriority())).compareTo(other.getPriority());
     }
+    
+    public static CBZip2InputStream getBZip2InputStream(InputStream in) throws IOException {
+        if (in == null) {
+            return null;
+        }
+        BufferedInputStream bis = new BufferedInputStream(in);
+        int b = bis.read();
+        if (b != 'B')
+            throw new IOException(tr("Invalid bz2 file."));
+        b = bis.read();
+        if (b != 'Z')
+            throw new IOException(tr("Invalid bz2 file."));
+        return new CBZip2InputStream(bis);
+    }
 
+    public static GZIPInputStream getGZipInputStream(InputStream in) throws IOException {
+        if (in == null) {
+            return null;
+        }
+        return new GZIPInputStream(in);
+    }
 }

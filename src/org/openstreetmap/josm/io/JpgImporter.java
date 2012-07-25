@@ -18,9 +18,12 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public class JpgImporter extends FileImporter {
     private GpxLayer gpx;
+    
+    public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
+            "jpg", "jpg", tr("Image Files") + " (*.jpg, "+ tr("folder")+")");
 
     public JpgImporter() {
-        super(new ExtensionFileFilter("jpg", "jpg", tr("Image Files") + " (*.jpg, "+ tr("folder")+")"));
+        super(FILE_FILTER);
     }
 
     public JpgImporter(GpxLayer gpx) {

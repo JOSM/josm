@@ -26,7 +26,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -42,7 +41,7 @@ public class GpxExporter extends FileExporter {
         + tr("Note: GPL is not compatible with the OSM license. Do not upload GPL licensed tracks.") + "</html>";
 
     public GpxExporter() {
-        super(new ExtensionFileFilter("gpx,gpx.gz", "gpx", tr("GPX Files") + " (*.gpx *.gpx.gz)"));
+        super(GpxImporter.FILE_FILTER);
     }
 
     @Override

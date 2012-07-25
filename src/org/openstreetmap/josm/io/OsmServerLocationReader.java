@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -75,9 +76,27 @@ public class OsmServerLocationReader extends OsmServerReader {
                 in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(9, false));
                 if (in == null)
                     return null;
-                CBZip2InputStream bzin = OsmBzip2Importer.getBZip2InputStream(in);
+                CBZip2InputStream bzin = FileImporter.getBZip2InputStream(in);
                 progressMonitor.subTask(tr("Downloading OSM data..."));
                 return OsmReader.parseDataSet(bzin, progressMonitor.createSubTaskMonitor(1, false));
+            }
+        }, progressMonitor);
+    }
+    
+    /**
+     * Method to download GZip-compressed OSM files from somewhere
+     */
+    @Override
+    public DataSet parseOsmGzip(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return doParse(new Parser<DataSet>() {
+            @Override
+            public DataSet parse() throws OsmTransferException, IllegalDataException, IOException {
+                in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(9, false));
+                if (in == null)
+                    return null;
+                GZIPInputStream gzin = FileImporter.getGZipInputStream(in);
+                progressMonitor.subTask(tr("Downloading OSM data..."));
+                return OsmReader.parseDataSet(gzin, progressMonitor.createSubTaskMonitor(1, false));
             }
         }, progressMonitor);
     }
@@ -96,6 +115,42 @@ public class OsmServerLocationReader extends OsmServerReader {
                     return null;
                 progressMonitor.subTask(tr("Downloading OSM data..."));
                 return OsmChangeReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+            }
+        }, progressMonitor);
+    }
+    
+    /**
+     * Method to download BZip2-compressed OSM Change files from somewhere
+     */
+    @Override
+    public DataSet parseOsmChangeBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return doParse(new Parser<DataSet>() {
+            @Override
+            public DataSet parse() throws OsmTransferException, IllegalDataException, IOException {
+                in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(9, false));
+                if (in == null)
+                    return null;
+                CBZip2InputStream bzin = FileImporter.getBZip2InputStream(in);
+                progressMonitor.subTask(tr("Downloading OSM data..."));
+                return OsmChangeReader.parseDataSet(bzin, progressMonitor.createSubTaskMonitor(1, false));
+            }
+        }, progressMonitor);
+    }
+    
+    /**
+     * Method to download GZip-compressed OSM Change files from somewhere
+     */
+    @Override
+    public DataSet parseOsmChangeGzip(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return doParse(new Parser<DataSet>() {
+            @Override
+            public DataSet parse() throws OsmTransferException, IllegalDataException, IOException {
+                in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(9, false));
+                if (in == null)
+                    return null;
+                GZIPInputStream gzin = FileImporter.getGZipInputStream(in);
+                progressMonitor.subTask(tr("Downloading OSM data..."));
+                return OsmChangeReader.parseDataSet(gzin, progressMonitor.createSubTaskMonitor(1, false));
             }
         }, progressMonitor);
     }

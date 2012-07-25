@@ -150,7 +150,15 @@ public abstract class OsmServerReader extends OsmConnection {
     public DataSet parseOsmChange(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
     }
-    
+
+    public DataSet parseOsmChangeBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return null;
+    }
+
+    public DataSet parseOsmChangeGzip(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return null;
+    }
+
     public GpxData parseRawGps(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
     }
@@ -158,7 +166,11 @@ public abstract class OsmServerReader extends OsmConnection {
     public DataSet parseOsmBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
     }
-    
+
+    public DataSet parseOsmGzip(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return null;
+    }
+
     /**
      * Returns true if this reader is adding authentication credentials to the read
      * request sent to the server.

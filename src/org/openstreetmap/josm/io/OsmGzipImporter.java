@@ -6,20 +6,21 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.zip.GZIPInputStream;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public class OsmGzipImporter extends OsmImporter {
 
+    public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
+            "osm.gz", "osm.gz", tr("OSM Server Files gzip compressed") + " (*.osm.gz)");
+    
     public OsmGzipImporter() {
-        super(new ExtensionFileFilter("osm.gz", "osm.gz", tr("OSM Server Files gzip compressed") + " (*.osm.gz)"));
+        super(FILE_FILTER);
     }
 
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
-        GZIPInputStream in = new GZIPInputStream(new FileInputStream(file));
-        importData(in, file);
+        importData(getGZipInputStream(new FileInputStream(file)), file);
     }
 }
