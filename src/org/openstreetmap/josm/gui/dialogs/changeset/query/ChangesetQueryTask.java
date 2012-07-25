@@ -9,14 +9,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetDownloadTask;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.io.OsmServerChangesetReader;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
@@ -92,7 +95,17 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
     protected void finish() {
         if (canceled) return;
         if (lastException != null) {
-            ExceptionUtil.explainException(lastException);
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                private final Component parent = progressMonitor != null ? progressMonitor.getWindowParent() : null;
+                @Override
+                public void run() {
+                    JOptionPane.showMessageDialog(
+                            parent != null ? parent : Main.parent,
+                            ExceptionUtil.explainException(lastException),
+                            tr("Errors during download"),
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            });
             return;
         }
 

@@ -3,6 +3,8 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
@@ -232,7 +234,11 @@ public class ChangesetQuery {
         if (uid != null) {
             sb.append("user").append("=").append(uid);
         } else if (userName != null) {
-            sb.append("display_name").append("=").append(userName);
+            try {
+                sb.append("display_name").append("=").append(URLEncoder.encode(userName, "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
         if (bounds != null) {
             if (sb.length() > 0) {
@@ -267,6 +273,11 @@ public class ChangesetQuery {
             sb.append("closed=").append(Boolean.toString(closed));
         }
         return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return getQueryString();
     }
 
     public static class ChangesetQueryUrlException extends Exception {
