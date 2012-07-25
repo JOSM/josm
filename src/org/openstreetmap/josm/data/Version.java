@@ -67,6 +67,7 @@ public class Version {
     private int version;
     private String releaseDescription;
     private String time;
+    private String buildName;
     private boolean isLocalBuild;
 
     protected HashMap<String, String> parseManifestStyleFormattedString(String content) {
@@ -128,6 +129,14 @@ public class Version {
         value = properties.get("Is-Local-Build");
         if (value != null && value.trim().toLowerCase().equals("true"))  {
             isLocalBuild = true;
+        }
+
+        // is this a specific build ?
+        //
+        buildName = null;
+        value = properties.get("Build-Name");
+        if (value != null && !value.trim().isEmpty())  {
+            buildName = value.trim();
         }
 
         // the revision info
@@ -198,6 +207,9 @@ public class Version {
     public String getAgentString() {
         int v = getVersion();
         String s = (v == JOSM_UNKNOWN_VERSION) ? "UNKNOWN" : Integer.toString(v);
+        if (buildName != null) {
+            s += " " + buildName;
+        }
         if (isLocalBuild() && v != JOSM_UNKNOWN_VERSION) {
             s += " SVN";
         }
