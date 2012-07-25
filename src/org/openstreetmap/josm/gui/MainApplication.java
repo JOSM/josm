@@ -101,16 +101,17 @@ public class MainApplication extends Main {
                 "\t--help|-h                                 "+tr("Show this help")+"\n"+
                 "\t--geometry=widthxheight(+|-)x(+|-)y       "+tr("Standard unix geometry argument")+"\n"+
                 "\t[--download=]minlat,minlon,maxlat,maxlon  "+tr("Download the bounding box")+"\n"+
-                "\t[--download=]<url>                        "+tr("Download the location at the url (with lat=x&lon=y&zoom=z)")+"\n"+
+                "\t[--download=]<URL>                        "+tr("Download the location at the URL (with lat=x&lon=y&zoom=z)")+"\n"+
                 "\t[--download=]<filename>                   "+tr("Open a file (any file type that can be opened with File/Open)")+"\n"+
-                "\t--downloadgps=minlat,minlon,maxlat,maxlon "+tr("Download the bounding box as raw gps")+"\n"+
-                "\t--downloadgps=<url>                       "+tr("Download the location at the url (with lat=x&lon=y&zoom=z) as raw gps")+"\n"+
+                "\t--downloadgps=minlat,minlon,maxlat,maxlon "+tr("Download the bounding box as raw GPS")+"\n"+
+                "\t--downloadgps=<URL>                       "+tr("Download the location at the URL (with lat=x&lon=y&zoom=z) as raw GPS")+"\n"+
                 "\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
                 "\t--[no-]maximize                           "+tr("Launch in maximized mode")+"\n"+
                 "\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
                 "\t--load-preferences=<url-to-xml>           "+tr("Changes preferences according to the XML file")+"\n\n"+
                 "\t--set=<key>=<value>                       "+tr("Set preference key to value")+"\n\n"+
                 "\t--language=<language>                     "+tr("Set the language")+"\n\n"+
+                "\t--version                                 "+tr("Displays the JOSM version and exits")+"\n\n"+
                 tr("options provided as Java system properties")+":\n"+
                 "\t-Djosm.home="+tr("/PATH/TO/JOSM/FOLDER/         ")+tr("Change the folder for all user settings")+"\n\n"+
                 tr("note: For some tasks, JOSM needs a lot of memory. It can be necessary to add the following\n" +
