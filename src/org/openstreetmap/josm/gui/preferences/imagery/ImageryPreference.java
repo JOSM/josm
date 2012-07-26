@@ -810,6 +810,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
 
             @Override
             public void setValueAt(Object o, int row, int column) {
+                if (layerInfo.getLayers().size() <= row) return;
                 ImageryInfo info = layerInfo.getLayers().get(row);
                 switch (column) {
                 case 0:
