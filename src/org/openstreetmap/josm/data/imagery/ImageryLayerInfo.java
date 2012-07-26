@@ -149,4 +149,13 @@ public class ImageryLayerInfo {
         instance.save();
         Main.main.menu.imageryMenu.refreshImageryMenu();
     }
+
+    public static void addLayers(Collection<ImageryInfo> infos) {
+        for (ImageryInfo i : infos) {
+            instance.add(i);
+        }
+        instance.save();
+        Collections.sort(instance.layers);
+        Main.main.menu.imageryMenu.refreshImageryMenu();
+    }
 }

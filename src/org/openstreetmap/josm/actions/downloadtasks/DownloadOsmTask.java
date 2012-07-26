@@ -4,17 +4,25 @@ package org.openstreetmap.josm.actions.downloadtasks;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -24,6 +32,7 @@ import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -66,8 +75,8 @@ public class DownloadOsmTask extends AbstractDownloadTask {
 
     /**
      * Loads a given URL from the OSM Server
-     * @param True if the data should be saved to a new layer
-     * @param The URL as String
+     * @param new_layer True if the data should be saved to a new layer
+     * @param url The URL as String
      */
     public Future<?> loadUrl(boolean new_layer, String url, ProgressMonitor progressMonitor) {
         downloadTask = new DownloadTask(new_layer,
@@ -215,6 +224,8 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 computeBboxAndCenterScale();
                 targetLayer.onPostDownloadFromServer();
             }
+
+            suggestImageryLayers();
         }
         
         protected void computeBboxAndCenterScale() {
@@ -233,5 +244,42 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 reader.cancel();
             }
         }
+
+        protected void suggestImageryLayers() {
+            final LatLon center = currentBounds.getCenter();
+            final Set<ImageryInfo> layers = new HashSet<ImageryInfo>();
+
+            for (ImageryInfo i : ImageryLayerInfo.instance.getDefaultLayers()) {
+                if (i.getBounds() != null && i.getBounds().contains(center)) {
+                    layers.add(i);
+                }
+            }
+            layers.removeAll(ImageryLayerInfo.instance.getLayers());
+            if (layers.isEmpty()) {
+                return;
+            }
+
+            final List<String> layerNames = new ArrayList<String>();
+            for (ImageryInfo i : layers) {
+                layerNames.add(i.getName());
+            }
+
+            if (!ConditionalOptionPaneUtil.showConfirmationDialog(
+                    "download.suggest-imagery-layer",
+                    Main.parent,
+                    tr("<html>For the downloaded area, the following additional imagery layers are available: {0}" +
+                            "Do you want to add those layers to the <em>Imagery</em> menu?" +
+                            "<br>(If needed, you can remove those entries in the <em>Preferences</em>.)",
+                            Utils.joinAsHtmlUnorderedList(layerNames)),
+                    tr("Add imagery layers?"),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    JOptionPane.YES_OPTION)) {
+                return;
+            }
+
+            ImageryLayerInfo.addLayers(layers);
+        }
+
     }
 }
