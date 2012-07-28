@@ -961,7 +961,7 @@ public class GpxLayer extends Layer {
                         return;
                     int row = t.rowAtPoint(e.getPoint());
                     String url = (String) t.getValueAt(row, col);
-                    if(url == "")
+                    if (url == null || url.isEmpty())
                         return;
                     OpenBrowser.displayUrl(url);
                 }
