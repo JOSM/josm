@@ -43,5 +43,5 @@ way[boundary=national_park]                 { z-index: 5; color: #225500; width:
 way[boundary=protected_area]                { z-index: 5; color: #447744; width: 2; opacity: 0.6; dashes: 12,4, 4, 4; z-index: 4;}
 way[boundary=administrative]                { z-index: 5; color: purple; width: 2; opacity: 0.2; dashes: 24,4; z-index: 4;}
 way[boundary=administrative][waterway]      { z-index: 5; opacity: 0.8; z-index: 4; dashes: 24,4; width: 6; }
-area[landuse=cemetery]:closed						{ color: #664466; width: 2; fill-color: color: #664466; opacity: 0.2; prop_area_small_name : 1;}
+area[landuse=cemetery]:closed						{ color: #664466; width: 2; fill-color: #664466; opacity: 0.2; prop_area_small_name : 1;}
 /* Addressing. Nodes with addresses *and* match POIs should have a poi icon, so we put addressing first */
