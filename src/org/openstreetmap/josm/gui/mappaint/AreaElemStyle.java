@@ -48,7 +48,7 @@ public class AreaElemStyle extends ElemStyle
             );
 
             fillImage.alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fill-image-alpha", 255))));
-            Integer pAlpha = Utils.color_float2int(c.get("fill-opacity", null, float.class));
+            Integer pAlpha = Utils.color_float2int(c.get(FILL_OPACITY, null, float.class));
             if (pAlpha != null) {
                 fillImage.alpha = pAlpha;
             }
@@ -56,7 +56,7 @@ public class AreaElemStyle extends ElemStyle
             color = c.get(FILL_COLOR, null, Color.class);
             if (color != null) {
                 int alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
-                Integer pAlpha = Utils.color_float2int(c.get("fill-opacity", null, float.class));
+                Integer pAlpha = Utils.color_float2int(c.get(FILL_OPACITY, null, float.class));
                 if (pAlpha != null) {
                     alpha = pAlpha;
                 }

@@ -10,6 +10,7 @@ public interface StyleKeys {
     public static final String DASHES_OFFSET = "dashes-offset";
     public static final String FILL_COLOR = "fill-color";
     public static final String FILL_IMAGE = "fill-image";
+    public static final String FILL_OPACITY = "fill-opacity";
     public static final String ICON_IMAGE = "icon-image";
     public static final String MODIFIER = "modifier";
     public static final String OBJECT_Z_INDEX = "object-z-index";
