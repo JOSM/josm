@@ -1172,6 +1172,27 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         return rv;
     }
 
+    /**
+     * Get selected primitives, while draw action is in progress.
+     *
+     * While drawing a way, technically the last node is selected.
+     * This is inconvenient when the user tries to add tags to the
+     * way using a keyboard shortcut. In that case, this method returns
+     * the current way as selection, to work around this issue.
+     * Otherwise the normal selection of the current data layer is returned.
+     */
+    public Collection<OsmPrimitive> getInProgressSelection() {
+        DataSet ds = getCurrentDataSet();
+        if (ds == null) return null;
+        if (currentBaseNode != null && !ds.getSelected().isEmpty()) {
+            Way continueFrom = getWayForNode(currentBaseNode);
+            if (alt && continueFrom != null) {
+                return Collections.<OsmPrimitive>singleton(continueFrom);
+            }
+        }
+        return ds.getSelected();
+    }
+
     @Override
     public boolean layerIsSupported(Layer l) {
         return l instanceof OsmDataLayer;

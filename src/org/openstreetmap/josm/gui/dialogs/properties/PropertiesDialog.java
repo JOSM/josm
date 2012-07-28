@@ -73,6 +73,7 @@ import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -461,9 +462,14 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * to the dataset, of course).
      */
     void add() {
-        DataSet ds = Main.main.getCurrentDataSet();
-        if (ds == null) return;
-        Collection<OsmPrimitive> sel = ds.getSelected();
+        Collection<OsmPrimitive> sel;
+        if (Main.map.mapMode instanceof DrawAction) {
+            sel = ((DrawAction) Main.map.mapMode).getInProgressSelection();
+        } else {
+            DataSet ds = Main.main.getCurrentDataSet();
+            if (ds == null) return;
+            sel = ds.getSelected();
+        }
         if (sel.isEmpty()) return;
 
         JPanel p = new JPanel(new BorderLayout());
