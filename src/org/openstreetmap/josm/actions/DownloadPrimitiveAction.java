@@ -317,18 +317,20 @@ public class DownloadPrimitiveAction extends JosmAction {
 
     private void tryToPasteFromClipboard(OsmIdTextField tfId, OsmPrimitiveTypesComboBox cbType) {
         String buf = Utils.getClipboardContent();
-        if (buf.contains("node")) cbType.setSelectedIndex(0);
-        if (buf.contains("way")) cbType.setSelectedIndex(1);
-        if (buf.contains("relation")) cbType.setSelectedIndex(2);
-        String[] res = buf.split("/");
-        String txt;
-        if (res.length>0) {
-            txt = res[res.length-1];
-            if (txt.isEmpty() && txt.length()>1) txt=res[res.length-2];
-        } else {
-            txt=buf;
+        if (buf != null) {
+	        if (buf.contains("node")) cbType.setSelectedIndex(0);
+	        if (buf.contains("way")) cbType.setSelectedIndex(1);
+	        if (buf.contains("relation")) cbType.setSelectedIndex(2);
+	        String[] res = buf.split("/");
+	        String txt;
+	        if (res.length>0) {
+	            txt = res[res.length-1];
+	            if (txt.isEmpty() && txt.length()>1) txt=res[res.length-2];
+	        } else {
+	            txt=buf;
+	        }
+	        tfId.setText(txt);
+	        tfId.clearTextIfInvalid();
         }
-        tfId.setText(txt);
-        tfId.clearTextIfInvalid();
     }
 }
