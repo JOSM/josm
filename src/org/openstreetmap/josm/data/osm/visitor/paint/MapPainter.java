@@ -402,10 +402,10 @@ public class MapPainter {
     }
 
     public void drawTextOnPath(Way way, TextElement text) {
-        if (text == null)
+        if (way == null || text == null)
             return;
         String name = text.getString(way);
-        if (name == null || name.equals(""))
+        if (name == null || name.isEmpty())
             return;
 
         Polygon poly = new Polygon();
@@ -437,6 +437,9 @@ public class MapPainter {
 
         double[] p1 = pointAt(t1, poly, pathLength);
         double[] p2 = pointAt(t2, poly, pathLength);
+        
+        if (p1 == null || p2 == null)
+        	return;
 
         double angleOffset;
         double offsetSign;
@@ -461,11 +464,13 @@ public class MapPainter {
             Rectangle2D rect = gv.getGlyphLogicalBounds(i).getBounds2D();
             double t = tStart + offsetSign * (rect.getX() + rect.getWidth()/2) / pathLength;
             double[] p = pointAt(t, poly, pathLength);
-            AffineTransform trfm = AffineTransform.getTranslateInstance(p[0] - rect.getX(), p[1]);
-            trfm.rotate(p[2]+angleOffset);
-            double off = -rect.getY() - rect.getHeight()/2 + text.yOffset;
-            trfm.translate(-rect.getWidth()/2, off);
-            gv.setGlyphTransform(i, trfm);
+            if (p != null) {
+	            AffineTransform trfm = AffineTransform.getTranslateInstance(p[0] - rect.getX(), p[1]);
+	            trfm.rotate(p[2]+angleOffset);
+	            double off = -rect.getY() - rect.getHeight()/2 + text.yOffset;
+	            trfm.translate(-rect.getWidth()/2, off);
+	            gv.setGlyphTransform(i, trfm);
+            }
         }
         if (text.haloRadius != null) {
             Shape textOutline = gv.getOutline();
@@ -487,7 +492,7 @@ public class MapPainter {
         long dx, dy;
         double segLen;
 
-        // Yes, it is ineffecient to iterate from the beginning for each glyph.
+        // Yes, it is inefficient to iterate from the beginning for each glyph.
         // Can be optimized if it turns out to be slow.
         for (int i = 1; i < poly.npoints; ++i) {
             dx = poly.xpoints[i] - poly.xpoints[i-1];
@@ -497,7 +502,8 @@ public class MapPainter {
                 curLen += segLen;
                 continue;
             }
-            return new double[] {poly.xpoints[i-1]+(totalLen - curLen)/segLen*dx,
+            return new double[] {
+            		poly.xpoints[i-1]+(totalLen - curLen)/segLen*dx,
                     poly.ypoints[i-1]+(totalLen - curLen)/segLen*dy,
                     Math.atan2(dy, dx)};
         }
