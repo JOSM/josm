@@ -439,7 +439,7 @@ public class MapPainter {
         double[] p2 = pointAt(t2, poly, pathLength);
         
         if (p1 == null || p2 == null)
-        	return;
+            return;
 
         double angleOffset;
         double offsetSign;
@@ -465,11 +465,11 @@ public class MapPainter {
             double t = tStart + offsetSign * (rect.getX() + rect.getWidth()/2) / pathLength;
             double[] p = pointAt(t, poly, pathLength);
             if (p != null) {
-	            AffineTransform trfm = AffineTransform.getTranslateInstance(p[0] - rect.getX(), p[1]);
-	            trfm.rotate(p[2]+angleOffset);
-	            double off = -rect.getY() - rect.getHeight()/2 + text.yOffset;
-	            trfm.translate(-rect.getWidth()/2, off);
-	            gv.setGlyphTransform(i, trfm);
+                AffineTransform trfm = AffineTransform.getTranslateInstance(p[0] - rect.getX(), p[1]);
+                trfm.rotate(p[2]+angleOffset);
+                double off = -rect.getY() - rect.getHeight()/2 + text.yOffset;
+                trfm.translate(-rect.getWidth()/2, off);
+                gv.setGlyphTransform(i, trfm);
             }
         }
         if (text.haloRadius != null) {
@@ -503,7 +503,7 @@ public class MapPainter {
                 continue;
             }
             return new double[] {
-            		poly.xpoints[i-1]+(totalLen - curLen)/segLen*dx,
+                    poly.xpoints[i-1]+(totalLen - curLen)/segLen*dx,
                     poly.ypoints[i-1]+(totalLen - curLen)/segLen*dy,
                     Math.atan2(dy, dx)};
         }
