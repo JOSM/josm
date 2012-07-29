@@ -457,6 +457,10 @@ public class TagChecker extends Test
                 withErrors.put(p, "HTML");
             }
             if (checkValues && value != null && value.length() > 0 && presetsValueData != null) {
+                final Set<String> values = presetsValueData.get(key);
+                final boolean keyInPresets = values != null;  
+                final boolean tagInPresets = values != null && (values.isEmpty() || values.contains(prop.getValue()));
+                
                 boolean ignore = false;
                 for (String a : ignoreDataStartsWith) {
                     if (key.startsWith(a)) {
@@ -473,33 +477,32 @@ public class TagChecker extends Test
                         ignore = true;
                     }
                 }
+                
+                if (!tagInPresets) {
+                    for (IgnoreKeyPair a : ignoreDataKeyPair) {
+                        if (key.equals(a.key) && value.equals(a.value)) {
+                            ignore = true;
+                        }
+                    }
+
+                    for (IgnoreTwoKeyPair a : ignoreDataTwoKeyPair) {
+                        if (key.equals(a.key2) && value.equals(a.value2)) {
+                            ignore = true;
+                        }
+                    }
+                }
+                
                 if (!ignore) {
-                    String i = marktr("Key ''{0}'' not in presets.");
-                    errors.add( new TestError(this, Severity.OTHER, tr("Presets do not contain property key"),
-                            tr(i, key), MessageFormat.format(i, key), INVALID_VALUE, p) );
-                    withErrors.put(p, "UPK");
-                } else {
-                    Set<String> values = presetsValueData.get(key);
-                    if (values != null && values.size() > 0 && !values.contains(prop.getValue())) {
-                        ignore = false;
-                        for (IgnoreKeyPair a : ignoreDataKeyPair) {
-                            if (key.equals(a.key) && value.equals(a.value)) {
-                                ignore = true;
-                            }
-                        }
-
-                        for (IgnoreTwoKeyPair a : ignoreDataTwoKeyPair) {
-                            if (key.equals(a.key2) && value.equals(a.value2)) {
-                                ignore = true;
-                            }
-                        }
-
-                        if (!ignore) {
-                            String i = marktr("Value ''{0}'' for key ''{1}'' not in presets.");
-                            errors.add( new TestError(this, Severity.OTHER, tr("Presets do not contain property value"),
-                                    tr(i, prop.getValue(), key), MessageFormat.format(i, prop.getValue(), key), INVALID_VALUE, p) );
-                            withErrors.put(p, "UPV");
-                        }
+                    if (!keyInPresets) {
+                        String i = marktr("Key ''{0}'' not in presets.");
+                        errors.add( new TestError(this, Severity.OTHER, tr("Presets do not contain property key"),
+                                tr(i, key), MessageFormat.format(i, key), INVALID_VALUE, p) );
+                        withErrors.put(p, "UPK");
+                    } else if (!tagInPresets) {
+                        String i = marktr("Value ''{0}'' for key ''{1}'' not in presets.");
+                        errors.add( new TestError(this, Severity.OTHER, tr("Presets do not contain property value"),
+                                tr(i, prop.getValue(), key), MessageFormat.format(i, prop.getValue(), key), INVALID_VALUE, p) );
+                        withErrors.put(p, "UPV");
                     }
                 }
             }
