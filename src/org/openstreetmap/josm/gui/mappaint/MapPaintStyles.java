@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -18,7 +19,10 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
@@ -117,6 +121,34 @@ public class MapPaintStyles {
                 .setId("mappaint."+source.getPrefName())
                 .setArchive(source.zipIcons)
                 .setOptional(true).get();
+    }
+    
+    public static ImageIcon getNodeIcon(Tag tag) {
+        return getNodeIcon(tag, true);
+    }
+    
+    public static ImageIcon getNodeIcon(Tag tag, boolean includeDeprecatedIcon) {
+        if (tag != null) {
+            Node virtualNode = new Node();
+            virtualNode.put(tag.getKey(), tag.getValue());
+            StyleList styleList = getStyles().generateStyles(virtualNode, 0, null, false).a;
+            if (styleList != null) {
+                for (Iterator<ElemStyle> it = styleList.iterator(); it.hasNext(); ) {
+                    ElemStyle style = it.next();
+                    if (style instanceof NodeElemStyle) {
+                        MapImage mapImage = ((NodeElemStyle) style).mapImage;
+                        if (mapImage != null) {
+                            if (includeDeprecatedIcon || mapImage.name == null || !mapImage.name.equals("misc/deprecated.png")) {
+                                return new ImageIcon(mapImage.getImage());
+                            } else {
+                                return null; // Deprecated icon found but not wanted
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public static List<String> getIconSourceDirs(StyleSource source) {
