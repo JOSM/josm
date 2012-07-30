@@ -276,8 +276,16 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
         if (layer instanceof GpxLayer) {
             addGpxLayer((GpxLayer)layer);
-        } else if (layer.isBackgroundLayer() || layers.isEmpty()) {
+        } else if (layers.isEmpty()) {
             layers.add(layer);
+        } else if (layer.isBackgroundLayer()) {
+            int i = 0;
+            for (; i < layers.size(); i++) {
+                if (layers.get(i).isBackgroundLayer()) {
+                    break;
+                }
+            }
+            layers.add(i, layer);
         } else {
             layers.add(0, layer);
         }
