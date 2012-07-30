@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
@@ -19,6 +20,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
+import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
@@ -254,7 +256,22 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                     layers.add(i);
                 }
             }
+            // Do not suggest layers already in use
             layers.removeAll(ImageryLayerInfo.instance.getLayers());
+            // For layers containing complex shapes, check that center is in one of its shapes (fix #7910)
+            for (Iterator<ImageryInfo> iti = layers.iterator(); iti.hasNext(); ) {
+                List<Shape> shapes = iti.next().getBounds().getShapes();
+                if (shapes != null) {
+                    boolean found = false;
+                    for (Iterator<Shape> its = shapes.iterator(); its.hasNext() && !found; ) {
+                        found = its.next().contains(center);
+                    }
+                    if (!found) {
+                        iti.remove();
+                    }
+                }
+            }
+            
             if (layers.isEmpty()) {
                 return;
             }
