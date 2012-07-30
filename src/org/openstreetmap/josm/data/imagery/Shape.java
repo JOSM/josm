@@ -9,7 +9,9 @@ import java.util.List;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Geometry;
 
 /**
  * @author Vincent
@@ -23,7 +25,7 @@ public class Shape {
         CheckParameterUtil.ensureParameterNotNull(asString, "asString");
         String[] components = asString.split(separator);
         if (components.length % 2 != 0)
-            throw new IllegalArgumentException(MessageFormat.format("Even number of doubles excpected in string, got {0}: {1}", components.length, asString));
+            throw new IllegalArgumentException(MessageFormat.format("Even number of doubles expected in string, got {0}: {1}", components.length, asString));
         for (int i=0; i<components.length; i+=2) {
             addPoint(components[i], components[i+1]);
         }
@@ -45,6 +47,16 @@ public class Shape {
 
     public List<Coordinate> getPoints() {
         return coords;
+    }
+    
+    public boolean contains(LatLon latlon) {
+        if (latlon == null)
+            return false;
+        List<Node> nodes = new ArrayList<Node>(coords.size());
+        for (Coordinate c : coords) {
+            nodes.add(new Node(new LatLon(c.getLat(), c.getLon())));
+        }
+        return Geometry.nodeInsidePolygon(new Node(latlon), nodes);
     }
 
     public void addPoint(String sLat, String sLon) throws IllegalArgumentException {
