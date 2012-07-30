@@ -441,7 +441,7 @@ abstract public class Main {
         contentPanePrivate.getActionMap().put(action, action);
     }
 
-    public static void unregisterActionShortcut(Shortcut shortcut) {
+    public static void unregisterShortcut(Shortcut shortcut) {
         contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(shortcut.getKeyStroke());
     }
 
@@ -450,7 +450,7 @@ abstract public class Main {
     }
 
     public static void unregisterActionShortcut(Action action, Shortcut shortcut) {
-        contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(shortcut.getKeyStroke());
+        unregisterShortcut(shortcut);
         contentPanePrivate.getActionMap().remove(action);
     }
 

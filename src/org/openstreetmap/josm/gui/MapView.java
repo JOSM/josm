@@ -735,7 +735,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             if (isLayerSupported) {
                 Main.registerActionShortcut(mode, mode.getShortcut());
             } else {
-                Main.unregisterActionShortcut(mode.getShortcut());
+                Main.unregisterShortcut(mode.getShortcut());
             }
         }
         AudioPlayer.reset();

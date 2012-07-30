@@ -223,7 +223,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.mapView.removeMouseMotionListener(this);
         Main.map.mapView.removeTemporaryLayer(this);
         DataSet.removeSelectionListener(this);
-        Main.unregisterActionShortcut(backspaceShortcut);
+        Main.unregisterShortcut(backspaceShortcut);
         snapHelper.unsetFixedMode();
         snapCheckboxMenuItem.getAction().setEnabled(false);
         
@@ -1410,7 +1410,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 }
 
                 if (active) {
-                    double de, dn, l, phi;
+                    double phi;
                     e0 = p0.east();
                     n0 = p0.north();
                     buildLabelText((nearestAngle<=180) ? nearestAngle : nearestAngle-360);
