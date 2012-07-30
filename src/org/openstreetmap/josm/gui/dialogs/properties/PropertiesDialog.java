@@ -6,22 +6,24 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.Dialog.ModalityType;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -34,20 +36,21 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
-import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.InputMap;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -61,7 +64,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuListener;
@@ -92,8 +94,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
-import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -104,6 +106,7 @@ import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandl
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.PresetType;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
@@ -156,19 +159,19 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             {
                 int row = propertyTable.rowAtPoint(e.getPoint());
                 if (row > -1) {
-                    propertyEdit(row);
+                    editProperty(row);
                 } else {
-                    add();
+                    addProperty();
                 }
             } else if (e.getSource() == membershipTable) {
                 int row = membershipTable.rowAtPoint(e.getPoint());
                 if (row > -1) {
-                    membershipEdit(row);
+                    editMembership(row);
                 }
             }
             else
             {
-                add();
+                addProperty();
             }
         }
         @Override public void mousePressed(MouseEvent e) {
@@ -232,7 +235,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * @param row The row of the table from which the value is edited.
      */
     @SuppressWarnings("unchecked")
-    void propertyEdit(int row) {
+    private void editProperty(int row) {
         Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
         if (sel.isEmpty()) return;
 
@@ -433,7 +436,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * @param key the key k
      * @return a list of keys
      */
-    static List<String> getAutocompletionKeys(String key) {
+    private static List<String> getAutocompletionKeys(String key) {
         if ("name".equals(key) || "addr:street".equals(key))
             return Arrays.asList("addr:street", "name");
         else
@@ -446,7 +449,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      *
      * @param row
      */
-    void membershipEdit(int row) {
+    private void editMembership(int row) {
         Relation relation = (Relation)membershipData.getValueAt(row, 0);
         Main.map.relationListDialog.selectRelation(relation);
         RelationEditor.getEditor(
@@ -457,11 +460,23 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
     private static String lastAddKey = null;
     private static String lastAddValue = null;
+    
+    public static final int DEFAULT_LRU_TAGS_NUMBER = 5;
+    public static final int MAX_LRU_TAGS_NUMBER = 9;
+    
+    // LRU cache for recently added tags (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html) 
+    private static final Map<Tag, Void> recentTags = new LinkedHashMap<Tag, Void>(MAX_LRU_TAGS_NUMBER+1, 1.1f, true) {
+        @Override
+        protected boolean removeEldestEntry(Entry<Tag, Void> eldest) {
+            return size() > MAX_LRU_TAGS_NUMBER;
+        }
+    };
+    
     /**
      * Open the add selection dialog and add a new key/value to the table (and
      * to the dataset, of course).
      */
-    void add() {
+    private void addProperty() {
         Collection<OsmPrimitive> sel;
         if (Main.map.mapMode instanceof DrawAction) {
             sel = ((DrawAction) Main.map.mapMode).getInProgressSelection();
@@ -472,10 +487,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
         if (sel.isEmpty()) return;
 
-        JPanel p = new JPanel(new BorderLayout());
+        JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel("<html>"+trn("This will change up to {0} object.",
                 "This will change up to {0} objects.", sel.size(),sel.size())
-                +"<br><br>"+tr("Please select a key")), BorderLayout.NORTH);
+                +"<br><br>"+tr("Please select a key")), GBC.eol());
         final AutoCompletingComboBox keys = new AutoCompletingComboBox();
         AutoCompletionManager autocomplete = Main.main.getEditLayer().data.getAutoCompletionManager();
         List<AutoCompletionListItem> keyList = autocomplete.getKeys();
@@ -503,14 +518,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         keys.setPossibleACItems(keyList);
         keys.setEditable(true);
 
-        p.add(keys, BorderLayout.CENTER);
+        p.add(keys, GBC.eop().fill());
 
-        JPanel p2 = new JPanel(new BorderLayout());
-        p.add(p2, BorderLayout.SOUTH);
-        p2.add(new JLabel(tr("Please select a value")), BorderLayout.NORTH);
+        p.add(new JLabel(tr("Please select a value")), GBC.eol());
         final AutoCompletingComboBox values = new AutoCompletingComboBox();
         values.setEditable(true);
-        p2.add(values, BorderLayout.CENTER);
+        p.add(values, GBC.eop().fill());
         if (itemToSelect != null) {
             keys.setSelectedItem(itemToSelect);
             /* don't add single chars, as they are no properly selected */
@@ -518,6 +531,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 values.setSelectedItem(lastAddValue);
             }
         }
+        
+        int recentTagsToShow = Main.pref.getInteger("properties.recently-added-tags", DEFAULT_LRU_TAGS_NUMBER);
+        if (recentTagsToShow > MAX_LRU_TAGS_NUMBER) {
+            recentTagsToShow = MAX_LRU_TAGS_NUMBER;
+        }
+        List<JosmAction> recentTagsActions = new ArrayList<JosmAction>();
+        suggestRecentlyAddedTags(p, keys, values, recentTagsActions, recentTagsToShow);
 
         FocusAdapter focus = addFocusAdapter(-1, keys, values, autocomplete, defaultACItemComparator);
         // fire focus event in advance or otherwise the popup list will be too small at first
@@ -541,6 +561,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         JDialog dialog = pane.createDialog(Main.parent, tr("Add value?"));
         dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
         dialog.setVisible(true);
+        
+        for (JosmAction action : recentTagsActions) {
+            action.destroy();
+        }
 
         if (!Integer.valueOf(JOptionPane.OK_OPTION).equals(pane.getValue()))
             return;
@@ -550,8 +574,58 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             return;
         lastAddKey = key;
         lastAddValue = value;
+        recentTags.put(new Tag(key, value), null);
         Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, value));
         btnAdd.requestFocusInWindow();
+    }
+    
+    private void suggestRecentlyAddedTags(JPanel p, final AutoCompletingComboBox keys, final AutoCompletingComboBox values, List<JosmAction> tagsActions, int tagsToShow) {
+        if (tagsToShow > 0 && !recentTags.isEmpty()) {
+            p.add(new JLabel(tr("Recently added tags")), GBC.eol());
+            
+            int count = 1;
+            // We store the maximum number (9) of recent tags to allow dynamic change of number of tags shown in the preferences.
+            // This implies to iterate in descending order, as the oldest elements will only be removed after we reach the maximum numbern and not the number of tags to show.
+            // However, as Set does not allow to iterate in descending order, we need to copy its elements into a List we can access in reverse order.
+            List<Tag> tags = new LinkedList<Tag>(recentTags.keySet());
+            for (int i = tags.size()-1; i >= 0 && count <= tagsToShow; i--, count++) {
+                final Tag t = tags.get(i);
+                // Find and display icon
+                ImageIcon icon = MapPaintStyles.getNodeIcon(t, false); // Filters deprecated icon
+                if (icon == null) {
+                    icon = new ImageIcon(new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB));
+                }
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.ipadx = 5;
+                p.add(new JLabel(icon), gbc);
+                // Create action for reusing the tag, with keyboard shortcut Ctrl+(1-5)
+                String actionShortcutKey = "properties:recent:"+count;
+                Shortcut sc = Shortcut.registerShortcut(actionShortcutKey, null, KeyEvent.VK_0+count, Shortcut.CTRL);
+                final JosmAction action = new JosmAction(actionShortcutKey, null, tr("Use this tag again"), sc, false) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        keys.getEditor().setItem(t.getKey());
+                        values.getEditor().setItem(t.getValue());
+                    }
+                };
+                p.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), actionShortcutKey);
+                p.getActionMap().put(actionShortcutKey, action);
+                tagsActions.add(action);
+                // Display clickable tag
+                final JLabel tagLabel = new JLabel("<html>"
+                    + "<style>td{border:1px solid gray; font-weight:normal;}</style>" 
+                    + "<table><tr><td>" + t.toString() + "</td></tr></table></html>");
+                tagLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                tagLabel.setToolTipText((String) action.getValue(Action.SHORT_DESCRIPTION));
+                tagLabel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        action.actionPerformed(null);
+                    }
+                });
+                p.add(tagLabel, GBC.eol());
+            }
+        }
     }
 
     /**
@@ -1188,7 +1262,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            add();
+            addProperty();
         }
     }
 
@@ -1206,10 +1280,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 return;
             if (propertyTable.getSelectedRowCount() == 1) {
                 int row = propertyTable.getSelectedRow();
-                propertyEdit(row);
+                editProperty(row);
             } else if (membershipTable.getSelectedRowCount() == 1) {
                 int row = membershipTable.getSelectedRow();
-                membershipEdit(row);
+                editMembership(row);
             }
         }
 
