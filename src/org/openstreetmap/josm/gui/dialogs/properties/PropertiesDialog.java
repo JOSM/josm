@@ -490,7 +490,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel("<html>"+trn("This will change up to {0} object.",
                 "This will change up to {0} objects.", sel.size(),sel.size())
-                +"<br><br>"+tr("Please select a key")), GBC.eol());
+                +"<br><br>"+tr("Please select a key")), GBC.eol().fill(GBC.HORIZONTAL));
         final AutoCompletingComboBox keys = new AutoCompletingComboBox();
         AutoCompletionManager autocomplete = Main.main.getEditLayer().data.getAutoCompletionManager();
         List<AutoCompletionListItem> keyList = autocomplete.getKeys();
