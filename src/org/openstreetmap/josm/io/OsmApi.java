@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
@@ -42,23 +41,33 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Class that encapsulates the communications with the OSM API.
+ * Class that encapsulates the communications with the <a href="http://wiki.openstreetmap.org/wiki/API_v0.6">OSM API</a>.<br/><br/>
  *
- * All interaction with the server-side OSM API should go through this class.
+ * All interaction with the server-side OSM API should go through this class.<br/><br/>
  *
  * It is conceivable to extract this into an interface later and create various
  * classes implementing the interface, to be able to talk to various kinds of servers.
  *
  */
 public class OsmApi extends OsmConnection {
-    /** max number of retries to send a request in case of HTTP 500 errors or timeouts */
+    
+    /** 
+     * Maximum number of retries to send a request in case of HTTP 500 errors or timeouts 
+     */
     static public final int DEFAULT_MAX_NUM_RETRIES = 5;
 
-    /** the collection of instantiated OSM APIs */
+    /**
+     * Maximum number of concurrent download threads, imposed by 
+     * <a href="http://wiki.openstreetmap.org/wiki/API_usage_policy#Technical_Usage_Requirements">
+     * OSM API usage policy.</a>
+     */
+    static public final int MAX_DOWNLOAD_THREADS = 2;
+
+    // The collection of instantiated OSM APIs
     private static HashMap<String, OsmApi> instances = new HashMap<String, OsmApi>();
 
     /**
-     * replies the {@link OsmApi} for a given server URL
+     * Replies the {@link OsmApi} for a given server URL
      *
      * @param serverUrl  the server URL
      * @return the OsmApi
@@ -73,11 +82,12 @@ public class OsmApi extends OsmConnection {
         }
         return api;
     }
+    
     /**
-     * replies the {@link OsmApi} for the URL given by the preference <code>osm-server.url</code>
+     * Replies the {@link OsmApi} for the URL given by the preference <code>osm-server.url</code>
      *
      * @return the OsmApi
-     * @exception IllegalStateException thrown, if the preference <code>osm-server.url</code> is not set
+     * @throws IllegalStateException thrown, if the preference <code>osm-server.url</code> is not set
      *
      */
     static public OsmApi getOsmApi() {
@@ -128,7 +138,7 @@ public class OsmApi extends OsmConnection {
      * creates an OSM api for a specific server URL
      *
      * @param serverUrl the server URL. Must not be null
-     * @exception IllegalArgumentException thrown, if serverUrl is null
+     * @throws IllegalArgumentException thrown, if serverUrl is null
      */
     protected OsmApi(String serverUrl)  {
         CheckParameterUtil.ensureParameterNotNull(serverUrl, "serverUrl");
@@ -136,13 +146,17 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
-     * Returns the OSM protocol version we use to talk to the server.
+     * Replies the OSM protocol version we use to talk to the server.
      * @return protocol version, or null if not yet negotiated.
      */
     public String getVersion() {
         return version;
     }
 
+    /**
+     * Replies the host name of the server URL.
+     * @return the host name of the server URL, or null if the server URL is malformed.
+     */
     public String getHost() {
         String host = null;
         try {
@@ -162,24 +176,33 @@ public class OsmApi extends OsmConnection {
             this.monitor = monitor;
             this.fastFail = fastFail;
         }
+        
         @Override
         protected byte[] updateData() throws OsmTransferException {
-            String s = sendRequest("GET", "capabilities", null, monitor, false, fastFail);
-            return s.getBytes();
+            return sendRequest("GET", "capabilities", null, monitor, false, fastFail).getBytes();
         }
     }
 
-    public void initialize(ProgressMonitor monitor) throws OsmApiInitializationException, OsmTransferCanceledException {
-        initialize(monitor, false);
-    }
     /**
      * Initializes this component by negotiating a protocol version with the server.
-     *
-     * @param monitor
-     * @param fastFail true to request quick initialisation with a small timeout (more likely to throw exception)
-     * @exception OsmApiInitializationException thrown, if an exception occurs
+     * 
+     * @param monitor the progress monitor
+     * @throws OsmTransferCanceledException If the initialisation has been cancelled by user.
+     * @throws OsmApiInitializationException If any other exception occurs. Use getCause() to get the original exception.
      */
-    public void initialize(ProgressMonitor monitor, boolean fastFail) throws OsmApiInitializationException, OsmTransferCanceledException {
+    public void initialize(ProgressMonitor monitor) throws OsmTransferCanceledException, OsmApiInitializationException {
+        initialize(monitor, false);
+    }
+    
+    /**
+     * Initializes this component by negotiating a protocol version with the server, with the ability to control the timeout. 
+     *
+     * @param monitor the progress monitor
+     * @param fastFail true to request quick initialisation with a small timeout (more likely to throw exception)
+     * @throws OsmTransferCanceledException If the initialisation has been cancelled by user.
+     * @throws OsmApiInitializationException If any other exception occurs. Use getCause() to get the original exception.
+     */
+    public void initialize(ProgressMonitor monitor, boolean fastFail) throws OsmTransferCanceledException, OsmApiInitializationException {
         if (initialized)
             return;
         cancel = false;
@@ -214,7 +237,7 @@ public class OsmApi extends OsmConnection {
              * in the preferences menu. Otherwise they would not have been able
              * to load the layers in the first place becuase they would have
              * been disabled! */
-            if (Main.main.isDisplayingMapView()) {
+            if (Main.isDisplayingMapView()) {
                 for (Layer l : Main.map.mapView.getLayersOfType(ImageryLayer.class)) {
                     if (((ImageryLayer) l).getInfo().isBlacklisted()) {
                         System.out.println(tr("Removed layer {0} because it is not allowed by the configured API.", l.getName()));
@@ -223,18 +246,9 @@ public class OsmApi extends OsmConnection {
                 }
             }
 
-        } catch(IOException e) {
-            initialized = false;
-            throw new OsmApiInitializationException(e);
-        } catch(SAXException e) {
-            initialized = false;
-            throw new OsmApiInitializationException(e);
-        } catch(ParserConfigurationException e) {
-            initialized = false;
-            throw new OsmApiInitializationException(e);
-        } catch(OsmTransferCanceledException e){
+        } catch (OsmTransferCanceledException e) {
             throw e;
-        } catch(OsmTransferException e) {
+        } catch (Exception e) {
             initialized = false;
             throw new OsmApiInitializationException(e);
         }
@@ -298,6 +312,7 @@ public class OsmApi extends OsmConnection {
      * is modified by giving it the server-assigned id.
      *
      * @param osm the primitive
+     * @param monitor the progress monitor
      * @throws OsmTransferException if something goes wrong
      */
     public void createPrimitive(IPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
@@ -338,6 +353,7 @@ public class OsmApi extends OsmConnection {
     /**
      * Deletes an OSM primitive on the server.
      * @param osm the primitive
+     * @param monitor the progress monitor
      * @throws OsmTransferException if something goes wrong
      */
     public void deletePrimitive(IPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
@@ -534,10 +550,6 @@ public class OsmApi extends OsmConnection {
         return sendRequest(requestMethod, urlSuffix, requestBody, monitor, true, false);
     }
 
-    private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor, boolean doAuth) throws OsmTransferException {
-        return sendRequest(requestMethod, urlSuffix, requestBody, monitor, doAuth, false);
-    }
-
     /**
      * Generic method for sending requests to the OSM API.
      *
@@ -554,7 +566,7 @@ public class OsmApi extends OsmConnection {
      * @param fastFail true to request a short timeout
      *
      * @return the body of the HTTP response, if and only if the response code was "200 OK".
-     * @exception OsmTransferException if the HTTP return code was not 200 (and retries have
+     * @throws OsmTransferException if the HTTP return code was not 200 (and retries have
      *    been exhausted), or rewrapping a Java exception.
      */
     private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor, boolean doAuthenticate, boolean fastFail) throws OsmTransferException {
@@ -683,9 +695,9 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
-     * returns the API capabilities; null, if the API is not initialized yet
+     * Replies the API capabilities
      *
-     * @return the API capabilities
+     * @return the API capabilities, or null, if the API is not initialized yet
      */
     public Capabilities getCapabilities() {
         return capabilities;
@@ -703,6 +715,7 @@ public class OsmApi extends OsmConnection {
         if (changeset.getId() <= 0)
             throw new OsmTransferException(tr("ID of current changeset > 0 required. Current ID is {0}.", changeset.getId()));
     }
+    
     /**
      * Replies the changeset data uploads are currently directed to
      *
