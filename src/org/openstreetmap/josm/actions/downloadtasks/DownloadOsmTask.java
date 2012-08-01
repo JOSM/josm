@@ -261,7 +261,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
             // For layers containing complex shapes, check that center is in one of its shapes (fix #7910)
             for (Iterator<ImageryInfo> iti = layers.iterator(); iti.hasNext(); ) {
                 List<Shape> shapes = iti.next().getBounds().getShapes();
-                if (shapes != null) {
+                if (shapes != null && !shapes.isEmpty()) {
                     boolean found = false;
                     for (Iterator<Shape> its = shapes.iterator(); its.hasNext() && !found; ) {
                         found = its.next().contains(center);
@@ -271,7 +271,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                     }
                 }
             }
-            
+
             if (layers.isEmpty()) {
                 return;
             }
