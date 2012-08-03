@@ -105,10 +105,11 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     public static final BooleanProperty PROP_OVERLAP = new BooleanProperty("imagery.wms.overlap", false);
     public static final IntegerProperty PROP_OVERLAP_EAST = new IntegerProperty("imagery.wms.overlapEast", 14);
     public static final IntegerProperty PROP_OVERLAP_NORTH = new IntegerProperty("imagery.wms.overlapNorth", 4);
+    public static final IntegerProperty PROP_IMAGE_SIZE = new IntegerProperty("imagery.wms.imageSize", 500);
 
     public int messageNum = 5; //limit for messages per layer
     protected String resolution;
-    protected int imageSize = 500;
+    protected int imageSize;
     protected int dax = 10;
     protected int day = 10;
     protected int daStep = 5;
@@ -157,6 +158,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
 
     public WMSLayer(ImageryInfo info) {
         super(info);
+        imageSize = PROP_IMAGE_SIZE.get();
         mv = Main.map.mapView;
         setBackgroundLayer(true); /* set global background variable */
         initializeImages();
