@@ -160,7 +160,7 @@ public class GpxWriter extends XmlWriter {
 
     private void writeTracks() {
         for (GpxTrack trk : data.tracks) {
-            open("trk");
+            openln("trk");
             writeAttr(trk.getAttributes());
             for (GpxTrackSegment seg : trk.getSegments()) {
                 openln("trkseg");
@@ -189,7 +189,7 @@ public class GpxWriter extends XmlWriter {
     }
 
     private void inline(String tag, String attributes) {
-        out.println(indent + "<" + tag + " " + attributes + " />");
+        out.println(indent + "<" + tag + " " + attributes + "/>");
     }
 
     private void close(String tag) {
@@ -247,9 +247,14 @@ public class GpxWriter extends XmlWriter {
         }
         if (pnt != null) {
             LatLon c = pnt.getCoor();
-            openAtt(type, "lat=\"" + c.lat() + "\" lon=\"" + c.lon() + "\"");
-            writeAttr(pnt.attr);
-            closeln(type);
+            String coordAttr = "lat=\"" + c.lat() + "\" lon=\"" + c.lon() + "\"";
+            if (pnt.attr.isEmpty()) {
+                inline(type, coordAttr);
+            } else {
+                openAtt(type, coordAttr);
+                writeAttr(pnt.attr);
+                closeln(type);
+            }
         }
     }
 }
