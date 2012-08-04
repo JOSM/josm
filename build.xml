@@ -108,10 +108,7 @@ Build-Date: ${build.tstamp}
             <zipfileset dir="macosx" includes="JOSM.app/Contents/MacOS/JOSM" filemode="755"/>
         </zip>
     </target>
-    <uptodate property="javacc.notRequired" targetfile="${mapcss.dir}/parsergen/MapCSSParser.java" >
-        <srcfiles dir="${mapcss.dir}" includes="MapCSSParser.jj"/>
-    </uptodate>
-    <target name="javacc" unless="javacc.notRequired">
+    <target name="javacc" depends="init" unless="javacc.notRequired">
         <mkdir dir="${mapcss.dir}/parsergen"/>
         <exec append="false" executable="java" failifexecutionfails="true">
             <arg value="-cp"/>
@@ -122,7 +119,7 @@ Build-Date: ${build.tstamp}
         </exec>
 <!--        <javacc target="${mapcss.dir}/MapCSSParser.jj" javacchome="${javacc.home}" outputdirectory="${mapcss.dir}/parsergen"/>-->
     </target>
-    <target name="compile" depends="javacc,init">
+    <target name="compile" depends="init,javacc">
         <javac srcdir="src" includes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.5" source="1.5" debug="on" encoding="iso-8859-1"/>
         <javac srcdir="src" excludes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.5" source="1.5" debug="on" encoding="UTF-8">
             <compilerarg value="-Xlint:deprecation"/>
@@ -130,6 +127,9 @@ Build-Date: ${build.tstamp}
         </javac>
     </target>
     <target name="init">
+        <uptodate property="javacc.notRequired" targetfile="${mapcss.dir}/parsergen/MapCSSParser.java" >
+            <srcfiles dir="${mapcss.dir}" includes="MapCSSParser.jj"/>
+        </uptodate>
         <mkdir dir="build"/>
         <mkdir dir="dist"/>
     </target>
