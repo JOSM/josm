@@ -37,7 +37,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.gui.jmapviewer.AttributionSupport;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
@@ -470,7 +469,13 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         if (source == null)
             throw new IllegalStateException("Cannot create TMSLayer with non-TMS ImageryInfo");
         initTileSource(source);
+    }
 
+    /**
+     * Adds a context menu to the mapView.
+     */
+    @Override
+    public void hookUpMapView() {
         tileOptionMenu = new JPopupMenu();
 
         autoZoom = PROP_DEFAULT_AUTOZOOM.get();
@@ -520,7 +525,6 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 tr("Show Tile Info")) {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                //Main.debug("info tile: " + clickedTile);
                 if (clickedTile != null) {
                     showMetadataTile = clickedTile;
                     redraw();
@@ -558,98 +562,88 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         }));
 
         // increase and decrease commands
-        tileOptionMenu.add(new JMenuItem(
-                new AbstractAction(tr("Increase zoom")) {
-                    @Override
-                    public void actionPerformed(ActionEvent ae) {
-                        increaseZoomLevel();
-                        redraw();
-                    }
-                }));
-
-        tileOptionMenu.add(new JMenuItem(
-                new AbstractAction(tr("Decrease zoom")) {
-                    @Override
-                    public void actionPerformed(ActionEvent ae) {
-                        decreaseZoomLevel();
-                        redraw();
-                    }
-                }));
-
-        // FIXME: currently ran in errors
-
-        tileOptionMenu.add(new JMenuItem(
-                new AbstractAction(tr("Snap to tile size")) {
-                    @Override
-                    public void actionPerformed(ActionEvent ae) {
-                        double new_factor = Math.sqrt(getScaleFactor(currentZoomLevel));
-                        Main.map.mapView.zoomToFactor(new_factor);
-                        redraw();
-                    }
-                }));
-        // end of adding menu commands
-
-        tileOptionMenu.add(new JMenuItem(
-                new AbstractAction(tr("Flush Tile Cache")) {
-                    @Override
-                    public void actionPerformed(ActionEvent ae) {
-                        new PleaseWaitRunnable(tr("Flush Tile Cache")) {
-                            
-                            @Override
-                            protected void realRun() throws SAXException, IOException,
-                                    OsmTransferException {
-                                clearTileCache(getProgressMonitor());
-                            }
-                            
-                            @Override
-                            protected void finish() {
-                            }
-                            
-                            @Override
-                            protected void cancel() {
-                            }
-                        }.run();
-                        
-                    }
-                }));
-        // end of adding menu commands
-
-        SwingUtilities.invokeLater(new Runnable() {
+        tileOptionMenu.add(new JMenuItem(new AbstractAction(
+                tr("Increase zoom")) {
             @Override
-            public void run() {
-                final MouseAdapter adapter = new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        if (!isVisible()) return;
-                        if (e.getButton() == MouseEvent.BUTTON3) {
-                            clickedTile = getTileForPixelpos(e.getX(), e.getY());
-                            tileOptionMenu.show(e.getComponent(), e.getX(), e.getY());
-                        } else if (e.getButton() == MouseEvent.BUTTON1) {
-                            attribution.handleAttribution(e.getPoint(), true);
-                        }
-                    }
-                };
-                Main.map.mapView.addMouseListener(adapter);
+            public void actionPerformed(ActionEvent ae) {
+                increaseZoomLevel();
+                redraw();
+            }
+        }));
 
-                MapView.addLayerChangeListener(new LayerChangeListener() {
+        tileOptionMenu.add(new JMenuItem(new AbstractAction(
+                tr("Decrease zoom")) {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                decreaseZoomLevel();
+                redraw();
+            }
+        }));
+
+        tileOptionMenu.add(new JMenuItem(new AbstractAction(
+                tr("Snap to tile size")) {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                double new_factor = Math.sqrt(getScaleFactor(currentZoomLevel));
+                Main.map.mapView.zoomToFactor(new_factor);
+                redraw();
+            }
+        }));
+
+        tileOptionMenu.add(new JMenuItem(new AbstractAction(
+                tr("Flush Tile Cache")) {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                new PleaseWaitRunnable(tr("Flush Tile Cache")) {
                     @Override
-                    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-                        //
+                    protected void realRun() throws SAXException, IOException,
+                            OsmTransferException {
+                        clearTileCache(getProgressMonitor());
                     }
 
                     @Override
-                    public void layerAdded(Layer newLayer) {
-                        //
+                    protected void finish() {
                     }
 
                     @Override
-                    public void layerRemoved(Layer oldLayer) {
-                        if (oldLayer == TMSLayer.this) {
-                            Main.map.mapView.removeMouseListener(adapter);
-                            MapView.removeLayerChangeListener(this);
-                        }
+                    protected void cancel() {
                     }
-                });
+                }.run();
+            }
+        }));
+        // end of adding menu commands
+
+        final MouseAdapter adapter = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (!isVisible()) return;
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    clickedTile = getTileForPixelpos(e.getX(), e.getY());
+                    tileOptionMenu.show(e.getComponent(), e.getX(), e.getY());
+                } else if (e.getButton() == MouseEvent.BUTTON1) {
+                    attribution.handleAttribution(e.getPoint(), true);
+                }
+            }
+        };
+        Main.map.mapView.addMouseListener(adapter);
+
+        MapView.addLayerChangeListener(new LayerChangeListener() {
+            @Override
+            public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+                //
+            }
+
+            @Override
+            public void layerAdded(Layer newLayer) {
+                //
+            }
+
+            @Override
+            public void layerRemoved(Layer oldLayer) {
+                if (oldLayer == TMSLayer.this) {
+                    Main.map.mapView.removeMouseListener(adapter);
+                    MapView.removeLayerChangeListener(this);
+                }
             }
         });
     }

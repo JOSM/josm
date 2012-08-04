@@ -120,7 +120,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     protected boolean autoDownloadEnabled = true;
     protected boolean settingsChanged;
     protected ImageryInfo info;
-    protected final MapView mv;
+    protected MapView mv;
     public WmsCache cache;
     private AttributionSupport attribution = new AttributionSupport();
 
@@ -159,9 +159,22 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     public WMSLayer(ImageryInfo info) {
         super(info);
         imageSize = PROP_IMAGE_SIZE.get();
-        mv = Main.map.mapView;
         setBackgroundLayer(true); /* set global background variable */
         initializeImages();
+        this.info = new ImageryInfo(info);
+
+        attribution.initialize(this.info);
+
+        if(info.getUrl() != null) {
+            startGrabberThreads();
+        }
+        
+        Main.pref.addPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void hookUpMapView() {
+        mv = Main.map.mapView;
         if (info.getUrl() != null) {
             for (WMSLayer layer: Main.map.mapView.getLayersOfType(WMSLayer.class)) {
                 if (layer.getInfo().getUrl().equals(info.getUrl())) {
@@ -174,54 +187,39 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                 cache.loadIndex();
             }
         }
-        this.info = new ImageryInfo(info);
         if(this.info.getPixelPerDegree() == 0.0) {
             this.info.setPixelPerDegree(getPPD());
         }
         resolution = mv.getDist100PixelText();
 
-        attribution.initialize(this.info);
-
-        if(info.getUrl() != null) {
-            startGrabberThreads();
-        }
-
-
-        Main.pref.addPreferenceChangeListener(this);
-
-        SwingUtilities.invokeLater(new Runnable() {
+        final MouseAdapter adapter = new MouseAdapter() {
             @Override
-            public void run() {
-                final MouseAdapter adapter = new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        if (!isVisible()) return;
-                        if (e.getButton() == MouseEvent.BUTTON1) {
-                            attribution.handleAttribution(e.getPoint(), true);
-                        }
-                    }
-                };
-                Main.map.mapView.addMouseListener(adapter);
+            public void mouseClicked(MouseEvent e) {
+                if (!isVisible()) return;
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    attribution.handleAttribution(e.getPoint(), true);
+                }
+            }
+        };
+        Main.map.mapView.addMouseListener(adapter);
 
-                MapView.addLayerChangeListener(new LayerChangeListener() {
-                    @Override
-                    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-                        //
-                    }
+        MapView.addLayerChangeListener(new LayerChangeListener() {
+            @Override
+            public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+                //
+            }
 
-                    @Override
-                    public void layerAdded(Layer newLayer) {
-                        //
-                    }
+            @Override
+            public void layerAdded(Layer newLayer) {
+                //
+            }
 
-                    @Override
-                    public void layerRemoved(Layer oldLayer) {
-                        if (oldLayer == WMSLayer.this) {
-                            Main.map.mapView.removeMouseListener(adapter);
-                            MapView.removeLayerChangeListener(this);
-                        }
-                    }
-                });
+            @Override
+            public void layerRemoved(Layer oldLayer) {
+                if (oldLayer == WMSLayer.this) {
+                    Main.map.mapView.removeMouseListener(adapter);
+                    MapView.removeLayerChangeListener(this);
+                }
             }
         });
     }

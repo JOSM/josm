@@ -371,6 +371,7 @@ abstract public class Main {
             //
             layer.addPropertyChangeListener(LayerListDialog.getInstance().getModel());
         }
+        layer.hookUpMapView();
         map.mapView.addLayer(layer);
     }
 

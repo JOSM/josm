@@ -33,6 +33,8 @@ import org.w3c.dom.Text;
 
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.TMSLayer;
+import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -42,6 +44,8 @@ public class SessionWriter {
             new HashMap<Class<? extends Layer>, Class<? extends SessionLayerExporter>>();
     static {
         registerSessionLayerExporter(OsmDataLayer.class , OsmDataSessionExporter.class);
+        registerSessionLayerExporter(TMSLayer.class , ImagerySessionExporter.class);
+        registerSessionLayerExporter(WMSLayer.class , ImagerySessionExporter.class);
     }
 
     /**

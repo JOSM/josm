@@ -55,6 +55,7 @@ public class SessionReader {
     private static Map<String, Class<? extends SessionLayerImporter>> sessionLayerImporters = new HashMap<String, Class<? extends SessionLayerImporter>>();
     static {
         registerSessionLayerImporter("osm-data", OsmDataSessionImporter.class);
+        registerSessionLayerImporter("imagery", ImagerySessionImporter.class);
     }
 
     public static void registerSessionLayerImporter(String layerType, Class<? extends SessionLayerImporter> importer) {
@@ -165,7 +166,7 @@ public class SessionReader {
         }
 
         /**
-         * Return a File for a URI from a .jos file.
+         * Return a File for a URI from a .jos/.joz file.
          *
          * Returns null if the URI points to a file inside the zip archive.
          * In this case, inZipPath will be set to the corresponding path.
