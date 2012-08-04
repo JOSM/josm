@@ -41,8 +41,8 @@ public interface SessionLayerExporter {
     boolean requiresZip();
 
     /**
-     * Save meta data to the .jos file. Return a <layer> element.
-     * Use support to save files in the zip archive as needed.
+     * Save meta data to the .jos file. Return a layer XML element.
+     * Use <code>support</code> to save files in the zip archive as needed.
      */
     Element export(ExportSupport support) throws IOException;
 

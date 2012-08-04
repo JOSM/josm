@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.data.imagery;
 
 import java.awt.Image;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -12,17 +12,16 @@ import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 
+import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.gui.jmapviewer.interfaces.Attributed;
+import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource.Mapnik;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences.pref;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.gui.jmapviewer.Coordinate;
-import org.openstreetmap.gui.jmapviewer.interfaces.Attributed;
-import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource.Mapnik;
-import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Class that stores info about an image background layer.

@@ -125,6 +125,17 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
     }
 
     /**
+     * Initialization code, that depends on Main.map.mapView.
+     *
+     * It is always called in the event dispatching thread.
+     * Note that Main.map is null as long as no layer has been added, so do
+     * not execute code in the constructor, that assumes Main.map.mapView is
+     * not null. Instead override this method.
+     */
+    public void hookUpMapView() {
+    }
+
+    /**
      * Paint the dataset using the engine set.
      * @param mv The object that can translate GeoPoints to screen coordinates.
      */

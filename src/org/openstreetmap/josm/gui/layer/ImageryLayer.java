@@ -82,9 +82,9 @@ public abstract class ImageryLayer extends Layer {
         if (info.getIcon() != null) {
             icon = new ImageProvider(info.getIcon()).setOptional(true).
                     setMaxHeight(ICON_SIZE).setMaxWidth(ICON_SIZE).get();
-            if (icon == null) {
-                icon = ImageProvider.get("imagery_small");
-            }
+        }
+        if (icon == null) {
+            icon = ImageProvider.get("imagery_small");
         }
         this.sharpenLevel = PROP_SHARPEN_LEVEL.get();
         if (OffsetServer.PROP_SERVER_ENABLED.get()) {

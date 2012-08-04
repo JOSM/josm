@@ -1287,7 +1287,7 @@ public class Preferences {
         return vals;
     }
 
-    private <T> Map<String,String> serializeStruct(T struct, Class<T> klass) {
+    public static <T> Map<String,String> serializeStruct(T struct, Class<T> klass) {
         T structPrototype;
         try {
             structPrototype = klass.newInstance();
@@ -1320,7 +1320,7 @@ public class Preferences {
         return hash;
     }
 
-    private <T> T deserializeStruct(Map<String,String> hash, Class<T> klass) {
+    public static <T> T deserializeStruct(Map<String,String> hash, Class<T> klass) {
         T struct = null;
         try {
             struct = klass.newInstance();
