@@ -82,6 +82,8 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
     static public final String OPACITY_PROP = Layer.class.getName() + ".opacity";
     static public final String NAME_PROP = Layer.class.getName() + ".name";
 
+    static public final int ICON_SIZE = 16;
+
     /** keeps track of property change listeners */
     protected PropertyChangeSupport propertyChangeSupport;
 
