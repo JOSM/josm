@@ -41,7 +41,6 @@ import org.openstreetmap.josm.io.imagery.OsmosnimkiOffsetServer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public abstract class ImageryLayer extends Layer {
-    protected static final Icon icon = ImageProvider.get("imagery_small");
 
     public static final IntegerProperty PROP_FADE_AMOUNT = new IntegerProperty("imagery.fade_amount", 0);
     public static final IntegerProperty PROP_SHARPEN_LEVEL = new IntegerProperty("imagery.sharpen_level", 0);
@@ -61,6 +60,8 @@ public abstract class ImageryLayer extends Layer {
 
     protected final ImageryInfo info;
 
+    protected Icon icon;
+
     protected double dx = 0.0;
     protected double dy = 0.0;
 
@@ -78,6 +79,13 @@ public abstract class ImageryLayer extends Layer {
     public ImageryLayer(ImageryInfo info) {
         super(info.getName());
         this.info = info;
+        if (info.getIcon() != null) {
+            icon = new ImageProvider(info.getIcon()).setOptional(true).
+                    setMaxHeight(ICON_SIZE).setMaxWidth(ICON_SIZE).get();
+            if (icon == null) {
+                icon = ImageProvider.get("imagery_small");
+            }
+        }
         this.sharpenLevel = PROP_SHARPEN_LEVEL.get();
         if (OffsetServer.PROP_SERVER_ENABLED.get()) {
             offsetServerThread = createoffsetServerThread();

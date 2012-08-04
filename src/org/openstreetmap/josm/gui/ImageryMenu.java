@@ -91,7 +91,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
     public void refreshImageryMenu() {
         removeAll();
 
-        // for each configured WMSInfo, add a menu entry.
+        // for each configured ImageryInfo, add a menu entry.
         for (final ImageryInfo u : ImageryLayerInfo.instance.getLayers()) {
             add(new AddImageryLayerAction(u));
         }
