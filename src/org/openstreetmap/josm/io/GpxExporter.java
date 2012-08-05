@@ -68,23 +68,32 @@ public class GpxExporter extends FileExporter {
         // open the dialog asking for options
         JPanel p = new JPanel(new GridBagLayout());
 
+        GpxData gpxData;
+        // At this moment, we only need to know the attributes of the GpxData,
+        // conversion of OsmDataLayer (if needed) will be done after the dialog
+        // is closed.
+        if (layer instanceof GpxLayer) {
+            gpxData = ((GpxLayer) layer).data;
+        } else {
+            gpxData = new GpxData();
+        }
+
         p.add(new JLabel(tr("GPS track description")), GBC.eol());
         JTextArea desc = new JTextArea(3, 40);
         desc.setWrapStyleWord(true);
         desc.setLineWrap(true);
+        desc.setText((String) gpxData.attr.get(GpxData.META_DESC));
         p.add(new JScrollPane(desc), GBC.eop().fill(GBC.BOTH));
 
         JCheckBox author = new JCheckBox(tr("Add author information"), Main.pref.getBoolean("lastAddAuthor", true));
-        author.setSelected(true);
         p.add(author, GBC.eol());
         JLabel nameLabel = new JLabel(tr("Real name"));
         p.add(nameLabel, GBC.std().insets(10, 0, 5, 0));
-        JTextField authorName = new JTextField(Main.pref.get("lastAuthorName"));
+        JTextField authorName = new JTextField();
         p.add(authorName, GBC.eol().fill(GBC.HORIZONTAL));
         JLabel emailLabel = new JLabel(tr("E-Mail"));
         p.add(emailLabel, GBC.std().insets(10, 0, 5, 0));
-        String user = CredentialsManager.getInstance().getUsername();
-        JTextField email = new JTextField(user == null ? "" : user);
+        JTextField email = new JTextField();
         p.add(email, GBC.eol().fill(GBC.HORIZONTAL));
         JLabel copyrightLabel = new JLabel(tr("Copyright (URL)"));
         p.add(copyrightLabel, GBC.std().insets(10, 0, 5, 0));
@@ -98,18 +107,12 @@ public class GpxExporter extends FileExporter {
         p.add(copyrightYear, GBC.eol().fill(GBC.HORIZONTAL));
         JLabel warning = new JLabel("<html><font size='-2'>&nbsp;</html");
         p.add(warning, GBC.eol().fill(GBC.HORIZONTAL).insets(15, 0, 0, 0));
-        addDependencies(author, authorName, email, copyright, predefined, copyrightYear, nameLabel, emailLabel,
+        addDependencies(gpxData, author, authorName, email, copyright, predefined, copyrightYear, nameLabel, emailLabel,
                 copyrightLabel, copyrightYearLabel, warning);
-
-        // if the user name is not the email address, but the osm user name
-        // move it from the email textfield to the author textfield
-        if (!email.getText().contains("@")) {
-            authorName.setText(email.getText());
-            email.setText("");
-        }
 
         p.add(new JLabel(tr("Keywords")), GBC.eol());
         JTextField keywords = new JTextField();
+        keywords.setText((String) gpxData.attr.get(GpxData.META_KEYWORDS));
         p.add(keywords, GBC.eop().fill(GBC.HORIZONTAL));
 
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
@@ -130,7 +133,6 @@ public class GpxExporter extends FileExporter {
             Main.pref.put("lastCopyright", copyright.getText());
         }
 
-        GpxData gpxData;
         if (layer instanceof OsmDataLayer) {
             gpxData = ((OsmDataLayer) layer).toGpxData();
         } else if (layer instanceof GpxLayer) {
@@ -179,7 +181,7 @@ public class GpxExporter extends FileExporter {
 
     }
 
-    private static void enableCopyright(final JTextField copyright, final JButton predefined,
+    private static void enableCopyright(final GpxData data, final JTextField copyright, final JButton predefined,
             final JTextField copyrightYear, final JLabel copyrightLabel, final JLabel copyrightYearLabel,
             final JLabel warning, boolean enable) {
         copyright.setEnabled(enable);
@@ -189,16 +191,24 @@ public class GpxExporter extends FileExporter {
         copyrightYearLabel.setEnabled(enable);
         warning.setText(enable ? warningGpl : "<html><font size='-2'>&nbsp;</html");
 
-        if (enable && copyrightYear.getText().length()==0) {
-            copyrightYear.setText(enable ? Integer.toString(Calendar.getInstance().get(Calendar.YEAR)) : "");
-        } else if (!enable) {
+        if (enable) {
+            if (copyrightYear.getText().length()==0) {
+                String sCopyrightYear = (String) data.attr.get(GpxData.META_COPYRIGHT_YEAR);
+                if (sCopyrightYear == null) {
+                    sCopyrightYear = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
+                }
+                copyrightYear.setText(sCopyrightYear);
+            }
+            if (copyright.getText().length()==0) {
+                String sCopyright = (String) data.attr.get(GpxData.META_COPYRIGHT_LICENSE);
+                if (sCopyright == null) {
+                    sCopyright = Main.pref.get("lastCopyright", "http://creativecommons.org/licenses/by-sa/2.5");
+                }
+                copyright.setText(sCopyright);
+                copyright.setCaretPosition(0);
+            }
+        } else {
             copyrightYear.setText("");
-        }
-
-        if (enable && copyright.getText().length()==0) {
-            copyright.setText(enable ? Main.pref.get("lastCopyright", "http://creativecommons.org/licenses/by-sa/2.5") : "");
-            copyright.setCaretPosition(0);
-        } else if (!enable) {
             copyright.setText("");
         }
     }
@@ -212,6 +222,7 @@ public class GpxExporter extends FileExporter {
      * @param warning
      */
     private static void addDependencies(
+            final GpxData data,
             final JCheckBox author,
             final JTextField authorName,
             final JTextField email,
@@ -231,12 +242,23 @@ public class GpxExporter extends FileExporter {
                 email.setEnabled(b);
                 nameLabel.setEnabled(b);
                 emailLabel.setEnabled(b);
-                authorName.setText(b ? Main.pref.get("lastAuthorName") : "");
-                String user = CredentialsManager.getInstance().getUsername();
-                email.setText(b ? (user == null ? "" : user) : "");
-
-                boolean authorSet = authorName.getText().length() != 0;
-                GpxExporter.enableCopyright(copyright, predefined, copyrightYear, copyrightLabel, copyrightYearLabel, warning, b && authorSet);
+                if (b) {
+                    String sAuthorName = (String) data.attr.get(GpxData.META_AUTHOR_NAME);
+                    if (sAuthorName == null) {
+                        sAuthorName = Main.pref.get("lastAuthorName");
+                    }
+                    authorName.setText(sAuthorName);
+                    String sEmail = (String) data.attr.get(GpxData.META_AUTHOR_EMAIL);
+                    if (sEmail == null) {
+                        sEmail = Main.pref.get("lastAuthorEmail");
+                    }
+                    email.setText(sEmail);
+                } else {
+                    authorName.setText("");
+                    email.setText("");
+                }
+                boolean isAuthorSet = authorName.getText().length() != 0;
+                GpxExporter.enableCopyright(data, copyright, predefined, copyrightYear, copyrightLabel, copyrightYearLabel, warning, b && isAuthorSet);
             }
         };
         author.addActionListener(authorActionListener);
@@ -244,7 +266,7 @@ public class GpxExporter extends FileExporter {
         KeyAdapter authorNameListener = new KeyAdapter(){
             @Override public void keyReleased(KeyEvent e) {
                 boolean b = authorName.getText().length()!=0 && author.isSelected();
-                GpxExporter.enableCopyright(copyright, predefined, copyrightYear, copyrightLabel, copyrightYearLabel, warning, b);
+                GpxExporter.enableCopyright(data, copyright, predefined, copyrightYear, copyrightLabel, copyrightYearLabel, warning, b);
             }
         };
         authorName.addKeyListener(authorNameListener);
