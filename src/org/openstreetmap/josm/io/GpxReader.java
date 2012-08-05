@@ -4,7 +4,6 @@
 package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,11 +30,14 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Read a gpx file. Bounds are not read, as we caluclate them. @see GpxData.recalculateBounds()
+ * Read a gpx file.
+ * 
+ * Bounds are not read, as we caluclate them. @see GpxData.recalculateBounds()
+ * Both GPX version 1.0 and 1.1 are supported.
+ *
  * @author imi, ramack
  */
 public class GpxReader {
-    // TODO: implement GPX 1.0 parsing
 
     private String version;
     /**
@@ -246,8 +248,11 @@ public class GpxReader {
                     currentData.attr.put(GpxData.META_AUTHOR_NAME, accumulator.toString());
                 } else if (version.equals("1.0") && qName.equals("email")) {
                     currentData.attr.put(GpxData.META_AUTHOR_EMAIL, accumulator.toString());
+                } else if (qName.equals("url") || qName.equals("urlname")) {
+                    currentData.attr.put(qName, accumulator.toString());
                 } else if ((currentState == State.metadata && qName.equals("metadata")) ||
                         (currentState == State.gpx && qName.equals("gpx"))) {
+                    convertUrlToLink(currentData.attr);
                     currentState = states.pop();
                 }
                 //TODO: parse bounds, extensions
@@ -295,11 +300,13 @@ public class GpxReader {
                 break;
             case wpt:
                 if (   qName.equals("ele")  || qName.equals("magvar")
-                        || qName.equals("name") || qName.equals("geoidheight")
-                        || qName.equals("type") || qName.equals("sym")) {
+                        || qName.equals("name") || qName.equals("src")
+                        || qName.equals("geoidheight") || qName.equals("type")
+                        || qName.equals("sym") || qName.equals("url")
+                        || qName.equals("urlname")) {
                     currentWayPoint.attr.put(qName, accumulator.toString());
-                } else if(qName.equals("hdop") /*|| qName.equals("vdop") ||
-                        qName.equals("pdop")*/) {
+                } else if(qName.equals("hdop") || qName.equals("vdop") ||
+                        qName.equals("pdop")) {
                     try {
                         currentWayPoint.attr.put(qName, Float.parseFloat(accumulator.toString()));
                     } catch(Exception e) {
@@ -313,12 +320,15 @@ public class GpxReader {
                     currentWayPoint.setTime();
                 } else if (qName.equals("rtept")) {
                     currentState = states.pop();
+                    convertUrlToLink(currentWayPoint.attr);
                     currentRoute.routePoints.add(currentWayPoint);
                 } else if (qName.equals("trkpt")) {
                     currentState = states.pop();
+                    convertUrlToLink(currentWayPoint.attr);
                     currentTrackSeg.add(currentWayPoint);
                 } else if (qName.equals("wpt")) {
                     currentState = states.pop();
+                    convertUrlToLink(currentWayPoint.attr);
                     currentData.waypoints.add(currentWayPoint);
                 }
                 break;
@@ -331,11 +341,12 @@ public class GpxReader {
             case trk:
                 if (qName.equals("trk")) {
                     currentState = states.pop();
+                    convertUrlToLink(currentTrackAttr);
                     currentData.tracks.add(new ImmutableGpxTrack(currentTrack, currentTrackAttr));
                 } else if (qName.equals("name") || qName.equals("cmt")
                         || qName.equals("desc") || qName.equals("src")
                         || qName.equals("type") || qName.equals("number")
-                        || qName.equals("url")) {
+                        || qName.equals("url") || qName.equals("urlname")) {
                     currentTrackAttr.put(qName, accumulator.toString());
                 }
                 break;
@@ -349,6 +360,7 @@ public class GpxReader {
                     currentState = states.pop();
                 } else if (qName.equals("rte")) {
                     currentState = states.pop();
+                    convertUrlToLink(currentRoute.attr);
                     currentData.routes.add(currentRoute);
                 }
             }
@@ -358,6 +370,22 @@ public class GpxReader {
             if (!states.empty())
                 throw new SAXException(tr("Parse error: invalid document structure for GPX document."));
             data = currentData;
+        }
+
+        /**
+         * convert url/urlname to link element (GPX 1.0 -> GPX 1.1).
+         */
+        private void convertUrlToLink(Map<String, Object> attr) {
+            String url = (String) attr.get("url");
+            String urlname = (String) attr.get("urlname");
+            if (url != null) {
+                if (!attr.containsKey(GpxData.META_LINKS)) {
+                    attr.put(GpxData.META_LINKS, new LinkedList<GpxLink>());
+                }
+                GpxLink link = new GpxLink(url);
+                link.text = urlname;
+                ((Collection<GpxLink>) attr.get(GpxData.META_LINKS)).add(link);
+            }
         }
 
         public void tryToFinish() throws SAXException {
