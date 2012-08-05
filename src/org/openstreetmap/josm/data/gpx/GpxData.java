@@ -34,6 +34,8 @@ public class GpxData extends WithAttributes {
     public File storageFile;
     public boolean fromServer;
 
+    public String creator;
+
     public final Collection<GpxTrack> tracks = new LinkedList<GpxTrack>();
     public final Collection<GpxRoute> routes = new LinkedList<GpxRoute>();
     public final Collection<WayPoint> waypoints = new LinkedList<WayPoint>();

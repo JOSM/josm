@@ -4,6 +4,7 @@
 package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,11 +37,12 @@ import org.xml.sax.helpers.DefaultHandler;
 public class GpxReader {
     // TODO: implement GPX 1.0 parsing
 
+    private String version;
     /**
      * The resulting gpx data
      */
     public GpxData data;
-    private enum State { init, metadata, wpt, rte, trk, ext, author, link, trkseg, copyright}
+    private enum State { init, gpx, metadata, wpt, rte, trk, ext, author, link, trkseg, copyright}
     private InputSource inputSource;
 
     private class Parser extends DefaultHandler {
@@ -86,6 +88,15 @@ public class GpxReader {
             elements.push(qName);
             switch(currentState) {
             case init:
+                states.push(currentState);
+                currentState = State.gpx;
+                currentData.creator = atts.getValue("creator");
+                version = atts.getValue("version");
+                if (!equal(version, "1.0") && !equal(version, "1.1")) {
+                    version = "1.1";
+                }
+                System.err.println("Version: "+version);
+            case gpx:
                 if (qName.equals("metadata")) {
                     states.push(currentState);
                     currentState = State.metadata;
@@ -109,6 +120,23 @@ public class GpxReader {
                     nokiaSportsTrackerBug = true;
                 }
                 break;
+            case metadata:
+                if (qName.equals("author")) {
+                    states.push(currentState);
+                    currentState = State.author;
+                } else if (qName.equals("extensions")) {
+                    states.push(currentState);
+                    currentState = State.ext;
+                } else if (qName.equals("copyright")) {
+                    states.push(currentState);
+                    currentState = State.copyright;
+                    currentData.attr.put(GpxData.META_COPYRIGHT_AUTHOR, atts.getValue("author"));
+                } else if (qName.equals("link")) {
+                    states.push(currentState);
+                    currentState = State.link;
+                    currentLink = new GpxLink(atts.getValue("href"));
+                }
+                break;
             case author:
                 if (qName.equals("link")) {
                     states.push(currentState);
@@ -130,23 +158,6 @@ public class GpxReader {
                 } else if (qName.equals("extensions")) {
                     states.push(currentState);
                     currentState = State.ext;
-                }
-                break;
-            case metadata:
-                if (qName.equals("author")) {
-                    states.push(currentState);
-                    currentState = State.author;
-                } else if (qName.equals("extensions")) {
-                    states.push(currentState);
-                    currentState = State.ext;
-                } else if (qName.equals("copyright")) {
-                    states.push(currentState);
-                    currentState = State.copyright;
-                    currentData.attr.put(GpxData.META_COPYRIGHT_AUTHOR, atts.getValue("author"));
-                } else if (qName.equals("link")) {
-                    states.push(currentState);
-                    currentState = State.link;
-                    currentLink = new GpxLink(atts.getValue("href"));
                 }
                 break;
             case trkseg:
@@ -322,6 +333,9 @@ public class GpxReader {
                 if (qName.equals("extensions")) {
                     currentState = states.pop();
                 }
+                break;
+            case gpx:
+                currentState = states.pop();
                 break;
             default:
                 if (qName.equals("wpt")) {
