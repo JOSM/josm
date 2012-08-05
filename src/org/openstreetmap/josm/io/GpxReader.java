@@ -92,10 +92,13 @@ public class GpxReader {
                 currentState = State.gpx;
                 currentData.creator = atts.getValue("creator");
                 version = atts.getValue("version");
-                if (!equal(version, "1.0") && !equal(version, "1.1")) {
+                if (version != null && version.startsWith("1.0")) {
+                    version = "1.0";
+                } else if (!"1.1".equals(version)) {
+                    // unknown version, assume 1.1
                     version = "1.1";
                 }
-                System.err.println("Version: "+version);
+                break;
             case gpx:
                 if (qName.equals("metadata")) {
                     states.push(currentState);
@@ -228,7 +231,8 @@ public class GpxReader {
         @Override public void endElement(String namespaceURI, String localName, String qName) {
             elements.pop();
             switch (currentState) {
-            case metadata:
+            case gpx:       // GPX 1.0
+            case metadata:  // GPX 1.1
                 if (qName.equals("name")) {
                     currentData.attr.put(GpxData.META_NAME, accumulator.toString());
                 } else if (qName.equals("desc")) {
@@ -237,7 +241,13 @@ public class GpxReader {
                     currentData.attr.put(GpxData.META_TIME, accumulator.toString());
                 } else if (qName.equals("keywords")) {
                     currentData.attr.put(GpxData.META_KEYWORDS, accumulator.toString());
-                } else if (qName.equals("metadata")) {
+                } else if (version.equals("1.0") && qName.equals("author")) {
+                    // author is a string in 1.0, but complex element in 1.1
+                    currentData.attr.put(GpxData.META_AUTHOR_NAME, accumulator.toString());
+                } else if (version.equals("1.0") && qName.equals("email")) {
+                    currentData.attr.put(GpxData.META_AUTHOR_EMAIL, accumulator.toString());
+                } else if ((currentState == State.metadata && qName.equals("metadata")) ||
+                        (currentState == State.gpx && qName.equals("gpx"))) {
                     currentState = states.pop();
                 }
                 //TODO: parse bounds, extensions
@@ -333,9 +343,6 @@ public class GpxReader {
                 if (qName.equals("extensions")) {
                     currentState = states.pop();
                 }
-                break;
-            case gpx:
-                currentState = states.pop();
                 break;
             default:
                 if (qName.equals("wpt")) {
