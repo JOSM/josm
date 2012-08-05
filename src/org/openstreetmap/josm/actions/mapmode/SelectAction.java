@@ -176,6 +176,8 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         mv.addMouseMotionListener(this);
         mv.setVirtualNodesEnabled(Main.pref.getInteger("mappaint.node.virtual-size", 8) != 0);
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
+        cycleManager.init();
+        virtualManager.init();
         // This is required to update the cursors when ctrl/shift/alt is pressed
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
@@ -374,8 +376,9 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
      */
     @Override
     public void mousePressed(MouseEvent e) {
+        mouseDownButton = e.getButton();
         // return early
-        if (!mv.isActiveLayerVisible() || !(Boolean) this.getValue("active") || (mouseDownButton = e.getButton()) != MouseEvent.BUTTON1)
+        if (!mv.isActiveLayerVisible() || !(Boolean) this.getValue("active") || mouseDownButton != MouseEvent.BUTTON1)
             return;
         
         // left-button mouse click only is processed here
@@ -395,16 +398,17 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         lastMousePos = e.getPoint();
 
         // primitives under cursor are stored in c collection
-        Collection<OsmPrimitive> c = MapView.asColl(
-                mv.getNearestNodeOrWay(e.getPoint(), OsmPrimitive.isSelectablePredicate, true));
+        
+        OsmPrimitive nearestPrimitive = mv.getNearestNodeOrWay(e.getPoint(), OsmPrimitive.isSelectablePredicate, true);
 
-        determineMapMode(!c.isEmpty());
+        determineMapMode(nearestPrimitive!=null);
         
         switch(mode) {
         case rotate:
         case scale:
+            //  if nothing was selected, select primitive under cursor for scaling or rotating
             if (getCurrentDataSet().getSelected().isEmpty()) {
-                getCurrentDataSet().setSelected(c);
+                getCurrentDataSet().setSelected(MapView.asColl(nearestPrimitive));
             }
 
             // Mode.select redraws when selectPrims is called
@@ -413,14 +417,16 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             // Mode.scale redraws here
             break;
         case move:
-            if (!cancelDrawMode && c.iterator().next() instanceof Way) {
+            // also include case when some primitive is under cursor and no shift+ctrl / alt+ctrl is pressed
+            // so this is not movement, but selection on primitive under cursor
+            if (!cancelDrawMode && nearestPrimitive instanceof Way) {
                 virtualManager.setupVirtual(e.getPoint());
             }
-           
-            selectPrims(cycleManager.cycleSetup(c, e.getPoint()), false, false);
+            selectPrims(cycleManager.cycleSetup(nearestPrimitive, e.getPoint()), false, false);
             break;
         case select:
         default:
+            // start working with rectangle or lasso
             selectionManager.register(mv, lassoMode);
             selectionManager.mousePressed(e);
             break;
@@ -452,12 +458,12 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     public void mouseDragged(MouseEvent e) {
         if (!mv.isActiveLayerVisible())
             return;
-
+        
         // Swing sends random mouseDragged events when closing dialogs by double-clicking their top-left icon on Windows
         // Ignore such false events to prevent issues like #7078
         if (mouseDownButton == MouseEvent.BUTTON1 && mouseReleaseTime > mouseDownTime)
             return;
-
+        
         cancelDrawMode = true;
         if (mode == Mode.select)
             return;
@@ -826,37 +832,47 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         private Collection<OsmPrimitive> cycleList = Collections.emptyList();
         private boolean cyclePrims = false;
         private OsmPrimitive cycleStart = null;
-
+        private boolean waitForMouseUpParameter;
+        private boolean multipleMatchesParameter;
         /**
-         *
-         * @param osm nearest primitive found by simple method
-         * @param e
-         * @return
+         * read preferences
          */
-        private Collection<OsmPrimitive> cycleSetup(Collection<OsmPrimitive> single, Point p) {
+        private void init() {
+            waitForMouseUpParameter = Main.pref.getBoolean("mappaint.select.waits-for-mouse-up", false);
+            multipleMatchesParameter = Main.pref.getBoolean("selectaction.cycles.multiple.matches", false);
+        }
+        
+        /**
+         * Determine prmitive to be selected and build cycleList
+         * @param nearest primitive found by simple method
+         * @param p point where user clicked
+         * @return single-element collection with OsmPrimitive to be selected
+         */
+        private Collection<OsmPrimitive> cycleSetup(OsmPrimitive nearest, Point p) {
             OsmPrimitive osm = null;
 
-            if (single != null && !single.isEmpty()) {
-                osm = single.iterator().next();
+            if (nearest != null) {
+                osm = nearest;
 
                 // Point p = e.getPoint();
-                boolean waitForMouseUp = Main.pref.getBoolean("mappaint.select.waits-for-mouse-up", false);
 //              updateKeyModifiers(e); // cycleSetup called only after updateModifiers !
-                alt = alt || Main.pref.getBoolean("selectaction.cycles.multiple.matches", false);
-
-                if (!alt) {
+                
+                if (!(alt || multipleMatchesParameter)) {
+                    // no real cycling, just one element in cycle list                    
                     cycleList = MapView.asColl(osm);
 
-                    if (waitForMouseUp) {
+                    if (waitForMouseUpParameter) {
                         // prefer a selected nearest node or way, if possible
                         osm = mv.getNearestNodeOrWay(p, OsmPrimitive.isSelectablePredicate, true);
                     }
                 } else {
+                    // Alt + left mouse button pressed: we need to build cycle list
                     cycleList = mv.getAllNearest(p, OsmPrimitive.isSelectablePredicate);
 
                     if (cycleList.size() > 1) {
                         cyclePrims = false;
 
+                        // find first already selected element in cycle list
                         OsmPrimitive old = osm;
                         for (OsmPrimitive o : cycleList) {
                             if (o.isSelected()) {
@@ -868,7 +884,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
 
                         // special case:  for cycle groups of 2, we can toggle to the
                         // true nearest primitive on mousePressed right away
-                        if (cycleList.size() == 2 && !waitForMouseUp) {
+                        if (cycleList.size() == 2 && !waitForMouseUpParameter) {
                             if (!(osm.equals(old) || osm.isNew() || ctrl)) {
                                 cyclePrims = false;
                                 osm = old;
@@ -890,64 +906,68 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         /**
          * Modifies current selection state and returns the next element in a
          * selection cycle given by
-         * <code>prims</code>.
-         *
-         * @param prims the primitives that form the selection cycle
-         * @param mouse event
+         * <code>cycleList</code> field
          * @return the next element of cycle list
-         * <code>prims</code>.
          */
         private Collection<OsmPrimitive> cyclePrims() {
-            Collection<OsmPrimitive> prims = cycleList;
             OsmPrimitive nxt = null;
 
-            if (prims.size() > 1) {
-//                updateKeyModifiers(e); // already called before !
+            if (cycleList.size() <= 1) {
+                // no real cycling, just return one-element collection with nearest primitive in it
+                return cycleList;
+            }
+//          updateKeyModifiers(e); // already called before !
 
-                DataSet ds = getCurrentDataSet();
-                OsmPrimitive first = prims.iterator().next(), foundInDS = null;
-                nxt = first;
+            DataSet ds = getCurrentDataSet();
+            OsmPrimitive first = cycleList.iterator().next(), foundInDS = null;
+            nxt = first;
 
-                for (Iterator<OsmPrimitive> i = prims.iterator(); i.hasNext();) {
-                    if (cyclePrims && shift) {
-                        if (!(nxt = i.next()).isSelected()) {
-                            break; // take first primitive in prims list not in sel
-                        }
-                    } else {
-                        if ((nxt = i.next()).isSelected()) {
-                            foundInDS = nxt;
-                            if (cyclePrims || ctrl) {
-                                ds.clearSelection(foundInDS);
-                                nxt = i.hasNext() ? i.next() : first;
-                            }
-                            break; // take next primitive in prims list
-                        }
+            if (cyclePrims && shift) {
+                for (Iterator<OsmPrimitive> i = cycleList.iterator(); i.hasNext();) {
+                    nxt = i.next();
+                    if (!nxt.isSelected()) {
+                        break; // take first primitive in cycleList not in sel
                     }
                 }
-
-                if (ctrl) {
-                    // a member of prims was found in the current dataset selection
-                    if (foundInDS != null) {
-                        // mouse was moved to a different selection group w/ a previous sel
-                        if (!prims.contains(cycleStart)) {
-                            ds.clearSelection(prims);
-                            cycleStart = foundInDS;
-                        } else if (cycleStart.equals(nxt)) {
-                            // loop detected, insert deselect step
-                            ds.addSelected(nxt);
+                // if primitives 1,2,3 are under cursor, [Alt-press] [Shift-release] gives 1 -> 12 -> 123
+            } else {
+                for (Iterator<OsmPrimitive> i = cycleList.iterator(); i.hasNext();) {
+                    nxt = i.next();
+                    if (nxt.isSelected()) {
+                        foundInDS = nxt;
+                        // first selected primitive in cycleList is found
+                        if (cyclePrims || ctrl) {
+                            ds.clearSelection(foundInDS); // deselect it 
+                            nxt = i.hasNext() ? i.next() : first;
+                            // return next one in cycle list (last->first)
                         }
-                    } else {
-                        // setup for iterating a sel group again or a new, different one..
-                        nxt = (prims.contains(cycleStart)) ? cycleStart : first;
-                        cycleStart = nxt;
+                        break; // take next primitive in cycleList
                     }
-                } else {
-                    cycleStart = null;
                 }
             }
-
-            // pass on prims, if it had less than 2 elements
-            return (nxt != null) ? MapView.asColl(nxt) : prims;
+            
+            // if "no-alt-cycling" is enabled, Ctrl-Click arrives here.
+            if (ctrl) {
+                // a member of cycleList was found in the current dataset selection
+                if (foundInDS != null) {
+                    // mouse was moved to a different selection group w/ a previous sel
+                    if (!cycleList.contains(cycleStart)) {
+                        ds.clearSelection(cycleList);
+                        cycleStart = foundInDS;
+                    } else if (cycleStart.equals(nxt)) {
+                        // loop detected, insert deselect step
+                        ds.addSelected(nxt);
+                    }
+                } else {
+                    // setup for iterating a sel group again or a new, different one..
+                    nxt = (cycleList.contains(cycleStart)) ? cycleStart : first;
+                    cycleStart = nxt;
+                }
+            } else {
+                cycleStart = null;
+            }
+            // return one-element collection with one element to be selected (or added  to selection)
+            return MapView.asColl(nxt);
         }
     }
     
@@ -955,7 +975,17 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
 
         private Node virtualNode = null;
         private Collection<WaySegment> virtualWays = new LinkedList<WaySegment>();
-
+        private int nodeVirtualSize;
+        private int virtualSnapDistSq2;
+        private int virtualSpace;
+        
+        private void init() {
+            nodeVirtualSize = Main.pref.getInteger("mappaint.node.virtual-size", 8);
+            int virtualSnapDistSq = Main.pref.getInteger("mappaint.node.virtual-snap-distance", 8);
+            virtualSnapDistSq2 = virtualSnapDistSq*virtualSnapDistSq;
+            virtualSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
+        }
+        
         /**
          * Calculate a virtual node if there is enough visual space to draw a
          * crosshair node and the middle of a way segment is clicked. If the
@@ -968,11 +998,8 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
          * <code>virtualWays</code> were setup.
          */
         private boolean setupVirtual(Point p) {
-            if (Main.pref.getInteger("mappaint.node.virtual-size", 8) > 0) {
-                int virtualSnapDistSq = Main.pref.getInteger("mappaint.node.virtual-snap-distance", 8);
-                int virtualSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
-                virtualSnapDistSq *= virtualSnapDistSq;
-
+            if (nodeVirtualSize > 0) {
+                
                 Collection<WaySegment> selVirtualWays = new LinkedList<WaySegment>();
                 Pair<Node, Node> vnp = null, wnp = new Pair<Node, Node>(null, null);
 
@@ -984,7 +1011,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                     Point2D p2 = mv.getPoint2D(wnp.b = w.getNode(ws.lowerIndex + 1));
                     if (WireframeMapRenderer.isLargeSegment(p1, p2, virtualSpace)) {
                         Point2D pc = new Point2D.Double((p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
-                        if (p.distanceSq(pc) < virtualSnapDistSq) {
+                        if (p.distanceSq(pc) < virtualSnapDistSq2) {
                             // Check that only segments on top of each other get added to the
                             // virtual ways list. Otherwise ways that coincidentally have their
                             // virtual node at the same spot will be joined which is likely unwanted
