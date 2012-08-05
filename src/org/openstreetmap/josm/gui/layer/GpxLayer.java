@@ -445,7 +445,7 @@ public class GpxLayer extends Layer {
 
         int maxLineLength;
         boolean lines;
-        if (this.isLocalFile) {
+        if (!this.data.fromServer) {
             maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length.local", spec, -1);
             lines = Main.pref.getBoolean("draw.rawgps.lines.local", spec, true);
         } else {
