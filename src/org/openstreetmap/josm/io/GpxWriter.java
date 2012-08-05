@@ -8,7 +8,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.Bounds;
@@ -60,19 +62,21 @@ public class GpxWriter extends XmlWriter {
         out.flush();
     }
 
+    public static List<String> WPT_KEYS = Arrays.asList("ele", "time", "magvar", "geoidheight",
+            "name", "cmt", "desc", "src", GpxData.META_LINKS, "sym", "number", "type",
+            "fix", "sat", "hdop", "vdop", "pdop", "ageofdgpsdata", "dgpsid");
     @SuppressWarnings("unchecked")
     private void writeAttr(Map<String, Object> attr) {
-        // FIXME this loop is evil, because it does not assure the
-        // correct element order specified by the xml schema.
-        // for now it works, but future extension could get very complex and unmaintainable
-        for (Map.Entry<String, Object> ent : attr.entrySet()) {
-            String k = ent.getKey();
-            if (k.equals(GpxData.META_LINKS)) {
-                for (GpxLink link : (Collection<GpxLink>) ent.getValue()) {
-                    gpxLink(link);
+        for (String key : WPT_KEYS) {
+            Object value = attr.get(key);
+            if (value != null) {
+                if (key.equals(GpxData.META_LINKS)) {
+                    for (GpxLink link : (Collection<GpxLink>) value) {
+                        gpxLink(link);
+                    }
+                } else {
+                    simpleTag(key, value.toString());
                 }
-            } else {
-                simpleTag(k, ent.getValue().toString());
             }
         }
     }
