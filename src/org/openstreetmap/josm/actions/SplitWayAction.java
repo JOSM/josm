@@ -43,13 +43,23 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class SplitWayAction extends JosmAction {
 
-
+    /**
+     * Represents the result of a {@link SplitWayAction}
+     * @see SplitWayAction#splitWay
+     * @see SplitWayAction#split
+     */
     public static class SplitWayResult {
         private final Command command;
         private final List<? extends PrimitiveId> newSelection;
         private Way originalWay;
         private List<Way> newWays;
 
+        /**
+         * @param command The command to be performed to split the way (which is saved for later retrieval by the {@link #getCommand} method)
+         * @param newSelection The new list of selected primitives ids (which is saved for later retrieval by the {@link #getNewSelection} method)
+         * @param originalWay The original way being split (which is saved for later retrieval by the {@link #getOriginalWay} method)
+         * @param newWays The resulting new ways (which is saved for later retrieval by the {@link #getOriginalWay} method)
+         */
         public SplitWayResult(Command command, List<? extends PrimitiveId> newSelection, Way originalWay, List<Way> newWays) {
             this.command = command;
             this.newSelection = newSelection;
@@ -57,18 +67,34 @@ public class SplitWayAction extends JosmAction {
             this.newWays = newWays;
         }
 
+        /**
+         * Replies the command to be performed to split the way
+         * @return The command to be performed to split the way
+         */
         public Command getCommand() {
             return command;
         }
 
+        /**
+         * Replies the new list of selected primitives ids
+         * @return The new list of selected primitives ids
+         */
         public List<? extends PrimitiveId> getNewSelection() {
             return newSelection;
         }
 
+        /**
+         * Replies the original way being split
+         * @return The original way being split
+         */
         public Way getOriginalWay() {
             return originalWay;
         }
 
+        /**
+         * Replies the resulting new ways
+         * @return The resulting new ways
+         */
         public List<Way> getNewWays() {
             return newWays;
         }
@@ -113,13 +139,13 @@ public class SplitWayAction extends JosmAction {
             return;
         }
 
-        { // Remove ways that doesn't have selected node in the middle
-            Iterator<Way> it = applicableWays.iterator();
+        // If several ways have been found, remove ways that doesn't have selected node in the middle
+        if (applicableWays.size() > 1) {
             WAY_LOOP:
-                while (it.hasNext()) {
+                for (Iterator<Way> it = applicableWays.iterator(); it.hasNext();) {
                     Way w = it.next();
                     for (Node n : selectedNodes) {
-                        if(!w.isInnerNode(n)) {
+                        if (!w.isInnerNode(n)) {
                             it.remove();
                             continue WAY_LOOP;
                         }
@@ -166,21 +192,18 @@ public class SplitWayAction extends JosmAction {
         // List of ways shared by all nodes
         List<Way> result = new ArrayList<Way>(OsmPrimitive.getFilteredList(selectedNodes.get(0).getReferrers(), Way.class));
         for (int i=1; i<selectedNodes.size(); i++) {
-            Iterator<Way> it = result.iterator();
             List<OsmPrimitive> ref = selectedNodes.get(i).getReferrers();
-            while (it.hasNext()) {
+            for (Iterator<Way> it = result.iterator(); it.hasNext(); ) {
                 if (!ref.contains(it.next())) {
                     it.remove();
                 }
             }
         }
 
-        { // Remove broken ways
-            Iterator<Way> it = result.iterator();
-            while (it.hasNext()) {
-                if (it.next().getNodesCount() <= 2) {
-                    it.remove();
-                }
+        // Remove broken ways
+        for (Iterator<Way> it = result.iterator(); it.hasNext(); ) {
+            if (it.next().getNodesCount() <= 2) {
+                it.remove();
             }
         }
 
@@ -188,15 +211,13 @@ public class SplitWayAction extends JosmAction {
             return result;
         else {
             // Return only selected ways
-            Iterator<Way> it = result.iterator();
-            while (it.hasNext()) {
+            for (Iterator<Way> it = result.iterator(); it.hasNext(); ) {
                 if (!selectedWays.contains(it.next())) {
                     it.remove();
                 }
             }
             return result;
         }
-
     }
 
     /**
@@ -276,11 +297,18 @@ public class SplitWayAction extends JosmAction {
     }
 
     /**
-     * Splits a way
-     * @param layer
-     * @param way
-     * @param wayChunks
-     * @return
+     * Splits the way {@code way} into chunks of {@code wayChunks} and replies
+     * the result of this process in an instance of {@link SplitWayResult}.
+     *
+     * Note that changes are not applied to the data yet. You have to
+     * submit the command in {@link SplitWayResult#getCommand()} first,
+     * i.e. {@code Main.main.undoredo.add(result.getCommand())}.
+     *
+     * @param layer the layer which the way belongs to. Must not be null.
+     * @param way the way to split. Must not be null.
+     * @param wayChunks the list of way chunks into the way is split. Must not be null.
+     * @param selection The list of currently selected primitives
+     * @return the result from the split operation
      */
     public static SplitWayResult splitWay(OsmDataLayer layer, Way way, List<List<Node>> wayChunks, Collection<? extends OsmPrimitive> selection) {
         // build a list of commands, and also a new selection list
@@ -478,9 +506,10 @@ public class SplitWayAction extends JosmAction {
      * @param layer the layer which the way belongs to. Must not be null.
      * @param way the way to split. Must not be null.
      * @param atNodes the list of nodes where the way is split. Must not be null.
+     * @param selection The list of currently selected primitives
      * @return the result from the split operation
      */
-    static public SplitWayResult split(OsmDataLayer layer, Way way, List<Node> atNodes, Collection<? extends OsmPrimitive> selection){
+    static public SplitWayResult split(OsmDataLayer layer, Way way, List<Node> atNodes, Collection<? extends OsmPrimitive> selection) {
         List<List<Node>> chunks = buildSplitChunks(way, atNodes);
         if (chunks == null) return null;
         return splitWay(layer,way, chunks, selection);
