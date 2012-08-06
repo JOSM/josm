@@ -35,7 +35,6 @@ import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.corrector.UserCancelException;
-import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -46,6 +45,7 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.Utils.Function;
@@ -81,8 +81,6 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * the dialog. If it wasn't canceled you may build a collection of {@link Command} objects
  * which reflect the conflict resolution decisions the user made in the dialog:
  * see {@link #buildResolutionCommands()}
- *
- *
  */
 public class CombinePrimitiveResolverDialog extends JDialog {
 
@@ -126,8 +124,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     }
 
     /**
-     * Sets the primitive the collection of primitives is merged or combined
-     * to.
+     * Sets the primitive the collection of primitives is merged or combined to.
      *
      * @param primitive the target primitive
      */
@@ -181,8 +178,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     }
 
     protected JPanel buildButtonPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout(FlowLayout.CENTER));
+        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         // -- apply button
         ApplyAction applyAction = new ApplyAction();
@@ -203,15 +199,27 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         return pnl;
     }
 
-    public CombinePrimitiveResolverDialog(Component owner) {
-        super(JOptionPane.getFrameForComponent(owner), ModalityType.DOCUMENT_MODAL);
+    /**
+     * Constructs a new {@code CombinePrimitiveResolverDialog}.
+     * @param parent The parent component in which this dialog will be displayed.
+     */
+    public CombinePrimitiveResolverDialog(Component parent) {
+        super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         build();
     }
 
+    /**
+     * Replies the tag conflict resolver model.
+     * @return The tag conflict resolver model.
+     */
     public TagConflictResolverModel getTagConflictResolverModel() {
         return pnlTagConflictResolver.getModel();
     }
 
+    /**
+     * Replies the relation membership conflict resolver model.
+     * @return The relation membership conflict resolver model.
+     */
     public RelationMemberConflictResolverModel getRelationMemberConflictResolverModel() {
         return pnlRelationMemberConflictResolver.getModel();
     }
@@ -233,6 +241,10 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         return cmds;
     }
 
+    /**
+     * Replies the list of {@link Command commands} needed to apply resolution choices.
+     * @return The list of {@link Command commands} needed to apply resolution choices.
+     */
     public List<Command> buildResolutionCommands() {
         List<Command> cmds = new LinkedList<Command>();
 
@@ -286,14 +298,16 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         model.refresh();
     }
 
+    /**
+     * Prepares the default decisions for populated tag and relation membership conflicts.
+     */
     public void prepareDefaultDecisions() {
         prepareDefaultTagDecisions();
         prepareDefaultRelationDecisions();
     }
 
     protected JPanel buildEmptyConflictsPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BorderLayout());
+        JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(new JLabel(tr("No conflicts to resolve")));
         return pnl;
     }
@@ -304,18 +318,15 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         getContentPane().removeAll();
 
         if (relModel.getNumDecisions() > 0 && tagModel.getNumDecisions() > 0) {
-            // display both, the dialog for resolving relation conflicts and for resolving
-            // tag conflicts
+            // display both, the dialog for resolving relation conflicts and for resolving tag conflicts
             spTagConflictTypes.setTopComponent(pnlTagConflictResolver);
             spTagConflictTypes.setBottomComponent(pnlRelationMemberConflictResolver);
             getContentPane().add(spTagConflictTypes, BorderLayout.CENTER);
         } else if (relModel.getNumDecisions() > 0) {
             // relation conflicts only
-            //
             getContentPane().add(pnlRelationMemberConflictResolver, BorderLayout.CENTER);
         } else if (tagModel.getNumDecisions() > 0) {
             // tag conflicts only
-            //
             getContentPane().add(pnlTagConflictResolver, BorderLayout.CENTER);
         } else {
             getContentPane().add(buildEmptyConflictsPanel(), BorderLayout.CENTER);
@@ -335,6 +346,10 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         this.canceled = canceled;
     }
 
+    /**
+     * Determines if this dialog has been cancelled.
+     * @return true if this dialog has been cancelled, false otherwise.
+     */
     public boolean isCanceled() {
         return canceled;
     }
@@ -435,10 +450,28 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         }
     }
 
+    /**
+     * Replies the list of {@link Command commands} needed to resolve specified conflicts, 
+     * by displaying if necessary a {@link CombinePrimitiveResolverDialog} to the user.
+     * This dialog will allow the user to choose conflict resolution actions.
+     * 
+     * Non-expert users are informed first of the meaning of these operations, allowing them to cancel.
+     * 
+     * @param tagsOfPrimitives The tag collection of the primitives to be combined.
+     *                         Should generally be equal to {@code TagCollection.unionOfAllPrimitives(primitives)}
+     * @param primitives The primitives to be combined
+     * @param targetPrimitives The primitives the collection of primitives are merged or combined to.
+     * @return The list of {@link Command commands} needed to apply resolution actions.
+     * @throws UserCancelException If the user cancelled a dialog.
+     */
     public static List<Command> launchIfNecessary(
             final TagCollection tagsOfPrimitives,
             final Collection<? extends OsmPrimitive> primitives,
             final Collection<? extends OsmPrimitive> targetPrimitives) throws UserCancelException {
+        
+        CheckParameterUtil.ensureParameterNotNull(tagsOfPrimitives, "tagsOfPrimitives");
+        CheckParameterUtil.ensureParameterNotNull(primitives, "primitives");
+        CheckParameterUtil.ensureParameterNotNull(targetPrimitives, "targetPrimitives");
 
         final TagCollection completeWayTags = new TagCollection(tagsOfPrimitives);
         TagConflictResolutionUtil.combineTigerTags(completeWayTags);
@@ -446,73 +479,35 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         final TagCollection tagsToEdit = new TagCollection(completeWayTags);
         TagConflictResolutionUtil.completeTagCollectionForEditing(tagsToEdit);
 
+        final Set<Relation> parentRelations = OsmPrimitive.getParentRelations(primitives);
+
+        // Show information dialogs about conflicts to non-experts
+        if (!ExpertToggleAction.isExpert()) {
+            // Tag conflicts
+            if (!completeWayTags.isApplicableToPrimitive()) {
+                informAboutTagConflicts(primitives, completeWayTags);
+            }
+            // Relation membership conflicts
+            if (!parentRelations.isEmpty()) {
+                informAboutRelationMembershipConflicts(primitives, parentRelations);
+            }
+        }
+
+        // Build conflict resolution dialog
         final CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
 
         dialog.getTagConflictResolverModel().populate(tagsToEdit, completeWayTags.getKeysWithMultipleValues());
-
-        final Set<Relation> parentRelations = OsmPrimitive.getParentRelations(primitives);
         dialog.getRelationMemberConflictResolverModel().populate(parentRelations, primitives);
         dialog.prepareDefaultDecisions();
-
-        // show information dialog to non-experts
-        if (!completeWayTags.isApplicableToPrimitive() && !ExpertToggleAction.isExpert()) {
-            String conflicts = Utils.joinAsHtmlUnorderedList(Utils.transform(completeWayTags.getKeysWithMultipleValues(), new Function<String, String>() {
-
-                @Override
-                public String apply(String key) {
-                    return tr("{0} ({1})", key, Utils.join(tr(", "), Utils.transform(completeWayTags.getValues(key), new Function<String, String>() {
-
-                        @Override
-                        public String apply(String x) {
-                            return x == null || x.isEmpty() ? tr("<i>missing</i>") : x;
-                        }
-                    })));
-                }
-            }));
-            String msg = tr("You are about to combine {0} objects, "
-                    + "but the following tags are used conflictingly:<br/>{1}"
-                    + "If these objects are combined, the resulting object may have unwanted tags.<br/>"
-                    + "If you want to continue, you are shown a dialog to fix the conflicting tags.<br/><br/>"
-                    + "Do you want to continue?",
-                    primitives.size(), conflicts);
-            if (!ConditionalOptionPaneUtil.showConfirmationDialog(
-                    "combine_tags",
-                    Main.parent,
-                    "<html>" + msg + "</html>",
-                    tr("Combine confirmation"),
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    JOptionPane.YES_OPTION)) {
-                throw new UserCancelException();
-            }
+        
+        // Ensure a proper title is displayed instead of a previous target (fix #7925)
+        if (targetPrimitives.size() == 1) {
+            dialog.setTargetPrimitive(targetPrimitives.iterator().next());
+        } else {
+            dialog.setTargetPrimitive(null);
         }
 
-        if (!parentRelations.isEmpty() && !ExpertToggleAction.isExpert()) {
-            String msg = trn("You are about to combine {1} objects, "
-                    + "which are part of {0} relation:<br/>{2}"
-                    + "Combining these objects may break this relation. If you are unsure, please cancel this operation.<br/>"
-                    + "If you want to continue, you are shown a dialog to decide how to adapt the relation.<br/><br/>"
-                    + "Do you want to continue?",
-                    "You are about to combine {1} objects, "
-                    + "which are part of {0} relations:<br/>{2}"
-                    + "Combining these objects may break these relations. If you are unsure, please cancel this operation.<br/>"
-                    + "If you want to continue, you are shown a dialog to decide how to adapt the relations.<br/><br/>"
-                    + "Do you want to continue?",
-                    parentRelations.size(), parentRelations.size(), primitives.size(),
-                    DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(parentRelations));
-            if (!ConditionalOptionPaneUtil.showConfirmationDialog(
-                    "combine_tags",
-                    Main.parent,
-                    "<html>" + msg + "</html>",
-                    tr("Combine confirmation"),
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    JOptionPane.YES_OPTION)) {
-                throw new UserCancelException();
-            }
-        }
-
-        // resolve tag conflicts if necessary
+        // Resolve tag conflicts if necessary
         if (!completeWayTags.isApplicableToPrimitive() || !parentRelations.isEmpty()) {
             dialog.setVisible(true);
             if (dialog.isCanceled()) {
@@ -525,5 +520,80 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             cmds.addAll(dialog.buildResolutionCommands());
         }
         return cmds;
+    }
+
+    /**
+     * Inform a non-expert user about what relation membership conflict resolution means.
+     * @param primitives The primitives to be combined
+     * @param parentRelations The parent relations of the primitives
+     * @throws UserCancelException If the user cancels the dialog.
+     */
+    protected static void informAboutRelationMembershipConflicts(
+            final Collection<? extends OsmPrimitive> primitives,
+            final Set<Relation> parentRelations) throws UserCancelException {
+        String msg = trn("You are about to combine {1} objects, "
+                + "which are part of {0} relation:<br/>{2}"
+                + "Combining these objects may break this relation. If you are unsure, please cancel this operation.<br/>"
+                + "If you want to continue, you are shown a dialog to decide how to adapt the relation.<br/><br/>"
+                + "Do you want to continue?",
+                "You are about to combine {1} objects, "
+                + "which are part of {0} relations:<br/>{2}"
+                + "Combining these objects may break these relations. If you are unsure, please cancel this operation.<br/>"
+                + "If you want to continue, you are shown a dialog to decide how to adapt the relations.<br/><br/>"
+                + "Do you want to continue?",
+                parentRelations.size(), parentRelations.size(), primitives.size(),
+                DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(parentRelations));
+        
+        if (!ConditionalOptionPaneUtil.showConfirmationDialog(
+                "combine_tags",
+                Main.parent,
+                "<html>" + msg + "</html>",
+                tr("Combine confirmation"),
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                JOptionPane.YES_OPTION)) {
+            throw new UserCancelException();
+        }
+    }
+
+    /**
+     * Inform a non-expert user about what tag conflict resolution means.
+     * @param primitives The primitives to be combined
+     * @param normalizedTags The normalized tag collection of the primitives to be combined
+     * @throws UserCancelException If the user cancels the dialog.
+     */
+    protected static void informAboutTagConflicts(
+            final Collection<? extends OsmPrimitive> primitives,
+            final TagCollection normalizedTags) throws UserCancelException {
+        String conflicts = Utils.joinAsHtmlUnorderedList(Utils.transform(normalizedTags.getKeysWithMultipleValues(), new Function<String, String>() {
+
+            @Override
+            public String apply(String key) {
+                return tr("{0} ({1})", key, Utils.join(tr(", "), Utils.transform(normalizedTags.getValues(key), new Function<String, String>() {
+
+                    @Override
+                    public String apply(String x) {
+                        return x == null || x.isEmpty() ? tr("<i>missing</i>") : x;
+                    }
+                })));
+            }
+        }));
+        String msg = tr("You are about to combine {0} objects, "
+                + "but the following tags are used conflictingly:<br/>{1}"
+                + "If these objects are combined, the resulting object may have unwanted tags.<br/>"
+                + "If you want to continue, you are shown a dialog to fix the conflicting tags.<br/><br/>"
+                + "Do you want to continue?",
+                primitives.size(), conflicts);
+        
+        if (!ConditionalOptionPaneUtil.showConfirmationDialog(
+                "combine_tags",
+                Main.parent,
+                "<html>" + msg + "</html>",
+                tr("Combine confirmation"),
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                JOptionPane.YES_OPTION)) {
+            throw new UserCancelException();
+        }
     }
 }
