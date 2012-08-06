@@ -281,12 +281,15 @@ public class ElemStyles {
      * Loops over the list of style sources, to generate the map of properties.
      * From these properties, it generates the different types of styles.
      *
+     * @param osm the primitive to create styles for
+     * @param scale the scale (in meters per 100 px), must be > 0
      * @param multipolyOuterWay support for a very old multipolygon tagging style
      * where you add the tags both to the outer and the inner way.
      * However, independent inner way style is also possible.
      * @param pretendWayIsClosed For styles that require the way to be closed,
      * we pretend it is. This is useful for generating area styles from the (segmented)
      * outer ways of a multipolygon.
+     * @return the generated styles and the valid range as a pair
      */
     public Pair<StyleList, Range> generateStyles(OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
 
@@ -334,7 +337,6 @@ public class ElemStyles {
                 }
             }
         }
-
         return new Pair<StyleList, Range>(new StyleList(sl), mc.range);
     }
 

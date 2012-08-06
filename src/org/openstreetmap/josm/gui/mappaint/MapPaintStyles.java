@@ -131,7 +131,7 @@ public class MapPaintStyles {
         if (tag != null) {
             Node virtualNode = new Node();
             virtualNode.put(tag.getKey(), tag.getValue());
-            StyleList styleList = getStyles().generateStyles(virtualNode, 0, null, false).a;
+            StyleList styleList = getStyles().generateStyles(virtualNode, 0.5, null, false).a;
             if (styleList != null) {
                 for (Iterator<ElemStyle> it = styleList.iterator(); it.hasNext(); ) {
                     ElemStyle style = it.next();
