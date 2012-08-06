@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
@@ -54,6 +55,10 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         this.downloadedData = ds;
     }
 
+    /**
+     * Replies the {@link DataSet} containing the downloaded OSM data.
+     * @return The {@link DataSet} containing the downloaded OSM data.
+     */
     public DataSet getDownloadedData() {
         return downloadedData;
     }
@@ -63,6 +68,43 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         return download(new BoundingBoxDownloader(downloadArea), newLayer, downloadArea, progressMonitor);
     }
 
+    /**
+     * Asynchronously launches the download task for a given bounding box.
+     *
+     * Set <code>progressMonitor</code> to null, if the task should create, open, and close a progress monitor.
+     * Set progressMonitor to {@link NullProgressMonitor#INSTANCE} if progress information is to
+     * be discarded.
+     *
+     * You can wait for the asynchronous download task to finish by synchronizing on the returned
+     * {@link Future}, but make sure not to freeze up JOSM. Example:
+     * <pre>
+     *    Future<?> future = task.download(...);
+     *    // DON'T run this on the Swing EDT or JOSM will freeze
+     *    future.get(); // waits for the dowload task to complete
+     * </pre>
+     *
+     * The following example uses a pattern which is better suited if a task is launched from
+     * the Swing EDT:
+     * <pre>
+     *    final Future<?> future = task.download(...);
+     *    Runnable runAfterTask = new Runnable() {
+     *       public void run() {
+     *           // this is not strictly necessary because of the type of executor service
+     *           // Main.worker is initialized with, but it doesn't harm either
+     *           //
+     *           future.get(); // wait for the download task to complete
+     *           doSomethingAfterTheTaskCompleted();
+     *       }
+     *    }
+     *    Main.worker.submit(runAfterTask);
+     * </pre>
+     * @param reader the reader used to parse OSM data (see {@link OsmServerReader#parseOsm})
+     * @param newLayer true, if the data is to be downloaded into a new layer. If false, the task
+     *                 selects one of the existing layers as download layer, preferably the active layer.
+     * @param downloadArea the area to download
+     * @param progressMonitor the progressMonitor
+     * @return the future representing the asynchronous task
+     */
     public Future<?> download(OsmServerReader reader, boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
         return download(new DownloadTask(newLayer, reader, progressMonitor), downloadArea);
     }
@@ -248,55 +290,56 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         }
 
         protected void suggestImageryLayers() {
-            final LatLon center = currentBounds.getCenter();
-            final Set<ImageryInfo> layers = new HashSet<ImageryInfo>();
-
-            for (ImageryInfo i : ImageryLayerInfo.instance.getDefaultLayers()) {
-                if (i.getBounds() != null && i.getBounds().contains(center)) {
-                    layers.add(i);
-                }
-            }
-            // Do not suggest layers already in use
-            layers.removeAll(ImageryLayerInfo.instance.getLayers());
-            // For layers containing complex shapes, check that center is in one of its shapes (fix #7910)
-            for (Iterator<ImageryInfo> iti = layers.iterator(); iti.hasNext(); ) {
-                List<Shape> shapes = iti.next().getBounds().getShapes();
-                if (shapes != null && !shapes.isEmpty()) {
-                    boolean found = false;
-                    for (Iterator<Shape> its = shapes.iterator(); its.hasNext() && !found; ) {
-                        found = its.next().contains(center);
-                    }
-                    if (!found) {
-                        iti.remove();
+            if (currentBounds != null) {
+                final LatLon center = currentBounds.getCenter();
+                final Set<ImageryInfo> layers = new HashSet<ImageryInfo>();
+    
+                for (ImageryInfo i : ImageryLayerInfo.instance.getDefaultLayers()) {
+                    if (i.getBounds() != null && i.getBounds().contains(center)) {
+                        layers.add(i);
                     }
                 }
+                // Do not suggest layers already in use
+                layers.removeAll(ImageryLayerInfo.instance.getLayers());
+                // For layers containing complex shapes, check that center is in one of its shapes (fix #7910)
+                for (Iterator<ImageryInfo> iti = layers.iterator(); iti.hasNext(); ) {
+                    List<Shape> shapes = iti.next().getBounds().getShapes();
+                    if (shapes != null && !shapes.isEmpty()) {
+                        boolean found = false;
+                        for (Iterator<Shape> its = shapes.iterator(); its.hasNext() && !found; ) {
+                            found = its.next().contains(center);
+                        }
+                        if (!found) {
+                            iti.remove();
+                        }
+                    }
+                }
+    
+                if (layers.isEmpty()) {
+                    return;
+                }
+    
+                final List<String> layerNames = new ArrayList<String>();
+                for (ImageryInfo i : layers) {
+                    layerNames.add(i.getName());
+                }
+    
+                if (!ConditionalOptionPaneUtil.showConfirmationDialog(
+                        "download.suggest-imagery-layer",
+                        Main.parent,
+                        tr("<html>For the downloaded area, the following additional imagery layers are available: {0}" +
+                                "Do you want to add those layers to the <em>Imagery</em> menu?" +
+                                "<br>(If needed, you can remove those entries in the <em>Preferences</em>.)",
+                                Utils.joinAsHtmlUnorderedList(layerNames)),
+                        tr("Add imagery layers?"),
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        JOptionPane.YES_OPTION)) {
+                    return;
+                }
+    
+                ImageryLayerInfo.addLayers(layers);
             }
-
-            if (layers.isEmpty()) {
-                return;
-            }
-
-            final List<String> layerNames = new ArrayList<String>();
-            for (ImageryInfo i : layers) {
-                layerNames.add(i.getName());
-            }
-
-            if (!ConditionalOptionPaneUtil.showConfirmationDialog(
-                    "download.suggest-imagery-layer",
-                    Main.parent,
-                    tr("<html>For the downloaded area, the following additional imagery layers are available: {0}" +
-                            "Do you want to add those layers to the <em>Imagery</em> menu?" +
-                            "<br>(If needed, you can remove those entries in the <em>Preferences</em>.)",
-                            Utils.joinAsHtmlUnorderedList(layerNames)),
-                    tr("Add imagery layers?"),
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    JOptionPane.YES_OPTION)) {
-                return;
-            }
-
-            ImageryLayerInfo.addLayers(layers);
         }
-
     }
 }
