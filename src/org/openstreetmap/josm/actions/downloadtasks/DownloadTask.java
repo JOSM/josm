@@ -5,9 +5,14 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
+/**
+ * Interface defining a general download task used to download geographic data (OSM data, GPX tracks, etc.) for a given URL or geographic area.
+ */
 public interface DownloadTask {
+    
     /**
      * Asynchronously launches the download task for a given bounding box.
      *
