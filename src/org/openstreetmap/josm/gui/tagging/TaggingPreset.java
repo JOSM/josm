@@ -116,17 +116,17 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
         public static PresetType forPrimitiveType(org.openstreetmap.josm.data.osm.OsmPrimitiveType type) {
             switch (type) {
-                case NODE:
-                    return NODE;
-                case WAY:
-                    return WAY;
-                case CLOSEDWAY:
-                    return CLOSEDWAY;
-                case RELATION:
-                case MULTIPOLYGON:
-                    return RELATION;
-                default:
-                    throw new IllegalArgumentException("Unexpected primitive type: " + type);
+            case NODE:
+                return NODE;
+            case WAY:
+                return WAY;
+            case CLOSEDWAY:
+                return CLOSEDWAY;
+            case RELATION:
+            case MULTIPOLYGON:
+                return RELATION;
+            default:
+                throw new IllegalArgumentException("Unexpected primitive type: " + type);
             }
         }
     }
@@ -165,9 +165,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
         public static MatchType ofString(String type) {
             for (MatchType i : EnumSet.allOf(MatchType.class)) {
-                if (i.getValue().equals(type)) {
+                if (i.getValue().equals(type))
                     return i;
-                }
             }
             throw new IllegalArgumentException(type + " is not allowed");
         }
@@ -228,16 +227,16 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         @Override
         Boolean matches(Map<String, String> tags) {
             switch (MatchType.ofString(match)) {
-                case NONE:
-                    return null;
-                case KEY:
-                    return tags.containsKey(key) ? true : null;
-                case KEY_REQUIRED:
-                    return tags.containsKey(key);
-                case KEY_VALUE:
-                    return tags.containsKey(key) && (getValues().contains(tags.get(key)));
-                default:
-                    throw new IllegalStateException();
+            case NONE:
+                return null;
+            case KEY:
+                return tags.containsKey(key) ? true : null;
+            case KEY_REQUIRED:
+                return tags.containsKey(key);
+            case KEY_VALUE:
+                return tags.containsKey(key) && (getValues().contains(tags.get(key)));
+            default:
+                throw new IllegalStateException();
             }
         }
 
@@ -305,6 +304,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String locale_short_description;
         private final File zipIcons = TaggingPreset.zipIcons;
 
+        // Cached size (currently only for Combo) to speed up preset dialog initialization
+        private int prefferedWidth = -1;
+        private int prefferedHeight = -1;
+
         public String getListDisplay() {
             if (value.equals(DIFFERENT))
                 return "<b>"+DIFFERENT.replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</b>";
@@ -338,13 +341,13 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String getDisplayValue(boolean translated) {
             return translated
                     ? Utils.firstNonNull(locale_display_value, tr(display_value), trc(value_context, value))
-                    : Utils.firstNonNull(display_value, value);
+                            : Utils.firstNonNull(display_value, value);
         }
 
         public String getShortDescription(boolean translated) {
             return translated
                     ? Utils.firstNonNull(locale_short_description, tr(short_description))
-                    : short_description;
+                            : short_description;
         }
 
         // toString is mainly used to initialize the Editor
@@ -443,9 +446,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
         @Override
         public Collection<String> getValues() {
-            if (default_ == null || default_.isEmpty()) {
+            if (default_ == null || default_.isEmpty())
                 return Collections.emptyList();
-            }
             return Collections.singleton(default_);
         }
     }
@@ -661,14 +663,14 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 final PresetListEntry e = new PresetListEntry(value_array[i]);
                 e.locale_display_value = locale_display_values != null
                         ? display_array[i]
-                        : trc(values_context, fixPresetString(display_array[i]));
-                if (short_descriptions_array != null) {
-                    e.locale_short_description = locale_short_descriptions != null
-                            ? short_descriptions_array[i]
-                            : tr(fixPresetString(short_descriptions_array[i]));
-                }
-                lhm.put(value_array[i], e);
-                display_array[i] = e.getDisplayValue(true);
+                                : trc(values_context, fixPresetString(display_array[i]));
+                        if (short_descriptions_array != null) {
+                            e.locale_short_description = locale_short_descriptions != null
+                                    ? short_descriptions_array[i]
+                                            : tr(fixPresetString(short_descriptions_array[i]));
+                        }
+                        lhm.put(value_array[i], e);
+                        display_array[i] = e.getDisplayValue(true);
             }
 
             return display_array;
@@ -731,42 +733,61 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             return component.requestFocusInWindow();
         }
 
-        protected ListCellRenderer getListCellRenderer() {
-            return new ListCellRenderer() {
+        private static ListCellRenderer RENDERER = new ListCellRenderer() {
 
-                JLabel lbl = new JLabel();
-                JComponent dummy = new JComponent() {
-                };
+            JLabel lbl = new JLabel();
 
-                public Component getListCellRendererComponent(
-                        JList list,
-                        Object value,
-                        int index,
-                        boolean isSelected,
-                        boolean cellHasFocus) {
-                    if (isSelected) {
-                        lbl.setBackground(list.getSelectionBackground());
-                        lbl.setForeground(list.getSelectionForeground());
-                    } else {
-                        lbl.setBackground(list.getBackground());
-                        lbl.setForeground(list.getForeground());
-                    }
+            public Component getListCellRendererComponent(
+                    JList list,
+                    Object value,
+                    int index,
+                    boolean isSelected,
+                    boolean cellHasFocus) {
+                PresetListEntry item = (PresetListEntry) value;
 
-                    PresetListEntry item = (PresetListEntry) value;
-                    lbl.setOpaque(true);
-                    lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
-                    lbl.setText("<html>" + item.getListDisplay() + "</html>");
-                    lbl.setIcon(item.getIcon());
-                    lbl.setEnabled(list.isEnabled());
-                    // We do not want the editor to have the maximum height of all
-                    // entries. Return a dummy with bogus height.
+                // Only return cached size, item is not shown
+                if (!list.isShowing() && item.prefferedWidth != -1 && item.prefferedHeight != -1) {
                     if (index == -1) {
-                        dummy.setPreferredSize(new Dimension(lbl.getPreferredSize().width, 10));
-                        return dummy;
+                        lbl.setPreferredSize(new Dimension(item.prefferedWidth, 10));
+                    } else {
+                        lbl.setPreferredSize(new Dimension(item.prefferedWidth, item.prefferedHeight));
                     }
                     return lbl;
                 }
-            };
+
+                lbl.setPreferredSize(null);
+
+
+                if (isSelected) {
+                    lbl.setBackground(list.getSelectionBackground());
+                    lbl.setForeground(list.getSelectionForeground());
+                } else {
+                    lbl.setBackground(list.getBackground());
+                    lbl.setForeground(list.getForeground());
+                }
+
+                lbl.setOpaque(true);
+                lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
+                lbl.setText("<html>" + item.getListDisplay() + "</html>");
+                lbl.setIcon(item.getIcon());
+                lbl.setEnabled(list.isEnabled());
+
+                // Cache size
+                item.prefferedWidth = lbl.getPreferredSize().width;
+                item.prefferedHeight = lbl.getPreferredSize().height;
+
+                // We do not want the editor to have the maximum height of all
+                // entries. Return a dummy with bogus height.
+                if (index == -1) {
+                    lbl.setPreferredSize(new Dimension(lbl.getPreferredSize().width, 10));
+                }
+                return lbl;
+            }
+        };
+
+
+        protected ListCellRenderer getListCellRenderer() {
+            return RENDERER;
         }
 
         @Override
@@ -948,9 +969,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * @param s the string
      */
     private static String[] splitEscaped(char delimiter, String s) {
-        if (s == null) {
+        if (s == null)
             return new String[0];
-        }
         List<String> result = new ArrayList<String>();
         boolean backslash = false;
         StringBuilder item = new StringBuilder();
@@ -1264,9 +1284,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             new LinkedHashMap<String, EnumSet<PresetType>>(16, 1.1f, true);
 
     static public EnumSet<PresetType> getType(String types) throws SAXException {
-        if (typeCache.containsKey(types)) {
+        if (typeCache.containsKey(types))
             return typeCache.get(types);
-        }
         EnumSet<PresetType> result = EnumSet.noneOf(PresetType.class);
         for (String type : Arrays.asList(types.split(","))) {
             try {
@@ -1365,9 +1384,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                         all.getLast().data.add((Item) o);
                         lastrole = (Roles) o;
                     } else if (o instanceof Role) {
-                        if (lastrole == null) {
+                        if (lastrole == null)
                             throw new SAXException(tr("Preset role element without parent"));
-                        }
                         lastrole.roles.add((Role) o);
                     } else if (o instanceof PresetListEntry) {
                         listEntries.add((PresetListEntry) o);
@@ -1694,17 +1712,16 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     }
 
     public boolean matches(Collection<PresetType> t, Map<String, String> tags, boolean onlyShowable) {
-        if (onlyShowable && !isShowable()) {
+        if (onlyShowable && !isShowable())
             return false;
-        } else if (!typeMatches(t)) {
+        else if (!typeMatches(t))
             return false;
-        }
         boolean atLeastOnePositiveMatch = false;
         for (Item item : data) {
             Boolean m = item.matches(tags);
-            if (m != null && !m) {
+            if (m != null && !m)
                 return false;
-            } else if (m != null) {
+            else if (m != null) {
                 atLeastOnePositiveMatch = true;
             }
         }
