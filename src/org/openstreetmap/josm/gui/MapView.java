@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractButton;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -55,26 +57,42 @@ import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 
 /**
- * This is a component used in the MapFrame for browsing the map. It use is to
- * provide the MapMode's enough capabilities to operate.
+ * This is a component used in the {@link MapFrame} for browsing the map. It use is to
+ * provide the MapMode's enough capabilities to operate.<br/><br/>
  *
- * MapView hold meta-data about the data set currently displayed, as scale level,
+ * {@code MapView} holds meta-data about the data set currently displayed, as scale level,
  * center point viewed, what scrolling mode or editing mode is selected or with
- * what projection the map is viewed etc..
+ * what projection the map is viewed etc..<br/><br/>
  *
- * MapView is able to administrate several layers.
+ * {@code MapView} is able to administrate several layers.
  *
  * @author imi
  */
 public class MapView extends NavigatableComponent implements PropertyChangeListener, PreferenceChangedListener {
 
     /**
-     * Interface to notify listeners of the change of the active layer.
+     * Interface to notify listeners of a layer change.
      * @author imi
      */
     public interface LayerChangeListener {
+        
+        /**
+         * Notifies this listener that the active layer has changed.
+         * @param oldLayer The previous active layer
+         * @param newLayer The new activer layer
+         */
         void activeLayerChange(Layer oldLayer, Layer newLayer);
+        
+        /**
+         * Notifies this listener that a layer has been added.
+         * @param newLayer The new added layer
+         */
         void layerAdded(Layer newLayer);
+        
+        /**
+         * Notifies this listener that a layer has been removed.
+         * @param oldLayer The old removed layer
+         */
         void layerRemoved(Layer oldLayer);
     }
 
@@ -130,6 +148,11 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         }
     }
 
+    /**
+     * Adds an edit layer change listener
+     *
+     * @param listener the listener. Ignored if null or already registered.
+     */
     public static void addEditLayerChangeListener(EditLayerChangeListener listener) {
         if (listener != null) {
             editLayerChangeListeners.addIfAbsent(listener);
@@ -192,6 +215,10 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     private boolean paintPreferencesChanged = true;
     private Rectangle lastClipBounds = new Rectangle();
 
+    /**
+     * Constructs a new {@code MapView}.
+     * @param contentPane The content pane used to register shortcuts in its {@link InputMap} and {@link ActionMap}
+     */
     public MapView(final JPanel contentPane) {
         Main.pref.addPreferenceChangeListener(this);
 
@@ -268,6 +295,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     /**
      * Add a layer to the current MapView. The layer will be added at topmost
      * position.
+     * @param layer The layer to add
      */
     public void addLayer(Layer layer) {
         if (layer instanceof MarkerLayer && playHeadMarker == null) {
@@ -356,6 +384,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     /**
      * Remove the layer from the mapview. If the layer was in the list before,
      * an LayerChange event is fired.
+     * @param layer The layer to remove
      */
     public void removeLayer(Layer layer) {
         List<Layer> layersList = new ArrayList<Layer>(layers);
@@ -467,7 +496,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     /**
      * Draw the component.
      */
-    @Override public synchronized void paint(Graphics g) {
+    @Override public void paint(Graphics g) {
         if (BugReportExceptionHandler.exceptionHandlingInProgress())
             return;
 
@@ -485,7 +514,12 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             }
         }
 
-        boolean canUseBuffer = !paintPreferencesChanged && nonChangedLayers.size() <= nonChangedLayersCount &&
+        boolean canUseBuffer;
+        
+        synchronized (this) {
+            canUseBuffer = !paintPreferencesChanged;
+        }
+        canUseBuffer = canUseBuffer && nonChangedLayers.size() <= nonChangedLayersCount &&
         lastViewID == getViewID() && lastClipBounds.contains(g.getClipBounds());
         if (canUseBuffer) {
             for (int i=0; i<nonChangedLayers.size(); i++) {
@@ -840,8 +874,11 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         }
     }
 
-    public synchronized void preferenceChanged(PreferenceChangeEvent e) {
-        paintPreferencesChanged = true;
+    @Override
+    public void preferenceChanged(PreferenceChangeEvent e) {
+        synchronized (this) {
+            paintPreferencesChanged = true;
+        }
     }
 
     private SelectionChangedListener repaintSelectionChangedListener = new SelectionChangedListener(){
