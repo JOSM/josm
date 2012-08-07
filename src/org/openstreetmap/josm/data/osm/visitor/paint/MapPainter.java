@@ -401,6 +401,36 @@ public class MapPainter {
         return true;
     }
 
+    private static Boolean IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = null;
+
+    /**
+     * Check, if this System has the GlyphVector double translation bug.
+     *
+     * With this bug, <code>gv.setGlyphTransform(i, trfm)</code> has a different
+     * effect than on most other systems, namely the translation components
+     * ("m02" & "m12", {@link AffineTransform}) appear to be twice as large, as
+     * they actually are. The rotation is unaffected (scale & shear not tested
+     * so far).
+     *
+     * This bug has only been observed on Mac OS X, see #7841.
+     *
+     * @return true, if the GlyphVector double translation bug is present on
+     * this System
+     */
+    public static boolean isGlyphVectorDoubleTranslationBug() {
+        if (IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG != null)
+            return IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG;
+        FontRenderContext frc = new FontRenderContext(null, false, false);
+        Font font = new Font("Dialog", Font.PLAIN, 12);
+        GlyphVector gv = font.createGlyphVector(frc, "x");
+        gv.setGlyphTransform(0, AffineTransform.getTranslateInstance(1000, 1000));
+        Shape shape = gv.getGlyphOutline(0);
+        // x is about 1000 on normal stystems and about 2000 when the bug occurs
+        int x = shape.getBounds().x;
+        IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = x > 1500;
+        return IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG;
+    }
+
     public void drawTextOnPath(Way way, TextElement text) {
         if (way == null || text == null)
             return;
@@ -469,6 +499,12 @@ public class MapPainter {
                 trfm.rotate(p[2]+angleOffset);
                 double off = -rect.getY() - rect.getHeight()/2 + text.yOffset;
                 trfm.translate(-rect.getWidth()/2, off);
+                if (isGlyphVectorDoubleTranslationBug()) {
+                    // scale the translation components by one half
+                    AffineTransform tmp = AffineTransform.getTranslateInstance(-0.5 * trfm.getTranslateX(), -0.5 * trfm.getTranslateY());
+                    tmp.concatenate(trfm);
+                    trfm = tmp;
+                }
                 gv.setGlyphTransform(i, trfm);
             }
         }
