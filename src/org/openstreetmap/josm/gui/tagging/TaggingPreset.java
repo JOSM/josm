@@ -1261,20 +1261,26 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * and the 16x16 icons for SMALL_ICON.
      */
     public void setIcon(final String iconName) {
-        final File zipIcons = TaggingPreset.zipIcons;
-        Main.worker.submit(new Runnable() {
-
+        ImageProvider imgProv = new ImageProvider(iconName);
+        final Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
+        imgProv.setDirs(s);
+        imgProv.setId("presets");
+        imgProv.setArchive(TaggingPreset.zipIcons);
+        imgProv.setOptional(true);
+        imgProv.setMaxWidth(16).setMaxHeight(16);
+        imgProv.getInBackground(new ImageProvider.ImageCallback() {
             @Override
-            public void run() {
-                ImageIcon icon = loadImageIcon(iconName, zipIcons);
-                if (icon == null) {
+            public void finished(final ImageIcon result) {
+                if (result != null) {
+                    GuiHelper.runInEDT(new Runnable() {
+                        @Override
+                        public void run() {
+                            putValue(Action.SMALL_ICON, result);
+                        }
+                    });
+                } else {
                     System.out.println("Could not get presets icon " + iconName);
-                    icon = new ImageIcon(iconName);
                 }
-                if (Math.max(icon.getIconHeight(), icon.getIconWidth()) != 16) {
-                    icon = new ImageIcon(icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-                }
-                putValue(Action.SMALL_ICON, icon);
             }
         });
     }
