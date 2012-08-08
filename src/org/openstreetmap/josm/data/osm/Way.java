@@ -18,9 +18,10 @@ import org.openstreetmap.josm.tools.CopyList;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
- * One full way, consisting of a list of way nodes.
+ * One full way, consisting of a list of way {@link Node nodes}.
  *
  * @author imi
+ * @since 64
  */
 public final class Way extends OsmPrimitive implements IWay {
 
@@ -127,7 +128,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @param node the node. May be null.
      * @return true if this way contains the node <code>node</code>, false
      * otherwise
-     * @since 1909
+     * @since 1911
      */
     public boolean containsNode(Node node) {
         if (node == null) return false;
@@ -145,7 +146,7 @@ public final class Way extends OsmPrimitive implements IWay {
      *
      * @param node the node. May be null.
      * @return Set of nodes adjacent to <code>node</code>
-     * @since 4666
+     * @since 4671
      */
     public Set<Node> getNeighbours(Node node) {
         HashSet<Node> neigh = new HashSet<Node>();
@@ -164,6 +165,13 @@ public final class Way extends OsmPrimitive implements IWay {
         return neigh;
     }
 
+    /**
+     * Replies the ordered {@link List} of chunks of this way. Each chunk is replied as a {@link Pair} of {@link Node nodes}. 
+     * @param sort If true, the nodes of each pair are sorted as defined by {@link Pair#sort}. 
+     *             If false, Pair.a and Pair.b are in the way order (i.e for a given Pair(n), Pair(n-1).b == Pair(n).a, Pair(n).b == Pair(n+1).a, etc.) 
+     * @return The ordered list of chunks of this way.
+     * @since 3348
+     */
     public List<Pair<Node,Node>> getNodePairs(boolean sort) {
         List<Pair<Node,Node>> chunkSet = new ArrayList<Pair<Node,Node>>();
         if (isIncomplete()) return chunkSet;
@@ -197,17 +205,18 @@ public final class Way extends OsmPrimitive implements IWay {
     }
 
     /**
-     * Creates a new way with id 0.
-     *
+     * Contructs a new {@code Way} with id 0.
+     * @since 86
      */
-    public Way(){
+    public Way() {
         super(0, false);
     }
 
     /**
-     *
-     * @param original
-     * @param clearId
+     * Contructs a new {@code Way} from an existing {@code Way}.
+     * @param original The original {@code Way} to be identically cloned. Must not be null
+     * @param clearId If true, clears the OSM id as defined by {@link #clearOsmId}. If false, does nothing
+     * @since 2410
      */
     public Way(Way original, boolean clearId) {
         super(original.getUniqueId(), true);
@@ -218,38 +227,37 @@ public final class Way extends OsmPrimitive implements IWay {
     }
 
     /**
-     * Create an identical clone of the argument (including the id).
-     *
-     * @param original  the original way. Must not be null.
+     * Contructs a new {@code Way} from an existing {@code Way} (including its id).
+     * @param original The original {@code Way} to be identically cloned. Must not be null
+     * @since 86
      */
     public Way(Way original) {
         this(original, false);
     }
 
     /**
-     * Creates a new way for the given id. If the id > 0, the way is marked
+     * Contructs a new {@code Way} for the given id. If the id > 0, the way is marked
      * as incomplete. If id == 0 then way is marked as new
      *
      * @param id the id. >= 0 required
-     * @throws IllegalArgumentException thrown if id < 0
+     * @throws IllegalArgumentException if id < 0
+     * @since 343
      */
     public Way(long id) throws IllegalArgumentException {
         super(id, false);
     }
 
     /**
-     * Creates new way with given id and version.
-     * @param id
-     * @param version
+     * Contructs a new {@code Way} with given id and version.
+     * @param id the id. >= 0 required
+     * @param version the version
+     * @throws IllegalArgumentException if id < 0
+     * @since 2620
      */
-    public Way(long id, int version) {
+    public Way(long id, int version) throws IllegalArgumentException {
         super(id, version, false);
     }
 
-    /**
-     *
-     * @param data
-     */
     @Override
     public void load(PrimitiveData data) {
         boolean locked = writeLock();
@@ -272,7 +280,8 @@ public final class Way extends OsmPrimitive implements IWay {
         }
     }
 
-    @Override public WayData save() {
+    @Override
+    public WayData save() {
         WayData data = new WayData();
         saveCommonAttributes(data);
         for (Node node:nodes) {
@@ -281,7 +290,8 @@ public final class Way extends OsmPrimitive implements IWay {
         return data;
     }
 
-    @Override public void cloneFrom(OsmPrimitive osm) {
+    @Override
+    public void cloneFrom(OsmPrimitive osm) {
         boolean locked = writeLock();
         try {
             super.cloneFrom(osm);
@@ -292,7 +302,8 @@ public final class Way extends OsmPrimitive implements IWay {
         }
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         String nodesDesc = isIncomplete()?"(incomplete)":"nodes=" + Arrays.toString(nodes);
         return "{Way id=" + getUniqueId() + " version=" + getVersion()+ " " + getFlagsAsString()  + " " + nodesDesc + "}";
     }
@@ -319,8 +330,13 @@ public final class Way extends OsmPrimitive implements IWay {
         return o instanceof Way ? Long.valueOf(getUniqueId()).compareTo(o.getUniqueId()) : -1;
     }
 
+    /**
+     * Removes the given {@link Node} from this way. Ignored, if n is null.
+     * @param n The node to remove. Ignored, if null
+     * @since 1463
+     */
     public void removeNode(Node n) {
-        if (isIncomplete()) return;
+        if (n == null || isIncomplete()) return;
         boolean locked = writeLock();
         try {
             boolean closed = (lastNode() == n && firstNode() == n);
@@ -341,8 +357,13 @@ public final class Way extends OsmPrimitive implements IWay {
         }
     }
 
-    public void removeNodes(Set<? extends OsmPrimitive> selection) {
-        if (isIncomplete()) return;
+    /**
+     * Removes the given set of {@link Node nodes} from this way. Ignored, if selection is null.
+     * @param selection The selection of nodes to remove. Ignored, if null
+     * @since 5408
+     */
+    public void removeNodes(Set<? extends Node> selection) {
+        if (selection == null || isIncomplete()) return;
         boolean locked = writeLock();
         try {
             boolean closed = (lastNode() == firstNode() && selection.contains(lastNode()));
@@ -369,9 +390,10 @@ public final class Way extends OsmPrimitive implements IWay {
     /**
      * Adds a node to the end of the list of nodes. Ignored, if n is null.
      *
-     * @param n the node. Ignored, if null.
+     * @param n the node. Ignored, if null
      * @throws IllegalStateException thrown, if this way is marked as incomplete. We can't add a node
      * to an incomplete way
+     * @since 1313
      */
     public void addNode(Node n) throws IllegalStateException {
         if (n==null) return;
@@ -395,11 +417,12 @@ public final class Way extends OsmPrimitive implements IWay {
     /**
      * Adds a node at position offs.
      *
-     * @param int offs the offset
+     * @param offs the offset
      * @param n the node. Ignored, if null.
      * @throws IllegalStateException thrown, if this way is marked as incomplete. We can't add a node
      * to an incomplete way
      * @throws IndexOutOfBoundsException thrown if offs is out of bounds
+     * @since 1313
      */
     public void addNode(int offs, Node n) throws IllegalStateException, IndexOutOfBoundsException {
         if (n==null) return;
@@ -452,6 +475,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * Returns the last node of this way.
      * The result equals <tt>{@link #getNode getNode}({@link #getNodesCount getNodesCount} - 1)</tt>.
      * @return the last node of this way
+     * @since 1400
      */
     public Node lastNode() {
         Node[] nodes = this.nodes;
@@ -463,6 +487,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * Returns the first node of this way.
      * The result equals {@link #getNode getNode}{@code (0)}.
      * @return the first node of this way
+     * @since 1400
      */
     public Node firstNode() {
         Node[] nodes = this.nodes;
@@ -470,24 +495,36 @@ public final class Way extends OsmPrimitive implements IWay {
         return nodes[0];
     }
 
+    /**
+     * Replies true if the given node is the first or the last one of this way, false otherwise.
+     * @param n The node to test
+     * @return true if the {@code n} is the first or the last node, false otherwise.
+     * @since 1400
+     */
     public boolean isFirstLastNode(Node n) {
         Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length == 0) return false;
         return n == nodes[0] || n == nodes[nodes.length -1];
     }
 
+    /**
+     * Replies true if the given node is an inner node of this way, false otherwise.
+     * @param n The node to test
+     * @return true if the {@code n} is an inner node, false otherwise.
+     * @since 3515
+     */
     public boolean isInnerNode(Node n) {
         Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length <= 2) return false;
         /* circular ways have only inner nodes, so return true for them! */
         if (n == nodes[0] && n == nodes[nodes.length-1]) return true;
-        for(int i = 1; i < nodes.length - 1; ++i) {
-            if(nodes[i] == n) return true;
+        for (int i = 1; i < nodes.length - 1; ++i) {
+            if (nodes[i] == n) return true;
         }
         return false;
     }
 
-
+    @Override
     public String getDisplayName(NameFormatter formatter) {
         return formatter.format(this);
     }
@@ -516,8 +553,8 @@ public final class Way extends OsmPrimitive implements IWay {
             }
             if (Main.pref.getBoolean("debug.checkNullCoor", true)) {
                 for (Node n: nodes) {
-                    if (!n.isIncomplete() && (n.getCoor() == null || n.getEastNorth() == null))
-                        throw new DataIntegrityProblemException("Complete node with null coordinates: " + toString() + n.get3892DebugInfo(),
+                    if (n.isVisible() && !n.isIncomplete() && (n.getCoor() == null || n.getEastNorth() == null))
+                        throw new DataIntegrityProblemException("Complete visible node with null coordinates: " + toString() + n.get3892DebugInfo(),
                                 "<html>" + tr("Complete node {0} with null coordinates in way {1}",
                                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(n),
                                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(this)) + "</html>");
@@ -554,9 +591,14 @@ public final class Way extends OsmPrimitive implements IWay {
         bbox = new BBox(this);
     }
 
+    /**
+     * Replies true if this way has incomplete nodes, false otherwise.
+     * @return true if this way has incomplete nodes, false otherwise.
+     * @since 2587
+     */
     public boolean hasIncompleteNodes() {
         Node[] nodes = this.nodes;
-        for (Node node:nodes) {
+        for (Node node : nodes) {
             if (node.isIncomplete())
                 return true;
         }
@@ -573,8 +615,11 @@ public final class Way extends OsmPrimitive implements IWay {
         return super.isDrawable() && !hasIncompleteNodes();
     }
 
-
-    /* since revision 4138 */
+    /**
+     * Replies the length of the way, in metres, as computed by {@link LatLon#greatCircleDistance}.
+     * @return The length of the way, in metres
+     * @since 4138
+     */
     public double getLength() {
         double length = 0;
         Node lastN = null;
@@ -593,8 +638,10 @@ public final class Way extends OsmPrimitive implements IWay {
 
     /**
      * Tests if this way is a oneway.
-     * @return {@code 1} if the way is a oneway, {@code -1} if the way is a reversed oneway,
-     * {@code 0} otherwise.
+     * @return {@code 1} if the way is a oneway, 
+     *         {@code -1} if the way is a reversed oneway,
+     *         {@code 0} otherwise.
+     * @since 5199
      */
     public int isOneway() {
         String oneway = get("oneway");
@@ -611,10 +658,22 @@ public final class Way extends OsmPrimitive implements IWay {
         return 0;
     }
 
+    /**
+     * Replies the first node of this way, respecting or not its oneway state.
+     * @param respectOneway If true and if this way is a oneway, replies the last node. Otherwise, replies the first node.
+     * @return the first node of this way, according to {@code respectOneway} and its oneway state.
+     * @since 5199
+     */
     public Node firstNode(boolean respectOneway) {
         return !respectOneway || isOneway() != -1 ? firstNode() : lastNode();
     }
 
+    /**
+     * Replies the last node of this way, respecting or not its oneway state.
+     * @param respectOneway If true and if this way is a oneway, replies the first node. Otherwise, replies the last node.
+     * @return the last node of this way, according to {@code respectOneway} and its oneway state.
+     * @since 5199
+     */
     public Node lastNode(boolean respectOneway) {
         return !respectOneway || isOneway() != -1 ? lastNode() : firstNode();
     }
