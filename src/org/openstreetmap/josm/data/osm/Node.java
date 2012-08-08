@@ -120,32 +120,34 @@ public final class Node extends OsmPrimitive implements INode {
     }
 
     /**
-     * Create a new local node.
-     *
+     * Constructs a new local {@code Node} with id 0.
      */
     public Node() {
         this(0, false);
     }
 
     /**
-     * Create an incomplete Node object
+     * Constructs an incomplete {@code Node} object with the given id.
+     * @param id The id. Must be >= 0
+     * @throws IllegalArgumentException if id < 0
      */
-    public Node(long id) {
+    public Node(long id) throws IllegalArgumentException {
         super(id, false);
     }
 
     /**
-     * Create new node
-     * @param id
-     * @param version
+     * Constructs a new {@code Node} with the given id and version.
+     * @param id The id. Must be >= 0
+     * @param version The version
+     * @throws IllegalArgumentException if id < 0
      */
-    public Node(long id, int version) {
+    public Node(long id, int version) throws IllegalArgumentException {
         super(id, version, false);
     }
 
     /**
-     *
-     * @param clone
+     * Constructs an identical clone of the argument.
+     * @param clone The node to clone
      * @param clearId If true, set version to 0 and id to new unique value
      */
     public Node(Node clone, boolean clearId) {
@@ -157,17 +159,26 @@ public final class Node extends OsmPrimitive implements INode {
     }
 
     /**
-     * Create an identical clone of the argument (including the id)
+     * Constructs an identical clone of the argument (including the id).
+     * @param clone The node to clone, including its id
      */
     public Node(Node clone) {
         this(clone, false);
     }
 
+    /**
+     * Constructs a new {@code Node} with the given lat/lon with id 0.
+     * @param latlon The {@link LatLon} coordinates
+     */
     public Node(LatLon latlon) {
         super(0, false);
         setCoor(latlon);
     }
 
+    /**
+     * Constructs a new {@code Node} with the given east/north with id 0.
+     * @param eastNorth The {@link EastNorth} coordinates
+     */
     public Node(EastNorth eastNorth) {
         super(0, false);
         setEastNorth(eastNorth);
@@ -180,15 +191,18 @@ public final class Node extends OsmPrimitive implements INode {
             throw new DataIntegrityProblemException("Complete node with null coordinates: " + toString() + get3892DebugInfo());
     }
 
-    @Override public void visit(Visitor visitor) {
+    @Override
+    public void visit(Visitor visitor) {
         visitor.visit(this);
     }
 
-    @Override public void visit(PrimitiveVisitor visitor) {
+    @Override
+    public void visit(PrimitiveVisitor visitor) {
         visitor.visit(this);
     }
 
-    @Override public void cloneFrom(OsmPrimitive osm) {
+    @Override
+    public void cloneFrom(OsmPrimitive osm) {
         boolean locked = writeLock();
         try {
             super.cloneFrom(osm);
@@ -241,7 +255,8 @@ public final class Node extends OsmPrimitive implements INode {
         return data;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         String coorDesc = isLatLonKnown() ? "lat="+lat+",lon="+lon : "";
         return "{Node id=" + getUniqueId() + " version=" + getVersion() + " " + getFlagsAsString() + " "  + coorDesc+"}";
     }
@@ -286,6 +301,12 @@ public final class Node extends OsmPrimitive implements INode {
     @Override
     public void updatePosition() {
     }
+    
+    @Override
+    public boolean isDrawable() {
+        // Not possible to draw a node without coordinates.
+        return super.isDrawable() && isLatLonKnown();
+    }
 
     /**
      * Check whether this node connects 2 ways.
@@ -297,6 +318,11 @@ public final class Node extends OsmPrimitive implements INode {
         return isReferredByWays(2);
     }
 
+    /**
+     * Get debug info for bug #3892.
+     * @return debug info for bug #3892.
+     * @deprecated This method will be remove by the end of 2012 if no report appears.
+     */
     public String get3892DebugInfo() {
         StringBuilder builder = new StringBuilder();
         builder.append("Unexpected error. Please report it to http://josm.openstreetmap.de/ticket/3892\n");

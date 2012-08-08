@@ -842,11 +842,13 @@ public class MapPainter {
         for (Node n : w.getNodes())
         {
             Point2D p = n.getEastNorth();
-            if (initial) {
-                path.moveTo(p.getX(), p.getY());
-                initial = false;
-            } else {
-                path.lineTo(p.getX(), p.getY());
+            if (p != null) {
+                if (initial) {
+                    path.moveTo(p.getX(), p.getY());
+                    initial = false;
+                } else {
+                    path.lineTo(p.getX(), p.getY());
+                }
             }
         }
         return path;
