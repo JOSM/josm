@@ -518,6 +518,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         
         synchronized (this) {
             canUseBuffer = !paintPreferencesChanged;
+            paintPreferencesChanged = false;
         }
         canUseBuffer = canUseBuffer && nonChangedLayers.size() <= nonChangedLayersCount &&
         lastViewID == getViewID() && lastClipBounds.contains(g.getClipBounds());
@@ -567,7 +568,6 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             nonChangedLayers.add(visibleLayers.get(i));
         }
         lastViewID = getViewID();
-        paintPreferencesChanged = false;
         lastClipBounds = g.getClipBounds();
 
         tempG.drawImage(nonChangedLayersBuffer, 0, 0, null);
