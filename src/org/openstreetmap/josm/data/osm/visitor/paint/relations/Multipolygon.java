@@ -213,11 +213,13 @@ public class Multipolygon {
             boolean initial = true;
             for (Node n : nodes) {
                 Point2D p = n.getEastNorth();
-                if (initial) {
-                    poly.moveTo(p.getX(), p.getY());
-                    initial = false;
-                } else {
-                    poly.lineTo(p.getX(), p.getY());
+                if (p != null) {
+                    if (initial) {
+                        poly.moveTo(p.getX(), p.getY());
+                        initial = false;
+                    } else {
+                        poly.lineTo(p.getX(), p.getY());
+                    }
                 }
             }
             if (!initial) { // fix #7593
