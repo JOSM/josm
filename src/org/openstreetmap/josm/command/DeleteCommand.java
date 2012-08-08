@@ -342,7 +342,7 @@ public class DeleteCommand extends Command {
         Set<OsmPrimitive> primitivesToDelete = new HashSet<OsmPrimitive>(selection);
 
         Collection<Relation> relationsToDelete = Utils.filteredCollection(primitivesToDelete, Relation.class);
-        if(!relationsToDelete.isEmpty() && !silent && !confirmRelationDeletion(relationsToDelete))
+        if (!relationsToDelete.isEmpty() && !silent && !confirmRelationDeletion(relationsToDelete))
             return null;
 
         Collection<Way> waysToBeChanged = new HashSet<Way>();
@@ -363,7 +363,7 @@ public class DeleteCommand extends Command {
         Collection<Command> cmds = new LinkedList<Command>();
         for (Way w : waysToBeChanged) {
             Way wnew = new Way(w);
-            wnew.removeNodes(primitivesToDelete);
+            wnew.removeNodes(OsmPrimitive.getFilteredSet(primitivesToDelete, Node.class));
             if (wnew.getNodesCount() < 2) {
                 primitivesToDelete.add(w);
             } else {
