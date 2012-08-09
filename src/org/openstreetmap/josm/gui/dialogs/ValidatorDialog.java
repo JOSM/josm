@@ -84,6 +84,8 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     /** Last selected element */
     private DefaultMutableTreeNode lastSelectedNode = null;
 
+    private OsmDataLayer linkedLayer;
+
     /**
      * Constructor
      */
@@ -366,7 +368,10 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 }
             }
         }
-        Main.main.getCurrentDataSet().setSelected(sel);
+        DataSet ds = Main.main.getCurrentDataSet();
+        if (ds != null) {
+            ds.setSelected(sel);
+        }
     }
 
     /**
@@ -426,7 +431,8 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
         if (newLayer instanceof OsmDataLayer) {
-            tree.setErrorList(((OsmDataLayer) newLayer).validationErrors);
+            linkedLayer = (OsmDataLayer)newLayer;
+            tree.setErrorList(linkedLayer.validationErrors);
         }
     }
 
@@ -434,7 +440,11 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     public void layerAdded(Layer newLayer) {}
 
     @Override
-    public void layerRemoved(Layer oldLayer) {}
+    public void layerRemoved(Layer oldLayer) {
+        if (oldLayer == linkedLayer) {
+            tree.setErrorList(new ArrayList<TestError>());
+        }
+    }
 
     /**
      * Watches for clicks.
