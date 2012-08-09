@@ -219,17 +219,14 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
                 }
             }
             public void visit(Relation e) {
-                for (RelationMember em : e.getMembers()) {
-                    OsmPrimitive m = em.getMember();
-                    if (m instanceof Node || m instanceof Way) {
-                        m.visit(this);
-                    } else if (m instanceof Relation && !visited.contains(m)) {
-                        visited.add((Relation) m);
-                        try {
-                            m.visit(this);
-                        } finally {
-                            visited.remove(m);
+                if (!visited.contains(e)) {
+                    visited.add(e);
+                    try {
+                        for (RelationMember em : e.getMembers()) {
+                            em.getMember().visit(this);
                         }
+                    } finally {
+                        visited.remove(e);
                     }
                 }
             }
