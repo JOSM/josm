@@ -295,9 +295,6 @@ public class OsmValidator implements LayerChangeListener {
 
     @Override
     public void layerRemoved(Layer oldLayer) {
-        if (oldLayer instanceof OsmDataLayer && Main.map.mapView.getActiveLayer() == oldLayer) {
-            Main.map.validatorDialog.tree.setErrorList(new ArrayList<TestError>());
-        }
         if (oldLayer == errorLayer) {
             errorLayer = null;
             return;
