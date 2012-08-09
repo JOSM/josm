@@ -22,7 +22,6 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -35,6 +34,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.data.Preferences.Setting;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -499,10 +499,13 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
     public void preferenceChanged(PreferenceChangeEvent e) {
         if (e.getKey() == null || ! e.getKey().equals("osm-server.url"))
             return;
-        if (e.getNewValue() == null) {
-            setTitle(tr("Upload"));
+        final Setting<?> newValue = e.getNewValue();
+        final String url;
+        if (newValue == null || newValue.getValue() == null) {
+            url = OsmApi.getOsmApi().getBaseUrl();
         } else {
-            setTitle(tr("Upload to ''{0}''", e.getNewValue()));
+            url = newValue.getValue().toString();
         }
+        setTitle(tr("Upload to ''{0}''", url));
     }
 }
