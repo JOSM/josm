@@ -396,7 +396,10 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             for (Object o : lstConflicts.getSelectedValues()) {
                 sel.add((OsmPrimitive)o);
             }
-            Main.main.getCurrentDataSet().setSelected(sel);
+            DataSet ds = Main.main.getCurrentDataSet();
+            if (ds != null) { // Can't see how it is possible but it happened in #7942 
+                ds.setSelected(sel);
+            }
         }
 
         public void valueChanged(ListSelectionEvent e) {
