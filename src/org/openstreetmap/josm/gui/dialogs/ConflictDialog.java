@@ -14,8 +14,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
@@ -56,11 +58,18 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public final class ConflictDialog extends ToggleDialog implements MapView.EditLayerChangeListener, IConflictListener, SelectionChangedListener{
 
+    /**
+     * Replies the color used to paint conflicts.
+     * 
+     * @return the color used to paint conflicts
+     * @since 1221
+     * @see #paintConflicts
+     */
     static public Color getColor() {
         return Main.pref.getColor(marktr("conflict"), Color.gray);
     }
 
-    /** the  collection of conflicts displayed by this conflict dialog*/
+    /** the collection of conflicts displayed by this conflict dialog */
     private ConflictCollection conflicts;
 
     /** the model for the list of conflicts */
@@ -175,14 +184,20 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     }
 
     /**
-     * Paint all conflicts that can be expressed on the main window.
+     * Paints all conflicts that can be expressed on the main window.
+     * 
+     * @param g The {@code Graphics} used to paint
+     * @param nc The {@code NavigatableComponent} used to get screen coordinates of nodes
+     * @since 86
      */
     public void paintConflicts(final Graphics g, final NavigatableComponent nc) {
         Color preferencesColor = getColor();
         if (preferencesColor.equals(Main.pref.getColor(marktr("background"), Color.black)))
             return;
         g.setColor(preferencesColor);
-        Visitor conflictPainter = new AbstractVisitor(){
+        Visitor conflictPainter = new AbstractVisitor() {
+            // Manage a stack of visited relations to avoid infinite recursion with cyclic relations (fix #7938)
+            private final Set<Relation> visited = new HashSet<Relation>();
             public void visit(Node n) {
                 Point p = nc.getPoint(n);
                 g.drawRect(p.x-1, p.y-1, 2, 2);
@@ -205,7 +220,17 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             }
             public void visit(Relation e) {
                 for (RelationMember em : e.getMembers()) {
-                    em.getMember().visit(this);
+                    OsmPrimitive m = em.getMember();
+                    if (m instanceof Node || m instanceof Way) {
+                        m.visit(this);
+                    } else if (m instanceof Relation && !visited.contains(m)) {
+                        visited.add((Relation) m);
+                        try {
+                            m.visit(this);
+                        } finally {
+                            visited.remove(m);
+                        }
+                    }
                 }
             }
         };
