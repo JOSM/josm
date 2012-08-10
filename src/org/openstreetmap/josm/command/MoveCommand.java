@@ -32,6 +32,11 @@ public class MoveCommand extends Command {
      */
     private Collection<Node> nodes = new LinkedList<Node>();
     /**
+     * Starting position, base command point, current (mouse-drag) position = startEN + (x,y) = 
+     */
+    private EastNorth startEN;
+
+    /**
      * x difference movement. Coordinates are in northern/eastern
      */
     private double x;
@@ -40,12 +45,16 @@ public class MoveCommand extends Command {
      */
     private double y;
 
+    private double backupX;
+    private double backupY;
+
     /**
      * Small helper for holding the interesting part of the old data state of the
      * objects.
      */
     public static class OldState {
         LatLon latlon;
+        EastNorth en; // cached EastNorth to be used for applying exact displacenment
         boolean modified;
     }
 
@@ -65,23 +74,36 @@ public class MoveCommand extends Command {
     public MoveCommand(Collection<OsmPrimitive> objects, EastNorth offset) {
         this(objects, offset.getX(), offset.getY());
     }
-
+    
     /**
      * Create a MoveCommand and assign the initial object set and movement vector.
      */
     public MoveCommand(Collection<OsmPrimitive> objects, double x, double y) {
         super();
+        startEN = null;
+        saveCheckpoint(); // (0,0) displacement will be saved
         this.x = x;
         this.y = y;
         this.nodes = AllNodesVisitor.getAllNodes(objects);
         for (Node n : this.nodes) {
             OldState os = new OldState();
             os.latlon = new LatLon(n.getCoor());
+            os.en = n.getEastNorth();
             os.modified = n.isModified();
             oldState.add(os);
         }
     }
 
+     public MoveCommand(Collection<OsmPrimitive> objects, EastNorth start, EastNorth end) {
+         this(objects, end.getX()-start.getX(), end.getY()-start.getY());
+         startEN =  start;
+     }
+
+     public MoveCommand(OsmPrimitive p, EastNorth start, EastNorth end) {
+         this(Collections.singleton(p), end.getX()-start.getX(), end.getY()-start.getY());
+         startEN =  start;
+     }
+     
     /**
      * Move the same set of objects again by the specified vector. The vectors
      * are added together and so the resulting will be moved to the previous
@@ -100,6 +122,51 @@ public class MoveCommand extends Command {
 
     public void moveAgainTo(double x, double y) {
         moveAgain(x - this.x, y - this.y);
+    }
+    
+    /**
+     * Change the displacement vector to have endpoint @param currentEN 
+     * starting point is  startEN
+     */
+    public void applyVectorTo(EastNorth currentEN) {
+        if (startEN == null) 
+            return;
+        x = currentEN.getX() - startEN.getX();
+        y = currentEN.getY() - startEN.getY();
+        updateCoordinates();
+    }
+
+     /**
+     * Changes base point of movement
+     * @param newDraggedStartPoint - new starting point after movement (where user clicks to start new drag)
+     */
+    public void changeStartPoint(EastNorth newDraggedStartPoint) {
+        startEN = new EastNorth(newDraggedStartPoint.getX()-x, newDraggedStartPoint.getY()-y);
+     }
+
+    /**
+     * Save curent displacement to restore in case of some problems
+     */
+    public void saveCheckpoint() {
+        backupX = x;
+        backupY = y;
+    }
+
+    /**
+     * Restore old displacement in case of some problems
+     */
+    public void resetToCheckpoint() {
+        x = backupX;
+        y = backupY;
+        updateCoordinates();
+    }
+
+    private void updateCoordinates() {
+        Iterator<OldState> it = oldState.iterator();
+        for (Node n : nodes) {
+            OldState os = it.next();
+            n.setEastNorth(os.en.add(x, y));
+        }
     }
 
     @Override public boolean executeCommand() {
