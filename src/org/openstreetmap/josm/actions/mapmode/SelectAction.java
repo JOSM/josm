@@ -649,10 +649,10 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
 
     
     /**
-     * Create or update data modfication command whle dragging mouse - implementation of 
+     * Create or update data modification command while dragging mouse - implementation of 
      * continuous moving, scaling and rotation
      * @param currentEN - mouse position
-     * @return 
+     * @return status of action (<code>true</code> when action was performed)
      */
     private boolean updateCommandWhileDragging(EastNorth currentEN) {
         // Currently we support only transformations which do not affect relations.
@@ -708,7 +708,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     }
     
     /**
-     * Adapt last move command (if it is suitabble) to work with next drag, startedd at point startEN
+     * Adapt last move command (if it is suitable) to work with next drag, started at point startEN
      */
     private void useLastMoveCommandIfPossible() {
         Command c = getLastCommand();
@@ -731,6 +731,12 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         return c;
     }
     
+    /**
+     * Present warning in case of large and possibly unwanted movements and undo
+     * unwanted movements.
+     *
+     * @param e the mouse event causing the action (mouse released)
+     */
     private void confirmOrUndoMovement(MouseEvent e) {
         int max = Main.pref.getInteger("warn.move.maxelements", 20), limit = max;
         for (OsmPrimitive osm : getCurrentDataSet().getSelected()) {
@@ -763,9 +769,11 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         getCurrentDataSet().fireSelectionChanged();
     }
     
-    /** Merges the selected nodes to the one closest to the given mouse position iff the control
+    /**
+     * Merges the selected nodes to the one closest to the given mouse position iff the control
      * key is pressed. If there is no such node, no action will be done and no error will be
-     * reported. If there is, it will execute the merge and add it to the undo buffer. */
+     * reported. If there is, it will execute the merge and add it to the undo buffer.
+     */
     final private void mergePrims(Point p) {
         Collection<Node> selNodes = getCurrentDataSet().getSelectedNodes();
         if (selNodes.isEmpty())
@@ -780,8 +788,10 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         MergeNodesAction.doMergeNodes(Main.main.getEditLayer(), nodesToMerge, target);
     }
 
-    /** tries to find a node to merge to when in move-merge mode for the current mouse
-     * position. Either returns the node or null, if no suitable one is nearby. */
+    /**
+     * Tries to find a node to merge to when in move-merge mode for the current mouse
+     * position. Either returns the node or null, if no suitable one is nearby.
+     */
     final private Node findNodeToMergeTo(Point p) {
         Collection<Node> target = mv.getNearestNodes(p,
                 getCurrentDataSet().getSelectedNodes(),
