@@ -16,6 +16,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+* Abstract class to represent common features of the datatypes primitives.
+*
+* @since 4099
+*/
 public abstract class AbstractPrimitive implements IPrimitive {
 
     private static final AtomicLong idCounter = new AtomicLong(0);
@@ -93,6 +98,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
     /**
      * Get and write all attributes from the parameter. Does not fire any listener, so
      * use this only in the data initializing phase
+     * @param other the primitive to clone data from
      */
     public void cloneFrom(AbstractPrimitive other) {
         setKeys(other.getKeys());
@@ -121,7 +127,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * Replies the version number as returned by the API. The version is 0 if the id is 0 or
      * if this primitive is incomplete.
      *
-     * @see #setVersion(int)
+     * @see PrimitiveData#setVersion(int)
      */
     @Override
     public int getVersion() {
@@ -140,6 +146,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
     }
 
     /**
+     * Gets a unique id representing this object.
      *
      * @return Osm id if primitive already exists on the server. Unique negative value if primitive is new
      */
@@ -282,6 +289,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * read from the server and delivered back to the server unmodified. It is
      * used to check against edit conflicts.
      *
+     * @return date of last modification
      */
     @Override
     public Date getTimestamp() {
@@ -350,22 +358,24 @@ public abstract class AbstractPrimitive implements IPrimitive {
     }
 
     /**
-     * Replies <code>true</code>, if the object is usable (i.e. complete
-     * and not deleted).
+     * Replies <code>true</code>, if the object is usable
+     * (i.e. complete and not deleted).
      *
      * @return <code>true</code>, if the object is usable.
-     * @see #delete(boolean)
+     * @see #setDeleted(boolean)
      */
     public boolean isUsable() {
         return (flags & (FLAG_DELETED + FLAG_INCOMPLETE)) == 0;
     }
 
     /**
+     * Checks if objects is known to the server.
      * Replies true if this primitive is either unknown to the server (i.e. its id
      * is 0) or it is known to the server and it hasn't be deleted on the server.
      * Replies false, if this primitive is known on the server and has been deleted
      * on the server.
      *
+     * @return <code>true</code>, if the object is visible on server.
      * @see #setVisible(boolean)
      */
     @Override
@@ -624,7 +634,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
     }
 
     /**
-     * Replies true if this primitive has a tag with key <code>key</code>
+     * Replies true if this primitive has a tag with key <code>key</code>.
      *
      * @param key the key
      * @return true, if his primitive has a tag with key <code>key</code>
