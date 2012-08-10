@@ -119,6 +119,10 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
      */
     private Point startingDraggingPos;
     /**
+     * point where user pressed the mouse to start movement
+     */
+    EastNorth startEN;
+    /**
      * The last known position of the mouse.
      */
     private Point lastMousePos;
@@ -197,6 +201,8 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         removeHighlighting();
     }
 
+    int previousModifiers;
+    
      /**
      * This is called whenever the keyboard modifier status changes
      */
@@ -205,6 +211,10 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             return;
         // We don't have a mouse event, so we pass the old mouse event but the
         // new modifiers.
+        int modif = ((InputEvent) e).getModifiers();
+        if (previousModifiers == modif)
+            return;
+        previousModifiers = modif;
         if(giveUserFeedback(oldEvent, ((InputEvent) e).getModifiers())) {
             mv.repaint();
         }
@@ -396,6 +406,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         initialMoveThresholdExceeded = false;
         mouseDownTime = System.currentTimeMillis();
         lastMousePos = e.getPoint();
+        startEN = mv.getEastNorth(lastMousePos.x,lastMousePos.y);
 
         // primitives under cursor are stored in c collection
         
@@ -423,6 +434,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                 virtualManager.setupVirtual(e.getPoint());
             }
             selectPrims(cycleManager.cycleSetup(nearestPrimitive, e.getPoint()), false, false);
+            useLastMoveCommandIfPossible();
             break;
         case select:
         default:
@@ -508,26 +520,20 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         }
 
         if (!initialMoveThresholdExceeded) {
-            int dxp = lastMousePos.x - e.getX();
-            int dyp = lastMousePos.y - e.getY();
-            int dp = (int) Math.sqrt(dxp * dxp + dyp * dyp);
+            int dp = (int) lastMousePos.distance(e.getX(), e.getY());
             if (dp < initialMoveThreshold)
                 return;
             initialMoveThresholdExceeded = true;
         }
 
         EastNorth currentEN = mv.getEastNorth(e.getX(), e.getY());
-        EastNorth lastEN = mv.getEastNorth(lastMousePos.x, lastMousePos.y);
-        //EastNorth startEN = mv.getEastNorth(startingDraggingPos.x, startingDraggingPos.y);
-        double dx = currentEN.east() - lastEN.east();
-        double dy = currentEN.north() - lastEN.north();
-        if (dx == 0 && dy == 0)
+        if (e.getPoint().equals(lastMousePos))
             return;
-
+        
         if (virtualManager.hasVirtualWays()) {
-            virtualManager.processVirtualNodeMovements(dx, dy);
+            virtualManager.processVirtualNodeMovements(currentEN);
         } else {
-            if (!updateCommandWhileDragging(dx, dy, currentEN)) return;
+            if (!updateCommandWhileDragging(currentEN)) return;
         }
 
         mv.repaint();
@@ -560,7 +566,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             selectionManager.unregister(mv);
 
             // Select Draw Tool if no selection has been made
-            if (getCurrentDataSet().getSelected().size() == 0 && !cancelDrawMode) {
+            if (getCurrentDataSet().getSelected().isEmpty() && !cancelDrawMode) {
                 Main.map.selectDrawTool(true);
                 return;
             }
@@ -645,11 +651,10 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     /**
      * Create or update data modfication command whle dragging mouse - implementation of 
      * continuous moving, scaling and rotation
-     * @param dx, @param dy - mouse displacement
-     * @param currentEN -
+     * @param currentEN - mouse position
      * @return 
      */
-    private boolean updateCommandWhileDragging(double dx, double dy, EastNorth currentEN) {
+    private boolean updateCommandWhileDragging(EastNorth currentEN) {
         // Currently we support only transformations which do not affect relations.
         // So don't add them in the first place to make handling easier
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelectedNodesAndWays();
@@ -658,24 +663,20 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         if (affectedNodes.size() < 2 && (mode == Mode.rotate || mode == Mode.scale)) {
             return false;
         }
-        Command c = !Main.main.undoRedo.commands.isEmpty()
-                ? Main.main.undoRedo.commands.getLast() : null;
-        if (c instanceof SequenceCommand) {
-            c = ((SequenceCommand) c).getLastCommand();
-        }
+        Command c = getLastCommand();
         if (mode == Mode.move) {
             getCurrentDataSet().beginUpdate();
             if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
-                ((MoveCommand) c).moveAgain(dx, dy);
+                ((MoveCommand) c).saveCheckpoint();
+                ((MoveCommand) c).applyVectorTo(currentEN);
             } else {
                 Main.main.undoRedo.add(
-                        c = new MoveCommand(selection, dx, dy));
+                        c = new MoveCommand(selection, startEN, currentEN));
             }
-            getCurrentDataSet().endUpdate();
             for (Node n : affectedNodes) {
                 if (n.getCoor().isOutSideWorld()) {
                     // Revert move
-                    ((MoveCommand) c).moveAgain(-dx, -dy);
+                    ((MoveCommand) c).resetToCheckpoint();
                     JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Cannot move objects outside of the world."),
@@ -685,6 +686,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                     return false;
                 }
             }
+            getCurrentDataSet().endUpdate();
         } else if (mode == Mode.rotate) {
             getCurrentDataSet().beginUpdate();
             if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
@@ -703,6 +705,30 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             getCurrentDataSet().endUpdate();
         }
         return true;
+    }
+    
+    /**
+     * Adapt last move command (if it is suitabble) to work with next drag, startedd at point startEN
+     */
+    private void useLastMoveCommandIfPossible() {
+        Command c = getLastCommand();
+        Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(getCurrentDataSet().getSelected());
+        if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
+            // old command was created with different base point of movement, we need to recalculate it
+            ((MoveCommand) c).changeStartPoint(startEN);
+        }
+    }
+       
+    /**
+     * Obtain command in undoRedo stack to "continue" when dragging
+     */
+    private Command getLastCommand() {
+        Command c = !Main.main.undoRedo.commands.isEmpty()
+                ? Main.main.undoRedo.commands.getLast() : null;
+        if (c instanceof SequenceCommand) {
+            c = ((SequenceCommand) c).getLastCommand();
+        }
+        return c;
     }
     
     private void confirmOrUndoMovement(MouseEvent e) {
@@ -1035,7 +1061,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             return !virtualWays.isEmpty();
         }
 
-        private void processVirtualNodeMovements(double dx, double dy) {
+        private void processVirtualNodeMovements(EastNorth currentEN) {
             Collection<Command> virtualCmds = new LinkedList<Command>();
             virtualCmds.add(new AddCommand(virtualNode));
             for (WaySegment virtualWay : virtualWays) {
@@ -1044,7 +1070,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                 wnew.addNode(virtualWay.lowerIndex + 1, virtualNode);
                 virtualCmds.add(new ChangeCommand(w, wnew));
             }
-            virtualCmds.add(new MoveCommand(virtualNode, dx, dy));
+            virtualCmds.add(new MoveCommand(virtualNode, startEN, currentEN));
             String text = trn("Add and move a virtual new node to way",
                     "Add and move a virtual new node to {0} ways", virtualWays.size(),
                     virtualWays.size());
