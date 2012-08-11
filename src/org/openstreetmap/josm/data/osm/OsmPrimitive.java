@@ -427,10 +427,13 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     /**
-     * Make the primitive disabled (e.g. if a filter applies).
+     * Make the primitive disabled (e.g.&nbsp;if a filter applies).
+     *
      * To enable the primitive again, use unsetDisabledState.
      * @param hide if the primitive should be completely hidden from view or
      *             just shown in gray color.
+     * @return true, any flag has changed; false if you try to set the disabled
+     * state to the value that is already preset
      */
     public boolean setDisabledState(boolean hide) {
         boolean locked = writeLock();
