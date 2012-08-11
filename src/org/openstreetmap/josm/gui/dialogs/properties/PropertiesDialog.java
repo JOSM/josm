@@ -605,27 +605,47 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 final JosmAction action = new JosmAction(actionShortcutKey, null, tr("Use this tag again"), sc, false) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        keys.getEditor().setItem(t.getKey());
+                        //keys.getEditor().setItem(t.getKey());
+                        keys.setSelectedItem(t.getKey());
                         values.getEditor().setItem(t.getValue());
                         // Update list of values (fix #7951) 
                         focus.focusGained(null);
                     }
                 };
-                p.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), actionShortcutKey);
-                p.getActionMap().put(actionShortcutKey, action);
                 tagsActions.add(action);
-                // Display clickable tag
+                // Disable action if its key is already set on the object (the key being absent from the keys list for this reason
+                // performing this action leads to autocomplete to the next key (see #7671 comments)
+                for (int j = 0; j < propertyData.getRowCount(); ++j) {
+                    System.out.println(propertyData.getValueAt(j, 0));
+                    if (t.getKey().equals(propertyData.getValueAt(j, 0))) {
+                        action.setEnabled(false);
+                        break;
+                    }
+                }
+                // Create tag label
                 final JLabel tagLabel = new JLabel("<html>"
                     + "<style>td{border:1px solid gray; font-weight:normal;}</style>" 
                     + "<table><tr><td>" + t.toString() + "</td></tr></table></html>");
-                tagLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                tagLabel.setToolTipText((String) action.getValue(Action.SHORT_DESCRIPTION));
-                tagLabel.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        action.actionPerformed(null);
-                    }
-                });
+                if (action.isEnabled()) {
+                    // Register action
+                    p.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), actionShortcutKey);
+                    p.getActionMap().put(actionShortcutKey, action);
+                    // Make the tag label clickable and set tooltip to the action description (this displays also the keyboard shortcut)
+                    tagLabel.setToolTipText((String) action.getValue(Action.SHORT_DESCRIPTION));
+                    tagLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    tagLabel.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            action.actionPerformed(null);
+                        }
+                    });
+                } else {
+                    // Disable tag label
+                    tagLabel.setEnabled(false);
+                    // Explain in the tooltip why
+                    tagLabel.setToolTipText(tr("The key ''{0}'' is already used", t.getKey()));
+                }
+                // Finally add label to the resulting panel
                 JPanel tagPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
                 tagPanel.add(tagLabel);
                 p.add(tagPanel, GBC.eol());
