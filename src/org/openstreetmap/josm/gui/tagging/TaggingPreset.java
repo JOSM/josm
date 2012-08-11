@@ -9,7 +9,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
@@ -35,7 +34,6 @@ import java.util.TreeSet;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -73,6 +71,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -395,7 +394,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 originalValue = usage.getFirst();
             } else {
                 // the objects have different values
-                JComboBox comboBox = new JComboBox(usage.values.toArray());
+                JosmComboBox comboBox = new JosmComboBox(usage.values.toArray());
                 comboBox.setEditable(true);
                 comboBox.setEditor(textField);
                 comboBox.getEditor().setItem(DIFFERENT);
@@ -420,8 +419,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public void addCommands(List<Tag> changedTags) {
 
             // return if unchanged
-            String v = (value instanceof JComboBox)
-                    ? ((JComboBox) value).getEditor().getItem().toString()
+            String v = (value instanceof JosmComboBox)
+                    ? ((JosmComboBox) value).getEditor().getItem().toString()
                             : ((JTextField) value).getText();
                     v = v.trim();
 
@@ -799,7 +798,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public static class Combo extends ComboMultiSelect {
 
         public boolean editable = true;
-        protected JComboBox combo;
+        protected JosmComboBox combo;
 
         public Combo() {
             delimiter = ",";
@@ -819,11 +818,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
             lhm.put("", new PresetListEntry(""));
 
-            combo = new JComboBox(lhm.values().toArray());
+            combo = new JosmComboBox(lhm.values().toArray());
             component = combo;
             combo.setRenderer(getListCellRenderer());
             combo.setEditable(editable);
-            combo.setMaximumRowCount(13);
+            //combo.setMaximumRowCount(13);
             AutoCompletingTextField tf = new AutoCompletingTextField();
             initAutoCompletionField(tf, key);
             tf.getAutoCompletionList().add(getDisplayValues(), AutoCompletionItemPritority.IS_IN_STANDARD);

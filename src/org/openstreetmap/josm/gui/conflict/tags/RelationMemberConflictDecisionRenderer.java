@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.awt.Font;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
@@ -13,9 +12,11 @@ import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+
 public class RelationMemberConflictDecisionRenderer extends JLabel implements TableCellRenderer, ListCellRenderer{
 
-    private JComboBox cbDecisionTypes;
+    private JosmComboBox cbDecisionTypes;
 
     protected void resetTableRenderer() {
         setOpaque(true);
@@ -33,7 +34,7 @@ public class RelationMemberConflictDecisionRenderer extends JLabel implements Ta
 
     public RelationMemberConflictDecisionRenderer() {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        cbDecisionTypes = new JComboBox(model);
+        cbDecisionTypes = new JosmComboBox(model);
         model.addElement(RelationMemberConflictDecisionType.KEEP);
         model.addElement(RelationMemberConflictDecisionType.REMOVE);
         model.addElement(RelationMemberConflictDecisionType.UNDECIDED);

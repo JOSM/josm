@@ -6,10 +6,10 @@ import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Collections;
 
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -71,10 +71,10 @@ abstract public class ListProjectionChoice extends AbstractProjectionChoice {
     }
 
     protected class CBPanel extends JPanel {
-        public JComboBox prefcb;
+        public JosmComboBox prefcb;
 
         public CBPanel(Object[] entries, int initialIndex, String label, final ActionListener listener) {
-            prefcb = new JComboBox(entries);
+            prefcb = new JosmComboBox(entries);
 
             prefcb.setSelectedIndex(initialIndex);
             this.setLayout(new GridBagLayout());

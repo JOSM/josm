@@ -10,7 +10,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -26,6 +25,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
 
 public class LafPreference implements SubPreferenceSetting {
@@ -39,7 +39,7 @@ public class LafPreference implements SubPreferenceSetting {
     /**
      * ComboBox with all look and feels.
      */
-    private JComboBox lafCombo;
+    private JosmComboBox lafCombo;
     public JPanel panel;
     private JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
     private JCheckBox showID = new JCheckBox(tr("Show object ID in selection lists"));
@@ -48,7 +48,7 @@ public class LafPreference implements SubPreferenceSetting {
     private JCheckBox dynamicButtons = new JCheckBox(tr("Dynamic buttons in side menus"));
 
     public void addGui(PreferenceTabbedPane gui) {
-        lafCombo = new JComboBox(UIManager.getInstalledLookAndFeels());
+        lafCombo = new JosmComboBox(UIManager.getInstalledLookAndFeels());
 
         // let's try to load additional LookAndFeels and put them into the list
         try {

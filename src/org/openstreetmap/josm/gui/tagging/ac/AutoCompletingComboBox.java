@@ -12,7 +12,6 @@ import java.util.Collection;
 import javax.swing.ComboBoxEditor;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
@@ -23,26 +22,27 @@ import javax.swing.text.PlainDocument;
 import javax.swing.text.StyleConstants;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
 /**
  * @author guilhem.bonnefille@gmail.com
  */
-public class AutoCompletingComboBox extends JComboBox {
+public class AutoCompletingComboBox extends JosmComboBox {
 
     private boolean autocompleteEnabled = true;
 
     private int maxTextLength = -1;
 
     /**
-     * Auto-complete a JComboBox.
+     * Auto-complete a JosmComboBox.
      *
      * Inspired by http://www.orbital-computer.de/JComboBox/
      */
     class AutoCompletingComboBoxDocument extends PlainDocument {
-        private JComboBox comboBox;
+        private JosmComboBox comboBox;
         private boolean selecting = false;
 
-        public AutoCompletingComboBoxDocument(final JComboBox comboBox) {
+        public AutoCompletingComboBoxDocument(final JosmComboBox comboBox) {
             this.comboBox = comboBox;
         }
 
@@ -166,8 +166,6 @@ public class AutoCompletingComboBox extends JComboBox {
                     }
                 }
         );
-        int maxsize=Math.max(getMaximumRowCount(),java.awt.Toolkit.getDefaultToolkit().getScreenSize().height/getPreferredSize().height - 1);
-        setMaximumRowCount(maxsize);
     }
 
     public void setMaxTextLength(int length)

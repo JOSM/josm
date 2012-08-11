@@ -12,13 +12,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellEditor;
+
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
 /**
  * This is a table cell editor for selecting a possible tag value from a list of
@@ -39,7 +40,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
     }
 
     /** the combo box used as editor */
-    private JComboBox editor;
+    private JosmComboBox editor;
     private DefaultComboBoxModel editorModel;
     private CopyOnWriteArrayList<NavigationListener> listeners;
 
@@ -67,7 +68,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
 
     public MultiValueCellEditor() {
         editorModel = new DefaultComboBoxModel();
-        editor = new JComboBox(editorModel) {
+        editor = new JosmComboBox(editorModel) {
             @Override
             public void processKeyEvent(KeyEvent e) {
                 if (e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_ENTER) {

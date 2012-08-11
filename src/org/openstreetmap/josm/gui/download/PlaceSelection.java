@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.download;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -28,7 +27,6 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -52,6 +50,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -74,7 +73,7 @@ public class PlaceSelection implements DownloadSelection {
         new Server("Nominatim","http://nominatim.openstreetmap.org/search?format=xml&q=",tr("Class Type"),tr("Bounds")),
         //new Server("Namefinder","http://gazetteer.openstreetmap.org/namefinder/search.xml?find=",tr("Near"),trc("placeselection", "Zoom"))
     };
-    private final JComboBox server = new JComboBox(servers);
+    private final JosmComboBox server = new JosmComboBox(servers);
 
     private static class Server {
         public String name;
@@ -102,8 +101,8 @@ public class PlaceSelection implements DownloadSelection {
         lpanel.add(new JLabel(tr("Choose the server for searching:")));
         lpanel.add(server);
         String s = Main.pref.get("namefinder.server", servers[0].name);
-        for(int i = 0; i < servers.length; ++i) {
-            if(servers[i].name.equals(s)) {
+        for (int i = 0; i < servers.length; ++i) {
+            if (servers[i].name.equals(s)) {
                 server.setSelectedIndex(i);
             }
         }

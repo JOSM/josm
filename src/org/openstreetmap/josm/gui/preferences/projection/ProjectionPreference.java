@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -42,6 +41,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
 
 public class ProjectionPreference implements SubPreferenceSetting {
@@ -112,14 +112,14 @@ public class ProjectionPreference implements SubPreferenceSetting {
     /**
      * Combobox with all projections available
      */
-    private JComboBox projectionCombo = new JComboBox(projectionChoices.toArray());
+    private JosmComboBox projectionCombo = new JosmComboBox(projectionChoices.toArray());
 
     /**
      * Combobox with all coordinate display possibilities
      */
-    private JComboBox coordinatesCombo = new JComboBox(CoordinateFormat.values());
+    private JosmComboBox coordinatesCombo = new JosmComboBox(CoordinateFormat.values());
 
-    private JComboBox unitsCombo = new JComboBox(unitsValuesTr);
+    private JosmComboBox unitsCombo = new JosmComboBox(unitsValuesTr);
 
     /**
      * This variable holds the JPanel with the projection's preferences. If the

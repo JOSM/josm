@@ -5,11 +5,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
 public class TagConflictResolverTable extends JTable implements MultiValueCellEditor.NavigationListener {
 
@@ -40,7 +41,7 @@ public class TagConflictResolverTable extends JTable implements MultiValueCellEd
 
         ((MultiValueCellEditor)getColumnModel().getColumn(2).getCellEditor()).addNavigationListeners(this);
 
-        setRowHeight((int)new JComboBox().getPreferredSize().getHeight());
+        setRowHeight((int)new JosmComboBox().getPreferredSize().getHeight());
     }
 
     /**

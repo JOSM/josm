@@ -12,7 +12,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -26,6 +25,7 @@ import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker.TemplateEntryProperty;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
 import org.openstreetmap.josm.tools.template_engine.TemplateParser;
@@ -57,15 +57,15 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private JRadioButton colorTypeTime = new JRadioButton(tr("Track date"));
     private JRadioButton colorTypeNone = new JRadioButton(tr("Single Color (can be customized for named layers)"));
     private JRadioButton colorTypeGlobal  = new JRadioButton(tr("Use global settings"));
-    private JComboBox colorTypeVelocityTune = new JComboBox(new String[] {tr("Car"), tr("Bicycle"), tr("Foot")});
+    private JosmComboBox colorTypeVelocityTune = new JosmComboBox(new String[] {tr("Car"), tr("Bicycle"), tr("Foot")});
     private JCheckBox makeAutoMarkers = new JCheckBox(tr("Create markers when reading GPX"));
     private JCheckBox drawGpsArrows = new JCheckBox(tr("Draw Direction Arrows"));
     private JCheckBox drawGpsArrowsFast = new JCheckBox(tr("Fast drawing (looks uglier)"));
     private JTextField drawGpsArrowsMinDist = new JTextField(8);
     private JCheckBox colorDynamic = new JCheckBox(tr("Dynamic color range based on data limits"));
-    private JComboBox waypointLabel = new JComboBox(LABEL_PATTERN_DESC);
+    private JosmComboBox waypointLabel = new JosmComboBox(LABEL_PATTERN_DESC);
     private JTextField waypointLabelPattern = new JTextField();
-    private JComboBox audioWaypointLabel = new JComboBox(LABEL_PATTERN_DESC);
+    private JosmComboBox audioWaypointLabel = new JosmComboBox(LABEL_PATTERN_DESC);
     private JTextField audioWaypointLabelPattern = new JTextField();
 
     private String layerName;
@@ -413,7 +413,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         savePreferences(null, false);
     }
 
-    private void updateWaypointLabelCombobox(JComboBox cb, JTextField tf, TemplateEntryProperty property) {
+    private void updateWaypointLabelCombobox(JosmComboBox cb, JTextField tf, TemplateEntryProperty property) {
         String labelPattern = property.getAsString();
         boolean found = false;
         for (int i=0; i<LABEL_PATTERN_TEMPLATE.length; i++) {
@@ -430,7 +430,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         }
     }
 
-    private void updateWaypointPattern(JComboBox cb, JTextField tf) {
+    private void updateWaypointPattern(JosmComboBox cb, JTextField tf) {
         if (cb.getSelectedIndex() == WAYPOINT_LABEL_CUSTOM) {
             tf.setEnabled(true);
         } else {

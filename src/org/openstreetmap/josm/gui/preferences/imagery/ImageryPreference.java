@@ -35,7 +35,6 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
-import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -79,6 +78,7 @@ import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.io.imagery.HTMLGrabber;
 import org.openstreetmap.josm.io.imagery.OffsetServer;
 import org.openstreetmap.josm.io.imagery.OsmosnimkiOffsetServer;
@@ -106,12 +106,12 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
     private Color colFadeColor;
     private JButton btnFadeColor;
     private JSlider fadeAmount = new JSlider(0, 100);
-    private JComboBox sharpen;
+    private JosmComboBox sharpen;
     private JCheckBox useOffsetServer;
     private JTextField offsetServerUrl;
 
     // WMS Settings
-    private JComboBox browser;
+    private JosmComboBox browser;
     private JCheckBox overlapCheckBox;
     private JSpinner spinEast;
     private JSpinner spinNorth;
@@ -156,7 +156,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
         p.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         p.add(this.fadeAmount, GBC.eol().fill(GBC.HORIZONTAL));
 
-        this.sharpen = new JComboBox(new String[] {
+        this.sharpen = new JosmComboBox(new String[] {
                 tr("None"),
                 tr("Soft"),
                 tr("Strong")});
@@ -180,7 +180,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
 
     private JPanel buildWMSSettingsPanel() {
         final JPanel p = new JPanel(new GridBagLayout());
-        browser = new JComboBox(new String[] {
+        browser = new JosmComboBox(new String[] {
                 "webkit-image {0}",
                 "gnome-web-photo --mode=photo --format=png {0} /dev/stdout",
                 "gnome-web-photo-fixed {0}",

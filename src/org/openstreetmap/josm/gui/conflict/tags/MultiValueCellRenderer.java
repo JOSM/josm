@@ -3,19 +3,18 @@ package org.openstreetmap.josm.gui.conflict.tags;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -27,13 +26,13 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
     private ImageIcon iconDecided;
     private ImageIcon iconUndecided;
     private DefaultComboBoxModel model;
-    private JComboBox cbDecisionRenderer;
+    private JosmComboBox cbDecisionRenderer;
 
     public MultiValueCellRenderer() {
         setOpaque(true);
         iconDecided = ImageProvider.get("dialogs/conflict", "tagconflictresolved");
         iconUndecided = ImageProvider.get("dialogs/conflict", "tagconflictunresolved");
-        cbDecisionRenderer = new JComboBox(model = new DefaultComboBoxModel());
+        cbDecisionRenderer = new JosmComboBox(model = new DefaultComboBoxModel());
     }
 
     protected void renderColors(MultiValueResolutionDecision decision, boolean selected) {
