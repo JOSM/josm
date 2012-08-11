@@ -15,6 +15,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.text.DateFormat;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -246,10 +247,13 @@ public class ImageViewerDialog extends ToggleDialog {
             //    osd.append(tr("\nlat: {0}, lon: {1}", Double.toString(entry.getPos().lat()), Double.toString(entry.getPos().lon())));
             //}
             //osd.append(tr("\nfile mtime: {0}", Long.toString(entry.getFile().lastModified())));
-            //osd.append(tr("\nImage exif time: {0}", Long.toString(entry.getExifTime().getTime())));
-            //if (entry.getGpsTime() != null) {
-            //    osd.append(tr("\nImage gps time: {0}", Long.toString(entry.getGpsTime().getTime())));
-            //}
+            DateFormat dtf = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+            if (entry.getExifTime() != null) {
+                osd.append(tr("\nEXIF time: {0}", dtf.format(entry.getExifTime())));
+            }
+            if (entry.getGpsTime() != null) {
+                osd.append(tr("\nGPS time: {0}", dtf.format(entry.getGpsTime())));
+            }
 
             imgDisplay.setOsdText(osd.toString());
         } else {
