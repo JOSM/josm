@@ -864,6 +864,9 @@ public class MapPainter {
 
         if (!isOutlineOnly) {
             if (fillImage == null) {
+                if (inactive) {
+                    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.33f));
+                }
                 g.setColor(color);
                 g.fill(area);
             } else {
