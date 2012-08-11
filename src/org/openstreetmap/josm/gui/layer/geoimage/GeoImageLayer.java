@@ -41,6 +41,7 @@ import javax.swing.SwingConstants;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
+import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
@@ -723,11 +724,14 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
     private void hook_up_mouse_events() {
         mouseAdapter = new MouseAdapter() {
+            private final boolean isMapModeOk() {
+                return Main.map.mapMode == null || Main.map.mapMode instanceof SelectAction;
+            }
             @Override public void mousePressed(MouseEvent e) {
 
                 if (e.getButton() != MouseEvent.BUTTON1)
                     return;
-                if (isVisible()) {
+                if (isVisible() && isMapModeOk()) {
                     Main.map.mapView.repaint();
                 }
             }
@@ -735,7 +739,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             @Override public void mouseReleased(MouseEvent ev) {
                 if (ev.getButton() != MouseEvent.BUTTON1)
                     return;
-                if (data == null || !isVisible())
+                if (data == null || !isVisible() || !isMapModeOk())
                     return;
 
                 for (int i = data.size() - 1; i >= 0; --i) {
