@@ -304,6 +304,31 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="lit" text="Lit" default="off" /> 
             </optional>
         </item>
+        <item name="Secondary Link" icon="presets/way_secondary.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Link_(highway)"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Link_(highway)"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Link_(highway)"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Link_(highway)"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Link_(highway)"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Link_(highway)"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Link_(highway)"/>
+            <label text="Edit Secondary Link" />
+            <space />
+            <key key="highway" value="secondary_link" />
+            <optional>
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+                <text key="maxspeed" text="Max. speed (km/h)" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
+                <check key="oneway" text="Oneway" default="off" />
+                <check key="bridge" text="Bridge" default="off" />
+                <check key="tunnel" text="Tunnel" default="off" />
+                <check key="cutting" text="Cutting" default="off" />
+                <check key="embankment" text="Embankment" default="off" />
+                <check key="lit" text="Lit" default="off" /> 
+            </optional>
+        </item>
         <item name="Tertiary" icon="presets/way_tertiary.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=tertiary"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:highway=tertiary"
@@ -320,6 +345,31 @@ Note that for a match, at least one positive and no negative is required.
             <text key="ref" text="Reference" />
             <optional>
                 <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+                <text key="maxspeed" text="Max. speed (km/h)" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
+                <check key="oneway" text="Oneway" default="off" />
+                <check key="bridge" text="Bridge" default="off" />
+                <check key="tunnel" text="Tunnel" default="off" />
+                <check key="cutting" text="Cutting" default="off" />
+                <check key="embankment" text="Embankment" default="off" />
+                <check key="lit" text="Lit" default="off" /> 
+            </optional>
+        </item>
+        <item name="Tertiary Link" icon="presets/way_tertiary.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Link_(highway)"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Link_(highway)"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Link_(highway)"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Link_(highway)"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Link_(highway)"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Link_(highway)"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Link_(highway)"/>
+            <label text="Edit Tertiary Link" />
+            <space />
+            <key key="highway" value="tertiary_link" />
+            <optional>
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
