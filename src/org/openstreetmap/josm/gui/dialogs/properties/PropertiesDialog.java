@@ -531,17 +531,17 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 values.setSelectedItem(lastAddValue);
             }
         }
-        
+
+        FocusAdapter focus = addFocusAdapter(-1, keys, values, autocomplete, defaultACItemComparator);
+        // fire focus event in advance or otherwise the popup list will be too small at first
+        focus.focusGained(null);
+
         int recentTagsToShow = Main.pref.getInteger("properties.recently-added-tags", DEFAULT_LRU_TAGS_NUMBER);
         if (recentTagsToShow > MAX_LRU_TAGS_NUMBER) {
             recentTagsToShow = MAX_LRU_TAGS_NUMBER;
         }
         List<JosmAction> recentTagsActions = new ArrayList<JosmAction>();
-        suggestRecentlyAddedTags(p, keys, values, recentTagsActions, recentTagsToShow);
-
-        FocusAdapter focus = addFocusAdapter(-1, keys, values, autocomplete, defaultACItemComparator);
-        // fire focus event in advance or otherwise the popup list will be too small at first
-        focus.focusGained(null);
+        suggestRecentlyAddedTags(p, keys, values, recentTagsActions, recentTagsToShow, focus);
 
         JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION){
             @Override public void selectInitialValue() {
@@ -579,7 +579,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         btnAdd.requestFocusInWindow();
     }
     
-    private void suggestRecentlyAddedTags(JPanel p, final AutoCompletingComboBox keys, final AutoCompletingComboBox values, List<JosmAction> tagsActions, int tagsToShow) {
+    private void suggestRecentlyAddedTags(JPanel p, final AutoCompletingComboBox keys, final AutoCompletingComboBox values, List<JosmAction> tagsActions, int tagsToShow, final FocusAdapter focus) {
         if (tagsToShow > 0 && !recentTags.isEmpty()) {
             p.add(new JLabel(tr("Recently added tags")), GBC.eol());
             
@@ -606,6 +606,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     public void actionPerformed(ActionEvent e) {
                         keys.getEditor().setItem(t.getKey());
                         values.getEditor().setItem(t.getValue());
+                        // Update list of values (fix #7951) 
+                        focus.focusGained(null);
                     }
                 };
                 p.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), actionShortcutKey);
