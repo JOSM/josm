@@ -16,6 +16,7 @@ public class MapPaintSettings implements PreferenceChangedListener {
     private boolean showDirectionArrow;
     /** Preference: should arrows for oneways be displayed */
     private boolean showOnewayArrow;
+    private int defaultSegmentWidth;
     /** Preference: should the segement numbers of ways be displayed */
     private boolean showOrderNumber;
     /** Preference: should only the last arrow of a way be displayed */
@@ -65,6 +66,7 @@ public class MapPaintSettings implements PreferenceChangedListener {
         showDirectionArrow = Main.pref.getBoolean("draw.segment.direction", false);
         showOnewayArrow = Main.pref.getBoolean("draw.oneway", true);
         useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth", false);
+        defaultSegmentWidth = Main.pref.getInteger("mappaint.segment.default-width", 2);
 
         selectedColor = PaintColors.SELECTED.get();
         relationSelectedColor = PaintColors.RELATIONSELECTED.get();
@@ -118,6 +120,10 @@ public class MapPaintSettings implements PreferenceChangedListener {
 
     public Color getSelectedColor() {
         return selectedColor;
+    }
+
+    public int getDefaultSegmentWidth() {
+        return defaultSegmentWidth;
     }
 
     public Color getSelectedColor(int alpha) {
