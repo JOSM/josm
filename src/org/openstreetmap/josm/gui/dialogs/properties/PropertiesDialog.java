@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -625,7 +626,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                         action.actionPerformed(null);
                     }
                 });
-                p.add(tagLabel, GBC.eol());
+                JPanel tagPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+                tagPanel.add(tagLabel);
+                p.add(tagPanel, GBC.eol());
             }
         }
     }
