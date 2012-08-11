@@ -39,7 +39,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * showing the current Access Token Key and Access Token Secret, if the
  * user already has an Access Token.
  *
- * For initial authorisation see {@link OAuthAuthorisationWizard}.
+ * For initial authorisation see {@link OAuthAuthorizationWizard}.
  *
  */
 public class OAuthAuthenticationPreferencesPanel extends JPanel implements PropertyChangeListener {
@@ -144,8 +144,14 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         refreshView();
     }
 
+    /**
+     * Sets the URL of the OSM API for which this panel is currently displaying OAuth properties.
+     *
+     * @param apiUrl the api URL
+     */
     public void setApiUrl(String apiUrl) {
         this.apiUrl = apiUrl;
+        pnlAdvancedProperties.setApiUrl(apiUrl);
     }
 
     /**
@@ -371,6 +377,6 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     public void propertyChange(PropertyChangeEvent evt) {
         if (! evt.getPropertyName().equals(OsmApiUrlInputPanel.API_URL_PROP))
             return;
-        apiUrl = (String)evt.getNewValue();
+        setApiUrl((String)evt.getNewValue());
     }
 }

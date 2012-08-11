@@ -26,6 +26,17 @@ import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * Panel allowing the user to setup advanced OAuth parameters:
+ * <li>Consumer key</li>
+ * <li>Consumer secret</li>
+ * <li>Request token URL</li>
+ * <li>Access token URL</li>
+ * <li>Authorize URL</li>
+ * 
+ * @see OAuthParameters
+ * @since 2746
+ */
 public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
     private JCheckBox cbUseDefaults;
@@ -35,6 +46,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     private JTextField tfAccessTokenURL;
     private JTextField tfAuthoriseURL;
     private UseDefaultItemListener ilUseDefault;
+    private String apiUrl;
 
     protected void build() {
         setLayout(new GridBagLayout());
@@ -109,12 +121,13 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     }
 
     protected boolean hasCustomSettings() {
+        OAuthParameters params = OAuthParameters.createDefault(apiUrl);
         return
-        ! tfConsumerKey.getText().equals( OAuthParameters.DEFAULT_JOSM_CONSUMER_KEY)
-        || ! tfConsumerSecret.getText().equals( OAuthParameters.DEFAULT_JOSM_CONSUMER_SECRET)
-        || ! tfRequestTokenURL.getText().equals( OAuthParameters.DEFAULT_REQUEST_TOKEN_URL)
-        || ! tfAccessTokenURL.getText().equals( OAuthParameters.DEFAULT_ACCESS_TOKEN_URL)
-        || ! tfAuthoriseURL.getText().equals( OAuthParameters.DEFAULT_AUTHORISE_URL);
+           ! tfConsumerKey.getText().equals(params.getConsumerKey())
+        || ! tfConsumerSecret.getText().equals(params.getConsumerSecret())
+        || ! tfRequestTokenURL.getText().equals(params.getRequestTokenUrl())
+        || ! tfAccessTokenURL.getText().equals(params.getAccessTokenUrl())
+        || ! tfAuthoriseURL.getText().equals(params.getAuthoriseUrl());
     }
 
     protected boolean confirmOverwriteCustomSettings() {
@@ -151,11 +164,12 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
     protected void resetToDefaultSettings() {
         cbUseDefaults.setSelected(true);
-        tfConsumerKey.setText( OAuthParameters.DEFAULT_JOSM_CONSUMER_KEY);
-        tfConsumerSecret.setText( OAuthParameters.DEFAULT_JOSM_CONSUMER_SECRET);
-        tfRequestTokenURL.setText(OAuthParameters.DEFAULT_REQUEST_TOKEN_URL);
-        tfAccessTokenURL.setText(OAuthParameters.DEFAULT_ACCESS_TOKEN_URL);
-        tfAuthoriseURL.setText(OAuthParameters.DEFAULT_AUTHORISE_URL);
+        OAuthParameters params = OAuthParameters.createDefault(apiUrl);
+        tfConsumerKey.setText(params.getConsumerKey());
+        tfConsumerSecret.setText(params.getConsumerSecret());
+        tfRequestTokenURL.setText(params.getRequestTokenUrl());
+        tfAccessTokenURL.setText(params.getAccessTokenUrl());
+        tfAuthoriseURL.setText(params.getAuthoriseUrl());
 
         setChildComponentsEnabled(false);
     }
@@ -175,7 +189,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
      */
     public OAuthParameters getAdvancedParameters() {
         if (cbUseDefaults.isSelected())
-            return OAuthParameters.createDefault();
+            return OAuthParameters.createDefault(apiUrl);
         OAuthParameters parameters = new OAuthParameters();
         parameters.setConsumerKey(tfConsumerKey.getText());
         parameters.setConsumerSecret(tfConsumerSecret.getText());
@@ -193,7 +207,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
      */
     public void setAdvancedParameters(OAuthParameters parameters) throws IllegalArgumentException{
         CheckParameterUtil.ensureParameterNotNull(parameters, "parameters");
-        if (parameters.equals(OAuthParameters.createDefault())) {
+        if (parameters.equals(OAuthParameters.createDefault(apiUrl))) {
             cbUseDefaults.setSelected(true);
             setChildComponentsEnabled(false);
         } else {
@@ -207,6 +221,9 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         }
     }
 
+    /**
+     * Constructs a new {@code AdvancedOAuthPropertiesPanel}.
+     */
     public AdvancedOAuthPropertiesPanel() {
         build();
     }
@@ -217,8 +234,9 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
      * @param pref the preferences. Must not be null.
      * @throws IllegalArgumentException thrown if pref is null
      */
-    public void initFromPreferences(Preferences pref) throws IllegalArgumentException{
+    public void initFromPreferences(Preferences pref) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(pref, "pref");
+        setApiUrl(pref.get("osm-server-url"));
         boolean useDefault = pref.getBoolean("oauth.settings.use-default", true);
         ilUseDefault.setEnabled(false);
         if (useDefault) {
@@ -264,7 +282,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
         public void itemStateChanged(ItemEvent e) {
             if (!enabled) return;
-            switch(e.getStateChange()) {
+            switch (e.getStateChange()) {
             case ItemEvent.SELECTED:
                 if (hasCustomSettings()) {
                     if (!confirmOverwriteCustomSettings()) {
@@ -282,6 +300,19 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
+        }
+    }
+
+    /**
+     * Sets the URL of the OSM API for which this panel is currently displaying OAuth properties.
+     *
+     * @param apiUrl the api URL
+     * @since 5422
+     */
+    public void setApiUrl(String apiUrl) {
+        this.apiUrl = apiUrl;
+        if (cbUseDefaults.isSelected()) {
+            resetToDefaultSettings();
         }
     }
 }

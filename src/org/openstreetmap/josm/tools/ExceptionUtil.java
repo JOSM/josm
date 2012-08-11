@@ -51,7 +51,7 @@ public class ExceptionUtil {
         String msg = tr(
                 "<html>Failed to initialize communication with the OSM server {0}.<br>"
                 + "Check the server URL in your preferences and your internet connection.", Main.pref.get(
-                        "osm-server.url", "http://api.openstreetmap.org/api"));
+                        "osm-server.url", OsmApi.DEFAULT_API_URL));
         return msg;
     }
 
@@ -69,7 +69,7 @@ public class ExceptionUtil {
                 + "OAuth Access Token configured.<br>"
                 + "Please open the Preferences Dialog and generate or enter an Access Token."
                 + "</html>",
-                Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api")
+                Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL)
         );
         return msg;
     }

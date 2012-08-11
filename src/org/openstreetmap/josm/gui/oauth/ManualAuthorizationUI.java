@@ -32,6 +32,12 @@ import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * This is an UI which supports a JOSM user to get an OAuth Access Token in a fully
+ * manual process.
+ *
+ * @since 2746
+ */
 public class ManualAuthorizationUI extends AbstractAuthorizationUI{
 
     private JTextField tfAccessTokenKey;
@@ -53,7 +59,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
         gc.weightx = 0.0;
         gc.gridwidth = 2;
         gc.insets = new Insets(0,0,5,0);
-        pnlMessage= new HtmlPanel();
+        pnlMessage = new HtmlPanel();
         pnlMessage.setText("<html><body>"
                 + tr("Please enter an OAuth Access Token which is authorized to access the OSM server "
                         + "''{0}''.",
@@ -136,12 +142,14 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
     @Override
     public void setApiUrl(String apiUrl) {
         super.setApiUrl(apiUrl);
-        pnlMessage.setText(tr("<html><body>"
-                + "Please enter an OAuth Access Token which is authorized to access the OSM server "
-                + "''{0}''."
-                + "</body></html>",
-                getApiUrl()
-        ));
+        if (pnlMessage != null) { 
+            pnlMessage.setText(tr("<html><body>"
+                    + "Please enter an OAuth Access Token which is authorized to access the OSM server "
+                    + "''{0}''."
+                    + "</body></html>",
+                    getApiUrl()
+            ));
+        }
     }
 
     protected void build() {
@@ -151,7 +159,13 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
         add(buildActionsPanel(), BorderLayout.SOUTH);
     }
 
-    public ManualAuthorizationUI() {
+    /**
+     * Constructs a new {@code ManualAuthorizationUI} for the given API URL.
+     * @param apiUrl The OSM API URL
+     * @since 5422
+     */
+    public ManualAuthorizationUI(String apiUrl) {
+        super(apiUrl);
         build();
     }
 

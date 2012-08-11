@@ -38,10 +38,14 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
+/**
+ * An OAuth 1.0 authorization client. 
+ * @since 2746
+ */
 public class OsmOAuthAuthorizationClient {
-    private OAuthParameters oauthProviderParameters;
-    private OAuthConsumer consumer;
-    private OAuthProvider provider;
+    private final OAuthParameters oauthProviderParameters;
+    private final OAuthConsumer consumer;
+    private final OAuthProvider provider;
     private boolean canceled;
     private HttpURLConnection connection;
 
@@ -56,7 +60,7 @@ public class OsmOAuthAuthorizationClient {
      *
      */
     public OsmOAuthAuthorizationClient() {
-        oauthProviderParameters = OAuthParameters.createDefault();
+        oauthProviderParameters = OAuthParameters.createDefault(Main.pref.get("osm-server.url"));
         consumer = oauthProviderParameters.buildConsumer();
         provider = oauthProviderParameters.buildProvider(consumer);
     }
@@ -65,7 +69,7 @@ public class OsmOAuthAuthorizationClient {
      * Creates a new authorisation client with the parameters <code>parameters</code>.
      *
      * @param parameters the OAuth parameters. Must not be null.
-     * @throws IllegalArgumentException thrown if parameters is null
+     * @throws IllegalArgumentException if parameters is null
      */
     public OsmOAuthAuthorizationClient(OAuthParameters parameters) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(parameters, "parameters");
@@ -80,8 +84,8 @@ public class OsmOAuthAuthorizationClient {
      *
      * @param parameters the OAuth parameters. Must not be null.
      * @param requestToken the request token. Must not be null.
-     * @throws IllegalArgumentException thrown if parameters is null
-     * @throws IllegalArgumentException thrown if requestToken is null
+     * @throws IllegalArgumentException if parameters is null
+     * @throws IllegalArgumentException if requestToken is null
      */
     public OsmOAuthAuthorizationClient(OAuthParameters parameters, OAuthToken requestToken) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(parameters, "parameters");
@@ -91,6 +95,9 @@ public class OsmOAuthAuthorizationClient {
         consumer.setTokenWithSecret(requestToken.getKey(), requestToken.getSecret());
     }
 
+    /**
+     * Cancels the current OAuth operation.
+     */
     public void cancel() {
         DefaultOAuthProvider p  = (DefaultOAuthProvider)provider;
         canceled = true;
@@ -126,7 +133,8 @@ public class OsmOAuthAuthorizationClient {
      *
      * @param monitor a progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
      * @return the OAuth Request Token
-     * @throws OsmOAuthAuthorizationException thrown if something goes wrong when retrieving the request token
+     * @throws OsmOAuthAuthorizationException if something goes wrong when retrieving the request token
+     * @throws OsmTransferCanceledException if the user canceled the request
      */
     public OAuthToken getRequestToken(ProgressMonitor monitor) throws OsmOAuthAuthorizationException, OsmTransferCanceledException {
         if (monitor == null) {
@@ -158,7 +166,8 @@ public class OsmOAuthAuthorizationClient {
      *
      * @param monitor a progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
      * @return the OAuth Access Token
-     * @throws OsmOAuthAuthorizationException thrown if something goes wrong when retrieving the request token
+     * @throws OsmOAuthAuthorizationException if something goes wrong when retrieving the request token
+     * @throws OsmTransferCanceledException if the user canceled the request
      * @see #getRequestToken(ProgressMonitor)
      */
     public OAuthToken getAccessToken(ProgressMonitor monitor) throws OsmOAuthAuthorizationException, OsmTransferCanceledException {
@@ -272,7 +281,7 @@ public class OsmOAuthAuthorizationClient {
      * Derives the OSM login URL from the OAuth Authorization Website URL
      *
      * @return the OSM login URL
-     * @throws OsmOAuthAuthorizationException thrown if something went wrong, in particular if the
+     * @throws OsmOAuthAuthorizationException if something went wrong, in particular if the
      * URLs are malformed
      */
     public String buildOsmLoginUrl() throws OsmOAuthAuthorizationException{
@@ -289,7 +298,7 @@ public class OsmOAuthAuthorizationClient {
      * Derives the OSM logout URL from the OAuth Authorization Website URL
      *
      * @return the OSM logout URL
-     * @throws OsmOAuthAuthorizationException thrown if something went wrong, in particular if the
+     * @throws OsmOAuthAuthorizationException if something went wrong, in particular if the
      * URLs are malformed
      */
     protected String buildOsmLogoutUrl() throws OsmOAuthAuthorizationException{
@@ -307,7 +316,7 @@ public class OsmOAuthAuthorizationClient {
      * a cookie.
      *
      * @return the session ID structure
-     * @throws OsmOAuthAuthorizationException thrown if something went wrong
+     * @throws OsmOAuthAuthorizationException if something went wrong
      */
     protected SessionId fetchOsmWebsiteSessionId() throws OsmOAuthAuthorizationException {
         try {
@@ -339,7 +348,7 @@ public class OsmOAuthAuthorizationClient {
      * Submits a request to the OSM website for a OAuth form. The OSM website replies a session token in
      * a hidden parameter.
      *
-     * @throws OsmOAuthAuthorizationException thrown if something went wrong
+     * @throws OsmOAuthAuthorizationException if something went wrong
      */
     protected void fetchOAuthToken(SessionId sessionId, OAuthToken requestToken) throws OsmOAuthAuthorizationException {
         try {
@@ -525,12 +534,12 @@ public class OsmOAuthAuthorizationClient {
      * @param osmPassword the OSM password. Must not be null.
      * @param privileges the set of privileges. Must not be null.
      * @param monitor a progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
-     * @throws IllegalArgumentException thrown if requestToken is null
-     * @throws IllegalArgumentException thrown if osmUserName is null
-     * @throws IllegalArgumentException thrown if osmPassword is null
-     * @throws IllegalArgumentException thrown if privileges is null
-     * @throws OsmOAuthAuthorizationException thrown if the authorisation fails
-     * @throws OsmTransferCanceledException thrown if the task is canceled by the user
+     * @throws IllegalArgumentException if requestToken is null
+     * @throws IllegalArgumentException if osmUserName is null
+     * @throws IllegalArgumentException if osmPassword is null
+     * @throws IllegalArgumentException if privileges is null
+     * @throws OsmOAuthAuthorizationException if the authorisation fails
+     * @throws OsmTransferCanceledException if the task is canceled by the user
      */
     public void authorise(OAuthToken requestToken, String osmUserName, String osmPassword, OsmPrivileges privileges, ProgressMonitor monitor) throws IllegalArgumentException, OsmOAuthAuthorizationException, OsmTransferCanceledException{
         CheckParameterUtil.ensureParameterNotNull(requestToken, "requestToken");

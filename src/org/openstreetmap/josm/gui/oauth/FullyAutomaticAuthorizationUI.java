@@ -53,6 +53,7 @@ import org.xml.sax.SAXException;
  * This is an UI which supports a JOSM user to get an OAuth Access Token in a fully
  * automatic process.
  *
+ * @since 2746
  */
 public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
@@ -305,7 +306,13 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         return String.valueOf(tfPassword.getPassword());
     }
 
-    public FullyAutomaticAuthorizationUI() {
+    /**
+     * Constructs a new {@code FullyAutomaticAuthorizationUI} for the given API URL.
+     * @param apiUrl The OSM API URL
+     * @since 5422
+     */
+    public FullyAutomaticAuthorizationUI(String apiUrl) {
+        super(apiUrl);
         build();
     }
 

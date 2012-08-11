@@ -60,8 +60,15 @@ public class OsmApi extends OsmConnection {
      * Maximum number of concurrent download threads, imposed by 
      * <a href="http://wiki.openstreetmap.org/wiki/API_usage_policy#Technical_Usage_Requirements">
      * OSM API usage policy.</a>
+     * @since 5386
      */
     static public final int MAX_DOWNLOAD_THREADS = 2;
+    
+    /**
+     * Default URL of the standard OSM API. 
+     * @since 5422
+     */
+    static public final String DEFAULT_API_URL = "http://api.openstreetmap.org/api";
 
     // The collection of instantiated OSM APIs
     private static HashMap<String, OsmApi> instances = new HashMap<String, OsmApi>();
@@ -91,7 +98,7 @@ public class OsmApi extends OsmConnection {
      *
      */
     static public OsmApi getOsmApi() {
-        String serverUrl = Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api");
+        String serverUrl = Main.pref.get("osm-server.url", DEFAULT_API_URL);
         if (serverUrl == null)
             throw new IllegalStateException(tr("Preference ''{0}'' missing. Cannot initialize OsmApi.", "osm-server.url"));
         return getOsmApi(serverUrl);

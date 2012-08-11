@@ -36,6 +36,8 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.CustomConfigurator;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.SideButton;
@@ -55,7 +57,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 public class OAuthAuthorizationWizard extends JDialog {
     private HtmlPanel pnlMessage;
     private boolean canceled;
-    private String apiUrl;
+    private final String apiUrl;
 
     private AuthorizationProcedureComboBox cbAuthorisationProcedure;
     private FullyAutomaticAuthorizationUI pnlFullyAutomaticAuthorisationUI;
@@ -162,14 +164,11 @@ public class OAuthAuthorizationWizard extends JDialog {
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(buildHeaderInfoPanel(), BorderLayout.NORTH);
 
-        pnlFullyAutomaticAuthorisationUI = new FullyAutomaticAuthorizationUI();
-        pnlFullyAutomaticAuthorisationUI.setApiUrl(apiUrl);
+        setTitle(tr("Get an Access Token for ''{0}''", apiUrl));
 
-        pnlSemiAutomaticAuthorisationUI = new SemiAutomaticAuthorizationUI();
-        pnlSemiAutomaticAuthorisationUI.setApiUrl(apiUrl);
-
-        pnlManualAuthorisationUI = new ManualAuthorizationUI();
-        pnlManualAuthorisationUI.setApiUrl(apiUrl);
+        pnlFullyAutomaticAuthorisationUI = new FullyAutomaticAuthorizationUI(apiUrl);
+        pnlSemiAutomaticAuthorisationUI = new SemiAutomaticAuthorizationUI(apiUrl);
+        pnlManualAuthorisationUI = new ManualAuthorizationUI(apiUrl);
 
         spAuthorisationProcedureUI = new JScrollPane(new JPanel());
         spAuthorisationProcedureUI.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -207,10 +206,7 @@ public class OAuthAuthorizationWizard extends JDialog {
      * @throws IllegalArgumentException thrown if apiUrl is null
      */
     public OAuthAuthorizationWizard(String apiUrl) throws IllegalArgumentException {
-        super(JOptionPane.getFrameForComponent(Main.parent), ModalityType.DOCUMENT_MODAL);
-        CheckParameterUtil.ensureParameterNotNull(apiUrl, "apiUrl");
-        build();
-        setApiUrl(apiUrl);
+        this(Main.parent, apiUrl);
     }
 
     /**
@@ -223,30 +219,8 @@ public class OAuthAuthorizationWizard extends JDialog {
     public OAuthAuthorizationWizard(Component parent, String apiUrl) {
         super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         CheckParameterUtil.ensureParameterNotNull(apiUrl, "apiUrl");
-        build();
-        setApiUrl(apiUrl);
-    }
-
-    /**
-     * Sets the API URL for the API for which this wizard is generating
-     * an Access Token.
-     *
-     * @param apiUrl the API URL. Must not be null.
-     * @throws IllegalArgumentException thrown if apiUrl is null
-     */
-    public void setApiUrl(String apiUrl) throws IllegalArgumentException{
-        CheckParameterUtil.ensureParameterNotNull(apiUrl, "apiUrl");
         this.apiUrl = apiUrl;
-        setTitle(tr("Get an Access Token for ''{0}''", apiUrl));
-        if (pnlFullyAutomaticAuthorisationUI != null) {
-            pnlFullyAutomaticAuthorisationUI.setApiUrl(apiUrl);
-        }
-        if (pnlSemiAutomaticAuthorisationUI != null) {
-            pnlSemiAutomaticAuthorisationUI.setApiUrl(apiUrl);
-        }
-        if (pnlManualAuthorisationUI != null) {
-            pnlManualAuthorisationUI.setApiUrl(apiUrl);
-        }
+        build();
     }
 
     /**
@@ -301,9 +275,12 @@ public class OAuthAuthorizationWizard extends JDialog {
      *
      */
     public void initFromPreferences() {
-        pnlFullyAutomaticAuthorisationUI.initFromPreferences(Main.pref);
-        pnlSemiAutomaticAuthorisationUI.initFromPreferences(Main.pref);
-        pnlManualAuthorisationUI.initFromPreferences(Main.pref);
+        // Copy current JOSM preferences to update API url with the one used in this wizard
+        Preferences copyPref = CustomConfigurator.clonePreferences(Main.pref);
+        copyPref.put("osm-server-url", apiUrl);
+        pnlFullyAutomaticAuthorisationUI.initFromPreferences(copyPref);
+        pnlSemiAutomaticAuthorisationUI.initFromPreferences(copyPref);
+        pnlManualAuthorisationUI.initFromPreferences(copyPref);
     }
 
     @Override
@@ -387,8 +364,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     static class ExternalBrowserLauncher implements HyperlinkListener {
         public void hyperlinkUpdate(HyperlinkEvent e) {
             if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-                String url = e.getDescription();
-                OpenBrowser.displayUrl(url);
+                OpenBrowser.displayUrl(e.getDescription());
             }
         }
     }
