@@ -23,7 +23,6 @@ public enum PaintColors implements ColorKey {
     DEFAULT_WAY(marktr("way"),  new Color(0,0,128)), // dark blue
     RELATION(marktr("relation"), new Color(0,128,128)), // teal
     UNTAGGED_WAY(marktr("untagged way"), new Color(0,128,0)), // dark green
-    INCOMPLETE_WAY(marktr("incomplete way"), new Color(0,0,96)), // darker blue
     BACKGROUND(marktr("background"), Color.BLACK),
     HIGHLIGHT(marktr("highlight"), SELECTED.get()),
     HIGHLIGHT_WIREFRAME(marktr("highlight wireframe"), Color.orange),

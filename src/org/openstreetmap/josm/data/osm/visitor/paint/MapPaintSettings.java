@@ -12,30 +12,48 @@ public class MapPaintSettings implements PreferenceChangedListener {
     public static final MapPaintSettings INSTANCE = new MapPaintSettings();
 
     private boolean useRealWidth;
+    /** Preference: should directional arrows be displayed */
     private boolean showDirectionArrow;
+    /** Preference: should arrows for oneways be displayed */
     private boolean showOnewayArrow;
-    private int defaultSegmentWidth;
+    /** Preference: should the segement numbers of ways be displayed */
     private boolean showOrderNumber;
+    /** Preference: should only the last arrow of a way be displayed */
     private boolean showHeadArrowOnly;
     private int showNamesDistance;
     private int useStrokesDistance;
     private int showIconsDistance;
+    /** Preference: size of selected nodes */
     private int selectedNodeSize;
+    /** Preference: size of multiply connected nodes */
     private int connectionNodeSize;
+    /** Preference: size of unselected nodes */
     private int unselectedNodeSize;
+    /** Preference: size of tagged nodes */
     private int taggedNodeSize;
+    /** Preference: should selected nodes be filled */
     private boolean fillSelectedNode;
+    /** Preference: should unselected nodes be filled */
     private boolean fillUnselectedNode;
+    /** Preference: should tagged nodes be filled */
     private boolean fillTaggedNode;
+    /** Preference: should multiply connected nodes be filled */
     private boolean fillConnectionNode;
     private boolean outlineOnly;
+    /** Color Preference for selected objects */
     private Color selectedColor;
     private Color relationSelectedColor;
+    /** Color Preference for hightlighted objects */
     private Color highlightColor;
+    /** Color Preference for inactive objects */
     private Color inactiveColor;
+    /** Color Preference for nodes */
     private Color nodeColor;
+    /** Color Preference for tagged nodes */
     private Color taggedColor;
+    /** Color Preference for multiply connected nodes */
     private Color connectionColor;
+    /** Color Preference for tagged and multiply connected nodes */
     private Color taggedConnectionColor;
 
     private MapPaintSettings() {
@@ -47,7 +65,6 @@ public class MapPaintSettings implements PreferenceChangedListener {
         showDirectionArrow = Main.pref.getBoolean("draw.segment.direction", false);
         showOnewayArrow = Main.pref.getBoolean("draw.oneway", true);
         useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth", false);
-        defaultSegmentWidth = Main.pref.getInteger("mappaint.segment.default-width", 2);
 
         selectedColor = PaintColors.SELECTED.get();
         relationSelectedColor = PaintColors.RELATIONSELECTED.get();
@@ -97,10 +114,6 @@ public class MapPaintSettings implements PreferenceChangedListener {
 
     public boolean isShowOnewayArrow() {
         return showOnewayArrow;
-    }
-
-    public int getDefaultSegmentWidth() {
-        return defaultSegmentWidth;
     }
 
     public Color getSelectedColor() {
