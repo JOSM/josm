@@ -10,24 +10,30 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 /**
  * This is the abstract base class for the three authorisation UIs.
  *
- *
+ * @since 2746
  */
-public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel{
+public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel {
     /**
      * The property name for the Access Token property
      */
     static public final String ACCESS_TOKEN_PROP = AbstractAuthorizationUI.class.getName() + ".accessToken";
 
     private String apiUrl;
-    private AdvancedOAuthPropertiesPanel pnlAdvancedProperties;
+    private final AdvancedOAuthPropertiesPanel pnlAdvancedProperties;
     private OAuthToken accessToken;
 
     protected void fireAccessTokenChanged(OAuthToken oldValue, OAuthToken newValue) {
         firePropertyChange(ACCESS_TOKEN_PROP, oldValue, newValue);
     }
 
-    public AbstractAuthorizationUI() {
+    /**
+     * Constructs a new {@code AbstractAuthorizationUI} for the given API URL.
+     * @param apiUrl The OSM API URL
+     * @since 5422
+     */
+    public AbstractAuthorizationUI(String apiUrl) {
         pnlAdvancedProperties = new AdvancedOAuthPropertiesPanel();
+        setApiUrl(apiUrl);
     }
 
     /**
@@ -48,6 +54,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel{
      */
     public void setApiUrl(String apiUrl) {
         this.apiUrl = apiUrl;
+        this.pnlAdvancedProperties.setApiUrl(apiUrl);
     }
 
     /**

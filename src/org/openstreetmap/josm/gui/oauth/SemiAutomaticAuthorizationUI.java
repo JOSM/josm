@@ -36,6 +36,8 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  *
  * In contrast to the fully-automatic procedure the user is dispatched to an
  * external browser for login and authorisation.
+ * 
+ * @since 2746
  */
 public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     private AccessTokenInfoPanel pnlAccessTokenInfo;
@@ -57,7 +59,13 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         add(pnlRetrieveRequestToken, BorderLayout.CENTER);
     }
 
-    public SemiAutomaticAuthorizationUI() {
+    /**
+     * Constructs a new {@code SemiAutomaticAuthorizationUI} for the given API URL.
+     * @param apiUrl The OSM API URL
+     * @since 5422
+     */
+    public SemiAutomaticAuthorizationUI(String apiUrl) {
+        super(apiUrl);
         build();
     }
 

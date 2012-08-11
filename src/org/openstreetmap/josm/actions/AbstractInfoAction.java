@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -37,7 +38,7 @@ public abstract class AbstractInfoAction extends JosmAction {
      * @return the base URL, i.e. http://api.openstreetmap.org/browse
      */
     static public String getBaseBrowseUrl() {
-        String baseUrl = Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api");
+        String baseUrl = Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
         Pattern pattern = Pattern.compile("/api/?$");
         String ret =  pattern.matcher(baseUrl).replaceAll("/browse");
         if (ret.equals(baseUrl)) {
@@ -56,7 +57,7 @@ public abstract class AbstractInfoAction extends JosmAction {
      * @return the base URL, i.e. http://www.openstreetmap.org/user
      */
     static public String getBaseUserUrl() {
-        String baseUrl = Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api");
+        String baseUrl = Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
         Pattern pattern = Pattern.compile("/api/?$");
         String ret =  pattern.matcher(baseUrl).replaceAll("/user");
         if (ret.equals(baseUrl)) {
