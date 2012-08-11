@@ -605,9 +605,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 final JosmAction action = new JosmAction(actionShortcutKey, null, tr("Use this tag again"), sc, false) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        //keys.getEditor().setItem(t.getKey());
                         keys.setSelectedItem(t.getKey());
-                        values.getEditor().setItem(t.getValue());
+                        values.setSelectedItem(t.getValue());
                         // Update list of values (fix #7951) 
                         focus.focusGained(null);
                     }
