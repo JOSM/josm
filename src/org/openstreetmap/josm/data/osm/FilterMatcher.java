@@ -5,12 +5,43 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
+import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Not;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 
+/**
+ * Class that encapsulates the filter logic, i.e.&nbsp;applies a list of
+ * filters to a primitive.
+ *
+ * Uses {@link SearchCompiler.Match#match} to see if the filter expression matches,
+ * cares for "inverted-flag" of the filters and combines the results of all active
+ * filters.
+ *
+ * There are two major use cases:
+ *
+ * (1) Hide features that you don't like to edit but get in the way, e.g.
+ * <code>landuse</code> or power lines. It is expected, that the inverted flag
+ * if false for these kind of filters.
+ *
+ * (2) Highlight certain features, that are currently interesting and hide everything
+ * else. This can be thought of as an improved search (Ctrl-F), where you can
+ * continue editing and don't loose the current selection. It is expected that
+ * the inverted flag of the filter is true in this case.
+ *
+ * In addition to the formal application of filter rules, some magic is applied
+ * to (hopefully) match the expectations of the user:
+ *
+ * (1) non-inverted: When hiding a way, all its untagged nodes are hidden as well.
+ * This avoids a "cloud of nodes", that normally isn't useful without the
+ * corresponding way.
+ *
+ * (2) inverted: When displaying a way, we show all its nodes, although the
+ * individual nodes do not match the filter expression. The reason is, that a
+ * way without its nodes cannot be edited properly.
+ *
+ */
 public class FilterMatcher {
 
     private static class FilterInfo {
@@ -105,22 +136,36 @@ public class FilterMatcher {
             return false;
 
         boolean selected = false;
-        boolean onlyInvertedFilters = true;
+        // If the primitive is "explicitly" hidden by a non-inverted filter.
+        // Only interesting for nodes.
+        boolean explicitlyHidden = false;
 
         for (FilterInfo fi: filters) {
-            if (fi.isDelete && selected && fi.match.match(primitive)) {
-                selected = false;
-            } else if (!fi.isDelete && (!selected || (onlyInvertedFilters && !fi.isInverted)) && fi.match.match(primitive)) {
-                selected = true;
-                onlyInvertedFilters = onlyInvertedFilters && fi.isInverted;
+            if (fi.isDelete) {
+                if (selected && fi.match.match(primitive)) {
+                    selected = false;
+                }
+            } else {
+                if ((!selected || (!explicitlyHidden && !fi.isInverted)) && fi.match.match(primitive)) {
+                    selected = true;
+                    if (!fi.isInverted) {
+                        explicitlyHidden = true;
+                    }
+                }
             }
         }
 
         if (primitive instanceof Node) {
+            // Technically not hidden by any filter, but we hide it anyway, if
+            // it is untagged and all parent ways are hidden.
             if (!selected)
                 return !primitive.isTagged() && allParentWaysFiltered(primitive, hidden);
-            if (onlyInvertedFilters)
-                return selected && !oneParentWayNotFiltered(primitive, hidden);
+            // At this point, selected == true, so the node is hidden.
+            // However, if there is a parent way, that is not hidden, we ignore
+            // this and show the node anyway, unless there is no non-inverted
+            // filter that applies to the node directly.
+            if (!explicitlyHidden)
+                return !oneParentWayNotFiltered(primitive, hidden);
             return true;
         } else
             return selected;
