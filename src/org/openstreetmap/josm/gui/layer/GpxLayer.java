@@ -43,7 +43,6 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -95,6 +94,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.gui.progress.ProgressTaskIds;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.AudioUtil;
@@ -1395,7 +1395,7 @@ public class GpxLayer extends Layer {
                 return null;
             }
 
-            JComboBox layerList = new JComboBox();
+            JosmComboBox layerList = new JosmComboBox();
             layerList.setRenderer(new LayerListCellRenderer());
             layerList.setModel(new DefaultComboBoxModel(targetLayers.toArray()));
             layerList.setSelectedIndex(0);

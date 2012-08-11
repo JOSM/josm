@@ -17,7 +17,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.event.ListDataEvent;
@@ -27,6 +26,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.gui.JMultilineLabel;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -53,7 +53,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
     private ButtonGroup bgUseNewOrExisting;
     private JRadioButton rbUseNew;
     private JRadioButton rbExisting;
-    private JComboBox cbOpenChangesets;
+    private JosmComboBox cbOpenChangesets;
     private JButton btnRefresh;
     private JButton btnClose;
     private JCheckBox cbCloseAfterUpload;
@@ -107,7 +107,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         gc.weightx = 1.0;
         model = new OpenChangesetComboBoxModel();
         ChangesetCache.getInstance().addChangesetCacheListener(model);
-        cbOpenChangesets = new JComboBox(model);
+        cbOpenChangesets = new JosmComboBox(model);
         cbOpenChangesets.setToolTipText(tr("Select an open changeset"));
         cbOpenChangesets.setRenderer(new ChangesetCellRenderer());
         cbOpenChangesets.addItemListener(new ChangesetListItemStateListener());

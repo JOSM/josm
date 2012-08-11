@@ -1,14 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
-import javax.swing.JComboBox;
-
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 
 /**
  * @author Matthias Julius
  */
-public class OsmPrimitiveTypesComboBox extends JComboBox {
+public class OsmPrimitiveTypesComboBox extends JosmComboBox {
 
     public OsmPrimitiveTypesComboBox() {
         for (OsmPrimitiveType type: OsmPrimitiveType.values()){

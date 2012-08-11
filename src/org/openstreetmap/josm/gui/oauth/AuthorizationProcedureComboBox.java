@@ -6,13 +6,14 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 
-public class AuthorizationProcedureComboBox extends JComboBox {
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+
+public class AuthorizationProcedureComboBox extends JosmComboBox {
 
     public AuthorizationProcedureComboBox() {
         setModel(new AuthorisationProcedureComboBoxModel());

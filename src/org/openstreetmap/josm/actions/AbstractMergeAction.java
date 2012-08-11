@@ -10,7 +10,6 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -19,6 +18,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -57,7 +57,7 @@ public abstract class AbstractMergeAction extends JosmAction {
     }
 
     protected Layer askTargetLayer(List<Layer> targetLayers) {
-        JComboBox layerList = new JComboBox();
+        JosmComboBox layerList = new JosmComboBox();
         layerList.setRenderer(new LayerListCellRenderer());
         layerList.setModel(new DefaultComboBoxModel(targetLayers.toArray()));
         layerList.setSelectedIndex(0);

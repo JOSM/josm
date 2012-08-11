@@ -24,7 +24,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -45,6 +44,7 @@ import javax.swing.table.TableColumnModel;
 
 import javax.swing.table.TableRowSorter;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -133,7 +133,7 @@ public class PrefJPanel extends JPanel {
     private JCheckBox cbShift = new JCheckBox();
     private JCheckBox cbDefault = new JCheckBox();
     private JCheckBox cbDisable = new JCheckBox();
-    private JComboBox tfKey = new JComboBox();
+    private JosmComboBox tfKey = new JosmComboBox();
 
     JTable shortcutTable = new JTable();
 

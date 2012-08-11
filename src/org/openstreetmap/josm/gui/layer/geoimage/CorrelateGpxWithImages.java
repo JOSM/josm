@@ -44,7 +44,6 @@ import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -73,6 +72,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.io.GpxReader;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.GBC;
@@ -116,7 +116,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     ExtendedDialog syncDialog;
     Vector<GpxDataWrapper> gpxLst = new Vector<GpxDataWrapper>();
     JPanel outerPanel;
-    JComboBox cbGpx;
+    JosmComboBox cbGpx;
     JTextField tfTimezone;
     JTextField tfOffset;
     JCheckBox cbExifImg;
@@ -230,7 +230,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         JPanel panel;
         JLabel lbExifTime;
         JTextField tfGpsTime;
-        JComboBox cbTimezones;
+        JosmComboBox cbTimezones;
         ImageDisplay imgDisp;
         JList imgList;
 
@@ -308,7 +308,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             Collections.sort(vtTimezones);
 
-            cbTimezones = new JComboBox(vtTimezones);
+            cbTimezones = new JosmComboBox(vtTimezones);
 
             String tzId = Main.pref.get("geoimage.timezoneid", "");
             TimeZone defaultTz;
@@ -481,7 +481,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         panelCb.add(new JLabel(tr("GPX track: ")));
 
-        cbGpx = new JComboBox(gpxLst);
+        cbGpx = new JosmComboBox(gpxLst);
         if (defaultItem != null) {
             cbGpx.setSelectedItem(defaultItem);
         }
