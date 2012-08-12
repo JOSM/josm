@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
 import java.text.MessageFormat;
 
 import org.openstreetmap.josm.Main;
@@ -10,6 +11,9 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.Preferences.StringSetting;
 import org.openstreetmap.josm.data.osm.UserInfo;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.io.OsmServerUserInfoReader;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -33,12 +37,12 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * The global JosmUserStateManager listens to {@link PreferenceChangeEvent}s and keeps track
  * of what the current JOSM instance knows about the current user. Other subsystems can
  * let the global JosmUserStateManager know in case they fully identify the current user, see
- * {@link #setFullyIdentified(String, long)}.
+ * {@link #setFullyIdentified}.
  *
  * The information kept by the JosmUserStateManager can be used to
  * <ul>
  *   <li>safely query changesets owned by the current user based on its user id, not on its user name</li>
- *   <li>safely search for objects last touched by the current user  based on its user id, not on its user name</li>
+ *   <li>safely search for objects last touched by the current user based on its user id, not on its user name</li>
  * </ul>
  *
  */
@@ -165,8 +169,11 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     public UserInfo getUserInfo() {
         return userInfo;
     }
+    
     /**
-     * Initializes the user identity manager from values in the {@link org.openstreetmap.josm.data.Preferences}
+     * Initializes the user identity manager from Basic Authentication values in the {@link org.openstreetmap.josm.data.Preferences}
+     * This method should be called if {@code osm-server.auth-method} is set to {@code basic}.
+     * @see #initFromOAuth
      */
     public void initFromPreferences() {
         String userName = CredentialsManager.getInstance().getUsername();
@@ -181,6 +188,24 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
                 // same name in the preferences as JOSM already knows about;
                 // keep the state, be it partially or fully identified
             }
+        }
+    }
+
+    /**
+     * Initializes the user identity manager from OAuth request of user details.
+     * This method should be called if {@code osm-server.auth-method} is set to {@code oauth}.
+     * @param parent component relative to which the {@link PleaseWaitDialog} is displayed.
+     * @see #initFromPreferences
+     * @since 5434
+     */
+    public void initFromOAuth(Component parent) {
+        try {
+            UserInfo info = new OsmServerUserInfoReader().fetchUserInfo(NullProgressMonitor.INSTANCE);
+            setFullyIdentified(info.getDisplayName(), info);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (OsmTransferException e) {
+            e.printStackTrace();
         }
     }
 

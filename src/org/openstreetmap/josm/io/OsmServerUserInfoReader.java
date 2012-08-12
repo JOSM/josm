@@ -96,7 +96,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
             }
 
             // -- language list
-            NodeList xmlNodeList = (NodeList)xpath.compile("/osm/user[1]/languages[1]/lang").evaluate(document, XPathConstants.NODESET);
+            NodeList xmlNodeList = (NodeList)xpath.compile("/osm/user[1]/languages[1]/lang/text()").evaluate(document, XPathConstants.NODESET);
             if (xmlNodeList != null) {
                 List<String> languages = new LinkedList<String>();
                 for (int i=0; i < xmlNodeList.getLength(); i++) {
