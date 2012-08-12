@@ -647,7 +647,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 // Finally add label to the resulting panel
                 JPanel tagPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
                 tagPanel.add(tagLabel);
-                p.add(tagPanel, GBC.eol());
+                p.add(tagPanel, GBC.eol().fill(GBC.HORIZONTAL));
             }
         }
     }
