@@ -247,14 +247,16 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         HashSet<OsmPrimitive> newHighlights = new HashSet<OsmPrimitive>();
 
         virtualManager.clear();
-        if(mode == Mode.move && virtualManager.setupVirtual(e.getPoint())) {
-            DataSet ds = getCurrentDataSet();
-            if (ds != null && drawTargetHighlight) {
-                ds.setHighlightedVirtualNodes(virtualManager.virtualWays);
+        if(mode == Mode.move) {
+            if (!dragInProgress() && virtualManager.activateVirtualNodeNearPoint(e.getPoint())) {
+                DataSet ds = getCurrentDataSet();
+                if (ds != null && drawTargetHighlight) {
+                    ds.setHighlightedVirtualNodes(virtualManager.virtualWays);
+                }
+                mv.setNewCursor(SelectActionCursor.virtual_node.cursor(), this);
+                // don't highlight anything else if a virtual node will be
+                return repaintIfRequired(newHighlights);
             }
-            mv.setNewCursor(SelectActionCursor.virtual_node.cursor(), this);
-            // don't highlight anything else if a virtual node will be
-            return repaintIfRequired(newHighlights);
         }
 
         mv.setNewCursor(getCursor(c), this);
@@ -431,7 +433,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             // also include case when some primitive is under cursor and no shift+ctrl / alt+ctrl is pressed
             // so this is not movement, but selection on primitive under cursor
             if (!cancelDrawMode && nearestPrimitive instanceof Way) {
-                virtualManager.setupVirtual(e.getPoint());
+                virtualManager.activateVirtualNodeNearPoint(e.getPoint());
             }
             selectPrims(cycleManager.cycleSetup(nearestPrimitive, e.getPoint()), false, false);
             useLastMoveCommandIfPossible();
@@ -522,16 +524,16 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         if (!initialMoveThresholdExceeded) {
             int dp = (int) lastMousePos.distance(e.getX(), e.getY());
             if (dp < initialMoveThreshold)
-                return;
-            initialMoveThresholdExceeded = true;
+                return; // ignore small drags
+            initialMoveThresholdExceeded = true; //no more ingnoring uintil nex mouse press
         }
-
-        EastNorth currentEN = mv.getEastNorth(e.getX(), e.getY());
         if (e.getPoint().equals(lastMousePos))
             return;
         
-        if (virtualManager.hasVirtualWays()) {
-            virtualManager.processVirtualNodeMovements(currentEN);
+        EastNorth currentEN = mv.getEastNorth(e.getX(), e.getY());
+
+        if (virtualManager.hasVirtualWaysToBeConstructed()) {
+            virtualManager.createMiddleNodeFromVirtual(currentEN);
         } else {
             if (!updateCommandWhileDragging(currentEN)) return;
         }
@@ -806,7 +808,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         // Virtual Ways: if non-empty the cursor is above a virtual node. So don't highlight
         // anything if about to drag the virtual node (i.e. !released) but continue if the
         // cursor is only released above a virtual node by accident (i.e. released). See #7018
-        if ((shift && ctrl) || (ctrl && !released) || (virtualManager.hasVirtualWays() && !released))
+        if ((shift && ctrl) || (ctrl && !released) || (virtualManager.hasVirtualWaysToBeConstructed() && !released))
             return;
 
         if (!released) {
@@ -1033,9 +1035,9 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
          * <code>virtualNode</code> and
          * <code>virtualWays</code> were setup.
          */
-        private boolean setupVirtual(Point p) {
+        private boolean activateVirtualNodeNearPoint(Point p) {
             if (nodeVirtualSize > 0) {
-                
+
                 Collection<WaySegment> selVirtualWays = new LinkedList<WaySegment>();
                 Pair<Node, Node> vnp = null, wnp = new Pair<Node, Node>(null, null);
 
@@ -1057,6 +1059,9 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                                 virtualNode = new Node(mv.getLatLon(pc.getX(), pc.getY()));
                             }
                             if (vnp.equals(wnp)) {
+                                // if mutiple line segments have the same points,
+                                // add all segments to be splitted to virtualWays list
+                                // if some lines are selected, only their segments will go to virtualWays
                                 (w.isSelected() ? selVirtualWays : virtualWays).add(ws);
                             }
                         }
@@ -1071,7 +1076,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             return !virtualWays.isEmpty();
         }
 
-        private void processVirtualNodeMovements(EastNorth currentEN) {
+        private void createMiddleNodeFromVirtual(EastNorth currentEN) {
             Collection<Command> virtualCmds = new LinkedList<Command>();
             virtualCmds.add(new AddCommand(virtualNode));
             for (WaySegment virtualWay : virtualWays) {
@@ -1098,7 +1103,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             return virtualNode != null;
         }
 
-        private boolean hasVirtualWays() {
+        private boolean hasVirtualWaysToBeConstructed() {
             return !virtualWays.isEmpty();
         }
     }
