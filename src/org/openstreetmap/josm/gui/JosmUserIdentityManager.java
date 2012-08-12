@@ -58,7 +58,17 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     static public JosmUserIdentityManager getInstance() {
         if (instance == null) {
             instance = new JosmUserIdentityManager();
-            instance.initFromPreferences();
+            if (Main.pref.get("osm-server.auth-method").equals("oauth")) {
+                try {
+                    instance.initFromOAuth(Main.parent);
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                    // Fall back to preferences if OAuth identification fails for any reason
+                    instance.initFromPreferences();
+                }
+            } else {
+                instance.initFromPreferences();
+            }
             Main.pref.addPreferenceChangeListener(instance);
         }
         return instance;
@@ -66,6 +76,8 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
 
     private String userName;
     private UserInfo userInfo;
+    private boolean accessTokenKeyChanged;
+    private boolean accessTokenSecretChanged;
 
     private JosmUserIdentityManager() {
     }
@@ -182,7 +194,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
                 setPartiallyIdentified(userName);
             }
         } else {
-            if (!userName.equals(this.userName)) {
+            if (userName != null && !userName.equals(this.userName)) {
                 setPartiallyIdentified(userName);
             } else {
                 // same name in the preferences as JOSM already knows about;
@@ -237,15 +249,32 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
                 }
             }
             return;
-        }
-
-        if (evt.getKey().equals("osm-server.url")) {
+            
+        } else if (evt.getKey().equals("osm-server.url")) {
             if (!(evt.getNewValue() instanceof StringSetting)) return;
             String newValue = ((StringSetting) evt.getNewValue()).getValue();
             if (newValue == null || newValue.trim().equals("")) {
                 setAnonymous();
             } else if (isFullyIdentified()) {
                 setPartiallyIdentified(getUserName());
+            }
+            
+        } else if (evt.getKey().equals("oauth.access-token.key")) {
+            accessTokenKeyChanged = true;
+            
+        } else if (evt.getKey().equals("oauth.access-token.secret")) {
+            accessTokenSecretChanged = true;
+        }
+        
+        if (accessTokenKeyChanged && accessTokenSecretChanged) {
+            accessTokenKeyChanged = false;
+            accessTokenSecretChanged = false;
+            if (Main.pref.get("osm-server.auth-method").equals("oauth")) {
+                try {
+                    instance.initFromOAuth(Main.parent);
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
             }
         }
     }
