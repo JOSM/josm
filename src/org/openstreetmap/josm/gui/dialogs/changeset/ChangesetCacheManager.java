@@ -531,14 +531,9 @@ public class ChangesetCacheManager extends JFrame {
 
         public void actionPerformed(ActionEvent arg0) {
             JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
-            if (Main.pref.get("osm-server.auth-method").equals("oauth")) {
-                im.initFromOAuth(ChangesetCacheManager.this);
-            } else {
-                im.initFromPreferences();
-                if (im.isAnonymous()) {
-                    alertAnonymousUser();
-                    return;
-                }
+            if (im.isAnonymous()) {
+                alertAnonymousUser();
+                return;
             }
             ChangesetQuery query = new ChangesetQuery();
             if (im.isFullyIdentified()) {
