@@ -74,6 +74,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.widgets.JFileChooserManager;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
@@ -750,12 +751,12 @@ public abstract class SourceEditor extends JPanel {
             }
 
             public void actionPerformed(ActionEvent e) {
-                JFileChooser fc= new JFileChooser();
-                prepareFileChooser(tfURL.getText(), fc);
-                int ret = fc.showOpenDialog(JOptionPane.getFrameForComponent(SourceEditor.this));
-                if (ret != JFileChooser.APPROVE_OPTION)
-                    return;
-                tfURL.setText(fc.getSelectedFile().toString());
+                JFileChooserManager fcm = new JFileChooserManager(true);
+                prepareFileChooser(tfURL.getText(), fcm.getFileChooser());
+                JFileChooser fc = fcm.openFileChooser(JOptionPane.getFrameForComponent(SourceEditor.this));
+                if (fc != null) {
+                    tfURL.setText(fc.getSelectedFile().toString());
+                }
             }
         }
 
@@ -1284,18 +1285,7 @@ public abstract class SourceEditor extends JPanel {
         private JTextField tfFileName;
         private CopyOnWriteArrayList<CellEditorListener> listeners;
         private String value;
-        private JFileChooser fileChooser;
         private boolean isFile;
-
-        protected JFileChooser getFileChooser() {
-            if (fileChooser == null) {
-                this.fileChooser = new JFileChooser();
-                if(!isFile) {
-                    fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                }
-            }
-            return fileChooser;
-        }
 
         /**
          * build the GUI
@@ -1427,12 +1417,15 @@ public abstract class SourceEditor extends JPanel {
             }
 
             public void actionPerformed(ActionEvent e) {
-                JFileChooser fc = getFileChooser();
-                prepareFileChooser(tfFileName.getText(), fc);
-                int ret = fc.showOpenDialog(JOptionPane.getFrameForComponent(SourceEditor.this));
-                if (ret != JFileChooser.APPROVE_OPTION)
-                    return;
-                tfFileName.setText(fc.getSelectedFile().toString());
+                JFileChooserManager fcm = new JFileChooserManager(true).createFileChooser();
+                if (!isFile) {
+                    fcm.getFileChooser().setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                }
+                prepareFileChooser(tfFileName.getText(), fcm.getFileChooser());
+                JFileChooser fc = fcm.openFileChooser(JOptionPane.getFrameForComponent(SourceEditor.this));
+                if (fc != null) {
+                    tfFileName.setText(fc.getSelectedFile().toString());
+                }
             }
         }
     }

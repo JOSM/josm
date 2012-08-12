@@ -52,7 +52,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * This flag is only relevant if an object is disabled by the
-     * filter mechanism (i.e. FLAG_DISABLED is set).
+     * filter mechanism (i.e.&nbsp;FLAG_DISABLED is set).
      * Then it indicates, whether it is completely hidden or
      * just shown in gray color.
      *
@@ -62,31 +62,41 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     protected static final int FLAG_HIDE_IF_DISABLED = 1 << 5;
 
     /**
+     * Flag used internally by the filter mechanism.
+     */
+    protected static final int FLAG_DISABLED_TYPE = 1 << 6;
+
+    /**
+     * Flag used internally by the filter mechanism.
+     */
+    protected static final int FLAG_HIDDEN_TYPE = 1 << 7;
+
+    /**
      * This flag is set if the primitive is a way and
      * according to the tags, the direction of the way is important.
      * (e.g. one way street.)
      */
-    protected static final int FLAG_HAS_DIRECTIONS = 1 << 6;
+    protected static final int FLAG_HAS_DIRECTIONS = 1 << 8;
 
     /**
      * If the primitive is tagged.
      * Some trivial tags like source=* are ignored here.
      */
-    protected static final int FLAG_TAGGED = 1 << 7;
+    protected static final int FLAG_TAGGED = 1 << 9;
 
     /**
      * This flag is only relevant if FLAG_HAS_DIRECTIONS is set.
      * It shows, that direction of the arrows should be reversed.
      * (E.g. oneway=-1.)
      */
-    protected static final int FLAG_DIRECTION_REVERSED = 1 << 8;
+    protected static final int FLAG_DIRECTION_REVERSED = 1 << 10;
 
     /**
      * When hovering over ways and nodes in add mode, the
      * "target" objects are visually highlighted. This flag indicates
      * that the primitive is currently highlighted.
      */
-    protected static final int FLAG_HIGHLIGHTED = 1 << 9;
+    protected static final int FLAG_HIGHLIGHTED = 1 << 11;
 
     /**
      * Replies the sub-collection of {@link OsmPrimitive}s of type <code>type</code> present in
@@ -430,17 +440,17 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Make the primitive disabled (e.g.&nbsp;if a filter applies).
      *
      * To enable the primitive again, use unsetDisabledState.
-     * @param hide if the primitive should be completely hidden from view or
+     * @param hidden if the primitive should be completely hidden from view or
      *             just shown in gray color.
      * @return true, any flag has changed; false if you try to set the disabled
      * state to the value that is already preset
      */
-    public boolean setDisabledState(boolean hide) {
+    public boolean setDisabledState(boolean hidden) {
         boolean locked = writeLock();
         try {
             int oldFlags = flags;
             updateFlagsNoLock(FLAG_DISABLED, true);
-            updateFlagsNoLock(FLAG_HIDE_IF_DISABLED, hide);
+            updateFlagsNoLock(FLAG_HIDE_IF_DISABLED, hidden);
             return oldFlags != flags;
         } finally {
             writeUnlock(locked);
@@ -464,6 +474,20 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     /**
+     * Set binary property used internally by the filter mechanism.
+     */
+    public void setDisabledType(boolean isExplicit) {
+        updateFlags(FLAG_DISABLED_TYPE, isExplicit);
+    }
+
+    /**
+     * Set binary property used internally by the filter mechanism.
+     */
+    public void setHiddenType(boolean isExplicit) {
+        updateFlags(FLAG_HIDDEN_TYPE, isExplicit);
+    }
+
+    /**
      * Replies true, if this primitive is disabled. (E.g. a filter
      * applies)
      */
@@ -477,6 +501,20 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     public boolean isDisabledAndHidden() {
         return (((flags & FLAG_DISABLED) != 0) && ((flags & FLAG_HIDE_IF_DISABLED) != 0));
+    }
+
+    /**
+     * Get binary property used internally by the filter mechanism.
+     */
+    public boolean getHiddenType() {
+        return (flags & FLAG_HIDDEN_TYPE) != 0;
+    }
+
+    /**
+     * Get binary property used internally by the filter mechanism.
+     */
+    public boolean getDisabledType() {
+        return (flags & FLAG_DISABLED_TYPE) != 0;
     }
 
     public boolean isSelectable() {

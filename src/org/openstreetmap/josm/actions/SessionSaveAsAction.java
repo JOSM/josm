@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -11,7 +11,9 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,7 +33,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -41,7 +42,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
-public class SessionSaveAsAction extends JosmAction {
+public class SessionSaveAsAction extends DiskAccessAction {
 
     private List<Layer> layers;
     private Map<Layer, SessionLayerExporter> exporters;
@@ -51,7 +52,6 @@ public class SessionSaveAsAction extends JosmAction {
 
     /**
      * Construct the action with "Save" as label.
-     * @param layer Save this layer.
      */
     public SessionSaveAsAction() {
         super(tr("Save Session As..."), "save_as", tr("Save the current session to a new file."), null, true, "save_as-session", true);
@@ -76,30 +76,20 @@ public class SessionSaveAsAction extends JosmAction {
                 break;
             }
         }
-
-        String curDir = Main.pref.get("lastDirectory");
-        if (curDir.equals("")) {
-            curDir = ".";
-        }
-        JFileChooser fc = new JFileChooser(new File(curDir));
-        fc.setDialogTitle(tr("Save session"));
-        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        
         FileFilter joz = new ExtensionFileFilter("joz", "joz", tr("Session file (archive) (*.joz)"));
         FileFilter jos = new ExtensionFileFilter("jos", "jos", tr("Session file (*.jos)"));
-        if (zipRequired) {
-            fc.addChoosableFileFilter(joz);
-        } else {
-            fc.addChoosableFileFilter(jos);
-            fc.addChoosableFileFilter(joz);
-            fc.setFileFilter(jos);
-        }
-        int answer = fc.showSaveDialog(Main.parent);
-        if (answer != JFileChooser.APPROVE_OPTION)
-            return;
 
-        if (!fc.getCurrentDirectory().getAbsolutePath().equals(curDir)) {
-            Main.pref.put("lastDirectory", fc.getCurrentDirectory().getAbsolutePath());
+        JFileChooser fc;
+        
+        if (zipRequired) {
+            fc = createAndOpenFileChooser(false, false, tr("Save session"), joz, JFileChooser.FILES_ONLY, "lastDirectory");
+        } else {
+            fc = createAndOpenFileChooser(false, false, tr("Save session"), Arrays.asList(new FileFilter[]{jos, joz}), jos, JFileChooser.FILES_ONLY, "lastDirectory");
         }
+
+        if (fc == null)
+            return;
 
         File file = fc.getSelectedFile();
         String fn = file.getName();

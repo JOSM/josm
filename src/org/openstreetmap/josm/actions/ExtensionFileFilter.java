@@ -18,15 +18,20 @@ import org.openstreetmap.josm.io.FileImporter;
 /**
  * A file filter that filters after the extension. Also includes a list of file
  * filters used in JOSM.
- *
+ * @since 32
  */
 public class ExtensionFileFilter extends FileFilter {
 
     /**
-     * list of supported formats
+     * List of supported formats for import.
+     * @since 4869
      */
     public static final ArrayList<FileImporter> importers;
 
+    /**
+     * List of supported formats for export.
+     * @since 4869
+     */
     public static final ArrayList<FileExporter> exporters;
 
     // add some file types only if the relevant classes are there;
@@ -94,10 +99,12 @@ public class ExtensionFileFilter extends FileFilter {
     /**
      * Updates the {@link AllFormatsImporter} that is contained in the importers list. If
      * you do not use the importers variable directly, you don’t need to call this.
+     * <p>
+     * Updating the AllFormatsImporter is required when plugins add new importers that
+     * support new file extensions. The old AllFormatsImporter doesn’t include the new
+     * extensions and thus will not display these files.
      * 
-     *  Updating the AllFormatsImporter is required when plugins add new importers that
-     *  support new file extensions. The old AllFormatsImporter doesn’t include the new
-     *  extensions and thus will not display these files.
+     * @since 5131
      */
     public static void updateAllFormatsImporter() {
         for(int i=0; i < importers.size(); i++) {
@@ -113,6 +120,7 @@ public class ExtensionFileFilter extends FileFilter {
      * is append at the end.
      *
      * @return an ordered list of {@link ExtensionFileFilter}s for importing.
+     * @since 2029
      */
     public static List<ExtensionFileFilter> getImportExtensionFileFilters() {
         updateAllFormatsImporter();
@@ -130,6 +138,7 @@ public class ExtensionFileFilter extends FileFilter {
      * is append at the end.
      *
      * @return an ordered list of {@link ExtensionFileFilter}s for exporting.
+     * @since 2029
      */
     public static List<ExtensionFileFilter> getExportExtensionFileFilters() {
         LinkedList<ExtensionFileFilter> filters = new LinkedList<ExtensionFileFilter>();
@@ -148,6 +157,7 @@ public class ExtensionFileFilter extends FileFilter {
      *
      * @param extension the extension
      * @return the default {@link ExtensionFileFilter} for a given extension
+     * @since 2029
      */
     public static ExtensionFileFilter getDefaultImportExtensionFileFilter(String extension) {
         if (extension == null) return new AllFormatsImporter().filter;
@@ -163,6 +173,7 @@ public class ExtensionFileFilter extends FileFilter {
      *
      * @param extension the extension
      * @return the default {@link ExtensionFileFilter} for a given extension
+     * @since 2029
      */
     public static ExtensionFileFilter getDefaultExportExtensionFileFilter(String extension) {
         if (extension == null) return new AllFormatsImporter().filter;
@@ -179,10 +190,15 @@ public class ExtensionFileFilter extends FileFilter {
      *
      * @param fileChooser the file chooser
      * @param extension the default extension
+     * @param allTypes If true, all the files types known by JOSM will be proposed in the "file type" combobox. 
+     *                 If false, only the file filters that include {@code extension} will be proposed
+     * @since 5438
      */
-    public static void applyChoosableImportFileFilters(JFileChooser fileChooser, String extension) {
+    public static void applyChoosableImportFileFilters(JFileChooser fileChooser, String extension, boolean allTypes) {
         for (ExtensionFileFilter filter: getImportExtensionFileFilters()) {
-            fileChooser.addChoosableFileFilter(filter);
+            if (allTypes || filter.acceptName("file."+extension)) {
+                fileChooser.addChoosableFileFilter(filter);
+            }
         }
         fileChooser.setFileFilter(getDefaultImportExtensionFileFilter(extension));
     }
@@ -193,16 +209,25 @@ public class ExtensionFileFilter extends FileFilter {
      *
      * @param fileChooser the file chooser
      * @param extension the default extension
+     * @param allTypes If true, all the files types known by JOSM will be proposed in the "file type" combobox. 
+     *                 If false, only the file filters that include {@code extension} will be proposed
+     * @since 5438
      */
-    public static void applyChoosableExportFileFilters(JFileChooser fileChooser, String extension) {
+    public static void applyChoosableExportFileFilters(JFileChooser fileChooser, String extension, boolean allTypes) {
         for (ExtensionFileFilter filter: getExportExtensionFileFilters()) {
-            fileChooser.addChoosableFileFilter(filter);
+            if (allTypes || filter.acceptName("file."+extension)) {
+                fileChooser.addChoosableFileFilter(filter);
+            }
         }
         fileChooser.setFileFilter(getDefaultExportExtensionFileFilter(extension));
     }
 
     /**
      * Construct an extension file filter by giving the extension to check after.
+     * @param extension The comma-separated list of file extensions
+     * @param defaultExtension The default extension
+     * @param description A short textual description of the file type
+     * @since 1169
      */
     public ExtensionFileFilter(String extension, String defaultExtension, String description) {
         this.extensions = extension;
@@ -210,6 +235,12 @@ public class ExtensionFileFilter extends FileFilter {
         this.description = description;
     }
 
+    /**
+     * Returns true if this file filter accepts the given filename.
+     * @param filename The filename to check after
+     * @return true if this file filter accepts the given filename (i.e if this filename ends with one of the extensions)
+     * @since 1169
+     */
     public boolean acceptName(String filename) {
         String name = filename.toLowerCase();
         for (String ext : extensions.split(","))
@@ -218,20 +249,32 @@ public class ExtensionFileFilter extends FileFilter {
         return false;
     }
 
-    @Override public boolean accept(File pathname) {
+    @Override
+    public boolean accept(File pathname) {
         if (pathname.isDirectory())
             return true;
         return acceptName(pathname.getName());
     }
 
-    @Override public String getDescription() {
+    @Override
+    public String getDescription() {
         return description;
     }
 
+    /**
+     * Replies the comma-separated list of file extensions of this file filter. 
+     * @return the comma-separated list of file extensions of this file filter, as a String
+     * @since 5131
+     */
     public String getExtensions() {
         return extensions;
     }
 
+    /**
+     * Replies the default file extension of this file filter.
+     * @return the default file extension of this file filter
+     * @since 2029
+     */
     public String getDefaultExtension() {
         return defaultExtension;
     }

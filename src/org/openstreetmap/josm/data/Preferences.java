@@ -105,9 +105,33 @@ public class Preferences {
     protected final SortedMap<String, List<Map<String,String>>> listOfStructsProperties = new TreeMap<String, List<Map<String,String>>>();
     protected final SortedMap<String, List<Map<String,String>>> listOfStructsDefaults = new TreeMap<String, List<Map<String,String>>>();
 
+    /**
+     * Interface for a preference value
+     *
+     * @param <T> the data type for the value
+     */
     public interface Setting<T> {
+        /**
+         * Returns the value of this setting.
+         *
+         * @return the value of this setting
+         */
         T getValue();
+
+        /**
+         * Enable usage of the visitor pattern.
+         *
+         * @param visitor the visitor
+         */
         void visit(SettingVisitor visitor);
+
+        /**
+         * Returns a setting whose value is null.
+         *
+         * Cannot be static, because there is no static inheritance.
+         * @return a Setting object that isn't null itself, but returns null
+         * for {@link #getValue()}
+         */
         Setting<T> getNullInstance();
     }
 
@@ -447,7 +471,7 @@ public class Preferences {
      * to the preference file immediately. Due to caching mechanisms on modern
      * operating systems and hardware, this shouldn't be a performance problem.
      * @param key the unique identifier for the setting
-     * @param value the value of the setting. Can be null or "" wich both removes
+     * @param value the value of the setting. Can be null or "" which both removes
      *  the key-value entry.
      * @return if true, something has changed (i.e. value is different than before)
      */

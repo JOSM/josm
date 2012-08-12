@@ -2,6 +2,10 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.Collection;
+import java.util.Collections;
+
+import org.openstreetmap.josm.data.osm.FilterMatcher.FilterType;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  *
@@ -14,51 +18,42 @@ public class FilterWorker {
      * @param all the collection of primitives for that the filter state should
      * be updated
      * @param filterMatcher the FilterMatcher
-     * @return true, if the filter state of any primitive has changed in the process
+     * @return true, if the filter state (normal / disabled / hidden)
+     * of any primitive has changed in the process
      */
     public static boolean executeFilters(Collection<OsmPrimitive> all, FilterMatcher filterMatcher) {
+        boolean changed = false;
+        // first relations, then ways and nodes last; this is required to resolve dependencies
+        changed = doExecuteFilters(Utils.filter(all, OsmPrimitive.relationPredicate), filterMatcher);
+        changed |= doExecuteFilters(Utils.filter(all, OsmPrimitive.wayPredicate), filterMatcher);
+        changed |= doExecuteFilters(Utils.filter(all, OsmPrimitive.nodePredicate), filterMatcher);
+        return changed;
+    }
+
+    private static boolean doExecuteFilters(Collection<OsmPrimitive> all, FilterMatcher filterMatcher) {
 
         boolean changed = false;
 
-        // First relation and ways
         for (OsmPrimitive primitive: all) {
-            if (!(primitive instanceof Node)) {
-                if (filterMatcher.isHidden(primitive)) {
-                    changed = changed | primitive.setDisabledState(true);
-                } else if (filterMatcher.isDisabled(primitive)) {
-                    changed = changed | primitive.setDisabledState(false);
+            FilterType hiddenType = filterMatcher.isHidden(primitive);
+            if (hiddenType != FilterType.NOT_FILTERED) {
+                changed |= primitive.setDisabledState(true);
+                primitive.setHiddenType(hiddenType == FilterType.EXPLICIT);
+            } else {
+                FilterType disabledType = filterMatcher.isDisabled(primitive);
+                if (disabledType != FilterType.NOT_FILTERED) {
+                    changed |= primitive.setDisabledState(false);
+                    primitive.setDisabledType(hiddenType == FilterType.EXPLICIT);
                 } else {
-                    changed = changed | primitive.unsetDisabledState();
+                    changed |= primitive.unsetDisabledState();
                 }
             }
         }
-
-        // Then nodes (because they state may depend on parent ways)
-        for (OsmPrimitive primitive: all) {
-            if (primitive instanceof Node) {
-                if (filterMatcher.isHidden(primitive)) {
-                    changed = changed | primitive.setDisabledState(true);
-                } else if (filterMatcher.isDisabled(primitive)) {
-                    changed = changed | primitive.setDisabledState(false);
-                } else {
-                    changed = changed | primitive.unsetDisabledState();
-                }
-            }
-        }
-
         return changed;
     }
 
     public static boolean executeFilters(OsmPrimitive primitive, FilterMatcher filterMatcher) {
-        boolean changed = false;
-        if (filterMatcher.isHidden(primitive)) {
-            changed = changed | primitive.setDisabledState(true);
-        } else if (filterMatcher.isDisabled(primitive)) {
-            changed = changed | primitive.setDisabledState(false);
-        } else {
-            changed = changed | primitive.unsetDisabledState();
-        }
-        return changed;
+        return doExecuteFilters(Collections.singleton(primitive), filterMatcher);
     }
 
     public static void clearFilterFlags(Collection<OsmPrimitive> prims) {

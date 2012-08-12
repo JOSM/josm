@@ -16,18 +16,48 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
+/**
+ * File importer allowing to import geottaged images (*.jpg files).
+ *
+ */
 public class JpgImporter extends FileImporter {
     private GpxLayer gpx;
     
+    /**
+     * The default file filter (only *.jpg files).
+     */
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
+            "jpg", "jpg", tr("Image Files") + " (*.jpg)");
+    
+    /**
+     * An alternate file filter that also includes folders.
+     * @since 5438
+     */
+    public static final ExtensionFileFilter FILE_FILTER_WITH_FOLDERS = new ExtensionFileFilter(
             "jpg", "jpg", tr("Image Files") + " (*.jpg, "+ tr("folder")+")");
 
+    /**
+     * Constructs a new {@code JpgImporter}.
+     */
     public JpgImporter() {
-        super(FILE_FILTER);
+        this(false);
     }
 
+    /**
+     * Constructs a new {@code JpgImporter} with folders selection, if wanted.
+     * @param includeFolders If true, includes folders in the file filter
+     * @since 5438
+     */
+    public JpgImporter(boolean includeFolders) {
+        super(includeFolders ? FILE_FILTER_WITH_FOLDERS : FILE_FILTER);
+    }
+
+    /**
+     * Constructs a new {@code JpgImporter} for the given GPX layer. Folders selection is allowed.
+     * @param gpx The GPX layer
+     */
     public JpgImporter(GpxLayer gpx) {
-        this();
+        this(true);
         this.gpx = gpx;
     }
 

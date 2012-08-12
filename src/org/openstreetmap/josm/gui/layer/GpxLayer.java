@@ -61,6 +61,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractMergeAction.LayerListCellRenderer;
+import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
 import org.openstreetmap.josm.data.Bounds;
@@ -94,6 +95,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.gui.progress.ProgressTaskIds;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.gui.widgets.JFileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -1908,11 +1910,7 @@ public class GpxLayer extends Layer {
                 warnCantImportIntoServerLayer(GpxLayer.this);
                 return;
             }
-            String dir = Main.pref.get("markers.lastaudiodirectory");
-            JFileChooser fc = new JFileChooser(dir);
-            fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fc.setAcceptAllFileFilterUsed(false);
-            fc.setFileFilter(new FileFilter() {
+            FileFilter filter = new FileFilter() {
                 @Override
                 public boolean accept(File f) {
                     return f.isDirectory() || f.getName().toLowerCase().endsWith(".wav");
@@ -1922,13 +1920,9 @@ public class GpxLayer extends Layer {
                 public String getDescription() {
                     return tr("Wave Audio files (*.wav)");
                 }
-            });
-            fc.setMultiSelectionEnabled(true);
-            if (fc.showOpenDialog(Main.parent) == JFileChooser.APPROVE_OPTION) {
-                if (!fc.getCurrentDirectory().getAbsolutePath().equals(dir)) {
-                    Main.pref.put("markers.lastaudiodirectory", fc.getCurrentDirectory().getAbsolutePath());
-                }
-
+            };
+            JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, true, null, filter, JFileChooser.FILES_ONLY, "markers.lastaudiodirectory");
+            if (fc != null) {
                 File sel[] = fc.getSelectedFiles();
                 // sort files in increasing order of timestamp (this is the end time, but so
                 // long as they don't overlap, that's fine)
@@ -1967,7 +1961,6 @@ public class GpxLayer extends Layer {
                 Main.main.addLayer(ml);
                 Main.map.repaint();
             }
-
         }
     }
 
@@ -2009,27 +2002,18 @@ public class GpxLayer extends Layer {
                 warnCantImportIntoServerLayer(GpxLayer.this);
                 return;
             }
-            String curDir = Main.pref.get("geoimage.lastdirectory", Main.pref.get("lastDirectory"));
-            if (curDir.equals("")) {
-                curDir = ".";
-            }
-            JFileChooser fc = new JFileChooser(new File(curDir));
-
-            fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            fc.setMultiSelectionEnabled(true);
-            fc.setAcceptAllFileFilterUsed(false);
+            
             JpgImporter importer = new JpgImporter(GpxLayer.this);
-            fc.setFileFilter(importer.filter);
-            fc.showOpenDialog(Main.parent);
-            LinkedList<File> files = new LinkedList<File>();
-            File[] sel = fc.getSelectedFiles();
-            if (sel == null || sel.length == 0)
-                return;
-            if (!fc.getCurrentDirectory().getAbsolutePath().equals(curDir)) {
-                Main.pref.put("geoimage.lastdirectory", fc.getCurrentDirectory().getAbsolutePath());
+            JFileChooser fc = new JFileChooserManager(true, "geoimage.lastdirectory", Main.pref.get("lastDirectory")).
+                    createFileChooser(true, null, importer.filter, JFileChooser.FILES_AND_DIRECTORIES).openFileChooser();
+            if (fc != null) {
+                File[] sel = fc.getSelectedFiles();
+                if (sel != null && sel.length > 0) {
+                    LinkedList<File> files = new LinkedList<File>();
+                    addRecursiveFiles(files, sel);
+                    importer.importDataHandleExceptions(files, NullProgressMonitor.INSTANCE);
+                }
             }
-            addRecursiveFiles(files, sel);
-            importer.importDataHandleExceptions(files, NullProgressMonitor.INSTANCE);
         }
     }
 

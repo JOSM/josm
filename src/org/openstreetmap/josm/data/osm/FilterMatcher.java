@@ -44,6 +44,31 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
  */
 public class FilterMatcher {
 
+    /**
+     * Describes quality of the filtering.
+     *
+     * Depending on the context, this can either refer to disabled or
+     * to hidden primitives.
+     *
+     * The distinction is necessary, because untagged nodes should only
+     * "inherit" their filter property from the parent way, when the
+     * parent way is hidden (or disabled) "explicitly" (i.e. by a non-inverted
+     * filter). This way, filters like
+     * <code>["child type:way", inverted, Add]</code> show the
+     * untagged way nodes, as intended.
+     *
+     * This information is only needed for ways and relations, so nodes are
+     * either <code>NOT_FILTERED</code> or <code>PASSIV</code>.
+     */
+    public enum FilterType {
+        /** no filter applies */
+        NOT_FILTERED,
+        /** at least one non-inverted filter applies */
+        EXPLICIT,
+        /** at least one filter applies, but they are all inverted filters */
+        PASSIV
+    }
+
     private static class FilterInfo {
         final Match match;
         final boolean isDelete;
@@ -101,55 +126,82 @@ public class FilterMatcher {
         }
     }
 
-    private boolean getState(OsmPrimitive primitive, boolean hidden) {
-        return hidden?primitive.isDisabledAndHidden():primitive.isDisabled();
+    /**
+     * Check if primitive is filtered.
+     * @param primitive the primitive to check
+     * @param hidden the minimum level required for the primitive to count as filtered
+     * @return when hidden is true, returns whether the primitive is hidden
+     * when hidden is false, returns whether the primitive is disabled or hidden
+     */
+    private boolean isFiltered(OsmPrimitive primitive, boolean hidden) {
+        return hidden ? primitive.isDisabledAndHidden() : primitive.isDisabled();
     }
 
+    /**
+     * Check if primitive is hidden explicitly.
+     * Only used for ways and relations.
+     * @param primitive the primitive to check
+     * @param hidden the level where the check is performed
+     * @return true, if at least one non-inverted filter applies to the primitive
+     */
+    private boolean isFilterExplicit(OsmPrimitive primitive, boolean hidden) {
+        return hidden ? primitive.getHiddenType() : primitive.getDisabledType();
+    }
+
+    /**
+     * Check if all parent ways are filtered.
+     * @param primitive the primitive to check
+     * @param hidden parameter that indicates the minimum level of filtering:
+     * true when objects need to be hidden to count as filtered and
+     * false when it suffices to be disabled to count as filtered
+     * @return true if (a) there is at least one parent way
+     * (b) all parent ways are filtered at least at the level indicated by the
+     * parameter <code>hidden</code> and
+     * (c) at least one of the parent ways is explicitly filtered
+     */
     private boolean allParentWaysFiltered(OsmPrimitive primitive, boolean hidden) {
         List<OsmPrimitive> refs = primitive.getReferrers();
-        boolean foundWay = false;
-
+        boolean isExplicit = false;
         for (OsmPrimitive p: refs) {
             if (p instanceof Way) {
-                foundWay = true;
-                if (!getState(p, hidden))
+                if (!isFiltered(p, hidden))
                     return false;
+                isExplicit |= isFilterExplicit(p, hidden);
             }
         }
-
-        return foundWay;
+        return isExplicit;
     }
 
     private boolean oneParentWayNotFiltered(OsmPrimitive primitive, boolean hidden) {
         List<OsmPrimitive> refs = primitive.getReferrers();
         for (OsmPrimitive p: refs) {
-            if (p instanceof Way && !getState(p, hidden))
+            if (p instanceof Way && !isFiltered(p, hidden))
                 return true;
         }
 
         return false;
     }
 
-    private boolean test(List<FilterInfo> filters, OsmPrimitive primitive, boolean hidden) {
+    private FilterType test(List<FilterInfo> filters, OsmPrimitive primitive, boolean hidden) {
 
         if (primitive.isIncomplete())
-            return false;
+            return FilterType.NOT_FILTERED;
 
-        boolean selected = false;
+        boolean filtered = false;
         // If the primitive is "explicitly" hidden by a non-inverted filter.
         // Only interesting for nodes.
-        boolean explicitlyHidden = false;
+        boolean explicitlyFiltered = false;
 
         for (FilterInfo fi: filters) {
             if (fi.isDelete) {
-                if (selected && fi.match.match(primitive)) {
-                    selected = false;
+                if (filtered && fi.match.match(primitive)) {
+                    filtered = false;
                 }
             } else {
-                if ((!selected || (!explicitlyHidden && !fi.isInverted)) && fi.match.match(primitive)) {
-                    selected = true;
+                if ((!filtered || (!explicitlyFiltered && !fi.isInverted)) && fi.match.match(primitive)) {
+                    filtered = true;
                     if (!fi.isInverted) {
-                        explicitlyHidden = true;
+                        explicitlyFiltered = true;
                     }
                 }
             }
@@ -158,25 +210,59 @@ public class FilterMatcher {
         if (primitive instanceof Node) {
             // Technically not hidden by any filter, but we hide it anyway, if
             // it is untagged and all parent ways are hidden.
-            if (!selected)
-                return !primitive.isTagged() && allParentWaysFiltered(primitive, hidden);
+            if (!filtered) {
+                if (!primitive.isTagged() && allParentWaysFiltered(primitive, hidden))
+                    return FilterType.PASSIV;
+                else
+                    return FilterType.NOT_FILTERED;
+            }
             // At this point, selected == true, so the node is hidden.
             // However, if there is a parent way, that is not hidden, we ignore
             // this and show the node anyway, unless there is no non-inverted
             // filter that applies to the node directly.
-            if (!explicitlyHidden)
-                return !oneParentWayNotFiltered(primitive, hidden);
-            return true;
-        } else
-            return selected;
+            if (!explicitlyFiltered) {
+                if (!oneParentWayNotFiltered(primitive, hidden))
+                    return FilterType.PASSIV;
+                else
+                    return FilterType.NOT_FILTERED;
+            }
+            return FilterType.PASSIV;
+        } else {
+            if (filtered)
+                return explicitlyFiltered ? FilterType.EXPLICIT : FilterType.PASSIV;
+            else
+                return FilterType.NOT_FILTERED;
+        }
 
     }
 
-    public boolean isHidden(OsmPrimitive primitive) {
+    /**
+     * Check if primitive is hidden.
+     * The filter flags for all parent objects must be set correctly, when
+     * calling this method.
+     * @param primitive the primitive
+     * @return FilterType.NOT_FILTERED when primitive is not hidden;
+     * FilterType.EXPLICIT when primitive is hidden and there is a non-inverted
+     * filter that applies;
+     * FilterType.PASSIV when primitive is hidden and all filters that apply
+     * are inverted
+     */
+    public FilterType isHidden(OsmPrimitive primitive) {
         return test(hiddenFilters, primitive, true);
     }
 
-    public boolean isDisabled(OsmPrimitive primitive) {
+    /**
+     * Check if primitive is disabled.
+     * The filter flags for all parent objects must be set correctly, when
+     * calling this method.
+     * @param primitive the primitive
+     * @return FilterType.NOT_FILTERED when primitive is not disabled;
+     * FilterType.EXPLICIT when primitive is disabled and there is a non-inverted
+     * filter that applies;
+     * FilterType.PASSIV when primitive is disabled and all filters that apply
+     * are inverted
+     */
+    public FilterType isDisabled(OsmPrimitive primitive) {
         return test(disabledFilters, primitive, false);
     }
 

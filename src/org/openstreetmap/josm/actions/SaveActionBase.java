@@ -181,30 +181,13 @@ public abstract class SaveActionBase extends DiskAccessAction {
     }
 
     public static File createAndOpenSaveFileChooser(String title, String extension) {
-        String curDir = Main.pref.get("lastDirectory");
-        if (curDir.equals("")) {
-            curDir = ".";
-        }
-        JFileChooser fc = new JFileChooser(new File(curDir));
-        if (title != null) {
-            fc.setDialogTitle(title);
-        }
 
-        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fc.setMultiSelectionEnabled(false);
-        fc.setAcceptAllFileFilterUsed(false);
-        ExtensionFileFilter.applyChoosableExportFileFilters(fc, extension);
-        int answer = fc.showSaveDialog(Main.parent);
-        if (answer != JFileChooser.APPROVE_OPTION)
-            return null;
-
-        if (!fc.getCurrentDirectory().getAbsolutePath().equals(curDir)) {
-            Main.pref.put("lastDirectory", fc.getCurrentDirectory().getAbsolutePath());
-        }
+        JFileChooser fc = createAndOpenFileChooser(false, false, title, extension);
+        if (fc == null) return null; 
 
         File file = fc.getSelectedFile();
         String fn = file.getPath();
-        if(fn.indexOf('.') == -1)
+        if (fn.indexOf('.') == -1)
         {
             FileFilter ff = fc.getFileFilter();
             if (ff instanceof ExtensionFileFilter) {
