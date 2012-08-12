@@ -64,6 +64,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
@@ -133,12 +134,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     private class LoadGpxDataActionListener implements ActionListener {
 
         public void actionPerformed(ActionEvent arg0) {
-            JFileChooser fc = new JFileChooser(Main.pref.get("lastDirectory"));
-            fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fc.setAcceptAllFileFilterUsed(false);
-            fc.setMultiSelectionEnabled(false);
-            fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fc.setFileFilter(new FileFilter(){
+            FileFilter filter = new FileFilter(){
                 @Override public boolean accept(File f) {
                     return (f.isDirectory()
                             || f .getName().toLowerCase().endsWith(".gpx")
@@ -147,16 +143,14 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 @Override public String getDescription() {
                     return tr("GPX Files (*.gpx *.gpx.gz)");
                 }
-            });
-            fc.showOpenDialog(Main.parent);
-            File sel = fc.getSelectedFile();
-            if (sel == null)
+            };
+            JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, filter, JFileChooser.FILES_ONLY, null);
+            if (fc == null)
                 return;
+            File sel = fc.getSelectedFile();
 
             try {
                 outerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-                Main.pref.put("lastDirectory", sel.getPath());
 
                 for (int i = gpxLst.size() - 1 ; i >= 0 ; i--) {
                     GpxDataWrapper wrapper = gpxLst.get(i);
@@ -374,15 +368,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
             openButton.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent arg0) {
-                    JFileChooser fc = new JFileChooser(Main.pref.get("geoimage.lastdirectory"));
-                    fc.setAcceptAllFileFilterUsed(false);
-                    fc.setMultiSelectionEnabled(false);
-                    fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    fc.setFileFilter(JpegFileFilter.getInstance());
-                    fc.showOpenDialog(Main.parent);
-                    File sel = fc.getSelectedFile();
-                    if (sel == null)
+                    JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, JpegFileFilter.getInstance(), JFileChooser.FILES_ONLY, "geoimage.lastdirectory");
+                    if (fc == null)
                         return;
+                    File sel = fc.getSelectedFile();
 
                     Integer orientation = null;
                     try {

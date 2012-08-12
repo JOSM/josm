@@ -1,8 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.preferences.advanced;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,6 +41,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.ListListSetting;
@@ -315,14 +315,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
     }
     
     private File[] askUserForCustomSettingsFiles(boolean saveFileFlag, String title) {
-        String dir = Main.pref.get("customsettings.lastDirectory");
-        if (dir.length()==0) dir =".";
-        
-        JFileChooser fc = new JFileChooser(dir);
-        fc.setDialogTitle(title);
-        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fc.setAcceptAllFileFilterUsed(false);
-        fc.setFileFilter(new FileFilter() {
+        FileFilter filter = new FileFilter() {
             @Override
             public boolean accept(File f) {
                 return f.isDirectory() || f.getName().toLowerCase().endsWith(".xml");
@@ -331,19 +324,14 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
             public String getDescription() {
                 return tr("JOSM custom settings files (*.xml)");
             }
-            });
-        
-            fc.setMultiSelectionEnabled(!saveFileFlag);
-            int result = saveFileFlag? fc.showSaveDialog(Main.parent) : fc.showOpenDialog(Main.parent);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                if (!fc.getCurrentDirectory().getAbsolutePath().equals(dir)) {
-                    Main.pref.put("customsettings.lastDirectory", fc.getCurrentDirectory().getAbsolutePath());
-                }
-                File sel[] = fc.isMultiSelectionEnabled() ? fc.getSelectedFiles() : (new File[]{fc.getSelectedFile()});
-                if (sel.length==1 && !sel[0].getName().contains(".")) sel[0]=new File(sel[0].getAbsolutePath()+".xml");
-                return sel;
-            } 
-            return new File[0];
+        };
+        JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(!saveFileFlag, !saveFileFlag, title, filter, JFileChooser.FILES_ONLY, "customsettings.lastDirectory");
+        if (fc != null) {
+            File sel[] = fc.isMultiSelectionEnabled() ? fc.getSelectedFiles() : (new File[]{fc.getSelectedFile()});
+            if (sel.length==1 && !sel[0].getName().contains(".")) sel[0]=new File(sel[0].getAbsolutePath()+".xml");
+            return sel;
+        } 
+        return new File[0];
     }
             
     private void prepareData(Map<String, Setting> loaded, Map<String, Setting> orig, Map<String, Setting> defaults) {

@@ -70,6 +70,7 @@ import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.preferences.PreferenceDialog;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.gui.widgets.JFileChooserManager;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -521,19 +522,13 @@ public class MapPaintDialog extends ToggleDialog {
                 return;
             final StyleSource s = model.getRow(sel);
 
-            String curDir = Main.pref.get("mappaint.clone-style.lastDirectory", System.getProperty("user.home"));
-
-            String suggestion = curDir + File.separator + s.getFileNamePart();
-            JFileChooser fc = new JFileChooser();
-            fc.setSelectedFile(new File(suggestion));
-
-            int answer = fc.showSaveDialog(Main.parent);
-            if (answer != JFileChooser.APPROVE_OPTION)
+            JFileChooserManager fcm = new JFileChooserManager(false, "mappaint.clone-style.lastDirectory", System.getProperty("user.home"));
+            String suggestion = fcm.getInitialDirectory() + File.separator + s.getFileNamePart();
+            fcm.createFileChooser().getFileChooser().setSelectedFile(new File(suggestion));
+            JFileChooser fc = fcm.openFileChooser();
+            if (fc == null)
                 return;
 
-            if (!fc.getCurrentDirectory().getAbsolutePath().equals(curDir)) {
-                Main.pref.put("mappaint.clone-style.lastDirectory", fc.getCurrentDirectory().getAbsolutePath());
-            }
             File file = fc.getSelectedFile();
 
             if (!SaveActionBase.confirmOverwrite(file))

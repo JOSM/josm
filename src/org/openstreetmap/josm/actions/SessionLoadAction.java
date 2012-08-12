@@ -12,7 +12,6 @@ import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -22,36 +21,19 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.session.SessionReader;
 
-public class SessionLoadAction extends JosmAction {
+public class SessionLoadAction extends DiskAccessAction {
+    
     public SessionLoadAction() {
         super(tr("Load Session"), "open", tr("Load a session from file."), null, true, "load-session", true);
         putValue("help", ht("/Action/SessionLoad"));
     }
 
     public void actionPerformed(ActionEvent e) {
-        String curDir = Main.pref.get("lastDirectory");
-        if (curDir.equals("")) {
-            curDir = ".";
-        }
-        JFileChooser fc = new JFileChooser(new File(curDir));
-        fc.setDialogTitle(tr("Open session"));
-        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fc.setMultiSelectionEnabled(false);
-        fc.setAcceptAllFileFilterUsed(true);
-        FileFilter ff = new ExtensionFileFilter("jos,joz", "jos", tr("Session file (*.jos, *.joz)"));
-        fc.addChoosableFileFilter(ff);
-        int answer = fc.showOpenDialog(Main.parent);
-        if (answer != JFileChooser.APPROVE_OPTION)
-            return;
-
-        if (!fc.getCurrentDirectory().getAbsolutePath().equals(curDir)) {
-            Main.pref.put("lastDirectory", fc.getCurrentDirectory().getAbsolutePath());
-        }
+        ExtensionFileFilter ff = new ExtensionFileFilter("jos,joz", "jos", tr("Session file (*.jos, *.joz)"));
+        JFileChooser fc = createAndOpenFileChooser(true, false, tr("Open session"), ff, JFileChooser.FILES_ONLY, "lastDirectory");
+        if (fc == null) return;
         File file = fc.getSelectedFile();
-        boolean zip = true;
-        if (file.getName().toLowerCase().endsWith(".jos")) {
-            zip = false;
-        }
+        boolean zip = file.getName().toLowerCase().endsWith(".joz");
         Main.worker.submit(new Loader(file, zip));
     }
 
@@ -71,7 +53,7 @@ public class SessionLoadAction extends JosmAction {
 
         @Override
         protected void cancel() {
-            Thread.currentThread().dumpStack();
+            Thread.dumpStack();
             canceled = true;
         }
 
