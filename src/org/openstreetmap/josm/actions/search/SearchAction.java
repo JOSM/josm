@@ -46,6 +46,7 @@ import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionParser;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Property;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -473,11 +474,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         search(s);
     }
 
-    public interface Function{
-        public Boolean isSomething(OsmPrimitive o);
-    }
-
-    public static int getSelection(SearchSetting s, Collection<OsmPrimitive> sel, Function f) {
+    public static int getSelection(SearchSetting s, Collection<OsmPrimitive> sel, Predicate<OsmPrimitive> p) {
         int foundMatches = 0;
         try {
             String searchText = s.text;
@@ -499,13 +496,13 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                         sel.add(osm);
                         ++foundMatches;
                     }
-                } else if (s.mode == SearchMode.add && !f.isSomething(osm) && matcher.match(osm)) {
+                } else if (s.mode == SearchMode.add && !p.evaluate(osm) && matcher.match(osm)) {
                     sel.add(osm);
                     ++foundMatches;
-                } else if (s.mode == SearchMode.remove && f.isSomething(osm) && matcher.match(osm)) {
+                } else if (s.mode == SearchMode.remove && p.evaluate(osm) && matcher.match(osm)) {
                     sel.remove(osm);
                     ++foundMatches;
-                } else if (s.mode == SearchMode.in_selection &&  f.isSomething(osm)&& !matcher.match(osm)) {
+                } else if (s.mode == SearchMode.in_selection &&  p.evaluate(osm) && !matcher.match(osm)) {
                     sel.remove(osm);
                     ++foundMatches;
                 }
@@ -569,23 +566,12 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     }
 
     public static void search(SearchSetting s) {
-        // FIXME: This is confusing. The GUI says nothing about loading primitives from an URL. We'd like to *search*
-        // for URLs in the current data set.
-        // Disabling until a better solution is in place
-        //
-        //        if (search.startsWith("http://") || search.startsWith("ftp://") || search.startsWith("https://")
-        //                || search.startsWith("file:/")) {
-        //            SelectionWebsiteLoader loader = new SelectionWebsiteLoader(search, mode);
-        //            if (loader.url != null && loader.url.getHost() != null) {
-        //                Main.worker.execute(loader);
-        //                return;
-        //            }
-        //        }
 
         final DataSet ds = Main.main.getCurrentDataSet();
         Collection<OsmPrimitive> sel = new HashSet<OsmPrimitive>(ds.getAllSelected());
-        int foundMatches = getSelection(s, sel, new Function(){
-            public Boolean isSomething(OsmPrimitive o){
+        int foundMatches = getSelection(s, sel, new Predicate<OsmPrimitive>(){
+            @Override
+            public boolean evaluate(OsmPrimitive o){
                 return ds.isSelected(o);
             }
         });
