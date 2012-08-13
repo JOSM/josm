@@ -216,6 +216,12 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         }
     };
 
+    public static final Predicate<OsmPrimitive> multipolygonPredicate = new Predicate<OsmPrimitive>() {
+        @Override public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.getClass() == Relation.class && ((Relation) primitive).isMultipolygon();
+        }
+    };
+
     public static final Predicate<OsmPrimitive> allPredicate = new Predicate<OsmPrimitive>() {
         @Override public boolean evaluate(OsmPrimitive primitive) {
             return true;
