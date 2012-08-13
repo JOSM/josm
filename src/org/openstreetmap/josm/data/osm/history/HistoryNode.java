@@ -14,18 +14,53 @@ import org.openstreetmap.josm.data.osm.User;
  *
  */
 public class HistoryNode extends HistoryOsmPrimitive {
+    
     /** the coordinates. May be null for deleted nodes */
-
     private LatLon coords;
 
-    public HistoryNode(long id, long version, boolean visible, User user, long changesetId, Date timestamp, LatLon coords) {
-        super(id, version, visible, user, changesetId, timestamp);
+    /**
+     * Constructs a new {@code HistoryNode}.
+     * 
+     * @param id the id (> 0 required)
+     * @param version the version (> 0 required)
+     * @param visible whether the node is still visible
+     * @param user the user (! null required)
+     * @param changesetId the changeset id (> 0 required)
+     * @param timestamp the timestamp (! null required)
+     * @param coords the coordinates
+     * @throws IllegalArgumentException if preconditions are violated
+     */
+    public HistoryNode(long id, long version, boolean visible, User user, long changesetId, Date timestamp, LatLon coords) throws IllegalArgumentException {
+        this(id, version, visible, user, changesetId, timestamp, coords, true);
+    }
+
+    /**
+     * Constructs a new {@code HistoryNode} with a configurable checking of historic parameters.
+     * This is needed to build virtual HistoryNodes for modified nodes, which do not have a timestamp and a changeset id.
+     * 
+     * @param id the id (> 0 required)
+     * @param version the version (> 0 required)
+     * @param visible whether the node is still visible
+     * @param user the user (! null required)
+     * @param changesetId the changeset id (> 0 required if {@code checkHistoricParams} is true)
+     * @param timestamp the timestamp (! null required if {@code checkHistoricParams} is true)
+     * @param coords the coordinates
+     * @param checkHistoricParams if true, checks values of {@code changesetId} and {@code timestamp}
+     * @throws IllegalArgumentException if preconditions are violated
+     * @since 5440
+     */
+    public HistoryNode(long id, long version, boolean visible, User user, long changesetId, Date timestamp, LatLon coords, boolean checkHistoricParams) throws IllegalArgumentException {
+        super(id, version, visible, user, changesetId, timestamp, checkHistoricParams);
         setCoords(coords);
     }
 
-    public HistoryNode(Node p) {
-        super(p);
-        setCoords(p.getCoor());
+    /**
+     * Constructs a new {@code HistoryNode} from an existing {@link Node}.
+     * @param n the node
+     */
+    public HistoryNode(Node n) {
+        super(n);
+        setCoords(n.getCoor());
     }
 
     @Override
@@ -33,10 +68,18 @@ public class HistoryNode extends HistoryOsmPrimitive {
         return OsmPrimitiveType.NODE;
     }
 
+    /**
+     * Replies the coordinates. May be null.
+     * @return the coordinates. May be null.
+     */
     public LatLon getCoords() {
         return coords;
     }
 
+    /**
+     * Sets the coordinates. Can be null.
+     * @param coords the coordinates. Can be null.
+     */
     public void setCoords(LatLon coords) {
         this.coords = coords;
     }

@@ -48,10 +48,13 @@ public class UrlLabel extends JLabel implements MouseListener {
     protected void refresh() {
         if (url != null) {
             setText("<html><a href=\""+url+"\">"+description+"</a></html>");
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            setToolTipText(String.format("<html>%s<br/>%s</html>", url, tr("Right click = copy to clipboard")));
         } else {
             setText("<html>" + description + "</html>");
+            setCursor(null);
+            setToolTipText(null);
         }
-        setToolTipText(String.format("<html>%s<br/>%s</html>",url, tr("Right click = copy to clipboard")));
     }
 
     /**

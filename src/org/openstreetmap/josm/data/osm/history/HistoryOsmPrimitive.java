@@ -41,40 +41,66 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
     }
 
     /**
-     * constructor
+     * Constructs a new {@code HistoryOsmPrimitive}.
      *
-     * @param id the id (>0 required)
+     * @param id the id (> 0 required)
      * @param version the version (> 0 required)
      * @param visible whether the primitive is still visible
-     * @param user  the user (! null required)
-     * @param uid the user id (> 0 required)
-     * @param changesetId the changeset id (may be null if the changeset isn't known)
+     * @param user the user (! null required)
+     * @param changesetId the changeset id (> 0 required)
      * @param timestamp the timestamp (! null required)
      *
-     * @throws IllegalArgumentException thrown if preconditions are violated
+     * @throws IllegalArgumentException if preconditions are violated
      */
     public HistoryOsmPrimitive(long id, long version, boolean visible, User user, long changesetId, Date timestamp) throws IllegalArgumentException {
+        this(id, version, visible, user, changesetId, timestamp, true);
+    }
+
+    /**
+     * Constructs a new {@code HistoryOsmPrimitive} with a configurable checking of historic parameters.
+     * This is needed to build virtual HistoryOsmPrimitives for modified primitives, which do not have a timestamp and a changeset id.
+     *
+     * @param id the id (> 0 required)
+     * @param version the version (> 0 required)
+     * @param visible whether the primitive is still visible
+     * @param user the user (! null required)
+     * @param changesetId the changeset id (> 0 required if {@code checkHistoricParams} is true)
+     * @param timestamp the timestamp (! null required if {@code checkHistoricParams} is true)
+     * @param checkHistoricParams if true, checks values of {@code changesetId} and {@code timestamp}
+     *
+     * @throws IllegalArgumentException if preconditions are violated
+     * @since 5440
+     */
+    public HistoryOsmPrimitive(long id, long version, boolean visible, User user, long changesetId, Date timestamp, boolean checkHistoricParams) throws IllegalArgumentException {
         ensurePositiveLong(id, "id");
         ensurePositiveLong(version, "version");
         CheckParameterUtil.ensureParameterNotNull(user, "user");
-        CheckParameterUtil.ensureParameterNotNull(timestamp, "timestamp");
+        if (checkHistoricParams) {
+            ensurePositiveLong(changesetId, "changesetId");
+            CheckParameterUtil.ensureParameterNotNull(timestamp, "timestamp");
+        }
         this.id = id;
         this.version = version;
         this.visible = visible;
         this.user = user;
-        // FIXME: restrict to IDs > 0 as soon as OsmPrimitive holds the
-        // changeset id too
         this.changesetId  = changesetId;
         this.timestamp = timestamp;
         tags = new HashMap<String, String>();
     }
-
+    
+    /**
+     * Constructs a new {@code HistoryOsmPrimitive} from an existing {@link OsmPrimitive}.
+     * @param p the primitive
+     */
     public HistoryOsmPrimitive(OsmPrimitive p) {
-        this(p.getId(), p.getVersion(), p.isVisible(),
-                p.getUser(),
-                p.getChangesetId(), p.getTimestamp());
+        this(p.getId(), p.getVersion(), p.isVisible(), p.getUser(), p.getChangesetId(), p.getTimestamp());
     }
 
+    /**
+     * Replies a new {@link HistoryNode}, {@link HistoryWay} or {@link HistoryRelation} from an existing {@link OsmPrimitive}.
+     * @param p the primitive
+     * @return a new {@code HistoryNode}, {@code HistoryWay} or {@code HistoryRelation} from {@code p}.
+     */
     public static HistoryOsmPrimitive forOsmPrimitive(OsmPrimitive p) {
         if (p instanceof Node) {
             return new HistoryNode((Node) p);
@@ -172,6 +198,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
 
     /**
      * Replies the display name of a primitive formatted by <code>formatter</code>
+     * @param formatter The formatter used to generate a display name
      *
      * @return the display name
      */

@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 /**
  * The {@link TableColumnModel} for the table with the list of versions
@@ -57,6 +58,9 @@ public class VersionTableColumnModel extends DefaultTableColumnModel {
         addColumn(col);
     }
 
+    /**
+     * Creates a new {@code VersionTableColumnModel}.
+     */
     public VersionTableColumnModel() {
         createColumns();
     }

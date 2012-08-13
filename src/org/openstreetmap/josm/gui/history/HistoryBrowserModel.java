@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
@@ -35,6 +36,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.UserListDialog;
@@ -436,7 +438,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
                 }
             case 4: {
                     HistoryOsmPrimitive p = getPrimitive(row);
-                    if (p != null)
+                    if (p != null && p.getTimestamp() != null)
                         return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(p.getTimestamp());
                     return null;
                 }
@@ -876,12 +878,12 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         private HistoryOsmPrimitive clone;
 
         public void visit(Node n) {
-            clone = new HistoryNode(n.getId(), n.getVersion(), n.isVisible(), n.getUser(), 0, n.getTimestamp(), n.getCoor());
+            clone = new HistoryNode(n.getId(), n.getVersion(), n.isVisible(), getCurrentUser(), 0, null, n.getCoor(), false);
             clone.setTags(n.getKeys());
         }
 
         public void visit(Relation r) {
-            clone = new HistoryRelation(r.getId(), r.getVersion(), r.isVisible(), r.getUser(), 0, r.getTimestamp());
+            clone = new HistoryRelation(r.getId(), r.getVersion(), r.isVisible(), getCurrentUser(), 0, null, false);
             clone.setTags(r.getKeys());
             HistoryRelation hr = (HistoryRelation)clone;
             for (RelationMember rm : r.getMembers()) {
@@ -890,11 +892,16 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
 
         public void visit(Way w) {
-            clone = new HistoryWay(w.getId(), w.getVersion(), w.isVisible(), w.getUser(), 0, w.getTimestamp());
+            clone = new HistoryWay(w.getId(), w.getVersion(), w.isVisible(), getCurrentUser(), 0, null, false);
             clone.setTags(w.getKeys());
             for (Node n: w.getNodes()) {
                 ((HistoryWay)clone).addNode(n.getUniqueId());
             }
+        }
+
+        private User getCurrentUser() {
+            UserInfo info = JosmUserIdentityManager.getInstance().getUserInfo();
+            return info == null ? User.getAnonymous() : User.createOsmUser(info.getId(), info.getDisplayName());
         }
 
         public HistoryOsmPrimitive build(OsmPrimitive primitive) {

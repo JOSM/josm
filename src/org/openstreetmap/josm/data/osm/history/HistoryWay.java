@@ -11,6 +11,7 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Represents an immutable OSM way in the context of a historical view on
@@ -21,17 +22,63 @@ public class HistoryWay extends HistoryOsmPrimitive {
 
     private ArrayList<Long> nodeIds = new ArrayList<Long>();
 
-    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp) {
+    /**
+     * Constructs a new {@code HistoryWay}.
+     * 
+     * @param id the id (> 0 required)
+     * @param version the version (> 0 required)
+     * @param visible whether the node is still visible
+     * @param user the user (! null required)
+     * @param changesetId the changeset id (> 0 required if {@code checkHistoricParams} is true)
+     * @param timestamp the timestamp (! null required if {@code checkHistoricParams} is true)
+     * @throws IllegalArgumentException if preconditions are violated
+     */
+    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp) throws IllegalArgumentException {
         super(id, version, visible, user, changesetId, timestamp);
     }
 
-    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp, ArrayList<Long> nodeIdList) {
+    /**
+     * Constructs a new {@code HistoryWay} with a configurable checking of historic parameters.
+     * This is needed to build virtual HistoryWays for modified ways, which do not have a timestamp and a changeset id.
+     * 
+     * @param id the id (> 0 required)
+     * @param version the version (> 0 required)
+     * @param visible whether the node is still visible
+     * @param user the user (! null required)
+     * @param changesetId the changeset id (> 0 required if {@code checkHistoricParams} is true)
+     * @param timestamp the timestamp (! null required if {@code checkHistoricParams} is true)
+     * @param checkHistoricParams if true, checks values of {@code changesetId} and {@code timestamp}
+     * @throws IllegalArgumentException if preconditions are violated
+     * @since 5440
+     */
+    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp, boolean checkHistoricParams) throws IllegalArgumentException {
+        super(id, version, visible, user, changesetId, timestamp, checkHistoricParams);
+    }
+
+    /**
+     * Constructs a new {@code HistoryWay} with a given list of node ids.
+     * 
+     * @param id the id (> 0 required)
+     * @param version the version (> 0 required)
+     * @param visible whether the node is still visible
+     * @param user the user (! null required)
+     * @param changesetId the changeset id (> 0 required if {@code checkHistoricParams} is true)
+     * @param timestamp the timestamp (! null required if {@code checkHistoricParams} is true)
+     * @param nodeIdList the node ids (! null required)
+     * @throws IllegalArgumentException if preconditions are violated
+     */
+    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp, ArrayList<Long> nodeIdList) throws IllegalArgumentException {
         this(id, version, visible, user, changesetId, timestamp);
+        CheckParameterUtil.ensureParameterNotNull(nodeIdList, "nodeIdList");
         this.nodeIds.addAll(nodeIdList);
     }
 
-    public HistoryWay(Way p) {
-        super(p);
+    /**
+     * Constructs a new {@code HistoryWay} from an existing {@link Way}.
+     * @param w the way
+     */
+    public HistoryWay(Way w) {
+        super(w);
     }
 
     /**

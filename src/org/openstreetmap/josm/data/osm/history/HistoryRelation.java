@@ -29,16 +29,15 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      * @param version the version (> 0 required)
      * @param visible whether the primitive is still visible
      * @param user  the user (! null required)
-     * @param uid the user id (> 0 required)
      * @param changesetId the changeset id (> 0 required)
      * @param timestamp the timestamp (! null required)
      *
-     * @throws IllegalArgumentException thrown if preconditions are violated
+     * @throws IllegalArgumentException if preconditions are violated
      */
-    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId,
-            Date timestamp) throws IllegalArgumentException {
+    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId, Date timestamp) throws IllegalArgumentException {
         super(id, version, visible, user, changesetId, timestamp);
     }
+
     /**
      * constructor
      *
@@ -46,7 +45,24 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      * @param version the version (> 0 required)
      * @param visible whether the primitive is still visible
      * @param user  the user (! null required)
-     * @param uid the user id (> 0 required)
+     * @param changesetId the changeset id (> 0 required if {@code checkHistoricParams} is true)
+     * @param timestamp the timestamp (! null required if {@code checkHistoricParams} is true)
+     * @param checkHistoricParams If true, checks values of {@code changesetId} and {@code timestamp}
+     *
+     * @throws IllegalArgumentException if preconditions are violated
+     * @since 5440
+     */
+    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId, Date timestamp, boolean checkHistoricParams) throws IllegalArgumentException {
+        super(id, version, visible, user, changesetId, timestamp, checkHistoricParams);
+    }
+
+    /**
+     * constructor
+     *
+     * @param id the id (>0 required)
+     * @param version the version (> 0 required)
+     * @param visible whether the primitive is still visible
+     * @param user  the user (! null required)
      * @param changesetId the changeset id (> 0 required)
      * @param timestamp the timestamp (! null required)
      * @param members list of members for this relation
@@ -61,8 +77,12 @@ public class HistoryRelation extends HistoryOsmPrimitive{
         }
     }
 
-    public HistoryRelation(Relation p) {
-        super(p);
+    /**
+     * Constructs a new {@code HistoryRelation} from an existing {@link Relation}.
+     * @param r the relation
+     */
+    public HistoryRelation(Relation r) {
+        super(r);
     }
 
     /**
