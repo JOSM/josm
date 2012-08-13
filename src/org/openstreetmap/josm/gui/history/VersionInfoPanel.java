@@ -19,11 +19,12 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.JMultilineLabel;
+import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.UrlLabel;
 
@@ -152,9 +153,10 @@ public class VersionInfoPanel extends JPanel implements Observer{
             }
             lblUser.setDescription(username);
         } else {
-            String user = CredentialsManager.getInstance().getUsername();
+            String user = JosmUserIdentityManager.getInstance().getUserName();
             if (user == null) {
                 lblUser.setDescription(tr("anonymous"));
+                lblUser.setUrl(null);
             } else {
                 try {
                     String url = AbstractInfoAction.getBaseUserUrl() + "/" +  URLEncoder.encode(user, "UTF-8").replaceAll("\\+", "%20");
