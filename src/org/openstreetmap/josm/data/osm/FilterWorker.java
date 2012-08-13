@@ -43,7 +43,7 @@ public class FilterWorker {
                 FilterType disabledType = filterMatcher.isDisabled(primitive);
                 if (disabledType != FilterType.NOT_FILTERED) {
                     changed |= primitive.setDisabledState(false);
-                    primitive.setDisabledType(hiddenType == FilterType.EXPLICIT);
+                    primitive.setDisabledType(disabledType == FilterType.EXPLICIT);
                 } else {
                     changed |= primitive.unsetDisabledState();
                 }

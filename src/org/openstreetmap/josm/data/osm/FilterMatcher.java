@@ -10,6 +10,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Not;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
  * Class that encapsulates the filter logic, i.e.&nbsp;applies a list of
@@ -41,6 +42,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
  * individual nodes do not match the filter expression. The reason is, that a
  * way without its nodes cannot be edited properly.
  *
+ * Multipolygons and (untagged) member ways are handled in a similar way.
  */
 public class FilterMatcher {
 
@@ -182,6 +184,26 @@ public class FilterMatcher {
         return false;
     }
 
+    private boolean allParentMultipolygonsFiltered(OsmPrimitive primitive, boolean hidden) {
+        boolean isExplicit = false;
+        for (Relation r : new SubclassFilteredCollection<OsmPrimitive, Relation>(
+                primitive.getReferrers(), OsmPrimitive.multipolygonPredicate)) {
+            if (!isFiltered(r, hidden))
+                return false;
+            isExplicit |= isFilterExplicit(r, hidden);
+        }
+        return isExplicit;
+    }
+
+    private boolean oneParentMultipolygonNotFiltered(OsmPrimitive primitive, boolean hidden) {
+        for (Relation r : new SubclassFilteredCollection<OsmPrimitive, Relation>(
+                primitive.getReferrers(), OsmPrimitive.multipolygonPredicate)) {
+            if (!isFiltered(r, hidden))
+                return true;
+        }
+        return false;
+    }
+
     private FilterType test(List<FilterInfo> filters, OsmPrimitive primitive, boolean hidden) {
 
         if (primitive.isIncomplete())
@@ -208,25 +230,42 @@ public class FilterMatcher {
         }
 
         if (primitive instanceof Node) {
-            // Technically not hidden by any filter, but we hide it anyway, if
-            // it is untagged and all parent ways are hidden.
-            if (!filtered) {
+            if (filtered) {
+                // If there is a parent way, that is not hidden, we  show the
+                // node anyway, unless there is no non-inverted filter that
+                // applies to the node directly.
+                if (explicitlyFiltered)
+                    return FilterType.PASSIV;
+                else {
+                    if (oneParentWayNotFiltered(primitive, hidden))
+                        return FilterType.NOT_FILTERED;
+                    else
+                        return FilterType.PASSIV;
+                }
+            } else {
                 if (!primitive.isTagged() && allParentWaysFiltered(primitive, hidden))
+                    // Technically not hidden by any filter, but we hide it anyway, if
+                    // it is untagged and all parent ways are hidden.
                     return FilterType.PASSIV;
                 else
                     return FilterType.NOT_FILTERED;
             }
-            // At this point, selected == true, so the node is hidden.
-            // However, if there is a parent way, that is not hidden, we ignore
-            // this and show the node anyway, unless there is no non-inverted
-            // filter that applies to the node directly.
-            if (!explicitlyFiltered) {
-                if (!oneParentWayNotFiltered(primitive, hidden))
-                    return FilterType.PASSIV;
+        } else if (primitive instanceof Way) {
+            if (filtered) {
+                if (explicitlyFiltered)
+                    return FilterType.EXPLICIT;
+                else {
+                    if (oneParentMultipolygonNotFiltered(primitive, hidden))
+                        return FilterType.NOT_FILTERED;
+                    else
+                        return FilterType.PASSIV;
+                }
+            } else {
+                if (!primitive.isTagged() && allParentMultipolygonsFiltered(primitive, hidden))
+                    return FilterType.EXPLICIT;
                 else
                     return FilterType.NOT_FILTERED;
             }
-            return FilterType.PASSIV;
         } else {
             if (filtered)
                 return explicitlyFiltered ? FilterType.EXPLICIT : FilterType.PASSIV;
