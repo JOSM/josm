@@ -435,7 +435,8 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             if (!cancelDrawMode && nearestPrimitive instanceof Way) {
                 virtualManager.activateVirtualNodeNearPoint(e.getPoint());
             }
-            selectPrims(cycleManager.cycleSetup(nearestPrimitive, e.getPoint()), false, false);
+            OsmPrimitive toSelect = cycleManager.cycleSetup(nearestPrimitive, e.getPoint());
+            selectPrims(mv.asColl(toSelect), false, false);
             useLastMoveCommandIfPossible();
             break;
         case select:
@@ -660,6 +661,11 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         // Currently we support only transformations which do not affect relations.
         // So don't add them in the first place to make handling easier
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelectedNodesAndWays();
+        if (selection.isEmpty()) { // if nothing was selected to drag, just select nearest node/way to the cursor
+            OsmPrimitive nearestPrimitive = mv.getNearestNodeOrWay(mv.getPoint(startEN), OsmPrimitive.isSelectablePredicate, true);
+            getCurrentDataSet().setSelected(nearestPrimitive);
+        }
+        
         Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
         // for these transformations, having only one node makes no sense - quit silently
         if (affectedNodes.size() < 2 && (mode == Mode.rotate || mode == Mode.scale)) {
@@ -689,7 +695,12 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                 }
             }
             getCurrentDataSet().endUpdate();
-        } else if (mode == Mode.rotate) {
+            return true;
+        } 
+
+        startEN = currentEN; // drag can continue after scaling/rotation
+
+        if (mode == Mode.rotate) {
             getCurrentDataSet().beginUpdate();
             if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
                 ((RotateCommand) c).handleEvent(currentEN);
@@ -884,9 +895,9 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
          * Determine prmitive to be selected and build cycleList
          * @param nearest primitive found by simple method
          * @param p point where user clicked
-         * @return single-element collection with OsmPrimitive to be selected
+         * @return OsmPrimitive to be selected
          */
-        private Collection<OsmPrimitive> cycleSetup(OsmPrimitive nearest, Point p) {
+        private OsmPrimitive cycleSetup(OsmPrimitive nearest, Point p) {
             OsmPrimitive osm = null;
 
             if (nearest != null) {
@@ -937,8 +948,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                     }
                 }
             }
-
-            return MapView.asColl(osm);
+            return osm;
         }
 
         /**
