@@ -24,37 +24,21 @@ public class RemoteControl
      * changes.
      */
     static final int protocolMajorVersion = 1;
-    static final int protocolMinorVersion = 3;
+    static final int protocolMinorVersion = 4;
 
     /**
-     * Returns an array of int values with major and minor API version
-     * and major and minor HTTP protocol version.
-     *
-     * The function returns an int[4] instead of an object with fields
-     * to avoid ClassNotFound errors with old versions of remotecontrol.
-     *
-     * @return array of integer version numbers:
-     *    apiMajorVersion (obsolete), apiMinorVersion (obsolete), protocolMajorVersion, protocolMajorVersion
-     */
-    @Deprecated
-    public int[] getVersion()
-    {
-        int versions[] = {1, 0, protocolMajorVersion, protocolMajorVersion};
-        return versions;
-    }
-
-    /**
-     * Start the remote control server
+     * Starts the remote control server
      */
     public static void start() {
         RemoteControlHttpServer.restartRemoteControlHttpServer();
     }
 
     /**
-     * Add external external request handler.
+     * Adds external request handler.
      * Can be used by plugins that want to use remote control.
-     *
-     * @param handler The additional request handler.
+     * 
+     * @param command The command name.
+     * @param handlerClass The additional request handler.
      */
     public void addRequestHandler(String command, Class<? extends RequestHandler> handlerClass)
     {
