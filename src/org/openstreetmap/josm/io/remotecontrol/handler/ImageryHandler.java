@@ -12,8 +12,15 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 
+/**
+ * Adds an imagery (WMS/TMS) layer. For instance, {@code /imagery?title=...&type=...&url=...}.
+ * @since 3715
+ */
 public class ImageryHandler extends RequestHandler {
 
+    /**
+     * The remote control command name used to add an imagery layer.
+     */
     public static final String command = "imagery";
 
     @Override
@@ -55,12 +62,11 @@ public class ImageryHandler extends RequestHandler {
         if (request.indexOf('?') != -1) {
             String query = request.substring(request.indexOf('?') + 1);
             if (query.indexOf("url=") == 0) {
-                args.put("url", decodeURL(query.substring(4)));
+                args.put("url", decodeParam(query.substring(4)));
             } else {
                 int urlIdx = query.indexOf("&url=");
                 if (urlIdx != -1) {
-                    String url = query.substring(urlIdx + 1);
-                    args.put("url", decodeURL(query.substring(urlIdx + 5)));
+                    args.put("url", decodeParam(query.substring(urlIdx + 5)));
                     query = query.substring(0, urlIdx);
                 } else {
                     if (query.indexOf('#') != -1) {
@@ -71,7 +77,7 @@ public class ImageryHandler extends RequestHandler {
                 for (String param : params) {
                     int eq = param.indexOf('=');
                     if (eq != -1) {
-                        args.put(param.substring(0, eq), param.substring(eq + 1));
+                        args.put(param.substring(0, eq), decodeParam(param.substring(eq + 1)));
                     }
                 }
             }
@@ -79,9 +85,9 @@ public class ImageryHandler extends RequestHandler {
         this.args = args;
     }
 
-    private String decodeURL(String url) {
+    private String decodeParam(String param) {
         try {
-            return URLDecoder.decode(url, "UTF-8");
+            return URLDecoder.decode(param, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException();
         }
