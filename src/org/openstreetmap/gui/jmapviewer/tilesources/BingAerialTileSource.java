@@ -2,6 +2,8 @@ package org.openstreetmap.gui.jmapviewer.tilesources;
 
 //License: GPL.
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Image;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -35,6 +37,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class BingAerialTileSource extends AbstractTMSTileSource {
+
     private static String API_KEY = "Arzdiw4nlOJzRwOz__qailc8NiR31Tt51dN2D7cm57NrnceZnCpgOkmJhNpGoppU";
     private static volatile Future<List<Attribution>> attributions; // volatile is required for getAttribution(), see below.
     private static String imageUrlTemplate;
@@ -60,7 +63,8 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
     @Override
     public String getTileUrl(int zoom, int tilex, int tiley) throws IOException {
         // make sure that attribution is loaded. otherwise subdomains is null.
-        getAttribution();
+        if (getAttribution() == null)
+            throw new IOException(tr("Attribution is not loaded yet"));
 
         int t = (zoom + tilex + tiley) % subdomains.length;
         String subdomain = subdomains[t];
@@ -239,9 +243,8 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
     public String getAttributionText(int zoom, Coordinate topLeft, Coordinate botRight) {
         try {
             final List<Attribution> data = getAttribution();
-            if (data == null) {
+            if (data == null)
                 return "Error loading Bing attribution data";
-            }
             StringBuilder a = new StringBuilder();
             for (Attribution attr : data) {
                 if (zoom <= attr.maxZoom && zoom >= attr.minZoom) {
