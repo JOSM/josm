@@ -48,12 +48,28 @@ public class ImageryHandler extends RequestHandler {
         String url = args.get("url");
         String title = args.get("title");
         String type = args.get("type");
-        if ((title == null) || (title.length() == 0)) {
+        if ((title == null) || (title.isEmpty())) {
             title = tr("Remote imagery");
         }
         String cookies = args.get("cookies");
-        ImageryLayer imgLayer = ImageryLayer.create(new ImageryInfo(title, url, type, null, cookies));
-        Main.main.addLayer(imgLayer);
+        ImageryInfo imgInfo = new ImageryInfo(title, url, type, null, cookies);
+        String min_zoom = args.get("min_zoom");
+        if (min_zoom != null && !min_zoom.isEmpty()) {
+            try {
+                imgInfo.setDefaultMinZoom(Integer.parseInt(min_zoom));
+            } catch (NumberFormatException e) {
+                System.err.println(e.getMessage());
+            }
+        }
+        String max_zoom = args.get("max_zoom");
+        if (max_zoom != null && !max_zoom.isEmpty()) {
+            try {
+                imgInfo.setDefaultMaxZoom(Integer.parseInt(max_zoom));
+            } catch (NumberFormatException e) {
+                System.err.println(e.getMessage());
+            }
+        }
+        Main.main.addLayer(ImageryLayer.create(imgInfo));
     }
 
     @Override
