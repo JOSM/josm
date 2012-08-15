@@ -626,13 +626,16 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
                 mapMode.exitMode(); // if new mode is null - simply exit from previous mode
             }
         }
-        if (!modeChanged && mapMode != null) {
-            // Let mapmodes know about new active layer
-            mapMode.exitMode();
-            mapMode.enterMode();
+        // if this is really a change (and not the first active layer)
+        if (oldLayer != null) {
+            if (!modeChanged && mapMode != null) {
+                // Let mapmodes know about new active layer
+                mapMode.exitMode();
+                mapMode.enterMode();
+            }
+            // invalidate repaint cache
+            Main.map.mapView.preferenceChanged(null);
         }
-        // invalidate repaint cache
-        Main.map.mapView.preferenceChanged(null);
 
         // After all listeners notice new layer, some buttons will be disabled/enabled
         // and possibly need to be hidden/shown.
