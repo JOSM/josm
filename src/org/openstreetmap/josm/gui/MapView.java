@@ -318,14 +318,17 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             layers.add(0, layer);
         }
         fireLayerAdded(layer);
-        if (layer instanceof OsmDataLayer || activeLayer == null) {
+        boolean callSetActiveLayer = layer instanceof OsmDataLayer || activeLayer == null;
+        if (callSetActiveLayer) {
             // autoselect the new layer
-            setActiveLayer(layer);
+            setActiveLayer(layer); // also repaints this MapView
         }
         layer.addPropertyChangeListener(this);
         Main.addProjectionChangeListener(layer);
         AudioPlayer.reset();
-        repaint();
+        if (!callSetActiveLayer) {
+            repaint();
+        }
     }
 
     @Override
