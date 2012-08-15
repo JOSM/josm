@@ -446,8 +446,9 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             selectionManager.mousePressed(e);
             break;
         }
-        giveUserFeedback(e);
-        mv.repaint();
+        if (giveUserFeedback(e)) {
+            mv.repaint();
+        }
         updateStatusLine();
     }
     
