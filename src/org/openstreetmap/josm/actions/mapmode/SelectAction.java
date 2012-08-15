@@ -446,8 +446,9 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             selectionManager.mousePressed(e);
             break;
         }
-        giveUserFeedback(e);
-        mv.repaint();
+        if (giveUserFeedback(e)) {
+            mv.repaint();
+        }
         updateStatusLine();
     }
     
@@ -620,7 +621,6 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     @Override
     public void selectionEnded(Rectangle r, MouseEvent e) {
         updateKeyModifiers(e);
-        mv.repaint();
         selectPrims(selectionManager.getSelectedObjects(alt), true, true);
     }
 
