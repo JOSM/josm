@@ -20,7 +20,6 @@ import java.util.Stack;
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
 import javax.swing.JTable;
-import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -72,7 +71,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     public FilterDialog(){
         super(tr("Filter"), "filter", tr("Filter objects and hide/disable them."),
                 Shortcut.registerShortcut("subwindow:filter", tr("Toggle: {0}", tr("Filter")),
-                KeyEvent.VK_F, Shortcut.ALT_SHIFT), 162);
+                        KeyEvent.VK_F, Shortcut.ALT_SHIFT), 162);
         build();
         enableFilterAction = new EnableFilterAction();
         hidingFilterAction = new HidingFilterAction();
@@ -95,11 +94,11 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
     private static final Shortcut ENABLE_FILTER_SHORTCUT
     = Shortcut.registerShortcut("core_multikey:enableFilter", tr("Multikey: {0}", tr("Enable filter")),
-    KeyEvent.VK_E, Shortcut.ALT_CTRL);
+            KeyEvent.VK_E, Shortcut.ALT_CTRL);
 
     private static final Shortcut HIDING_FILTER_SHORTCUT
     = Shortcut.registerShortcut("core_multikey:hidingFilter", tr("Multikey: {0}", tr("Hide filter")),
-    KeyEvent.VK_H, Shortcut.ALT_CTRL);
+            KeyEvent.VK_H, Shortcut.ALT_CTRL);
 
 
     protected final String[] columnToolTips = {
@@ -213,7 +212,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
                 userTable.getSelectionModel().setSelectionInterval(index+1, index+1);
             }
         });
-        
+
         // Toggle filter "enabled" on Enter
         InputMapUtils.addEnterAction(userTable, new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -245,7 +244,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         MultikeyActionsHandler.getInstance().removeAction(hidingFilterAction);
         super.destroy();
     }
-    
+
     static class StringRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
@@ -388,6 +387,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
         EnableFilterAction() {
             putValue(SHORT_DESCRIPTION, tr("Enable filter"));
+            ENABLE_FILTER_SHORTCUT.setAccelerator(this);
         }
 
         @Override
@@ -411,6 +411,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
         public HidingFilterAction() {
             putValue(SHORT_DESCRIPTION, tr("Hiding filter"));
+            HIDING_FILTER_SHORTCUT.setAccelerator(this);
         }
 
         @Override

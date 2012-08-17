@@ -273,7 +273,7 @@ public class LayerListDialog extends ToggleDialog {
                 KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),"delete"
                 );
         getActionMap().put("delete", deleteLayerAction);
-        
+
         // Activate layer on Enter key press
         InputMapUtils.addEnterAction(layerList, new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -281,10 +281,10 @@ public class LayerListDialog extends ToggleDialog {
                 layerList.requestFocus();
             }
         });
-        
+
         // Show/Activate layer on Enter key press
         InputMapUtils.addSpacebarAction(layerList, showHideLayerAction);
-        
+
         createLayout(layerList, true, Arrays.asList(new SideButton[] {
                 new SideButton(moveUpAction, false),
                 new SideButton(moveDownAction, false),
@@ -468,6 +468,7 @@ public class LayerListDialog extends ToggleDialog {
             putValue("help", HelpUtil.ht("/Dialog/LayerList#ShowHideLayer"));
             multikeyShortcut = Shortcut.registerShortcut("core_multikey:showHideLayer", tr("Multikey: {0}",
                     tr("Show/hide layer")), KeyEvent.VK_S, Shortcut.SHIFT);
+            multikeyShortcut.setAccelerator(this);
             if (init) {
                 updateEnabledState();
             }
@@ -670,6 +671,7 @@ public class LayerListDialog extends ToggleDialog {
             putValue(SHORT_DESCRIPTION, tr("Activate the selected layer"));
             multikeyShortcut = Shortcut.registerShortcut("core_multikey:activateLayer", tr("Multikey: {0}",
                     tr("Activate layer")), KeyEvent.VK_A, Shortcut.SHIFT);
+            multikeyShortcut.setAccelerator(this);
             putValue("help", HelpUtil.ht("/Dialog/LayerList#ActivateLayer"));
         }
 
