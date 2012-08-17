@@ -24,14 +24,14 @@ public class JumpToMarkerActions {
 
     private static JumpToNextMarker jumpToNextMarkerAction;
     private static JumpToPreviousMarker jumpToPreviousMarkerAction;
-            
+
     public static void initialize() {
         jumpToNextMarkerAction = new JumpToNextMarker(null);
         jumpToPreviousMarkerAction = new JumpToPreviousMarker(null);
         MultikeyActionsHandler.getInstance().addAction(jumpToNextMarkerAction);
         MultikeyActionsHandler.getInstance().addAction(jumpToPreviousMarkerAction);
     }
-    
+
     public static void unregisterActions() {
         MultikeyActionsHandler.getInstance().removeAction(jumpToNextMarkerAction);
         MultikeyActionsHandler.getInstance().removeAction(jumpToPreviousMarkerAction);
@@ -45,7 +45,8 @@ public class JumpToMarkerActions {
 
         public JumpToNextMarker(JumpToMarkerLayer layer) {
             multikeyShortcut = Shortcut.registerShortcut("core_multikey:nextMarker", tr("Multikey: {0}", tr("Next marker")),
-                KeyEvent.VK_J, Shortcut.ALT_CTRL);
+                    KeyEvent.VK_J, Shortcut.ALT_CTRL);
+            multikeyShortcut.setAccelerator(this);
             putValue(SHORT_DESCRIPTION, tr("Jump to next marker"));
             putValue(NAME, tr("Jump to next marker"));
 
@@ -106,8 +107,9 @@ public class JumpToMarkerActions {
         public JumpToPreviousMarker(JumpToMarkerLayer layer) {
             this.layer = (Layer)layer;
 
-            Shortcut.registerShortcut("core_multikey:previousMarker", tr("Multikey: {0}", tr("Previos marker")),
-                KeyEvent.VK_P, Shortcut.ALT_CTRL).setAccelerator(this);
+            multikeyShortcut = Shortcut.registerShortcut("core_multikey:previousMarker", tr("Multikey: {0}", tr("Previos marker")),
+                    KeyEvent.VK_P, Shortcut.ALT_CTRL);
+            multikeyShortcut.setAccelerator(this);
             putValue(SHORT_DESCRIPTION, tr("Jump to previous marker"));
             putValue(NAME, tr("Jump to previous marker"));
         }
