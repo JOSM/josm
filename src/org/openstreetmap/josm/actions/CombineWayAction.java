@@ -19,7 +19,6 @@ import java.util.Set;
 import java.util.Stack;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -35,6 +34,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -223,11 +223,7 @@ public class CombineWayAction extends JosmAction {
                     getCurrentDataSet().setSelected(selectedWay);
                 }
             };
-            if (SwingUtilities.isEventDispatchThread()) {
-                guiTask.run();
-            } else {
-                SwingUtilities.invokeLater(guiTask);
-            }
+            GuiHelper.runInEDT(guiTask);
         }
     }
 

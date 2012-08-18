@@ -22,6 +22,7 @@ import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -79,24 +80,12 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
             ExceptionDialogUtil.explainException(lastException);
             return;
         }
-        Runnable r = new Runnable() {
+        GuiHelper.runInEDTAndWait(new Runnable() {
             public void run() {
                 layer.mergeFrom(ds);
                 layer.onPostDownloadFromServer();
             }
-        };
-
-        if (SwingUtilities.isEventDispatchThread()) {
-            r.run();
-        } else {
-            try {
-                SwingUtilities.invokeAndWait(r);
-            } catch(InterruptedException e) {
-                e.printStackTrace();
-            } catch(InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
+        });
     }
 
     protected void initMultiFetchReaderWithNodes(MultiFetchServerObjectReader reader) {

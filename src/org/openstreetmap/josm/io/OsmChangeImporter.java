@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
@@ -18,6 +17,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public class OsmChangeImporter extends FileImporter {
 
@@ -59,7 +59,7 @@ public class OsmChangeImporter extends FileImporter {
     protected void addDataLayer(final DataSet dataSet, final OsmDataLayer layer, final String filePath) { 
         // FIXME: remove UI stuff from IO subsystem
         //
-        Runnable uiStuff = new Runnable() {
+        GuiHelper.runInEDT(new Runnable() {
             @Override
             public void run() {
                 if (dataSet.allPrimitives().isEmpty()) {
@@ -72,11 +72,6 @@ public class OsmChangeImporter extends FileImporter {
                 Main.main.addLayer(layer);
                 layer.onPostLoadFromFile();
             }
-        };
-        if (SwingUtilities.isEventDispatchThread()) {
-            uiStuff.run();
-        } else {
-            SwingUtilities.invokeLater(uiStuff);
-        }
+        });
     }
 }

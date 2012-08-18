@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
@@ -16,6 +15,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public class NMEAImporter extends FileImporter {
 
@@ -34,7 +34,7 @@ public class NMEAImporter extends FileImporter {
             final GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);
             final File fileFinal = file;
 
-            Runnable uiStuff = new Runnable() {
+            GuiHelper.runInEDT(new Runnable() {
                 public void run() {
                     Main.main.addLayer(gpxLayer);
                     if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
@@ -44,12 +44,7 @@ public class NMEAImporter extends FileImporter {
                         }
                     }
                 }
-            };
-            if (SwingUtilities.isEventDispatchThread()) {
-                uiStuff.run();
-            } else {
-                SwingUtilities.invokeLater(uiStuff);
-            }
+            });
         }
         showNmeaInfobox(r.getNumberOfCoordinates() > 0, r);
     }

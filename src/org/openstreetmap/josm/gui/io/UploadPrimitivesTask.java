@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiPrimitiveGoneException;
@@ -315,7 +316,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
         // - to an error dialog
         // - to the Upload Dialog
         // - to map editing
-        Runnable r = new Runnable() {
+        GuiHelper.runInEDT(new Runnable() {
             public void run() {
                 // if the changeset is still open after this upload we want it to
                 // be selected on the next upload
@@ -356,12 +357,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                     handleFailedUpload(lastException);
                 }
             }
-        };
-        if (SwingUtilities.isEventDispatchThread()) {
-            r.run();
-        } else {
-            SwingUtilities.invokeLater(r);
-        }
+        });
     }
 
     @Override protected void cancel() {
