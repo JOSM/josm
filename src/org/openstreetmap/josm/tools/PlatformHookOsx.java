@@ -4,19 +4,17 @@ package org.openstreetmap.josm.tools;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.HashMap;
 
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 
 /**
- * see PlatformHook.java
+ * @see PlatformHook
  */
 public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook, InvocationHandler {
     private static PlatformHookOsx ivhandler = new PlatformHookOsx();

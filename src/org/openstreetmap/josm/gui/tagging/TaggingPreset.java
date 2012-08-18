@@ -825,7 +825,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             //combo.setMaximumRowCount(13);
             AutoCompletingTextField tf = new AutoCompletingTextField();
             initAutoCompletionField(tf, key);
-            tf.getAutoCompletionList().add(getDisplayValues(), AutoCompletionItemPritority.IS_IN_STANDARD);
+            AutoCompletionList acList = tf.getAutoCompletionList();
+            if (acList != null) {
+                acList.add(getDisplayValues(), AutoCompletionItemPritority.IS_IN_STANDARD);
+            }
             combo.setEditor(tf);
 
             if (usage.hasUniqueValue()) {

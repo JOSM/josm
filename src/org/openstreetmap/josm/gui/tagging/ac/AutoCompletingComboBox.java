@@ -146,6 +146,7 @@ public class AutoCompletingComboBox extends JosmComboBox {
     }
 
     public AutoCompletingComboBox() {
+        super(new AutoCompletionListItem(JosmComboBox.DEFAULT_PROTOTYPE_DISPLAY_VALUE));
         setRenderer(new AutoCompleteListCellRenderer());
         final JTextComponent editor = (JTextComponent) this.getEditor().getEditorComponent();
         editor.setDocument(new AutoCompletingComboBoxDocument(this));
