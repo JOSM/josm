@@ -18,6 +18,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.FileExporter;
+import org.openstreetmap.josm.io.GpxImporter;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -72,7 +73,7 @@ public class GpxExportAction extends DiskAccessAction {
         if (! (layer instanceof OsmDataLayer) && ! (layer instanceof GpxLayer))
             throw new IllegalArgumentException(MessageFormat.format("Expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer.getClass().getName()));
 
-        File file = createAndOpenSaveFileChooser(tr("Export GPX file"), "gpx");
+        File file = createAndOpenSaveFileChooser(tr("Export GPX file"), GpxImporter.FILE_FILTER);
         if (file == null)
             return;
 
