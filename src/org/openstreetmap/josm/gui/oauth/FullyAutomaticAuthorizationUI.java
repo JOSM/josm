@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
@@ -37,6 +36,7 @@ import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
@@ -518,11 +518,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                 }
             };
             e.printStackTrace();
-            if (SwingUtilities.isEventDispatchThread()) {
-                r.run();
-            } else {
-                SwingUtilities.invokeLater(r);
-            }
+            GuiHelper.runInEDT(r);
         }
 
         @Override
@@ -551,17 +547,12 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                 );
                 getProgressMonitor().worked(1);
                 if (canceled)return;
-                Runnable r = new Runnable() {
+                GuiHelper.runInEDT(new Runnable() {
                     public void run() {
                         prepareUIForResultDisplay();
                         setAccessToken(accessToken);
                     }
-                };
-                if (SwingUtilities.isEventDispatchThread()) {
-                    r.run();
-                } else {
-                    SwingUtilities.invokeLater(r);
-                }
+                });
             } catch(final OsmOAuthAuthorizationException e) {
                 handleException(e);
             }

@@ -3,9 +3,8 @@ package org.openstreetmap.josm.gui.progress;
 
 import java.awt.Component;
 
-import javax.swing.SwingUtilities;
-
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -31,17 +30,9 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
         this.delegate = delegate;
     }
 
-    private void doInEDT(Runnable runnable) {
-        if (SwingUtilities.isEventDispatchThread()) {
-            runnable.run();
-        } else {
-            SwingUtilities.invokeLater(runnable);
-        }
-    }
-
     @Override
     public void doBeginTask() {
-        doInEDT(new Runnable() {
+        GuiHelper.runInEDT(new Runnable() {
             public void run() {
                 delegate.setCustomText("");
                 delegate.setMaximum(PROGRESS_BAR_MAX);
@@ -59,7 +50,7 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
         final int newValue = (int)(progressValue * PROGRESS_BAR_MAX);
         if (newValue != currentProgressValue) {
             currentProgressValue = newValue;
-            doInEDT(new Runnable() {
+            GuiHelper.runInEDT(new Runnable() {
                 public void run() {
                     delegate.setValue(currentProgressValue);
                 }
@@ -70,7 +61,7 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
     @Override
     protected void doSetCustomText(final String title) {
         checkState(State.IN_TASK, State.IN_SUBTASK);
-        doInEDT(new Runnable() {
+        GuiHelper.runInEDT(new Runnable() {
             public void run() {
                 delegate.setCustomText(title);
             }
@@ -80,7 +71,7 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
     @Override
     protected void doSetTitle(final String title) {
         checkState(State.IN_TASK, State.IN_SUBTASK);
-        doInEDT(new Runnable() {
+        GuiHelper.runInEDT(new Runnable() {
             public void run() {
                 delegate.setTaskTitle(title);
             }
@@ -89,7 +80,7 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
 
     @Override
     protected void doSetIntermediate(final boolean value) {
-        doInEDT(new Runnable() {
+        GuiHelper.runInEDT(new Runnable() {
             public void run() {
                 delegate.setIndeterminate(value);
             }

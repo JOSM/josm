@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.SwingUtilities;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -20,6 +18,7 @@ import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.AggregatePrimitivesVisitor;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
@@ -137,19 +136,14 @@ public class ValidateAction extends JosmAction {
 
             // update GUI on Swing EDT
             //
-            Runnable r = new Runnable()  {
+            GuiHelper.runInEDT(new Runnable()  {
                 @Override
                 public void run() {
                     Main.map.validatorDialog.tree.setErrors(errors);
                     Main.map.validatorDialog.unfurlDialog();
                     Main.main.getCurrentDataSet().fireSelectionChanged();
                 }
-            };
-            if (SwingUtilities.isEventDispatchThread()) {
-                r.run();
-            } else {
-                SwingUtilities.invokeLater(r);
-            }
+            });
         }
 
         @Override

@@ -5,11 +5,8 @@ import static org.openstreetmap.josm.tools.CheckParameterUtil.ensureParameterNot
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
-
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -24,6 +21,7 @@ import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -81,25 +79,13 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
             ExceptionDialogUtil.explainException(lastException);
             return;
         }
-        Runnable r = new Runnable() {
+        GuiHelper.runInEDTAndWait(new Runnable() {
             public void run() {
                 layer.mergeFrom(ds);
                 AutoScaleAction.zoomTo(ds.allPrimitives());
                 layer.onPostDownloadFromServer();
             }
-        };
-
-        if (SwingUtilities.isEventDispatchThread()) {
-            r.run();
-        } else {
-            try {
-                SwingUtilities.invokeAndWait(r);
-            } catch(InterruptedException e) {
-                e.printStackTrace();
-            } catch(InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
+        });
     }
 
     protected void initMultiFetchReader(MultiFetchServerObjectReader reader) {

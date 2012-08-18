@@ -10,11 +10,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.swing.SwingUtilities;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * ChangesetCache is global in-memory cache for changesets downloaded from
@@ -64,18 +63,13 @@ public class ChangesetCache implements PreferenceChangedListener{
     }
 
     protected void fireChangesetCacheEvent(final ChangesetCacheEvent e) {
-        Runnable r = new Runnable() {
+        GuiHelper.runInEDT(new Runnable() {
             public void run() {
                 for(ChangesetCacheListener l: listeners) {
                     l.changesetCacheUpdated(e);
                 }
             }
-        };
-        if (SwingUtilities.isEventDispatchThread()) {
-            r.run();
-        } else {
-            SwingUtilities.invokeLater(r);
-        }
+        });
     }
 
     protected void update(Changeset cs, DefaultChangesetCacheEvent e) {
