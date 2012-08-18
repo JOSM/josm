@@ -22,6 +22,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.FileExporter;
+import org.openstreetmap.josm.io.GpxImporter;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public abstract class SaveActionBase extends DiskAccessAction {
@@ -141,7 +142,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
         if (layer instanceof OsmDataLayer)
             return createAndOpenSaveFileChooser(tr("Save OSM file"), "osm");
         else if (layer instanceof GpxLayer)
-            return createAndOpenSaveFileChooser(tr("Save GPX file"), "gpx");
+            return createAndOpenSaveFileChooser(tr("Save GPX file"), GpxImporter.FILE_FILTER);
         return createAndOpenSaveFileChooser(tr("Save Layer"), "lay");
     }
 
@@ -180,11 +181,37 @@ public abstract class SaveActionBase extends DiskAccessAction {
         setEnabled(layer instanceof OsmDataLayer || layer instanceof GpxLayer);
     }
 
+    /**
+     * Creates a new "Save" dialog for a single {@link ExtensionFileFilter} and makes it visible.<br/>
+     * When the user has chosen a file, checks the file extension, and confirms overwrite if needed.
+     * 
+     * @param title The dialog title
+     * @param filter The dialog file filter
+     * @return The output {@code File}
+     * @since 5456
+     * @see DiskAccessAction#createAndOpenFileChooser(boolean, boolean, String, FileFilter, int, String)
+     */
+    public static File createAndOpenSaveFileChooser(String title, ExtensionFileFilter filter) {
+        JFileChooser fc = createAndOpenFileChooser(false, false, title, filter, JFileChooser.FILES_ONLY, null);
+        return checkFileAndConfirmOverWrite(fc, filter.getDefaultExtension());
+    }
+
+    /**
+     * Creates a new "Save" dialog for a given file extension and makes it visible.<br/>
+     * When the user has chosen a file, checks the file extension, and confirms overwrite if needed.
+     * 
+     * @param title The dialog title
+     * @param extension The file extension
+     * @return The output {@code File}
+     * @see DiskAccessAction#createAndOpenFileChooser(boolean, boolean, String, String)
+     */
     public static File createAndOpenSaveFileChooser(String title, String extension) {
-
         JFileChooser fc = createAndOpenFileChooser(false, false, title, extension);
-        if (fc == null) return null; 
-
+        return checkFileAndConfirmOverWrite(fc, extension);
+    }
+    
+    private static File checkFileAndConfirmOverWrite(JFileChooser fc, String extension) {
+        if (fc == null) return null;
         File file = fc.getSelectedFile();
         String fn = file.getPath();
         if (fn.indexOf('.') == -1)
@@ -192,7 +219,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
             FileFilter ff = fc.getFileFilter();
             if (ff instanceof ExtensionFileFilter) {
                 fn += "." + ((ExtensionFileFilter)ff).getDefaultExtension();
-            } else if(extension != null) {
+            } else if (extension != null) {
                 fn += "." + extension;
             }
             file = new File(fn);
