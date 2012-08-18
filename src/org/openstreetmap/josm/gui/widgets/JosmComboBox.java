@@ -69,7 +69,7 @@ public class JosmComboBox extends JComboBox {
      */
     public JosmComboBox(ComboBoxModel aModel) {
         super(aModel);
-        init(aModel != null && aModel.getSize() > 0 ? aModel.getElementAt(0) : DEFAULT_PROTOTYPE_DISPLAY_VALUE);
+        init(aModel != null && aModel.getSize() > 0 ? aModel.getElementAt(0) : null);
     }
 
     /** 
@@ -82,7 +82,7 @@ public class JosmComboBox extends JComboBox {
      */
     public JosmComboBox(Object[] items) {
         super(items);
-        init(items != null && items.length > 0 ? items[0] : DEFAULT_PROTOTYPE_DISPLAY_VALUE);
+        init(items != null && items.length > 0 ? items[0] : null);
     }
 
     /**
@@ -95,7 +95,7 @@ public class JosmComboBox extends JComboBox {
      */
     public JosmComboBox(Vector<?> items) {
         super(items);
-        init(items != null && !items.isEmpty() ? items.get(0) : DEFAULT_PROTOTYPE_DISPLAY_VALUE);
+        init(items != null && !items.isEmpty() ? items.get(0) : null);
     }
     
     protected void init(Object prototype) {
