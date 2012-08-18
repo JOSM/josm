@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
@@ -356,6 +357,10 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                     // Get icon
                     String iconName = tps.getIconName();
                     ImageIcon icon = iconName != null && iconName.length() > 0 ? ImageProvider.get("preferences", iconName) : null;
+                    // See #6985 - Force icons to be 48x48 pixels
+                    if (icon != null && (icon.getIconHeight() != 48 || icon.getIconWidth() != 48)) {
+                        icon = new ImageIcon(icon.getImage().getScaledInstance(48, 48, Image.SCALE_DEFAULT));
+                    }
                     if (settingsInitialized.contains(tps)) {
                         // If it has been initialized, add corresponding tab(s)
                         addGUITabsForSetting(icon, tps);
