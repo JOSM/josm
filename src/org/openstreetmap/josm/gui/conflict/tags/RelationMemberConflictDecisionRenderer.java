@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.conflict.tags;
 import java.awt.Component;
 import java.awt.Font;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
@@ -33,11 +32,7 @@ public class RelationMemberConflictDecisionRenderer extends JLabel implements Ta
     }
 
     public RelationMemberConflictDecisionRenderer() {
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
-        cbDecisionTypes = new JosmComboBox(model);
-        model.addElement(RelationMemberConflictDecisionType.KEEP);
-        model.addElement(RelationMemberConflictDecisionType.REMOVE);
-        model.addElement(RelationMemberConflictDecisionType.UNDECIDED);
+        cbDecisionTypes = new JosmComboBox(RelationMemberConflictDecisionType.values());
         cbDecisionTypes.setRenderer(this);
     }
 
