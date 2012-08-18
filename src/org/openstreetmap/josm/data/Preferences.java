@@ -1775,7 +1775,7 @@ public class Preferences {
      */
     public void removeObsolete() {
         String[] obsolete = {
-                "edit.make-parallel-way-action.snap-threshold",  // 10/2011 - replaced by snap-threshold-percent. Can be removed mid 2012
+                "gui.combobox.maximum-row-count",  // 08/2012 - briefly introduced with #7917, can be removed end 2012
         };
         for (String key : obsolete) {
             boolean removed = false;

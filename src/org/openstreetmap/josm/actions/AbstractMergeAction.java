@@ -7,7 +7,6 @@ import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.util.List;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -57,13 +56,11 @@ public abstract class AbstractMergeAction extends JosmAction {
     }
 
     protected Layer askTargetLayer(List<Layer> targetLayers) {
-        JosmComboBox layerList = new JosmComboBox();
+        JosmComboBox layerList = new JosmComboBox(targetLayers.toArray());
         layerList.setRenderer(new LayerListCellRenderer());
-        layerList.setModel(new DefaultComboBoxModel(targetLayers.toArray()));
         layerList.setSelectedIndex(0);
 
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
+        JPanel pnl = new JPanel(new GridBagLayout());
         pnl.add(new JLabel(tr("Please select the target layer.")), GBC.eol());
         pnl.add(layerList, GBC.eol());
 

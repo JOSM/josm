@@ -112,7 +112,6 @@ import org.openstreetmap.josm.gui.tagging.TaggingPreset.PresetType;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
-import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -709,8 +708,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      */
     private final JTable propertyTable = new JTable(propertyData);
     private final JTable membershipTable = new JTable(membershipData);
-
-    public JosmComboBox taggingPresets = new JosmComboBox();
 
     /**
      * The Add/Edit/Delete buttons (needed to be able to disable them)

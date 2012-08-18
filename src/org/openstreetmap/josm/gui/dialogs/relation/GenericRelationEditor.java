@@ -321,8 +321,10 @@ public class GenericRelationEditor extends RelationEditor  {
                     @Override
                     public void focusGained(FocusEvent e) {
                         AutoCompletionList list = tfRole.getAutoCompletionList();
-                        list.clear();
-                        getLayer().data.getAutoCompletionManager().populateWithMemberRoles(list);
+                        if (list != null) {
+                            list.clear();
+                            getLayer().data.getAutoCompletionManager().populateWithMemberRoles(list);
+                        }
                     }
                 }
         );

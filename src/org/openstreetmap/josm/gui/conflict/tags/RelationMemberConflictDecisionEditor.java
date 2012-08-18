@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.conflict.tags;
 import java.awt.Component;
 import java.util.EventObject;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTable;
 import javax.swing.event.CellEditorListener;
 import javax.swing.table.TableCellEditor;
@@ -15,12 +14,8 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 public class RelationMemberConflictDecisionEditor extends JosmComboBox implements TableCellEditor {
 
     public RelationMemberConflictDecisionEditor() {
+        super(RelationMemberConflictDecisionType.values());
         setOpaque(true);
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
-        model.addElement(RelationMemberConflictDecisionType.KEEP);
-        model.addElement(RelationMemberConflictDecisionType.REMOVE);
-        model.addElement(RelationMemberConflictDecisionType.UNDECIDED);
-        setModel(model);
         setRenderer(new RelationMemberConflictDecisionRenderer());
         tableCellEditorSupport = new TableCellEditorSupport(this);
     }

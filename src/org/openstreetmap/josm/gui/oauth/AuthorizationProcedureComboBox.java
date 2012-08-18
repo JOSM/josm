@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
@@ -16,26 +15,9 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 public class AuthorizationProcedureComboBox extends JosmComboBox {
 
     public AuthorizationProcedureComboBox() {
-        setModel(new AuthorisationProcedureComboBoxModel());
+        super(AuthorizationProcedure.values());
         setRenderer(new AuthorisationProcedureCellRenderer());
         setSelectedItem(AuthorizationProcedure.FULLY_AUTOMATIC);
-    }
-
-    static private class AuthorisationProcedureComboBoxModel extends DefaultComboBoxModel {
-        @Override
-        public Object getElementAt(int index) {
-            switch(index) {
-            case 0: return AuthorizationProcedure.FULLY_AUTOMATIC;
-            case 1: return AuthorizationProcedure.SEMI_AUTOMATIC;
-            case 2: return AuthorizationProcedure.MANUALLY;
-            }
-            return null;
-        }
-
-        @Override
-        public int getSize() {
-            return 3;
-        }
     }
 
     static private class AuthorisationProcedureCellRenderer extends JLabel implements ListCellRenderer {

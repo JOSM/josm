@@ -9,10 +9,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 public class OsmPrimitiveTypesComboBox extends JosmComboBox {
 
     public OsmPrimitiveTypesComboBox() {
-        for (OsmPrimitiveType type: OsmPrimitiveType.values()){
-            if(type.getOsmClass() != null)
-                addItem(type);
-        }
+        super(OsmPrimitiveType.dataValues());
     }
 
     public OsmPrimitiveType getType() {

@@ -1,47 +1,64 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
+import java.awt.Toolkit;
 import java.util.Vector;
 
+import javax.accessibility.Accessible;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
-
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import javax.swing.JList;
+import javax.swing.plaf.basic.ComboPopup;
 
 /**
  * Class overriding each {@link JComboBox} in JOSM to control consistently the number of displayed items at once.<br/>
- * This is needed because of the default Java behaviour that may display the top-down list off the screen (see #).
- * <p>
- * The property {@code gui.combobox.maximum-row-count} can be setup to control this behaviour.
+ * This is needed because of the default Java behaviour that may display the top-down list off the screen (see #7917).
  * 
  * @since 5429
  */
-public class JosmComboBox extends JComboBox implements PreferenceChangedListener {
+public class JosmComboBox extends JComboBox {
 
     /**
-     * This property allows to control the {@link #getMaximumRowCount} of all combo boxes used in JOSM.
+     * The default prototype value used to compute the maximum number of elements to be displayed at once before 
+     * displaying a scroll bar
      */
-    public static final String PROP_MAXIMUM_ROW_COUNT = "gui.combobox.maximum-row-count";
+    public static final String DEFAULT_PROTOTYPE_DISPLAY_VALUE = "Prototype display value";
     
     /**
      * Creates a <code>JosmComboBox</code> with a default data model.
      * The default data model is an empty list of objects.
-     * Use <code>addItem</code> to add items.  By default the first item
+     * Use <code>addItem</code> to add items. By default the first item
      * in the data model becomes selected.
      *
      * @see DefaultComboBoxModel
      */
     public JosmComboBox() {
+        this(DEFAULT_PROTOTYPE_DISPLAY_VALUE);
+    }
+
+    /**
+     * Creates a <code>JosmComboBox</code> with a default data model and
+     * the specified prototype display value.
+     * The default data model is an empty list of objects.
+     * Use <code>addItem</code> to add items. By default the first item
+     * in the data model becomes selected.
+     * 
+     * @param prototypeDisplayValue the <code>Object</code> used to compute 
+     *      the maximum number of elements to be displayed at once before 
+     *      displaying a scroll bar
+     *
+     * @see DefaultComboBoxModel
+     * @since 5450
+     */
+    public JosmComboBox(Object prototypeDisplayValue) {
         super();
-        init();
+        init(prototypeDisplayValue);
     }
 
     /**
      * Creates a <code>JosmComboBox</code> that takes its items from an
-     * existing <code>ComboBoxModel</code>.  Since the
+     * existing <code>ComboBoxModel</code>. Since the
      * <code>ComboBoxModel</code> is provided, a combo box created using
      * this constructor does not create a default combo box model and
      * may impact how the insert, remove and add methods behave.
@@ -52,12 +69,12 @@ public class JosmComboBox extends JComboBox implements PreferenceChangedListener
      */
     public JosmComboBox(ComboBoxModel aModel) {
         super(aModel);
-        init();
+        init(aModel != null && aModel.getSize() > 0 ? aModel.getElementAt(0) : DEFAULT_PROTOTYPE_DISPLAY_VALUE);
     }
 
     /** 
      * Creates a <code>JosmComboBox</code> that contains the elements
-     * in the specified array.  By default the first item in the array
+     * in the specified array. By default the first item in the array
      * (and therefore the data model) becomes selected.
      *
      * @param items  an array of objects to insert into the combo box
@@ -65,12 +82,12 @@ public class JosmComboBox extends JComboBox implements PreferenceChangedListener
      */
     public JosmComboBox(Object[] items) {
         super(items);
-        init();
+        init(items != null && items.length > 0 ? items[0] : DEFAULT_PROTOTYPE_DISPLAY_VALUE);
     }
 
     /**
      * Creates a <code>JosmComboBox</code> that contains the elements
-     * in the specified Vector.  By default the first item in the vector
+     * in the specified Vector. By default the first item in the vector
      * (and therefore the data model) becomes selected.
      *
      * @param items  an array of vectors to insert into the combo box
@@ -78,34 +95,35 @@ public class JosmComboBox extends JComboBox implements PreferenceChangedListener
      */
     public JosmComboBox(Vector<?> items) {
         super(items);
-        init();
+        init(items != null && !items.isEmpty() ? items.get(0) : DEFAULT_PROTOTYPE_DISPLAY_VALUE);
     }
     
-    protected void init() {
-        setMaximumRowCount(Main.pref.getInteger(PROP_MAXIMUM_ROW_COUNT, 20));
-    }
-    
-    /**
-     * Registers this combo box to the change of the property {@code gui.combobox.maximum-row-count}.<br/>
-     * Do not forget to call {@link #unregisterFromPreferenceChange} when the combo box is no longer needed.
-     * @see #unregisterFromPreferenceChange
-     */
-    public final void registerToPreferenceChange() {
-        Main.pref.addPreferenceChangeListener(this);
-    }
-    
-    /**
-     * Unregisters this combo box previously registered by {@link #registerToPreferenceChange}.
-     * @see #registerToPreferenceChange
-     */
-    public final void unregisterFromPreferenceChange() {
-        Main.pref.removePreferenceChangeListener(this);
-    }
-
-    @Override
-    public void preferenceChanged(PreferenceChangeEvent e) {
-        if (PROP_MAXIMUM_ROW_COUNT.equals(e.getKey())) {
-            setMaximumRowCount(Main.pref.getInteger(PROP_MAXIMUM_ROW_COUNT, 20));
+    protected void init(Object prototype) {
+        if (prototype != null) {
+            setPrototypeDisplayValue(prototype);
+            int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+            // Compute maximum number of visible items based on the preferred size of the combo box. 
+            // This assumes that items have the same height as the combo box, which is not granted by the look and feel
+            int maxsize = (screenHeight/getPreferredSize().height) / 2;
+            // If possible, adjust the maximum number of items with the real height of items
+            // It is not granted this works on every platform (tested OK on Windows)
+            for (int i = 0; i < getUI().getAccessibleChildrenCount(this); i++) {
+                Accessible child = getUI().getAccessibleChild(this, i);
+                if (child instanceof ComboPopup) {
+                    JList list = ((ComboPopup)child).getList();
+                    if (list != null) {
+                        if (list.getPrototypeCellValue() != prototype) {
+                            list.setPrototypeCellValue(prototype);
+                        }
+                        int height = list.getFixedCellHeight();
+                        if (height > 0) {
+                            maxsize = (screenHeight/height) / 2;
+                        }
+                    }
+                    break;
+                }
+            }
+            setMaximumRowCount(Math.max(getMaximumRowCount(), maxsize));
         }
     }
 }

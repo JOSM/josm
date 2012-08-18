@@ -41,7 +41,6 @@ import java.util.concurrent.Future;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -1397,13 +1396,11 @@ public class GpxLayer extends Layer {
                 return null;
             }
 
-            JosmComboBox layerList = new JosmComboBox();
+            JosmComboBox layerList = new JosmComboBox(targetLayers.toArray());
             layerList.setRenderer(new LayerListCellRenderer());
-            layerList.setModel(new DefaultComboBoxModel(targetLayers.toArray()));
             layerList.setSelectedIndex(0);
 
-            JPanel pnl = new JPanel();
-            pnl.setLayout(new GridBagLayout());
+            JPanel pnl = new JPanel(new GridBagLayout());
             pnl.add(new JLabel(tr("Please select the imagery layer.")), GBC.eol());
             pnl.add(layerList, GBC.eol());
 
@@ -1416,8 +1413,7 @@ public class GpxLayer extends Layer {
             if (ed.getValue() != 1)
                 return null;
 
-            WMSLayer targetLayer = (WMSLayer) layerList.getSelectedItem();
-            return targetLayer;
+            return (WMSLayer) layerList.getSelectedItem();
         }
 
         protected void warnNoImageryLayers() {
