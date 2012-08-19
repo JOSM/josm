@@ -35,7 +35,6 @@ public class SaveAction extends SaveActionBase {
         return instance;
     }
 
-
     @Override public File getFile(Layer layer) {
         File f = layer.getAssociatedFile();
         if(f != null && ! f.exists()) {
@@ -58,6 +57,6 @@ public class SaveAction extends SaveActionBase {
                 f = null;
             }
         }
-        return f == null ? openFileDialog(layer) : f;
+        return f == null ? layer.createAndOpenSaveFileChooser() : f;
     }
 }

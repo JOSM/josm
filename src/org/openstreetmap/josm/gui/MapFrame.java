@@ -234,11 +234,11 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         return selectMapMode(mapModeSelect);
     }
 
-    public void selectDrawTool(boolean onlyIfModeless) {
+    public boolean selectDrawTool(boolean onlyIfModeless) {
         if(onlyIfModeless && !Main.pref.getBoolean("modeless", false))
-            return;
+            return false;
 
-        selectMapMode(mapModeDraw);
+        return selectMapMode(mapModeDraw);
     }
 
     public boolean selectZoomTool(boolean onlyIfModeless) {

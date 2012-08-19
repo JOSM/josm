@@ -8,9 +8,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -54,6 +56,15 @@ public class WMSLayerImporter extends FileImporter {
         } finally {
             ois.close();
         }
+        
+        // FIXME: remove UI stuff from IO subsystem
+        GuiHelper.runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                Main.main.addLayer(wmsLayer);
+                wmsLayer.onPostLoadFromFile();
+            }
+        });
     }
 
     /**

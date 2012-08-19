@@ -16,14 +16,19 @@ import org.apache.tools.bzip2.CBZip2InputStream;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
-public abstract class FileImporter implements Comparable<FileImporter> {
+public abstract class FileImporter implements Comparable<FileImporter>, LayerChangeListener {
 
     public final ExtensionFileFilter filter;
+    
+    private boolean enabled;
 
     public FileImporter(ExtensionFileFilter filter) {
         this.filter = filter;
+        this.enabled = true;
     }
 
     public boolean acceptFile(File pathname) {
@@ -120,5 +125,38 @@ public abstract class FileImporter implements Comparable<FileImporter> {
             return null;
         }
         return new GZIPInputStream(in);
+    }
+
+    /**
+     * Returns the enabled state of this {@code FileImporter}. When enabled, it is listed and usable in "File->Open" dialog. 
+     * @return true if this {@code FileImporter} is enabled
+     * @since 5459
+     */
+    public final boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Sets the enabled state of the {@code FileImporter}. When enabled, it is listed and usable in "File->Open" dialog.
+     * @param enabled true to enable this {@code FileImporter}, false to disable it
+     * @since 5459
+     */
+    public final void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        // To be overriden by subclasses if their enabled state depends of the active layer nature
+    }
+
+    @Override
+    public void layerAdded(Layer newLayer) {
+        // To be overriden by subclasses if needed
+    }
+
+    @Override
+    public void layerRemoved(Layer oldLayer) {
+        // To be overriden by subclasses if needed
     }
 }

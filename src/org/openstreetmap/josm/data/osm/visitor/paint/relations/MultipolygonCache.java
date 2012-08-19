@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -48,6 +49,7 @@ public class MultipolygonCache implements DataSetListener, LayerChangeListener, 
         this.selectedPolyData = new ArrayList<Multipolygon.PolyData>();
         Main.addProjectionChangeListener(this);
         DataSet.addSelectionListener(this);
+        MapView.addLayerChangeListener(this);
     }
 
     public static final MultipolygonCache getInstance() {

@@ -20,7 +20,6 @@ public class SaveAsAction extends SaveActionBase {
     
     /**
      * Construct the action with "Save" as label.
-     * @param layer Save this layer.
      */
     public SaveAsAction() {
         super(tr("Save As..."), "save_as", tr("Save the current data to a new file."),
@@ -34,6 +33,6 @@ public class SaveAsAction extends SaveActionBase {
     }
 
     @Override protected File getFile(Layer layer) {
-        return openFileDialog(layer);
+        return layer.createAndOpenSaveFileChooser();
     }
 }

@@ -198,25 +198,26 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
     };
 
-    private DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
-    private HelpAction helpAction = new HelpAction();
-    private CopyValueAction copyValueAction = new CopyValueAction();
-    private CopyKeyValueAction copyKeyValueAction = new CopyKeyValueAction();
-    private CopyAllKeyValueAction copyAllKeyValueAction = new CopyAllKeyValueAction();
-    private SearchAction searchActionSame = new SearchAction(true);
-    private SearchAction searchActionAny = new SearchAction(false);
-    private AddAction addAction = new AddAction();
-    private EditAction editAction = new EditAction();
-    private DeleteAction deleteAction = new DeleteAction();
+    private final DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
+    private final HelpAction helpAction = new HelpAction();
+    private final CopyValueAction copyValueAction = new CopyValueAction();
+    private final CopyKeyValueAction copyKeyValueAction = new CopyKeyValueAction();
+    private final CopyAllKeyValueAction copyAllKeyValueAction = new CopyAllKeyValueAction();
+    private final SearchAction searchActionSame = new SearchAction(true);
+    private final SearchAction searchActionAny = new SearchAction(false);
+    private final AddAction addAction = new AddAction();
+    private final EditAction editAction = new EditAction();
+    private final DeleteAction deleteAction = new DeleteAction();
+    private final JosmAction[] josmActions = new JosmAction[]{addAction, editAction, deleteAction};
 
     @Override
     public void showNotify() {
         DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IN_EDT_CONSOLIDATED);
         SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
         MapView.addEditLayerChangeListener(this);
-        Main.registerActionShortcut(addAction);
-        Main.registerActionShortcut(editAction);
-        Main.registerActionShortcut(deleteAction);
+        for (JosmAction action : josmActions) {
+            Main.registerActionShortcut(action);
+        }
         updateSelection();
     }
 
@@ -225,9 +226,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
         SelectionEventManager.getInstance().removeSelectionListener(this);
         MapView.removeEditLayerChangeListener(this);
-        Main.unregisterActionShortcut(addAction);
-        Main.unregisterActionShortcut(editAction);
-        Main.unregisterActionShortcut(deleteAction);
+        for (JosmAction action : josmActions) {
+            Main.unregisterActionShortcut(action);
+        }
     }
 
     /**
@@ -1667,6 +1668,14 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
             SearchSetting ss = new SearchSetting(s, SearchMode.replace, true, false, false);
             org.openstreetmap.josm.actions.search.SearchAction.searchWithoutHistory(ss);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        for (JosmAction action : josmActions) {
+            action.destroy();
         }
     }
 }

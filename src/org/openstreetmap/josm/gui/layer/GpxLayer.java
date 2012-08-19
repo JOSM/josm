@@ -62,6 +62,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractMergeAction.LayerListCellRenderer;
 import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
+import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -96,6 +97,7 @@ import org.openstreetmap.josm.gui.progress.ProgressTaskIds;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JFileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.io.GpxImporter;
 import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.AudioUtil;
@@ -2040,5 +2042,20 @@ public class GpxLayer extends Layer {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isSavable() {
+        return true; // With GpxExporter
+    }
+
+    @Override
+    public boolean checkSaveConditions() {
+        return data != null;
+    }
+
+    @Override
+    public File createAndOpenSaveFileChooser() {
+        return SaveActionBase.createAndOpenSaveFileChooser(tr("Save GPX file"), GpxImporter.FILE_FILTER);
     }
 }

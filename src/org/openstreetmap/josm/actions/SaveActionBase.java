@@ -15,14 +15,10 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.conflict.ConflictCollection;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.FileExporter;
-import org.openstreetmap.josm.io.GpxImporter;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public abstract class SaveActionBase extends DiskAccessAction {
@@ -43,25 +39,24 @@ public abstract class SaveActionBase extends DiskAccessAction {
     }
 
     public boolean doSave() {
-        Layer layer = null;
-        if (Main.isDisplayingMapView() && (Main.map.mapView.getActiveLayer() instanceof OsmDataLayer
-                || Main.map.mapView.getActiveLayer() instanceof GpxLayer)) {
-            layer = Main.map.mapView.getActiveLayer();
+        if (Main.isDisplayingMapView()) {
+            Layer layer = Main.map.mapView.getActiveLayer();
+            if (layer != null && layer.isSavable()) {
+                return doSave(layer);
+            }
         }
-        if (layer == null)
-            return false;
-        return doSave(layer);
+        return false;
     }
 
     public boolean doSave(Layer layer) {
-        if(!checkSaveConditions(layer))
+        if(!layer.checkSaveConditions())
             return false;
         file = getFile(layer);
         return doInternalSave(layer, file);
     }
 
     public static boolean doSave(Layer layer, File file) {
-        if(!checkSaveConditions(layer))
+        if(!layer.checkSaveConditions())
             return false;
         return doInternalSave(layer, file);
     }
@@ -100,67 +95,6 @@ public abstract class SaveActionBase extends DiskAccessAction {
     protected abstract File getFile(Layer layer);
 
     /**
-     * Checks whether it is ok to launch a save (whether we have data,
-     * there is no conflict etc.)
-     * @return <code>true</code>, if it is safe to save.
-     */
-    public static boolean checkSaveConditions(Layer layer) {
-        if (layer instanceof GpxLayer)
-            return ((GpxLayer)layer).data != null;
-        else if (layer instanceof OsmDataLayer)  {
-            if (isDataSetEmpty((OsmDataLayer)layer)) {
-                ExtendedDialog dialog = new ExtendedDialog(
-                        Main.parent,
-                        tr("Empty document"),
-                        new String[] {tr("Save anyway"), tr("Cancel")}
-                );
-                dialog.setContent(tr("The document contains no data."));
-                dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
-                dialog.showDialog();
-                if (dialog.getValue() != 1) return false;
-            }
-
-            ConflictCollection conflicts = ((OsmDataLayer)layer).getConflicts();
-            if (conflicts != null && !conflicts.isEmpty()) {
-                ExtendedDialog dialog = new ExtendedDialog(
-                        Main.parent,
-                        /* I18N: Display title of the window showing conflicts */
-                        tr("Conflicts"),
-                        new String[] {tr("Reject Conflicts and Save"), tr("Cancel")}
-                );
-                dialog.setContent(tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"));
-                dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
-                dialog.showDialog();
-                if (dialog.getValue() != 1) return false;
-            }
-            return true;
-        }
-        return false;
-    }
-
-    public static File openFileDialog(Layer layer) {
-        if (layer instanceof OsmDataLayer)
-            return createAndOpenSaveFileChooser(tr("Save OSM file"), "osm");
-        else if (layer instanceof GpxLayer)
-            return createAndOpenSaveFileChooser(tr("Save GPX file"), GpxImporter.FILE_FILTER);
-        return createAndOpenSaveFileChooser(tr("Save Layer"), "lay");
-    }
-
-    /**
-     * Check the data set if it would be empty on save. It is empty, if it contains
-     * no objects (after all objects that are created and deleted without being
-     * transferred to the server have been removed).
-     *
-     * @return <code>true</code>, if a save result in an empty data set.
-     */
-    private static boolean isDataSetEmpty(OsmDataLayer layer) {
-        for (OsmPrimitive osm : layer.data.allNonDeletedPrimitives())
-            if (!osm.isDeleted() || !osm.isNewOrUndeleted())
-                return false;
-        return true;
-    }
-
-    /**
      * Refreshes the enabled state
      *
      */
@@ -178,7 +112,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
             return;
         }
         Layer layer = Main.map.mapView.getActiveLayer();
-        setEnabled(layer instanceof OsmDataLayer || layer instanceof GpxLayer);
+        setEnabled(layer != null && layer.isSavable());
     }
 
     /**

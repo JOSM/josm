@@ -32,13 +32,11 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.gui.jmapviewer.AttributionSupport;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
@@ -61,15 +59,12 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
-import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.io.WMSLayerExporter;
 import org.openstreetmap.josm.io.WMSLayerImporter;
 import org.openstreetmap.josm.io.imagery.Grabber;
 import org.openstreetmap.josm.io.imagery.HTMLGrabber;
 import org.openstreetmap.josm.io.imagery.WMSGrabber;
 import org.openstreetmap.josm.io.imagery.WMSRequest;
-import org.openstreetmap.josm.tools.ImageProvider;
 
 
 /**
@@ -123,7 +118,6 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     protected boolean autoDownloadEnabled = true;
     protected boolean settingsChanged;
     protected ImageryInfo info;
-    protected MapView mv;
     public WmsCache cache;
     private AttributionSupport attribution = new AttributionSupport();
 
@@ -177,7 +171,6 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
 
     @Override
     public void hookUpMapView() {
-        mv = Main.map.mapView;
         if (info.getUrl() != null) {
             for (WMSLayer layer: Main.map.mapView.getLayersOfType(WMSLayer.class)) {
                 if (layer.getInfo().getUrl().equals(info.getUrl())) {
@@ -193,7 +186,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         if(this.info.getPixelPerDegree() == 0.0) {
             this.info.setPixelPerDegree(getPPD());
         }
-        resolution = mv.getDist100PixelText();
+        resolution = Main.map.mapView.getDist100PixelText();
 
         final MouseAdapter adapter = new MouseAdapter() {
             @Override
@@ -483,8 +476,8 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                 LayerListDialog.getInstance().createDeleteLayerAction(),
                 SeparatorLayerAction.INSTANCE,
                 new OffsetAction(),
-                new LoadWmsAction(),
-                new SaveWmsAction(),
+                new LayerSaveAction(this),
+                new LayerSaveAsAction(this),
                 new BookmarkWmsAction(),
                 SeparatorLayerAction.INSTANCE,
                 new ZoomToNativeResolution(),
@@ -522,7 +515,8 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                 || bmaxy < request.getYIndex())
             return -1;
 
-        EastNorth cursorEastNorth = mv.getEastNorth(mv.lastMEvent.getX(), mv.lastMEvent.getY());
+        MouseEvent lastMEvent = Main.map.mapView.lastMEvent;
+        EastNorth cursorEastNorth = Main.map.mapView.getEastNorth(lastMEvent.getX(), lastMEvent.getY());
         int mouseX = getImageXIndex(cursorEastNorth.east());
         int mouseY = getImageYIndex(cursorEastNorth.north());
         int dx = request.getXIndex() - mouseX;
@@ -604,7 +598,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             processingRequests.remove(request);
             if (request.getState() != null && !request.isPrecacheOnly()) {
                 finishedRequests.add(request);
-                mv.repaint();
+                Main.map.mapView.repaint();
             }
         } finally {
             requestQueueLock.unlock();
@@ -668,7 +662,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                         JOptionPane.ERROR_MESSAGE
                         );
             } else {
-                downloadAndPaintVisible(mv.getGraphics(), mv, true);
+                downloadAndPaintVisible(Main.map.mapView.getGraphics(), Main.map.mapView, true);
             }
         }
     }
@@ -679,7 +673,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
 
         private void changeResolution(WMSLayer layer) {
-            layer.resolution = layer.mv.getDist100PixelText();
+            layer.resolution = Main.map.mapView.getDist100PixelText();
             layer.info.setPixelPerDegree(layer.getPPD());
             layer.settingsChanged = true;
             for(int x = 0; x<layer.dax; ++x) {
@@ -760,7 +754,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                     img.flushedResizedCachedInstance();
                 }
             }
-            mv.repaint();
+            Main.map.mapView.repaint();
         }
         @Override
         public Component createMenuComponent() {
@@ -774,46 +768,6 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
     }
 
-    public class SaveWmsAction extends AbstractAction {
-        public SaveWmsAction() {
-            super(tr("Save WMS layer to file"), ImageProvider.get("save"));
-        }
-        @Override
-        public void actionPerformed(ActionEvent ev) {
-            File f = SaveActionBase.createAndOpenSaveFileChooser(
-                    tr("Save WMS layer"), WMSLayerImporter.FILE_FILTER);
-            try {
-                new WMSLayerExporter().exportData(f, WMSLayer.this);
-            } catch (Exception ex) {
-                ex.printStackTrace(System.out);
-            }
-        }
-    }
-
-    public class LoadWmsAction extends AbstractAction {
-        public LoadWmsAction() {
-            super(tr("Load WMS layer from file"), ImageProvider.get("open"));
-        }
-        @Override
-        public void actionPerformed(ActionEvent ev) {
-            JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true,
-                    false, tr("Load WMS layer"), WMSLayerImporter.FILE_FILTER, JFileChooser.FILES_ONLY, null);
-            if (fc == null) return;
-            File f = fc.getSelectedFile();
-            if (f == null) return;
-            try {
-                new WMSLayerImporter(WMSLayer.this).importData(f, NullProgressMonitor.INSTANCE);
-            } catch (InvalidClassException ex) {
-                JOptionPane.showMessageDialog(Main.parent, ex.getMessage(), tr("File Format Error"), JOptionPane.ERROR_MESSAGE);
-                return;
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(Main.parent, ex.getMessage(), tr("Error loading file"), JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-        }
-    }
-    
     /**
      * This action will add a WMS layer menu entry with the current WMS layer
      * URL and name extended by the current resolution.
@@ -859,7 +813,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                         }
                     }
                 }
-                mv.repaint();
+                Main.map.mapView.repaint();
             }
         }
     }
@@ -951,11 +905,11 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
     }
 
-    protected Grabber getGrabber(boolean localOnly){
-        if(getInfo().getImageryType() == ImageryType.HTML)
-            return new HTMLGrabber(mv, this, localOnly);
-        else if(getInfo().getImageryType() == ImageryType.WMS)
-            return new WMSGrabber(mv, this, localOnly);
+    protected Grabber getGrabber(boolean localOnly) {
+        if (getInfo().getImageryType() == ImageryType.HTML)
+            return new HTMLGrabber(Main.map.mapView, this, localOnly);
+        else if (getInfo().getImageryType() == ImageryType.WMS)
+            return new WMSGrabber(Main.map.mapView, this, localOnly);
         else throw new IllegalStateException("getGrabber() called for non-WMS layer type");
     }
 
@@ -1041,14 +995,30 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
         
         settingsChanged = true;
-        mv.repaint();
+        if (Main.isDisplayingMapView()) {
+            Main.map.mapView.repaint();
+        }
         if (cache != null) {
             cache.saveIndex();
             cache = null;
         }
+    }
+
+    @Override
+    public void onPostLoadFromFile() {
         if (info.getUrl() != null) {
             cache = new WmsCache(info.getUrl(), imageSize);
             startGrabberThreads();
         }
+    }
+
+    @Override
+    public boolean isSavable() {
+        return true; // With WMSLayerExporter
+    }
+
+    @Override
+    public File createAndOpenSaveFileChooser() {
+        return SaveActionBase.createAndOpenSaveFileChooser(tr("Save WMS file"), WMSLayerImporter.FILE_FILTER);
     }
 }

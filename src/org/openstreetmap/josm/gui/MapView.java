@@ -105,7 +105,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     /**
      * the layer listeners
      */
-    private static final CopyOnWriteArrayList<MapView.LayerChangeListener> layerChangeListeners = new CopyOnWriteArrayList<MapView.LayerChangeListener>();
+    private static final CopyOnWriteArrayList<LayerChangeListener> layerChangeListeners = new CopyOnWriteArrayList<LayerChangeListener>();
     private static final CopyOnWriteArrayList<EditLayerChangeListener> editLayerChangeListeners = new CopyOnWriteArrayList<EditLayerChangeListener>();
 
     /**
@@ -113,7 +113,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      *
      * @param listener the listener. Ignored if null or already registered.
      */
-    public static void removeLayerChangeListener(MapView.LayerChangeListener listener) {
+    public static void removeLayerChangeListener(LayerChangeListener listener) {
         layerChangeListeners.remove(listener);
     }
 
@@ -126,7 +126,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      *
      * @param listener the listener. Ignored if null or already registered.
      */
-    public static void addLayerChangeListener(MapView.LayerChangeListener listener) {
+    public static void addLayerChangeListener(LayerChangeListener listener) {
         if (listener != null) {
             layerChangeListeners.addIfAbsent(listener);
         }
@@ -222,11 +222,6 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     public MapView(final JPanel contentPane) {
         Main.pref.addPreferenceChangeListener(this);
 
-        //        new MoveAction(MoveAction.Direction.UP);
-        //        new MoveAction(MoveAction.Direction.DOWN);
-        //        new MoveAction(MoveAction.Direction.LEFT);
-        //        new MoveAction(MoveAction.Direction.RIGHT);
-
         addComponentListener(new ComponentAdapter(){
             @Override public void componentResized(ComponentEvent e) {
                 removeComponentListener(this);
@@ -264,9 +259,6 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 lastMEvent = e;
             }
         });
-
-        // Add Multipolygon cache to layer listeners
-        addLayerChangeListener(MultipolygonCache.getInstance());
     }
 
     /**

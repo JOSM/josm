@@ -37,4 +37,9 @@ public class WMSLayerExporter extends FileExporter {
             }
         }
     }
+
+    @Override
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        setEnabled(newLayer instanceof WMSLayer);
+    }
 }

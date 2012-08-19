@@ -127,6 +127,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         }
     }
 
+    @Override
     public void destroy() {
         if (sc != null) {
             Main.unregisterActionShortcut(this);
