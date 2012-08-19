@@ -55,11 +55,22 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             }
         }
     }
+    
+    protected boolean isLayerAlreadyPresent() {
+        if (Main.map != null && Main.map.mapView != null) {
+            for (ImageryLayer layer : Main.map.mapView.getLayersOfType(ImageryLayer.class)) {
+                if (info.equals(layer.getInfo())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     @Override
     protected void updateEnabledState() {
-        // never enable blacklisted entries.
-        if (info.isBlacklisted()) {
+        // never enable blacklisted entries. Do not add same imagery layer twice (fix #2519)
+        if (info.isBlacklisted() || isLayerAlreadyPresent()) {
             setEnabled(false);
         } else if (info.getImageryType() == ImageryType.TMS || info.getImageryType() == ImageryType.BING || info.getImageryType() == ImageryType.SCANEX) {
             setEnabled(true);
