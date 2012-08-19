@@ -1,7 +1,5 @@
 package org.openstreetmap.josm.gui.widgets;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.Component;
 import java.io.File;
 import java.util.Collection;
@@ -13,7 +11,7 @@ import javax.swing.filechooser.FileFilter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
-import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.actions.SaveActionBase;
 
 /**
  * A chained utility class used to create and open {@link JFileChooser} dialogs.<br/>
@@ -205,18 +203,8 @@ public class JFileChooserManager {
 
             if (!open) {
                 File file = fc.getSelectedFile();
-                if (file != null && file.exists()) {
-                    ExtendedDialog dialog = new ExtendedDialog(
-                            Main.parent,
-                            tr("Overwrite"),
-                            new String[] {tr("Overwrite"), tr("Cancel")}
-                    );
-                    dialog.setContent(tr("File exists. Overwrite?"));
-                    dialog.setButtonIcons(new String[] {"save_as.png", "cancel.png"});
-                    dialog.showDialog();
-                    if (dialog.getValue() != 1) {
-                        return null;
-                    }
+                if (!SaveActionBase.confirmOverwrite(file)) {
+                    return null;
                 }
             }
         }

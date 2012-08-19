@@ -13,11 +13,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.io.Externalizable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -34,7 +35,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.gui.jmapviewer.AttributionSupport;
 import org.openstreetmap.josm.Main;
@@ -61,7 +61,10 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.WMSLayerExporter;
+import org.openstreetmap.josm.io.WMSLayerImporter;
 import org.openstreetmap.josm.io.imagery.Grabber;
 import org.openstreetmap.josm.io.imagery.HTMLGrabber;
 import org.openstreetmap.josm.io.imagery.WMSGrabber;
@@ -73,7 +76,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * This is a layer that grabs the current screen from an WMS server. The data
  * fetched this way is tiled and managed to the disc to reduce server load.
  */
-public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceChangedListener {
+public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceChangedListener, Externalizable {
 
     public static class PrecacheTask {
         private final ProgressMonitor progressMonitor;
@@ -458,7 +461,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                 }
             }
         }
-        cache.setAreaToCache(areaToCache);
+        if (cache != null) {
+            cache.setAreaToCache(areaToCache);
+        }
     }
 
     @Override public void visitBoundingBox(BoundingXYVisitor v) {
@@ -610,11 +615,13 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         requestQueueLock.lock();
         try {
 
-            ProjectionBounds b = getBounds(request);
-            // Checking for exact match is fast enough, no need to do it in separated thread
-            request.setHasExactMatch(cache.hasExactMatch(Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth));
-            if (request.isPrecacheOnly() && request.hasExactMatch())
-                return; // We already have this tile cached
+            if (cache != null) {
+                ProjectionBounds b = getBounds(request);
+                // Checking for exact match is fast enough, no need to do it in separated thread
+                request.setHasExactMatch(cache.hasExactMatch(Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth));
+                if (request.isPrecacheOnly() && request.hasExactMatch())
+                    return; // We already have this tile cached
+            }
 
             if (!requestQueue.contains(request) && !finishedRequests.contains(request) && !processingRequests.contains(request)) {
                 requestQueue.add(request);
@@ -648,7 +655,6 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     public class DownloadAction extends AbstractAction {
-        private static final long serialVersionUID = -7183852461015284020L;
         public DownloadAction() {
             super(tr("Download visible tiles"));
         }
@@ -775,22 +781,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         @Override
         public void actionPerformed(ActionEvent ev) {
             File f = SaveActionBase.createAndOpenSaveFileChooser(
-                    tr("Save WMS layer"), ".wms");
+                    tr("Save WMS layer"), WMSLayerImporter.FILE_FILTER);
             try {
-                if (f != null) {
-                    ObjectOutputStream oos = new ObjectOutputStream(
-                            new FileOutputStream(f)
-                            );
-                    oos.writeInt(serializeFormatVersion);
-                    oos.writeInt(dax);
-                    oos.writeInt(day);
-                    oos.writeInt(imageSize);
-                    oos.writeDouble(info.getPixelPerDegree());
-                    oos.writeObject(info.getName());
-                    oos.writeObject(info.getExtendedUrl());
-                    oos.writeObject(images);
-                    oos.close();
-                }
+                new WMSLayerExporter().exportData(f, WMSLayer.this);
             } catch (Exception ex) {
                 ex.printStackTrace(System.out);
             }
@@ -804,62 +797,23 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         @Override
         public void actionPerformed(ActionEvent ev) {
             JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true,
-                    false, tr("Load WMS layer"), "wms");
-            if(fc == null) return;
+                    false, tr("Load WMS layer"), WMSLayerImporter.FILE_FILTER, JFileChooser.FILES_ONLY, null);
+            if (fc == null) return;
             File f = fc.getSelectedFile();
             if (f == null) return;
-            try
-            {
-                FileInputStream fis = new FileInputStream(f);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                int sfv = ois.readInt();
-                if (sfv != serializeFormatVersion) {
-                    JOptionPane.showMessageDialog(Main.parent,
-                            tr("Unsupported WMS file version; found {0}, expected {1}", sfv, serializeFormatVersion),
-                            tr("File Format Error"),
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                autoDownloadEnabled = false;
-                dax = ois.readInt();
-                day = ois.readInt();
-                imageSize = ois.readInt();
-                info.setPixelPerDegree(ois.readDouble());
-                doSetName((String)ois.readObject());
-                info.setExtendedUrl((String) ois.readObject());
-                images = (GeorefImage[][])ois.readObject();
-                ois.close();
-                fis.close();
-                for (GeorefImage[] imgs : images) {
-                    for (GeorefImage img : imgs) {
-                        if (img != null) {
-                            img.setLayer(WMSLayer.this);
-                        }
-                    }
-                }
-                settingsChanged = true;
-                mv.repaint();
-                if (cache != null) {
-                    cache.saveIndex();
-                    cache = null;
-                }
-                if(info.getUrl() != null)
-                {
-                    cache = new WmsCache(info.getUrl(), imageSize);
-                    startGrabberThreads();
-                }
-            }
-            catch (Exception ex) {
-                // FIXME be more specific
-                ex.printStackTrace(System.out);
-                JOptionPane.showMessageDialog(Main.parent,
-                        tr("Error loading file"),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE);
+            try {
+                new WMSLayerImporter(WMSLayer.this).importData(f, NullProgressMonitor.INSTANCE);
+            } catch (InvalidClassException ex) {
+                JOptionPane.showMessageDialog(Main.parent, ex.getMessage(), tr("File Format Error"), JOptionPane.ERROR_MESSAGE);
+                return;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(Main.parent, ex.getMessage(), tr("Error loading file"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
     }
+    
     /**
      * This action will add a WMS layer menu entry with the current WMS layer
      * URL and name extended by the current resolution.
@@ -1051,4 +1005,50 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         return !done;
     }
 
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(serializeFormatVersion);
+        out.writeInt(dax);
+        out.writeInt(day);
+        out.writeInt(imageSize);
+        out.writeDouble(info.getPixelPerDegree());
+        out.writeObject(info.getName());
+        out.writeObject(info.getExtendedUrl());
+        out.writeObject(images);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        int sfv = in.readInt();
+        if (sfv != serializeFormatVersion) {
+            throw new InvalidClassException(tr("Unsupported WMS file version; found {0}, expected {1}", sfv, serializeFormatVersion));
+        }
+        autoDownloadEnabled = false;
+        dax = in.readInt();
+        day = in.readInt();
+        imageSize = in.readInt();
+        info.setPixelPerDegree(in.readDouble());
+        doSetName((String)in.readObject());
+        info.setExtendedUrl((String)in.readObject());
+        images = (GeorefImage[][])in.readObject();
+        
+        for (GeorefImage[] imgs : images) {
+            for (GeorefImage img : imgs) {
+                if (img != null) {
+                    img.setLayer(WMSLayer.this);
+                }
+            }
+        }
+        
+        settingsChanged = true;
+        mv.repaint();
+        if (cache != null) {
+            cache.saveIndex();
+            cache = null;
+        }
+        if (info.getUrl() != null) {
+            cache = new WmsCache(info.getUrl(), imageSize);
+            startGrabberThreads();
+        }
+    }
 }
