@@ -128,7 +128,7 @@ public class AutoScaleAction extends JosmAction {
     }
 
     public void autoScale()  {
-        if (Main.map != null) {
+        if (Main.isDisplayingMapView()) {
             if (mode.equals("previous")) {
                 Main.map.mapView.zoomPrevious();
             } else if (mode.equals("next")) {
@@ -236,9 +236,9 @@ public class AutoScaleAction extends JosmAction {
                 setEnabled(true);
             }
         } else if ("previous".equals(mode)) {
-            setEnabled(Main.map != null && Main.map.mapView != null && Main.map.mapView.hasZoomUndoEntries());
+            setEnabled(Main.isDisplayingMapView() && Main.map.mapView.hasZoomUndoEntries());
         } else if ("next".equals(mode)) {
-            setEnabled(Main.map != null && Main.map.mapView != null && Main.map.mapView.hasZoomRedoEntries());
+            setEnabled(Main.isDisplayingMapView() && Main.map.mapView.hasZoomRedoEntries());
         } else {
             setEnabled(
                     Main.isDisplayingMapView()

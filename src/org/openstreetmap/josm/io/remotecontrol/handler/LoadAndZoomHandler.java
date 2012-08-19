@@ -169,7 +169,7 @@ public class LoadAndZoomHandler extends RequestHandler
                     if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
                         AutoScaleAction.autoScale("selection");
                     }
-                    if (Main.map != null && Main.map.relationListDialog != null) {
+                    if (Main.isDisplayingMapView() && Main.map.relationListDialog != null) {
                         Main.map.relationListDialog.selectRelations(null); // unselect all relations to fix #7342
                         Main.map.relationListDialog.dataChanged(null);
                         Main.map.relationListDialog.selectRelations(Utils.filteredCollection(newSel, Relation.class));
@@ -220,7 +220,7 @@ public class LoadAndZoomHandler extends RequestHandler
 
         // make sure this isn't called unless there *is* a MapView
         //
-        if (Main.map != null && Main.map.mapView != null) {
+        if (Main.isDisplayingMapView()) {
             Main.worker.execute(new Runnable() {
                 public void run() {
                     BoundingXYVisitor bbox = new BoundingXYVisitor();

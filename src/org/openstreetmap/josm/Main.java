@@ -821,7 +821,7 @@ abstract public class Main {
     public static void setProjection(Projection p) {
         CheckParameterUtil.ensureParameterNotNull(p);
         Projection oldValue = proj;
-        Bounds b = (Main.map != null && Main.map.mapView != null) ? Main.map.mapView.getRealBounds() : null;
+        Bounds b = isDisplayingMapView() ? map.mapView.getRealBounds() : null;
         proj = p;
         fireProjectionChanged(oldValue, proj, b);
     }

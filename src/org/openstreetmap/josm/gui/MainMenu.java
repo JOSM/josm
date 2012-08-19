@@ -592,8 +592,7 @@ public class MainMenu extends JMenuBar {
          *
          */
         protected void refreshEnabled() {
-            presetsMenu.setEnabled(Main.map != null
-                    && Main.map.mapView !=null
+            presetsMenu.setEnabled(Main.isDisplayingMapView()
                     && Main.map.mapView.getEditLayer() != null
             );
         }

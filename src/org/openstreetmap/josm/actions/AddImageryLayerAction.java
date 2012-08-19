@@ -57,7 +57,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     }
     
     protected boolean isLayerAlreadyPresent() {
-        if (Main.map != null && Main.map.mapView != null) {
+        if (Main.isDisplayingMapView()) {
             for (ImageryLayer layer : Main.map.mapView.getLayersOfType(ImageryLayer.class)) {
                 if (info.equals(layer.getInfo())) {
                     return true;
@@ -74,7 +74,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             setEnabled(false);
         } else if (info.getImageryType() == ImageryType.TMS || info.getImageryType() == ImageryType.BING || info.getImageryType() == ImageryType.SCANEX) {
             setEnabled(true);
-        } else if (Main.map != null && Main.map.mapView != null && !Main.map.mapView.getAllLayers().isEmpty()) {
+        } else if (Main.isDisplayingMapView() && !Main.map.mapView.getAllLayers().isEmpty()) {
             setEnabled(true);
         } else {
             setEnabled(false);

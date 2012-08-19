@@ -222,7 +222,7 @@ public class ImageViewerDialog extends ToggleDialog {
             //                return;
             //            }                     TODO: pop up image dialog but don't load image again
 
-            if (centerView && Main.map != null && entry != null && entry.getPos() != null) {
+            if (centerView && Main.isDisplayingMapView() && entry != null && entry.getPos() != null) {
                 Main.map.mapView.zoomTo(entry.getPos());
             }
 

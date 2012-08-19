@@ -22,6 +22,7 @@ import javax.swing.JSeparator;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.SaveAction;
+import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
@@ -425,5 +426,42 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
                             tr("Warning"),
                             JOptionPane.WARNING_MESSAGE);
         }
+    }
+
+    /**
+     * Initializes the layer after a successful load of data from a file
+     * @since 5459
+     */
+    public void onPostLoadFromFile() {
+        // To be overriden if needed
+    }
+    
+    /**
+     * Replies the savable state of this layer (i.e if it can be saved through a "File->Save" dialog).
+     * @return true if this layer can be saved to a file
+     * @since 5459
+     */
+    public boolean isSavable() {
+        return false;
+    }
+    
+    /**
+     * Checks whether it is ok to launch a save (whether we have data, there is no conflict etc.)
+     * @return <code>true</code>, if it is safe to save.
+     * @since 5459
+     */
+    public boolean checkSaveConditions() {
+        return true;
+    }
+    
+    /**
+     * Creates a new "Save" dialog for this layer and makes it visible.<br/>
+     * When the user has chosen a file, checks the file extension, and confirms overwrite if needed.
+     * @return The output {@code File}
+     * @since 5459
+     * @see SaveActionBase#createAndOpenSaveFileChooser
+     */
+    public File createAndOpenSaveFileChooser() {
+        return SaveActionBase.createAndOpenSaveFileChooser(tr("Save Layer"), "lay");
     }
 }

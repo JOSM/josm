@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.io.AllFormatsImporter;
 import org.openstreetmap.josm.io.FileExporter;
 import org.openstreetmap.josm.io.FileImporter;
@@ -50,14 +51,16 @@ public class ExtensionFileFilter extends FileFilter {
                 "org.openstreetmap.josm.io.NMEAImporter",
                 "org.openstreetmap.josm.io.OsmBzip2Importer",
                 "org.openstreetmap.josm.io.JpgImporter",
+                "org.openstreetmap.josm.io.WMSLayerImporter",
                 "org.openstreetmap.josm.io.AllFormatsImporter"
         };
 
         for (String classname : importerNames) {
             try {
-                Class<?> klass = Class.forName(classname);
-                importers.add((FileImporter) klass.newInstance());
-            } catch (Exception e) {}
+                FileImporter importer = (FileImporter) Class.forName(classname).newInstance();
+                importers.add(importer);
+                MapView.addLayerChangeListener(importer);
+            } catch (Throwable t) { }
         }
 
         exporters = new ArrayList<FileExporter>();
@@ -68,13 +71,15 @@ public class ExtensionFileFilter extends FileFilter {
                 "org.openstreetmap.josm.io.OsmGzipExporter",
                 "org.openstreetmap.josm.io.OsmBzip2Exporter",
                 "org.openstreetmap.josm.io.GeoJSONExporter",
+                "org.openstreetmap.josm.io.WMSLayerExporter"
         };
 
         for (String classname : exporterNames) {
             try {
-                Class<?> klass = Class.forName(classname);
-                exporters.add((FileExporter)klass.newInstance());
-            } catch (Exception e) {}
+                FileExporter exporter = (FileExporter)Class.forName(classname).newInstance();
+                exporters.add(exporter);
+                MapView.addLayerChangeListener(exporter);
+            } catch (Throwable t) { }
         }
     }
 
@@ -133,17 +138,17 @@ public class ExtensionFileFilter extends FileFilter {
     }
 
     /**
-     * Replies an ordered list of {@link ExtensionFileFilter}s for exporting.
+     * Replies an ordered list of enabled {@link ExtensionFileFilter}s for exporting.
      * The list is ordered according to their description, an {@link AllFormatsImporter}
      * is append at the end.
      *
-     * @return an ordered list of {@link ExtensionFileFilter}s for exporting.
+     * @return an ordered list of enabled {@link ExtensionFileFilter}s for exporting.
      * @since 2029
      */
     public static List<ExtensionFileFilter> getExportExtensionFileFilters() {
         LinkedList<ExtensionFileFilter> filters = new LinkedList<ExtensionFileFilter>();
         for (FileExporter exporter : exporters) {
-            if (filters.contains(exporter.filter)) {
+            if (filters.contains(exporter.filter) || !exporter.isEnabled()) {
                 continue;
             }
             filters.add(exporter.filter);

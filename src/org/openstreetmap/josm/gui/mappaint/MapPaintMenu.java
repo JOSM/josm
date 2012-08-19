@@ -54,7 +54,7 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
 
         @Override
         public void updateEnabledState() {
-            setEnabled(Main.map != null && Main.main.getEditLayer() != null);
+            setEnabled(Main.isDisplayingMapView() && Main.main.getEditLayer() != null);
         }
     }
     private final Map<String, MapPaintAction> actions = new HashMap<String, MapPaintAction>();

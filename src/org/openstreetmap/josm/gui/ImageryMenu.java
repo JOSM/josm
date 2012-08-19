@@ -23,7 +23,6 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
@@ -68,19 +67,6 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
     JMenuItem singleOffset = new JMenuItem(offsetAction);
     JMenuItem offsetMenuItem = singleOffset;
     Map_Rectifier_WMSmenuAction rectaction = new Map_Rectifier_WMSmenuAction();
-    JosmAction blankmenu = new JosmAction(
-            tr("Blank Layer"), /* ICON */"blankmenu", tr("Open a blank WMS layer to load data from a file"), null, false) {
-        @Override
-        public void actionPerformed(ActionEvent ev) {
-            if (!isEnabled()) return;
-            Main.main.addLayer(new WMSLayer());
-        }
-
-        @Override
-        protected void updateEnabledState() {
-            setEnabled(Main.map != null && Main.map.mapView != null && !Main.map.mapView.getAllLayers().isEmpty());
-        }
-    };
     int offsPos;
 
     public ImageryMenu() {
@@ -101,8 +87,6 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
         addSeparator();
         offsPos = getMenuComponentCount();
         add(offsetMenuItem);
-        addSeparator();
-        add(new JMenuItem(blankmenu));
     }
 
     private JMenuItem getNewOffsetMenu(){

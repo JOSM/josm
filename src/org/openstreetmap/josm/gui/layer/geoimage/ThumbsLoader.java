@@ -44,7 +44,7 @@ public class ThumbsLoader implements Runnable {
 
             data.get(i).thumbnail = loadThumb(data.get(i));
 
-            if (Main.map != null && Main.map.mapView != null) {
+            if (Main.isDisplayingMapView()) {
                 layer.updateOffscreenBuffer = true;
                 Main.map.mapView.repaint();
             }

@@ -18,7 +18,7 @@ public class LassoModeAction extends MapMode {
 
     @Override
     public void enterMode() {
-        if (Main.map != null) {
+        if (Main.isDisplayingMapView()) {
             Main.map.mapModeSelect.setLassoMode(true);
             Main.map.mapModeSelect.enterMode();
         }
@@ -27,8 +27,10 @@ public class LassoModeAction extends MapMode {
 
     @Override
     public void exitMode() {
-        Main.map.mapModeSelect.setLassoMode(false);
-        Main.map.mapModeSelect.exitMode();
+        if (Main.isDisplayingMapView()) {
+            Main.map.mapModeSelect.setLassoMode(false);
+            Main.map.mapModeSelect.exitMode();
+        }
         super.exitMode();
     }
 }

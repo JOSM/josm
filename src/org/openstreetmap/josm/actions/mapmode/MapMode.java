@@ -70,8 +70,9 @@ abstract public class MapMode extends JosmAction implements MouseListener, Mouse
      * Call selectMapMode(this) on the parent mapFrame.
      */
     public void actionPerformed(ActionEvent e) {
-        if (Main.map != null)
+        if (Main.isDisplayingMapView()) {
             Main.map.selectMapMode(this);
+        }
     }
 
     // By default, all tools will work with all layers. Can be overwritten to require

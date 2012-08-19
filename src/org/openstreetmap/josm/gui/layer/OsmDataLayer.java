@@ -41,6 +41,7 @@ import javax.swing.JTextArea;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
+import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.actions.ToggleUploadDiscouragedLayerAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
@@ -70,6 +71,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MapView;
@@ -654,10 +656,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         return getAssociatedFile() != null && requiresSaveToFile;
     }
 
-    /**
-     * Initializes the layer after a successful load of OSM data from a file
-     *
-     */
+    @Override
     public void onPostLoadFromFile() {
         setRequiresSaveToFile(false);
         setRequiresUploadToServer(data.isModified());
@@ -743,5 +742,61 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
 
     public final void setUploadDiscouraged(boolean uploadDiscouraged) {
         data.setUploadDiscouraged(uploadDiscouraged);
+    }
+
+    @Override
+    public boolean isSavable() {
+        return true; // With OsmExporter
+    }
+
+    @Override
+    public boolean checkSaveConditions() {
+        if (isDataSetEmpty()) {
+            ExtendedDialog dialog = new ExtendedDialog(
+                    Main.parent,
+                    tr("Empty document"),
+                    new String[] {tr("Save anyway"), tr("Cancel")}
+            );
+            dialog.setContent(tr("The document contains no data."));
+            dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
+            dialog.showDialog();
+            if (dialog.getValue() != 1) return false;
+        }
+
+        ConflictCollection conflicts = getConflicts();
+        if (conflicts != null && !conflicts.isEmpty()) {
+            ExtendedDialog dialog = new ExtendedDialog(
+                    Main.parent,
+                    /* I18N: Display title of the window showing conflicts */
+                    tr("Conflicts"),
+                    new String[] {tr("Reject Conflicts and Save"), tr("Cancel")}
+            );
+            dialog.setContent(tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"));
+            dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
+            dialog.showDialog();
+            if (dialog.getValue() != 1) return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Check the data set if it would be empty on save. It is empty, if it contains
+     * no objects (after all objects that are created and deleted without being
+     * transferred to the server have been removed).
+     *
+     * @return <code>true</code>, if a save result in an empty data set.
+     */
+    private boolean isDataSetEmpty() {
+        if (data != null) {
+            for (OsmPrimitive osm : data.allNonDeletedPrimitives())
+                if (!osm.isDeleted() || !osm.isNewOrUndeleted())
+                    return false;
+        }
+        return true;
+    }
+
+    @Override
+    public File createAndOpenSaveFileChooser() {
+        return SaveActionBase.createAndOpenSaveFileChooser(tr("Save OSM file"), "osm");
     }
 }

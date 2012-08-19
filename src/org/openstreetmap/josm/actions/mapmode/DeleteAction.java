@@ -325,7 +325,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.map != null && Main.map.mapView != null && Main.map.mapView.isActiveLayerDrawable());
+        setEnabled(Main.isDisplayingMapView() && Main.map.mapView.isActiveLayerDrawable());
     }
 
     /**

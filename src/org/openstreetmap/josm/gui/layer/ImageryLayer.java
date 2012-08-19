@@ -71,6 +71,14 @@ public abstract class ImageryLayer extends Layer {
     protected boolean offsetServerUsed;
     protected OffsetServerThread offsetServerThread;
 
+    private final ImageryAdjustAction adjustAction = new ImageryAdjustAction(this);
+    private final AbstractAction useServerOffsetAction = new AbstractAction(tr("(use server offset)")) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            enableOffsetServer(true);
+        }
+    };
+
     protected OffsetServerThread createoffsetServerThread() {
         return new OffsetServerThread(new OsmosnimkiOffsetServer(
                 OsmosnimkiOffsetServer.PROP_SERVER_URL.get()));
@@ -178,14 +186,6 @@ public abstract class ImageryLayer extends Layer {
             return false;
         }
     }
-
-    ImageryAdjustAction adjustAction = new ImageryAdjustAction(this);
-    AbstractAction useServerOffsetAction = new AbstractAction(tr("(use server offset)")) {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            enableOffsetServer(true);
-        }
-    };
 
     public void enableOffsetServer(boolean enable) {
         offsetServerUsed = enable;
@@ -309,5 +309,13 @@ public abstract class ImageryLayer extends Layer {
             }
             offsetServerUsed = false;
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.openstreetmap.josm.gui.layer.Layer#destroy()
+     */
+    @Override
+    public void destroy() {
+        adjustAction.destroy();
     }
 }

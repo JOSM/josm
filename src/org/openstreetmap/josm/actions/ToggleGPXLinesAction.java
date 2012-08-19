@@ -20,7 +20,7 @@ public class ToggleGPXLinesAction extends JosmAction {
 
     public void actionPerformed(ActionEvent e) {
         Main.pref.put("draw.rawgps.lines", !Main.pref.getBoolean("draw.rawgps.lines", true));
-        if(Main.map != null) {
+        if (Main.isDisplayingMapView()) {
             Main.map.mapView.repaint();
         }
     }

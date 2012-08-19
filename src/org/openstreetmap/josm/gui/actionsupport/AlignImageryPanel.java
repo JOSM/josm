@@ -1,25 +1,24 @@
 package org.openstreetmap.josm.gui.actionsupport;
 
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.BoxLayout;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.Box;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
-import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
 
@@ -49,7 +48,7 @@ public class AlignImageryPanel extends JPanel {
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed( ActionEvent e ) {
-                if (Main.map!=null) {
+                if (Main.isDisplayingMapView()) {
                     Main.map.removeTopPanel(AlignImageryPanel.class);
                     Main.pref.put(PREF, false);
                 }
@@ -72,7 +71,7 @@ public class AlignImageryPanel extends JPanel {
     }
 
     public static void addNagPanelIfNeeded() {
-        if( Main.map != null && !Main.pref.getBoolean("expert") && Main.pref.getBoolean(PREF, true) ) {
+        if (Main.isDisplayingMapView() && !Main.pref.getBoolean("expert") && Main.pref.getBoolean(PREF, true) ) {
             if (Main.map.getTopPanel(AlignImageryPanel.class) == null) {
                 double w = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
                 AlignImageryPanel p = new AlignImageryPanel(w>1300);
