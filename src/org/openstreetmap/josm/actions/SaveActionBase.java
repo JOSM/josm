@@ -223,9 +223,9 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 fn += "." + extension;
             }
             file = new File(fn);
+            if (!confirmOverwrite(file))
+                return null;
         }
-        if (!confirmOverwrite(file))
-            return null;
         return file;
     }
 

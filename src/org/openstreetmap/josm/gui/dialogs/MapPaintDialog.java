@@ -528,13 +528,7 @@ public class MapPaintDialog extends ToggleDialog {
             JFileChooser fc = fcm.openFileChooser();
             if (fc == null)
                 return;
-
-            File file = fc.getSelectedFile();
-
-            if (!SaveActionBase.confirmOverwrite(file))
-                return;
-
-            Main.worker.submit(new SaveToFileTask(s, file));
+            Main.worker.submit(new SaveToFileTask(s, fc.getSelectedFile()));
         }
 
         private class SaveToFileTask extends PleaseWaitRunnable {
