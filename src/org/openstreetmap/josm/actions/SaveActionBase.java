@@ -104,8 +104,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
             setEnabled(false);
             return;
         }
-        boolean check =  Main.map != null
-        && Main.map.mapView !=null
+        boolean check = Main.isDisplayingMapView()
         && Main.map.mapView.getActiveLayer() != null;
         if(!check) {
             setEnabled(false);

@@ -314,7 +314,7 @@ public class DownloadDialog extends JDialog  {
         }
         tpDownloadAreaSelectors.setSelectedIndex(idx);
 
-        if (Main.map != null) {
+        if (Main.isDisplayingMapView()) {
             MapView mv = Main.map.mapView;
             currentBounds = new Bounds(
                     mv.getLatLon(0, mv.getHeight()),

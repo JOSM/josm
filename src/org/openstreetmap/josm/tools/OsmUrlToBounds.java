@@ -151,7 +151,7 @@ public class OsmUrlToBounds {
         int tileSizeInPixels = 256;
         int height = Toolkit.getDefaultToolkit().getScreenSize().height;
         int width = Toolkit.getDefaultToolkit().getScreenSize().width;
-        if (Main.map != null && Main.map.mapView != null) {
+        if (Main.isDisplayingMapView()) {
             height = Main.map.mapView.getHeight();
             width = Main.map.mapView.getWidth();
         }

@@ -102,7 +102,7 @@ public class OffsetBookmark {
 
     public static void bookmarkOffset(String name, ImageryLayer layer) {
         LatLon center;
-        if (Main.map != null && Main.map.mapView != null) {
+        if (Main.isDisplayingMapView()) {
             center = Main.getProjection().eastNorth2latlon(Main.map.mapView.getCenter());
         } else {
             center = new LatLon(0,0);

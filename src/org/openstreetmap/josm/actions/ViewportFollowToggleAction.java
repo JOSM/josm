@@ -63,6 +63,6 @@ public class ViewportFollowToggleAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.map != null && Main.main.getEditLayer() != null);
+        setEnabled(Main.isDisplayingMapView() && Main.main.getEditLayer() != null);
     }
 }

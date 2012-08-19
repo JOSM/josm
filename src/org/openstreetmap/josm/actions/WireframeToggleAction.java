@@ -66,7 +66,7 @@ public class WireframeToggleAction extends JosmAction {
 	        } 
         
         notifySelectedState();
-        if (Main.map != null) {
+        if (Main.isDisplayingMapView()) {
             Main.map.mapView.repaint();
         }
     }
@@ -77,7 +77,7 @@ public class WireframeToggleAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.map != null && Main.main.getEditLayer() != null);
+        setEnabled(Main.isDisplayingMapView() && Main.main.getEditLayer() != null);
     }
 
     public boolean isSelected() {

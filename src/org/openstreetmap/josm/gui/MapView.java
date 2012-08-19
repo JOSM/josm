@@ -142,7 +142,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     public static void addEditLayerChangeListener(EditLayerChangeListener listener, boolean initialFire) {
         addEditLayerChangeListener(listener);
         if (initialFire) {
-            if (Main.map != null && Main.map.mapView != null && Main.map.mapView.getEditLayer() != null) {
+            if (Main.isDisplayingMapView() && Main.map.mapView.getEditLayer() != null) {
                 fireEditLayerChanged(null, Main.map.mapView.getEditLayer());
             }
         }
@@ -622,7 +622,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         border.intersect(viewport);
         tempG.draw(border);
 
-        if (Main.map != null && Main.map.filterDialog != null) {
+        if (Main.isDisplayingMapView() && Main.map.filterDialog != null) {
             Main.map.filterDialog.drawOSDText(tempG);
         }
 

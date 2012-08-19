@@ -200,7 +200,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
                 }
             }
             updateOffsetIntl();
-            if (Main.map != null) {
+            if (Main.isDisplayingMapView()) {
                 Main.map.repaint();
             }
         }
