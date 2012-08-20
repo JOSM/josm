@@ -7,14 +7,14 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 
 public abstract class CachedProperty<T> extends AbstractProperty<T> implements PreferenceChangedListener {
 
-    protected final String defaultValue;
+    private final String defaultValueAsString;
     private T value;
     private int updateCount;
 
-    protected CachedProperty(String key, String defaultValue) {
-        super(key);
+    protected CachedProperty(String key, T defaultValue, String defaultValueAsString) {
+        super(key, defaultValue);
         Main.pref.addPreferenceChangeListener(this);
-        this.defaultValue = defaultValue;
+        this.defaultValueAsString = defaultValueAsString;
         updateValue();
     }
 
@@ -29,6 +29,7 @@ public abstract class CachedProperty<T> extends AbstractProperty<T> implements P
 
     protected abstract T fromString(String s);
 
+    @Override
     public T get() {
         return value;
     }
@@ -39,17 +40,18 @@ public abstract class CachedProperty<T> extends AbstractProperty<T> implements P
         updateCount++;
     }
 
+    @Override
+    public final boolean put(T value) {
+        // Not used
+        throw new IllegalAccessError("You cannot use put(T). Use put(String) instead.");
+    }
+
     public int getUpdateCount() {
         return updateCount;
     }
 
-    @Override
-    public T getDefaultValue() {
-        return fromString(getDefaultValueAsString());
-    }
-
     public String getDefaultValueAsString() {
-        return defaultValue;
+        return defaultValueAsString;
     }
 
     public String getAsString() {

@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -128,7 +127,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
     private JPanel buildCommonSettingsPanel(final PreferenceTabbedPane gui) {
         final JPanel p = new JPanel(new GridBagLayout());
 
-        this.colFadeColor = ImageryLayer.getFadeColor();
+        this.colFadeColor = ImageryLayer.PROP_FADE_COLOR.get();
         this.btnFadeColor = new JButton();
 
         this.btnFadeColor.addActionListener(new ActionListener() {
@@ -195,8 +194,8 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
         overlapCheckBox = new JCheckBox(tr("Overlap tiles"));
         JLabel labelEast = new JLabel(tr("% of east:"));
         JLabel labelNorth = new JLabel(tr("% of north:"));
-        spinEast = new JSpinner(new SpinnerNumberModel(WMSLayer.PROP_OVERLAP_EAST.get(), 1, 50, 1));
-        spinNorth = new JSpinner(new SpinnerNumberModel(WMSLayer.PROP_OVERLAP_NORTH.get(), 1, 50, 1));
+        spinEast = new JSpinner(new SpinnerNumberModel(WMSLayer.PROP_OVERLAP_EAST.get().intValue(), 1, 50, 1));
+        spinNorth = new JSpinner(new SpinnerNumberModel(WMSLayer.PROP_OVERLAP_NORTH.get().intValue(), 1, 50, 1));
 
         JPanel overlapPanel = new JPanel(new FlowLayout());
         overlapPanel.add(overlapCheckBox);
@@ -210,7 +209,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
         // Simultaneous connections
         p.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
         JLabel labelSimConn = new JLabel(tr("Simultaneous connections"));
-        spinSimConn = new JSpinner(new SpinnerNumberModel(WMSLayer.PROP_SIMULTANEOUS_CONNECTIONS.get(), 1, 30, 1));
+        spinSimConn = new JSpinner(new SpinnerNumberModel(WMSLayer.PROP_SIMULTANEOUS_CONNECTIONS.get().intValue(), 1, 30, 1));
         JPanel overlapPanelSimConn = new JPanel(new FlowLayout(FlowLayout.LEFT));
         overlapPanelSimConn.add(labelSimConn);
         overlapPanelSimConn.add(spinSimConn);
@@ -351,7 +350,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
         TMSLayer.PROP_TILECACHE_DIR.put(this.tilecacheDir.getText());
 
         ImageryLayer.PROP_FADE_AMOUNT.put(this.fadeAmount.getValue());
-        ImageryLayer.setFadeColor(this.colFadeColor);
+        ImageryLayer.PROP_FADE_COLOR.put(this.colFadeColor);
         ImageryLayer.PROP_SHARPEN_LEVEL.put(sharpen.getSelectedIndex());
 
         return restartRequired;

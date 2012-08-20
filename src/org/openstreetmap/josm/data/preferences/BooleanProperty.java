@@ -3,25 +3,27 @@ package org.openstreetmap.josm.data.preferences;
 
 import org.openstreetmap.josm.Main;
 
+/**
+ * A property containing a {@code Boolean} value.
+ */
 public class BooleanProperty extends AbstractProperty<Boolean> {
 
-    protected final boolean defaultValue;
-
+    /**
+     * Constructs a new {@code BooleanProperty}.
+     * @param key The property key
+     * @param defaultValue The default value
+     */
     public BooleanProperty(String key, boolean defaultValue) {
-        super(key);
-        this.defaultValue = defaultValue;
-    }
-
-    public boolean get() {
-        return Main.pref.getBoolean(getKey(), defaultValue);
-    }
-
-    public boolean put(boolean value) {
-        return Main.pref.put(getKey(), value);
+        super(key, defaultValue);
     }
 
     @Override
-    public Boolean getDefaultValue() {
-        return defaultValue;
+    public Boolean get() {
+        return Main.pref.getBoolean(getKey(), defaultValue);
+    }
+
+    @Override
+    public boolean put(Boolean value) {
+        return Main.pref.put(getKey(), value);
     }
 }
