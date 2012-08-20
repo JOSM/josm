@@ -278,7 +278,7 @@ public class AddWMSLayerPanel extends JPanel {
     private String buildGetMapUrl() {
         StringBuilder a = new StringBuilder();
         a.append(buildRootUrl());
-        a.append("FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=");
+        a.append("FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=");
         a.append(commaSepLayerList());
         a.append("&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}");
 
