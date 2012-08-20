@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -23,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,7 +49,6 @@ import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.preferences.ParametrizedEnumProperty;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.ShowHideButtonListener;
@@ -55,6 +56,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.help.Helpful;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -365,6 +367,19 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         closeDetachedDialog();
         hideNotify();
         Main.main.menu.windowMenu.remove(windowMenuItem);
+        Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+        destroyComponents(this);
+    }
+
+    private void destroyComponents(Component component) {
+        if (component instanceof Container) {
+            for (Component c: ((Container)component).getComponents()) {
+                destroyComponents(c);
+            }
+        }
+        if (component instanceof Destroyable) {
+            ((Destroyable) component).destroy();
+        }
     }
 
     /**

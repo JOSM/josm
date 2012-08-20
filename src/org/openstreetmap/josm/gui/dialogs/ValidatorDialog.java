@@ -32,6 +32,7 @@ import javax.swing.tree.TreePath;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.ValidateAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -109,7 +110,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         tree.addMouseListener(new ClickWatch());
         tree.addTreeSelectionListener(new SelectionWatch());
         InputMapUtils.unassignCtrlShiftUpDown(tree, JComponent.WHEN_FOCUSED);
-                
+
         List<SideButton> buttons = new LinkedList<SideButton>();
 
         selectButton = new SideButton(new AbstractAction() {
@@ -124,11 +125,11 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             }
         });
         InputMapUtils.addEnterAction(tree, selectButton.getAction());
-        
+
         selectButton.setEnabled(false);
         buttons.add(selectButton);
 
-        buttons.add(new SideButton(Main.main.validator.validateAction));
+        buttons.add(new SideButton(new ValidateAction()));
 
         fixButton = new SideButton(new AbstractAction() {
             {
@@ -415,8 +416,8 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
                 hasFixes = hasFixes || error.isFixable();
                 if (addSelected) {
-//                    sel.addAll(error.getPrimitives()); // was selecting already deleted primitives! see #6640
-                      sel.addAll(error.getSelectablePrimitives());
+                    //                    sel.addAll(error.getPrimitives()); // was selecting already deleted primitives! see #6640
+                    sel.addAll(error.getSelectablePrimitives());
                 }
             }
         }

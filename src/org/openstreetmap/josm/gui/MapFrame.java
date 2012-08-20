@@ -51,6 +51,7 @@ import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.actions.mapmode.ZoomAction;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.ChangesetDialog;
 import org.openstreetmap.josm.gui.dialogs.CommandStackDialog;
@@ -146,16 +147,16 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         setSize(400,400);
         setLayout(new BorderLayout());
 
-        
+
         mapView = new MapView(contentPane);
 
         new FileDrop(mapView);
-        
-        leftPanel = new JPanel(); 
+
+        leftPanel = new JPanel();
         leftPanel.setLayout(new GridBagLayout());
-        
-        leftPanel.add(mapView, GBC.std().fill()); 
- 	
+
+        leftPanel.add(mapView, GBC.std().fill());
+
         // toolbar
         toolBarActions.setFloatable(false);
         addMapMode(new IconToggleButton(mapModeSelect = new SelectAction(this)));
@@ -255,6 +256,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     public void destroy() {
         MapView.removeLayerChangeListener(this);
         dialogsPanel.destroy();
+        Main.pref.removePreferenceChangeListener(sidetoolbarPreferencesChangedListener);
         for (int i = 0; i < toolBarActions.getComponentCount(); ++i) {
             if (toolBarActions.getComponent(i) instanceof Destroyable) {
                 ((Destroyable)toolBarActions.getComponent(i)).destroy();
@@ -430,7 +432,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
             }
         }));
 
-        Main.pref.addPreferenceChangeListener(new Preferences.PreferenceChangedListener() {
+        sidetoolbarPreferencesChangedListener = new Preferences.PreferenceChangedListener() {
 
             @Override
             public void preferenceChanged(PreferenceChangeEvent e) {
@@ -438,7 +440,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
                     toToggle.setVisible(Main.pref.getBoolean("sidetoolbar.visible"));
                 }
             }
-        });
+        };
+        Main.pref.addPreferenceChangeListener(sidetoolbarPreferencesChangedListener);
 
         if (statusLine != null && Main.pref.getBoolean("statusline.visible", true)) {
             panel.add(statusLine, BorderLayout.SOUTH);
@@ -538,33 +541,32 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     public void rememberToggleDialogWidth() {
         Main.pref.putInteger("toggleDialogs.width", dialogsPanel.getWidth());
     }
-    
-     /*
+
+    /*
      * Remove panel from top of MapView by class
      */
-     public void removeTopPanel(Class<?> type) {
+    public void removeTopPanel(Class<?> type) {
         int n = leftPanel.getComponentCount();
         for (int i=0; i<n; i++) {
             Component c = leftPanel.getComponent(i);
             if (type.isInstance(c)) {
                 leftPanel.remove(i);
                 leftPanel.doLayout();
-//                repaint();
+                //                repaint();
                 return;
             }
         }
     }
-    
+
     /*
-    * Find panel on top of MapView by class
-    */
+     * Find panel on top of MapView by class
+     */
     public <T> T getTopPanel(Class<T> type) {
         int n = leftPanel.getComponentCount();
         for (int i=0; i<n; i++) {
             Component c = leftPanel.getComponent(i);
-            if (type.isInstance(c)) {
+            if (type.isInstance(c))
                 return type.cast(c);
-            }
         }
         return null;
     }
@@ -589,6 +591,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      * the mapMode listeners
      */
     private static final CopyOnWriteArrayList<MapModeChangeListener> mapModeChangeListeners = new CopyOnWriteArrayList<MapModeChangeListener>();
+
+    private PreferenceChangedListener sidetoolbarPreferencesChangedListener;
     /**
      * Adds a mapMode change listener
      *

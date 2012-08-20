@@ -36,9 +36,9 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
     private final static String separator = System.getProperty("file.separator");
     private final static String ellipsis = "…" + separator;
 
-    private final static JLabel lblLayerName = new JLabel();
-    private final static JLabel lblFilename = new JLabel("");
-    private final static JTextField tfFilename = new JTextField();
+    private final JLabel lblLayerName = new JLabel();
+    private final JLabel lblFilename = new JLabel("");
+    private final JTextField tfFilename = new JTextField();
     private final JButton btnFileChooser = new JButton(new LaunchFileChooserAction());
 
     private final static GBC defaultCellStyle = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);
@@ -65,7 +65,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
                         tfFilename.selectAll();
                     }
                 }
-        );
+                );
         // hide border
         tfFilename.setBorder(BorderFactory.createLineBorder(getBackground()));
 
@@ -162,7 +162,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
 
     /** makes the given path fit lblFilename, appends ellipsis on the left if it doesn’t fit.
      * Idea: /home/user/josm → …/user/josm → …/josm; and take the first one that fits */
-    static final private String makePathFit(String t) {
+    private String makePathFit(String t) {
         boolean hasEllipsis = false;
         while(t != null && !t.isEmpty()) {
             int txtwidth = lblFilename.getFontMetrics(lblFilename.getFont()).stringWidth(t);
