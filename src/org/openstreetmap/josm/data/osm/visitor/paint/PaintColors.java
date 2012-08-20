@@ -56,14 +56,17 @@ public enum PaintColors implements ColorKey {
         this.defaultColor = defaultColor;
     }
 
+    @Override
     public String getColorName() {
         return name;
     }
 
-    public Color getDefault() {
+    @Override
+    public Color getDefaultValue() {
         return defaultColor;
     }
 
+    @Override
     public String getSpecialName() {
         return null;
     }

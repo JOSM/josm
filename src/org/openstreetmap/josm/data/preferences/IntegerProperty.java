@@ -3,20 +3,27 @@ package org.openstreetmap.josm.data.preferences;
 
 import org.openstreetmap.josm.Main;
 
+/**
+ * A property containing an {@code Integer} value.
+ */
 public class IntegerProperty extends AbstractProperty<Integer> {
 
-    protected final int defaultValue;
-
+    /**
+     * Constructs a new {@code IntegerProperty}.
+     * @param key The property key
+     * @param defaultValue The default value
+     */
     public IntegerProperty(String key, int defaultValue) {
-        super(key);
-        this.defaultValue = defaultValue;
+        super(key, defaultValue);
     }
 
-    public int get() {
+    @Override
+    public Integer get() {
         return Main.pref.getInteger(getKey(), getDefaultValue());
     }
 
-    public boolean put(int value) {
+    @Override
+    public boolean put(Integer value) {
         return Main.pref.putInteger(getKey(), value);
     }
 
@@ -35,10 +42,4 @@ public class IntegerProperty extends AbstractProperty<Integer> {
         }
         return put(intVal);
     }
-
-    @Override
-    public Integer getDefaultValue() {
-        return defaultValue;
-    }
-
 }

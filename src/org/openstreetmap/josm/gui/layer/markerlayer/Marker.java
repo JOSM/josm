@@ -101,10 +101,14 @@ public class Marker implements TemplateEngineDataProvider {
             }
             TemplateEntryProperty result = cache.get(key);
             if (result == null) {
-                String defaultValue = layerName == null?getDefaultLabelPattern():"";
-                TemplateEntryProperty parent = layerName == null?null:forMarker(null);
-                result = new TemplateEntryProperty(key, defaultValue, parent);
-                cache.put(key, result);
+                String defaultValue = layerName == null ? getDefaultLabelPattern():"";
+                TemplateEntryProperty parent = layerName == null ? null : forMarker(null);
+                try {
+                    result = new TemplateEntryProperty(key, defaultValue, parent);
+                    cache.put(key, result);
+                } catch (ParseError e) {
+                    System.out.println(String.format("Unable to parse template engine pattern '%s' for property %s", defaultValue, key));
+                }
             }
             return result;
         }
@@ -117,9 +121,13 @@ public class Marker implements TemplateEngineDataProvider {
             TemplateEntryProperty result = cache.get(key);
             if (result == null) {
                 String defaultValue = layerName == null?"?{ '{name}' | '{desc}' | '{" + Marker.MARKER_FORMATTED_OFFSET + "}' }":"";
-                TemplateEntryProperty parent = layerName == null?null:forAudioMarker(null);
-                result = new TemplateEntryProperty(key, defaultValue, parent);
-                cache.put(key, result);
+                TemplateEntryProperty parent = layerName == null ? null : forAudioMarker(null);
+                try {
+                    result = new TemplateEntryProperty(key, defaultValue, parent);
+                    cache.put(key, result);
+                } catch (ParseError e) {
+                    System.out.println(String.format("Unable to parse template engine pattern '%s' for property %s", defaultValue, key));
+                }
             }
             return result;
         }
@@ -127,8 +135,8 @@ public class Marker implements TemplateEngineDataProvider {
         private TemplateEntryProperty parent;
 
 
-        private TemplateEntryProperty(String key, String defaultValue, TemplateEntryProperty parent) {
-            super(key, defaultValue);
+        private TemplateEntryProperty(String key, String defaultValue, TemplateEntryProperty parent) throws ParseError {
+            super(key, new TemplateParser(defaultValue).parse(), defaultValue);
             this.parent = parent;
             updateValue(); // Needs to be called because parent wasn't know in super constructor
         }
@@ -139,7 +147,7 @@ public class Marker implements TemplateEngineDataProvider {
                 return new TemplateParser(s).parse();
             } catch (ParseError e) {
                 System.out.println(String.format("Unable to parse template engine pattern '%s' for property %s. Using default ('%s') instead",
-                        s, getKey(), defaultValue));
+                        s, getKey(), super.getDefaultValueAsString()));
                 return getDefaultValue();
             }
         }

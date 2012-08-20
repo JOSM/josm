@@ -48,6 +48,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
@@ -240,7 +241,7 @@ public class Preferences {
     public interface ColorKey {
         String getColorName();
         String getSpecialName();
-        Color getDefault();
+        Color getDefaultValue();
     }
 
     private final CopyOnWriteArrayList<PreferenceChangedListener> listeners = new CopyOnWriteArrayList<PreferenceChangedListener>();
@@ -448,17 +449,17 @@ public class Preferences {
         }
     }
 
-    synchronized public boolean getBoolean(final String key) {
+    synchronized public Boolean getBoolean(final String key) {
         putDefault(key, null);
         return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : false;
     }
 
-    synchronized public boolean getBoolean(final String key, final boolean def) {
+    synchronized public Boolean getBoolean(final String key, final boolean def) {
         putDefault(key, Boolean.toString(def));
         return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : def;
     }
 
-    synchronized public boolean getBoolean(final String key, final String specName, final boolean def) {
+    synchronized public Boolean getBoolean(final String key, final String specName, final boolean def) {
         putDefault(key, Boolean.toString(def));
         String skey = key+"."+specName;
         if(properties.containsKey(skey))
@@ -801,7 +802,7 @@ public class Preferences {
     }
 
     public Color getColor(ColorKey key) {
-        return getColor(key.getColorName(), key.getSpecialName(), key.getDefault());
+        return getColor(key.getColorName(), key.getSpecialName(), key.getDefaultValue());
     }
 
     /**
@@ -813,7 +814,7 @@ public class Preferences {
      * @return a Color object for the configured colour, or the default value if none configured.
      */
     synchronized public Color getColor(String colName, String specName, Color def) {
-        String colKey = colName.toLowerCase().replaceAll("[^a-z0-9]+",".");
+        String colKey = ColorProperty.getColorKey(colName);
         if(!colKey.equals(colName)) {
             colornames.put(colKey, colName);
         }
@@ -825,13 +826,13 @@ public class Preferences {
         return colStr.equals("") ? def : ColorHelper.html2color(colStr);
     }
 
-    synchronized public Color getDefaultColor(String colName) {
-        String colStr = defaults.get("color."+colName);
+    synchronized public Color getDefaultColor(String colKey) {
+        String colStr = defaults.get("color."+colKey);
         return colStr == null || "".equals(colStr) ? null : ColorHelper.html2color(colStr);
     }
 
-    synchronized public boolean putColor(String colName, Color val) {
-        return put("color."+colName, val != null ? ColorHelper.color2html(val) : null);
+    synchronized public boolean putColor(String colKey, Color val) {
+        return put("color."+colKey, val != null ? ColorHelper.color2html(val) : null);
     }
 
     synchronized public int getInteger(String key, int def) {

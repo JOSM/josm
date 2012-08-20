@@ -34,6 +34,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.io.imagery.OffsetServer;
@@ -42,20 +43,17 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 public abstract class ImageryLayer extends Layer {
 
+    public static final ColorProperty PROP_FADE_COLOR = new ColorProperty(marktr("Imagery fade"), Color.white);
     public static final IntegerProperty PROP_FADE_AMOUNT = new IntegerProperty("imagery.fade_amount", 0);
     public static final IntegerProperty PROP_SHARPEN_LEVEL = new IntegerProperty("imagery.sharpen_level", 0);
 
     public static Color getFadeColor() {
-        return Main.pref.getColor(marktr("Imagery fade"), Color.white);
+        return PROP_FADE_COLOR.get();
     }
 
     public static Color getFadeColorWithAlpha() {
-        Color c = getFadeColor();
+        Color c = PROP_FADE_COLOR.get();
         return new Color(c.getRed(),c.getGreen(),c.getBlue(),PROP_FADE_AMOUNT.get()*255/100);
-    }
-
-    public static void setFadeColor(Color color) {
-        Main.pref.putColor("imagery.fade", color);
     }
 
     protected final ImageryInfo info;
