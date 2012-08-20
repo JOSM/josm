@@ -32,24 +32,16 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JSlider;
-import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -70,18 +62,10 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.imagery.Shape;
-import org.openstreetmap.josm.gui.layer.ImageryLayer;
-import org.openstreetmap.josm.gui.layer.TMSLayer;
-import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.widgets.JosmComboBox;
-import org.openstreetmap.josm.io.imagery.HTMLGrabber;
-import org.openstreetmap.josm.io.imagery.OffsetServer;
-import org.openstreetmap.josm.io.imagery.OsmosnimkiOffsetServer;
-import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -101,159 +85,14 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
     private ImageryProvidersPanel imageryProviders;
     private ImageryLayerInfo layerInfo;
 
-    // Common settings
-    private Color colFadeColor;
-    private JButton btnFadeColor;
-    private JSlider fadeAmount = new JSlider(0, 100);
-    private JosmComboBox sharpen;
-    private JCheckBox useOffsetServer;
-    private JTextField offsetServerUrl;
-
-    // WMS Settings
-    private JosmComboBox browser;
-    private JCheckBox overlapCheckBox;
-    private JSpinner spinEast;
-    private JSpinner spinNorth;
-    private JSpinner spinSimConn;
-
-    //TMS settings controls
-    private JCheckBox autozoomActive = new JCheckBox();
-    private JCheckBox autoloadTiles = new JCheckBox();
-    private JSpinner minZoomLvl;
-    private JSpinner maxZoomLvl;
-    private JCheckBox addToSlippyMapChosser = new JCheckBox();
-    private JTextField tilecacheDir = new JTextField();
-
-    private JPanel buildCommonSettingsPanel(final PreferenceTabbedPane gui) {
-        final JPanel p = new JPanel(new GridBagLayout());
-
-        this.colFadeColor = ImageryLayer.PROP_FADE_COLOR.get();
-        this.btnFadeColor = new JButton();
-
-        this.btnFadeColor.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JColorChooser chooser = new JColorChooser(colFadeColor);
-                int answer = JOptionPane.showConfirmDialog(
-                        gui, chooser,
-                        tr("Choose a color for {0}", tr("imagery fade")),
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE);
-                if (answer == JOptionPane.OK_OPTION) {
-                    colFadeColor = chooser.getColor();
-                    btnFadeColor.setBackground(colFadeColor);
-                    btnFadeColor.setText(ColorHelper.color2html(colFadeColor));
-                }
-            }
-        });
-
-        p.add(new JLabel(tr("Fade Color: ")), GBC.std());
-        p.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
-        p.add(this.btnFadeColor, GBC.eol().fill(GBC.HORIZONTAL));
-
-        p.add(new JLabel(tr("Fade amount: ")), GBC.std());
-        p.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
-        p.add(this.fadeAmount, GBC.eol().fill(GBC.HORIZONTAL));
-
-        this.sharpen = new JosmComboBox(new String[] {
-                tr("None"),
-                tr("Soft"),
-                tr("Strong")});
-        p.add(new JLabel(tr("Sharpen (requires layer re-add): ")));
-        p.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
-        p.add(this.sharpen, GBC.eol().fill(GBC.HORIZONTAL));
-
-        this.useOffsetServer = new JCheckBox(tr("Use offset server: "));
-        this.offsetServerUrl = new JTextField();
-        this.useOffsetServer.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                offsetServerUrl.setEnabled(useOffsetServer.isSelected());
-            }
-        });
-        offsetServerUrl.setEnabled(useOffsetServer.isSelected());
-        p.add(this.useOffsetServer, GBC.eol().fill(GBC.HORIZONTAL));
-        p.add(this.offsetServerUrl, GBC.eol().fill(GBC.HORIZONTAL));
-        return p;
-    }
-
-    private JPanel buildWMSSettingsPanel() {
-        final JPanel p = new JPanel(new GridBagLayout());
-        browser = new JosmComboBox(new String[] {
-                "webkit-image {0}",
-                "gnome-web-photo --mode=photo --format=png {0} /dev/stdout",
-                "gnome-web-photo-fixed {0}",
-        "webkit-image-gtk {0}"});
-        browser.setEditable(true);
-        p.add(new JLabel(tr("Downloader:")), GBC.eol().fill(GBC.HORIZONTAL));
-        p.add(browser);
-
-        // Overlap
-        p.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
-
-        overlapCheckBox = new JCheckBox(tr("Overlap tiles"));
-        JLabel labelEast = new JLabel(tr("% of east:"));
-        JLabel labelNorth = new JLabel(tr("% of north:"));
-        spinEast = new JSpinner(new SpinnerNumberModel(WMSLayer.PROP_OVERLAP_EAST.get().intValue(), 1, 50, 1));
-        spinNorth = new JSpinner(new SpinnerNumberModel(WMSLayer.PROP_OVERLAP_NORTH.get().intValue(), 1, 50, 1));
-
-        JPanel overlapPanel = new JPanel(new FlowLayout());
-        overlapPanel.add(overlapCheckBox);
-        overlapPanel.add(labelEast);
-        overlapPanel.add(spinEast);
-        overlapPanel.add(labelNorth);
-        overlapPanel.add(spinNorth);
-
-        p.add(overlapPanel);
-
-        // Simultaneous connections
-        p.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
-        JLabel labelSimConn = new JLabel(tr("Simultaneous connections"));
-        spinSimConn = new JSpinner(new SpinnerNumberModel(WMSLayer.PROP_SIMULTANEOUS_CONNECTIONS.get().intValue(), 1, 30, 1));
-        JPanel overlapPanelSimConn = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        overlapPanelSimConn.add(labelSimConn);
-        overlapPanelSimConn.add(spinSimConn);
-        p.add(overlapPanelSimConn, GBC.eol().fill(GBC.HORIZONTAL));
-
-        return p;
-    }
-
-    private JPanel buildTMSSettingsPanel() {
-        JPanel tmsTab = new JPanel(new GridBagLayout());
-
-        minZoomLvl = new JSpinner(new SpinnerNumberModel(TMSLayer.DEFAULT_MIN_ZOOM, TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
-        maxZoomLvl = new JSpinner(new SpinnerNumberModel(TMSLayer.DEFAULT_MAX_ZOOM, TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
-
-        tmsTab.add(new JLabel(tr("Auto zoom by default: ")), GBC.std());
-        tmsTab.add(GBC.glue(5, 0), GBC.std());
-        tmsTab.add(autozoomActive, GBC.eol().fill(GBC.HORIZONTAL));
-
-        tmsTab.add(new JLabel(tr("Autoload tiles by default: ")), GBC.std());
-        tmsTab.add(GBC.glue(5, 0), GBC.std());
-        tmsTab.add(autoloadTiles, GBC.eol().fill(GBC.HORIZONTAL));
-
-        tmsTab.add(new JLabel(tr("Min. zoom level: ")), GBC.std());
-        tmsTab.add(GBC.glue(5, 0), GBC.std());
-        tmsTab.add(this.minZoomLvl, GBC.eol());
-
-        tmsTab.add(new JLabel(tr("Max. zoom level: ")), GBC.std());
-        tmsTab.add(GBC.glue(5, 0), GBC.std());
-        tmsTab.add(this.maxZoomLvl, GBC.eol());
-
-        tmsTab.add(new JLabel(tr("Add to slippymap chooser: ")), GBC.std());
-        tmsTab.add(GBC.glue(5, 0), GBC.std());
-        tmsTab.add(addToSlippyMapChosser, GBC.eol().fill(GBC.HORIZONTAL));
-
-        tmsTab.add(new JLabel(tr("Tile cache directory: ")), GBC.std());
-        tmsTab.add(GBC.glue(5, 0), GBC.std());
-        tmsTab.add(tilecacheDir, GBC.eol().fill(GBC.HORIZONTAL));
-
-        return tmsTab;
-    }
+    private CommonSettingsPanel commonSettings;
+    private WMSSettingsPanel wmsSettings;
+    private TMSSettingsPanel tmsSettings;
 
     private void addSettingsSection(final JPanel p, String name, JPanel section) {
         addSettingsSection(p, name, section, GBC.eol());
     }
+    
     private void addSettingsSection(final JPanel p, String name, JPanel section, GBC gbc) {
         final JLabel lbl = new JLabel(name);
         lbl.setFont(lbl.getFont().deriveFont(Font.BOLD));
@@ -266,9 +105,10 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
         final JPanel p = new JPanel(new GridBagLayout());
         p.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
-        addSettingsSection(p, tr("Common Settings"), buildCommonSettingsPanel(gui));
-        addSettingsSection(p, tr("WMS Settings"), buildWMSSettingsPanel());
-        addSettingsSection(p, tr("TMS Settings"), buildTMSSettingsPanel(),
+        addSettingsSection(p, tr("Common Settings"), commonSettings = new CommonSettingsPanel());
+        addSettingsSection(p, tr("WMS Settings"), wmsSettings = new WMSSettingsPanel(),
+                GBC.eol().fill(GBC.HORIZONTAL));
+        addSettingsSection(p, tr("TMS Settings"), tmsSettings = new TMSSettingsPanel(),
                 GBC.eol().fill(GBC.HORIZONTAL));
 
         p.add(new JPanel(),GBC.eol().fill(GBC.BOTH));
@@ -296,33 +136,13 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
     }
 
     private void loadSettings() {
-        // Common settings
-        this.btnFadeColor.setBackground(colFadeColor);
-        this.btnFadeColor.setText(ColorHelper.color2html(colFadeColor));
-        this.fadeAmount.setValue(ImageryLayer.PROP_FADE_AMOUNT.get());
-        this.sharpen.setSelectedIndex(Math.max(0, Math.min(2, ImageryLayer.PROP_SHARPEN_LEVEL.get())));
-        this.useOffsetServer.setSelected(OffsetServer.PROP_SERVER_ENABLED.get());
-        this.offsetServerUrl.setText(OsmosnimkiOffsetServer.PROP_SERVER_URL.get());
-
-        // WMS Settings
-        this.browser.setSelectedItem(HTMLGrabber.PROP_BROWSER.get());
-        this.overlapCheckBox.setSelected(WMSLayer.PROP_OVERLAP.get());
-        this.spinEast.setValue(WMSLayer.PROP_OVERLAP_EAST.get());
-        this.spinNorth.setValue(WMSLayer.PROP_OVERLAP_NORTH.get());
-        this.spinSimConn.setValue(WMSLayer.PROP_SIMULTANEOUS_CONNECTIONS.get());
-
-        // TMS Settings
-        this.autozoomActive.setSelected(TMSLayer.PROP_DEFAULT_AUTOZOOM.get());
-        this.autoloadTiles.setSelected(TMSLayer.PROP_DEFAULT_AUTOLOAD.get());
-        this.addToSlippyMapChosser.setSelected(TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get());
-        this.maxZoomLvl.setValue(TMSLayer.getMaxZoomLvl(null));
-        this.minZoomLvl.setValue(TMSLayer.getMinZoomLvl(null));
-        this.tilecacheDir.setText(TMSLayer.PROP_TILECACHE_DIR.get());
+        commonSettings.loadSettings();
+        wmsSettings.loadSettings();
+        tmsSettings.loadSettings();
     }
 
     @Override
     public boolean ok() {
-        boolean restartRequired = false;
         layerInfo.save();
         ImageryLayerInfo.instance.clear();
         ImageryLayerInfo.instance.load();
@@ -330,32 +150,12 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
         Main.main.menu.imageryMenu.refreshOffsetMenu();
         OffsetBookmark.saveBookmarks();
 
-        WMSLayer.PROP_OVERLAP.put(overlapCheckBox.getModel().isSelected());
-        WMSLayer.PROP_OVERLAP_EAST.put((Integer) spinEast.getModel().getValue());
-        WMSLayer.PROP_OVERLAP_NORTH.put((Integer) spinNorth.getModel().getValue());
-        WMSLayer.PROP_SIMULTANEOUS_CONNECTIONS.put((Integer) spinSimConn.getModel().getValue());
+        boolean commonRestartRequired = commonSettings.saveSettings();
+        boolean wmsRestartRequired = wmsSettings.saveSettings();
+        boolean tmsRestartRequired = tmsSettings.saveSettings();
 
-        HTMLGrabber.PROP_BROWSER.put(browser.getEditor().getItem().toString());
-        OffsetServer.PROP_SERVER_ENABLED.put(useOffsetServer.isSelected());
-        OsmosnimkiOffsetServer.PROP_SERVER_URL.put(offsetServerUrl.getText());
-
-        if (TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get() != this.addToSlippyMapChosser.isSelected()) {
-            restartRequired = true;
-        }
-        TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.put(this.addToSlippyMapChosser.isSelected());
-        TMSLayer.PROP_DEFAULT_AUTOZOOM.put(this.autozoomActive.isSelected());
-        TMSLayer.PROP_DEFAULT_AUTOLOAD.put(this.autoloadTiles.isSelected());
-        TMSLayer.setMaxZoomLvl((Integer)this.maxZoomLvl.getValue());
-        TMSLayer.setMinZoomLvl((Integer)this.minZoomLvl.getValue());
-        TMSLayer.PROP_TILECACHE_DIR.put(this.tilecacheDir.getText());
-
-        ImageryLayer.PROP_FADE_AMOUNT.put(this.fadeAmount.getValue());
-        ImageryLayer.PROP_FADE_COLOR.put(this.colFadeColor);
-        ImageryLayer.PROP_SHARPEN_LEVEL.put(sharpen.getSelectedIndex());
-
-        return restartRequired;
+        return commonRestartRequired || wmsRestartRequired || tmsRestartRequired;
     }
-
 
     /**
      * Updates a server URL in the preferences dialog. Used by plugins.
