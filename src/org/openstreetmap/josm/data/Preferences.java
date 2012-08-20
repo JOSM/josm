@@ -1776,6 +1776,7 @@ public class Preferences {
     public void removeObsolete() {
         String[] obsolete = {
                 "gui.combobox.maximum-row-count",  // 08/2012 - briefly introduced with #7917, can be removed end 2012
+                "color.Imagery fade",              // 08/2012 - wrong property caused by #6723, can be removed mid-2013
         };
         for (String key : obsolete) {
             boolean removed = false;

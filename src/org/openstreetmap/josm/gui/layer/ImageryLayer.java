@@ -55,7 +55,7 @@ public abstract class ImageryLayer extends Layer {
     }
 
     public static void setFadeColor(Color color) {
-        Main.pref.putColor(marktr("Imagery fade"), color);
+        Main.pref.putColor("imagery.fade", color);
     }
 
     protected final ImageryInfo info;
