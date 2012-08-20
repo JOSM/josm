@@ -19,9 +19,9 @@ import org.openstreetmap.josm.tools.GBC;
 class SaveLayersTableColumnModel extends DefaultTableColumnModel {
     /** small renderer class that handles the "should be uploaded/saved" texts. */
     private static class RecommendedActionsTableCell implements TableCellRenderer {
-        private final static JPanel pnlEmpty = new JPanel();
-        private final static JLabel needsUpload = new JLabel(tr("should be uploaded"));
-        private final static JLabel needsSave = new JLabel(tr("should be saved"));
+        private final JPanel pnlEmpty = new JPanel();
+        private final JLabel needsUpload = new JLabel(tr("should be uploaded"));
+        private final JLabel needsSave = new JLabel(tr("should be saved"));
         private final static GBC defaultCellStyle = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);
 
         public RecommendedActionsTableCell() {

@@ -26,7 +26,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
-    Action offsetAction = new JosmAction(
+    private Action offsetAction = new JosmAction(
             tr("Imagery offset"), "mapmode/adjustimg", tr("Adjust imagery offset"), null, false, false) {
         {
             putValue("toolbar", "imagery-offset");
@@ -64,10 +64,10 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
             popup.show(source, source.getWidth()/2, source.getHeight()/2);
         }
     };
-    JMenuItem singleOffset = new JMenuItem(offsetAction);
-    JMenuItem offsetMenuItem = singleOffset;
-    Map_Rectifier_WMSmenuAction rectaction = new Map_Rectifier_WMSmenuAction();
-    int offsPos;
+    private JMenuItem singleOffset = new JMenuItem(offsetAction);
+    private JMenuItem offsetMenuItem = singleOffset;
+    private Map_Rectifier_WMSmenuAction rectaction = new Map_Rectifier_WMSmenuAction();
+    private int offsPos;
 
     public ImageryMenu() {
         super(tr("Imagery"));

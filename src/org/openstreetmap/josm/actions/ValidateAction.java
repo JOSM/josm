@@ -44,8 +44,8 @@ public class ValidateAction extends JosmAction {
      */
     public ValidateAction() {
         super(tr("Validation"), "dialogs/validator", tr("Performs the data validation"),
-            Shortcut.registerShortcut("tools:validate", tr("Tool: {0}", tr("Validation")),
-            KeyEvent.VK_V, Shortcut.SHIFT), true);
+                Shortcut.registerShortcut("tools:validate", tr("Tool: {0}", tr("Validation")),
+                        KeyEvent.VK_V, Shortcut.SHIFT), true);
     }
 
     public void actionPerformed(ActionEvent ev) {
@@ -63,7 +63,7 @@ public class ValidateAction extends JosmAction {
      * @param getSelectedItems If selected or last selected items must be validated
      */
     public void doValidate(ActionEvent ev, boolean getSelectedItems) {
-        if (Main.main.validator.validateAction == null || Main.map == null || !Main.map.isVisible())
+        if (Main.map == null || !Main.map.isVisible())
             return;
 
         OsmValidator.initializeErrorLayer();

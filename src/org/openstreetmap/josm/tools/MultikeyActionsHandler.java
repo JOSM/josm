@@ -25,7 +25,6 @@ import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction.MultikeyInfo;
-import org.openstreetmap.josm.tools.Shortcut;
 
 public class MultikeyActionsHandler {
 
@@ -33,7 +32,7 @@ public class MultikeyActionsHandler {
     private static final String STATUS_BAR_ID = new String("multikeyShortcut");
 
     private Map<MultikeyShortcutAction, MyAction> myActions = new HashMap<MultikeyShortcutAction,MyAction>();
-            
+
     private class MyKeyEventDispatcher implements KeyEventDispatcher {
         @Override
         public boolean dispatchKeyEvent(KeyEvent e) {
@@ -210,13 +209,13 @@ public class MultikeyActionsHandler {
             Main.registerActionShortcut(myAction, myAction.shortcut);
         }
     }
-    
+
     // unregister action and its shortcut completely
     public void removeAction(MultikeyShortcutAction action) {
         MyAction a = myActions.get(action);
         if (a!=null) {
             Main.unregisterActionShortcut(a, a.shortcut);
-            myActions.remove(a);
+            myActions.remove(action);
         }
     }
 }

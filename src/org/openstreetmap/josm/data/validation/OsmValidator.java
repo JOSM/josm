@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.ValidateAction;
 import org.openstreetmap.josm.data.projection.Epsg4326;
 import org.openstreetmap.josm.data.projection.Lambert;
 import org.openstreetmap.josm.data.projection.Mercator;
@@ -66,9 +65,6 @@ import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 public class OsmValidator implements LayerChangeListener {
 
     public static ValidatorLayer errorLayer = null;
-
-    /** The validate action */
-    public ValidateAction validateAction = new ValidateAction();
 
     /** Grid detail, multiplier of east,north values for valuable cell sizing */
     public static double griddetail;
