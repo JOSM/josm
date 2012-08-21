@@ -449,17 +449,17 @@ public class Preferences {
         }
     }
 
-    synchronized public Boolean getBoolean(final String key) {
+    synchronized public boolean getBoolean(final String key) {
         putDefault(key, null);
         return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : false;
     }
 
-    synchronized public Boolean getBoolean(final String key, final boolean def) {
+    synchronized public boolean getBoolean(final String key, final boolean def) {
         putDefault(key, Boolean.toString(def));
         return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : def;
     }
 
-    synchronized public Boolean getBoolean(final String key, final String specName, final boolean def) {
+    synchronized public boolean getBoolean(final String key, final String specName, final boolean def) {
         putDefault(key, Boolean.toString(def));
         String skey = key+"."+specName;
         if(properties.containsKey(skey))
