@@ -11,6 +11,7 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.Preferences.StringSetting;
 import org.openstreetmap.josm.data.osm.UserInfo;
+import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -58,7 +59,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     static public JosmUserIdentityManager getInstance() {
         if (instance == null) {
             instance = new JosmUserIdentityManager();
-            if (Main.pref.get("osm-server.auth-method").equals("oauth")) {
+            if (Main.pref.get("osm-server.auth-method").equals("oauth") && OAuthAccessTokenHolder.getInstance().containsAccessToken()) {
                 try {
                     instance.initFromOAuth(Main.parent);
                 } catch (Throwable t) {
