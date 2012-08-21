@@ -5,7 +5,10 @@ import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageProducer;
 
 import javax.swing.GrayFilter;
 import javax.swing.ImageIcon;
@@ -45,7 +48,9 @@ public class MapImage {
             return disabledImg;
         if (img == null)
             getImage(); // fix #7498 ?
-        return disabledImg = GrayFilter.createDisabledImage(img);
+        ImageProducer ip = new FilteredImageSource(img.getSource(), new GrayFilter(true, 20));
+        disabledImg = Toolkit.getDefaultToolkit().createImage(ip);
+        return disabledImg;
     }
 
     public BufferedImage getImage() {
