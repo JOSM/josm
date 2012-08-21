@@ -58,7 +58,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
             return new PluginPreference();
         }
     }
-    
+
     private PluginPreference() {
         super("plugin", tr("Plugins"), tr("Configure available plugins."));
     }
@@ -73,7 +73,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                     "The following {0} plugins have been downloaded <strong>successfully</strong>:",
                     downloaded.size(),
                     downloaded.size()
-            ));
+                    ));
             sb.append("<ul>");
             for(PluginInformation pi: downloaded) {
                 sb.append("<li>").append(pi.name).append(" (").append(pi.version).append(")").append("</li>");
@@ -86,7 +86,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                     "Downloading the following {0} plugins has <strong>failed</strong>:",
                     failed.size(),
                     failed.size()
-            ));
+                    ));
             sb.append("<ul>");
             for(PluginInformation pi: failed) {
                 sb.append("<li>").append(pi.name).append("</li>");
@@ -155,7 +155,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                         spPluginPreferences.setBorder(null);
                     }
                 }
-        );
+                );
 
         pnl.add(spPluginPreferences, BorderLayout.CENTER);
         pnl.add(buildActionPanel(), BorderLayout.SOUTH);
@@ -193,13 +193,13 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                         ImageProvider.get("ok"),
                         tr("Accept the new plugin sites and close the dialog"),
                         null /* no special help topic */
-                ),
-                new ButtonSpec(
-                        tr("Cancel"),
-                        ImageProvider.get("cancel"),
-                        tr("Close the dialog"),
-                        null /* no special help topic */
-                )
+                        ),
+                        new ButtonSpec(
+                                tr("Cancel"),
+                                ImageProvider.get("cancel"),
+                                tr("Close the dialog"),
+                                null /* no special help topic */
+                                )
         };
         PluginConfigurationSitesPanel pnl = new PluginConfigurationSitesPanel();
 
@@ -212,7 +212,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                 options,
                 options[0],
                 null /* no help topic */
-        );
+                );
         if (answer != 0 /* OK */)
             return;
         List<String> sites = pnl.getUpdateSites();
@@ -322,17 +322,25 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                     tr("Update plugins"),
                     !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
                             HelpUtil.ht("/Preferences/Plugins")
-            );
+                    );
         }
 
         protected void alertNothingToUpdate() {
-            HelpAwareOptionPane.showOptionDialog(
-                    pnlPluginPreferences,
-                    tr("All installed plugins are up to date. JOSM does not have to download newer versions."),
-                    tr("Plugins up to date"),
-                    JOptionPane.INFORMATION_MESSAGE,
-                    null // FIXME: provide help context
-            );
+            try {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    public void run() {
+                        HelpAwareOptionPane.showOptionDialog(
+                                pnlPluginPreferences,
+                                tr("All installed plugins are up to date. JOSM does not have to download newer versions."),
+                                tr("Plugins up to date"),
+                                JOptionPane.INFORMATION_MESSAGE,
+                                null // FIXME: provide help context
+                                );
+                    };
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -342,7 +350,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                     pnlPluginPreferences,
                     toUpdate,
                     tr("Update plugins")
-            );
+                    );
             // the async task for downloading plugin information
             final ReadRemotePluginInformationTask pluginInfoDownloadTask = new ReadRemotePluginInformationTask(Main.pref.getPluginSites());
 
@@ -455,7 +463,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                             tr("Add JOSM Plugin description URL."),
                             tr("Enter URL"),
                             JOptionPane.QUESTION_MESSAGE
-                    );
+                            );
                     if (s != null) {
                         model.addElement(s);
                     }
@@ -469,7 +477,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                                 tr("Please select an entry."),
                                 tr("Warning"),
                                 JOptionPane.WARNING_MESSAGE
-                        );
+                                );
                         return;
                     }
                     String s = (String)JOptionPane.showInputDialog(
@@ -480,7 +488,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                             null,
                             null,
                             list.getSelectedValue()
-                    );
+                            );
                     if (s != null) {
                         model.setElementAt(s, list.getSelectedIndex());
                     }
@@ -494,7 +502,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                                 tr("Please select an entry."),
                                 tr("Warning"),
                                 JOptionPane.WARNING_MESSAGE
-                        );
+                                );
                         return;
                     }
                     model.removeElement(list.getSelectedValue());
