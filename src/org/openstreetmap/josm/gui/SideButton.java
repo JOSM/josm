@@ -26,6 +26,8 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class SideButton extends JButton implements Destroyable {
     private final static int iconHeight = 20;
+    
+    private PropertyChangeListener propertyChangeListener;
 
     public SideButton(Action action)
     {
@@ -51,21 +53,21 @@ public class SideButton extends JButton implements Destroyable {
         doStyle();
     }
 
-    void fixIcon(Action action) {
+    private void fixIcon(Action action) {
         // need to listen for changes, so that putValue() that are called after the
         // SideButton is constructed get the proper icon size
-        if(action != null) {
-            action.addPropertyChangeListener(new PropertyChangeListener() {
+        if (action != null) {
+            action.addPropertyChangeListener(propertyChangeListener = new PropertyChangeListener() {
                 @Override
                 public void propertyChange(PropertyChangeEvent evt) {
-                    if(evt.getPropertyName() == javax.swing.Action.SMALL_ICON) {
+                    if (evt.getPropertyName() == javax.swing.Action.SMALL_ICON) {
                         fixIcon(null);
                     }
                 }
             });
         }
         Icon i = getIcon();
-        if(i != null && i instanceof ImageIcon && i.getIconHeight() != iconHeight) {
+        if (i != null && i instanceof ImageIcon && i.getIconHeight() != iconHeight) {
             setIcon(getScaledImage(((ImageIcon) i).getImage()));
         }
     }
@@ -143,6 +145,11 @@ public class SideButton extends JButton implements Destroyable {
         if (action instanceof Destroyable) {
             ((Destroyable) action).destroy();
         }
-        setAction(null);
+        if (action != null) {
+            if (propertyChangeListener != null) {
+                action.removePropertyChangeListener(propertyChangeListener);
+            }
+            setAction(null);
+        }
     }
 }
