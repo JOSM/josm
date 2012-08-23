@@ -1,4 +1,3 @@
-// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -369,7 +368,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
     }
 
     /**
-     * Checks if objects is known to the server.
+     * Checks if object is known to the server.
      * Replies true if this primitive is either unknown to the server (i.e. its id
      * is 0) or it is known to the server and it hasn't be deleted on the server.
      * Replies false, if this primitive is known on the server and has been deleted
