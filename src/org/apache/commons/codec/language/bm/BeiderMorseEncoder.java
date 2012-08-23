@@ -65,6 +65,7 @@ import org.apache.commons.codec.StringEncoder;
  * splitting on pipe (<code>|</code>) and indexing under each of these alternatives.
  *
  * @since 1.6
+ * @version $Id: BeiderMorseEncoder.java 1376690 2012-08-23 20:51:45Z tn $
  */
 public class BeiderMorseEncoder implements StringEncoder {
     // Implementation note: This class is a spring-friendly facade to PhoneticEngine. It allows read/write configuration

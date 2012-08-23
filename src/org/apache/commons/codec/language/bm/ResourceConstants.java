@@ -25,6 +25,7 @@ import org.apache.commons.codec.CharEncoding;
  * <p>This class is immutable and thread-safe.</p>
  *
  * @since 1.6
+ * @version $Id: ResourceConstants.java 1376690 2012-08-23 20:51:45Z tn $
  */
 class ResourceConstants {
 

@@ -29,6 +29,7 @@ import org.apache.commons.codec.binary.BaseNCodec.Context;
  * Abstract superclass for Base-N input streams.
  *
  * @since 1.5
+ * @version $Id: BaseNCodecInputStream.java 1376694 2012-08-23 20:55:04Z tn $
  */
 public class BaseNCodecInputStream extends FilterInputStream {
 

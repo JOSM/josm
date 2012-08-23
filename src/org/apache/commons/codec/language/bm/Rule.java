@@ -75,6 +75,7 @@ import java.util.regex.Pattern;
  * </ul>
  *
  * @since 1.6
+ * @version $Id: Rule.java 1376690 2012-08-23 20:51:45Z tn $
  */
 public class Rule {
 

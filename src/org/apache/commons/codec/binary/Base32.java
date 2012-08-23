@@ -39,7 +39,7 @@ package org.apache.commons.codec.binary;
  * @see <a href="http://www.ietf.org/rfc/rfc4648.txt">RFC 4648</a>
  *
  * @since 1.5
- * @version $Revision: 1352268 $
+ * @version $Id: Base32.java 1376694 2012-08-23 20:55:04Z tn $
  */
 public class Base32 extends BaseNCodec {
 

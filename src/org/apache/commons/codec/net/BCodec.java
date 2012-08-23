@@ -29,24 +29,20 @@ import org.apache.commons.codec.StringEncoder;
 import org.apache.commons.codec.binary.Base64;
 
 /**
- * <p>
- * Identical to the Base64 encoding defined by <a href="http://www.ietf.org/rfc/rfc1521.txt">RFC
- * 1521</a> and allows a character set to be specified.
- * </p>
- *
+ * Identical to the Base64 encoding defined by <a href="http://www.ietf.org/rfc/rfc1521.txt">RFC 1521</a>
+ * and allows a character set to be specified.
  * <p>
  * <a href="http://www.ietf.org/rfc/rfc1522.txt">RFC 1522</a> describes techniques to allow the encoding of non-ASCII
  * text in various portions of a RFC 822 [2] message header, in a manner which is unlikely to confuse existing message
  * handling software.
- * </p>
- *
- * <p>This class is immutable and thread-safe.</p>
+ * <p>
+ * This class is immutable and thread-safe.
  *
  * @see <a href="http://www.ietf.org/rfc/rfc1522.txt">MIME (Multipurpose Internet Mail Extensions) Part Two: Message
  *          Header Extensions for Non-ASCII Text</a>
  *
  * @since 1.3
- * @version $Id: BCodec.java 1352268 2012-06-20 19:04:08Z ggregory $
+ * @version $Id: BCodec.java 1376686 2012-08-23 20:38:20Z tn $
  */
 public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder {
     /**

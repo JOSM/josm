@@ -66,6 +66,7 @@ import java.util.regex.Pattern;
  * Port of lang.php
  *
  * @since 1.6
+ * @version $Id: Lang.java 1376690 2012-08-23 20:51:45Z tn $
  */
 public class Lang {
     // Implementation note: This class is divided into two sections. The first part is a static factory interface that

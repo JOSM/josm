@@ -43,10 +43,11 @@ import java.util.Set;
  * </ul>
  * <p>
  * Ported from language.php
+ * <p>
+ * This class is immutable and thread-safe.
  *
  * @since 1.6
- *
- * <p>This class is immutable and thread-safe.</p>
+ * @version $Id: Languages.java 1376690 2012-08-23 20:51:45Z tn $
  */
 public class Languages {
     // Iimplementation note: This class is divided into two sections. The first part is a static factory interface that

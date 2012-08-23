@@ -32,7 +32,7 @@ import java.io.InputStream;
  * character encodings which are compatible with the lower 127 ASCII chart (ISO-8859-1, Windows-1252, UTF-8, etc).
  * </p>
  *
- * @version $Revision: 1352268 $
+ * @version $Id: Base32InputStream.java 1376694 2012-08-23 20:55:04Z tn $
  * @see <a href="http://www.ietf.org/rfc/rfc4648.txt">RFC 4648</a>
  * @since 1.5
  */

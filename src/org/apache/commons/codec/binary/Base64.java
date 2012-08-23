@@ -45,7 +45,7 @@ import java.math.BigInteger;
  *
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
  * @since 1.0
- * @version $Revision: 1352268 $
+ * @version $Id: Base64.java 1376694 2012-08-23 20:55:04Z tn $
  */
 public class Base64 extends BaseNCodec {
 
