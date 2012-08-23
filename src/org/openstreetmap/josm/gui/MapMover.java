@@ -14,11 +14,15 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.PlatformHookOsx;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -28,7 +32,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class MapMover extends MouseAdapter implements MouseMotionListener, MouseWheelListener {
+public class MapMover extends MouseAdapter implements MouseMotionListener, MouseWheelListener, Destroyable {
 
     private final class ZoomerAction extends AbstractAction {
         private final String action;
@@ -66,6 +70,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
      * The map to move around.
      */
     private final NavigatableComponent nc;
+    private final JPanel contentPane;
 
     private boolean movementInPlace = false;
 
@@ -74,6 +79,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
      */
     public MapMover(NavigatableComponent navComp, JPanel contentPane) {
         this.nc = navComp;
+        this.contentPane = contentPane;
         nc.addMouseListener(this);
         nc.addMouseMotionListener(this);
         nc.addMouseWheelListener(this);
@@ -216,4 +222,28 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
         return Main.platform != null && Main.platform instanceof PlatformHookOsx;
     }
 
+    @Override
+    public void destroy() {
+        if (this.contentPane != null) {
+            InputMap inputMap = contentPane.getInputMap();
+            KeyStroke[] inputKeys = inputMap.keys();
+            if (inputKeys != null) {
+                for (KeyStroke key : inputKeys) {
+                    Object binding = inputMap.get(key);
+                    if (binding instanceof String && ((String)binding).startsWith("MapMover.")) {
+                        inputMap.remove(key);
+                    }
+                }
+            }
+            ActionMap actionMap = contentPane.getActionMap();
+            Object[] actionsKeys = actionMap.keys();
+            if (actionsKeys != null) {
+                for (Object key : actionsKeys) {
+                    if (key instanceof String && ((String)key).startsWith("MapMover.")) {
+                        actionMap.remove(key);
+                    }
+                }
+            }
+        }
+    }
 }
