@@ -214,6 +214,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     private int lastViewID;
     private boolean paintPreferencesChanged = true;
     private Rectangle lastClipBounds = new Rectangle();
+    private MapMover mapMover;
 
     /**
      * Constructs a new {@code MapView}.
@@ -234,7 +235,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 add(scaler);
                 scaler.setLocation(10,30);
 
-                new MapMover(MapView.this, contentPane);
+                mapMover = new MapMover(MapView.this, contentPane);
                 OsmDataLayer layer = getEditLayer();
                 if (layer != null) {
                     if (!zoomToDataSetBoundingBox(layer.data)) {
@@ -886,6 +887,9 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         Main.pref.removePreferenceChangeListener(this);
         DataSet.removeSelectionListener(repaintSelectionChangedListener);
         MultipolygonCache.getInstance().clear(this);
+        if (mapMover != null) {
+            mapMover.destroy();
+        }
     }
 
 }

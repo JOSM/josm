@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
@@ -1676,6 +1677,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         super.destroy();
         for (JosmAction action : josmActions) {
             action.destroy();
+        }
+        Container parent = pluginHook.getParent();
+        if (parent != null) {
+            parent.remove(pluginHook);
         }
     }
 }
