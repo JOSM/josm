@@ -99,6 +99,8 @@ public class LatLon extends Coordinate {
 
     /**
      * Replies the coordinate in degrees/minutes/seconds format
+     * @param pCoordinate The coordinate to convert
+     * @return The coordinate in degrees/minutes/seconds format
      */
     public static String dms(double pCoordinate) {
 
@@ -107,17 +109,43 @@ public class LatLon extends Coordinate {
         double tTmpMinutes = (tAbsCoord - tDegree) * 60;
         int tMinutes = (int) tTmpMinutes;
         double tSeconds = (tTmpMinutes - tMinutes) * 60;
+        
+        String sDegrees = Integer.toString(tDegree);
+        String sMinutes = cDmsMinuteFormatter.format(tMinutes);
+        String sSeconds = cDmsSecondFormatter.format(tSeconds);
+        
+        if (sSeconds.equals("60.0")) {
+            sSeconds = "00.0";
+            sMinutes = cDmsMinuteFormatter.format(tMinutes+1);
+        }
+        if (sMinutes.equals("60")) {
+            sMinutes = "00";
+            sDegrees = Integer.toString(tDegree+1);
+        }
 
-        return tDegree + "\u00B0" + cDmsMinuteFormatter.format(tMinutes) + "\'"
-        + cDmsSecondFormatter.format(tSeconds) + "\"";
+        return sDegrees + "\u00B0" + sMinutes + "\'" + sSeconds + "\"";
     }
 
+    /**
+     * Replies the coordinate in degrees/minutes format
+     * @param pCoordinate The coordinate to convert
+     * @return The coordinate in degrees/minutes format
+     */
     public static String dm(double pCoordinate) {
 
         double tAbsCoord = Math.abs(pCoordinate);
         int tDegree = (int) tAbsCoord;
         double tMinutes = (tAbsCoord - tDegree) * 60;
-        return tDegree + "\u00B0" + cDmMinuteFormatter.format(tMinutes) + "\'";
+        
+        String sDegrees = Integer.toString(tDegree);
+        String sMinutes = cDmMinuteFormatter.format(tMinutes);
+        
+        if (sMinutes.equals("60.000")) {
+            sMinutes = "00.000";
+            sDegrees = Integer.toString(tDegree+1);
+        }
+        
+        return sDegrees + "\u00B0" + sMinutes + "\'";
     }
 
     public LatLon(double lat, double lon) {
