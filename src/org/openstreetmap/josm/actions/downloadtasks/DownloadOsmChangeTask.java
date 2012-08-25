@@ -1,21 +1,23 @@
 package org.openstreetmap.josm.actions.downloadtasks;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.RelationData;
+import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
@@ -29,7 +31,6 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
-import org.openstreetmap.josm.tools.Pair;
 
 public class DownloadOsmChangeTask extends DownloadOsmTask {
 
@@ -88,10 +89,9 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
             if (isFailed() || isCanceled() || downloadedData == null)
                 return; // user canceled download or error occurred
             try {
-                // A changeset does not contain all referred primitives, this is the list of incomplete ones
-                Set<OsmPrimitive> toLoad = new HashSet<OsmPrimitive>();
+                // A changeset does not contain all referred primitives, this is the map of incomplete ones
                 // For each incomplete primitive, we'll have to get its state at date it was referred
-                List<Pair<OsmPrimitive, Date>> toMonitor = new ArrayList<Pair<OsmPrimitive, Date>>();
+                Map<OsmPrimitive, Date> toLoad = new HashMap<OsmPrimitive, Date>();
                 for (OsmPrimitive p : downloadedData.allNonDeletedPrimitives()) {
                     if (p.isIncomplete()) {
                         Date timestamp = null;
@@ -101,84 +101,103 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                                 break;
                             }
                         }
-                        if (toLoad.add(p)) {
-                            toMonitor.add(new Pair<OsmPrimitive, Date>(p, timestamp));
-                        }
+                        toLoad.put(p, timestamp);
                     }
                 }
                 if (isCanceled()) return;
-                // Updating process is asynchronous and done after each history request
-                HistoryDataSet.getInstance().addHistoryDataSetListener(new HistoryListener(toMonitor));
                 // Let's load all required history
-                Main.worker.submit(new HistoryLoadTask().add(toLoad));
+                Main.worker.submit(new HistoryLoaderAndListener(toLoad));
             } catch (Exception e) {
                 rememberException(e);
                 setFailed(true);
             }
         }
     }
+    
     /**
-     * Asynchroneous updater of incomplete primitives.
-     *
+     * Loads history and updates incomplete primitives.
      */
-    private static class HistoryListener implements HistoryDataSetListener {
+    private static class HistoryLoaderAndListener extends HistoryLoadTask implements HistoryDataSetListener {
 
-        private final List<Pair<OsmPrimitive, Date>> toMonitor;
+        private final Map<OsmPrimitive, Date> toLoad;
 
-        public HistoryListener(List<Pair<OsmPrimitive, Date>> toMonitor) {
-            this.toMonitor = toMonitor;
+        public HistoryLoaderAndListener(Map<OsmPrimitive, Date> toLoad) {
+            this.toLoad = toLoad;
+            add(toLoad.keySet());
+            // Updating process is done after all history requests have been made
+            HistoryDataSet.getInstance().addHistoryDataSetListener(this);
         }
 
         @Override
         public void historyUpdated(HistoryDataSet source, PrimitiveId id) {
-            for (Iterator<Pair<OsmPrimitive, Date>> it = toMonitor.iterator(); it.hasNext();) {
-                Pair<OsmPrimitive, Date> pair = it.next();
-                History history = source.getHistory(pair.a.getPrimitiveId());
+            Map<OsmPrimitive, Date> toLoadNext = new HashMap<OsmPrimitive, Date>();
+            for (Iterator<OsmPrimitive> it = toLoad.keySet().iterator(); it.hasNext();) {
+                OsmPrimitive p = it.next();
+                History history = source.getHistory(p.getPrimitiveId());
+                Date date = toLoad.get(p);
                 // If the history has been loaded and a timestamp is known
-                if (history != null && pair.b != null) {
+                if (history != null && date != null) {
                     // Lookup for the primitive version at the specified timestamp
-                    HistoryOsmPrimitive hp = history.getByDate(pair.b);
+                    HistoryOsmPrimitive hp = history.getByDate(date);
                     if (hp != null) {
                         PrimitiveData data = null;
 
-                        switch (pair.a.getType()) {
+                        switch (p.getType()) {
                         case NODE:
                             data = new NodeData();
                             ((NodeData)data).setCoor(((HistoryNode)hp).getCoords());
                             break;
                         case WAY:
                             data = new WayData();
-                            ((WayData)data).setNodes(((HistoryWay)hp).getNodes());
+                            List<Long> nodeIds = ((HistoryWay)hp).getNodes();
+                            ((WayData)data).setNodes(nodeIds);
+                            // Find incomplete nodes to load at next run
+                            for (Long nodeId : nodeIds) {
+                                if (p.getDataSet().getPrimitiveById(nodeId, OsmPrimitiveType.NODE) == null) {
+                                    Node n = new Node(nodeId);
+                                    p.getDataSet().addPrimitive(n);
+                                    toLoadNext.put(n, date);
+                                }
+                            }
                             break;
                         case RELATION:
                             data = new RelationData();
-                            ((RelationData)data).setMembers(((HistoryRelation)hp).getMembers());
+                            List<RelationMemberData> members = ((HistoryRelation)hp).getMembers();
+                            ((RelationData)data).setMembers(members);
                             break;
-                        default: throw new AssertionError();
+                        default: throw new AssertionError("Unknown primitive type");
                         }
 
                         data.setUser(hp.getUser());
                         try {
                             data.setVisible(hp.isVisible());
                         } catch (IllegalStateException e) {
-                            System.err.println("Cannot change visibility for "+pair.a+": "+e.getMessage());
+                            System.err.println("Cannot change visibility for "+p+": "+e.getMessage());
                         }
                         data.setTimestamp(hp.getTimestamp());
                         data.setKeys(hp.getTags());
                         data.setOsmId(hp.getChangesetId(), (int) hp.getVersion());
 
                         // Load the history data
-                        pair.a.load(data);
-                        // Forget this primitive
-                        it.remove();
+                        try {
+                            p.load(data);
+                            // Forget this primitive
+                            it.remove();
+                        } catch (AssertionError e) {
+                            System.err.println("Cannot load "+p + ": " + e.getMessage());
+                        }
                     }
                 }
             }
-            if (toMonitor.isEmpty()) {
+            source.removeHistoryDataSetListener(this);
+            if (toLoadNext.isEmpty()) {
                 // No more primitive to update. Processing is finished
-                source.removeHistoryDataSetListener(this);
                 // Be sure all updated primitives are correctly drawn
                 Main.map.repaint();
+            } else {
+                // Some primitives still need to be loaded
+                // Let's load all required history
+                Main.worker.submit(new HistoryLoaderAndListener(toLoadNext));
             }
         }
 
