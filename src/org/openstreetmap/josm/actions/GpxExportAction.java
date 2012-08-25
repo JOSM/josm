@@ -33,18 +33,21 @@ public class GpxExportAction extends DiskAccessAction {
         putValue("help", ht("/Action/GpxExport"));
     }
 
-    protected GpxLayer getLayer() {
-        if (!Main.isDisplayingMapView()) return null;
-        if (Main.map.mapView.getActiveLayer() == null) return null;
+    /**
+     * Get the layer to export.
+     * @return The layer to export, either a {@link GpxLayer} or {@link OsmDataLayer}.
+     */
+    protected Layer getLayer() {
+        if(!Main.isDisplayingMapView())
+            return null;
         Layer layer = Main.map.mapView.getActiveLayer();
-        if (! (layer instanceof GpxLayer)) return null;
-        return (GpxLayer)layer;
+        return (layer instanceof GpxLayer || layer instanceof OsmDataLayer) ? layer : null;
     }
 
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        GpxLayer layer = getLayer();
+        Layer layer = getLayer();
         if (layer == null) {
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -94,14 +97,6 @@ public class GpxExportAction extends DiskAccessAction {
      */
     @Override
     protected void updateEnabledState() {
-        boolean check =
-        Main.isDisplayingMapView()
-        && Main.map.mapView.getActiveLayer() != null;
-        if(!check) {
-            setEnabled(false);
-            return;
-        }
-        Layer layer = Main.map.mapView.getActiveLayer();
-        setEnabled(layer instanceof GpxLayer);
+        setEnabled(getLayer() != null);
     }
 }
