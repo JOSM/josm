@@ -221,7 +221,7 @@ public class AutoCompletingComboBox extends JosmComboBox {
      */
     public void setPossibleItems(Collection<String> elems) {
         DefaultComboBoxModel model = (DefaultComboBoxModel)this.getModel();
-        Object oldValue = this.getEditor().getItem();
+        Object oldValue = getSelectedItem();
         model.removeAllElements();
         for (String elem : elems) {
             model.addElement(new AutoCompletionListItem(elem, AutoCompletionItemPritority.UNKNOWN));
@@ -229,7 +229,7 @@ public class AutoCompletingComboBox extends JosmComboBox {
         // disable autocomplete to prevent unnecessary actions in
         // AutoCompletingComboBoxDocument#insertString
         autocompleteEnabled = false;
-        this.getEditor().setItem(oldValue);
+        setSelectedItem(oldValue);
         autocompleteEnabled = true;
     }
 
@@ -238,12 +238,12 @@ public class AutoCompletingComboBox extends JosmComboBox {
      */
     public void setPossibleACItems(Collection<AutoCompletionListItem> elems) {
         DefaultComboBoxModel model = (DefaultComboBoxModel)this.getModel();
-        Object oldValue = this.getEditor().getItem();
+        Object oldValue = getSelectedItem();
         model.removeAllElements();
         for (AutoCompletionListItem elem : elems) {
             model.addElement(elem);
         }
-        this.getEditor().setItem(oldValue);
+        setSelectedItem(oldValue);
     }
 
 
