@@ -48,7 +48,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateParser;
  * By default, one the list contains one default "Maker" implementation that
  * will create AudioMarkers for .wav files, ImageMarkers for .png/.jpg/.jpeg
  * files, and WebMarkers for everything else. (The creation of a WebMarker will
- * fail if there's no vaild URL in the <link> tag, so it might still make sense
+ * fail if there's no valid URL in the <link> tag, so it might still make sense
  * to add Makers for such waypoints at the end of the list.)
  *
  * The default implementation only looks at the value of the <link> tag inside
@@ -76,7 +76,7 @@ public class Marker implements TemplateEngineDataProvider {
         // so per layer settings is useless. Anyway it's possible to specify marker layer pattern in Einstein preferences and maybe somebody
         // will make gui for it so I'm keeping it here
 
-        private final static Map<String, TemplateEntryProperty> cache = new HashMap<String, Marker.TemplateEntryProperty>();
+        private final static Map<String, TemplateEntryProperty> cache = new HashMap<String, TemplateEntryProperty>();
 
         // Legacy code - convert label from int to template engine expression
         private static final IntegerProperty PROP_LABEL = new IntegerProperty("draw.rawgps.layer.wpt", 0 );
@@ -136,7 +136,7 @@ public class Marker implements TemplateEngineDataProvider {
 
 
         private TemplateEntryProperty(String key, String defaultValue, TemplateEntryProperty parent) throws ParseError {
-            super(key, new TemplateParser(defaultValue).parse(), defaultValue);
+            super(key, defaultValue);
             this.parent = parent;
             updateValue(); // Needs to be called because parent wasn't know in super constructor
         }
