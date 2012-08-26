@@ -11,8 +11,8 @@ public abstract class CachedProperty<T> extends AbstractProperty<T> implements P
     private T value;
     private int updateCount;
 
-    protected CachedProperty(String key, T defaultValue, String defaultValueAsString) {
-        super(key, defaultValue);
+    protected CachedProperty(String key, String defaultValueAsString) {
+        super(key, null);
         Main.pref.addPreferenceChangeListener(this);
         this.defaultValueAsString = defaultValueAsString;
         updateValue();
@@ -48,6 +48,11 @@ public abstract class CachedProperty<T> extends AbstractProperty<T> implements P
 
     public int getUpdateCount() {
         return updateCount;
+    }
+    
+    @Override 
+    public T getDefaultValue() { 
+        return fromString(getDefaultValueAsString()); 
     }
 
     public String getDefaultValueAsString() {
