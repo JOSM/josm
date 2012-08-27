@@ -139,6 +139,7 @@ public class DuplicateWay extends Test
 
     /**
      * Remove uninteresting keys, like created_by to normalize the tags
+     * @param wkeys The tags of the way, obtained by {@code Way#getKeys}
      */
     public void removeUninterestingKeys(Map<String, String> wkeys) {
         wkeys.remove("created_by");
@@ -150,8 +151,29 @@ public class DuplicateWay extends Test
             return;
         List<Node> wNodes = w.getNodes();
         List<LatLon> wLat = new ArrayList<LatLon>(wNodes.size());
-        for (int i=0;i<wNodes.size();i++) {
-            wLat.add(wNodes.get(i).getCoor());
+        if (w.isClosed()) {
+            // In case of a closed way, build the list of lat/lon starting from the node with the lowest id
+            // to ensure this list will produce the same hashcode as the list obtained from another closed
+            // way with the same nodes, in the same order, but that does not start from the same node (fix #8008)
+            int lowestIndex = 0;
+            long lowestNodeId = wNodes.get(0).getUniqueId();
+            for (int i=1; i<wNodes.size(); i++) {
+                if (wNodes.get(i).getUniqueId() < lowestNodeId) {
+                    lowestNodeId = wNodes.get(i).getUniqueId();
+                    lowestIndex = i;
+                }
+            }
+            for (int i=lowestIndex; i<wNodes.size()-1; i++) {
+                wLat.add(wNodes.get(i).getCoor());
+            }
+            for (int i=0; i<lowestIndex; i++) {
+                wLat.add(wNodes.get(i).getCoor());
+            }
+            wLat.add(wNodes.get(lowestIndex).getCoor());
+        } else {
+            for (int i=0; i<wNodes.size(); i++) {
+                wLat.add(wNodes.get(i).getCoor());
+            }
         }
         Map<String, String> wkeys = w.getKeys();
         removeUninterestingKeys(wkeys);
