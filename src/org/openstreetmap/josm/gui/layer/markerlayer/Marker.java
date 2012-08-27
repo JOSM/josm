@@ -16,6 +16,7 @@ import java.util.Map;
 
 import javax.swing.Icon;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
@@ -107,7 +108,7 @@ public class Marker implements TemplateEngineDataProvider {
                     result = new TemplateEntryProperty(key, defaultValue, parent);
                     cache.put(key, result);
                 } catch (ParseError e) {
-                    System.out.println(String.format("Unable to parse template engine pattern '%s' for property %s", defaultValue, key));
+                    Main.warn("Unable to parse template engine pattern ''{0}'' for property {1}", defaultValue, key);
                 }
             }
             return result;
@@ -126,7 +127,7 @@ public class Marker implements TemplateEngineDataProvider {
                     result = new TemplateEntryProperty(key, defaultValue, parent);
                     cache.put(key, result);
                 } catch (ParseError e) {
-                    System.out.println(String.format("Unable to parse template engine pattern '%s' for property %s", defaultValue, key));
+                    Main.warn("Unable to parse template engine pattern ''{0}'' for property {1}", defaultValue, key);
                 }
             }
             return result;
@@ -146,8 +147,8 @@ public class Marker implements TemplateEngineDataProvider {
             try {
                 return new TemplateParser(s).parse();
             } catch (ParseError e) {
-                System.out.println(String.format("Unable to parse template engine pattern '%s' for property %s. Using default ('%s') instead",
-                        s, getKey(), super.getDefaultValueAsString()));
+                Main.warn("Unable to parse template engine pattern ''{0}'' for property {1}. Using default (''{2}'') instead",
+                        s, getKey(), super.getDefaultValueAsString());
                 return getDefaultValue();
             }
         }
@@ -176,7 +177,7 @@ public class Marker implements TemplateEngineDataProvider {
      */
     public static final List<MarkerProducers> markerProducers = new LinkedList<MarkerProducers>();
 
-    // Add one Maker specifying the default behaviour.
+    // Add one Marker specifying the default behaviour.
     static {
         Marker.markerProducers.add(new MarkerProducers() {
             @SuppressWarnings("unchecked")
@@ -202,7 +203,7 @@ public class Marker implements TemplateEngineDataProvider {
                             try {
                                 url = new File(relativePath.getParentFile(), uri).toURI().toURL();
                             } catch (MalformedURLException e1) {
-                                System.err.println("Unable to convert uri " + uri + " to URL: "  + e1.getMessage());
+                                Main.warn("Unable to convert uri {0} to URL: {1}", uri, e1.getMessage());
                             }
                         }
                     }
@@ -216,12 +217,13 @@ public class Marker implements TemplateEngineDataProvider {
                     }
                     return new Marker(wpt.getCoor(), wpt, symbolName, parentLayer, time, offset);
                 }
-                else if (url.toString().endsWith(".wav"))
+                else if (url.toString().endsWith(".wav")) {
                     return new AudioMarker(wpt.getCoor(), wpt, url, parentLayer, time, offset);
-                else if (url.toString().endsWith(".png") || url.toString().endsWith(".jpg") || url.toString().endsWith(".jpeg") || url.toString().endsWith(".gif"))
+                } else if (url.toString().endsWith(".png") || url.toString().endsWith(".jpg") || url.toString().endsWith(".jpeg") || url.toString().endsWith(".gif")) {
                     return new ImageMarker(wpt.getCoor(), url, parentLayer, time, offset);
-                else
+                } else {
                     return new WebMarker(wpt.getCoor(), url, parentLayer, time, offset);
+                }
             }
         });
     }
@@ -365,7 +367,7 @@ public class Marker implements TemplateEngineDataProvider {
 
     /**
      * Returns the Text which should be displayed, depending on chosen preference
-     * @return Text
+     * @return Text of the label
      */
     public String getText() {
         if (text != null)

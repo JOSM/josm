@@ -25,15 +25,15 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * {@link OsmPrimitive}s. In particular, it represents conflicts in the coordinates of {@link Node}s and
  * the deleted or visible state of {@link OsmPrimitive}s.
  *
- * This model is an {@link Observable}. It notifies registered {@link Observer}s whenever the
+ * This model is an {@link Observable}. It notifies registered {@link java.util.Observer}s whenever the
  * internal state changes.
  *
  * This model also emits property changes for {@link #RESOLVED_COMPLETELY_PROP}. Property change
  * listeners may register themselves using {@link #addPropertyChangeListener(PropertyChangeListener)}.
  *
  * @see Node#getCoor()
- * @see OsmPrimitive#deleted
- * @see OsmPrimitive#visible
+ * @see OsmPrimitive#isDeleted
+ * @see OsmPrimitive#isVisible
  *
  */
 public class PropertiesMergeModel extends Observable {
@@ -119,10 +119,9 @@ public class PropertiesMergeModel extends Observable {
     }
 
     /**
-     * populates the model with the differences between my and their version
+     * Populates the model with the differences between local and server version
      *
-     * @param my my version of the primitive
-     * @param their their version of the primitive
+     * @param conflict The conflict information
      */
     public void populate(Conflict<? extends OsmPrimitive> conflict) {
         this.my = conflict.getMy();
@@ -150,10 +149,10 @@ public class PropertiesMergeModel extends Observable {
 
     /**
      * replies the coordinates of my {@link OsmPrimitive}. null, if my primitive hasn't
-     * coordinates (i.e. because it is a {@link Way}).
+     * coordinates (i.e. because it is a {@link org.openstreetmap.josm.data.osm.Way}).
      *
      * @return the coordinates of my {@link OsmPrimitive}. null, if my primitive hasn't
-     *  coordinates (i.e. because it is a {@link Way}).
+     *  coordinates (i.e. because it is a {@link org.openstreetmap.josm.data.osm.Way}).
      */
     public LatLon getMyCoords() {
         return myCoords;
@@ -161,10 +160,10 @@ public class PropertiesMergeModel extends Observable {
 
     /**
      * replies the coordinates of their {@link OsmPrimitive}. null, if their primitive hasn't
-     * coordinates (i.e. because it is a {@link Way}).
+     * coordinates (i.e. because it is a {@link org.openstreetmap.josm.data.osm.Way}).
      *
      * @return the coordinates of my {@link OsmPrimitive}. null, if my primitive hasn't
-     * coordinates (i.e. because it is a {@link Way}).
+     * coordinates (i.e. because it is a {@link org.openstreetmap.josm.data.osm.Way}).
      */
     public LatLon getTheirCoords() {
         return theirCoords;
@@ -188,7 +187,7 @@ public class PropertiesMergeModel extends Observable {
     }
 
     /**
-     * decides a conflict between my and their coordinates
+     * Decides a conflict between local and server coordinates
      *
      * @param decision the decision
      */
@@ -200,17 +199,25 @@ public class PropertiesMergeModel extends Observable {
     }
 
     /**
-     * replies my deleted state,
-     * @return
+     * Replies deleted state of local dataset
+     * @return The state of deleted flag
      */
     public Boolean getMyDeletedState() {
         return myDeletedState;
     }
 
+    /**
+     * Replies deleted state of Server dataset
+     * @return The state of deleted flag
+     */
     public  Boolean getTheirDeletedState() {
         return theirDeletedState;
     }
 
+    /**
+     * Replies deleted state of combined dataset
+     * @return The state of deleted flag
+     */
     public Boolean getMergedDeletedState() {
         switch(deletedMergeDecision) {
         case KEEP_MINE: return myDeletedState;
@@ -222,16 +229,16 @@ public class PropertiesMergeModel extends Observable {
     }
 
     /**
-     * returns my referrers,
-     * @return my referrers
+     * Returns local referrers
+     * @return The referrers
      */
     public List<OsmPrimitive> getMyReferrers() {
         return myReferrers;
     }
 
     /**
-     * returns their referrers,
-     * @return their referrers
+     * Returns server referrers
+     * @return The referrers
      */
     public List<OsmPrimitive> getTheirReferrers() {
         return theirReferrers;
@@ -288,7 +295,7 @@ public class PropertiesMergeModel extends Observable {
      * replies true if my and their primitive have a conflict between
      * their deleted states
      *
-     * @return true if my and their primitive have a conflict between
+     * @return <code>true</code> if my and their primitive have a conflict between
      * their deleted states
      */
     public boolean hasDeletedStateConflict() {
@@ -298,7 +305,7 @@ public class PropertiesMergeModel extends Observable {
     /**
      * replies true if all conflict in this model are resolved
      *
-     * @return true if all conflict in this model are resolved; false otherwise
+     * @return <code>true</code> if all conflict in this model are resolved; <code>false</code> otherwise
      */
     public boolean isResolvedCompletely() {
         boolean ret = true;
@@ -312,11 +319,10 @@ public class PropertiesMergeModel extends Observable {
     }
 
     /**
-     * builds the command(s) to apply the conflict resolutions to my primitive
+     * Builds the command(s) to apply the conflict resolutions to my primitive
      *
-     * @param my  my primitive
-     * @param their their primitive
-     * @return the list of commands
+     * @param conflict The conflict information
+     * @return The list of commands
      */
     public List<Command> buildResolveCommand(Conflict<? extends OsmPrimitive> conflict) {
         List<Command> cmds = new ArrayList<Command>();

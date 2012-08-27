@@ -15,6 +15,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -150,6 +151,9 @@ abstract public class Main {
      */
     public MainMenu menu;
 
+    /**
+     * The data validation handler.
+     */
     public OsmValidator validator;
     /**
      * The MOTD Layer.
@@ -157,23 +161,62 @@ abstract public class Main {
     private GettingStarted gettingStarted = new GettingStarted();
 
     /**
-     * Print a message if logging is on.
+     * Logging level (3 = debug, 2 = info, 1 = warn, 0 = none).
      */
     static public int log_level = 2;
+    /**
+     * Print a warning message if logging is on.
+     * @param msg The message to print.
+     */
     static public void warn(String msg) {
         if (log_level < 1)
             return;
         System.out.println(msg);
     }
+    /**
+     * Print an informational message if logging is on.
+     * @param msg The message to print.
+     */
     static public void info(String msg) {
         if (log_level < 2)
             return;
         System.out.println(msg);
     }
+    /**
+     * Print an debug message if logging is on.
+     * @param msg The message to print.
+     */
     static public void debug(String msg) {
         if (log_level < 3)
             return;
         System.out.println(msg);
+    }
+    /**
+     * Print a formated warning message if logging is on. Calls {@link MessageFormat#format}
+     * function to format text.
+     * @param msg The formated message to print.
+     * @param objects The objects to insert into format string.
+     */
+    static public void warn(String msg, Object... objects) {
+        warn(MessageFormat.format(msg, objects));
+    }
+    /**
+     * Print a formated informational message if logging is on. Calls {@link MessageFormat#format}
+     * function to format text.
+     * @param msg The formated message to print.
+     * @param objects The objects to insert into format string.
+     */
+    static public void info(String msg, Object... objects) {
+        info(MessageFormat.format(msg, objects));
+    }
+    /**
+     * Print a formated debug message if logging is on. Calls {@link MessageFormat#format}
+     * function to format text.
+     * @param msg The formated message to print.
+     * @param objects The objects to insert into format string.
+     */
+    static public void debug(String msg, Object... objects) {
+        debug(MessageFormat.format(msg, objects));
     }
 
     /**
