@@ -139,6 +139,7 @@ Build-Date: ${build.tstamp}
                 packagenames="org.openstreetmap.josm.*,org.openstreetmap.gui.jmapviewer.*"
                 windowtitle="JOSM"
                 use="true"
+                private="true"
                 linksource="true"
                 author="false">
             <link href="http://docs.oracle.com/javase/6/docs/api"/>

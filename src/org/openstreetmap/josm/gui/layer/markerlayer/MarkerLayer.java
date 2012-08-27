@@ -423,6 +423,10 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         }
     }
 
+    /**
+     * Get state of text display.
+     * @return <code>true</code> if text should be shown, <code>false</code> otherwise.
+     */
     private boolean isTextOrIconShown() {
         String current = Main.pref.get("marker.show "+getName(),"show");
         return "show".equalsIgnoreCase(current);

@@ -316,7 +316,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         p.add(new JLabel(tr("Value")), GBC.std());
         p.add(Box.createHorizontalStrut(10), GBC.std());
         p.add(values, GBC.eol().fill(GBC.HORIZONTAL));
-        addFocusAdapter(row, keys, values, autocomplete, usedValuesAwareComparator);
+        addFocusAdapter(keys, values, autocomplete, usedValuesAwareComparator);
 
         final JOptionPane optionPane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
             @Override public void selectInitialValue() {
@@ -446,7 +446,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     }
 
     /**
-     * This simply fires up an relation editor for the relation shown; everything else
+     * This simply fires up an {@link RelationEditor} for the relation shown; everything else
      * is the editor's business.
      *
      * @param row
@@ -534,7 +534,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         }
 
-        FocusAdapter focus = addFocusAdapter(-1, keys, values, autocomplete, defaultACItemComparator);
+        FocusAdapter focus = addFocusAdapter(keys, values, autocomplete, defaultACItemComparator);
         // fire focus event in advance or otherwise the popup list will be too small at first
         focus.focusGained(null);
 
@@ -616,7 +616,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 // Disable action if its key is already set on the object (the key being absent from the keys list for this reason
                 // performing this action leads to autocomplete to the next key (see #7671 comments)
                 for (int j = 0; j < propertyData.getRowCount(); ++j) {
-                    System.out.println(propertyData.getValueAt(j, 0));
                     if (t.getKey().equals(propertyData.getValueAt(j, 0))) {
                         action.setEnabled(false);
                         break;
@@ -654,12 +653,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     }
 
     /**
-     * @param allData
-     * @param keys
-     * @param values
+     * Create a focus handling adapter and apply in to the editor component of value
+     * autocompletion box.
+     * @param keys Box for keys entering and autocompletion
+     * @param values Box for values entering and autocompletion
+     * @param autocomplete Manager handling the autocompletion
+     * @param comparator Class to decide what values are offered on autocompletion
+     * @return The created adapter
      */
-    private FocusAdapter addFocusAdapter(final int row,
-            final AutoCompletingComboBox keys, final AutoCompletingComboBox values,
+    private FocusAdapter addFocusAdapter(final AutoCompletingComboBox keys, final AutoCompletingComboBox values,
             final AutoCompletionManager autocomplete, final Comparator<AutoCompletionListItem> comparator) {
         // get the combo box' editor component
         JTextComponent editor = (JTextComponent)values.getEditor()
@@ -682,7 +684,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private String objKey;
 
     /**
-     * The property data.
+     * The property data of selected objects.
      */
     private final DefaultTableModel propertyData = new DefaultTableModel() {
         @Override public boolean isCellEditable(int row, int column) {
@@ -694,7 +696,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     };
 
     /**
-     * The membership data.
+     * The membership data of selected objects.
      */
     private final DefaultTableModel membershipData = new DefaultTableModel() {
         @Override public boolean isCellEditable(int row, int column) {
@@ -706,19 +708,34 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     };
 
     /**
-     * The properties list.
+     * The properties table.
      */
     private final JTable propertyTable = new JTable(propertyData);
+    /**
+     * The membership table.
+     */
     private final JTable membershipTable = new JTable(membershipData);
 
     /**
-     * The Add/Edit/Delete buttons (needed to be able to disable them)
+     * The Add button (needed to be able to disable it)
      */
     private final SideButton btnAdd;
+    /**
+     * The Edit button (needed to be able to disable it)
+     */
     private final SideButton btnEdit;
+    /**
+     * The Delete button (needed to be able to disable it)
+     */
     private final SideButton btnDel;
+    /**
+     * Matching preset display class
+     */
     private final PresetListPanel presets = new PresetListPanel();
 
+    /**
+     * Text to display when nothing selected.
+     */
     private final JLabel selectSth = new JLabel("<html><p>"
             + tr("Select objects for which to change properties.") + "</p></html>");
 
@@ -995,7 +1012,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         getActionMap().put("onHelp", helpAction);
     }
 
-    @Override public void setVisible(boolean b) {
+    @Override
+    public void setVisible(boolean b) {
         super.setVisible(b);
         if (b && Main.main.getCurrentDataSet() != null) {
             selectionChanged(Main.main.getCurrentDataSet().getSelected());
@@ -1029,6 +1047,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
     };
 
+    @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         if (!isVisible())
             return;
@@ -1155,6 +1174,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
     }
 
+    /**
+     * Update selection status, call @{link #selectionChanged} function.
+     */
     private void updateSelection() {
         if (Main.main.getCurrentDataSet() == null) {
             selectionChanged(Collections.<OsmPrimitive>emptyList());
@@ -1164,16 +1186,21 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     }
 
     /* ---------------------------------------------------------------------------------- */
-    /* EditLayerChangeListener                                                                */
+    /* EditLayerChangeListener                                                            */
     /* ---------------------------------------------------------------------------------- */
+    @Override
     public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
         updateSelection();
     }
 
+    @Override
     public void processDatasetEvent(AbstractDatasetChangedEvent event) {
         updateSelection();
     }
 
+    /**
+     * Action handling delete button press in properties dialog.
+     */
     class DeleteAction extends JosmAction implements ListSelectionListener {
 
         public DeleteAction() {
@@ -1276,6 +1303,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
     }
 
+    /**
+     * Action handling add button press in properties dialog.
+     */
     class AddAction extends JosmAction {
         public AddAction() {
             super(tr("Add"), "dialogs/add", tr("Add a new key/value pair to all objects"),
@@ -1289,6 +1319,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
     }
 
+    /**
+     * Action handling edit button press in properties dialog.
+     */
     class EditAction extends JosmAction implements ListSelectionListener {
         public EditAction() {
             super(tr("Edit"), "dialogs/edit", tr("Edit the value of the selected key for all objects"),
@@ -1380,7 +1413,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                                 conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
 
                                 if (conn.getResponseCode() != 200) {
-                                    System.out.println("INFO: " + u + " does not exist");
+                                    Main.info("INFO: {0} does not exist", u);
                                     conn.disconnect();
                                 } else {
                                     int osize = conn.getContentLength();
@@ -1397,10 +1430,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                                      *  content lengths, so we have to be fuzzy.. (this is UGLY, recode if u know better)
                                      */
                                     if (Math.abs(conn.getContentLength() - osize) > 200) {
-                                        System.out.println("INFO: " + u + " is a mediawiki redirect");
+                                        Main.info("INFO: {0} is a mediawiki redirect", u);
                                         conn.disconnect();
                                     } else {
-                                        System.out.println("INFO: browsing to " + u);
+                                        Main.info("INFO: browsing to {0}", u);
                                         conn.disconnect();
 
                                         OpenBrowser.displayUrl(u.toString());
