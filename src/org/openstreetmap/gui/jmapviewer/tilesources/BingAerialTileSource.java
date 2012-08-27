@@ -2,8 +2,6 @@ package org.openstreetmap.gui.jmapviewer.tilesources;
 
 //License: GPL.
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.Image;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -64,7 +62,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
     public String getTileUrl(int zoom, int tilex, int tiley) throws IOException {
         // make sure that attribution is loaded. otherwise subdomains is null.
         if (getAttribution() == null)
-            throw new IOException(tr("Attribution is not loaded yet"));
+            throw new IOException("Attribution is not loaded yet");
 
         int t = (zoom + tilex + tiley) % subdomains.length;
         String subdomain = subdomains[t];
