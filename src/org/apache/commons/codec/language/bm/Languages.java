@@ -36,9 +36,10 @@ import java.util.Set;
  * The format of these resources is the following:
  * <ul>
  * <li><b>Language:</b> a single string containing no whitespace</li>
- * <li><b>End-of-line comments:</b> Any occurance of '//' will cause all text following on that line to be discarded as a comment.</li>
- * <li><b>Multi-line comments:</b> Any line starting with '/*' will start multi-line commenting mode. This will skip all content until a
- * line ending in '*' and '/' is found.</li>
+ * <li><b>End-of-line comments:</b> Any occurrence of '//' will cause all text following on that line to be
+ * discarded as a comment.</li>
+ * <li><b>Multi-line comments:</b> Any line starting with '/*' will start multi-line commenting mode.
+ * This will skip all content until a line ending in '*' and '/' is found.</li>
  * <li><b>Blank lines:</b> All blank lines will be skipped.</li>
  * </ul>
  * <p>
@@ -47,7 +48,7 @@ import java.util.Set;
  * This class is immutable and thread-safe.
  *
  * @since 1.6
- * @version $Id: Languages.java 1376690 2012-08-23 20:51:45Z tn $
+ * @version $Id: Languages.java 1378746 2012-08-29 21:29:49Z tn $
  */
 public class Languages {
     // Iimplementation note: This class is divided into two sections. The first part is a static factory interface that
