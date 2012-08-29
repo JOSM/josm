@@ -24,14 +24,15 @@ import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.Charsets;
 
 /**
- * Converts String to and from bytes using the encodings required by the Java specification. These encodings are specified in <a
- * href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
+ * Converts String to and from bytes using the encodings required by the Java specification. These encodings are
+ * specified in <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">
+ * Standard charsets</a>.
  *
  * <p>This class is immutable and thread-safe.</p>
  *
  * @see CharEncoding
  * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
- * @version $Id: StringUtils.java 1352268 2012-06-20 19:04:08Z ggregory $
+ * @version $Id: StringUtils.java 1378740 2012-08-29 21:18:47Z tn $
  * @since 1.4
  */
 public class StringUtils {

@@ -34,7 +34,7 @@ import org.apache.commons.codec.EncoderException;
  * This class is thread-safe.
  *
  * @since 1.1
- * @version $Id: Hex.java 1352268 2012-06-20 19:04:08Z ggregory $
+ * @version $Id: Hex.java 1378740 2012-08-29 21:18:47Z tn $
  */
 public class Hex implements BinaryEncoder, BinaryDecoder {
 
@@ -55,12 +55,14 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
     /**
      * Used to build output as Hex
      */
-    private static final char[] DIGITS_LOWER = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    private static final char[] DIGITS_LOWER =
+        {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     /**
      * Used to build output as Hex
      */
-    private static final char[] DIGITS_UPPER = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    private static final char[] DIGITS_UPPER =
+        {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
     /**
      * Converts an array of characters representing hexadecimal values into an array of bytes of those same values. The
@@ -293,7 +295,8 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
     @Override
     public Object encode(Object object) throws EncoderException {
         try {
-            byte[] byteArray = object instanceof String ? ((String) object).getBytes(this.getCharset()) : (byte[]) object;
+            byte[] byteArray = object instanceof String ?
+                                   ((String) object).getBytes(this.getCharset()) : (byte[]) object;
             return encodeHex(byteArray);
         } catch (ClassCastException e) {
             throw new EncoderException(e.getMessage(), e);

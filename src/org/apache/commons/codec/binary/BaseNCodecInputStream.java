@@ -29,7 +29,7 @@ import org.apache.commons.codec.binary.BaseNCodec.Context;
  * Abstract superclass for Base-N input streams.
  *
  * @since 1.5
- * @version $Id: BaseNCodecInputStream.java 1376694 2012-08-23 20:55:04Z tn $
+ * @version $Id: BaseNCodecInputStream.java 1378740 2012-08-29 21:18:47Z tn $
  */
 public class BaseNCodecInputStream extends FilterInputStream {
 
@@ -170,7 +170,8 @@ public class BaseNCodecInputStream extends FilterInputStream {
 
     /**
      * Repositions this stream to the position at the time the mark method was last called on this input stream.
-     * <p>The {@link #reset} method of {@link BaseNCodecInputStream} does nothing except throw an {@link IOException}.</p>
+     * <p>
+     * The {@link #reset} method of {@link BaseNCodecInputStream} does nothing except throw an {@link IOException}.
      *
      * @throws IOException if this method is invoked
      * @since 1.7
