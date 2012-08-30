@@ -39,11 +39,11 @@ import org.apache.commons.codec.binary.StringUtils;
  * <p>
  * This class is immutable and thread-safe.
  *
- * @see <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4.1">Chapter 17.13.4 'Form content types'</a>
+ * @see "<a href='http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4.1'>Chapter 17.13.4 'Form content types'</a>"
  *           of the <a href="http://www.w3.org/TR/html4/">HTML 4.01 Specification<a>
  *
  * @since 1.2
- * @version $Id: URLCodec.java 1378748 2012-08-29 21:37:30Z tn $
+ * @version $Id: URLCodec.java 1379013 2012-08-30 16:47:01Z sebb $
  */
 public class URLCodec implements BinaryEncoder, BinaryDecoder, StringEncoder, StringDecoder {
 

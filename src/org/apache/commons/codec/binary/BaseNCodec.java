@@ -29,7 +29,7 @@ import org.apache.commons.codec.EncoderException;
  * This class is thread-safe.
  * </p>
  *
- * @version $Id: BaseNCodec.java 1378955 2012-08-30 14:25:04Z ggregory $
+ * @version $Id: BaseNCodec.java 1379019 2012-08-30 16:53:56Z sebb $
  */
 public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
 
@@ -95,6 +95,7 @@ public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
          *
          * @return a String useful for debugging.
          */
+        @SuppressWarnings("boxing") // OK to ignore boxing here
         @Override
         public String toString() {
             return String
