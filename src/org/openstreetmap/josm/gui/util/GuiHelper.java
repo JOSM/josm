@@ -6,8 +6,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.FilteredImageSource;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.GrayFilter;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -79,5 +82,25 @@ public class GuiHelper {
         dlg.setCancelButton(1);
         return dlg.showDialog().getValue() != 2;
     }
+    
+    /**
+     * Replies the disabled (grayed) version of the specified image.
+     * @param image The image to disable
+     * @return The disabled (grayed) version of the specified image, brightened by 20%.
+     * @since 5484
+     */
+    public static final Image getDisabledImage(Image image) {
+        return Toolkit.getDefaultToolkit().createImage(
+                new FilteredImageSource(image.getSource(), new GrayFilter(true, 20)));
+    }
 
+    /**
+     * Replies the disabled (grayed) version of the specified icon.
+     * @param icon The icon to disable
+     * @return The disabled (grayed) version of the specified icon, brightened by 20%.
+     * @since 5484
+     */
+    public static final ImageIcon getDisabledIcon(ImageIcon icon) {
+        return new ImageIcon(getDisabledImage(icon.getImage()));
+    }
 }
