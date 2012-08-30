@@ -53,75 +53,59 @@ package org.apache.commons.codec;
  *
  * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
  * @since 1.4
- * @version $Id: CharEncoding.java 1378197 2012-08-28 16:02:33Z ggregory $
+ * @version $Id: CharEncoding.java 1379049 2012-08-30 18:35:22Z tn $
  */
 public class CharEncoding {
     /**
-     * CharEncodingISO Latin Alphabet No. 1, a.k.a. ISO-LATIN-1. </p>
+     * CharEncodingISO Latin Alphabet No. 1, a.k.a. ISO-LATIN-1.
      * <p>
      * Every implementation of the Java platform is required to support this character encoding.
-     * </p>
      *
      * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      */
     public static final String ISO_8859_1 = "ISO-8859-1";
 
     /**
-     * <p>
      * Seven-bit ASCII, also known as ISO646-US, also known as the Basic Latin block of the Unicode character set.
-     * </p>
      * <p>
      * Every implementation of the Java platform is required to support this character encoding.
-     * </p>
      *
      * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      */
     public static final String US_ASCII = "US-ASCII";
 
     /**
-     * <p>
      * Sixteen-bit Unicode Transformation Format, The byte order specified by a mandatory initial byte-order mark
      * (either order accepted on input, big-endian used on output)
-     * </p>
      * <p>
      * Every implementation of the Java platform is required to support this character encoding.
-     * </p>
      *
      * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      */
     public static final String UTF_16 = "UTF-16";
 
     /**
-     * <p>
      * Sixteen-bit Unicode Transformation Format, big-endian byte order.
-     * </p>
      * <p>
      * Every implementation of the Java platform is required to support this character encoding.
-     * </p>
      *
      * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      */
     public static final String UTF_16BE = "UTF-16BE";
 
     /**
-     * <p>
      * Sixteen-bit Unicode Transformation Format, little-endian byte order.
-     * </p>
      * <p>
      * Every implementation of the Java platform is required to support this character encoding.
-     * </p>
      *
      * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      */
     public static final String UTF_16LE = "UTF-16LE";
 
     /**
-     * <p>
      * Eight-bit Unicode Transformation Format.
-     * </p>
      * <p>
      * Every implementation of the Java platform is required to support this character encoding.
-     * </p>
      *
      * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      */

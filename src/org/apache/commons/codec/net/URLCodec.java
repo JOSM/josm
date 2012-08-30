@@ -43,7 +43,7 @@ import org.apache.commons.codec.binary.StringUtils;
  *           of the <a href="http://www.w3.org/TR/html4/">HTML 4.01 Specification<a>
  *
  * @since 1.2
- * @version $Id: URLCodec.java 1379013 2012-08-30 16:47:01Z sebb $
+ * @version $Id: URLCodec.java 1379048 2012-08-30 18:34:35Z tn $
  */
 public class URLCodec implements BinaryEncoder, BinaryDecoder, StringEncoder, StringDecoder {
 
@@ -320,8 +320,7 @@ public class URLCodec implements BinaryEncoder, BinaryDecoder, StringEncoder, St
         } else if (obj instanceof String) {
             return encode((String)obj);
         } else {
-            throw new EncoderException("Objects of type " +
-                obj.getClass().getName() + " cannot be URL encoded");
+            throw new EncoderException("Objects of type " + obj.getClass().getName() + " cannot be URL encoded");
 
         }
     }

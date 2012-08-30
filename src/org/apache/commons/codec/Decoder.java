@@ -25,27 +25,22 @@ package org.apache.commons.codec;
  * <p>
  * One of the two interfaces at the center of the codec package.
  *
- * @version $Id: Decoder.java 1376686 2012-08-23 20:38:20Z tn $
+ * @version $Id: Decoder.java 1379049 2012-08-30 18:35:22Z tn $
  */
 public interface Decoder {
 
     /**
-     * Decodes an "encoded" Object and returns a "decoded"
-     * Object.  Note that the implementation of this
-     * interface will try to cast the Object parameter
-     * to the specific type expected by a particular Decoder
-     * implementation.  If a {@link ClassCastException} occurs
-     * this decode method will throw a DecoderException.
+     * Decodes an "encoded" Object and returns a "decoded" Object.  Note that the implementation of this
+     * interface will try to cast the Object parameter to the specific type expected by a particular Decoder
+     * implementation.  If a {@link ClassCastException} occurs this decode method will throw a DecoderException.
      *
-     * @param source the object to decode
-     *
+     * @param source
+     *                  the object to decode
      * @return a 'decoded" object
-     *
-     * @throws DecoderException a decoder exception can
-     * be thrown for any number of reasons.  Some good
-     * candidates are that the parameter passed to this
-     * method is null, a param cannot be cast to the
-     * appropriate type for a specific encoder.
+     * @throws DecoderException
+     *                  a decoder exception can be thrown for any number of reasons.  Some good candidates are that
+     *                  the parameter passed to this method is null, a param cannot be cast to the appropriate type
+     *                  for a specific encoder.
      */
     Object decode(Object source) throws DecoderException;
 }

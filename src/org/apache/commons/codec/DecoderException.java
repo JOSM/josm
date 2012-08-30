@@ -21,7 +21,7 @@ package org.apache.commons.codec;
  * Thrown when there is a failure condition during the decoding process. This exception is thrown when a {@link Decoder}
  * encounters a decoding specific exception such as invalid data, or characters outside of the expected range.
  *
- * @version $Id: DecoderException.java 1352268 2012-06-20 19:04:08Z ggregory $
+ * @version $Id: DecoderException.java 1379049 2012-08-30 18:35:22Z tn $
  */
 public class DecoderException extends Exception {
 
@@ -54,7 +54,7 @@ public class DecoderException extends Exception {
     }
 
     /**
-     * Constructsa new exception with the specified detail message and cause.
+     * Constructs a new exception with the specified detail message and cause.
      *
      * <p>
      * Note that the detail message associated with <code>cause</code> is not automatically incorporated into this

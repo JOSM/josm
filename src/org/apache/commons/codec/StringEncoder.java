@@ -20,19 +20,18 @@ package org.apache.commons.codec;
 /**
  * Defines common encoding methods for String encoders.
  *
- * @version $Id: StringEncoder.java 1352268 2012-06-20 19:04:08Z ggregory $
+ * @version $Id: StringEncoder.java 1379049 2012-08-30 18:35:22Z tn $
  */
 public interface StringEncoder extends Encoder {
 
     /**
      * Encodes a String and returns a String.
      *
-     * @param source the String to encode
-     *
+     * @param source
+     *                  the String to encode
      * @return the encoded String
-     *
-     * @throws EncoderException thrown if there is
-     *  an error condition during the encoding process.
+     * @throws EncoderException
+     *                  thrown if there is an error condition during the encoding process.
      */
     String encode(String source) throws EncoderException;
 }

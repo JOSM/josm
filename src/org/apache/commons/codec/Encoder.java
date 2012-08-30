@@ -24,22 +24,20 @@ package org.apache.commons.codec;
  * common generic interface which allows a user to pass a generic Object to any Encoder implementation
  * in the codec package.
  *
- * @version $Id: Encoder.java 1376686 2012-08-23 20:38:20Z tn $
+ * @version $Id: Encoder.java 1379049 2012-08-30 18:35:22Z tn $
  */
 public interface Encoder {
 
     /**
-     * Encodes an "Object" and returns the encoded content
-     * as an Object.  The Objects here may just be <code>byte[]</code>
-     * or <code>String</code>s depending on the implementation used.
+     * Encodes an "Object" and returns the encoded content as an Object. The Objects here may just be
+     * <code>byte[]</code> or <code>String</code>s depending on the implementation used.
      *
-     * @param source An object to encode
-     *
+     * @param source
+     *                  An object to encode
      * @return An "encoded" Object
-     *
-     * @throws EncoderException an encoder exception is
-     *  thrown if the encoder experiences a failure
-     *  condition during the encoding process.
+     * @throws EncoderException
+     *                  An encoder exception is thrown if the encoder experiences a failure condition during
+     *                  the encoding process.
      */
     Object encode(Object source) throws EncoderException;
 }
