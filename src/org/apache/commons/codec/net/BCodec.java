@@ -42,7 +42,7 @@ import org.apache.commons.codec.binary.Base64;
  *          Header Extensions for Non-ASCII Text</a>
  *
  * @since 1.3
- * @version $Id: BCodec.java 1376686 2012-08-23 20:38:20Z tn $
+ * @version $Id: BCodec.java 1379145 2012-08-30 21:02:52Z tn $
  */
 public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder {
     /**
@@ -61,7 +61,7 @@ public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * Constructor which allows for the selection of a default charset
      *
      * @param charset
-     *                  the default string charset to use.
+     *            the default string charset to use.
      *
      * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      * @since 1.7
@@ -74,7 +74,7 @@ public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * Constructor which allows for the selection of a default charset
      *
      * @param charsetName
-     *                  the default charset to use.
+     *            the default charset to use.
      * @throws UnsupportedCharsetException
      *             If the named charset is unavailable
      * @since 1.7 throws UnsupportedCharsetException if the named charset is unavailable
@@ -109,13 +109,12 @@ public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * Encodes a string into its Base64 form using the specified charset. Unsafe characters are escaped.
      *
      * @param value
-     *                  string to convert to Base64 form
+     *            string to convert to Base64 form
      * @param charset
-     *                  the charset for <code>value</code>
+     *            the charset for <code>value</code>
      * @return Base64 string
-     *
      * @throws EncoderException
-     *                  thrown if a failure condition is encountered during the encoding process.
+     *             thrown if a failure condition is encountered during the encoding process.
      * @since 1.7
      */
     public String encode(final String value, final Charset charset) throws EncoderException {
@@ -129,13 +128,12 @@ public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * Encodes a string into its Base64 form using the specified charset. Unsafe characters are escaped.
      *
      * @param value
-     *                  string to convert to Base64 form
+     *            string to convert to Base64 form
      * @param charset
-     *                  the charset for <code>value</code>
+     *            the charset for <code>value</code>
      * @return Base64 string
-     *
      * @throws EncoderException
-     *                  thrown if a failure condition is encountered during the encoding process.
+     *             thrown if a failure condition is encountered during the encoding process.
      */
     public String encode(final String value, final String charset) throws EncoderException {
         if (value == null) {
@@ -152,11 +150,10 @@ public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * Encodes a string into its Base64 form using the default charset. Unsafe characters are escaped.
      *
      * @param value
-     *                  string to convert to Base64 form
+     *            string to convert to Base64 form
      * @return Base64 string
-     *
      * @throws EncoderException
-     *                  thrown if a failure condition is encountered during the encoding process.
+     *             thrown if a failure condition is encountered during the encoding process.
      */
     @Override
     public String encode(String value) throws EncoderException {
@@ -192,11 +189,10 @@ public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * Encodes an object into its Base64 form using the default charset. Unsafe characters are escaped.
      *
      * @param value
-     *                  object to convert to Base64 form
+     *            object to convert to Base64 form
      * @return Base64 object
-     *
      * @throws EncoderException
-     *                  thrown if a failure condition is encountered during the encoding process.
+     *             thrown if a failure condition is encountered during the encoding process.
      */
     @Override
     public Object encode(Object value) throws EncoderException {
@@ -216,13 +212,11 @@ public class BCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * representation.
      *
      * @param value
-     *                  Base64 object to convert into its original form
-     *
+     *            Base64 object to convert into its original form
      * @return original object
-     *
      * @throws DecoderException
-     *                  Thrown if the argument is not a <code>String</code>. Thrown if a failure condition is
-     *                  encountered during the decode process.
+     *             Thrown if the argument is not a <code>String</code>. Thrown if a failure condition is encountered
+     *             during the decode process.
      */
     @Override
     public Object decode(Object value) throws DecoderException {
