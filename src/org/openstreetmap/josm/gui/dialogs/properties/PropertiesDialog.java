@@ -113,6 +113,7 @@ import org.openstreetmap.josm.gui.tagging.TaggingPreset.PresetType;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -528,8 +529,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         p.add(values, GBC.eop().fill());
         if (itemToSelect != null) {
             keys.setSelectedItem(itemToSelect);
-            /* don't add single chars, as they are no properly selected */
-            if(lastAddValue != null && lastAddValue.length() > 1) {
+            if (lastAddValue != null) {
                 values.setSelectedItem(lastAddValue);
             }
         }
@@ -592,14 +592,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             List<Tag> tags = new LinkedList<Tag>(recentTags.keySet());
             for (int i = tags.size()-1; i >= 0 && count <= tagsToShow; i--, count++) {
                 final Tag t = tags.get(i);
-                // Find and display icon
-                ImageIcon icon = MapPaintStyles.getNodeIcon(t, false); // Filters deprecated icon
-                if (icon == null) {
-                    icon = new ImageIcon(new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB));
-                }
-                GridBagConstraints gbc = new GridBagConstraints();
-                gbc.ipadx = 5;
-                p.add(new JLabel(icon), gbc);
                 // Create action for reusing the tag, with keyboard shortcut Ctrl+(1-5)
                 String actionShortcutKey = "properties:recent:"+count;
                 Shortcut sc = Shortcut.registerShortcut(actionShortcutKey, null, KeyEvent.VK_0+count, Shortcut.CTRL);
@@ -621,9 +613,18 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                         break;
                     }
                 }
+                // Find and display icon
+                ImageIcon icon = MapPaintStyles.getNodeIcon(t, false); // Filters deprecated icon
+                if (icon == null) {
+                    icon = new ImageIcon(new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB));
+                }
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.ipadx = 5;
+                p.add(new JLabel(action.isEnabled() ? icon : GuiHelper.getDisabledIcon(icon)), gbc);
                 // Create tag label
+                final String color = action.isEnabled() ? "" : "; color:gray";
                 final JLabel tagLabel = new JLabel("<html>"
-                    + "<style>td{border:1px solid gray; font-weight:normal;}</style>" 
+                    + "<style>td{border:1px solid gray; font-weight:normal"+color+"}</style>" 
                     + "<table><tr><td>" + t.toString() + "</td></tr></table></html>");
                 if (action.isEnabled()) {
                     // Register action

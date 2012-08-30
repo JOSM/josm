@@ -5,17 +5,14 @@ import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageProducer;
 
-import javax.swing.GrayFilter;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.BoxProvider;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.BoxProviderResult;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageCallback;
 import org.openstreetmap.josm.tools.Utils;
@@ -48,8 +45,7 @@ public class MapImage {
             return disabledImg;
         if (img == null)
             getImage(); // fix #7498 ?
-        ImageProducer ip = new FilteredImageSource(img.getSource(), new GrayFilter(true, 20));
-        disabledImg = Toolkit.getDefaultToolkit().createImage(ip);
+        disabledImg = GuiHelper.getDisabledImage(img);
         return disabledImg;
     }
 
