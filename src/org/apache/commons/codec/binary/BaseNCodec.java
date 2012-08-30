@@ -29,7 +29,7 @@ import org.apache.commons.codec.EncoderException;
  * This class is thread-safe.
  * </p>
  *
- * @version $Id: BaseNCodec.java 1378941 2012-08-30 13:56:54Z ggregory $
+ * @version $Id: BaseNCodec.java 1378955 2012-08-30 14:25:04Z ggregory $
  */
 public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
 
@@ -88,6 +88,19 @@ public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
         int modulus;
 
         Context() {
+        }
+
+        /**
+         * Returns a String useful for debugging (especially within a debugger.)
+         *
+         * @return a String useful for debugging.
+         */
+        @Override
+        public String toString() {
+            return String
+                    .format("%s[buffer=%s, currentLinePos=%s, eof=%s, ibitWorkArea=%s, lbitWorkArea=%s, modulus=%s, pos=%s, readPos=%s]",
+                            this.getClass().getSimpleName(), buffer, currentLinePos, eof, ibitWorkArea, lbitWorkArea,
+                            modulus, pos, readPos);
         }
     }
 

@@ -39,7 +39,7 @@ package org.apache.commons.codec.binary;
  * @see <a href="http://www.ietf.org/rfc/rfc4648.txt">RFC 4648</a>
  *
  * @since 1.5
- * @version $Id: Base32.java 1378941 2012-08-30 13:56:54Z ggregory $
+ * @version $Id: Base32.java 1378950 2012-08-30 14:18:41Z ggregory $
  */
 public class Base32 extends BaseNCodec {
 
@@ -396,7 +396,6 @@ public class Base32 extends BaseNCodec {
                     buffer[context.pos++] = PAD;
                     buffer[context.pos++] = PAD;
                     break;
-
                 case 2 : // 2 octets = 16 bits to use
                     buffer[context.pos++] = encodeTable[(int)(context.lbitWorkArea >> 11) & MASK_5BITS]; // 16-1*5 = 11
                     buffer[context.pos++] = encodeTable[(int)(context.lbitWorkArea >>  6) & MASK_5BITS]; // 16-2*5 = 6
