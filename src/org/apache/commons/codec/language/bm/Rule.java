@@ -75,7 +75,7 @@ import java.util.regex.Pattern;
  * </ul>
  *
  * @since 1.6
- * @version $Id: Rule.java 1378746 2012-08-29 21:29:49Z tn $
+ * @version $Id: Rule.java 1379128 2012-08-30 20:36:17Z tn $
  */
 public class Rule {
 
@@ -358,8 +358,8 @@ public class Rule {
                         // include statement
                         String incl = line.substring(HASH_INCLUDE.length()).trim();
                         if (incl.contains(" ")) {
-                            // FIXME: consider throwing an IllegalStateException like in parsePhonemeExpr
-                            // System.err.println("Warning: malformed import statement: " + rawLine);
+                            throw new IllegalArgumentException("Malformed import statement '" + rawLine + "' in " +
+                                                               location);
                         } else {
                             lines.addAll(parseRules(createScanner(incl), location + "->" + incl));
                         }
@@ -367,9 +367,8 @@ public class Rule {
                         // rule
                         String[] parts = line.split("\\s+");
                         if (parts.length != 4) {
-                            // FIXME: consider throwing an IllegalStateException like in parsePhonemeExpr
-//                            System.err.println("Warning: malformed rule statement split into " + parts.length +
-//                                               " parts: " + rawLine);
+                            throw new IllegalArgumentException("Malformed rule statement split into " + parts.length +
+                                                               " parts: " + rawLine + " in " + location);
                         } else {
                             try {
                                 String pat = stripQuotes(parts[0]);
@@ -393,7 +392,8 @@ public class Rule {
                                 };
                                 lines.add(r);
                             } catch (IllegalArgumentException e) {
-                                throw new IllegalStateException("Problem parsing line " + currentLine, e);
+                                throw new IllegalStateException("Problem parsing line '" + currentLine + "' in " +
+                                                                location, e);
                             }
                         }
                     }
