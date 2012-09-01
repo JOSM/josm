@@ -16,7 +16,7 @@ public class DownloadOsmChangeCompressedTask extends DownloadOsmChangeTask {
      */
     @Override
     public boolean acceptsUrl(String url) {
-        return url != null && url.matches("http://.*/.*\\.osc.(gz|bz2?)"); // Remote .osc.gz / .osc.bz / .osc.bz2 files
+        return url != null && url.matches("https?://.*/.*\\.osc.(gz|bz2?)"); // Remote .osc.gz / .osc.bz / .osc.bz2 files
     }
         
     /**
@@ -29,7 +29,7 @@ public class DownloadOsmChangeCompressedTask extends DownloadOsmChangeTask {
             @Override
             protected DataSet parseDataSet() throws OsmTransferException {
                 ProgressMonitor subTaskMonitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
-                if (url.matches("http://.*/.*\\.osc.bz2?")) {
+                if (url.matches("https?://.*/.*\\.osc.bz2?")) {
                     return reader.parseOsmChangeBzip2(subTaskMonitor);
                 } else {
                     return reader.parseOsmChangeGzip(subTaskMonitor);
@@ -38,7 +38,7 @@ public class DownloadOsmChangeCompressedTask extends DownloadOsmChangeTask {
         };
         currentBounds = null;
         // Extract .osc.gz/bz/bz2 filename from URL to set the new layer name
-        extractOsmFilename("http://.*/(.*\\.osc.(gz|bz2?))", url);
+        extractOsmFilename("https?://.*/(.*\\.osc.(gz|bz2?))", url);
         return Main.worker.submit(downloadTask);
     }
 }

@@ -32,8 +32,8 @@ public class DownloadGpsTask extends AbstractDownloadTask {
 
     private static final String PATTERN_TRACKPOINTS_BBOX = "http://.*/api/0.6/trackpoints\\?bbox=.*,.*,.*,.*";
 
-    private static final String PATTERN_EXTERNAL_GPX_SCRIPT = "http://.*exportgpx.*";
-    private static final String PATTERN_EXTERNAL_GPX_FILE = "http://.*/(.*\\.gpx)";
+    private static final String PATTERN_EXTERNAL_GPX_SCRIPT = "https?://.*exportgpx.*";
+    private static final String PATTERN_EXTERNAL_GPX_FILE = "https?://.*/(.*\\.gpx)";
 
     protected String newLayerName = null;
 

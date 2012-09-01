@@ -128,7 +128,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 progressMonitor);
         currentBounds = null;
         // Extract .osm filename from URL to set the new layer name
-        extractOsmFilename("http://.*/(.*\\.osm)", url);
+        extractOsmFilename("https?://.*/(.*\\.osm)", url);
         return Main.worker.submit(downloadTask);
     }
     
@@ -146,7 +146,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 url.matches("http://.*/api/0.6/(map|nodes?|ways?|relations?|\\*).*")// OSM API 0.6 and XAPI
              || url.matches("http://.*/interpreter\\?data=.*")                      // Overpass API
              || url.matches("http://.*/xapi\\?.*\\[@meta\\].*")                     // Overpass API XAPI compatibility layer
-             || url.matches("http://.*/.*\\.osm")                                   // Remote .osm files
+             || url.matches("https?://.*/.*\\.osm")                                 // Remote .osm files
                 );
     }
 
