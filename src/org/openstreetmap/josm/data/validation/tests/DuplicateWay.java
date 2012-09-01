@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,10 +77,13 @@ public class DuplicateWay extends Test
     protected static final int SAME_WAY = 1402;
 
     /** Bag of all ways */
-    MultiMap<WayPair, OsmPrimitive> ways;
+    private MultiMap<WayPair, OsmPrimitive> ways;
 
     /** Bag of all ways, regardless of tags */
-    MultiMap<WayPairNoTags, OsmPrimitive> waysNoTags;
+    private MultiMap<WayPairNoTags, OsmPrimitive> waysNoTags;
+    
+    /** Set of known hashcodes for list of coordinates **/
+    private Set<Integer> knownHashCodes;
 
     /**
      * Constructor
@@ -95,6 +99,7 @@ public class DuplicateWay extends Test
         super.startTest(monitor);
         ways = new MultiMap<WayPair, OsmPrimitive>(1000);
         waysNoTags = new MultiMap<WayPairNoTags, OsmPrimitive>(1000);
+        knownHashCodes = new HashSet<Integer>(1000);
     }
 
     @Override
@@ -135,6 +140,7 @@ public class DuplicateWay extends Test
         }
         ways = null;
         waysNoTags = null;
+        knownHashCodes = null;
     }
 
     /**
@@ -149,8 +155,8 @@ public class DuplicateWay extends Test
     public void visit(Way w) {
         if (!w.isUsable())
             return;
-        List<Node> wNodes = w.getNodes();
-        List<LatLon> wLat = new ArrayList<LatLon>(wNodes.size());
+        List<Node> wNodes = w.getNodes();                            // The original list of nodes for this way
+        List<Node> wNodesToUse = new ArrayList<Node>(wNodes.size()); // The list that will be considered for this test
         if (w.isClosed()) {
             // In case of a closed way, build the list of lat/lon starting from the node with the lowest id
             // to ensure this list will produce the same hashcode as the list obtained from another closed
@@ -164,16 +170,33 @@ public class DuplicateWay extends Test
                 }
             }
             for (int i=lowestIndex; i<wNodes.size()-1; i++) {
-                wLat.add(wNodes.get(i).getCoor());
+            	wNodesToUse.add(wNodes.get(i));
             }
             for (int i=0; i<lowestIndex; i++) {
-                wLat.add(wNodes.get(i).getCoor());
+            	wNodesToUse.add(wNodes.get(i));
             }
-            wLat.add(wNodes.get(lowestIndex).getCoor());
-        } else {
-            for (int i=0; i<wNodes.size(); i++) {
-                wLat.add(wNodes.get(i).getCoor());
-            }
+            wNodesToUse.add(wNodes.get(lowestIndex));
+        }
+        // Build the list of lat/lon
+        List<LatLon> wLat = new ArrayList<LatLon>(wNodesToUse.size());
+        for (int i=0; i<wNodesToUse.size(); i++) {
+            wLat.add(wNodesToUse.get(i).getCoor());
+        }
+        // If this way has not direction-dependant keys, make sure the list is ordered the same for all ways (fix #8015)
+        if (!w.hasDirectionKeys()) {
+        	int hash = wLat.hashCode();
+        	if (!knownHashCodes.contains(hash)) {
+            	List<LatLon> reversedwLat = new ArrayList<LatLon>(wLat);
+       			Collections.reverse(reversedwLat);
+            	int reverseHash = reversedwLat.hashCode();
+            	if (!knownHashCodes.contains(reverseHash)) {
+            		// Neither hash or reversed hash is known, remember hash
+            		knownHashCodes.add(hash);
+            	} else {
+            		// Reversed hash is known, use the reverse list then
+            		wLat = reversedwLat;
+            	}
+        	}
         }
         Map<String, String> wkeys = w.getKeys();
         removeUninterestingKeys(wkeys);
