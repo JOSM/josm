@@ -15,15 +15,21 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.gui.progress.ProgressTaskIds;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
+import org.openstreetmap.josm.io.GpxImporter;
+import org.openstreetmap.josm.io.GpxImporter.GpxImporterData;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
 
+/**
+ * Task allowing to download GPS data.
+ */
 public class DownloadGpsTask extends AbstractDownloadTask {
 
     private DownloadTask downloadTask;
@@ -114,25 +120,46 @@ public class DownloadGpsTask extends AbstractDownloadTask {
             if (rawData == null)
                 return;
             String name = newLayerName != null ? newLayerName : tr("Downloaded GPX Data");
-            GpxLayer layer = new GpxLayer(rawData, name);
-            Layer x = findMergeLayer();
-            if (newLayer || x == null) {
+            
+            GpxImporterData layers = GpxImporter.loadLayers(rawData, reader.isGpxParsedProperly(), name, tr("Markers from {0}", name));
+            
+            GpxLayer gpxLayer = addOrMergeLayer(layers.gpxLayer, findGpxMergeLayer());
+            addOrMergeLayer(layers.markerLayer, findMarkerMergeLayer(gpxLayer));
+            
+            layers.postLayerTask.run();
+        }
+        
+        private <L extends Layer> L addOrMergeLayer(L layer, L mergeLayer) {
+            if (layer == null) return null;
+            if (newLayer || mergeLayer == null) {
                 Main.main.addLayer(layer);
+                return layer;
             } else {
-                x.mergeFrom(layer);
+                mergeLayer.mergeFrom(layer);
                 Main.map.repaint();
+                return mergeLayer;
             }
         }
 
-        private Layer findMergeLayer() {
-            boolean merge = Main.pref.getBoolean("download.gps.mergeWithLocal", false);
+        private GpxLayer findGpxMergeLayer() {
             if (!Main.isDisplayingMapView())
                 return null;
+            boolean merge = Main.pref.getBoolean("download.gps.mergeWithLocal", false);
             Layer active = Main.map.mapView.getActiveLayer();
             if (active != null && active instanceof GpxLayer && (merge || ((GpxLayer)active).data.fromServer))
-                return active;
-            for (Layer l : Main.map.mapView.getAllLayers()) {
-                if (l instanceof GpxLayer &&  (merge || ((GpxLayer)l).data.fromServer))
+                return (GpxLayer) active;
+            for (GpxLayer l : Main.map.mapView.getLayersOfType(GpxLayer.class)) {
+                if (merge || l.data.fromServer)
+                    return l;
+            }
+            return null;
+        }
+        
+        private MarkerLayer findMarkerMergeLayer(GpxLayer fromLayer) {
+            if (!Main.isDisplayingMapView())
+                return null;
+            for (MarkerLayer l : Main.map.mapView.getLayersOfType(MarkerLayer.class)) {
+                if (fromLayer != null && l.fromLayer == fromLayer)
                     return l;
             }
             return null;
