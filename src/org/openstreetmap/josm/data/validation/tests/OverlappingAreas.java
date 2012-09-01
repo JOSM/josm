@@ -26,7 +26,7 @@ public class OverlappingAreas extends Test {
 
     @Override
     public void visit(Way w) {
-        if (w.isUsable() && w.isClosed() && ElemStyles.hasAreaElemStyle(w, false)) {
+        if (w.isUsable() && w.isArea() && ElemStyles.hasAreaElemStyle(w, false)) {
             index.add(w);
         }
     }

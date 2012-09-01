@@ -115,7 +115,7 @@ public class MultipolygonTest extends Test {
 
     @Override
     public void visit(Way w) {
-        if (!w.isClosed() && ElemStyles.hasAreaElemStyle(w, false)) {
+        if (!w.isArea() && ElemStyles.hasAreaElemStyle(w, false)) {
             List<Node> nodes = w.getNodes();
             if (nodes.size()<1) return; // fix zero nodes bug
             errors.add(new TestError(this, Severity.WARNING, tr("Area style way is not closed"), NOT_CLOSED,
