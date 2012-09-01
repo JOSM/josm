@@ -28,7 +28,7 @@ import org.apache.commons.codec.binary.StringUtils;
 /**
  * Operations to simplify common {@link java.security.MessageDigest} tasks. This class is thread safe.
  *
- * @version $Id: DigestUtils.java 1352268 2012-06-20 19:04:08Z ggregory $
+ * @version $Id: DigestUtils.java 1379769 2012-09-01 15:18:31Z ggregory $
  */
 public class DigestUtils {
 
@@ -97,7 +97,7 @@ public class DigestUtils {
      *             when a {@link java.security.NoSuchAlgorithmException} is caught.
      */
     public static MessageDigest getMd5Digest() {
-        return getDigest("MD5");
+        return getDigest(MessageDigestAlgorithms.MD5);
     }
 
     /**
@@ -111,7 +111,7 @@ public class DigestUtils {
      *             when a {@link java.security.NoSuchAlgorithmException} is caught.
      */
     public static MessageDigest getSha256Digest() {
-        return getDigest("SHA-256");
+        return getDigest(MessageDigestAlgorithms.SHA_256);
     }
 
     /**
@@ -125,7 +125,7 @@ public class DigestUtils {
      *             when a {@link java.security.NoSuchAlgorithmException} is caught.
      */
     public static MessageDigest getSha384Digest() {
-        return getDigest("SHA-384");
+        return getDigest(MessageDigestAlgorithms.SHA_384);
     }
 
     /**
@@ -139,7 +139,7 @@ public class DigestUtils {
      *             when a {@link java.security.NoSuchAlgorithmException} is caught.
      */
     public static MessageDigest getSha512Digest() {
-        return getDigest("SHA-512");
+        return getDigest(MessageDigestAlgorithms.SHA_512);
     }
 
     /**
