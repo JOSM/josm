@@ -176,6 +176,8 @@ public class DuplicateWay extends Test
                 wNodesToUse.add(wNodes.get(i));
             }
             wNodesToUse.add(wNodes.get(lowestIndex));
+        } else {
+        	wNodesToUse.addAll(wNodes);
         }
         // Build the list of lat/lon
         List<LatLon> wLat = new ArrayList<LatLon>(wNodesToUse.size());
