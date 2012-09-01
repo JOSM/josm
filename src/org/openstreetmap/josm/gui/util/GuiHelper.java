@@ -5,8 +5,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.image.FilteredImageSource;
 import java.lang.reflect.InvocationTargetException;
 
@@ -102,5 +107,34 @@ public class GuiHelper {
      */
     public static final ImageIcon getDisabledIcon(ImageIcon icon) {
         return new ImageIcon(getDisabledImage(icon.getImage()));
+    }
+    
+    /**
+     * Attaches a {@code HierarchyListener} to the specified {@code Component} that
+     * will set its parent dialog resizeable. Use it before a call to JOptionPane#showXXXXDialog
+     * to make it resizeable.
+     * @param pane The component that will be displayed
+     * @param minDimension The minimum dimension that will be set for the dialog. Ignored if null
+     * @return {@code pane}
+     * @since 5493
+     */
+    public static final Component prepareResizeableOptionPane(final Component pane, final Dimension minDimension) {
+        if (pane != null) {
+            pane.addHierarchyListener(new HierarchyListener() {
+                public void hierarchyChanged(HierarchyEvent e) {
+                    Window window = SwingUtilities.getWindowAncestor(pane);
+                    if (window instanceof Dialog) {
+                        Dialog dialog = (Dialog)window;
+                        if (!dialog.isResizable()) {
+                            dialog.setResizable(true);
+                            if (minDimension != null) {
+                                dialog.setMinimumSize(minDimension);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        return pane;
     }
 }
