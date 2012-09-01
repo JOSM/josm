@@ -35,7 +35,7 @@ import org.apache.commons.codec.Charsets;
  * <p>
  * This class is immutable and thread-safe.
  *
- * @version $Id: UnixCrypt.java 1379785 2012-09-01 16:05:58Z ggregory $
+ * @version $Id: UnixCrypt.java 1379806 2012-09-01 16:49:52Z ggregory $
  * @since 1.7
  */
 public class UnixCrypt {
@@ -239,14 +239,10 @@ public class UnixCrypt {
             Random randomGenerator = new Random();
             int numSaltChars = SALT_CHARS.length;
             // Types casts fix two FindBugs report of RV_ABSOLUTE_VALUE_OF_RANDOM_INT.
-            salt = "" + SALT_CHARS[(int)Math.abs((long)randomGenerator.nextInt()) % numSaltChars] +
-                   SALT_CHARS[(int)Math.abs((long)randomGenerator.nextInt()) % numSaltChars];
+            salt = "" + SALT_CHARS[randomGenerator.nextInt(numSaltChars)] +
+                   SALT_CHARS[randomGenerator.nextInt(numSaltChars)];
         } else if (!salt.matches("^[" + B64.B64T + "]{2,}$")) {
             throw new IllegalArgumentException("Invalid salt value: " + salt);
-        }
-
-        for (; salt.length() < 2; salt = salt + "A") {
-            // NOOP
         }
 
         StringBuilder buffer = new StringBuilder("             ");
