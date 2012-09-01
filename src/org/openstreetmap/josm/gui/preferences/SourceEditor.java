@@ -751,7 +751,7 @@ public abstract class SourceEditor extends JPanel {
             }
 
             public void actionPerformed(ActionEvent e) {
-                JFileChooserManager fcm = new JFileChooserManager(true);
+                JFileChooserManager fcm = new JFileChooserManager(true).createFileChooser();
                 prepareFileChooser(tfURL.getText(), fcm.getFileChooser());
                 JFileChooser fc = fcm.openFileChooser(JOptionPane.getFrameForComponent(SourceEditor.this));
                 if (fc != null) {
