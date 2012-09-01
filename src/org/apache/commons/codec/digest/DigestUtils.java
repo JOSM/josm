@@ -28,7 +28,7 @@ import org.apache.commons.codec.binary.StringUtils;
 /**
  * Operations to simplify common {@link java.security.MessageDigest} tasks. This class is thread safe.
  *
- * @version $Id: DigestUtils.java 1379769 2012-09-01 15:18:31Z ggregory $
+ * @version $Id: DigestUtils.java 1379796 2012-09-01 16:27:01Z ggregory $
  */
 public class DigestUtils {
 
@@ -85,7 +85,7 @@ public class DigestUtils {
         try {
             return MessageDigest.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
