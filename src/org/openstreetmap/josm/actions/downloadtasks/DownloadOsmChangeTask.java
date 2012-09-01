@@ -38,7 +38,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
     public boolean acceptsUrl(String url) {
         return url != null && (
                 url.matches("http://.*/api/0.6/changeset/\\p{Digit}+/download") // OSM API 0.6 changesets
-             || url.matches("http://.*/.*\\.osc")                               // Remote .osc files
+             || url.matches("https?://.*/.*\\.osc")                             // Remote .osc files
                 );
     }
 
@@ -61,7 +61,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                 new OsmServerLocationReader(url),
                 progressMonitor);
         // Extract .osc filename from URL to set the new layer name
-        extractOsmFilename("http://.*/(.*\\.osc)", url);
+        extractOsmFilename("https?://.*/(.*\\.osc)", url);
         return Main.worker.submit(downloadTask);
     }
 
