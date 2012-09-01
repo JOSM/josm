@@ -165,7 +165,7 @@ public class OsmServerLocationReader extends OsmServerReader {
                     return null;
                 progressMonitor.subTask(tr("Downloading OSM data..."));
                 GpxReader reader = new GpxReader(in);
-                reader.parse(false);
+                gpxParsedProperly = reader.parse(false);
                 GpxData result = reader.data;
                 result.fromServer = true;
                 return result;

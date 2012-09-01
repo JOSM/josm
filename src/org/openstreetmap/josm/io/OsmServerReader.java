@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 public abstract class OsmServerReader extends OsmConnection {
     private OsmApi api = OsmApi.getOsmApi();
     private boolean doAuthenticate = false;
+    protected boolean gpxParsedProperly;
 
     /**
      * Open a connection to the given url and return a reader on the input stream
@@ -191,5 +192,14 @@ public abstract class OsmServerReader extends OsmConnection {
      */
     public void setDoAuthenticate(boolean doAuthenticate) {
         this.doAuthenticate = doAuthenticate;
+    }
+    
+    /**
+     * Determines if the GPX data has been parsed properly.
+     * @return true if the GPX data has been parsed properly, false otherwise
+     * @see GpxReader#parse
+     */
+    public final boolean isGpxParsedProperly() {
+        return gpxParsedProperly;
     }
 }
