@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -42,7 +43,7 @@ public class AboutAction extends JosmAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-        JTabbedPane about = new JTabbedPane();
+        final JTabbedPane about = new JTabbedPane();
 
         Version version = Version.getInstance();
 
@@ -90,9 +91,13 @@ public class AboutAction extends JosmAction {
         about.addTab(tr("License"), createScrollPane(license));
         about.addTab(tr("Plugins"), new JScrollPane(PluginHandler.getInfoPanel()));
 
-        about.setPreferredSize(new Dimension(500,300));
-
-        JOptionPane.showMessageDialog(Main.parent, about, tr("About JOSM..."),
+        // Intermediate panel to allow proper optionPane resizing
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setPreferredSize(new Dimension(600, 300));
+        panel.add(about, GBC.std().fill());
+        
+        GuiHelper.prepareResizeableOptionPane(panel, panel.getPreferredSize());
+        JOptionPane.showMessageDialog(Main.parent, panel, tr("About JOSM..."),
                 JOptionPane.INFORMATION_MESSAGE, ImageProvider.get("logo"));
     }
 

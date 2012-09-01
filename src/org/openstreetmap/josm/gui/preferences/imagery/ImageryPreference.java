@@ -6,17 +6,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -41,7 +37,6 @@ import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -66,6 +61,7 @@ import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -430,22 +426,9 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
 
             public void actionPerformed(ActionEvent evt) {
                 final AddWMSLayerPanel p = new AddWMSLayerPanel();
-                // This code snippet allows to resize the JOptionPane (fix #6090)
-                p.addHierarchyListener(new HierarchyListener() {
-                    public void hierarchyChanged(HierarchyEvent e) {
-                        Window window = SwingUtilities.getWindowAncestor(p);
-                        if (window instanceof Dialog) {
-                            Dialog dialog = (Dialog)window;
-                            if (!dialog.isResizable()) {
-                                dialog.setResizable(true);
-                                dialog.setMinimumSize(new Dimension(250, 350));
-                            }
-                        }
-                    }
-                });
+                GuiHelper.prepareResizeableOptionPane(p, new Dimension(250, 350));
                 int answer = JOptionPane.showConfirmDialog(
-                        gui, p,
-                        tr("Add Imagery URL"),
+                        gui, p, tr("Add Imagery URL"),
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (answer == JOptionPane.OK_OPTION) {
                     try {

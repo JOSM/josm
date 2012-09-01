@@ -14,11 +14,10 @@ To run JOSM, you need:
 
 How to get Java Runtime Environment
 -----------------------------------
-You need JRE Version 1.6 (also called Java6), or later. 
+You need JRE Version 1.6 (also called Java 6), or later. 
 
-Microsoft Windows users should visit 
-http://www.oracle.com/technetwork/java/index.html 
-and download the latest Java6 executable for Windows systems.
+Microsoft Windows users should visit http://www.java.com 
+and download the latest Java executable for Windows systems.
 
 Linux users should visit http://www.oracle.com/technetwork/java/index.html
 There is a Linux binary installer, which you must execute from a console, or 
@@ -38,7 +37,7 @@ Under Linux, open a shell, go to the file directory and type
 your JAVA_HOME variable to the java executable location (the root location, 
 not the bin).
 
-MacOS users just click on the .jar file icon.
+MacOS X users just click on the .jar file icon.
 
 =============================================================================
             II. Development
