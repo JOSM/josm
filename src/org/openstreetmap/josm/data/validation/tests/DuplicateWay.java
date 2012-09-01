@@ -170,10 +170,10 @@ public class DuplicateWay extends Test
                 }
             }
             for (int i=lowestIndex; i<wNodes.size()-1; i++) {
-            	wNodesToUse.add(wNodes.get(i));
+                wNodesToUse.add(wNodes.get(i));
             }
             for (int i=0; i<lowestIndex; i++) {
-            	wNodesToUse.add(wNodes.get(i));
+                wNodesToUse.add(wNodes.get(i));
             }
             wNodesToUse.add(wNodes.get(lowestIndex));
         }
@@ -184,19 +184,19 @@ public class DuplicateWay extends Test
         }
         // If this way has not direction-dependant keys, make sure the list is ordered the same for all ways (fix #8015)
         if (!w.hasDirectionKeys()) {
-        	int hash = wLat.hashCode();
-        	if (!knownHashCodes.contains(hash)) {
-            	List<LatLon> reversedwLat = new ArrayList<LatLon>(wLat);
-       			Collections.reverse(reversedwLat);
-            	int reverseHash = reversedwLat.hashCode();
-            	if (!knownHashCodes.contains(reverseHash)) {
-            		// Neither hash or reversed hash is known, remember hash
-            		knownHashCodes.add(hash);
-            	} else {
-            		// Reversed hash is known, use the reverse list then
-            		wLat = reversedwLat;
-            	}
-        	}
+            int hash = wLat.hashCode();
+            if (!knownHashCodes.contains(hash)) {
+                List<LatLon> reversedwLat = new ArrayList<LatLon>(wLat);
+                   Collections.reverse(reversedwLat);
+                int reverseHash = reversedwLat.hashCode();
+                if (!knownHashCodes.contains(reverseHash)) {
+                    // Neither hash or reversed hash is known, remember hash
+                    knownHashCodes.add(hash);
+                } else {
+                    // Reversed hash is known, use the reverse list then
+                    wLat = reversedwLat;
+                }
+            }
         }
         Map<String, String> wkeys = w.getKeys();
         removeUninterestingKeys(wkeys);
