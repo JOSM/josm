@@ -49,7 +49,6 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.history.HistoryLoadTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.progress.ContributorTermsUpdateRunnable;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -263,7 +262,6 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
 
         public void showHistory(final Collection<HistoryOsmPrimitive> primitives) {
-            Main.worker.submit(new ContributorTermsUpdateRunnable());
 
             List<HistoryOsmPrimitive> toLoad = filterPrimitivesWithUnloadedHistory(primitives);
             if (!toLoad.isEmpty()) {

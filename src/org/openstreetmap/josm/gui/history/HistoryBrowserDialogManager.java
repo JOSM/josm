@@ -19,7 +19,6 @@ import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.progress.ContributorTermsUpdateRunnable;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
@@ -145,8 +144,6 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-        Main.worker.submit(new ContributorTermsUpdateRunnable());
 
         Collection<OsmPrimitive> toLoad = Utils.filter(primitives, unloadedHistoryPredicate);
         if (!toLoad.isEmpty()) {

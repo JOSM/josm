@@ -57,7 +57,6 @@ public class VersionTable extends JTable implements Observer{
                 adjustColumnWidth(VersionTable.this, 2, -8);
                 adjustColumnWidth(VersionTable.this, 3, 0);
                 adjustColumnWidth(VersionTable.this, 4, 0);
-                adjustColumnWidth(VersionTable.this, 5, 0);
             }
         });
     }

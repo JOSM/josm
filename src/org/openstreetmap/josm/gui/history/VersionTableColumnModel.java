@@ -38,21 +38,13 @@ public class VersionTableColumnModel extends DefaultTableColumnModel {
         col.setCellEditor(new VersionTable.RadioButtonEditor());
         col.setResizable(false);
         addColumn(col);
-        // column 3 - CT state
+        // column 3 - Date
         col = new TableColumn(3);
-        /* translation note: short for "Contributor Terms" */
-        col.setHeaderValue(tr("CT"));
-        col.setCellRenderer(new VersionTable.LabelRenderer());
-        col.setPreferredWidth(22);
-        col.setResizable(false);
-        addColumn(col);
-        // column 4 - Date
-        col = new TableColumn(4);
         col.setHeaderValue(tr("Date"));
         col.setResizable(false);
         addColumn(col);
-        // column 5 - User
-        col = new TableColumn(5);
+        // column 4 - User
+        col = new TableColumn(4);
         col.setHeaderValue(tr("User"));
         col.setResizable(false);
         addColumn(col);
