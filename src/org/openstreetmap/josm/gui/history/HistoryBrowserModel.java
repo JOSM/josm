@@ -9,7 +9,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Observable;
 
+import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -39,7 +41,6 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
-import org.openstreetmap.josm.gui.dialogs.UserListDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.XmlWriter;
@@ -427,22 +428,12 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             case 2:
                 return isCurrentPointInTime(row);
             case 3: {
-                    User user = getPrimitive(row).getUser();
-                    int status;
-                    if (user == null) {
-                        status = User.STATUS_UNKNOWN;
-                    } else {
-                        status = user.getRelicensingStatus();
-                    }
-                    return UserListDialog.getRelicensingStatusIcon(status);
-                }
-            case 4: {
                     HistoryOsmPrimitive p = getPrimitive(row);
                     if (p != null && p.getTimestamp() != null)
                         return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(p.getTimestamp());
                     return null;
                 }
-            case 5: {
+            case 4: {
                     HistoryOsmPrimitive p = getPrimitive(row);
                     if (p != null) {
                         User user = p.getUser();

@@ -3,18 +3,12 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
-
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -34,8 +28,6 @@ public class User {
      * the map of known users
      */
     private static HashMap<Long,User> userMap = new HashMap<Long,User>();
-    private static HashSet<Long> relicensingUsers = null;
-    private static HashSet<Long> nonRelicensingUsers = null;
     private final static User anonymous = createLocalUser(tr("<anonymous>"));
 
     private static long getNextLocalUid() {
@@ -118,102 +110,10 @@ public class User {
         return anonymous;
     }
 
-    public static void initRelicensingInformation() {
-        if (relicensingUsers == null) {
-            loadRelicensingInformation(false);
-        }
-    }
-
-    public static void loadRelicensingInformation(boolean clean) {
-        relicensingUsers = new HashSet<Long>();
-        nonRelicensingUsers = new HashSet<Long>();
-        try {
-            MirroredInputStream stream = new MirroredInputStream(
-                 Main.pref.get("url.licensechange",
-                    "http://planet.openstreetmap.org/users_agreed/users_agreed.txt"),
-                 clean ? 1 : 7200);
-            try {
-                InputStreamReader r;
-                r = new InputStreamReader(stream);
-                BufferedReader reader = new BufferedReader(r);
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("#")) continue;
-                    try {
-                        Long id = new Long(Long.parseLong(line.trim()));
-                        relicensingUsers.add(id);
-                    } catch (java.lang.NumberFormatException ex) {
-                    }
-                }
-            }
-            finally {
-                stream.close();
-            }
-        } catch (IOException ex) {
-        }
-
-        try {
-            MirroredInputStream stream = new MirroredInputStream(
-                Main.pref.get("url.licensechange_reject",
-                    "http://planet.openstreetmap.org/users_agreed/users_disagreed.txt"),
-                clean ? 1 : 7200);
-            try {
-                InputStreamReader r;
-                r = new InputStreamReader(stream);
-                BufferedReader reader = new BufferedReader(r);
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("#")) continue;
-                    try {
-                        Long id = new Long(Long.parseLong(line.trim()));
-                        nonRelicensingUsers.add(id);
-                    } catch (java.lang.NumberFormatException ex) {
-                    }
-                }
-            }
-            finally {
-                stream.close();
-            }
-        } catch (IOException ex) {
-        }
-    }
-
     /** the user name */
     private final HashSet<String> names = new HashSet<String>();
     /** the user id */
     private final long uid;
-    private int relicensingStatus = STATUS_UNKNOWN;
-
-    public static final int STATUS_UNKNOWN = -1;
-    public static final int STATUS_UNDECIDED = 0;
-    public static final int STATUS_AGREED = 1;
-    public static final int STATUS_NOT_AGREED = 2;
-    public static final int STATUS_AUTO_AGREED = 3;
-    public static final int STATUS_ANONYMOUS = 4;
-
-    /**
-    * Finds out this user's relicensing status and saves it for quicker
-    * access.
-    */
-    public int getRelicensingStatus() {
-        if (relicensingStatus != STATUS_UNKNOWN) return relicensingStatus;
-        if (uid >= 286582) return (relicensingStatus = STATUS_AUTO_AGREED);
-        if (relicensingUsers == null) return STATUS_UNKNOWN;
-        Long id = new Long(uid);
-        if (relicensingUsers.contains(id)) return (relicensingStatus = STATUS_AGREED);
-        if (nonRelicensingUsers == null) return STATUS_UNKNOWN;
-        if (nonRelicensingUsers.contains(id)) return (relicensingStatus = STATUS_NOT_AGREED);
-        return STATUS_UNDECIDED;
-    }
-
-    /**
-    * Sets this user's relicensing status. This can be used if relicensing
-    * information is available from another source so that directly looking
-    * at the users_agreed/users_not_agreed files it not required.
-    */
-    public void setRelicensingStatus(int status) {
-        relicensingStatus = status;
-    }
 
     /**
      * Replies the user name

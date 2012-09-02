@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -25,15 +24,12 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
@@ -45,7 +41,6 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.progress.ContributorTermsUpdateRunnable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -63,7 +58,6 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     private UserTableModel model;
     private SelectUsersPrimitivesAction selectionUsersPrimitivesAction;
     private ShowUserInfoAction showUserInfoAction;
-    private LoadRelicensingInformationAction loadRelicensingInformationAction;
 
     public UserListDialog() {
         super(tr("Authors"), "userlist", tr("Open a list of people working on the selected objects."),
@@ -89,21 +83,6 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         userTable = new JTable(model);
         userTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         userTable.addMouseListener(new DoubleClickAdapter());
-        TableColumnModel columnModel = userTable.getColumnModel();
-        columnModel.getColumn(3).setPreferredWidth(20);
-        columnModel.getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                // see http://download.oracle.com/javase/6/docs/api/javax/swing/table/DefaultTableCellRenderer.html#override
-                // for why we don't use the label directly
-                final JLabel renderLabel = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                JLabel sourceLabel = (JLabel) value;
-                renderLabel.setIcon(sourceLabel.getIcon());
-                renderLabel.setText("");
-                renderLabel.setToolTipText(sourceLabel.getToolTipText());
-                return renderLabel;
-            }
-        });
 
         // -- select users primitives action
         //
@@ -115,13 +94,9 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         showUserInfoAction = new ShowUserInfoAction();
         userTable.getSelectionModel().addListSelectionListener(showUserInfoAction);
 
-        // -- load relicensing info action
-        loadRelicensingInformationAction = new LoadRelicensingInformationAction();
-
         createLayout(userTable, true, Arrays.asList(new SideButton[] {
             new SideButton(selectionUsersPrimitivesAction),
-            new SideButton(showUserInfoAction),
-            new SideButton(loadRelicensingInformationAction)
+            new SideButton(showUserInfoAction)
         }));
     }
 
@@ -161,7 +136,6 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     @Override
     public void showDialog() {
         super.showDialog();
-        Main.worker.submit(new ContributorTermsUpdateRunnable());
         Layer layer = Main.main.getActiveLayer();
         if (layer instanceof OsmDataLayer) {
             refresh(((OsmDataLayer)layer).data.getAllSelected());
@@ -258,28 +232,6 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
     }
 
-    /*
-     */
-    class LoadRelicensingInformationAction extends AbstractAction {
-
-        public LoadRelicensingInformationAction() {
-            super();
-            putValue(NAME, tr("Load CT"));
-            putValue(SHORT_DESCRIPTION, tr("Loads information about relicensing status from the server. Users having agreed to the new contributor terms will show a green check mark."));
-            putValue(SMALL_ICON, ImageProvider.get("about"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            Main.worker.submit(new ContributorTermsUpdateRunnable());
-            Layer layer = Main.main.getActiveLayer();
-            if (layer instanceof OsmDataLayer) {
-                refresh(((OsmDataLayer)layer).data.getAllSelected());
-            }
-            setEnabled(false);
-        }
-    }
-
     class DoubleClickAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -316,12 +268,6 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
                 return tr("<new object>");
             return user.getName();
         }
-
-        public int getRelicensingStatus() {
-            if (user == null)
-                return User.STATUS_UNKNOWN;
-            return user.getRelicensingStatus();
-        }
     }
 
     /**
@@ -332,7 +278,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         private ArrayList<UserInfo> data;
 
         public UserTableModel() {
-            setColumnIdentifiers(new String[]{tr("Author"),tr("# Objects"),"%", tr("CT")});
+            setColumnIdentifiers(new String[]{tr("Author"),tr("# Objects"),"%"});
             data = new ArrayList<UserInfo>();
         }
 
@@ -374,7 +320,6 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             case 0: /* author */ return info.getName() == null ? "" : info.getName();
             case 1: /* count */ return info.count;
             case 2: /* percent */ return NumberFormat.getPercentInstance().format(info.percent);
-            case 3: /* relicensing status */ return getRelicensingStatusIcon(info.getRelicensingStatus());
             }
             return null;
         }
@@ -410,39 +355,5 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             }
             return ret;
         }
-    }
-
-    private static JLabel greenCheckmark;
-    private static JLabel greyCheckmark;
-    private static JLabel redX;
-    private static JLabel empty;
-
-    public static JLabel getRelicensingStatusIcon(int status) {
-        switch(status) {
-        case User.STATUS_AGREED:
-            if (greenCheckmark == null) {
-                greenCheckmark = new JLabel(ImageProvider.get("misc", "green_check.png"));
-                greenCheckmark.setToolTipText(tr("Accepted"));
-            }
-            return greenCheckmark;
-        case User.STATUS_AUTO_AGREED:
-            if (greyCheckmark == null) {
-                greyCheckmark = new JLabel(ImageProvider.get("misc", "grey_check.png"));
-                greyCheckmark.setToolTipText(tr("Auto-accepted"));
-            }
-            return greyCheckmark;
-        case User.STATUS_NOT_AGREED:
-            if (redX == null) {
-                redX = new JLabel(ImageProvider.get("misc", "red_x.png"));
-                redX.setToolTipText(tr("Declined"));
-            }
-            return redX;
-        default:
-            if (empty == null) {
-                empty = new JLabel("");
-                empty.setToolTipText(tr("Undecided"));
-            }
-        }
-        return empty; // Undecided or unknown?
     }
 }
