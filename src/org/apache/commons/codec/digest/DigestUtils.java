@@ -28,7 +28,7 @@ import org.apache.commons.codec.binary.StringUtils;
 /**
  * Operations to simplify common {@link java.security.MessageDigest} tasks. This class is thread safe.
  *
- * @version $Id: DigestUtils.java 1380018 2012-09-02 18:27:02Z ggregory $
+ * @version $Id: DigestUtils.java 1380028 2012-09-02 18:43:24Z ggregory $
  */
 public class DigestUtils {
 
@@ -342,7 +342,9 @@ public class DigestUtils {
      * @param data
      *            Data to digest
      * @return SHA-1 digest
+     * @deprecated Use {@link #sha1(byte[])}
      */
+    @Deprecated
     public static byte[] sha(byte[] data) {
         return getShaDigest().digest(data);
     }
@@ -356,7 +358,9 @@ public class DigestUtils {
      * @throws IOException
      *             On error reading from the stream
      * @since 1.4
+     * @deprecated Use {@link #sha1(InputStream)}
      */
+    @Deprecated
     public static byte[] sha(InputStream data) throws IOException {
         return digest(getShaDigest(), data);
     }
@@ -367,7 +371,9 @@ public class DigestUtils {
      * @param data
      *            Data to digest
      * @return SHA-1 digest
+     * @deprecated Use {@link #sha1(String)}
      */
+    @Deprecated
     public static byte[] sha(String data) {
         return sha(getBytesUtf8(data));
     }
@@ -396,6 +402,55 @@ public class DigestUtils {
      */
     public static byte[] sha1(InputStream data) throws IOException {
         return digest(getSha1Digest(), data);
+    }
+
+    /**
+     * Calculates the SHA-1 digest and returns the value as a <code>byte[]</code>.
+     *
+     * @param data
+     *            Data to digest
+     * @return SHA-1 digest
+     */
+    public static byte[] sha1(String data) {
+        return sha1(getBytesUtf8(data));
+    }
+
+    /**
+     * Calculates the SHA-1 digest and returns the value as a hex string.
+     *
+     * @param data
+     *            Data to digest
+     * @return SHA-1 digest as a hex string
+     * @since 1.7
+     */
+    public static String sha1Hex(byte[] data) {
+        return Hex.encodeHexString(sha1(data));
+    }
+
+    /**
+     * Calculates the SHA-1 digest and returns the value as a hex string.
+     *
+     * @param data
+     *            Data to digest
+     * @return SHA-1 digest as a hex string
+     * @throws IOException
+     *             On error reading from the stream
+     * @since 1.7
+     */
+    public static String sha1Hex(InputStream data) throws IOException {
+        return Hex.encodeHexString(sha1(data));
+    }
+
+    /**
+     * Calculates the SHA-1 digest and returns the value as a hex string.
+     *
+     * @param data
+     *            Data to digest
+     * @return SHA-1 digest as a hex string
+     * @since 1.7
+     */
+    public static String sha1Hex(String data) {
+        return Hex.encodeHexString(sha1(data));
     }
 
     /**
@@ -686,7 +741,9 @@ public class DigestUtils {
      * @param data
      *            Data to digest
      * @return SHA-1 digest as a hex string
+     * @deprecated Use {@link #sha1Hex(byte[])}
      */
+    @Deprecated
     public static String shaHex(byte[] data) {
         return Hex.encodeHexString(sha(data));
     }
@@ -700,7 +757,9 @@ public class DigestUtils {
      * @throws IOException
      *             On error reading from the stream
      * @since 1.4
+     * @deprecated Use {@link #sha1Hex(InputStream)}
      */
+    @Deprecated
     public static String shaHex(InputStream data) throws IOException {
         return Hex.encodeHexString(sha(data));
     }
@@ -711,7 +770,9 @@ public class DigestUtils {
      * @param data
      *            Data to digest
      * @return SHA-1 digest as a hex string
+     * @deprecated Use {@link #sha1Hex(String)}
      */
+    @Deprecated
     public static String shaHex(String data) {
         return Hex.encodeHexString(sha(data));
     }
