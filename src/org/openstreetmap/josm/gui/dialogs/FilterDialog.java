@@ -142,7 +142,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
         addButton = new SideButton(new AbstractAction() {
             {
-                putValue(NAME, marktr("Add"));
+                putValue(NAME, tr("Add"));
                 putValue(SHORT_DESCRIPTION,  tr("Add filter."));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs","add"));
             }
@@ -155,7 +155,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             }});
         editButton = new SideButton(new AbstractAction() {
             {
-                putValue(NAME, marktr("Edit"));
+                putValue(NAME, tr("Edit"));
                 putValue(SHORT_DESCRIPTION, tr("Edit filter."));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
             }
@@ -172,7 +172,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         });
         deleteButton = new SideButton(new AbstractAction() {
             {
-                putValue(NAME, marktr("Delete"));
+                putValue(NAME, tr("Delete"));
                 putValue(SHORT_DESCRIPTION, tr("Delete filter."));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             }
@@ -185,7 +185,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         });
         upButton = new SideButton(new AbstractAction() {
             {
-                putValue(NAME, marktr("Up"));
+                putValue(NAME, tr("Up"));
                 putValue(SHORT_DESCRIPTION, tr("Move filter up."));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "up"));
             }
@@ -200,7 +200,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         });
         downButton = new SideButton(new AbstractAction() {
             {
-                putValue(NAME, marktr("Down"));
+                putValue(NAME, tr("Down"));
                 putValue(SHORT_DESCRIPTION, tr("Move filter down."));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "down"));
             }
