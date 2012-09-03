@@ -18,7 +18,6 @@
 package org.apache.commons.codec.binary;
 
 import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
 
 import org.apache.commons.codec.BinaryDecoder;
 import org.apache.commons.codec.BinaryEncoder;
@@ -34,7 +33,7 @@ import org.apache.commons.codec.EncoderException;
  * This class is thread-safe.
  *
  * @since 1.1
- * @version $Id: Hex.java 1378740 2012-08-29 21:18:47Z tn $
+ * @version $Id: Hex.java 1380305 2012-09-03 18:37:21Z tn $
  */
 public class Hex implements BinaryEncoder, BinaryDecoder {
 
@@ -207,7 +206,7 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
      *
      * @param charsetName
      *            the charset name.
-     * @throws UnsupportedCharsetException
+     * @throws java.nio.charset.UnsupportedCharsetException
      *             If the named charset is unavailable
      * @since 1.4
      * @since 1.7 throws UnsupportedCharsetException if the named charset is unavailable

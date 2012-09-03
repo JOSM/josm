@@ -66,7 +66,7 @@ import java.util.regex.Pattern;
  * Port of lang.php
  *
  * @since 1.6
- * @version $Id: Lang.java 1379128 2012-08-30 20:36:17Z tn $
+ * @version $Id: Lang.java 1380304 2012-09-03 18:33:52Z tn $
  */
 public class Lang {
     // Implementation note: This class is divided into two sections. The first part is a static factory interface that
@@ -141,10 +141,9 @@ public class Lang {
             String line = rawLine;
 
             if (inExtendedComment) {
+                // check for closing comment marker, otherwise discard doc comment line
                 if (line.endsWith(ResourceConstants.EXT_CMT_END)) {
                     inExtendedComment = false;
-                } else {
-                    // discard doc comment line
                 }
             } else {
                 if (line.startsWith(ResourceConstants.EXT_CMT_START)) {

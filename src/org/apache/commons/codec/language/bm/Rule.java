@@ -75,7 +75,7 @@ import java.util.regex.Pattern;
  * </ul>
  *
  * @since 1.6
- * @version $Id: Rule.java 1379128 2012-08-30 20:36:17Z tn $
+ * @version $Id: Rule.java 1380304 2012-09-03 18:33:52Z tn $
  */
 public class Rule {
 
@@ -334,8 +334,6 @@ public class Rule {
             if (inMultilineComment) {
                 if (line.endsWith(ResourceConstants.EXT_CMT_END)) {
                     inMultilineComment = false;
-                } else {
-                    // skip
                 }
             } else {
                 if (line.startsWith(ResourceConstants.EXT_CMT_START)) {

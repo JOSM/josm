@@ -48,7 +48,7 @@ import java.util.Set;
  * This class is immutable and thread-safe.
  *
  * @since 1.6
- * @version $Id: Languages.java 1378746 2012-08-29 21:29:49Z tn $
+ * @version $Id: Languages.java 1380304 2012-09-03 18:33:52Z tn $
  */
 public class Languages {
     // Iimplementation note: This class is divided into two sections. The first part is a static factory interface that
@@ -164,16 +164,12 @@ public class Languages {
             if (inExtendedComment) {
                 if (line.endsWith(ResourceConstants.EXT_CMT_END)) {
                     inExtendedComment = false;
-                } else {
-                    // skip
                 }
             } else {
                 if (line.startsWith(ResourceConstants.EXT_CMT_START)) {
                     inExtendedComment = true;
                 } else if (line.length() > 0) {
                     ls.add(line);
-                } else {
-                    // skip blank lines
                 }
             }
         }
