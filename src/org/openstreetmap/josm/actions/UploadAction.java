@@ -13,6 +13,7 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.upload.ApiPreconditionCheckerHook;
+import org.openstreetmap.josm.actions.upload.DiscardTagsHook;
 import org.openstreetmap.josm.actions.upload.RelationUploadOrderHook;
 import org.openstreetmap.josm.actions.upload.UploadHook;
 import org.openstreetmap.josm.actions.upload.ValidateUploadHook;
@@ -49,6 +50,7 @@ public class UploadAction extends JosmAction{
      * however, a plugin might also want to insert something after that.
      */
     private static final LinkedList<UploadHook> uploadHooks = new LinkedList<UploadHook>();
+    private static final LinkedList<UploadHook> lateUploadHooks = new LinkedList<UploadHook>();
     static {
         uploadHooks.add(new ValidateUploadHook());
         /**
@@ -60,6 +62,11 @@ public class UploadAction extends JosmAction{
          * Adjusts the upload order of new relations
          */
         uploadHooks.add(new RelationUploadOrderHook());
+
+        /**
+         * Removes discardable tags like created_by on modified objects
+         */
+        lateUploadHooks.add(new DiscardTagsHook());
     }
 
     /**
@@ -68,9 +75,27 @@ public class UploadAction extends JosmAction{
      * @param hook the upload hook. Ignored if null.
      */
     public static void registerUploadHook(UploadHook hook) {
+        registerUploadHook(hook, false);
+    }
+
+    /**
+     * Registers an upload hook. Adds the hook at the first position of the upload hooks.
+     *
+     * @param hook the upload hook. Ignored if null.
+     * @param late true, if the hook should be executed after the upload dialog
+     * has been confirmed. Late upload hooks should in general succeed and not
+     * abort the upload.
+     */
+    public static void registerUploadHook(UploadHook hook, boolean late) {
         if(hook == null) return;
-        if (!uploadHooks.contains(hook)) {
-            uploadHooks.add(0,hook);
+        if (late) {
+            if (!lateUploadHooks.contains(hook)) {
+                lateUploadHooks.add(0, hook);
+            }
+        } else {
+            if (!uploadHooks.contains(hook)) {
+                uploadHooks.add(0, hook);
+            }
         }
     }
 
@@ -83,6 +108,9 @@ public class UploadAction extends JosmAction{
         if(hook == null) return;
         if (uploadHooks.contains(hook)) {
             uploadHooks.remove(hook);
+        }
+        if (lateUploadHooks.contains(hook)) {
+            lateUploadHooks.remove(hook);
         }
     }
 
@@ -121,7 +149,7 @@ public class UploadAction extends JosmAction{
      * returns true if the user wants to cancel, false if they
      * want to continue
      */
-    public static final boolean warnUploadDiscouraged(OsmDataLayer layer) {
+    public static boolean warnUploadDiscouraged(OsmDataLayer layer) {
         return GuiHelper.warnUser(tr("Upload discouraged"),
                 "<html>" +
                 tr("You are about to upload data from the layer ''{0}''.<br /><br />"+
@@ -198,6 +226,11 @@ public class UploadAction extends JosmAction{
         if (dialog.isCanceled())
             return;
         dialog.rememberUserInput();
+
+        for (UploadHook hook : lateUploadHooks) {
+            if (!hook.checkUpload(apiData))
+                return;
+        }
 
         Main.worker.execute(
                 new UploadPrimitivesTask(
