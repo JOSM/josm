@@ -1,9 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -56,9 +54,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         /**
          * Called, when the left mouse button was released.
          * @param r The rectangle that is currently the selection.
-         * @param alt Whether the alt key was pressed
-         * @param shift Whether the shift key was pressed
-         * @param ctrl Whether the ctrl key was pressed
+         * @param e The mouse event.
          * @see InputEvent#getModifiersEx()
          */
         public void selectionEnded(Rectangle r, MouseEvent e);
@@ -118,6 +114,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
     /**
      * Register itself at the given event source.
      * @param eventSource The emitter of the mouse events.
+     * @param lassoMode {@code true} to enable lasso mode, {@code false} to disable it.
      */
     public void register(NavigatableComponent eventSource, boolean lassoMode) {
        this.lassoMode = lassoMode;
@@ -198,11 +195,12 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         // disable the selection rect
         Rectangle r;
         if (!lassoMode) {
-            paintRect();
+            nc.requestClearRect();
             r = getSelectionRectangle();
 
             lasso = rectToPolygon(r);
         } else {
+            nc.requestClearPoly();
             lasso.addPoint(mousePos.x, mousePos.y);
             r = lasso.getBounds();
         }
@@ -215,33 +213,20 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
     }
 
     /**
-     * Draw a selection rectangle on screen. If already a rectangle is drawn,
-     * it is removed instead.
+     * Draws a selection rectangle on screen.
      */
     private void paintRect() {
         if (mousePos == null || mousePosStart == null || mousePos == mousePosStart)
             return;
-        Graphics g = nc.getGraphics();
-        g.setColor(Color.BLACK);
-        g.setXORMode(Color.WHITE);
-
-        Rectangle r = getSelectionRectangle();
-        g.drawRect(r.x,r.y,r.width,r.height);
+        nc.requestPaintRect(getSelectionRectangle());
     }
-
+    
     private void paintLasso() {
         if (mousePos == null || mousePosStart == null || mousePos == mousePosStart) {
             return;
         }
-
-        Graphics g = nc.getGraphics();
-        g.setColor(Color.WHITE);
-
-        int lastPosX = lasso.xpoints[lasso.npoints - 1];
-        int lastPosY = lasso.ypoints[lasso.npoints - 1];
-        g.drawLine(lastPosX, lastPosY, mousePos.x, mousePos.y);
-
         lasso.addPoint(mousePos.x, mousePos.y);
+        nc.requestPaintPoly(lasso);
     }
 
     /**
@@ -301,6 +286,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      *
      * @param alt Whether the alt key was pressed, which means select all
      * objects that are touched, instead those which are completely covered.
+     * @return The collection of selected objects.
      */
     public Collection<OsmPrimitive> getSelectedObjects(boolean alt) {
 
@@ -367,6 +353,10 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         return poly;
     }
 
+    /**
+     * Enables or disables the lasso mode.
+     * @param lassoMode {@code true} to enable lasso mode, {@code false} to disable it.
+     */
     public void setLassoMode(boolean lassoMode) {
         this.lassoMode = lassoMode;
     }
