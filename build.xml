@@ -252,17 +252,9 @@ Build-Date: ${build.tstamp}
         <local name="plugins"/>
         <property name="dir" value="plugin-check"/>
         <typedef uri="antlib:org.codehaus.mojo.animal_sniffer">
-            <classpath path="tools/animal-sniffer-ant-tasks-1.7.jar"/>
+            <classpath path="tools/animal-sniffer-ant-tasks-1.8.jar"/>
         </typedef>
-        <delete dir="${dir}"/>
         <mkdir dir="${dir}"/>
-        <as:build-signatures destfile="${dir}/api.sig">
-            <path>
-                <fileset file="dist/josm-custom-optimized.jar"/>
-                <fileset file="${java.home}/lib/rt.jar"/>
-                <fileset file="${java.home}/lib/jce.jar"/>
-            </path>
-        </as:build-signatures>
         <!-- List of deprecated plugins -->
         <loadfile property="deprecated-plugins" srcFile="src/org/openstreetmap/josm/plugins/PluginHandler.java">
             <filterchain>
@@ -278,7 +270,7 @@ Build-Date: ${build.tstamp}
                 </tokenfilter>
             </filterchain>
         </loadfile>
-        <!-- Download plugins -->
+        <!-- Download list of plugins -->
         <loadresource property="plugins">
             <url url="http://josm.openstreetmap.de/plugin"/>
             <filterchain>
@@ -292,13 +284,42 @@ Build-Date: ${build.tstamp}
                     <replaceregex pattern="^.*;" replace="" flags="gi"/>
                 </tokenfilter>
             </filterchain>
-        </loadresource>
+        </loadresource>	
+	<!-- Delete files that are not in plugin list (like old plugins) -->
+	<loadresource property="file-list">
+	  <propertyresource name="plugins"/>
+	  <filterchain>
+	    <tokenfilter>
+	      <replaceregex pattern="^.*/(.*)$" replace="\1\|" flags=""/>
+            </tokenfilter>
+	    <striplinebreaks/>
+	    <tokenfilter>
+	      <replaceregex pattern="\|$" replace="" flags="gi"/>
+            </tokenfilter>	    
+	  </filterchain>
+	</loadresource>
+	<delete>
+	  <restrict>
+	    <fileset dir="${dir}"/>
+	    <not>
+	      <name regex="${file-list}"/>
+	    </not>
+	  </restrict>
+	</delete>
+	<!-- Download plugins -->
         <copy todir="${dir}" flatten="true">
             <resourcelist>
                 <string value="${plugins}"/>
             </resourcelist>
         </copy>
         <!-- Check plugins -->
+        <as:build-signatures destfile="${dir}/api.sig">
+            <path>
+                <fileset file="dist/josm-custom-optimized.jar"/>
+                <fileset file="${java.home}/lib/rt.jar"/>
+                <fileset file="${java.home}/lib/jce.jar"/>
+            </path>
+        </as:build-signatures>	
         <as:check-signature signature="${dir}/api.sig">
             <ignore classname="org.jgraph.*"/>
             <ignore classname="com.touchgraph.*"/>
