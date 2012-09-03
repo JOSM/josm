@@ -218,10 +218,8 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             List<Entry<String, String>> entries = new ArrayList<Entry<String,String>>(osm.getKeys().entrySet());
             Collections.sort(entries, byKeyComparator);
             for (Entry<String, String> e : entries) {
-                if ((osm instanceof Changeset) || !("created_by".equals(e.getKey()))) {
-                    out.println("    <tag k='"+ XmlWriter.encode(e.getKey()) +
-                            "' v='"+XmlWriter.encode(e.getValue())+ "' />");
-                }
+                out.println("    <tag k='"+ XmlWriter.encode(e.getKey()) +
+                        "' v='"+XmlWriter.encode(e.getValue())+ "' />");
             }
             out.println("  </" + tagname + ">");
         } else if (tagOpen) {

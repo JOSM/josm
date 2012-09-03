@@ -608,8 +608,9 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * UNINTERESTING AND DIRECTION KEYS
      *----------------------------------*/
 
-
     private static volatile Collection<String> uninteresting = null;
+    private static volatile Collection<String> discardable = null;
+    
     /**
      * Contains a list of "uninteresting" keys that do not make an object
      * "tagged".  Entries that end with ':' are causing a whole namespace to be considered
@@ -619,11 +620,26 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     public static Collection<String> getUninterestingKeys() {
         if (uninteresting == null) {
             uninteresting = Main.pref.getCollection("tags.uninteresting",
-                    Arrays.asList(new String[]{"source", "source_ref", "source:", "note", "comment",
+                    Arrays.asList("source", "source_ref", "source:", "note", "comment",
                             "converted_by", "created_by", "watch", "watch:", "fixme", "FIXME",
-                            "description", "attribution"}));
+                            "description", "attribution"));
         }
         return uninteresting;
+    }
+
+    /**
+     * Returns a list of keys which have been deemed uninteresting to the point
+     * that they can be silently removed from data which is being edited.
+     */
+    public static Collection<String> getDiscardableKeys() {
+        if(discardable == null) {
+            discardable = Main.pref.getCollection("tags.discardable",
+                    Arrays.asList("created_by",
+                            "tiger:upload_uuid", "tiger:tlid", "tiger:source", "tiger:separated",
+                            "geobase:datasetName", "geobase:uuid", "sub_sea:type",
+                            "odbl", "odbl:note"));
+        }
+        return discardable;
     }
 
     /**
