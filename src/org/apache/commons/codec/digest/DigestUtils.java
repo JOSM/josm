@@ -28,7 +28,7 @@ import org.apache.commons.codec.binary.StringUtils;
 /**
  * Operations to simplify common {@link java.security.MessageDigest} tasks. This class is thread safe.
  *
- * @version $Id: DigestUtils.java 1380028 2012-09-02 18:43:24Z ggregory $
+ * @version $Id: DigestUtils.java 1380826 2012-09-04 19:35:06Z ggregory $
  */
 public class DigestUtils {
 
@@ -97,6 +97,7 @@ public class DigestUtils {
      *             when a {@link NoSuchAlgorithmException} is caught, which should never happen because MD2 is a
      *             built-in algorithm
      * @see MessageDigestAlgorithms#MD2
+     * @since 1.7
      */
     public static MessageDigest getMd2Digest() {
         return getDigest(MessageDigestAlgorithms.MD2);
@@ -183,9 +184,11 @@ public class DigestUtils {
      * @return An SHA-1 digest instance.
      * @throws IllegalArgumentException
      *             when a {@link NoSuchAlgorithmException} is caught
+     * @deprecated Use {@link #getSha1Digest()}
      */
+    @Deprecated
     public static MessageDigest getShaDigest() {
-        return getDigest("SHA");
+        return getSha1Digest();
     }
 
     /**
@@ -346,7 +349,7 @@ public class DigestUtils {
      */
     @Deprecated
     public static byte[] sha(byte[] data) {
-        return getShaDigest().digest(data);
+        return sha1(data);
     }
 
     /**
@@ -362,7 +365,7 @@ public class DigestUtils {
      */
     @Deprecated
     public static byte[] sha(InputStream data) throws IOException {
-        return digest(getShaDigest(), data);
+        return sha1(data);
     }
 
     /**
@@ -375,7 +378,7 @@ public class DigestUtils {
      */
     @Deprecated
     public static byte[] sha(String data) {
-        return sha(getBytesUtf8(data));
+        return sha1(data);
     }
 
     /**
@@ -745,7 +748,7 @@ public class DigestUtils {
      */
     @Deprecated
     public static String shaHex(byte[] data) {
-        return Hex.encodeHexString(sha(data));
+        return sha1Hex(data);
     }
 
     /**
@@ -761,7 +764,7 @@ public class DigestUtils {
      */
     @Deprecated
     public static String shaHex(InputStream data) throws IOException {
-        return Hex.encodeHexString(sha(data));
+        return sha1Hex(data);
     }
 
     /**
@@ -774,7 +777,7 @@ public class DigestUtils {
      */
     @Deprecated
     public static String shaHex(String data) {
-        return Hex.encodeHexString(sha(data));
+        return sha1Hex(data);
     }
 
     /**
