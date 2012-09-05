@@ -39,15 +39,33 @@ public class GpxImporter extends FileImporter {
         /**
          * The imported GPX layer. May be null if no GPX data.
          */
-        public GpxLayer gpxLayer;
+        private GpxLayer gpxLayer;
         /**
          * The imported marker layer. May be null if no marker.
          */
-        public MarkerLayer markerLayer;
+        private MarkerLayer markerLayer;
         /**
          * The task to run after GPX and/or marker layer has been added to MapView.
          */
-        public Runnable postLayerTask;
+        private Runnable postLayerTask;
+
+        public GpxImporterData(GpxLayer gpxLayer, MarkerLayer markerLayer, Runnable postLayerTask) {
+            this.gpxLayer = gpxLayer;
+            this.markerLayer = markerLayer;
+            this.postLayerTask = postLayerTask;
+        }
+
+        public GpxLayer getGpxLayer() {
+            return gpxLayer;
+        }
+
+        public MarkerLayer getMarkerLayer() {
+            return markerLayer;
+        }
+
+        public Runnable getPostLayerTask() {
+            return postLayerTask;
+        }
     }
 
     /**
@@ -107,23 +125,22 @@ public class GpxImporter extends FileImporter {
      * @return the new GPX and marker layers corresponding to the specified GPX data, to be used with {@link #addLayers}
      * @see #addLayers
      */
-    public static GpxImporterData loadLayers(final GpxData data, final boolean parsedProperly, final String gpxLayerName, String markerLayerName) {
-        final GpxImporterData result = new GpxImporterData();
+    public static GpxImporterData loadLayers(final GpxData data, final boolean parsedProperly, 
+            final String gpxLayerName, String markerLayerName) {
+        GpxLayer gpxLayer = null;
+        MarkerLayer markerLayer = null;
         if (data.hasRoutePoints() || data.hasTrackPoints()) {
-            result.gpxLayer = new GpxLayer(data, gpxLayerName, data.storageFile != null);
+            gpxLayer = new GpxLayer(data, gpxLayerName, data.storageFile != null);
         }
         if (Main.pref.getBoolean("marker.makeautomarkers", true) && !data.waypoints.isEmpty()) {
-            result.markerLayer = new MarkerLayer(data, markerLayerName, data.storageFile, result.gpxLayer, false);
-            if (result.markerLayer.data.size() == 0) {
-                result.markerLayer = null;
+            markerLayer = new MarkerLayer(data, markerLayerName, data.storageFile, gpxLayer);
+            if (markerLayer.data.isEmpty()) {
+                markerLayer = null;
             }
         }
-        result.postLayerTask = new Runnable() {
+        Runnable postLayerTask = new Runnable() {
             @Override
             public void run() {
-                if (result.markerLayer != null) {
-                    result.markerLayer.addMouseHandler();
-                }
                 if (!parsedProperly) {
                     String msg;
                     if (data.storageFile == null) {
@@ -137,6 +154,19 @@ public class GpxImporter extends FileImporter {
                 }
             }
         };
-        return result;
+        return new GpxImporterData(gpxLayer, markerLayer, postLayerTask);
+    }
+
+    public static GpxImporterData loadLayers(InputStream is, final File associatedFile,
+            final String gpxLayerName, String markerLayerName, ProgressMonitor progressMonitor) throws IOException {
+        try {
+            final GpxReader r = new GpxReader(is);
+            final boolean parsedProperly = r.parse(true);
+            r.data.storageFile = associatedFile;
+            return loadLayers(r.data, parsedProperly, gpxLayerName, markerLayerName);
+        } catch (SAXException e) {
+            e.printStackTrace();
+            throw new IOException(tr("Parsing data for layer ''{0}'' failed", gpxLayerName));
+        }
     }
 }

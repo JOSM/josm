@@ -56,6 +56,7 @@ public class SessionReader {
     static {
         registerSessionLayerImporter("osm-data", OsmDataSessionImporter.class);
         registerSessionLayerImporter("imagery", ImagerySessionImporter.class);
+        registerSessionLayerImporter("tracks", GpxTracksSessionImporter.class);
     }
 
     public static void registerSessionLayerImporter(String layerType, Class<? extends SessionLayerImporter> importer) {

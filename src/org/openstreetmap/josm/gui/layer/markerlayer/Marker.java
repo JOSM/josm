@@ -169,7 +169,6 @@ public class Marker implements TemplateEngineDataProvider {
         }
     }
 
-
     /**
      * Plugins can add their Marker creation stuff at the bottom or top of this list
      * (depending on whether they want to override default behaviour or just add new
@@ -208,7 +207,6 @@ public class Marker implements TemplateEngineDataProvider {
                         }
                     }
                 }
-
 
                 if (url == null) {
                     String symbolName = wpt.getString("symbol");

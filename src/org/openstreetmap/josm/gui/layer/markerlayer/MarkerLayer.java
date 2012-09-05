@@ -67,11 +67,12 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     public GpxLayer fromLayer = null;
     private Marker currentMarker;
 
-    public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer) {
-        this(indata, name, associatedFile, fromLayer, true);
+    @Deprecated
+    public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer, boolean addMouseHandlerInConstructor) {
+        this(indata, name, associatedFile, fromLayer);
     }
 
-    public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer, boolean addMouseHandlerInConstructor) {
+    public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer) {
         super(name);
         this.setAssociatedFile(associatedFile);
         this.data = new ArrayList<Marker>();
@@ -104,17 +105,10 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 data.add(m);
             }
         }
-
-        if (addMouseHandlerInConstructor) {
-            SwingUtilities.invokeLater(new Runnable(){
-                public void run() {
-                    addMouseHandler();
-                }
-            });
-        }
     }
 
-    public void addMouseHandler() {
+    @Override
+    public void hookUpMapView() {
         Main.map.mapView.addMouseListener(new MouseAdapter() {
             @Override public void mousePressed(MouseEvent e) {
                 if (e.getButton() != MouseEvent.BUTTON1)

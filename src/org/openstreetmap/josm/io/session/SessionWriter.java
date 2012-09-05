@@ -27,16 +27,16 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 public class SessionWriter {
 
@@ -46,6 +46,7 @@ public class SessionWriter {
         registerSessionLayerExporter(OsmDataLayer.class , OsmDataSessionExporter.class);
         registerSessionLayerExporter(TMSLayer.class , ImagerySessionExporter.class);
         registerSessionLayerExporter(WMSLayer.class , ImagerySessionExporter.class);
+        registerSessionLayerExporter(GpxLayer.class , GpxTracksSessionExporter.class);
     }
 
     /**
@@ -85,6 +86,10 @@ public class SessionWriter {
         this.zip = zip;
     }
 
+    /**
+     * A class that provides some context for the individual {@link SessionLayerExporter}
+     * when doing the export.
+     */
     public class ExportSupport {
         private Document doc;
         private int layerIndex;
@@ -102,14 +107,20 @@ public class SessionWriter {
             return doc.createTextNode(text);
         }
 
+        /**
+         * Get the index of the layer that is currently exported.
+         * @return the index of the layer that is currently exported
+         */
         public int getLayerIndex() {
             return layerIndex;
         }
 
         /**
-         * Create a file in the zip archive.
+         * Create a file inside the zip archive.
          *
-         * @return never close the output stream, but make sure to flush buffers
+         * @param zipPath the path inside the zip archive, e.g. "layers/03/data.xml"
+         * @return the OutputStream you can write to. Never close the returned
+         * output stream, but make sure to flush buffers.
          */
         public OutputStream getOutputStreamZip(String zipPath) throws IOException {
             if (!isZip()) throw new RuntimeException();
@@ -118,6 +129,15 @@ public class SessionWriter {
             return zipOut;
         }
 
+        /**
+         * Check, if the session is exported as a zip archive.
+         *
+         * @return true, if the session is exported as a zip archive (.joz file
+         * extension). It will always return true, if one of the
+         * {@link SessionLayerExporter} returns true for the
+         * {@link SessionLayerExporter#requiresZip()} method. Otherwise, the
+         * user can decide in the file chooser dialog.
+         */
         public boolean isZip() {
             return zip;
         }
