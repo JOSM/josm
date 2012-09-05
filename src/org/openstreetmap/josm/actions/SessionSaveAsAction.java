@@ -50,9 +50,6 @@ public class SessionSaveAsAction extends DiskAccessAction {
 
     private boolean zipRequired;
 
-    /**
-     * Construct the action with "Save" as label.
-     */
     public SessionSaveAsAction() {
         super(tr("Save Session As..."), "save_as", tr("Save the current session to a new file."), null, true, "save_as-session", true);
         putValue("help", ht("/Action/SessionSaveAs"));
@@ -71,7 +68,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
         zipRequired = false;
         for (Layer l : layers) {
             SessionLayerExporter ex = exporters.get(l);
-            if (ex.requiresZip()) {
+            if (ex != null && ex.requiresZip()) {
                 zipRequired = true;
                 break;
             }

@@ -123,10 +123,10 @@ public class DownloadGpsTask extends AbstractDownloadTask {
             
             GpxImporterData layers = GpxImporter.loadLayers(rawData, reader.isGpxParsedProperly(), name, tr("Markers from {0}", name));
             
-            GpxLayer gpxLayer = addOrMergeLayer(layers.gpxLayer, findGpxMergeLayer());
-            addOrMergeLayer(layers.markerLayer, findMarkerMergeLayer(gpxLayer));
+            GpxLayer gpxLayer = addOrMergeLayer(layers.getGpxLayer(), findGpxMergeLayer());
+            addOrMergeLayer(layers.getMarkerLayer(), findMarkerMergeLayer(gpxLayer));
             
-            layers.postLayerTask.run();
+            layers.getPostLayerTask().run();
         }
         
         private <L extends Layer> L addOrMergeLayer(L layer, L mergeLayer) {

@@ -4,9 +4,9 @@ package org.openstreetmap.josm.io.session;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -24,9 +24,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 
-import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,28 +32,22 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import org.openstreetmap.josm.actions.SaveAction;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.io.OsmWriter;
-import org.openstreetmap.josm.io.OsmWriterFactory;
+import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.io.session.SessionWriter.ExportSupport;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.w3c.dom.Element;
 
-public class OsmDataSessionExporter implements SessionLayerExporter {
+public class GpxTracksSessionExporter implements SessionLayerExporter {
 
-    private OsmDataLayer layer;
+    private GpxLayer layer;
     private JRadioButton link, include;
     private JCheckBox export;
 
-    public OsmDataSessionExporter(OsmDataLayer layer) {
+    public GpxTracksSessionExporter(GpxLayer layer) {
         this.layer = layer;
-    }
-
-    public OsmDataSessionExporter() {
     }
 
     @Override
@@ -63,27 +55,8 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
         return Collections.emptySet();
     }
 
-    private class LayerSaveAction extends AbstractAction {
-        public LayerSaveAction() {
-            putValue(SMALL_ICON, new ImageProvider("save").setWidth(16).get());
-            putValue(SHORT_DESCRIPTION, layer.requiresSaveToFile() ? 
-                    tr("Layer contains unsaved data - save to file.") :
-                    tr("Layer does not contain unsaved data."));
-            updateEnabledState();
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            SaveAction.getInstance().doSave(layer);
-            updateEnabledState();
-        }
-
-        public void updateEnabledState() {
-            setEnabled(layer.requiresSaveToFile());
-        }
-    }
-
     @Override
-    public JPanel getExportPanel() {
+    public Component getExportPanel() {
         final JPanel p = new JPanel(new GridBagLayout());
         JPanel topRow = new JPanel(new GridBagLayout());
         export = new JCheckBox();
@@ -104,15 +77,11 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
 
         JPanel cardLink = new JPanel(new GridBagLayout());
         final File file = layer.getAssociatedFile();
-        final LayerSaveAction saveAction = new LayerSaveAction();
-        final JButton save = new JButton(saveAction);
         if (file != null) {
             JTextField tf = new JTextField();
             tf.setText(file.getPath());
             tf.setEditable(false);
             cardLink.add(tf, GBC.std());
-            save.setMargin(new Insets(0,0,0,0));
-            cardLink.add(save, GBC.eol().insets(2,0,0,0));
         } else {
             cardLink.add(new JLabel(tr("No file association")), GBC.eol());
         }
@@ -163,7 +132,6 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
                     export.setEnabled(true);
                 } else {
                     GuiHelper.setEnabledRec(p, true);
-                    save.setEnabled(saveAction.isEnabled());
                     link.setEnabled(file != null);
                 }
             }
@@ -184,14 +152,14 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
     @Override
     public Element export(ExportSupport support) throws IOException {
         Element layerEl = support.createElement("layer");
-        layerEl.setAttribute("type", "osm-data");
+        layerEl.setAttribute("type", "tracks");
         layerEl.setAttribute("version", "0.1");
 
         Element file = support.createElement("file");
         layerEl.appendChild(file);
 
         if (requiresZip()) {
-            String zipPath = "layers/" + String.format("%02d", support.getLayerIndex()) + "/data.osm";
+            String zipPath = "layers/" + String.format("%02d", support.getLayerIndex()) + "/data.gpx";
             file.appendChild(support.createTextNode(zipPath));
             addDataFile(support.getOutputStreamZip(zipPath));
         } else {
@@ -214,14 +182,9 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
-        OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
-        layer.data.getReadLock().lock();
-        try {
-            w.writeLayer(layer);
-            w.flush();
-        } finally {
-            layer.data.getReadLock().unlock();
-        }
+        GpxWriter w = new GpxWriter(new PrintWriter(writer));
+        w.write(layer.data);
+        w.flush();
     }
-}
 
+}
