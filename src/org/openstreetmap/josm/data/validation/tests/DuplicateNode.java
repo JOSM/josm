@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -125,14 +126,27 @@ public class DuplicateNode extends Test {
     public void endTest() {
         for (Object v: potentialDuplicates) {
             if (v instanceof Node) {
-                // just one node at this position. Nothing to report as
-                // error
+                // just one node at this position. Nothing to report as error
                 continue;
             }
 
-            // multiple nodes at the same position -> report errors
-            //
+            // multiple nodes at the same position -> check if all nodes have a distinct elevation
             List<Node> nodes = (List<Node>) v;
+            Set<String> eles = new HashSet<String>();
+            for (Node n : nodes) {
+                String ele = n.get("ele");
+                if (ele != null) {
+                    eles.add(ele);
+                }
+            }
+            if (eles.size() == nodes.size()) {
+                // All nodes at this position have a distinct elevation.
+                // This is normal in some particular cases (for example, geodesic points in France)
+                // Do not report this as an error
+                continue;
+            }
+            
+            // report errors
             errors.addAll(buildTestErrors(this, nodes));
         }
         super.endTest();
