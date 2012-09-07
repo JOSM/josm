@@ -24,7 +24,6 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
@@ -86,18 +85,23 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
             boolean wpt_has_link = wpt.attr.containsKey(GpxData.META_LINKS);
             if (firstTime < 0 && wpt_has_link) {
                 firstTime = time;
-                for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get(GpxData.META_LINKS)) {
-                    lastLinkedFile = oneLink.uri;
-                    break;
+                for (Object oneLink : wpt.getCollection(GpxData.META_LINKS)) {
+                    if (oneLink instanceof GpxLink) {
+                        lastLinkedFile = ((GpxLink)oneLink).uri;
+                        break;
+                    }
                 }
             }
             if (wpt_has_link) {
-                for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get(GpxData.META_LINKS)) {
-                    if (!oneLink.uri.equals(lastLinkedFile)) {
-                        firstTime = time;
+                for (Object oneLink : wpt.getCollection(GpxData.META_LINKS)) {
+                    if (oneLink instanceof GpxLink) {
+                        String uri = ((GpxLink)oneLink).uri;
+                        if (!uri.equals(lastLinkedFile)) {
+                            firstTime = time;
+                        }
+                        lastLinkedFile = uri;
+                        break;
                     }
-                    lastLinkedFile = oneLink.uri;
-                    break;
                 }
             }
             Marker m = Marker.createMarker(wpt, indata.storageFile, this, time, time - firstTime);
