@@ -276,9 +276,8 @@ public class WindowGeometry {
         GraphicsDevice[] gs = ge.getScreenDevices();
         for (int j = 0; j < gs.length; j++) {
             GraphicsDevice gd = gs[j];
-            GraphicsConfiguration[] gc = gd.getConfigurations();
-            for (int i = 0; i < gc.length; i++) {
-                virtualBounds = virtualBounds.union(gc[i].getBounds());
+            if (gd.getType() == GraphicsDevice.TYPE_RASTER_SCREEN) {
+            	virtualBounds = virtualBounds.union(gd.getDefaultConfiguration().getBounds());
             }
         }
 
@@ -315,10 +314,9 @@ public class WindowGeometry {
         Rectangle bounds = null;
         for (int j = 0; j < gs.length; j++) {
             GraphicsDevice gd = gs[j];
-            GraphicsConfiguration[] gc = gd.getConfigurations();
-            for (int i = 0; i < gc.length; i++) {
-                Rectangle b = gc[i].getBounds();
-                if(b.width/b.height >= 3) /* multiscreen with wrong definition */
+            if (gd.getType() == GraphicsDevice.TYPE_RASTER_SCREEN) {
+                Rectangle b = gd.getDefaultConfiguration().getBounds();
+                if (b.height > 0 && b.width/b.height >= 3) /* multiscreen with wrong definition */
                 {
                     b.width /= 2;
                     Rectangle is = b.intersection(g);
