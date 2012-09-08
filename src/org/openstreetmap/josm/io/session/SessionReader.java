@@ -57,6 +57,7 @@ public class SessionReader {
         registerSessionLayerImporter("osm-data", OsmDataSessionImporter.class);
         registerSessionLayerImporter("imagery", ImagerySessionImporter.class);
         registerSessionLayerImporter("tracks", GpxTracksSessionImporter.class);
+        registerSessionLayerImporter("geoimage", GeoImageSessionImporter.class);
     }
 
     public static void registerSessionLayerImporter(String layerType, Class<? extends SessionLayerImporter> importer) {
@@ -102,9 +103,9 @@ public class SessionReader {
 
         private String layerName;
         private int layerIndex;
-        private LinkedHashMap<Integer,SessionLayerImporter> layerDependencies;
+        private List<LayerDependency> layerDependencies;
 
-        public ImportSupport(String layerName, int layerIndex, LinkedHashMap<Integer,SessionLayerImporter> layerDependencies) {
+        public ImportSupport(String layerName, int layerIndex, List<LayerDependency> layerDependencies) {
             this.layerName = layerName;
             this.layerIndex = layerIndex;
             this.layerDependencies = layerDependencies;
@@ -233,8 +234,32 @@ public class SessionReader {
          * Dependencies - maps the layer index to the importer of the given
          * layer. All the dependent importers have loaded completely at this point.
          */
-        public LinkedHashMap<Integer,SessionLayerImporter> getLayerDependencies() {
+        public List<LayerDependency> getLayerDependencies() {
             return layerDependencies;
+        }
+    }
+
+    public static class LayerDependency {
+        private Integer index;
+        private Layer layer;
+        private SessionLayerImporter importer;
+
+        public LayerDependency(Integer index, Layer layer, SessionLayerImporter importer) {
+            this.index = index;
+            this.layer = layer;
+            this.importer = importer;
+        }
+
+        public SessionLayerImporter getImporter() {
+            return importer;
+        }
+
+        public Integer getIndex() {
+            return index;
+        }
+
+        public Layer getLayer() {
+            return layer;
         }
     }
 
@@ -337,7 +362,7 @@ public class SessionReader {
                 }
             } else {
                 importers.put(idx, imp);
-                LinkedHashMap<Integer,SessionLayerImporter> depsImp = new LinkedHashMap<Integer,SessionLayerImporter>();
+                List<LayerDependency> depsImp = new ArrayList<LayerDependency>();
                 for (int d : deps.get(idx)) {
                     SessionLayerImporter dImp = importers.get(d);
                     if (dImp == null) {
@@ -355,7 +380,7 @@ public class SessionReader {
                             continue LAYER;
                         }
                     }
-                    depsImp.put(d, dImp);
+                    depsImp.add(new LayerDependency(d, layersMap.get(d), dImp));
                 }
                 ImportSupport support = new ImportSupport(name, idx, depsImp);
                 Layer layer = null;

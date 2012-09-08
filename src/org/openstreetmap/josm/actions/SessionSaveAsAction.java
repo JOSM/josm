@@ -78,7 +78,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
         FileFilter jos = new ExtensionFileFilter("jos", "jos", tr("Session file (*.jos)"));
 
         JFileChooser fc;
-        
+
         if (zipRequired) {
             fc = createAndOpenFileChooser(false, false, tr("Save session"), joz, JFileChooser.FILES_ONLY, "lastDirectory");
         } else {
@@ -108,9 +108,9 @@ public class SessionSaveAsAction extends DiskAccessAction {
         }
         if (fn.indexOf('.') == -1) {
             file = new File(file.getPath() + (zip ? ".joz" : ".jos"));
+            if (!SaveActionBase.confirmOverwrite(file))
+                return;
         }
-        if (!SaveActionBase.confirmOverwrite(file))
-            return;
 
         List<Layer> layersOut = new ArrayList<Layer>();
         for (Layer layer : layers) {
