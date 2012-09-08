@@ -69,7 +69,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class PluginHandler {
 
-    /* deprecated plugins that are removed on start */
+    /**
+     * deprecated plugins that are removed on start
+     */
     public final static Collection<DeprecatedPlugin> DEPRECATED_PLUGINS;
     static {
         String IN_CORE = tr("integrated into main program");
@@ -444,6 +446,7 @@ public class PluginHandler {
             }
             Set<String> missingPlugins = new HashSet<String>();
             for (String requiredPlugin : plugin.requires.split(";")) {
+                requiredPlugin = requiredPlugin.trim();
                 if (!pluginNames.contains(requiredPlugin)) {
                     missingPlugins.add(requiredPlugin);
                 }
