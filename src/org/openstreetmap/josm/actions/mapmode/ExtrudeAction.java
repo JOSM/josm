@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions.mapmode;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AWTEvent;
@@ -62,19 +63,27 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      * If true, when extruding create new node even if segments parallel.
      */
     private boolean alwaysCreateNodes = false;
+
     private long mouseDownTime = 0;
     private WaySegment selectedSegment = null;
     private Color selectedColor;
 
     /**
+     * drawing settings for helper lines
+     */
+    private Color helperColor;
+    private BasicStroke helperStrokeDash;
+    private BasicStroke helperStrokeRA;
+
+    /**
      * Possible directions to move to.
      */
-    private List<EastNorth> possibleMoveDirections;
+    private List<ReferenceSegment> possibleMoveDirections;
 
     /**
      * The direction that is currently active.
      */
-    private EastNorth activeMoveDirection;
+    private ReferenceSegment activeMoveDirection;
 
     /**
      * The position of the mouse cursor when the drag action was initiated.
@@ -104,6 +113,24 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     /** The cursor for the 'create_new' mode. */
     private final Cursor cursorCreateNew;
 
+    /** The cursor for the 'translate' mode. */
+    private final Cursor cursorTranslate;
+
+    /** The cursor for the 'alwaysCreateNodes' submode. */
+    private final Cursor cursorCreateNodes;
+
+    private class ReferenceSegment {
+        public final EastNorth en;
+        public final WaySegment ws;
+        public final boolean perpendicular;
+
+        public ReferenceSegment(EastNorth en, WaySegment ws, boolean perpendicular) {
+            this.en = en;
+            this.ws = ws;
+            this.perpendicular = perpendicular;
+        }
+    }
+
     /**
      * This listener is used to indicate the 'create_new' mode, if the Alt modifier is pressed.
      */
@@ -114,8 +141,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                 return;
             InputEvent ie = (InputEvent) e;
             boolean alt = (ie.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
-            if(mode == Mode.select) {
-                Main.map.mapView.setNewCursor(alt ? cursorCreateNew : cursor, this);
+            boolean ctrl = (ie.getModifiers() & (ActionEvent.CTRL_MASK)) != 0;
+            boolean shift = (ie.getModifiers() & (ActionEvent.SHIFT_MASK)) != 0;
+            if (mode == Mode.select) {
+                Main.map.mapView.setNewCursor(ctrl ? cursorTranslate : alt ? cursorCreateNew : shift ? cursorCreateNodes : cursor, this);
             }
         }
     };
@@ -133,6 +162,13 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
         selectedColor = PaintColors.SELECTED.get();
         cursorCreateNew = ImageProvider.getCursor("normal", "rectangle_plus");
+        cursorTranslate = ImageProvider.getCursor("normal", "rectangle_move");
+        cursorCreateNodes = ImageProvider.getCursor("normal", "rectangle_plussmall");
+        helperColor = Main.pref.getColor(marktr("Extrude: helper line"), Color.ORANGE);
+        float dash1[] = { 4.0f };
+        helperStrokeDash = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
+        helperStrokeRA = new BasicStroke(1);
     }
 
     @Override public String getModeHelpText() {
@@ -211,27 +247,30 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             initialN2en = selectedSegment.getSecondNode().getEastNorth();
 
             //gather possible move directions - perpendicular to the selected segment and parallel to neighbor segments
-            possibleMoveDirections = new ArrayList<EastNorth>();
-            possibleMoveDirections.add(new EastNorth(
+            possibleMoveDirections = new ArrayList<ReferenceSegment>();
+            possibleMoveDirections.add(new ReferenceSegment(new EastNorth(
                     initialN1en.getY() - initialN2en.getY(),
-                    initialN2en.getX() - initialN1en.getX()));
+                    initialN2en.getX() - initialN1en.getX()
+                    ), selectedSegment, true));
 
             //add directions parallel to neighbor segments
 
             Node prevNode = getPreviousNode(selectedSegment.lowerIndex);
             if (prevNode != null) {
                 EastNorth en = prevNode.getEastNorth();
-                possibleMoveDirections.add(new EastNorth(
+                possibleMoveDirections.add(new ReferenceSegment(new EastNorth(
                         initialN1en.getX() - en.getX(),
-                        initialN1en.getY() - en.getY()));
+                        initialN1en.getY() - en.getY()
+                        ), new WaySegment(selectedSegment.way, getPreviousNodeIndex(selectedSegment.lowerIndex)), false));
             }
 
             Node nextNode = getNextNode(selectedSegment.lowerIndex + 1);
             if (nextNode != null) {
                 EastNorth en = nextNode.getEastNorth();
-                possibleMoveDirections.add(new EastNorth(
+                possibleMoveDirections.add(new ReferenceSegment(new EastNorth(
                         initialN2en.getX() - en.getX(),
-                        initialN2en.getY() - en.getY()));
+                        initialN2en.getY() - en.getY()
+                        ), new WaySegment(selectedSegment.way, getPreviousNodeIndex(getNextNodeIndex(getNextNodeIndex(selectedSegment.lowerIndex)))), false));
             }
 
             // Signifies that nothing has happened yet
@@ -277,8 +316,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             activeMoveDirection = null;
 
             //find the best movement direction and vector
-            for (EastNorth direction: possibleMoveDirections) {
-                EastNorth movement = calculateSegmentOffset(initialN1en, initialN2en, direction , mouseEn);
+            for (ReferenceSegment direction : possibleMoveDirections) {
+                EastNorth movement = calculateSegmentOffset(initialN1en, initialN2en, direction.en, mouseEn);
                 if (movement == null) {
                     //if direction parallel to segment.
                     continue;
@@ -428,8 +467,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             }
 
             boolean alt = (e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
+            boolean ctrl = (e.getModifiers() & (ActionEvent.CTRL_MASK)) != 0;
+            boolean shift = (e.getModifiers() & (ActionEvent.SHIFT_MASK)) != 0;
             // Switch back into select mode
-            Main.map.mapView.setNewCursor(alt ? cursorCreateNew : cursor, this);
+            Main.map.mapView.setNewCursor(ctrl ? cursorTranslate : alt ? cursorCreateNew : shift ? cursorCreateNodes : cursor, this);
             Main.map.mapView.removeTemporaryLayer(this);
             selectedSegment = null;
             moveCommand = null;
@@ -474,6 +515,19 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     targetPos.getY() - intersectionPoint.getY());
     }
 
+    /**
+     * Gets a node from selected way before given index.
+     * @param index  index of current node
+     * @return index of previous node or -1 if there are no nodes there.
+     */
+    private int getPreviousNodeIndex(int index) {
+        if (index > 0)
+            return index - 1;
+        else if (selectedSegment.way.isClosed())
+            return selectedSegment.way.getNodesCount() - 2;
+        else
+            return -1;
+    }
 
     /**
      * Gets a node from selected way before given index.
@@ -481,25 +535,38 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      * @return previous node or null if there are no nodes there.
      */
     private Node getPreviousNode(int index) {
-        if (index > 0)
-            return selectedSegment.way.getNode(index - 1);
-        else if (selectedSegment.way.isClosed())
-            return selectedSegment.way.getNode(selectedSegment.way.getNodesCount() - 2);
+        int indexPrev = getPreviousNodeIndex(index);
+        if (indexPrev >= 0)
+            return selectedSegment.way.getNode(indexPrev);
         else
             return null;
     }
 
+
     /**
-     * Gets a node from selected way before given index.
+     * Gets a node from selected way after given index.
+     * @param index index of current node
+     * @return index of next node or -1 if there are no nodes there.
+     */
+    private int getNextNodeIndex(int index) {
+        int count = selectedSegment.way.getNodesCount();
+        if (index <  count - 1)
+            return index + 1;
+        else if (selectedSegment.way.isClosed())
+            return 1;
+        else
+            return -1;
+    }
+
+    /**
+     * Gets a node from selected way after given index.
      * @param index index of current node
      * @return next node or null if there are no nodes there.
      */
     private Node getNextNode(int index) {
-        int count = selectedSegment.way.getNodesCount();
-        if (index <  count - 1)
-            return selectedSegment.way.getNode(index + 1);
-        else if (selectedSegment.way.isClosed())
-            return selectedSegment.way.getNode(1);
+        int indexNext = getNextNodeIndex(index);
+        if (indexNext >= 0)
+            return selectedSegment.way.getNode(indexNext);
         else
             return null;
     }
@@ -518,6 +585,21 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                 Point p3 = mv.getPoint(newN1en);
                 Point p4 = mv.getPoint(newN2en);
 
+                double fac = 1.0 / activeMoveDirection.en.distance(0,0);
+                // mult by factor to get unit vector.
+                EastNorth normalUnitVector = new EastNorth(activeMoveDirection.en.getX() * fac, activeMoveDirection.en.getY() * fac);
+
+                // Check to see if our new N1 is in a positive direction with respect to the normalUnitVector.
+                // Even if the x component is zero, we should still be able to discern using +0.0 and -0.0
+                if (newN1en != null && ((newN1en.getX() > initialN1en.getX()) != (normalUnitVector.getX() > -0.0))) {
+                    // If not, use a sign-flipped version of the normalUnitVector.
+                    normalUnitVector = new EastNorth(-normalUnitVector.getX(), -normalUnitVector.getY());
+                }
+
+                //HACK: swap Y, because the target pixels are top down, but EastNorth is bottom-up.
+                //This is normally done by MapView.getPoint, but it does not work on vectors.
+                normalUnitVector.setLocation(normalUnitVector.getX(), -normalUnitVector.getY());
+
                 if (mode == Mode.extrude || mode == Mode.create_new) {
                     // Draw rectangle around new area.
                     GeneralPath b = new GeneralPath();
@@ -525,7 +607,43 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     b.lineTo(p4.x, p4.y); b.lineTo(p2.x, p2.y);
                     b.lineTo(p1.x, p1.y);
                     g2.draw(b);
-                    g2.setStroke(new BasicStroke(1));
+
+                    if (activeMoveDirection != null) {
+                        // Draw reference way
+                        Point pr1 = mv.getPoint(activeMoveDirection.ws.getFirstNode().getEastNorth());
+                        Point pr2 = mv.getPoint(activeMoveDirection.ws.getSecondNode().getEastNorth());
+                        b = new GeneralPath();
+                        b.moveTo(pr1.x, pr1.y);
+                        b.lineTo(pr2.x, pr2.y);
+                        g2.setColor(helperColor);
+                        g2.setStroke(helperStrokeDash);
+                        g2.draw(b);
+
+                        // Draw right angle marker on first node position, only when moving at right angle
+                        if (activeMoveDirection.perpendicular) {
+                            // mirror RightAngle marker, so it is inside the extrude
+                            double headingRefWS = activeMoveDirection.ws.getFirstNode().getEastNorth().heading(activeMoveDirection.ws.getSecondNode().getEastNorth());
+                            double headingMoveDir = Math.atan2(normalUnitVector.getY(), normalUnitVector.getX());
+                            double headingDiff = headingRefWS - headingMoveDir;
+                            if (headingDiff < 0) headingDiff += 2 * Math.PI;
+                            boolean mirrorRA = Math.abs(headingDiff - Math.PI) > 1e-5;
+
+                            // EastNorth units per pixel
+                            double factor = 1.0/g2.getTransform().getScaleX();
+                            double raoffsetx = 8.0*factor*normalUnitVector.getX();
+                            double raoffsety = 8.0*factor*normalUnitVector.getY();
+
+                            Point2D ra1 = new Point2D.Double(pr1.x + raoffsetx, pr1.y+raoffsety);
+                            Point2D ra3 = new Point2D.Double(pr1.x - raoffsety*(mirrorRA ? -1 : 1), pr1.y + raoffsetx*(mirrorRA ? -1 : 1));
+                            Point2D ra2 = new Point2D.Double(ra1.getX() - raoffsety*(mirrorRA ? -1 : 1), ra1.getY() + raoffsetx*(mirrorRA ? -1 : 1));
+                            GeneralPath ra = new GeneralPath();
+                            ra.moveTo((float)ra1.getX(), (float)ra1.getY());
+                            ra.lineTo((float)ra2.getX(), (float)ra2.getY());
+                            ra.lineTo((float)ra3.getX(), (float)ra3.getY());
+                            g2.setStroke(helperStrokeRA);
+                            g2.draw(ra);
+                        }
+                    }
                 } else if (mode == Mode.translate) {
                     // Highlight the new and old segments.
                     Line2D newline = new Line2D.Double(p3, p4);
@@ -536,21 +654,6 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
                     if (activeMoveDirection != null) {
 
-                        double fac = 1.0 / activeMoveDirection.distance(0,0);
-                        // mult by factor to get unit vector.
-                        EastNorth normalUnitVector = new EastNorth(activeMoveDirection.getX() * fac, activeMoveDirection.getY() * fac);
-
-                        // Check to see if our new N1 is in a positive direction with respect to the normalUnitVector.
-                        // Even if the x component is zero, we should still be able to discern using +0.0 and -0.0
-                        if (newN1en != null && (newN1en.getX() > initialN1en.getX() != normalUnitVector.getX() > -0.0)) {
-                            // If not, use a sign-flipped version of the normalUnitVector.
-                            normalUnitVector = new EastNorth(-normalUnitVector.getX(), -normalUnitVector.getY());
-                        }
-
-                        //HACK: swap Y, because the target pixels are top down, but EastNorth is bottom-up.
-                        //This is normally done by MapView.getPoint, but it does not work on vectors.
-                        normalUnitVector.setLocation(normalUnitVector.getX(), -normalUnitVector.getY());
-
                         // Draw a guideline along the normal.
                         Line2D normline;
                         Point2D centerpoint = new Point2D.Double((p1.getX()+p2.getX())*0.5, (p1.getY()+p2.getY())*0.5);
@@ -558,7 +661,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                         g2.draw(normline);
 
                         // Draw right angle marker on initial position, only when moving at right angle
-                        if (activeMoveDirection == possibleMoveDirections.get(0)) {
+                        if (activeMoveDirection.perpendicular) {
                             // EastNorth units per pixel
                             double factor = 1.0/g2.getTransform().getScaleX();
 
