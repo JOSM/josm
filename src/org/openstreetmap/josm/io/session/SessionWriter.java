@@ -32,6 +32,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
+import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Document;
@@ -47,6 +48,7 @@ public class SessionWriter {
         registerSessionLayerExporter(TMSLayer.class , ImagerySessionExporter.class);
         registerSessionLayerExporter(WMSLayer.class , ImagerySessionExporter.class);
         registerSessionLayerExporter(GpxLayer.class , GpxTracksSessionExporter.class);
+        registerSessionLayerExporter(GeoImageLayer.class , GeoImageSessionExporter.class);
     }
 
     /**

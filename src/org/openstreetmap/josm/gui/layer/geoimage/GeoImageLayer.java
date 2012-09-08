@@ -237,13 +237,6 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             }
             if (layer != null) {
                 Main.main.addLayer(layer);
-                layer.hook_up_mouse_events(); // Main.map.mapView should exist
-                // now. Can add mouse listener
-                Main.map.mapView.addPropertyChangeListener(layer);
-                if (Main.map.getToggleDialog(ImageViewerDialog.class) == null) {
-                    ImageViewerDialog.newInstance();
-                    Main.map.addToggleDialog(ImageViewerDialog.getInstance());
-                }
 
                 if (! canceled && layer.data.size() > 0) {
                     boolean noGeotagFound = true;
@@ -269,7 +262,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         Main.worker.execute(loader);
     }
 
-    private GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer) {
+    public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer) {
 
         super(tr("Geotagged Images"));
 
@@ -722,7 +715,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     private MouseAdapter mouseAdapter = null;
     private MapModeChangeListener mapModeListener = null;
 
-    private void hook_up_mouse_events() {
+    @Override
+    public void hookUpMapView() {
         mouseAdapter = new MouseAdapter() {
             private final boolean isMapModeOk() {
                 return Main.map.mapMode == null || Main.map.mapMode instanceof SelectAction;
@@ -807,6 +801,12 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 }
             }
         });
+
+        Main.map.mapView.addPropertyChangeListener(this);
+        if (Main.map.getToggleDialog(ImageViewerDialog.class) == null) {
+            ImageViewerDialog.newInstance();
+            Main.map.addToggleDialog(ImageViewerDialog.getInstance());
+        }
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
@@ -836,6 +836,10 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             copy.add(ie.clone());
         }
         return copy;
+    }
+
+    public GpxLayer getGpxLayer() {
+        return gpxLayer;
     }
 
     public void jumpToNextMarker() {

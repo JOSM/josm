@@ -79,11 +79,15 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     public Date getExifTime() {
         return exifTime;
     }
-    LatLon getExifCoor() {
+    public LatLon getExifCoor() {
         return exifCoor;
     }
     public Double getExifImgDir() {
         return exifImgDir;
+    }
+
+    public boolean hasThumbnail() {
+        return thumbnail != null;
     }
 
     /**
@@ -101,22 +105,22 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     public void setElevation(Double elevation) {
         this.elevation = elevation;
     }
-    void setFile(File file) {
+    public void setFile(File file) {
         this.file = file;
     }
-    void setExifOrientation(Integer exifOrientation) {
+    public void setExifOrientation(Integer exifOrientation) {
         this.exifOrientation = exifOrientation;
     }
-    void setExifTime(Date exifTime) {
+    public void setExifTime(Date exifTime) {
         this.exifTime = exifTime;
     }
-    void setGpsTime(Date gpsTime) {
+    public void setGpsTime(Date gpsTime) {
         this.gpsTime = gpsTime;
     }
-    void setExifCoor(LatLon exifCoor) {
+    public void setExifCoor(LatLon exifCoor) {
         this.exifCoor = exifCoor;
     }
-    void setExifImgDir(double exifDir) {
+    public void setExifImgDir(double exifDir) {
         this.exifImgDir = exifDir;
     }
 
