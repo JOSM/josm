@@ -39,7 +39,7 @@ package org.apache.commons.codec.binary;
  * @see <a href="http://www.ietf.org/rfc/rfc4648.txt">RFC 4648</a>
  *
  * @since 1.5
- * @version $Id: Base32.java 1378966 2012-08-30 14:44:23Z ggregory $
+ * @version $Id: Base32.java 1382485 2012-09-09 12:57:11Z sebb $
  */
 public class Base32 extends BaseNCodec {
 
@@ -352,6 +352,9 @@ public class Base32 extends BaseNCodec {
                     buffer[context.pos++] = (byte) ((context.lbitWorkArea >> 8) & MASK_8BITS);
                     buffer[context.pos++] = (byte) ((context.lbitWorkArea) & MASK_8BITS);
                     break;
+                default:
+                    // modulus can be 0-7, and we excluded 0,1 already
+                    throw new IllegalStateException("Impossible modulus "+context.modulus);
             }
         }
     }
@@ -386,6 +389,8 @@ public class Base32 extends BaseNCodec {
             final byte[] buffer = ensureBufferSize(encodeSize, context);
             final int savedPos = context.pos;
             switch (context.modulus) { // % 5
+                case 0 : // TODO - correct?
+                    break;
                 case 1 : // Only 1 octet; take top 5 bits then remainder
                     buffer[context.pos++] = encodeTable[(int)(context.lbitWorkArea >> 3) & MASK_5BITS]; // 8-1*5 = 3
                     buffer[context.pos++] = encodeTable[(int)(context.lbitWorkArea << 2) & MASK_5BITS]; // 5-3=2
@@ -426,6 +431,8 @@ public class Base32 extends BaseNCodec {
                     buffer[context.pos++] = encodeTable[(int)(context.lbitWorkArea <<  3) & MASK_5BITS]; // 5-2 = 3
                     buffer[context.pos++] = PAD;
                     break;
+                default:
+                    throw new IllegalStateException("Impossible modulus "+context.modulus);
             }
             context.currentLinePos += context.pos - savedPos; // keep track of current line position
             // if currentPos == 0 we are at the start of a line, so don't add CRLF
