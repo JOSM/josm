@@ -29,7 +29,7 @@ import org.apache.commons.codec.EncoderException;
  * This class is thread-safe.
  * </p>
  *
- * @version $Id: BaseNCodec.java 1380589 2012-09-04 12:16:22Z ggregory $
+ * @version $Id: BaseNCodec.java 1382490 2012-09-09 13:10:38Z sebb $
  */
 public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
 
@@ -377,10 +377,10 @@ public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
      */
     @Override
     public byte[] decode(byte[] pArray) {
-        Context context = new Context();
         if (pArray == null || pArray.length == 0) {
             return pArray;
         }
+        Context context = new Context();
         decode(pArray, 0, pArray.length, context);
         decode(pArray, 0, EOF, context); // Notify decoder of EOF.
         byte[] result = new byte[context.pos];
@@ -397,10 +397,10 @@ public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
      */
     @Override
     public byte[] encode(byte[] pArray) {
-        Context context = new Context();
         if (pArray == null || pArray.length == 0) {
             return pArray;
         }
+        Context context = new Context();
         encode(pArray, 0, pArray.length, context);
         encode(pArray, 0, EOF, context); // Notify encoder of EOF.
         byte[] buf = new byte[context.pos - context.readPos];
