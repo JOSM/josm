@@ -11,6 +11,7 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
 
@@ -188,9 +189,9 @@ public class XmlObjectParser implements Iterable<Object> {
                 } else {
                     if (fieldName.startsWith(lang)) {
                         int l = lang.length();
-                        fieldName = "set" + fieldName.substring(l, l + 1).toUpperCase() + fieldName.substring(l + 1);
+                        fieldName = "set" + fieldName.substring(l, l + 1).toUpperCase(Locale.ENGLISH) + fieldName.substring(l + 1);
                     } else {
-                        fieldName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                        fieldName = "set" + fieldName.substring(0, 1).toUpperCase(Locale.ENGLISH) + fieldName.substring(1);
                     }
                     Method m = entry.getMethod(fieldName);
                     if (m != null) {
