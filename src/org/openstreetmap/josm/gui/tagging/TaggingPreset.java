@@ -93,12 +93,17 @@ import org.xml.sax.SAXException;
 public class TaggingPreset extends AbstractAction implements MapView.LayerChangeListener {
 
     public enum PresetType {
-        NODE(/* ICON */"Mf_node"), WAY(/* ICON */"Mf_way"), RELATION(/* ICON */"Mf_relation"), CLOSEDWAY(/* ICON */"Mf_closedway");
+        NODE(/* ICON */"Mf_node", "node"),
+        WAY(/* ICON */"Mf_way", "way"),
+        RELATION(/* ICON */"Mf_relation", "relation"),
+        CLOSEDWAY(/* ICON */"Mf_closedway", "closedway");
 
         private final String iconName;
+        private final String name;
 
-        PresetType(String iconName) {
+        PresetType(String iconName, String name) {
             this.iconName = iconName;
+            this.name = name;
         }
 
         public String getIconName() {
@@ -106,7 +111,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
 
         public String getName() {
-            return name().toLowerCase();
+            return name;
         }
 
         public static PresetType forPrimitive(OsmPrimitive p) {
@@ -127,6 +132,14 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             default:
                 throw new IllegalArgumentException("Unexpected primitive type: " + type);
             }
+        }
+
+        public static PresetType fromString(String type) {
+            for (PresetType t : PresetType.values()) {
+                if (t.getName().equals(type))
+                    return t;
+            }
+            return null;
         }
     }
 
@@ -1297,7 +1310,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         EnumSet<PresetType> result = EnumSet.noneOf(PresetType.class);
         for (String type : Arrays.asList(types.split(","))) {
             try {
-                PresetType presetType = PresetType.valueOf(type.toUpperCase());
+                PresetType presetType = PresetType.fromString(type);
                 result.add(presetType);
             } catch (IllegalArgumentException e) {
                 throw new SAXException(tr("Unknown type: {0}", type));
