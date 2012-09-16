@@ -67,7 +67,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     }
 
     private final DataSetListenerAdapter datasetAdapter = new DataSetListenerAdapter(this);
-    private Set<DataSet> changedDatasets = new HashSet<DataSet>();
+    private final Set<DataSet> changedDatasets = new HashSet<DataSet>();
     private final List<AutosaveLayerInfo> layersInfo = new ArrayList<AutosaveLayerInfo>();
     private Timer timer;
     private final Object layersLock = new Object();
@@ -162,7 +162,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
             setLayerFileName(info);
             info.layerName = info.layer.getName();
         }
-        if (changedDatasets.contains(info.layer.data)) {
+        if (changedDatasets.remove(info.layer.data)) {
             File file = getNewLayerFile(info);
             if (file != null) {
                 info.backupFiles.add(file);
