@@ -314,6 +314,7 @@ public abstract class ImageryLayer extends Layer {
      */
     @Override
     public void destroy() {
+        super.destroy();
         adjustAction.destroy();
     }
 }

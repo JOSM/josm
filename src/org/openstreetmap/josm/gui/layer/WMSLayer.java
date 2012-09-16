@@ -165,7 +165,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         if(info.getUrl() != null) {
             startGrabberThreads();
         }
-        
+
         Main.pref.addPreferenceChangeListener(this);
     }
 
@@ -256,6 +256,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
 
     @Override
     public void destroy() {
+        super.destroy();
         cancelGrabberThreads(false);
         Main.pref.removePreferenceChangeListener(this);
         if (cache != null) {
@@ -974,9 +975,8 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         int sfv = in.readInt();
-        if (sfv != serializeFormatVersion) {
+        if (sfv != serializeFormatVersion)
             throw new InvalidClassException(tr("Unsupported WMS file version; found {0}, expected {1}", sfv, serializeFormatVersion));
-        }
         autoDownloadEnabled = false;
         dax = in.readInt();
         day = in.readInt();
@@ -985,7 +985,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         doSetName((String)in.readObject());
         info.setExtendedUrl((String)in.readObject());
         images = (GeorefImage[][])in.readObject();
-        
+
         for (GeorefImage[] imgs : images) {
             for (GeorefImage img : imgs) {
                 if (img != null) {
@@ -993,7 +993,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                 }
             }
         }
-        
+
         settingsChanged = true;
         if (Main.isDisplayingMapView()) {
             Main.map.mapView.repaint();
