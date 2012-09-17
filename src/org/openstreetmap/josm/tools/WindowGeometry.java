@@ -81,7 +81,6 @@ public class WindowGeometry {
 
     /**
      * Exception thrown by the WindowGeometry class if something goes wrong
-     *
      */
     static public class WindowGeometryException extends Exception {
         public WindowGeometryException(String message, Throwable cause) {
@@ -99,6 +98,7 @@ public class WindowGeometry {
     private Dimension extent;
 
     /**
+     * Creates a window geometry from a position and dimension
      *
      * @param topLeft the top left point
      * @param extent the extent
@@ -109,7 +109,8 @@ public class WindowGeometry {
     }
 
     /**
-     *
+     * Creates a window geometry from a rectangle
+     * 
      * @param rect the position
      */
     public WindowGeometry(Rectangle rect) {
@@ -124,6 +125,22 @@ public class WindowGeometry {
      */
     public WindowGeometry(Window window)  {
         this(window.getLocationOnScreen(), window.getSize());
+    }
+
+    /**
+     * Fixes a window geometry to shift to the correct screen.
+     *
+     * @param window the window
+     */
+    public void fixScreen(Window window)  {
+        Rectangle oldScreen = getScreenInfo(getRectangle());
+        Rectangle newScreen = getScreenInfo(new Rectangle(window.getLocationOnScreen(), window.getSize()));
+        if(oldScreen.x != newScreen.x) {
+            this.topLeft.x += newScreen.x - oldScreen.x;
+        }
+        if(oldScreen.y != newScreen.y) {
+            this.topLeft.y += newScreen.y - oldScreen.y;
+        }
     }
 
     protected int parseField(String preferenceKey, String preferenceValue, String field) throws WindowGeometryException {
@@ -249,14 +266,19 @@ public class WindowGeometry {
     }
 
     /**
-     * Replies the size spezified by the geometry
+     * Replies the size specified by the geometry
      *
-     * @return the size spezified by the geometry
+     * @return the size specified by the geometry
      */
     public Dimension getSize() {
         return extent;
     }
 
+    /**
+     * Replies the size and position specified by the geometry
+     *
+     * @return the size and position specified by the geometry
+     */
     private Rectangle getRectangle() {
         return new Rectangle(topLeft, extent);
     }
@@ -277,7 +299,7 @@ public class WindowGeometry {
         for (int j = 0; j < gs.length; j++) {
             GraphicsDevice gd = gs[j];
             if (gd.getType() == GraphicsDevice.TYPE_RASTER_SCREEN) {
-            	virtualBounds = virtualBounds.union(gd.getDefaultConfiguration().getBounds());
+                virtualBounds = virtualBounds.union(gd.getDefaultConfiguration().getBounds());
             }
         }
 
@@ -302,11 +324,23 @@ public class WindowGeometry {
      * when no coordinates are stored or null is passed.
      * 
      * @param preferenceKey the key to get size and position from
+     * @return bounds of the screen
      */
     public static Rectangle getScreenInfo(String preferenceKey) {
         Rectangle g = new WindowGeometry(preferenceKey,
             /* default: something on screen 1 */
             new WindowGeometry(new Point(0,0), new Dimension(10,10))).getRectangle();
+        return getScreenInfo(g);
+    }
+
+    /**
+     * Find the size and position of the screen for given coordinates. Use first screen,
+     * when no coordinates are stored or null is passed.
+     * 
+     * @param g coordinates to check
+     * @return bounds of the screen
+     */
+    private static Rectangle getScreenInfo(Rectangle g) {
         GraphicsEnvironment ge = GraphicsEnvironment
                 .getLocalGraphicsEnvironment();
         GraphicsDevice[] gs = ge.getScreenDevices();
@@ -350,6 +384,7 @@ public class WindowGeometry {
 
     /**
      * Find the size of the full virtual screen.
+     * @return size of the full virtual screen
      */
     public static Rectangle getFullScreenInfo() {
         return new Rectangle(new Point(0,0), Toolkit.getDefaultToolkit().getScreenSize());

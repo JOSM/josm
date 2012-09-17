@@ -789,8 +789,12 @@ abstract public class Main {
 
         private void handleComponentEvent(ComponentEvent e) {
             Component c = e.getComponent();
-            if (c instanceof JFrame && c.isVisible() && Main.windowState == JFrame.NORMAL) {
-                Main.geometry = new WindowGeometry((JFrame) c);
+            if (c instanceof JFrame && c.isVisible()) {
+                if(Main.windowState == JFrame.NORMAL) {
+                    Main.geometry = new WindowGeometry((JFrame) c);
+                } else {
+                    Main.geometry.fixScreen((JFrame) c);
+                }
             }
         }
     }
