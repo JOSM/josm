@@ -41,12 +41,14 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * An component that can be navigated by a mapmover. Used as map view and for the
@@ -110,7 +112,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     protected EastNorth center = calculateDefaultCenter();
 
-    private static final Object paintRequestLock = new Object();
+    private final Object paintRequestLock = new Object();
     private Rectangle paintRect = null;
     private Polygon paintPoly = null;
     
@@ -1278,14 +1280,15 @@ public class NavigatableComponent extends JComponent implements Helpful {
         synchronized (paintRequestLock) {
             if (paintRect != null) {
                 Graphics g2 = g.create();
-                g2.setColor(Color.BLACK);
-                g2.setXORMode(Color.WHITE);
+                g2.setColor(Utils.complement(PaintColors.getBackgroundColor()));
                 g2.drawRect(paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+                g2.dispose();
             }
             if (paintPoly != null) {
                 Graphics g2 = g.create();
-                g2.setColor(Color.WHITE);
+                g2.setColor(Utils.complement(PaintColors.getBackgroundColor()));
                 g2.drawPolyline(paintPoly.xpoints, paintPoly.ypoints, paintPoly.npoints);
+                g2.dispose();
             }
         }
         super.paint(g);
