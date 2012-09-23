@@ -11,10 +11,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -59,6 +62,12 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     private OsmDataLayer layer;
 
     private final int UNCONNECTED = Integer.MIN_VALUE;
+    
+    private static final Collection<AdditionalSorter> additionalSorters = new ArrayList<AdditionalSorter>();
+    
+    static {
+        additionalSorters.add(new AssociatedStreetSorter());
+    }
 
     /**
      * constructor
@@ -720,16 +729,40 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             }
         }
 
-        group = new LinkedList<Integer>();
-        group.addAll(map.getNotSortableMembers());
-        allGroups.add(group);
-
         ArrayList<RelationMember> newMembers = new ArrayList<RelationMember>();
         for (LinkedList<Integer> tmpGroup : allGroups) {
             for (Integer p : tmpGroup) {
                 newMembers.add(relationMembers.get(p));
             }
         }
+
+        // Try to sort remaining members with custom mechanisms (relation-dependent)
+        List<RelationMember> notSortableMembers = new LinkedList<RelationMember>();
+        Map<AdditionalSorter, List<RelationMember>> additionalMap = new HashMap<AdditionalSorter, List<RelationMember>>();
+
+        // Dispatch members to correct sorters
+        for (Integer i : map.getNotSortableMembers()) {
+            RelationMember m = relationMembers.get(i);
+            for (AdditionalSorter sorter : additionalSorters) {
+                List<RelationMember> list = notSortableMembers;
+                if (sorter.acceptsMember(m)) {
+                    list = additionalMap.get(sorter);
+                    if (list == null) {
+                        additionalMap.put(sorter, list = new LinkedList<RelationMember>()); 
+                    }
+                }
+                list.add(m);
+            }
+        }
+        
+        // Sort members and add them to result
+        for (AdditionalSorter s : additionalMap.keySet()) {
+            newMembers.addAll(s.sortMembers(additionalMap.get(s)));
+        }
+        
+        // Finally, add members that have not been sorted at all
+        newMembers.addAll(notSortableMembers);
+        
         return newMembers;
     }
 
@@ -1136,5 +1169,49 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             }
         }
         return wct;
+    }
+    
+    private static interface AdditionalSorter {
+        public boolean acceptsMember(RelationMember m);
+        public List<RelationMember> sortMembers(List<RelationMember> list);
+    }
+    
+    /**
+     * Class that sorts type=associatedStreet relation's houses.
+     */
+    private static class AssociatedStreetSorter implements AdditionalSorter {
+
+        @Override
+        public boolean acceptsMember(RelationMember m) {
+            return m != null 
+                    && m.getRole() != null && m.getRole().equals("house") 
+                    && m.getMember() != null && m.getMember().get("addr:housenumber") != null;
+        }
+
+        @Override
+        public List<RelationMember> sortMembers(List<RelationMember> list) {
+            Collections.sort(list, new Comparator<RelationMember>() {
+                @Override
+                public int compare(RelationMember a, RelationMember b) {
+                    if (a == b || a.getMember() == b.getMember()) return 0;
+                    String addrA = a.getMember().get("addr:housenumber").trim();
+                    String addrB = b.getMember().get("addr:housenumber").trim();
+                    if (addrA.equals(addrB)) return 0;
+                    // Strip non-digits (from "1B" addresses for example)
+                    String addrAnum = addrA.replaceAll("\\D+", "");
+                    String addrBnum = addrB.replaceAll("\\D+", "");
+                    // Compare only numbers
+                    try {
+                        Integer res = Integer.parseInt(addrAnum) - Integer.parseInt(addrBnum);
+                        if (res != 0) return res;
+                    } catch (NumberFormatException e) {
+                        // Ignore NumberFormatException. If the number is not composed of digits, strings are compared next
+                    }
+                    // Same number ? Compare full strings
+                    return addrA.compareTo(addrB);
+                }
+            });
+            return list;
+        }
     }
 }
