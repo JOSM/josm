@@ -760,6 +760,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
 
         public Object getElementAt(int index) {
+            if (index < 0 || index >= relations.size()) return null;
             return relations.get(index);
         }
 
