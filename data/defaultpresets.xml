@@ -5306,7 +5306,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="addr:street" text="Street name" use_last_as_default="force" match="key" />
                 <text key="addr:city" text="City name" use_last_as_default="force" match="key" />
                 <text key="addr:postcode" text="Post code" use_last_as_default="force" match="key" />
-                <combo key="addr:country" text="Country code" values="AT,CH,DE,FR,GB,IT,US" use_last_as_default="force" match="key" />
+                <combo key="addr:country" text="Country code" values="AT,CH,DE,FR,GB,IT,RS,US" use_last_as_default="force" match="key" />
             </optional>
         </item>
         <item name="Address Interpolation" icon="presets/interpolation.png" type="way">
