@@ -627,16 +627,41 @@ abstract public class Main {
         }
     }
 
+    /**
+     * Asks user to perform "save layer" operations (save .osm on disk and/or upload osm data to server) for all {@link OsmDataLayer} before JOSM exits.
+     * @return {@code true} if there was nothing to save, or if the user wants to proceed to save operations. {@code false} if the user cancels.
+     * @since 2025
+     */
     public static boolean saveUnsavedModifications() {
-        if (map == null) return true;
-        SaveLayersDialog dialog = new SaveLayersDialog(Main.parent);
+        if (map == null || map.mapView == null) return true;
+        return saveUnsavedModifications(map.mapView.getLayersOfType(OsmDataLayer.class), true);
+    }
+
+    /**
+     * Asks user to perform "save layer" operations (save .osm on disk and/or upload osm data to server) before osm layers deletion.
+     * 
+     * @param selectedLayers The layers to check. Only instances of {@link OsmDataLayer} are considered.
+     * @param exit {@code true} if JOSM is exiting, {@code false} otherwise.
+     * @return {@code true} if there was nothing to save, or if the user wants to proceed to save operations. {@code false} if the user cancels.
+     * @since 5519
+     */
+    public static boolean saveUnsavedModifications(List<? extends Layer> selectedLayers, boolean exit) {
+        SaveLayersDialog dialog = new SaveLayersDialog(parent);
         List<OsmDataLayer> layersWithUnmodifiedChanges = new ArrayList<OsmDataLayer>();
-        for (OsmDataLayer l: Main.map.mapView.getLayersOfType(OsmDataLayer.class)) {
-            if ((l.requiresSaveToFile() || l.requiresUploadToServer()) && l.data.isModified()) {
-                layersWithUnmodifiedChanges.add(l);
+        for (Layer l: selectedLayers) {
+            if (!(l instanceof OsmDataLayer)) {
+                continue;
+            }
+            OsmDataLayer odl = (OsmDataLayer)l;
+            if ((odl.requiresSaveToFile() || (odl.requiresUploadToServer() && !odl.isUploadDiscouraged())) && odl.data.isModified()) {
+                layersWithUnmodifiedChanges.add(odl);
             }
         }
-        dialog.prepareForSavingAndUpdatingLayersBeforeExit();
+        if (exit) {
+            dialog.prepareForSavingAndUpdatingLayersBeforeExit();
+        } else {
+            dialog.prepareForSavingAndUpdatingLayersBeforeDelete();
+        }
         if (!layersWithUnmodifiedChanges.isEmpty()) {
             dialog.getModel().populate(layersWithUnmodifiedChanges);
             dialog.setVisible(true);
