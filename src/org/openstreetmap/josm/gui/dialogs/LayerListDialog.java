@@ -388,39 +388,14 @@ public class LayerListDialog extends ToggleDialog {
             updateEnabledState();
         }
 
-        protected boolean enforceUploadOrSaveModifiedData(List<Layer> selectedLayers) {
-            SaveLayersDialog dialog = new SaveLayersDialog(Main.parent);
-            List<OsmDataLayer> layersWithUnmodifiedChanges = new ArrayList<OsmDataLayer>();
-            for (Layer l: selectedLayers) {
-                if (! (l instanceof OsmDataLayer)) {
-                    continue;
-                }
-                OsmDataLayer odl = (OsmDataLayer)l;
-                if ((odl.requiresSaveToFile() || odl.requiresUploadToServer()) && odl.data.isModified()) {
-                    layersWithUnmodifiedChanges.add(odl);
-                }
-            }
-            dialog.prepareForSavingAndUpdatingLayersBeforeDelete();
-            if (!layersWithUnmodifiedChanges.isEmpty()) {
-                dialog.getModel().populate(layersWithUnmodifiedChanges);
-                dialog.setVisible(true);
-                switch(dialog.getUserAction()) {
-                case CANCEL: return false;
-                case PROCEED: return true;
-                default: return false;
-                }
-            }
-            return true;
-        }
-
         @Override
         public void actionPerformed(ActionEvent e) {
             List<Layer> selectedLayers = getModel().getSelectedLayers();
             if (selectedLayers.isEmpty())
                 return;
-            if (! enforceUploadOrSaveModifiedData(selectedLayers))
+            if (!Main.saveUnsavedModifications(selectedLayers, false))
                 return;
-            for(Layer l: selectedLayers) {
+            for (Layer l: selectedLayers) {
                 Main.main.removeLayer(l);
             }
         }

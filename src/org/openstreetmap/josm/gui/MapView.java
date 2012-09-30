@@ -68,7 +68,7 @@ import org.openstreetmap.josm.tools.BugReportExceptionHandler;
  *
  * @author imi
  */
-public class MapView extends NavigatableComponent implements PropertyChangeListener, PreferenceChangedListener {
+public class MapView extends NavigatableComponent implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.LayerStateChangeListener {
 
     /**
      * Interface to notify listeners of a layer change.
@@ -311,7 +311,11 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             layers.add(0, layer);
         }
         fireLayerAdded(layer);
-        boolean callSetActiveLayer = layer instanceof OsmDataLayer || activeLayer == null;
+        boolean isOsmDataLayer = layer instanceof OsmDataLayer;
+        if (isOsmDataLayer) {
+            ((OsmDataLayer)layer).addLayerStateChangeListener(this);
+        }
+        boolean callSetActiveLayer = isOsmDataLayer || activeLayer == null;
         if (callSetActiveLayer) {
             // autoselect the new layer
             setActiveLayer(layer); // also repaints this MapView
@@ -392,6 +396,10 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
         if (layer == activeLayer) {
             setActiveLayer(determineNextActiveLayer(layersList), false);
+        }
+        
+        if (layer instanceof OsmDataLayer) {
+            ((OsmDataLayer)layer).removeLayerPropertyChangeListener(this);
         }
 
         layers.remove(layer);
@@ -862,7 +870,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     }
 
     protected void refreshTitle() {
-        boolean dirty = editLayer != null && (editLayer.requiresSaveToFile() || editLayer.requiresUploadToServer());
+        boolean dirty = editLayer != null && (editLayer.requiresSaveToFile() || (editLayer.requiresUploadToServer() && !editLayer.isUploadDiscouraged()));
         if (dirty) {
             JOptionPane.getFrameForComponent(Main.parent).setTitle("* " + tr("Java OpenStreetMap Editor"));
         } else {
@@ -892,4 +900,10 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         }
     }
 
+    @Override
+    public void uploadDiscouragedChanged(OsmDataLayer layer, boolean newValue) {
+        if (layer == getEditLayer()) {
+            refreshTitle();
+        }
+    }
 }

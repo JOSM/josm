@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -163,6 +164,42 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
 
     public interface CommandQueueListener {
         void commandChanged(int queueSize, int redoSize);
+    }
+    
+    /**
+     * Listener called when a state of this layer has changed.
+     */
+    public interface LayerStateChangeListener {
+        /**
+         * Notifies that the "upload discouraged" (upload=no) state has changed.
+         * @param layer The layer that has been modified
+         * @param newValue The new value of the state
+         */
+        void uploadDiscouragedChanged(OsmDataLayer layer, boolean newValue);
+    }
+    
+    private final CopyOnWriteArrayList<LayerStateChangeListener> layerStateChangeListeners = new CopyOnWriteArrayList<LayerStateChangeListener>();
+    
+    /**
+     * Adds a layer state change listener
+     *
+     * @param listener the listener. Ignored if null or already registered.
+     * @since 5519
+     */
+    public void addLayerStateChangeListener(LayerStateChangeListener listener) {
+        if (listener != null) {
+            layerStateChangeListeners.addIfAbsent(listener);
+        }
+    }
+    
+    /**
+     * Removes a layer property change listener
+     *
+     * @param listener the listener. Ignored if null or already registered.
+     * @since 5519
+     */
+    public void removeLayerPropertyChangeListener(LayerStateChangeListener listener) {
+        layerStateChangeListeners.remove(listener);
     }
 
     /**
@@ -741,7 +778,12 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     }
 
     public final void setUploadDiscouraged(boolean uploadDiscouraged) {
-        data.setUploadDiscouraged(uploadDiscouraged);
+        if (uploadDiscouraged ^ isUploadDiscouraged()) {
+            data.setUploadDiscouraged(uploadDiscouraged);
+            for (LayerStateChangeListener l : layerStateChangeListeners) {
+                l.uploadDiscouragedChanged(this, uploadDiscouraged);
+            }
+        }
     }
 
     @Override
