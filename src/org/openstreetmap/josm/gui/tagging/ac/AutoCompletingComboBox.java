@@ -145,8 +145,21 @@ public class AutoCompletingComboBox extends JosmComboBox {
         }
     }
 
+    /**
+     * Creates a <code>AutoCompletingComboBox</code> with a default prototype display value.
+     */
     public AutoCompletingComboBox() {
-        super(new AutoCompletionListItem(JosmComboBox.DEFAULT_PROTOTYPE_DISPLAY_VALUE));
+        this(JosmComboBox.DEFAULT_PROTOTYPE_DISPLAY_VALUE);
+    }
+
+    /**
+     * Creates a <code>AutoCompletingComboBox</code> with the specified prototype display value.
+     * @param prototype the <code>Object</code> used to compute the maximum number of elements to be displayed at once before displaying a scroll bar.
+     *                  It also affects the initial width of the combo box.
+     * @since 5520
+     */
+    public AutoCompletingComboBox(String prototype) {
+        super(new AutoCompletionListItem(prototype));
         setRenderer(new AutoCompleteListCellRenderer());
         final JTextComponent editor = (JTextComponent) this.getEditor().getEditorComponent();
         editor.setDocument(new AutoCompletingComboBoxDocument(this));

@@ -259,7 +259,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         List<AutoCompletionListItem> keyList = autocomplete.getKeys();
         Collections.sort(keyList, defaultACItemComparator);
 
-        final AutoCompletingComboBox keys = new AutoCompletingComboBox();
+        final AutoCompletingComboBox keys = new AutoCompletingComboBox(key);
         keys.setPossibleACItems(keyList);
         keys.setEditable(true);
         keys.setSelectedItem(key);
@@ -267,28 +267,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         p.add(new JLabel(tr("Key")), GBC.std());
         p.add(Box.createHorizontalStrut(10), GBC.std());
         p.add(keys, GBC.eol().fill(GBC.HORIZONTAL));
-
-        final AutoCompletingComboBox values = new AutoCompletingComboBox();
-        values.setRenderer(new DefaultListCellRenderer() {
-            @Override public Component getListCellRendererComponent(JList list,
-                    Object value, int index, boolean isSelected,  boolean cellHasFocus){
-                Component c = super.getListCellRendererComponent(list, value,
-                        index, isSelected, cellHasFocus);
-                if (c instanceof JLabel) {
-                    String str = ((AutoCompletionListItem) value).getValue();
-                    if (valueCount.containsKey(objKey)) {
-                        Map<String, Integer> m = valueCount.get(objKey);
-                        if (m.containsKey(str)) {
-                            str = tr("{0} ({1})", str, m.get(str));
-                            c.setFont(c.getFont().deriveFont(Font.ITALIC + Font.BOLD));
-                        }
-                    }
-                    ((JLabel) c).setText(str);
-                }
-                return c;
-            }
-        });
-        values.setEditable(true);
 
         final Map<String, Integer> m = (Map<String, Integer>) propertyData.getValueAt(row, 1);
 
@@ -310,8 +288,31 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
         Collections.sort(valueList, usedValuesAwareComparator);
 
-        values.setPossibleACItems(valueList);
         final String selection= m.size()!=1?tr("<different>"):m.entrySet().iterator().next().getKey();
+        
+        final AutoCompletingComboBox values = new AutoCompletingComboBox(selection);
+        values.setRenderer(new DefaultListCellRenderer() {
+            @Override public Component getListCellRendererComponent(JList list,
+                    Object value, int index, boolean isSelected,  boolean cellHasFocus){
+                Component c = super.getListCellRendererComponent(list, value,
+                        index, isSelected, cellHasFocus);
+                if (c instanceof JLabel) {
+                    String str = ((AutoCompletionListItem) value).getValue();
+                    if (valueCount.containsKey(objKey)) {
+                        Map<String, Integer> m = valueCount.get(objKey);
+                        if (m.containsKey(str)) {
+                            str = tr("{0} ({1})", str, m.get(str));
+                            c.setFont(c.getFont().deriveFont(Font.ITALIC + Font.BOLD));
+                        }
+                    }
+                    ((JLabel) c).setText(str);
+                }
+                return c;
+            }
+        });
+        
+        values.setEditable(true);
+        values.setPossibleACItems(valueList);
         values.setSelectedItem(selection);
         values.getEditor().setItem(selection);
         p.add(new JLabel(tr("Value")), GBC.std());
