@@ -45,6 +45,11 @@ public class LatLon extends Coordinate {
         cDdFormatter = (DecimalFormat) NumberFormat.getInstance(Locale.UK);
         cDdFormatter.applyPattern("###0.0######");
     }
+    
+    private static final String cDms60 = cDmsSecondFormatter.format(60.0);
+    private static final String cDms00 = cDmsSecondFormatter.format( 0.0);
+    private static final String cDm60 = cDmMinuteFormatter.format(60.0);
+    private static final String cDm00 = cDmMinuteFormatter.format( 0.0);
 
     /**
      * Replies true if lat is in the range [-90,90]
@@ -114,8 +119,8 @@ public class LatLon extends Coordinate {
         String sMinutes = cDmsMinuteFormatter.format(tMinutes);
         String sSeconds = cDmsSecondFormatter.format(tSeconds);
         
-        if (sSeconds.equals("60.0")) {
-            sSeconds = "00.0";
+        if (sSeconds.equals(cDms60)) {
+            sSeconds = cDms00;
             sMinutes = cDmsMinuteFormatter.format(tMinutes+1);
         }
         if (sMinutes.equals("60")) {
@@ -140,8 +145,8 @@ public class LatLon extends Coordinate {
         String sDegrees = Integer.toString(tDegree);
         String sMinutes = cDmMinuteFormatter.format(tMinutes);
         
-        if (sMinutes.equals("60.000")) {
-            sMinutes = "00.000";
+        if (sMinutes.equals(cDm60)) {
+            sMinutes = cDm00;
             sDegrees = Integer.toString(tDegree+1);
         }
         
