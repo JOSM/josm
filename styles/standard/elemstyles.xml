@@ -3716,16 +3716,81 @@ For external files the <rules> should have following elements:
 	</rule> 
 
 <!--public_transport tags --> 
-	<rule> 
-		<condition k="public_transport" v="stop_position"/> 
-		<icon annotate="true" src="misc/no_icon.png" priority="-10"/>
-	</rule> 
+    <rule>
+        <condition k="public_transport" v="stop_position"/>
+        <condition k="train" v="yes"/>
+        <icon annotate="true" src="transport/railway_small.png" priority="10" />
+    </rule>
 
-	<rule> 
-		<condition k="public_transport" v="platform"/> 
+    <rule>
+        <condition k="public_transport" v="stop_position"/>
+        <condition k="tram" v="yes"/>
+        <icon annotate="true" src="transport/tram.png"  priority="8" />
+    </rule>
+
+    <rule>
+        <condition k="public_transport" v="stop_position"/>
+        <condition k="ferry" v="yes"/>
+        <icon annotate="true" src="transport/ferry.png"  priority="7" />
+    </rule>
+
+    <rule>
+        <condition k="public_transport" v="stop_position"/>
+        <condition k="aerial" v="yes"/>
+        <icon annotate="true" src="transport/aerialway.png"  priority="6" />
+    </rule>
+
+    <rule>
+        <condition k="public_transport" v="stop_position"/>
+        <condition k="bus" v="yes"/>
+        <icon annotate="true" src="transport/bus_small.png"  priority="4" />
+    </rule>
+
+    <rule>
+		<condition k="public_transport" v="stop_position"/>
 		<icon annotate="true" src="misc/no_icon.png" priority="-10"/>
-		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/> 
-	</rule> 
+	</rule>
+
+    <rule>
+        <condition k="public_transport" v="platform"/>
+        <condition k="train" v="yes"/>
+        <icon annotate="true" src="transport/railway_station.png"  priority="10" />
+        <line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
+    </rule>
+    
+    <rule>
+        <condition k="public_transport" v="platform"/>
+        <condition k="tram" v="yes"/>
+        <icon annotate="true" src="transport/railway_station.png"  priority="8" />
+        <line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
+    </rule>
+    
+    <rule>
+        <condition k="public_transport" v="platform"/>
+        <condition k="ferry" v="yes"/>
+        <icon annotate="true" src="transport/ferry.png"  priority="7" />
+        <line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
+    </rule>
+    
+    <rule>
+        <condition k="public_transport" v="platform"/>
+        <condition k="aerial" v="yes"/>
+        <icon annotate="true" src="transport/aerialway/station.png"  priority="6" />
+        <line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
+    </rule>
+    
+    <rule>
+        <condition k="public_transport" v="platform"/>
+        <condition k="bus" v="yes"/>
+        <icon annotate="true" src="transport/bus_small.png"  priority="4" />
+        <line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
+    </rule>
+
+	<rule>
+		<condition k="public_transport" v="platform"/>
+		<icon annotate="true" src="misc/no_icon.png" priority="-10"/>
+		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
+	</rule>
 
 <!--"deprecated" tags -->
 
