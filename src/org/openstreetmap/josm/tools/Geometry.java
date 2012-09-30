@@ -1,12 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import java.awt.Rectangle;
+import java.awt.geom.Area;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -368,67 +370,47 @@ public class Geometry {
         return dy1 * dx2 - dx1 * dy2 > 0;
     }
 
+    private static Area getArea(List<Node> polygon) {
+        Path2D path = new Path2D.Double();
+
+        boolean begin = true;
+        for (Node n : polygon) {
+            if (begin) {
+                path.moveTo(n.getEastNorth().getX(), n.getEastNorth().getY());
+                begin = false;
+            } else {
+                path.lineTo(n.getEastNorth().getX(), n.getEastNorth().getY());
+            }
+        }
+        path.closePath();
+        
+        return new Area(path);
+    }
+    
     /**
      * Tests if two polygons intersect.
      * @param first
      * @param second
      * @return intersection kind
-     * TODO: test segments, not only points
-     * TODO: is O(N*M), should use sweep for better performance.
      */
     public static PolygonIntersection polygonIntersection(List<Node> first, List<Node> second) {
-        Set<Node> firstSet = new HashSet<Node>(first);
-        Set<Node> secondSet = new HashSet<Node>(second);
-
-        int nodesInsideSecond = 0;
-        int nodesOutsideSecond = 0;
-        int nodesInsideFirst = 0;
-        int nodesOutsideFirst = 0;
-
-        for (Node insideNode : first) {
-            if (secondSet.contains(insideNode)) {
-                continue;
-                //ignore touching nodes.
-            }
-
-            if (nodeInsidePolygon(insideNode, second)) {
-                nodesInsideSecond ++;
-            }
-            else {
-                nodesOutsideSecond ++;
-            }
-        }
-
-        for (Node insideNode : second) {
-            if (firstSet.contains(insideNode)) {
-                continue;
-                //ignore touching nodes.
-            }
-
-            if (nodeInsidePolygon(insideNode, first)) {
-                nodesInsideFirst ++;
-            }
-            else {
-                nodesOutsideFirst ++;
-            }
-        }
-
-        if (nodesInsideFirst == 0) {
-            if (nodesInsideSecond == 0){
-                if (nodesOutsideFirst + nodesInsideSecond > 0)
-                    return PolygonIntersection.OUTSIDE;
-                else
-                    //all nodes common
-                    return PolygonIntersection.CROSSING;
-            } else
-                return PolygonIntersection.FIRST_INSIDE_SECOND;
-        }
-        else
-        {
-            if (nodesInsideSecond == 0)
-                return PolygonIntersection.SECOND_INSIDE_FIRST;
-            else
-                return PolygonIntersection.CROSSING;
+        
+        Area a1 = getArea(first);
+        Area a2 = getArea(second);
+        
+        Area inter = new Area(a1);
+        inter.intersect(a2);
+        
+        Rectangle bounds = inter.getBounds();
+        
+        if (inter.isEmpty() || bounds.getHeight()*bounds.getWidth() <= 1.0) {
+            return PolygonIntersection.OUTSIDE;
+        } else if (inter.equals(a1)) {
+            return PolygonIntersection.FIRST_INSIDE_SECOND;
+        } else if (inter.equals(a2)) {
+            return PolygonIntersection.SECOND_INSIDE_FIRST;
+        } else {
+            return PolygonIntersection.CROSSING;
         }
     }
 
