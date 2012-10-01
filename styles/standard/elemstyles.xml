@@ -2976,6 +2976,12 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="natural" v="sand"/>
+		<icon src="misc/no_icon.png"/>
+		<area colour="sand#f8dba2"/>
+	</rule>
+
+	<rule>
 		<condition k="natural" v="bay"/>
 		<icon src="misc/bay.png"/>
 		<area colour="natural#002f00"/>
