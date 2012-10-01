@@ -487,7 +487,8 @@ public class ExceptionUtil {
         IOException ioe = getNestedException(e, IOException.class);
         String apiUrl = e.getUrl();
         String message = tr("<html>Failed to upload data to or download data from<br>" + "''{0}''<br>"
-                + "due to a problem with transferring data.<br>" + "Details(untranslated): {1}</html>", apiUrl, ioe
+                + "due to a problem with transferring data.<br>"
+                + "Details (untranslated): {1}</html>", apiUrl, ioe
                 .getMessage());
         e.printStackTrace();
         return message;
