@@ -99,21 +99,21 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
      *            do want a shortcut, remember you can always register it with group=none, so you
      *            won't be assigned a shortcut unless the user configures one. If you pass null here,
      *            the user CANNOT configure a shortcut for your action.
-     * @param register register this action for the toolbar preferences?
+     * @param registerInToolbar register this action for the toolbar preferences?
      * @param toolbarId identifier for the toolbar preferences. The iconName is used, if this parameter is null
      * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
      */
-    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register, String toolbarId, boolean installAdapters) {
-        this(name, iconName == null ? null : ImageProvider.get(iconName), tooltip, shortcut, register,
+    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar, String toolbarId, boolean installAdapters) {
+        this(name, iconName == null ? null : ImageProvider.get(iconName), tooltip, shortcut, registerInToolbar,
                 toolbarId == null ? iconName : toolbarId, installAdapters);
     }
 
-    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register, boolean installAdapters) {
-        this(name, iconName, tooltip, shortcut, register, null, installAdapters);
+    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar, boolean installAdapters) {
+        this(name, iconName, tooltip, shortcut, registerInToolbar, null, installAdapters);
     }
 
-    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register) {
-        this(name, iconName, tooltip, shortcut, register, null, true);
+    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar) {
+        this(name, iconName, tooltip, shortcut, registerInToolbar, null, true);
     }
 
     public JosmAction() {

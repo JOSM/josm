@@ -100,6 +100,12 @@ public class ValidateAction extends JosmAction {
         setEnabled(getEditLayer() != null);
     }
 
+    @Override
+    public void destroy() {
+        // Hack - this action should stay forever because it could be added to toolbar
+        // Do not call super.destroy() here
+    }
+
     /**
      * Asynchronous task for running a collection of tests against a collection
      * of primitives
