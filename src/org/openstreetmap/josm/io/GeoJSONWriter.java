@@ -93,6 +93,8 @@ public class GeoJSONWriter implements Visitor {
                 out.append("\"").append(escape(t.getValue())).append("\"");
             }
             out.append("\n\t},\n");
+        } else {
+            out.append("\t\"properties\": {},\n");
         }
         { // append primitive specific
             out.append("\t\"geometry\": {");
