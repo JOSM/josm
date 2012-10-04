@@ -108,7 +108,10 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
     }
 
     private <T extends Prototype> T update(T current, T candidate, Double scale, MultiCascade mc) {
-        return requiresUpdate(current, candidate, scale, mc) ? candidate : current;
+        if (requiresUpdate(current, candidate, scale, mc))
+            return candidate;
+        else
+            return current;
     }
 
     /**
