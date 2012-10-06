@@ -637,7 +637,9 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
                     Arrays.asList("created_by",
                             "tiger:upload_uuid", "tiger:tlid", "tiger:source", "tiger:separated",
                             "geobase:datasetName", "geobase:uuid", "sub_sea:type",
-                            "odbl", "odbl:note"));
+                            "odbl", "odbl:note",
+                            "yh:LINE_NAME", "yh:LINE_NUM", "yh:STRUCTURE", "yh:TOTYUMONO",
+                            "yh:TYPE", "yh:WIDTH_RANK"));
         }
         return discardable;
     }
