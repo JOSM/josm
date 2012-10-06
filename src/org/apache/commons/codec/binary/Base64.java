@@ -46,7 +46,7 @@ import java.math.BigInteger;
  *
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
  * @since 1.0
- * @version $Id: Base64.java 1382496 2012-09-09 13:31:11Z sebb $
+ * @version $Id: Base64.java 1394981 2012-10-06 10:08:43Z sebb $
  */
 public class Base64 extends BaseNCodec {
 
@@ -756,11 +756,11 @@ public class Base64 extends BaseNCodec {
     }
 
     /**
-     * Returns whether or not the <code>octet</code> is in the Base32 alphabet.
+     * Returns whether or not the <code>octet</code> is in the Base64 alphabet.
      *
      * @param octet
      *            The value to test
-     * @return {@code true} if the value is defined in the the Base32 alphabet {@code false} otherwise.
+     * @return {@code true} if the value is defined in the the Base64 alphabet {@code false} otherwise.
      */
     @Override
     protected boolean isInAlphabet(byte octet) {
