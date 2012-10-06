@@ -28,7 +28,7 @@ import org.apache.commons.codec.binary.StringUtils;
 /**
  * Operations to simplify common {@link java.security.MessageDigest} tasks. This class is thread safe.
  *
- * @version $Id: DigestUtils.java 1380826 2012-09-04 19:35:06Z ggregory $
+ * @version $Id: DigestUtils.java 1395065 2012-10-06 14:07:10Z sebb $
  */
 public class DigestUtils {
 
@@ -55,17 +55,6 @@ public class DigestUtils {
         }
 
         return digest.digest();
-    }
-
-    /**
-     * Calls {@link StringUtils#getBytesUtf8(String)}
-     *
-     * @param data
-     *            the String to encode
-     * @return encoded bytes
-     */
-    private static byte[] getBytesUtf8(String data) {
-        return StringUtils.getBytesUtf8(data);
     }
 
     /**
@@ -226,7 +215,7 @@ public class DigestUtils {
      * @since 1.7
      */
     public static byte[] md2(String data) {
-        return md2(getBytesUtf8(data));
+        return md2(StringUtils.getBytesUtf8(data));
     }
 
     /**
@@ -300,7 +289,7 @@ public class DigestUtils {
      * @return MD5 digest
      */
     public static byte[] md5(String data) {
-        return md5(getBytesUtf8(data));
+        return md5(StringUtils.getBytesUtf8(data));
     }
 
     /**
@@ -415,7 +404,7 @@ public class DigestUtils {
      * @return SHA-1 digest
      */
     public static byte[] sha1(String data) {
-        return sha1(getBytesUtf8(data));
+        return sha1(StringUtils.getBytesUtf8(data));
     }
 
     /**
@@ -500,7 +489,7 @@ public class DigestUtils {
      * @since 1.4
      */
     public static byte[] sha256(String data) {
-        return sha256(getBytesUtf8(data));
+        return sha256(StringUtils.getBytesUtf8(data));
     }
 
     /**
@@ -594,7 +583,7 @@ public class DigestUtils {
      * @since 1.4
      */
     public static byte[] sha384(String data) {
-        return sha384(getBytesUtf8(data));
+        return sha384(StringUtils.getBytesUtf8(data));
     }
 
     /**
@@ -688,7 +677,7 @@ public class DigestUtils {
      * @since 1.4
      */
     public static byte[] sha512(String data) {
-        return sha512(getBytesUtf8(data));
+        return sha512(StringUtils.getBytesUtf8(data));
     }
 
     /**
@@ -806,7 +795,7 @@ public class DigestUtils {
      * @since 1.7
      */
     public static MessageDigest updateDigest(final MessageDigest messageDigest, final String valueToDigest) {
-        messageDigest.update(getBytesUtf8(valueToDigest));
+        messageDigest.update(StringUtils.getBytesUtf8(valueToDigest));
         return messageDigest;
     }
 }
