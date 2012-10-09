@@ -56,7 +56,7 @@ import org.apache.commons.codec.binary.StringUtils;
  *          Mechanisms for Specifying and Describing the Format of Internet Message Bodies </a>
  *
  * @since 1.3
- * @version $Id: QuotedPrintableCodec.java 1393625 2012-10-03 17:17:32Z sebb $
+ * @version $Id: QuotedPrintableCodec.java 1396319 2012-10-09 21:05:03Z tn $
  */
 public class QuotedPrintableCodec implements BinaryEncoder, BinaryDecoder, StringEncoder, StringDecoder {
     /**
@@ -111,7 +111,7 @@ public class QuotedPrintableCodec implements BinaryEncoder, BinaryDecoder, Strin
      * @param charsetName
      *            the default string charset to use.
      * @throws UnsupportedCharsetException
-     *             If no support for the named charset is available 
+     *             If no support for the named charset is available
      *             in this instance of the Java virtual machine
      * @throws IllegalArgumentException
      *             If the given charsetName is null
@@ -120,7 +120,7 @@ public class QuotedPrintableCodec implements BinaryEncoder, BinaryDecoder, Strin
      *
      * @since 1.7 throws UnsupportedCharsetException if the named charset is unavailable
      */
-    public QuotedPrintableCodec(String charsetName) 
+    public QuotedPrintableCodec(String charsetName)
             throws IllegalCharsetNameException, IllegalArgumentException, UnsupportedCharsetException {
         this(Charset.forName(charsetName));
     }
