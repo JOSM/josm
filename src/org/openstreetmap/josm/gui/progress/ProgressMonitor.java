@@ -35,7 +35,7 @@ public interface ProgressMonitor {
         void operationCanceled();
     }
 
-    public final int DEFAULT_TICKS = 100;
+    public final int DEFAULT_TICKS = 10000;
 
     /**
      * Can be used with {@link #worked(int)} and {@link #createSubTaskMonitor(int, boolean)} to

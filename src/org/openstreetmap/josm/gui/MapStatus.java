@@ -120,6 +120,7 @@ public class MapStatus extends JPanel implements Helpful {
 
         public void updateProgress(int progress) {
             progressBar.setValue(progress);
+            progressBar.repaint();
             MapStatus.this.doLayout();
         }
 

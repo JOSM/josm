@@ -184,6 +184,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
     @Override
     public void updateProgress(int progress) {
         this.progress.setValue(progress);
+        this.progressBar.repaint();
     }
 
 }

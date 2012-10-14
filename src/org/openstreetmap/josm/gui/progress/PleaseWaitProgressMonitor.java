@@ -33,7 +33,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         void appendLogMessage(String message); //TODO Not implemented properly in background monitor, log message will get lost if progress runs in background
     }
 
-    public static final int PROGRESS_BAR_MAX = 100;
+    public static final int PROGRESS_BAR_MAX = 10000;
     private final Window dialogParent;
 
     private int currentProgressValue = 0;
