@@ -114,7 +114,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
         selectButton = new SideButton(new AbstractAction() {
             {
-                putValue(NAME, marktr("Select"));
+                putValue(NAME, tr("Select"));
                 putValue(SHORT_DESCRIPTION,  tr("Set the selected elements on the map to the selected items in the list above."));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs","select"));
             }
@@ -132,7 +132,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
         fixButton = new SideButton(new AbstractAction() {
             {
-                putValue(NAME, marktr("Fix"));
+                putValue(NAME, tr("Fix"));
                 putValue(SHORT_DESCRIPTION,  tr("Fix the selected issue."));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs","fix"));
             }
@@ -147,7 +147,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
             ignoreButton = new SideButton(new AbstractAction() {
                 {
-                    putValue(NAME, marktr("Ignore"));
+                    putValue(NAME, tr("Ignore"));
                     putValue(SHORT_DESCRIPTION,  tr("Ignore the selected issue next time."));
                     putValue(SMALL_ICON, ImageProvider.get("dialogs","fix"));
                 }
