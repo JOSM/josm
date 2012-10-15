@@ -1472,14 +1472,24 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <text key="wikipedia" text="Wikipedia" />
         </item>
-         <item name="Groyne" icon="presets/groyne.png" type="node,way,closedway">
+        <item name="Groyne" icon="presets/groyne.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=groyne"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=groyne"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=groyne"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=groyne" />
             <label text="Edit Groyne" />
-            <space />            
+            <space />
             <key key="man_made" value="groyne" />                               
+        </item>
+        <item name="Breakwater" icon="presets/groyne.png" type="way,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=breakwater"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=breakwater"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=breakwater" />
+            <label text="Edit Breakwater"/>
+            <space />
+            <key key="man_made" value="breakwater" />
+            <text key="ref" text="Reference" />
+            <text key="name" text="Name" />
         </item>
         <separator/>
         <item name="Basin" icon="presets/landuse_water.png" type="node,closedway,relation">
