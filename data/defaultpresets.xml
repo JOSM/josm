@@ -3521,7 +3521,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <label text="select sport:" />
             <space />
-            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" />
+            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" />
         </item>
         <item name="Sports Centre" icon="presets/sports_centre.png" type="node,closedway">
             <label text="Edit Sports Centre" />
@@ -3530,7 +3530,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <label text="select sport:" />
             <space />
-            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" />
+            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" />
         </item>
         <item name="Pitch" icon="presets/pitch.png" type="node,closedway">
             <label text="Edit Pitch" />
@@ -3539,7 +3539,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <label text="select sport:" />
             <space />
-            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,table_tennis,tennis" />
+            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,table_tennis,tennis" />
         </item>
         <item name="Racetrack" icon="presets/stadium.png" type="node,way,closedway,relation">
             <label text="Edit Racetrack" />
@@ -3548,7 +3548,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <label text="select sport:" />
             <space />
-            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,table_tennis,tennis" />
+            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,table_tennis,tennis" />
         </item>
         <item name="Golf Course" icon="presets/golf.png" type="node,closedway">
             <label text="Edit Golf Course" />
@@ -3723,12 +3723,18 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" />
         </item>
-        <item name="Gaelic Football" icon="presets/soccer.png" type="node,closedway">
+        <item name="Gaelic Games" icon="presets/soccer.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=gaelic_games"/>
-            <label text="Edit Gaelic Football" />
-            <key key="sport" value="gaelic_football" />
+            <label text="Edit Gaelic Games" />
+            <key key="sport" value="gaelic_games" />
             <text key="name" text="Name" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium" default="pitch" />
+            <optional>
+                <check key="gaelic_games:hurling" text="Hurling" text_context="gaelic game" default="off" />
+                <check key="gaelic_games:football" text="Football" text_context="gaelic game"  default="off" />
+                <check key="gaelic_games:camogie" text="Camogie" text_context="gaelic game"  default="off" />
+                <check key="gaelic_games:rounders" text="Rounders" text_context="gaelic game"  default="off" />
+            </optional>
         </item>
         <item name="Rugby League" icon="presets/football.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=rugby_league"
