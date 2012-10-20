@@ -350,6 +350,7 @@ public class MainApplication extends Main {
         splash.setVisible(false);
         splash.dispose();
         mainFrame.setVisible(true);
+        Main.MasterWindowListener.setup();
 
         boolean maximized = Boolean.parseBoolean(Main.pref.get("gui.maximized"));
         if ((!args.containsKey(Option.NO_MAXIMIZE) && maximized) || args.containsKey(Option.MAXIMIZE)) {
