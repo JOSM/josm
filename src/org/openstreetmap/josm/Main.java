@@ -6,6 +6,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
@@ -17,6 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -911,7 +913,7 @@ abstract public class Main {
 
             synchronized(Main.class) {
                 Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
-                while(it.hasNext()){
+                while (it.hasNext()){
                     WeakReference<ProjectionChangeListener> wr = it.next();
                     ProjectionChangeListener listener = wr.get();
                     if (listener == null) {
@@ -929,7 +931,7 @@ abstract public class Main {
     }
 
     /**
-     * Register a projection change listener
+     * Register a projection change listener.
      *
      * @param listener the listener. Ignored if <code>null</code>.
      */
@@ -945,7 +947,7 @@ abstract public class Main {
     }
 
     /**
-     * Removes a projection change listener
+     * Removes a projection change listener.
      *
      * @param listener the listener. Ignored if <code>null</code>.
      */
@@ -953,9 +955,9 @@ abstract public class Main {
         if (listener == null) return;
         synchronized(Main.class){
             Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
-            while(it.hasNext()){
+            while (it.hasNext()){
                 WeakReference<ProjectionChangeListener> wr = it.next();
-                // remove the listener - and any other listener which god garbage
+                // remove the listener - and any other listener which got garbage
                 // collected in the meantime
                 if (wr.get() == null || wr.get() == listener) {
                     it.remove();
@@ -963,4 +965,173 @@ abstract public class Main {
             }
         }
     }
+
+    /**
+     * Listener for window switch events.
+     * 
+     * These are events, when the user activates a window of another application
+     * or comes back to JOSM. Window switches from one JOSM window to another
+     * are not reported.
+     */
+    public static interface WindowSwitchListener {
+        /**
+         * Called when the user activates a window of another application.
+         */
+        void toOtherApplication();
+        /**
+         * Called when the user comes from a window of another application
+         * back to JOSM.
+         */
+        void fromOtherApplication();
+    }
+
+    private static final ArrayList<WeakReference<WindowSwitchListener>> windowSwitchListeners = new ArrayList<WeakReference<WindowSwitchListener>>();
+
+    /**
+     * Register a window switch listener.
+     *
+     * @param listener the listener. Ignored if <code>null</code>.
+     */
+    public static void addWindowSwitchListener(WindowSwitchListener listener) {
+        if (listener == null) return;
+        synchronized (Main.class) {
+            for (WeakReference<WindowSwitchListener> wr : windowSwitchListeners) {
+                // already registered ? => abort
+                if (wr.get() == listener) return;
+            }
+            boolean wasEmpty = windowSwitchListeners.isEmpty();
+            windowSwitchListeners.add(new WeakReference<WindowSwitchListener>(listener));
+            if (wasEmpty) {
+                // The following call will have no effect, when there is no window
+                // at the time. Therefore, MasterWindowListener.setup() will also be
+                // called, as soon as the main window is shown.
+                MasterWindowListener.setup();
+            }
+        }
+    }
+
+    /**
+     * Removes a window switch listener.
+     *
+     * @param listener the listener. Ignored if <code>null</code>.
+     */
+    public static void removeWindowSwitchListener(WindowSwitchListener listener) {
+        if (listener == null) return;
+        synchronized (Main.class){
+            Iterator<WeakReference<WindowSwitchListener>> it = windowSwitchListeners.iterator();
+            while (it.hasNext()){
+                WeakReference<WindowSwitchListener> wr = it.next();
+                // remove the listener - and any other listener which got garbage
+                // collected in the meantime
+                if (wr.get() == null || wr.get() == listener) {
+                    it.remove();
+                }
+            }
+            if (windowSwitchListeners.isEmpty()) {
+                MasterWindowListener.teardown();
+            }
+        }
+    }
+
+    /**
+     * WindowListener, that is registered on all Windows of the application.
+     *
+     * Its purpose is to notify WindowSwitchListeners, that the user switches to
+     * another application, e.g. a browser, or back to JOSM.
+     *
+     * When changing from JOSM to another application and back (e.g. two times
+     * alt+tab), the active Window within JOSM may be different.
+     * Therefore, we need to register listeners to <strong>all</strong> (visible)
+     * Windows in JOSM, and it does not suffice to monitor the one that was
+     * deactivated last.
+     *
+     * This class is only "active" on demand, i.e. when there is at least one
+     * WindowSwitchListener registered.
+     */
+    protected static class MasterWindowListener extends WindowAdapter {
+
+        private static MasterWindowListener INSTANCE;
+
+        public static MasterWindowListener getInstance() {
+            if (INSTANCE == null) {
+                INSTANCE = new MasterWindowListener();
+            }
+            return INSTANCE;
+        }
+
+        /**
+         * Register listeners to all non-hidden windows.
+         *
+         * Windows that are created later, will be cared for in {@link #windowDeactivated(WindowEvent)}.
+         */
+        public static void setup() {
+            if (!windowSwitchListeners.isEmpty()) {
+                for (Window w : Window.getWindows()) {
+                    if (w.isShowing()) {
+                        if (!Arrays.asList(w.getWindowListeners()).contains(getInstance())) {
+                            w.addWindowListener(getInstance());
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
+         * Unregister all listeners.
+         */
+        public static void teardown() {
+            for (Window w : Window.getWindows()) {
+                w.removeWindowListener(getInstance());
+            }
+        }
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+            if (e.getOppositeWindow() == null) { // we come from a window of a different application
+                // fire WindowSwitchListeners
+                synchronized (Main.class) {
+                    Iterator<WeakReference<WindowSwitchListener>> it = windowSwitchListeners.iterator();
+                    while (it.hasNext()){
+                        WeakReference<WindowSwitchListener> wr = it.next();
+                        WindowSwitchListener listener = wr.get();
+                        if (listener == null) {
+                            it.remove();
+                            continue;
+                        }
+                        listener.fromOtherApplication();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+            // set up windows that have been created in the meantime
+            for (Window w : Window.getWindows()) {
+                if (!w.isShowing()) {
+                    w.removeWindowListener(getInstance());
+                } else {
+                    if (!Arrays.asList(w.getWindowListeners()).contains(getInstance())) {
+                        w.addWindowListener(getInstance());
+                    }
+                }
+            }
+            if (e.getOppositeWindow() == null) { // we go to a window of a different application
+                // fire WindowSwitchListeners
+                synchronized (Main.class) {
+                    Iterator<WeakReference<WindowSwitchListener>> it = windowSwitchListeners.iterator();
+                    while (it.hasNext()){
+                        WeakReference<WindowSwitchListener> wr = it.next();
+                        WindowSwitchListener listener = wr.get();
+                        if (listener == null) {
+                            it.remove();
+                            continue;
+                        }
+                        listener.toOtherApplication();
+                    }
+                }
+            }
+        }
+    }
+
 }

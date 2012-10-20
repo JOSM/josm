@@ -77,7 +77,7 @@ import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
-public class MapPaintDialog extends ToggleDialog {
+public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchListener {
 
     protected StylesTable tblStyles;
     protected StylesModel model;
@@ -177,69 +177,29 @@ public class MapPaintDialog extends ToggleDialog {
         }
     }
 
-    /**
-     * Reload local styles when they have been changed in an external editor.
-     *
-     * Checks file modification time when an WindowEvent is invoked. Because
-     * any dialog window can get activated, when switching to another app and back,
-     * we have to register listeners to all windows in JOSM.
-     */
-    protected static class ReloadWindowListener extends WindowAdapter {
+    @Override
+    public void toOtherApplication() {
+        // nothing
+    }
 
-        private static ReloadWindowListener INSTANCE;
-
-        public static ReloadWindowListener getInstance() {
-            if (INSTANCE == null) {
-                INSTANCE = new ReloadWindowListener();
-            }
-            return INSTANCE;
-        }
-
-        public static void setup() {
-            for (Window w : Window.getWindows()) {
-                if (w.isShowing()) {
-                    w.addWindowListener(getInstance());
+    @Override
+    public void fromOtherApplication() {
+        // Reload local styles when they have been changed in an external editor.
+        // Checks file modification time.
+        List<StyleSource> toReload = new ArrayList<StyleSource>();
+        for (StyleSource s : MapPaintStyles.getStyles().getStyleSources()) {
+            if (s.isLocal()) {
+                File f = new File(s.url);
+                long mtime = f.lastModified();
+                if (mtime > s.getLastMTime()) {
+                    toReload.add(s);
+                    s.setLastMTime(mtime);
                 }
             }
         }
-
-        public static void teardown() {
-            for (Window w : Window.getWindows()) {
-                w.removeWindowListener(getInstance());
-            }
-        }
-
-        @Override
-        public void windowActivated(WindowEvent e) {
-            if (e.getOppositeWindow() == null) { // we come from a native window, e.g. editor
-                // reload local styles, if necessary
-                List<StyleSource> toReload = new ArrayList<StyleSource>();
-                for (StyleSource s : MapPaintStyles.getStyles().getStyleSources()) {
-                    if (s.isLocal()) {
-                        File f = new File(s.url);
-                        long mtime = f.lastModified();
-                        if (mtime > s.getLastMTime()) {
-                            toReload.add(s);
-                            s.setLastMTime(mtime);
-                        }
-                    }
-                }
-                if (!toReload.isEmpty()) {
-                    System.out.println(trn("Reloading {0} map style.", "Reloading {0} map styles.", toReload.size(), toReload.size()));
-                    Main.worker.submit(new MapPaintStyleLoader(toReload));
-                }
-            }
-        }
-
-        @Override
-        public void windowDeactivated(WindowEvent e) {
-            // set up windows that have been created in the meantime
-            for (Window w : Window.getWindows()) {
-                w.removeWindowListener(getInstance());
-                if (w.isShowing()) {
-                    w.addWindowListener(getInstance());
-                }
-            }
+        if (!toReload.isEmpty()) {
+            System.out.println(trn("Reloading {0} map style.", "Reloading {0} map styles.", toReload.size(), toReload.size()));
+            Main.worker.submit(new MapPaintStyleLoader(toReload));
         }
     }
 
@@ -248,7 +208,7 @@ public class MapPaintDialog extends ToggleDialog {
         MapPaintStyles.addMapPaintSylesUpdateListener(model);
         Main.main.menu.wireFrameToggleAction.addButtonModel(cbWireframe.getModel());
         if (Main.pref.getBoolean("mappaint.auto_reload_local_styles", true)) {
-            ReloadWindowListener.setup();
+            Main.addWindowSwitchListener(this);
         }
     }
 
@@ -257,7 +217,7 @@ public class MapPaintDialog extends ToggleDialog {
         Main.main.menu.wireFrameToggleAction.removeButtonModel(cbWireframe.getModel());
         MapPaintStyles.removeMapPaintSylesUpdateListener(model);
         if (Main.pref.getBoolean("mappaint.auto_reload_local_styles", true)) {
-            ReloadWindowListener.teardown();
+            Main.removeWindowSwitchListener(this);
         }
     }
 
