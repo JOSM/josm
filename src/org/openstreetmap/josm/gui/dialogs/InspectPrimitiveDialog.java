@@ -23,6 +23,8 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
+import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
@@ -266,8 +268,16 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         }
 
         void addBbox(OsmPrimitive o) {
-            if (o.getBBox() != null) {
-                add(tr("Bounding box: "), o.getBBox().toStringCSV(", "));
+            BBox bbox = o.getBBox();
+            if (bbox != null) {
+                add(tr("Bounding box: "), bbox.toStringCSV(", "));
+                EastNorth bottomRigth = Main.getProjection().latlon2eastNorth(bbox.getBottomRight());
+                EastNorth topLeft = Main.getProjection().latlon2eastNorth(bbox.getTopLeft());
+                add(tr("Bounding box (projected): "),
+                        Double.toString(topLeft.east()), ", ",
+                        Double.toString(bottomRigth.north()), ", ",
+                        Double.toString(bottomRigth.east()), ", ",
+                        Double.toString(topLeft.north()));
             }
         }
 
