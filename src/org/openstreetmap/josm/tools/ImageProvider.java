@@ -31,8 +31,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -277,7 +277,7 @@ public class ImageProvider {
      *
      * @param callback a callback. It is called, when the image is ready.
      * This can happen before the call to this method returns or it may be
-     * invoked some time (seconds) later. If no image is available, a null 
+     * invoked some time (seconds) later. If no image is available, a null
      * value is returned to callback (just like {@link #get}).
      */
     public void getInBackground(final ImageCallback callback) {
@@ -325,7 +325,7 @@ public class ImageProvider {
     }
 
     /**
-     * @see #getIfAvailable(java.lang.String, java.lang.String) 
+     * @see #getIfAvailable(java.lang.String, java.lang.String)
      */
     public static ImageIcon getIfAvailable(String name) {
         return new ImageProvider(name).setOptional(true).get();
@@ -339,91 +339,95 @@ public class ImageProvider {
             "^data:([a-zA-Z]+/[a-zA-Z+]+)?(;base64)?,(.+)$");
 
     private ImageResource getIfAvailableImpl(Collection<ClassLoader> additionalClassLoaders) {
-        if (name == null)
-            return null;
+        synchronized (cache) {
+            // This method is called from different thread and modifying HashMap concurrently can result
+            // for example in loops in map entries (ie freeze when such entry is retrieved)
+            // Yes, it did happen to me :-)
+            if (name == null)
+                return null;
 
-        try {
-            if (name.startsWith("data:")) {
-                Matcher m = dataUrlPattern.matcher(name);
-                if (m.matches()) {
-                    String mediatype = m.group(1);
-                    String base64 = m.group(2);
-                    String data = m.group(3);
-                    byte[] bytes = ";base64".equals(base64)
-                            ? Base64.decodeBase64(data)
-                            : URLDecoder.decode(data, "utf-8").getBytes();
-                    if (mediatype != null && mediatype.contains("image/svg+xml")) {
-                        URI uri = getSvgUniverse().loadSVG(new StringReader(new String(bytes)), name);
-                        return new ImageResource(getSvgUniverse().getDiagram(uri));
-                    } else {
-                        try {
-                            return new ImageResource(ImageIO.read(new ByteArrayInputStream(bytes)));
-                        } catch (IOException e) {}
+            try {
+                if (name.startsWith("data:")) {
+                    Matcher m = dataUrlPattern.matcher(name);
+                    if (m.matches()) {
+                        String mediatype = m.group(1);
+                        String base64 = m.group(2);
+                        String data = m.group(3);
+                        byte[] bytes = ";base64".equals(base64)
+                                ? Base64.decodeBase64(data)
+                                        : URLDecoder.decode(data, "utf-8").getBytes();
+                                if (mediatype != null && mediatype.contains("image/svg+xml")) {
+                                    URI uri = getSvgUniverse().loadSVG(new StringReader(new String(bytes)), name);
+                                    return new ImageResource(getSvgUniverse().getDiagram(uri));
+                                } else {
+                                    try {
+                                        return new ImageResource(ImageIO.read(new ByteArrayInputStream(bytes)));
+                                    } catch (IOException e) {}
+                                }
                     }
                 }
+            } catch (UnsupportedEncodingException ex) {
+                throw new RuntimeException(ex.getMessage(), ex);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex.getMessage(), ex);
             }
-        } catch (UnsupportedEncodingException ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
-        }
 
-        ImageType type = name.toLowerCase().endsWith(".svg") ? ImageType.SVG : ImageType.OTHER;
+            ImageType type = name.toLowerCase().endsWith(".svg") ? ImageType.SVG : ImageType.OTHER;
 
-        if (name.startsWith("http://")) {
-            String url = name;
-            ImageResource ir = cache.get(url);
-            if (ir != null) return ir;
-            ir = getIfAvailableHttp(url, type);
-            if (ir != null) {
-                cache.put(url, ir);
-            }
-            return ir;
-        } else if (name.startsWith("wiki://")) {
-            ImageResource ir = cache.get(name);
-            if (ir != null) return ir;
-            ir = getIfAvailableWiki(name, type);
-            if (ir != null) {
-                cache.put(name, ir);
-            }
-            return ir;
-        }
-
-        if (subdir == null) {
-            subdir = "";
-        } else if (!subdir.equals("")) {
-            subdir += "/";
-        }
-        String[] extensions;
-        if (name.indexOf('.') != -1) {
-            extensions = new String[] { "" };
-        } else {
-            extensions = new String[] { ".png", ".svg"};
-        }
-        final int ARCHIVE = 0, LOCAL = 1;
-        for (int place : new Integer[] { ARCHIVE, LOCAL }) {
-            for (String ext : extensions) {
-
-                if (".svg".equals(ext)) {
-                    type = ImageType.SVG;
-                } else if (".png".equals(ext)) {
-                    type = ImageType.OTHER;
-                }
-
-                String full_name = subdir + name + ext;
-                String cache_name = full_name;
-                /* cache separately */
-                if (dirs != null && dirs.size() > 0) {
-                    cache_name = "id:" + id + ":" + full_name;
-                    if(archive != null) {
-                        cache_name += ":" + archive.getName();
-                    }
-                }
-
-                ImageResource ir = cache.get(cache_name);
+            if (name.startsWith("http://")) {
+                String url = name;
+                ImageResource ir = cache.get(url);
                 if (ir != null) return ir;
+                ir = getIfAvailableHttp(url, type);
+                if (ir != null) {
+                    cache.put(url, ir);
+                }
+                return ir;
+            } else if (name.startsWith("wiki://")) {
+                ImageResource ir = cache.get(name);
+                if (ir != null) return ir;
+                ir = getIfAvailableWiki(name, type);
+                if (ir != null) {
+                    cache.put(name, ir);
+                }
+                return ir;
+            }
 
-                switch (place) {
+            if (subdir == null) {
+                subdir = "";
+            } else if (!subdir.equals("")) {
+                subdir += "/";
+            }
+            String[] extensions;
+            if (name.indexOf('.') != -1) {
+                extensions = new String[] { "" };
+            } else {
+                extensions = new String[] { ".png", ".svg"};
+            }
+            final int ARCHIVE = 0, LOCAL = 1;
+            for (int place : new Integer[] { ARCHIVE, LOCAL }) {
+                for (String ext : extensions) {
+
+                    if (".svg".equals(ext)) {
+                        type = ImageType.SVG;
+                    } else if (".png".equals(ext)) {
+                        type = ImageType.OTHER;
+                    }
+
+                    String full_name = subdir + name + ext;
+                    String cache_name = full_name;
+                    /* cache separately */
+                    if (dirs != null && dirs.size() > 0) {
+                        cache_name = "id:" + id + ":" + full_name;
+                        if(archive != null) {
+                            cache_name += ":" + archive.getName();
+                        }
+                    }
+
+                    ImageResource ir = cache.get(cache_name);
+                    if (ir != null) return ir;
+
+                    switch (place) {
                     case ARCHIVE:
                         if (archive != null) {
                             ir = getIfAvailableZip(full_name, archive, type);
@@ -449,10 +453,11 @@ public class ImageProvider {
                             return ir;
                         }
                         break;
+                    }
                 }
             }
+            return null;
         }
-        return null;
     }
 
     private static ImageResource getIfAvailableHttp(String url, ImageType type) {
@@ -460,18 +465,18 @@ public class ImageProvider {
             MirroredInputStream is = new MirroredInputStream(url,
                     new File(Main.pref.getCacheDirectory(), "images").getPath());
             switch (type) {
-                case SVG:
-                    URI uri = getSvgUniverse().loadSVG(is, is.getFile().toURI().toURL().toString());
-                    SVGDiagram svg = getSvgUniverse().getDiagram(uri);
-                    return svg == null ? null : new ImageResource(svg);
-                case OTHER:
-                    BufferedImage img = null;
-                    try {
-                        img = ImageIO.read(is.getFile().toURI().toURL());
-                    } catch (IOException e) {}
-                    return img == null ? null : new ImageResource(img);
-                default:
-                    throw new AssertionError();
+            case SVG:
+                URI uri = getSvgUniverse().loadSVG(is, is.getFile().toURI().toURL().toString());
+                SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+                return svg == null ? null : new ImageResource(svg);
+            case OTHER:
+                BufferedImage img = null;
+                try {
+                    img = ImageIO.read(is.getFile().toURI().toURL());
+                } catch (IOException e) {}
+                return img == null ? null : new ImageResource(img);
+            default:
+                throw new AssertionError();
             }
         } catch (IOException e) {
             return null;
@@ -483,7 +488,7 @@ public class ImageProvider {
                 "http://wiki.openstreetmap.org/w/images/",
                 "http://upload.wikimedia.org/wikipedia/commons/",
                 "http://wiki.openstreetmap.org/wiki/File:"
-        );
+                );
         final Collection<String> baseUrls = Main.pref.getCollection("image-provider.wiki.urls", defaultBaseUrls);
 
         final String fn = name.substring(name.lastIndexOf('/') + 1);
@@ -523,24 +528,24 @@ public class ImageProvider {
                 try {
                     is = zipFile.getInputStream(entry);
                     switch (type) {
-                        case SVG:
-                            URI uri = getSvgUniverse().loadSVG(is, full_name);
-                            SVGDiagram svg = getSvgUniverse().getDiagram(uri);
-                            return svg == null ? null : new ImageResource(svg);
-                        case OTHER:
-                            while(size > 0)
-                            {
-                                int l = is.read(buf, offs, size);
-                                offs += l;
-                                size -= l;
-                            }
-                            BufferedImage img = null;
-                            try {
-                                img = ImageIO.read(new ByteArrayInputStream(buf));
-                            } catch (IOException e) {}
-                            return img == null ? null : new ImageResource(img);
-                        default:
-                            throw new AssertionError();
+                    case SVG:
+                        URI uri = getSvgUniverse().loadSVG(is, full_name);
+                        SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+                        return svg == null ? null : new ImageResource(svg);
+                    case OTHER:
+                        while(size > 0)
+                        {
+                            int l = is.read(buf, offs, size);
+                            offs += l;
+                            size -= l;
+                        }
+                        BufferedImage img = null;
+                        try {
+                            img = ImageIO.read(new ByteArrayInputStream(buf));
+                        } catch (IOException e) {}
+                        return img == null ? null : new ImageResource(img);
+                    default:
+                        throw new AssertionError();
                     }
                 } finally {
                     if (is != null) {
@@ -563,18 +568,18 @@ public class ImageProvider {
 
     private static ImageResource getIfAvailableLocalURL(URL path, ImageType type) {
         switch (type) {
-            case SVG:
-                URI uri = getSvgUniverse().loadSVG(path);
-                SVGDiagram svg = getSvgUniverse().getDiagram(uri);
-                return svg == null ? null : new ImageResource(svg);
-            case OTHER:
-                BufferedImage img = null;
-                try {
-                    img = ImageIO.read(path);
-                } catch (IOException e) {}
-                return img == null ? null : new ImageResource(img);
-            default:
-                throw new AssertionError();
+        case SVG:
+            URI uri = getSvgUniverse().loadSVG(path);
+            SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+            return svg == null ? null : new ImageResource(svg);
+        case OTHER:
+            BufferedImage img = null;
+            try {
+                img = ImageIO.read(path);
+            } catch (IOException e) {}
+            return img == null ? null : new ImageResource(img);
+        default:
+            throw new AssertionError();
         }
     }
 
@@ -695,7 +700,7 @@ public class ImageProvider {
             parser.parse(new InputSource(new MirroredInputStream(
                     base + fn,
                     new File(Main.pref.getPreferencesDir(), "images").toString()
-            )));
+                    )));
         } catch (SAXReturnException r) {
             return r.getResult();
         } catch (Exception e) {
@@ -733,7 +738,7 @@ public class ImageProvider {
      */
     public static ImageIcon overlay(Icon ground, Icon overlay, OverlayPosition pos) {
         GraphicsConfiguration conf = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-        .getDefaultConfiguration();
+                .getDefaultConfiguration();
         int w = ground.getIconWidth();
         int h = ground.getIconHeight();
         int wo = overlay.getIconWidth();
