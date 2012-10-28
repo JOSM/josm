@@ -218,18 +218,19 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
                     isSelected, boolean hasFocus, int row, int column) {
                 JLabel label = (JLabel) super.getTableCellRendererComponent(
                         table, value, isSelected, hasFocus, row, column);
-                String t = value.toString();
                 label.setBackground(Main.pref.getUIColor("Table.background"));
                 if (isSelected) {
                     label.setForeground(Main.pref.getUIColor("Table.foreground"));
                 }
-                for(ImageryInfo l : layers)
-                {
-                    if(l.getExtendedUrl().equals(t)) {
-                        label.setBackground(Main.pref.getColor(
-                                marktr("Imagery Background: Default"),
-                                new Color(200,255,200)));
-                        break;
+                if (value != null) { // Fix #8159
+                    String t = value.toString();
+                    for (ImageryInfo l : layers) {
+                        if (l.getExtendedUrl().equals(t)) {
+                            label.setBackground(Main.pref.getColor(
+                                    marktr("Imagery Background: Default"),
+                                    new Color(200,255,200)));
+                            break;
+                        }
                     }
                 }
                 return label;
