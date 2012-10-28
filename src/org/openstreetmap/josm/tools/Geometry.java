@@ -382,7 +382,9 @@ public class Geometry {
                 path.lineTo(n.getEastNorth().getX(), n.getEastNorth().getY());
             }
         }
-        path.closePath();
+        if (!begin) {
+            path.closePath();
+        }
         
         return new Area(path);
     }
