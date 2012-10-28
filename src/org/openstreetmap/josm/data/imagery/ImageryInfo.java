@@ -275,6 +275,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
 
         if (imageryType != that.imageryType) return false;
         if (url != null ? !url.equals(that.url) : that.url != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
 
         return true;
     }
