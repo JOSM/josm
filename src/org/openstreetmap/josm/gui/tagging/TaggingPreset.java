@@ -340,7 +340,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
 
         public ImageIcon getIcon() {
-            return icon == null ? null : loadImageIcon(icon, zipIcons);
+            return icon == null ? null : loadImageIcon(icon, zipIcons, 24);
         }
 
         public PresetListEntry() {
@@ -1263,9 +1263,13 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return group != null ? group.getRawName() + "/" + name : name;
     }
 
-    protected static ImageIcon loadImageIcon(String iconName, File zipIcons) {
+    protected static ImageIcon loadImageIcon(String iconName, File zipIcons, Integer maxSize) {
         final Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
-        return new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true).get();
+        ImageProvider imgProv = new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true);
+        if (maxSize != null) {
+            imgProv.setMaxSize(24);
+        }
+        return imgProv.get();
     }
 
     /*
