@@ -106,10 +106,10 @@ public class BoundingBoxSelectionPanel extends JPanel {
     public Bounds getBoundingBox() {
         double minlon, minlat, maxlon,maxlat;
         try {
-            minlon = Double.parseDouble(tfLatLon[0].getText().trim());
-            minlat = Double.parseDouble(tfLatLon[1].getText().trim());
-            maxlon = Double.parseDouble(tfLatLon[2].getText().trim());
-            maxlat = Double.parseDouble(tfLatLon[3].getText().trim());
+            minlat = Double.parseDouble(tfLatLon[0].getText().trim());
+            minlon = Double.parseDouble(tfLatLon[1].getText().trim());
+            maxlat = Double.parseDouble(tfLatLon[2].getText().trim());
+            maxlon = Double.parseDouble(tfLatLon[3].getText().trim());
         } catch(NumberFormatException e) {
             return null;
         }
