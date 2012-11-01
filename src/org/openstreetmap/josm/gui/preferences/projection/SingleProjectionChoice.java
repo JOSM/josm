@@ -7,27 +7,31 @@ import java.util.Collections;
 
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.data.projection.Projection;
-
 /**
  * ProjectionChoice, that offers just one projection as choice.
  *
  * The GUI is an empty panel.
  */
-public class SingleProjectionChoice implements ProjectionChoice {
+public class SingleProjectionChoice extends AbstractProjectionChoice {
 
-    private String id;
-    private String name;
-    private Projection projection;
+    protected String code;
 
-    public SingleProjectionChoice(String id, String name, Projection projection) {
-        this.id = id;
-        this.name = name;
-        this.projection = projection;
+    /**
+     * Constructor.
+     *
+     * @param name short name of the projection choice as shown in the GUI
+     * @param id unique identifier for the projection choice, e.g. "core:thisproj"
+     * @param code the unique identifier for the projection, e.g. "EPSG:1234"
+     * @param cacheDir a cache directory name
+     */
+    public SingleProjectionChoice(String name, String id, String code, String cacheDir) {
+        super(name, id, cacheDir);
+        this.code = code;
     }
 
-    public SingleProjectionChoice(String id, Projection projection) {
-        this(id, projection.toString(), projection);
+    public SingleProjectionChoice(String name, String id, String code) {
+        super(name, id);
+        this.code = code;
     }
 
     @Override
@@ -36,13 +40,8 @@ public class SingleProjectionChoice implements ProjectionChoice {
     }
 
     @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
     public String[] allCodes() {
-        return new String[] { projection.toCode() };
+        return new String[] { code };
     }
 
     @Override
@@ -55,20 +54,26 @@ public class SingleProjectionChoice implements ProjectionChoice {
     }
 
     @Override
-    public Projection getProjection() {
-        return projection;
-    }
-
-    @Override
     public String toString() {
         return name;
     }
 
     @Override
     public Collection<String> getPreferencesFromCode(String code) {
-        if (code.equals(projection.toCode()))
+        if (code.equals(this.code))
             return Collections.emptyList();
         else
             return null;
     }
+
+    @Override
+    public String getCurrentCode() {
+        return code;
+    }
+
+    @Override
+    public String getProjectionName() {
+        return name; // the same name as the projection choice
+    }
+
 }

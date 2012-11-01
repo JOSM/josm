@@ -6,9 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.data.projection.UTM_France_DOM;
-
 public class UTM_France_DOM_ProjectionChoice extends ListProjectionChoice {
 
     private final static String FortMarigotName = tr("Guadeloupe Fort-Marigot 1949");
@@ -18,8 +15,15 @@ public class UTM_France_DOM_ProjectionChoice extends ListProjectionChoice {
     private final static String Guyane92Name = tr("Guyane RGFG95");
     private final static String[] utmGeodesicsNames = { FortMarigotName, SainteAnneName, MartiniqueName, Reunion92Name, Guyane92Name};
 
+    private final static Integer FortMarigotEPSG = 2969;
+    private final static Integer SainteAnneEPSG = 2970;
+    private final static Integer MartiniqueEPSG = 2973;
+    private final static Integer ReunionEPSG = 2975;
+    private final static Integer GuyaneEPSG = 2972;
+    private final static Integer[] utmEPSGs = { FortMarigotEPSG, SainteAnneEPSG, MartiniqueEPSG, ReunionEPSG, GuyaneEPSG };
+
     public UTM_France_DOM_ProjectionChoice() {
-        super("core:utmfrancedom", tr("UTM France (DOM)"), utmGeodesicsNames, tr("UTM Geodesic system"));
+        super(tr("UTM France (DOM)"), "core:utmfrancedom", utmGeodesicsNames, tr("UTM Geodesic system"));
     }
 
     @Override
@@ -36,23 +40,28 @@ public class UTM_France_DOM_ProjectionChoice extends ListProjectionChoice {
     }
 
     @Override
-    public Projection getProjection() {
-        return new UTM_France_DOM(index);
+    public String getProjectionName() {
+        return utmGeodesicsNames[index];
+    }
+
+    @Override
+    public String getCurrentCode() {
+        return "EPSG:" + utmEPSGs[index];
     }
 
     @Override
     public String[] allCodes() {
-        String[] res = new String[UTM_France_DOM.utmEPSGs.length];
-        for (int i=0; i<UTM_France_DOM.utmEPSGs.length; ++i) {
-            res[i] = "EPSG:"+UTM_France_DOM.utmEPSGs[i];
+        String[] res = new String[utmEPSGs.length];
+        for (int i=0; i<utmEPSGs.length; ++i) {
+            res[i] = "EPSG:" + utmEPSGs[i];
         }
         return res;
     }
 
     @Override
     public Collection<String> getPreferencesFromCode(String code) {
-        for (int i=0; i < UTM_France_DOM.utmEPSGs.length; i++ )
-            if (("EPSG:"+UTM_France_DOM.utmEPSGs[i]).equals(code))
+        for (int i=0; i < utmEPSGs.length; i++ )
+            if (("EPSG:" + utmEPSGs[i]).equals(code))
                 return Collections.singleton(Integer.toString(i+1));
         return null;
     }

@@ -17,29 +17,29 @@ import org.openstreetmap.josm.tools.GBC;
  */
 abstract public class ListProjectionChoice extends AbstractProjectionChoice {
 
-    protected int index;
+    protected int index;        // 0-based index
     protected int defaultIndex;
     protected Object[] entries;
     protected String label;
 
-    public ListProjectionChoice(String id, String name, Object[] entries, String label) {
-        this(id, name, entries, label, 0);
-    }
-
     /**
      * Constructor
      *
-     * @param id the unique id for this ProjectionChoice
      * @param name the display name
+     * @param id the unique id for this ProjectionChoice
      * @param entries the list of display entries for the combo-box
      * @param label a label shown left to the combo-box
      * @param defaultIndex the default index for the combo-box
      */
-    public ListProjectionChoice(String id, String name, Object[] entries, String label, int defaultIndex) {
-        super(id, name);
+    public ListProjectionChoice(String name, String id, Object[] entries, String label, int defaultIndex) {
+        super(name, id);
         this.entries = entries;
         this.label = label;
         this.defaultIndex = defaultIndex;
+    }
+
+    public ListProjectionChoice(String name, String id, Object[] entries, String label) {
+        this(name, id, entries, label, 0);
     }
 
     /**

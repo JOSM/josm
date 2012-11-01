@@ -1,4 +1,4 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
 import org.openstreetmap.josm.data.Bounds;
@@ -6,53 +6,64 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
- * Classes implementing this are able to convert lat/lon values to
- * planar screen coordinates.
+ * A projection, i.e.&nbsp;a class that supports conversion from lat/lon
+ * to east/north and back.
  *
- * @author imi
+ * The conversion from east/north to the screen coordinates is simply a scale
+ * factor and x/y offset.
  */
 public interface Projection {
     /**
-     * The default scale factor in east/north units per pixel ({@link #NavigatableComponent#scale}))
+     * The default scale factor in east/north units per pixel ({@link #NavigatableComponent#scale})).
      * FIXME: misnomer
+     * @return the scale factor
      */
     double getDefaultZoomInPPD();
 
     /**
-     * Convert from lat/lon to northing/easting.
+     * Convert from lat/lon to easting/northing.
      *
-     * @param p     The geo point to convert. x/y members of the point are filled.
+     * @param ll the geographical point to convert (in WGS84 lat/lon)
+     * @return the corresponding east/north coordinates
      */
-    EastNorth latlon2eastNorth(LatLon p);
+    EastNorth latlon2eastNorth(LatLon ll);
 
     /**
-     * Convert from norting/easting to lat/lon.
+     * Convert from easting/norting to lat/lon.
      *
-     * @param p     The geo point to convert. lat/lon members of the point are filled.
+     * @param en the geographical point to convert (in projected coordinates)
+     * @return the corresponding lat/lon (WGS84)
      */
-    LatLon eastNorth2latlon(EastNorth p);
+    LatLon eastNorth2latlon(EastNorth en);
 
     /**
-     * Describe the projection converter in one or two words.
+     * Describe the projection in one or two words.
+     * @return the name / description
      */
     String toString();
 
     /**
-     * Return projection code. This should be a unique identifier.
+     * Return projection code.
+     *
+     * This should be a unique identifier.
      * If projection supports parameters, return a different code
      * for each set of parameters.
      * 
      * The EPSG code can be used (if defined for the projection).
+     *
+     * @return the projection identifier
      */
     String toCode();
 
     /**
-     * Get a filename compatible string (for the cache directory)
+     * Get a filename compatible string (for the cache directory).
+     * @return the cache directory name (base name)
      */
     String getCacheDirectoryName();
 
     /**
-     * Get the bounds of the world
+     * Get the bounds of the world.
+     * @return the supported lat/lon rectangle for this projection
      */
     Bounds getWorldBoundsLatLon();
 }

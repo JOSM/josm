@@ -17,6 +17,10 @@ public interface ProjectionChoice {
 
     /**
      * Get a unique id for the projection choice.
+     *
+     * Will be used to save the user selection to the preference file.
+     * 
+     * @return the string identifier
      */
     String getId();
 
@@ -26,7 +30,8 @@ public interface ProjectionChoice {
      * Will be called before getPreferencePanel and when the
      * listener from getPreferencePanel is invoked.
      *
-     * Argument may be null to reset everything.
+     * @param args preferences as a list of strings; may be null
+     * to reset everything.
      */
     void setPreferences(Collection<String> args);
 
@@ -55,7 +60,7 @@ public interface ProjectionChoice {
     Collection<String> getPreferences(JPanel panel);
 
     /**
-     * Return all projection codes supported by this projection class.
+     * Return all projection codes supported by this projection choice.
      */
     String[] allCodes();
 
@@ -67,5 +72,12 @@ public interface ProjectionChoice {
      * but no preferences are required to set it up.
      */
     Collection<String> getPreferencesFromCode(String code);
+
+    /**
+     * Short name of the projection choice as shown in the GUI (combo box).
+     * 
+     * @return the name
+     */
+    String toString();
 
 }

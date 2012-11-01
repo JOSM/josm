@@ -15,25 +15,25 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.data.projection.UTM;
 import org.openstreetmap.josm.tools.GBC;
 
 public class UTMProjectionChoice extends ListProjectionChoice {
 
-    private static final UTM.Hemisphere DEFAULT_HEMISPHERE = UTM.Hemisphere.North;
+    public enum Hemisphere { North, South }
 
-    private UTM.Hemisphere hemisphere;
+    private static final Hemisphere DEFAULT_HEMISPHERE = Hemisphere.North;
+
+    private Hemisphere hemisphere;
     
     private final static List<String> cbEntries = new ArrayList<String>();
     static {
         for (int i = 1; i <= 60; i++) {
-                cbEntries.add(Integer.toString(i));
+            cbEntries.add(Integer.toString(i));
         }
     }
 
     public UTMProjectionChoice() {
-        super("core:utm", tr("UTM"), cbEntries.toArray(), tr("UTM Zone"));
+        super(tr("UTM"), "core:utm", cbEntries.toArray(), tr("UTM Zone"));
     }
 
     private class UTMPanel extends CBPanel {
@@ -45,9 +45,9 @@ public class UTMProjectionChoice extends ListProjectionChoice {
 
             //Hemisphere
             north = new JRadioButton();
-            north.setSelected(hemisphere == UTM.Hemisphere.North);
+            north.setSelected(hemisphere == Hemisphere.North);
             south = new JRadioButton();
-            south.setSelected(hemisphere == UTM.Hemisphere.South);
+            south.setSelected(hemisphere == Hemisphere.South);
 
             ButtonGroup group = new ButtonGroup();
             group.add(north);
@@ -81,15 +81,23 @@ public class UTMProjectionChoice extends ListProjectionChoice {
     }
 
     @Override
-    public Projection getProjection() {
-        return new UTM(index + 1, hemisphere);
+    public String getCurrentCode() {
+        int zone = index + 1;
+        int code = 32600 + zone + (hemisphere == Hemisphere.South ? 100 : 0);
+        return "EPSG:" + Integer.toString(code);
     }
+
+    @Override
+    public String getProjectionName() {
+        return tr("UTM");
+    }
+
 
     @Override
     public Collection<String> getPreferences(JPanel panel) {
         UTMPanel p = (UTMPanel) panel;
         int index = p.prefcb.getSelectedIndex();
-        UTM.Hemisphere hemisphere = p.south.isSelected()?UTM.Hemisphere.South:UTM.Hemisphere.North;
+        Hemisphere hemisphere = p.south.isSelected()?Hemisphere.South:Hemisphere.North;
         return Arrays.asList(indexToZone(index), hemisphere.toString());
     }
 
@@ -97,8 +105,8 @@ public class UTMProjectionChoice extends ListProjectionChoice {
     public String[] allCodes() {
         ArrayList<String> projections = new ArrayList<String>(60*4);
         for (int zone = 1;zone <= 60; zone++) {
-            for (UTM.Hemisphere hemisphere : UTM.Hemisphere.values()) {
-                projections.add("EPSG:" + (32600 + zone + (hemisphere == UTM.Hemisphere.South?100:0)));
+            for (Hemisphere hemisphere : Hemisphere.values()) {
+                projections.add("EPSG:" + (32600 + zone + (hemisphere == Hemisphere.South?100:0)));
             }
         }
         return projections.toArray(new String[0]);
@@ -109,7 +117,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
 
         if (code.startsWith("EPSG:326") || code.startsWith("EPSG:327")) {
             try {
-                UTM.Hemisphere hemisphere = code.charAt(7)=='6'?UTM.Hemisphere.North:UTM.Hemisphere.South;
+                Hemisphere hemisphere = code.charAt(7)=='6'?Hemisphere.North:Hemisphere.South;
                 String zonestring = code.substring(8);
                 int zoneval = Integer.parseInt(zonestring);
                 if(zoneval > 0 && zoneval <= 60)
@@ -122,13 +130,13 @@ public class UTMProjectionChoice extends ListProjectionChoice {
     @Override
     public void setPreferences(Collection<String> args) {
         super.setPreferences(args);
-        UTM.Hemisphere hemisphere = DEFAULT_HEMISPHERE;
+        Hemisphere hemisphere = DEFAULT_HEMISPHERE;
 
         if(args != null) {
             String[] array = args.toArray(new String[0]);
 
             if (array.length > 1) {
-                hemisphere = UTM.Hemisphere.valueOf(array[1]);
+                hemisphere = Hemisphere.valueOf(array[1]);
             }
         }
         this.hemisphere = hemisphere;

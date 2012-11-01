@@ -26,15 +26,8 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
-import org.openstreetmap.josm.data.projection.BelgianLambert1972;
-import org.openstreetmap.josm.data.projection.BelgianLambert2008;
-import org.openstreetmap.josm.data.projection.Epsg3008;
-import org.openstreetmap.josm.data.projection.Epsg4326;
-import org.openstreetmap.josm.data.projection.Lambert93;
-import org.openstreetmap.josm.data.projection.LambertEST;
-import org.openstreetmap.josm.data.projection.Mercator;
+import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.data.projection.TransverseMercatorLV;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -44,6 +37,22 @@ import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * Projection preferences.
+ *
+ * How to add new Projections:
+ *  - Find EPSG code for the projection.
+ *  - Look up the parameter string for Proj4, e.g. on http://spatialreference.org/
+ *      and add it to the file 'data/epsg' in JOSM trunk
+ *  - Search for official references and verify the parameter values. These
+ *      documents are often available in the local language only.
+ *  - Use {@link #registerProjectionChoice()}, to make the entry known to JOSM.
+ *
+ * In case there is no EPSG code:
+ *  - override {@link AbstractProjectionChoice#getProjection()} and provide
+ *    a manual implementation of the projection. Use {@link CustomProjection}
+ *    if possible.
+ */
 public class ProjectionPreference implements SubPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
@@ -55,25 +64,147 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private static List<ProjectionChoice> projectionChoices = new ArrayList<ProjectionChoice>();
     private static Map<String, ProjectionChoice> projectionChoicesById = new HashMap<String, ProjectionChoice>();
 
-    public static ProjectionChoice mercator = new SingleProjectionChoice("core:mercator", new Mercator());
+    public static final ProjectionChoice wgs84;
+    public static final ProjectionChoice mercator;
+    public static final ProjectionChoice lambert;
     static {
-        // global projections
-        registerProjectionChoice("core:wgs84", new Epsg4326());
-        registerProjectionChoice(mercator);
+
+        /************************
+         * Global projections.
+         */
+
+        /**
+         * WGS84: Directly use latitude / longitude values as x/y.
+         */
+        wgs84 = registerProjectionChoice(tr("WGS84 Geographic"), "core:wgs84", 4326, "epsg4326");
+
+        /**
+         * Mercator Projection.
+         *
+         * The center of the mercator projection is always the 0 grad
+         * coordinate.
+         *
+         * See also USGS Bulletin 1532
+         * (http://egsc.usgs.gov/isb/pubs/factsheets/fs08799.html)
+         * initially EPSG used 3785 but that has been superseded by 3857,
+         * see http://www.epsg-registry.org/
+         */
+        mercator = registerProjectionChoice(tr("Mercator"), "core:mercator", 
+                3857);
+        
+        /**
+         * UTM.
+         */
         registerProjectionChoice(new UTMProjectionChoice());
-        // regional - alphabetical order by country code
-        registerProjectionChoice("core:belambert1972", new BelgianLambert1972());   // BE
-        registerProjectionChoice("core:belambert2008", new BelgianLambert2008());   // BE
-        registerProjectionChoice(new SwissGridProjectionChoice());                  // CH
-        registerProjectionChoice(new GaussKruegerProjectionChoice());               // DE
-        registerProjectionChoice("core:lambertest", new LambertEST());              // EE
-        registerProjectionChoice(new LambertProjectionChoice());                    // FR
-        registerProjectionChoice("core:lambert93", new Lambert93());                // FR
-        registerProjectionChoice(new LambertCC9ZonesProjectionChoice());            // FR
-        registerProjectionChoice(new UTM_France_DOM_ProjectionChoice());            // FR
-        registerProjectionChoice("core:tmerclv", new TransverseMercatorLV());       // LV
-        registerProjectionChoice(new PuwgProjectionChoice());                       // PL
-        registerProjectionChoice("core:sweref99", new Epsg3008());                  // SE
+
+        /************************
+         * Regional - alphabetical order by country code.
+         */
+
+        /**
+         * Belgian Lambert 72 projection.
+         *
+         * As specified by the Belgian IGN in this document:
+         * http://www.ngi.be/Common/Lambert2008/Transformation_Geographic_Lambert_FR.pdf
+         *
+         * @author Don-vip
+         */
+        registerProjectionChoice(tr("Belgian Lambert 1972"), "core:belgianLambert1972", 31370);     // BE
+        /**
+         * Belgian Lambert 2008 projection.
+         *
+         * As specified by the Belgian IGN in this document:
+         * http://www.ngi.be/Common/Lambert2008/Transformation_Geographic_Lambert_FR.pdf
+         *
+         * @author Don-vip
+         */
+        registerProjectionChoice(tr("Belgian Lambert 2008"), "core:belgianLambert2008", 3812);      // BE
+
+        /**
+         * SwissGrid CH1903 / L03, see http://de.wikipedia.org/wiki/Swiss_Grid.
+         *
+         * Actually, what we have here, is CH1903+ (EPSG:2056), but without
+         * the additional false easting of 2000km and false northing 1000 km.
+         *
+         * To get to CH1903, a shift file is required. So currently, there are errors
+         * up to 1.6m (depending on the location).
+         */
+        registerProjectionChoice(new SwissGridProjectionChoice());                                  // CH
+
+        registerProjectionChoice(new GaussKruegerProjectionChoice());                               // DE
+
+        /**
+         * Estonian Coordinate System of 1997.
+         *
+         * Thanks to Johan Montagnat and its geoconv java converter application
+         * (http://www.i3s.unice.fr/~johan/gps/ , published under GPL license)
+         * from which some code and constants have been reused here.
+         */
+        registerProjectionChoice(tr("Lambert Zone (Estonia)"), "core:lambertest", 3301);            // EE
+
+        /**
+         * Lambert conic conform 4 zones using the French geodetic system NTF.
+         *
+         * This newer version uses the grid translation NTF<->RGF93 provided by IGN for a submillimetric accuracy.
+         * (RGF93 is the French geodetic system similar to WGS84 but not mathematically equal)
+         *
+         * Source: http://professionnels.ign.fr/DISPLAY/000/526/700/5267002/transformation.pdf
+         * @author Pieren
+         */
+        registerProjectionChoice(lambert = new LambertProjectionChoice());                          // FR
+        /**
+         * Lambert 93 projection.
+         * 
+         * As specified by the IGN in this document
+         * http://professionnels.ign.fr/DISPLAY/000/526/702/5267026/NTG_87.pdf
+         * @author Don-vip
+         */
+        registerProjectionChoice(tr("Lambert 93 (France)"), "core:lambert93", 2154);                // FR
+        /**
+         * Lambert Conic Conform 9 Zones projection.
+         *
+         * As specified by the IGN in this document
+         * http://professionnels.ign.fr/DISPLAY/000/526/700/5267002/transformation.pdf
+         * @author Pieren
+         */
+        registerProjectionChoice(new LambertCC9ZonesProjectionChoice());                            // FR
+        /**
+         * French departements in the Caribbean Sea and Indian Ocean.
+         *
+         * Using the UTM transvers Mercator projection and specific geodesic settings.
+         */
+        registerProjectionChoice(new UTM_France_DOM_ProjectionChoice());                            // FR
+
+        /**
+         * LKS-92/ Latvia TM projection.
+         *
+         * Based on data from spatialreference.org.
+         * http://spatialreference.org/ref/epsg/3059/
+         *
+         * @author Viesturs Zarins
+         */
+        registerProjectionChoice(tr("LKS-92 (Latvia TM)"), "core:tmerclv", 3059);                   // LV
+
+        /**
+         * PUWG 1992 and 2000 are the official cordinate systems in Poland.
+         *
+         * They use the same math as UTM only with different constants.
+         *
+         * @author steelman
+         */
+        registerProjectionChoice(new PuwgProjectionChoice());                                       // PL
+
+        /**
+         * SWEREF99 13 30 projection. Based on data from spatialreference.org.
+         * http://spatialreference.org/ref/epsg/3008/
+         *
+         * @author Hanno Hecker
+         */
+        registerProjectionChoice(tr("SWEREF99 13 30 / EPSG:3008 (Sweden)"), "core:sweref99", 3008); // SE
+
+        /************************
+         * Custom projection.
+         */
         registerProjectionChoice(new CustomProjectionChoice());
     }
 
@@ -82,8 +213,16 @@ public class ProjectionPreference implements SubPreferenceSetting {
         projectionChoicesById.put(c.getId(), c);
     }
 
-    public static void registerProjectionChoice(String id, Projection projection) {
-        registerProjectionChoice(new SingleProjectionChoice(id, projection));
+    public static ProjectionChoice registerProjectionChoice(String name, String id, Integer epsg, String cacheDir) {
+        ProjectionChoice pc = new SingleProjectionChoice(name, id, "EPSG:"+epsg, cacheDir);
+        registerProjectionChoice(pc);
+        return pc;
+    }
+
+    private static ProjectionChoice registerProjectionChoice(String name, String id, Integer epsg) {
+        ProjectionChoice pc = new SingleProjectionChoice(name, id, "EPSG:"+epsg);
+        registerProjectionChoice(pc);
+        return pc;
     }
 
     public static List<ProjectionChoice> getProjectionChoices() {
