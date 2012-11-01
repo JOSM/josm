@@ -1211,6 +1211,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public static final SystemOfMeasurement METRIC_SOM = new SystemOfMeasurement(1, "m", 1000, "km");
     public static final SystemOfMeasurement CHINESE_SOM = new SystemOfMeasurement(1.0/3.0, "\u5e02\u5c3a" /* chi */, 500, "\u5e02\u91cc" /* li */);
     public static final SystemOfMeasurement IMPERIAL_SOM = new SystemOfMeasurement(0.3048, "ft", 1609.344, "mi");
+    public static final SystemOfMeasurement NAUTICAL_MILE_SOM = new SystemOfMeasurement(185.2, "kbl", 1852, "NM");
 
     public static final Map<String, SystemOfMeasurement> SYSTEMS_OF_MEASUREMENT;
     static {
@@ -1218,6 +1219,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         SYSTEMS_OF_MEASUREMENT.put(marktr("Metric"), METRIC_SOM);
         SYSTEMS_OF_MEASUREMENT.put(marktr("Chinese"), CHINESE_SOM);
         SYSTEMS_OF_MEASUREMENT.put(marktr("Imperial"), IMPERIAL_SOM);
+        SYSTEMS_OF_MEASUREMENT.put(marktr("Nautical Mile"), NAUTICAL_MILE_SOM);
     }
 
     private static class CursorInfo {
