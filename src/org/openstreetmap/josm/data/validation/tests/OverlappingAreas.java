@@ -2,6 +2,7 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -48,8 +49,39 @@ public class OverlappingAreas extends Test {
                         }
                     });
             if (!overlaps.isEmpty()) {
-                errors.add(new TestError(this, Severity.OTHER, tr("Overlapping Areas"),
-                        OVERLAPPING_AREAS, Collections.singletonList(w), overlaps));
+                Collection<Way> overlapsWater = new ArrayList<Way>();
+                Collection<Way> overlapsOther = new ArrayList<Way>();
+
+                String natural1 = w.get("natural");
+                String landuse1 = w.get("landuse");
+                boolean isWaterArea = "water".equals(natural1) || "wetland".equals(natural1) || "coastline".equals(natural1) || "reservoir".equals(landuse1);
+                boolean isWaterArea2 = false;
+
+                for (Way wayOther : overlaps) {
+                    String natural2 = wayOther.get("natural");
+                    String landuse2 = wayOther.get("landuse");
+                    boolean isWaterAreaTest = "water".equals(natural2) || "wetland".equals(natural2) || "coastline".equals(natural2) || "reservoir".equals(landuse2);
+
+                    if (!isWaterArea2) {
+                        isWaterArea2 = isWaterAreaTest;
+                    }
+
+                    if (isWaterArea && isWaterAreaTest) {
+                        overlapsWater.add(wayOther);
+                    } else {
+                        overlapsOther.add(wayOther);
+                    }
+                }
+
+                if (!overlapsWater.isEmpty()) {
+                    errors.add(new TestError(this, Severity.WARNING, tr("Overlapping Water Areas"),
+                            OVERLAPPING_AREAS, Collections.singletonList(w), overlapsWater));
+                }
+
+                if (!overlapsOther.isEmpty()) {
+                    errors.add(new TestError(this, Severity.OTHER, tr("Overlapping Areas"),
+                            OVERLAPPING_AREAS, Collections.singletonList(w), overlapsOther));
+                }
             }
         }
 
