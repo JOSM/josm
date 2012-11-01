@@ -64,9 +64,9 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private static List<ProjectionChoice> projectionChoices = new ArrayList<ProjectionChoice>();
     private static Map<String, ProjectionChoice> projectionChoicesById = new HashMap<String, ProjectionChoice>();
 
-    public static final ProjectionChoice wgs84;
-    public static final ProjectionChoice mercator;
-    public static final ProjectionChoice lambert;
+    // some ProjectionChoices that are referenced from other parts of the code
+    public static final ProjectionChoice wgs84, mercator, lambert;
+
     static {
 
         /************************
