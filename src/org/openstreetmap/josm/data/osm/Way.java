@@ -55,6 +55,7 @@ public final class Way extends OsmPrimitive implements IWay {
         try {
             for (Node node:this.nodes) {
                 node.removeReferrer(this);
+                node.clearCachedStyle();
             }
 
             if (nodes == null) {
@@ -64,6 +65,7 @@ public final class Way extends OsmPrimitive implements IWay {
             }
             for (Node node: this.nodes) {
                 node.addReferrer(this);
+                node.clearCachedStyle();
             }
 
             clearCachedStyle();
@@ -352,6 +354,7 @@ public final class Way extends OsmPrimitive implements IWay {
                 copy.remove(i-1);
             }
             setNodes(removeDouble(copy));
+            n.clearCachedStyle();
         } finally {
             writeUnlock(locked);
         }
@@ -382,6 +385,9 @@ public final class Way extends OsmPrimitive implements IWay {
                 copy.remove(i-1);
             }
             setNodes(removeDouble(copy));
+            for (Node n : selection) {
+                n.clearCachedStyle();
+            }
         } finally {
             writeUnlock(locked);
         }
@@ -408,6 +414,7 @@ public final class Way extends OsmPrimitive implements IWay {
             System.arraycopy(nodes, 0, newNodes, 0, nodes.length);
             newNodes[nodes.length] = n;
             nodes = newNodes;
+            n.clearCachedStyle();
             fireNodesChanged();
         } finally {
             writeUnlock(locked);
@@ -439,6 +446,7 @@ public final class Way extends OsmPrimitive implements IWay {
             System.arraycopy(nodes, offs, newNodes, offs + 1, nodes.length - offs);
             newNodes[offs] = n;
             nodes = newNodes;
+            n.clearCachedStyle();
             fireNodesChanged();
         } finally {
             writeUnlock(locked);
@@ -455,6 +463,7 @@ public final class Way extends OsmPrimitive implements IWay {
                 } else {
                     n.addReferrer(this);
                 }
+                n.clearCachedStyle();
             }
             fireNodesChanged();
             super.setDeleted(deleted);
