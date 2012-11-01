@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice implements Alias {
+public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
 
     private static String[] lambert9zones = {
         tr("{0} ({1} to {2} degrees)", 1,41,43),
@@ -85,11 +85,6 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice implem
             return Integer.parseInt(zone) - 1;
         } catch(NumberFormatException e) {}
         return defaultIndex;
-    }
-
-    @Override
-    public String getAlias() {
-        return LambertCC9Zones.class.getName();
     }
 
 }

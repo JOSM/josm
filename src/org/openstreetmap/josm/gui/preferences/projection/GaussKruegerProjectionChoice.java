@@ -9,7 +9,7 @@ import java.util.Collections;
 import org.openstreetmap.josm.data.projection.GaussKrueger;
 import org.openstreetmap.josm.data.projection.Projection;
 
-public class GaussKruegerProjectionChoice extends ListProjectionChoice implements Alias {
+public class GaussKruegerProjectionChoice extends ListProjectionChoice {
 
     private static String[] zones = { "2", "3", "4", "5" };
 
@@ -56,9 +56,4 @@ public class GaussKruegerProjectionChoice extends ListProjectionChoice implement
         return null;
     }
     
-    @Override
-    public String getAlias() {
-        return GaussKrueger.class.getName();
-    }
-
 }

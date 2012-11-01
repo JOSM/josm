@@ -37,7 +37,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
-public class CustomProjectionChoice extends AbstractProjectionChoice implements Alias, SubPrefsOptions {
+public class CustomProjectionChoice extends AbstractProjectionChoice implements SubPrefsOptions {
 
     private String pref;
 
@@ -226,11 +226,6 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
     @Override
     public Collection<String> getPreferencesFromCode(String code) {
         return null;
-    }
-
-    @Override
-    public String getAlias() {
-        return "org.openstreetmap.josm.data.projection.CustomProjectionPrefGui";
     }
 
     @Override

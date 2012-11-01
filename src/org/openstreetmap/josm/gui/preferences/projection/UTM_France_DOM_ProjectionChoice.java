@@ -9,7 +9,7 @@ import java.util.Collections;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.UTM_France_DOM;
 
-public class UTM_France_DOM_ProjectionChoice extends ListProjectionChoice implements Alias {
+public class UTM_France_DOM_ProjectionChoice extends ListProjectionChoice {
 
     private final static String FortMarigotName = tr("Guadeloupe Fort-Marigot 1949");
     private final static String SainteAnneName = tr("Guadeloupe Ste-Anne 1948");
@@ -55,11 +55,6 @@ public class UTM_France_DOM_ProjectionChoice extends ListProjectionChoice implem
             if (("EPSG:"+UTM_France_DOM.utmEPSGs[i]).equals(code))
                 return Collections.singleton(Integer.toString(i+1));
         return null;
-    }
-
-    @Override
-    public String getAlias() {
-        return UTM_France_DOM.class.getName();
     }
 
 }
