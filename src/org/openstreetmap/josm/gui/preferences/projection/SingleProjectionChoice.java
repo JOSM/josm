@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.projection.Projection;
  *
  * The GUI is an empty panel.
  */
-public class SingleProjectionChoice implements ProjectionChoice, Alias {
+public class SingleProjectionChoice implements ProjectionChoice {
 
     private String id;
     private String name;
@@ -70,10 +70,5 @@ public class SingleProjectionChoice implements ProjectionChoice, Alias {
             return Collections.emptyList();
         else
             return null;
-    }
-
-    @Override
-    public String getAlias() {
-        return projection.getClass().getName();
     }
 }

@@ -9,7 +9,7 @@ import java.util.Collections;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Puwg;
 
-public class PuwgProjectionChoice extends ListProjectionChoice implements Alias {
+public class PuwgProjectionChoice extends ListProjectionChoice {
 
     public PuwgProjectionChoice() {
         super("core:puwg", tr("PUWG (Poland)"), Puwg.zones, tr("PUWG Zone"));
@@ -36,11 +36,6 @@ public class PuwgProjectionChoice extends ListProjectionChoice implements Alias 
                 return Collections.singleton(code);
         }
         return null;
-    }
-
-    @Override
-    public String getAlias() {
-        return Puwg.class.getName();
     }
 
     @Override

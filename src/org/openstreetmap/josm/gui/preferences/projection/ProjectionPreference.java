@@ -54,7 +54,6 @@ public class ProjectionPreference implements SubPreferenceSetting {
 
     private static List<ProjectionChoice> projectionChoices = new ArrayList<ProjectionChoice>();
     private static Map<String, ProjectionChoice> projectionChoicesById = new HashMap<String, ProjectionChoice>();
-    private static Map<String, String> aliasNormalizer = new HashMap<String, String>();
 
     public static ProjectionChoice mercator = new SingleProjectionChoice("core:mercator", new Mercator());
     static {
@@ -81,12 +80,6 @@ public class ProjectionPreference implements SubPreferenceSetting {
     public static void registerProjectionChoice(ProjectionChoice c) {
         projectionChoices.add(c);
         projectionChoicesById.put(c.getId(), c);
-        aliasNormalizer.put(c.getId(), c.getId());
-        if (c instanceof Alias) {
-            String alias = ((Alias) c).getAlias();
-            projectionChoicesById.put(alias, c);
-            aliasNormalizer.put(alias, c.getId());
-        }
     }
 
     public static void registerProjectionChoice(String id, Projection projection) {
@@ -287,7 +280,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         for (int i = 0; i < projectionCombo.getItemCount(); ++i) {
             ProjectionChoice pc1 = (ProjectionChoice) projectionCombo.getItemAt(i);
             pc1.setPreferences(getSubprojectionPreference(pc1));
-            if (pc1.getId().equals(aliasNormalizer.get(PROP_PROJECTION.get()))) {
+            if (pc1.getId().equals(PROP_PROJECTION.get())) {
                 projectionCombo.setSelectedIndex(i);
                 selectedProjectionChanged(pc1);
                 pc = pc1;
@@ -308,15 +301,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     }
 
     private Collection<String> getSubprojectionPreference(ProjectionChoice pc) {
-        Collection<String> c1 = Main.pref.getCollection("projection.sub."+pc.getId(), null);
-        if (c1 != null)
-            return c1;
-        if (pc instanceof Alias) {
-            String alias = ((Alias) pc).getAlias();
-            String sname = alias.substring(alias.lastIndexOf(".")+1);
-            return Main.pref.getCollection("projection.sub."+sname, null);
-        }
-        return null;
+        return Main.pref.getCollection("projection.sub."+pc.getId(), null);
     }
 
     @Override

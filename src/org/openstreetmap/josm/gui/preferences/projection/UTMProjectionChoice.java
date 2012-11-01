@@ -19,7 +19,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.UTM;
 import org.openstreetmap.josm.tools.GBC;
 
-public class UTMProjectionChoice extends ListProjectionChoice implements Alias {
+public class UTMProjectionChoice extends ListProjectionChoice {
 
     private static final UTM.Hemisphere DEFAULT_HEMISPHERE = UTM.Hemisphere.North;
 
@@ -145,11 +145,6 @@ public class UTMProjectionChoice extends ListProjectionChoice implements Alias {
             return Integer.parseInt(zone) - 1;
         } catch(NumberFormatException e) {}
         return defaultIndex;
-    }
-
-    @Override
-    public String getAlias() {
-        return UTM.class.getName();
     }
 
 }
