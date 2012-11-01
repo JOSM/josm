@@ -6,20 +6,17 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.openstreetmap.josm.data.projection.GaussKrueger;
-import org.openstreetmap.josm.data.projection.Projection;
-
 public class GaussKruegerProjectionChoice extends ListProjectionChoice {
 
     private static String[] zones = { "2", "3", "4", "5" };
 
     public GaussKruegerProjectionChoice() {
-        super("core:gauss-krueger", tr("Gau\u00DF-Kr\u00FCger"), zones, tr("GK Zone"));
+        super(tr("Gau\u00DF-Kr\u00FCger"), "core:gauss-krueger", zones, tr("GK Zone"));
     }
 
     @Override
-    public Projection getProjection() {
-        return new GaussKrueger(index + 2);
+    public String getCurrentCode() {
+        return "EPSG:"+Integer.toString(31466 + index);
     }
 
     @Override
@@ -56,4 +53,9 @@ public class GaussKruegerProjectionChoice extends ListProjectionChoice {
         return null;
     }
     
+    @Override
+    public String getProjectionName() {
+        return tr("Gau\u00DF-Kr\u00FCger Zone {0}", index + 2);
+    }
+
 }

@@ -42,7 +42,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
     private String pref;
 
     public CustomProjectionChoice() {
-        super("core:custom", tr("Custom Projection"));
+        super(tr("Custom Projection"), "core:custom");
     }
 
     private static class PreferencePanel extends JPanel {
@@ -203,6 +203,18 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
     @Override
     public Projection getProjection() {
         return new CustomProjection(pref);
+    }
+
+    @Override
+    public String getCurrentCode() {
+        // not needed - getProjection() is overridden
+        throw new UnsupportedOperationException(); 
+    }
+
+    @Override
+    public String getProjectionName() {
+        // not needed - getProjection() is overridden
+        throw new UnsupportedOperationException();
     }
 
     @Override

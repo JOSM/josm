@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.projection.datum.NullDatum;
 import org.openstreetmap.josm.data.projection.datum.SevenParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.ThreeParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
+import org.openstreetmap.josm.data.projection.proj.Mercator;
 import org.openstreetmap.josm.data.projection.proj.Proj;
 import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.tools.Utils;
@@ -37,6 +38,9 @@ public class CustomProjection extends AbstractProjection {
      * null means fall back mode (Mercator)
      */
     protected String pref;
+    protected String name;
+    protected String code;
+    protected String cacheDir;
     protected Bounds bounds;
 
     protected static enum Param {
@@ -82,12 +86,26 @@ public class CustomProjection extends AbstractProjection {
     }
 
     public CustomProjection() {
-        this.pref = null;
     }
 
     public CustomProjection(String pref) {
+        this(null, null, pref, null);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param name describe projection in one or two words
+     * @param code unique code for this projection - may be null
+     * @param pref the string that defines the custom projection
+     * @param cacheDir cache directory name
+     */
+    public CustomProjection(String name, String code, String pref, String cacheDir) {
+        this.name = name;
+        this.code = code;
+        this.pref = pref;
+        this.cacheDir = cacheDir;
         try {
-            this.pref = pref;
             update(pref);
         } catch (ProjectionConfigurationException ex) {
             try {
@@ -103,7 +121,7 @@ public class CustomProjection extends AbstractProjection {
         if (pref == null) {
             ellps = Ellipsoid.WGS84;
             datum = WGS84Datum.INSTANCE;
-            proj = new org.openstreetmap.josm.data.projection.proj.Mercator();
+            proj = new Mercator();
             bounds = new Bounds(
                     new LatLon(-85.05112877980659, -180.0),
                     new LatLon(85.05112877980659, 180.0), true);
@@ -428,17 +446,22 @@ public class CustomProjection extends AbstractProjection {
 
     @Override
     public Integer getEpsgCode() {
+        if (code != null && code.startsWith("EPSG:")) {
+            try {
+                return Integer.parseInt(code.substring(5));
+            } catch (NumberFormatException e) {}
+        }
         return null;
     }
 
     @Override
     public String toCode() {
-        return "proj:" + (pref == null ? "ERROR" : pref);
+        return code != null ? code : "proj:" + (pref == null ? "ERROR" : pref);
     }
 
     @Override
     public String getCacheDirectoryName() {
-        return "proj-"+Utils.md5Hex(pref == null ? "" : pref).substring(0, 4);
+        return cacheDir != null ? cacheDir : "proj-"+Utils.md5Hex(pref == null ? "" : pref).substring(0, 4);
     }
 
     @Override
@@ -451,6 +474,6 @@ public class CustomProjection extends AbstractProjection {
 
     @Override
     public String toString() {
-        return tr("Custom Projection");
+        return name != null ? name : tr("Custom Projection");
     }
 }

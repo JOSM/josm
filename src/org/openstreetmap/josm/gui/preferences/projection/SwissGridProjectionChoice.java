@@ -9,14 +9,13 @@ import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.data.projection.SwissGrid;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.GBC;
 
 public class SwissGridProjectionChoice extends SingleProjectionChoice {
 
     public SwissGridProjectionChoice() {
-        super("core:swissgrid", tr("Swiss Grid (Switzerland)"), new SwissGrid());
+        super(tr("Swiss Grid (Switzerland)"), "core:swissgrid", "EPSG:21781");
     }
 
     @Override

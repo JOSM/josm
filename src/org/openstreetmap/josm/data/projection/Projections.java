@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.projection.proj.ProjFactory;
 import org.openstreetmap.josm.data.projection.proj.SwissObliqueMercator;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.tools.Pair;
 
 /**
  * Class to handle projections
@@ -46,11 +47,11 @@ public class Projections {
      *
      * should be compatible to PROJ.4
      */
-    public static Map<String, ProjFactory> projs = new HashMap<String, ProjFactory>();
-    public static Map<String, Ellipsoid> ellipsoids = new HashMap<String, Ellipsoid>();
-    public static Map<String, Datum> datums = new HashMap<String, Datum>();
-    public static Map<String, NTV2GridShiftFileWrapper> nadgrids = new HashMap<String, NTV2GridShiftFileWrapper>();
-    public static Map<String, String> inits = new HashMap<String, String>();
+    final public static Map<String, ProjFactory> projs = new HashMap<String, ProjFactory>();
+    final public static Map<String, Ellipsoid> ellipsoids = new HashMap<String, Ellipsoid>();
+    final public static Map<String, Datum> datums = new HashMap<String, Datum>();
+    final public static Map<String, NTV2GridShiftFileWrapper> nadgrids = new HashMap<String, NTV2GridShiftFileWrapper>();
+    final public static Map<String, Pair<String, String>> inits = new HashMap<String, Pair<String, String>>();
 
     static {
         registerBaseProjection("lonlat", LonLat.class, "core");
@@ -108,28 +109,31 @@ public class Projections {
     }
 
     public static String getInit(String id) {
-        return inits.get(id);
+        return inits.get(id.toLowerCase()).b;
     }
 
     /**
      * Load +init "presets" from file
      */
     private static void loadInits() {
-        Pattern epsgPattern = Pattern.compile("\\A<(\\d+)>(.*)<>\\Z");
+        Pattern epsgPattern = Pattern.compile("<(\\d+)>(.*)<>");
         try {
             InputStream in = new MirroredInputStream("resource://data/epsg");
             BufferedReader r = new BufferedReader(new InputStreamReader(in));
-            String line;
+            String line, lastline = "";
             while ((line = r.readLine()) != null) {
                 line = line.trim();
                 if (!line.startsWith("#") && !line.isEmpty()) {
+                    if (!lastline.startsWith("#")) throw new AssertionError();
+                    String name = lastline.substring(1).trim();
                     Matcher m = epsgPattern.matcher(line);
                     if (m.matches()) {
-                        inits.put("epsg:" + m.group(1), m.group(2).trim());
+                        inits.put("epsg:" + m.group(1), Pair.create(name, m.group(2).trim()));
                     } else {
                         System.err.println("Warning: failed to parse line from the epsg projection definition: "+line);
                     }
                 }
+                lastline = line;
             }
         } catch (IOException ex) {
             throw new RuntimeException();

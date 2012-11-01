@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,9 +23,6 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ValidateAction;
-import org.openstreetmap.josm.data.projection.Epsg4326;
-import org.openstreetmap.josm.data.projection.Lambert;
-import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.validation.tests.BuildingInBuilding;
 import org.openstreetmap.josm.data.validation.tests.Coastlines;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays;
@@ -56,6 +54,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 
 /**
  *
@@ -252,11 +251,12 @@ public class OsmValidator implements LayerChangeListener {
      * until most bugs were discovered while keeping the processing time reasonable)
      */
     public void initializeGridDetail() {
-        if (Main.getProjection().toString().equals(new Epsg4326().toString())) {
+        String code = Main.getProjection().toCode();
+        if (Arrays.asList(ProjectionPreference.wgs84.allCodes()).contains(code)) {
             OsmValidator.griddetail = 10000;
-        } else if (Main.getProjection().toString().equals(new Mercator().toString())) {
+        } else if (Arrays.asList(ProjectionPreference.mercator.allCodes()).contains(code)) {
             OsmValidator.griddetail = 0.01;
-        } else if (Main.getProjection().toString().equals(new Lambert().toString())) {
+        } else if (Arrays.asList(ProjectionPreference.lambert.allCodes()).contains(code)) {
             OsmValidator.griddetail = 0.1;
         } else {
             OsmValidator.griddetail = 1.0;

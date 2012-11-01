@@ -10,8 +10,6 @@ import java.util.Collections;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.data.projection.LambertCC9Zones;
-import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -30,7 +28,7 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
     };
 
     public LambertCC9ZonesProjectionChoice() {
-        super("core:lambertcc9", tr("Lambert CC9 Zone (France)"), lambert9zones, tr("Lambert CC Zone"));
+        super(tr("Lambert CC9 Zone (France)"), "core:lambertcc9", lambert9zones, tr("Lambert CC Zone"));
     }
 
     private class LambertCC9CBPanel extends CBPanel {
@@ -47,8 +45,13 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
     }
 
     @Override
-    public Projection getProjection() {
-        return new LambertCC9Zones(index);
+    public String getCurrentCode() {
+        return "EPSG:" + Integer.toString(3942+index); //CC42 is EPSG:3942 (up to EPSG:3950 for CC50)
+    }
+
+    @Override
+    public String getProjectionName() {
+        return tr("Lambert CC9 Zone (France)");
     }
 
     @Override
