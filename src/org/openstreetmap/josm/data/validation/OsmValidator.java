@@ -258,6 +258,8 @@ public class OsmValidator implements LayerChangeListener {
             OsmValidator.griddetail = 0.01;
         } else if (Main.getProjection().toString().equals(new Lambert().toString())) {
             OsmValidator.griddetail = 0.1;
+        } else {
+            OsmValidator.griddetail = 1.0;
         }
     }
 
