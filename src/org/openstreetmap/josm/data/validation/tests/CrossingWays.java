@@ -41,7 +41,7 @@ public class CrossingWays extends Test {
      * Constructor
      */
     public CrossingWays() {
-        super(tr("Crossing ways"),
+        super(tr("Crossing ways."),
                 tr("This test checks if two roads, railways, waterways or buildings crosses in the same layer, but are not connected by a node."));
     }
 
@@ -138,6 +138,8 @@ public class CrossingWays extends Test {
                         String message;
                         if (isBuilding) {
                             message = tr("Crossing buildings");
+                        } else if ((es1.waterway != null && es2.waterway != null)) {
+                            message = tr("Crossing waterways");
                         } else if ((es1.waterway != null && es2.ws.way.get("highway") != null)
                                 || (es2.waterway != null && es1.ws.way.get("highway") != null)) {
                             message = tr("Crossing waterway/highway");

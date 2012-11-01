@@ -171,6 +171,10 @@ public class SessionWriter {
             Element el = exporter.export(support);
             el.setAttribute("index", Integer.toString(index+1));
             el.setAttribute("name", layer.getName());
+            el.setAttribute("visible", Boolean.toString(layer.isVisible()));
+            if (layer.getOpacity() != 1.0) {
+                el.setAttribute("opacity", Double.toString(layer.getOpacity()));
+            }
             Set<Layer> deps = dependencies.get(layer);
             if (deps.size() > 0) {
                 List<Integer> depsInt = new ArrayList<Integer>();

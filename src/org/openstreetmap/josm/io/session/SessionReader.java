@@ -416,11 +416,28 @@ public class SessionReader {
         }
 
         layers = new ArrayList<Layer>();
+        for (int idx : layersMap.keySet()) {
+            Layer layer = layersMap.get(idx);
+            if (layer == null) {
+                continue;
+            }
+            Element el = elems.get(idx);
+            if (el.hasAttribute("visible")) {
+                layer.setVisible(Boolean.parseBoolean(el.getAttribute("visible")));
+            }
+            if (el.hasAttribute("opacity")) {
+                try {
+                    double opacity = Double.parseDouble(el.getAttribute("opacity"));
+                    layer.setOpacity(opacity);
+                } catch (NumberFormatException ex) {}
+            }
+        }
         for (Entry<Integer, Layer> e : layersMap.entrySet()) {
             Layer l = e.getValue();
             if (l == null) {
                 continue;
             }
+
             l.setName(names.get(e.getKey()));
             layers.add(l);
         }
