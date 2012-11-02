@@ -65,7 +65,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private static Map<String, ProjectionChoice> projectionChoicesById = new HashMap<String, ProjectionChoice>();
 
     // some ProjectionChoices that are referenced from other parts of the code
-    public static final ProjectionChoice wgs84, mercator, lambert;
+    public static final ProjectionChoice wgs84, mercator, lambert, utm_france_dom, lambert_cc9;
 
     static {
 
@@ -167,13 +167,13 @@ public class ProjectionPreference implements SubPreferenceSetting {
          * http://professionnels.ign.fr/DISPLAY/000/526/700/5267002/transformation.pdf
          * @author Pieren
          */
-        registerProjectionChoice(new LambertCC9ZonesProjectionChoice());                            // FR
+        registerProjectionChoice(lambert_cc9 = new LambertCC9ZonesProjectionChoice());                            // FR
         /**
          * French departements in the Caribbean Sea and Indian Ocean.
          *
          * Using the UTM transvers Mercator projection and specific geodesic settings.
          */
-        registerProjectionChoice(new UTM_France_DOM_ProjectionChoice());                            // FR
+        registerProjectionChoice(utm_france_dom = new UTM_France_DOM_ProjectionChoice());                            // FR
 
         /**
          * LKS-92/ Latvia TM projection.
