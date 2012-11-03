@@ -10,14 +10,14 @@ import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.projection.Epsg4326;
+import org.openstreetmap.josm.data.projection.Projections;
 
 public class PropertiesMergerTest extends JFrame{
 
     private PropertiesMerger merger;
 
     protected void build() {
-        Main.setProjection(new Epsg4326());
+        Main.setProjection(Projections.getProjectionByCode("EPSG:4326")); // WGS 84
 
         setLayout(new BorderLayout());
         add(merger = new PropertiesMerger(), BorderLayout.CENTER);

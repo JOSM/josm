@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.projection.Mercator;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmReader;
 
@@ -65,14 +65,14 @@ public class QuadBucketsTest {
 
     @Test
     public void testRemove() throws Exception {
-        Main.setProjection(new Mercator());
+        Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
         DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/restriction.osm"), NullProgressMonitor.INSTANCE);
         removeAllTest(ds);
     }
 
     @Test
     public void testMove() throws Exception {
-        Main.setProjection(new Mercator());
+        Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
         DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/restriction.osm"), NullProgressMonitor.INSTANCE);
 
         for (Node n: ds.getNodes()) {

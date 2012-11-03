@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.projection.Mercator;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.I18n;
 
@@ -67,7 +67,7 @@ public class JOSMFixture {
         Main.pref.init(false);
 
         // init projection
-        Main.setProjection(new Mercator());
+        Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
 
         // make sure we don't upload to or test against production
         //

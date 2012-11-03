@@ -20,7 +20,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.projection.Epsg4326;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.conflict.pair.properties.PropertiesMergeModel;
 
@@ -46,7 +46,7 @@ public class PropertiesMergeModelTest {
 
     @BeforeClass
     public static void init() {
-        Main.setProjection(new Epsg4326());
+        Main.setProjection(Projections.getProjectionByCode("EPSG:4326"));
         Main.pref = new Preferences();
     }
 

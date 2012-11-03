@@ -11,7 +11,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
-import org.openstreetmap.josm.data.projection.Mercator;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -31,7 +31,7 @@ public class MapPaintVisitorPerformanceTest {
 
     @BeforeClass
     public static void load() throws Exception {
-        Main.setProjection(new Mercator());
+        Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
         img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
         g = (Graphics2D)img.getGraphics();
         nc = new NavigatableComponent();

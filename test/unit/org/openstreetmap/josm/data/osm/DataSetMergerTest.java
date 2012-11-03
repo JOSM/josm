@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.projection.Mercator;
+import org.openstreetmap.josm.data.projection.Projections;
 
 public class DataSetMergerTest {
     /*private static Logger logger = Logger.getLogger(DataSetMergerTest.class.getName());
@@ -75,7 +75,7 @@ public class DataSetMergerTest {
         my.setVersion("0.6");
         their = new DataSet();
         their.setVersion("0.6");
-        Main.setProjection(new Mercator());
+        Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
     }
 
     private void runConsistencyTests(DataSet ds) throws Exception {

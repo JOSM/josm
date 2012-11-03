@@ -22,43 +22,35 @@ public class ProjectionTest {
         error = false;
         text = "";
 
-        testProj(new Epsg4326());
-        testProj(new Mercator());
+        testProj(Projections.getProjectionByCode("EPSG:4326")); // WGS 84
+        testProj(Projections.getProjectionByCode("EPSG:3857")); // Mercator
         if (!"yes".equals(System.getProperty("suppressPermanentFailure"))) {
-            testProj(new LambertEST());
+            testProj(Projections.getProjectionByCode("EPSG:3301")); // Lambert EST
         }
 
         for (int i=0; i<=3; ++i) {
-            testProj(new Lambert(i));
+            testProj(Projections.getProjectionByCode("EPSG:"+Integer.toString(27561+i))); // Lambert 4 Zones France
         }
 
         for (int i=0; i<=4; ++i) {
-            testProj(new Puwg(i));
+            testProj(Projections.getProjectionByCode("EPSG:"+Integer.toString(2176+i))); // PUWG Poland
         }
 
-        testProj(new SwissGrid());
+        testProj(Projections.getProjectionByCode("EPSG:21781")); // Swiss grid
 
-        for (int i=0; i<=6; ++i) {
-            int zone;
-            if (i==0) {
-                zone = 1;
-            } else if (i==6) {
-                zone = 60;
-            } else {
-                zone = rand.nextInt(60) + 1;
-            }
-            UTM.Hemisphere hem = rand.nextBoolean() ? UTM.Hemisphere.North : UTM.Hemisphere.South;
-            testProj(new UTM(zone, hem));
+        for (int i=0; i<=60; ++i) {
+            testProj(Projections.getProjectionByCode("EPSG:"+Integer.toString(32601+i))); // UTM North
+            testProj(Projections.getProjectionByCode("EPSG:"+Integer.toString(32701+i))); // UTM South
         }
 
         if (!"yes".equals(System.getProperty("suppressPermanentFailure"))) {
             for (int i=0; i<=4; ++i) {
-                testProj(new UTM_France_DOM(i));
+                testProj(Projections.getProjectionByCode("EPSG:"+Integer.toString(2969+i))); // UTM France DOM
             }
         }
 
         for (int i=0; i<=8; ++i) {
-            testProj(new LambertCC9Zones(i));
+            testProj(Projections.getProjectionByCode("EPSG:"+Integer.toString(3942+i))); // Lambert CC9 Zones France
         }
 
         if (error) {
@@ -68,31 +60,32 @@ public class ProjectionTest {
     }
 
     private void testProj(Projection p) {
-        double maxErrLat = 0, maxErrLon = 0;
-
-        Bounds b = p.getWorldBoundsLatLon();
-
-        text += String.format("*** %s %s\n", p.toString(), p.toCode());
-        for (int num=0; num < 1000; ++num) {
-
-            double lat = rand.nextDouble() * (b.getMax().lat() - b.getMin().lat()) + b.getMin().lat();
-            double lon = rand.nextDouble() * (b.getMax().lon() - b.getMin().lon()) + b.getMin().lon();
-
-            LatLon ll = new LatLon(lat, lon);
-
-            for (int i=0; i<10; ++i) {
-                EastNorth en = p.latlon2eastNorth(ll);
-                ll = p.eastNorth2latlon(en);
+        if (p != null) {
+            double maxErrLat = 0, maxErrLon = 0;
+            Bounds b = p.getWorldBoundsLatLon();
+    
+            text += String.format("*** %s %s\n", p.toString(), p.toCode());
+            for (int num=0; num < 1000; ++num) {
+    
+                double lat = rand.nextDouble() * (b.getMax().lat() - b.getMin().lat()) + b.getMin().lat();
+                double lon = rand.nextDouble() * (b.getMax().lon() - b.getMin().lon()) + b.getMin().lon();
+    
+                LatLon ll = new LatLon(lat, lon);
+    
+                for (int i=0; i<10; ++i) {
+                    EastNorth en = p.latlon2eastNorth(ll);
+                    ll = p.eastNorth2latlon(en);
+                }
+                maxErrLat = Math.max(maxErrLat, Math.abs(lat - ll.lat()));
+                maxErrLon = Math.max(maxErrLon, Math.abs(lon - ll.lon()));
             }
-            maxErrLat = Math.max(maxErrLat, Math.abs(lat - ll.lat()));
-            maxErrLon = Math.max(maxErrLon, Math.abs(lon - ll.lon()));
+    
+            String mark = "";
+            if (maxErrLat + maxErrLon > 1e-5) {
+                mark = "--FAILED-- ";
+                error = true;
+            }
+            text += String.format("%s errorLat: %s errorLon: %s\n", mark, maxErrLat, maxErrLon);
         }
-
-        String mark = "";
-        if (maxErrLat + maxErrLon > 1e-5) {
-            mark = "--FAILED-- ";
-            error = true;
-        }
-        text += String.format("%s errorLat: %s errorLon: %s\n", mark, maxErrLat, maxErrLon);
     }
 }
