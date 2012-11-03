@@ -613,6 +613,11 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="vehicle/restriction/stop.png"/>
 	</rule>
 
+    <rule>
+        <condition k="highway" v="give_way"/>
+        <icon annotate="true" src="vehicle/restriction/right_of_way.png"/>
+    </rule>
+
 	<rule>
 		<condition k="highway" v="traffic_signals"/>
 		<icon annotate="true" src="vehicle/restriction/traffic-light.png"/>
