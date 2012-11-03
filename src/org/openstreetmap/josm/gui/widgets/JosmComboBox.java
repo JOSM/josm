@@ -1,7 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Vector;
 
 import javax.accessibility.Accessible;
@@ -69,7 +74,11 @@ public class JosmComboBox extends JComboBox {
      */
     public JosmComboBox(ComboBoxModel aModel) {
         super(aModel);
-        init(aModel != null && aModel.getSize() > 0 ? aModel.getElementAt(0) : null);
+        ArrayList<Object> list = new ArrayList<Object>(aModel.getSize());
+        for (int i = 0; i<aModel.getSize(); i++) {
+            list.add(aModel.getElementAt(i));
+        }
+        init(findPrototypeDisplayValue(list));
     }
 
     /** 
@@ -82,7 +91,7 @@ public class JosmComboBox extends JComboBox {
      */
     public JosmComboBox(Object[] items) {
         super(items);
-        init(items != null && items.length > 0 ? items[0] : null);
+        init(findPrototypeDisplayValue(Arrays.asList(items)));
     }
 
     /**
@@ -95,7 +104,63 @@ public class JosmComboBox extends JComboBox {
      */
     public JosmComboBox(Vector<?> items) {
         super(items);
-        init(items != null && !items.isEmpty() ? items.get(0) : null);
+        init(findPrototypeDisplayValue(items));
+    }
+    
+    /**
+     * Finds the prototype display value to use among the given possible candidates.
+     * @param possibleValues The possible candidates that will be iterated.
+     * @return The value that needs the largest display height on screen.
+     * @since 5558
+     */
+    protected Object findPrototypeDisplayValue(Collection<?> possibleValues) {
+        Object result = null;
+        int maxHeight = -1;
+        if (possibleValues != null) {
+            // Remind old prototype to restore it later
+            Object oldPrototype = getPrototypeDisplayValue();
+            // Get internal JList to directly call the renderer 
+            JList list = getList();
+            try {
+                // Index to give to renderer
+                int i = 0;
+                for (Object value : possibleValues) {
+                    if (value != null) {
+                        // These two lines work with a "classic" renderer, 
+                        // but not with TaggingPreset custom renderer that return a dummy height if index is equal to -1
+                        //setPrototypeDisplayValue(value);
+                        //Dimension dim = getPreferredSize();
+                        
+                        // So we explicitely call the renderer by simulating a correct index for the current value
+                        Component c = getRenderer().getListCellRendererComponent(list, value, i, true, true);
+                        if (c != null) {
+                            // Get the real preferred size for the current value
+                            Dimension dim = c.getPreferredSize();
+                            if (dim.height > maxHeight) {
+                                // Larger ? This is our new prototype
+                                maxHeight = dim.height;
+                                result = value;
+                            }
+                        }
+                    }
+                    i++;
+                }
+            } finally {
+                // Restore original prototype
+                setPrototypeDisplayValue(oldPrototype);
+            }
+        }
+        return result;
+    }
+    
+    protected final JList getList() {
+        for (int i = 0; i < getUI().getAccessibleChildrenCount(this); i++) {
+            Accessible child = getUI().getAccessibleChild(this, i);
+            if (child instanceof ComboPopup) {
+                return ((ComboPopup)child).getList();
+            }
+        }
+        return null;
     }
     
     protected void init(Object prototype) {
@@ -107,23 +172,26 @@ public class JosmComboBox extends JComboBox {
             int maxsize = (screenHeight/getPreferredSize().height) / 2;
             // If possible, adjust the maximum number of items with the real height of items
             // It is not granted this works on every platform (tested OK on Windows)
-            for (int i = 0; i < getUI().getAccessibleChildrenCount(this); i++) {
-                Accessible child = getUI().getAccessibleChild(this, i);
-                if (child instanceof ComboPopup) {
-                    JList list = ((ComboPopup)child).getList();
-                    if (list != null) {
-                        if (list.getPrototypeCellValue() != prototype) {
-                            list.setPrototypeCellValue(prototype);
-                        }
-                        int height = list.getFixedCellHeight();
-                        if (height > 0) {
-                            maxsize = (screenHeight/height) / 2;
-                        }
-                    }
-                    break;
+            JList list = getList();
+            if (list != null) {
+                if (list.getPrototypeCellValue() != prototype) {
+                    list.setPrototypeCellValue(prototype);
+                }
+                int height = list.getFixedCellHeight();
+                if (height > 0) {
+                    maxsize = (screenHeight/height) / 2;
                 }
             }
             setMaximumRowCount(Math.max(getMaximumRowCount(), maxsize));
         }
+    }
+    
+    /**
+     * Reinitializes this {@link JosmComboBox} to the specified values. This may needed if a custom renderer is used.
+     * @param values The values displayed in the combo box.
+     * @since 5558
+     */
+    public final void reinitialize(Collection<?> values) {
+        init(findPrototypeDisplayValue(values));
     }
 }

@@ -756,7 +756,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     boolean isSelected,
                     boolean cellHasFocus) {
                 PresetListEntry item = (PresetListEntry) value;
-
+                
                 // Only return cached size, item is not shown
                 if (!list.isShowing() && item.prefferedWidth != -1 && item.prefferedHeight != -1) {
                     if (index == -1) {
@@ -835,7 +835,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             component = combo;
             combo.setRenderer(getListCellRenderer());
             combo.setEditable(editable);
-            //combo.setMaximumRowCount(13);
+            combo.reinitialize(lhm.values());
             AutoCompletingTextField tf = new AutoCompletingTextField();
             initAutoCompletionField(tf, key);
             AutoCompletionList acList = tf.getAutoCompletionList();
