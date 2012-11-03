@@ -377,12 +377,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if (e.getButton() == MouseEvent.BUTTON3) {
             Point curMousePos = e.getPoint();
             if (curMousePos.equals(rightClickPressPos)) {
-                WaySegment seg = Main.map.mapView.getNearestWaySegment(curMousePos, OsmPrimitive.isSelectablePredicate);
-                if (seg!=null) {
-                    snapHelper.setBaseSegment(seg);
-                    computeHelperLine();
-                    redrawIfRequired();
-                }
+                tryToSetBaseSegmentForAngleSnap();
             }
             return;
         }
@@ -755,9 +750,21 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // if that can ever happen but better be safe.
         updateKeyModifiers(e);
         mousePos = e.getPoint();
-
+        if (snapHelper.isSnapOn() && ctrl) 
+            tryToSetBaseSegmentForAngleSnap();
+         
         computeHelperLine();
         addHighlighting();
+    }
+    
+    /**
+     * This method is used to detect segment under mouse and use it as reference for angle snapping
+     */
+    private void tryToSetBaseSegmentForAngleSnap() {
+        WaySegment seg = Main.map.mapView.getNearestWaySegment(mousePos, OsmPrimitive.isSelectablePredicate);
+        if (seg!=null) {
+            snapHelper.setBaseSegment(seg);
+        }
     }
 
     /**
