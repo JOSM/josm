@@ -170,7 +170,7 @@ public class ProjectionRegressionTest {
         }
 
         for (TestData data : allData) {
-            Projection proj = ProjectionInfo.getProjectionByCode(data.code);
+            Projection proj = Projections.getProjectionByCode(data.code);
             if (proj == null) {
                 fail.append("Projection "+data.code+" from test data was not found!\n");
                 continue;
