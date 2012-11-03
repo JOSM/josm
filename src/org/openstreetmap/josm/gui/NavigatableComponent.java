@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -132,8 +131,24 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return Main.getProjection().latlon2eastNorth(new LatLon(lat, lon));
     }
 
+    /**
+     * Returns the text describing the given distance in the current system of measurement.
+     * @param dist The distance in metres.
+     * @return the text describing the given distance in the current system of measurement.
+     * @since 3406
+     */
     public static String getDistText(double dist) {
         return getSystemOfMeasurement().getDistText(dist);
+    }
+
+    /**
+     * Returns the text describing the given area in the current system of measurement.
+     * @param area The distance in square metres.
+     * @return the text describing the given area in the current system of measurement.
+     * @since 5560
+     */
+    public static String getAreaText(double area) {
+        return getSystemOfMeasurement().getAreaText(area);
     }
 
     public String getDist100PixelText()
@@ -1170,6 +1185,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return (int)id.getValue();
     }
 
+    /**
+     * Returns the current system of measurement.
+     * @return The current system of measurement (metric system by default).
+     * @since 3490
+     */
     public static SystemOfMeasurement getSystemOfMeasurement() {
         SystemOfMeasurement som = SYSTEMS_OF_MEASUREMENT.get(ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get());
         if (som == null)
@@ -1177,6 +1197,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return som;
     }
 
+    /**
+     * A system of units used to express length and area measurements.
+     * @since 3406
+     */
     public static class SystemOfMeasurement {
         public final double aValue;
         public final double bValue;
@@ -1184,7 +1208,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         public final String bName;
 
         /**
-         * System of measurement. Currently covers only length units.
+         * System of measurement. Currently covers only length (and area) units.
          *
          * If a quantity x is given in m (x_m) and in unit a (x_a) then it translates as
          * x_a == x_m / aValue
@@ -1196,6 +1220,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
             this.bName = bName;
         }
 
+        /**
+         * Returns the text describing the given distance in this system of measurement.
+         * @param dist The distance in metres
+         * @return The text describing the given distance in this system of measurement.
+         */
         public String getDistText(double dist) {
             double a = dist / aValue;
             if (!Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false) && a > bValue / aValue) {
@@ -1206,13 +1235,46 @@ public class NavigatableComponent extends JComponent implements Helpful {
             else
                 return String.format(Locale.US, "%." + (a<10 ? 2 : 1) + "f %s", a, aName);
         }
+
+        /**
+         * Returns the text describing the given area in this system of measurement.
+         * @param area The area in square metres
+         * @return The text describing the given area in this system of measurement.
+         * @since 5560
+         */
+        public String getAreaText(double area) {
+            return getDistText(area)+"\u00b2"; // square
+        }
     }
 
+    /**
+     * Metric system (international standard).
+     * @since 3406
+     */
     public static final SystemOfMeasurement METRIC_SOM = new SystemOfMeasurement(1, "m", 1000, "km");
+    
+    /**
+     * Chinese system.
+     * @since 3406
+     */
     public static final SystemOfMeasurement CHINESE_SOM = new SystemOfMeasurement(1.0/3.0, "\u5e02\u5c3a" /* chi */, 500, "\u5e02\u91cc" /* li */);
+    
+    /**
+     * Imperial system (British Commonwealth and former British Empire).
+     * @since 3406
+     */
     public static final SystemOfMeasurement IMPERIAL_SOM = new SystemOfMeasurement(0.3048, "ft", 1609.344, "mi");
+    
+    /**
+     * Nautical mile system (navigation, polar exploration).
+     * @since 5549
+     */
     public static final SystemOfMeasurement NAUTICAL_MILE_SOM = new SystemOfMeasurement(185.2, "kbl", 1852, "NM");
 
+    /**
+     * Known systems of measurement.
+     * @since 3406
+     */
     public static final Map<String, SystemOfMeasurement> SYSTEMS_OF_MEASUREMENT;
     static {
         SYSTEMS_OF_MEASUREMENT = new LinkedHashMap<String, SystemOfMeasurement>();
