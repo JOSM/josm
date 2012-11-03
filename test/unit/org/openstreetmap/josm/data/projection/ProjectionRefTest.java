@@ -64,7 +64,7 @@ public class ProjectionRefTest {
             double lon = Double.parseDouble(f[2]);
             double east = Double.parseDouble(f[3]);
             double north = Double.parseDouble(f[4]);
-            Projection p = ProjectionInfo.getProjectionByCode(code);
+            Projection p = Projections.getProjectionByCode(code);
             {
                 EastNorth en = p.latlon2eastNorth(new LatLon(lat, lon));
                 String error = String.format("%s (%s): Projecting latlon(%s,%s):\n" +

@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -23,6 +24,8 @@ import org.openstreetmap.josm.data.projection.proj.Proj;
 import org.openstreetmap.josm.data.projection.proj.ProjFactory;
 import org.openstreetmap.josm.data.projection.proj.SwissObliqueMercator;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.Pair;
 
@@ -139,4 +142,30 @@ public class Projections {
             throw new RuntimeException();
         }
     }
+
+    private final static Map<String, ProjectionChoice> allCodesPC = new HashMap<String, ProjectionChoice>();
+    private final static Map<String, Projection> allCodes = new HashMap<String, Projection>();
+
+    static {
+        // FIXME: use {@link #inits}, because it may contain more codes in future
+        // than exposed by the ProjectionChoices
+        for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
+            for (String code : pc.allCodes()) {
+                allCodesPC.put(code, pc);
+            }
+        }
+    }
+
+    public static Projection getProjectionByCode(String code) {
+        Projection p = allCodes.get(code);
+        if (p != null) return p;
+        ProjectionChoice pc = allCodesPC.get(code);
+        if (pc == null) return null;
+        Collection<String> pref = pc.getPreferencesFromCode(code);
+        pc.setPreferences(pref);
+        p = pc.getProjection();
+        allCodes.put(code, p);
+        return p;
+    }
+
 }
