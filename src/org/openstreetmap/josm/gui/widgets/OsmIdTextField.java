@@ -13,7 +13,6 @@ import javax.swing.text.JTextComponent;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * @author Matthias Julius
@@ -103,12 +102,15 @@ public class OsmIdTextField extends JTextField {
                         ids.add(SimplePrimitiveId.fromString(s));
                     } catch (IllegalArgumentException ex) {
                         try {
-                            if (type == OsmPrimitiveType.NODE) {
-                                ids.add(new SimplePrimitiveId(Long.parseLong(s), OsmPrimitiveType.NODE));
+                            long id = Long.parseLong(s);
+                            if (id <= 0) {
+                                return false;
+                            } else if (type == OsmPrimitiveType.NODE) {
+                                ids.add(new SimplePrimitiveId(id, OsmPrimitiveType.NODE));
                             } else if (type == OsmPrimitiveType.WAY) {
-                                ids.add(new SimplePrimitiveId(Long.parseLong(s), OsmPrimitiveType.WAY));
+                                ids.add(new SimplePrimitiveId(id, OsmPrimitiveType.WAY));
                             } else if (type == OsmPrimitiveType.RELATION) {
-                                ids.add(new SimplePrimitiveId(Long.parseLong(s), OsmPrimitiveType.RELATION));
+                                ids.add(new SimplePrimitiveId(id, OsmPrimitiveType.RELATION));
                             } else {
                                 return false;
                             }
