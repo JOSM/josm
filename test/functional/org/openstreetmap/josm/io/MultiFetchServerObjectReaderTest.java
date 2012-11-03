@@ -30,7 +30,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.projection.Mercator;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.io.UploadStrategy;
 import org.openstreetmap.josm.gui.io.UploadStrategySpecification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -175,7 +175,7 @@ public class MultiFetchServerObjectReaderTest {
         // don't use atomic upload, the test API server can't cope with large diff uploads
         //
         Main.pref.put("osm-server.atomic-upload", false);
-        Main.setProjection(new Mercator());
+        Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
 
         File dataSetCacheOutputFile = new File(tempOutputDir, MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
 

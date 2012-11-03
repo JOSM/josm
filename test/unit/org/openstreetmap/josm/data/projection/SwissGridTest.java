@@ -14,7 +14,7 @@ public class SwissGridTest {
 
     @BeforeClass
     public static void setUp() {
-        Main.setProjection(new SwissGrid());
+        Main.setProjection(Projections.getProjectionByCode("EPSG:21781")); // Swiss grid
     }
 
     /**
@@ -46,7 +46,7 @@ public class SwissGridTest {
 
     @Test
     public void projReferenceTest() {
-        Projection swiss = new SwissGrid();
+        Projection swiss = Projections.getProjectionByCode("EPSG:21781"); // Swiss grid
         String errs = "";
         for (ProjData pd : data) {
             EastNorth en2 = swiss.latlon2eastNorth(pd.ll);
