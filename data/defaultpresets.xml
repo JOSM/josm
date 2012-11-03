@@ -1037,6 +1037,9 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Stop" icon="presets/Stop.png" type="node">
             <key key="highway" value="stop" />
         </item>
+        <item name="Give way" icon="styles/standard/vehicle/restriction/right_of_way.png" type="node">
+            <key key="highway" value="give_way" />
+        </item>
         <item name="Mini-roundabout" icon="presets/roundabout_left.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=mini_roundabout"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=mini_roundabout"
