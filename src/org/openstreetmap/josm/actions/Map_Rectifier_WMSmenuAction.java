@@ -38,12 +38,13 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
         private final Pattern urlRegEx;
         private final Pattern idValidator;
         public JRadioButton btn;
+        
         /**
-         * @param name: Name of the rectifing service
-         * @param url: URL to the service where users can register, upload, etc.
-         * @param wmsUrl: URL to the WMS server where JOSM will grab the images. Insert __s__ where the ID should be placed
-         * @param urlRegEx: a regular expression that determines if a given URL is one of the service and returns the WMS id if so
-         * @param idValidator: regular expression that checks if a given ID is syntactically valid
+         * @param name Name of the rectifing service
+         * @param url URL to the service where users can register, upload, etc.
+         * @param wmsUrl URL to the WMS server where JOSM will grab the images. Insert __s__ where the ID should be placed
+         * @param urlRegEx a regular expression that determines if a given URL is one of the service and returns the WMS id if so
+         * @param idValidator regular expression that checks if a given ID is syntactically valid
          */
         public RectifierService(String name, String url, String wmsUrl, String urlRegEx, String idValidator) {
             this.name = name;
@@ -85,12 +86,9 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
                 "^[0-9]+$")
         );
         services.add(
-                // TODO: Change all links to mapwarper.net once the project has moved.
-                // The RegEx already matches the new URL and old URLs will be forwarded
-                // to make the transition as smooth as possible for the users
-                new RectifierService("Geothings Map Warper",
-                        "http://warper.geothings.net/",
-                        "http://warper.geothings.net/maps/wms/__s__?request=GetMap&version=1.1.1"
+                new RectifierService("Map Warper",
+                        "http://mapwarper.net/",
+                        "http://mapwarper.net/maps/wms/__s__?request=GetMap&version=1.1.1"
                         + "&styles=&format=image/png&srs=epsg:4326&exceptions=application/vnd.ogc.se_inimage&",
                         // This matches more than the "classic" WMS link, so users can pretty much
                         // copy any link as long as it includes the ID
@@ -214,8 +212,8 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
 
     /**
      * Adds a WMS Layer with given title and URL
-     * @param title: Name of the layer as it will shop up in the layer manager
-     * @param url: URL to the WMS server
+     * @param title Name of the layer as it will shop up in the layer manager
+     * @param url URL to the WMS server
      */
     private void addWMSLayer(String title, String url) {
         Main.main.addLayer(new WMSLayer(new ImageryInfo(title, url)));
