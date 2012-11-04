@@ -17,6 +17,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -198,6 +200,12 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     @Override public void mergeFrom(Layer from) {
         MarkerLayer layer = (MarkerLayer)from;
         data.addAll(layer.data);
+        Collections.sort(data, new Comparator<Marker>() {
+            @Override
+            public int compare(Marker o1, Marker o2) {
+                return Double.compare(o1.time, o2.time);
+            }
+        });
     }
 
     @Override public boolean isMergable(Layer other) {
