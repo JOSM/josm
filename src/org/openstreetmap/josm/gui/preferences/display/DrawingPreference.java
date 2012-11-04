@@ -44,6 +44,7 @@ public class DrawingPreference implements SubPreferenceSetting {
     private JCheckBox useHighlighting = new JCheckBox(tr("Highlight target ways and nodes"));
     private JCheckBox drawHelperLine = new JCheckBox(tr("Draw rubber-band helper line"));
     private JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
+    private JCheckBox useWireframeAntialiasing = new JCheckBox(tr("Smooth map graphics in wireframe mode (antialiasing)"));
     private JCheckBox outlineOnly = new JCheckBox(tr("Draw only outlines of areas"));
 
     public void addGui(PreferenceTabbedPane gui) {
@@ -108,6 +109,10 @@ public class DrawingPreference implements SubPreferenceSetting {
         useAntialiasing.setToolTipText(tr("Apply antialiasing to the map view resulting in a smoother appearance."));
         useAntialiasing.setSelected(Main.pref.getBoolean("mappaint.use-antialiasing", true));
 
+        // wireframe mode antialiasing
+        useWireframeAntialiasing.setToolTipText(tr("Apply antialiasing to the map view in wireframe mode resulting in a smoother appearance."));
+        useWireframeAntialiasing.setSelected(Main.pref.getBoolean("mappaint.wireframe.use-antialiasing", false));
+
         // highlighting
         useHighlighting.setToolTipText(tr("Hightlight target nodes and ways while drawing or selecting"));
         useHighlighting.setSelected(Main.pref.getBoolean("draw.target-highlight", true));
@@ -123,11 +128,13 @@ public class DrawingPreference implements SubPreferenceSetting {
         JLabel performanceLabel = new JLabel(tr("Options that affect drawing performance"));
         panel.add(performanceLabel, GBC.eop().insets(5,10,0,0));
         panel.add(useAntialiasing, GBC.eop().insets(20,5,0,0));
+        panel.add(useWireframeAntialiasing, GBC.eop().insets(20, 0, 0, 0));
         panel.add(useHighlighting, GBC.eop().insets(20,0,0,0));
         panel.add(outlineOnly, GBC.eol().insets(20,0,0,5));
 
         ExpertToggleAction.addVisibilitySwitcher(performanceLabel);
         ExpertToggleAction.addVisibilitySwitcher(useAntialiasing);
+        ExpertToggleAction.addVisibilitySwitcher(useWireframeAntialiasing);
         ExpertToggleAction.addVisibilitySwitcher(useHighlighting);
         ExpertToggleAction.addVisibilitySwitcher(outlineOnly);
 
@@ -147,6 +154,7 @@ public class DrawingPreference implements SubPreferenceSetting {
         Main.pref.put("draw.data.downloaded_area", sourceBounds.isSelected());
         Main.pref.put("draw.data.inactive_color", inactive.isSelected());
         Main.pref.put("mappaint.use-antialiasing", useAntialiasing.isSelected());
+        Main.pref.put("mappaint.wireframe.use-antialiasing", useWireframeAntialiasing.isSelected());
         Main.pref.put("draw.target-highlight", useHighlighting.isSelected());
         Main.pref.put("draw.helper-line", drawHelperLine.isSelected());
         int vn = Main.pref.getInteger("mappaint.node.virtual-size", 8);

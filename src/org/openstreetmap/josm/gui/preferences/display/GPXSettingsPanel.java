@@ -67,6 +67,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private JTextField waypointLabelPattern = new JTextField();
     private JosmComboBox audioWaypointLabel = new JosmComboBox(LABEL_PATTERN_DESC);
     private JTextField audioWaypointLabelPattern = new JTextField();
+    private JCheckBox useGpsAntialiasing = new JCheckBox(tr("Smooth GPX graphics (antialiasing)"));
 
     private String layerName;
     private boolean local; // flag to display LocalOnly checkbox
@@ -196,6 +197,11 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         add(new JLabel(tr("Drawing width of GPX lines")), GBC.std().insets(20,0,0,0));
         add(drawLineWidth, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 
+        // antialiasing
+        useGpsAntialiasing.setToolTipText(tr("Apply antialiasing to the GPX lines resulting in a smoother appearance."));
+        add(useGpsAntialiasing, GBC.eop().insets(20, 0, 0, 0));
+        ExpertToggleAction.addVisibilitySwitcher(useGpsAntialiasing);
+
         // colorTracks
         colorGroup = new ButtonGroup();
         if (layerName!=null) {
@@ -320,6 +326,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         drawGpsArrowsMinDist.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.min-arrow-distance",layerName, 40)));
         hdopCircleGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.hdopcircle",layerName, false));
         largeGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.large",layerName, false));
+        useGpsAntialiasing.setSelected(Main.pref.getBoolean("mappaint.gpx.use-antialiasing", false));
         drawRawGpsLinesActionListener.actionPerformed(null);
 
         if(layerName!=null && Main.pref.get("draw.rawgps.colors."+layerName).isEmpty()) {
@@ -380,6 +387,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         Main.pref.put("draw.rawgps.hdopcircle"+layerNameDot, hdopCircleGpsPoints.isSelected());
         Main.pref.put("draw.rawgps.large"+layerNameDot, largeGpsPoints.isSelected());
         Main.pref.put("draw.rawgps.linewidth"+layerNameDot, drawLineWidth.getText());
+        Main.pref.put("mappaint.gpx.use-antialiasing", useGpsAntialiasing.isSelected());
 
         TemplateEntryProperty.forMarker(layerName).put(waypointLabelPattern.getText());
         TemplateEntryProperty.forAudioMarker(layerName).put(audioWaypointLabelPattern.getText());
