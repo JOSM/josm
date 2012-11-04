@@ -1243,7 +1243,14 @@ public class NavigatableComponent extends JComponent implements Helpful {
          * @since 5560
          */
         public String getAreaText(double area) {
-            return getDistText(area)+"\u00b2"; // square
+            double a = area / (aValue*aValue);
+            if (!Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false) && a > bValue / aValue) {
+                double b = area / (bValue*bValue);
+                return String.format(Locale.US, "%." + (b<10 ? 2 : 1) + "f %s", b, bName+"\u00b2");
+            } else if (a < 0.01)
+                return "< 0.01 " + aName;
+            else
+                return String.format(Locale.US, "%." + (a<10 ? 2 : 1) + "f %s", a, aName+"\u00b2");
         }
     }
 

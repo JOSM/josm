@@ -21,7 +21,7 @@ import org.openstreetmap.josm.io.FileImporter;
  * filters used in JOSM.
  * @since 32
  */
-public class ExtensionFileFilter extends FileFilter {
+public class ExtensionFileFilter extends FileFilter implements java.io.FileFilter {
 
     /**
      * List of supported formats for import.
