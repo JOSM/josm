@@ -861,7 +861,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             } else if (usage.unused()) {
                 // all items were unset (and so is default)
                 originalValue = lhm.get("");
-                combo.setSelectedItem(originalValue);
+                if ("force".equals(use_last_as_default) && lastValue.containsKey(key)) {
+                    combo.setSelectedItem(lhm.get(lastValue.get(key)));
+                } else {
+                    combo.setSelectedItem(originalValue);
+                }
             } else {
                 originalValue = lhm.get(DIFFERENT);
                 combo.setSelectedItem(originalValue);
@@ -1222,7 +1226,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public List<Item> data = new LinkedList<Item>();
     public TemplateEntry nameTemplate;
     public Match nameTemplateFilter;
-    private static HashMap<String,String> lastValue = new HashMap<String,String>();
+    private static final HashMap<String,String> lastValue = new HashMap<String,String>();
 
     /**
      * Create an empty tagging preset. This will not have any items and
