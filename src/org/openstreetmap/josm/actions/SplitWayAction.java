@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -188,6 +189,29 @@ public class SplitWayAction extends JosmAction {
     private List<Way> getApplicableWays(List<Way> selectedWays, List<Node> selectedNodes) {
         if (selectedNodes.isEmpty())
             return null;
+
+        // Special case - one of the selected ways touches (not cross) way that we want to split
+        if (selectedNodes.size() == 1) {
+            Node n = selectedNodes.get(0);
+            List<Way> referedWays = OsmPrimitive.getFilteredList(n.getReferrers(), Way.class);
+            Way inTheMiddle = null;
+            boolean foundSelected = false;
+            for (Way w: referedWays) {
+                if (selectedWays.contains(w)) {
+                    foundSelected = true;
+                }
+                if (w.getNode(0) != n && w.getNode(w.getNodesCount() - 1) != n) {
+                    if (inTheMiddle == null) {
+                        inTheMiddle = w;
+                    } else {
+                        inTheMiddle = null;
+                        break;
+                    }
+                }
+            }
+            if (foundSelected && inTheMiddle != null)
+                return Collections.singletonList(inTheMiddle);
+        }
 
         // List of ways shared by all nodes
         List<Way> result = new ArrayList<Way>(OsmPrimitive.getFilteredList(selectedNodes.get(0).getReferrers(), Way.class));
@@ -486,11 +510,11 @@ public class SplitWayAction extends JosmAction {
                 new SequenceCommand(
                         tr("Split way {0} into {1} parts", way.getDisplayName(DefaultNameFormatter.getInstance()),wayChunks.size()),
                         commandList
-                ),
-                newSelection,
-                way,
-                newWays
-        );
+                        ),
+                        newSelection,
+                        way,
+                        newWays
+                );
     }
 
     /**
