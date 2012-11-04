@@ -134,7 +134,7 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
             group.add(serviceBtn);
             if(!s.url.equals("")) {
                 panel.add(serviceBtn, GBC.std());
-                panel.add(new UrlLabel(s.url, tr("Visit Homepage")), GBC.eol().anchor(GridBagConstraints.EAST), 2);
+                panel.add(new UrlLabel(s.url, tr("Visit Homepage")), GBC.eol().anchor(GridBagConstraints.EAST));
             } else {
                 panel.add(serviceBtn, GBC.eol().anchor(GridBagConstraints.WEST));
             }
