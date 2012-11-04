@@ -34,8 +34,13 @@ public class TigerUtils {
     public static String combineTags(String name, Set<String> values) {
         TreeSet<Object> resultSet = new TreeSet<Object>();
         for (String value: values) {
-            for (String part: value.split(":")) {
+            String[] parts = value.split(":");
+            for (String part: parts) {
                resultSet.add(tagObj(part));
+            }
+            // Do not produce useless changeset noise if a single value is used and does not contain redundant splitted parts (fix #7405)
+            if (values.size() == 1 && resultSet.size() == parts.length) {
+                return value;
             }
         }
         String combined = "";
