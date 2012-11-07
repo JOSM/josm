@@ -10,7 +10,7 @@ import java.util.Map;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
-import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
+import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.RelativeFloat;
 
 abstract public class ElemStyle implements StyleKeys {
@@ -43,7 +43,7 @@ abstract public class ElemStyle implements StyleKeys {
      * @param selected true, if primitive is selected
      * @param member true, if primitive is not selected and member of a selected relation
      */
-    public abstract void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, MapPainter painter, boolean selected, boolean member);
+    public abstract void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter, boolean selected, boolean member);
 
     public boolean isProperLineStyle() {
         return false;

@@ -4,7 +4,7 @@ package org.openstreetmap.josm.gui.mappaint;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
-import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
+import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -30,7 +30,7 @@ public class LineTextElemStyle extends ElemStyle {
     }
 
     @Override
-    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, MapPainter painter, boolean selected, boolean member) {
+    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter, boolean selected, boolean member) {
         Way w = (Way)primitive;
         painter.drawTextOnPath(w, text);
     }

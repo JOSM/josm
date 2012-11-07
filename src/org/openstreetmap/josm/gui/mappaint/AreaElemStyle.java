@@ -10,7 +10,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
-import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
+import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -77,7 +77,7 @@ public class AreaElemStyle extends ElemStyle
     }
 
     @Override
-    public void paintPrimitive(OsmPrimitive osm, MapPaintSettings paintSettings, MapPainter painter, boolean selected, boolean member) {
+    public void paintPrimitive(OsmPrimitive osm, MapPaintSettings paintSettings, StyledMapRenderer painter, boolean selected, boolean member) {
         if (osm instanceof Way)
         {
             Color myColor = color;

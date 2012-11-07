@@ -10,8 +10,6 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
-import java.util.Collection;
 import java.util.Iterator;
 
 import org.openstreetmap.josm.Main;
@@ -34,22 +32,12 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
  */
 public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor {
 
-    /** Color Preference for inactive objects */
-    protected Color inactiveColor;
-    /** Color Preference for selected objects */
-    protected Color selectedColor;
-    /** Color Preference for nodes */
-    protected Color nodeColor;
     /** Color Preference for ways not matching any other group */
     protected Color dfltWayColor;
     /** Color Preference for relations */
     protected Color relationColor;
     /** Color Preference for untagged ways */
     protected Color untaggedWayColor;
-    /** Color Preference for background */
-    protected Color backgroundColor;
-    /** Color Preference for hightlighted objects */
-    protected Color highlightColor;
     /** Color Preference for tagged nodes */
     protected Color taggedColor;
     /** Color Preference for multiply connected nodes */
@@ -80,12 +68,6 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
     protected int connectionNodeSize;
     /** Preference: size of tagged nodes */
     protected int taggedNodeSize;
-    /** Preference: size of virtual nodes (0 displayes display) */
-    protected int virtualNodeSize;
-    /** Preference: minimum space (displayed way length) to display virtual nodes */
-    protected int virtualNodeSpace;
-    /** Preference: minimum space (displayed way length) to display segment numbers */
-    protected int segmentNumberSpace;
 
     /** Color cache to draw subsequent segments of same color as one <code>Path</code>. */
     protected Color currentColor = null;
@@ -122,19 +104,12 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         super(g, nc, isInactiveMode);
     }
 
-    /**
-     * Reads the color definitions from preferences. This function is <code>public</code>, so that
-     * color names in preferences can be displayed even without calling the wireframe display before.
-     */
-    public void getColors()
-    {
-        inactiveColor = PaintColors.INACTIVE.get();
-        selectedColor = PaintColors.SELECTED.get();
-        nodeColor = PaintColors.NODE.get();
+    @Override
+    public void getColors() {
+        super.getColors();
         dfltWayColor = PaintColors.DEFAULT_WAY.get();
         relationColor = PaintColors.RELATION.get();
         untaggedWayColor = PaintColors.UNTAGGED_WAY.get();
-        backgroundColor = PaintColors.BACKGROUND.get();
         highlightColor = PaintColors.HIGHLIGHT_WIREFRAME.get();
         taggedColor = PaintColors.TAGGED.get();
         connectionColor = PaintColors.CONNECTION.get();
@@ -146,13 +121,9 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         }
     }
 
-    /**
-     * Reads all the settings from preferences. Calls the @{link #getColors}
-     * function.
-     *
-     * @param virtual <code>true</code> if virtual nodes are used
-     */
+    @Override
     protected void getSettings(boolean virtual) {
+        super.getSettings(virtual);
         MapPaintSettings settings = MapPaintSettings.INSTANCE;
         showDirectionArrow = settings.isShowDirectionArrow();
         showOnewayArrow = settings.isShowOnewayArrow();
@@ -166,10 +137,6 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         fillUnselectedNode = settings.isFillUnselectedNode();
         fillConnectionNode = settings.isFillConnectionNode();
         fillTaggedNode = settings.isFillTaggedNode();
-        virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 8) / 2 : 0;
-        virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
-        segmentNumberSpace = Main.pref.getInteger("mappaint.segmentnumber.space", 40);
-        getColors();
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 Main.pref.getBoolean("mappaint.wireframe.use-antialiasing", false) ?
@@ -223,13 +190,13 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
                 osm.visit(this);
             }
         }
-        drawVirtualNodes(data.searchWays(bbox), data.getHighlightedVirtualNodes());
+        drawVirtualNodes(data, bbox);
 
         // draw highlighted way segments over the already drawn ways. Otherwise each
         // way would have to be checked if it contains a way segment to highlight when
         // in most of the cases there won't be more than one segment. Since the wireframe
         // renderer does not feature any transparency there should be no visual difference.
-        for(final WaySegment wseg : data.getHighlightedWaySegments()) {
+        for (final WaySegment wseg : data.getHighlightedWaySegments()) {
             drawSegment(nc.getPoint(wseg.getFirstNode()), nc.getPoint(wseg.getSecondNode()), highlightColor, false);
         }
         displaySegments();
@@ -295,79 +262,6 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
     }
 
     /**
-     * Checks if a way segemnt is large enough for additional information display.
-     *
-     * @param p1 First point of the way segment.
-     * @param p2 Second point of the way segment.
-     * @param space The free space to check against.
-     * @return <code>true</code> if segment is larger than required space
-     */
-    public static boolean isLargeSegment(Point2D p1, Point2D p2, int space)
-    {
-        double xd = Math.abs(p1.getX()-p2.getX());
-        double yd = Math.abs(p1.getY()-p2.getY());
-        return (xd+yd > space);
-    }
-
-    /**
-     * Draws virtual nodes.
-     *
-     * @param ways The ways to draw nodes for.
-     * @param highlightVirtualNodes Way segements, where nodesshould be highlighted.
-     */
-    public void drawVirtualNodes(Collection<Way> ways, Collection<WaySegment> highlightVirtualNodes) {
-        if (virtualNodeSize == 0)
-            return;
-        // print normal virtual nodes
-        GeneralPath path = new GeneralPath();
-        for (Way osm : ways) {
-            if (osm.isUsable() && !osm.isDisabledAndHidden() && !osm.isDisabled()) {
-                visitVirtual(path, osm);
-            }
-        }
-        g.setColor(nodeColor);
-        g.draw(path);
-        // print highlighted virtual nodes. Since only the color changes, simply
-        // drawing them over the existing ones works fine (at least in their current
-        // simple style)
-        path = new GeneralPath();
-        for (WaySegment wseg: highlightVirtualNodes){
-            if (wseg.way.isUsable() && !wseg.way.isDisabled()) {
-                visitVirtual(path, wseg.toWay());
-            }
-        }
-        g.setColor(highlightColor);
-        g.draw(path);
-    }
-
-    /**
-     * Creates path for drawing virtual nodes for one way.
-     *
-     * @param path The path to append drawing to.
-     * @param w The ways to draw node for.
-     */
-    public void visitVirtual(GeneralPath path, Way w) {
-        Iterator<Node> it = w.getNodes().iterator();
-        if (it.hasNext()) {
-            Point lastP = nc.getPoint(it.next());
-            while(it.hasNext())
-            {
-                Point p = nc.getPoint(it.next());
-                if(isSegmentVisible(lastP, p) && isLargeSegment(lastP, p, virtualNodeSpace))
-                {
-                    int x = (p.x+lastP.x)/2;
-                    int y = (p.y+lastP.y)/2;
-                    path.moveTo(x-virtualNodeSize, y);
-                    path.lineTo(x+virtualNodeSize, y);
-                    path.moveTo(x, y-virtualNodeSize);
-                    path.lineTo(x, y+virtualNodeSize);
-                }
-                lastP = p;
-            }
-        }
-    }
-
-    /**
      * Draw a line for all way segments.
      * @param w The way to draw.
      */
@@ -405,7 +299,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
                 drawSegment(lastP, p, wayColor,
                         showOnlyHeadArrowOnly ? !it.hasNext() : showThisDirectionArrow);
                 if (showOrderNumber && !isInactiveMode) {
-                    drawOrderNumber(lastP, p, orderNumber);
+                    drawOrderNumber(lastP, p, orderNumber, g.getColor());
                 }
                 lastP = p;
             }
@@ -472,41 +366,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
     @Override
     public void visit(Changeset cs) {/* ignore */}
 
-    /**
-     * Draw an number of the order of the two consecutive nodes within the
-     * parents way
-     *
-     * @param p1 First point of the way segment.
-     * @param p2 Second point of the way segment.
-     * @param orderNumber The number of the segment in the way.
-     */
-    protected void drawOrderNumber(Point p1, Point p2, int orderNumber) {
-        if (isSegmentVisible(p1, p2) && isLargeSegment(p1, p2, segmentNumberSpace)) {
-            String on = Integer.toString(orderNumber);
-            int strlen = on.length();
-            int x = (p1.x+p2.x)/2 - 4*strlen;
-            int y = (p1.y+p2.y)/2 + 4;
-
-            if(virtualNodeSize != 0 && isLargeSegment(p1, p2, virtualNodeSpace))
-            {
-                y = (p1.y+p2.y)/2 - virtualNodeSize - 3;
-            }
-
-            displaySegments(); /* draw nodes on top! */
-            Color c = g.getColor();
-            g.setColor(backgroundColor);
-            g.fillRect(x-1, y-12, 8*strlen+1, 14);
-            g.setColor(c);
-            g.drawString(on, x, y);
-        }
-    }
-
-    /**
-     * Draw the node as small rectangle with the given color.
-     *
-     * @param n     The node to draw.
-     * @param color The color of the node.
-     */
+    @Override
     public void drawNode(Node n, Color color, int size, boolean fill) {
         if (size > 1) {
             int radius = size / 2;
@@ -568,21 +428,6 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
             displaySegments(col);
         }
         drawSegment(currentPath, p1, p2, showDirection);
-    }
-
-    /**
-     * Checks if segment is visible in display.
-     *
-     * @param p1 First point of the way segment.
-     * @param p2 Second point of the way segment.
-     * @return <code>true</code> if segment is visible.
-     */
-    protected boolean isSegmentVisible(Point p1, Point p2) {
-        if ((p1.x < 0) && (p2.x < 0)) return false;
-        if ((p1.y < 0) && (p2.y < 0)) return false;
-        if ((p1.x > nc.getWidth()) && (p2.x > nc.getWidth())) return false;
-        if ((p1.y > nc.getHeight()) && (p2.y > nc.getHeight())) return false;
-        return true;
     }
 
     /**
