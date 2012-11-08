@@ -11,13 +11,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -53,12 +50,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
@@ -66,8 +65,10 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintStyleLoader;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.preferences.PreferenceDialog;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
+import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JFileChooserManager;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
@@ -483,7 +484,15 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
 
             JFileChooserManager fcm = new JFileChooserManager(false, "mappaint.clone-style.lastDirectory", System.getProperty("user.home"));
             String suggestion = fcm.getInitialDirectory() + File.separator + s.getFileNamePart();
-            fcm.createFileChooser().getFileChooser().setSelectedFile(new File(suggestion));
+
+            FileFilter ff;
+            if (s instanceof MapCSSStyleSource) {
+                ff = new ExtensionFileFilter("mapcss,css", "mapcss", tr("Map paint style file (*.mapcss)"));
+            } else {
+                ff = new ExtensionFileFilter("xml", "xml", tr("Map paint style file (*.xml)"));
+            }
+            fcm.createFileChooser(false, null, Arrays.asList(ff, FileFilterAllFiles.getInstance()), ff, JFileChooser.FILES_ONLY)
+                    .getFileChooser().setSelectedFile(new File(suggestion));
             JFileChooser fc = fcm.openFileChooser();
             if (fc == null)
                 return;

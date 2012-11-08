@@ -26,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -65,15 +66,18 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
 import org.openstreetmap.josm.gui.widgets.JFileChooserManager;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -751,7 +755,14 @@ public abstract class SourceEditor extends JPanel {
             }
 
             public void actionPerformed(ActionEvent e) {
-                JFileChooserManager fcm = new JFileChooserManager(true).createFileChooser();
+                FileFilter ff;
+                if (isMapPaint) {
+                    ff = new ExtensionFileFilter("xml,mapcss,css", "xml", tr("Map paint style file (*.xml, *.mapcss)"));
+                } else {
+                    ff = new ExtensionFileFilter("xml", "xml", tr("Preset definition file (*.xml)"));
+                }
+                JFileChooserManager fcm = new JFileChooserManager(true)
+                        .createFileChooser(true, null, Arrays.asList(ff, FileFilterAllFiles.getInstance()), ff, JFileChooser.FILES_ONLY);
                 prepareFileChooser(tfURL.getText(), fcm.getFileChooser());
                 JFileChooser fc = fcm.openFileChooser(JOptionPane.getFrameForComponent(SourceEditor.this));
                 if (fc != null) {
