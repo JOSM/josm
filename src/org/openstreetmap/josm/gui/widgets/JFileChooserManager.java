@@ -41,7 +41,7 @@ public class JFileChooserManager {
      * Creates a new {@code JFileChooserManager}.
      * @param open If true, "Open File" dialogs will be created. If false, "Save File" dialogs will be created.
      * @param lastDirProperty The name of the property used to get the last directory. This directory is used to initialize the JFileChooser. 
-     *                        Then, if the user effetively choses a file or a directory, this property will be updated to the directory path.
+     *                        Then, if the user effectively chooses a file or a directory, this property will be updated to the directory path.
      * @see #createFileChooser
      */
     public JFileChooserManager(boolean open, String lastDirProperty) {
@@ -52,7 +52,7 @@ public class JFileChooserManager {
      * Creates a new {@code JFileChooserManager}.
      * @param open If true, "Open File" dialogs will be created. If false, "Save File" dialogs will be created.
      * @param lastDirProperty The name of the property used to get the last directory. This directory is used to initialize the JFileChooser. 
-     *                        Then, if the user effetively choses a file or a directory, this property will be updated to the directory path.
+     *                        Then, if the user effectively chooses a file or a directory, this property will be updated to the directory path.
      * @param defaultDir The default directory used to initialize the JFileChooser if the {@code lastDirProperty} property value is missing. 
      * @see #createFileChooser
      */
