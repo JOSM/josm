@@ -487,9 +487,9 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
 
             FileFilter ff;
             if (s instanceof MapCSSStyleSource) {
-                ff = new ExtensionFileFilter("mapcss,css", "mapcss", tr("Map paint style file (*.mapcss)"));
+                ff = new ExtensionFileFilter("mapcss,css,zip", "mapcss", tr("Map paint style file (*.mapcss, *.zip)"));
             } else {
-                ff = new ExtensionFileFilter("xml", "xml", tr("Map paint style file (*.xml)"));
+                ff = new ExtensionFileFilter("xml,zip", "xml", tr("Map paint style file (*.xml, *.zip)"));
             }
             fcm.createFileChooser(false, null, Arrays.asList(ff, FileFilterAllFiles.getInstance()), ff, JFileChooser.FILES_ONLY)
                     .getFileChooser().setSelectedFile(new File(suggestion));
