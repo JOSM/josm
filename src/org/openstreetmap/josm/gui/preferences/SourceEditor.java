@@ -757,9 +757,9 @@ public abstract class SourceEditor extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 FileFilter ff;
                 if (isMapPaint) {
-                    ff = new ExtensionFileFilter("xml,mapcss,css", "xml", tr("Map paint style file (*.xml, *.mapcss)"));
+                    ff = new ExtensionFileFilter("xml,mapcss,css,zip", "xml", tr("Map paint style file (*.xml, *.mapcss, *.zip)"));
                 } else {
-                    ff = new ExtensionFileFilter("xml", "xml", tr("Preset definition file (*.xml)"));
+                    ff = new ExtensionFileFilter("xml,zip", "xml", tr("Preset definition file (*.xml, *.zip)"));
                 }
                 JFileChooserManager fcm = new JFileChooserManager(true)
                         .createFileChooser(true, null, Arrays.asList(ff, FileFilterAllFiles.getInstance()), ff, JFileChooser.FILES_ONLY);
