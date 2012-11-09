@@ -90,7 +90,9 @@ public abstract class OsmServerReader extends OsmConnection {
                 activeConnection.connect();
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new OsmTransferException(tr("Could not connect to the OSM server. Please check your internet connection."), e);
+                OsmTransferException ote = new OsmTransferException(tr("Could not connect to the OSM server. Please check your internet connection."), e);
+                ote.setUrl(url.toString());
+                throw ote;
             }
             try {
                 if (activeConnection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
