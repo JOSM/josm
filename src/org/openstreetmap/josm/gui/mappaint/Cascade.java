@@ -8,8 +8,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
+import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -21,12 +23,15 @@ public class Cascade implements Cloneable {
 
     protected Map<String, Object> prop = new HashMap<String, Object>();
 
+    private final static Pattern HEX_COLOR_PATTERN = Pattern.compile("#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})");
+
     public <T> T get(String key, T def, Class<T> klass) {
         return get(key, def, klass, false);
     }
     
     /**
      * Get value for the given key
+     * @param <T> the expected type
      * @param key the key
      * @param def default value, can be null
      * @param klass the same as T
@@ -164,6 +169,14 @@ public class Cascade implements Cloneable {
             return (Color) o;
         if (o instanceof Keyword)
             return CSSColors.get(((Keyword) o).val);
+        if (o instanceof String) {
+            Color c = CSSColors.get((String) o);
+            if (c != null)
+                return c;
+            if (HEX_COLOR_PATTERN.matcher((String) o).matches()) {
+                return Utils.hexToColor((String) o);
+            }
+        }
         return null;
     }
 
