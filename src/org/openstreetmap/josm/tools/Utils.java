@@ -18,6 +18,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
+import java.util.AbstractCollection;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -454,36 +456,11 @@ public class Utils {
      * @return the transformed unmodifiable collection
      */
     public static <A, B> Collection<B> transform(final Collection<? extends A> c, final Function<A, B> f) {
-        return new Collection<B>() {
+        return new AbstractCollection<B>() {
 
             @Override
             public int size() {
                 return c.size();
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return c.isEmpty();
-            }
-
-            @Override
-            public boolean contains(Object o) {
-                return c.contains(o);
-            }
-
-            @Override
-            public Object[] toArray() {
-                return c.toArray();
-            }
-
-            @Override
-            public <T> T[] toArray(T[] a) {
-                return c.toArray(a);
-            }
-
-            @Override
-            public String toString() {
-                return c.toString();
             }
 
             @Override
@@ -508,41 +485,33 @@ public class Utils {
                     }
                 };
             }
+        };
+    }
+
+    /**
+     * Transforms the list {@code l} into an unmodifiable list and
+     * applies the {@link Function} {@code f} on each element upon access.
+     * @param <A> class of input collection
+     * @param <B> class of transformed collection
+     * @param l a collection
+     * @param f a function that transforms objects of {@code A} to objects of {@code B}
+     * @return the transformed unmodifiable list
+     */
+    public static <A, B> List<B> transform(final List<? extends A> l, final Function<A, B> f) {
+        return new AbstractList<B>() {
+
 
             @Override
-            public boolean add(B e) {
-                throw new UnsupportedOperationException();
+            public int size() {
+                return l.size();
             }
 
             @Override
-            public boolean remove(Object o) {
-                throw new UnsupportedOperationException();
+            public B get(int index) {
+                return f.apply(l.get(index));
             }
 
-            @Override
-            public boolean containsAll(Collection<?> c) {
-                throw new UnsupportedOperationException();
-            }
 
-            @Override
-            public boolean addAll(Collection<? extends B> c) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public boolean removeAll(Collection<?> c) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public boolean retainAll(Collection<?> c) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void clear() {
-                throw new UnsupportedOperationException();
-            }
         };
     }
 

@@ -12,6 +12,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * An relation, having a set of tags and any number (0...n) of members.
@@ -392,6 +393,15 @@ public final class Relation extends OsmPrimitive implements IRelation {
             }
         }
         return ret;
+    }
+
+    public List<OsmPrimitive> getMemberPrimitivesList() {
+        return Utils.transform(getMembers(), new Utils.Function<RelationMember, OsmPrimitive>() {
+            @Override
+            public OsmPrimitive apply(RelationMember x) {
+                return x.getMember();
+            }
+        });
     }
 
     @Override
