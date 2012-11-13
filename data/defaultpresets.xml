@@ -1077,7 +1077,7 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming"/>
             <label text="Edit Traffic Calming" />
-            <combo key="traffic_calming" text="Type" values="yes,bump,chicane,choker,cushion,hump,table" match="key" />
+            <combo key="traffic_calming" text="Type" values="yes,bump,chicane,choker,cushion,hump,island,rumble_strip,table" match="key" />
         </item>
         <item name="Passing Place" icon="presets/passingplace.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=passing_place"
