@@ -432,9 +432,11 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("incomplete", "incomplete ", tr("all incomplete objects"))
                 , GBC.eol());
             right.add(new SearchKeywordRow(hcbSearchString)
-                .addTitle(tr("relations"))
+                .addTitle(tr("related objects"))
                 .addKeyword("child <i>expr</i>", "child ", tr("all children of objects matching the expression"), "child building")
                 .addKeyword("parent <i>expr</i>", "parent ", tr("all parents of objects matching the expression"), "parent bus_stop")
+                .addKeyword("nth:<i>7</i>", "nth: ", tr("n-th member of relation and/or n-th node of way"), "nth:5 (child type:relation)")
+                .addKeyword("nth%:<i>7</i>", "nth: ", tr("every n-th member of relation and/or every n-th node of way"), "nth%:100 (child waterway)")
                 , GBC.eol());
             right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("view"))

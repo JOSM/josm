@@ -100,7 +100,7 @@ public class SearchCompiler {
         private Collection<String> keywords = Arrays.asList("id", "version",
                 "changeset", "nodes", "tags", "areasize", "modified", "selected",
                 "incomplete", "untagged", "closed", "new", "indownloadarea",
-                "allindownloadarea", "inview", "allinview", "timestamp");
+                "allindownloadarea", "inview", "allinview", "timestamp", "nth", "nth%");
 
         @Override
         public Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError {
@@ -137,6 +137,10 @@ public class SearchCompiler {
                     return new TagCountRange(tokenizer);
                 else if ("areasize".equals(keyword))
                     return new AreaSize(tokenizer);
+                else if ("nth".equals(keyword))
+                    return new Nth(tokenizer, false);
+                else if ("nth%".equals(keyword))
+                    return new Nth(tokenizer, true);
                 else if ("timestamp".equals(keyword)) {
                     String rangeS = " " + tokenizer.readTextOrNumber() + " "; // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
                     String[] rangeA = rangeS.split("/");
@@ -784,6 +788,44 @@ public class SearchCompiler {
 
         @Override public String toString() {
             return "role=" + role;
+        }
+    }
+
+    /**
+     * Matches the n-th object of a relation and/or the n-th node of a way.
+     */
+    private static class Nth extends Match {
+
+        private final int nth;
+        private final boolean modulo;
+
+        public Nth(PushbackTokenizer tokenizer, boolean modulo) throws ParseError {
+            this((int) tokenizer.readNumber(tr("Primitive id expected")), modulo);
+        }
+
+        private Nth(int nth, boolean modulo) {
+            this.nth = nth;
+            this.modulo = modulo;
+        }
+
+        @Override
+        public boolean match(OsmPrimitive osm) {
+            for (OsmPrimitive p : osm.getReferrers()) {
+                Integer idx = null;
+                if (p instanceof Way) {
+                    Way w = (Way) p;
+                    idx = w.getNodes().indexOf(osm);
+                } else if (p instanceof Relation) {
+                    Relation r = (Relation) p;
+                    idx = r.getMemberPrimitivesList().indexOf(osm);
+                }
+                if (idx != null) {
+                    if (idx.intValue() == nth || (modulo && idx.intValue() % nth == 0)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 
