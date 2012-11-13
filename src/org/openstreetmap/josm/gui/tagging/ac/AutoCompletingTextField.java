@@ -32,6 +32,9 @@ import org.openstreetmap.josm.gui.util.TableCellEditorSupport;
  *
  */
 public class AutoCompletingTextField extends JTextField implements ComboBoxEditor, TableCellEditor {
+
+    private Integer maxChars;
+    
     /**
      * The document model for the editor
      */
@@ -43,6 +46,17 @@ public class AutoCompletingTextField extends JTextField implements ComboBoxEdito
          */
         @Override
         public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+            
+            // If a maximum number of characters is specified, avoid to exceed it
+            if (maxChars != null && str != null && getLength() + str.length() > maxChars) {
+                int allowedLength = maxChars-getLength();
+                if (allowedLength > 0) {
+                    str = str.substring(0, allowedLength);
+                } else {
+                    return;
+                }
+            }
+            
             if (autoCompletionList == null) {
                 super.insertString(offs, str, a);
                 return;
@@ -192,6 +206,15 @@ public class AutoCompletingTextField extends JTextField implements ComboBoxEdito
         } else {
             setText(anObject.toString());
         }
+    }
+
+    /**
+     * Sets the maximum number of characters allowed.
+     * @param max maximum number of characters allowed
+     * @since 5579
+     */
+    public void setMaxChars(Integer max) {
+        maxChars = max;
     }
 
     /* ------------------------------------------------------------------------------------ */

@@ -35,6 +35,7 @@ text: text box
   default: default string to display (defaults to "")
   use_last_as_default: true/false/force (default is "false")
   match: none/key/key!/keyvalue (default is "none", see below for more information)
+  length: length of input box (number of characters allowed)
 
 combo: combo box, with multiple choices and possible to enter free form text
   key: key to set
