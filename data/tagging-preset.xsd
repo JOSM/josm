@@ -117,6 +117,7 @@
 		<attribute name="default" type="string" />
 		<attribute name="use_last_as_default" type="tns:last_default" />
 		<attribute name="match" type="tns:match" />
+        <attribute name="length" type="positiveInteger" />
 
 		<attribute name="type" use="prohibited" />
 		<attribute name="name" use="prohibited" />

@@ -377,6 +377,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String default_;
         public String originalValue;
         public String use_last_as_default = "false";
+        public String length;
 
         private JComponent value;
 
@@ -386,6 +387,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             Usage usage = determineTextUsage(sel, key);
             AutoCompletingTextField textField = new AutoCompletingTextField();
             initAutoCompletionField(textField, key);
+            if (length != null && !length.isEmpty()) {
+                textField.setMaxChars(new Integer(length));
+            }
             if (usage.unused()){
                 if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                     // selected osm primitives are untagged or filling default values feature is enabled
