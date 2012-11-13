@@ -29,6 +29,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
@@ -291,6 +293,13 @@ public class XmlObjectParser implements Iterable<Object> {
             SAXParser saxParser = parserFactory.newSAXParser();
             XMLReader reader = saxParser.getXMLReader();
             reader.setContentHandler(contentHandler);
+            try {
+                // Do not load external DTDs (fix #8191)
+                reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            } catch (SAXException e) {
+                // Exception very unlikely to happen, so no need to translate this
+                System.err.println("Cannot disable 'load-external-dtd' feature: "+e.getMessage());
+            }
             reader.parse(new InputSource(in));
             queueIterator = queue.iterator();
             return this;
