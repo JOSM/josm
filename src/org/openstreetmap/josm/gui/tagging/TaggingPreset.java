@@ -312,6 +312,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String display_value;
         public String short_description;
         public String icon;
+        public String icon_size;
         public String locale_display_value;
         public String locale_short_description;
         private final File zipIcons = TaggingPreset.zipIcons;
@@ -340,7 +341,18 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
 
         public ImageIcon getIcon() {
-            return icon == null ? null : loadImageIcon(icon, zipIcons, 24);
+            return icon == null ? null : loadImageIcon(icon, zipIcons, parseInteger(icon_size));
+        }
+
+        private Integer parseInteger(String str) {
+            if (str == null || "".equals(str))
+                return null;
+            try {
+                return Integer.parseInt(str);
+            } catch (Exception e) {
+                //
+            }
+            return null;
         }
 
         public PresetListEntry() {
@@ -760,7 +772,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     boolean isSelected,
                     boolean cellHasFocus) {
                 PresetListEntry item = (PresetListEntry) value;
-                
+
                 // Only return cached size, item is not shown
                 if (!list.isShowing() && item.prefferedWidth != -1 && item.prefferedHeight != -1) {
                     if (index == -1) {
@@ -1275,7 +1287,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         final Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
         ImageProvider imgProv = new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true);
         if (maxSize != null) {
-            imgProv.setMaxSize(24);
+            imgProv.setMaxSize(maxSize);
         }
         return imgProv.get();
     }
