@@ -47,7 +47,9 @@ combo: combo box, with multiple choices and possible to enter free form text
                       display_value. (Only if it is not possible to describe
                       the entry in 2-3 words.) Instead of comma separeted list
   instead using values, display_values and short_descriptions, the following form is also supported:
-    <list_entry value="" display_value="' short_description="" icon=""/>
+    <list_entry value="" display_value="' short_description="" icon="" icon_size=""/>
+        icon: location of icon
+        icon_size: maximal size of icon. If tag is not setup it is taken default size of icon file
   default: default string to display (defaults to "")
   use_last_as_default: true/false/force (default is "false")
   match: none/key/key!/keyvalue (default is none, see below for more information)
@@ -65,7 +67,9 @@ multiselect: list of values from which zero or more can be selected
                       display_value. (Only if it is not possible to describe
                       the entry in 2-3 words.) Instead of a separated list
   instead using values, display_values and short_descriptions, the following form is also supported:
-    <list_entry value="" display_value="' short_description="" icon=""/>
+    <list_entry value="" display_value="' short_description="" icon="" icon_size=""/>
+        icon: location of icon
+        icon_size: maximal size of icon. If tag is not setup it is taken default size of icon file
   default: default string to display (defaults to "")
   use_last_as_default: true/false/force (default is "false")
   match: none/key/key!/keyvalue (default is "none", see below for more information)
