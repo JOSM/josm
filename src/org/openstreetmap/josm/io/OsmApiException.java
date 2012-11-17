@@ -18,6 +18,21 @@ public class OsmApiException extends OsmTransferException {
      * @param responseCode The HTTP response code replied by the OSM server. See {@link java.net.HttpURLConnection HttpURLConnection} for predefined HTTP response code values
      * @param errorHeader The error header, as transmitted in the {@code Error} field of the HTTP response header
      * @param errorBody The error body, as transmitted in the HTTP response body
+     * @param accessedUrl The complete URL accessed when this error occured
+     * @since 5584
+     */
+    public OsmApiException(int responseCode, String errorHeader, String errorBody, String accessedUrl) {
+        this.responseCode = responseCode;
+        this.errorHeader = errorHeader;
+        this.errorBody = errorBody;
+        this.accessedUrl = accessedUrl;
+    }
+    
+    /**
+     * Constructs an {@code OsmApiException} with the specified response code, error header and error body
+     * @param responseCode The HTTP response code replied by the OSM server. See {@link java.net.HttpURLConnection HttpURLConnection} for predefined HTTP response code values
+     * @param errorHeader The error header, as transmitted in the {@code Error} field of the HTTP response header
+     * @param errorBody The error body, as transmitted in the HTTP response body
      */
     public OsmApiException(int responseCode, String errorHeader, String errorBody) {
         this.responseCode = responseCode;
