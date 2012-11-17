@@ -180,7 +180,11 @@ public class PluginInformation {
         {
             s = attr.getValue("Plugin-Description");
             if(s != null) {
-                s = tr(s);
+                try {
+                    s = tr(s);
+                } catch (IllegalArgumentException e) {
+                    System.out.println(tr("Invalid plugin description ''{0}'' in plugin {1}", s, name));
+                }
             }
         }
         description = s;
