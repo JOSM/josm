@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -44,6 +45,8 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -74,6 +77,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -84,6 +88,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 public abstract class SourceEditor extends JPanel {
@@ -627,11 +632,11 @@ public abstract class SourceEditor extends JPanel {
         public String author;
         public String link;
         public String description;
+        public Integer minJosmVersion;
 
         public ExtendedSourceEntry(String simpleFileName, String url) {
             super(url, null, null, true);
             this.simpleFileName = simpleFileName;
-            version = author = link = description = title = null;
         }
 
         /**
@@ -660,6 +665,9 @@ public abstract class SourceEditor extends JPanel {
             }
             if (version != null) {
                 appendRow(s, tr("Version:"), version);
+            }
+            if (minJosmVersion != null) {
+                appendRow(s, tr("Minimum JOSM Version:"), Integer.toString(minJosmVersion));
             }
             return "<html><style>th{text-align:right}td{width:400px}</style>"
                     + "<table>" + s + "</table></html>";
@@ -924,6 +932,37 @@ public abstract class SourceEditor extends JPanel {
 
         public void actionPerformed(ActionEvent e) {
             List<ExtendedSourceEntry> sources = availableSourcesModel.getSelected();
+            int josmVersion = Version.getInstance().getVersion();
+            if (josmVersion != Version.JOSM_UNKNOWN_VERSION) {
+                Collection<String> messages = new ArrayList<String>();
+                for (ExtendedSourceEntry entry : sources) {
+                    if (entry.minJosmVersion != null && entry.minJosmVersion > josmVersion) {
+                        messages.add(tr("Entry ''{0}'' requires JOSM Version {1}. (Currently running: {2})",
+                                entry.title,
+                                Integer.toString(entry.minJosmVersion),
+                                Integer.toString(josmVersion))
+                        );
+                    }
+                }
+                if (!messages.isEmpty()) {
+                    ExtendedDialog dlg = new ExtendedDialog(Main.parent, tr("Warning"), new String [] { tr("Cancel"), tr("Continue anyway") });
+                    dlg.setButtonIcons(new Icon[] {
+                        ImageProvider.get("cancel"),
+                        ImageProvider.overlay(
+                            ImageProvider.get("ok"),
+                            new ImageIcon(ImageProvider.get("warning-small").getImage().getScaledInstance(12 , 12, Image.SCALE_SMOOTH)),
+                            ImageProvider.OverlayPosition.SOUTHEAST)
+                    });
+                    dlg.setToolTipTexts(new String[] {
+                        tr("Cancel and return to the previous dialog"),
+                        tr("Ignore warning and install style anyway")});
+                    dlg.setContent("<html>" + tr("Some entries have unmet dependencies:") +
+                            "<br>" + Utils.join("<br>", messages) + "</html>");
+                    dlg.setIcon(JOptionPane.WARNING_MESSAGE);
+                    if (dlg.showDialog().getValue() != 2)
+                        return;
+                }
+            }
             activeSourcesModel.addExtendedSourceEntries(sources);
         }
     }
@@ -1235,6 +1274,12 @@ public abstract class SourceEditor extends JPanel {
                                 last.link = value;
                             } else if ((lang + "description").equals(key)) {
                                 last.description = value;
+                            } else if ("min-josm-version".equals(key)) {
+                                try {
+                                    last.minJosmVersion = Integer.parseInt(value);
+                                } catch (NumberFormatException e) {
+                                    // ignore
+                                }
                             }
                         }
                     } else {
