@@ -55,6 +55,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -361,7 +362,7 @@ public class PlaceSelection implements DownloadSelection {
                 getProgressMonitor().indeterminateSubTask(tr("Querying name server ..."));
                 URL url = new URL(urlString);
                 synchronized(this) {
-                    connection = (HttpURLConnection)url.openConnection();
+                    connection = Utils.openHttpConnection(url);
                 }
                 connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
                 InputStream inputStream = connection.getInputStream();

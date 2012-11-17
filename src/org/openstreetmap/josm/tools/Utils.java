@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
@@ -24,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import org.openstreetmap.josm.data.Version;
 
 /**
  * Basic utils, that can be useful in different parts of the program.
@@ -532,5 +536,36 @@ public class Utils {
             throw new IllegalArgumentException();
         return new Color(Integer.parseInt(clr, 16));
     }
-
+    
+    /**
+     * Opens a HTTP connection to the given URL and sets the User-Agent property to JOSM's one.
+     * @param httpURL The HTTP url to open (must use http:// or https://)
+     * @return An open HTTP connection to the given URL
+     * @throws IOException if an I/O exception occurs.
+     * @since 5587
+     */
+    public static HttpURLConnection openHttpConnection(URL httpURL) throws IOException {
+        if (httpURL == null || !httpURL.getProtocol().matches("https?")) {
+            throw new IllegalArgumentException("Invalid HTTP url");
+        }
+        HttpURLConnection connection = (HttpURLConnection) httpURL.openConnection();
+        connection.setRequestProperty("User-Agent", Version.getInstance().getAgentString());
+        return connection;
+    }
+    
+    /**
+     * Opens a HTTP connection to the given URL, sets the User-Agent property to JOSM's one and optionnaly disables Keep-Alive.
+     * @param httpURL The HTTP url to open (must use http:// or https://)
+     * @param keepAlive 
+     * @return An open HTTP connection to the given URL
+     * @throws IOException if an I/O exception occurs.
+     * @since 5587
+     */
+    public static HttpURLConnection openHttpConnection(URL httpURL, boolean keepAlive) throws IOException {
+        HttpURLConnection connection = openHttpConnection(httpURL);
+        if (!keepAlive) {
+            connection.setRequestProperty("Connection", "close");
+        }
+        return connection;
+    }
 }

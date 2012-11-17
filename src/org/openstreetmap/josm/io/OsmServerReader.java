@@ -18,6 +18,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This DataReader reads directly from the REST API of the osm server.
@@ -63,9 +64,8 @@ public abstract class OsmServerReader extends OsmConnection {
                 throw new OsmTransferException(e);
             }
             try {
-                activeConnection = (HttpURLConnection)url.openConnection();
                 // fix #7640, see http://www.tikalk.com/java/forums/httpurlconnection-disable-keep-alive
-                activeConnection.setRequestProperty("Connection", "close");
+                activeConnection = Utils.openHttpConnection(url, false);
             } catch(Exception e) {
                 throw new OsmTransferException(tr("Failed to open connection to API {0}.", url.toExternalForm()), e);
             }

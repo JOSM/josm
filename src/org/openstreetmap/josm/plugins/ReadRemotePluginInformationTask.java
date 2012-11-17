@@ -161,10 +161,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
 
             URL url = new URL(site);
             synchronized(this) {
-                connection = (HttpURLConnection)url.openConnection();
+                connection = Utils.openHttpConnection(url);
                 connection.setRequestProperty("Cache-Control", "no-cache");
-                connection.setRequestProperty("User-Agent",Version.getInstance().getAgentString());
-                connection.setRequestProperty("Host", url.getHost());
                 connection.setRequestProperty("Accept-Charset", "utf-8");
             }
             in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
@@ -210,10 +208,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
 
             URL url = new URL(site);
             synchronized(this) {
-                connection = (HttpURLConnection)url.openConnection();
+                connection = Utils.openHttpConnection(url);
                 connection.setRequestProperty("Cache-Control", "no-cache");
-                connection.setRequestProperty("User-Agent",Version.getInstance().getAgentString());
-                connection.setRequestProperty("Host", url.getHost());
             }
             in = connection.getInputStream();
             out = new FileOutputStream(destFile);

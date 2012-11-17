@@ -16,7 +16,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.exception.OAuthException;
 
-import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.data.osm.UserInfo;
@@ -29,6 +28,7 @@ import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -103,13 +103,11 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
             authenticatorEnabled = DefaultAuthenticator.getInstance().isEnabled();
             DefaultAuthenticator.getInstance().setEnabled(false);
             synchronized(this) {
-                connection = (HttpURLConnection)url.openConnection();
+                connection = Utils.openHttpConnection(url);
             }
 
             connection.setDoOutput(true);
             connection.setRequestMethod("GET");
-            connection.setRequestProperty("User-Agent", Version.getInstance().getAgentString());
-            connection.setRequestProperty("Host", connection.getURL().getHost());
             sign(connection);
             connection.connect();
 

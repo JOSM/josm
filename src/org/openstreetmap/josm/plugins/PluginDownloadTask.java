@@ -118,10 +118,8 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
             }
             URL url = new URL(pi.downloadlink);
             synchronized(this) {
-                downloadConnection = (HttpURLConnection)url.openConnection();
+                downloadConnection = Utils.openHttpConnection(url);
                 downloadConnection.setRequestProperty("Cache-Control", "no-cache");
-                downloadConnection.setRequestProperty("User-Agent",Version.getInstance().getAgentString());
-                downloadConnection.setRequestProperty("Host", url.getHost());
                 downloadConnection.connect();
             }
             in = downloadConnection.getInputStream();

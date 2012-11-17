@@ -268,7 +268,7 @@ public class MirroredInputStream extends InputStream {
         HttpURLConnection con = null;
         int numRedirects = 0;
         while(true) {
-            con = (HttpURLConnection)downloadUrl.openConnection();
+            con = Utils.openHttpConnection(downloadUrl);
             con.setInstanceFollowRedirects(false);
             con.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
             con.setReadTimeout(Main.pref.getInteger("socket.timeout.read",30)*1000);
