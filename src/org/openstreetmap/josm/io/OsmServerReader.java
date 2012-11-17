@@ -121,7 +121,7 @@ public abstract class OsmServerReader extends OsmConnection {
                         errorBody.append(tr("Reading error text failed."));
                     }
 
-                    throw new OsmApiException(activeConnection.getResponseCode(), errorHeader, errorBody.toString());
+                    throw new OsmApiException(activeConnection.getResponseCode(), errorHeader, errorBody.toString(), url.toString());
                 }
 
                 return FixEncoding(new ProgressInputStream(activeConnection, progressMonitor), encoding);
@@ -130,7 +130,6 @@ public abstract class OsmServerReader extends OsmConnection {
                     throw (OsmTransferException)e;
                 else
                     throw new OsmTransferException(e);
-
             }
         } finally {
             progressMonitor.invalidate();

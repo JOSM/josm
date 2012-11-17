@@ -16,7 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -269,13 +268,6 @@ public class ExceptionUtil {
         e.printStackTrace();
         String header = e.getErrorHeader();
         String body = e.getErrorBody();
-        if (body.equals("Your access to the API is temporarily suspended. Please log-in to the web interface to view the Contributor Terms. You do not need to agree, but you must view them.")) {
-            return tr("<html>"
-                    +"Your access to the API is temporarily suspended.<br>"
-                    + "Please log-in to the web interface to view the Contributor Terms.<br>"
-                    + "You do not need to agree, but you must view them."
-                    + "</html>");
-        }
         String msg = null;
         if (header != null) {
             if (body != null && !header.equals(body)) {
@@ -287,13 +279,20 @@ public class ExceptionUtil {
             msg = body;
         }
         
-        return tr("<html>"
-                + "Authorisation at the OSM server failed.<br>"
-                + "The server reported the following error:<br>"
-                + "''{0}''"
-                + "</html>",
-                msg
-        );
+        if (msg != null && !msg.isEmpty()) {
+            return tr("<html>"
+                    + "Authorisation at the OSM server failed.<br>"
+                    + "The server reported the following error:<br>"
+                    + "''{0}''"
+                    + "</html>",
+                    msg
+            );
+        } else {
+            return tr("<html>"
+                    + "Authorisation at the OSM server failed.<br>"
+                    + "</html>"
+            );
+        }
     }
 
     public static String explainFailedOAuthAuthorisation(OsmApiException e) {

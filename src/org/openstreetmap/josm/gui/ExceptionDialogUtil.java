@@ -9,6 +9,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
@@ -241,6 +243,10 @@ public class ExceptionDialogUtil {
         );
     }
 
+    private static boolean isOAuth() {
+        return Main.pref.get("osm-server.auth-method", "basic").equals("oauth");
+    }
+    
     /**
      * Explains a {@link OsmApiException} which was thrown because the authentication at
      * the OSM server failed
@@ -248,9 +254,8 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainAuthenticationFailed(OsmApiException e) {
-        String authMethod = Main.pref.get("osm-server.auth-method", "basic");
         String msg;
-        if (authMethod.equals("oauth")) {
+        if (isOAuth()) {
             msg = ExceptionUtil.explainFailedOAuthAuthentication(e);
         } else {
             msg = ExceptionUtil.explainFailedBasicAuthentication(e);
@@ -267,18 +272,38 @@ public class ExceptionDialogUtil {
 
     /**
      * Explains a {@link OsmApiException} which was thrown because accessing a protected
-     * resource was forbidden.
+     * resource was forbidden (HTTP 403).
      *
      * @param e the exception
      */
     public static void explainAuthorizationFailed(OsmApiException e) {
-        // Fixme: add special handling that calls ExceptionUtil.explainFailedOAuthAuthorisation(e)
+        
+        Matcher m;
+        String msg;
+        String url = e.getAccessedUrl();
+        Pattern p = Pattern.compile("http://.*/api/0.6/(node|way|relation)/(\\d+)/(\\d+)");
+        
+        // Special case for individual access to redacted versions
+        // See http://wiki.openstreetmap.org/wiki/Open_Database_License/Changes_in_the_API
+        if (url != null && (m = p.matcher(url)).matches()) {
+            String type = m.group(1);
+            String id = m.group(2);
+            String version = m.group(3);
+            // {1} is the translation of "node", "way" or "relation"
+            msg = tr("Access to redacted version ''{0}'' of {1} {2} is forbidden.",
+                    version, tr(type), id);
+        } else if (isOAuth()) {
+            msg = ExceptionUtil.explainFailedOAuthAuthorisation(e);
+        } else {
+            msg = ExceptionUtil.explainFailedAuthorisation(e);
+        }
+        
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
-                ExceptionUtil.explainFailedAuthorisation(e),
+                msg,
                 tr("Authorisation Failed"),
                 JOptionPane.ERROR_MESSAGE,
-                ht("/ErrorMessages#AuthenticationFailed")
+                ht("/ErrorMessages#AuthorizationFailed")
         );
     }
 
