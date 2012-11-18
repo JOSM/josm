@@ -384,7 +384,9 @@ public class GpxReader {
                 }
                 GpxLink link = new GpxLink(url);
                 link.text = urlname;
-                ((Collection<GpxLink>) attr.get(GpxData.META_LINKS)).add(link);
+                @SuppressWarnings("unchecked")
+                Collection<GpxLink> links = (Collection) attr.get(GpxData.META_LINKS);
+                links.add(link);
             }
         }
 

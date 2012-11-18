@@ -23,7 +23,6 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -60,7 +59,6 @@ import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.gui.mappaint.TextElement;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -1193,24 +1191,24 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                             double dist = interval - (wayLength % interval);
 
                             while (dist < segmentLength) {
-                                for (Pair<Float, GeneralPath> sizeAndPath : Arrays.asList(new Pair[] {
-                                        new Pair<Float, GeneralPath>(3f, onewayArrowsCasing),
-                                        new Pair<Float, GeneralPath>(2f, onewayArrows)})) {
+                                for (int i=0; i<2; ++i) {
+                                    float onewaySize = i == 0 ? 3f : 2f;
+                                    GeneralPath onewayPath = i == 0 ? onewayArrowsCasing : onewayArrows;
 
                                     // scale such that border is 1 px
-                                    final double fac = - (onewayReversed ? -1 : 1) * sizeAndPath.a * (1 + sinPHI) / (sinPHI * cosPHI);
+                                    final double fac = - (onewayReversed ? -1 : 1) * onewaySize * (1 + sinPHI) / (sinPHI * cosPHI);
                                     final double sx = nx * fac;
                                     final double sy = ny * fac;
 
                                     // Attach the triangle at the incenter and not at the tip.
                                     // Makes the border even at all sides.
-                                    final double x = p1.x + nx * (dist + (onewayReversed ? -1 : 1) * (sizeAndPath.a / sinPHI));
-                                    final double y = p1.y + ny * (dist + (onewayReversed ? -1 : 1) * (sizeAndPath.a / sinPHI));
+                                    final double x = p1.x + nx * (dist + (onewayReversed ? -1 : 1) * (onewaySize / sinPHI));
+                                    final double y = p1.y + ny * (dist + (onewayReversed ? -1 : 1) * (onewaySize / sinPHI));
 
-                                    sizeAndPath.b.moveTo(x, y);
-                                    sizeAndPath.b.lineTo (x + cosPHI * sx - sinPHI * sy, y + sinPHI * sx + cosPHI * sy);
-                                    sizeAndPath.b.lineTo (x + cosPHI * sx + sinPHI * sy, y - sinPHI * sx + cosPHI * sy);
-                                    sizeAndPath.b.lineTo(x, y);
+                                    onewayPath.moveTo(x, y);
+                                    onewayPath.lineTo (x + cosPHI * sx - sinPHI * sy, y + sinPHI * sx + cosPHI * sy);
+                                    onewayPath.lineTo (x + cosPHI * sx + sinPHI * sy, y - sinPHI * sx + cosPHI * sy);
+                                    onewayPath.lineTo(x, y);
                                 }
                                 dist += interval;
                             }

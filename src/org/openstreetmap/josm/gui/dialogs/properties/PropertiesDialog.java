@@ -237,7 +237,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * Edit the value in the properties table row
      * @param row The row of the table from which the value is edited.
      */
-    @SuppressWarnings("unchecked")
     private void editProperty(int row) {
         Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
         if (sel.isEmpty()) return;
@@ -268,6 +267,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         p.add(Box.createHorizontalStrut(10), GBC.std());
         p.add(keys, GBC.eol().fill(GBC.HORIZONTAL));
 
+        @SuppressWarnings("unchecked")
         final Map<String, Integer> m = (Map<String, Integer>) propertyData.getValueAt(row, 1);
 
         Comparator<AutoCompletionListItem> usedValuesAwareComparator = new Comparator<AutoCompletionListItem>() {
@@ -1375,10 +1375,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 if (propertyTable.getSelectedRowCount() == 1) {
                     row = propertyTable.getSelectedRow();
                     String key = URLEncoder.encode(propertyData.getValueAt(row, 0).toString(), "UTF-8");
-                    String val = URLEncoder.encode(
-                            ((Map<String,Integer>)propertyData.getValueAt(row, 1))
-                            .entrySet().iterator().next().getKey(), "UTF-8"
-                            );
+                    @SuppressWarnings("unchecked")
+                    Map<String, Integer> m = (Map<String, Integer>) propertyData.getValueAt(row, 1);
+                    String val = URLEncoder.encode(m.entrySet().iterator().next().getKey(), "UTF-8");
 
                     uris.add(new URI(String.format("%s%sTag:%s=%s", base, lang, key, val)));
                     uris.add(new URI(String.format("%sTag:%s=%s", base, key, val)));

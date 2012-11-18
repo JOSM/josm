@@ -584,7 +584,9 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
                 llEditor.showDialog();
                 if (llEditor.getValue() == 1) {
                     List<List<String>> data = llEditor.getData();
-                    if (!Preferences.equalArray((Collection) llSetting.getValue(), data)) {
+                    @SuppressWarnings("unchecked")
+                    Collection<Collection<String>> llSettingValue = (Collection) llSetting.getValue();
+                    if (!Preferences.equalArray(llSettingValue, data)) {
                         pe.setValue(new ListListSetting(data));
                         ok = true;
                     }
@@ -644,7 +646,9 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
             llEditor.showDialog();
             if (llEditor.getValue() == 1) {
                 List<List<String>> data = llEditor.getData();
-                if (!Preferences.equalArray((Collection) stg.getValue(), data)) {
+                @SuppressWarnings("unchecked")
+                Collection<Collection<String>> stgValue = (Collection) stg.getValue();
+                if (!Preferences.equalArray(stgValue, data)) {
                     e.setValue(new ListListSetting(data));
                     applyFilter();
                 }

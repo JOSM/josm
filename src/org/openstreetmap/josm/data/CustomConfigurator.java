@@ -1027,9 +1027,13 @@ public class CustomConfigurator {
             "  }";
         engine.eval(finish);
 
+        @SuppressWarnings("unchecked")
         Map<String, String> stringMap =  (Map<String, String>) engine.get("stringMap");
+        @SuppressWarnings("unchecked")
         Map<String, List<String>> listMap = (SortedMap<String, List<String>> ) engine.get("listMap");
+        @SuppressWarnings("unchecked")
         Map<String, List<Collection<String>>> listlistMap = (SortedMap<String, List<Collection<String>>>) engine.get("listlistMap");
+        @SuppressWarnings("unchecked")
         Map<String, List<Map<String, String>>> listmapMap = (SortedMap<String, List<Map<String,String>>>) engine.get("listmapMap");
 
         tmpPref.properties.clear();
@@ -1049,7 +1053,8 @@ public class CustomConfigurator {
 
         for (Entry<String, List<Collection<String>>> e : listlistMap.entrySet()) {
             if (Preferences.equalArray(e.getValue(), tmpPref.arrayDefaults.get(e.getKey()))) continue;
-            tmpPref.arrayProperties.put(e.getKey(), (List<List<String>>)(List)e.getValue());
+            @SuppressWarnings("unchecked") List<List<String>> value = (List)e.getValue();
+            tmpPref.arrayProperties.put(e.getKey(), value);
         }
 
         for (Entry<String, List<Map<String, String>>> e : listmapMap.entrySet()) {
