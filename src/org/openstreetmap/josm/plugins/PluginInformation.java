@@ -456,4 +456,9 @@ public class PluginInformation {
             return emptyIcon;
         return new ImageIcon(icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }
