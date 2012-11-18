@@ -1178,42 +1178,55 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="piste:difficulty" v="easy"/>
-		<line width="6" colour="piste_easy#0000ff"/>
+		<!--
+		    Show piste indication as linemod if there is already another line
+		    style in place (e.g. from highway=track), otherwise add a proper line
+		    style that looks the same.
+		    If the proper line style applies, the linemod is suppressed, so it
+		    renders only one style for each way.
+		-->
+		<line width="6" colour="piste_easy#0000ff" priority="-100000"/>
+		<linemod width="6" mode="under" colour="piste_easy#0000ff"/>
 		<area colour="piste_easy#0000ff" closed="true"/>
 		<icon src="sport/skiing.png"/>
 	</rule>
 
 	<rule>
 		<condition k="piste:difficulty" v="intermediate"/>
-		<line width="6" colour="piste_intermediate#ff0000"/>
+		<line width="6" colour="piste_intermediate#ff0000" priority="-100000"/>
+		<linemod width="6" mode="under" colour="piste_intermediate#ff0000"/>
 		<area colour="piste_intermediate#ff0000" closed="true"/>
 		<icon src="sport/skiing.png"/>
 	</rule>
 
 	<rule>
 		<condition k="piste:difficulty" v="advanced"/>
-		<line width="6" colour="piste_advanced#606060"/>
+		<line width="6" colour="piste_advanced#606060" priority="-100000"/>
+		<linemod width="6" mode="under" colour="piste_advanced#606060"/>
 		<area colour="piste_advanced#606060" closed="true"/>
 		<icon src="sport/skiing.png"/>
 	</rule>
 
 	<rule>
 		<condition k="piste:difficulty" v="expert"/>
-		<line width="6" colour="piste_expert#606060"/>
+		<line width="6" colour="piste_expert#606060" priority="-100000"/>
+		<linemod width="6" mode="under" colour="piste_expert#606060"/>
 		<area colour="piste_expert#606060" closed="true"/>
 		<icon src="sport/skiing.png"/>
 	</rule>
 
 	<rule>
 		<condition k="piste:difficulty" v="freeride"/>
-		<line width="6" colour="piste_freeride#ffff00"/>
+		<line width="6" colour="piste_freeride#ffff00" priority="-100000"/>
+		<linemod width="6" mode="under" colour="piste_freeride#ffff00"/>
 		<area colour="piste_freeride#ffff00" closed="true"/>
 		<icon src="sport/skiing.png"/>
 	</rule>
 
 	<rule>
 		<condition k="piste:difficulty" v="novice"/>
-		<line width="6" colour="piste_novice#00ff00"/>
+		<line width="6" colour="piste_novice#00ff00" priority="-100000"/>
+		<linemod width="6" mode="under" colour="piste_novice#00ff00"/>
 		<area colour="piste_novice#00ff00" closed="true"/>
 		<icon src="sport/skiing.png"/>
 	</rule>
