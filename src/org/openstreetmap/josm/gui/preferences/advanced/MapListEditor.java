@@ -202,7 +202,9 @@ public class MapListEditor extends ExtendedDialog {
     class MapTableModel extends AbstractTableModel {
         private List<List<String>> data() {
             if (entryIdx == null) return Collections.emptyList();
-            return Arrays.asList(dataKeys.get(entryIdx), dataValues.get(entryIdx));
+            @SuppressWarnings("unchecked")
+            List<List<String>> result = Arrays.asList(dataKeys.get(entryIdx), dataValues.get(entryIdx));
+            return result;
         }
 
         private int size() {

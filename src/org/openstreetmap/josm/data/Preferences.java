@@ -1798,12 +1798,21 @@ public class Preferences {
         
         if (a instanceof StringSetting) 
             return (a.getValue().equals(b.getValue()));
-        if (a instanceof ListSetting) 
-            return equalCollection((Collection<String>) a.getValue(), (Collection<String>) b.getValue());
-        if (a instanceof ListListSetting) 
-            return equalArray((Collection<Collection<String>>) a.getValue(), (Collection<List<String>>) b.getValue());
-        if (a instanceof MapListSetting) 
-            return equalListOfStructs((Collection<Map<String, String>>) a.getValue(), (Collection<Map<String, String>>) b.getValue());
+        if (a instanceof ListSetting) {
+            @SuppressWarnings("unchecked") Collection<String> aValue = (Collection) a.getValue();
+            @SuppressWarnings("unchecked") Collection<String> bValue = (Collection) b.getValue();
+            return equalCollection(aValue, bValue);
+        }
+        if (a instanceof ListListSetting) {
+            @SuppressWarnings("unchecked") Collection<Collection<String>> aValue = (Collection) a.getValue();
+            @SuppressWarnings("unchecked") Collection<List<String>> bValue = (Collection) b.getValue();
+            return equalArray(aValue, bValue);
+        }
+        if (a instanceof MapListSetting) {
+            @SuppressWarnings("unchecked") Collection<Map<String, String>> aValue = (Collection) a.getValue();
+            @SuppressWarnings("unchecked") Collection<Map<String, String>> bValue = (Collection) b.getValue();
+            return equalListOfStructs(aValue, bValue);
+        }
         return a.equals(b);
     }
 
