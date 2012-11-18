@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.tools.Utils;
 
 public class OsmosnimkiOffsetServer implements OffsetServer {
     public static final StringProperty PROP_SERVER_URL = new StringProperty("imagery.offsetserver.url","http://offset.osmosnimki.ru/offset/v0?");
@@ -27,7 +28,7 @@ public class OsmosnimkiOffsetServer implements OffsetServer {
         try {
             URL url = new URL(this.url + "action=CheckAvailability&id=" + URLEncoder.encode(info.getUrl(), "UTF-8"));
             System.out.println(tr("Querying offset availability: {0}", url));
-            final BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream(), "UTF-8"));
+            final BufferedReader rdr = new BufferedReader(new InputStreamReader(Utils.openHttpConnection(url).getInputStream(), "UTF-8"));
             String response = rdr.readLine();
             System.out.println(tr("Offset server response: {0}", response));
             if (response == null)
@@ -45,7 +46,7 @@ public class OsmosnimkiOffsetServer implements OffsetServer {
         try {
             URL url = new URL(this.url + "action=GetOffsetForPoint&lat=" + ll.lat() + "&lon=" + ll.lon() + "&id=" + URLEncoder.encode(info.getUrl(), "UTF-8"));
             System.out.println(tr("Querying offset: {0}", url.toString()));
-            final BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream(), "UTF-8"));
+            final BufferedReader rdr = new BufferedReader(new InputStreamReader(Utils.openHttpConnection(url).getInputStream(), "UTF-8"));
             String s = rdr.readLine();
             if (s == null)
                 return null;

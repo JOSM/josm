@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -181,13 +182,11 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
             }
 
             synchronized(this) {
-                connection = (HttpURLConnection)capabilitiesUrl.openConnection();
+                connection = Utils.openHttpConnection(capabilitiesUrl);
             }
             connection.setDoInput(true);
             connection.setDoOutput(false);
             connection.setRequestMethod("GET");
-            connection.setRequestProperty("User-Agent", Version.getInstance().getAgentString());
-            connection.setRequestProperty("Host", connection.getURL().getHost());
             connection.connect();
 
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {

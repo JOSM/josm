@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WikiReader;
 
 /**
@@ -45,12 +46,10 @@ public class HelpContentReader {
      * @throws MissingHelpContentException thrown if this helpTopicUrl doesn't point to an existing Wiki help page
      */
     public String fetchHelpTopicContent(String helpTopicUrl, boolean dotest) throws HelpContentReaderException {
-        URL url = null;
         HttpURLConnection con = null;
         BufferedReader in = null;
         try {
-            url = new URL(helpTopicUrl);
-            con = (HttpURLConnection)url.openConnection();
+            con = Utils.openHttpConnection(new URL(helpTopicUrl));
             con.connect();
             in = new BufferedReader(new InputStreamReader(con.getInputStream(),"utf-8"));
             return prepareHelpContent(in, dotest);

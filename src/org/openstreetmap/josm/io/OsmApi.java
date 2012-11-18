@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -584,9 +585,8 @@ public class OsmApi extends OsmConnection {
             try {
                 URL url = new URL(new URL(getBaseUrl()), urlSuffix);
                 System.out.print(requestMethod + " " + url + "... ");
-                activeConnection = (HttpURLConnection)url.openConnection();
                 // fix #5369, see http://www.tikalk.com/java/forums/httpurlconnection-disable-keep-alive
-                activeConnection.setRequestProperty("Connection", "close");
+                activeConnection = Utils.openHttpConnection(url, false);
                 activeConnection.setConnectTimeout(fastFail ? 1000 : Main.pref.getInteger("socket.timeout.connect",15)*1000);
                 if (fastFail) {
                     activeConnection.setReadTimeout(1000);

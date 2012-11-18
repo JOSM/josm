@@ -29,7 +29,6 @@ import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthException;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.data.oauth.OsmPrivileges;
@@ -37,6 +36,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * An OAuth 1.0 authorization client. 
@@ -324,12 +324,11 @@ public class OsmOAuthAuthorizationClient {
             sb.append(buildOsmLoginUrl()).append("?cookie_test=true");
             URL url = new URL(sb.toString());
             synchronized(this) {
-                connection = (HttpURLConnection)url.openConnection();
+                connection = Utils.openHttpConnection(url);
             }
             connection.setRequestMethod("GET");
             connection.setDoInput(true);
             connection.setDoOutput(false);
-            setHttpRequestParameters(connection);
             connection.connect();
             SessionId sessionId = extractOsmSession(connection);
             if (sessionId == null)
@@ -354,13 +353,12 @@ public class OsmOAuthAuthorizationClient {
         try {
             URL url = new URL(getAuthoriseUrl(requestToken));
             synchronized(this) {
-                connection = (HttpURLConnection)url.openConnection();
+                connection = Utils.openHttpConnection(url);
             }
             connection.setRequestMethod("GET");
             connection.setDoInput(true);
             connection.setDoOutput(false);
             connection.setRequestProperty("Cookie", "_osm_session=" + sessionId.id + "; _osm_username=" + sessionId.userName);
-            setHttpRequestParameters(connection);
             connection.connect();
             sessionId.token = extractToken(connection);
             if (sessionId.token == null)
@@ -379,7 +377,7 @@ public class OsmOAuthAuthorizationClient {
         try {
             URL url = new URL(buildOsmLoginUrl());
             synchronized(this) {
-                connection = (HttpURLConnection)url.openConnection();
+                connection = Utils.openHttpConnection(url);
             }
             connection.setRequestMethod("POST");
             connection.setDoInput(true);
@@ -400,7 +398,6 @@ public class OsmOAuthAuthorizationClient {
             connection.setRequestProperty("Cookie", "_osm_session=" + sessionId.id);
             // make sure we can catch 302 Moved Temporarily below
             connection.setInstanceFollowRedirects(false);
-            setHttpRequestParameters(connection);
 
             connection.connect();
 
@@ -436,14 +433,13 @@ public class OsmOAuthAuthorizationClient {
         try {
             URL url = new URL(buildOsmLogoutUrl());
             synchronized(this) {
-                connection = (HttpURLConnection)url.openConnection();
+                connection = Utils.openHttpConnection(url);
             }
             connection.setRequestMethod("GET");
             connection.setDoInput(true);
             connection.setDoOutput(false);
-            setHttpRequestParameters(connection);
             connection.connect();
-        }catch(MalformedURLException e) {
+        } catch(MalformedURLException e) {
             throw new OsmOAuthAuthorizationException(e);
         } catch(IOException e) {
             throw new OsmOAuthAuthorizationException(e);
@@ -483,7 +479,7 @@ public class OsmOAuthAuthorizationClient {
         try {
             URL url = new URL(oauthProviderParameters.getAuthoriseUrl());
             synchronized(this) {
-                connection = (HttpURLConnection)url.openConnection();
+                connection = Utils.openHttpConnection(url);
             }
             connection.setRequestMethod("POST");
             connection.setDoInput(true);
@@ -493,7 +489,6 @@ public class OsmOAuthAuthorizationClient {
             connection.setRequestProperty("Content-Length", Integer.toString(request.length()));
             connection.setRequestProperty("Cookie", "_osm_session=" + sessionId.id + "; _osm_username=" + sessionId.userName);
             connection.setInstanceFollowRedirects(false);
-            setHttpRequestParameters(connection);
 
             connection.connect();
 
@@ -519,11 +514,6 @@ public class OsmOAuthAuthorizationClient {
                 connection = null;
             }
         }
-    }
-
-    protected void setHttpRequestParameters(HttpURLConnection connection) {
-        connection.setRequestProperty("User-Agent", Version.getInstance().getAgentString());
-        connection.setRequestProperty("Host", connection.getURL().getHost());
     }
 
     /**

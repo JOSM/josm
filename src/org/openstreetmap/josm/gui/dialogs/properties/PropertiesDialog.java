@@ -1411,7 +1411,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                             // find a page that actually exists in the wiki
                             HttpURLConnection conn;
                             for (URI u : uris) {
-                                conn = (HttpURLConnection) u.toURL().openConnection();
+                                conn = Utils.openHttpConnection(u.toURL());
                                 conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
 
                                 if (conn.getResponseCode() != 200) {
@@ -1421,10 +1421,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                                     int osize = conn.getContentLength();
                                     conn.disconnect();
 
-                                    conn = (HttpURLConnection) new URI(u.toString()
+                                    conn = Utils.openHttpConnection(new URI(u.toString()
                                             .replace("=", "%3D") /* do not URLencode whole string! */
                                             .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
-                                            ).toURL().openConnection();
+                                            ).toURL());
                                     conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
 
                                     /* redirect pages have different content length, but retrieving a "nonredirect"

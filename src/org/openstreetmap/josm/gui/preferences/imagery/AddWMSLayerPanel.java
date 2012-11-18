@@ -59,6 +59,7 @@ import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -341,7 +342,7 @@ public class AddWMSLayerPanel extends JPanel {
         String incomingData;
         try {
             System.out.println("GET "+getCapabilitiesUrl.toString());
-            URLConnection openConnection = getCapabilitiesUrl.openConnection();
+            URLConnection openConnection = Utils.openHttpConnection(getCapabilitiesUrl);
             InputStream inputStream = openConnection.getInputStream();
             BufferedReader br = new BufferedReader(UTFInputStreamReader.create(inputStream, "UTF-8"));
             String line;

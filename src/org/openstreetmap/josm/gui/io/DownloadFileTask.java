@@ -1,8 +1,5 @@
-package org.openstreetmap.josm.gui.io;
-
-
-
 // License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.gui.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -16,13 +13,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import java.net.URLConnection;
 import java.util.Enumeration;
-
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.openstreetmap.josm.data.Version;
+
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.tools.Utils;
@@ -30,8 +24,8 @@ import org.xml.sax.SAXException;
 
 
 /**
- * Asynchronous task for downloading andnd unpacking arbitrary file lists
- * Shows progress bar when donloading
+ * Asynchronous task for downloading and unpacking arbitrary file lists
+ * Shows progress bar when downloading
  */
 public class DownloadFileTask extends PleaseWaitRunnable{
     private final String address;
@@ -62,12 +56,11 @@ public class DownloadFileTask extends PleaseWaitRunnable{
     }
 
     private boolean canceled;
-    private URLConnection downloadConnection;
+    private HttpURLConnection downloadConnection;
 
     private synchronized void closeConnectionIfNeeded() {
-        if (downloadConnection != null && downloadConnection instanceof HttpURLConnection) {
-            HttpURLConnection conn = ((HttpURLConnection) downloadConnection);
-            conn.disconnect();
+        if (downloadConnection != null) {
+            downloadConnection.disconnect();
         }
         downloadConnection = null;
     }
@@ -96,10 +89,8 @@ public class DownloadFileTask extends PleaseWaitRunnable{
             URL url = new URL(address);
             int size;
             synchronized(this) {
-                downloadConnection = url.openConnection();
+                downloadConnection = Utils.openHttpConnection(url);
                 downloadConnection.setRequestProperty("Cache-Control", "no-cache");
-                downloadConnection.setRequestProperty("User-Agent",Version.getInstance().getAgentString());
-                downloadConnection.setRequestProperty("Host", url.getHost());
                 downloadConnection.connect();
                 size = downloadConnection.getContentLength();
             }
@@ -175,7 +166,7 @@ public class DownloadFileTask extends PleaseWaitRunnable{
         ZipFile zf = null;
         try {
             zf = new ZipFile(file);
-            Enumeration es = zf.entries();
+            Enumeration<?> es = zf.entries();
             ZipEntry ze;
             while (es.hasMoreElements()) {
                 ze = (ZipEntry) es.nextElement();
