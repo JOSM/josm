@@ -39,6 +39,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
 
     private boolean osmConform;
     private boolean withBody = true;
+    private boolean isOsmChange;
     private String version;
     private Changeset changeset;
 
@@ -54,6 +55,11 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     public void setWithBody(boolean wb) {
         this.withBody = wb;
     }
+
+    public void setIsOsmChange(boolean isOsmChange) {
+        this.isOsmChange = isOsmChange;
+    }
+
     public void setChangeset(Changeset cs) {
         this.changeset = cs;
     }
@@ -135,12 +141,12 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     public void visit(INode n) {
         if (n.isIncomplete()) return;
         addCommon(n, "node");
-        if (n.getCoor() != null) { 
-            out.print(" lat='"+n.getCoor().lat()+"' lon='"+n.getCoor().lon()+"'");
-        } 
         if (!withBody) {
             out.println("/>");
         } else {
+            if (n.getCoor() != null) {
+                out.print(" lat='"+n.getCoor().lat()+"' lon='"+n.getCoor().lon()+"'");
+            }
             addTags(n, "node", true);
         }
     }
@@ -239,31 +245,33 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             out.print(" id='"+ osm.getUniqueId()+"'");
         } else
             throw new IllegalStateException(tr("Unexpected id 0 for osm primitive found"));
-        if (!osmConform) {
-            String action = null;
-            if (osm.isDeleted()) {
-                action = "delete";
-            } else if (osm.isModified()) {
-                action = "modify";
+        if (!isOsmChange) {
+            if (!osmConform) {
+                String action = null;
+                if (osm.isDeleted()) {
+                    action = "delete";
+                } else if (osm.isModified()) {
+                    action = "modify";
+                }
+                if (action != null) {
+                    out.print(" action='"+action+"'");
+                }
             }
-            if (action != null) {
-                out.print(" action='"+action+"'");
+            if (!osm.isTimestampEmpty()) {
+                out.print(" timestamp='"+DateUtils.fromDate(osm.getTimestamp())+"'");
             }
-        }
-        if (!osm.isTimestampEmpty()) {
-            out.print(" timestamp='"+DateUtils.fromDate(osm.getTimestamp())+"'");
-        }
-        // user and visible added with 0.4 API
-        if (osm.getUser() != null) {
-            if(osm.getUser().isLocalUser()) {
-                out.print(" user='"+XmlWriter.encode(osm.getUser().getName())+"'");
-            } else if (osm.getUser().isOsmUser()) {
-                // uid added with 0.6
-                out.print(" uid='"+ osm.getUser().getId()+"'");
-                out.print(" user='"+XmlWriter.encode(osm.getUser().getName())+"'");
+            // user and visible added with 0.4 API
+            if (osm.getUser() != null) {
+                if(osm.getUser().isLocalUser()) {
+                    out.print(" user='"+XmlWriter.encode(osm.getUser().getName())+"'");
+                } else if (osm.getUser().isOsmUser()) {
+                    // uid added with 0.6
+                    out.print(" uid='"+ osm.getUser().getId()+"'");
+                    out.print(" user='"+XmlWriter.encode(osm.getUser().getName())+"'");
+                }
             }
+            out.print(" visible='"+osm.isVisible()+"'");
         }
-        out.print(" visible='"+osm.isVisible()+"'");
         if (osm.getVersion() != 0) {
             out.print(" version='"+osm.getVersion()+"'");
         }
