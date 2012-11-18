@@ -2414,6 +2414,20 @@ Note that for a match, at least one positive and no negative is required.
             <check key="area" text="Area" default="off" />
         </item>
         <separator/>
+        <item name="Stop Area" type="relation">
+            <label text="Edit Stop Area" />
+            <key key="type" value="public_transport" />
+            <key key="public_transport" value="stop_area" />
+            <optional>
+                <text key="name" text="Name" />
+                <text key="ref" text="Reference" />
+                <text key="uic_ref" text="UIC reference" />
+                <text key="uic_name" text="UIC name" />
+                <text key="operator" text="Operator" />
+                <text key="network" text="Network" />
+            </optional>
+        </item>
+        <separator/>
         <item name="Ticket Machine" de.name="Fahrausweisautomat" icon="presets/vending_machine.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=vending_machine"
