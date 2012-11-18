@@ -361,7 +361,8 @@ public class Utils {
 
     /**
      * Calculate MD5 hash of a string and output in hexadecimal format.
-     * Output has length 32 with characters in range [0-9a-f]
+     * @param data arbitrary String
+     * @return MD5 hash of data, string of length 32 with characters in range [0-9a-f]
      */
     public static String md5Hex(String data) {
         byte[] byteData = null;
@@ -381,8 +382,11 @@ public class Utils {
     }
 
     /**
-     * Converts a byte array to a string of hexadecimal characters. Preserves leading zeros, so the
-     * size of the output string is always twice the number of input bytes.
+     * Converts a byte array to a string of hexadecimal characters.
+     * Preserves leading zeros, so the size of the output string is always twice
+     * the number of input bytes.
+     * @param bytes the byte array
+     * @return hexadecimal representation
      */
     public static String toHexString(byte[] bytes) {
         char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};

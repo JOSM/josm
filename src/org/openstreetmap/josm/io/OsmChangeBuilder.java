@@ -35,6 +35,7 @@ public class OsmChangeBuilder {
         writer = new PrintWriter(swriter = new StringWriter());
         osmwriter = OsmWriterFactory.createOsmWriter(writer, false, apiVersion);
         osmwriter.setChangeset(changeset);
+        osmwriter.setIsOsmChange(true);
     }
 
     protected void write(IPrimitive p) {

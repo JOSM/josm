@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * This class can be used to save properties of OsmPrimitive.
  *
- * This class can be used to save properties of OsmPrimitive. The main difference between PrimitiveData
+ * The main difference between PrimitiveData
  * and OsmPrimitive is that PrimitiveData is not part of the dataset and changes in PrimitiveData are not
  * reported by events
- *
  */
 public abstract class PrimitiveData extends AbstractPrimitive {
 
