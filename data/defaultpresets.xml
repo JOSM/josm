@@ -2325,7 +2325,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="operator" text="Operator"/>
                 <text key="network" text="Network"/>
                 <text key="description" text="Description"/>
-                <text key="color" text="Color (hex)"/>
+                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
             </optional>
             <roles>
                 <role key="" text="route segment" requisite="required" type="way" />
@@ -2347,7 +2347,7 @@ Note that for a match, at least one positive and no negative is required.
             <optional>
                 <text key="operator" text="Operator"/>
                 <text key="network" text="Network"/>
-                <text key="color" text="Color (hex)"/>
+                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
             </optional>
             <roles>
                 <role key="" text="route variant/direction (at least 2)" requisite="required" type="relation"/> <!-- FIXME: at least 2 members are required -->
@@ -3684,7 +3684,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="amenity" value="bench" />
             <combo key="backrest" text="Backrest" values="yes,no" />
             <combo key="material" text="Material" values="stone,metal,wood,plastic" />
-            <combo key="colour" text="Colour" values_context="color" values="black,brown,green,red,blue,gray,white" />
+            <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
             <combo key="seats" text="Amount of Seats" values="2,3,4,5,6,7,8,9,10" />
         </item>
         <item name="Shelter" icon="presets/shelter.png" type="node,closedway">
@@ -5771,7 +5771,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="network" text="Network" />
                 <text key="operator" text="Operator" />
                 <combo key="state" text="Route state" values="proposed,alternate,temporary,connection" />
-                <text key="color" text="Color (hex)" />
+                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
             </optional>
             <roles>
                 <role key="" text="route segment" requisite="optional" type="way" />
