@@ -5775,6 +5775,8 @@ Note that for a match, at least one positive and no negative is required.
             </optional>
             <roles>
                 <role key="" text="route segment" requisite="optional" type="way" />
+                <role key="forward" text="forward segment" requisite="optional" type="way" />
+                <role key="backward" text="backward segment" requisite="optional" type="way" />
                 <role key="east" text="east segment (North America)" requisite="optional" type="way" />
                 <role key="north" text="north segment (North America)" requisite="optional" type="way" />
                 <role key="west" text="west segment (North America)" requisite="optional" type="way" />
