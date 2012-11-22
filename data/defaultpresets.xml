@@ -5864,7 +5864,8 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="wikipedia" text="Wikipedia" />
             </optional>
             <roles>
-                <role key="main_stream" text="waterways (no riverbank)" requisite="required" type="way" />
+                <role key="" text="waterways (no riverbank)" requisite="optional" type="way" />
+                <role key="main_stream" text="waterways (no riverbank)" requisite="optional" type="way" />
                 <role key="side_stream" text="branch waterways (no riverbank)" requisite="optional" type="way" />
                 <role key="spring" text="spring of waterway" requisite="optional" type="node" />
             </roles>
