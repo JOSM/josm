@@ -2311,6 +2311,168 @@ Note that for a match, at least one positive and no negative is required.
         </item>
     </group> <!-- Bicycle -->
     <group name="Public Transport" icon="presets/bus.png">
+        <item name="Route" icon="presets/path.png" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Route"/>
+            <label text="Edit Route"/>
+            <key key="type" value="route"/>
+            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry"/>
+            <text key="name" text="Name"/>
+            <text key="ref" text="Reference"/>
+            <optional>
+                <text key="from" text="From (initial stop)"/>
+                <text key="to" text="To (terminal stop)"/>
+                <text key="via" text="Via (intermediate stops)"/>
+                <text key="operator" text="Operator"/>
+                <text key="network" text="Network"/>
+                <text key="description" text="Description"/>
+                <text key="color" text="Color (hex)"/>
+            </optional>
+            <roles>
+                <role key="" text="route segment" requisite="required" type="way" />
+                <role key="stop" text="stop position" requisite="optional" type="node" />
+                <role key="stop_exit_only" text="stop position (exit only)" requisite="optional" type="node" />
+                <role key="stop_entry_only" text="stop position (entry only)" requisite="optional" type="node" />
+                <role key="platform" text="platform" requisite="optional" type="node,way,closedway" />
+                <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway" />
+                <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway" />
+            </roles>
+        </item>
+        <item name="Route master" icon="presets/path.png" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Route_master"/>
+            <label text="Edit Route master"/>
+            <key key="type" value="route_master"/>
+            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry"/>
+            <text key="name" text="Name"/>
+            <text key="ref" text="Reference"/>
+            <optional>
+                <text key="operator" text="Operator"/>
+                <text key="network" text="Network"/>
+                <text key="color" text="Color (hex)"/>
+            </optional>
+            <roles>
+                <role key="" text="route variant/direction (at least 2)" requisite="required" type="relation"/> <!-- FIXME: at least 2 members are required -->
+            </roles>
+        </item>
+        <item name="Stop Area" type="relation" icon="presets/interpolation.png">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Stop_area"/>
+            <label text="Edit Stop Area"/>
+            <key key="type" value="public_transport"/>
+            <key key="public_transport" value="stop_area"/>
+            <text key="name" text="Name"/>
+            <optional>
+                <text key="ref" text="Reference"/>
+                <text key="uic_ref" text="UIC reference"/>
+                <text key="uic_name" text="UIC name"/>
+                <text key="operator" text="Operator"/>
+                <text key="network" text="Network"/>
+            </optional>
+            <roles>
+                <role key="stop" text="Stop Position" requisite="optional" type="node"/>
+                <role key="platform" text="Platform" requisite="optional" type="node,way,closedway"/>
+                <role key="" text="Station or amenities" requisite="optional" type="node,way,closedway"/>
+            </roles>
+        </item>
+        <separator/>
+        <item name="Stop Position" type="node" icon="presets/barrier.png">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Stop_area"/>
+            <key key="public_transport" value="stop_position"/>
+            <text key="name" text="Name"/>
+            <optional>
+                <text key="ref" text="Reference"/>
+                <text key="uic_ref" text="UIC reference"/>
+                <text key="uic_name" text="UIC name"/>
+                <text key="operator" text="Operator"/>
+                <text key="network" text="Network"/>
+            </optional>
+            <space/>
+            <check key="bus" text="Bus"/>
+            <check key="highway" value_on="bus_stop" value_off="" text="Bus stop (legacy)"/>
+            <check key="tram" text="Tram"/>
+            <check key="railway" value_on="tram_stop" value_off="" text="Tram stop (legacy)"/>
+            <check key="train" text="Train"/>
+            <check key="railway" value_on="station" value_off="" text="Railway station (legacy)"/>
+            <check key="railway" value_on="halt" value_off="" text="Railway halt (legacy)"/>
+            <check key="trolleybus" text="Trolleybus"/>
+            <check key="share_taxi" text="Share taxi"/>
+            <check key="subway" text="Subway"/>
+            <check key="monorail" text="Monorail"/>
+            <check key="funicular" text="Funicular"/>
+            <check key="aerialway" text="Aerialway"/>
+            <check key="ferry" text="Ferry"/>
+        </item>
+        <item name="Platform" type="node,way,closedway" icon="presets/platform_bus.png">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Platform"/>
+            <key key="public_transport" value="platform"/>
+            <text key="name" text="Name"/>
+            <check key="bench" text="Bench"/>
+            <check key="shelter" text="Shelter"/>
+            <check key="covered" text="Covered"/>
+            <combo key="wheelchair" text="Wheelchair" values="yes,no,limited,only"/>
+            <optional>
+                <text key="ref" text="Reference"/>
+                <text key="uic_ref" text="UIC reference"/>
+                <text key="uic_name" text="UIC name"/>
+                <text key="operator" text="Operator"/>
+                <text key="network" text="Network"/>
+                <space/>
+                <check key="bus" text="Bus"/>
+                <check key="highway" value_on="platform" text="Highway platform (legacy)"/>
+                <check key="tram" text="Tram"/>
+                <check key="train" text="Train"/>
+                <check key="railway" value_on="platform" text="Railway platform (legacy)"/>
+                <check key="trolleybus" text="Trolleybus"/>
+                <check key="share_taxi" text="Share taxi"/>
+                <check key="subway" text="Subway"/>
+                <check key="monorail" text="Monorail"/>
+                <check key="funicular" text="funicular"/>
+                <check key="aerialway" text="aerialway"/>
+                <check key="ferry" text="ferry"/>
+            </optional>
+        </item>
+        <item name="Station" type="node,closedway" icon="styles/standard/transport/railway_station.png">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:public_transport=station"/>
+            <key key="public_transport" value="station"/>
+            <text key="name" text="Name"/>
+            <check key="area" text="Area"/>
+            <check key="building" text="Building"/>
+            <text key="operator" text="Operator"/>
+            <text key="network" text="Network"/>
+        </item>
+        <separator/>
+        <item name="Subway Entrance" icon="presets/underground.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=subway_entrance"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:railway=subway_entrance"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:railway=subway_entrance"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:railway=subway_entrance" />
+            <label text="Edit Subway Entrance" />
+            <space />
+            <key key="railway" value="subway_entrance" />
+            <optional>
+                <text key="name" text="Name" />
+                <check key="wheelchair" text="Wheelchair" default="off" />
+                <check key="bicycle" text="Bicycle" default="off" />
+            </optional>
+        </item>
+        <item name="Ticket Machine" de.name="Fahrausweisautomat" icon="presets/vending_machine.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=vending_machine"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=vending_machine"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=vending_machine"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=vending_machine"/>
+            <key key="amenity" value="vending_machine"/>
+            <key key="vending" value="public_transport_tickets"/>
+            <text key="name" text="Name"/>
+            <text key="operator" text="Operator"/>
+            <text key="ref" text="Reference Number"/>
+            <check key="payment:coins" text="Coins" default="off" />
+            <check key="payment:notes" text="Notes" default="off" />
+            <check key="payment:electronic_purses" text="Electronic purses and Charge cards" default="off" />
+            <check key="payment:debit_cards" text="Debit cards" default="off" />
+            <check key="payment:credit_cards" text="Credit cards" default="off" />
+            <check key="payment:account_cards" text="Account or loyalty cards" default="off" />
+        </item>
+    </group>
+    <group name="Public Transport (legacy)" icon="presets/bus.png">
         <item name="Station" name_context="railway" icon="styles/standard/transport/railway_station.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=station"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=station"
@@ -2360,20 +2522,6 @@ Note that for a match, at least one positive and no negative is required.
             <text key="width" text="Width (meters)" />
             <check key="area" text="Area" default="off" />
         </item>
-        <item name="Subway Entrance" icon="presets/underground.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=subway_entrance"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:railway=subway_entrance"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:railway=subway_entrance"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:railway=subway_entrance" />
-            <label text="Edit Subway Entrance" />
-            <space />
-            <key key="railway" value="subway_entrance" />
-            <optional>
-                <text key="name" text="Name" />
-                <check key="wheelchair" text="Wheelchair" default="off" />
-                <check key="bicycle" text="Bicycle" default="off" />
-            </optional>
-        </item>
         <separator/>
         <item name="Bus Station" icon="presets/bus.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bus_station"
@@ -2405,46 +2553,13 @@ Note that for a match, at least one positive and no negative is required.
 
             </optional>
         </item>
-        <item name="Bus Platform" icon="presets/platform_bus.png" type="node,closedway">
+        <item name="Bus Platform" icon="presets/platform_bus.png" type="node,way,closedway">
             <label text="Edit Bus Platform" />
             <key key="highway" value="platform" />
             <space />
             <text key="ref" text="Reference (track number)" />
             <text key="width" text="Width (meters)" />
             <check key="area" text="Area" default="off" />
-        </item>
-        <separator/>
-        <item name="Stop Area" type="relation">
-            <label text="Edit Stop Area" />
-            <key key="type" value="public_transport" />
-            <key key="public_transport" value="stop_area" />
-            <optional>
-                <text key="name" text="Name" />
-                <text key="ref" text="Reference" />
-                <text key="uic_ref" text="UIC reference" />
-                <text key="uic_name" text="UIC name" />
-                <text key="operator" text="Operator" />
-                <text key="network" text="Network" />
-            </optional>
-        </item>
-        <separator/>
-        <item name="Ticket Machine" de.name="Fahrausweisautomat" icon="presets/vending_machine.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=vending_machine"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=vending_machine"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=vending_machine"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=vending_machine"/>
-            <key key="amenity" value="vending_machine"/>
-            <key key="vending" value="public_transport_tickets"/>
-            <text key="name" text="Name"/>
-            <text key="operator" text="Operator"/>
-            <text key="ref" text="Reference Number"/>
-            <check key="payment:coins" text="Coins" default="off" />
-            <check key="payment:notes" text="Notes" default="off" />
-            <check key="payment:electronic_purses" text="Electronic purses and Charge cards" default="off" />
-            <check key="payment:debit_cards" text="Debit cards" default="off" />
-            <check key="payment:credit_cards" text="Credit cards" default="off" />
-            <check key="payment:account_cards" text="Account or loyalty cards" default="off" />
         </item>
     </group> <!-- Public Transport -->
     <item name="Taxi" icon="presets/taxi.png" type="node,closedway">
@@ -5637,7 +5752,7 @@ Note that for a match, at least one positive and no negative is required.
             </roles>
         </item>
         <separator/>
-        <item name="Route" icon="presets/path.png" type="relation">
+        <item name="Route (legacy)" icon="presets/path.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:route"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:route"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Relation:route"
@@ -5645,57 +5760,7 @@ Note that for a match, at least one positive and no negative is required.
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Relation:route"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Relation:route"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Relation:route"/>
-            <label text="Edit Route" />
-            <key key="type" value="route" />
-            <combo key="route" text="Route type" values="bicycle,bus,road,ferry,ski,foot,hiking,tram,detour,railway,subway" />
-            <text key="name" text="Name" />
-            <text key="ref" text="Reference" />
-            <text key="symbol" text="Symbol description" />
-            <text key="description" text="Description" />
-            <optional>
-                <text key="from" text="From (initial stop)" />
-                <text key="to" text="To (terminal stop)" />
-                <text key="network" text="Network" />
-                <text key="operator" text="Operator" />
-                <combo key="state" text="Route state" values="proposed,alternate,temporary,connection" />
-                <text key="color" text="Color (hex)" />
-            </optional>
-            <roles>
-                <role key="" text="route segment" requisite="optional" type="way" />
-                <role key="forward" text="forward segment" requisite="optional" type="way" />
-                <role key="backward" text="backward segment" requisite="optional" type="way" />
-                <role key="stop" text="halt point" requisite="optional" type="node" />
-                <role key="forward_stop" text="forward halt point" requisite="optional" type="node" />
-                <role key="backward_stop" text="backward halt point" requisite="optional" type="node" />
-                <role key="platform" text="platform belonging to route" requisite="optional" type="node,way,closedway" />
-            </roles>
-        </item>
-        <item name="Route master" icon="presets/path.png" type="relation">
-            <link href="http://wiki.openstreetmap.org/wiki/Relation:route_master"
-                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Relation:route_master"/>
-            <label text="Edit Route master" />
-            <key key="type" value="route_master" />
-            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry" />
-            <text key="name" text="Name" />
-            <text key="ref" text="Reference" />
-            <optional>
-                <text key="network" text="Network" />
-                <text key="operator" text="Operator" />
-                <text key="color" text="Color (hex)" />
-            </optional>
-            <roles>
-              <role key="" text="route variant/direction (at least 2)" requisite="required" type="relation" /><!-- FIXME: at least 2 members are required -->
-            </roles>
-        </item>
-        <item name="Directional Route (North America)" icon="presets/path.png" type="relation">
-            <link href="http://wiki.openstreetmap.org/wiki/Relation:route"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:route"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Relation:route"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Relation:route"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Relation:route"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Relation:route"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Relation:route"/>
-            <label text="Edit Directional Route (used in North America)" />
+            <label text="Edit Route (legacy)" />
             <key key="type" value="route" />
             <combo key="route" text="Route type" values="bicycle,bus,road,ferry,ski,foot,hiking,tram,detour,railway,subway" />
             <text key="name" text="Name" />
@@ -5710,10 +5775,10 @@ Note that for a match, at least one positive and no negative is required.
             </optional>
             <roles>
                 <role key="" text="route segment" requisite="optional" type="way" />
-                <role key="east" text="east segment" requisite="optional" type="way" />
-                <role key="north" text="north segment" requisite="optional" type="way" />
-                <role key="west" text="west segment" requisite="optional" type="way" />
-                <role key="south" text="south segment" requisite="optional" type="way" />
+                <role key="east" text="east segment (North America)" requisite="optional" type="way" />
+                <role key="north" text="north segment (North America)" requisite="optional" type="way" />
+                <role key="west" text="west segment (North America)" requisite="optional" type="way" />
+                <role key="south" text="south segment (North America)" requisite="optional" type="way" />
                 <role key="stop" text="halt point" requisite="optional" type="node" />
                 <role key="forward_stop" text="forward halt point" requisite="optional" type="node" />
                 <role key="backward_stop" text="backward halt point" requisite="optional" type="node" />
