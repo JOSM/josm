@@ -99,8 +99,8 @@ public class SearchCompiler {
     public class CoreSimpleMatchFactory implements SimpleMatchFactory {
         private Collection<String> keywords = Arrays.asList("id", "version",
                 "changeset", "nodes", "tags", "areasize", "modified", "selected",
-                "incomplete", "untagged", "closed", "new", "indownloadarea",
-                "allindownloadarea", "inview", "allinview", "timestamp", "nth", "nth%");
+                "incomplete", "untagged", "closed", "new", "indownloadedarea",
+                "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%");
 
         @Override
         public Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError {
