@@ -70,7 +70,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         }
     }
 
-    private static PrefixSuffixSwitcher[] prefixSuffixSwitchers =
+    private static final PrefixSuffixSwitcher[] prefixSuffixSwitchers =
         new PrefixSuffixSwitcher[] {
         new PrefixSuffixSwitcher("left", "right"),
         new PrefixSuffixSwitcher("forward", "backward"),
@@ -80,17 +80,25 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         new PrefixSuffixSwitcher("north", "south"),
     };
 
-    private static ArrayList<String> reversibleTags = new ArrayList<String>(
-            Arrays.asList(new String[] {"oneway", "incline", "direction"}));
-
+    /**
+     * Tests whether way can be reversed without semantic change, i.e., whether tags have to be changed.
+     * Looks for keys like oneway, oneway:bicycle, cycleway:right:oneway, left/right.
+     * @param way
+     * @return false if tags should be changed to keep semantic, true otherwise.
+     */
     public static boolean isReversible(Way way) {
         for (String key : way.keySet()) {
-            if (reversibleTags.contains(key)) return false;
+            for (String k : Arrays.asList("oneway", "incline", "direction")) {
+                if (key.startsWith(k) || key.endsWith(k)) {
+                    return false;
+                }
+            }
             for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
-                if (!key.equals(prefixSuffixSwitcher.apply(key))) return false;
+                if (!key.equals(prefixSuffixSwitcher.apply(key))) {
+                    return false;
+                }
             }
         }
-
         return true;
     }
 
@@ -125,13 +133,14 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             String value = way.get(key);
             String newValue = value;
 
-            if (key.equals("oneway")) {
+            if (key.startsWith("oneway") || key.endsWith("oneway")) {
                 if (OsmUtils.isReversed(value)) {
                     newValue = OsmUtils.trueval;
                 } else if (OsmUtils.isTrue(value)) {
                     newValue = OsmUtils.reverseval;
                 }
-            } else if (key.equals("incline") || key.equals("direction")) {
+            } else if (key.startsWith("incline") || key.endsWith("incline")
+                    || key.startsWith("direction") || key.endsWith("direction")) {
                 PrefixSuffixSwitcher switcher = new PrefixSuffixSwitcher("up", "down");
                 newValue = switcher.apply(value);
                 if (newValue.equals(value)) {
