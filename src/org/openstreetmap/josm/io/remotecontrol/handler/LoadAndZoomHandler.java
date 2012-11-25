@@ -125,6 +125,7 @@ public class LoadAndZoomHandler extends RequestHandler
             });
         }
 
+        final Bounds bbox = new Bounds(new LatLon(minlat, minlon), new LatLon(maxlat, maxlon));
         if (args.containsKey("select") && PermissionPrefWithDefault.CHANGE_SELECTION.isAllowed()) {
             // select objects after downloading, zoom to selection.
             final String selection = args.get("select");
@@ -167,7 +168,12 @@ public class LoadAndZoomHandler extends RequestHandler
                     }
                     ds.setSelected(newSel);
                     if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
-                        AutoScaleAction.autoScale("selection");
+                        // zoom_mode=(download|selection), defaults to selection
+                        if (!"download".equals(args.get("zoom_mode"))) {
+                            AutoScaleAction.autoScale("selection");
+                        } else {
+                            zoom(bbox);
+                        }
                     }
                     if (Main.isDisplayingMapView() && Main.map.relationListDialog != null) {
                         Main.map.relationListDialog.selectRelations(null); // unselect all relations to fix #7342
@@ -178,7 +184,7 @@ public class LoadAndZoomHandler extends RequestHandler
             });
         } else if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
             // after downloading, zoom to downloaded area.
-            zoom(minlat, maxlat, minlon, maxlon);
+            zoom(bbox);
         }
 
         addTags(args);
@@ -214,12 +220,8 @@ public class LoadAndZoomHandler extends RequestHandler
         }
     }
 
-    protected void zoom(double minlat, double maxlat, double minlon, double maxlon) {
-        final Bounds bounds = new Bounds(new LatLon(minlat, minlon),
-                new LatLon(maxlat, maxlon));
-
+    protected void zoom(final Bounds bounds) {
         // make sure this isn't called unless there *is* a MapView
-        //
         if (Main.isDisplayingMapView()) {
             Main.worker.execute(new Runnable() {
                 public void run() {
