@@ -381,8 +381,9 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
      * Replies the list of plugins described in the downloaded plugin lists
      *
      * @return  the list of plugins
+     * @since 5601
      */
-    public List<PluginInformation> getAvailabePlugins() {
+    public List<PluginInformation> getAvailablePlugins() {
         return availablePlugins;
     }
 }

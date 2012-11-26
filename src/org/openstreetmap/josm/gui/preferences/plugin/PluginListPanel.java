@@ -117,19 +117,19 @@ public class PluginListPanel extends VerticallyScrollablePanel{
             // Does the newly selected plugin require other plugins ?
             if (cb.isSelected() && cb.pi.requires != null) {
                 // Select required plugins
-                for (String s : cb.pi.requires.split(";")) {
-                    model.setPluginSelected(s.trim(), true);
+                for (String s : cb.pi.getRequiredPlugins()) {
+                    model.setPluginSelected(s, true);
                 }
                 // Alert user if plugin requirements are not met
-                PluginHandler.checkRequiredPluginsPreconditions(PluginListPanel.this, model.getAvailablePlugins(), cb.pi);
+                PluginHandler.checkRequiredPluginsPreconditions(PluginListPanel.this, model.getAvailablePlugins(), cb.pi, false);
             }
             // If the plugin has been unselected, was it required by other plugins still selected ?
             else if (!cb.isSelected()) {
                 Set<String> otherPlugins = new HashSet<String>();
                 for (PluginInformation pi : model.getAvailablePlugins()) {
                     if (!pi.equals(cb.pi) && pi.requires != null && model.isSelectedPlugin(pi.getName())) {
-                        for (String s : pi.requires.split(";")) {
-                            if (s.trim().equals(cb.pi.getName())) {
+                        for (String s : pi.getRequiredPlugins()) {
+                            if (s.equals(cb.pi.getName())) {
                                 otherPlugins.add(pi.getName()); 
                                 break;
                             }

@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.PluginException;
+import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 
 public class PluginPreferencesModel extends Observable{
@@ -338,17 +339,10 @@ public class PluginPreferencesModel extends Observable{
      */
     public void refreshLocalPluginVersion(Collection<PluginInformation> plugins) {
         if (plugins == null) return;
-        File pluginDir = Main.pref.getPluginsDirectory();
         for (PluginInformation pi : plugins) {
-            // Find the downloaded file. We have tried to install the downloaded plugins
-            // (PluginHandler.installDownloadedPlugins). This succeeds depending on the
-            // platform.
-            File downloadedPluginFile = new File(pluginDir, pi.name + ".jar.new");
-            if (!(downloadedPluginFile.exists() && downloadedPluginFile.canRead())) {
-                downloadedPluginFile = new File(pluginDir, pi.name + ".jar");
-                if (!(downloadedPluginFile.exists() && downloadedPluginFile.canRead())) {
-                    continue;
-                }
+            File downloadedPluginFile = PluginHandler.findUpdatedJar(pi.name);
+            if (downloadedPluginFile == null) {
+                continue;
             }
             try {
                 PluginInformation newinfo = new PluginInformation(downloadedPluginFile, pi.name);
@@ -357,7 +351,7 @@ public class PluginPreferencesModel extends Observable{
                     // should not happen
                     continue;
                 }
-                oldinfo.localversion = newinfo.version;
+                oldinfo.updateLocalInfo(newinfo);
             } catch(PluginException e) {
                 e.printStackTrace();
             }
