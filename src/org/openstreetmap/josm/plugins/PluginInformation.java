@@ -43,6 +43,7 @@ public class PluginInformation {
     public String className = null;
     public boolean oldmode = false;
     public String requires = null;
+    public String localrequires = null;
     public String link = null;
     public String description = null;
     public boolean early = false;
@@ -156,7 +157,26 @@ public class PluginInformation {
         this.attr.clear();
         this.attr.putAll(other.attr);
     }
-
+    
+    /**
+     * Updates the plugin information of this plugin information object with the
+     * plugin information in a plugin information object retrieved from a plugin
+     * jar.
+     *
+     * @param other the plugin information object retrieved from the jar file
+     * @since 5601
+     */
+    public void updateFromJar(PluginInformation other) {
+        updateLocalInfo(other);
+        if (other.icon != null) {
+            this.icon = other.icon;
+        }
+        this.early = other.early;
+        this.className = other.className;
+        this.libraries = other.libraries;
+        this.stage = other.stage;
+    }
+    
     private void scanManifest(Manifest manifest, boolean oldcheck){
         String lang = LanguageInfo.getLanguageCodeManifest();
         Attributes attr = manifest.getMainAttributes();
@@ -451,6 +471,10 @@ public class PluginInformation {
         this.name = name;
     }
 
+    /**
+     * Replies the plugin icon, scaled to 24x24 pixels.
+     * @return the plugin icon, scaled to 24x24 pixels.
+     */
     public ImageIcon getScaledIcon() {
         if (icon == null)
             return emptyIcon;
@@ -460,5 +484,51 @@ public class PluginInformation {
     @Override
     public String toString() {
         return getName();
+    }
+
+    private static List<String> getRequiredPlugins(String pluginList) {
+        List<String> requiredPlugins = new ArrayList<String>();
+        if (pluginList != null) {
+            for (String s : pluginList.split(";")) {
+                String plugin = s.trim();
+                if (!plugin.isEmpty()) {
+                    requiredPlugins.add(plugin);
+                }
+            }
+        }
+        return requiredPlugins;
+    }
+    
+    /**
+     * Replies the list of plugins required by the up-to-date version of this plugin. 
+     * @return List of plugins required. Empty if no plugin is required.
+     * @since 5601
+     */
+    public List<String> getRequiredPlugins() {
+        return getRequiredPlugins(requires);
+    }
+    
+    /**
+     * Replies the list of plugins required by the local instance of this plugin. 
+     * @return List of plugins required. Empty if no plugin is required.
+     * @since 5601
+     */
+    public List<String> getLocalRequiredPlugins() {
+        return getRequiredPlugins(localrequires);
+    }
+    
+    /**
+     * Updates the local fields ({@link #localversion}, {@link #localmainversion}, {@link #localrequires}) 
+     * to values contained in the up-to-date fields ({@link #version}, {@link #mainversion}, {@link #requires}) 
+     * of the given PluginInformation.
+     * @param info The plugin information to get the data from.
+     * @since 5601
+     */
+    public void updateLocalInfo(PluginInformation info) {
+        if (info != null) {
+            this.localversion = info.version;
+            this.localmainversion = info.mainversion;
+            this.localrequires = info.requires;
+        }
     }
 }

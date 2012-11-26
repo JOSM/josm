@@ -283,7 +283,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                     if (task.isCanceled()) return;
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                            model.updateAvailablePlugins(task.getAvailabePlugins());
+                            model.updateAvailablePlugins(task.getAvailablePlugins());
                             pnlPluginPreferences.refreshView();
                             Main.pref.putInteger("pluginmanager.version", Version.getInstance().getVersion()); // fix #7030
                         }
@@ -373,7 +373,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                 public void run() {
                     if (pluginInfoDownloadTask.isCanceled())
                         return;
-                    model.updateAvailablePlugins(pluginInfoDownloadTask.getAvailabePlugins());
+                    model.updateAvailablePlugins(pluginInfoDownloadTask.getAvailablePlugins());
                     // select plugins which actually have to be updated
                     //
                     Iterator<PluginInformation> it = toUpdate.iterator();

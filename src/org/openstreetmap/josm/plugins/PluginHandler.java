@@ -423,7 +423,7 @@ public class PluginHandler {
             return false;
         }
 
-        return checkRequiredPluginsPreconditions(parent, plugins, plugin);
+        return checkRequiredPluginsPreconditions(parent, plugins, plugin, true);
     }
 
     /**
@@ -433,20 +433,24 @@ public class PluginHandler {
      * @param parent The parent Component used to display error popup
      * @param plugins the collection of all loaded plugins
      * @param plugin the plugin for which preconditions are checked
+     * @param local Determines if the local or up-to-date plugin dependencies are to be checked.
      * @return true, if the preconditions are met; false otherwise
+     * @since 5601
      */
-    public static boolean checkRequiredPluginsPreconditions(Component parent, Collection<PluginInformation> plugins, PluginInformation plugin) {
+    public static boolean checkRequiredPluginsPreconditions(Component parent, Collection<PluginInformation> plugins, PluginInformation plugin, boolean local) {
 
+        String requires = local ? plugin.localrequires : plugin.requires;
+        
         // make sure the dependencies to other plugins are not broken
         //
-        if(plugin.requires != null){
+        if (requires != null) {
             Set<String> pluginNames = new HashSet<String>();
             for (PluginInformation pi: plugins) {
                 pluginNames.add(pi.name);
             }
             Set<String> missingPlugins = new HashSet<String>();
-            for (String requiredPlugin : plugin.requires.split(";")) {
-                requiredPlugin = requiredPlugin.trim();
+            List<String> requiredPlugins = local ? plugin.getLocalRequiredPlugins() : plugin.getRequiredPlugins();
+            for (String requiredPlugin : requiredPlugins) {
                 if (!pluginNames.contains(requiredPlugin)) {
                     missingPlugins.add(requiredPlugin);
                 }
@@ -729,6 +733,36 @@ public class PluginHandler {
                 HelpUtil.ht("/Plugin/Loading#FailedPluginUpdated")
         );
     }
+    
+    private static Set<PluginInformation> findRequiredPluginsToDownload(
+            Collection<PluginInformation> pluginsToUpdate, List<PluginInformation> allPlugins, Set<PluginInformation> pluginsToDownload) {
+        Set<PluginInformation> result = new HashSet<PluginInformation>();
+        for (PluginInformation pi : pluginsToUpdate) {
+            for (String name : pi.getRequiredPlugins()) {
+                try {
+                    PluginInformation installedPlugin = PluginInformation.findPlugin(name);
+                    if (installedPlugin == null) {
+                        // New required plugin is not installed, find its PluginInformation
+                        PluginInformation reqPlugin = null;
+                        for (PluginInformation pi2 : allPlugins) {
+                            if (pi2.getName().equals(name)) {
+                                reqPlugin = pi2;
+                                break;
+                            }
+                        }
+                        // Required plugin is known but not already on download list
+                        if (reqPlugin != null && !pluginsToDownload.contains(reqPlugin)) {
+                            result.add(reqPlugin);
+                        }
+                    }
+                } catch (PluginException e) {
+                    System.out.println(tr("Warning: failed to find plugin {0}", name));
+                    e.printStackTrace();
+                }
+            }
+        }
+        return result;
+    }
 
     /**
      * Updates the plugins in <code>plugins</code>.
@@ -756,8 +790,11 @@ public class PluginHandler {
                     Main.pref.getPluginSites()
             );
             Future<?> future = service.submit(task1);
+            List<PluginInformation> allPlugins = null;
+            
             try {
                 future.get();
+                allPlugins = task1.getAvailablePlugins();
                 plugins = buildListOfPluginsToLoad(parent,monitor.createSubTaskMonitor(1, false));
             } catch(ExecutionException e) {
                 System.out.println(tr("Warning: failed to download plugin information list"));
@@ -777,13 +814,31 @@ public class PluginHandler {
                     pluginsToUpdate.add(pi);
                 }
             }
-
+            
             if (!pluginsToUpdate.isEmpty()) {
+                
+                Set<PluginInformation> pluginsToDownload = new HashSet<PluginInformation>(pluginsToUpdate);
+                
+                if (allPlugins != null) {
+                    // Updated plugins may need additional plugin dependencies currently not installed
+                    //
+                    Set<PluginInformation> additionalPlugins = findRequiredPluginsToDownload(pluginsToUpdate, allPlugins, pluginsToDownload);
+                    pluginsToDownload.addAll(additionalPlugins);
+                    
+                    // Iterate on required plugins, if they need themselves another plugins (i.e A needs B, but B needs C)
+                    while (!additionalPlugins.isEmpty()) {
+                        // Install the additional plugins to load them later
+                        plugins.addAll(additionalPlugins);
+                        additionalPlugins = findRequiredPluginsToDownload(additionalPlugins, allPlugins, pluginsToDownload);
+                        pluginsToDownload.addAll(additionalPlugins);
+                    }
+                }
+
                 // try to update the locally installed plugins
                 //
                 PluginDownloadTask task2 = new PluginDownloadTask(
                         monitor.createSubTaskMonitor(1,false),
-                        pluginsToUpdate,
+                        pluginsToDownload,
                         tr("Update plugins")
                 );
 
@@ -799,6 +854,11 @@ public class PluginHandler {
                     alertFailedPluginUpdate(parent, pluginsToUpdate);
                     return plugins;
                 }
+                
+                // Update Plugin info for downloaded plugins
+                //
+                refreshLocalUpdatedPluginInfo(task2.getDownloadedPlugins());
+                
                 // notify user if downloading a locally installed plugin failed
                 //
                 if (! task2.getFailedPlugins().isEmpty()) {
@@ -919,6 +979,47 @@ public class PluginHandler {
             }
         }
         return;
+    }
+    
+    /**
+     * Replies the updated jar file for the given plugin name.
+     * @param name The plugin name to find.
+     * @return the updated jar file for the given plugin name. null if not found or not readable.
+     * @since 5601
+     */
+    public static File findUpdatedJar(String name) {
+        File pluginDir = Main.pref.getPluginsDirectory();
+        // Find the downloaded file. We have tried to install the downloaded plugins
+        // (PluginHandler.installDownloadedPlugins). This succeeds depending on the
+        // platform.
+        File downloadedPluginFile = new File(pluginDir, name + ".jar.new");
+        if (!(downloadedPluginFile.exists() && downloadedPluginFile.canRead())) {
+            downloadedPluginFile = new File(pluginDir, name + ".jar");
+            if (!(downloadedPluginFile.exists() && downloadedPluginFile.canRead())) {
+                return null;
+            }
+        }
+        return downloadedPluginFile;
+    }
+    
+    /**
+     * Refreshes the given PluginInformation objects with new contents read from their corresponding jar file.
+     * @param updatedPlugins The PluginInformation objects to update.
+     * @since 5601
+     */
+    public static void refreshLocalUpdatedPluginInfo(Collection<PluginInformation> updatedPlugins) {
+        if (updatedPlugins == null) return;
+        for (PluginInformation pi : updatedPlugins) {
+            File downloadedPluginFile = findUpdatedJar(pi.name);
+            if (downloadedPluginFile == null) {
+                continue;
+            }
+            try {
+                pi.updateFromJar(new PluginInformation(downloadedPluginFile, pi.name));
+            } catch(PluginException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private static boolean confirmDeactivatingPluginAfterException(PluginProxy plugin) {
