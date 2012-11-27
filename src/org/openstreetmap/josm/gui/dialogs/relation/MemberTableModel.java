@@ -698,7 +698,32 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * @return sorted collection of relation members
      */
     private List<RelationMember> sortMembers(List<RelationMember> relationMembers) {
-        RelationNodeMap map = new RelationNodeMap(relationMembers);
+        ArrayList<RelationMember> newMembers = new ArrayList<RelationMember>();
+
+        // Sort members with custom mechanisms (relation-dependent)
+        List<RelationMember> defaultMembers = new LinkedList<RelationMember>();
+        Map<AdditionalSorter, List<RelationMember>> customMap = new HashMap<AdditionalSorter, List<RelationMember>>();
+
+        // Dispatch members to correct sorters
+        for (RelationMember m : relationMembers) {
+            for (AdditionalSorter sorter : additionalSorters) {
+                List<RelationMember> list = defaultMembers;
+                if (sorter.acceptsMember(m)) {
+                    list = customMap.get(sorter);
+                    if (list == null) {
+                        customMap.put(sorter, list = new LinkedList<RelationMember>()); 
+                    }
+                }
+                list.add(m);
+            }
+        }
+        
+        // Sort members and add them to result
+        for (AdditionalSorter s : customMap.keySet()) {
+            newMembers.addAll(s.sortMembers(customMap.get(s)));
+        }
+        
+        RelationNodeMap map = new RelationNodeMap(defaultMembers);
         // List of groups of linked members
         //
         ArrayList<LinkedList<Integer>> allGroups = new ArrayList<LinkedList<Integer>>();
@@ -729,39 +754,16 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             }
         }
 
-        ArrayList<RelationMember> newMembers = new ArrayList<RelationMember>();
         for (LinkedList<Integer> tmpGroup : allGroups) {
             for (Integer p : tmpGroup) {
-                newMembers.add(relationMembers.get(p));
+                newMembers.add(defaultMembers.get(p));
             }
-        }
-
-        // Try to sort remaining members with custom mechanisms (relation-dependent)
-        List<RelationMember> notSortableMembers = new LinkedList<RelationMember>();
-        Map<AdditionalSorter, List<RelationMember>> additionalMap = new HashMap<AdditionalSorter, List<RelationMember>>();
-
-        // Dispatch members to correct sorters
-        for (Integer i : map.getNotSortableMembers()) {
-            RelationMember m = relationMembers.get(i);
-            for (AdditionalSorter sorter : additionalSorters) {
-                List<RelationMember> list = notSortableMembers;
-                if (sorter.acceptsMember(m)) {
-                    list = additionalMap.get(sorter);
-                    if (list == null) {
-                        additionalMap.put(sorter, list = new LinkedList<RelationMember>()); 
-                    }
-                }
-                list.add(m);
-            }
-        }
-        
-        // Sort members and add them to result
-        for (AdditionalSorter s : additionalMap.keySet()) {
-            newMembers.addAll(s.sortMembers(additionalMap.get(s)));
         }
         
         // Finally, add members that have not been sorted at all
-        newMembers.addAll(notSortableMembers);
+        for (Integer i : map.getNotSortableMembers()) {
+            newMembers.add(defaultMembers.get(i));
+        }
         
         return newMembers;
     }
