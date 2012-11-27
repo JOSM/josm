@@ -452,4 +452,15 @@ public class ProjectionPreference implements SubPreferenceSetting {
     public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
         return gui.getMapPreference();
     }
+    
+    /**
+     * Selects the given projection.
+     * @param projection The projection to select.
+     * @since 5604
+     */
+    public void selectProjection(ProjectionChoice projection) {
+        if (projectionCombo != null && projection != null) {
+            projectionCombo.setSelectedItem(projection);
+        }
+    }
 }
