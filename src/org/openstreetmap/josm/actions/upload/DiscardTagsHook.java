@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  */
 public class DiscardTagsHook implements UploadHook {
 
+    @Override
     public boolean checkUpload(APIDataSet apiDataSet) {
         List<OsmPrimitive> objectsToUpload = apiDataSet.getPrimitives();
         Collection<String> discardableKeys = new HashSet<String>(OsmPrimitive.getDiscardableKeys());

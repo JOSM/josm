@@ -127,8 +127,8 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      *
      * If <code>list</code> is null, replies an empty set.
      *
-     * @param <T>
-     * @param list  the original collection
+     * @param <T> type of data (must be one of the {@link OsmPrimitive} types
+     * @param set  the original collection
      * @param type the type to filter for
      * @return the sub-set of OSM primitives of type <code>type</code>
      */
@@ -620,10 +620,12 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     public static Collection<String> getUninterestingKeys() {
         if (uninteresting == null) {
-            uninteresting = Main.pref.getCollection("tags.uninteresting",
-                    Arrays.asList("source", "source_ref", "source:", "note", "comment",
-                            "converted_by", "created_by", "watch", "watch:", "fixme", "FIXME",
-                            "description", "attribution"));
+            LinkedList<String> l = new LinkedList<String>(Arrays.asList(
+                "source", "source_ref", "source:", "note", "comment",
+                "converted_by", "watch", "watch:", "fixme", "FIXME",
+                "description", "attribution"));
+            l.addAll(getDiscardableKeys());
+            uninteresting = Main.pref.getCollection("tags.uninteresting", l);
         }
         return uninteresting;
     }
@@ -966,7 +968,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /*-----------------
      * OTHER METHODS
-     *----------------/
+     *----------------*/
 
     /**
      * Implementation of the visitor scheme. Subclasses have to call the correct
@@ -1074,7 +1076,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Loads (clone) this primitive from provided PrimitiveData
-     * @param data
+     * @param data The object which should be cloned
      */
     public void load(PrimitiveData data) {
         // Write lock is provided by subclasses
@@ -1090,10 +1092,14 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Save parameters of this primitive to the transport object
-     * @return
+     * @return The saved object data
      */
     public abstract PrimitiveData save();
 
+    /**
+     * Save common parameters of primitives to the transport object
+     * @param data The object to save the data into
+     */
     protected void saveCommonAttributes(PrimitiveData data) {
         data.setId(id);
         data.setKeys(getKeys());
@@ -1107,6 +1113,10 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         data.setVersion(version);
     }
 
+    /**
+     * Fetch the bounding box of the primitive
+     * @return Bounding box of the object
+     */
     public abstract BBox getBBox();
 
     /**

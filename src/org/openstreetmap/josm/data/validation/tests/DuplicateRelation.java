@@ -27,17 +27,29 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.MultiMap;
+
 /**
  * Tests if there are duplicate relations
  */
-public class DuplicateRelation extends Test
-{
+public class DuplicateRelation extends Test {
 
+    /**
+     * Class to store one relation members and information about it
+     */
     public static class RelMember {
+        /** Role of the relation member */
         private String role;
+
+        /** Type of the relation member */
         private OsmPrimitiveType type;
+
+        /** Tags of the relation member */
         private Map<String, String> tags;
+
+        /** Coordinates of the relation member */
         private List<LatLon> coor;
+
+        /** ID of the relation member in case it is a {@link Relation} */
         private long rel_id;
 
         @Override
@@ -52,48 +64,61 @@ public class DuplicateRelation extends Test
             return rm.role.equals(role) && rm.type.equals(type) && rm.rel_id==rel_id && rm.tags.equals(tags) && rm.coor.equals(coor);
         }
 
+        /** Extract and store relation information based on the relation member
+         * @param src The relation member to store information about
+         */
         public RelMember(RelationMember src) {
-            role=src.getRole();
-            type=src.getType();
-            rel_id=0;
-            coor=new ArrayList<LatLon>();
+            role = src.getRole();
+            type = src.getType();
+            rel_id = 0;
+            coor = new ArrayList<LatLon>();
 
             if (src.isNode()) {
-                Node r=src.getNode();
-                tags=r.getKeys();
-                coor=new ArrayList<LatLon>(1);
+                Node r = src.getNode();
+                tags = r.getKeys();
+                coor = new ArrayList<LatLon>(1);
                 coor.add(r.getCoor());
             }
             if (src.isWay()) {
-                Way r=src.getWay();
-                tags=r.getKeys();
+                Way r = src.getWay();
+                tags = r.getKeys();
                 List<Node> wNodes = r.getNodes();
-                coor=new ArrayList<LatLon>(wNodes.size());
-                for (int i=0;i<wNodes.size();i++) {
+                coor = new ArrayList<LatLon>(wNodes.size());
+                for (int i = 0; i < wNodes.size(); i++) {
                     coor.add(wNodes.get(i).getCoor());
                 }
             }
             if (src.isRelation()) {
-                Relation r=src.getRelation();
-                tags=r.getKeys();
-                rel_id=r.getId();
-                coor=new ArrayList<LatLon>();
+                Relation r = src.getRelation();
+                tags = r.getKeys();
+                rel_id = r.getId();
+                coor = new ArrayList<LatLon>();
             }
         }
     }
 
+    /**
+     * Class to store relation members
+     */
     private class RelationMembers {
+        /** List of member objects of the relation */
         public List<RelMember> members;
-        public RelationMembers(List<RelationMember> _members) {
-            members=new ArrayList<RelMember>(_members.size());
-            for (int i=0;i<_members.size();i++) {
-                members.add(new RelMember(_members.get(i)));
+
+        /** Store relation information
+         * @param members The list of relation members
+         */
+        public RelationMembers(List<RelationMember> members) {
+            this.members = new ArrayList<RelMember>(members.size());
+            for (int i = 0; i < members.size(); i++) {
+                this.members.add(new RelMember(members.get(i)));
             }
         }
+
         @Override
         public int hashCode() {
             return members.hashCode();
         }
+
         @Override
         public boolean equals(Object obj) {
             if (!(obj instanceof RelationMembers)) return false;
@@ -102,17 +127,29 @@ public class DuplicateRelation extends Test
         }
     }
 
+    /**
+     * Class to store relation data (keys are usually cleanup and may not be equal to original relation)
+     */
     private class RelationPair {
+        /** Member objects of the relation */
         public RelationMembers members;
+        /** Tags of the relation */
         public Map<String, String> keys;
-        public RelationPair(List<RelationMember> _members,Map<String, String> _keys) {
-            members=new RelationMembers(_members);
-            keys=_keys;
+
+        /** Store relation information
+         * @param members The list of relation members
+         * @param keys The set of tags of the relation
+         */
+        public RelationPair(List<RelationMember> members, Map<String, String> keys) {
+            this.members = new RelationMembers(members);
+            this.keys = keys;
         }
+
         @Override
         public int hashCode() {
             return members.hashCode()+keys.hashCode();
         }
+
         @Override
         public boolean equals(Object obj) {
             if (!(obj instanceof RelationPair)) return false;
@@ -121,7 +158,10 @@ public class DuplicateRelation extends Test
         }
     }
 
+    /** Code number of completely duplicated relation error */
     protected static final int DUPLICATE_RELATION = 1901;
+
+    /** Code number of relation with same members error */
     protected static final int SAME_RELATION = 1902;
 
     /** MultiMap of all relations */
@@ -130,41 +170,36 @@ public class DuplicateRelation extends Test
     /** MultiMap of all relations, regardless of keys */
     MultiMap<List<RelationMember>, OsmPrimitive> relations_nokeys;
 
+    /** List of keys without useful information */
+    Collection<String> ignoreKeys = new HashSet<String>(OsmPrimitive.getUninterestingKeys());
+
     /**
-     * Constructor
+     * Default constructor
      */
-    public DuplicateRelation()
-    {
+    public DuplicateRelation() {
         super(tr("Duplicated relations"),
                 tr("This test checks that there are no relations with same tags and same members with same roles."));
     }
 
-
     @Override
-    public void startTest(ProgressMonitor monitor)
-    {
+    public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
         relations = new MultiMap<RelationPair, OsmPrimitive>(1000);
         relations_nokeys = new MultiMap<List<RelationMember>, OsmPrimitive>(1000);
     }
 
     @Override
-    public void endTest()
-    {
+    public void endTest() {
         super.endTest();
-        for(LinkedHashSet<OsmPrimitive> duplicated : relations.values() )
-        {
-            if( duplicated.size() > 1)
-            {
+        for(LinkedHashSet<OsmPrimitive> duplicated : relations.values()) {
+            if (duplicated.size() > 1) {
                 TestError testError = new TestError(this, Severity.ERROR, tr("Duplicated relations"), DUPLICATE_RELATION, duplicated);
                 errors.add( testError );
             }
         }
         relations = null;
-        for(LinkedHashSet<OsmPrimitive> duplicated : relations_nokeys.values() )
-        {
-            if( duplicated.size() > 1)
-            {
+        for(LinkedHashSet<OsmPrimitive> duplicated : relations_nokeys.values()) {
+            if (duplicated.size() > 1) {
                 TestError testError = new TestError(this, Severity.WARNING, tr("Relations with same members"), SAME_RELATION, duplicated);
                 errors.add( testError );
             }
@@ -173,24 +208,24 @@ public class DuplicateRelation extends Test
     }
 
     @Override
-    public void visit(Relation r)
-    {
+    public void visit(Relation r) {
         if (!r.isUsable() || r.hasIncompleteMembers())
             return;
-        List<RelationMember> rMembers=r.getMembers();
-        Map<String, String> rkeys=r.getKeys();
-        rkeys.remove("created_by");
-        RelationPair rKey=new RelationPair(rMembers,rkeys);
+        List<RelationMember> rMembers = r.getMembers();
+        Map<String, String> rkeys = r.getKeys();
+        for (String key : ignoreKeys)
+            rkeys.remove(ignoreKeys);
+        RelationPair rKey = new RelationPair(rMembers, rkeys);
         relations.put(rKey, r);
         relations_nokeys.put(rMembers, r);
     }
 
     /**
      * Fix the error by removing all but one instance of duplicate relations
+     * @param testError The error to fix, must be of type {@link #DUPLICATE_RELATION}
      */
     @Override
-    public Command fixError(TestError testError)
-    {
+    public Command fixError(TestError testError) {
         if (testError.getCode() == SAME_RELATION) return null;
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
         HashSet<Relation> rel_fix = new HashSet<Relation>();
@@ -252,12 +287,9 @@ public class DuplicateRelation extends Test
     }
 
     @Override
-    public boolean isFixable(TestError testError)
-    {
-        if (!(testError.getTester() instanceof DuplicateRelation))
-            return false;
-
-        if (testError.getCode() == SAME_RELATION) return false;
+    public boolean isFixable(TestError testError) {
+        if (!(testError.getTester() instanceof DuplicateRelation)
+            || testError.getCode() == SAME_RELATION) return false;
 
         // We fix it only if there is no more than one relation that is relation member.
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
