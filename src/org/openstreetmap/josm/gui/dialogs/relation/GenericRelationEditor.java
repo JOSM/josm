@@ -1085,7 +1085,7 @@ public class GenericRelationEditor extends RelationEditor  {
     class RemoveAction extends AbstractAction implements ListSelectionListener {
         public RemoveAction() {
             String tooltip = tr("Remove the currently selected members from this relation");
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "remove"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             putValue(NAME, tr("Remove"));
             Shortcut sc = Shortcut.registerShortcut("relationeditor:remove", tr("Relation Editor: Remove"),
                 KeyEvent.VK_DELETE, Shortcut.ALT);
