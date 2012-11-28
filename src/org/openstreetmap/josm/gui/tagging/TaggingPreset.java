@@ -1480,7 +1480,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             try {
                 allPresets.addAll(TaggingPreset.readAll(source, validate));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println(e.getClass().getName()+": "+e.getMessage());
+                System.err.println(source);
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Could not read tagging preset source: {0}",source),
@@ -1488,9 +1489,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                         JOptionPane.ERROR_MESSAGE
                         );
             } catch (SAXException e) {
-                System.err.println(e.getMessage());
+                System.err.println(e.getClass().getName()+": "+e.getMessage());
                 System.err.println(source);
-                e.printStackTrace();
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Error parsing {0}: ", source)+e.getMessage(),
