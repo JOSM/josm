@@ -38,8 +38,10 @@ public class ExifReader {
                     }
                 }
             }
-            dateStr = dateStr.replace('/', ':'); // workaround for HTC Sensation bug, see #7228
-            return DateParser.parse(dateStr);
+            if (dateStr != null) {
+                dateStr = dateStr.replace('/', ':'); // workaround for HTC Sensation bug, see #7228
+                return DateParser.parse(dateStr);
+            }
         } catch (ParseException e) {
             throw e;
         } catch (Exception e) {
