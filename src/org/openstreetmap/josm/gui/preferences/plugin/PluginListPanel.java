@@ -111,15 +111,23 @@ public class PluginListPanel extends VerticallyScrollablePanel{
         public PluginCbActionListener(JPluginCheckBox cb) {
             this.cb = cb;
         }
+        protected void selectRequiredPlugins(PluginInformation info) {
+            if (info != null && info.requires != null) {
+                for (String s : info.getRequiredPlugins()) {
+                    if (!model.isSelectedPlugin(s)) {
+                        model.setPluginSelected(s, true);
+                        selectRequiredPlugins(model.getPluginInformation(s));
+                    }
+                }
+            }
+        }
         public void actionPerformed(ActionEvent e) {
             // Select/unselect corresponding plugin in the model
             model.setPluginSelected(cb.pi.getName(), cb.isSelected());
             // Does the newly selected plugin require other plugins ?
             if (cb.isSelected() && cb.pi.requires != null) {
                 // Select required plugins
-                for (String s : cb.pi.getRequiredPlugins()) {
-                    model.setPluginSelected(s, true);
-                }
+                selectRequiredPlugins(cb.pi);
                 // Alert user if plugin requirements are not met
                 PluginHandler.checkRequiredPluginsPreconditions(PluginListPanel.this, model.getAvailablePlugins(), cb.pi, false);
             }
