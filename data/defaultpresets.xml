@@ -688,27 +688,6 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
             </optional>
         </item>
-        <item name="Tunnel" icon="presets/tunnel.png" type="way">
-            <label text="Edit Tunnel"/>
-            <link href="http://wiki.openstreetmap.org/wiki/Key:tunnel"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:tunnel"
-                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:tunnel"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:tunnel"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:tunnel"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:tunnel"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:tunnel"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:tunnel"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:tunnel" />
-            <space />
-            <key key="tunnel" value="yes" />
-            <optional>
-                <text key="name" text="Name" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" />
-                <text key="maxspeed" text="Max. speed (km/h)" />
-                <text key="width" text="Width (meters)" />
-                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
-            </optional>
-        </item>
         <item name="Ford" icon="presets/ford.png" type="node,way">
             <label text="Edit Ford" />
             <link href="http://wiki.openstreetmap.org/wiki/Key:ford"
@@ -1400,7 +1379,107 @@ Note that for a match, at least one positive and no negative is required.
         </item> <!-- sally_port -->
 
     </group> <!-- Barriers -->
-  </group>
+    <group name="Passageways" icon="presets/tunnel.png">
+        <item name="Tunnel" icon="presets/tunnel.png" type="way">
+            <label text="Edit Tunnel"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Key:tunnel"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:tunnel"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:tunnel"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:tunnel"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:tunnel"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:tunnel"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:tunnel"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:tunnel"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:tunnel" />
+            <space />
+            <key key="tunnel" value="yes" />
+            <optional>
+                <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" />
+                <text key="maxspeed" text="Max. speed (km/h)" />
+                <text key="width" text="Width (meters)" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+            </optional>
+        </item>
+        <item name="Building Passage" icon="presets/tunnel.png" type="way">
+            <label text="Edit Building Passage"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Key:tunnel"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:tunnel"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:tunnel"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:tunnel"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:tunnel"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:tunnel"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:tunnel"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:tunnel"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:tunnel" />
+            <space />
+            <key key="tunnel" value="building_passage" />
+            <optional>
+                <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <text key="maxspeed" text="Max. speed (km/h)" />
+                <text key="width" text="Width (meters)" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+            </optional>
+        </item>
+        <item name="Arcade" type="way">
+            <label text="Edit Arcade"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Key:covered"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:covered"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:covered"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:covered"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:covered" />
+            <space />
+            <key key="covered" value="arcade" />
+            <check key="arcade:left" value_on="open" text="Open on left side" />
+            <check key="arcade:right" value_on="open" text="Open on right side" />
+            <optional>
+                <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <text key="width" text="Width (meters)" />
+            </optional>
+        </item>
+        <item name="Colonnade" type="way">
+            <label text="Edit Colonnade"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Key:covered"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:covered"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:covered"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:covered"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:covered" />
+            <space />
+            <key key="covered" value="colonnade" />
+            <check key="colonnade:left" value_on="open" text="Open on left side" />
+            <check key="colonnade:right" value_on="open" text="Open on right side" />
+            <optional>
+                <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <text key="width" text="Width (meters)" />
+            </optional>
+        </item>
+        <item name="Avalanche Protector" type="way">
+            <label text="Edit Avalanche Protector"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Key:tunnel"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:tunnel"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:tunnel"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:tunnel"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:tunnel"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:tunnel"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:tunnel"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:tunnel"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:tunnel" />
+            <space />
+            <key key="tunnel" value="avalanche_protector" />
+            <check key="avalanche_protector:left" value_on="open" text="Open on left side" />
+            <check key="avalanche_protector:right" value_on="open" text="Open on right side" />
+            <optional>
+                <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <text key="width" text="Width (meters)" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+            </optional>
+        </item>
+    </group>
+  </group> <!-- Passageways -->
   <group name="Water" icon="presets/waterway.png">
     <group name="Water" icon="presets/waterway.png">
         <separator/>
@@ -1527,6 +1606,23 @@ Note that for a match, at least one positive and no negative is required.
             <key key="man_made" value="breakwater" />
             <text key="ref" text="Reference" />
             <text key="name" text="Name" />
+        </item>
+        <separator/>
+        <item name="Culvert" icon="presets/tunnel.png" type="way">
+            <label text="Edit Culvert"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:tunnel=culvert"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:tunnel=culvert"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:tunnel=culvert"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:tunnel=culvert"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:tunnel=culvert" />
+            <space />
+            <key key="tunnel" value="culvert" />
+            <optional>
+                <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" />
+                <text key="width" text="Width (meters)" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+            </optional>
         </item>
         <separator/>
         <item name="Basin" icon="presets/landuse_water.png" type="node,closedway,relation">
