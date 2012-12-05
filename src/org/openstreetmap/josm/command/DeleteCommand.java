@@ -367,7 +367,7 @@ public class DeleteCommand extends Command {
             if (wnew.getNodesCount() < 2) {
                 primitivesToDelete.add(w);
             } else {
-                cmds.add(new ChangeCommand(w, wnew));
+                cmds.add(new ChangeNodesCommand(w, wnew.getNodes()));
             }
         }
 
