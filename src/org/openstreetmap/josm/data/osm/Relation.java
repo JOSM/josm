@@ -351,8 +351,9 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * removes all members with member.member == primitive
      *
      * @param primitives the primitives to check for
+     * @since 5613
      */
-    public void removeMembersFor(Collection<OsmPrimitive> primitives) {
+    public void removeMembersFor(Collection<? extends OsmPrimitive> primitives) {
         if (primitives == null || primitives.isEmpty())
             return;
 
