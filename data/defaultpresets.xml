@@ -88,6 +88,7 @@ role: type to specify possible roles in relations
   requisite: optional/required (default is "optional")
   count: how often can the role occur (if not given unlimited number is assumed)
   type: the data types - way,node,relation,closedway (separated by comma)
+  member_expression: an expression (cf. search dialog) for objects of this role
 
  presets: For external files <presets> should have following attributes:
    author: the author of the preset
@@ -2425,12 +2426,12 @@ Note that for a match, at least one positive and no negative is required.
             </optional>
             <roles>
                 <role key="" text="route segment" requisite="required" type="way" />
-                <role key="stop" text="stop position" requisite="optional" type="node" />
-                <role key="stop_exit_only" text="stop position (exit only)" requisite="optional" type="node" />
-                <role key="stop_entry_only" text="stop position (entry only)" requisite="optional" type="node" />
-                <role key="platform" text="platform" requisite="optional" type="node,way,closedway" />
-                <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway" />
-                <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway" />
+                <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position" />
+                <role key="stop_exit_only" text="stop position (exit only)" requisite="optional" type="node" member_expression="public_transport=stop_position" />
+                <role key="stop_entry_only" text="stop position (entry only)" requisite="optional" type="node" member_expression="public_transport=stop_position" />
+                <role key="platform" text="platform" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform" />
+                <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform" />
+                <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform" />
             </roles>
         </item>
         <item name="Route master" icon="presets/path.png" type="relation">
@@ -2446,7 +2447,7 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
             </optional>
             <roles>
-                <role key="" text="route variant/direction (at least 2)" requisite="required" type="relation"/> <!-- FIXME: at least 2 members are required -->
+                <role key="" text="route variant/direction (at least 2)" requisite="required" type="relation" member_expression="type=route"/> <!-- FIXME: at least 2 members are required -->
             </roles>
         </item>
         <item name="Stop Area" type="relation" icon="presets/interpolation.png">
@@ -2463,9 +2464,9 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="network" text="Network"/>
             </optional>
             <roles>
-                <role key="stop" text="Stop Position" requisite="optional" type="node"/>
-                <role key="platform" text="Platform" requisite="optional" type="node,way,closedway"/>
-                <role key="" text="Station or amenities" requisite="optional" type="node,way,closedway"/>
+                <role key="stop" text="Stop Position" requisite="optional" type="node" member_expression="public_transport=stop_position"/>
+                <role key="platform" text="Platform" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform"/>
+                <role key="" text="Station or amenities" requisite="optional" type="node,way,closedway" member_expression="amenity|public_transport=station"/>
             </roles>
         </item>
         <separator/>
@@ -5905,8 +5906,8 @@ Note that for a match, at least one positive and no negative is required.
             <key key="type" value="associatedStreet" />
             <text key="name" text="Street name" />
             <roles>
-                <role key="street" text="street" requisite="required" type="way" />
-                <role key="house" text="house" requisite="required" type="node,way,closedway,relation" />
+                <role key="street" text="street" requisite="required" type="way" member_expression="highway &quot;addr:street&quot;" />
+                <role key="house" text="house" requisite="required" type="node,way,closedway,relation" member_expression="&quot;addr:housenumber&quot;" />
             </roles>
         </item>
         <item name="Street" type="relation">
@@ -5962,9 +5963,9 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="wikipedia" text="Wikipedia" />
             </optional>
             <roles>
-                <role key="" text="waterways (no riverbank)" requisite="optional" type="way" />
-                <role key="main_stream" text="waterways (no riverbank)" requisite="optional" type="way" />
-                <role key="side_stream" text="branch waterways (no riverbank)" requisite="optional" type="way" />
+                <role key="" text="waterways (no riverbank)" requisite="optional" type="way" member_expression="waterway -waterway:riverbank" />
+                <role key="main_stream" text="waterways (no riverbank)" requisite="optional" type="way" member_expression="waterway -waterway:riverbank" />
+                <role key="side_stream" text="branch waterways (no riverbank)" requisite="optional" type="way" member_expression="waterway -waterway:riverbank"/>
                 <role key="spring" text="spring of waterway" requisite="optional" type="node" />
             </roles>
         </item>

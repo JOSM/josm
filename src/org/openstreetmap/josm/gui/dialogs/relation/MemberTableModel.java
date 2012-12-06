@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,8 +46,10 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
 import org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 
 public class MemberTableModel extends AbstractTableModel implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPrimitivesTableModel {
@@ -58,8 +61,9 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     private List<WayConnectionType> connectionType = null;
 
     private DefaultListSelectionModel listSelectionModel;
-    private CopyOnWriteArrayList<IMemberModelListener> listeners;
-    private OsmDataLayer layer;
+    private final CopyOnWriteArrayList<IMemberModelListener> listeners;
+    private final OsmDataLayer layer;
+    private final PresetListPanel.PresetHandler presetHandler;
 
     private final int UNCONNECTED = Integer.MIN_VALUE;
     
@@ -72,10 +76,11 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     /**
      * constructor
      */
-    public MemberTableModel(OsmDataLayer layer) {
+    public MemberTableModel(OsmDataLayer layer, PresetListPanel.PresetHandler presetHandler) {
         members = new ArrayList<RelationMember>();
         listeners = new CopyOnWriteArrayList<IMemberModelListener>();
         this.layer = layer;
+        this.presetHandler = presetHandler;
         addTableModelListener(this);
     }
 
@@ -394,11 +399,13 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     private void addMembersAtIndex(List<? extends OsmPrimitive> primitives, int index) {
+        final Collection<TaggingPreset> presets = TaggingPreset.getMatchingPresets(EnumSet.of(TaggingPreset.PresetType.RELATION), presetHandler.getSelection().iterator().next().getKeys(), false);
         if (primitives == null)
             return;
         int idx = index;
         for (OsmPrimitive primitive : primitives) {
-            RelationMember member = new RelationMember("", primitive);
+            final String role = presets.isEmpty() ? null : presets.iterator().next().suggestRoleForOsmPrimitive(primitive);
+            RelationMember member = new RelationMember(role == null ? "" : role, primitive);
             members.add(idx++, member);
         }
         fireTableDataChanged();

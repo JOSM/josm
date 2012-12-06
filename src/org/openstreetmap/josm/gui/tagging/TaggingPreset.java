@@ -66,6 +66,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
+import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference.PresetPrefHelper;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
@@ -75,6 +76,7 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.UrlLabel;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlObjectParser;
@@ -1093,6 +1095,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String text;
         public String text_context;
         public String locale_text;
+        public Match memberExpression;
 
         public boolean required = false;
         public long count = 0;
@@ -1106,6 +1109,14 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 required = true;
             } else if(!"optional".equals(str))
                 throw new SAXException(tr("Unknown requisite: {0}", str));
+        }
+
+        public void setMember_expression(String member_expression) throws SAXException {
+            try {
+                this.memberExpression = SearchCompiler.compile(member_expression, true, true);
+            } catch (SearchCompiler.ParseError ex) {
+                throw new SAXException(tr("Illegal member expression: {0}", ex.getMessage()), ex);
+            }
         }
 
         /* return either argument, the highest possible value or the lowest
@@ -1157,7 +1168,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     public static class Roles extends Item {
 
-        public List<Role> roles = new LinkedList<Role>();
+        public final List<Role> roles = new LinkedList<Role>();
 
         @Override
         public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
@@ -1240,6 +1251,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      */
     public EnumSet<PresetType> types;
     public List<Item> data = new LinkedList<Item>();
+    public Roles roles;
     public TemplateEntry nameTemplate;
     public Match nameTemplateFilter;
     private static final HashMap<String,String> lastValue = new HashMap<String,String>();
@@ -1427,6 +1439,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 if (all.size() != 0) {
                     if (o instanceof Roles) {
                         all.getLast().data.add((Item) o);
+                        if (all.getLast().roles != null) {
+                            throw new SAXException(tr("Roles cannot appear more than once"));
+                        }
+                        all.getLast().roles = (Roles) o;
                         lastrole = (Roles) o;
                     } else if (o instanceof Role) {
                         if (lastrole == null)
@@ -1571,6 +1587,18 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return false;
     }
 
+    public String suggestRoleForOsmPrimitive(OsmPrimitive osm) {
+        if (roles == null) {
+            return null;
+        }
+        for (Role i : roles.roles) {
+            if (i.memberExpression != null && i.memberExpression.match(osm)) {
+                return i.key;
+            }
+        }
+        return null;
+    }
+
     public void actionPerformed(ActionEvent e) {
         if (Main.main == null) return;
         if (Main.main.getCurrentDataSet() == null) return;
@@ -1589,8 +1617,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             for(Tag t : getChangedTags()) {
                 r.put(t.getKey(), t.getValue());
             }
-            for(OsmPrimitive osm : Main.main.getCurrentDataSet().getSelected()) {
-                RelationMember rm = new RelationMember("", osm);
+            for (OsmPrimitive osm : Main.main.getCurrentDataSet().getSelected()) {
+                String role = suggestRoleForOsmPrimitive(osm);
+                RelationMember rm = new RelationMember(role == null ? "" : role, osm);
                 r.addMember(rm);
                 members.add(rm);
             }
@@ -1771,5 +1800,14 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
         }
         return atLeastOnePositiveMatch;
+    }
+
+    public static Collection<TaggingPreset> getMatchingPresets(final Collection<PresetType> t, final Map<String, String> tags, final boolean onlyShowable) {
+        return Utils.filter(TaggingPresetPreference.taggingPresets, new Predicate<TaggingPreset>() {
+            @Override
+            public boolean evaluate(TaggingPreset object) {
+                return object.matches(t, tags, onlyShowable);
+            }
+        });
     }
 }

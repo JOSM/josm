@@ -61,6 +61,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
 import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandler;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -114,15 +115,7 @@ public class GenericRelationEditor extends RelationEditor  {
         setRememberWindowGeometry(getClass().getName() + ".geometry",
                 WindowGeometry.centerInWindow(Main.parent, new Dimension(700, 650)));
 
-        // init the various models
-        //
-        memberTableModel = new MemberTableModel(getLayer());
-        memberTableModel.register();
-        selectionTableModel = new SelectionTableModel(getLayer());
-        selectionTableModel.register();
-        referrerModel = new ReferringRelationsBrowserModel(relation);
-
-        tagEditorPanel = new TagEditorPanel(new PresetHandler() {
+        final PresetHandler presetHandler = new PresetHandler() {
 
             @Override
             public void updateTags(List<Tag> tags) {
@@ -135,7 +128,17 @@ public class GenericRelationEditor extends RelationEditor  {
                 tagEditorPanel.getModel().applyToPrimitive(relation);
                 return Collections.<OsmPrimitive>singletonList(relation);
             }
-        });
+        };
+
+        // init the various models
+        //
+        memberTableModel = new MemberTableModel(getLayer(), presetHandler);
+        memberTableModel.register();
+        selectionTableModel = new SelectionTableModel(getLayer());
+        selectionTableModel.register();
+        referrerModel = new ReferringRelationsBrowserModel(relation);
+
+        tagEditorPanel = new TagEditorPanel(presetHandler);
 
         // populate the models
         //

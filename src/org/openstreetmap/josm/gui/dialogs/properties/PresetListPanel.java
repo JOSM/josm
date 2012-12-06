@@ -20,7 +20,6 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.PresetType;
 import org.openstreetmap.josm.tools.GBC;
@@ -85,11 +84,7 @@ public class PresetListPanel extends JPanel {
             return;
         }
 
-        for (TaggingPreset t : TaggingPresetPreference.taggingPresets) {
-            if (!t.matches(types, tags, true)) {
-                continue;
-            }
-
+        for (TaggingPreset t : TaggingPreset.getMatchingPresets(types, tags, true)) {
             JLabel lbl = new JLabel(t.getName() + " …");
             lbl.setIcon((Icon) t.getValue(Action.SMALL_ICON));
             lbl.addMouseListener(new PresetLabelML(lbl, t, presetHandler));
