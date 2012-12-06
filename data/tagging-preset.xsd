@@ -56,7 +56,7 @@
 				<element name="key" type="tns:key" />
 				<element name="optional" type="tns:optional" minOccurs="0" />
 			</choice>
-			<element name="roles" type="tns:roles" minOccurs="0" />
+			<element name="roles" type="tns:roles" minOccurs="0" maxOccurs="1" />
 		</sequence>
 		<attribute name="name" type="string" use="required" />
 		<attribute name="icon" type="string" />
@@ -231,6 +231,7 @@
 		<attribute name="requisite" type="tns:role_requisite" />
 		<attribute name="type" type="string" />
 		<attribute name="count" type="integer" />
+		<attribute name="member_expression" type="string" />
 	</complexType>
 
 	<simpleType name="role_requisite">
