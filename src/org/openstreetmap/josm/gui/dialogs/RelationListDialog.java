@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -27,14 +29,21 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
@@ -67,7 +76,9 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A dialog showing all known relations, with buttons to add, edit, and
@@ -141,7 +152,42 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         SelectAction selectAction = new SelectAction(false);
         displaylist.addListSelectionListener(selectAction);
 
-        createLayout(displaylist, true, Arrays.asList(new SideButton[] {
+        final JTextField filter = new JTextField();
+        filter.setToolTipText(tr("Relation list filter"));
+        filter.getDocument().addDocumentListener(new DocumentListener() {
+
+            private void setFilter() {
+                try {
+                    filter.setBackground(UIManager.getColor("TextField.background"));
+                    filter.setToolTipText(tr("Relation list filter"));
+                    model.setFilter(SearchCompiler.compile(filter.getText(), false, false));
+                } catch (SearchCompiler.ParseError ex) {
+                    filter.setBackground(new Color(255, 224, 224));
+                    filter.setToolTipText(ex.getMessage());
+                    model.setFilter(new SearchCompiler.Always());
+                }
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                setFilter();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                setFilter();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                setFilter();
+            }
+        });
+
+        JPanel pane = new JPanel(new BorderLayout());
+        pane.add(filter, BorderLayout.NORTH);
+        pane.add(new JScrollPane(displaylist), BorderLayout.CENTER);
+        createLayout(pane, false, Arrays.asList(new SideButton[]{
                 new SideButton(newAction, false),
                 new SideButton(editAction, false),
                 new SideButton(duplicateAction, false),
@@ -642,7 +688,9 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      */
     private class RelationListModel extends AbstractListModel {
         private final ArrayList<Relation> relations = new ArrayList<Relation>();
+        private ArrayList<Relation> filteredRelations;
         private DefaultListSelectionModel selectionModel;
+        private SearchCompiler.Match filter;
 
         public RelationListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
@@ -759,13 +807,33 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             return ret;
         }
 
-        public Object getElementAt(int index) {
-            if (index < 0 || index >= relations.size()) return null;
-            return relations.get(index);
+        public void setFilter(final SearchCompiler.Match filter) {
+            this.filter = filter;
+            this.filteredRelations = new ArrayList<Relation>(Utils.filter(relations, new Predicate<Relation>() {
+                @Override
+                public boolean evaluate(Relation r) {
+                    return filter.match(r);
+                }
+            }));
+            List<Relation> sel = getSelectedRelations();
+            fireContentsChanged(this, 0, getSize());
+            setSelectedRelations(sel);
+            updateTitle();
         }
 
+        private List<Relation> getVisibleRelations() {
+            return filteredRelations == null ? relations : filteredRelations;
+        }
+
+        @Override
+        public Object getElementAt(int index) {
+            if (index < 0 || index >= getVisibleRelations().size()) return null;
+            return getVisibleRelations().get(index);
+        }
+
+        @Override
         public int getSize() {
-            return relations.size();
+            return getVisibleRelations().size();
         }
 
         /**
@@ -836,7 +904,9 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
 
         public void updateTitle() {
-            if (getSize() > 0) {
+            if (relations.size() > 0 && relations.size() != getSize()) {
+                RelationListDialog.this.setTitle(tr("Relations: {0}/{1}", getSize(), relations.size()));
+            } else if (getSize() > 0) {
                 RelationListDialog.this.setTitle(tr("Relations: {0}", getSize()));
             } else {
                 RelationListDialog.this.setTitle(tr("Relations"));
