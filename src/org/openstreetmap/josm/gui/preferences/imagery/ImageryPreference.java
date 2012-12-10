@@ -335,7 +335,8 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
             activeToolbar.setFloatable(false);
             activeToolbar.setBorderPainted(false);
             activeToolbar.setOpaque(false);
-            activeToolbar.add(new NewEntryAction());
+            activeToolbar.add(new NewEntryAction(ImageryInfo.ImageryType.WMS));
+            activeToolbar.add(new NewEntryAction(ImageryInfo.ImageryType.TMS));
             //activeToolbar.add(edit); TODO
             activeToolbar.add(remove);
             add(activeToolbar, GBC.eol().anchor(GBC.NORTH).insets(0, 0, 5, 5));
@@ -419,14 +420,25 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
         }
 
         private class NewEntryAction extends AbstractAction {
-            public NewEntryAction() {
-                putValue(NAME, tr("New"));
-                putValue(SHORT_DESCRIPTION, tr("Add a new WMS/TMS entry by entering the URL"));
+
+            private final ImageryInfo.ImageryType type;
+
+            public NewEntryAction(ImageryInfo.ImageryType type) {
+                putValue(NAME, type.toString());
+                putValue(SHORT_DESCRIPTION, tr("Add a new {0} entry by entering the URL", type.toString()));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
+                this.type = type;
             }
 
             public void actionPerformed(ActionEvent evt) {
-                final AddWMSLayerPanel p = new AddWMSLayerPanel();
+                final AddImageryPanel p;
+                if (ImageryInfo.ImageryType.WMS.equals(type)) {
+                    p = new AddWMSLayerPanel();
+                } else if (ImageryInfo.ImageryType.TMS.equals(type)) {
+                    p = new AddTMSLayerPanel();
+                } else {
+                    throw new IllegalStateException("Type " + type + " not supported");
+                }
                 GuiHelper.prepareResizeableOptionPane(p, new Dimension(250, 350));
                 int answer = JOptionPane.showConfirmDialog(
                         gui, p, tr("Add Imagery URL"),
