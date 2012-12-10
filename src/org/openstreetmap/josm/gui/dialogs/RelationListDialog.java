@@ -714,6 +714,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         public void setRelations(Collection<Relation> relations) {
             List<Relation> sel =  getSelectedRelations();
             this.relations.clear();
+            this.filteredRelations = null;
             if (relations == null) {
                 selectionModel.clearSelection();
                 fireContentsChanged(this,0,getSize());
