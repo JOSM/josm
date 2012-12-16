@@ -13,6 +13,13 @@ import javax.swing.table.TableColumnModel;
  *
  */
 public class VersionTableColumnModel extends DefaultTableColumnModel {
+
+    public static final int COL_VERSION = 0;
+    public static final int COL_REFERENCE = 1;
+    public static final int COL_CURRENT = 2;
+    public static final int COL_DATE = 3;
+    public static final int COL_USER = 4;
+
     protected void createColumns() {
         TableColumn col = null;
         VersionTable.RadioButtonRenderer bRenderer = new VersionTable.RadioButtonRenderer();

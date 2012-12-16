@@ -38,6 +38,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class VersionTable extends JTable implements Observer{
     private VersionTablePopupMenu popupMenu;
+    private final HistoryBrowserModel model;
 
     protected void build() {
         getTableHeader().setFont(getTableHeader().getFont().deriveFont(9f));
@@ -48,7 +49,7 @@ public class VersionTable extends JTable implements Observer{
         setIntercellSpacing(new Dimension(6, 0));
         putClientProperty("terminateEditOnFocusLost", true);
         popupMenu = new VersionTablePopupMenu();
-        addMouseListener(new PopupMenuTrigger());
+        addMouseListener(new MouseListener());
         getModel().addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
@@ -65,6 +66,7 @@ public class VersionTable extends JTable implements Observer{
         super(model.getVersionTableModel(), new VersionTableColumnModel());
         model.addObserver(this);
         build();
+        this.model = model;
     }
 
     // some kind of hack to prevent the table from scrolling to the
@@ -92,19 +94,28 @@ public class VersionTable extends JTable implements Observer{
         }
     }
 
-    class PopupMenuTrigger extends MouseAdapter {
+    class MouseListener extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
-            showPopup(e);
+            if (!showPopup(e) && e.getButton() == MouseEvent.BUTTON1) {
+                int row = rowAtPoint(e.getPoint());
+                int col = columnAtPoint(e.getPoint());
+                if (row > 0 && (col == VersionTableColumnModel.COL_DATE || col == VersionTableColumnModel.COL_USER)) {
+                    model.getVersionTableModel().setCurrentPointInTime(row);
+                    model.getVersionTableModel().setReferencePointInTime(row - 1);
+                }
+            }
         }
         @Override
         public void mouseReleased(MouseEvent e) {
             showPopup(e);
         }
-        private void showPopup(MouseEvent e) {
+        private boolean showPopup(MouseEvent e) {
             if (e.isPopupTrigger()) {
                 showPopupMenu(e);
+                return true;
             }
+            return false;
         }
     }
 
@@ -176,6 +187,7 @@ public class VersionTable extends JTable implements Observer{
             btn.setHorizontalAlignment(SwingConstants.CENTER);
         }
 
+        @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             if (value == null) return null;
             boolean val = (Boolean) value;
@@ -184,6 +196,7 @@ public class VersionTable extends JTable implements Observer{
             return btn;
         }
 
+        @Override
         public Object getCellEditorValue() {
             btn.removeItemListener(this);
             return btn.isSelected();
@@ -191,12 +204,6 @@ public class VersionTable extends JTable implements Observer{
 
         public void itemStateChanged(ItemEvent e) {
             fireEditingStopped();
-        }
-    }
-
-    public static class LabelRenderer implements TableCellRenderer {
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
-            return (Component) value;
         }
     }
 
