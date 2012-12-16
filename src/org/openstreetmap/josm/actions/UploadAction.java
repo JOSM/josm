@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.upload.ApiPreconditionCheckerHook;
 import org.openstreetmap.josm.actions.upload.DiscardTagsHook;
+import org.openstreetmap.josm.actions.upload.FixDataHook;
 import org.openstreetmap.josm.actions.upload.RelationUploadOrderHook;
 import org.openstreetmap.josm.actions.upload.UploadHook;
 import org.openstreetmap.josm.actions.upload.ValidateUploadHook;
@@ -52,7 +53,16 @@ public class UploadAction extends JosmAction{
     private static final LinkedList<UploadHook> uploadHooks = new LinkedList<UploadHook>();
     private static final LinkedList<UploadHook> lateUploadHooks = new LinkedList<UploadHook>();
     static {
+        /**
+         * Calls validator before upload.
+         */
         uploadHooks.add(new ValidateUploadHook());
+
+        /**
+         * Fixes database errors
+         */
+        uploadHooks.add(new FixDataHook());
+
         /**
          * Checks server capabilities before upload.
          */
