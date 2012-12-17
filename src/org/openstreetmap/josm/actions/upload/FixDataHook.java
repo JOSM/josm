@@ -43,7 +43,7 @@ public class FixDataHook implements UploadHook {
         deprecated.add(new FixDataTag("highway", "stile", "barrier", "stile"));
         deprecated.add(new FixData() {
             public boolean fixKeys(Map<String, String> keys, OsmPrimitive osm) {
-                if(osm instanceof Relation && keys.get("type").equals("multipolygon") && keys.get("boundary").equals("administrative")) {
+                if(osm instanceof Relation && "multipolygon".equals(keys.get("type")) && "administrative".equals(keys.get("boundary"))) {
                     keys.put("type", "boundary");
                     return true;
                 }
