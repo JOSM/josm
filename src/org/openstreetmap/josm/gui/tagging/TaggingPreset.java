@@ -53,6 +53,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -120,7 +121,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             return forPrimitiveType(p.getDisplayType());
         }
 
-        public static PresetType forPrimitiveType(org.openstreetmap.josm.data.osm.OsmPrimitiveType type) {
+        public static PresetType forPrimitiveType(OsmPrimitiveType type) {
             switch (type) {
             case NODE:
                 return NODE;
@@ -1588,12 +1589,12 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     }
 
     public String suggestRoleForOsmPrimitive(OsmPrimitive osm) {
-        if (roles == null) {
-            return null;
-        }
-        for (Role i : roles.roles) {
-            if (i.memberExpression != null && i.memberExpression.match(osm)) {
-                return i.key;
+        if (roles != null && osm != null) {
+            for (Role i : roles.roles) {
+                if (i.memberExpression != null && i.memberExpression.match(osm) 
+                        && (i.types == null || i.types.isEmpty() || i.types.contains(PresetType.forPrimitive(osm)) )) {
+                    return i.key;
+                }
             }
         }
         return null;
