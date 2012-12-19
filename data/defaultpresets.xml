@@ -5906,7 +5906,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="type" value="associatedStreet" />
             <text key="name" text="Street name" />
             <roles>
-                <role key="street" text="street" requisite="required" type="way" member_expression="highway" />
+                <role key="street" text="street" requisite="required" type="way,closedway" member_expression="highway" />
                 <role key="house" text="house" requisite="required" type="node,way,closedway,relation" member_expression="&quot;addr:housenumber&quot;" />
             </roles>
         </item>
