@@ -2,8 +2,10 @@
 package org.openstreetmap.josm.gui.history;
 /// Feel free to move me somewhere else. Maybe a bit specific for josm.tools?
 
+import java.awt.Color;
 import java.util.ArrayList;
 
+import org.openstreetmap.josm.gui.history.TwoColumnDiff.Item.DiffItemType;
 import org.openstreetmap.josm.tools.Diff;
 
 /**
@@ -23,18 +25,27 @@ import org.openstreetmap.josm.tools.Diff;
  */
 class TwoColumnDiff {
     public static class Item {
-        public static final int INSERTED = 1;
-        public static final int DELETED = 2;
-        public static final int CHANGED = 3;
-        public static final int SAME = 4;
-        public static final int EMPTY = 5; // value should be null
-        public Item(int state, Object value) {
+
+        public enum DiffItemType {
+            INSERTED(new Color(0xDD, 0xFF, 0xDD)), DELETED(new Color(255,197,197)), CHANGED(new Color(255,234,213)),
+            SAME(new Color(234,234,234)), EMPTY(new Color(234,234,234));
+
+            private final Color color;
+            private DiffItemType(Color color) {
+                this.color = color;
+            }
+            public Color getColor() {
+                return color;
+            }
+        }
+
+        public Item(DiffItemType state, Object value) {
             this.state = state;
-            this.value = state == EMPTY ? null : value;
+            this.value = state == DiffItemType.EMPTY ? null : value;
         }
 
         public final Object value;
-        public final int state;
+        public final DiffItemType state;
     }
 
     public ArrayList<Item> referenceDiff;
@@ -71,7 +82,7 @@ class TwoColumnDiff {
             int inserted = script.inserted;
             while(ia < script.line0 && ib < script.line1){
                 // System.out.println(" "+a[ia] + "\t "+b[ib]);
-                Item cell = new Item(Item.SAME, a[ia]);
+                Item cell = new Item(DiffItemType.SAME, a[ia]);
                 referenceDiff.add(cell);
                 currentDiff.add(cell);
                 ia++;
@@ -81,16 +92,16 @@ class TwoColumnDiff {
             while(inserted > 0 || deleted > 0) {
                 if(inserted > 0 && deleted > 0) {
                     // System.out.println("="+a[ia] + "\t="+b[ib]);
-                    referenceDiff.add(new Item(Item.CHANGED, a[ia++]));
-                    currentDiff.add(new Item(Item.CHANGED, b[ib++]));
+                    referenceDiff.add(new Item(DiffItemType.CHANGED, a[ia++]));
+                    currentDiff.add(new Item(DiffItemType.CHANGED, b[ib++]));
                 } else if(inserted > 0) {
                     // System.out.println("\t+" + b[ib]);
-                    referenceDiff.add(new Item(Item.EMPTY, null));
-                    currentDiff.add(new Item(Item.INSERTED, b[ib++]));
+                    referenceDiff.add(new Item(DiffItemType.EMPTY, null));
+                    currentDiff.add(new Item(DiffItemType.INSERTED, b[ib++]));
                 } else if(deleted > 0) {
                     // System.out.println("-"+a[ia]);
-                    referenceDiff.add(new Item(Item.DELETED, a[ia++]));
-                    currentDiff.add(new Item(Item.EMPTY, null));
+                    referenceDiff.add(new Item(DiffItemType.DELETED, a[ia++]));
+                    currentDiff.add(new Item(DiffItemType.EMPTY, null));
                 }
                 inserted--;
                 deleted--;
@@ -99,8 +110,8 @@ class TwoColumnDiff {
         }
         while(ia < a.length && ib < b.length) {
             // System.out.println((ia < a.length ? " "+a[ia]+"\t" : "\t") + (ib < b.length ? " "+b[ib] : ""));
-            referenceDiff.add(new Item(Item.SAME, a[ia++]));
-            currentDiff.add(new Item(Item.SAME, b[ib++]));
+            referenceDiff.add(new Item(DiffItemType.SAME, a[ia++]));
+            currentDiff.add(new Item(DiffItemType.SAME, b[ib++]));
         }
     }
 }

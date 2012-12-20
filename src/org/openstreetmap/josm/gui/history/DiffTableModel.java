@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.openstreetmap.josm.gui.history.TwoColumnDiff.Item.DiffItemType;
+
 /**
  * Simple model storing "diff cells" in a list. Could probably have used a DefaultTableModel instead..
  *
@@ -37,5 +39,13 @@ class DiffTableModel extends AbstractTableModel {
     @Override
     public TwoColumnDiff.Item getValueAt(int rowIndex, int columnIndex) {
         return rows.get(rowIndex);
+    }
+
+    public int getFirstChange() {
+        for (int i=0; i<rows.size(); i++) {
+            if (rows.get(i).state != DiffItemType.SAME)
+                return i;
+        }
+        return -1;
     }
 }
