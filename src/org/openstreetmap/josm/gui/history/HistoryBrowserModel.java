@@ -41,6 +41,7 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
+import org.openstreetmap.josm.gui.history.TwoColumnDiff.Item.DiffItemType;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.XmlWriter;
@@ -85,8 +86,8 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     private VersionTableModel versionTableModel;
     private TagTableModel currentTagTableModel;
     private TagTableModel referenceTagTableModel;
-    private RelationMemberTableModel currentRelationMemberTableModel;
-    private RelationMemberTableModel referenceRelationMemberTableModel;
+    private DiffTableModel currentRelationMemberTableModel;
+    private DiffTableModel referenceRelationMemberTableModel;
     private DiffTableModel referenceNodeListTableModel;
     private DiffTableModel currentNodeListTableModel;
 
@@ -99,8 +100,8 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         referenceTagTableModel = new TagTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
         referenceNodeListTableModel = new DiffTableModel();
         currentNodeListTableModel = new DiffTableModel();
-        currentRelationMemberTableModel = new RelationMemberTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
-        referenceRelationMemberTableModel = new RelationMemberTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
+        currentRelationMemberTableModel = new DiffTableModel();
+        referenceRelationMemberTableModel = new DiffTableModel();
 
         if (getEditLayer() != null) {
             getEditLayer().data.addDataSetListener(this);
@@ -207,6 +208,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
 
     protected void fireModelChange() {
         initNodeListTableModels();
+        initMemberListTableModels();
         setChanged();
         notifyObservers();
         versionTableModel.fireTableDataChanged();
@@ -246,6 +248,16 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     }
 
     protected void initMemberListTableModels() {
+        if(current.getType() != OsmPrimitiveType.RELATION || reference.getType() != OsmPrimitiveType.RELATION)
+            return;
+
+        TwoColumnDiff diff = new TwoColumnDiff(
+                ((HistoryRelation)reference).getMembers().toArray(),
+                ((HistoryRelation)current).getMembers().toArray());
+
+        referenceRelationMemberTableModel.setRows(diff.referenceDiff);
+        currentRelationMemberTableModel.setRows(diff.currentDiff);
+
         currentRelationMemberTableModel.fireTableDataChanged();
         referenceRelationMemberTableModel.fireTableDataChanged();
     }
@@ -279,7 +291,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         return null;
     }
 
-    public RelationMemberTableModel getRelationMemberTableModel(PointInTimeType pointInTimeType) throws IllegalArgumentException {
+    public DiffTableModel getRelationMemberTableModel(PointInTimeType pointInTimeType) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(pointInTimeType, "pointInTimeType");
         if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
             return currentRelationMemberTableModel;
@@ -428,20 +440,20 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             case 2:
                 return isCurrentPointInTime(row);
             case 3: {
-                    HistoryOsmPrimitive p = getPrimitive(row);
-                    if (p != null && p.getTimestamp() != null)
-                        return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(p.getTimestamp());
-                    return null;
-                }
+                HistoryOsmPrimitive p = getPrimitive(row);
+                if (p != null && p.getTimestamp() != null)
+                    return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(p.getTimestamp());
+                return null;
+            }
             case 4: {
-                    HistoryOsmPrimitive p = getPrimitive(row);
-                    if (p != null) {
-                        User user = p.getUser();
-                        if (user != null)
-                            return "<html>" + XmlWriter.encode(user.getName(), true) + " <font color=gray>(" + user.getId() + ")</font></html>";
-                    }
-                    return null;
+                HistoryOsmPrimitive p = getPrimitive(row);
+                if (p != null) {
+                    User user = p.getUser();
+                    if (user != null)
+                        return "<html>" + XmlWriter.encode(user.getName(), true) + " <font color=gray>(" + user.getId() + ")</font></html>";
                 }
+                return null;
+            }
             }
             return null;
         }
@@ -626,108 +638,6 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
 
         public boolean isReferencePointInTime() {
             return pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME);
-        }
-
-        @Override
-        public int getColumnCount() {
-            return 1;
-        }
-    }
-
-    /**
-     * The table model for the relation members of the version at {@link PointInTimeType#REFERENCE_POINT_IN_TIME}
-     * or {@link PointInTimeType#CURRENT_POINT_IN_TIME}
-     *
-     */
-
-    public class RelationMemberTableModel extends AbstractTableModel {
-
-        private PointInTimeType pointInTimeType;
-
-        private RelationMemberTableModel(PointInTimeType pointInTimeType) {
-            this.pointInTimeType = pointInTimeType;
-        }
-
-        @Override
-        public int getRowCount() {
-            // Match the size of the opposite table so comparison is less confusing.
-            // (scroll bars lines up properly, etc.)
-            int n = 0;
-            if (current != null && current.getType().equals(OsmPrimitiveType.RELATION)) {
-                n = ((HistoryRelation)current).getNumMembers();
-            }
-            if (reference != null && reference.getType().equals(OsmPrimitiveType.RELATION)) {
-                n = Math.max(n,((HistoryRelation)reference).getNumMembers());
-            }
-            return n;
-        }
-
-        protected HistoryRelation getRelation() {
-            if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME)) {
-                if (! current.getType().equals(OsmPrimitiveType.RELATION))
-                    return null;
-                return (HistoryRelation)current;
-            }
-            if (pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME)) {
-                if (! reference.getType().equals(OsmPrimitiveType.RELATION))
-                    return null;
-                return (HistoryRelation)reference;
-            }
-
-            // should not happen
-            return null;
-        }
-
-        protected HistoryRelation getOppositeRelation() {
-            PointInTimeType opposite = pointInTimeType.opposite();
-            if (opposite.equals(PointInTimeType.CURRENT_POINT_IN_TIME)) {
-                if (! current.getType().equals(OsmPrimitiveType.RELATION))
-                    return null;
-                return (HistoryRelation)current;
-            }
-            if (opposite.equals(PointInTimeType.REFERENCE_POINT_IN_TIME)) {
-                if (! reference.getType().equals(OsmPrimitiveType.RELATION))
-                    return null;
-                return (HistoryRelation)reference;
-            }
-
-            // should not happen
-            return null;
-        }
-
-        @Override
-        public Object getValueAt(int row, int column) {
-            HistoryRelation relation = getRelation();
-            if (relation == null)
-                return null;
-            if (row >= relation.getNumMembers()) // see getRowCount
-                return null;
-            return relation.getMembers().get(row);
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-
-        public boolean isSameInOppositeWay(int row) {
-            HistoryRelation thisRelation = getRelation();
-            HistoryRelation oppositeRelation = getOppositeRelation();
-            if (thisRelation == null || oppositeRelation == null)
-                return false;
-            if (row >= oppositeRelation.getNumMembers())
-                return false;
-            return
-            thisRelation.getMembers().get(row).getMemberId() == oppositeRelation.getMembers().get(row).getMemberId()
-            &&  thisRelation.getMembers().get(row).getRole().equals(oppositeRelation.getMembers().get(row).getRole());
-        }
-
-        public boolean isInOppositeWay(int row) {
-            HistoryRelation thisRelation = getRelation();
-            HistoryRelation oppositeRelation = getOppositeRelation();
-            if (thisRelation == null || oppositeRelation == null)
-                return false;
-            return oppositeRelation.getMembers().contains(thisRelation.getMembers().get(row));
         }
 
         @Override

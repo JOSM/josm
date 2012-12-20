@@ -4,11 +4,16 @@ package org.openstreetmap.josm.gui.history;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+
+import org.openstreetmap.josm.data.osm.history.History;
 /**
  * RelationMemberListViewer is a UI component which displays the  list of relation members of two
  * version of a {@link Relation} in a {@link History}.
@@ -36,14 +41,29 @@ public class RelationMemberListViewer extends JPanel{
         return pane;
     }
 
+    protected class MemberModelChanged implements TableModelListener {
+        private final JTable table;
+
+        protected MemberModelChanged(JTable table) {
+            this.table = table;
+        }
+
+        @Override
+        public void tableChanged(TableModelEvent e) {
+            Rectangle rect = table.getCellRect(((DiffTableModel)e.getSource()).getFirstChange(), 0, true);
+            table.scrollRectToVisible(rect);
+        }
+    }
+
     protected JTable buildReferenceMemberListTable() {
         JTable table = new JTable(
                 model.getRelationMemberTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME),
                 new RelationMemberTableColumnModel()
-        );
+                );
         table.setName("table.referencememberlisttable");
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
+        table.getModel().addTableModelListener(new MemberModelChanged(table));
         return table;
     }
 
@@ -51,10 +71,11 @@ public class RelationMemberListViewer extends JPanel{
         JTable table = new JTable(
                 model.getRelationMemberTableModel(PointInTimeType.CURRENT_POINT_IN_TIME),
                 new RelationMemberTableColumnModel()
-        );
+                );
         table.setName("table.currentmemberlisttable");
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
+        table.getModel().addTableModelListener(new MemberModelChanged(table));
         return table;
     }
 
