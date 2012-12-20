@@ -14,6 +14,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
+import org.openstreetmap.josm.gui.history.TwoColumnDiff.Item;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -46,44 +47,26 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         }
     }
 
-    protected void renderRole( HistoryBrowserModel.RelationMemberTableModel model, RelationMemberData member, int row, boolean isSelected) {
+    protected void renderRole(Item diffItem, int row, boolean isSelected) {
         String text = "";
-        Color bgColor = Color.WHITE;
-        if (member == null) {
-            bgColor = BGCOLOR_EMPTY_ROW;
-        } else {
-            text = member.getRole();
-            if (model.isSameInOppositeWay(row)) {
-                bgColor = Color.WHITE;
-            } else if (model.isInOppositeWay(row)) {
-                bgColor = BGCOLOR_IN_OPPOSITE;
-            } else {
-                bgColor = BGCOLOR_NOT_IN_OPPOSITE;
-            }
-        }
+        Color bgColor = diffItem.state.getColor();
+        RelationMemberData member = (RelationMemberData) diffItem.value;
+        text = member == null?"":member.getRole();
         setText(text);
         setToolTipText(text);
         setBackground(bgColor);
     }
 
-    protected void renderPrimitive( HistoryBrowserModel.RelationMemberTableModel model, RelationMemberData member, int row, boolean isSelected) {
+    protected void renderPrimitive(Item diffItem, int row, boolean isSelected) {
         String text = "";
-        Color bgColor = Color.WHITE;
-        if (member == null) {
-            bgColor = BGCOLOR_EMPTY_ROW;
-        } else {
-            text = "";
+        Color bgColor = diffItem.state.getColor();
+        RelationMemberData member = (RelationMemberData) diffItem.value;
+        text = "";
+        if (member != null) {
             switch(member.getMemberType()) {
             case NODE: text = tr("Node {0}", member.getMemberId()); break;
             case WAY: text = tr("Way {0}", member.getMemberId()); break;
             case RELATION: text = tr("Relation {0}", member.getMemberId()); break;
-            }
-            if (model.isSameInOppositeWay(row)) {
-                bgColor = Color.WHITE;
-            } else if (model.isInOppositeWay(row)) {
-                bgColor = BGCOLOR_IN_OPPOSITE;
-            } else {
-                bgColor = BGCOLOR_NOT_IN_OPPOSITE;
             }
         }
         setText(text);
@@ -95,22 +78,21 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
 
-        HistoryBrowserModel.RelationMemberTableModel model = gteRelationMemberTableModel(table);
-        RelationMemberData member = (RelationMemberData)value;
-        renderIcon(member);
+        Item member = (TwoColumnDiff.Item)value;
+        renderIcon((RelationMemberData) member.value);
         switch(column) {
         case 0:
-            renderRole(model, member, row, isSelected);
+            renderRole(member, row, isSelected);
             break;
         case 1:
-            renderPrimitive(model, member, row, isSelected);
+            renderPrimitive(member, row, isSelected);
             break;
         }
 
         return this;
     }
 
-    protected HistoryBrowserModel.RelationMemberTableModel gteRelationMemberTableModel(JTable table) {
-        return (HistoryBrowserModel.RelationMemberTableModel) table.getModel();
+    protected DiffTableModel getRelationMemberTableModel(JTable table) {
+        return (DiffTableModel) table.getModel();
     }
 }
