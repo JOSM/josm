@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.dialogs.relation;
+package org.openstreetmap.josm.gui.dialogs.relation.sort;
 
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.NONE;
+import static org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction.NONE;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class WayConnectionType {
