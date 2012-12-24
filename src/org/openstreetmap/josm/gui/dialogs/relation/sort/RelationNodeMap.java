@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.dialogs.relation;
+package org.openstreetmap.josm.gui.dialogs.relation.sort;
 
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.NONE;
+import static org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction.NONE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +29,11 @@ import org.openstreetmap.josm.data.osm.Way;
  *
  */
 public class RelationNodeMap {
+
     private static class NodesWays{
-        public Map<Node, Set<Integer>> nodes = new TreeMap<Node, Set<Integer>>();
-        public Map<Integer, Set<Node>> ways = new TreeMap<Integer, Set<Node>>();
-        public boolean oneWay;
+        public final Map<Node, Set<Integer>> nodes = new TreeMap<Node, Set<Integer>>();
+        public final Map<Integer, Set<Node>> ways = new TreeMap<Integer, Set<Node>>();
+        public final boolean oneWay;
         public NodesWays(boolean oneWay){
             this.oneWay = oneWay;
         }
@@ -41,23 +42,23 @@ public class RelationNodeMap {
     /*
      * the maps. (Need TreeMap for efficiency.)
      */
-    private NodesWays map = new NodesWays(false);
+    private final NodesWays map = new NodesWays(false);
     /*
      * Maps for oneways (forward/backward roles)
      */
 
-    private NodesWays onewayMap = new NodesWays(true);
-    private NodesWays onewayReverseMap = new NodesWays(true);
+    private final NodesWays onewayMap = new NodesWays(true);
+    private final NodesWays onewayReverseMap = new NodesWays(true);
     /*
      * Used to keep track of what members are done.
      */
-    private Set<Integer> remaining;
-    private Map<Integer, Set<Node>> remainingOneway = new TreeMap<Integer, Set<Node>>();;
+    private final Set<Integer> remaining = new TreeSet<Integer>();
+    private final Map<Integer, Set<Node>> remainingOneway = new TreeMap<Integer, Set<Node>>();
 
     /**
      * All members that are incomplete or not a way
      */
-    private List<Integer> notSortable = new ArrayList<Integer>();
+    private final List<Integer> notSortable = new ArrayList<Integer>();
 
     public static Node firstOnewayNode(RelationMember m){
         if(!m.isWay()) return null;
@@ -72,9 +73,6 @@ public class RelationNodeMap {
     }
 
     RelationNodeMap(List<RelationMember> members) {
-        map.nodes = new TreeMap<Node, Set<Integer>>();
-        map.ways = new TreeMap<Integer, Set<Node>>();
-
         for (int i = 0; i < members.size(); ++i) {
             RelationMember m = members.get(i);
             if (m.getMember().isIncomplete() || !m.isWay()) {
@@ -83,11 +81,11 @@ public class RelationNodeMap {
             }
 
             Way w = m.getWay();
-            if ((MemberTableModel.roundaboutType(w) != NONE)) {
+            if ((RelationSortUtils.roundaboutType(w) != NONE)) {
                 for (Node nd : w.getNodes()) {
                     addPair(nd, i);
                 }
-            } else if(MemberTableModel.isOneway(m)) {
+            } else if(RelationSortUtils.isOneway(m)) {
                 addNodeWayMap(firstOnewayNode(m), i);
                 addWayNodeMap(lastOnewayNode(m), i);
                 addNodeWayMapReverse(lastOnewayNode(m), i);
@@ -100,7 +98,6 @@ public class RelationNodeMap {
             }
         }
 
-        remaining = new TreeSet<Integer>();
         remaining.addAll(map.ways.keySet());
 
         /*
@@ -324,7 +321,7 @@ public class RelationNodeMap {
         }
 
         if (remainingOneway.isEmpty()) return null;
-        for(Integer i :remainingOneway.keySet()){ //find oneway, whic is connected to more than one way (is between two oneway loops)
+        for(Integer i :remainingOneway.keySet()){ //find oneway, which is connected to more than one way (is between two oneway loops)
             for(Node n : onewayReverseMap.ways.get(i)){
                 if(onewayReverseMap.nodes.containsKey(n) && onewayReverseMap.nodes.get(n).size() > 1) {
                     doneOneway(i);

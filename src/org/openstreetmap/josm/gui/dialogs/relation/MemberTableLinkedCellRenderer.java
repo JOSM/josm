@@ -10,7 +10,8 @@ import java.awt.Image;
 
 import javax.swing.JTable;
 
-import org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction;
+import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType;
+import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
