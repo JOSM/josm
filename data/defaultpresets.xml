@@ -485,6 +485,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="pedestrian" />
             <text key="name" text="Name" />
             <optional>
+                <check key="area" text="Area" default="off" />
                 <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
