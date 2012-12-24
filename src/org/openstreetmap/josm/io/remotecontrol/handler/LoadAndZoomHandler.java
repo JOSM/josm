@@ -169,7 +169,7 @@ public class LoadAndZoomHandler extends RequestHandler
                     ds.setSelected(newSel);
                     if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
                         // zoom_mode=(download|selection), defaults to selection
-                        if (!"download".equals(args.get("zoom_mode"))) {
+                        if (!"download".equals(args.get("zoom_mode")) && !newSel.isEmpty()) {
                             AutoScaleAction.autoScale("selection");
                         } else {
                             zoom(bbox);
