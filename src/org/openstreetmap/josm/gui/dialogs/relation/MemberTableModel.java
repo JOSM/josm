@@ -1,24 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.BACKWARD;
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.FORWARD;
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.NONE;
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.ROUNDABOUT_LEFT;
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.ROUNDABOUT_RIGHT;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -30,13 +20,10 @@ import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
@@ -47,7 +34,9 @@ import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
-import org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction;
+import org.openstreetmap.josm.gui.dialogs.relation.sort.RelationSorter;
+import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType;
+import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionTypeCalculator;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
@@ -65,13 +54,8 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     private final OsmDataLayer layer;
     private final PresetListPanel.PresetHandler presetHandler;
 
-    private final int UNCONNECTED = Integer.MIN_VALUE;
-    
-    private static final Collection<AdditionalSorter> additionalSorters = new ArrayList<AdditionalSorter>();
-    
-    static {
-        additionalSorters.add(new AssociatedStreetSorter());
-    }
+    private final WayConnectionTypeCalculator wayConnectionTypeCalculator = new WayConnectionTypeCalculator();
+    private final RelationSorter relationSorter = new RelationSorter();
 
     /**
      * constructor
@@ -589,17 +573,15 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * otherwise
      */
     public static boolean hasMembersReferringTo(Collection<RelationMember> members, Collection<OsmPrimitive> primitives) {
-        if (primitives == null || primitives.isEmpty()) {
+        if (primitives == null || primitives.isEmpty())
             return false;
-        }
         HashSet<OsmPrimitive> referrers = new HashSet<OsmPrimitive>();
         for (RelationMember member : members) {
             referrers.add(member.getMember());
         }
         for (OsmPrimitive referred : primitives) {
-            if (referrers.contains(referred)) {
+            if (referrers.contains(referred))
                 return true;
-            }
         }
         return false;
     }
@@ -698,82 +680,6 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         return result;
     }*/
 
-    /*
-     * Sort a collection of relation members by the way they are linked.
-     *
-     * @param relationMembers collection of relation members
-     * @return sorted collection of relation members
-     */
-    private List<RelationMember> sortMembers(List<RelationMember> relationMembers) {
-        ArrayList<RelationMember> newMembers = new ArrayList<RelationMember>();
-
-        // Sort members with custom mechanisms (relation-dependent)
-        List<RelationMember> defaultMembers = new LinkedList<RelationMember>();
-        Map<AdditionalSorter, List<RelationMember>> customMap = new HashMap<AdditionalSorter, List<RelationMember>>();
-
-        // Dispatch members to correct sorters
-        for (RelationMember m : relationMembers) {
-            for (AdditionalSorter sorter : additionalSorters) {
-                List<RelationMember> list = defaultMembers;
-                if (sorter.acceptsMember(m)) {
-                    list = customMap.get(sorter);
-                    if (list == null) {
-                        customMap.put(sorter, list = new LinkedList<RelationMember>()); 
-                    }
-                }
-                list.add(m);
-            }
-        }
-        
-        // Sort members and add them to result
-        for (AdditionalSorter s : customMap.keySet()) {
-            newMembers.addAll(s.sortMembers(customMap.get(s)));
-        }
-        
-        RelationNodeMap map = new RelationNodeMap(defaultMembers);
-        // List of groups of linked members
-        //
-        ArrayList<LinkedList<Integer>> allGroups = new ArrayList<LinkedList<Integer>>();
-
-        // current group of members that are linked among each other
-        // Two successive members are always linked i.e. have a common node.
-        //
-        LinkedList<Integer> group;
-
-        Integer first;
-        while ((first = map.pop()) != null) {
-            group = new LinkedList<Integer>();
-            group.add(first);
-
-            allGroups.add(group);
-
-            Integer next = first;
-            while ((next = map.popAdjacent(next)) != null) {
-                group.addLast(next);
-            }
-
-            // The first element need not be in front of the list.
-            // So the search goes in both directions
-            //
-            next = first;
-            while ((next = map.popAdjacent(next)) != null) {
-                group.addFirst(next);
-            }
-        }
-
-        for (LinkedList<Integer> tmpGroup : allGroups) {
-            for (Integer p : tmpGroup) {
-                newMembers.add(defaultMembers.get(p));
-            }
-        }
-        
-        // Finally, add members that have not been sorted at all
-        for (Integer i : map.getNotSortableMembers()) {
-            newMembers.add(defaultMembers.get(i));
-        }
-        
-        return newMembers;
-    }
 
     /**
      * Sort the selected relation members by the way they are linked.
@@ -783,10 +689,10 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         List<RelationMember> sortedMembers = null;
         List<RelationMember> newMembers;
         if (selectedMembers.size() <= 1) {
-            newMembers = sortMembers(members);
+            newMembers = relationSorter.sortMembers(members);
             sortedMembers = newMembers;
         } else {
-            sortedMembers = sortMembers(selectedMembers);
+            sortedMembers = relationSorter.sortMembers(selectedMembers);
             List<Integer> selectedIndices = getSelectedIndices();
             newMembers = new ArrayList<RelationMember>();
             boolean inserted = false;
@@ -810,128 +716,10 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         setSelectedMembers(sortedMembers);
     }
 
-    private Direction determineDirection(int ref_i, Direction ref_direction, int k) {
-        return determineDirection(ref_i, ref_direction, k, false);
-    }
-    /**
-     * Determines the direction of way k with respect to the way ref_i.
-     * The way ref_i is assumed to have the direction ref_direction and
-     * to be the predecessor of k.
-     *
-     * If both ways are not linked in any way, NONE is returned.
-     *
-     * Else the direction is given as follows:
-     * Let the relation be a route of oneway streets, and someone travels them in the given order.
-     * Direction is FORWARD if it is legal and BACKWARD if it is illegal to do so for the given way.
-     *
-     **/
-    private Direction determineDirection(int ref_i, final Direction ref_direction, int k, boolean reversed) {
-        if (ref_i < 0 || k < 0 || ref_i >= members.size() || k >= members.size())
-            return NONE;
-        if (ref_direction == NONE)
-            return NONE;
-
-        final RelationMember m_ref = members.get(ref_i);
-        final RelationMember m = members.get(k);
-        Way way_ref = null;
-        Way way = null;
-
-        if (m_ref.isWay()) {
-            way_ref = m_ref.getWay();
-        }
-        if (m.isWay()) {
-            way = m.getWay();
-        }
-
-        if (way_ref == null || way == null)
-            return NONE;
-
-        /** the list of nodes the way k can dock to */
-        List<Node> refNodes= new ArrayList<Node>();
-
-        switch (ref_direction) {
-        case FORWARD:
-            refNodes.add(way_ref.lastNode());
-            break;
-        case BACKWARD:
-            refNodes.add(way_ref.firstNode());
-            break;
-        case ROUNDABOUT_LEFT:
-        case ROUNDABOUT_RIGHT:
-            refNodes = way_ref.getNodes();
-            break;
-        }
-
-        if (refNodes == null)
-            return NONE;
-
-        for (Node n : refNodes) {
-            if (n == null) {
-                continue;
-            }
-            if (roundaboutType(k) != NONE) {
-                for (Node nn : way.getNodes()) {
-                    if (n == nn)
-                        return roundaboutType(k);
-                }
-            } else if(isOneway(m)) {
-                if (n == RelationNodeMap.firstOnewayNode(m) && !reversed) {
-                    if(isBackward(m))
-                        return BACKWARD;
-                    else
-                        return FORWARD;
-                }
-                if (n == RelationNodeMap.lastOnewayNode(m) && reversed) {
-                    if(isBackward(m))
-                        return FORWARD;
-                    else
-                        return BACKWARD;
-                }
-            } else {
-                if (n == way.firstNode())
-                    return FORWARD;
-                if (n == way.lastNode())
-                    return BACKWARD;
-            }
-        }
-        return NONE;
-    }
-
-    /**
-     * determine, if the way i is a roundabout and if yes, what type of roundabout
-     */
-    private Direction roundaboutType(int i) {
-        RelationMember m = members.get(i);
-        if (m == null || !m.isWay()) return NONE;
-        Way w = m.getWay();
-        return roundaboutType(w);
-    }
-    static Direction roundaboutType(Way w) {
-        if (w != null &&
-                "roundabout".equals(w.get("junction")) &&
-                w.getNodesCount() < 200 &&
-                w.getNodesCount() > 2 &&
-                w.getNode(0) != null &&
-                w.getNode(1) != null &&
-                w.getNode(2) != null &&
-                w.firstNode() == w.lastNode()) {
-            /** do some simple determinant / cross pruduct test on the first 3 nodes
-                to see, if the roundabout goes clock wise or ccw */
-            EastNorth en1 = w.getNode(0).getEastNorth();
-            EastNorth en2 = w.getNode(1).getEastNorth();
-            EastNorth en3 = w.getNode(2).getEastNorth();
-            if (en1 != null && en2 != null && en3 != null) {
-                en1 = en1.sub(en2);
-                en2 = en2.sub(en3);
-                return en1.north() * en2.east() - en2.north() * en1.east() > 0 ? ROUNDABOUT_LEFT : ROUNDABOUT_RIGHT;
-            }
-        }
-        return NONE;
-    }
 
     WayConnectionType getWayConnection(int i) {
         if (connectionType == null) {
-            updateLinks();
+            connectionType = wayConnectionTypeCalculator.updateLinks(members);
         }
         return connectionType.get(i);
     }
@@ -968,91 +756,6 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         }
     }
 
-    /**
-     * refresh the cache of member WayConnectionTypes
-     */
-    public void updateLinks() {
-        connectionType = null;
-        final List<WayConnectionType> con = new ArrayList<WayConnectionType>();
-
-        for (int i=0; i<members.size(); ++i) {
-            con.add(null);
-        }
-
-        firstGroupIdx=0;
-
-        lastForwardWay = UNCONNECTED;
-        lastBackwardWay = UNCONNECTED;
-        onewayBeginning = false;
-        WayConnectionType lastWct = null;
-
-        for (int i=0; i<members.size(); ++i) {
-            final RelationMember m = members.get(i);
-            if (!m.isWay() || m.getWay() == null || m.getWay().isIncomplete()) {
-                if(i > 0) {
-                    makeLoopIfNeeded(con, i-1);
-                }
-                con.set(i, new WayConnectionType());
-                firstGroupIdx = i;
-                continue;
-            }
-
-            WayConnectionType wct = new WayConnectionType(false);
-            wct.linkPrev = i>0 && con.get(i-1) != null && con.get(i-1).isValid();
-            wct.direction = NONE;
-
-            if(isOneway(m)){
-                if(lastWct != null && lastWct.isOnewayTail) {
-                    wct.isOnewayHead = true;
-                }
-                if(lastBackwardWay == UNCONNECTED && lastForwardWay == UNCONNECTED){ //Beginning of new oneway
-                    wct.isOnewayHead = true;
-                    lastForwardWay = i-1;
-                    lastBackwardWay = i-1;
-                    onewayBeginning = true;
-                }
-            }
-
-            if (wct.linkPrev) {
-                if(lastBackwardWay != UNCONNECTED && lastForwardWay != UNCONNECTED) {
-                    wct = determineOnewayConnectionType(con, m, i, wct);
-                    if(!wct.linkPrev) {
-                        firstGroupIdx = i;
-                    }
-                }
-
-                if(!isOneway(m)) {
-                    wct.direction = determineDirection(i-1, lastWct.direction, i);
-                    wct.linkPrev = (wct.direction != NONE);
-                }
-            }
-
-            if (!wct.linkPrev) {
-                wct.direction = determineDirectionOfFirst(i, m);
-                if(isOneway(m)){
-                    wct.isOnewayLoopForwardPart = true;
-                    lastForwardWay = i;
-                }
-            }
-
-            wct.linkNext = false;
-            if(lastWct != null) {
-                lastWct.linkNext = wct.linkPrev;
-            }
-            con.set(i, wct);
-            lastWct = wct;
-
-            if(!wct.linkPrev) {
-                if(i > 0) {
-                    makeLoopIfNeeded(con, i-1);
-                }
-                firstGroupIdx = i;
-            }
-        }
-        makeLoopIfNeeded(con, members.size()-1);
-        connectionType = con;
-    }
-
     //    private static void unconnectPreviousLink(List<WayConnectionType> con, int beg, boolean backward){
     //        int i = beg;
     //        while(true){
@@ -1063,164 +766,4 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     //        }
     //    }
 
-    private static Direction reverse(final Direction dir){
-        if(dir == FORWARD) return BACKWARD;
-        if(dir == BACKWARD) return FORWARD;
-        return dir;
-    }
-
-    private static boolean isBackward(final RelationMember member){
-        return member.getRole().equals("backward");
-    }
-
-    private static boolean isForward(final RelationMember member){
-        return member.getRole().equals("forward");
-    }
-
-    public static boolean isOneway(final RelationMember member){
-        return isForward(member) || isBackward(member);
-    }
-
-    int firstGroupIdx;
-    private void makeLoopIfNeeded(final List<WayConnectionType> con, final int i) {
-        boolean loop;
-        if (i == firstGroupIdx) { //is primitive loop
-            loop = determineDirection(i, FORWARD, i) == FORWARD;
-        } else {
-            loop = determineDirection(i, con.get(i).direction, firstGroupIdx) == con.get(firstGroupIdx).direction;
-        }
-        if (loop) {
-            for (int j=firstGroupIdx; j <= i; ++j) {
-                con.get(j).isLoop = true;
-            }
-        }
-    }
-
-    private Direction determineDirectionOfFirst(final int i, final RelationMember m) {
-        if (roundaboutType(i) != NONE)
-            return roundaboutType(i);
-
-        if (isOneway(m)){
-            if(isBackward(m)) return BACKWARD;
-            else return FORWARD;
-        } else { /** guess the direction and see if it fits with the next member */
-            if(determineDirection(i, FORWARD, i+1) != NONE) return FORWARD;
-            if(determineDirection(i, BACKWARD, i+1) != NONE) return BACKWARD;
-        }
-        return NONE;
-    }
-
-    int lastForwardWay, lastBackwardWay;
-    boolean onewayBeginning;
-    private WayConnectionType determineOnewayConnectionType(final List<WayConnectionType> con,
-            RelationMember m, int i, final WayConnectionType wct) {
-        Direction dirFW = determineDirection(lastForwardWay, con.get(lastForwardWay).direction, i);
-        Direction dirBW = NONE;
-        if(onewayBeginning) {
-            if(lastBackwardWay < 0) {
-                dirBW = determineDirection(firstGroupIdx, reverse(con.get(firstGroupIdx).direction), i, true);
-            } else {
-                dirBW = determineDirection(lastBackwardWay, con.get(lastBackwardWay).direction, i, true);
-            }
-
-            if(dirBW != NONE) {
-                onewayBeginning = false;
-            }
-        } else {
-            dirBW = determineDirection(lastBackwardWay, con.get(lastBackwardWay).direction, i, true);
-        }
-
-        if(isOneway(m)) {
-            if(dirBW != NONE){
-                wct.direction = dirBW;
-                lastBackwardWay = i;
-                wct.isOnewayLoopBackwardPart = true;
-            }
-            if(dirFW != NONE){
-                wct.direction = dirFW;
-                lastForwardWay = i;
-                wct.isOnewayLoopForwardPart = true;
-            }
-            if(dirFW == NONE && dirBW == NONE) { //Not connected to previous
-                //                        unconnectPreviousLink(con, i, true);
-                //                        unconnectPreviousLink(con, i, false);
-                wct.linkPrev = false;
-                if(isOneway(m)){
-                    wct.isOnewayHead = true;
-                    lastForwardWay = i-1;
-                    lastBackwardWay = i-1;
-                } else {
-                    lastForwardWay = UNCONNECTED;
-                    lastBackwardWay = UNCONNECTED;
-                }
-                onewayBeginning = true;
-            }
-
-            if(dirFW != NONE && dirBW != NONE) { //End of oneway loop
-                if(i+1<members.size() && determineDirection(i, dirFW, i+1) != NONE) {
-                    wct.isOnewayLoopBackwardPart = false;
-                    dirBW = NONE;
-                    wct.direction = dirFW;
-                } else {
-                    wct.isOnewayLoopForwardPart = false;
-                    dirFW = NONE;
-                    wct.direction = dirBW;
-                }
-
-                wct.isOnewayTail = true;
-            }
-
-        } else {
-            lastForwardWay = UNCONNECTED;
-            lastBackwardWay = UNCONNECTED;
-            if(dirFW == NONE || dirBW == NONE) {
-                wct.linkPrev = false;
-            }
-        }
-        return wct;
-    }
-    
-    private static interface AdditionalSorter {
-        public boolean acceptsMember(RelationMember m);
-        public List<RelationMember> sortMembers(List<RelationMember> list);
-    }
-    
-    /**
-     * Class that sorts type=associatedStreet relation's houses.
-     */
-    private static class AssociatedStreetSorter implements AdditionalSorter {
-
-        @Override
-        public boolean acceptsMember(RelationMember m) {
-            return m != null 
-                    && m.getRole() != null && m.getRole().equals("house") 
-                    && m.getMember() != null && m.getMember().get("addr:housenumber") != null;
-        }
-
-        @Override
-        public List<RelationMember> sortMembers(List<RelationMember> list) {
-            Collections.sort(list, new Comparator<RelationMember>() {
-                @Override
-                public int compare(RelationMember a, RelationMember b) {
-                    if (a == b || a.getMember() == b.getMember()) return 0;
-                    String addrA = a.getMember().get("addr:housenumber").trim();
-                    String addrB = b.getMember().get("addr:housenumber").trim();
-                    if (addrA.equals(addrB)) return 0;
-                    // Strip non-digits (from "1B" addresses for example)
-                    String addrAnum = addrA.replaceAll("\\D+", "");
-                    String addrBnum = addrB.replaceAll("\\D+", "");
-                    // Compare only numbers
-                    try {
-                        Integer res = Integer.parseInt(addrAnum) - Integer.parseInt(addrBnum);
-                        if (res != 0) return res;
-                    } catch (NumberFormatException e) {
-                        // Ignore NumberFormatException. If the number is not composed of digits, strings are compared next
-                    }
-                    // Same number ? Compare full strings
-                    return addrA.compareTo(addrB);
-                }
-            });
-            return list;
-        }
-    }
 }

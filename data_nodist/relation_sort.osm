@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='true' generator='JOSM'>
+  <node id='-66' action='modify' visible='true' lat='0.013038062491396258' lon='-0.022228708815553687'>
+    <tag k='addr:housenumber' v='4' />
+    <tag k='name' v='t2n4' />
+  </node>
+  <node id='-64' action='modify' visible='true' lat='0.012930871679247545' lon='-0.023173575998757284'>
+    <tag k='addr:housenumber' v='3' />
+    <tag k='name' v='t2n3' />
+  </node>
+  <node id='-62' action='modify' visible='true' lat='0.013073792762102373' lon='-0.023697619982718937'>
+    <tag k='addr:housenumber' v='2' />
+    <tag k='name' v='t2n2' />
+  </node>
+  <node id='-60' action='modify' visible='true' lat='0.013173043514037084' lon='-0.023991402216151987'>
+    <tag k='addr:housenumber' v='1' />
+    <tag k='name' v='t2n1' />
+  </node>
+  <node id='-58' action='modify' visible='true' lat='0.01301027228084355' lon='-0.02147837311124495' />
+  <node id='-56' action='modify' visible='true' lat='0.013204803754647857' lon='-0.021911106401031468' />
+  <node id='-54' action='modify' visible='true' lat='0.01305394261171071' lon='-0.023320467115473805' />
+  <node id='-52' action='modify' visible='true' lat='0.01342315540873657' lon='-0.024273274359040455' />
+  <node id='-50' action='modify' visible='true' lat='0.014332292293628876' lon='-0.02137515232652523'>
+    <tag k='name' v='t1n2' />
+  </node>
+  <node id='-48' action='modify' visible='true' lat='0.014268771812702965' lon='-0.021518073413060227' />
+  <node id='-46' action='modify' visible='true' lat='0.014379932654311749' lon='-0.021569683805420084'>
+    <tag k='name' v='t1n1' />
+  </node>
+  <node id='-44' action='modify' visible='true' lat='0.014252891692468746' lon='-0.021776125374859526' />
+  <node id='-42' action='modify' visible='true' lat='0.014014689888824738' lon='-0.021819795706856333' />
+  <node id='-40' action='modify' visible='true' lat='0.01389955901697638' lon='-0.022077847668655632' />
+  <node id='-38' action='modify' visible='true' lat='0.013986899678383742' lon='-0.022423240294448546' />
+  <node id='-36' action='modify' visible='true' lat='0.01427274184276135' lon='-0.02253440113953132' />
+  <node id='-34' action='modify' visible='true' lat='0.014657834758095989' lon='-0.022161218302467714' />
+  <node id='-32' action='modify' visible='true' lat='0.014911916681254264' lon='-0.022177098423193826' />
+  <node id='-30' action='modify' visible='true' lat='0.015181878724288504' lon='-0.022316049479547295' />
+  <node id='-28' action='modify' visible='true' lat='0.0154002303764964' lon='-0.02298301455004395' />
+  <node id='-26' action='modify' visible='true' lat='0.015428020586761428' lon='-0.023340317266381447' />
+  <node id='-24' action='modify' visible='true' lat='0.01539626034645824' lon='-0.023880241371069214' />
+  <node id='-22' action='modify' visible='true' lat='0.011539938658067678' lon='-0.02462061995945469' />
+  <node id='-20' action='modify' visible='true' lat='0.011113261386811617' lon='-0.023652390748067607' />
+  <node id='-18' action='modify' visible='true' lat='0.011096850722520079' lon='-0.023143660145474393' />
+  <node id='-16' action='modify' visible='true' lat='0.01196661592868377' lon='-0.023053401490175603' />
+  <node id='-14' action='modify' visible='true' lat='0.011571901667096615' lon='-0.023094362404978128' />
+  <node id='-12' action='modify' visible='true' lat='0.0121881598958588' lon='-0.02275800952737954' />
+  <node id='-10' action='modify' visible='true' lat='0.010990181404602947' lon='-0.02221645759558677' />
+  <node id='-8' action='modify' visible='true' lat='0.011392242679627185' lon='-0.02151079901779618' />
+  <way id='-112' action='modify' visible='true'>
+    <nd ref='-12' />
+    <nd ref='-18' />
+    <tag k='name' v='t3w5' />
+  </way>
+  <way id='-96' action='modify' visible='true'>
+    <nd ref='-54' />
+    <nd ref='-56' />
+    <nd ref='-58' />
+    <tag k='name' v='t2w2' />
+  </way>
+  <way id='-94' action='modify' visible='true'>
+    <nd ref='-52' />
+    <nd ref='-54' />
+    <tag k='name' v='t2w1' />
+  </way>
+  <way id='-92' action='modify' visible='true'>
+    <nd ref='-42' />
+    <nd ref='-44' />
+    <nd ref='-48' />
+    <tag k='name' v='t1w7' />
+  </way>
+  <way id='-90' action='modify' visible='true'>
+    <nd ref='-30' />
+    <nd ref='-32' />
+    <tag k='name' v='t1w4' />
+  </way>
+  <way id='-88' action='modify' visible='true'>
+    <nd ref='-28' />
+    <nd ref='-30' />
+    <tag k='name' v='t1w3' />
+  </way>
+  <way id='-86' action='modify' visible='true'>
+    <nd ref='-26' />
+    <nd ref='-28' />
+    <tag k='name' v='t1w2' />
+  </way>
+  <way id='-84' action='modify' visible='true'>
+    <nd ref='-38' />
+    <nd ref='-40' />
+    <nd ref='-42' />
+    <tag k='name' v='t1w6' />
+  </way>
+  <way id='-82' action='modify' visible='true'>
+    <nd ref='-34' />
+    <nd ref='-36' />
+    <tag k='name' v='t1w5' />
+  </way>
+  <way id='-80' action='modify' visible='true'>
+    <nd ref='-24' />
+    <nd ref='-26' />
+    <tag k='name' v='t1w1' />
+  </way>
+  <way id='-78' action='modify' visible='true'>
+    <nd ref='-22' />
+    <nd ref='-20' />
+    <nd ref='-18' />
+    <tag k='name' v='t3w1' />
+  </way>
+  <way id='-76' action='modify' visible='true'>
+    <nd ref='-18' />
+    <nd ref='-10' />
+    <tag k='name' v='t3w6' />
+  </way>
+  <way id='-74' action='modify' visible='true'>
+    <nd ref='-14' />
+    <nd ref='-16' />
+    <tag k='name' v='t3w3' />
+  </way>
+  <way id='-72' action='modify' visible='true'>
+    <nd ref='-16' />
+    <nd ref='-12' />
+    <tag k='name' v='t3w4' />
+  </way>
+  <way id='-70' action='modify' visible='true'>
+    <nd ref='-10' />
+    <nd ref='-8' />
+    <tag k='name' v='t3w7' />
+  </way>
+  <way id='-68' action='modify' visible='true'>
+    <nd ref='-18' />
+    <nd ref='-14' />
+    <tag k='name' v='t3w2' />
+  </way>
+  <relation id='-102' action='modify' visible='true'>
+    <member type='way' ref='-94' role='street' />
+    <member type='way' ref='-96' role='street' />
+    <member type='node' ref='-64' role='house' />
+    <member type='node' ref='-62' role='house' />
+    <member type='node' ref='-60' role='house' />
+    <member type='node' ref='-66' role='house' />
+    <tag k='test' v='associatedStreet' />
+    <tag k='type' v='associatedStreet' />
+  </relation>
+  <relation id='-100' action='modify' visible='true'>
+    <member type='way' ref='-88' role='' />
+    <member type='way' ref='-92' role='' />
+    <member type='way' ref='-80' role='' />
+    <member type='way' ref='-86' role='' />
+    <member type='way' ref='-90' role='' />
+    <member type='way' ref='-82' role='' />
+    <member type='way' ref='-84' role='' />
+    <member type='node' ref='-46' role='' />
+    <member type='node' ref='-50' role='' />
+    <tag k='test' v='generic' />
+  </relation>
+  <relation id='-98' action='modify' visible='true'>
+    <member type='way' ref='-112' role='forward' />
+    <member type='way' ref='-68' role='forward' />
+    <member type='way' ref='-70' role='' />
+    <member type='way' ref='-72' role='forward' />
+    <member type='way' ref='-76' role='' />
+    <member type='way' ref='-74' role='forward' />
+    <member type='way' ref='-78' role='' />
+    <tag k='test' v='loop' />
+  </relation>
+</osm>
