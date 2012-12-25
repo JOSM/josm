@@ -19,10 +19,14 @@ public class MapPreference extends DefaultTabPreferenceSetting {
     }
     
     private MapPreference() {
-        super("map", tr("Map Settings"), tr("Settings for the map projection and data interpretation."));
+        super("map", tr("Map Settings"), tr("Settings for the map projection and data interpretation."), false, new JTabbedPane());
+        mapcontent = getTabPane();
     }
     
-    public final JTabbedPane mapcontent = new JTabbedPane();
+    /**
+     * @deprecated Use {@link #getTabPane()} instead. This field will be removed mid-2013.
+     */
+    public final JTabbedPane mapcontent; // FIXME remove it mid 2013
     
     @Override
     public boolean ok() {
@@ -31,6 +35,6 @@ public class MapPreference extends DefaultTabPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
-        gui.createPreferenceTab(this).add(mapcontent, GBC.eol().fill(GBC.BOTH));
+        gui.createPreferenceTab(this).add(getTabPane(), GBC.eol().fill(GBC.BOTH));
     }
 }

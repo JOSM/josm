@@ -162,15 +162,15 @@ public class TaggingPresetPreference implements SubPreferenceSetting {
         panel.add(sortMenu, GBC.eol().insets(5,5,5,0));
         sources = new TaggingPresetSourceEditor();
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
-        gui.getMapPreference().mapcontent.addTab(tr("Tagging Presets"), panel);
+        gui.getMapPreference().addSubTab(this, tr("Tagging Presets"), panel);
 
         // this defers loading of tagging preset sources to the first time the tab
         // with the tagging presets is selected by the user
         //
-        gui.getMapPreference().mapcontent.addChangeListener(
+        gui.getMapPreference().getTabPane().addChangeListener(
                 new ChangeListener() {
                     public void stateChanged(ChangeEvent e) {
-                        if (gui.getMapPreference().mapcontent.getSelectedComponent() == panel) {
+                        if (gui.getMapPreference().getTabPane().getSelectedComponent() == panel) {
                             sources.initiallyLoadAvailableSources();
                         }
                     }

@@ -238,7 +238,7 @@ public class ColorPreference implements SubPreferenceSetting {
         buttonPanel.add(defaultSet, GBC.std().insets(5,5,5,0));
         buttonPanel.add(defaultAll, GBC.std().insets(0,5,0,0));
         buttonPanel.add(remove, GBC.std().insets(0,5,0,0));
-        gui.getDisplayPreference().displaycontent.addTab(tr("Colors"), panel);
+        gui.getDisplayPreference().addSubTab(this, tr("Colors"), panel);
     }
 
     Boolean isRemoveColor(int row)

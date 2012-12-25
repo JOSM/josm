@@ -318,7 +318,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         projPanel.add(GBC.glue(1,1), GBC.std().fill(GBC.HORIZONTAL).weight(1.0, 1.0));
 
         JScrollPane scrollpane = new JScrollPane(projPanel);
-        gui.getMapPreference().mapcontent.addTab(tr("Map Projection"), scrollpane);
+        gui.getMapPreference().addSubTab(this, tr("Map Projection"), scrollpane);
 
         selectedProjectionChanged(pc);
     }

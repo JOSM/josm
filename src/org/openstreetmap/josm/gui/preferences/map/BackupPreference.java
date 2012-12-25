@@ -100,7 +100,7 @@ public class BackupPreference implements SubPreferenceSetting {
         sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-        gui.getMapPreference().mapcontent.addTab(tr("File backup"), null, sp, tr("Configure whether to create backup files"));
+        gui.getMapPreference().addSubTab(this, tr("File backup"), sp, tr("Configure whether to create backup files"));
     }
 
     @Override
