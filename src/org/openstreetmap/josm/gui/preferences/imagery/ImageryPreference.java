@@ -75,7 +75,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
     }
 
     private ImageryPreference() {
-        super("imagery", tr("Imagery Preferences"), tr("Modify list of imagery layers displayed in the Imagery menu"));
+        super("imagery", tr("Imagery Preferences"), tr("Modify list of imagery layers displayed in the Imagery menu"), false, new JTabbedPane());
     }
 
     private ImageryProvidersPanel imageryProviders;
@@ -114,16 +114,13 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
     @Override
     public void addGui(final PreferenceTabbedPane gui) {
         JPanel p = gui.createPreferenceTab(this);
-        JTabbedPane pane = new JTabbedPane();
+        JTabbedPane pane = getTabPane();
         layerInfo = new ImageryLayerInfo(ImageryLayerInfo.instance);
         imageryProviders = new ImageryProvidersPanel(gui, layerInfo);
-        pane.add(imageryProviders);
-        pane.add(buildSettingsPanel(gui));
-        pane.add(new OffsetBookmarksPanel(gui));
+        pane.addTab(tr("Imagery providers"), imageryProviders);
+        pane.addTab(tr("Settings"), buildSettingsPanel(gui));
+        pane.addTab(tr("Offset bookmarks"), new OffsetBookmarksPanel(gui));
         loadSettings();
-        pane.setTitleAt(0, tr("Imagery providers"));
-        pane.setTitleAt(1, tr("Settings"));
-        pane.setTitleAt(2, tr("Offset bookmarks"));
         p.add(pane,GBC.std().fill(GBC.BOTH));
     }
 

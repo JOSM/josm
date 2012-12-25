@@ -60,7 +60,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
     }
 
     private PluginPreference() {
-        super("plugin", tr("Plugins"), tr("Configure available plugins."));
+        super("plugin", tr("Plugins"), tr("Configure available plugins."), false, new JTabbedPane());
     }
 
     public static String buildDownloadSummary(PluginDownloadTask task) {
@@ -162,16 +162,11 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
         return pnl;
     }
 
-    protected JPanel buildContentPanel() {
-        JPanel pnl = new JPanel(new BorderLayout());
-        JTabbedPane tpPluginPreferences = new JTabbedPane();
-        tpPluginPreferences.add(buildPluginListPanel());
-        tpPluginPreferences.add(pnlPluginUpdatePolicy  =new PluginUpdatePolicyPanel());
-        tpPluginPreferences.setTitleAt(0, tr("Plugins"));
-        tpPluginPreferences.setTitleAt(1, tr("Plugin update policy"));
-
-        pnl.add(tpPluginPreferences, BorderLayout.CENTER);
-        return pnl;
+    protected JTabbedPane buildContentPane() {
+        JTabbedPane pane = getTabPane();
+        pane.addTab(tr("Plugins"), buildPluginListPanel());
+        pane.addTab(tr("Plugin update policy"), pnlPluginUpdatePolicy = new PluginUpdatePolicyPanel());
+        return pane;
     }
 
     public void addGui(final PreferenceTabbedPane gui) {
@@ -181,7 +176,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.BOTH;
         PreferencePanel plugins = gui.createPreferenceTab(this);
-        plugins.add(buildContentPanel(), gc);
+        plugins.add(buildContentPane(), gc);
         readLocalPluginInformation();
         pluginPreferencesActivated = true;
     }

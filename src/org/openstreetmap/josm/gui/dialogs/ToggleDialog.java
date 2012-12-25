@@ -56,6 +56,10 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.help.Helpful;
+import org.openstreetmap.josm.gui.preferences.PreferenceDialog;
+import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -138,6 +142,11 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      * toggle the checkbox on show/hide
      */
     protected JCheckBoxMenuItem windowMenuItem;
+    
+    /**
+     * The linked preferences class (optional). If set, accessible from the title bar with a dedicated button
+     */
+    protected Class<? extends PreferenceSetting> preferenceClass;
 
     /**
      * Constructor
@@ -148,6 +157,13 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     }
     /**
      * Constructor
+     * (see below)
+     */
+    public ToggleDialog(String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight, boolean defShow) {
+        this(name, iconName, tooltip, shortcut, preferredHeight, defShow, null);
+    }
+    /**
+     * Constructor
      *
      * @param name  the name of the dialog
      * @param iconName the name of the icon to be displayed
@@ -155,11 +171,13 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      * @param shortcut  the shortcut
      * @param preferredHeight the preferred height for the dialog
      * @param defShow if the dialog should be shown by default, if there is no preference
+     * @param prefClass the preferences settings class, or null if not applicable
      */
-    public ToggleDialog(String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight, boolean defShow) {
+    public ToggleDialog(String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight, boolean defShow, Class<? extends PreferenceSetting> prefClass) {
         super(new BorderLayout());
         this.preferencePrefix = iconName;
         this.name = name;
+        this.preferenceClass = prefClass;
 
         /** Use the full width of the parent element */
         setPreferredSize(new Dimension(0, preferredHeight));
@@ -520,6 +538,30 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                         }
                         );
                 add(buttonsHide);
+            }
+            
+            // show the pref button if applicable
+            if (preferenceClass != null) {
+                inIcon = ImageProvider.get("preference");
+                smallIcon = new ImageIcon(inIcon.getImage().getScaledInstance(16 , 16, Image.SCALE_SMOOTH));
+                JButton pref = new JButton(smallIcon);
+                pref.setToolTipText(tr("Open preferences for this panel"));
+                pref.setBorder(BorderFactory.createEmptyBorder());
+                pref.addActionListener(
+                        new ActionListener(){
+                            @SuppressWarnings("unchecked")
+                            public void actionPerformed(ActionEvent e) {
+                                final PreferenceDialog p = new PreferenceDialog(Main.parent);
+                                if (TabPreferenceSetting.class.isAssignableFrom(preferenceClass)) {
+                                    p.selectPreferencesTabByClass((Class<? extends TabPreferenceSetting>) preferenceClass);
+                                } else if (SubPreferenceSetting.class.isAssignableFrom(preferenceClass)) {
+                                    p.selectSubPreferencesTabByClass((Class<? extends SubPreferenceSetting>) preferenceClass);
+                                }
+                                p.setVisible(true);
+                            }
+                        }
+                        );
+                add(pref);
             }
 
             // show the sticky button

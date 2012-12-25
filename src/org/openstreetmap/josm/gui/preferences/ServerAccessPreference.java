@@ -26,12 +26,11 @@ public class ServerAccessPreference extends DefaultTabPreferenceSetting {
     }
     
     private ServerAccessPreference() {
-        super("connection", tr("Connection Settings"), tr("Connection Settings for the OSM server."));
+        super("connection", tr("Connection Settings"), tr("Connection Settings for the OSM server."), false, new JTabbedPane());
     }
 
     private OsmApiUrlInputPanel pnlApiUrlPreferences;
 
-    private JTabbedPane tpServerPreferences;
     /** indicates whether to use the default OSM URL or not */
     /** panel for configuring authentication preferences */
     private AuthenticationPreferencesPanel pnlAuthPreferences;
@@ -59,7 +58,7 @@ public class ServerAccessPreference extends DefaultTabPreferenceSetting {
     protected JPanel buildTabbedServerPreferences() {
         JPanel pnl = new JPanel(new BorderLayout());
 
-        tpServerPreferences = new JTabbedPane();
+        JTabbedPane tpServerPreferences = getTabPane();
         pnlAuthPreferences = new AuthenticationPreferencesPanel();
         tpServerPreferences.add(wrapVerticallyScrollablePanel(pnlAuthPreferences));
         pnlProxyPreferences = new ProxyPreferencesPanel();

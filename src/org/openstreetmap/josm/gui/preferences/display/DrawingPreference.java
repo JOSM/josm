@@ -55,7 +55,7 @@ public class DrawingPreference implements SubPreferenceSetting {
 
         JScrollPane scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
-        gui.getDisplayPreference().displaycontent.addTab(tr("GPS Points"), scrollpane);
+        gui.getDisplayPreference().addSubTab(this, tr("GPS Points"), scrollpane);
         panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
@@ -141,7 +141,7 @@ public class DrawingPreference implements SubPreferenceSetting {
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
         scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
-        gui.getDisplayPreference().displaycontent.addTab(tr("OSM Data"), scrollpane);
+        gui.getDisplayPreference().addSubTab(this, tr("OSM Data"), scrollpane);
     }
 
     public boolean ok() {

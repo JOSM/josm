@@ -1,7 +1,6 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui.dialogs;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -92,7 +91,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     public ValidatorDialog() {
         super(tr("Validation Results"), "validator", tr("Open the validation window."),
                 Shortcut.registerShortcut("subwindow:validator", tr("Toggle: {0}", tr("Validation results")),
-                        KeyEvent.VK_V, Shortcut.ALT_SHIFT), 150);
+                        KeyEvent.VK_V, Shortcut.ALT_SHIFT), 150, false, ValidatorPreference.class);
 
         popupMenu = new JPopupMenu();
 

@@ -64,15 +64,15 @@ public class MapPaintPreference implements SubPreferenceSetting {
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
         panel.add(enableIconDefault, GBC.eol().insets(11,2,5,0));
 
-        gui.getMapPreference().mapcontent.addTab(tr("Map Paint Styles"), panel);
+        gui.getMapPreference().addSubTab(this, tr("Map Paint Styles"), panel);
 
         // this defers loading of style sources to the first time the tab
         // with the map paint preferences is selected by the user
         //
-        gui.getMapPreference().mapcontent.addChangeListener(
+        gui.getMapPreference().getTabPane().addChangeListener(
                 new ChangeListener() {
                     public void stateChanged(ChangeEvent e) {
-                        if (gui.getMapPreference().mapcontent.getSelectedComponent() == panel) {
+                        if (gui.getMapPreference().getTabPane().getSelectedComponent() == panel) {
                             sources.initiallyLoadAvailableSources();
                         }
                     }

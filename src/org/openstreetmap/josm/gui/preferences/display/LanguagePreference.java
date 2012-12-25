@@ -53,6 +53,9 @@ public class LanguagePreference implements SubPreferenceSetting {
         panel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
         panel.add(langCombo, GBC.eol().fill(GBC.HORIZONTAL));
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
+        
+        TabPreferenceSetting tabPref = lafPreference.getTabPreferenceSetting(gui);
+        tabPref.registerSubTab(this, tabPref.getSubTab(lafPreference));
     }
 
     public boolean ok() {
@@ -119,6 +122,6 @@ public class LanguagePreference implements SubPreferenceSetting {
 
     @Override
     public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
-        return gui.getDisplayPreference();
+        return gui.getSetting(LafPreference.class).getTabPreferenceSetting(gui);
     }
 }

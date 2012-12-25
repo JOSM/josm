@@ -115,7 +115,7 @@ public class LafPreference implements SubPreferenceSetting {
 
         JScrollPane scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
-        gui.getDisplayPreference().displaycontent.addTab(tr("Look and Feel"), scrollpane);
+        gui.getDisplayPreference().addSubTab(this, tr("Look and Feel"), scrollpane);
     }
 
     public boolean ok() {

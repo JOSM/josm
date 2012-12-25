@@ -208,6 +208,22 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                 return tps.getClass().isAssignableFrom((Class<?>) clazz);
             }}, clazz);
     }
+    
+    public boolean selectSubTabByPref(Class<? extends SubPreferenceSetting> clazz) {
+        for (PreferenceSetting setting : settings) {
+            if (clazz.isInstance(setting)) {
+                final SubPreferenceSetting sub = (SubPreferenceSetting) setting;
+                final TabPreferenceSetting tab = sub.getTabPreferenceSetting(PreferenceTabbedPane.this);
+                selectTabBy(new TabIdentifier(){
+                    @Override
+                    public boolean identify(TabPreferenceSetting tps, Object unused) {
+                        return tps.equals(tab);
+                    }}, null);
+                return tab.selectSubTab(sub);
+            }
+        }
+        return false;
+    }
 
     public final DisplayPreference getDisplayPreference() {
         return getSetting(DisplayPreference.class);

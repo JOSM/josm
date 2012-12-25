@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.preferences;
 
+import java.awt.Component;
+
 /**
  * Preference settings, that display a top level tab.
  *
@@ -28,8 +30,51 @@ public interface TabPreferenceSetting extends PreferenceSetting {
 
     /**
      * Called during preferences tab initialization to display a description in one sentence for this tab. 
-     * Will be displayedin italic under the title.
+     * Will be displayed in italic under the title.
      * @return The description of this preferences tab.
      */
     public String getDescription();
+
+    /**
+     * Adds a new sub preference settings tab with the given title and component.
+     * @param sub The new sub preference settings.
+     * @param title The tab title.
+     * @param component The tab component.
+     * @since 5631
+     */
+    public void addSubTab(SubPreferenceSetting sub, String title, Component component);
+    
+    /**
+     * Adds a new sub preference settings tab with the given title, component and tooltip.
+     * @param sub The new sub preference settings.
+     * @param title The tab title.
+     * @param component The tab component.
+     * @param tip The tab tooltip.
+     * @since 5631
+     */
+    public void addSubTab(SubPreferenceSetting sub, String title, Component component, String tip);
+
+    /**
+     * Registers a sub preference settings to an existing tab component.
+     * @param sub The new sub preference settings.
+     * @param component The component for which a tab already exists.
+     * @since 5631
+     */
+    public void registerSubTab(SubPreferenceSetting sub, Component component);
+    
+    /**
+     * Returns the tab component related to the specified sub preference settings
+     * @param sub The requested sub preference settings.
+     * @return The component related to the specified sub preference settings, or null.
+     * @since 5631
+     */
+    public Component getSubTab(SubPreferenceSetting sub);
+
+    /**
+     * Selects the specified sub preference settings, if applicable. Not all Tab preference settings need to implement this.
+     * @param subPref The sub preference settings to be selected.
+     * @return true if the specified preference settings have been selected, false otherwise.
+     * @since 5631
+     */
+    public boolean selectSubTab(SubPreferenceSetting subPref);
 }
