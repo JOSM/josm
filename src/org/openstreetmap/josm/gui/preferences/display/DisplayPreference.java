@@ -19,10 +19,14 @@ public class DisplayPreference extends DefaultTabPreferenceSetting {
     }
     
     private DisplayPreference() {
-        super("display", tr("Display Settings"), tr("Various settings that influence the visual representation of the whole program."));
+        super("display", tr("Display Settings"), tr("Various settings that influence the visual representation of the whole program."), false, new JTabbedPane());
+        displaycontent = getTabPane();
     }
     
-    public final JTabbedPane displaycontent = new JTabbedPane();
+    /**
+     * @deprecated Use {@link #getTabPane()} instead. This field will be removed mid-2013.
+     */
+    public final JTabbedPane displaycontent;
     
     @Override
     public boolean ok() {
@@ -31,6 +35,6 @@ public class DisplayPreference extends DefaultTabPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
-        gui.createPreferenceTab(this).add(displaycontent, GBC.eol().fill(GBC.BOTH));
+        gui.createPreferenceTab(this).add(getTabPane(), GBC.eol().fill(GBC.BOTH));
     }
 }
