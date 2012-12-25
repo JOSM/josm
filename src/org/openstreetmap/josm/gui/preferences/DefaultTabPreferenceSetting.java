@@ -95,11 +95,6 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
                     return true;
                 } catch (IllegalArgumentException e) {
                     // Ignore exception and return false below
-                    e.printStackTrace();
-                    System.out.println(tabpane.getTabCount());
-                    for (int i = 0; i < tabpane.getTabCount() ; i++) {
-                        System.out.println(tabpane.getComponentAt(i));
-                    }
                 }
             }
         }
