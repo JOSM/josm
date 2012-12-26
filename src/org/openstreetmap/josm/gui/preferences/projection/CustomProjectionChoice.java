@@ -244,4 +244,9 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
     public boolean showProjectionCode() {
         return false;
     }
+
+    @Override
+    public boolean showProjectionName() {
+        return false;
+    }
 }
