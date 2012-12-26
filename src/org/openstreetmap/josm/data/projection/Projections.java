@@ -6,8 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -112,7 +115,7 @@ public class Projections {
     }
 
     public static String getInit(String id) {
-        return inits.get(id.toLowerCase()).b;
+        return inits.get(id.toUpperCase()).b;
     }
 
     /**
@@ -131,7 +134,7 @@ public class Projections {
                     String name = lastline.substring(1).trim();
                     Matcher m = epsgPattern.matcher(line);
                     if (m.matches()) {
-                        inits.put("epsg:" + m.group(1), Pair.create(name, m.group(2).trim()));
+                        inits.put("EPSG:" + m.group(1), Pair.create(name, m.group(2).trim()));
                     } else {
                         System.err.println("Warning: failed to parse line from the epsg projection definition: "+line);
                     }
@@ -143,29 +146,41 @@ public class Projections {
         }
     }
 
-    private final static Map<String, ProjectionChoice> allCodesPC = new HashMap<String, ProjectionChoice>();
-    private final static Map<String, Projection> allCodes = new HashMap<String, Projection>();
+    private final static Set<String> allCodes = new HashSet<String>();
+    private final static Map<String, ProjectionChoice> allProjectionChoicesByCode = new HashMap<String, ProjectionChoice>();
+    private final static Map<String, Projection> projectionsByCode_cache = new HashMap<String, Projection>();
 
     static {
-        // FIXME: use {@link #inits}, because it may contain more codes in future
-        // than exposed by the ProjectionChoices
         for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
             for (String code : pc.allCodes()) {
-                allCodesPC.put(code, pc);
+                allProjectionChoicesByCode.put(code, pc);
             }
         }
+        allCodes.addAll(inits.keySet());
+        allCodes.addAll(allProjectionChoicesByCode.keySet());
     }
 
     public static Projection getProjectionByCode(String code) {
-        Projection p = allCodes.get(code);
-        if (p != null) return p;
-        ProjectionChoice pc = allCodesPC.get(code);
-        if (pc == null) return null;
-        Collection<String> pref = pc.getPreferencesFromCode(code);
-        pc.setPreferences(pref);
-        p = pc.getProjection();
-        allCodes.put(code, p);
-        return p;
+        Projection proj = projectionsByCode_cache.get(code);
+        if (proj != null) return proj;
+        ProjectionChoice pc = allProjectionChoicesByCode.get(code);
+        if (pc != null) {
+            Pair<String, String> pair = inits.get(code);
+            if (pair == null) return null;
+            String name = pair.a;
+            String init = pair.b;
+            proj = new CustomProjection(name, code, init, null);
+        } else {
+            Collection<String> pref = pc.getPreferencesFromCode(code);
+            pc.setPreferences(pref);
+            proj = pc.getProjection();
+        }
+        projectionsByCode_cache.put(code, proj);
+        return proj;
+    }
+
+    public static Collection<String> getAllProjectionCodes() {
+        return Collections.unmodifiableCollection(allCodes);
     }
 
 }

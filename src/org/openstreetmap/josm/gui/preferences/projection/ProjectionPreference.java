@@ -203,6 +203,11 @@ public class ProjectionPreference implements SubPreferenceSetting {
         registerProjectionChoice(tr("SWEREF99 13 30 / EPSG:3008 (Sweden)"), "core:sweref99", 3008); // SE
 
         /************************
+         * Projection by Code.
+         */
+        registerProjectionChoice(new CodeProjectionChoice());
+
+        /************************
          * Custom projection.
          */
         registerProjectionChoice(new CustomProjectionChoice());
@@ -264,6 +269,9 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private JLabel projectionCodeLabel;
     private Component projectionCodeGlue;
     private JLabel projectionCode = new JLabel();
+    private JLabel projectionNameLabel;
+    private Component projectionNameGlue;
+    private JLabel projectionName = new JLabel();
     private JLabel bounds = new JLabel();
 
     /**
@@ -303,6 +311,9 @@ public class ProjectionPreference implements SubPreferenceSetting {
         projPanel.add(projectionCodeLabel = new JLabel(tr("Projection code")), GBC.std().insets(25,5,0,5));
         projPanel.add(projectionCodeGlue = GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(projectionCode, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
+        projPanel.add(projectionNameLabel = new JLabel(tr("Projection name")), GBC.std().insets(25,5,0,5));
+        projPanel.add(projectionNameGlue = GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(projectionName, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
         projPanel.add(new JLabel(tr("Bounds")), GBC.std().insets(25,5,0,5));
         projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(bounds, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
@@ -327,16 +338,22 @@ public class ProjectionPreference implements SubPreferenceSetting {
         pc.setPreferences(pc.getPreferences(projSubPrefPanel));
         Projection proj = pc.getProjection();
         projectionCode.setText(proj.toCode());
+        projectionName.setText(proj.toString());
         Bounds b = proj.getWorldBoundsLatLon();
         CoordinateFormat cf = CoordinateFormat.getDefaultFormat();
         bounds.setText(b.getMin().lonToString(cf)+", "+b.getMin().latToString(cf)+" : "+b.getMax().lonToString(cf)+", "+b.getMax().latToString(cf));
         boolean showCode = true;
+        boolean showName = false;
         if (pc instanceof SubPrefsOptions) {
             showCode = ((SubPrefsOptions) pc).showProjectionCode();
+            showName = ((SubPrefsOptions) pc).showProjectionName();
         }
         projectionCodeLabel.setVisible(showCode);
         projectionCodeGlue.setVisible(showCode);
         projectionCode.setVisible(showCode);
+        projectionNameLabel.setVisible(showName);
+        projectionNameGlue.setVisible(showName);
+        projectionName.setVisible(showName);
     }
 
     @Override
