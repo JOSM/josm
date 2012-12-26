@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
@@ -39,6 +40,7 @@ import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -215,9 +217,14 @@ public class OsmApi extends OsmConnection {
             return;
         cancel = false;
         try {
-            String s = new CapabilitiesCache(monitor, fastFail).updateIfRequiredString();
-            InputSource inputSource = new InputSource(new StringReader(s));
-            SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new CapabilitiesParser());
+            CapabilitiesCache cache = new CapabilitiesCache(monitor, fastFail);
+            try {
+                initializeCapabilities(cache.updateIfRequiredString());
+            } catch (SAXParseException parseException) {
+                // XML parsing may fail if JOSM previously stored a corrupted capabilities document (see #8278)
+                // In that case, force update and try again
+                initializeCapabilities(cache.updateForceString());
+            }
             if (capabilities.supportsVersion("0.6")) {
                 version = "0.6";
             } else {
@@ -260,6 +267,11 @@ public class OsmApi extends OsmConnection {
             initialized = false;
             throw new OsmApiInitializationException(e);
         }
+    }
+    
+    private void initializeCapabilities(String xml) throws SAXException, IOException, ParserConfigurationException {
+        InputSource inputSource = new InputSource(new StringReader(xml));
+        SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new CapabilitiesParser());
     }
 
     /**
