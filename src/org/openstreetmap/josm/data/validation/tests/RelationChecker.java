@@ -159,7 +159,7 @@ public class RelationChecker extends Test {
                                     tr(s, keyname, count), MessageFormat.format(s, keyname, count), HIGH_COUNT, n));
                         }
                     }
-                    if (ri != null) {
+                    if (ri != null && r.types != null) {
                         Collection<OsmPrimitive> wrongTypes = new LinkedList<OsmPrimitive>();
                         if (!r.types.contains(PresetType.WAY)) {
                             wrongTypes.addAll(r.types.contains(PresetType.CLOSEDWAY) ? ri.openways : ri.ways);
