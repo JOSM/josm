@@ -460,7 +460,7 @@ public class ExtendedDialog extends JDialog {
             if(visible) {
                 new WindowGeometry(rememberSizePref,
                         defaultWindowGeometry).applySafe(this);
-            } else {
+            } else if (isShowing()) { // should fix #6438, #6981, #8295
                 new WindowGeometry(this).remember(rememberSizePref);
             }
         }
