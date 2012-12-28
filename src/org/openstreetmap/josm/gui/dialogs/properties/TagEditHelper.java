@@ -522,9 +522,10 @@ import org.openstreetmap.josm.tools.Shortcut;
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         keys.setSelectedItem(t.getKey());
-                        values.setSelectedItem(t.getValue());
                         // Update list of values (fix #7951) 
+                        // fix #8298 - update list of values before setting value (?)
                         focus.focusGained(null);
+                        values.setSelectedItem(t.getValue());
                     }
                 };
                 recentTagsActions.add(action);
