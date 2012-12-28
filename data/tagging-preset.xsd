@@ -116,6 +116,7 @@
 		<attribute name="text_context" type="string" />
 		<attribute name="default" type="string" />
 		<attribute name="use_last_as_default" type="tns:last_default" />
+		<attribute name="auto_increment" type="string" />
 		<attribute name="match" type="tns:match" />
         <attribute name="length" type="positiveInteger" />
 

@@ -11,6 +11,7 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +19,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,7 +36,9 @@ import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -41,6 +46,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
@@ -392,6 +398,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String default_;
         public String originalValue;
         public String use_last_as_default = "false";
+        public String auto_increment;
         public String length;
 
         private JComponent value;
@@ -410,6 +417,12 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     // selected osm primitives are untagged or filling default values feature is enabled
                     if (!"false".equals(use_last_as_default) && lastValue.containsKey(key)) {
                         textField.setText(lastValue.get(key));
+                    } else if (auto_increment_selected != 0  && auto_increment != null) {
+                        try {
+                            textField.setText(Integer.toString(Integer.parseInt(lastValue.get(key)) + auto_increment_selected));
+                        } catch (NumberFormatException ex) {
+                            // Ignore - cannot auto-increment if last was non-numeric
+                        }
                     } else {
                         textField.setText(default_);
                     }
@@ -442,6 +455,57 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     }
                 }
             }
+
+            // if there's an auto_increment setting, then wrap the text field
+            // into a panel, appending a number of buttons.
+            // auto_increment has a format like -2,-1,1,2
+            // the text box being the first component in the panel is relied
+            // on in a rather ugly fashion further down.
+            if (auto_increment != null) {
+                ButtonGroup bg = new ButtonGroup();
+                JPanel pnl = new JPanel(new GridBagLayout());
+                pnl.add(value, GBC.std().fill(GBC.HORIZONTAL));
+
+                // first, one button for each auto_increment value
+                for (final String ai : auto_increment.split(",")) {
+                    JToggleButton aibutton = new JToggleButton(ai);
+                    aibutton.setToolTipText(tr("Select auto-increment of {0} for this field", ai));
+                    aibutton.setMargin(new java.awt.Insets(0,0,0,0));
+                    bg.add(aibutton);
+                    try {
+                        // TODO there must be a better way to parse a number like "+3" than this.
+                        final int buttonvalue = ((Number)NumberFormat.getIntegerInstance().parse(ai.replace("+", ""))).intValue();
+                        if (auto_increment_selected == buttonvalue) aibutton.setSelected(true);
+                        aibutton.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                auto_increment_selected = buttonvalue;
+                            }
+                        });
+                        pnl.add(aibutton, GBC.std());
+                    } catch (ParseException x) {
+                        System.err.println("Cannot parse auto-increment value of '" + ai + "' into an integer");
+                    }
+                }
+
+                // an invisible toggle button for "release" of the button group
+                final JToggleButton clearbutton = new JToggleButton("X");
+                clearbutton.setVisible(false);
+                bg.add(clearbutton);
+                // and its visible counterpart. - this mechanism allows us to 
+                // have *no* button selected after the X is clicked, instead 
+                // of the X remaining selected
+                JButton releasebutton = new JButton("X");
+                releasebutton.setToolTipText(tr("Cancel auto-increment for this field"));
+                releasebutton.setMargin(new java.awt.Insets(0,0,0,0));
+                releasebutton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        auto_increment_selected = 0;
+                        clearbutton.setSelected(true);
+                    }
+                });
+                pnl.add(releasebutton, GBC.std().eol());
+                value = pnl;
+            }
             p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
             p.add(value, GBC.eol().fill(GBC.HORIZONTAL));
             return true;
@@ -451,18 +515,28 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public void addCommands(List<Tag> changedTags) {
 
             // return if unchanged
-            String v = (value instanceof JosmComboBox)
-                    ? ((JosmComboBox) value).getEditor().getItem().toString()
-                            : ((JTextField) value).getText();
-                    v = v.trim();
+            String v = null;
+            if (value instanceof JosmComboBox) {
+                v = ((JosmComboBox) value).getEditor().getItem().toString();
+            } else if (value instanceof JTextField) {
+                v = ((JTextField) value).getText();
+            } else if (value instanceof JPanel) {
+                // this is what was alluded to with "ugly fashion" above.
+                v = ((JTextField) (((JPanel)value).getComponent(0))).getText();
+            } else {
+                System.err.println("No 'last value' support for component " + value);
+                return;
+            }
+               
+            v = v.trim();
 
-                    if (!"false".equals(use_last_as_default)) {
-                        lastValue.put(key, v);
-                    }
-                    if (v.equals(originalValue) || (originalValue == null && v.length() == 0))
-                        return;
+            if (!"false".equals(use_last_as_default) || auto_increment != null) {
+                lastValue.put(key, v);
+            }
+            if (v.equals(originalValue) || (originalValue == null && v.length() == 0))
+                return;
 
-                    changedTags.add(new Tag(key, v));
+            changedTags.add(new Tag(key, v));
         }
 
         @Override
@@ -1256,6 +1330,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public TemplateEntry nameTemplate;
     public Match nameTemplateFilter;
     private static final HashMap<String,String> lastValue = new HashMap<String,String>();
+    private static int auto_increment_selected = 0;
 
     /**
      * Create an empty tagging preset. This will not have any items and
