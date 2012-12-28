@@ -34,6 +34,12 @@ text: text box
   text: fixed label to display
   default: default string to display (defaults to "")
   use_last_as_default: true/false/force (default is "false")
+  auto_increment: may contain a comma separated list of integer increments or 
+                  decrements, e.g. "-2,-1,+1,+2"; a button will be shown next
+                  to the text field for each value, allowing the user to select
+                  auto-increment with the given stepping. auto-increment only
+                  happens if the user selects it. default is no auto-increment;
+                  mutually exclusive with use_last_as_default.
   match: none/key/key!/keyvalue (default is "none", see below for more information)
   length: length of input box (number of characters allowed)
 
@@ -5726,7 +5732,7 @@ Note that for a match, at least one positive and no negative is required.
                   de.href="http://wiki.openstreetmap.org/wiki/Proposed_features/De:Hausnummern" />
             <label text="Edit Address Information" />
             <space />
-            <text key="addr:housenumber" text="House number" match="key" />
+            <text key="addr:housenumber" text="House number" match="key" auto_increment="-2,-1,+1,+2" />
             <optional>
                 <text key="addr:housename" text="House name" match="key" />
                 <text key="addr:street" text="Street name" use_last_as_default="force" match="key" />
