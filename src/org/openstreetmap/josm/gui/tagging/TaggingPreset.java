@@ -413,16 +413,17 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 textField.setMaxChars(new Integer(length));
             }
             if (usage.unused()){
-                if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
+                if (auto_increment_selected != 0  && auto_increment != null) {
+                    try {
+                        textField.setText(Integer.toString(Integer.parseInt(lastValue.get(key)) + auto_increment_selected));
+                    } catch (NumberFormatException ex) {
+                        // Ignore - cannot auto-increment if last was non-numeric
+                    }
+                }
+                else if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                     // selected osm primitives are untagged or filling default values feature is enabled
                     if (!"false".equals(use_last_as_default) && lastValue.containsKey(key)) {
                         textField.setText(lastValue.get(key));
-                    } else if (auto_increment_selected != 0  && auto_increment != null) {
-                        try {
-                            textField.setText(Integer.toString(Integer.parseInt(lastValue.get(key)) + auto_increment_selected));
-                        } catch (NumberFormatException ex) {
-                            // Ignore - cannot auto-increment if last was non-numeric
-                        }
                     } else {
                         textField.setText(default_);
                     }
@@ -446,9 +447,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 value=comboBox;
                 originalValue = DIFFERENT;
             }
-            if(locale_text == null) {
+            if (locale_text == null) {
                 if (text != null) {
-                    if(text_context != null) {
+                    if (text_context != null) {
                         locale_text = trc(text_context, fixPresetString(text));
                     } else {
                         locale_text = tr(fixPresetString(text));
