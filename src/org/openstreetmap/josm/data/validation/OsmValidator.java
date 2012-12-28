@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ValidateAction;
+import org.openstreetmap.josm.data.validation.tests.Addresses;
 import org.openstreetmap.josm.data.validation.tests.BuildingInBuilding;
 import org.openstreetmap.josm.data.validation.tests.Coastlines;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays;
@@ -106,6 +107,7 @@ public class OsmValidator implements LayerChangeListener {
         WayConnectedToArea.class, // ID 2301 .. 2399
         NodesDuplicatingWayTags.class, // ID 2401 .. 2499
         PowerLines.class, // ID 2501 .. 2599
+        Addresses.class, // ID 2601 .. 2699
     };
 
     public OsmValidator() {
