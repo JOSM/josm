@@ -5,9 +5,12 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -159,16 +162,27 @@ public class RelationChecker extends Test {
                                     tr(s, keyname, count), MessageFormat.format(s, keyname, count), HIGH_COUNT, n));
                         }
                     }
-                    if (ri != null && r.types != null) {
-                        Collection<OsmPrimitive> wrongTypes = new LinkedList<OsmPrimitive>();
-                        if (!r.types.contains(PresetType.WAY)) {
-                            wrongTypes.addAll(r.types.contains(PresetType.CLOSEDWAY) ? ri.openways : ri.ways);
+                    if (ri != null) {
+                        Set<OsmPrimitive> wrongTypes = new HashSet<OsmPrimitive>();
+                        if (r.types != null) {
+                            if (!r.types.contains(PresetType.WAY)) {
+                                wrongTypes.addAll(r.types.contains(PresetType.CLOSEDWAY) ? ri.openways : ri.ways);
+                            }
+                            if (!r.types.contains(PresetType.NODE)) {
+                                wrongTypes.addAll(ri.nodes);
+                            }
+                            if (!r.types.contains(PresetType.RELATION)) {
+                                wrongTypes.addAll(ri.relations);
+                            }
                         }
-                        if (!r.types.contains(PresetType.NODE)) {
-                            wrongTypes.addAll(ri.nodes);
-                        }
-                        if (!r.types.contains(PresetType.RELATION)) {
-                            wrongTypes.addAll(ri.relations);
+                        if (r.memberExpression != null) {
+                            for (Collection<OsmPrimitive> c : Arrays.asList(new Collection[]{ri.nodes, ri.ways, ri.relations})) {
+                                for (OsmPrimitive p : c) {
+                                    if (!r.memberExpression.match(p)) {
+                                        wrongTypes.add(p);
+                                    }
+                                }
+                            }
                         }
                         if (!wrongTypes.isEmpty()) {
                             String s = marktr("Member for role {0} of wrong type");
