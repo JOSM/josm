@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -23,7 +24,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,6 +36,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
@@ -49,6 +50,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
@@ -66,6 +68,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * Class that helps PropertiesDialog add and edit tag values
@@ -205,9 +208,7 @@ import org.openstreetmap.josm.tools.Shortcut;
     }
     
         
-    public class EditTagDialog extends ExtendedDialog {
-        AutoCompletingComboBox keys;
-        AutoCompletingComboBox values;
+    public class EditTagDialog extends AbstractTagsDialog {
         String oldValue;
         String key;
         Map<String, Integer> m;
@@ -255,12 +256,6 @@ import org.openstreetmap.josm.tools.Shortcut;
             this.key = key;
             this.row = row;
             this.m = map;
-            
-            // TODO : How to remember position, allowing autosizing?
-            // setRememberWindowGeometry(getClass().getName() + ".geometry",
-            //    WindowGeometry.centerInWindow(Main.parent, new Dimension(270, 180)));
-            //setRememberWindowGeometry(getClass().getName() + ".geometry",
-            //        WindowGeometry.centerInWindow(Main.parent, new Dimension(270, 180)));
             
             JPanel mainPanel = new JPanel(new BorderLayout());
                     
@@ -314,18 +309,18 @@ import org.openstreetmap.josm.tools.Shortcut;
             //  new JOptionPane(p, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
             //    @Override public void selectInitialValue() {
             Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
-                if(sysSel != null) {
-                    Transferable old = sysSel.getContents(null);
-                    values.requestFocusInWindow();
-                    values.getEditor().selectAll();
-                    sysSel.setContents(old, null);
-                } else {
-                    values.requestFocusInWindow();
-                    values.getEditor().selectAll();
-                }
+            if(sysSel != null) {
+                Transferable old = sysSel.getContents(null);
+                values.requestFocusInWindow();
+                values.getEditor().selectAll();
+                sysSel.setContents(old, null);
+            } else {
+                values.requestFocusInWindow();
+                values.getEditor().selectAll();
+            }
         }
         
-           /**
+        /**
          * Edit tags of multiple selected objects according to selected ComboBox values
          * If value == "", tag will be deleted
          * Confirmations may be needed.
@@ -398,10 +393,41 @@ import org.openstreetmap.josm.tools.Shortcut;
             changedKey = newkey;
         }
     }
-    
-    class AddTagsDialog extends ExtendedDialog {
+
+    abstract class AbstractTagsDialog extends ExtendedDialog {
         AutoCompletingComboBox keys;
         AutoCompletingComboBox values;
+        
+        public AbstractTagsDialog(Component parent, String title, String[] buttonTexts) {
+            super(parent, title, buttonTexts);
+        }
+
+        @Override
+        public void setupDialog() {
+            setResizable(false);
+            super.setupDialog();
+            
+            setRememberWindowGeometry(getClass().getName() + ".geometry",
+                WindowGeometry.centerInWindow(Main.parent, getSize()));
+        }
+
+        @Override
+        public void setVisible(boolean visible) {
+            // Do not want dialog to be resizable, but its size may increase each time because of the recently added tags
+            // So need to modify the stored geometry (size part only) in order to use the automatic positioning mechanism
+            if (visible) {
+                WindowGeometry geometry = initWindowGeometry();
+                Dimension storedSize = geometry.getSize();
+                if (!storedSize.equals(getSize())) {
+                    storedSize.setSize(getSize());
+                    rememberWindowGeometry(geometry);
+                }
+            }
+            super.setVisible(visible);
+        }
+    }
+
+    class AddTagsDialog extends AbstractTagsDialog {
         List<JosmAction> recentTagsActions = new ArrayList<JosmAction>();
         
         // Counter of added commands for possible undo
@@ -411,10 +437,6 @@ import org.openstreetmap.josm.tools.Shortcut;
             super(Main.parent, tr("Add value?"), new String[] {tr("OK"),tr("Cancel")});
             setButtonIcons(new String[] {"ok","cancel"});
             setCancelButton(2);
-            
-            // TODO : How to remember position, allowing autosizing?
-            // setRememberWindowGeometry(getClass().getName() + ".geometry",
-            //    WindowGeometry.centerInWindow(Main.parent, new Dimension(270, 180)));
             
             JPanel mainPanel = new JPanel(new GridBagLayout());
             keys = new AutoCompletingComboBox();
@@ -485,21 +507,19 @@ import org.openstreetmap.josm.tools.Shortcut;
             
             setContent(mainPanel, false);
             
-            // TODO: Is it correct place for thois code - was in 
+            // TODO: Is it correct place for this code - was in 
             //  new JOptionPane(p, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
             //    @Override public void selectInitialValue() {
             Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
-                if(sysSel != null) {
-                    Transferable old = sysSel.getContents(null);
-                    values.requestFocusInWindow();
-                    values.getEditor().selectAll();
-                    sysSel.setContents(old, null);
-                } else {
-                    values.requestFocusInWindow();
-                    values.getEditor().selectAll();
-                }
-                
-            
+            if(sysSel != null) {
+                Transferable old = sysSel.getContents(null);
+                values.requestFocusInWindow();
+                values.getEditor().selectAll();
+                sysSel.setContents(old, null);
+            } else {
+                values.requestFocusInWindow();
+                values.getEditor().selectAll();
+            }
         }
 
         private void suggestRecentlyAddedTags(JPanel mainPanel, int tagsToShow, final FocusAdapter focus) {
