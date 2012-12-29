@@ -7,8 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -20,10 +18,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,16 +36,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
 import org.openstreetmap.josm.Main;
@@ -65,7 +66,6 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * Class that helps PropertiesDialog add and edit tag values
@@ -74,9 +74,10 @@ import org.openstreetmap.josm.tools.WindowGeometry;
     private final DefaultTableModel propertyData;
     private final Map<String, Map<String, Integer>> valueCount;
 
-    private String changedKey;
-
+    // Selection that we are editing by using both dialogs
+    Collection<OsmPrimitive> sel;
     
+    private String changedKey;
     private String objKey;
 
     Comparator<AutoCompletionListItem> defaultACItemComparator = new Comparator<AutoCompletionListItem>() {
@@ -85,21 +86,19 @@ import org.openstreetmap.josm.tools.WindowGeometry;
         }
     };
 
-    Collection<OsmPrimitive> sel;
-        
-            private String lastAddKey = null;
-        private String lastAddValue = null;
+    private String lastAddKey = null;
+    private String lastAddValue = null;
 
-        public static final int DEFAULT_LRU_TAGS_NUMBER = 5;
-        public static final int MAX_LRU_TAGS_NUMBER = 9;
+    public static final int DEFAULT_LRU_TAGS_NUMBER = 5;
+    public static final int MAX_LRU_TAGS_NUMBER = 9;
 
-        // LRU cache for recently added tags (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html) 
-        private final Map<Tag, Void> recentTags = new LinkedHashMap<Tag, Void>(MAX_LRU_TAGS_NUMBER+1, 1.1f, true) {
-            @Override
-            protected boolean removeEldestEntry(Map.Entry<Tag, Void> eldest) {
-                return size() > MAX_LRU_TAGS_NUMBER;
-            }
-        };
+    // LRU cache for recently added tags (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html) 
+    private final Map<Tag, Void> recentTags = new LinkedHashMap<Tag, Void>(MAX_LRU_TAGS_NUMBER+1, 1.1f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Tag, Void> eldest) {
+            return size() > MAX_LRU_TAGS_NUMBER;
+        }
+    };
 
     TagEditHelper(DefaultTableModel propertyData, Map<String, Map<String, Integer>> valueCount) {
         this.propertyData = propertyData;
@@ -138,7 +137,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
     */
     public void editProperty(final int row) {
         changedKey = null;
-        Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+        sel = Main.main.getCurrentDataSet().getSelected();
         if (sel.isEmpty()) return;
 
         String key = propertyData.getValueAt(row, 0).toString();
@@ -471,6 +470,17 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             if (recentTagsToShow > MAX_LRU_TAGS_NUMBER) {
                 recentTagsToShow = MAX_LRU_TAGS_NUMBER;
             }
+            
+            // Add tag on Shift-Enter
+            mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                        KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_MASK), "addAndContinue");
+                mainPanel.getActionMap().put("addAndContinue", new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        performTagAdding();
+                    }
+                });
+                    
             suggestRecentlyAddedTags(mainPanel, recentTagsToShow, focus);
             
             setContent(mainPanel, false);
