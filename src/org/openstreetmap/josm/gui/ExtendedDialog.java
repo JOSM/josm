@@ -446,6 +446,16 @@ public class ExtendedDialog extends JDialog {
         getRootPane().getActionMap().put("ESCAPE", actionListener);
     }
 
+    protected final void rememberWindowGeometry(WindowGeometry geometry) {
+        if (geometry != null) {
+            geometry.remember(rememberSizePref);
+        }
+    }
+    
+    protected final WindowGeometry initWindowGeometry() {
+        return new WindowGeometry(rememberSizePref, defaultWindowGeometry);
+    }
+
     /**
      * Override setVisible to be able to save the window geometry if required
      */
@@ -458,10 +468,9 @@ public class ExtendedDialog extends JDialog {
         // Ensure all required variables are available
         if(rememberSizePref.length() != 0 && defaultWindowGeometry != null) {
             if(visible) {
-                new WindowGeometry(rememberSizePref,
-                        defaultWindowGeometry).applySafe(this);
+                initWindowGeometry().applySafe(this);
             } else if (isShowing()) { // should fix #6438, #6981, #8295
-                new WindowGeometry(this).remember(rememberSizePref);
+                rememberWindowGeometry(new WindowGeometry(this));
             }
         }
         super.setVisible(visible);
@@ -472,7 +481,7 @@ public class ExtendedDialog extends JDialog {
     }
 
     /**
-     * Call this if you want the dialog to remember the size set by the user.
+     * Call this if you want the dialog to remember the geometry (size and position) set by the user.
      * Set the pref to <code>null</code> or to an empty string to disable again.
      * By default, it's disabled.
      *
