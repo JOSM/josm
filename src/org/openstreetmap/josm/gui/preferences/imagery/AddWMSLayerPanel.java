@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 public class AddWMSLayerPanel extends AddImageryPanel {
 
@@ -92,6 +93,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
             public void propertyChange(PropertyChangeEvent evt) {
                 if (wms.getServiceUrl() != null) {
                     wmsUrl.setText(wms.buildGetMapUrl(tree.getSelectedLayers()));
+                    name.setText(wms.getServiceUrl().getHost() + ": " + Utils.join(", ", tree.getSelectedLayers()));
                 }
                 showBounds.setEnabled(tree.getSelectedLayers().size() == 1);
             }
