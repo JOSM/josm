@@ -173,6 +173,7 @@ public class Addresses extends Test {
         } else {
             return; // TODO handle multipolygon houses ?
         }
+        if (centroid == null) return; // fix #8305
         double maxDistance = Main.pref.getDouble("validator.addresses.max_street_distance", 200.0);
         for (Way streetPart : street) {
             for (Pair<Node, Node> chunk : streetPart.getNodePairs(false)) {
