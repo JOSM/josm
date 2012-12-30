@@ -141,7 +141,7 @@ public class RequestProcessor extends Thread {
             StringBuffer requestLine = new StringBuffer();
             while (requestLine.length() < 1024 * 1024) {
                 int c = in.read();
-                if (c == '\r' || c == '\n')
+                if (c == -1 || c == '\r' || c == '\n')
                     break;
                 requestLine.append((char) c);
             }
