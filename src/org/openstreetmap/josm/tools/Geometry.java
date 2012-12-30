@@ -311,47 +311,55 @@ public class Geometry {
         return Math.abs(det) < 1e-3;
     }
 
+    private static EastNorth closestPointTo(EastNorth p1, EastNorth p2, EastNorth point, boolean segmentOnly) {
+        CheckParameterUtil.ensureParameterNotNull(p1, "p1");
+        CheckParameterUtil.ensureParameterNotNull(p2, "p2");
+        CheckParameterUtil.ensureParameterNotNull(point, "point");
+
+        double ldx = p2.getX() - p1.getX();
+        double ldy = p2.getY() - p1.getY();
+
+        if (ldx == 0 && ldy == 0) //segment zero length
+            return p1;
+
+        double pdx = point.getX() - p1.getX();
+        double pdy = point.getY() - p1.getY();
+
+        double offset = (pdx * ldx + pdy * ldy) / (ldx * ldx + ldy * ldy);
+
+        if (segmentOnly && offset <= 0)
+            return p1;
+        else if (segmentOnly && offset >= 1)
+            return p2;
+        else
+            return new EastNorth(p1.getX() + ldx * offset, p1.getY() + ldy * offset);
+    }
+    
     /**
      * Calculates closest point to a line segment.
-     * @param segmentP1
-     * @param segmentP2
-     * @param point
+     * @param segmentP1 First point determining line segment
+     * @param segmentP2 Second point determining line segment
+     * @param point Point for which a closest point is searched on line segment [P1,P2]
      * @return segmentP1 if it is the closest point, segmentP2 if it is the closest point,
      * a new point if closest point is between segmentP1 and segmentP2.
+     * @since 3650
+     * @see #closestPointToLine
      */
     public static EastNorth closestPointToSegment(EastNorth segmentP1, EastNorth segmentP2, EastNorth point) {
-
-        double ldx = segmentP2.getX() - segmentP1.getX();
-        double ldy = segmentP2.getY() - segmentP1.getY();
-
-        if (ldx == 0 && ldy == 0) //segment zero length
-            return segmentP1;
-
-        double pdx = point.getX() - segmentP1.getX();
-        double pdy = point.getY() - segmentP1.getY();
-
-        double offset = (pdx * ldx + pdy * ldy) / (ldx * ldx + ldy * ldy);
-
-        if (offset <= 0)
-            return segmentP1;
-        else if (offset >= 1)
-            return segmentP2;
-        else
-            return new EastNorth(segmentP1.getX() + ldx * offset, segmentP1.getY() + ldy * offset);
+        return closestPointTo(segmentP1, segmentP2, point, true);
     }
 
+    /**
+     * Calculates closest point to a line.
+     * @param lineP1 First point determining line
+     * @param lineP2 Second point determining line
+     * @param point Point for which a closest point is searched on line (P1,P2)
+     * @return The closest point found on line. It may be outside the segment [P1,P2].
+     * @since 4134
+     * @see #closestPointToSegment
+     */
     public static EastNorth closestPointToLine(EastNorth lineP1, EastNorth lineP2, EastNorth point) {
-        double ldx = lineP2.getX() - lineP1.getX();
-        double ldy = lineP2.getY() - lineP1.getY();
-
-        if (ldx == 0 && ldy == 0) //segment zero length
-            return lineP1;
-
-        double pdx = point.getX() - lineP1.getX();
-        double pdy = point.getY() - lineP1.getY();
-
-        double offset = (pdx * ldx + pdy * ldy) / (ldx * ldx + ldy * ldy);
-        return new EastNorth(lineP1.getX() + ldx * offset, lineP1.getY() + ldy * offset);
+        return closestPointTo(lineP1, lineP2, point, false);
     }
 
     /**
