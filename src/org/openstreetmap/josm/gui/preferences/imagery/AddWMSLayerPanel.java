@@ -45,8 +45,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
 
         add(new JLabel(tr("2. Select layers")), GBC.eol());
         add(endpoint, GBC.eol().fill());
-        tree.getLayerTree().setPreferredSize(new Dimension(400, 100));
-        add(new JScrollPane(tree.getLayerTree()), GBC.eol().fill());
+        add(new JScrollPane(tree.getLayerTree()), GBC.eol().fill().weight(1, 100));
         final JButton showBounds = new JButton(tr("Show bounds"));
         showBounds.setEnabled(false);
         add(new JScrollPane(showBounds), GBC.eop().fill());
