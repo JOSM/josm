@@ -10,7 +10,10 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -86,7 +89,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
     /** Helper variable for {@link #drawSgement} */
     private static final double sinPHI = Math.sin(PHI);
 
-    /** Helper variable for {@link #visit(Relation) */
+    /** Helper variable for {@link #visit(Relation)} */
     private Stroke relatedWayStroke = new BasicStroke(
             4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL);
 
@@ -154,29 +157,39 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         BBox bbox = new BBox(bounds);
         this.ds = data;
         getSettings(virtual);
-
-        /* draw tagged ways first, then untagged ways. takes
-           time to iterate through list twice, OTOH does not
-           require changing the colour while painting... */
-        for (final OsmPrimitive osm: data.searchRelations(bbox)) {
-            if (osm.isDrawable() && !ds.isSelected(osm) && !osm.isDisabledAndHidden()) {
-                osm.visit(this);
+        
+        for (final Relation rel : data.searchRelations(bbox)) {
+            if (rel.isDrawable() && !ds.isSelected(rel) && !rel.isDisabledAndHidden()) {
+                rel.visit(this);
             }
         }
 
-        for (final OsmPrimitive osm:data.searchWays(bbox)){
-            if (osm.isDrawable() && !ds.isSelected(osm) && !osm.isDisabledAndHidden() && osm.isTagged()) {
-                osm.visit(this);
+        // draw tagged ways first, then untagged ways, then highlighted ways
+        List<Way> highlightedWays = new ArrayList<Way>();
+        List<Way> untaggedWays = new ArrayList<Way>();
+
+        for (final Way way : data.searchWays(bbox)){
+            if (way.isDrawable() && !ds.isSelected(way) && !way.isDisabledAndHidden() && way.isTagged()) {
+                if (way.isHighlighted()) {
+                    highlightedWays.add(way);
+                } else if (!way.isTagged()) {
+                    untaggedWays.add(way);
+                } else {
+                    way.visit(this);
+                }
             }
         }
         displaySegments();
-
-        for (final OsmPrimitive osm:data.searchWays(bbox)){
-            if (osm.isDrawable() && !ds.isSelected(osm) && !osm.isDisabledAndHidden() && !osm.isTagged()) {
-                osm.visit(this);
+        
+        // Display highlighted ways after the other ones (fix #8276)
+        for (List<Way> specialWays : Arrays.asList(new List[]{untaggedWays, highlightedWays})) {
+            for (final Way way : specialWays){
+                way.visit(this);
             }
+            specialWays.clear();
+            displaySegments();
         }
-        displaySegments();
+        
         for (final OsmPrimitive osm : data.getSelected()) {
             if (osm.isDrawable()) {
                 osm.visit(this);
