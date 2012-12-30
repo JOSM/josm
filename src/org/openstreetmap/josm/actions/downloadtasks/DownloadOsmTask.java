@@ -245,6 +245,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
 
             rememberDownloadedData(dataSet);
             int numDataLayers = getNumDataLayers();
+            boolean isUpdateData = false;
             if (newLayer || numDataLayers == 0 || (numDataLayers > 1 && getEditLayer() == null)) {
                 // the user explicitly wants a new layer, we don't have any layer at all
                 // or it is not clear which layer to merge to
@@ -264,12 +265,16 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 if (targetLayer == null) {
                     targetLayer = getFirstDataLayer();
                 }
+                isUpdateData = targetLayer.data.getDataSourceArea().contains(currentBounds.asRect());
                 targetLayer.mergeFrom(dataSet);
                 computeBboxAndCenterScale();
                 targetLayer.onPostDownloadFromServer();
             }
 
-            suggestImageryLayers();
+            // Suggest potential imagery data, except if the data is downloaded after a "data update" command (see #8307)
+            if (!isUpdateData) {
+                suggestImageryLayers();
+            }
         }
         
         protected void computeBboxAndCenterScale() {
