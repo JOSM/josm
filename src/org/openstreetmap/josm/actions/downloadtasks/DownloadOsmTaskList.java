@@ -49,7 +49,9 @@ public class DownloadOsmTaskList {
     /**
      * Downloads a list of areas from the OSM Server
      * @param newLayer Set to true if all areas should be put into a single new layer
-     * @param The List of Rectangle2D to download
+     * @param rects The List of Rectangle2D to download
+     * @param progressMonitor The progress monitor 
+     * @return The Future representing the asynchronous download task
      */
     public Future<?> download(boolean newLayer, List<Rectangle2D> rects, ProgressMonitor progressMonitor) {
         this.progressMonitor = progressMonitor;
@@ -83,7 +85,9 @@ public class DownloadOsmTaskList {
     /**
      * Downloads a list of areas from the OSM Server
      * @param newLayer Set to true if all areas should be put into a single new layer
-     * @param The Collection of Areas to download
+     * @param areas The Collection of Areas to download
+     * @param progressMonitor The progress monitor
+     * @return The Future representing the asynchronous download task
      */
     public Future<?> download(boolean newLayer, Collection<Area> areas, ProgressMonitor progressMonitor) {
         progressMonitor.beginTask(tr("Updating data"));
