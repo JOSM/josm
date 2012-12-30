@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 public class AddWMSLayerPanel extends AddImageryPanel {
 
@@ -45,8 +46,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
 
         add(new JLabel(tr("2. Select layers")), GBC.eol());
         add(endpoint, GBC.eol().fill());
-        tree.getLayerTree().setPreferredSize(new Dimension(400, 100));
-        add(new JScrollPane(tree.getLayerTree()), GBC.eol().fill());
+        add(new JScrollPane(tree.getLayerTree()), GBC.eol().fill().weight(1, 100));
         final JButton showBounds = new JButton(tr("Show bounds"));
         showBounds.setEnabled(false);
         add(new JScrollPane(showBounds), GBC.eop().fill());
@@ -93,6 +93,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
             public void propertyChange(PropertyChangeEvent evt) {
                 if (wms.getServiceUrl() != null) {
                     wmsUrl.setText(wms.buildGetMapUrl(tree.getSelectedLayers()));
+                    name.setText(wms.getServiceUrl().getHost() + ": " + Utils.join(", ", tree.getSelectedLayers()));
                 }
                 showBounds.setEnabled(tree.getSelectedLayers().size() == 1);
             }
