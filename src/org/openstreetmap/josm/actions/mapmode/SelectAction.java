@@ -673,6 +673,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         }
         Command c = getLastCommand();
         if (mode == Mode.move) {
+            if (startEN == null) return false; // fix #8128
             getCurrentDataSet().beginUpdate();
             if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
                 ((MoveCommand) c).saveCheckpoint();
@@ -685,6 +686,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                 if (n.getCoor().isOutSideWorld()) {
                     // Revert move
                     ((MoveCommand) c).resetToCheckpoint();
+                    getCurrentDataSet().endUpdate();
                     JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Cannot move objects outside of the world."),
@@ -694,29 +696,28 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                     return false;
                 }
             }
-            getCurrentDataSet().endUpdate();
-            return true;
-        } 
-
-        startEN = currentEN; // drag can continue after scaling/rotation
-
-        if (mode == Mode.rotate) {
-            getCurrentDataSet().beginUpdate();
-            if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
-                ((RotateCommand) c).handleEvent(currentEN);
+        } else {
+            startEN = currentEN; // drag can continue after scaling/rotation
+    
+            if (mode == Mode.rotate) {
+                getCurrentDataSet().beginUpdate();
+                if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
+                    ((RotateCommand) c).handleEvent(currentEN);
+                } else {
+                    Main.main.undoRedo.add(new RotateCommand(selection, currentEN));
+                }
+            } else if (mode == Mode.scale) {
+                getCurrentDataSet().beginUpdate();
+                if (c instanceof ScaleCommand && affectedNodes.equals(((ScaleCommand) c).getTransformedNodes())) {
+                    ((ScaleCommand) c).handleEvent(currentEN);
+                } else {
+                    Main.main.undoRedo.add(new ScaleCommand(selection, currentEN));
+                }
             } else {
-                Main.main.undoRedo.add(new RotateCommand(selection, currentEN));
+                return false;
             }
-            getCurrentDataSet().endUpdate();
-        } else if (mode == Mode.scale) {
-            getCurrentDataSet().beginUpdate();
-            if (c instanceof ScaleCommand && affectedNodes.equals(((ScaleCommand) c).getTransformedNodes())) {
-                ((ScaleCommand) c).handleEvent(currentEN);
-            } else {
-                Main.main.undoRedo.add(new ScaleCommand(selection, currentEN));
-            }
-            getCurrentDataSet().endUpdate();
         }
+        getCurrentDataSet().endUpdate();
         return true;
     }
     
