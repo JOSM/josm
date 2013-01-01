@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions.downloadtasks;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.geom.Area;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -265,7 +266,10 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 if (targetLayer == null) {
                     targetLayer = getFirstDataLayer();
                 }
-                isUpdateData = targetLayer.data.getDataSourceArea().contains(currentBounds.asRect());
+                Area dataSourceArea = targetLayer.data.getDataSourceArea();
+                if (dataSourceArea != null) {
+                    isUpdateData = dataSourceArea.contains(currentBounds.asRect());
+                }
                 targetLayer.mergeFrom(dataSet);
                 computeBboxAndCenterScale();
                 targetLayer.onPostDownloadFromServer();
