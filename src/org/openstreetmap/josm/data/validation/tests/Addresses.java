@@ -175,6 +175,7 @@ public class Addresses extends Test {
         }
         if (centroid == null) return; // fix #8305
         double maxDistance = Main.pref.getDouble("validator.addresses.max_street_distance", 200.0);
+        boolean hasIncompleteWays = false;
         for (Way streetPart : street) {
             for (Pair<Node, Node> chunk : streetPart.getNodePairs(false)) {
                 EastNorth closest = Geometry.closestPointToSegment(
@@ -183,8 +184,12 @@ public class Addresses extends Test {
                     return;
                 }
             }
+            if (!hasIncompleteWays && streetPart.isIncomplete()) {
+                hasIncompleteWays = true;
+            }
         }
-        // No street segment found near this house, report error
+        // No street segment found near this house, report error on if the relation does not contain incomplete street ways (fix #8314)
+        if (hasIncompleteWays) return;
         List<OsmPrimitive> errorList = new ArrayList<OsmPrimitive>(street);
         errorList.add(0, house);
         errors.add(new AddressError(HOUSE_NUMBER_TOO_FAR, errorList, 

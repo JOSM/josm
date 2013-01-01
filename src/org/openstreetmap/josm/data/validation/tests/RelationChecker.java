@@ -178,7 +178,7 @@ public class RelationChecker extends Test {
                         if (r.memberExpression != null) {
                             for (Collection<OsmPrimitive> c : Arrays.asList(new Collection[]{ri.nodes, ri.ways, ri.relations})) {
                                 for (OsmPrimitive p : c) {
-                                    if (!r.memberExpression.match(p)) {
+                                    if (p.isUsable() && !r.memberExpression.match(p)) {
                                         wrongTypes.add(p);
                                     }
                                 }
