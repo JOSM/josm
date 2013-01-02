@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.dialogs.properties;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -130,7 +129,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             {
                 int row = propertyTable.rowAtPoint(e.getPoint());
                 if (row > -1) {
-                    editHelper.editProperty(row);
+                    boolean focusOnKey = (propertyTable.columnAtPoint(e.getPoint()) == 0);
+                    editHelper.editProperty(row, focusOnKey);
                 } else {
                     editHelper.addProperty();
                     btnAdd.requestFocusInWindow();
@@ -875,7 +875,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 return;
             if (propertyTable.getSelectedRowCount() == 1) {
                 int row = propertyTable.getSelectedRow();
-                editHelper.editProperty(row);
+                editHelper.editProperty(row, false);
             } else if (membershipTable.getSelectedRowCount() == 1) {
                 int row = membershipTable.getSelectedRow();
                 editMembership(row);
