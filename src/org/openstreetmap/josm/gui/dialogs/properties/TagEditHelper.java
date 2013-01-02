@@ -23,6 +23,8 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -137,8 +139,10 @@ import org.openstreetmap.josm.tools.WindowGeometry;
     /**
     * Edit the value in the properties table row
     * @param row The row of the table from which the value is edited.
+    * @param focusOnKey Determines if the initial focus should be set on key instead of value
+    * @since 5653
     */
-    public void editProperty(final int row) {
+    public void editProperty(final int row, boolean focusOnKey) {
         changedKey = null;
         sel = Main.main.getCurrentDataSet().getSelected();
         if (sel.isEmpty()) return;
@@ -147,7 +151,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
         objKey=key;
         
         final EditTagDialog editDialog = new EditTagDialog(key, row, 
-                (Map<String, Integer>) propertyData.getValueAt(row, 1));
+                (Map<String, Integer>) propertyData.getValueAt(row, 1), focusOnKey);
         editDialog.showDialog();
         if (editDialog.getValue() !=1 ) return;
         editDialog.performTagEdit();
@@ -177,42 +181,10 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             return Arrays.asList(key);
     }
 
-    /**
-     * Create a focus handling adapter and apply in to the editor component of value
-     * autocompletion box.
-     * @param keys Box for keys entering and autocompletion
-     * @param values Box for values entering and autocompletion
-     * @param autocomplete Manager handling the autocompletion
-     * @param comparator Class to decide what values are offered on autocompletion
-     * @return The created adapter
-     */
-    private FocusAdapter addFocusAdapter(final AutoCompletingComboBox keys, final AutoCompletingComboBox values,
-            final AutoCompletionManager autocomplete, final Comparator<AutoCompletionListItem> comparator) {
-        // get the combo box' editor component
-        JTextComponent editor = (JTextComponent)values.getEditor()
-                .getEditorComponent();
-        // Refresh the values model when focus is gained
-        FocusAdapter focus = new FocusAdapter() {
-            @Override public void focusGained(FocusEvent e) {
-                String key = keys.getEditor().getItem().toString();
-
-                List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
-                Collections.sort(valueList, comparator);
-
-                values.setPossibleACItems(valueList);
-                objKey=key;
-            }
-        };
-        editor.addFocusListener(focus);
-        return focus;
-    }
-    
-        
     public class EditTagDialog extends AbstractTagsDialog {
-        String oldValue;
-        String key;
-        Map<String, Integer> m;
-        int row;
+        final String key;
+        final Map<String, Integer> m;
+        final int row;
 
         Comparator<AutoCompletionListItem> usedValuesAwareComparator = new Comparator<AutoCompletionListItem>() {
                 @Override
@@ -248,7 +220,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 }
             };
         
-        private EditTagDialog(String key, int row, Map<String, Integer> map) {
+        private EditTagDialog(String key, int row, Map<String, Integer> map, final boolean initialFocusOnKey) {
             super(Main.parent, trn("Change value?", "Change values?", map.size()), new String[] {tr("OK"),tr("Cancel")});
             setButtonIcons(new String[] {"ok","cancel"});
             setCancelButton(2);
@@ -301,23 +273,20 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                     buttonAction(0, null); // emulate OK button click
                 }
             });
-            addFocusAdapter(keys, values, autocomplete, usedValuesAwareComparator);
+            addFocusAdapter(autocomplete, usedValuesAwareComparator);
             
             setContent(mainPanel, false);
             
-            // TODO: Is it correct place for thois code - was in 
-            //  new JOptionPane(p, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
-            //    @Override public void selectInitialValue() {
-            Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
-            if(sysSel != null) {
-                Transferable old = sysSel.getContents(null);
-                values.requestFocusInWindow();
-                values.getEditor().selectAll();
-                sysSel.setContents(old, null);
-            } else {
-                values.requestFocusInWindow();
-                values.getEditor().selectAll();
-            }
+            addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowOpened(WindowEvent e) {
+                    if (initialFocusOnKey) {
+                        selectKeysComboBox();
+                    } else {
+                        selectValuesCombobox();
+                    }
+                }
+            });
         }
         
         /**
@@ -425,6 +394,58 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             }
             super.setVisible(visible);
         }
+        
+        private void selectACComboBoxSavingUnixBuffer(AutoCompletingComboBox cb) {
+            // select compbobox with saving unix system selection (middle mouse paste)
+            Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
+            if(sysSel != null) {
+                Transferable old = sysSel.getContents(null);
+                cb.requestFocusInWindow();
+                cb.getEditor().selectAll();
+                sysSel.setContents(old, null);
+            } else {
+                cb.requestFocusInWindow();
+                cb.getEditor().selectAll();
+            }
+        }
+        
+        public void selectKeysComboBox() {
+            selectACComboBoxSavingUnixBuffer(keys);
+        }
+        
+        public void selectValuesCombobox()   {
+            selectACComboBoxSavingUnixBuffer(values);
+        }
+        
+        /**
+        * Create a focus handling adapter and apply in to the editor component of value
+        * autocompletion box.
+        * @param keys Box for keys entering and autocompletion
+        * @param values Box for values entering and autocompletion
+        * @param autocomplete Manager handling the autocompletion
+        * @param comparator Class to decide what values are offered on autocompletion
+        * @return The created adapter
+        */
+        protected FocusAdapter addFocusAdapter(final AutoCompletionManager autocomplete, final Comparator<AutoCompletionListItem> comparator) {
+           // get the combo box' editor component
+           JTextComponent editor = (JTextComponent)values.getEditor()
+                   .getEditorComponent();
+           // Refresh the values model when focus is gained
+           FocusAdapter focus = new FocusAdapter() {
+               @Override public void focusGained(FocusEvent e) {
+                   String key = keys.getEditor().getItem().toString();
+
+                   List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
+                   Collections.sort(valueList, comparator);
+
+                   values.setPossibleACItems(valueList);
+                   objKey=key;
+               }
+           };
+           editor.addFocusListener(focus);
+           return focus;
+       }
+        
     }
 
     class AddTagsDialog extends AbstractTagsDialog {
@@ -484,7 +505,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 }
             }
 
-            FocusAdapter focus = addFocusAdapter(keys, values, autocomplete, defaultACItemComparator);
+            FocusAdapter focus = addFocusAdapter(autocomplete, defaultACItemComparator);
             // fire focus event in advance or otherwise the popup list will be too small at first
             focus.focusGained(null);
 
@@ -500,6 +521,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         performTagAdding();
+                        selectKeysComboBox();
                     }
                 });
                     
@@ -507,19 +529,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             
             setContent(mainPanel, false);
             
-            // TODO: Is it correct place for this code - was in 
-            //  new JOptionPane(p, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
-            //    @Override public void selectInitialValue() {
-            Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
-            if(sysSel != null) {
-                Transferable old = sysSel.getContents(null);
-                values.requestFocusInWindow();
-                values.getEditor().selectAll();
-                sysSel.setContents(old, null);
-            } else {
-                values.requestFocusInWindow();
-                values.getEditor().selectAll();
-            }
+            selectKeysComboBox();
         }
 
         private void suggestRecentlyAddedTags(JPanel mainPanel, int tagsToShow, final FocusAdapter focus) {
@@ -546,6 +556,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                         // fix #8298 - update list of values before setting value (?)
                         focus.focusGained(null);
                         values.setSelectedItem(t.getValue());
+                        selectValuesCombobox();
                     }
                 };
                 recentTagsActions.add(action);
@@ -582,6 +593,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                             // add tags on Shift-Click
                             if (e.isShiftDown()) {
                                 performTagAdding();
+                                selectKeysComboBox();
                             }
                         }
                     });
