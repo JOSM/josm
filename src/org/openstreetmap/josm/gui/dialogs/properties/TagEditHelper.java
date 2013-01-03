@@ -548,6 +548,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 final Tag t = tags.get(i);
                 // Create action for reusing the tag, with keyboard shortcut Ctrl+(1-5)
                 String actionShortcutKey = "properties:recent:"+count;
+                String actionShortcutShiftKey = "properties:recent:shift:"+count;
                 Shortcut sc = Shortcut.registerShortcut(actionShortcutKey, null, KeyEvent.VK_0+count, Shortcut.CTRL);
                 final JosmAction action = new JosmAction(actionShortcutKey, null, tr("Use this tag again"), sc, false) {
                     @Override
@@ -560,7 +561,17 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                         selectValuesCombobox();
                     }
                 };
+                Shortcut scShift = Shortcut.registerShortcut(actionShortcutShiftKey, null, KeyEvent.VK_0+count, Shortcut.CTRL_SHIFT);
+                final JosmAction actionShift = new JosmAction(actionShortcutShiftKey, null, tr("Use this tag again"), scShift, false) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        action.actionPerformed(null);
+                        performTagAdding();
+                        selectKeysComboBox();
+                    }
+                };
                 recentTagsActions.add(action);
+                recentTagsActions.add(actionShift);
                 disableTagIfNeeded(t, action);
                 // Find and display icon
                 ImageIcon icon = MapPaintStyles.getNodeIcon(t, false); // Filters deprecated icon
@@ -579,6 +590,8 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                     // Register action
                     mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), actionShortcutKey);
                     mainPanel.getActionMap().put(actionShortcutKey, action);
+                    mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scShift.getKeyStroke(), actionShortcutShiftKey);
+                    mainPanel.getActionMap().put(actionShortcutShiftKey, actionShift);
                     // Make the tag label clickable and set tooltip to the action description (this displays also the keyboard shortcut)
                     tagLabel.setToolTipText((String) action.getValue(Action.SHORT_DESCRIPTION));
                     tagLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
