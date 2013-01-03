@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Component;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -71,6 +72,9 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
 
     public ImageryMenu() {
         super(tr("Imagery"));
+        int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+        int menuItemHeight = singleOffset.getPreferredSize().height;
+        MenuScroller.setScrollerFor(this, (screenHeight / menuItemHeight)-1);
         MapView.addLayerChangeListener(this);
     }
 
