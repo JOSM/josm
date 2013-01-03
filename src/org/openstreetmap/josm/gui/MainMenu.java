@@ -99,6 +99,8 @@ import org.openstreetmap.josm.actions.audio.AudioPlayPauseAction;
 import org.openstreetmap.josm.actions.audio.AudioPrevAction;
 import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.gui.io.RecentlyOpenedFilesMenu;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.mappaint.MapPaintMenu;
@@ -556,17 +558,18 @@ public class MainMenu extends JMenuBar {
                 MainMenu.WINDOW_MENU_GROUP.ALWAYS);
         changesetManagerToggleAction.addButtonModel(mi.getModel());
 
-
         if (!Main.pref.getBoolean("audio.menuinvisible", false)) {
-            audioMenu = addMenu(marktr("Audio"), KeyEvent.VK_U, defaultMenuPos, ht("/Menu/Audio"));
-            add(audioMenu, audioPlayPause);
-            add(audioMenu, audioNext);
-            add(audioMenu, audioPrev);
-            add(audioMenu, audioFwd);
-            add(audioMenu, audioBack);
-            add(audioMenu, audioSlower);
-            add(audioMenu, audioFaster);
+            showAudioMenu(true);
         }
+        
+        Main.pref.addPreferenceChangeListener(new PreferenceChangedListener() {
+            @Override
+            public void preferenceChanged(PreferenceChangeEvent e) {
+                if (e.getKey().equals("audio.menuinvisible")) {
+                    showAudioMenu(!Boolean.parseBoolean(e.getNewValue().toString()));
+                }
+            }
+        });
 
         helpMenu.add(statusreport);
 
@@ -579,6 +582,25 @@ public class MainMenu extends JMenuBar {
         windowMenu.addMenuListener(menuSeparatorHandler);
 
         new PresetsMenuEnabler(presetsMenu).refreshEnabled();
+    }
+    
+    protected void showAudioMenu(boolean showMenu) {
+        if (showMenu && audioMenu == null) {
+            audioMenu = addMenu(marktr("Audio"), KeyEvent.VK_U, defaultMenuPos, ht("/Menu/Audio"));
+            add(audioMenu, audioPlayPause);
+            add(audioMenu, audioNext);
+            add(audioMenu, audioPrev);
+            add(audioMenu, audioFwd);
+            add(audioMenu, audioBack);
+            add(audioMenu, audioSlower);
+            add(audioMenu, audioFaster);
+            validate();
+        } else if (!showMenu && audioMenu != null) {
+            remove(audioMenu);
+            audioMenu.removeAll();
+            audioMenu = null;
+            validate();
+        }
     }
 
     static class PresetsMenuEnabler implements MapView.LayerChangeListener {
