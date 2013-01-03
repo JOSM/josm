@@ -224,7 +224,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             super(Main.parent, trn("Change value?", "Change values?", map.size()), new String[] {tr("OK"),tr("Cancel")});
             setButtonIcons(new String[] {"ok","cancel"});
             setCancelButton(2);
-            setIcon(JOptionPane.QUESTION_MESSAGE);
+            configureContextsensitiveHelp("/Dialog/EditValue", true /* show help button */);
             this.key = key;
             this.row = row;
             this.m = map;
@@ -458,6 +458,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             super(Main.parent, tr("Add value?"), new String[] {tr("OK"),tr("Cancel")});
             setButtonIcons(new String[] {"ok","cancel"});
             setCancelButton(2);
+            configureContextsensitiveHelp("/Dialog/AddValue", true /* show help button */);
             
             JPanel mainPanel = new JPanel(new GridBagLayout());
             keys = new AutoCompletingComboBox();
