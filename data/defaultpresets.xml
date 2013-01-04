@@ -5928,7 +5928,8 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Street name" />
             <roles>
                 <role key="street" text="street" requisite="required" type="way,closedway" member_expression="highway" />
-                <role key="house" text="house" requisite="required" type="node,closedway,relation" member_expression="&quot;addr:housenumber&quot;" />
+                <role key="house" text="house" requisite="required" type="node,way,closedway,relation" 
+                    member_expression="&quot;addr:housenumber&quot; | &quot;addr:interpolation&quot;" />
             </roles>
         </item>
         <item name="Street" type="relation">
