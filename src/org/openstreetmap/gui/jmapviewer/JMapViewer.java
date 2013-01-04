@@ -619,6 +619,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      *            vertical movement in pixel
      */
     public void moveMap(int x, int y) {
+        tileController.cancelOutstandingJobs(); // Clear outstanding load
         center.x += x;
         center.y += y;
         repaint();
