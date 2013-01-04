@@ -40,9 +40,10 @@ public class Addresses extends Test {
     protected static final int HOUSE_NUMBER_TOO_FAR = 2605;
     protected static final int HOUSE_NUMBER_ON_NON_BUILDING_AREA = 2606;
     
-    protected static final String ADDR_HOUSE_NUMBER = "addr:housenumber";
-    protected static final String ADDR_STREET       = "addr:street";
-    protected static final String ASSOCIATED_STREET = "associatedStreet";
+    protected static final String ADDR_HOUSE_NUMBER  = "addr:housenumber";
+    protected static final String ADDR_INTERPOLATION = "addr:interpolation";
+    protected static final String ADDR_STREET        = "addr:street";
+    protected static final String ASSOCIATED_STREET  = "associatedStreet";
     
     protected class AddressError extends TestError {
 
@@ -142,7 +143,7 @@ public class Addresses extends Test {
                 }
             }
             // Report duplicate house numbers
-            String description_en = marktr("House number '{0}' duplicated");
+            String description_en = marktr("House number ''{0}'' duplicated");
             for (String key : map.keySet()) {
                 List<OsmPrimitive> list = map.get(key);
                 if (list.size() > 1) {
@@ -158,7 +159,9 @@ public class Addresses extends Test {
             // Report addresses too far away
             if (!street.isEmpty()) {
                 for (OsmPrimitive house : houses) {
-                    checkDistance(house, street);
+                    if (house.isUsable()) {
+                        checkDistance(house, street);
+                    }
                 }
             }
         }
@@ -169,7 +172,16 @@ public class Addresses extends Test {
         if (house instanceof Node) {
             centroid = ((Node) house).getEastNorth();
         } else if (house instanceof Way) {
-            centroid = Geometry.getCentroid(((Way)house).getNodes());
+            List<Node> nodes = ((Way)house).getNodes();
+            if (house.hasKey(ADDR_INTERPOLATION)) {
+                for (Node n : nodes) {
+                    if (n.hasKey(ADDR_HOUSE_NUMBER)) {
+                        checkDistance(n, street);
+                    }
+                }
+                return;
+            }
+            centroid = Geometry.getCentroid(nodes);
         } else {
             return; // TODO handle multipolygon houses ?
         }
