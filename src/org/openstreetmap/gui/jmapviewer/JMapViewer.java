@@ -2,20 +2,14 @@ package org.openstreetmap.gui.jmapviewer;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.font.TextAttribute;
-import java.awt.geom.Rectangle2D;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -98,12 +92,13 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * retrieving the tiles.
      */
     public JMapViewer() {
-        this(new MemoryTileCache(), 4);
+        this(new MemoryTileCache(), 8);
         new DefaultMapController(this);
     }
 
     public JMapViewer(TileCache tileCache, int downloadThreadCount) {
         super();
+        JobDispatcher.WORKER_THREAD_MAX_COUNT = downloadThreadCount;
         tileSource = new OsmTileSource.Mapnik();
         tileController = new TileController(tileSource, tileCache, this);
         mapMarkerList = new LinkedList<MapMarker>();
