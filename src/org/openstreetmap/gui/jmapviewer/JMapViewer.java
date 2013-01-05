@@ -524,12 +524,12 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
                         // tile is visible
                         Tile tile = tileController.getTile(tilex, tiley, zoom);
                         if (tile != null) {
-                            painted = true;
                             tile.paint(g, posx, posy);
                             if (tileGridVisible) {
                                 g.drawRect(posx, posy, tilesize, tilesize);
                             }
                         }
+                        painted = true;
                     }
                     Point p = move[iMove];
                     posx += p.x * tilesize;
