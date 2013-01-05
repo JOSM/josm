@@ -11,8 +11,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 /**
  * A generic class that processes a list of {@link Runnable} one-by-one using
  * one or more {@link Thread}-instances. The number of instances varies between
- * 1 and {@link #WORKER_THREAD_MAX_COUNT} (default: 8). If an instance is idle
- * more than {@link #WORKER_THREAD_TIMEOUT} seconds (default: 30), the instance
+ * 1 and {@link #workerThreadMaxCount} (default: 8). If an instance is idle
+ * more than {@link #workerThreadTimeout} seconds (default: 30), the instance
  * ends itself.
  *
  * @author Jan Peter Stotz
@@ -34,7 +34,7 @@ public class JobDispatcher {
 
     protected BlockingDeque<TileJob> jobQueue = new LinkedBlockingDeque<TileJob>();
 
-    public static int WORKER_THREAD_MAX_COUNT = 8;
+    protected static int workerThreadMaxCount = 8;
 
     /**
      * Specifies the time span in seconds that a worker thread waits for new
@@ -42,7 +42,7 @@ public class JobDispatcher {
      * terminates itself. Only the first worker thread works differently, it
      * ignores the timeout and will never terminate itself.
      */
-    public static int WORKER_THREAD_TIMEOUT = 30;
+    protected static int workerThreadTimeout = 30;
 
     /**
      * Type of queue, FIFO if <code>false</code>, LIFO if <code>true</code>
@@ -75,7 +75,7 @@ public class JobDispatcher {
      * Function to set the maximum number of workers for tile loading.
      */
     static public void setMaxWorkers(int workers) {
-        WORKER_THREAD_MAX_COUNT = workers;
+        workerThreadMaxCount = workers;
     }
 
     /**
@@ -104,7 +104,7 @@ public class JobDispatcher {
                 }
             }
             jobQueue.put(job);
-            if (workerThreadIdleCount == 0 && workerThreadCount < WORKER_THREAD_MAX_COUNT)
+            if (workerThreadIdleCount == 0 && workerThreadCount < workerThreadMaxCount)
                 addWorkerThread();
         } catch (InterruptedException e) {
         }
@@ -148,12 +148,12 @@ public class JobDispatcher {
                         if (firstThread)
                             job = jobQueue.takeLast();
                         else
-                            job = jobQueue.pollLast(WORKER_THREAD_TIMEOUT, TimeUnit.SECONDS);
+                            job = jobQueue.pollLast(workerThreadTimeout, TimeUnit.SECONDS);
                     } else {
                         if (firstThread)
                             job = jobQueue.take();
                         else
-                            job = jobQueue.poll(WORKER_THREAD_TIMEOUT, TimeUnit.SECONDS);
+                            job = jobQueue.poll(workerThreadTimeout, TimeUnit.SECONDS);
                     }
                 } catch (InterruptedException e1) {
                     return;

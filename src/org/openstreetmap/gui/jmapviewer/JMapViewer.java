@@ -105,7 +105,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     public JMapViewer(TileCache tileCache, int downloadThreadCount) {
         super();
-        JobDispatcher.WORKER_THREAD_MAX_COUNT = downloadThreadCount;
+        JobDispatcher.setMaxWorkers(downloadThreadCount);
         tileSource = new OsmTileSource.Mapnik();
         tileController = new TileController(tileSource, tileCache, this);
         mapMarkerList = new LinkedList<MapMarker>();
