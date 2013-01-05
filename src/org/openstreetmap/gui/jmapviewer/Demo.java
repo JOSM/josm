@@ -62,6 +62,8 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         JPanel panel = new JPanel();
+        JPanel panelTop = new JPanel();
+        JPanel panelBottom = new JPanel();
         JPanel helpPanel = new JPanel();
 
         mperpLabelName=new JLabel("Meters/Pixels: ");
@@ -72,6 +74,9 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
 
         add(panel, BorderLayout.NORTH);
         add(helpPanel, BorderLayout.SOUTH);
+        panel.setLayout(new BorderLayout());
+        panel.add(panelTop, BorderLayout.NORTH);
+        panel.add(panelBottom, BorderLayout.SOUTH);
         JLabel helpLabel = new JLabel("Use right mouse button to move,\n "
                 + "left double click or mouse wheel to zoom.");
         helpPanel.add(helpLabel);
@@ -102,8 +107,8 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
             }
         });
         map.setTileLoader((TileLoader) tileLoaderSelector.getSelectedItem());
-        panel.add(tileSourceSelector);
-        panel.add(tileLoaderSelector);
+        panelTop.add(tileSourceSelector);
+        panelTop.add(tileLoaderSelector);
         final JCheckBox showMapMarker = new JCheckBox("Map markers visible");
         showMapMarker.setSelected(map.getMapMarkersVisible());
         showMapMarker.addActionListener(new ActionListener() {
@@ -112,7 +117,7 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
                 map.setMapMarkerVisible(showMapMarker.isSelected());
             }
         });
-        panel.add(showMapMarker);
+        panelBottom.add(showMapMarker);
         final JCheckBox showTileGrid = new JCheckBox("Tile grid visible");
         showTileGrid.setSelected(map.isTileGridVisible());
         showTileGrid.addActionListener(new ActionListener() {
@@ -121,7 +126,7 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
                 map.setTileGridVisible(showTileGrid.isSelected());
             }
         });
-        panel.add(showTileGrid);
+        panelBottom.add(showTileGrid);
         final JCheckBox showZoomControls = new JCheckBox("Show zoom controls");
         showZoomControls.setSelected(map.getZoomContolsVisible());
         showZoomControls.addActionListener(new ActionListener() {
@@ -130,13 +135,20 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
                 map.setZoomContolsVisible(showZoomControls.isSelected());
             }
         });
-        panel.add(showZoomControls);
-        panel.add(button);
+        panelBottom.add(showZoomControls);
+        final JCheckBox scrollWrapEnabled = new JCheckBox("Scrollwrap enabled");
+        scrollWrapEnabled.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                map.setScrollWrapEnabled(scrollWrapEnabled.isSelected());
+            }
+        });
+        panelBottom.add(scrollWrapEnabled);
+        panelBottom.add(button);
 
-        panel.add(zoomLabel);
-        panel.add(zoomValue);
-        panel.add(mperpLabelName);
-        panel.add(mperpLabelValue);
+        panelTop.add(zoomLabel);
+        panelTop.add(zoomValue);
+        panelTop.add(mperpLabelName);
+        panelTop.add(mperpLabelValue);
 
         add(map, BorderLayout.CENTER);
 
