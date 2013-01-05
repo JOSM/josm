@@ -80,6 +80,12 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     protected JSlider zoomSlider;
     protected JButton zoomInButton;
     protected JButton zoomOutButton;
+        
+    public static enum ZOOM_BUTTON_STYLE {
+        HORIZONTAL,
+        VERTICAL
+    }
+    protected ZOOM_BUTTON_STYLE zoomButtonStyle;
 
     private TileSource tileSource;
 
@@ -964,6 +970,35 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     
     public void setScrollWrapEnabled(boolean scrollWrapEnabled) {
         this.scrollWrapEnabled = scrollWrapEnabled;
+        repaint();
+    }
+    
+    public ZOOM_BUTTON_STYLE getZoomButtonStyle() {
+        return zoomButtonStyle;
+    }
+    
+    public void setZoomButtonStyle(ZOOM_BUTTON_STYLE style) {
+        zoomButtonStyle = style;
+        if (zoomSlider == null || zoomInButton == null || zoomOutButton == null) {
+            return;
+        }
+        switch (style) {
+            case HORIZONTAL:
+                zoomSlider.setBounds(10, 10, 30, 150);
+                zoomInButton.setBounds(4, 155, 18, 18);
+                zoomOutButton.setBounds(26, 155, 18, 18);
+                break;
+            case VERTICAL:
+                zoomSlider.setBounds(10, 27, 30, 150);
+                zoomInButton.setBounds(14, 8, 20, 20);
+                zoomOutButton.setBounds(14, 176, 20, 20);
+                break;
+            default:
+                zoomSlider.setBounds(10, 10, 30, 150);
+                zoomInButton.setBounds(4, 155, 18, 18);
+                zoomOutButton.setBounds(26, 155, 18, 18);
+                break;
+        }
         repaint();
     }
 
