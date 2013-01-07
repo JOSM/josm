@@ -66,7 +66,7 @@ import org.apache.commons.codec.StringEncoder;
  * splitting on pipe (<code>|</code>) and indexing under each of these alternatives.
  *
  * @since 1.6
- * @version $Id: BeiderMorseEncoder.java 1378746 2012-08-29 21:29:49Z tn $
+ * @version $Id: BeiderMorseEncoder.java 1429868 2013-01-07 16:08:05Z ggregory $
  */
 public class BeiderMorseEncoder implements StringEncoder {
     // Implementation note: This class is a spring-friendly facade to PhoneticEngine. It allows read/write configuration
@@ -76,7 +76,7 @@ public class BeiderMorseEncoder implements StringEncoder {
     private PhoneticEngine engine = new PhoneticEngine(NameType.GENERIC, RuleType.APPROX, true);
 
     @Override
-    public Object encode(Object source) throws EncoderException {
+    public Object encode(final Object source) throws EncoderException {
         if (!(source instanceof String)) {
             throw new EncoderException("BeiderMorseEncoder encode parameter is not of type String");
         }
@@ -84,7 +84,7 @@ public class BeiderMorseEncoder implements StringEncoder {
     }
 
     @Override
-    public String encode(String source) throws EncoderException {
+    public String encode(final String source) throws EncoderException {
         if (source == null) {
             return null;
         }
@@ -125,7 +125,7 @@ public class BeiderMorseEncoder implements StringEncoder {
      *            true if multiple encodings are to be combined with a '|', false if just the first one is
      *            to be considered
      */
-    public void setConcat(boolean concat) {
+    public void setConcat(final boolean concat) {
         this.engine = new PhoneticEngine(this.engine.getNameType(),
                                          this.engine.getRuleType(),
                                          concat,
@@ -139,7 +139,7 @@ public class BeiderMorseEncoder implements StringEncoder {
      * @param nameType
      *            the NameType in use
      */
-    public void setNameType(NameType nameType) {
+    public void setNameType(final NameType nameType) {
         this.engine = new PhoneticEngine(nameType,
                                          this.engine.getRuleType(),
                                          this.engine.isConcat(),
@@ -152,7 +152,7 @@ public class BeiderMorseEncoder implements StringEncoder {
      * @param ruleType
      *            {@link RuleType#APPROX} or {@link RuleType#EXACT} for approximate or exact phonetic matches
      */
-    public void setRuleType(RuleType ruleType) {
+    public void setRuleType(final RuleType ruleType) {
         this.engine = new PhoneticEngine(this.engine.getNameType(),
                                          ruleType,
                                          this.engine.isConcat(),
@@ -166,7 +166,7 @@ public class BeiderMorseEncoder implements StringEncoder {
      *            the maximum number of phonemes returned by the engine
      * @since 1.7
      */
-    public void setMaxPhonemes(int maxPhonemes) {
+    public void setMaxPhonemes(final int maxPhonemes) {
         this.engine = new PhoneticEngine(this.engine.getNameType(),
                                          this.engine.getRuleType(),
                                          this.engine.isConcat(),

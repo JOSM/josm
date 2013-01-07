@@ -23,7 +23,7 @@ package org.apache.commons.codec.language.bm;
  * specifically tuned to family names, and may not work well at all for general text.
  *
  * @since 1.6
- * @version $Id: NameType.java 1376690 2012-08-23 20:51:45Z tn $
+ * @version $Id: NameType.java 1429868 2013-01-07 16:08:05Z ggregory $
  */
 public enum NameType {
 
@@ -38,7 +38,7 @@ public enum NameType {
 
     private final String name;
 
-    NameType(String name) {
+    NameType(final String name) {
         this.name = name;
     }
 

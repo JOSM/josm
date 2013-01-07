@@ -27,7 +27,7 @@ import java.util.Random;
  * This class is immutable and thread-safe.
  * </p>
  *
- * @version $Id: B64.java 1379808 2012-09-01 16:55:51Z ggregory $
+ * @version $Id: B64.java 1429868 2013-01-07 16:08:05Z ggregory $
  * @since 1.7
  */
 class B64 {
@@ -51,7 +51,7 @@ class B64 {
      * @param buffer
      *            Where the output chars is appended to.
      */
-    static void b64from24bit(byte b2, byte b1, byte b0, int outLen, StringBuilder buffer) {
+    static void b64from24bit(final byte b2, final byte b1, final byte b0, final int outLen, final StringBuilder buffer) {
         // The bit masking is necessary because the JVM byte type is signed!
         int w = ((b2 << 16) & 0x00ffffff) | ((b1 << 8) & 0x00ffff) | (b0 & 0xff);
         // It's effectively a "for" loop but kept to resemble the original C code.
@@ -68,8 +68,8 @@ class B64 {
      * @param num
      *            Number of chars to generate.
      */
-    static String getRandomSalt(int num) {
-        StringBuilder saltString = new StringBuilder();
+    static String getRandomSalt(final int num) {
+        final StringBuilder saltString = new StringBuilder();
         for (int i = 1; i <= num; i++) {
             saltString.append(B64T.charAt(new Random().nextInt(B64T.length())));
         }

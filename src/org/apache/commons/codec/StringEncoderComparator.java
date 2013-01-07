@@ -26,7 +26,7 @@ import java.util.Comparator;
  *
  * <p>This class is immutable and thread-safe.</p>
  *
- * @version $Id: StringEncoderComparator.java 1352268 2012-06-20 19:04:08Z ggregory $
+ * @version $Id: StringEncoderComparator.java 1429868 2013-01-07 16:08:05Z ggregory $
  */
 public class StringEncoderComparator implements Comparator {
 
@@ -52,7 +52,7 @@ public class StringEncoderComparator implements Comparator {
      * @param stringEncoder
      *            the StringEncoder used for comparisons.
      */
-    public StringEncoderComparator(StringEncoder stringEncoder) {
+    public StringEncoderComparator(final StringEncoder stringEncoder) {
         this.stringEncoder = stringEncoder;
     }
 
@@ -70,15 +70,15 @@ public class StringEncoderComparator implements Comparator {
      * @see Comparable
      */
     @Override
-    public int compare(Object o1, Object o2) {
+    public int compare(final Object o1, final Object o2) {
 
         int compareCode = 0;
 
         try {
-            Comparable s1 = (Comparable) this.stringEncoder.encode(o1);
-            Comparable s2 = (Comparable) this.stringEncoder.encode(o2);
+            final Comparable s1 = (Comparable) this.stringEncoder.encode(o1);
+            final Comparable s2 = (Comparable) this.stringEncoder.encode(o2);
             compareCode = s1.compareTo(s2);
-        } catch (EncoderException ee) {
+        } catch (final EncoderException ee) {
             compareCode = 0;
         }
         return compareCode;

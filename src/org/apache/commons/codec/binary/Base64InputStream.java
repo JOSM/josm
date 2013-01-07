@@ -36,7 +36,7 @@ import java.io.InputStream;
  * character encodings which are compatible with the lower 127 ASCII chart (ISO-8859-1, Windows-1252, UTF-8, etc).
  * </p>
  *
- * @version $Id: Base64InputStream.java 1352268 2012-06-20 19:04:08Z ggregory $
+ * @version $Id: Base64InputStream.java 1429868 2013-01-07 16:08:05Z ggregory $
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
  * @since 1.4
  */
@@ -48,7 +48,7 @@ public class Base64InputStream extends BaseNCodecInputStream {
      * @param in
      *            InputStream to wrap.
      */
-    public Base64InputStream(InputStream in) {
+    public Base64InputStream(final InputStream in) {
         this(in, false);
     }
 
@@ -61,7 +61,7 @@ public class Base64InputStream extends BaseNCodecInputStream {
      * @param doEncode
      *            true if we should encode all data read from us, false if we should decode.
      */
-    public Base64InputStream(InputStream in, boolean doEncode) {
+    public Base64InputStream(final InputStream in, final boolean doEncode) {
         super(in, new Base64(false), doEncode);
     }
 
@@ -81,7 +81,7 @@ public class Base64InputStream extends BaseNCodecInputStream {
      *            If doEncode is true, each line of encoded data will be terminated with this byte sequence (e.g. \r\n).
      *            If lineLength <= 0, the lineSeparator is not used. If doEncode is false lineSeparator is ignored.
      */
-    public Base64InputStream(InputStream in, boolean doEncode, int lineLength, byte[] lineSeparator) {
+    public Base64InputStream(final InputStream in, final boolean doEncode, final int lineLength, final byte[] lineSeparator) {
         super(in, new Base64(lineLength, lineSeparator), doEncode);
     }
 }

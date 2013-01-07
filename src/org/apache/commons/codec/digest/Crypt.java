@@ -25,7 +25,7 @@ import org.apache.commons.codec.Charsets;
  * <p>
  * This class is immutable and thread-safe.
  *
- * @version $Id: Crypt.java 1379809 2012-09-01 16:56:48Z ggregory $
+ * @version $Id: Crypt.java 1429868 2013-01-07 16:08:05Z ggregory $
  * @since 1.7
  */
 public class Crypt {
@@ -42,7 +42,7 @@ public class Crypt {
      * @throws RuntimeException
      *             when a {@link java.security.NoSuchAlgorithmException} is caught.
      */
-    public static String crypt(byte[] keyBytes) {
+    public static String crypt(final byte[] keyBytes) {
         return crypt(keyBytes, null);
     }
 
@@ -62,7 +62,7 @@ public class Crypt {
      * @throws RuntimeException
      *             when a {@link java.security.NoSuchAlgorithmException} is caught.
      */
-    public static String crypt(byte[] keyBytes, String salt) {
+    public static String crypt(final byte[] keyBytes, final String salt) {
         if (salt == null) {
             return Sha2Crypt.sha512Crypt(keyBytes);
         } else if (salt.startsWith(Sha2Crypt.SHA512_PREFIX)) {
@@ -88,7 +88,7 @@ public class Crypt {
      * @throws RuntimeException
      *             when a {@link java.security.NoSuchAlgorithmException} is caught.
      */
-    public static String crypt(String key) {
+    public static String crypt(final String key) {
         return crypt(key, null);
     }
 
@@ -145,7 +145,7 @@ public class Crypt {
      * @throws RuntimeException
      *             when a {@link java.security.NoSuchAlgorithmException} is caught. *
      */
-    public static String crypt(String key, String salt) {
+    public static String crypt(final String key, final String salt) {
         return crypt(key.getBytes(Charsets.UTF_8), salt);
     }
 }

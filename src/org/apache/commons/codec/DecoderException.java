@@ -21,7 +21,7 @@ package org.apache.commons.codec;
  * Thrown when there is a failure condition during the decoding process. This exception is thrown when a {@link Decoder}
  * encounters a decoding specific exception such as invalid data, or characters outside of the expected range.
  *
- * @version $Id: DecoderException.java 1379145 2012-08-30 21:02:52Z tn $
+ * @version $Id: DecoderException.java 1429868 2013-01-07 16:08:05Z ggregory $
  */
 public class DecoderException extends Exception {
 
@@ -49,7 +49,7 @@ public class DecoderException extends Exception {
      * @param message
      *            The detail message which is saved for later retrieval by the {@link #getMessage()} method.
      */
-    public DecoderException(String message) {
+    public DecoderException(final String message) {
         super(message);
     }
 
@@ -66,7 +66,7 @@ public class DecoderException extends Exception {
      *            value is permitted, and indicates that the cause is nonexistent or unknown.
      * @since 1.4
      */
-    public DecoderException(String message, Throwable cause) {
+    public DecoderException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
@@ -80,7 +80,7 @@ public class DecoderException extends Exception {
      *            value is permitted, and indicates that the cause is nonexistent or unknown.
      * @since 1.4
      */
-    public DecoderException(Throwable cause) {
+    public DecoderException(final Throwable cause) {
         super(cause);
     }
 }
