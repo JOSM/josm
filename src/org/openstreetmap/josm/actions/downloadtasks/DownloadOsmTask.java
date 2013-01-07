@@ -267,7 +267,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                     targetLayer = getFirstDataLayer();
                 }
                 Area dataSourceArea = targetLayer.data.getDataSourceArea();
-                if (dataSourceArea != null) {
+                if (dataSourceArea != null && currentBounds != null) {
                     isUpdateData = dataSourceArea.contains(currentBounds.asRect());
                 }
                 targetLayer.mergeFrom(dataSet);
