@@ -69,16 +69,26 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
     private JMenuItem offsetMenuItem = singleOffset;
     private Map_Rectifier_WMSmenuAction rectaction = new Map_Rectifier_WMSmenuAction();
     private int offsPos;
+    private MenuScroller menuScroller;
 
     public ImageryMenu() {
         super(tr("Imagery"));
+        setupMenuScroller();
+        MapView.addLayerChangeListener(this);
+    }
+    
+    private final void setupMenuScroller() {
         int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
         int menuItemHeight = singleOffset.getPreferredSize().height;
-        MenuScroller.setScrollerFor(this, (screenHeight / menuItemHeight)-1);
-        MapView.addLayerChangeListener(this);
+        menuScroller = MenuScroller.setScrollerFor(this, (screenHeight / menuItemHeight)-1);
     }
 
     public void refreshImageryMenu() {
+        if (menuScroller != null) {
+            menuScroller.dispose();
+            menuScroller = null;
+        }
+        setupMenuScroller();
         removeAll();
 
         // for each configured ImageryInfo, add a menu entry.
