@@ -570,9 +570,6 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         state = State.selecting;
 
         targetWay = null;
-        if (getCurrentDataSet() != null) {
-            getCurrentDataSet().clearSelection();
-        }
 
         mv.repaint();
         updateStatusLine();
