@@ -140,10 +140,11 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
                 setZoom(zoomSlider.getValue());
             }
         });
+        zoomSlider.setFocusable(false);
         add(zoomSlider);
         int size = 18;
         try {
-            ImageIcon icon = new ImageIcon(getClass().getResource("images/plus.png"));
+            ImageIcon icon = new ImageIcon(JMapViewer.class.getResource("images/plus.png"));
             zoomInButton = new JButton(icon);
         } catch (Exception e) {
             zoomInButton = new JButton("+");
@@ -157,9 +158,10 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
                 zoomIn();
             }
         });
+        zoomInButton.setFocusable(false);
         add(zoomInButton);
         try {
-            ImageIcon icon = new ImageIcon(getClass().getResource("images/minus.png"));
+            ImageIcon icon = new ImageIcon(JMapViewer.class.getResource("images/minus.png"));
             zoomOutButton = new JButton(icon);
         } catch (Exception e) {
             zoomOutButton = new JButton("-");
@@ -173,6 +175,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
                 zoomOut();
             }
         });
+        zoomOutButton.setFocusable(false);
         add(zoomOutButton);
     }
 
@@ -1002,6 +1005,10 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         repaint();
     }
 
+    public TileController getTileController() {
+        return tileController;
+    }
+    
     /**
      * Return tile information caching class
      * @see TileLoaderListener#getTileCache()

@@ -28,6 +28,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -174,7 +175,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
     @Override
     public Image getAttributionImage() {
         try {
-            return ImageIO.read(getClass().getResourceAsStream("/org/openstreetmap/gui/jmapviewer/images/bing_maps.png"));
+            return ImageIO.read(JMapViewer.class.getResourceAsStream("images/bing_maps.png"));
         } catch (IOException e) {
             return null;
         }
