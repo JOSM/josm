@@ -423,7 +423,8 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
             public NewEntryAction(ImageryInfo.ImageryType type) {
                 putValue(NAME, type.toString());
                 putValue(SHORT_DESCRIPTION, tr("Add a new {0} entry by entering the URL", type.toString()));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs",
+                            "add" + (ImageryInfo.ImageryType.WMS.equals(type) ? "_wms" : ImageryInfo.ImageryType.TMS.equals(type) ? "_tms" : "")));
                 this.type = type;
             }
 
