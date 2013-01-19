@@ -32,7 +32,7 @@ import org.apache.commons.codec.Charsets;
  *
  * @see CharEncoding
  * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
- * @version $Id: StringUtils.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: StringUtils.java 1435550 2013-01-19 14:09:52Z tn $
  * @since 1.4
  */
 public class StringUtils {
@@ -192,7 +192,8 @@ public class StringUtils {
         return getBytes(string, Charsets.UTF_8);
     }
 
-    private static IllegalStateException newIllegalStateException(final String charsetName, final UnsupportedEncodingException e) {
+    private static IllegalStateException newIllegalStateException(final String charsetName,
+                                                                  final UnsupportedEncodingException e) {
         return new IllegalStateException(charsetName + ": " + e);
     }
 

@@ -35,7 +35,7 @@ import org.apache.commons.codec.Charsets;
  * <p>
  * This class is immutable and thread-safe.
  *
- * @version $Id: Sha2Crypt.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: Sha2Crypt.java 1435550 2013-01-19 14:09:52Z tn $
  * @since 1.7
  */
 public class Sha2Crypt {
@@ -122,7 +122,8 @@ public class Sha2Crypt {
      *             when a {@link NoSuchAlgorithmException} is caught
      * @see MessageDigestAlgorithms
      */
-    private static String sha2Crypt(final byte[] keyBytes, final String salt, final String saltPrefix, final int blocksize, final String algorithm) {
+    private static String sha2Crypt(final byte[] keyBytes, final String salt, final String saltPrefix,
+                                    final int blocksize, final String algorithm) {
 
         final int keyLen = keyBytes.length;
 

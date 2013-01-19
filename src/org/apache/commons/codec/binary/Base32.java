@@ -39,7 +39,7 @@ package org.apache.commons.codec.binary;
  * @see <a href="http://www.ietf.org/rfc/rfc4648.txt">RFC 4648</a>
  *
  * @since 1.5
- * @version $Id: Base32.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: Base32.java 1435550 2013-01-19 14:09:52Z tn $
  */
 public class Base32 extends BaseNCodec {
 
@@ -281,7 +281,9 @@ public class Base32 extends BaseNCodec {
      * Output is written to {@link Context#buffer} as 8-bit octets, using {@link Context#pos} as the buffer position
      */
     @Override
-    void decode(final byte[] in, int inPos, final int inAvail, final Context context) { // package protected for access from I/O streams
+    void decode(final byte[] in, int inPos, final int inAvail, final Context context) {
+        // package protected for access from I/O streams
+
         if (context.eof) {
             return;
         }
@@ -375,7 +377,9 @@ public class Base32 extends BaseNCodec {
      * @param context the context to be used
      */
     @Override
-    void encode(final byte[] in, int inPos, final int inAvail, final Context context) { // package protected for access from I/O streams
+    void encode(final byte[] in, int inPos, final int inAvail, final Context context) {
+        // package protected for access from I/O streams
+
         if (context.eof) {
             return;
         }

@@ -36,7 +36,7 @@ import java.io.OutputStream;
  * character encodings which are compatible with the lower 127 ASCII chart (ISO-8859-1, Windows-1252, UTF-8, etc).
  * </p>
  *
- * @version $Id: Base64OutputStream.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: Base64OutputStream.java 1435550 2013-01-19 14:09:52Z tn $
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
  * @since 1.4
  */
@@ -81,7 +81,8 @@ public class Base64OutputStream extends BaseNCodecOutputStream {
      *            If doEncode is true, each line of encoded data will be terminated with this byte sequence (e.g. \r\n).
      *            If lineLength <= 0, the lineSeparator is not used. If doEncode is false lineSeparator is ignored.
      */
-    public Base64OutputStream(final OutputStream out, final boolean doEncode, final int lineLength, final byte[] lineSeparator) {
+    public Base64OutputStream(final OutputStream out, final boolean doEncode,
+                              final int lineLength, final byte[] lineSeparator) {
         super(out, new Base64(lineLength, lineSeparator), doEncode);
     }
 }

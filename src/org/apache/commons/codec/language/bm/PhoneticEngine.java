@@ -44,7 +44,7 @@ import java.util.TreeSet;
  * Ported from phoneticengine.php
  *
  * @since 1.6
- * @version $Id: PhoneticEngine.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: PhoneticEngine.java 1435550 2013-01-19 14:09:52Z tn $
  */
 public class PhoneticEngine {
 
@@ -337,7 +337,8 @@ public class PhoneticEngine {
      *            the maximum number of phonemes that will be handled
      * @since 1.7
      */
-    public PhoneticEngine(final NameType nameType, final RuleType ruleType, final boolean concat, final int maxPhonemes) {
+    public PhoneticEngine(final NameType nameType, final RuleType ruleType, final boolean concat,
+                          final int maxPhonemes) {
         if (ruleType == RuleType.RULES) {
             throw new IllegalArgumentException("ruleType must not be " + RuleType.RULES);
         }

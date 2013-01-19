@@ -46,7 +46,7 @@ import java.math.BigInteger;
  *
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
  * @since 1.0
- * @version $Id: Base64.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: Base64.java 1435550 2013-01-19 14:09:52Z tn $
  */
 public class Base64 extends BaseNCodec {
 
@@ -654,7 +654,8 @@ public class Base64 extends BaseNCodec {
      *             Thrown when the input array needs an output array bigger than maxResultSize
      * @since 1.4
      */
-    public static byte[] encodeBase64(final byte[] binaryData, final boolean isChunked, final boolean urlSafe, final int maxResultSize) {
+    public static byte[] encodeBase64(final byte[] binaryData, final boolean isChunked,
+                                      final boolean urlSafe, final int maxResultSize) {
         if (binaryData == null || binaryData.length == 0) {
             return binaryData;
         }

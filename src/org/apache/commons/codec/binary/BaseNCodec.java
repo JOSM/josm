@@ -29,7 +29,7 @@ import org.apache.commons.codec.EncoderException;
  * This class is thread-safe.
  * </p>
  *
- * @version $Id: BaseNCodec.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: BaseNCodec.java 1435550 2013-01-19 14:09:52Z tn $
  */
 public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
 
@@ -179,7 +179,8 @@ public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
      * @param lineLength if &gt; 0, use chunking with a length <code>lineLength</code>
      * @param chunkSeparatorLength the chunk separator length, if relevant
      */
-    protected BaseNCodec(final int unencodedBlockSize, final int encodedBlockSize, final int lineLength, final int chunkSeparatorLength) {
+    protected BaseNCodec(final int unencodedBlockSize, final int encodedBlockSize,
+                         final int lineLength, final int chunkSeparatorLength) {
         this.unencodedBlockSize = unencodedBlockSize;
         this.encodedBlockSize = encodedBlockSize;
         final boolean useChunking = lineLength > 0 && chunkSeparatorLength > 0;

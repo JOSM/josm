@@ -26,8 +26,9 @@ import java.util.Comparator;
  *
  * <p>This class is immutable and thread-safe.</p>
  *
- * @version $Id: StringEncoderComparator.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: StringEncoderComparator.java 1435550 2013-01-19 14:09:52Z tn $
  */
+@SuppressWarnings("rawtypes")
 public class StringEncoderComparator implements Comparator {
 
     /**
@@ -69,6 +70,7 @@ public class StringEncoderComparator implements Comparator {
      * @return the Comparable.compareTo() return code or 0 if an encoding error was caught.
      * @see Comparable
      */
+    @SuppressWarnings("unchecked")
     @Override
     public int compare(final Object o1, final Object o2) {
 
