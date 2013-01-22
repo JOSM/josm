@@ -217,7 +217,7 @@ public class DuplicateWay extends Test
         HashSet<Way> ways = new HashSet<Way>();
 
         for (OsmPrimitive osm : sel) {
-            if (osm instanceof Way) {
+            if (osm instanceof Way && !osm.isDeleted()) {
                 ways.add((Way)osm);
             }
         }

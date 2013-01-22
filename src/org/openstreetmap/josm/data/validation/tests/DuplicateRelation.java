@@ -214,7 +214,7 @@ public class DuplicateRelation extends Test {
         List<RelationMember> rMembers = r.getMembers();
         Map<String, String> rkeys = r.getKeys();
         for (String key : ignoreKeys)
-            rkeys.remove(ignoreKeys);
+            rkeys.remove(key);
         RelationPair rKey = new RelationPair(rMembers, rkeys);
         relations.put(rKey, r);
         relations_nokeys.put(rMembers, r);
@@ -231,7 +231,7 @@ public class DuplicateRelation extends Test {
         HashSet<Relation> rel_fix = new HashSet<Relation>();
 
         for (OsmPrimitive osm : sel)
-            if (osm instanceof Relation) {
+            if (osm instanceof Relation && !osm.isDeleted()) {
                 rel_fix.add((Relation)osm);
             }
 
