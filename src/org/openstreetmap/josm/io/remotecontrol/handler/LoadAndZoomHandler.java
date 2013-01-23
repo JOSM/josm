@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.Main;
@@ -206,15 +207,21 @@ public class LoadAndZoomHandler extends RequestHandler
                     } catch (UnsupportedEncodingException e) {
                         throw new RuntimeException();
                     }
-                    String[][] keyValue = new String[tags.length][2];
-                    for (int i = 0; i < tags.length; i++) {
-                        keyValue[i] = tags[i].split("=");
-
-                        keyValue[i][0] = keyValue[i][0];
-                        keyValue[i][1] = keyValue[i][1];
+                    Set<String> tagSet = new HashSet<String>();
+                    for (String tag : tags) {
+                        if (!tag.trim().isEmpty() && tag.contains("=")) {
+                            tagSet.add(tag.trim());
+                        }
                     }
-
-                    new AddTagsDialog(keyValue);
+                    if (!tagSet.isEmpty()) {
+                        String[][] keyValue = new String[tagSet.size()][2];
+                        int i = 0;
+                        for (String tag : tagSet) {
+                            keyValue[i++] = tag.split("=");
+                        }
+    
+                        new AddTagsDialog(keyValue);
+                    }
                 }
             });
         }
