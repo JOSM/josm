@@ -27,6 +27,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -160,6 +164,19 @@ public class SessionWriter {
         Element root = doc.createElement("josm-session");
         root.setAttribute("version", "0.1");
         doc.appendChild(root);
+
+        Element viewportEl = doc.createElement("viewport");
+        root.appendChild(viewportEl);
+        Element centerEl = doc.createElement("center");
+        viewportEl.appendChild(centerEl);
+        EastNorth center = Main.map.mapView.getCenter();
+        LatLon centerLL = Projections.inverseProject(center);
+        centerEl.setAttribute("lat", Double.toString(centerLL.lat()));
+        centerEl.setAttribute("lon", Double.toString(centerLL.lon()));
+        Element scale = doc.createElement("scale");
+        viewportEl.appendChild(scale);
+        double dist100px = Main.map.mapView.getDist100Pixel();
+        scale.setAttribute("meter-per-pixel", Double.toString(dist100px / 100));
 
         Element layersEl = doc.createElement("layers");
         root.appendChild(layersEl);

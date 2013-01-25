@@ -32,7 +32,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.NavigatableComponent.ViewportData;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -83,6 +88,7 @@ public class SessionReader {
     private ZipFile zipFile;
     private List<Layer> layers = new ArrayList<Layer>();
     private List<Runnable> postLoadTasks = new ArrayList<Runnable>();
+    private ViewportData viewport;
 
     /**
      * @return list of layers that are later added to the mapview
@@ -96,6 +102,14 @@ public class SessionReader {
      */
     public List<Runnable> getPostLoadTasks() {
         return postLoadTasks;
+    }
+
+    /**
+     * Return the viewport (map position and scale).
+     * @return The viewport. Can be null when no viewport info is found in the file.
+     */
+    public ViewportData getViewport() {
+        return viewport;
     }
 
     public class ImportSupport {
@@ -276,10 +290,39 @@ public class SessionReader {
             error(tr("Version ''{0}'' of session file is not supported. Expected: 0.1", version));
         }
 
-        NodeList layersNL = root.getElementsByTagName("layers");
-        if (layersNL.getLength() == 0) return;
+        Element viewportEl = getElementByTagName(root, "viewport");
+        if (viewportEl != null) {
+            EastNorth center = null;
+            Element centerEl = getElementByTagName(viewportEl, "center");
+            if (centerEl != null && centerEl.hasAttribute("lat") && centerEl.hasAttribute("lon")) {
+                try {
+                    LatLon centerLL = new LatLon(Double.parseDouble(centerEl.getAttribute("lat")), Double.parseDouble(centerEl.getAttribute("lon")));
+                    center = Projections.project(centerLL);
+                } catch (NumberFormatException ex) {}
+            }
+            if (center != null) {
+                Element scaleEl = getElementByTagName(viewportEl, "scale");
+                if (scaleEl != null && scaleEl.hasAttribute("meter-per-pixel")) {
+                    try {
+                        Double meterPerPixel = Double.parseDouble(scaleEl.getAttribute("meter-per-pixel"));
+                        Projection proj = Main.getProjection();
+                        // Get a "typical" distance in east/north units that
+                        // corresponds to a couple of pixels. Shouldn't be too
+                        // large, to keep it within projection bounds and
+                        // not too small to avoid rounding errors.
+                        double dist = 0.01 * proj.getDefaultZoomInPPD();
+                        LatLon ll1 = proj.eastNorth2latlon(new EastNorth(center.east() - dist, center.north()));
+                        LatLon ll2 = proj.eastNorth2latlon(new EastNorth(center.east() + dist, center.north()));
+                        double meterPerEasting = ll1.greatCircleDistance(ll2) / dist / 2;
+                        double scale = meterPerPixel / meterPerEasting; // unit: easting per pixel
+                        viewport = new ViewportData(center, scale);
+                    } catch (NumberFormatException ex) {}
+                }
+            }
+        }
 
-        Element layersEl = (Element) layersNL.item(0);
+        Element layersEl = getElementByTagName(root, "layers");
+        if (layersEl == null) return;
 
         MultiMap<Integer, Integer> deps = new MultiMap<Integer, Integer>();
         Map<Integer, Element> elems = new HashMap<Integer, Element>();
@@ -529,6 +572,12 @@ public class SessionReader {
         } catch (ParserConfigurationException e) {
             throw new IOException(e);
         }
+    }
+
+    private static Element getElementByTagName(Element root, String name) {
+        NodeList els = root.getElementsByTagName(name);
+        if (els.getLength() == 0) return null;
+        return (Element) els.item(0);
     }
 
 }
