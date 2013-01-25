@@ -1,5 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm;
+
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
@@ -64,6 +65,7 @@ import org.openstreetmap.josm.gui.MainApplication.Option;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.NavigatableComponent.ViewportData;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -405,19 +407,28 @@ abstract public class Main {
      * Add a new layer to the map. If no map exists, create one.
      */
     public final synchronized void addLayer(final Layer layer) {
-        if (map == null) {
-            final MapFrame mapFrame = new MapFrame(contentPanePrivate);
-            setMapFrame(mapFrame);
-            mapFrame.selectMapMode((MapMode)mapFrame.getDefaultButtonAction(), layer);
-            mapFrame.setVisible(true);
-            mapFrame.initializeDialogsPane();
-            // bootstrapping problem: make sure the layer list dialog is going to
-            // listen to change events of the very first layer
-            //
-            layer.addPropertyChangeListener(LayerListDialog.getInstance().getModel());
+        boolean noMap = map == null;
+        if (noMap) {
+            createMapFrame(layer, null);
         }
         layer.hookUpMapView();
         map.mapView.addLayer(layer);
+        if (noMap) {
+            Main.map.setVisible(true);
+        }
+    }
+
+    public synchronized void createMapFrame(Layer firstLayer, ViewportData viewportData) {
+        MapFrame mapFrame = new MapFrame(contentPanePrivate, viewportData);
+        setMapFrame(mapFrame);
+        if (firstLayer != null) {
+            mapFrame.selectMapMode((MapMode)mapFrame.getDefaultButtonAction(), firstLayer);
+        }
+        mapFrame.initializeDialogsPane();
+        // bootstrapping problem: make sure the layer list dialog is going to
+        // listen to change events of the very first layer
+        //
+        firstLayer.addPropertyChangeListener(LayerListDialog.getInstance().getModel());
     }
 
     /**

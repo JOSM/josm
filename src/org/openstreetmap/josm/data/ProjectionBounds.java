@@ -16,7 +16,7 @@ public class ProjectionBounds {
     public double minEast, minNorth, maxEast, maxNorth;
 
     /**
-     * Construct bounds out of two points
+     * Construct bounds out of two points.
      */
     public ProjectionBounds(EastNorth min, EastNorth max) {
         this.minEast = min.east();
