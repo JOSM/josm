@@ -15,7 +15,10 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.NavigatableComponent.ViewportData;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -46,6 +49,7 @@ public class SessionLoadAction extends DiskAccessAction {
         private boolean zip;
         private List<Layer> layers;
         private List<Runnable> postLoadTasks;
+        private ViewportData viewport;
 
         public Loader(File file, boolean zip) {
             super(tr("Loading session ''{0}''", file.getName()));
@@ -65,9 +69,19 @@ public class SessionLoadAction extends DiskAccessAction {
                 @Override
                 public void run() {
                     if (canceled) return;
-                    for (Layer l : layers) {
-                        if (canceled) return;
-                        Main.main.addLayer(l);
+                    if (!layers.isEmpty()) {
+                        Layer firstLayer = layers.iterator().next();
+                        boolean noMap = Main.map == null;
+                        if (noMap) {
+                            Main.main.createMapFrame(firstLayer, viewport);
+                        }
+                        for (Layer l : layers) {
+                            if (canceled) return;
+                            Main.main.addLayer(l);
+                        }
+                        if (noMap) {
+                            Main.map.setVisible(true);
+                        }
                     }
                     for (Runnable task : postLoadTasks) {
                         if (canceled) return;
@@ -88,6 +102,7 @@ public class SessionLoadAction extends DiskAccessAction {
                 reader.loadSession(file, zip, monitor);
                 layers = reader.getLayers();
                 postLoadTasks = reader.getPostLoadTasks();
+                viewport = reader.getViewport();
             } catch (IllegalDataException e) {
                 e.printStackTrace();
                 HelpAwareOptionPane.showMessageDialogInEDT(

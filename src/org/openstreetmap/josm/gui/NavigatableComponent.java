@@ -64,6 +64,35 @@ public class NavigatableComponent extends JComponent implements Helpful {
         void zoomChanged();
     }
 
+    /**
+     * Simple data class that keeps map center and scale in one object.
+     */
+    public static class ViewportData {
+        private EastNorth center;
+        private Double scale;
+
+        public ViewportData(EastNorth center, Double scale) {
+            this.center = center;
+            this.scale = scale;
+        }
+
+        /**
+         * Return the projected coordinates of the map center
+         * @return the center
+         */
+        public EastNorth getCenter() {
+            return center;
+        }
+
+        /**
+         * Return the scale factor in east-/north-units per pixel.
+         * @return the scale
+         */
+        public Double getScale() {
+            return scale;
+        }
+    }
+
     public static final IntegerProperty PROP_SNAP_DISTANCE = new IntegerProperty("mappaint.node.snap-distance", 10);
 
     public static final String PROPNAME_CENTER = "center";
@@ -171,6 +200,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public EastNorth getCenter() {
         return center;
+    }
+
+    public double getScale() {
+        return scale;
     }
 
     /**

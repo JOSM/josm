@@ -218,9 +218,12 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     /**
      * Constructs a new {@code MapView}.
-     * @param contentPane The content pane used to register shortcuts in its {@link InputMap} and {@link ActionMap}
+     * @param contentPane The content pane used to register shortcuts in its
+     * {@link InputMap} and {@link ActionMap}
+     * @param viewportData the initial viewport of the map. Can be null, then
+     * the viewport is derived from the layer data.
      */
-    public MapView(final JPanel contentPane) {
+    public MapView(final JPanel contentPane, final ViewportData viewportData) {
         Main.pref.addPreferenceChangeListener(this);
 
         addComponentListener(new ComponentAdapter(){
@@ -236,14 +239,18 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 scaler.setLocation(10,30);
 
                 mapMover = new MapMover(MapView.this, contentPane);
-                OsmDataLayer layer = getEditLayer();
-                if (layer != null) {
-                    if (!zoomToDataSetBoundingBox(layer.data)) {
-                        // no bounding box defined
-                        AutoScaleAction.autoScale("data");
-                    }
+                if (viewportData != null) {
+                    zoomTo(viewportData.getCenter(), viewportData.getScale());
                 } else {
-                    AutoScaleAction.autoScale("layer");
+                    OsmDataLayer layer = getEditLayer();
+                    if (layer != null) {
+                        if (!zoomToDataSetBoundingBox(layer.data)) {
+                            // no bounding box defined
+                            AutoScaleAction.autoScale("data");
+                        }
+                    } else {
+                        AutoScaleAction.autoScale("layer");
+                    }
                 }
             }
         });

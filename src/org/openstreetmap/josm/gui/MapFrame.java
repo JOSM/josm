@@ -53,6 +53,7 @@ import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
+import org.openstreetmap.josm.gui.NavigatableComponent.ViewportData;
 import org.openstreetmap.josm.gui.dialogs.ChangesetDialog;
 import org.openstreetmap.josm.gui.dialogs.CommandStackDialog;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
@@ -143,12 +144,19 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
     private final Map<Layer, MapMode> lastMapMode = new HashMap<Layer, MapMode>();
 
-    public MapFrame(JPanel contentPane) {
+    /**
+     * Constructs a new {@code MapFrame}.
+     * @param contentPane The content pane used to register shortcuts in its
+     * {@link InputMap} and {@link ActionMap}
+     * @param viewportData the initial viewport of the map. Can be null, then
+     * the viewport is derived from the layer data.
+     */
+    public MapFrame(JPanel contentPane, ViewportData viewportData) {
         setSize(400,400);
         setLayout(new BorderLayout());
 
 
-        mapView = new MapView(contentPane);
+        mapView = new MapView(contentPane, viewportData);
 
         new FileDrop(mapView);
 
