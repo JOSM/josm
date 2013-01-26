@@ -99,20 +99,8 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
      */
     private static final int MAX_EVENTS = 1000;
 
-    private static class IdHash implements Hash<PrimitiveId,OsmPrimitive> {
-
-        public int getHashCode(PrimitiveId k) {
-            return (int)k.getUniqueId() ^ k.getType().hashCode();
-        }
-
-        public boolean equals(PrimitiveId key, OsmPrimitive value) {
-            if (key == null || value == null) return false;
-            return key.getUniqueId() == value.getUniqueId() && key.getType() == value.getType();
-        }
-    }
-
-    private Storage<OsmPrimitive> allPrimitives = new Storage<OsmPrimitive>(new IdHash(), true);
-    private Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new IdHash());
+    private Storage<OsmPrimitive> allPrimitives = new Storage<OsmPrimitive>(new Storage.PrimitiveIdHash(), true);
+    private Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new Storage.PrimitiveIdHash());
     private CopyOnWriteArrayList<DataSetListener> listeners = new CopyOnWriteArrayList<DataSetListener>();
 
     // provide means to highlight map elements that are not osm primitives
@@ -125,7 +113,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
     private final List<AbstractDatasetChangedEvent> cachedEvents = new ArrayList<AbstractDatasetChangedEvent>();
 
     private int highlightUpdateCount;
-    
+
     private boolean uploadDiscouraged = false;
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -485,7 +473,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
     public Collection<OsmPrimitive> getSelected() {
         return new SubclassFilteredCollection<OsmPrimitive, OsmPrimitive>(getAllSelected(), OsmPrimitive.nonDeletedPredicate);
     }
-    
+
     /**
      * Replies an unmodifiable collection of primitives currently selected
      * in this dataset, including deleted ones. May be empty, but not null.
@@ -1176,9 +1164,9 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
      * @param from The source DataSet
      */
     public void mergeFrom(DataSet from) {
-    	mergeFrom(from, null);
+        mergeFrom(from, null);
     }
-    
+
     /**
      * Moves all primitives and datasources from DataSet "from" to this DataSet
      * @param from The source DataSet
