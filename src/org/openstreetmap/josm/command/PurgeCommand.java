@@ -15,7 +15,6 @@ import java.util.Set;
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Hash;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -64,24 +63,8 @@ public class PurgeCommand extends Command {
     }
 
     protected void saveIncomplete(Collection<OsmPrimitive> makeIncomplete) {
-        makeIncompleteData = new Storage<PrimitiveData>(new Hash<PrimitiveData,PrimitiveData>() {
-            public int getHashCode(PrimitiveData k) {
-                return (int) k.getUniqueId();
-            }
-
-            public boolean equals(PrimitiveData k, PrimitiveData t) {
-                return k.getUniqueId() == t.getUniqueId() && k.getType() == t.getType();
-            }
-        });
-        makeIncompleteData_byPrimId = makeIncompleteData.foreignKey(new Hash<PrimitiveId, PrimitiveData>() {
-            public int getHashCode(PrimitiveId k) {
-                return (int) k.getUniqueId();
-            }
-
-            public boolean equals(PrimitiveId k, PrimitiveData t) {
-                return k.getUniqueId() == t.getUniqueId() && k.getType() == t.getType();
-            }
-        });
+        makeIncompleteData = new Storage<PrimitiveData>(new Storage.PrimitiveIdHash());
+        makeIncompleteData_byPrimId = makeIncompleteData.foreignKey(new Storage.PrimitiveIdHash());
 
         for (OsmPrimitive osm : makeIncomplete) {
             makeIncompleteData.add(osm.save());
@@ -190,64 +173,64 @@ public class PurgeCommand extends Command {
                 break; // no more ways left
             }
 
-        /**
-         * Rest are relations. Do topological sorting on a DAG where each
-         * arrow points from child to parent. (Because it is faster to
-         * loop over getReferrers() than getMembers().)
-         */
-        Set<Relation> inR = (Set) in;
-        Set<Relation> childlessR = new HashSet<Relation>();
-        List<Relation> outR = new ArrayList<Relation>(inR.size());
+            /**
+             * Rest are relations. Do topological sorting on a DAG where each
+             * arrow points from child to parent. (Because it is faster to
+             * loop over getReferrers() than getMembers().)
+             */
+            Set<Relation> inR = (Set) in;
+            Set<Relation> childlessR = new HashSet<Relation>();
+            List<Relation> outR = new ArrayList<Relation>(inR.size());
 
-        HashMap<Relation, Integer> numChilds = new HashMap<Relation, Integer>();
+            HashMap<Relation, Integer> numChilds = new HashMap<Relation, Integer>();
 
-        // calculate initial number of childs
-        for (Relation r : inR) {
-            numChilds.put(r, 0);
-        }
-        for (Relation r : inR) {
-            for (OsmPrimitive parent : r.getReferrers()) {
-                if (!(parent instanceof Relation))
-                    throw new AssertionError();
-                Integer i = numChilds.get(parent);
-                if (i != null) {
-                    numChilds.put((Relation)parent, i+1);
-                }
+            // calculate initial number of childs
+            for (Relation r : inR) {
+                numChilds.put(r, 0);
             }
-        }
-        for (Relation r : inR) {
-            if (numChilds.get(r).equals(0)) {
-                childlessR.add(r);
-            }
-        }
-
-        while (!childlessR.isEmpty()) {
-            // Identify one childless Relation and
-            // let it virtually die. This makes other
-            // relations childless.
-            Iterator<Relation> it  = childlessR.iterator();
-            Relation next = it.next();
-            it.remove();
-            outR.add(next);
-
-            for (OsmPrimitive parentPrim : next.getReferrers()) {
-                Relation parent = (Relation) parentPrim;
-                Integer i = numChilds.get(parent);
-                if (i != null) {
-                    numChilds.put(parent, i-1);
-                    if (i-1 == 0) {
-                        childlessR.add(parent);
+            for (Relation r : inR) {
+                for (OsmPrimitive parent : r.getReferrers()) {
+                    if (!(parent instanceof Relation))
+                        throw new AssertionError();
+                    Integer i = numChilds.get(parent);
+                    if (i != null) {
+                        numChilds.put((Relation)parent, i+1);
                     }
                 }
             }
-        }
+            for (Relation r : inR) {
+                if (numChilds.get(r).equals(0)) {
+                    childlessR.add(r);
+                }
+            }
 
-        if (outR.size() != inR.size())
-            throw new AssertionError("topo sort algorithm failed");
+            while (!childlessR.isEmpty()) {
+                // Identify one childless Relation and
+                // let it virtually die. This makes other
+                // relations childless.
+                Iterator<Relation> it  = childlessR.iterator();
+                Relation next = it.next();
+                it.remove();
+                outR.add(next);
 
-        out.addAll(outR);
+                for (OsmPrimitive parentPrim : next.getReferrers()) {
+                    Relation parent = (Relation) parentPrim;
+                    Integer i = numChilds.get(parent);
+                    if (i != null) {
+                        numChilds.put(parent, i-1);
+                        if (i-1 == 0) {
+                            childlessR.add(parent);
+                        }
+                    }
+                }
+            }
 
-        return out;
+            if (outR.size() != inR.size())
+                throw new AssertionError("topo sort algorithm failed");
+
+            out.addAll(outR);
+
+            return out;
     }
 
     @Override

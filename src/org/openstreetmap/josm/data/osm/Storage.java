@@ -86,6 +86,19 @@ import java.util.Set;
  * @author nenik
  */
 public class Storage<T> extends AbstractSet<T> {
+
+    public static class PrimitiveIdHash implements Hash<PrimitiveId, PrimitiveId> {
+
+        public int getHashCode(PrimitiveId k) {
+            return (int)k.getUniqueId() ^ k.getType().hashCode();
+        }
+
+        public boolean equals(PrimitiveId key, PrimitiveId value) {
+            if (key == null || value == null) return false;
+            return key.getUniqueId() == value.getUniqueId() && key.getType() == value.getType();
+        }
+    }
+
     private final Hash<? super T,? super T> hash;
     private T[] data;
     private int mask;
