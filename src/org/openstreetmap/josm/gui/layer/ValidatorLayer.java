@@ -16,6 +16,7 @@ import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.validation.OsmValidator;
+import org.openstreetmap.josm.data.validation.PaintVisitor;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.MapView;
@@ -34,6 +35,9 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
 
     private int updateCount = -1;
 
+    /**
+     * Constructs a new Validator layer
+     */
     public ValidatorLayer() {
         super(tr("Validation errors"));
         MapView.addLayerChangeListener(this);
@@ -59,6 +63,8 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
         DefaultMutableTreeNode root = Main.map.validatorDialog.tree.getRoot();
         if (root == null || root.getChildCount() == 0)
             return;
+        
+        PaintVisitor paintVisitor = new PaintVisitor(g, mv);
 
         DefaultMutableTreeNode severity = (DefaultMutableTreeNode) root.getLastChild();
         while (severity != null) {
@@ -66,13 +72,15 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
             while (errorMessages.hasMoreElements()) {
                 Object tn = errorMessages.nextElement().getUserObject();
                 if (tn instanceof TestError) {
-                    ((TestError) tn).paint(g, mv);
+                    paintVisitor.visit(((TestError) tn));
                 }
             }
 
             // Severities in inverse order
             severity = severity.getPreviousSibling();
         }
+        
+        paintVisitor.clearPaintedObjects();
     }
 
     @Override
