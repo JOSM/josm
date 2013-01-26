@@ -334,7 +334,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         if (popupMenuError == null)
             return;
         ValidatorBoundingXYVisitor bbox = new ValidatorBoundingXYVisitor();
-        popupMenuError.visitHighlighted(bbox);
+        bbox.visit(popupMenuError);
         if (bbox.getBounds() == null)
             return;
         bbox.enlargeBoundingBox(Main.pref.getDouble("validator.zoom-enlarge-bbox", 0.0002));
@@ -522,6 +522,13 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         public void visit(List<Node> nodes) {
             for (Node n: nodes) {
                 visit(n);
+            }
+        }
+
+        @Override
+        public void visit(TestError error) {
+            if (error != null) {
+                error.visitHighlighted(this);
             }
         }
     }
