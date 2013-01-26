@@ -571,6 +571,23 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         protected void finish() {
             // do nothing
         }
+        
+        protected void fixError(TestError error) throws InterruptedException, InvocationTargetException {
+            if (error.isFixable()) {
+                final Command fixCommand = error.getFix();
+                if (fixCommand != null) {
+                    SwingUtilities.invokeAndWait(new Runnable() {
+                        @Override
+                        public void run() {
+                            Main.main.undoRedo.addNoRedraw(fixCommand);
+                        }
+                    });
+                }
+                // It is wanted to ignore an error if it said fixable, even if fixCommand was null
+                // This is to fix #5764 and #5773: a delete command, for example, may be null if all concerned primitives have already been deleted
+                error.setIgnored(true);
+            }
+        }
 
         @Override
         protected void realRun() throws SAXException, IOException,
@@ -579,26 +596,28 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             try {
                 monitor.setTicksCount(testErrors.size());
                 int i=0;
-                for (TestError error: testErrors) {
-                    i++;
-                    monitor.subTask(tr("Fixing ({0}/{1}): ''{2}''", i, testErrors.size(),error.getMessage()));
-                    if (this.canceled)
-                        return;
-                    if (error.isFixable()) {
-                        final Command fixCommand = error.getFix();
-                        if (fixCommand != null) {
-                            SwingUtilities.invokeAndWait(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Main.main.undoRedo.addNoRedraw(fixCommand);
-                                }
-                            });
-                        }
-                        // It is wanted to ignore an error if it said fixable, even if fixCommand was null
-                        // This is to fix #5764 and #5773: a delete command, for example, may be null if all concerned primitives have already been deleted
-                        error.setIgnored(true);
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        Main.main.getCurrentDataSet().beginUpdate();
                     }
-                    monitor.worked(1);
+                });
+                try {
+                    for (TestError error: testErrors) {
+                        i++;
+                        monitor.subTask(tr("Fixing ({0}/{1}): ''{2}''", i, testErrors.size(),error.getMessage()));
+                        if (this.canceled)
+                            return;
+                        fixError(error);
+                        monitor.worked(1);
+                    }
+                } finally {
+                    SwingUtilities.invokeAndWait(new Runnable() {
+                        @Override
+                        public void run() {
+                            Main.main.getCurrentDataSet().endUpdate();
+                        }
+                    });
                 }
                 monitor.subTask(tr("Updating map ..."));
                 SwingUtilities.invokeAndWait(new Runnable() {
