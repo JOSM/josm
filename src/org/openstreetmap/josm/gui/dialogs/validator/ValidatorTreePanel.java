@@ -1,6 +1,7 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui.dialogs.validator;
 
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,8 +11,8 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
@@ -20,13 +21,13 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
 import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 import org.openstreetmap.josm.tools.MultiMap;
-import org.openstreetmap.josm.Main;
 
 /**
  * A panel that displays the error tree. The selection manager
@@ -69,6 +70,12 @@ public class ValidatorTreePanel extends JTree {
         this.setCellRenderer(new ValidatorTreeRenderer());
         this.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
         setErrorList(errors);
+        for (KeyListener keyListener : getKeyListeners()) {
+            // Fix #3596 - Remove default keyListener to avoid conflicts with JOSM commands
+            if (keyListener.getClass().getName().equals("javax.swing.plaf.basic.BasicTreeUI$Handler")) {
+                removeKeyListener(keyListener);
+            }
+        }
     }
 
     @Override
