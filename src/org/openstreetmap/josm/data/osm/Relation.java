@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -528,5 +529,16 @@ public final class Relation extends OsmPrimitive implements IRelation {
             ret.add(rm.getMember());
         }
         return ret;
+    }
+
+    @Override
+    protected void keysChangedImpl(Map<String, String> originalKeys) {
+        super.keysChangedImpl(originalKeys);
+        // fix #8346 - Clear style cache for multipolygon members after a tag change
+        if (isMultipolygon()) {
+            for (OsmPrimitive member : getMemberPrimitives()) {
+                member.clearCachedStyle();
+            }
+        }
     }
 }
