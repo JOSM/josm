@@ -3,8 +3,6 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.HashMap;
 
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
@@ -16,6 +14,9 @@ import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
  */
 public class ImportHandler extends RequestHandler {
 
+    /**
+     * The remote control command name used to import data.
+     */
     public static final String command = "import";
 
     @Override
@@ -38,7 +39,7 @@ public class ImportHandler extends RequestHandler {
     @Override
     public String getPermissionMessage() {
         return tr("Remote Control has been asked to import data from the following URL:")
-                + "<br>" + request;
+                + "<br>" + args.get("url");
     }
 
     @Override
@@ -52,12 +53,12 @@ public class ImportHandler extends RequestHandler {
         if (request.indexOf('?') != -1) {
             String query = request.substring(request.indexOf('?') + 1);
             if (query.indexOf("url=") == 0) {
-                args.put("url", decodeURL(query.substring(4)));
+                args.put("url", decodeParam(query.substring(4)));
             } else {
                 int urlIdx = query.indexOf("&url=");
                 if (urlIdx != -1) {
-                    String url = query.substring(urlIdx + 1);
-                    args.put("url", decodeURL(query.substring(urlIdx + 5)));
+                    /*String url =*/ query.substring(urlIdx + 1);
+                    args.put("url", decodeParam(query.substring(urlIdx + 5)));
                     query = query.substring(0, urlIdx);
                 } else {
                     if (query.indexOf('#') != -1) {
@@ -76,11 +77,8 @@ public class ImportHandler extends RequestHandler {
         this.args = args;
     }
 
-    private String decodeURL(String url) {
-        try {
-            return URLDecoder.decode(url, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException();
-        }
+    @Override
+    protected void validateRequest() throws RequestHandlerBadRequestException {
+        // Nothing to do
     }
 }

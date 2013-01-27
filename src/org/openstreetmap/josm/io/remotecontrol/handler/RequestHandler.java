@@ -52,9 +52,17 @@ public abstract class RequestHandler {
     public final void handle() throws RequestHandlerForbiddenException, RequestHandlerBadRequestException, RequestHandlerErrorException
     {
         checkMandatoryParams();
+        validateRequest();
         checkPermission();
         handleRequest();
     }
+
+    /**
+     * Validates the request before attempting to perform it.
+     * @throws RequestHandlerBadRequestException
+     * @since 5678
+     */
+    protected abstract void validateRequest() throws RequestHandlerBadRequestException;
 
     /**
      * Handle a specific command sent as remote control.
@@ -216,6 +224,14 @@ public abstract class RequestHandler {
         return args.get("new_layer") != null && !args.get("new_layer").isEmpty()
                 ? Boolean.parseBoolean(args.get("new_layer"))
                 : Main.pref.getBoolean(loadInNewLayerKey, loadInNewLayerDefault);
+    }
+
+    protected final String decodeParam(String param) {
+        try {
+            return URLDecoder.decode(param, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException();
+        }
     }
 
     public static class RequestHandlerException extends Exception {
