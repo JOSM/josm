@@ -512,23 +512,28 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             return true;
         }
 
+        private static String getValue(Component comp) {
+            if (comp instanceof JosmComboBox) {
+                return ((JosmComboBox) comp).getEditor().getItem().toString();
+            } else if (comp instanceof JTextField) {
+                return ((JTextField) comp).getText();
+            } else if (comp instanceof JPanel) {
+                return getValue(((JPanel)comp).getComponent(0));
+            } else {
+                return null;
+            }
+        }
+        
         @Override
         public void addCommands(List<Tag> changedTags) {
 
             // return if unchanged
-            String v = null;
-            if (value instanceof JosmComboBox) {
-                v = ((JosmComboBox) value).getEditor().getItem().toString();
-            } else if (value instanceof JTextField) {
-                v = ((JTextField) value).getText();
-            } else if (value instanceof JPanel) {
-                // this is what was alluded to with "ugly fashion" above.
-                v = ((JTextField) (((JPanel)value).getComponent(0))).getText();
-            } else {
+            String v = getValue(value);
+            if (v == null) {
                 System.err.println("No 'last value' support for component " + value);
                 return;
             }
-               
+            
             v = v.trim();
 
             if (!"false".equals(use_last_as_default) || auto_increment != null) {
