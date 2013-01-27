@@ -6,8 +6,14 @@ import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+/**
+ * Opens a local file
+ */
 public class OpenFileHandler extends RequestHandler {
 
+    /**
+     * The remote control command name used to open a local file.
+     */
     public static final String command = "open_file";
 
     @Override
@@ -28,5 +34,10 @@ public class OpenFileHandler extends RequestHandler {
     @Override
     public String getPermissionMessage() {
         return tr("Remote Control has been asked to open a local file.");
+    }
+
+    @Override
+    protected void validateRequest() throws RequestHandlerBadRequestException {
+        // Nothing to do
     }
 }

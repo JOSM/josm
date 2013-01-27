@@ -11,6 +11,9 @@ import org.openstreetmap.josm.io.remotecontrol.RequestProcessor;
  */
 public class VersionHandler extends RequestHandler {
 
+    /**
+     * The remote control command name used to reply version.
+     */
     public static final String command = "version";
 
     @Override
@@ -36,5 +39,10 @@ public class VersionHandler extends RequestHandler {
     @Override
     public String[] getMandatoryParams() {
         return null;
+    }
+
+    @Override
+    protected void validateRequest() throws RequestHandlerBadRequestException {
+        // Nothing to do
     }
 }
