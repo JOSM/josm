@@ -30,6 +30,9 @@ public class GpxData extends WithAttributes {
     public static final String META_LINKS = META_PREFIX + "links";
     public static final String META_NAME = META_PREFIX + "name";
     public static final String META_TIME = META_PREFIX + "time";
+    public static final String META_EXTENSIONS = META_PREFIX + "extensions";
+
+    public static final String JOSM_EXTENSIONS_NAMESPACE_URI = "http://josm.openstreetmap.de/gpx-extensions";
 
     public File storageFile;
     public boolean fromServer;

@@ -51,8 +51,9 @@ public class GpxWriter extends XmlWriter {
         this.data = data;
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
         out.println("<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
+                (data.fromServer ? String.format("    xmlns:josm=\"%s\"\n", GpxData.JOSM_EXTENSIONS_NAMESPACE_URI) : "") +
                 "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n" +
-        "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">");
+                "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">");
         indent = "  ";
         writeMetaData();
         writeWayPoints();
@@ -98,9 +99,9 @@ public class GpxWriter extends XmlWriter {
             // write the name
             simpleTag("name", (String) attr.get(GpxData.META_AUTHOR_NAME));
             // write the email address
-            if(attr.containsKey(GpxData.META_AUTHOR_EMAIL)) {
+            if (attr.containsKey(GpxData.META_AUTHOR_EMAIL)) {
                 String[] tmp = ((String)attr.get(GpxData.META_AUTHOR_EMAIL)).split("@");
-                if(tmp.length == 2) {
+                if (tmp.length == 2) {
                     inline("email", "id=\"" + tmp[0] + "\" domain=\""+tmp[1]+"\"");
                 }
             }
@@ -110,20 +111,20 @@ public class GpxWriter extends XmlWriter {
         }
 
         // write the copyright details
-        if(attr.containsKey(GpxData.META_COPYRIGHT_LICENSE)
+        if (attr.containsKey(GpxData.META_COPYRIGHT_LICENSE)
                 || attr.containsKey(GpxData.META_COPYRIGHT_YEAR)) {
             openAtt("copyright", "author=\""+ attr.get(GpxData.META_COPYRIGHT_AUTHOR) +"\"");
-            if(attr.containsKey(GpxData.META_COPYRIGHT_YEAR)) {
+            if (attr.containsKey(GpxData.META_COPYRIGHT_YEAR)) {
                 simpleTag("year", (String) attr.get(GpxData.META_COPYRIGHT_YEAR));
             }
-            if(attr.containsKey(GpxData.META_COPYRIGHT_LICENSE)) {
+            if (attr.containsKey(GpxData.META_COPYRIGHT_LICENSE)) {
                 simpleTag("license", encode((String) attr.get(GpxData.META_COPYRIGHT_LICENSE)));
             }
             closeln("copyright");
         }
 
         // write links
-        if(attr.containsKey(GpxData.META_LINKS)) {
+        if (attr.containsKey(GpxData.META_LINKS)) {
             for (GpxLink link : (Collection<GpxLink>) attr.get(GpxData.META_LINKS)) {
                 gpxLink(link);
             }
@@ -135,11 +136,16 @@ public class GpxWriter extends XmlWriter {
         }
 
         Bounds bounds = data.recalculateBounds();
-        if(bounds != null)
-        {
+        if (bounds != null) {
             String b = "minlat=\"" + bounds.getMin().lat() + "\" minlon=\"" + bounds.getMin().lon() +
             "\" maxlat=\"" + bounds.getMax().lat() + "\" maxlon=\"" + bounds.getMax().lon() + "\"" ;
             inline("bounds", b);
+        }
+
+        if (data.fromServer) {
+            openln("extensions");
+            simpleTag("josm:from-server", "true");
+            closeln("extensions");
         }
 
         closeln("metadata");
