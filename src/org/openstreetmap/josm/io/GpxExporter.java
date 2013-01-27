@@ -26,6 +26,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -35,7 +36,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 
-public class GpxExporter extends FileExporter {
+public class GpxExporter extends FileExporter implements GpxConstants {
     private final static String warningGpl = "<html><font color='red' size='-2'>"
         + tr("Note: GPL is not compatible with the OSM license. Do not upload GPL licensed tracks.") + "</html>";
 
@@ -81,7 +82,7 @@ public class GpxExporter extends FileExporter {
         JTextArea desc = new JTextArea(3, 40);
         desc.setWrapStyleWord(true);
         desc.setLineWrap(true);
-        desc.setText((String) gpxData.attr.get(GpxData.META_DESC));
+        desc.setText((String) gpxData.attr.get(META_DESC));
         p.add(new JScrollPane(desc), GBC.eop().fill(GBC.BOTH));
 
         JCheckBox author = new JCheckBox(tr("Add author information"), Main.pref.getBoolean("lastAddAuthor", true));
@@ -111,7 +112,7 @@ public class GpxExporter extends FileExporter {
 
         p.add(new JLabel(tr("Keywords")), GBC.eol());
         JTextField keywords = new JTextField();
-        keywords.setText((String) gpxData.attr.get(GpxData.META_KEYWORDS));
+        keywords.setText((String) gpxData.attr.get(META_KEYWORDS));
         p.add(keywords, GBC.eop().fill(GBC.HORIZONTAL));
 
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
@@ -143,28 +144,28 @@ public class GpxExporter extends FileExporter {
         // add author and copyright details to the gpx data
         if (author.isSelected()) {
             if (authorName.getText().length() > 0) {
-                gpxData.attr.put(GpxData.META_AUTHOR_NAME, authorName.getText());
-                gpxData.attr.put(GpxData.META_COPYRIGHT_AUTHOR, authorName.getText());
+                gpxData.attr.put(META_AUTHOR_NAME, authorName.getText());
+                gpxData.attr.put(META_COPYRIGHT_AUTHOR, authorName.getText());
             }
             if (email.getText().length() > 0) {
-                gpxData.attr.put(GpxData.META_AUTHOR_EMAIL, email.getText());
+                gpxData.attr.put(META_AUTHOR_EMAIL, email.getText());
             }
             if (copyright.getText().length() > 0) {
-                gpxData.attr.put(GpxData.META_COPYRIGHT_LICENSE, copyright.getText());
+                gpxData.attr.put(META_COPYRIGHT_LICENSE, copyright.getText());
             }
             if (copyrightYear.getText().length() > 0) {
-                gpxData.attr.put(GpxData.META_COPYRIGHT_YEAR, copyrightYear.getText());
+                gpxData.attr.put(META_COPYRIGHT_YEAR, copyrightYear.getText());
             }
         }
 
         // add the description to the gpx data
         if (desc.getText().length() > 0) {
-            gpxData.attr.put(GpxData.META_DESC, desc.getText());
+            gpxData.attr.put(META_DESC, desc.getText());
         }
 
         // add keywords to the gpx data
         if (keywords.getText().length() > 0) {
-            gpxData.attr.put(GpxData.META_KEYWORDS, keywords.getText());
+            gpxData.attr.put(META_KEYWORDS, keywords.getText());
         }
 
         try {
@@ -192,14 +193,14 @@ public class GpxExporter extends FileExporter {
 
         if (enable) {
             if (copyrightYear.getText().length()==0) {
-                String sCopyrightYear = (String) data.attr.get(GpxData.META_COPYRIGHT_YEAR);
+                String sCopyrightYear = (String) data.attr.get(META_COPYRIGHT_YEAR);
                 if (sCopyrightYear == null) {
                     sCopyrightYear = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
                 }
                 copyrightYear.setText(sCopyrightYear);
             }
             if (copyright.getText().length()==0) {
-                String sCopyright = (String) data.attr.get(GpxData.META_COPYRIGHT_LICENSE);
+                String sCopyright = (String) data.attr.get(META_COPYRIGHT_LICENSE);
                 if (sCopyright == null) {
                     sCopyright = Main.pref.get("lastCopyright", "http://creativecommons.org/licenses/by-sa/2.5");
                 }
@@ -242,12 +243,12 @@ public class GpxExporter extends FileExporter {
                 nameLabel.setEnabled(b);
                 emailLabel.setEnabled(b);
                 if (b) {
-                    String sAuthorName = (String) data.attr.get(GpxData.META_AUTHOR_NAME);
+                    String sAuthorName = (String) data.attr.get(META_AUTHOR_NAME);
                     if (sAuthorName == null) {
                         sAuthorName = Main.pref.get("lastAuthorName");
                     }
                     authorName.setText(sAuthorName);
-                    String sEmail = (String) data.attr.get(GpxData.META_AUTHOR_EMAIL);
+                    String sEmail = (String) data.attr.get(META_AUTHOR_EMAIL);
                     if (sEmail == null) {
                         sEmail = Main.pref.get("lastAuthorEmail");
                     }

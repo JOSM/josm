@@ -20,6 +20,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.Extensions;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.GpxRoute;
@@ -38,7 +39,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author imi, ramack
  */
-public class GpxReader {
+public class GpxReader implements GpxConstants {
 
     private String version;
     /**
@@ -139,7 +140,7 @@ public class GpxReader {
                 } else if (localName.equals("copyright")) {
                     states.push(currentState);
                     currentState = State.copyright;
-                    data.attr.put(GpxData.META_COPYRIGHT_AUTHOR, atts.getValue("author"));
+                    data.attr.put(META_COPYRIGHT_AUTHOR, atts.getValue("author"));
                 } else if (localName.equals("link")) {
                     states.push(currentState);
                     currentState = State.link;
@@ -152,7 +153,7 @@ public class GpxReader {
                     currentState = State.link;
                     currentLink = new GpxLink(atts.getValue("href"));
                 } else if (localName.equals("email")) {
-                    data.attr.put(GpxData.META_AUTHOR_EMAIL, atts.getValue("id") + "@" + atts.getValue("domain"));
+                    data.attr.put(META_AUTHOR_EMAIL, atts.getValue("id") + "@" + atts.getValue("domain"));
                 }
                 break;
             case trk:
@@ -242,25 +243,25 @@ public class GpxReader {
             case gpx:       // GPX 1.0
             case metadata:  // GPX 1.1
                 if (localName.equals("name")) {
-                    data.attr.put(GpxData.META_NAME, accumulator.toString());
+                    data.attr.put(META_NAME, accumulator.toString());
                 } else if (localName.equals("desc")) {
-                    data.attr.put(GpxData.META_DESC, accumulator.toString());
+                    data.attr.put(META_DESC, accumulator.toString());
                 } else if (localName.equals("time")) {
-                    data.attr.put(GpxData.META_TIME, accumulator.toString());
+                    data.attr.put(META_TIME, accumulator.toString());
                 } else if (localName.equals("keywords")) {
-                    data.attr.put(GpxData.META_KEYWORDS, accumulator.toString());
+                    data.attr.put(META_KEYWORDS, accumulator.toString());
                 } else if (version.equals("1.0") && localName.equals("author")) {
                     // author is a string in 1.0, but complex element in 1.1
-                    data.attr.put(GpxData.META_AUTHOR_NAME, accumulator.toString());
+                    data.attr.put(META_AUTHOR_NAME, accumulator.toString());
                 } else if (version.equals("1.0") && localName.equals("email")) {
-                    data.attr.put(GpxData.META_AUTHOR_EMAIL, accumulator.toString());
+                    data.attr.put(META_AUTHOR_EMAIL, accumulator.toString());
                 } else if (localName.equals("url") || localName.equals("urlname")) {
                     data.attr.put(localName, accumulator.toString());
                 } else if ((currentState == State.metadata && localName.equals("metadata")) ||
                         (currentState == State.gpx && localName.equals("gpx"))) {
                     convertUrlToLink(data.attr);
                     if (currentExtensions != null && !currentExtensions.isEmpty()) {
-                        data.attr.put(GpxData.META_EXTENSIONS, currentExtensions);
+                        data.attr.put(META_EXTENSIONS, currentExtensions);
                     }
                     currentState = states.pop();
                 }
@@ -270,20 +271,20 @@ public class GpxReader {
                 if (localName.equals("author")) {
                     currentState = states.pop();
                 } else if (localName.equals("name")) {
-                    data.attr.put(GpxData.META_AUTHOR_NAME, accumulator.toString());
+                    data.attr.put(META_AUTHOR_NAME, accumulator.toString());
                 } else if (localName.equals("email")) {
                     // do nothing, has been parsed on startElement
                 } else if (localName.equals("link")) {
-                    data.attr.put(GpxData.META_AUTHOR_LINK, currentLink);
+                    data.attr.put(META_AUTHOR_LINK, currentLink);
                 }
                 break;
             case copyright:
                 if (localName.equals("copyright")) {
                     currentState = states.pop();
                 } else if (localName.equals("year")) {
-                    data.attr.put(GpxData.META_COPYRIGHT_YEAR, accumulator.toString());
+                    data.attr.put(META_COPYRIGHT_YEAR, accumulator.toString());
                 } else if (localName.equals("license")) {
-                    data.attr.put(GpxData.META_COPYRIGHT_LICENSE, accumulator.toString());
+                    data.attr.put(META_COPYRIGHT_LICENSE, accumulator.toString());
                 }
                 break;
             case link:
@@ -298,13 +299,13 @@ public class GpxReader {
                     currentState = states.pop();
                 }
                 if (currentState == State.author) {
-                    data.attr.put(GpxData.META_AUTHOR_LINK, currentLink);
+                    data.attr.put(META_AUTHOR_LINK, currentLink);
                 } else if (currentState != State.link) {
                     Map<String, Object> attr = getAttr();
-                    if (!attr.containsKey(GpxData.META_LINKS)) {
-                        attr.put(GpxData.META_LINKS, new LinkedList<GpxLink>());
+                    if (!attr.containsKey(META_LINKS)) {
+                        attr.put(META_LINKS, new LinkedList<GpxLink>());
                     }
-                    ((Collection<GpxLink>) attr.get(GpxData.META_LINKS)).add(currentLink);
+                    ((Collection<GpxLink>) attr.get(META_LINKS)).add(currentLink);
                 }
                 break;
             case wpt:
@@ -363,7 +364,7 @@ public class GpxReader {
                 if (localName.equals("extensions")) {
                     currentState = states.pop();
                 // only interested in extensions written by JOSM
-                } else if (GpxData.JOSM_EXTENSIONS_NAMESPACE_URI.equals(namespaceURI)) {
+                } else if (JOSM_EXTENSIONS_NAMESPACE_URI.equals(namespaceURI)) {
                     currentExtensions.put(localName, accumulator.toString());
                 }
                 break;
@@ -381,7 +382,7 @@ public class GpxReader {
         @Override public void endDocument() throws SAXException  {
             if (!states.empty())
                 throw new SAXException(tr("Parse error: invalid document structure for GPX document."));
-            Extensions metaExt = (Extensions) data.attr.get(GpxData.META_EXTENSIONS);
+            Extensions metaExt = (Extensions) data.attr.get(META_EXTENSIONS);
             if (metaExt != null && "true".equals(metaExt.get("from-server"))) {
                 data.fromServer = true;
             }
@@ -395,13 +396,13 @@ public class GpxReader {
             String url = (String) attr.get("url");
             String urlname = (String) attr.get("urlname");
             if (url != null) {
-                if (!attr.containsKey(GpxData.META_LINKS)) {
-                    attr.put(GpxData.META_LINKS, new LinkedList<GpxLink>());
+                if (!attr.containsKey(META_LINKS)) {
+                    attr.put(META_LINKS, new LinkedList<GpxLink>());
                 }
                 GpxLink link = new GpxLink(url);
                 link.text = urlname;
                 @SuppressWarnings("unchecked")
-                Collection<GpxLink> links = (Collection) attr.get(GpxData.META_LINKS);
+                Collection<GpxLink> links = (Collection) attr.get(META_LINKS);
                 links.add(link);
             }
         }

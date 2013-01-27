@@ -22,7 +22,7 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.preferences.CachedProperty;
@@ -184,7 +184,7 @@ public class Marker implements TemplateEngineDataProvider {
                 String uri = null;
                 // cheapest way to check whether "link" object exists and is a non-empty
                 // collection of GpxLink objects...
-                Collection<GpxLink> links = (Collection<GpxLink>)wpt.attr.get(GpxData.META_LINKS);
+                Collection<GpxLink> links = (Collection<GpxLink>)wpt.attr.get(GpxConstants.META_LINKS);
                 if (links != null) {
                     for (GpxLink oneLink : links ) {
                         uri = oneLink.uri;
