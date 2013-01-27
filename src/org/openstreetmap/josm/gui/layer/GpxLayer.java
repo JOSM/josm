@@ -67,6 +67,7 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxRoute;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
@@ -206,11 +207,11 @@ public class GpxLayer extends Layer {
         StringBuilder info = new StringBuilder();
 
         if (data.attr.containsKey("name")) {
-            info.append(tr("Name: {0}", data.attr.get(GpxData.META_NAME))).append("<br>");
+            info.append(tr("Name: {0}", data.attr.get(GpxConstants.META_NAME))).append("<br>");
         }
 
         if (data.attr.containsKey("desc")) {
-            info.append(tr("Description: {0}", data.attr.get(GpxData.META_DESC))).append("<br>");
+            info.append(tr("Description: {0}", data.attr.get(GpxConstants.META_DESC))).append("<br>");
         }
 
         if (data.tracks.size() > 0) {
@@ -323,11 +324,11 @@ public class GpxLayer extends Layer {
         StringBuilder info = new StringBuilder().append("<html>");
 
         if (data.attr.containsKey("name")) {
-            info.append(tr("Name: {0}", data.attr.get(GpxData.META_NAME))).append("<br>");
+            info.append(tr("Name: {0}", data.attr.get(GpxConstants.META_NAME))).append("<br>");
         }
 
         if (data.attr.containsKey("desc")) {
-            info.append(tr("Description: {0}", data.attr.get(GpxData.META_DESC))).append("<br>");
+            info.append(tr("Description: {0}", data.attr.get(GpxConstants.META_DESC))).append("<br>");
         }
 
         info.append(trn("{0} track, ", "{0} tracks, ", data.tracks.size(), data.tracks.size()));
