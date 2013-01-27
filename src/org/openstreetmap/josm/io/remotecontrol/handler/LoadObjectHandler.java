@@ -17,7 +17,12 @@ import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
  */
 public class LoadObjectHandler extends RequestHandler {
 
+    /**
+     * The remote control command name used to load objects using their ID.
+     */
     public static final String command = "load_object";
+    
+    private final List<PrimitiveId> ps = new LinkedList<PrimitiveId>();
 
     @Override
     public String[] getMandatoryParams() {
@@ -29,21 +34,20 @@ public class LoadObjectHandler extends RequestHandler {
         if (!PermissionPrefWithDefault.LOAD_DATA.isAllowed()) {
             System.out.println("RemoteControl: download forbidden by preferences");
         }
-        final List<PrimitiveId> ps = new LinkedList<PrimitiveId>();
-        for (String i : args.get("objects").split(",\\s*")) {
-            ps.add(SimplePrimitiveId.fromString(i));
+        if (!ps.isEmpty()) {
+            boolean newLayer = isLoadInNewLayer();
+            boolean relationMembers = Boolean.parseBoolean(args.get("relation_members"));
+            DownloadPrimitiveAction.processItems(newLayer, ps, true, relationMembers);
+            Main.worker.submit(new Runnable() {
+    
+                @Override
+                public void run() {
+                    Main.main.getCurrentDataSet().setSelected(ps);
+                    LoadAndZoomHandler.addTags(args);
+                    ps.clear();
+                }
+            });
         }
-        boolean newLayer = isLoadInNewLayer();
-        boolean relationMembers = Boolean.parseBoolean(args.get("relation_members"));
-        DownloadPrimitiveAction.processItems(newLayer, ps, true, relationMembers);
-        Main.worker.submit(new Runnable() {
-
-            @Override
-            public void run() {
-                Main.main.getCurrentDataSet().setSelected(ps);
-                LoadAndZoomHandler.addTags(args);
-            }
-        });
     }
 
     @Override
@@ -54,5 +58,17 @@ public class LoadObjectHandler extends RequestHandler {
     @Override
     public PermissionPrefWithDefault getPermissionPref() {
         return PermissionPrefWithDefault.LOAD_DATA;
+    }
+
+    @Override
+    protected void validateRequest() throws RequestHandlerBadRequestException {
+        ps.clear();
+        for (String i : args.get("objects").split(",\\s*")) {
+            try {
+                ps.add(SimplePrimitiveId.fromString(i));
+            } catch (IllegalArgumentException e) {
+                System.out.println("RemoteControl: invalid selection '"+i+"' ignored");
+            }
+        }
     }
 }

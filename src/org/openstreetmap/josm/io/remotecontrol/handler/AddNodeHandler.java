@@ -10,13 +10,20 @@ import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 
 /**
  * Handler for add_node request.
  */
 public class AddNodeHandler extends RequestHandler {
 
+    /**
+     * The remote control command name used to add a node.
+     */
     public static final String command = "add_node";
+    
+    private double lat;
+    private double lon;
 
     @Override
     protected void handleRequest() {
@@ -31,7 +38,8 @@ public class AddNodeHandler extends RequestHandler {
 
     @Override
     public String getPermissionMessage() {
-        return tr("Remote Control has been asked to create a new node.");
+        return tr("Remote Control has been asked to create a new node.") +
+                "<br>" + tr("Coordinates: ") + args.get("lat") + ", " + args.get("lon");
     }
 
     @Override
@@ -46,8 +54,6 @@ public class AddNodeHandler extends RequestHandler {
     private void addNode(HashMap<String, String> args){
 
         // Parse the arguments
-        double lat = Double.parseDouble(args.get("lat"));
-        double lon = Double.parseDouble(args.get("lon"));
         System.out.println("Adding node at (" + lat + ", " + lon + ")");
 
         // Create a new node
@@ -61,6 +67,16 @@ public class AddNodeHandler extends RequestHandler {
             AutoScaleAction.autoScale("selection");
         } else {
             Main.map.mapView.repaint();
+        }
+    }
+
+    @Override
+    protected void validateRequest() throws RequestHandlerBadRequestException {
+        try {
+            lat = Double.parseDouble(args.get("lat"));
+            lon = Double.parseDouble(args.get("lon"));
+        } catch (NumberFormatException e) {
+            throw new RequestHandlerBadRequestException("NumberFormatException ("+e.getMessage()+")");
         }
     }
 }

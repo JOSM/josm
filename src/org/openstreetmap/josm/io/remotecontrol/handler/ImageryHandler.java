@@ -3,8 +3,6 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.HashMap;
 
 import org.openstreetmap.josm.Main;
@@ -58,7 +56,7 @@ public class ImageryHandler extends RequestHandler {
             try {
                 imgInfo.setDefaultMinZoom(Integer.parseInt(min_zoom));
             } catch (NumberFormatException e) {
-                System.err.println(e.getMessage());
+                System.err.println("NumberFormatException ("+e.getMessage()+")");
             }
         }
         String max_zoom = args.get("max_zoom");
@@ -66,7 +64,7 @@ public class ImageryHandler extends RequestHandler {
             try {
                 imgInfo.setDefaultMaxZoom(Integer.parseInt(max_zoom));
             } catch (NumberFormatException e) {
-                System.err.println(e.getMessage());
+                System.err.println("NumberFormatException ("+e.getMessage()+")");
             }
         }
         Main.main.addLayer(ImageryLayer.create(imgInfo));
@@ -101,11 +99,8 @@ public class ImageryHandler extends RequestHandler {
         this.args = args;
     }
 
-    private String decodeParam(String param) {
-        try {
-            return URLDecoder.decode(param, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException();
-        }
+    @Override
+    protected void validateRequest() throws RequestHandlerBadRequestException {
+        // Nothing to do
     }
 }
