@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.Bounds;
  *
  */
 
-public interface GpxTrack {
+public interface GpxTrack extends IWithAttributes {
 
     Collection<GpxTrackSegment> getSegments();
     Map<String, Object> getAttributes();

@@ -10,9 +10,8 @@ import java.util.Map;
 
 import org.openstreetmap.josm.data.Bounds;
 
-public class ImmutableGpxTrack implements GpxTrack {
+public class ImmutableGpxTrack extends WithAttributes implements GpxTrack {
 
-    private final Map<String, Object> attributes;
     private final Collection<GpxTrackSegment> segments;
     private final double length;
     private final Bounds bounds;
@@ -24,7 +23,7 @@ public class ImmutableGpxTrack implements GpxTrack {
                 newSegments.add(new ImmutableGpxTrackSegment(trackSeg));
             }
         }
-        this.attributes = Collections.unmodifiableMap(new HashMap<String, Object>(attributes));
+        this.attr = Collections.unmodifiableMap(new HashMap<String, Object>(attributes));
         this.segments = Collections.unmodifiableCollection(newSegments);
         this.length = calculateLength();
         this.bounds = calculateBounds();
@@ -54,10 +53,12 @@ public class ImmutableGpxTrack implements GpxTrack {
         return result;
     }
 
+    @Override
     public Map<String, Object> getAttributes() {
-        return attributes;
+        return attr;
     }
 
+    @Override
     public Bounds getBounds() {
         if (bounds == null)
             return null;
@@ -65,14 +66,17 @@ public class ImmutableGpxTrack implements GpxTrack {
             return new Bounds(bounds);
     }
 
+    @Override
     public double length() {
         return length;
     }
 
+    @Override
     public Collection<GpxTrackSegment> getSegments() {
         return segments;
     }
 
+    @Override
     public int getUpdateCount() {
         return 0;
     }

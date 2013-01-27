@@ -8,13 +8,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.GpxRoute;
@@ -25,7 +24,7 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 /**
  * Writes GPX files from GPX data or OSM data.
  */
-public class GpxWriter extends XmlWriter {
+public class GpxWriter extends XmlWriter implements GpxConstants {
 
     public GpxWriter(PrintWriter out) {
         super(out);
@@ -51,7 +50,7 @@ public class GpxWriter extends XmlWriter {
         this.data = data;
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
         out.println("<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
-                (data.fromServer ? String.format("    xmlns:josm=\"%s\"\n", GpxData.JOSM_EXTENSIONS_NAMESPACE_URI) : "") +
+                (data.fromServer ? String.format("    xmlns:josm=\"%s\"\n", JOSM_EXTENSIONS_NAMESPACE_URI) : "") +
                 "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n" +
                 "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">");
         indent = "  ";
@@ -63,15 +62,12 @@ public class GpxWriter extends XmlWriter {
         out.flush();
     }
 
-    public static List<String> WPT_KEYS = Arrays.asList("ele", "time", "magvar", "geoidheight",
-            "name", "cmt", "desc", "src", GpxData.META_LINKS, "sym", "number", "type",
-            "fix", "sat", "hdop", "vdop", "pdop", "ageofdgpsdata", "dgpsid");
     @SuppressWarnings("unchecked")
     private void writeAttr(Map<String, Object> attr) {
         for (String key : WPT_KEYS) {
             Object value = attr.get(key);
             if (value != null) {
-                if (key.equals(GpxData.META_LINKS)) {
+                if (key.equals(META_LINKS)) {
                     for (GpxLink link : (Collection<GpxLink>) value) {
                         gpxLink(link);
                     }
@@ -88,51 +84,51 @@ public class GpxWriter extends XmlWriter {
         openln("metadata");
 
         // write the description
-        if (attr.containsKey(GpxData.META_DESC)) {
-            simpleTag("desc", (String)attr.get(GpxData.META_DESC));
+        if (attr.containsKey(META_DESC)) {
+            simpleTag("desc", (String)attr.get(META_DESC));
         }
 
         // write the author details
-        if (attr.containsKey(GpxData.META_AUTHOR_NAME)
-                || attr.containsKey(GpxData.META_AUTHOR_EMAIL)) {
+        if (attr.containsKey(META_AUTHOR_NAME)
+                || attr.containsKey(META_AUTHOR_EMAIL)) {
             openln("author");
             // write the name
-            simpleTag("name", (String) attr.get(GpxData.META_AUTHOR_NAME));
+            simpleTag("name", (String) attr.get(META_AUTHOR_NAME));
             // write the email address
-            if (attr.containsKey(GpxData.META_AUTHOR_EMAIL)) {
-                String[] tmp = ((String)attr.get(GpxData.META_AUTHOR_EMAIL)).split("@");
+            if (attr.containsKey(META_AUTHOR_EMAIL)) {
+                String[] tmp = ((String)attr.get(META_AUTHOR_EMAIL)).split("@");
                 if (tmp.length == 2) {
                     inline("email", "id=\"" + tmp[0] + "\" domain=\""+tmp[1]+"\"");
                 }
             }
             // write the author link
-            gpxLink((GpxLink) attr.get(GpxData.META_AUTHOR_LINK));
+            gpxLink((GpxLink) attr.get(META_AUTHOR_LINK));
             closeln("author");
         }
 
         // write the copyright details
-        if (attr.containsKey(GpxData.META_COPYRIGHT_LICENSE)
-                || attr.containsKey(GpxData.META_COPYRIGHT_YEAR)) {
-            openAtt("copyright", "author=\""+ attr.get(GpxData.META_COPYRIGHT_AUTHOR) +"\"");
-            if (attr.containsKey(GpxData.META_COPYRIGHT_YEAR)) {
-                simpleTag("year", (String) attr.get(GpxData.META_COPYRIGHT_YEAR));
+        if (attr.containsKey(META_COPYRIGHT_LICENSE)
+                || attr.containsKey(META_COPYRIGHT_YEAR)) {
+            openAtt("copyright", "author=\""+ attr.get(META_COPYRIGHT_AUTHOR) +"\"");
+            if (attr.containsKey(META_COPYRIGHT_YEAR)) {
+                simpleTag("year", (String) attr.get(META_COPYRIGHT_YEAR));
             }
-            if (attr.containsKey(GpxData.META_COPYRIGHT_LICENSE)) {
-                simpleTag("license", encode((String) attr.get(GpxData.META_COPYRIGHT_LICENSE)));
+            if (attr.containsKey(META_COPYRIGHT_LICENSE)) {
+                simpleTag("license", encode((String) attr.get(META_COPYRIGHT_LICENSE)));
             }
             closeln("copyright");
         }
 
         // write links
-        if (attr.containsKey(GpxData.META_LINKS)) {
-            for (GpxLink link : (Collection<GpxLink>) attr.get(GpxData.META_LINKS)) {
+        if (attr.containsKey(META_LINKS)) {
+            for (GpxLink link : (Collection<GpxLink>) attr.get(META_LINKS)) {
                 gpxLink(link);
             }
         }
 
         // write keywords
-        if (attr.containsKey(GpxData.META_KEYWORDS)) {
-            simpleTag("keywords", (String)attr.get(GpxData.META_KEYWORDS));
+        if (attr.containsKey(META_KEYWORDS)) {
+            simpleTag("keywords", (String)attr.get(META_KEYWORDS));
         }
 
         Bounds bounds = data.recalculateBounds();

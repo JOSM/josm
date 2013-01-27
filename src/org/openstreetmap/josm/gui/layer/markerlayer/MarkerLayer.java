@@ -31,6 +31,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -84,10 +85,10 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         for (WayPoint wpt : indata.waypoints) {
             /* calculate time differences in waypoints */
             double time = wpt.time;
-            boolean wpt_has_link = wpt.attr.containsKey(GpxData.META_LINKS);
+            boolean wpt_has_link = wpt.attr.containsKey(GpxConstants.META_LINKS);
             if (firstTime < 0 && wpt_has_link) {
                 firstTime = time;
-                for (Object oneLink : wpt.getCollection(GpxData.META_LINKS)) {
+                for (Object oneLink : wpt.getCollection(GpxConstants.META_LINKS)) {
                     if (oneLink instanceof GpxLink) {
                         lastLinkedFile = ((GpxLink)oneLink).uri;
                         break;
@@ -95,7 +96,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 }
             }
             if (wpt_has_link) {
-                for (Object oneLink : wpt.getCollection(GpxData.META_LINKS)) {
+                for (Object oneLink : wpt.getCollection(GpxConstants.META_LINKS)) {
                     if (oneLink instanceof GpxLink) {
                         String uri = ((GpxLink)oneLink).uri;
                         if (!uri.equals(lastLinkedFile)) {
