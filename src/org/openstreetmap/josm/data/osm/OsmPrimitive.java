@@ -793,7 +793,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     @Override
-    protected final void keysChangedImpl(Map<String, String> originalKeys) {
+    protected void keysChangedImpl(Map<String, String> originalKeys) {
         clearCachedStyle();
         if (dataSet != null) {
             for (OsmPrimitive ref : getReferrers()) {
