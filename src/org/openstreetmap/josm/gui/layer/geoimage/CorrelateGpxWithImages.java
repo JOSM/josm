@@ -177,7 +177,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     }
                     GpxReader reader = new GpxReader(iStream);
                     reader.parse(false);
-                    data = reader.data;
+                    data = reader.getGpxData();
                     data.storageFile = sel;
 
                 } catch (SAXException x) {
