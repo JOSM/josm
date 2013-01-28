@@ -3,9 +3,13 @@ package org.openstreetmap.josm.gui.layer.markerlayer;
 
 import java.awt.event.ActionEvent;
 import java.net.URL;
+import java.util.Collections;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
+import org.openstreetmap.josm.data.gpx.GpxLink;
+import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
@@ -75,5 +79,16 @@ public class AudioMarker extends ButtonMarker {
     @Override
     protected TemplateEntryProperty getTextTemplate() {
         return TemplateEntryProperty.forAudioMarker(parentLayer.getName());
+    }
+
+    @Override
+    public WayPoint convertToWayPoint() {
+        WayPoint wpt = super.convertToWayPoint();
+        GpxLink link = new GpxLink(audioUrl.toString());
+        link.type = "audio";
+        wpt.attr.put(GpxConstants.META_LINKS, Collections.singleton(link));
+        wpt.addExtension("offset", Double.toString(offset));
+        wpt.addExtension("sync-offset", Double.toString(syncOffset));
+        return wpt;
     }
 }

@@ -27,6 +27,6 @@ public interface GpxConstants {
 
     public static List<String> WPT_KEYS = Arrays.asList("ele", "time", "magvar", "geoidheight",
             "name", "cmt", "desc", "src", META_LINKS, "sym", "number", "type",
-            "fix", "sat", "hdop", "vdop", "pdop", "ageofdgpsdata", "dgpsid");
+            "fix", "sat", "hdop", "vdop", "pdop", "ageofdgpsdata", "dgpsid", META_EXTENSIONS);
 
 }

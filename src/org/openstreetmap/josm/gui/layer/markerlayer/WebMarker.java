@@ -5,11 +5,15 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.net.URL;
+import java.util.Collections;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
+import org.openstreetmap.josm.data.gpx.GpxLink;
+import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
 /**
@@ -36,5 +40,14 @@ public class WebMarker extends ButtonMarker {
                             "</b><br>" + tr("(URL was: ") + webUrl.toString() + ")" + "<br>" + error,
                             tr("Error displaying URL"), JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    @Override
+    public WayPoint convertToWayPoint() {
+        WayPoint wpt = super.convertToWayPoint();
+        GpxLink link = new GpxLink(webUrl.toString());
+        link.type = "web";
+        wpt.attr.put(GpxConstants.META_LINKS, Collections.singleton(link));
+        return wpt;
     }
 }

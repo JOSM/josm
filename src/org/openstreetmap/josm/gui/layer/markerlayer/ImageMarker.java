@@ -7,6 +7,7 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.Collections;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -20,6 +21,9 @@ import javax.swing.JViewport;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
+import org.openstreetmap.josm.data.gpx.GpxLink;
+import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -80,6 +84,15 @@ public class ImageMarker extends ButtonMarker {
             h = maxSize;
         }
         return new ImageIcon(img.getScaledInstance(w, h, Image.SCALE_SMOOTH));
+    }
+
+    @Override
+    public WayPoint convertToWayPoint() {
+        WayPoint wpt = super.convertToWayPoint();
+        GpxLink link = new GpxLink(imageUrl.toString());
+        link.type = "image";
+        wpt.attr.put(GpxConstants.META_LINKS, Collections.singleton(link));
+        return wpt;
     }
 
 }

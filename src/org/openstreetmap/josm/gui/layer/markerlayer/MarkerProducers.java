@@ -23,5 +23,5 @@ public interface MarkerProducers {
      *        <code>null</code> for no relative URLs
      * @return A Marker object, or <code>null</code>.
      */
-    public Marker createMarker(WayPoint wp, File relativePath, MarkerLayer parentLayer, double time, double offset);
+    Marker createMarker(WayPoint wp, File relativePath, MarkerLayer parentLayer, double time, double offset);
 }
