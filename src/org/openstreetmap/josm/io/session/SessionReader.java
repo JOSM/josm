@@ -62,6 +62,7 @@ public class SessionReader {
         registerSessionLayerImporter("imagery", ImagerySessionImporter.class);
         registerSessionLayerImporter("tracks", GpxTracksSessionImporter.class);
         registerSessionLayerImporter("geoimage", GeoImageSessionImporter.class);
+        registerSessionLayerImporter("markers", MarkerSessionImporter.class);
     }
 
     public static void registerSessionLayerImporter(String layerType, Class<? extends SessionLayerImporter> importer) {
@@ -304,7 +305,7 @@ public class SessionReader {
                 Element scaleEl = getElementByTagName(viewportEl, "scale");
                 if (scaleEl != null && scaleEl.hasAttribute("meter-per-pixel")) {
                     try {
-                        Double meterPerPixel = Double.parseDouble(scaleEl.getAttribute("meter-per-pixel"));
+                        double meterPerPixel = Double.parseDouble(scaleEl.getAttribute("meter-per-pixel"));
                         Projection proj = Main.getProjection();
                         // Get a "typical" distance in east/north units that
                         // corresponds to a couple of pixels. Shouldn't be too

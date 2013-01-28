@@ -31,6 +31,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.Extensions;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
@@ -107,7 +108,22 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                     }
                 }
             }
-            Marker m = Marker.createMarker(wpt, indata.storageFile, this, time, time - firstTime);
+            Double offset = null;
+            // If we have an explicit offset, take it.
+            // Otherwise, for a group of markers with the same Link-URI (e.g. an
+            // audio file) calculate the offset relative to the first marker of
+            // that group. This way the user can jump to the corresponding
+            // playback positions in a long audio track.
+            Extensions exts = (Extensions) wpt.get(GpxConstants.META_EXTENSIONS);
+            if (exts != null && exts.containsKey("offset")) {
+                try {
+                    offset = Double.parseDouble(exts.get("offset"));
+                } catch (NumberFormatException nfe) {}
+            }
+            if (offset == null) {
+                offset = time - firstTime;
+            }
+            Marker m = Marker.createMarker(wpt, indata.storageFile, this, time, offset);
             if (m != null) {
                 data.add(m);
             }
