@@ -27,6 +27,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -37,11 +41,9 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
+import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
 
 public class SessionWriter {
 
@@ -53,6 +55,7 @@ public class SessionWriter {
         registerSessionLayerExporter(WMSLayer.class , ImagerySessionExporter.class);
         registerSessionLayerExporter(GpxLayer.class , GpxTracksSessionExporter.class);
         registerSessionLayerExporter(GeoImageLayer.class , GeoImageSessionExporter.class);
+        registerSessionLayerExporter(MarkerLayer.class, MarkerSessionExporter.class);
     }
 
     /**

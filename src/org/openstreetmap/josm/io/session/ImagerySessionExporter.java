@@ -29,7 +29,8 @@ import org.w3c.dom.Element;
 public class ImagerySessionExporter implements SessionLayerExporter {
 
     private ImageryLayer layer;
-
+    private JCheckBox export;
+    
     public ImagerySessionExporter(ImageryLayer layer) {
         this.layer = layer;
     }
@@ -41,8 +42,6 @@ public class ImagerySessionExporter implements SessionLayerExporter {
     public ImagerySessionExporter(WMSLayer layer) {
         this((ImageryLayer) layer);
     }
-
-    private JCheckBox export;
 
     @Override
     public Collection<Layer> getDependencies() {

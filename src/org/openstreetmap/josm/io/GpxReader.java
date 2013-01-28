@@ -339,6 +339,9 @@ public class GpxReader implements GpxConstants {
                 } else if (localName.equals("wpt")) {
                     currentState = states.pop();
                     convertUrlToLink(currentWayPoint.attr);
+                    if (currentExtensions != null && !currentExtensions.isEmpty()) {
+                        currentWayPoint.attr.put(META_EXTENSIONS, currentExtensions);
+                    }
                     data.waypoints.add(currentWayPoint);
                 }
                 break;

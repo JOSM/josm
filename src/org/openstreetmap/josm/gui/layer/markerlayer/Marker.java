@@ -7,12 +7,16 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.swing.Icon;
 
@@ -22,6 +26,7 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.Extensions;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -180,6 +185,7 @@ public class Marker implements TemplateEngineDataProvider {
     static {
         Marker.markerProducers.add(new MarkerProducers() {
             @SuppressWarnings("unchecked")
+            @Override
             public Marker createMarker(WayPoint wpt, File relativePath, MarkerLayer parentLayer, double time, double offset) {
                 String uri = null;
                 // cheapest way to check whether "link" object exists and is a non-empty
@@ -216,7 +222,15 @@ public class Marker implements TemplateEngineDataProvider {
                     return new Marker(wpt.getCoor(), wpt, symbolName, parentLayer, time, offset);
                 }
                 else if (url.toString().endsWith(".wav")) {
-                    return new AudioMarker(wpt.getCoor(), wpt, url, parentLayer, time, offset);
+                    AudioMarker audioMarker = new AudioMarker(wpt.getCoor(), wpt, url, parentLayer, time, offset);
+                    Extensions exts = (Extensions) wpt.get(GpxConstants.META_EXTENSIONS);
+                    if (exts != null && exts.containsKey("offset")) {
+                        try {
+                            double syncOffset = Double.parseDouble(exts.get("sync-offset"));
+                            audioMarker.syncOffset = syncOffset;
+                        } catch (NumberFormatException nfe) {}
+                    }
+                    return audioMarker;
                 } else if (url.toString().endsWith(".png") || url.toString().endsWith(".jpg") || url.toString().endsWith(".jpeg") || url.toString().endsWith(".gif")) {
                     return new ImageMarker(wpt.getCoor(), url, parentLayer, time, offset);
                 } else {
@@ -233,6 +247,8 @@ public class Marker implements TemplateEngineDataProvider {
      * @param wpt waypoint data for marker
      * @param relativePath An path to use for constructing relative URLs or
      *        <code>null</code> for no relative URLs
+     * @param parentLayer the <code>MarkerLayer</code> that will contain the created <code>Marker</code>
+     * @param time time of the marker in seconds since epoch
      * @param offset double in seconds as the time offset of this marker from
      *        the GPX file from which it was derived (if any).
      * @return a new Marker object
@@ -246,6 +262,12 @@ public class Marker implements TemplateEngineDataProvider {
         return null;
     }
 
+    private static final DateFormat timeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    static {
+         TimeZone tz = TimeZone.getTimeZone("UTC");
+         timeFormatter.setTimeZone(tz);
+    }
+
     public static final String MARKER_OFFSET = "waypointOffset";
     public static final String MARKER_FORMATTED_OFFSET = "formattedWaypointOffset";
 
@@ -253,13 +275,12 @@ public class Marker implements TemplateEngineDataProvider {
     public static final String LABEL_PATTERN_NAME = "{name}";
     public static final String LABEL_PATTERN_DESC = "{desc}";
 
-
     private final TemplateEngineDataProvider dataProvider;
     private final String text;
 
     public final Icon symbol;
     public final MarkerLayer parentLayer;
-    public double time; /* absolute time of marker since epoch */
+    public double time; /* absolute time of marker in seconds since epoch */
     public double offset; /* time offset in seconds from the gpx point from which it was derived,
                              may be adjusted later to sync with other data, so not final */
 
@@ -293,6 +314,29 @@ public class Marker implements TemplateEngineDataProvider {
 
         this.dataProvider = null;
         this.text = text;
+    }
+
+    /**
+     * Convert Marker to WayPoint so it can be exported to a GPX file.
+     *
+     * Override in subclasses to add all necessary attributes.
+     * 
+     * @return the corresponding WayPoint with all relevant attributes
+     */
+    public WayPoint convertToWayPoint() {
+        WayPoint wpt = new WayPoint(getCoor());
+        wpt.put("time", timeFormatter.format(new Date(Math.round(time * 1000))));
+        if (text != null) {
+            wpt.addExtension("text", text);
+        } else if (dataProvider != null) {
+            for (String key : dataProvider.getTemplateKeys()) {
+                Object value = dataProvider.getTemplateValue(key, false);
+                if (value != null && GpxConstants.WPT_KEYS.contains(key)) {
+                    wpt.put(key, value);
+                }
+            }
+        }
+        return wpt;
     }
 
     public final void setCoor(LatLon coor) {
@@ -342,6 +386,7 @@ public class Marker implements TemplateEngineDataProvider {
      * @param g graphics context
      * @param mv map view
      * @param mousePressed true if the left mouse button is pressed
+     * @param showTextOrIcon true if text and icon shall be drawn
      */
     public void paint(Graphics g, MapView mv, boolean mousePressed, boolean showTextOrIcon) {
         Point screen = mv.getPoint(getEastNorth());
@@ -397,7 +442,7 @@ public class Marker implements TemplateEngineDataProvider {
         return result;
     }
 
-    private String formatOffset () {
+    private String formatOffset() {
         int wholeSeconds = (int)(offset + 0.5);
         if (wholeSeconds < 60)
             return Integer.toString(wholeSeconds);
