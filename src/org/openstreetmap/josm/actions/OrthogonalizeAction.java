@@ -341,6 +341,9 @@ public final class OrthogonalizeAction extends JosmAction {
                         }
                     }
                 }
+                for (Node n : cs) {
+                    s.remove(n);
+                }
 
                 final HashMap<Node, Double> nC = (orientation == HORIZONTAL) ? nY : nX;
 
@@ -357,12 +360,17 @@ public final class OrthogonalizeAction extends JosmAction {
                     }
                 }
 
-                for (Node n : cs) {
-                    nC.put(n, average);
+                // At this point, the two heading nodes (if any) are horizontally aligned, i.e. they
+                // have the same y coordinate. So in general we shouldn't find them in a vertical string
+                // of segments. This can still happen in some pathological cases (see #7889). To avoid
+                // both heading nodes collapsing to one point, we simply skip this segment string and
+                // don't touch the node coordinates.
+                if (orientation == VERTICAL && headingNodes.size() == 2 && cs.containsAll(headingNodes)) {
+                    continue;
                 }
 
                 for (Node n : cs) {
-                    s.remove(n);
+                    nC.put(n, average);
                 }
             }
             if (!s.isEmpty()) throw new RuntimeException();
