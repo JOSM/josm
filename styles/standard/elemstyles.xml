@@ -3771,9 +3771,9 @@ For external files the <rules> should have following elements:
     </rule>
 
     <rule>
-		<condition k="public_transport" v="stop_position"/>
-		<icon annotate="true" src="misc/no_icon.png" priority="-10"/>
-	</rule>
+        <condition k="public_transport" v="stop_position"/>
+        <icon annotate="true" src="transport/railway_small.png" priority="-10"/>
+    </rule>
 
     <rule>
         <condition k="public_transport" v="platform"/>
@@ -3810,11 +3810,11 @@ For external files the <rules> should have following elements:
         <line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
     </rule>
 
-	<rule>
-		<condition k="public_transport" v="platform"/>
-		<icon annotate="true" src="misc/no_icon.png" priority="-10"/>
-		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
-	</rule>
+    <rule>
+        <condition k="public_transport" v="platform"/>
+        <icon annotate="true" src="transport/bus_small.png" priority="-10"/>
+        <line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
+    </rule>
 
 <!--"deprecated" tags -->
 
