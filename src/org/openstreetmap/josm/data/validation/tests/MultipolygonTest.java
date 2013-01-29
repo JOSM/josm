@@ -139,7 +139,7 @@ public class MultipolygonTest extends Test {
                 }
             }
             if (!hasOuterWay) {
-                errors.add(new TestError(this, Severity.WARNING, tr("No outer way for multipolygon"), MISSING_OUTER_WAY, r));
+                addError(r, new TestError(this, Severity.WARNING, tr("No outer way for multipolygon"), MISSING_OUTER_WAY, r));
             }
 
             for (RelationMember rm : r.getMembers()) {
@@ -162,9 +162,9 @@ public class MultipolygonTest extends Test {
                         }
                     }
                     if(area == null)
-                        errors.add(new TestError(this, Severity.OTHER, tr("No style for multipolygon"), NO_STYLE, r));
+                        addError(r, new TestError(this, Severity.OTHER, tr("No style for multipolygon"), NO_STYLE, r));
                     else
-                        errors.add( new TestError(this, Severity.OTHER, tr("No style in multipolygon relation"),
+                        addError(r, new TestError(this, Severity.OTHER, tr("No style in multipolygon relation"),
                             NO_STYLE_POLYGON, r));
                 }
 
@@ -176,7 +176,7 @@ public class MultipolygonTest extends Test {
                             List<OsmPrimitive> l = new ArrayList<OsmPrimitive>();
                             l.add(r);
                             l.add(wInner);
-                            errors.add( new TestError(this, Severity.WARNING, tr("Style for inner way equals multipolygon"),
+                            addError(r, new TestError(this, Severity.WARNING, tr("Style for inner way equals multipolygon"),
                                     INNER_STYLE_MISMATCH, l, Collections.singletonList(wInner)));
                         }
                     }
@@ -187,7 +187,7 @@ public class MultipolygonTest extends Test {
                                 List<OsmPrimitive> l = new ArrayList<OsmPrimitive>();
                                 l.add(r);
                                 l.add(wOuter);
-                                errors.add(new TestError(this, Severity.WARNING, tr("Style for outer way mismatches"),
+                                addError(r, new TestError(this, Severity.WARNING, tr("Style for outer way mismatches"),
                                 OUTER_STYLE_MISMATCH, l, Collections.singletonList(wOuter)));
                             }
                         }
@@ -206,7 +206,7 @@ public class MultipolygonTest extends Test {
                 primitives.add(r);
                 primitives.addAll(openNodes);
                 Arrays.asList(openNodes, r);
-                errors.add(new TestError(this, Severity.WARNING, tr("Multipolygon is not closed"), NON_CLOSED_WAY,
+                addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon is not closed"), NON_CLOSED_WAY,
                         primitives, openNodes));
             }
 
@@ -229,10 +229,10 @@ public class MultipolygonTest extends Test {
                     List<List<Node>> highlights = new ArrayList<List<Node>>();
                     highlights.add(pdInner);
                     if (outside) {
-                        errors.add(new TestError(this, Severity.WARNING, tr("Multipolygon inner way is outside"), INNER_WAY_OUTSIDE, Collections.singletonList(r), highlights));
+                        addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon inner way is outside"), INNER_WAY_OUTSIDE, Collections.singletonList(r), highlights));
                     } else if (crossing) {
                         highlights.add(outerWay);
-                        errors.add(new TestError(this, Severity.WARNING, tr("Intersection between multipolygon ways"), CROSSING_WAYS, Collections.singletonList(r), highlights));
+                        addError(r, new TestError(this, Severity.WARNING, tr("Intersection between multipolygon ways"), CROSSING_WAYS, Collections.singletonList(r), highlights));
                     }
                 }
             }
@@ -243,12 +243,33 @@ public class MultipolygonTest extends Test {
         for (RelationMember rm : r.getMembers()) {
             if (rm.isWay()) {
                 if (!("inner".equals(rm.getRole()) || "outer".equals(rm.getRole()) || !rm.hasRole())) {
-                    errors.add(new TestError(this, Severity.WARNING, tr("No useful role for multipolygon member"), WRONG_MEMBER_ROLE, rm.getMember()));
+                    addError(r, new TestError(this, Severity.WARNING, tr("No useful role for multipolygon member"), WRONG_MEMBER_ROLE, rm.getMember()));
                 }
             } else {
                 if(!"admin_centre".equals(rm.getRole()))
-                    errors.add(new TestError(this, Severity.WARNING, tr("Non-Way in multipolygon"), WRONG_MEMBER_TYPE, rm.getMember()));
+                    addError(r, new TestError(this, Severity.WARNING, tr("Non-Way in multipolygon"), WRONG_MEMBER_TYPE, rm.getMember()));
             }
         }
+    }
+    
+    private void addRelationIfNeeded(TestError error, Relation r) {
+        // Fix #8212 : if the error references only incomplete primitives, 
+        // add multipolygon in order to let user select something and fix the error 
+        Collection<? extends OsmPrimitive> primitives = error.getPrimitives();
+        if (!primitives.contains(r)) {
+            for (OsmPrimitive p : primitives) {
+                if (!p.isIncomplete()) {
+                    return;
+                }
+            }
+            List<OsmPrimitive> newPrimitives = new ArrayList<OsmPrimitive>(primitives);
+            newPrimitives.add(0, r);
+            error.setPrimitives(newPrimitives);
+        }
+    }
+    
+    private void addError(Relation r, TestError error) {
+        addRelationIfNeeded(error, r);
+        errors.add(error);
     }
 }
