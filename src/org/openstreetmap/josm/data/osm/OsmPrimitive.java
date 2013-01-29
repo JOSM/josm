@@ -674,7 +674,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         String directionDefault = "oneway? | aerialway=* | "+
                 "waterway=stream | waterway=river | waterway=canal | waterway=drain | waterway=rapids | "+
                 "\"piste:type\"=downhill | \"piste:type\"=sled | man_made=\"piste:halfpipe\" | "+
-                "junction=roundabout";
+                "junction=roundabout | (highway=motorway_link & -oneway=no)";
 
         try {
             reversedDirectionKeys = SearchCompiler.compile(Main.pref.get("tags.reversed_direction", reversedDirectionDefault), false, false);
