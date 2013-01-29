@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.downloadtasks;
 
+import java.net.URL;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -91,4 +92,12 @@ public interface DownloadTask {
      *
      */
     public void cancel();
+    
+    /**
+     * Replies the HTML-formatted confirmation message to be shown to user when the given URL needs to be confirmed before loading.
+     * @param url The URL to be confirmed
+     * @return The HTML-formatted confirmation message to be shown to user
+     * @since 
+     */
+    public String getConfirmationMessage(URL url);
 }
