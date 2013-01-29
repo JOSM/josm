@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.Area;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -44,6 +46,12 @@ import org.xml.sax.SAXException;
  * Run in the worker thread.
  */
 public class DownloadOsmTask extends AbstractDownloadTask {
+    
+    private static final String PATTERN_OSM_API_URL           = "http://.*/api/0.6/(map|nodes?|ways?|relations?|\\*).*";
+    private static final String PATTERN_OVERPASS_API_URL      = "http://.*/interpreter\\?data=.*";
+    private static final String PATTERN_OVERPASS_API_XAPI_URL = "http://.*/xapi\\?.*\\[@meta\\].*";
+    private static final String PATTERN_EXTERNAL_OSM_FILE     = "https?://.*/.*\\.osm";
+    
     protected Bounds currentBounds;
     protected DataSet downloadedData;
     protected DownloadTask downloadTask;
@@ -144,10 +152,10 @@ public class DownloadOsmTask extends AbstractDownloadTask {
     @Override
     public boolean acceptsUrl(String url) {
         return url != null && (
-                url.matches("http://.*/api/0.6/(map|nodes?|ways?|relations?|\\*).*")// OSM API 0.6 and XAPI
-             || url.matches("http://.*/interpreter\\?data=.*")                      // Overpass API
-             || url.matches("http://.*/xapi\\?.*\\[@meta\\].*")                     // Overpass API XAPI compatibility layer
-             || url.matches("https?://.*/.*\\.osm")                                 // Remote .osm files
+                url.matches(PATTERN_OSM_API_URL)           // OSM API 0.6 and XAPI
+             || url.matches(PATTERN_OVERPASS_API_URL)      // Overpass API
+             || url.matches(PATTERN_OVERPASS_API_XAPI_URL) // Overpass API XAPI compatibility layer
+             || url.matches(PATTERN_EXTERNAL_OSM_FILE)     // Remote .osm files
                 );
     }
 
@@ -350,5 +358,24 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 ImageryLayerInfo.addLayers(layers);
             }
         }
+    }
+
+    @Override
+    public String getConfirmationMessage(URL url) {
+        if (url != null) {
+            String urlString = url.toExternalForm();
+            if (urlString.matches(PATTERN_OSM_API_URL)) {
+                // TODO: proper i18n after stabilization
+                String message = "<ul><li>"+tr("OSM Server URL:") + " " + url.getHost() + "</li><li>" +
+                        tr("Command")+": "+url.getPath()+"</li>";
+                if (url.getQuery() != null) {
+                    message += "<li>" + tr("Request details: {0}", url.getQuery().replaceAll(",\\s*", ", ")) + "</li>";
+                }
+                message += "</ul>";
+                return message;
+            }
+            // TODO: other APIs
+        }
+        return null;
     }
 }

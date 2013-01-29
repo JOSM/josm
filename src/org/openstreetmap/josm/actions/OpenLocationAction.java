@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -119,26 +120,44 @@ public class OpenLocationAction extends JosmAction {
         remindUploadAddressHistory(uploadAddresses);
         openUrl(layer.isSelected(), uploadAddresses.getText());
     }
-
+    
     /**
-     * Open the given URL.
+     * Replies the list of download tasks accepting the given url.
+     * @param url The URL to open
+     * @return The list of download tasks accepting the given url.
+     * @since 5691
      */
-    public void openUrl(boolean new_layer, final String url) {
-        PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download Data"));
-        DownloadTask task = null;
-        Future<?> future = null;
-        for (int i = 0; future == null && i < downloadTasks.size(); i++) {
+    public Collection<DownloadTask> findDownloadTasks(final String url) {
+        List<DownloadTask> result = new ArrayList<DownloadTask>();
+        for (int i = 0; i < downloadTasks.size(); i++) {
             Class<? extends DownloadTask> taskClass = downloadTasks.get(i);
             if (taskClass != null) {
                 try {
-                    task = taskClass.getConstructor().newInstance();
+                    DownloadTask task = taskClass.getConstructor().newInstance();
                     if (task.acceptsUrl(url)) {
-                        future = task.loadUrl(new_layer, url, monitor);
+                        result.add(task);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+        }
+        return result;
+    }
+
+    /**
+     * Open the given URL.
+     * @param new_layer true if the URL needs to be opened in a new layer, false otherwise
+     * @param url The URL to open
+     */
+    public void openUrl(boolean new_layer, final String url) {
+        PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download Data"));
+        Collection<DownloadTask> tasks = findDownloadTasks(url);
+        DownloadTask task = null;
+        Future<?> future = null;
+        if (!tasks.isEmpty()) {
+            // TODO: handle multiple suitable tasks ?
+            future = tasks.iterator().next().loadUrl(new_layer, url, monitor);
         }
         if (future != null) {
             Main.worker.submit(new PostDownloadHandler(task, future));
