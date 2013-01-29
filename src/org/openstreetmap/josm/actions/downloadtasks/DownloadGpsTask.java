@@ -4,6 +4,7 @@ package org.openstreetmap.josm.actions.downloadtasks;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -176,5 +177,11 @@ public class DownloadGpsTask extends AbstractDownloadTask {
         public ProgressTaskId canRunInBackground() {
             return ProgressTaskIds.DOWNLOAD_GPS;
         }
+    }
+
+    @Override
+    public String getConfirmationMessage(URL url) {
+        // TODO
+        return null;
     }
 }

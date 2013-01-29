@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
@@ -128,9 +129,15 @@ public abstract class RequestHandler {
          * If yes, display specific confirmation message.
          */
         if (Main.pref.getBoolean(globalConfirmationKey, globalConfirmationDefault)) {
-            if (JOptionPane.showConfirmDialog(Main.parent,
-                "<html>" + getPermissionMessage() +
-                "<br>" + tr("Do you want to allow this?"),
+            // Ensure dialog box does not exceed main window size
+            Integer maxWidth = (int) Math.max(200, Main.parent.getWidth()*0.6);
+            String message = "<html><div>" + getPermissionMessage() +
+                    "<br/>" + tr("Do you want to allow this?") + "</div></html>";
+            JLabel label = new JLabel(message);
+            if (label.getPreferredSize().width > maxWidth) {
+                label.setText(message.replaceFirst("<div>", "<div style=\"width:" + maxWidth + "px;\">"));
+            }
+            if (JOptionPane.showConfirmDialog(Main.parent, label,
                 tr("Confirm Remote Control action"),
                 JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
                     String err = MessageFormat.format("RemoteControl: ''{0}'' forbidden by user''s choice", myCommand);
