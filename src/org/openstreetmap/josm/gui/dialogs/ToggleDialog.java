@@ -375,7 +375,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     protected void setContentVisible(boolean visible) {
         Component comps[] = getComponents();
         for(int i=0; i<comps.length; i++) {
-            if(comps[i] != titleBar) {
+            if (comps[i] != titleBar && (!visible || comps[i] != buttonsPanel || buttonHiding != ButtonHiddingType.ALWAYS_HIDDEN)) {
                 comps[i].setVisible(visible);
             }
         }
@@ -852,6 +852,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             if (Main.pref.getBoolean("dialog.dynamic.buttons", true)) {
                 Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_MOTION_EVENT_MASK);
                 buttonsPanel.setVisible(buttonHiding == ButtonHiddingType.ALWAYS_SHOWN || !isDocked);
+            } else if (buttonHiding == ButtonHiddingType.ALWAYS_HIDDEN) {
+                buttonsPanel.setVisible(false);
             }
         } else if (buttonsHide != null) {
             buttonsHide.setVisible(false);
