@@ -7,23 +7,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openstreetmap.josm.gui.io.CredentialDialog;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 abstract public class AbstractCredentialsAgent implements CredentialsAgent {
 
     protected Map<RequestorType, PasswordAuthentication> memoryCredentialsCache = new HashMap<RequestorType, PasswordAuthentication>();
 
     /**
-     * @see CredentialsAgent#getCredentials(RequestorType, boolean)
+     * @see CredentialsAgent#getCredentials(RequestorType, String, boolean)
      */
     @Override
-    public CredentialsAgentResponse getCredentials(RequestorType requestorType, String host, boolean noSuccessWithLastResponse) throws CredentialsAgentException{
+    public CredentialsAgentResponse getCredentials(final RequestorType requestorType, final String host, boolean noSuccessWithLastResponse) throws CredentialsAgentException{
         if (requestorType == null)
             return null;
         PasswordAuthentication credentials =  lookup(requestorType, host);
-        String username = (credentials == null || credentials.getUserName() == null) ? "" : credentials.getUserName();
-        String password = (credentials == null || credentials.getPassword() == null) ? "" : String.valueOf(credentials.getPassword());
+        final String username = (credentials == null || credentials.getUserName() == null) ? "" : credentials.getUserName();
+        final String password = (credentials == null || credentials.getPassword() == null) ? "" : String.valueOf(credentials.getPassword());
 
-        CredentialsAgentResponse response = new CredentialsAgentResponse();
+        final CredentialsAgentResponse response = new CredentialsAgentResponse();
 
         /*
          * Last request was successful and there was no credentials stored
@@ -44,18 +45,27 @@ abstract public class AbstractCredentialsAgent implements CredentialsAgent {
          * (noSuccessWithLastResponse == true).
          */
         } else if (noSuccessWithLastResponse || username.equals("") || password.equals("")) {
-            CredentialDialog dialog = null;
-            switch(requestorType) {
-            case SERVER: dialog = CredentialDialog.getOsmApiCredentialDialog(username, password, host, getSaveUsernameAndPasswordCheckboxText()); break;
-            case PROXY: dialog = CredentialDialog.getHttpProxyCredentialDialog(username, password, host, getSaveUsernameAndPasswordCheckboxText()); break;
-            }
-            dialog.setVisible(true);
-            response.setCanceled(dialog.isCanceled());
-            if (dialog.isCanceled())
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    CredentialDialog dialog = null;
+                    switch(requestorType) {
+                    case SERVER: dialog = CredentialDialog.getOsmApiCredentialDialog(username, password, host, getSaveUsernameAndPasswordCheckboxText()); break;
+                    case PROXY: dialog = CredentialDialog.getHttpProxyCredentialDialog(username, password, host, getSaveUsernameAndPasswordCheckboxText()); break;
+                    }
+                    dialog.setVisible(true);
+                    response.setCanceled(dialog.isCanceled());
+                    if (dialog.isCanceled())
+                        return;
+                    response.setUsername(dialog.getUsername());
+                    response.setPassword(dialog.getPassword());
+                    response.setSaveCredentials(dialog.isSaveCredentials());
+                }
+            });
+            if (response.isCanceled()) {
                 return response;
-            response.setUsername(dialog.getUsername());
-            response.setPassword(dialog.getPassword());
-            if (dialog.isSaveCredentials()) {
+            }
+            if (response.isSaveCredentials()) {
                 store(requestorType, host, new PasswordAuthentication(
                         response.getUsername(),
                         response.getPassword()
@@ -65,7 +75,7 @@ abstract public class AbstractCredentialsAgent implements CredentialsAgent {
              * in memory so we don't have to ask over and over again.
              */
             } else {
-                PasswordAuthentication pa = new PasswordAuthentication(dialog.getUsername(), dialog.getPassword());
+                PasswordAuthentication pa = new PasswordAuthentication(response.getUsername(), response.getPassword());
                 memoryCredentialsCache.put(requestorType, pa);
             }
         /*
