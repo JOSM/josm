@@ -583,7 +583,7 @@ public final class Way extends OsmPrimitive implements IWay {
             if (Main.pref.getBoolean("debug.checkNullCoor", true)) {
                 for (Node n: nodes) {
                     if (n.isVisible() && !n.isIncomplete() && (n.getCoor() == null || n.getEastNorth() == null))
-                        throw new DataIntegrityProblemException("Complete visible node with null coordinates: " + toString() + n.get3892DebugInfo(),
+                        throw new DataIntegrityProblemException("Complete visible node with null coordinates: " + toString(),
                                 "<html>" + tr("Complete node {0} with null coordinates in way {1}",
                                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(n),
                                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(this)) + "</html>");
@@ -689,7 +689,7 @@ public final class Way extends OsmPrimitive implements IWay {
 
     /**
      * Replies the first node of this way, respecting or not its oneway state.
-     * @param respectOneway If true and if this way is a oneway, replies the last node. Otherwise, replies the first node.
+     * @param respectOneway If true and if this way is a reversed oneway, replies the last node. Otherwise, replies the first node.
      * @return the first node of this way, according to {@code respectOneway} and its oneway state.
      * @since 5199
      */
@@ -699,7 +699,7 @@ public final class Way extends OsmPrimitive implements IWay {
 
     /**
      * Replies the last node of this way, respecting or not its oneway state.
-     * @param respectOneway If true and if this way is a oneway, replies the first node. Otherwise, replies the last node.
+     * @param respectOneway If true and if this way is a reversed oneway, replies the first node. Otherwise, replies the last node.
      * @return the last node of this way, according to {@code respectOneway} and its oneway state.
      * @since 5199
      */
