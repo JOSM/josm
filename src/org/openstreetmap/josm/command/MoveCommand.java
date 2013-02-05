@@ -10,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.Icon;
 
-import javax.swing.JLabel;
-
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -175,7 +173,7 @@ public class MoveCommand extends Command {
             if (n == null)
                 throw new AssertionError("null detected in node list");
             if (n.getEastNorth() == null)
-                throw new AssertionError(n.get3892DebugInfo());
+                throw new AssertionError("null coordinates detected in node list");
 
             n.setEastNorth(n.getEastNorth().add(x, y));
             n.setModified(true);

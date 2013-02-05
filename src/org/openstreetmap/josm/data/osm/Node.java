@@ -188,7 +188,7 @@ public final class Node extends OsmPrimitive implements INode {
     void setDataset(DataSet dataSet) {
         super.setDataset(dataSet);
         if (!isIncomplete() && isVisible() && (getCoor() == null || getEastNorth() == null))
-            throw new DataIntegrityProblemException("Complete node with null coordinates: " + toString() + get3892DebugInfo());
+            throw new DataIntegrityProblemException("Complete node with null coordinates: " + toString());
     }
 
     @Override
@@ -316,27 +316,6 @@ public final class Node extends OsmPrimitive implements INode {
      */
     public boolean isConnectionNode() {
         return isReferredByWays(2);
-    }
-
-    /**
-     * Get debug info for bug #3892.
-     * @return debug info for bug #3892.
-     * @deprecated This method will be remove by the end of 2012 if no report appears.
-     */
-    public String get3892DebugInfo() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Unexpected error. Please report it to http://josm.openstreetmap.de/ticket/3892\n");
-        builder.append(toString());
-        builder.append("\n");
-        if (isLatLonKnown()) {
-            builder.append("Coor is null\n");
-        } else {
-            builder.append(String.format("EastNorth: %s\n", getEastNorth()));
-            builder.append(Main.getProjection());
-            builder.append("\n");
-        }
-
-        return builder.toString();
     }
 
     /**
