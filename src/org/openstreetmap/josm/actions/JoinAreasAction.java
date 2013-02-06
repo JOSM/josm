@@ -106,9 +106,12 @@ public class JoinAreasAction extends JosmAction {
     }
 
 
-    //HelperClass
-    //saves a way and the "inside" side
-    // insideToTheLeft: if true left side is "in", false -right side is "in". Left and right are determined along the orientation of way.
+    /**
+     * HelperClass - saves a way and the "inside" side.
+     *
+     * insideToTheLeft: if true left side is "in", false -right side is "in".
+     * Left and right are determined along the orientation of way.
+     */
     public static class WayInPolygon {
         public final Way way;
         public boolean insideToTheRight;
@@ -936,9 +939,9 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * Finds all ways that form inner or outer boundaries.
-     * @param Collection<Way> A list of (splitted) ways that form a multigon and share common end nodes on intersections.
-     * @param Collection<Way> this list is filled with ways that are to be discarded
-     * @return Collection<Collection<Way>> A list of ways that form the outer and inner boundaries of the multigon.
+     * @param multigonWays A list of (splitted) ways that form a multigon and share common end nodes on intersections.
+     * @param discardedResult this list is filled with ways that are to be discarded
+     * @return A list of ways that form the outer and inner boundaries of the multigon.
      */
     public static List<AssembledPolygon> findBoundaryPolygons(Collection<WayInPolygon> multigonWays, List<Way> discardedResult) {
         //first find all discardable ways, by getting outer shells.
@@ -1033,7 +1036,7 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * This method checks if polygons have several touching parts and splits them in several polygons.
-     * @param polygon the polygon to process.
+     * @param polygons the polygons to process.
      */
     public static List<AssembledPolygon> fixTouchingPolygons(List<AssembledPolygon> polygons)
     {
