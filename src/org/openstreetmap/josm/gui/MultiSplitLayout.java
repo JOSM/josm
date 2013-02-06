@@ -845,19 +845,25 @@ public class MultiSplitLayout implements LayoutManager {
         /**
          * Returns the Split parent of this Node, or null.
          *
+         * This method isn't called getParent(), in order to avoid problems
+         * with recursive object creation when using XmlDecoder.
+         *
          * @return the value of the parent property.
-         * @see #setParent
+         * @see #parent_set
          */
-        public Split getParent() { return parent; }
+        public Split parent_get() { return parent; }
 
         /**
          * Set the value of this Node's parent property.  The default
          * value of this property is null.
          *
+         * This method isn't called setParent(), in order to avoid problems
+         * with recursive object creation when using XmlEncoder.
+         *
          * @param parent a Split or null
-         * @see #getParent
+         * @see #parent_get
          */
-        public void setParent(Split parent) {
+        public void parent_set(Split parent) {
             this.parent = parent;
         }
 
@@ -917,7 +923,7 @@ public class MultiSplitLayout implements LayoutManager {
         }
 
         private Node siblingAtOffset(int offset) {
-            Split parent = getParent();
+            Split parent = parent_get();
             if (parent == null)
                 return null;
             List<Node> siblings = parent.getChildren();
@@ -1014,11 +1020,11 @@ public class MultiSplitLayout implements LayoutManager {
             if (children == null)
                 throw new IllegalArgumentException("children must be a non-null List");
             for(Node child : this.children) {
-                child.setParent(null);
+                child.parent_set(null);
             }
             this.children = new ArrayList<Node>(children);
             for(Node child : this.children) {
-                child.setParent(this);
+                child.parent_set(this);
             }
         }
 
@@ -1124,7 +1130,7 @@ public class MultiSplitLayout implements LayoutManager {
          * @return true if this Divider is part of a Split row.
          */
         public final boolean isVertical() {
-            Split parent = getParent();
+            Split parent = parent_get();
             return (parent != null) ? parent.isRowLayout() : false;
         }
 

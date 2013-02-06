@@ -304,6 +304,14 @@ public class Preferences {
         return new File(getPreferencesDirFile(), "plugins");
     }
 
+    /**
+     * Get the directory where cached content of any kind should be stored.
+     *
+     * If the directory doesn't exist on the file system, it will be created
+     * by this method.
+     *
+     * @return the cache directory
+     */
     public File getCacheDirectory() {
         if (cacheDirFile != null)
             return cacheDirFile;

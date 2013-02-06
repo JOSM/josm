@@ -207,6 +207,13 @@ public class Geometry {
 
     /**
      * Tests if given point is to the right side of path consisting of 3 points.
+     *
+     * (Imagine the path is continued beyond the endpoints, so you get two rays
+     * starting from lineP2 and going through lineP1 and lineP3 respectively
+     * which divide the plane into two parts. The test returns true, if testPoint
+     * lies in the part that is to the right when traveling in the direction
+     * lineP1, lineP2, lineP3.)
+     *
      * @param lineP1 first point in path
      * @param lineP2 second point in path
      * @param lineP3 third point in path
@@ -364,6 +371,12 @@ public class Geometry {
 
     /**
      * This method tests if secondNode is clockwise to first node.
+     *
+     * The line through the two points commonNode and firstNode divides the
+     * plane into two parts. The test returns true, if secondNode lies in
+     * the part that is to the right when traveling in the direction from
+     * commonNode to firstNode.
+     *
      * @param commonNode starting point for both vectors
      * @param firstNode first vector end node
      * @param secondNode second vector end node
