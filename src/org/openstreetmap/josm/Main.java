@@ -510,6 +510,22 @@ abstract public class Main {
         unregisterShortcut(shortcut);
         contentPanePrivate.getActionMap().remove(action);
     }
+    
+    /**
+     * Replies the registered action for the given shortcut
+     * @param shortcut The shortcut to look for
+     * @return the registered action for the given shortcut
+     * @since 5696
+     */
+    public static Action getRegisteredActionShortcut(Shortcut shortcut) {
+        KeyStroke keyStroke = shortcut.getKeyStroke();
+        if (keyStroke == null)
+            return null;
+        Object action = contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).get(keyStroke);
+        if (action instanceof Action)
+            return (Action) action;
+        return null;
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     //  Implementation part

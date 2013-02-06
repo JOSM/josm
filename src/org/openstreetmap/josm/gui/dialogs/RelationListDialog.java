@@ -73,6 +73,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -152,7 +153,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         SelectAction selectAction = new SelectAction(false);
         displaylist.addListSelectionListener(selectAction);
 
-        final JTextField filter = new JTextField();
+        final JTextField filter = new DisableShortcutsOnFocusGainedTextField();
         filter.setToolTipText(tr("Relation list filter"));
         filter.getDocument().addDocumentListener(new DocumentListener() {
 
