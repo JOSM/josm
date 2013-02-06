@@ -47,7 +47,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
@@ -68,6 +67,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -585,7 +585,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 final String color = action.isEnabled() ? "" : "; color:gray";
                 final JLabel tagLabel = new JLabel("<html>"
                     + "<style>td{border:1px solid gray; font-weight:normal"+color+"}</style>" 
-                    + "<table><tr><td>" + t.toString() + "</td></tr></table></html>");
+                    + "<table><tr><td>" + XmlWriter.encode(t.toString(), true) + "</td></tr></table></html>");
                 if (action.isEnabled()) {
                     // Register action
                     mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), actionShortcutKey);
