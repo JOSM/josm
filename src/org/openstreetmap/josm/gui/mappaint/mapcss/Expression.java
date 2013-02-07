@@ -10,6 +10,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
@@ -106,6 +108,17 @@ public interface Expression {
                 return Arrays.asList(args);
             }
 
+            public static Object get(List objects, float index) {
+                int idx = Math.round(index);
+                if (idx >=0 && idx < objects.size())
+                    return objects.get(idx);
+                return null;
+            }
+
+            public List split(String sep, String toSplit) {
+                return Arrays.asList(toSplit.split(Pattern.quote(sep)));
+            }
+            
             public Color rgb(float r, float g, float b) {
                 Color c = null;
                 try {
@@ -230,6 +243,10 @@ public interface Expression {
                 return s.length();
             }
 
+            public int length(List l) {
+                return l.size();
+            }
+
             @SuppressWarnings("unchecked")
             public boolean equal(Object a, Object b) {
                 // make sure the casts are done in a meaningful way, so
@@ -262,6 +279,62 @@ public interface Expression {
             public Color JOSM_pref_color(String s, Color def) {
                 Color res = Main.pref.getColor(s, null);
                 return res != null ? res : def;
+            }
+
+            public static boolean regexp_test(String pattern, String target) {
+                return Pattern.matches(pattern, target);
+            }
+
+            public static boolean regexp_test(String pattern, String target, String flags) {
+                int f = 0;
+                if (flags.contains("i")) {
+                    f |= Pattern.CASE_INSENSITIVE;
+                }
+                if (flags.contains("s")) {
+                    f |= Pattern.DOTALL;
+                }
+                if (flags.contains("m")) {
+                    f |= Pattern.MULTILINE;
+                }
+                return Pattern.compile(pattern, f).matcher(target).matches();
+            }
+
+            public static List regexp_match(String pattern, String target, String flags) {
+                int f = 0;
+                if (flags.contains("i")) {
+                    f |= Pattern.CASE_INSENSITIVE;
+                }
+                if (flags.contains("s")) {
+                    f |= Pattern.DOTALL;
+                }
+                if (flags.contains("m")) {
+                    f |= Pattern.MULTILINE;
+                }
+                Matcher m = Pattern.compile(pattern, f).matcher(target);
+                if (m.matches()) {
+                    List result = new ArrayList(m.groupCount());
+                    for (int i=1; i<=m.groupCount(); i++) {
+                        result.add(m.group(i));
+                    }
+                    return result;
+                } else
+                    return null;
+            }
+
+            public static List regexp_match(String pattern, String target) {
+                Matcher m = Pattern.compile(pattern).matcher(target);
+                if (m.matches()) {
+                    List result = new ArrayList(m.groupCount());
+                    for (int i=1; i<=m.groupCount(); i++) {
+                        result.add(m.group(i));
+                    }
+                    return result;
+                } else
+                    return null;
+            }
+
+            public long osm_id() {
+                return env.osm.getUniqueId();
             }
         }
 
