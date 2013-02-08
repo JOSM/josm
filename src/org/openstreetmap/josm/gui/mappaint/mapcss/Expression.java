@@ -312,8 +312,8 @@ public interface Expression {
                 }
                 Matcher m = Pattern.compile(pattern, f).matcher(target);
                 if (m.matches()) {
-                    List result = new ArrayList(m.groupCount());
-                    for (int i=1; i<=m.groupCount(); i++) {
+                    List result = new ArrayList(m.groupCount() + 1);
+                    for (int i=0; i<=m.groupCount(); i++) {
                         result.add(m.group(i));
                     }
                     return result;
@@ -324,8 +324,8 @@ public interface Expression {
             public static List regexp_match(String pattern, String target) {
                 Matcher m = Pattern.compile(pattern).matcher(target);
                 if (m.matches()) {
-                    List result = new ArrayList(m.groupCount());
-                    for (int i=1; i<=m.groupCount(); i++) {
+                    List result = new ArrayList(m.groupCount() + 1);
+                    for (int i=0; i<=m.groupCount(); i++) {
                         result.add(m.group(i));
                     }
                     return result;
