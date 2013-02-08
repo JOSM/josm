@@ -252,8 +252,10 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         if (allResolutions.size() > 0) {
             cmds.addAll(buildTagChangeCommand(targetPrimitive, allResolutions));
         }
-        if (targetPrimitive.get("created_by") != null) {
-            cmds.add(new ChangePropertyCommand(targetPrimitive, "created_by", null));
+        for(String p : targetPrimitive.getDiscardableKeys()) {
+            if (targetPrimitive.get(p) != null) {
+                cmds.add(new ChangePropertyCommand(targetPrimitive, p, null));
+            }
         }
 
         if (getRelationMemberConflictResolverModel().getNumDecisions() > 0) {
