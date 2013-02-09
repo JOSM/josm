@@ -41,13 +41,18 @@ import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
@@ -61,15 +66,19 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -95,7 +104,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
     private String lastAddValue = null;
 
     public static final int DEFAULT_LRU_TAGS_NUMBER = 5;
-    public static final int MAX_LRU_TAGS_NUMBER = 9;
+    public static final int MAX_LRU_TAGS_NUMBER = 30;
 
     // LRU cache for recently added tags (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html) 
     private final Map<Tag, Void> recentTags = new LinkedHashMap<Tag, Void>(MAX_LRU_TAGS_NUMBER+1, 1.1f, true) {
@@ -249,6 +258,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             keys.setEditable(true);
             keys.setSelectedItem(key);
 
+            p.add(Box.createVerticalStrut(5),GBC.eol()); 
             p.add(new JLabel(tr("Key")), GBC.std());
             p.add(Box.createHorizontalStrut(10), GBC.std());
             p.add(keys, GBC.eol().fill(GBC.HORIZONTAL));
@@ -265,6 +275,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             values.setPossibleACItems(valueList);
             values.setSelectedItem(selection);
             values.getEditor().setItem(selection);
+            p.add(Box.createVerticalStrut(5),GBC.eol()); 
             p.add(new JLabel(tr("Value")), GBC.std());
             p.add(Box.createHorizontalStrut(10), GBC.std());
             p.add(values, GBC.eol().fill(GBC.HORIZONTAL));
@@ -363,12 +374,17 @@ import org.openstreetmap.josm.tools.WindowGeometry;
         }
     }
 
+    public static final BooleanProperty PROPERTY_FIX_TAG_LOCALE = new BooleanProperty("properties.fix-tag-combobox-locale", false);
+    public static final IntegerProperty PROPERTY_RECENT_TAGS_NUMBER = new IntegerProperty("properties.recently-added-tags", DEFAULT_LRU_TAGS_NUMBER);
+
     abstract class AbstractTagsDialog extends ExtendedDialog {
         AutoCompletingComboBox keys;
         AutoCompletingComboBox values;
+        Component componentUnderMouse;
         
         public AbstractTagsDialog(Component parent, String title, String[] buttonTexts) {
             super(parent, title, buttonTexts);
+            addMouseListener(new PopupMenuLauncher(popupMenu));
         }
 
         @Override
@@ -391,6 +407,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                     storedSize.setSize(getSize());
                     rememberWindowGeometry(geometry);
                 }
+                keys.setFixedLocale(PROPERTY_FIX_TAG_LOCALE.get());
             }
             super.setVisible(visible);
         }
@@ -444,8 +461,42 @@ import org.openstreetmap.josm.tools.WindowGeometry;
            };
            editor.addFocusListener(focus);
            return focus;
-       }
+        }
         
+        protected JPopupMenu popupMenu = new JPopupMenu() {
+            JCheckBoxMenuItem fixTagLanguageCb = new JCheckBoxMenuItem(
+                new AbstractAction(tr("Use English language for tag by default")){
+                public void actionPerformed(ActionEvent e) {
+                    boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
+                    PROPERTY_FIX_TAG_LOCALE.put(sel);
+                }
+            });
+            JMenuItem pasteK = new JMenuItem(
+                new AbstractAction(tr("Paste tag")){
+                public void actionPerformed(ActionEvent e) {
+                    String buf = Utils.getClipboardContent().trim();
+                    if (buf.isEmpty()) return;
+                    keys.setSelectedItem(buf);
+                }
+            });
+            JMenuItem pasteV = new JMenuItem(
+                new AbstractAction(tr("Paste value")){
+                public void actionPerformed(ActionEvent e) {
+                    String buf = Utils.getClipboardContent().trim();
+                    if (buf.isEmpty()) return;
+                    values.setSelectedItem(buf);
+                }
+            });
+            
+            {
+                add(pasteK);
+                add(pasteV);
+                addSeparator();
+                add(fixTagLanguageCb);
+                fixTagLanguageCb.setState(PROPERTY_FIX_TAG_LOCALE.get());
+            }
+        };
+                
     }
 
     class AddTagsDialog extends AbstractTagsDialog {
@@ -510,7 +561,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             // fire focus event in advance or otherwise the popup list will be too small at first
             focus.focusGained(null);
 
-            int recentTagsToShow = Main.pref.getInteger("properties.recently-added-tags", DEFAULT_LRU_TAGS_NUMBER);
+            int recentTagsToShow = PROPERTY_RECENT_TAGS_NUMBER.get();
             if (recentTagsToShow > MAX_LRU_TAGS_NUMBER) {
                 recentTagsToShow = MAX_LRU_TAGS_NUMBER;
             }
@@ -531,8 +582,27 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             setContent(mainPanel, false);
             
             selectKeysComboBox();
+            
+            popupMenu.add(new AbstractAction(tr("Set number of recently added tags")) {
+                public void actionPerformed(ActionEvent e) {
+                    selectNumberOfTags();
+                }
+            });
         }
-
+        
+        private void selectNumberOfTags() {
+            String s = JOptionPane.showInputDialog(this, tr("Please enter the number of recently added tags to display"));
+            if (s!=null) try {
+                int v = Integer.parseInt(s);
+                if (v>=0 && v<=MAX_LRU_TAGS_NUMBER) {
+                    PROPERTY_RECENT_TAGS_NUMBER.put(v);
+                    return;
+                }
+            } catch (NumberFormatException ex) { }
+            JOptionPane.showMessageDialog(this, tr("Please enter integer number between 0 and {0}", MAX_LRU_TAGS_NUMBER));
+            
+        }
+        
         private void suggestRecentlyAddedTags(JPanel mainPanel, int tagsToShow, final FocusAdapter focus) {
             if (!(tagsToShow > 0 && !recentTags.isEmpty())) 
                 return;
