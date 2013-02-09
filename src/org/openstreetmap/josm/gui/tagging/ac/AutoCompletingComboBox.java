@@ -7,7 +7,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.im.InputContext;
 import java.util.Collection;
+import java.util.Locale;
 
 import javax.swing.ComboBoxEditor;
 import javax.swing.ComboBoxModel;
@@ -32,6 +34,7 @@ public class AutoCompletingComboBox extends JosmComboBox {
     private boolean autocompleteEnabled = true;
 
     private int maxTextLength = -1;
+    private boolean useFixedLocale;
 
     /**
      * Auto-complete a JosmComboBox.
@@ -268,6 +271,27 @@ public class AutoCompletingComboBox extends JosmComboBox {
 
     protected void setAutocompleteEnabled(boolean autocompleteEnabled) {
         this.autocompleteEnabled = autocompleteEnabled;
+    }
+
+    /**
+     * If the locale is fixed, English keyboard layout will be used by default for this combobox
+     * all other components can still have different keyboard layout selected
+     */
+    public void setFixedLocale(boolean f) {
+        useFixedLocale = f;
+        if (useFixedLocale) {
+            privateInputContext.selectInputMethod(new Locale("en", "US"));
+        }
+    }
+
+    private static InputContext privateInputContext = InputContext.getInstance();
+    
+    @Override
+    public InputContext getInputContext() {
+        if (useFixedLocale) {
+            return privateInputContext;
+        }
+        return super.getInputContext();
     }
 
     /**
