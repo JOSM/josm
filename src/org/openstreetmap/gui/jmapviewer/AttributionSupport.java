@@ -106,11 +106,20 @@ public class AttributionSupport {
         g.setFont(font);
     }
 
+    public boolean handleAttributionCursor(Point p) {
+        if (attrTextBounds != null && attrTextBounds.contains(p)) {
+            return true;
+        } else if (attrImageBounds != null && attrImageBounds.contains(p)) {
+            return true;
+        } else if (attrToUBounds != null && attrToUBounds.contains(p)) {
+            return true;
+        }
+        return false;
+    }
+    
     public boolean handleAttribution(Point p, boolean click) {
         if (source == null || !source.requiresAttribution())
             return false;
-
-        /* TODO: Somehow indicate the link is clickable state to user */
 
         if (attrTextBounds != null && attrTextBounds.contains(p)) {
             String attributionURL = source.getAttributionLinkURL();

@@ -1021,6 +1021,10 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         tileController.setTileLoader(loader);
     }
 
+    public AttributionSupport getAttribution() {
+        return attribution;
+    }
+
     protected EventListenerList listenerList = new EventListenerList();
 
     /**
