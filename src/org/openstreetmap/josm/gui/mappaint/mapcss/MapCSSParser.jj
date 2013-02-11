@@ -18,8 +18,8 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Expression.FunctionExpression;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Expression.LiteralExpression;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory;
+import org.openstreetmap.josm.gui.mappaint.mapcss.LiteralExpression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
@@ -501,14 +501,14 @@ Expression expression():
     {
         if (op == null)
             return args.get(0);
-        return new FunctionExpression(op, args);
+        return ExpressionFactory.createFunctionExpression(op, args);
     }
 }
 
 Expression primary() :
 {
     Expression nested;
-    FunctionExpression fn;
+    Expression fn;
     Object lit;
 }
 {
@@ -520,7 +520,7 @@ Expression primary() :
         <LPAR> w() nested=expression() <RPAR> { return nested; }
 }
 
-FunctionExpression function() :
+Expression function() :
 {
     Token tmp;
     Expression arg;
@@ -535,7 +535,7 @@ FunctionExpression function() :
         ( <COMMA> w() arg=expression() { args.add(arg); } )*
     )?
     <RPAR>
-    { return new FunctionExpression(name, args); }
+    { return ExpressionFactory.createFunctionExpression(name, args); }
 }
 
 Object literal() :

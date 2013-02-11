@@ -33,8 +33,8 @@ abstract public class Instruction implements StyleKeys {
 
         public AssignmentInstruction(String key, Object val) {
             this.key = key;
-            if (val instanceof Expression.LiteralExpression) {
-                Object litValue = ((Expression.LiteralExpression) val).evaluate(null);
+            if (val instanceof LiteralExpression) {
+                Object litValue = ((LiteralExpression) val).evaluate(null);
                 if (key.equals(TEXT)) {
                     /* Special case for declaration 'text: ...'
                      * 
