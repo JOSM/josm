@@ -7,6 +7,11 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.LinkSelector;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
+/**
+ * Environment is a data object to provide access to various "global" parameters.
+ * It is used during processing of MapCSS rules and for the generation of
+ * style elements.
+ */
 public class Environment {
 
     public OsmPrimitive osm;

@@ -307,10 +307,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private Color relationSelectedColor;
     private Color highlightColorTransparent;
     
-    private static int FLAG_NORMAL = 0;
-    private static int FLAG_DISABLED = 1;
-    private static int FLAG_MEMBER_OF_SELECTED = 2;
-    private static int FLAG_SELECTED = 4;
+    private static final int FLAG_NORMAL = 0;
+    private static final int FLAG_DISABLED = 1;
+    private static final int FLAG_MEMBER_OF_SELECTED = 2;
+    private static final int FLAG_SELECTED = 4;
 
     private static final double PHI = Math.toRadians(20);
     private static final double cosPHI = Math.cos(PHI);
@@ -365,20 +365,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    private void collectRelationStyles(DataSet data, StyleCollector sc, BBox bbox) {
-        for (Relation r: data.searchRelations(bbox)) {
-            if (r.isDrawable()) {
-                if (r.isDisabled()) {
-                    sc.add(r, FLAG_DISABLED);
-                } else if (data.isSelected(r)) {
-                    sc.add(r, FLAG_SELECTED);
-                } else {
-                    sc.add(r, FLAG_NORMAL);
-                }
-            }
-        }
-    }
-
     private void collectWayStyles(DataSet data, StyleCollector sc, BBox bbox) {
         for (final Way w : data.searchWays(bbox)) {
             if (w.isDrawable()) {
@@ -390,6 +376,20 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     sc.add(w, FLAG_MEMBER_OF_SELECTED);
                 } else {
                     sc.add(w, FLAG_NORMAL);
+                }
+            }
+        }
+    }
+
+    private void collectRelationStyles(DataSet data, StyleCollector sc, BBox bbox) {
+        for (Relation r: data.searchRelations(bbox)) {
+            if (r.isDrawable()) {
+                if (r.isDisabled()) {
+                    sc.add(r, FLAG_DISABLED);
+                } else if (data.isSelected(r)) {
+                    sc.add(r, FLAG_SELECTED);
+                } else {
+                    sc.add(r, FLAG_NORMAL);
                 }
             }
         }
