@@ -68,6 +68,8 @@ public class AddNodeHandler extends RequestHandler {
         } else {
             Main.map.mapView.repaint();
         }
+        // parse parameter addtags=tag1=value1|tag2=vlaue2
+        LoadAndZoomHandler.addTags(args);
     }
 
     @Override
@@ -77,6 +79,9 @@ public class AddNodeHandler extends RequestHandler {
             lon = Double.parseDouble(args.get("lon"));
         } catch (NumberFormatException e) {
             throw new RequestHandlerBadRequestException("NumberFormatException ("+e.getMessage()+")");
+        }
+        if (!Main.main.hasEditLayer()) {
+             throw new RequestHandlerBadRequestException(tr("There is no layer opened to add node"));
         }
     }
 }

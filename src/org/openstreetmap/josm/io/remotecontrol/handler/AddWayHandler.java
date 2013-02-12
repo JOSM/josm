@@ -53,6 +53,8 @@ public class AddWayHandler extends RequestHandler {
         } else {
             Main.map.mapView.repaint();
         }
+        // parse parameter addtags=tag1=value1|tag2=vlaue2
+        LoadAndZoomHandler.addTags(args);        
     }
 
     @Override
@@ -86,6 +88,9 @@ public class AddWayHandler extends RequestHandler {
             throw new RequestHandlerBadRequestException(tr("Empty ways"));
         } else if (allCoordinates.size() == 1) {
             throw new RequestHandlerBadRequestException(tr("One node ways"));
+        }
+        if (!Main.main.hasEditLayer()) {
+             throw new RequestHandlerBadRequestException(tr("There is no layer opened to add way"));
         }
     }
 }
