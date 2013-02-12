@@ -41,6 +41,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -126,11 +127,16 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
     public void refresh(Collection<? extends OsmPrimitive> fromPrimitives) {
         model.populate(fromPrimitives);
-        if(model.getRowCount() != 0) {
-            setTitle(trn("{0} Author", "{0} Authors", model.getRowCount() , model.getRowCount()));
-        } else {
-            setTitle(tr("Authors"));
-        }
+        GuiHelper.runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                if (model.getRowCount() != 0) {
+                    setTitle(trn("{0} Author", "{0} Authors", model.getRowCount() , model.getRowCount()));
+                } else {
+                    setTitle(tr("Authors"));
+                }
+            }
+        });
     }
 
     @Override
@@ -304,7 +310,12 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
                 }
             }
             Collections.sort(data);
-            fireTableDataChanged();
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    fireTableDataChanged();
+                }
+            });
         }
 
         @Override
