@@ -39,7 +39,7 @@ public class MainApplet extends JApplet {
     public static final class UploadPreferencesAction extends JosmAction {
         public UploadPreferencesAction() {
             super(tr("Upload Preferences"), "upload-preferences", tr("Upload the current preferences to the server"),
-                    Shortcut.registerShortcut("applet:uploadprefs", tr("Upload Preferences"), KeyEvent.VK_U, Shortcut.ALT_CTRL_SHIFT), true);
+                    Shortcut.registerShortcut("applet:uploadprefs", tr("Upload Preferences"), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), true);
         }
         public void actionPerformed(ActionEvent e) {
             ((ServerSidePreferences)Main.pref).upload();

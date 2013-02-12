@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -31,6 +32,7 @@ import org.openstreetmap.josm.io.OsmServerBackreferenceReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ExceptionUtil;
+import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
 /**
@@ -43,7 +45,7 @@ public class UploadSelectionAction extends JosmAction{
                 tr("Upload selection"),
                 "uploadselection",
                 tr("Upload all changes in the current selection to the OSM server."),
-                null, /* no shortcut */
+                Shortcut.registerShortcut("file:uploadSelection", tr("File: {0}", tr("Upload selection")), KeyEvent.VK_U, Shortcut.ALT_CTRL_SHIFT),
                 true);
         putValue("help", ht("/Action/UploadSelection"));
     }
