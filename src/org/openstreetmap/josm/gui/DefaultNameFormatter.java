@@ -120,7 +120,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      *
      * @param name  the name without the id
      * @param primitive the primitive
-     * @return the decorated name
      */
     protected void decorateNameWithId(StringBuilder name, IPrimitive primitive) {
         if (Main.pref.getBoolean("osm-primitives.showid")) {
@@ -383,7 +382,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 String name1 = getRelationName(r1);
                 String name2 = getRelationName(r2);
 
-                return ALPHANUM_COMPARATOR.compare(name1, name2);
+                comp = ALPHANUM_COMPARATOR.compare(name1, name2);
+                if (comp != 0)
+                    return comp;
             }
 
             if (r1.getMembersCount() != r2.getMembersCount())
