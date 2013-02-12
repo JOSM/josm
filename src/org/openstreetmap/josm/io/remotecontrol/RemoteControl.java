@@ -24,7 +24,7 @@ public class RemoteControl
      * changes.
      */
     static final int protocolMajorVersion = 1;
-    static final int protocolMinorVersion = 4;
+    static final int protocolMinorVersion = 5;
 
     /**
      * Starts the remote control server

@@ -224,7 +224,7 @@ public class LoadAndZoomHandler extends RequestHandler
                             i++;
                         }
     
-                        new AddTagsDialog(keyValue);
+                        new AddTagsDialog(keyValue).showDialog();
                     }
                 }
             });

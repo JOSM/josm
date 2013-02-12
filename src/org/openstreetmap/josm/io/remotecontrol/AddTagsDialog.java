@@ -129,7 +129,6 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         setDefaultButton(2);
         // set the default Dimensions and show the dialog
         setPreferredSize(new Dimension(400,tablePanel.getPreferredSize().height+100));
-        showDialog();
     }
 
     /**
