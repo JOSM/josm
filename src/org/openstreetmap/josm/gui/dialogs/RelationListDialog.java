@@ -73,6 +73,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -677,8 +678,13 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
 
         @Override
-        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-            setEnabled(newSelection != null && !newSelection.isEmpty());
+        public void selectionChanged(final Collection<? extends OsmPrimitive> newSelection) {
+            GuiHelper.runInEDT(new Runnable() {
+                @Override
+                public void run() {
+                    setEnabled(newSelection != null && !newSelection.isEmpty());
+                }
+            });
         }
     }
 
