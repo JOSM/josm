@@ -217,7 +217,11 @@ public class LoadAndZoomHandler extends RequestHandler
                         String[][] keyValue = new String[tagSet.size()][2];
                         int i = 0;
                         for (String tag : tagSet) {
-                            keyValue[i++] = tag.split("=");
+                            // support a  =   b===c as "a"="b===c"
+                            String [] pair = tag.split("\\s*=\\s*",2); 
+                            keyValue[i][0] = pair[0];
+                            keyValue[i][1] = pair.length<2 ? "": pair[1];
+                            i++;
                         }
     
                         new AddTagsDialog(keyValue);
