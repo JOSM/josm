@@ -409,7 +409,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 return;
             List<Relation> toDelete = new LinkedList<Relation>();
             for (int i : displaylist.getSelectedIndices()) {
-                toDelete.add(model.getRelation(i));
+                toDelete.add(model.getVisibleRelation(i));
             }
             for (Relation r : toDelete) {
                 deleteRelation(r);
@@ -518,7 +518,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             if (idx == null || idx.length == 0) return;
             ArrayList<OsmPrimitive> selection = new ArrayList<OsmPrimitive>(idx.length);
             for (int i: idx) {
-                selection.add(model.getRelation(i));
+                selection.add(model.getVisibleRelation(i));
             }
             if(add) {
                 Main.map.mapView.getEditLayer().data.addSelected(selection);
@@ -691,7 +691,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         private final ArrayList<Relation> relations = new ArrayList<Relation>();
         private ArrayList<Relation> filteredRelations;
         private DefaultListSelectionModel selectionModel;
-        private SearchCompiler.Match filter;
+        //private SearchCompiler.Match filter;
 
         public RelationListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
@@ -784,6 +784,9 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 return;
             int size = relations.size();
             relations.removeAll(removedRelations);
+            if (filteredRelations != null) {
+                filteredRelations.removeAll(removedRelations);
+            }
             if (size != relations.size()) {
                 List<Relation> sel = getSelectedRelations();
                 sort();
@@ -810,7 +813,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
 
         public void setFilter(final SearchCompiler.Match filter) {
-            this.filter = filter;
+            //this.filter = filter;
             this.filteredRelations = new ArrayList<Relation>(Utils.filter(relations, new Predicate<Relation>() {
                 @Override
                 public boolean evaluate(Relation r) {
@@ -826,11 +829,15 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         private List<Relation> getVisibleRelations() {
             return filteredRelations == null ? relations : filteredRelations;
         }
+        
+        private Relation getVisibleRelation(int index) {
+            if (index < 0 || index >= getVisibleRelations().size()) return null;
+            return getVisibleRelations().get(index);
+        }
 
         @Override
         public Object getElementAt(int index) {
-            if (index < 0 || index >= getVisibleRelations().size()) return null;
-            return getVisibleRelations().get(index);
+            return getVisibleRelation(index);
         }
 
         @Override
@@ -878,7 +885,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         /**
          * Sets the selected relations.
          *
-         * @return sel the list of selected relations
+         * @param sel the list of selected relations
          */
         public void setSelectedRelations(Collection<Relation> sel) {
             selectionModel.clearSelection();
@@ -895,6 +902,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         /**
          * Returns the index of the relation
+         * @param rel The relation to look for
          *
          * @return index of relation (null if it cannot be found)
          */
