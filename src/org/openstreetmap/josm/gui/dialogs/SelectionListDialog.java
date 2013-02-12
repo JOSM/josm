@@ -73,6 +73,7 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
  * A small tool dialog for displaying the current selection.
@@ -589,10 +590,13 @@ public class SelectionListDialog extends ToggleDialog  {
             fireContentsChanged(this, 0, getSize());
             remember(selection);
             double dist = -1;
-            if(this.selection.size() == 1) {
-                OsmPrimitive o = this.selection.get(0);
-                if(o instanceof Way)
-                   dist = ((Way)o).getLength();
+            SubclassFilteredCollection<OsmPrimitive, Way> ways = new SubclassFilteredCollection<OsmPrimitive, Way>(selection, OsmPrimitive.wayPredicate);
+            // Compute total length of selected way(s) until an arbitrary limit set to 250 ways
+            // in order to prevent performance issue if a large number of ways are selected (old behaviour kept in that case, see #8403)
+            if (!ways.isEmpty() && ways.size() < 250) {
+                for (Way w : ways) {
+                    dist += w.getLength();
+                }
             }
             Main.map.statusLine.setDist(dist);
         }
