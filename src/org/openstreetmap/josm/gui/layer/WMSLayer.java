@@ -83,7 +83,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             this.progressMonitor = progressMonitor;
         }
 
-        boolean isFinished() {
+        public boolean isFinished() {
             return totalCount == processedCount;
         }
 
