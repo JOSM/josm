@@ -142,7 +142,7 @@ public class PlayHeadMarker extends Marker {
             /* work out EastNorth equivalent of 50 (default) pixels tolerance */
             Point p = Main.map.mapView.getPoint(en);
             EastNorth enPlus25px = Main.map.mapView.getEastNorth(p.x+dropTolerance, p.y);
-            cw = recent.parentLayer.fromLayer.nearestPointOnTrack(en, enPlus25px.east() - en.east());
+            cw = recent.parentLayer.fromLayer.data.nearestPointOnTrack(en, enPlus25px.east() - en.east());
         }
 
         AudioMarker ca = null;
@@ -218,7 +218,7 @@ public class PlayHeadMarker extends Marker {
             /* work out EastNorth equivalent of 50 (default) pixels tolerance */
             Point p = Main.map.mapView.getPoint(en);
             EastNorth enPlus25px = Main.map.mapView.getEastNorth(p.x+dropTolerance, p.y);
-            WayPoint cw = recent.parentLayer.fromLayer.nearestPointOnTrack(en, enPlus25px.east() - en.east());
+            WayPoint cw = recent.parentLayer.fromLayer.data.nearestPointOnTrack(en, enPlus25px.east() - en.east());
             if (cw == null) {
                 JOptionPane.showMessageDialog(
                         Main.parent,
