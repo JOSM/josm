@@ -139,7 +139,7 @@ public class ExpressionFactory {
         }
 
         public static List split(String sep, String toSplit) {
-            return Arrays.asList(toSplit.split(Pattern.quote(sep)));
+            return Arrays.asList(toSplit.split(Pattern.quote(sep), -1));
         }
 
         public static Color rgb(float r, float g, float b) {
