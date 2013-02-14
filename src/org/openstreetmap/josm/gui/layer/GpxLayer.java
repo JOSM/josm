@@ -16,6 +16,7 @@ import java.awt.Stroke;
 import java.io.File;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -90,9 +91,9 @@ public class GpxLayer extends Layer {
     }
 
     /**
-     * returns a human readable string that shows the timespan of the given track
+     * returns minimum and maximum timestamps in the track
      */
-    public static String getTimespanForTrack(GpxTrack trk) {
+    public static Date[] getMinMaxTimeForTrack(GpxTrack trk) {
         WayPoint earliest = null, latest = null;
 
         for (GpxTrackSegment seg : trk.getSegments()) {
@@ -108,24 +109,52 @@ public class GpxLayer extends Layer {
                 }
             }
         }
-
+        if (earliest==null || latest==null) return null;
+        return new Date[]{earliest.getTime(), latest.getTime()};
+    }
+    
+    /**
+    * returns minimum and maximum timestamps for all tracks
+    */
+    public Date[] getMinMaxTimeForAllTracks() {
+        double min=Double.MIN_VALUE, max=Double.MAX_VALUE, t;
+        for (GpxTrack trk: data.tracks) {
+            for (GpxTrackSegment seg : trk.getSegments()) {
+                for (WayPoint pnt : seg.getWayPoints()) {
+                    t = pnt.time;
+                    if (t!=0) {
+                        if (t>max) max=t;
+                        if (t<min) min=t;
+                    }
+                }
+            }
+        }
+        if (min==Double.MIN_VALUE || max==Double.MAX_VALUE) return null;
+        return new Date[]{new Date((long) (min * 1000)), new Date((long) (max * 1000)), };
+    }
+    
+    
+    /**
+     * returns a human readable string that shows the timespan of the given track
+     */
+    public static String getTimespanForTrack(GpxTrack trk) {
+        Date[] bounds = getMinMaxTimeForTrack(trk);
         String ts = "";
-
-        if (earliest != null && latest != null) {
+        if (bounds != null) {
             DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
-            String earliestDate = df.format(earliest.getTime());
-            String latestDate = df.format(latest.getTime());
+            String earliestDate = df.format(bounds[0]);
+            String latestDate = df.format(bounds[1]);
 
             if (earliestDate.equals(latestDate)) {
                 DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT);
                 ts += earliestDate + " ";
-                ts += tf.format(earliest.getTime()) + " - " + tf.format(latest.getTime());
+                ts += tf.format(bounds[0]) + " - " + tf.format(bounds[1]);
             } else {
                 DateFormat dtf = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-                ts += dtf.format(earliest.getTime()) + " - " + dtf.format(latest.getTime());
+                ts += dtf.format(bounds[0]) + " - " + dtf.format(bounds[1]);
             }
 
-            int diff = (int) (latest.time - earliest.time);
+            int diff = (int) (bounds[1].getTime() - bounds[0].getTime());
             ts += String.format(" (%d:%02d)", diff / 3600, (diff % 3600) / 60);
         }
         return ts;
@@ -299,6 +328,20 @@ public class GpxLayer extends Layer {
             return sumUpdateCount() != lastUpdateCount;
         else
             return true;
+    }
+    
+    public void filterTracksByDate(Date fromDate, Date toDate, boolean showWithoutDate) {
+        int i = 0;
+        long from = fromDate.getTime();
+        long to = toDate.getTime();
+        for (GpxTrack trk : data.tracks) {
+            Date[] t = GpxLayer.getMinMaxTimeForTrack(trk);
+            
+            if (t==null) continue;
+            long tm = t[1].getTime();
+            trackVisibility[i]= (tm==0 && showWithoutDate) || (from<=tm && tm <= to);
+            i++;
+        }
     }
 
     @Override
@@ -838,4 +881,5 @@ public class GpxLayer extends Layer {
     public File createAndOpenSaveFileChooser() {
         return SaveActionBase.createAndOpenSaveFileChooser(tr("Save GPX file"), GpxImporter.FILE_FILTER);
     }
+    
 }
