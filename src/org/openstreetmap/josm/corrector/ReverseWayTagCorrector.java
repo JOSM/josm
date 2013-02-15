@@ -93,8 +93,9 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                     return false;
                 }
             }
+            String value = way.get(key);
             for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
-                if (!key.equals(prefixSuffixSwitcher.apply(key))) {
+                if (!key.equals(prefixSuffixSwitcher.apply(key)) || !value.equals(prefixSuffixSwitcher.apply(value))) {
                     return false;
                 }
             }
