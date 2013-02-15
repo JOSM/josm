@@ -88,7 +88,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 return super.parse(s);
             } catch (IllegalArgumentException e) {
                 // Legacy settings
-                return Boolean.parseBoolean(s)?ButtonHiddingType.DYNAMIC:ButtonHiddingType.ALWAYS_HIDDEN;
+                return Boolean.parseBoolean(s)?ButtonHiddingType.DYNAMIC:ButtonHiddingType.ALWAYS_SHOWN;
             }
         }
     };
@@ -150,14 +150,25 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     /**
      * Constructor
-     * (see below)
+     * 
+     * @param name  the name of the dialog
+     * @param iconName the name of the icon to be displayed
+     * @param tooltip  the tool tip
+     * @param shortcut  the shortcut
+     * @param preferredHeight the preferred height for the dialog
      */
     public ToggleDialog(String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight) {
         this(name, iconName, tooltip, shortcut, preferredHeight, false);
     }
     /**
      * Constructor
-     * (see below)
+
+     * @param name  the name of the dialog
+     * @param iconName the name of the icon to be displayed
+     * @param tooltip  the tool tip
+     * @param shortcut  the shortcut
+     * @param preferredHeight the preferred height for the dialog
+     * @param defShow if the dialog should be shown by default, if there is no preference
      */
     public ToggleDialog(String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight, boolean defShow) {
         this(name, iconName, tooltip, shortcut, preferredHeight, defShow, null);
