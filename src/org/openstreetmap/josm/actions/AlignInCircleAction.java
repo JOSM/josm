@@ -9,8 +9,10 @@ import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -115,16 +117,15 @@ public final class AlignInCircleAction extends JosmAction {
             // When one more node, part of the way, is selected, set the radius equal to the
             // distance between two nodes.
             if (nodes.size() > 0) {
-                if (nodes.size() == 1 && way.containsNode(nodes.get(0))) {
+                if (nodes.size() == 1 && way.containsNode(nodes.get(0)) && allowRegularPolygon(way.getNodes())) {
                     regular = true;
-                } else {
-
+                } else if (nodes.size() >= 2) {
                     center = nodes.get(way.containsNode(nodes.get(0)) ? 1 : 0).getEastNorth();
                     if (nodes.size() == 2) {
                         radius = distance(nodes.get(0).getEastNorth(), nodes.get(1).getEastNorth());
                     }
                 }
-                nodes = new LinkedList<Node>();
+                nodes.clear();
             }
 
             for (Node n : way.getNodes()) {
@@ -237,5 +238,21 @@ public final class AlignInCircleAction extends JosmAction {
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         setEnabled(selection != null && !selection.isEmpty());
+    }
+    
+    /**
+     * Determines if a regular polygon is allowed to be created with the given nodes collection.
+     * @param nodes The nodes collection to check.
+     * @return true if all nodes in the given collection are referred by the same object, and no other one (see #8431)
+     */
+    protected boolean allowRegularPolygon(Collection<Node> nodes) {
+        Set<OsmPrimitive> allReferrers = new HashSet<OsmPrimitive>();
+        for (Node n : nodes) {
+            List<OsmPrimitive> referrers = n.getReferrers();
+            if (referrers.size() > 1 || (allReferrers.addAll(referrers) && allReferrers.size() > 1)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
