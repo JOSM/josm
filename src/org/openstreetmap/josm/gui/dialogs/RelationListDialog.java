@@ -697,7 +697,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         private final ArrayList<Relation> relations = new ArrayList<Relation>();
         private ArrayList<Relation> filteredRelations;
         private DefaultListSelectionModel selectionModel;
-        //private SearchCompiler.Match filter;
+        private SearchCompiler.Match filter;
 
         public RelationListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
@@ -726,7 +726,6 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 selectionModel.clearSelection();
                 fireContentsChanged(this,0,getSize());
                 return;
-
             }
             for (Relation r: relations) {
                 if (isValid(r)) {
@@ -736,6 +735,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             sort();
             fireIntervalAdded(this, 0, getSize());
             setSelectedRelations(sel);
+            updateFilteredRelations();
         }
 
         /**
@@ -766,6 +766,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 sort();
                 fireIntervalAdded(this, 0, getSize());
                 setSelectedRelations(sel);
+                updateFilteredRelations();
             }
         }
 
@@ -817,15 +818,23 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             }
             return ret;
         }
+        
+        private void updateFilteredRelations() {
+            if (filter != null) {
+                filteredRelations = new ArrayList<Relation>(Utils.filter(relations, new Predicate<Relation>() {
+                    @Override
+                    public boolean evaluate(Relation r) {
+                        return filter.match(r);
+                    }
+                }));
+            } else if (filteredRelations != null) {
+                filteredRelations = null;
+            }
+        }
 
         public void setFilter(final SearchCompiler.Match filter) {
-            //this.filter = filter;
-            this.filteredRelations = new ArrayList<Relation>(Utils.filter(relations, new Predicate<Relation>() {
-                @Override
-                public boolean evaluate(Relation r) {
-                    return filter.match(r);
-                }
-            }));
+            this.filter = filter;
+            updateFilteredRelations();
             List<Relation> sel = getSelectedRelations();
             fireContentsChanged(this, 0, getSize());
             setSelectedRelations(sel);
@@ -863,10 +872,10 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 if (!selectionModel.isSelectedIndex(i)) {
                     continue;
                 }
-                if (relations.get(i).isNew()) {
+                if (getVisibleRelation(i).isNew()) {
                     continue;
                 }
-                ret.add(relations.get(i));
+                ret.add(getVisibleRelation(i));
             }
             return ret;
         }
@@ -883,7 +892,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 if (!selectionModel.isSelectedIndex(i)) {
                     continue;
                 }
-                ret.add(relations.get(i));
+                ret.add(getVisibleRelation(i));
             }
             return ret;
         }
