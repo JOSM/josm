@@ -74,13 +74,16 @@ public class PluginInformation {
 
     /**
      * Creates a plugin information object for the plugin with name {@code name}.
-     * Information about the plugin is extracted from the maifest file in the plugin jar
+     * Information about the plugin is extracted from the manifest file in the plugin jar
      * {@code file}.
      * @param file the plugin jar
      * @param name the plugin name
      * @throws PluginException thrown if reading the manifest file fails
      */
-    public PluginInformation(File file, String name) throws PluginException{
+    public PluginInformation(File file, String name) throws PluginException {
+        if (!PluginHandler.isValidJar(file)) {
+            throw new PluginException(name, tr("Invalid jar file ''{0}''", file));
+        }
         this.name = name;
         this.file = file;
         FileInputStream fis = null;
@@ -323,7 +326,7 @@ public class PluginInformation {
             return realClass;
         } catch (ClassNotFoundException e) {
             throw new PluginException(name, e);
-        } catch(ClassCastException e) {
+        } catch (ClassCastException e) {
             throw new PluginException(name, e);
         }
     }
