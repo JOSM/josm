@@ -44,6 +44,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.PreferencePan
 import org.openstreetmap.josm.gui.preferences.plugin.PluginListPanel;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginPreferencesModel;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginUpdatePolicyPanel;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -302,22 +303,27 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
         }
 
         protected void notifyDownloadResults(PluginDownloadTask task) {
-            Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
-            Collection<PluginInformation> failed = task.getFailedPlugins();
-            StringBuilder sb = new StringBuilder();
+            final Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
+            final Collection<PluginInformation> failed = task.getFailedPlugins();
+            final StringBuilder sb = new StringBuilder();
             sb.append("<html>");
             sb.append(buildDownloadSummary(task));
             if (!downloaded.isEmpty()) {
                 sb.append(tr("Please restart JOSM to activate the downloaded plugins."));
             }
             sb.append("</html>");
-            HelpAwareOptionPane.showOptionDialog(
-                    pnlPluginPreferences,
-                    sb.toString(),
-                    tr("Update plugins"),
-                    !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
-                            HelpUtil.ht("/Preferences/Plugins")
-                    );
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    HelpAwareOptionPane.showOptionDialog(
+                            pnlPluginPreferences,
+                            sb.toString(),
+                            tr("Update plugins"),
+                            !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
+                                    HelpUtil.ht("/Preferences/Plugins")
+                            );
+                }
+            });
         }
 
         protected void alertNothingToUpdate() {
@@ -358,7 +364,11 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                     notifyDownloadResults(pluginDownloadTask);
                     model.refreshLocalPluginVersion(pluginDownloadTask.getDownloadedPlugins());
                     model.clearPendingPlugins(pluginDownloadTask.getDownloadedPlugins());
-                    pnlPluginPreferences.refreshView();
+                    GuiHelper.runInEDT(new Runnable() {
+                        @Override
+                        public void run() {
+                            pnlPluginPreferences.refreshView();                        }
+                    });
                 }
             };
 

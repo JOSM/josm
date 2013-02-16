@@ -27,8 +27,8 @@ import org.xml.sax.SAXException;
  * It scans the files in the local plugins repository (see {@link Preferences#getPluginsDirectory()}
  * and extracts plugin information from three kind of files:
  * <ul>
- *   <li>.jar-files, assuming that they represent plugin jars</li>
- *   <li>.jar.new-files, assuming that these are downloaded but not yet installed plugins</li>
+ *   <li>.jar files, assuming that they represent plugin jars</li>
+ *   <li>.jar.new files, assuming that these are downloaded but not yet installed plugins</li>
  *   <li>cached lists of available plugins, downloaded for instance from
  *   <a href="http://josm.openstreetmap.de/plugins">http://josm.openstreetmap.de/plugins</a></li>
  * </ul>
@@ -146,9 +146,9 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
                     String pluginName = fname.substring(0, fname.length() - 8);
                     processJarFile(f, pluginName);
                 }
-            } catch(PluginException e){
+            } catch (PluginException e){
+                System.err.println(e.getMessage());
                 System.err.println(tr("Warning: Failed to scan file ''{0}'' for plugin information. Skipping.", fname));
-                e.printStackTrace();
             }
             monitor.worked(1);
         }
