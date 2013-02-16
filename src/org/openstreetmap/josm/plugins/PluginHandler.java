@@ -33,6 +33,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.jar.JarFile;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -508,8 +509,13 @@ public class PluginHandler {
                 pluginList.add(plugin.load(klass));
             }
             msg = null;
-        } catch(PluginException e) {
-            e.printStackTrace();
+        } catch (PluginException e) {
+            System.err.print(e.getMessage());
+            Throwable cause = e.getCause();
+            if (cause != null) {
+                System.err.print(". " + cause.getClass().getName() + ": " + cause.getLocalizedMessage());
+            }
+            System.err.println();
             if (e.getCause() instanceof ClassNotFoundException) {
                 msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
                         + "Delete from preferences?</html>", plugin.name, plugin.className);
@@ -973,12 +979,40 @@ public class PluginHandler {
                     continue;
                 }
             }
+            try {
+                // Check the plugin is a valid and accessible JAR file before installing it (fix #7754)
+                new JarFile(updatedPlugin).close();
+            } catch (Exception e) {
+                if (dowarn) {
+                    System.err.println(tr("Warning: failed to install plugin ''{0}'' from temporary download file ''{1}''. {2}", plugin.toString(), updatedPlugin.toString(), e.getLocalizedMessage()));
+                }
+                continue;
+            }
+            // Install plugin
             if (!updatedPlugin.renameTo(plugin) && dowarn) {
                 System.err.println(tr("Warning: failed to install plugin ''{0}'' from temporary download file ''{1}''. Renaming failed.", plugin.toString(), updatedPlugin.toString()));
                 System.err.println(tr("Warning: failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.", pluginName));
             }
         }
         return;
+    }
+    
+    /**
+     * Determines if the specified file is a valid and accessible JAR file.
+     * @param jar The fil to check
+     * @return true if file can be opened as a JAR file.
+     * @since 5723
+     */
+    public static boolean isValidJar(File jar) {
+        if (jar != null && jar.exists() && jar.canRead()) {
+            try {
+                new JarFile(jar).close();
+            } catch (Exception e) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
     
     /**
@@ -990,12 +1024,11 @@ public class PluginHandler {
     public static File findUpdatedJar(String name) {
         File pluginDir = Main.pref.getPluginsDirectory();
         // Find the downloaded file. We have tried to install the downloaded plugins
-        // (PluginHandler.installDownloadedPlugins). This succeeds depending on the
-        // platform.
+        // (PluginHandler.installDownloadedPlugins). This succeeds depending on the platform.
         File downloadedPluginFile = new File(pluginDir, name + ".jar.new");
-        if (!(downloadedPluginFile.exists() && downloadedPluginFile.canRead())) {
+        if (!isValidJar(downloadedPluginFile)) {
             downloadedPluginFile = new File(pluginDir, name + ".jar");
-            if (!(downloadedPluginFile.exists() && downloadedPluginFile.canRead())) {
+            if (!isValidJar(downloadedPluginFile)) {
                 return null;
             }
         }
