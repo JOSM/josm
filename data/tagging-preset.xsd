@@ -134,6 +134,7 @@
 		<attribute name="short_description" type="string" />
 		<attribute name="icon" type="string" />
 		<attribute name="icon_size" type="integer" />
+		<anyAttribute processContents="skip" />
 	</complexType>
 
 	<complexType name="combo">
