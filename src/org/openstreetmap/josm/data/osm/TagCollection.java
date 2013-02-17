@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * A TagCollection can be created:
  * <ul>
- *  <li>from the tags managed by a specific {@link OsmPrimitive} with {@link #from(OsmPrimitive)}</li>
+ *  <li>from the tags managed by a specific {@link OsmPrimitive} with {@link #from(Tagged)}</li>
  *  <li>from the union of all tags managed by a collection of {@link OsmPrimitive}s with {@link #unionOfAllPrimitives(Collection)}</li>
  *  <li>from the union of all tags managed by a {@link DataSet} with {@link #unionOfAllPrimitives(DataSet)}</li>
  *  <li>from the intersection of all tags managed by a collection of primitives with {@link #commonToAllPrimitives(Collection)}</li>
@@ -50,8 +50,10 @@ public class TagCollection implements Iterable<Tag> {
      */
     public static TagCollection from(Tagged primitive) {
         TagCollection tags = new TagCollection();
-        for (String key: primitive.keySet()) {
-            tags.add(new Tag(key, primitive.get(key)));
+        if (primitive != null) {
+            for (String key: primitive.keySet()) {
+                tags.add(new Tag(key, primitive.get(key)));
+            }
         }
         return tags;
     }
@@ -154,6 +156,15 @@ public class TagCollection implements Iterable<Tag> {
         if (other != null) {
             tags.addAll(other.tags);
         }
+    }
+
+    /**
+     * Creates a tag collection from <code>tags</code>.
+     * @param tags the collection of tags
+     * @since 5724
+     */
+    public TagCollection(Collection<Tag> tags) {
+        add(tags);
     }
 
     /**
@@ -636,7 +647,7 @@ public class TagCollection implements Iterable<Tag> {
      * Replaces the tags of a collection of{@link OsmPrimitive}s by the tags in this collection.
      * Does nothing if primitives is null
      *
-     * @param primitive  the collection of primitives
+     * @param primitives the collection of primitives
      * @throws IllegalStateException thrown if this tag collection can't be applied
      * because there are keys with multiple values
      */
@@ -656,13 +667,12 @@ public class TagCollection implements Iterable<Tag> {
      * @return the intersection of this tag collection and another tag collection
      */
     public TagCollection intersect(TagCollection other) {
-        if (other == null) {
-            other = new TagCollection();
-        }
-        TagCollection ret = new TagCollection(this);
-        for (Tag tag: tags) {
-            if (other.contains(tag)) {
-                ret.add(tag);
+        TagCollection ret = new TagCollection();
+        if (other != null) {
+            for (Tag tag: tags) {
+                if (other.contains(tag)) {
+                    ret.add(tag);
+                }
             }
         }
         return ret;

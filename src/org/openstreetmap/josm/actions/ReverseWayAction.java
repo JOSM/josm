@@ -18,6 +18,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.corrector.ReverseWayNoTagCorrector;
 import org.openstreetmap.josm.corrector.ReverseWayTagCorrector;
 import org.openstreetmap.josm.corrector.UserCancelException;
 import org.openstreetmap.josm.data.osm.Node;
@@ -108,8 +109,10 @@ public final class ReverseWayAction extends JosmAction {
     /**
      * @param w the way
      * @return the reverse command and the tag correction commands
+     * @throws UserCancelException if user cancels a reverse warning dialog
      */
     public static ReverseWayResult reverseWay(Way w) throws UserCancelException {
+        ReverseWayNoTagCorrector.checkAndConfirmReverseWay(w);
         Way wnew = new Way(w);
         List<Node> nodesCopy = wnew.getNodes();
         Collections.reverse(nodesCopy);
