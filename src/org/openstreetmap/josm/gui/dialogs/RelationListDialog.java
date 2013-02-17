@@ -91,19 +91,21 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class RelationListDialog extends ToggleDialog implements DataSetListener {
     /** The display list. */
-    private JList displaylist;
+    private final JList displaylist;
     /** the list model used */
-    private RelationListModel model;
+    private final RelationListModel model;
 
     /** the edit action */
-    private EditAction editAction;
+    private final EditAction editAction;
     /** the delete action */
-    private DeleteAction deleteAction;
-    private NewAction newAction;
-    private AddToRelation addToRelation;
+    private final DeleteAction deleteAction;
+    private final NewAction newAction;
+    private final AddToRelation addToRelation;
     /** the popup menu */
-    private RelationDialogPopupMenu popupMenu;
+    private final RelationDialogPopupMenu popupMenu;
 
+    private final JTextField filter;
+    
     /**
      * constructor
      */
@@ -154,7 +156,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         SelectAction selectAction = new SelectAction(false);
         displaylist.addListSelectionListener(selectAction);
 
-        final JTextField filter = new DisableShortcutsOnFocusGainedTextField();
+        filter = new DisableShortcutsOnFocusGainedTextField();
         filter.setToolTipText(tr("Relation list filter"));
         filter.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -227,6 +229,10 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         DatasetEventManager.getInstance().removeDatasetListener(this);
         DataSet.removeSelectionListener(addToRelation);
     }
+    
+    private void resetFilter() {
+        filter.setText(null);
+    }
 
     /**
      * Initializes the relation list dialog from a layer. If <code>layer</code> is null
@@ -292,7 +298,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             model.setSelectedRelations(null);
         } else {
             model.setSelectedRelations(relations);
-            Integer i = model.getRelationIndex(relations.iterator().next());
+            Integer i = model.getVisibleRelationIndex(relations.iterator().next());
             if (i != null) { // Not all relations have to be in the list (for example when the relation list is hidden, it's not updated with new relations)
                 displaylist.scrollRectToVisible(displaylist.getCellBounds(i, i));
             }
@@ -906,8 +912,11 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             selectionModel.clearSelection();
             if (sel == null || sel.isEmpty())
                 return;
+            if (!getVisibleRelations().containsAll(sel)) {
+                resetFilter();
+            }
             for (Relation r: sel) {
-                int i = relations.indexOf(r);
+                int i = getVisibleRelationIndex(r);
                 if (i<0) {
                     continue;
                 }
@@ -923,6 +932,13 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
          */
         public Integer getRelationIndex(Relation rel) {
             int i = relations.indexOf(rel);
+            if (i<0)
+                return null;
+            return i;
+        }
+        
+        private Integer getVisibleRelationIndex(Relation rel) {
+            int i = getVisibleRelations().indexOf(rel);
             if (i<0)
                 return null;
             return i;
