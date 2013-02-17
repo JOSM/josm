@@ -97,7 +97,7 @@ public class ConditionalOptionPaneUtil {
      * @param optionType  the option type
      * @param messageType the message type
      * @param options a list of options
-     * @param defaultOption the default option
+     * @param defaultOption the default option; only meaningful if options is used; can be null
      *
      * @return the option selected by user. {@link JOptionPane#CLOSED_OPTION} if the dialog was closed.
      */

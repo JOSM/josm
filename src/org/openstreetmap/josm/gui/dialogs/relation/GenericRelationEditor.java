@@ -30,7 +30,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -58,10 +72,9 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
-import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
 import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandler;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -696,7 +709,7 @@ public class GenericRelationEditor extends RelationEditor  {
     static class AddAbortException extends Exception {
     }
 
-    static boolean confirmAddingPrimtive(OsmPrimitive primitive) throws AddAbortException {
+    static boolean confirmAddingPrimitive(OsmPrimitive primitive) throws AddAbortException {
         String msg = tr("<html>This relation already has one or more members referring to<br>"
                 + "the object ''{0}''<br>"
                 + "<br>"
@@ -746,7 +759,7 @@ public class GenericRelationEditor extends RelationEditor  {
                     warnOfCircularReferences(p);
                     continue;
                 } else if (MemberTableModel.hasMembersReferringTo(relation.getMembers(), Collections.singleton(p))
-                        && !confirmAddingPrimtive(p)) {
+                        && !confirmAddingPrimitive(p)) {
                     continue;
                 }
                 relation.addMember(new RelationMember("", p));
@@ -775,7 +788,7 @@ public class GenericRelationEditor extends RelationEditor  {
                     continue;
                 }
                 if (isPotentialDuplicate(primitive))  {
-                    if (confirmAddingPrimtive(primitive)) {
+                    if (confirmAddingPrimitive(primitive)) {
                         ret.add(primitive);
                     }
                     continue;
