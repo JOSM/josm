@@ -169,6 +169,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     
     private final DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
     private final HelpAction helpAction = new HelpAction();
+    private final PasteValueAction pasteValueAction = new PasteValueAction();
     private final CopyValueAction copyValueAction = new CopyValueAction();
     private final CopyKeyValueAction copyKeyValueAction = new CopyKeyValueAction();
     private final CopyAllKeyValueAction copyAllKeyValueAction = new CopyAllKeyValueAction();
@@ -324,6 +325,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         // setting up the properties table
         propertyMenu = new JPopupMenu();
+        propertyMenu.add(pasteValueAction);
         propertyMenu.add(copyValueAction);
         propertyMenu.add(copyKeyValueAction);
         propertyMenu.add(copyAllKeyValueAction);
@@ -1123,6 +1125,25 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     buildSetOfIncompleteMembers(relation),
                     Main.map.mapView.getEditLayer()
                     ));
+        }
+    }
+    
+    class PasteValueAction extends AbstractAction {
+        public PasteValueAction() {
+            putValue(NAME, tr("Paste Value"));
+            putValue(SHORT_DESCRIPTION, tr("Paste the value of the selected tag from clipboard"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            if (propertyTable.getSelectedRowCount() != 1)
+                return;
+            String key = propertyData.getValueAt(propertyTable.getSelectedRow(), 0).toString();
+            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+            String value = Utils.getClipboardContent().trim();
+            if (sel.isEmpty())
+                return;
+            Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, value));
         }
     }
 
