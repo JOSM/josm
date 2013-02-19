@@ -30,6 +30,8 @@ public class ReverseWayNoTagCorrector {
     public static final TagCollection directionalTags = new TagCollection(Arrays.asList(new Tag[]{
             new Tag("natural", "coastline"),
             new Tag("natural", "cliff"),
+            new Tag("barrier", "guard_rail"),
+            new Tag("barrier", "kerb"),
             new Tag("barrier", "retaining_wall"),
             new Tag("waterway", "stream"),
             new Tag("waterway", "river"),
