@@ -6,28 +6,19 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.geom.Area;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
+import org.xml.sax.SAXException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.imagery.ImageryInfo;
-import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
-import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
-import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -38,8 +29,6 @@ import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
-import org.openstreetmap.josm.tools.Utils;
-import org.xml.sax.SAXException;
 
 /**
  * Open the download dialog and download the data.
@@ -282,11 +271,6 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 computeBboxAndCenterScale();
                 targetLayer.onPostDownloadFromServer();
             }
-
-            // Suggest potential imagery data, except if the data is downloaded after a "data update" command (see #8307)
-            if (!isUpdateData) {
-                suggestImageryLayers();
-            }
         }
         
         protected void computeBboxAndCenterScale() {
@@ -303,59 +287,6 @@ public class DownloadOsmTask extends AbstractDownloadTask {
             setCanceled(true);
             if (reader != null) {
                 reader.cancel();
-            }
-        }
-
-        protected void suggestImageryLayers() {
-            if (currentBounds != null) {
-                final LatLon center = currentBounds.getCenter();
-                final Set<ImageryInfo> layers = new HashSet<ImageryInfo>();
-    
-                for (ImageryInfo i : ImageryLayerInfo.instance.getDefaultLayers()) {
-                    if (i.getBounds() != null && i.getBounds().contains(center)) {
-                        layers.add(i);
-                    }
-                }
-                // Do not suggest layers already in use
-                layers.removeAll(ImageryLayerInfo.instance.getLayers());
-                // For layers containing complex shapes, check that center is in one of its shapes (fix #7910)
-                for (Iterator<ImageryInfo> iti = layers.iterator(); iti.hasNext(); ) {
-                    List<Shape> shapes = iti.next().getBounds().getShapes();
-                    if (shapes != null && !shapes.isEmpty()) {
-                        boolean found = false;
-                        for (Iterator<Shape> its = shapes.iterator(); its.hasNext() && !found; ) {
-                            found = its.next().contains(center);
-                        }
-                        if (!found) {
-                            iti.remove();
-                        }
-                    }
-                }
-    
-                if (layers.isEmpty()) {
-                    return;
-                }
-    
-                final List<String> layerNames = new ArrayList<String>();
-                for (ImageryInfo i : layers) {
-                    layerNames.add(i.getName());
-                }
-    
-                if (!ConditionalOptionPaneUtil.showConfirmationDialog(
-                        "download.suggest-imagery-layer",
-                        Main.parent,
-                        tr("<html>For the downloaded area, the following additional imagery layers are available: {0}" +
-                                "Do you want to add those layers to the <em>Imagery</em> menu?" +
-                                "<br>(If needed, you can remove those entries in the <em>Preferences</em>.)",
-                                Utils.joinAsHtmlUnorderedList(layerNames)),
-                        tr("Add imagery layers?"),
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,
-                        JOptionPane.YES_OPTION)) {
-                    return;
-                }
-    
-                ImageryLayerInfo.addLayers(layers);
             }
         }
     }
