@@ -61,7 +61,6 @@ import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -436,11 +435,11 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
                 } else {
                     throw new IllegalStateException("Type " + type + " not supported");
                 }
-                GuiHelper.prepareResizeableOptionPane(p, new Dimension(250, 350));
-                int answer = JOptionPane.showConfirmDialog(
-                        gui, p, tr("Add Imagery URL"),
-                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-                if (answer == JOptionPane.OK_OPTION) {
+                
+                final AddImageryDialog addDialog = new AddImageryDialog(gui, p);
+                addDialog.showDialog();
+                
+                if (addDialog.getValue() == 1) {
                     try {
                         activeModel.addRow(p.getImageryInfo());
                     } catch (IllegalArgumentException ex) {
@@ -455,7 +454,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
                 }
             }
         }
-
+        
         private class RemoveEntryAction extends AbstractAction implements ListSelectionListener {
 
             public RemoveEntryAction() {

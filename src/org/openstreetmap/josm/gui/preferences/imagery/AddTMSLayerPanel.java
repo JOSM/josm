@@ -4,24 +4,23 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
+
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.View;
+
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 
 public class AddTMSLayerPanel extends AddImageryPanel {
 
-    private final JTextArea rawUrl = new JTextArea(3, 40);
     private final JTextField tmsZoom = new JTextField();
     private final JTextArea tmsUrl = new JTextArea(3, 40);
-    private final JTextField name = new JTextField();
     private final KeyAdapter keyAdapter = new KeyAdapter() {
         @Override
         public void keyReleased(KeyEvent e) {
@@ -30,7 +29,6 @@ public class AddTMSLayerPanel extends AddImageryPanel {
     };
 
     public AddTMSLayerPanel() {
-        super(new GridBagLayout());
 
         add(new JLabel(tr("1. Enter URL")), GBC.eol());
         add(new JLabel("<html>" + Utils.joinAsHtmlUnorderedList(Arrays.asList(
@@ -59,10 +57,7 @@ public class AddTMSLayerPanel extends AddImageryPanel {
         add(new JLabel(tr("4. Enter name for this layer")), GBC.eol());
         add(name, GBC.eop().fill());
 
-    }
-
-    private String sanitize(String s) {
-        return s.replaceAll("[\r\n]+", "").trim();
+        registerValidableComponent(tmsUrl);
     }
 
     private String buildTMSUrl() {
@@ -72,13 +67,13 @@ public class AddTMSLayerPanel extends AddImageryPanel {
             a.append("[").append(z).append("]");
         }
         a.append(":");
-        a.append(sanitize(rawUrl.getText()));
+        a.append(getImageryRawUrl());
         return a.toString();
     }
 
     @Override
     public ImageryInfo getImageryInfo() {
-        return new ImageryInfo(name.getText(), tmsUrl.getText());
+        return new ImageryInfo(getImageryName(), getTmsUrl());
     }
 
     public static Dimension getPreferredSize(JLabel label, boolean width, int prefSize) {
@@ -89,5 +84,13 @@ public class AddTMSLayerPanel extends AddImageryPanel {
         return new java.awt.Dimension(
                 (int) Math.ceil(view.getPreferredSpan(View.X_AXIS)),
                 (int) Math.ceil(view.getPreferredSpan(View.Y_AXIS)));
+    }
+    
+    protected final String getTmsUrl() {
+        return sanitize(tmsUrl.getText());
+    }
+
+    protected boolean isImageryValid() {
+        return !getImageryName().isEmpty() && !getTmsUrl().isEmpty();
     }
 }

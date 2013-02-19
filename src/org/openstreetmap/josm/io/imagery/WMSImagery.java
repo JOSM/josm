@@ -15,9 +15,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
@@ -59,6 +60,9 @@ public class WMSImagery {
     }
 
     String buildRootUrl() {
+        if (serviceUrl == null) {
+            return null; 
+        }
         StringBuilder a = new StringBuilder(serviceUrl.getProtocol());
         a.append("://");
         a.append(serviceUrl.getHost());
