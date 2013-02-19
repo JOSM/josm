@@ -3,8 +3,6 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -13,13 +11,14 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
+
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
@@ -29,14 +28,13 @@ import org.openstreetmap.josm.tools.Utils;
 public class AddWMSLayerPanel extends AddImageryPanel {
 
     private final WMSImagery wms = new WMSImagery();
-    private final JTextArea rawUrl = new JTextArea(3, 40);
     private final JCheckBox endpoint = new JCheckBox(tr("Store WMS endpoint only, select layers at usage"));
     private final WMSLayerTree tree = new WMSLayerTree();
+    private final JLabel wmsInstruction;
     private final JTextArea wmsUrl = new JTextArea(3, 40);
-    private final JTextField name = new JTextField();
+    private final JButton showBounds = new JButton(tr("Show bounds"));
 
     public AddWMSLayerPanel() {
-        super(new GridBagLayout());
 
         add(new JLabel(tr("1. Enter service URL")), GBC.eol());
         add(rawUrl, GBC.eol().fill());
@@ -47,11 +45,11 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         add(new JLabel(tr("2. Select layers")), GBC.eol());
         add(endpoint, GBC.eol().fill());
         add(new JScrollPane(tree.getLayerTree()), GBC.eol().fill().weight(1, 100));
-        final JButton showBounds = new JButton(tr("Show bounds"));
+
         showBounds.setEnabled(false);
         add(new JScrollPane(showBounds), GBC.eop().fill());
 
-        add(new JLabel(tr("3. Verify generated WMS URL")), GBC.eol());
+        add(wmsInstruction = new JLabel(tr("3. Verify generated WMS URL")), GBC.eol());
         add(wmsUrl, GBC.eop().fill());
         wmsUrl.setLineWrap(true);
 
@@ -84,18 +82,20 @@ public class AddWMSLayerPanel extends AddImageryPanel {
             public void itemStateChanged(ItemEvent e) {
                 tree.getLayerTree().setEnabled(!endpoint.isSelected());
                 showBounds.setEnabled(!endpoint.isSelected());
+                wmsInstruction.setEnabled(!endpoint.isSelected());
                 wmsUrl.setEnabled(!endpoint.isSelected());
+                if (endpoint.isSelected()) {
+                    name.setText(wms.getServiceUrl().getHost());
+                } else {
+                    onLayerSelectionChanged();
+                }
             }
         });
 
         tree.getLayerTree().addPropertyChangeListener("selectedLayers", new PropertyChangeListener() {
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (wms.getServiceUrl() != null) {
-                    wmsUrl.setText(wms.buildGetMapUrl(tree.getSelectedLayers()));
-                    name.setText(wms.getServiceUrl().getHost() + ": " + Utils.join(", ", tree.getSelectedLayers()));
-                }
-                showBounds.setEnabled(tree.getSelectedLayers().size() == 1);
+            public void propertyChange(PropertyChangeEvent evt) { 
+                onLayerSelectionChanged();
             }
         });
 
@@ -112,19 +112,45 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                 }
             }
         });
-
+        
+        registerValidableComponent(endpoint);
+        registerValidableComponent(rawUrl);
+        registerValidableComponent(wmsUrl);
+    }
+    
+    protected final void onLayerSelectionChanged() {
+        if (wms.getServiceUrl() != null) {
+            wmsUrl.setText(wms.buildGetMapUrl(tree.getSelectedLayers()));
+            name.setText(wms.getServiceUrl().getHost() + ": " + Utils.join(", ", tree.getSelectedLayers()));
+        }
+        showBounds.setEnabled(tree.getSelectedLayers().size() == 1);
     }
 
     @Override
     public ImageryInfo getImageryInfo() {
         final ImageryInfo info;
         if (endpoint.isSelected()) {
-            info = new ImageryInfo(name.getText(), rawUrl.getText());
+            info = new ImageryInfo(getImageryName(), getImageryRawUrl());
             info.setImageryType(ImageryInfo.ImageryType.WMS_ENDPOINT);
         } else {
-            info = wms.toImageryInfo(name.getText(), tree.getSelectedLayers());
-            info.setUrl(wmsUrl.getText());
+            info = wms.toImageryInfo(getImageryName(), tree.getSelectedLayers());
+            info.setUrl(getWmsUrl());
         }
         return info;
+    }
+    
+    protected final String getWmsUrl() {
+        return sanitize(wmsUrl.getText());
+    }
+    
+    protected boolean isImageryValid() {
+        if (getImageryName().isEmpty()) {
+            return false;
+        }
+        if (endpoint.isSelected()) {
+            return !getImageryRawUrl().isEmpty();
+        } else {
+            return !getWmsUrl().isEmpty();
+        }
     }
 }
