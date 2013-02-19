@@ -6,15 +6,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
+
+import org.xml.sax.SAXException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
-import org.openstreetmap.josm.io.imagery.ImageryReader;
 import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.io.imagery.ImageryReader;
 import org.openstreetmap.josm.tools.Utils;
-import org.xml.sax.SAXException;
 
 /**
  * Manages the list of imagery entries that are shown in the imagery menu.
@@ -59,6 +59,15 @@ public class ImageryLayerInfo {
         }
     }
 
+    /**
+     * Loads the available imagery entries.
+     *
+     * The data is downloaded from the JOSM website (or loaded from cache).
+     * Entries marked as "default" are added to the user selection, if not
+     * already present.
+     *
+     * @param clearCache if true, clear the cache and start a fresh download.
+     */
     public void loadDefaults(boolean clearCache) {
         defaultLayers.clear();
         for (String source : Main.pref.getCollection("imagery.layers.sites", Arrays.asList(DEFAULT_LAYER_SITES))) {
@@ -147,7 +156,6 @@ public class ImageryLayerInfo {
     public static void addLayer(ImageryInfo info) {
         instance.add(info);
         instance.save();
-        Main.main.menu.imageryMenu.refreshImageryMenu();
     }
 
     public static void addLayers(Collection<ImageryInfo> infos) {
@@ -156,6 +164,5 @@ public class ImageryLayerInfo {
         }
         instance.save();
         Collections.sort(instance.layers);
-        Main.main.menu.imageryMenu.refreshImageryMenu();
     }
 }
