@@ -916,11 +916,10 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 resetFilter();
             }
             for (Relation r: sel) {
-                int i = getVisibleRelationIndex(r);
-                if (i<0) {
-                    continue;
+                Integer i = getVisibleRelationIndex(r);
+                if (i != null) {
+                    selectionModel.addSelectionInterval(i,i);
                 }
-                selectionModel.addSelectionInterval(i,i);
             }
         }
 
