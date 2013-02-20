@@ -44,6 +44,9 @@ public final class OrthogonalizeAction extends JosmAction {
             "(Afterwards, you can undo the movement for certain nodes:<br>"+
     "Select them and press the shortcut for Orthogonalize / Undo. The default is Shift-Q.)");
 
+    /**
+     * Constructor
+     */
     public OrthogonalizeAction() {
         super(tr("Orthogonalize Shape"),
                 "ortho",
@@ -77,6 +80,9 @@ public final class OrthogonalizeAction extends JosmAction {
      * This action can be triggered by shortcut only.
      */
     public static class Undo extends JosmAction {
+        /**
+         * Constructor
+         */
         public Undo() {
             super(tr("Orthogonalize Shape / Undo"), "ortho",
                     tr("Undo orthogonalization for certain nodes"),
@@ -176,14 +182,14 @@ public final class OrthogonalizeAction extends JosmAction {
             }
         } catch (InvalidUserInputException ex) {
             if (ex.getMessage().equals("usage")) {
-                JOptionPane.showMessageDialog(
+                ConditionalOptionPaneUtil.showMessageDialog("orthogonalize_usage",
                         Main.parent,
                         "<html><h2>" + tr("Usage") + "</h2>" + USAGE + "</html>",
                         tr("Orthogonalize Shape"),
                         JOptionPane.INFORMATION_MESSAGE);
             }
             else {
-                JOptionPane.showMessageDialog(
+                ConditionalOptionPaneUtil.showMessageDialog("orthogonalize_error",
                         Main.parent,
                         "<html>" + ex.getMessage() + "<br><hr><h2>" + tr("Usage") + "</h2>" + USAGE + "</html>",
                         tr("Selected Elements cannot be orthogonalized"),
@@ -420,6 +426,7 @@ public final class OrthogonalizeAction extends JosmAction {
          * direction <code>pInitialDirection</code>.
          * Then sum up all horizontal / vertical segments to have a good guess for the
          * heading of the entire way.
+         * @throws InvalidUserInputException 
          */
         public void calcDirections(Direction pInitialDirection) throws InvalidUserInputException {
             final EastNorth[] en = new EastNorth[nNode]; // alias: way.getNodes().get(i).getEastNorth() ---> en[i]
