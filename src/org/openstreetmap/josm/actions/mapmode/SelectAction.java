@@ -11,6 +11,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -49,6 +51,7 @@ import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.PlatformHookOsx;
@@ -439,6 +442,12 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             OsmPrimitive toSelect = cycleManager.cycleSetup(nearestPrimitive, e.getPoint());
             selectPrims(NavigatableComponent.asColl(toSelect), false, false);
             useLastMoveCommandIfPossible();
+            // Schedule a timer to update status line "initialMoveDelay+1" ms in the future
+            GuiHelper.scheduleTimer(initialMoveDelay+1, new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    updateStatusLine();
+                }
+            }, false);
             break;
         case select:
         default:
@@ -852,18 +861,19 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
 
     @Override
     public String getModeHelpText() {
-        if (mode == Mode.select && mouseDownButton == MouseEvent.BUTTON1 && mouseReleaseTime < mouseDownTime)
-            return tr("Release the mouse button to select the objects in the rectangle.");
-        else if (mode == Mode.move) {
-            final boolean canMerge = getCurrentDataSet()!=null && !getCurrentDataSet().getSelectedNodes().isEmpty();
-            final String mergeHelp = canMerge ? (" " + tr("Ctrl to merge with nearest node.")) : "";
-            return tr("Release the mouse button to stop moving.") + mergeHelp;
-        } else if (mode == Mode.rotate)
-            return tr("Release the mouse button to stop rotating.");
-        else if (mode == Mode.scale)
-            return tr("Release the mouse button to stop scaling.");
-        else
-            return tr("Move objects by dragging; Shift to add to selection (Ctrl to toggle); Shift-Ctrl to rotate selected; Alt-Ctrl to scale selected; or change selection");
+        if (mouseDownButton == MouseEvent.BUTTON1 && mouseReleaseTime < mouseDownTime) {
+            if (mode == Mode.select)
+                return tr("Release the mouse button to select the objects in the rectangle.");
+            else if (mode == Mode.move && (System.currentTimeMillis() - mouseDownTime >= initialMoveDelay)) {
+                final boolean canMerge = getCurrentDataSet()!=null && !getCurrentDataSet().getSelectedNodes().isEmpty();
+                final String mergeHelp = canMerge ? (" " + tr("Ctrl to merge with nearest node.")) : "";
+                return tr("Release the mouse button to stop moving.") + mergeHelp;
+            } else if (mode == Mode.rotate)
+                return tr("Release the mouse button to stop rotating.");
+            else if (mode == Mode.scale)
+                return tr("Release the mouse button to stop scaling.");
+        }
+        return tr("Move objects by dragging; Shift to add to selection (Ctrl to toggle); Shift-Ctrl to rotate selected; Alt-Ctrl to scale selected; or change selection");
     }
 
     @Override
