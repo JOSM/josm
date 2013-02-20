@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
@@ -105,7 +106,13 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
         MenuScroller.setScrollerFor(this, (screenHeight / menuItemHeight)-1);
     }
 
-    protected void refreshImageryMenu() {
+    /**
+     * Refresh imagery menu.
+     *
+     * Outside this class only called in {@link ImageryPreference#initialize()}.
+     * (In order to have actions ready for the toolbar, see #8446.)
+     */
+    public void refreshImageryMenu() {
         removeAll();
 
         // for each configured ImageryInfo, add a menu entry.

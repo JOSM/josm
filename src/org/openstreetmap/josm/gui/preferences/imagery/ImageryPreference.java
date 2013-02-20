@@ -828,6 +828,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
         ImageryLayerInfo.instance.loadDefaults(false);
         ImageryLayerInfo.instance.load();
         OffsetBookmark.loadBookmarks();
+        Main.main.menu.imageryMenu.refreshImageryMenu();
         Main.main.menu.imageryMenu.refreshOffsetMenu();
     }
 }
