@@ -44,6 +44,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.WireframeMapRenderer;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -436,7 +437,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                 virtualManager.activateVirtualNodeNearPoint(e.getPoint());
             }
             OsmPrimitive toSelect = cycleManager.cycleSetup(nearestPrimitive, e.getPoint());
-            selectPrims(mv.asColl(toSelect), false, false);
+            selectPrims(NavigatableComponent.asColl(toSelect), false, false);
             useLastMoveCommandIfPossible();
             break;
         case select:
@@ -572,6 +573,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             // Select Draw Tool if no selection has been made
             if (getCurrentDataSet().getSelected().isEmpty() && !cancelDrawMode) {
                 Main.map.selectDrawTool(true);
+                updateStatusLine();
                 return;
             }
         }
@@ -850,7 +852,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
 
     @Override
     public String getModeHelpText() {
-        if (mode == Mode.select)
+        if (mode == Mode.select && mouseDownButton == MouseEvent.BUTTON1 && mouseReleaseTime < mouseDownTime)
             return tr("Release the mouse button to select the objects in the rectangle.");
         else if (mode == Mode.move) {
             final boolean canMerge = getCurrentDataSet()!=null && !getCurrentDataSet().getSelectedNodes().isEmpty();
@@ -869,6 +871,10 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         return l instanceof OsmDataLayer;
     }
 
+    /**
+     * Enable or diable the lasso mode
+     * @param lassoMode true to enable the lasso mode, false otherwise
+     */
     public void setLassoMode(boolean lassoMode) {
         this.selectionManager.setLassoMode(lassoMode);
         this.lassoMode = lassoMode;
