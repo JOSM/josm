@@ -10,6 +10,8 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.image.FilteredImageSource;
@@ -20,6 +22,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -136,5 +139,20 @@ public class GuiHelper {
             });
         }
         return pane;
+    }
+    
+    /**
+     * Schedules a new Timer to be run in the future (once or several times).
+     * @param initialDelay milliseconds for the initial and between-event delay if repeatable
+     * @param actionListener an initial listener; can be null
+     * @param repeats specify false to make the timer stop after sending its first action event
+     * @return The (started) timer.
+     * @since 5735
+     */
+    public static final Timer scheduleTimer(int initialDelay, ActionListener actionListener, boolean repeats) {
+        Timer timer = new Timer(initialDelay, actionListener);
+        timer.setRepeats(repeats);
+        timer.start();
+        return timer;
     }
 }
