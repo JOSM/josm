@@ -90,8 +90,8 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         }
     };
 
-    protected Collection<OsmPrimitive> sortById(Collection<? extends OsmPrimitive> primitives) {
-        List<OsmPrimitive> result = new ArrayList<OsmPrimitive>(primitives.size());
+    protected <T extends OsmPrimitive> Collection<T> sortById(Collection<T> primitives) {
+        List<T> result = new ArrayList<T>(primitives.size());
         result.addAll(primitives);
         Collections.sort(result, byIdComparator);
         return result;
@@ -104,20 +104,51 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         footer();
     }
 
+    /**
+     * Writes the contents of the given dataset (nodes, then ways, then relations)
+     * @param ds The dataset to write
+     */
     public void writeContent(DataSet ds) {
-        for (OsmPrimitive n : sortById(ds.getNodes())) {
+        writeNodes(ds.getNodes());
+        writeWays(ds.getWays());
+        writeRelations(ds.getRelations());
+    }
+    
+    /**
+     * Writes the given nodes sorted by id
+     * @param nodes The nodes to write
+     * @since 5737
+     */
+    public void writeNodes(Collection<Node> nodes) {
+        for (Node n : sortById(nodes)) {
             if (shouldWrite(n)) {
-                visit((Node)n);
+                visit(n);
             }
         }
-        for (OsmPrimitive w : sortById(ds.getWays())) {
+    }
+    
+    /**
+     * Writes the given ways sorted by id
+     * @param ways The ways to write
+     * @since 5737
+     */
+    public void writeWays(Collection<Way> ways) {
+        for (Way w : sortById(ways)) {
             if (shouldWrite(w)) {
-                visit((Way)w);
+                visit(w);
             }
         }
-        for (OsmPrimitive e: sortById(ds.getRelations())) {
-            if (shouldWrite(e)) {
-                visit((Relation)e);
+    }
+    
+    /**
+     * Writes the given relations sorted by id
+     * @param relations The relations to write
+     * @since 5737
+     */
+    public void writeRelations(Collection<Relation> relations) {
+        for (Relation r : sortById(relations)) {
+            if (shouldWrite(r)) {
+                visit(r);
             }
         }
     }
