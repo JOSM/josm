@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.util;
 
+import java.awt.BasicStroke;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
@@ -8,6 +9,7 @@ import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -16,6 +18,7 @@ import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.image.FilteredImageSource;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 import javax.swing.GrayFilter;
 import javax.swing.Icon;
@@ -155,4 +158,44 @@ public class GuiHelper {
         timer.start();
         return timer;
     }
+    
+    /**
+     * Return s new BasicStroke object with given thickness and style
+     * @param code = 3.5 -> thickness=3.5px
+     * @param code = 3.5 10 5 -> thickness=3.5px, dashed: 10px filled + 5px empty
+     */
+    public static Stroke getCustomizedStroke(String code) {
+        String[] s = code.trim().split("[^\\.0-9]+");
+        
+        if (s.length==0) return new BasicStroke(); 
+        float w;
+        try {
+            w = Float.parseFloat(s[0]);
+        } catch (NumberFormatException ex) {
+            w = 1.0f;
+        }
+        if (s.length>1) {
+            float dash[]= new float[s.length-1];
+            try {
+                for (int i=1; i<s.length; i++) {
+                   dash[i-1] = Float.parseFloat(s[i]);
+                }
+            } catch (NumberFormatException ex) {
+                System.err.println("Error in stroke preference format: "+code);
+                dash = new float[]{5.0f};
+            }
+            // dashed stroke
+            return new BasicStroke(w, BasicStroke.CAP_BUTT,
+                    BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
+        } else {
+            if (w>1) {
+                // thick stroke
+                return new BasicStroke(w, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+            } else {
+                // thin stroke
+                return new BasicStroke(w);
+            }
+        }
+    }
+    
 }

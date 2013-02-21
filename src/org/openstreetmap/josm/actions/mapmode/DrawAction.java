@@ -68,6 +68,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -115,7 +116,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private final SnapChangeAction snapChangeAction;
     private final JCheckBoxMenuItem snapCheckboxMenuItem;
     private boolean useRepeatedShortcut;
-
+    private Stroke rubberLineStroke;
+    private static final BasicStroke BASIC_STROKE = new BasicStroke(1);
+    
     public DrawAction(MapFrame mapFrame) {
         super(tr("Draw"), "node/autonode", tr("Draw nodes"),
                 Shortcut.registerShortcut("mapmode:draw", tr("Mode: {0}", tr("Draw")), KeyEvent.VK_A, Shortcut.DIRECT),
@@ -198,7 +201,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if (!isEnabled())
             return;
         super.enterMode();
-        selectedColor =PaintColors.SELECTED.get();
+        
+        selectedColor = Main.pref.getColor(marktr("helper-line") ,PaintColors.SELECTED.get());
+        rubberLineStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.stroke.helper-line","3"));
         drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
 
@@ -1108,7 +1113,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         if (!snapHelper.isActive()) { // else use color and stoke from  snapHelper.draw
             g2.setColor(selectedColor);
-            g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g2.setStroke(rubberLineStroke);
         } else if (!snapHelper.drawConstructionGeometry)
             return;
         GeneralPath b = new GeneralPath();
@@ -1126,7 +1131,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         }
 
         g2.draw(b);
-        g2.setStroke(new BasicStroke(1));
+        g2.setStroke(BASIC_STROKE);
     }
 
     @Override
@@ -1309,7 +1314,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         private Stroke highlightStroke;
 
         JCheckBoxMenuItem checkBox;
-
+        public final Color ORANGE_TRANSPARENT = new Color(Color.ORANGE.getRed(),Color.ORANGE.getGreen(),Color.ORANGE.getBlue(),128);
+    
         public void init() {
             snapOn=false;
             checkBox.setState(snapOn);
@@ -1338,16 +1344,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             showAngle = Main.pref.getBoolean("draw.anglesnap.showAngle", true);
             useRepeatedShortcut = Main.pref.getBoolean("draw.anglesnap.toggleOnRepeatedA", true);
 
-            normalStroke = new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+            normalStroke = rubberLineStroke;
             snapHelperColor = Main.pref.getColor(marktr("draw angle snap"), Color.ORANGE);
 
-            highlightColor = Main.pref.getColor(marktr("draw angle snap highlight"),
-                    new Color(Color.ORANGE.getRed(),Color.ORANGE.getGreen(),Color.ORANGE.getBlue(),128));
-            highlightStroke = new BasicStroke(10, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-
-            float dash1[] = { 4.0f };
-            helperStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
-                    BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
+            highlightColor = Main.pref.getColor(marktr("draw angle snap highlight"), ORANGE_TRANSPARENT);
+            highlightStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.anglesnap.stroke.highlight","10"));
+            helperStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.anglesnap.stroke.helper","1 4"));
         }
 
         public void saveAngles(String ... angles) {
