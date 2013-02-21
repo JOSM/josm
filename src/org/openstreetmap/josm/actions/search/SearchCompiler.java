@@ -1081,23 +1081,22 @@ public class SearchCompiler {
 
         protected abstract Bounds getBounds();
         protected final boolean all;
-        protected final Bounds bounds;
 
         /**
          * @param all if true, all way nodes or relation members have to be within source area;if false, one suffices.
          */
         public InArea(boolean all) {
             this.all = all;
-            this.bounds = getBounds();
         }
 
         @Override
         public boolean match(OsmPrimitive osm) {
             if (!osm.isUsable())
                 return false;
-            else if (osm instanceof Node)
-                return bounds.contains(((Node) osm).getCoor());
-            else if (osm instanceof Way) {
+            else if (osm instanceof Node) {
+                Bounds bounds = getBounds();
+                return bounds != null && bounds.contains(((Node) osm).getCoor());
+            } else if (osm instanceof Way) {
                 Collection<Node> nodes = ((Way) osm).getNodes();
                 return all ? forallMatch(nodes) : existsMatch(nodes);
             } else if (osm instanceof Relation) {
@@ -1134,6 +1133,9 @@ public class SearchCompiler {
 
         @Override
         protected Bounds getBounds() {
+            if (Main.map == null || Main.map.mapView == null) {
+                return null;
+            }
             return Main.map.mapView.getRealBounds();
         }
     }
