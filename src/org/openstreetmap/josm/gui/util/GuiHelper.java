@@ -12,13 +12,11 @@ import java.awt.Image;
 import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.image.FilteredImageSource;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 
 import javax.swing.GrayFilter;
 import javax.swing.Icon;
@@ -176,13 +174,20 @@ public class GuiHelper {
         }
         if (s.length>1) {
             float dash[]= new float[s.length-1];
+            boolean error = false;
+            float sumAbs = 0;
             try {
-                for (int i=1; i<s.length; i++) {
-                   dash[i-1] = Float.parseFloat(s[i]);
+                for (int i=0; i<s.length-1; i++) {
+                   dash[i] = Float.parseFloat(s[i+1]);
+                   sumAbs += Math.abs(dash[i]);
                 }
             } catch (NumberFormatException ex) {
                 System.err.println("Error in stroke preference format: "+code);
                 dash = new float[]{5.0f};
+            }
+            if (sumAbs < 1e-1) {
+                System.err.println("Error in stroke dash fomat (all zeros): "+code);
+                return new BasicStroke(w);
             }
             // dashed stroke
             return new BasicStroke(w, BasicStroke.CAP_BUTT,

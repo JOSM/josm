@@ -101,7 +101,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private boolean drawTargetHighlight;
     private Point mousePos;
     private Point oldMousePos;
-    private Color selectedColor;
+    private Color rubberLineColor;
 
     private Node currentBaseNode;
     private Node previousNode;
@@ -202,7 +202,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return;
         super.enterMode();
         
-        selectedColor = Main.pref.getColor(marktr("helper-line") ,PaintColors.SELECTED.get());
+        rubberLineColor = Main.pref.getColor(marktr("draw.helper-line"), null);
+        if (rubberLineColor == null) rubberLineColor = PaintColors.SELECTED.get();
+        
         rubberLineStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.stroke.helper-line","3"));
         drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
@@ -1112,7 +1114,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return;
 
         if (!snapHelper.isActive()) { // else use color and stoke from  snapHelper.draw
-            g2.setColor(selectedColor);
+            g2.setColor(rubberLineColor);
             g2.setStroke(rubberLineStroke);
         } else if (!snapHelper.drawConstructionGeometry)
             return;
@@ -1402,7 +1404,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 g2.draw(b);
             }
 
-            g2.setColor(selectedColor);
+            g2.setColor(rubberLineColor);
             g2.setStroke(normalStroke);
             b = new GeneralPath();
             b.moveTo(p1.x,p1.y);
