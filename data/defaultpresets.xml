@@ -1007,8 +1007,11 @@ Note that for a match, at least one positive and no negative is required.
             </optional>
         </item>
         <item name="Emergency Phone" icon="presets/telephone.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/emergency_phone" />
-            <key key="amenity" value="emergency_phone" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=phone" 
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=phone"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=phone"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:emergency=phone" />
+            <key key="emergency" value="phone" />
         </item>
         <separator/>
         <item name="Traffic Signal" icon="presets/traffic-light.png" type="node">

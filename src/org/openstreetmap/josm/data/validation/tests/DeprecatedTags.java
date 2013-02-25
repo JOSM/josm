@@ -80,6 +80,10 @@ public class DeprecatedTags extends Test {
         checks.add(new DeprecationCheck(2115).
                 testAndRemove("bicycle_parking", "sheffield").
                 add("bicycle_parking", "stands"));
+        // http://wiki.openstreetmap.org/wiki/Tag:emergency=phone
+        checks.add(new DeprecationCheck(2116).
+                testAndRemove("amenity", "emergency_phone").
+                add("emergency", "phone"));
     }
 
     public void visit(OsmPrimitive p) {
