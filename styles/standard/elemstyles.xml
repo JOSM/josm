@@ -2962,6 +2962,12 @@ For external files the <rules> should have following elements:
 		<icon src="misc/landmark/trees.png"/>
 		<area colour="woodarea#008000"/>
 	</rule>
+    
+    <rule>
+        <condition k="natural" v="grassland"/>
+        <icon src="misc/no_icon.png"/>
+        <area colour="green#b1e0c2"/>
+    </rule>
 
 	<rule>
 		<condition k="natural" v="wetland"/>

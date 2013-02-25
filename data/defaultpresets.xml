@@ -5484,6 +5484,19 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="wood" text="Type" values="coniferous,deciduous,mixed" />
         </item>
+        <item name="Grassland" icon="presets/landuse.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=grassland"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=grassland"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:natural=grassland"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=grassland"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=grassland"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=grassland" />
+            <label text="Edit Grassland" />
+            <space />
+            <key key="natural" value="grassland" />
+            <text key="name" text="Name" />
+            <combo key="grassland" text="Type" values="pampas,prairie,puszta,savanna,steppe,veld" />
+        </item>
         <item name="Nature Reserve" icon="styles/standard/leisure/nature_reserve.png" type="node,closedway,relation">
             <label text="Edit Nature Reserve" />
             <key key="leisure" value="nature_reserve" />
