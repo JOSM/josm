@@ -739,9 +739,9 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 }
             }
             sort();
+            updateFilteredRelations();
             fireIntervalAdded(this, 0, getSize());
             setSelectedRelations(sel);
-            updateFilteredRelations();
         }
 
         /**
@@ -770,9 +770,9 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             if (added) {
                 List<Relation> sel = getSelectedRelations();
                 sort();
+                updateFilteredRelations();
                 fireIntervalAdded(this, 0, getSize());
                 setSelectedRelations(sel);
-                updateFilteredRelations();
             }
         }
 
