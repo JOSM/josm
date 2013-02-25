@@ -1790,7 +1790,7 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="amenity" v="emergency_phone"/>
+		<condition k="emergency" v="phone"/>
 		<icon annotate="true" src="vehicle/emergency_phone.png"/>
 		<area colour="amenity_light#f7efb7"/>
 	</rule>
@@ -3825,6 +3825,7 @@ For external files the <rules> should have following elements:
 	<!-- man_made=power_nuclear -> power=generator and power_source=nuclear -->
 	<!-- amenity=park_bench -> amenity=bench -->
 	<!-- amenity=signpost -> information=guidepost -->
+    <!-- amenity=emergency_phone -> emergency=phone -->
 	<!-- highway minor - classification now more detailed -->
 	<!-- highway=stile -> barrier=stile -->
 	<!-- highway=gate -> barrier=gate -->
