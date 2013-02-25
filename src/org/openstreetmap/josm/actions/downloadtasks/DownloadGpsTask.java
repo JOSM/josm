@@ -184,4 +184,15 @@ public class DownloadGpsTask extends AbstractDownloadTask {
         // TODO
         return null;
     }
+    
+    /**
+     * Determines if the given URL denotes an OSM gpx-related API call.
+     * @param url The url to check
+     * @return true if the url matches "Trace ID" API call or "Trackpoints bbox" API call, false otherwise
+     * @see GpxData#fromServer
+     * @since 5745
+     */
+    public static final boolean isFromServer(String url) {
+        return url != null && (url.matches(PATTERN_TRACE_ID) || url.matches(PATTERN_TRACKPOINTS_BBOX));
+    }
 }

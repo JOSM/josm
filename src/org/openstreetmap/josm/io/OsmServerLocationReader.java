@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -167,7 +168,7 @@ public class OsmServerLocationReader extends OsmServerReader {
                 GpxReader reader = new GpxReader(in);
                 gpxParsedProperly = reader.parse(false);
                 GpxData result = reader.getGpxData();
-                result.fromServer = true;
+                result.fromServer = DownloadGpsTask.isFromServer(url);
                 return result;
             }
         }, progressMonitor);
