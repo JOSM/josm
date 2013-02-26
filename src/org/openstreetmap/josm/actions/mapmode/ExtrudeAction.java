@@ -57,7 +57,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
-    enum Mode { extrude, translate, select, create_new }
+    enum Mode { extrude, translate, select, create_new, translate_node }
 
     private Mode mode = Mode.select;
 
@@ -68,6 +68,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
     private long mouseDownTime = 0;
     private WaySegment selectedSegment = null;
+    private Node selectedNode = null;
     private Color mainColor;
     private Stroke mainStroke;
     
@@ -84,6 +85,12 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      * Possible directions to move to.
      */
     private List<ReferenceSegment> possibleMoveDirections;
+
+    
+    /**
+     * Collection of nodes that is moved
+     */
+    private Collection<OsmPrimitive> movingNodeList;
 
     /**
      * The direction that is currently active.
@@ -232,18 +239,28 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
         updateKeyModifiers(e);
         
-        Node nearestNode = Main.map.mapView.getNearestNode(e.getPoint(), OsmPrimitive.isSelectablePredicate);
-        
+        selectedNode = Main.map.mapView.getNearestNode(e.getPoint(), OsmPrimitive.isSelectablePredicate);
         selectedSegment = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive.isSelectablePredicate);
-        boolean dragNode = nearestNode!=null;
-
-        if (selectedSegment == null && nearestNode == null) {
-            // If nothing gets caught, stay in select mode
+        
+        // If nothing gets caught, stay in select mode
+        if (selectedSegment == null && selectedNode == null) return;
+        
+        if (selectedNode != null) {
+            movingNodeList = new ArrayList<OsmPrimitive>();
+            movingNodeList.add(selectedNode);
+            calculatePossibleDirectionsByNode();
+            if (possibleMoveDirections.isEmpty()) { 
+                // if no directions fould, do not enter dragging mode
+                return;
+            }
+            mode = Mode.translate_node;
         } else {
             // Otherwise switch to another mode
-
             if (ctrl) {
                 mode = Mode.translate;
+                movingNodeList = new ArrayList<OsmPrimitive>();
+                movingNodeList.add(selectedSegment.getFirstNode());
+                movingNodeList.add(selectedSegment.getSecondNode());
             } else if (alt) {
                 mode = Mode.create_new;
                 // create a new segment and then select and extrude the new segment
@@ -254,27 +271,25 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                 getCurrentDataSet().setSelected(selectedSegment.way);
                 alwaysCreateNodes = shift;
             }
-            
-            
-            calculatePossibleDirections();
-
-            // Signifies that nothing has happened yet
-            newN1en = null;
-            newN2en = null;
-            moveCommand = null;
-
-            Main.map.mapView.addTemporaryLayer(this);
-
-            updateStatusLine();
-            Main.map.mapView.repaint();
-
-            // Make note of time pressed
-            mouseDownTime = System.currentTimeMillis();
-
-            // Make note of mouse position
-            initialMousePos = e.getPoint();
+            calculatePossibleDirectionsBySegment();
         }
-    }
+        
+        // Signifies that nothing has happened yet
+        newN1en = null;
+        newN2en = null;
+        moveCommand = null;
+
+        Main.map.mapView.addTemporaryLayer(this);
+
+        updateStatusLine();
+        Main.map.mapView.repaint();
+
+        // Make note of time pressed
+        mouseDownTime = System.currentTimeMillis();
+
+        // Make note of mouse position
+        initialMousePos = e.getPoint();
+   }
 
     /**
      * Perform action depending on what mode we're in.
@@ -307,14 +322,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
             if (mode == Mode.extrude || mode == Mode.create_new) {
                 //nothing here
-            } else if (mode == Mode.translate) {
+            } else if (mode == Mode.translate_node || mode == Mode.translate) {
                 //move nodes to new position
                 if (moveCommand == null) {
                     //make a new move command
-                    Collection<OsmPrimitive> nodelist = new LinkedList<OsmPrimitive>();
-                    nodelist.add(selectedSegment.getFirstNode());
-                    nodelist.add(selectedSegment.getSecondNode());
-                    moveCommand = new MoveCommand(nodelist, bestMovement.getX(), bestMovement.getY());
+                    moveCommand = new MoveCommand(movingNodeList, bestMovement.getX(), bestMovement.getY());
                     Main.main.undoRedo.add(moveCommand);
                 } else {
                     //reuse existing move command
@@ -339,93 +351,18 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         } else {
             if (mode == Mode.create_new) {
                 if (e.getPoint().distance(initialMousePos) > 10 && newN1en != null) {
-                    // crete a new rectangle
-                    Collection<Command> cmds = new LinkedList<Command>();
-                    Node third = new Node(newN2en);
-                    Node fourth = new Node(newN1en);
-                    Way wnew = new Way();
-                    wnew.addNode(selectedSegment.getFirstNode());
-                    wnew.addNode(selectedSegment.getSecondNode());
-                    wnew.addNode(third);
-                    wnew.addNode(fourth);
-                    // ... and close the way
-                    wnew.addNode(selectedSegment.getFirstNode());
-                    // undo support
-                    cmds.add(new AddCommand(third));
-                    cmds.add(new AddCommand(fourth));
-                    cmds.add(new AddCommand(wnew));
-                    Command c = new SequenceCommand(tr("Extrude Way"), cmds);
-                    Main.main.undoRedo.add(c);
-                    getCurrentDataSet().setSelected(wnew);
+                    createNewRectangle();
                 }
             } else if (mode == Mode.extrude) {
                 if( e.getClickCount() == 2 && e.getPoint().equals(initialMousePos) ) {
-                    // double click add a new node
-                    // Should maybe do the same as in DrawAction and fetch all nearby segments?
-                    WaySegment ws = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive.isSelectablePredicate);
-                    if (ws != null) {
-                        Node n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
-                        EastNorth A = ws.getFirstNode().getEastNorth();
-                        EastNorth B = ws.getSecondNode().getEastNorth();
-                        n.setEastNorth(Geometry.closestPointToSegment(A, B, n.getEastNorth()));
-                        Way wnew = new Way(ws.way);
-                        wnew.addNode(ws.lowerIndex+1, n);
-                        SequenceCommand cmds = new SequenceCommand(tr("Add a new node to an existing way"),
-                                new AddCommand(n), new ChangeCommand(ws.way, wnew));
-                        Main.main.undoRedo.add(cmds);
-                    }
+                    // double click adds a new node
+                    addNewNode(e);
                 }
                 else if (e.getPoint().distance(initialMousePos) > 10 && newN1en != null && selectedSegment != null) {
-                    // create extrusion
-
-                    Collection<Command> cmds = new LinkedList<Command>();
-                    Way wnew = new Way(selectedSegment.way);
-                    int insertionPoint = selectedSegment.lowerIndex + 1;
-
-                    //find if the new points overlap existing segments (in case of 90 degree angles)
-                    Node prevNode = getPreviousNode(selectedSegment.lowerIndex);
-                    boolean nodeOverlapsSegment = prevNode != null && Geometry.segmentsParallel(initialN1en, prevNode.getEastNorth(), initialN1en, newN1en);
-                    boolean hasOtherWays = this.hasNodeOtherWays(selectedSegment.getFirstNode(), selectedSegment.way);
-
-                    if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
-                        //move existing node
-                        Node n1Old = selectedSegment.getFirstNode();
-                        cmds.add(new MoveCommand(n1Old, Main.getProjection().eastNorth2latlon(newN1en)));
-                    } else {
-                        //introduce new node
-                        Node n1New = new Node(Main.getProjection().eastNorth2latlon(newN1en));
-                        wnew.addNode(insertionPoint, n1New);
-                        insertionPoint ++;
-                        cmds.add(new AddCommand(n1New));
-                    }
-
-                    //find if the new points overlap existing segments (in case of 90 degree angles)
-                    Node nextNode = getNextNode(selectedSegment.lowerIndex + 1);
-                    nodeOverlapsSegment = nextNode != null && Geometry.segmentsParallel(initialN2en, nextNode.getEastNorth(), initialN2en, newN2en);
-                    hasOtherWays = hasNodeOtherWays(selectedSegment.getSecondNode(), selectedSegment.way);
-
-                    if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
-                        //move existing node
-                        Node n2Old = selectedSegment.getSecondNode();
-                        cmds.add(new MoveCommand(n2Old, Main.getProjection().eastNorth2latlon(newN2en)));
-                    } else {
-                        //introduce new node
-                        Node n2New = new Node(Main.getProjection().eastNorth2latlon(newN2en));
-                        wnew.addNode(insertionPoint, n2New);
-                        insertionPoint ++;
-                        cmds.add(new AddCommand(n2New));
-                    }
-
-                    //the way was a single segment, close the way
-                    if (wnew.getNodesCount() == 4) {
-                        wnew.addNode(selectedSegment.getFirstNode());
-                    }
-
-                    cmds.add(new ChangeCommand(selectedSegment.way, wnew));
-                    Command c = new SequenceCommand(tr("Extrude Way"), cmds);
-                    Main.main.undoRedo.add(c);
+                    // main extrusion commands
+                    performExtrusion();
                 }
-            } else if (mode == Mode.translate) {
+            } else if (mode == Mode.translate || mode == Mode.translate_node) {
                 //Commit translate
                 //the move command is already committed in mouseDragged
             }
@@ -444,7 +381,102 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             Main.map.mapView.repaint();
         }
     }
+    
+    /**
+     * Insert node into nearby segment
+     * @param e - current mouse point 
+     */
+    private void addNewNode(MouseEvent e) {
+        // Should maybe do the same as in DrawAction and fetch all nearby segments?
+        WaySegment ws = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive.isSelectablePredicate);
+        if (ws != null) {
+            Node n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
+            EastNorth A = ws.getFirstNode().getEastNorth();
+            EastNorth B = ws.getSecondNode().getEastNorth();
+            n.setEastNorth(Geometry.closestPointToSegment(A, B, n.getEastNorth()));
+            Way wnew = new Way(ws.way);
+            wnew.addNode(ws.lowerIndex+1, n);
+            SequenceCommand cmds = new SequenceCommand(tr("Add a new node to an existing way"),
+                    new AddCommand(n), new ChangeCommand(ws.way, wnew));
+            Main.main.undoRedo.add(cmds);
+        }
+    }
 
+    private void createNewRectangle() {
+        if (selectedSegment == null) return;
+        // crete a new rectangle
+        Collection<Command> cmds = new LinkedList<Command>();
+        Node third = new Node(newN2en);
+        Node fourth = new Node(newN1en);
+        Way wnew = new Way();
+        wnew.addNode(selectedSegment.getFirstNode());
+        wnew.addNode(selectedSegment.getSecondNode());
+        wnew.addNode(third);
+        wnew.addNode(fourth);
+        // ... and close the way
+        wnew.addNode(selectedSegment.getFirstNode());
+        // undo support
+        cmds.add(new AddCommand(third));
+        cmds.add(new AddCommand(fourth));
+        cmds.add(new AddCommand(wnew));
+        Command c = new SequenceCommand(tr("Extrude Way"), cmds);
+        Main.main.undoRedo.add(c);
+        getCurrentDataSet().setSelected(wnew);
+    }
+
+    /**
+     * Do actual extrusion of @field selectedSegment
+     */
+    private void performExtrusion() {
+        // create extrusion
+        Collection<Command> cmds = new LinkedList<Command>();
+        Way wnew = new Way(selectedSegment.way);
+        int insertionPoint = selectedSegment.lowerIndex + 1;
+
+        //find if the new points overlap existing segments (in case of 90 degree angles)
+        Node prevNode = getPreviousNode(selectedSegment.lowerIndex);
+        boolean nodeOverlapsSegment = prevNode != null && Geometry.segmentsParallel(initialN1en, prevNode.getEastNorth(), initialN1en, newN1en);
+        boolean hasOtherWays = this.hasNodeOtherWays(selectedSegment.getFirstNode(), selectedSegment.way);
+
+        if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
+            //move existing node
+            Node n1Old = selectedSegment.getFirstNode();
+            cmds.add(new MoveCommand(n1Old, Main.getProjection().eastNorth2latlon(newN1en)));
+        } else {
+            //introduce new node
+            Node n1New = new Node(Main.getProjection().eastNorth2latlon(newN1en));
+            wnew.addNode(insertionPoint, n1New);
+            insertionPoint ++;
+            cmds.add(new AddCommand(n1New));
+        }
+
+        //find if the new points overlap existing segments (in case of 90 degree angles)
+        Node nextNode = getNextNode(selectedSegment.lowerIndex + 1);
+        nodeOverlapsSegment = nextNode != null && Geometry.segmentsParallel(initialN2en, nextNode.getEastNorth(), initialN2en, newN2en);
+        hasOtherWays = hasNodeOtherWays(selectedSegment.getSecondNode(), selectedSegment.way);
+
+        if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
+            //move existing node
+            Node n2Old = selectedSegment.getSecondNode();
+            cmds.add(new MoveCommand(n2Old, Main.getProjection().eastNorth2latlon(newN2en)));
+        } else {
+            //introduce new node
+            Node n2New = new Node(Main.getProjection().eastNorth2latlon(newN2en));
+            wnew.addNode(insertionPoint, n2New);
+            insertionPoint ++;
+            cmds.add(new AddCommand(n2New));
+        }
+
+        //the way was a single segment, close the way
+        if (wnew.getNodesCount() == 4) {
+            wnew.addNode(selectedSegment.getFirstNode());
+        }
+
+        cmds.add(new ChangeCommand(selectedSegment.way, wnew));
+        Command c = new SequenceCommand(tr("Extrude Way"), cmds);
+        Main.main.undoRedo.add(c);
+    }
+    
     /**
      * This method tests if a node has other ways apart from the given one.
      * @param node
@@ -467,8 +499,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     private EastNorth calculateBestMovement(EastNorth mouseEn) {
         
         EastNorth initialMouseEn = Main.map.mapView.getEastNorth(initialMousePos.x, initialMousePos.y);
-        EastNorth mouseMovement = new EastNorth(mouseEn.getX() - initialMouseEn.getX(), mouseEn.getY() - initialMouseEn.getY());
-
+        EastNorth mouseMovement = initialMouseEn.sub(mouseEn);
+        
         double bestDistance = Double.POSITIVE_INFINITY;
         EastNorth bestMovement = null;
         activeMoveDirection = null;
@@ -500,21 +532,24 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      */
     private static EastNorth calculateSegmentOffset(EastNorth segmentP1, EastNorth segmentP2, EastNorth moveDirection,
             EastNorth targetPos) {
-        EastNorth intersectionPoint = Geometry.getLineLineIntersection(segmentP1, segmentP2, targetPos,
-                new EastNorth(targetPos.getX() + moveDirection.getX(), targetPos.getY() + moveDirection.getY()));
+        EastNorth intersectionPoint;
+        if (segmentP1.distanceSq(segmentP2)>1e-7) {
+            intersectionPoint = Geometry.getLineLineIntersection(segmentP1, segmentP2, targetPos, targetPos.add(moveDirection));
+        } else {
+            intersectionPoint = Geometry.closestPointToLine(targetPos, targetPos.add(moveDirection), segmentP1);
+        }
 
         if (intersectionPoint == null)
             return null;
         else
             //return distance form base to target position
-            return new EastNorth(targetPos.getX() - intersectionPoint.getX(),
-                    targetPos.getY() - intersectionPoint.getY());
+            return intersectionPoint.sub(targetPos);
     }
 
     /**
      * Gather possible move directions - perpendicular to the selected segment and parallel to neighbor segments
      */
-    private void calculatePossibleDirections() {
+    private void calculatePossibleDirectionsBySegment() {
         // remember initial positions for segment nodes.
         initialN1en = selectedSegment.getFirstNode().getEastNorth();
         initialN2en = selectedSegment.getSecondNode().getEastNorth();
@@ -544,6 +579,27 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     initialN2en.getX() - en.getX(),
                     initialN2en.getY() - en.getY()
                     ), initialN2en,  en, false));
+        }
+    }
+    
+    /**
+     * Gather possible move directions - along all adjacent segments
+     */
+    private void calculatePossibleDirectionsByNode() {
+        // remember initial positions for segment nodes.
+        initialN1en = selectedNode.getEastNorth();
+        initialN2en = initialN1en;
+        possibleMoveDirections = new ArrayList<ReferenceSegment>();
+        for (OsmPrimitive p: selectedNode.getReferrers()) {
+            if (p instanceof Way  && p.isUsable()) {
+                for (Node neighbor: ((Way) p).getNeighbours(selectedNode)) {
+                    EastNorth en = neighbor.getEastNorth();
+                    possibleMoveDirections.add(new ReferenceSegment(new EastNorth(
+                        initialN1en.getX() - en.getX(),
+                        initialN1en.getY() - en.getY()
+                    ), initialN1en, en, false));                                    
+                }
+            }
         }
     }
     
@@ -603,6 +659,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             return null;
     }
 
+    @Override
     public void paint(Graphics2D g, MapView mv, Bounds box) {
         Graphics2D g2 = g;
         if (mode == Mode.select) {
@@ -649,13 +706,17 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                             drawAngleSymbol(g2, pr1, normalUnitVector, mirrorRA);
                         }
                     }
-                } else if (mode == Mode.translate) {
+                } else if (mode == Mode.translate || mode == Mode.translate_node) {
                     g2.setColor(mainColor);
-                    g2.setStroke(oldLineStroke);
-                    // Highlight the old segment
-                    g2.setStroke(mainStroke);
-                    Line2D oldline = new Line2D.Double(p1, p2);
-                    g2.draw(oldline);
+                    if (p1.distance(p2) < 3) {
+                        g2.setStroke(mainStroke);
+                        g2.drawOval((int)(p1.x-symbolSize/2), (int)(p1.y-symbolSize/2), 
+                                (int)(symbolSize), (int)(symbolSize));
+                    } else {
+                        Line2D oldline = new Line2D.Double(p1, p2);
+                        g2.setStroke(oldLineStroke);
+                        g2.draw(oldline);
+                    }
 
                     if (activeMoveDirection != null) {
 
