@@ -431,6 +431,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         // create extrusion
         Collection<Command> cmds = new LinkedList<Command>();
         Way wnew = new Way(selectedSegment.way);
+        boolean wayWasModified = false;
         int insertionPoint = selectedSegment.lowerIndex + 1;
 
         //find if the new points overlap existing segments (in case of 90 degree angles)
@@ -446,6 +447,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             //introduce new node
             Node n1New = new Node(Main.getProjection().eastNorth2latlon(newN1en));
             wnew.addNode(insertionPoint, n1New);
+            wayWasModified = true;
             insertionPoint ++;
             cmds.add(new AddCommand(n1New));
         }
@@ -463,6 +465,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             //introduce new node
             Node n2New = new Node(Main.getProjection().eastNorth2latlon(newN2en));
             wnew.addNode(insertionPoint, n2New);
+            wayWasModified = true;
             insertionPoint ++;
             cmds.add(new AddCommand(n2New));
         }
@@ -470,9 +473,12 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         //the way was a single segment, close the way
         if (wnew.getNodesCount() == 4) {
             wnew.addNode(selectedSegment.getFirstNode());
+            wayWasModified = true;
         }
-
-        cmds.add(new ChangeCommand(selectedSegment.way, wnew));
+        if (wayWasModified) {
+            // we only need to change the way if its node list was really modified
+            cmds.add(new ChangeCommand(selectedSegment.way, wnew));
+        }
         Command c = new SequenceCommand(tr("Extrude Way"), cmds);
         Main.main.undoRedo.add(c);
     }
