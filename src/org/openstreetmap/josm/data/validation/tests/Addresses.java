@@ -42,6 +42,7 @@ public class Addresses extends Test {
     
     protected static final String ADDR_HOUSE_NUMBER  = "addr:housenumber";
     protected static final String ADDR_INTERPOLATION = "addr:interpolation";
+    protected static final String ADDR_PLACE         = "addr:place";
     protected static final String ADDR_STREET        = "addr:street";
     protected static final String ASSOCIATED_STREET  = "associatedStreet";
     
@@ -84,8 +85,8 @@ public class Addresses extends Test {
     @Override
     public void visit(Node n) {
         List<Relation> associatedStreets = getAndCheckAssociatedStreets(n);
-        // Find house number without street (neither addr:street or associatedStreet)
-        if (n.hasKey(ADDR_HOUSE_NUMBER) && !n.hasKey(ADDR_STREET)) {
+        // Find house number without proper location (neither addr:street, associatedStreet or addr:place)
+        if (n.hasKey(ADDR_HOUSE_NUMBER) && !n.hasKey(ADDR_STREET) && !n.hasKey(ADDR_PLACE)) {
             for (Relation r : associatedStreets) {
                 if (r.hasTag("type", ASSOCIATED_STREET)) {
                     return;
