@@ -1789,6 +1789,13 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="service/clock.png"/>
 	</rule>
 
+    <!-- Rule to delete by end of 2013 if this deprecated tag has finally been replaced by emergency=phone below-->
+    <rule>
+        <condition k="amenity" v="emergency_phone"/>
+        <icon annotate="true" src="vehicle/emergency_phone.png"/>
+        <area colour="amenity_light#f7efb7"/>
+    </rule>
+    
 	<rule>
 		<condition k="emergency" v="phone"/>
 		<icon annotate="true" src="vehicle/emergency_phone.png"/>
@@ -3824,23 +3831,23 @@ For external files the <rules> should have following elements:
 
 <!--"deprecated" tags -->
 
-	<!-- historic=museum -> tourism=museum -->
-	<!-- man_made=power_wind -> power=generator and power_source=wind -->
-	<!-- man_made=power_hydro -> power=generator and power_source=hydro -->
-	<!-- man_made=power_fossil -> power=generator and power_source=fossil -->
-	<!-- man_made=power_nuclear -> power=generator and power_source=nuclear -->
-	<!-- amenity=park_bench -> amenity=bench -->
-	<!-- amenity=signpost -> information=guidepost -->
+    <!-- historic=museum -> tourism=museum -->
+    <!-- man_made=power_wind -> power=generator and power_source=wind -->
+    <!-- man_made=power_hydro -> power=generator and power_source=hydro -->
+    <!-- man_made=power_fossil -> power=generator and power_source=fossil -->
+    <!-- man_made=power_nuclear -> power=generator and power_source=nuclear -->
+    <!-- amenity=park_bench -> amenity=bench -->
+    <!-- amenity=signpost -> information=guidepost -->
     <!-- amenity=emergency_phone -> emergency=phone -->
-	<!-- highway minor - classification now more detailed -->
-	<!-- highway=stile -> barrier=stile -->
-	<!-- highway=gate -> barrier=gate -->
-	<!-- highway=cattle_grid -> barrier=cattle_grid -->
-	<!-- highway=toll_booth -> barrier=toll_booth -->
-	<!-- highway=viaduct -> bridge=viaduct -->
-	<!-- railway=viaduct -> bridge=viaduct -->
-	<!-- waterway=aqueduct -> bridge=aqueduct -->
-	<!-- natural=marsh -> natural=wetland -->
-	<!-- leisure=zoo -> tourism=zoo -->
+    <!-- highway minor - classification now more detailed -->
+    <!-- highway=stile -> barrier=stile -->
+    <!-- highway=gate -> barrier=gate -->
+    <!-- highway=cattle_grid -> barrier=cattle_grid -->
+    <!-- highway=toll_booth -> barrier=toll_booth -->
+    <!-- highway=viaduct -> bridge=viaduct -->
+    <!-- railway=viaduct -> bridge=viaduct -->
+    <!-- waterway=aqueduct -> bridge=aqueduct -->
+    <!-- natural=marsh -> natural=wetland -->
+    <!-- leisure=zoo -> tourism=zoo -->
 
 </rules>
