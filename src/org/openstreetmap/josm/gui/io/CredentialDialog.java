@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
+import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
@@ -156,7 +157,7 @@ public class CredentialDialog extends JDialog {
 
         protected void build() {
             tfUserName = new JTextField(20);
-            tfPassword = new JPasswordField(20);
+            tfPassword = new JosmPasswordField(20);
             tfUserName.addFocusListener(new SelectAllOnFocusHandler());
             tfPassword.addFocusListener(new SelectAllOnFocusHandler());
             tfUserName.addKeyListener(new TFKeyListener(owner, tfUserName, tfPassword));

@@ -28,6 +28,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.ServerSidePreferences;
 import org.openstreetmap.josm.gui.MainApplication.Option;
+import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -112,7 +113,7 @@ public class MainApplet extends JApplet {
                 JTextField user = new JTextField(username == null ? "" : username);
                 p.add(user, GBC.eol().fill(GBC.HORIZONTAL));
                 p.add(new JLabel(tr("Password")), GBC.std().insets(0,0,20,0));
-                JPasswordField pass = new JPasswordField(password == null ? "" : password);
+                JPasswordField pass = new JosmPasswordField(password == null ? "" : password);
                 p.add(pass, GBC.eol().fill(GBC.HORIZONTAL));
                 JOptionPane.showMessageDialog(null, p);
                 username = user.getText();
