@@ -16,12 +16,11 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.io.auth.CredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
-import org.openstreetmap.josm.io.auth.JosmPreferencesCredentialAgent;
 import org.openstreetmap.josm.io.OsmApi;
 
 /**
@@ -69,7 +68,7 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfOsmPassword = new JPasswordField(), gc);
+        add(tfOsmPassword = new JosmPasswordField(), gc);
         SelectAllOnFocusGainedDecorator.decorate(tfOsmPassword);
         tfOsmPassword.setToolTipText(tr("Please enter your OSM password"));
 

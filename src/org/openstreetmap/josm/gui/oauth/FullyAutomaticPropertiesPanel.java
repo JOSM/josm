@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
+import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 
 public class FullyAutomaticPropertiesPanel extends JPanel {
@@ -55,7 +56,7 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfPassword = new JPasswordField(), gc);
+        pnl.add(tfPassword = new JosmPasswordField(), gc);
         SelectAllOnFocusGainedDecorator.decorate(tfPassword);
 
         return pnl;
