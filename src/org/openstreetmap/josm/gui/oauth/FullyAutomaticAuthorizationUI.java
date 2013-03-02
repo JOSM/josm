@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.io.OsmApi;
@@ -129,7 +130,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfPassword = new JPasswordField(), gc);
+        pnl.add(tfPassword = new JosmPasswordField(), gc);
         SelectAllOnFocusGainedDecorator.decorate(tfPassword);
         valPassword = new PasswordValidator(tfPassword);
         valPassword.validate();

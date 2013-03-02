@@ -28,6 +28,7 @@ import javax.swing.JTextField;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.auth.CredentialsAgent;
@@ -145,7 +146,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxyHttpPassword = new JPasswordField(20),gc);
+        pnl.add(tfProxyHttpPassword = new JosmPasswordField(20),gc);
         tfProxyHttpPassword.setMinimumSize(tfProxyHttpPassword.getPreferredSize());
 
         // add an extra spacer, otherwise the layout is broken
