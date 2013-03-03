@@ -61,7 +61,7 @@ public class ElemStyles {
      * Uses the cache, if possible, and saves the results to the cache.
      */
     public Pair<StyleList, Range> getStyleCacheWithRange(OsmPrimitive osm, double scale, NavigatableComponent nc) {
-        if (osm.mappaintStyle == null || osm.mappaintCacheIdx != cacheIdx) {
+        if (osm.mappaintStyle == null || osm.mappaintCacheIdx != cacheIdx || scale <= 0) {
             osm.mappaintStyle = StyleCache.EMPTY_STYLECACHE;
         } else {
             Pair<StyleList, Range> lst = osm.mappaintStyle.getWithRange(scale);
