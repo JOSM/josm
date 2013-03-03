@@ -26,6 +26,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
+
 /**
  * The base class for OSM objects ({@link Node}, {@link Way}, {@link Relation}).
  * 
@@ -98,6 +99,12 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * that the primitive is currently highlighted.
      */
     protected static final int FLAG_HIGHLIGHTED = 1 << 11;
+
+    /**
+     * If the primitive is annotated with a tag such as note, fixme, etc.
+     * Match the "work in progress" tags in default elemstyles.xml.
+     */
+    protected static final int FLAG_ANNOTATED = 1 << 12;
 
     /**
      * Replies the sub-collection of {@link OsmPrimitive}s of type <code>type</code> present in
@@ -605,26 +612,29 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         return (flags & FLAG_HIGHLIGHTED) != 0;
     }
 
-    /*----------------------------------
-     * UNINTERESTING AND DIRECTION KEYS
-     *----------------------------------*/
+    /*---------------------------------------------------
+     * WORK IN PROGRESS, UNINTERESTING AND DIRECTION KEYS
+     *--------------------------------------------------*/
 
+    private static volatile Collection<String> workinprogress = null;
     private static volatile Collection<String> uninteresting = null;
     private static volatile Collection<String> discardable = null;
     
     /**
-     * Contains a list of "uninteresting" keys that do not make an object
+     * Returns a list of "uninteresting" keys that do not make an object
      * "tagged".  Entries that end with ':' are causing a whole namespace to be considered
      * "uninteresting".  Only the first level namespace is considered.
      * Initialized by isUninterestingKey()
+     * @return The list of uninteresting keys.
      */
     public static Collection<String> getUninterestingKeys() {
         if (uninteresting == null) {
             LinkedList<String> l = new LinkedList<String>(Arrays.asList(
-                "source", "source_ref", "source:", "note", "comment",
-                "converted_by", "watch", "watch:", "fixme", "FIXME",
+                "source", "source_ref", "source:", "comment",
+                "converted_by", "watch", "watch:",
                 "description", "attribution"));
             l.addAll(getDiscardableKeys());
+            l.addAll(getWorkInProgressKeys());
             uninteresting = Main.pref.getCollection("tags.uninteresting", l);
         }
         return uninteresting;
@@ -633,9 +643,10 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     /**
      * Returns a list of keys which have been deemed uninteresting to the point
      * that they can be silently removed from data which is being edited.
+     * @return The list of discardable keys.
      */
     public static Collection<String> getDiscardableKeys() {
-        if(discardable == null) {
+        if (discardable == null) {
             discardable = Main.pref.getCollection("tags.discardable",
                     Arrays.asList("created_by",
                             "tiger:upload_uuid", "tiger:tlid", "tiger:source", "tiger:separated",
@@ -646,9 +657,25 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         }
         return discardable;
     }
+    
+    /**
+     * Returns a list of "work in progress" keys that do not make an object
+     * "tagged" but "annotated".
+     * @return The list of work in progress keys.
+     * @since 5754
+     */
+    public static Collection<String> getWorkInProgressKeys() {
+        if (workinprogress == null) {
+            workinprogress = Main.pref.getCollection("tags.workinprogress",
+                    Arrays.asList("note", "fixme", "FIXME"));
+        }
+        return workinprogress;
+    }
 
     /**
-     * Returns true if key is considered "uninteresting".
+     * Determines if key is considered "uninteresting".
+     * @param key The key to check
+     * @return true if key is considered "uninteresting".
      */
     public static boolean isUninterestingKey(String key) {
         getUninterestingKeys();
@@ -712,14 +739,37 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         updateFlagsNoLock(FLAG_TAGGED, false);
     }
 
+    private void updateAnnotated() {
+        if (keys != null) {
+            for (String key: keySet()) {
+                if (getWorkInProgressKeys().contains(key)) {
+                    updateFlagsNoLock(FLAG_ANNOTATED, true);
+                    return;
+                }
+            }
+        }
+        updateFlagsNoLock(FLAG_ANNOTATED, false);
+    }
+
     /**
-     * true if this object is considered "tagged". To be "tagged", an object
+     * Determines if this object is considered "tagged". To be "tagged", an object
      * must have one or more "interesting" tags. "created_by" and "source"
      * are typically considered "uninteresting" and do not make an object
      * "tagged".
+     * @return true if this object is considered "tagged"
      */
     public boolean isTagged() {
         return (flags & FLAG_TAGGED) != 0;
+    }
+    
+    /**
+     * Determines if this object is considered "annotated". To be "annotated", an object
+     * must have one or more "work in progress" tags, such as "note" or "fixme".
+     * @return true if this object is considered "annotated"
+     * @since 5754
+     */
+    public boolean isAnnotated() {
+        return (flags & FLAG_ANNOTATED) != 0;
     }
 
     private void updateDirectionFlags() {
@@ -802,6 +852,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         }
         updateDirectionFlags();
         updateTagged();
+        updateAnnotated();
         if (dataSet != null) {
             dataSet.fireTagsChanged(this, originalKeys);
         }
