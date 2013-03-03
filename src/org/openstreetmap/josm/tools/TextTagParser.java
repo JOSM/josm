@@ -189,7 +189,7 @@ public class TextTagParser {
         
         // Format
         // tag1\tval1\ntag2\tval2\n
-        tags = readTagsByRegexp(buf, "[\r\n]+]", "(.*?)\t(.*?)", false);
+        tags = readTagsByRegexp(buf, "[\\r\\n]+", "(.*?)\\t(.*?)", false);
                 // try "tag\tvalue\n" format
         if (tags!=null) return tags;
 
