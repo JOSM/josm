@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.tools;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -50,17 +51,19 @@ public class TextTagParser {
             while (true) {
                 skipEmpty();
                 if (pos == n) { break; }
-                k = parseString(true);
+                k = parseString("\n\r\t= ");
                 if (pos == n) { tags.clear();  break; }
                 skipSign();
                 if (pos == n) { tags.clear();  break; }
-                v = parseString(false);
+                v = parseString("\n\r\t ");
                 tags.put(k, v);
             }
             return tags;
         }
         
-        private String parseString(boolean stopOnEquals) {
+        private String parseString(String stopChars) {
+            char stop[] = stopChars.toCharArray();
+            Arrays.sort(stop);
             char c;
             while (pos < n) {
                 c = data.charAt(pos);
@@ -80,8 +83,8 @@ public class TextTagParser {
                     quotesStarted = false;
                     pos++;
                     break;
-                } else if (!quotesStarted && (c=='\n'|| c=='\t'|| c==' ' || c=='\r'
-                      || (c=='=' && stopOnEquals))) {  // stop-symbols
+                } else if (!quotesStarted && (Arrays.binarySearch(stop, c)>=0)) { 
+                    // stop-symbol found
                     pos++;
                     break;
                 } else {
@@ -126,7 +129,7 @@ public class TextTagParser {
         }
     }
 
-    private static String unescape(String k) {
+    protected static String unescape(String k) {
         if(! (k.startsWith("\"") && k.endsWith("\"")) ) {
             if (k.contains("=")) {
                 // '=' not in quotes will be treated as an error!
@@ -136,7 +139,7 @@ public class TextTagParser {
             }
         }
         String text = k.substring(1,k.length()-1);
-        return (new TextAnalyzer(text)).parseString(false);
+        return (new TextAnalyzer(text)).parseString("\r\t\n");
     }
 
     /**
