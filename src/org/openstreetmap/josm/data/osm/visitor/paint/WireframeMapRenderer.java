@@ -247,13 +247,13 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
             } else if (ds.isSelected(n)) {
                 color = selectedColor;
             } else if (n.isConnectionNode()) {
-                if (n.isTagged()) {
+                if (isNodeTagged(n)) {
                     color = taggedConnectionColor;
                 } else {
                     color = connectionColor;
                 }
             } else {
-                if (n.isTagged()) {
+                if (isNodeTagged(n)) {
                     color = taggedColor;
                 } else {
                     color = nodeColor;
@@ -261,17 +261,21 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
             }
 
             final int size = max((ds.isSelected(n) ? selectedNodeSize : 0),
-                    (n.isTagged() ? taggedNodeSize : 0),
+                    (isNodeTagged(n) ? taggedNodeSize : 0),
                     (n.isConnectionNode() ? connectionNodeSize : 0),
                     unselectedNodeSize);
 
             final boolean fill = (ds.isSelected(n) && fillSelectedNode) ||
-            (n.isTagged() && fillTaggedNode) ||
+            (isNodeTagged(n) && fillTaggedNode) ||
             (n.isConnectionNode() && fillConnectionNode) ||
             fillUnselectedNode;
 
             drawNode(n, color, size, fill);
         }
+    }
+    
+    private boolean isNodeTagged(Node n) {
+        return n.isTagged() || n.isAnnotated();
     }
 
     /**
