@@ -1,8 +1,6 @@
 //License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.command;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.GridBagLayout;
 import java.awt.geom.Area;
 import java.util.ArrayList;
@@ -15,8 +13,6 @@ import java.util.Map.Entry;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -58,10 +54,13 @@ abstract public class Command extends PseudoCommand {
     private Map<OsmPrimitive, PrimitiveData> cloneMap = new HashMap<OsmPrimitive, PrimitiveData>();
 
     /** the layer which this command is applied to */
-    private OsmDataLayer layer;
+    private final OsmDataLayer layer;
 
+    /**
+     * Creates a new command in the context of the current edit layer, if any
+     */
     public Command() {
-        this.layer = Main.map.mapView.getEditLayer();
+        this.layer = Main.map != null && Main.map.mapView != null ? Main.map.mapView.getEditLayer() : null;
     }
 
     /**
@@ -78,6 +77,7 @@ abstract public class Command extends PseudoCommand {
     /**
      * Executes the command on the dataset. This implementation will remember all
      * primitives returned by fillModifiedData for restoring them on undo.
+     * @return true
      */
     public boolean executeCommand() {
         CloneVisitor visitor = new CloneVisitor();
@@ -123,15 +123,11 @@ abstract public class Command extends PseudoCommand {
     /**
      * Lets other commands access the original version
      * of the object. Usually for undoing.
+     * @param osm The requested OSM object
+     * @return The original version of the requested object, if any
      */
     public PrimitiveData getOrig(OsmPrimitive osm) {
-        PrimitiveData o = cloneMap.get(osm);
-        if (o != null)
-            return o;
-        for (OsmPrimitive t : cloneMap.keySet()) {
-            PrimitiveData to = cloneMap.get(t);
-        }
-        return o;
+        return cloneMap.get(osm);
     }
 
     /**
