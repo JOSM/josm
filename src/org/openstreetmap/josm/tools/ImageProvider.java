@@ -728,11 +728,6 @@ public class ImageProvider {
         return c;
     }
 
-    @Deprecated
-    public static ImageIcon overlay(Icon ground, String overlayImage, OverlayPosition pos) {
-        return overlay(ground, ImageProvider.get(overlayImage), pos);
-    }
-
     /**
      * Decorate one icon with an overlay icon.
      *

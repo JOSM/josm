@@ -83,39 +83,6 @@ public class SideButton extends JButton implements Destroyable {
         return getScaledImage(im);
     }
 
-    // Used constructor with Action
-    @Deprecated
-    public SideButton(String imagename, String property, String tooltip, ActionListener actionListener)
-    {
-        super(makeIcon(imagename));
-        doStyle();
-        setActionCommand(imagename);
-        addActionListener(actionListener);
-        setToolTipText(tooltip);
-    }
-
-    // Used constructor with Action
-    @Deprecated
-    public SideButton(String name, String imagename, String property, String tooltip, Shortcut shortcut, ActionListener actionListener)
-    {
-        super(tr(name), makeIcon(imagename));
-        if(shortcut != null)
-        {
-            shortcut.setMnemonic(this);
-            if(tooltip != null) {
-                tooltip = Main.platform.makeTooltip(tooltip, shortcut);
-            }
-        }
-        setup(name, property, tooltip, actionListener);
-    }
-
-    // Used constructor with Action
-    @Deprecated
-    public SideButton(String name, String imagename, String property, String tooltip, ActionListener actionListener)
-    {
-        super(tr(name), makeIcon(imagename));
-        setup(name, property, tooltip, actionListener);
-    }
     private void setup(String name, String property, String tooltip, ActionListener actionListener)
     {
         doStyle();
@@ -124,6 +91,7 @@ public class SideButton extends JButton implements Destroyable {
         setToolTipText(tooltip);
         putClientProperty("help", "Dialog/"+property+"/"+name);
     }
+
     private void doStyle()
     {
         setLayout(new BorderLayout());

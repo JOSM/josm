@@ -70,11 +70,6 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     public GpxLayer fromLayer = null;
     private Marker currentMarker;
 
-    @Deprecated
-    public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer, boolean addMouseHandlerInConstructor) {
-        this(indata, name, associatedFile, fromLayer);
-    }
-
     public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer) {
         super(name);
         this.setAssociatedFile(associatedFile);
