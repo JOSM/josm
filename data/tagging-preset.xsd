@@ -234,6 +234,7 @@
 		<attribute name="type" type="string" />
 		<attribute name="count" type="integer" />
 		<attribute name="member_expression" type="string" />
+		<anyAttribute processContents="skip" />
 	</complexType>
 
 	<simpleType name="role_requisite">
