@@ -308,7 +308,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         } else {
             // nodes
             for (Node n : nc.getCurrentDataSet().getNodes()) {
-                if (n.isSelectable() && lasso.contains(nc.getPoint(n))) {
+                if (n.isSelectable() && lasso.contains(nc.getPoint2D(n))) {
                     selection.add(n);
                 }
             }
@@ -320,7 +320,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
                 }
                 if (alt) {
                     for (Node n : w.getNodes()) {
-                        if (!n.isIncomplete() && lasso.contains(nc.getPoint(n))) {
+                        if (!n.isIncomplete() && lasso.contains(nc.getPoint2D(n))) {
                             selection.add(w);
                             break;
                         }
