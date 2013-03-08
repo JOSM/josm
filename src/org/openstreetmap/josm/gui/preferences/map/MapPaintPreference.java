@@ -267,19 +267,6 @@ public class MapPaintPreference implements SubPreferenceSetting {
         public SourceEntry deserialize(Map<String, String> s) {
             return new SourceEntry(s.get("url"), s.get("ptoken"), s.get("title"), Boolean.parseBoolean(s.get("active")));
         }
-
-        @Override
-        public Map<String, String> migrate(Collection<String> old) {
-            List<String> entryStr = new ArrayList<String>(old);
-            if (entryStr.size() < 4)
-                return null;
-            Map<String, String> res = new HashMap<String, String>();
-            res.put("url", entryStr.get(0));
-            res.put("ptoken", entryStr.get(1));
-            res.put("title", entryStr.get(2));
-            res.put("active", entryStr.get(3));
-            return res;
-        }
     }
 
     @Override

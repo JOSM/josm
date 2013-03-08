@@ -100,14 +100,6 @@ public class WmsCache {
         if (!(new File(cPath).isAbsolute())) {
             cPath = Main.pref.getCacheDirectory() + File.separator + cPath;
         }
-        // Migrate to new cache directory. Remove 2012-06
-        {
-            File oldPath = new File(Main.pref.getPreferencesDirFile(), "wms-cache");
-            File newPath = new File(cPath);
-            if (oldPath.exists() && !newPath.exists()) {
-                oldPath.renameTo(newPath);
-            }
-        }
         return cPath;
     }
 
