@@ -335,18 +335,6 @@ public class TaggingPresetPreference implements SubPreferenceSetting {
         public SourceEntry deserialize(Map<String, String> s) {
             return new SourceEntry(s.get("url"), null, s.get("title"), true);
         }
-
-        @Override
-        public Map<String, String> migrate(Collection<String> old) {
-            List<String> entryStr = new ArrayList<String>(old);
-            if (entryStr.size() < 2)
-                return null;
-            Map<String, String> res = new HashMap<String, String>();
-            res.put("url", entryStr.get(0));
-            res.put("title", entryStr.get(1));
-            return res;
-        }
-
     }
 
     @Override
