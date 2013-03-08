@@ -111,7 +111,9 @@ public class ElemStyles {
                 p.a = new StyleList(p.a, line);
             }
         }
-        osm.mappaintStyle = osm.mappaintStyle.put(p.a, p.b);
+        if (p != null) {
+            osm.mappaintStyle = osm.mappaintStyle.put(p.a, p.b);
+        }
         osm.mappaintCacheIdx = cacheIdx;
         return p;
     }
