@@ -1502,23 +1502,9 @@ public abstract class SourceEditor extends JPanel {
 
         abstract public SourceEntry deserialize(Map<String, String> entryStr);
 
-        // migration can be removed end 2012
-        abstract public Map<String, String> migrate(Collection<String> old);
-
         public List<SourceEntry> get() {
 
-            boolean migration = false;
             Collection<Map<String, String>> src = Main.pref.getListOfStructs(pref, (Collection<Map<String, String>>) null);
-            if (src == null) {
-                Collection<Collection<String>> srcOldPrefFormat = Main.pref.getArray(prefOld, null);
-                if (srcOldPrefFormat != null) {
-                    migration = true;
-                    src = new ArrayList<Map<String, String>>();
-                    for (Collection<String> p : srcOldPrefFormat) {
-                        src.add(migrate(p));
-                    }
-                }
-            }
             if (src == null)
                 return new ArrayList<SourceEntry>(getDefault());
 
@@ -1528,9 +1514,6 @@ public abstract class SourceEditor extends JPanel {
                 if (e != null) {
                     entries.add(e);
                 }
-            }
-            if (migration) {
-                put(entries);
             }
             return entries;
         }
