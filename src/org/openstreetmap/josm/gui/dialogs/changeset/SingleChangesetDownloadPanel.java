@@ -12,13 +12,12 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.JTextComponent;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
+import org.openstreetmap.josm.gui.widgets.ChangesetIdTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -29,9 +28,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class SingleChangesetDownloadPanel extends JPanel {
 
-    private JTextField tfChangesetId;
+    private ChangesetIdTextField tfChangesetId;
     private DownloadAction actDownload;
-    private ChangesetIdValidator valChangesetId;
 
     protected void build() {
         setLayout(new FlowLayout(FlowLayout.LEFT,0,0));
@@ -43,9 +41,8 @@ public class SingleChangesetDownloadPanel extends JPanel {
         );
 
         add(new JLabel(tr("Changeset ID: ")));
-        add(tfChangesetId = new JTextField(10));
+        add(tfChangesetId = new ChangesetIdTextField());
         tfChangesetId.setToolTipText(tr("Enter a changeset id"));
-        valChangesetId  =ChangesetIdValidator.decorate(tfChangesetId);
         SelectAllOnFocusGainedDecorator.decorate(tfChangesetId);
 
         actDownload = new DownloadAction();
@@ -53,8 +50,15 @@ public class SingleChangesetDownloadPanel extends JPanel {
         tfChangesetId.addActionListener(actDownload);
         tfChangesetId.getDocument().addDocumentListener(actDownload);
         add(btn);
+        
+        if (Main.pref.getBoolean("downloadchangeset.autopaste", true)) { 
+            tfChangesetId.tryToPasteFromClipboard();
+        }
     }
 
+    /**
+     * Constructs a new {@link SingleChangesetDownloadPanel}
+     */
     public SingleChangesetDownloadPanel() {
         build();
     }
@@ -66,7 +70,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
      * @return the changeset id entered in this panel
      */
     public int getChangesetId() {
-        return valChangesetId.getChangesetId();
+        return tfChangesetId.getChangesetId();
     }
 
     /**
@@ -93,12 +97,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
         }
 
         protected void updateEnabledState() {
-            String v = tfChangesetId.getText();
-            if (v == null || v.trim().length() == 0) {
-                setEnabled(false);
-                return;
-            }
-            setEnabled(valChangesetId.isValid());
+            setEnabled(tfChangesetId.readIds());
         }
 
         public void changedUpdate(DocumentEvent arg0) {
@@ -111,49 +110,6 @@ public class SingleChangesetDownloadPanel extends JPanel {
 
         public void removeUpdate(DocumentEvent arg0) {
             updateEnabledState();
-        }
-    }
-
-    /**
-     * Validator for a changeset ID entered in a {@link JTextComponent}.
-     *
-     */
-    static private class ChangesetIdValidator extends AbstractTextComponentValidator {
-        static public ChangesetIdValidator decorate(JTextComponent tc) {
-            return new ChangesetIdValidator(tc);
-        }
-
-        public ChangesetIdValidator(JTextComponent tc) {
-            super(tc);
-        }
-
-        @Override
-        public boolean isValid() {
-            String value  = getComponent().getText();
-            if (value == null || value.trim().length() == 0)
-                return true;
-            return getChangesetId() > 0;
-        }
-
-        @Override
-        public void validate() {
-            if (!isValid()) {
-                feedbackInvalid(tr("The current value is not a valid changeset ID. Please enter an integer value > 0"));
-            } else {
-                feedbackValid(tr("Please enter an integer value > 0"));
-            }
-        }
-
-        public int getChangesetId() {
-            String value  = getComponent().getText();
-            if (value == null || value.trim().length() == 0) return 0;
-            try {
-                int changesetId = Integer.parseInt(value.trim());
-                if (changesetId > 0) return changesetId;
-                return 0;
-            } catch(NumberFormatException e) {
-                return 0;
-            }
         }
     }
 }
