@@ -20,13 +20,7 @@ public class DisplayPreference extends DefaultTabPreferenceSetting {
     
     private DisplayPreference() {
         super("display", tr("Display Settings"), tr("Various settings that influence the visual representation of the whole program."), false, new JTabbedPane());
-        displaycontent = getTabPane();
     }
-    
-    /**
-     * @deprecated Use {@link #getTabPane()} instead. This field will be removed mid-2013.
-     */
-    public final JTabbedPane displaycontent;
     
     @Override
     public boolean ok() {
