@@ -4405,7 +4405,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="man_made" value="wastewater_plant" />
             <text key="name" text="Name" />
         </item>
-        <item name="Watermill" icon="styles/standard/misc/landmark/watermill.png" type="node">
+        <item name="Watermill" icon="styles/standard/misc/landmark/watermill.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=watermill"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:man_made=watermill"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=watermill" />
