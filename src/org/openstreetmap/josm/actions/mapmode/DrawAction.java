@@ -202,7 +202,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return;
         super.enterMode();
         
-        rubberLineColor = Main.pref.getColor(marktr("draw.helper-line"), null);
+        rubberLineColor = Main.pref.getColor(marktr("helper line"), null);
         if (rubberLineColor == null) rubberLineColor = PaintColors.SELECTED.get();
         
         rubberLineStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.stroke.helper-line","3"));
