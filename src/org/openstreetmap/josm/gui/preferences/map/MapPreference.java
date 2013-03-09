@@ -20,13 +20,7 @@ public class MapPreference extends DefaultTabPreferenceSetting {
     
     private MapPreference() {
         super("map", tr("Map Settings"), tr("Settings for the map projection and data interpretation."), false, new JTabbedPane());
-        mapcontent = getTabPane();
     }
-    
-    /**
-     * @deprecated Use {@link #getTabPane()} instead. This field will be removed mid-2013.
-     */
-    public final JTabbedPane mapcontent; // FIXME remove it mid 2013
     
     @Override
     public boolean ok() {
