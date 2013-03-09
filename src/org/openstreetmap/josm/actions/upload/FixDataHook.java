@@ -5,9 +5,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -72,25 +72,28 @@ public class FixDataHook implements UploadHook {
     public class FixDataSpace implements FixData {
         @Override
         public boolean fixKeys(Map<String, String> keys, OsmPrimitive osm) {
-            boolean changed = false;
-            for(Entry<String, String> e : keys.entrySet()) {
+            Map<String, String> newKeys = new HashMap<String, String>(keys);
+            for (Entry<String, String> e : keys.entrySet()) {
                 String v = e.getValue().trim();
                 String k = e.getKey().trim();
                 if(!e.getKey().equals(k)) {
-                    changed = true;
                     boolean drop = k.isEmpty() || v.isEmpty();
                     if(drop || !keys.containsKey(k)) {
-                        keys.remove(e.getKey());
+                        newKeys.remove(e.getKey());
                         if(!drop)
-                            keys.put(k, v);
+                            newKeys.put(k, v);
                     }
                 } else if(!e.getValue().equals(v)) {
                     if(v.isEmpty())
-                        keys.remove(k);
+                        newKeys.remove(k);
                     else
-                        keys.put(k, v);
-                    changed = true;
+                        newKeys.put(k, v);
                 }
+            }
+            boolean changed = !keys.equals(newKeys);
+            if (changed) {
+                keys.clear();
+                keys.putAll(newKeys);
             }
             return changed;
         }
@@ -179,7 +182,6 @@ public class FixDataHook implements UploadHook {
         List<OsmPrimitive> objectsToUpload = apiDataSet.getPrimitives();
         Collection<Command> cmds = new LinkedList<Command>();
 
-        boolean needsChange = false;
         for (OsmPrimitive osm : objectsToUpload) {
             Map<String, String> keys = osm.getKeys();
             if(!keys.isEmpty()) {
