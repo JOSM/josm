@@ -71,7 +71,7 @@ public class DeprecatedTags extends Test {
         checks.add(new DeprecationCheck(2113).
                 test("power_rating").
                 alternative("generator:output"));
-        // from http://wiki.openstreetmap.org/wiki/Tag:shop%3Dorganic
+        // from http://wiki.openstreetmap.org/wiki/Tag:shop=organic
         checks.add(new DeprecationCheck(2114).
                 testAndRemove("shop", "organic").
                 add("shop", "supermarket").
@@ -84,6 +84,11 @@ public class DeprecatedTags extends Test {
         checks.add(new DeprecationCheck(2116).
                 testAndRemove("amenity", "emergency_phone").
                 add("emergency", "phone"));
+        // http://wiki.openstreetmap.org/wiki/Tag:sport=gaelic_football
+        // fix #8132
+        checks.add(new DeprecationCheck(2117).
+                testAndRemove("sport", "gaelic_football").
+                add("sport", "gaelic_games"));
     }
 
     public void visit(OsmPrimitive p) {
