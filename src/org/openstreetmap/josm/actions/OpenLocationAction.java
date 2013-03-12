@@ -34,6 +34,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Open an URL input dialog and load data from the given URL.
@@ -118,7 +119,7 @@ public class OpenLocationAction extends JosmAction {
         dialog.showDialog();
         if (dialog.getValue() != 1) return;
         remindUploadAddressHistory(uploadAddresses);
-        openUrl(layer.isSelected(), uploadAddresses.getText());
+        openUrl(layer.isSelected(), Utils.strip(uploadAddresses.getText()));
     }
     
     /**
