@@ -572,4 +572,35 @@ public class Utils {
         }
         return connection;
     }
+    
+    /**
+     * An alternative to {@link String#trim()} to effectively remove all leading and trailing white characters, including Unicode ones.
+     * @see <a href="http://closingbraces.net/2008/11/11/javastringtrim/">Java’s String.trim has a strange idea of whitespace</a>
+     * @see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4080617">JDK bug 4080617</a>  
+     * @param str The string to strip
+     * @return <code>str</code>, without leading and trailing characters, according to 
+     *         {@link Character#isWhitespace(char)} and {@link Character#isSpaceChar(char)}.
+     * @since 5772
+     */
+    public static String strip(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        int start = 0, end = str.length();
+        boolean leadingWhite = true;
+        while (leadingWhite && start < end) {
+            char c = str.charAt(start);
+            if (leadingWhite = (Character.isWhitespace(c) || Character.isSpaceChar(c))) {
+                start++;
+            }
+        }
+        boolean trailingWhite = true;
+        while (trailingWhite && end > start+1) {
+            char c = str.charAt(end-1);
+            if (trailingWhite = (Character.isWhitespace(c) || Character.isSpaceChar(c))) {
+                end--;
+            }
+        }
+        return str.substring(start, end);
+    }
 }
