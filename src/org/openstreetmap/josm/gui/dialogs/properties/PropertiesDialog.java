@@ -544,6 +544,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         selectSth.setPreferredSize(scrollPane.getSize());
         presets.setSize(scrollPane.getSize());
 
+        editHelper.loadTagsIfNeeded();
         // -- help action
         //
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
@@ -730,6 +731,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     /* ---------------------------------------------------------------------------------- */
     @Override
     public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
+        if (newLayer == null) editHelper.saveTagsIfNeeded();
+        // it is time to save history of tags
+            
         updateSelection();
     }
 
