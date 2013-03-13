@@ -38,7 +38,6 @@ public class Addresses extends Test {
     protected static final int MULTIPLE_STREET_NAMES = 2603;
     protected static final int MULTIPLE_STREET_RELATIONS = 2604;
     protected static final int HOUSE_NUMBER_TOO_FAR = 2605;
-    protected static final int HOUSE_NUMBER_ON_NON_BUILDING_AREA = 2606;
     
     protected static final String ADDR_HOUSE_NUMBER  = "addr:housenumber";
     protected static final String ADDR_INTERPOLATION = "addr:interpolation";
@@ -100,9 +99,6 @@ public class Addresses extends Test {
     @Override
     public void visit(Way w) {
         getAndCheckAssociatedStreets(w);
-        if (w.isArea() && w.hasKey(ADDR_HOUSE_NUMBER) && !w.hasKey("building")) {
-            errors.add(new AddressError(HOUSE_NUMBER_ON_NON_BUILDING_AREA, w, tr("House number on a non-building area")));
-        }
     }
 
     @Override
