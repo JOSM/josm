@@ -32,37 +32,30 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
     private static class PrefixSuffixSwitcher {
 
-        private static final String SEPARATOR = "[:_]?";
+        private static final String SEPARATOR = "[:_]";
 
         private final String a;
         private final String b;
-        private final Pattern startPattern;
-        private final Pattern endPattern;
+        private final Pattern pattern;
 
         public PrefixSuffixSwitcher(String a, String b) {
             this.a = a;
             this.b = b;
-            startPattern = Pattern.compile(
-                    "^(" + a + "|" + b + ")(" + SEPARATOR + "|$)",
-                    Pattern.CASE_INSENSITIVE);
-            endPattern = Pattern.compile("^.*" +
-                    SEPARATOR + "(" + a + "|" + b + ")$",
+            this.pattern = Pattern.compile(
+                    "(^|.*" + SEPARATOR + ")(" + a + "|" + b + ")(" + SEPARATOR + ".*|$)",
                     Pattern.CASE_INSENSITIVE);
         }
 
         public String apply(String text) {
-            Matcher m = startPattern.matcher(text);
-            if (!m.lookingAt()) {
-                m = endPattern.matcher(text);
-            }
+            Matcher m = pattern.matcher(text);
 
             if (m.lookingAt()) {
-                String leftRight = m.group(1).toLowerCase();
+                String leftRight = m.group(2).toLowerCase();
 
                 StringBuilder result = new StringBuilder();
-                result.append(text.substring(0, m.start(1)));
+                result.append(text.substring(0, m.start(2)));
                 result.append(leftRight.equals(a) ? b : a);
-                result.append(text.substring(m.end(1)));
+                result.append(text.substring(m.end(2)));
 
                 return result.toString();
             }
