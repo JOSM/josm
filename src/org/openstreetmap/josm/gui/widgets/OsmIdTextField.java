@@ -42,7 +42,7 @@ public class OsmIdTextField extends AbstractIdTextField<OsmIdTextField.OsmIdVali
      * @return list of id's
      */
     public final List<PrimitiveId> getIds() {
-        return validator.ids;
+        return new ArrayList<PrimitiveId>(validator.ids);
     }
 
     /**
