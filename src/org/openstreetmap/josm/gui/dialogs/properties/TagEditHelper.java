@@ -190,6 +190,37 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             return Arrays.asList(key);
     }
 
+    /**
+     * Load recently used tags from preferences if needed
+     */
+    public void loadTagsIfNeeded() {
+        if (PROPERTY_REMEMBER_TAGS.get() && recentTags.isEmpty()) {
+            recentTags.clear();
+            Collection<String> c = Main.pref.getCollection("properties.recent-tags");
+            Iterator<String> it = c.iterator();
+            String key, value;
+            while (it.hasNext()) {
+                key = it.next();
+                value = it.next();
+                recentTags.put(new Tag(key, value), null);
+            }
+        }
+    }
+
+    /**
+     * Store recently used tags in preferences if needed
+     */
+    public void saveTagsIfNeeded() {
+        if (PROPERTY_REMEMBER_TAGS.get() && !recentTags.isEmpty()) {
+            List<String> c = new ArrayList<String>( recentTags.size()*2 );
+            for (Tag t: recentTags.keySet()) {
+                c.add(t.getKey());
+                c.add(t.getValue());
+            }
+            Main.pref.putCollection("properties.recent-tags", c);
+        }
+    }
+
     public class EditTagDialog extends AbstractTagsDialog {
         final String key;
         final Map<String, Integer> m;
@@ -375,6 +406,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
     }
 
     public static final BooleanProperty PROPERTY_FIX_TAG_LOCALE = new BooleanProperty("properties.fix-tag-combobox-locale", false);
+    public static final BooleanProperty PROPERTY_REMEMBER_TAGS = new BooleanProperty("properties.remember-recently-added-tags", false);
     public static final IntegerProperty PROPERTY_RECENT_TAGS_NUMBER = new IntegerProperty("properties.recently-added-tags", DEFAULT_LRU_TAGS_NUMBER);
 
     abstract class AbstractTagsDialog extends ExtendedDialog {
@@ -588,6 +620,16 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                     selectNumberOfTags();
                 }
             });
+            JCheckBoxMenuItem rememberLastTags = new JCheckBoxMenuItem(
+                new AbstractAction(tr("Remember last used tags")){
+                public void actionPerformed(ActionEvent e) {
+                    boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
+                    PROPERTY_REMEMBER_TAGS.put(sel);
+                    if (sel) saveTagsIfNeeded();
+                }
+            });
+            rememberLastTags.setState(PROPERTY_REMEMBER_TAGS.get());
+            popupMenu.add(rememberLastTags);
         }
         
         private void selectNumberOfTags() {
