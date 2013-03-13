@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -22,6 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
@@ -42,10 +44,12 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -406,5 +410,51 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             setEnabled(enabled);
         }
     }
+    
+    /**
+     * Warns the user about the number of detected conflicts
+     *
+     * @param numNewConflicts the number of detected conflicts
+     * @since 5775
+     */
+    public void warnNumNewConflicts(int numNewConflicts) {
+        if (numNewConflicts == 0) return;
 
+        String msg1 = trn(
+                "There was {0} conflict detected.",
+                "There were {0} conflicts detected.",
+                numNewConflicts,
+                numNewConflicts
+        );
+
+        final StringBuffer sb = new StringBuffer();
+        sb.append("<html>").append(msg1).append("</html>");
+        if (numNewConflicts > 0) {
+            final ButtonSpec[] options = new ButtonSpec[] {
+                    new ButtonSpec(
+                            tr("OK"),
+                            ImageProvider.get("ok"),
+                            tr("Click to close this dialog and continue editing"),
+                            null /* no specific help */
+                    )
+            };
+            GuiHelper.runInEDT(new Runnable() {
+                @Override
+                public void run() {
+                    HelpAwareOptionPane.showOptionDialog(
+                            Main.parent,
+                            sb.toString(),
+                            tr("Conflicts detected"),
+                            JOptionPane.WARNING_MESSAGE,
+                            null, /* no icon */
+                            options,
+                            options[0],
+                            ht("/Concepts/Conflict#WarningAboutDetectedConflicts")
+                    );
+                    unfurlDialog();
+                    Main.map.repaint();
+                }
+            });
+        }
+    }
 }

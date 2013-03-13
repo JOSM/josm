@@ -73,14 +73,11 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.GBC;
@@ -409,55 +406,8 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         if (Main.map != null && Main.map.mapView != null) {
             Main.map.mapView.repaint();
         }
-        warnNumNewConflicts(numNewConflicts);
+        Main.map.conflictDialog.warnNumNewConflicts(numNewConflicts);
     }
-
-    /**
-     * Warns the user about the number of detected conflicts
-     *
-     * @param numNewConflicts the number of detected conflicts
-     */
-    protected void warnNumNewConflicts(int numNewConflicts) {
-        if (numNewConflicts == 0) return;
-
-        String msg1 = trn(
-                "There was {0} conflict detected.",
-                "There were {0} conflicts detected.",
-                numNewConflicts,
-                numNewConflicts
-        );
-
-        final StringBuffer sb = new StringBuffer();
-        sb.append("<html>").append(msg1).append("</html>");
-        if (numNewConflicts > 0) {
-            final ButtonSpec[] options = new ButtonSpec[] {
-                    new ButtonSpec(
-                            tr("OK"),
-                            ImageProvider.get("ok"),
-                            tr("Click to close this dialog and continue editing"),
-                            null /* no specific help */
-                    )
-            };
-            GuiHelper.runInEDT(new Runnable() {
-                @Override
-                public void run() {
-                    HelpAwareOptionPane.showOptionDialog(
-                            Main.parent,
-                            sb.toString(),
-                            tr("Conflicts detected"),
-                            JOptionPane.WARNING_MESSAGE,
-                            null, /* no icon */
-                            options,
-                            options[0],
-                            ht("/Concepts/Conflict#WarningAboutDetectedConflicts")
-                    );
-                    Main.map.conflictDialog.unfurlDialog();
-                    Main.map.repaint();
-                }
-            });
-        }
-    }
-
 
     @Override public boolean isMergable(final Layer other) {
         // isUploadDiscouraged commented to allow merging between normal layers and discouraged layers with a warning (see #7684) 
