@@ -310,4 +310,15 @@ public class Tile {
     public Map<String,String> getMetadata() {
         return metadata;
     }
+
+    public void initLoading() {
+        loaded = false;
+        error = false;
+        loading = true;
+    }
+
+    public void finishLoading() {
+        loading = false;
+        loaded = true;
+    }
 }
