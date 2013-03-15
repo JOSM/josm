@@ -31,6 +31,7 @@ import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.MapQuestOpenAerialTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.MapQuestOsmTileSource;
@@ -184,14 +185,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
     public SlippyMapBBoxChooser() {
         super();
         TMSLayer.setMaxWorkers();
-        cachedLoader = null;
-        String cachePath = TMSLayer.PROP_TILECACHE_DIR.get();
-        if (cachePath != null && !cachePath.isEmpty()) {
-            try {
-                cachedLoader = new OsmFileCacheTileLoader(this, new File(cachePath));
-            } catch (IOException e) {
-            }
-        }
+        cachedLoader = TMSLayer.loaderFactory.makeTileLoader(this);
 
         uncachedLoader = new OsmTileLoader(this);
         setZoomContolsVisible(Main.pref.getBoolean("slippy_map_chooser.zoomcontrols",false));

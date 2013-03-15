@@ -117,10 +117,35 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     /*boolean debug = true;*/
 
+    public interface TileLoaderFactory {
+        OsmTileLoader makeTileLoader(TileLoaderListener listener);
+    }
+
     protected MemoryTileCache tileCache;
     protected TileSource tileSource;
     protected OsmTileLoader tileLoader;
-
+    
+    public static TileLoaderFactory loaderFactory = new TileLoaderFactory() {
+        @Override
+        public OsmTileLoader makeTileLoader(TileLoaderListener listener) {
+            String cachePath = TMSLayer.PROP_TILECACHE_DIR.get();
+            if (cachePath != null && !cachePath.isEmpty()) {
+                try {
+                    return new OsmFileCacheTileLoader(listener, new File(cachePath));
+                } catch (IOException e) {
+                }
+            }
+            return null;
+        }
+    };
+    
+    /**
+    * Plugins that wish to set custom tile loader should call this method
+    */
+    public static void setCustomTileLoaderFactory(TileLoaderFactory loaderFactory) {
+        TMSLayer.loaderFactory = loaderFactory;
+    }
+    
     HashSet<Tile> tileRequestsOutstanding = new HashSet<Tile>();
     @Override
     public synchronized void tileLoadingFinished(Tile tile, boolean success) {
@@ -379,14 +404,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
         tileCache = new MemoryTileCache();
 
-        String cachePath = TMSLayer.PROP_TILECACHE_DIR.get();
-        tileLoader = null;
-        if (cachePath != null && !cachePath.isEmpty()) {
-            try {
-                tileLoader = new OsmFileCacheTileLoader(this, new File(cachePath));
-            } catch (IOException e) {
-            }
-        }
+        tileLoader = loaderFactory.makeTileLoader(this);
         if (tileLoader == null) {
             tileLoader = new OsmTileLoader(this);
         }
