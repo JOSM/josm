@@ -149,7 +149,7 @@ public class SimplifyWayAction extends JosmAction {
      * @param w the way to simplify
      */
     public SequenceCommand simplifyWay(Way w, DataSet ds) {
-        double threshold = Double.parseDouble(Main.pref.get("simplify-way.max-error", "3"));
+        double threshold = Main.pref.getDouble("simplify-way.max-error", "3");
         int lower = 0;
         int i = 0;
         List<Node> newNodes = new ArrayList<Node>(w.getNodesCount());
