@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -89,6 +90,7 @@ public class DownloadObjectDialog extends ExtendedDialog implements WindowListen
         
         // forward the enter key stroke to the download button
         tfId.getKeymap().removeKeyStrokeBinding(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false));
+        tfId.setPreferredSize(new Dimension(400, tfId.getPreferredSize().height));
         
         newLayer.setToolTipText(tr("Select if the data should be downloaded into a new layer"));
         newLayer.setSelected(Main.pref.getBoolean("download.newlayer"));
@@ -202,7 +204,9 @@ public class DownloadObjectDialog extends ExtendedDialog implements WindowListen
             } else {
                 txt=buf;
             }
-            tfId.tryToPasteFrom(txt);
+            if (buf.length() <= Main.pref.getInteger("downloadprimitive.max-autopaste-length", 2000)) {
+                tfId.tryToPasteFrom(txt);
+            }
         }
     }
     
