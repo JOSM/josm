@@ -3,15 +3,14 @@ package org.openstreetmap.josm.actions.downloadtasks;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.geom.Area;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.xml.sax.SAXException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -29,6 +28,7 @@ import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.xml.sax.SAXException;
 
 /**
  * Open the download dialog and download the data.
@@ -115,12 +115,33 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         return Main.worker.submit(downloadTask);
     }
 
+    protected final String encodePartialUrl(String url, String safePart) {
+        if (url != null && safePart != null) {
+            int pos = url.indexOf(safePart);
+            if (pos > -1) {
+                pos += safePart.length();
+                try {
+                    return url.substring(0, pos) + URLEncoder.encode(url.substring(pos), "UTF-8").replaceAll("\\+", "%20");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return url;
+    }
+    
     /**
      * Loads a given URL from the OSM Server
      * @param new_layer True if the data should be saved to a new layer
      * @param url The URL as String
      */
     public Future<?> loadUrl(boolean new_layer, String url, ProgressMonitor progressMonitor) {
+        if (url.matches(PATTERN_OVERPASS_API_URL)) {
+            url = encodePartialUrl(url, "/interpreter?data="); // encode only the part after the = sign
+            
+        } else if (url.matches(PATTERN_OVERPASS_API_XAPI_URL)) {
+            url = encodePartialUrl(url, "/xapi?"); // encode only the part after the ? sign
+        }
         downloadTask = new DownloadTask(new_layer,
                 new OsmServerLocationReader(url),
                 progressMonitor);
