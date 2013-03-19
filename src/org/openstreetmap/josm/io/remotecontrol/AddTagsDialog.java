@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -109,8 +110,11 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
             }
         };
         
+        propertyTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         // a checkbox has a size of 15 px
         propertyTable.getColumnModel().getColumn(0).setMaxWidth(15);
+        TableHelper.adjustColumnWidth(propertyTable, 1, 200);
+        TableHelper.adjustColumnWidth(propertyTable, 2, 700);
         // get edit results if the table looses the focus, for example if a user clicks "add tags"
         propertyTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         propertyTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_MASK), "shiftenter");
@@ -127,8 +131,6 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         tablePanel.add(propertyTable, GBC.eol().fill(GBC.BOTH));
         setContent(tablePanel);
         setDefaultButton(2);
-        // set the default Dimensions and show the dialog
-        setPreferredSize(new Dimension(400,tablePanel.getPreferredSize().height+100));
     }
 
     /**
