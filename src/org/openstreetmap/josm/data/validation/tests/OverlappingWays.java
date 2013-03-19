@@ -6,9 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -55,9 +55,9 @@ public class OverlappingWays extends Test {
 
     @Override
     public void endTest() {
-        Map<List<Way>, LinkedHashSet<WaySegment>> ways_seen = new HashMap<List<Way>, LinkedHashSet<WaySegment>>(500);
+        Map<List<Way>, Set<WaySegment>> ways_seen = new HashMap<List<Way>, Set<WaySegment>>(500);
 
-        for (LinkedHashSet<WaySegment> duplicated : nodePairs.values()) {
+        for (Set<WaySegment> duplicated : nodePairs.values()) {
             int ways = duplicated.size();
 
             if (ways > 1) {

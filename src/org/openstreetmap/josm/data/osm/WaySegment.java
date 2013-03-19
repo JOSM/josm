@@ -4,7 +4,7 @@ package org.openstreetmap.josm.data.osm;
 /**
  * A segment consisting of 2 consecutive nodes out of a way.
  */
-public final class WaySegment {
+public final class WaySegment implements Comparable<WaySegment> {
     /**
      * The way.
      */
@@ -48,5 +48,10 @@ public final class WaySegment {
 
     @Override public int hashCode() {
         return way.hashCode() ^ lowerIndex;
+    }
+
+    @Override
+    public int compareTo(WaySegment o) {
+        return equals(o) ? 0 : toWay().compareTo(o.toWay());
     }
 }

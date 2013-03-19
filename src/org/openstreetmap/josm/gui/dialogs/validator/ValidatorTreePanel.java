@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -205,7 +204,7 @@ public class ValidatorTreePanel extends JTree {
                 expandedPaths.add(new TreePath(new Object[] { rootNode, severityNode }));
             }
 
-            for (Entry<String, LinkedHashSet<TestError>> msgErrors : severityErrors.entrySet()) {
+            for (Entry<String, Set<TestError>> msgErrors : severityErrors.entrySet()) {
                 // Message node
                 Set<TestError> errs = msgErrors.getValue();
                 String msg = msgErrors.getKey() + " (" + errs.size() + ")";
@@ -235,7 +234,7 @@ public class ValidatorTreePanel extends JTree {
                     }
                 }
 
-                for (Entry<String, LinkedHashSet<TestError>> msgErrors : errorlist.entrySet()) {
+                for (Entry<String, Set<TestError>> msgErrors : errorlist.entrySet()) {
                     // Message node
                     Set<TestError> errs = msgErrors.getValue();
                     String msg;
