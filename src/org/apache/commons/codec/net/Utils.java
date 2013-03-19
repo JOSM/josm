@@ -24,7 +24,7 @@ import org.apache.commons.codec.DecoderException;
  *
  * <p>This class is immutable and thread-safe.</p>
  *
- * @version $Id: Utils.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: Utils.java 1458495 2013-03-19 20:19:13Z sebb $
  * @since 1.4
  */
 class Utils {
@@ -40,7 +40,7 @@ class Utils {
      *             Thrown when the byte is not valid per {@link Character#digit(char,int)}
      */
     static int digit16(final byte b) throws DecoderException {
-        final int i = Character.digit((char) b, 16);
+        final int i = Character.digit((char) b, URLCodec.RADIX);
         if (i == -1) {
             throw new DecoderException("Invalid URL encoding: not a valid digit (radix " + URLCodec.RADIX + "): " + b);
         }
