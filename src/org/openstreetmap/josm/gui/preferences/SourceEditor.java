@@ -82,6 +82,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.JFileChooserManager;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -153,7 +154,7 @@ public abstract class SourceEditor extends JPanel {
             // Yes, this is a little ugly, but should work
             @Override
             public void tableChanged(TableModelEvent e) {
-                adjustColumnWidth(tblActiveSources, isMapPaint ? 1 : 0);
+                TableHelper.adjustColumnWidth(tblActiveSources, isMapPaint ? 1 : 0, 800);
             }
         });
         activeSourcesModel.setActiveSources(getInitialSourcesList());
@@ -386,21 +387,6 @@ public abstract class SourceEditor extends JPanel {
         REMOVE_SOURCE_TOOLTIP, EDIT_SOURCE_TOOLTIP, ACTIVATE_TOOLTIP, RELOAD_ALL_AVAILABLE,
         LOADING_SOURCES_FROM, FAILED_TO_LOAD_SOURCES_FROM, FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC,
         ILLEGAL_FORMAT_OF_ENTRY }
-
-    /**
-     * adjust the preferred width of column col to the maximum preferred width of the cells
-     * requires JTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-     */
-    private static void adjustColumnWidth(JTable tbl, int col) {
-        int maxwidth = 0;
-        for (int row=0; row<tbl.getRowCount(); row++) {
-            TableCellRenderer tcr = tbl.getCellRenderer(row, col);
-            Object val = tbl.getValueAt(row, col);
-            Component comp = tcr.getTableCellRendererComponent(tbl, val, false, false, row, col);
-            maxwidth = Math.max(comp.getPreferredSize().width, maxwidth);
-        }
-        tbl.getColumnModel().getColumn(col).setPreferredWidth(maxwidth);
-    }
 
     public boolean hasActiveSourcesChanged() {
         Collection<? extends SourceEntry> prev = getInitialSourcesList();
