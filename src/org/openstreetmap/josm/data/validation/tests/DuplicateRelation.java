@@ -6,10 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -191,14 +191,14 @@ public class DuplicateRelation extends Test {
     @Override
     public void endTest() {
         super.endTest();
-        for(LinkedHashSet<OsmPrimitive> duplicated : relations.values()) {
+        for (Set<OsmPrimitive> duplicated : relations.values()) {
             if (duplicated.size() > 1) {
                 TestError testError = new TestError(this, Severity.ERROR, tr("Duplicated relations"), DUPLICATE_RELATION, duplicated);
                 errors.add( testError );
             }
         }
         relations = null;
-        for(LinkedHashSet<OsmPrimitive> duplicated : relations_nokeys.values()) {
+        for (Set<OsmPrimitive> duplicated : relations_nokeys.values()) {
             if (duplicated.size() > 1) {
                 TestError testError = new TestError(this, Severity.WARNING, tr("Relations with same members"), SAME_RELATION, duplicated);
                 errors.add( testError );

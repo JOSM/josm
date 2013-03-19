@@ -13,12 +13,13 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
 
 /**
  * Validation error
  * @author frsantos
  */
-public class TestError {
+public class TestError implements Comparable<TestError> {
     /** is this error on the ignore list */
     private Boolean ignored = false;
     /** Severity */
@@ -275,5 +276,17 @@ public class TestError {
      */
     public Collection<?> getHighlighted() {
         return highlighted;
+    }
+
+    @Override
+    public int compareTo(TestError o) {
+        if (equals(o)) return 0;
+        
+        MultipleNameVisitor v1 = new MultipleNameVisitor();
+        MultipleNameVisitor v2 = new MultipleNameVisitor();
+
+        v1.visit(getPrimitives());
+        v2.visit(o.getPrimitives());
+        return v1.toString().compareToIgnoreCase(v2.toString());
     }
 }
