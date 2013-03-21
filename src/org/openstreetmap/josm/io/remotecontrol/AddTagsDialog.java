@@ -79,9 +79,10 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         for (int i = 0; i<tags.length; i++) {
             count[i] = 0;
             String key = tags[i][0];
+            String value = tags[i][1];
             Boolean b = Boolean.TRUE;
             for (OsmPrimitive osm : sel) {
-                if (osm.keySet().contains(key)) {
+                if (osm.keySet().contains(key) && !osm.get(key).equals(value)) {
                     b = Boolean.FALSE;
                     count[i]++;
                     break;
@@ -140,9 +141,10 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         TableModel tm = propertyTable.getModel();
         for (int i=0; i<tm.getRowCount(); i++) {
             String key = (String)tm.getValueAt(i, 1);
+            String value = (String)tm.getValueAt(i, 1);
             count[i] = 0;
             for (OsmPrimitive osm : sel) {
-                if (osm.keySet().contains(key)) {
+                if (osm.keySet().contains(key) && !osm.get(key).equals(value)) {
                     count[i]++;
                     break;
                 }
@@ -157,7 +159,8 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
      */
     @Override
     protected void buttonAction(int buttonIndex, ActionEvent evt) {
-        if (buttonIndex != 2) {
+        // if layer all layers were closed, ignore all actions
+        if (Main.main.getCurrentDataSet() != null  && buttonIndex != 2) {
             TableModel tm = propertyTable.getModel();
             for (int i=0; i<tm.getRowCount(); i++) {
                 if (buttonIndex==1 || (Boolean)tm.getValueAt(i, 0)) {

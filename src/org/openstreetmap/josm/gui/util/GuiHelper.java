@@ -47,6 +47,14 @@ public class GuiHelper {
             }
         }
     }
+    
+    public static void executeByMainWorkerInEDT(final Runnable task) {
+        Main.worker.submit(new Runnable() {
+            public void run() {
+                runInEDTAndWait(task); 
+            }
+        });
+    }
 
     public static void runInEDT(Runnable task) {
         if (SwingUtilities.isEventDispatchThread()) {
