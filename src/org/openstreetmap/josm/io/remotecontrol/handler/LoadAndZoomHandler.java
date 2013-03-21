@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.tools.Utils;
@@ -131,7 +132,7 @@ public class LoadAndZoomHandler extends RequestHandler
          * deselect objects if parameter addtags given
          */
         if (args.containsKey("addtags")) {
-            Main.worker.execute(new Runnable() {
+            GuiHelper.executeByMainWorkerInEDT(new Runnable() {
                 public void run() {
                     DataSet ds = Main.main.getCurrentDataSet();
                     if(ds == null) // e.g. download failed
@@ -144,7 +145,7 @@ public class LoadAndZoomHandler extends RequestHandler
         final Bounds bbox = new Bounds(new LatLon(minlat, minlon), new LatLon(maxlat, maxlon));
         if (args.containsKey("select") && PermissionPrefWithDefault.CHANGE_SELECTION.isAllowed()) {
             // select objects after downloading, zoom to selection.
-            Main.worker.execute(new Runnable() {
+            GuiHelper.executeByMainWorkerInEDT(new Runnable() {
                 public void run() {
                     HashSet<OsmPrimitive> newSel = new HashSet<OsmPrimitive>();
                     DataSet ds = Main.main.getCurrentDataSet();
@@ -198,7 +199,7 @@ public class LoadAndZoomHandler extends RequestHandler
      */
     static void addTags(final Map<String, String> args) {
         if (args.containsKey("addtags")) {
-            Main.worker.execute(new Runnable() {
+            GuiHelper.executeByMainWorkerInEDT(new Runnable() {
 
                 public void run() {
                     String[] tags = null;
@@ -234,7 +235,7 @@ public class LoadAndZoomHandler extends RequestHandler
     protected void zoom(final Bounds bounds) {
         // make sure this isn't called unless there *is* a MapView
         if (Main.isDisplayingMapView()) {
-            Main.worker.execute(new Runnable() {
+            GuiHelper.executeByMainWorkerInEDT(new Runnable() {
                 public void run() {
                     BoundingXYVisitor bbox = new BoundingXYVisitor();
                     bbox.visit(bounds);
