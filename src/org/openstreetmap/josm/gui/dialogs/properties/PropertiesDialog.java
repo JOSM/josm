@@ -1144,10 +1144,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 return;
             String key = propertyData.getValueAt(propertyTable.getSelectedRow(), 0).toString();
             Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
-            String value = Utils.getClipboardContent().trim();
-            if (sel.isEmpty())
+            String clipboard = Utils.getClipboardContent();
+            if (sel.isEmpty() || clipboard == null)
                 return;
-            Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, value));
+            Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, Utils.strip(clipboard)));
         }
     }
 
