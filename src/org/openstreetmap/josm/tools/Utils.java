@@ -590,14 +590,16 @@ public class Utils {
         boolean leadingWhite = true;
         while (leadingWhite && start < end) {
             char c = str.charAt(start);
-            if (leadingWhite = (Character.isWhitespace(c) || Character.isSpaceChar(c))) {
+            leadingWhite = (Character.isWhitespace(c) || Character.isSpaceChar(c));
+            if (leadingWhite) {
                 start++;
             }
         }
         boolean trailingWhite = true;
         while (trailingWhite && end > start+1) {
             char c = str.charAt(end-1);
-            if (trailingWhite = (Character.isWhitespace(c) || Character.isSpaceChar(c))) {
+            trailingWhite = (Character.isWhitespace(c) || Character.isSpaceChar(c));
+            if (trailingWhite) {
                 end--;
             }
         }

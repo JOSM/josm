@@ -150,10 +150,13 @@ public class AutoCompletionManager implements DataSetListener {
             for (TaggingPreset.Item item : p.data) {
                 if (item instanceof TaggingPreset.KeyedItem) {
                     TaggingPreset.KeyedItem ki = (TaggingPreset.KeyedItem) item;
-                    if (ki.key == null) {
-                        continue;
+                    if (ki.key != null && ki.getValues() != null) {
+                        try {
+                            presetTagCache.putAll(ki.key, ki.getValues());
+                        } catch (NullPointerException e) {
+                            System.err.println(p+": Unable to cache "+ki);
+                        }
                     }
-                    presetTagCache.putAll(ki.key, ki.getValues());
                 } else if (item instanceof TaggingPreset.Roles) {
                     TaggingPreset.Roles r = (TaggingPreset.Roles) item;
                     for (TaggingPreset.Role i : r.roles) {
