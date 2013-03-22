@@ -1,20 +1,22 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.relation;
 
-import java.awt.event.ActionEvent;
-import static javax.swing.Action.NAME;
-import static javax.swing.Action.SHORT_DESCRIPTION;
-import static javax.swing.Action.SMALL_ICON;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.event.ActionEvent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 /**
  * The action for activating a relation in relation list dialog
+ * @since 5793
  */
 public class SelectInRelationListAction extends AbstractRelationAction {
+
+    /**
+     * Constructs a new <code>SelectInRelationListAction</code>.
+     */
     public SelectInRelationListAction() {
         putValue(NAME, tr("Select in relation list"));
         putValue(SHORT_DESCRIPTION, tr("Select relation in relation list."));
@@ -22,8 +24,7 @@ public class SelectInRelationListAction extends AbstractRelationAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || relations.isEmpty()) return;
-        if (Main.map.relationListDialog!=null)
-            Main.map.relationListDialog.selectRelations(relations);
+        if (!isEnabled() || relations.isEmpty() || Main.map==null || Main.map.relationListDialog==null) return;
+        Main.map.relationListDialog.selectRelations(relations);
     }
 }
