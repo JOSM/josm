@@ -69,7 +69,7 @@ public class AboutAction extends JosmAction {
 
         JPanel info = new JPanel(new GridBagLayout());
         JLabel caption = new JLabel("JOSM – " + tr("Java OpenStreetMap Editor"));
-        caption.setFont(new Font("Helvetica", Font.BOLD, 20));
+        caption.setFont(GuiHelper.getTitleFont());
         info.add(caption, GBC.eol().fill(GBC.HORIZONTAL).insets(10,0,0,0));
         info.add(GBC.glue(0,10), GBC.eol());
         info.add(new JLabel(tr("Version {0}", version.getVersionString())), GBC.eol().fill(GBC.HORIZONTAL).insets(10,0,0,0));
