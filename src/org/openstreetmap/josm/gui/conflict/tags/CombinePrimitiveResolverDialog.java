@@ -252,7 +252,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         if (allResolutions.size() > 0) {
             cmds.addAll(buildTagChangeCommand(targetPrimitive, allResolutions));
         }
-        for(String p : targetPrimitive.getDiscardableKeys()) {
+        for(String p : OsmPrimitive.getDiscardableKeys()) {
             if (targetPrimitive.get(p) != null) {
                 cmds.add(new ChangePropertyCommand(targetPrimitive, p, null));
             }
