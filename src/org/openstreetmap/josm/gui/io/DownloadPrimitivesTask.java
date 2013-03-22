@@ -31,12 +31,12 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
     private DataSet ds;
     private boolean canceled;
     private Exception lastException;
-    private List<PrimitiveId> ids;
+    private final List<PrimitiveId> ids;
 
     private Set<PrimitiveId> missingPrimitives;
 
-    private OsmDataLayer layer;
-    private boolean fullRelation;
+    private final OsmDataLayer layer;
+    private final boolean fullRelation;
     private MultiFetchServerObjectReader multiObjectReader;
     private OsmServerObjectReader objectReader;
 
@@ -44,13 +44,13 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
      * Creates the  task
      *
      * @param layer the layer in which primitives are updated. Must not be null.
-     * @param toUpdate a collection of primitives to update from the server. Set to
+     * @param ids a collection of primitives to update from the server. Set to
      * the empty collection if null.
      * @param fullRelation true if a full download is required, i.e.,
      * a download including the immediate children of a relation.
      * @throws IllegalArgumentException thrown if layer is null.
      */
-    public DownloadPrimitivesTask(OsmDataLayer layer, List<PrimitiveId>  ids, boolean fullRelation) throws IllegalArgumentException {
+    public DownloadPrimitivesTask(OsmDataLayer layer, List<PrimitiveId> ids, boolean fullRelation) throws IllegalArgumentException {
         super(tr("Download objects"), false /* don't ignore exception */);
         ensureParameterNotNull(layer, "layer");
         this.ids = ids;

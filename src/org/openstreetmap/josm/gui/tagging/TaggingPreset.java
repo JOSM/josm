@@ -260,7 +260,13 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 throw new IllegalStateException();
             }
         }
-
+        
+        @Override
+        public String toString() {
+            return "KeyedItem [key=" + key + ", text=" + text
+                    + ", text_context=" + text_context + ", match=" + match
+                    + "]";
+        }
     }
 
     public static class Usage {
@@ -668,7 +674,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String use_last_as_default = "false";
 
         protected JComponent component;
-        protected Map<String, PresetListEntry> lhm = new LinkedHashMap<String, PresetListEntry>();
+        protected final Map<String, PresetListEntry> lhm = new LinkedHashMap<String, PresetListEntry>();
         private boolean initialized = false;
         protected Usage usage;
         protected Object originalValue;
