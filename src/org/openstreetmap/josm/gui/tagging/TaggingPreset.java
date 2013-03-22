@@ -510,7 +510,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                         clearbutton.setSelected(true);
                     }
                 });
-                pnl.add(releasebutton, GBC.std().eol());
+                pnl.add(releasebutton, GBC.eol());
                 value = pnl;
             }
             p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
