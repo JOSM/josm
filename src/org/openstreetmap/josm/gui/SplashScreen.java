@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressRenderer;
 import org.openstreetmap.josm.gui.progress.SwingRenderingProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -63,7 +64,7 @@ public class SplashScreen extends JFrame {
 
         // Add the name of this application
         JLabel caption = new JLabel("JOSM - " + tr("Java OpenStreetMap Editor"));
-        caption.setFont(new Font("Helvetica", Font.BOLD, 20));
+        caption.setFont(GuiHelper.getTitleFont());
         gbc.gridheight = 1;
         gbc.gridx = 1;
         gbc.insets = new Insets(30, 0, 0, 0);
