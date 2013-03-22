@@ -52,6 +52,9 @@ import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
+import org.openstreetmap.josm.actions.relation.SelectMembersAction;
+import org.openstreetmap.josm.actions.relation.SelectRelationAction;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -180,6 +183,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final DeleteAction deleteAction = new DeleteAction();
     private final JosmAction[] josmActions = new JosmAction[]{addAction, editAction, deleteAction};
 
+    // relation actions
+    private final DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction = new DownloadSelectedIncompleteMembersAction();
+    private final SelectRelationAction addRelationToSelectionAction = new SelectRelationAction(true);
+    private final SelectMembersAction addMembersToSelectionAction = new SelectMembersAction(true);
+    private final SelectRelationAction selectRelationAction = new SelectRelationAction(false);
+    
     @Override
     public void showNotify() {
         DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IN_EDT_CONSOLIDATED);
@@ -378,33 +387,34 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         // setting up the membership table
         membershipMenu = new JPopupMenu();
-        membershipMenu.add(new SelectRelationAction(true));
-        membershipMenu.add(new SelectRelationAction(false));
-        membershipMenu.add(new SelectRelationMembersAction());
-        membershipMenu.add(new DownloadIncompleteMembersAction());
+        membershipMenu.add(addRelationToSelectionAction);
+        membershipMenu.add(selectRelationAction);
+        membershipMenu.add(addMembersToSelectionAction);
+        membershipMenu.add(downloadSelectedIncompleteMembersAction);
         membershipMenu.addSeparator();
         membershipMenu.add(helpAction);
 
         membershipData.setColumnIdentifiers(new String[]{tr("Member Of"),tr("Role"),tr("Position")});
-        membershipTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        membershipTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         membershipTable.addMouseListener(new PopupMenuLauncher() {
             @Override
             public void launch(MouseEvent evt) {
                 Point p = evt.getPoint();
                 int row = membershipTable.rowAtPoint(p);
-                if (row > -1) {
-                    membershipTable.changeSelection(row, 0, false, false);
-                    Relation relation = (Relation)membershipData.getValueAt(row, 0);
-                    for (Component c : membershipMenu.getComponents()) {
-                        if (c instanceof JMenuItem) {
-                            Action action = ((JMenuItem) c).getAction();
-                            if (action instanceof RelationRelated) {
-                                ((RelationRelated)action).setRelation(relation);
-                            }
-                        }
+                membershipTable.changeSelection(row, 0, false, false);
+                int idx[] = membershipTable.getSelectedRows();
+                List<Relation> rels =  new ArrayList<Relation>(10);
+                if (idx!=null) {
+                    for (int i: idx) {
+                        Relation r = (Relation) (membershipData.getValueAt(i, 0));
+                        rels.add(r);
                     }
-                    membershipMenu.show(membershipTable, p.x, p.y-3);
                 }
+                selectRelationAction.setRelations(rels);
+                addMembersToSelectionAction.setRelations(rels);
+                addMembersToSelectionAction.setRelations(rels);
+                downloadSelectedIncompleteMembersAction.setRelations(rels);
+                membershipMenu.show(membershipTable, p.x, p.y-3);
             }
         });
 
@@ -1043,95 +1053,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         return row > -1 ? (IRelation) membershipData.getValueAt(row, 0) : null;
     }
 
-    public static interface RelationRelated {
-        public Relation getRelation();
-        public void setRelation(Relation relation);
-    }
-
-    static abstract class AbstractRelationAction extends AbstractAction implements RelationRelated {
-        protected Relation relation;
-        public Relation getRelation() {
-            return this.relation;
-        }
-        public void setRelation(Relation relation) {
-            this.relation = relation;
-        }
-    }
-
-    static class SelectRelationAction extends AbstractRelationAction {
-        boolean selectionmode;
-        public SelectRelationAction(boolean select) {
-            selectionmode = select;
-            if(select) {
-                putValue(NAME, tr("Select relation"));
-                putValue(SHORT_DESCRIPTION, tr("Select relation in main selection."));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
-            } else {
-                putValue(NAME, tr("Select in relation list"));
-                putValue(SHORT_DESCRIPTION, tr("Select relation in relation list."));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs", "relationlist"));
-            }
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            if(selectionmode) {
-                Main.map.mapView.getEditLayer().data.setSelected(relation);
-            } else {
-                Main.map.relationListDialog.selectRelation(relation);
-                Main.map.relationListDialog.unfurlDialog();
-            }
-        }
-    }
-
-
-    /**
-     * Sets the current selection to the members of selected relation
-     *
-     */
-    class SelectRelationMembersAction extends AbstractRelationAction {
-        public SelectRelationMembersAction() {
-            putValue(SHORT_DESCRIPTION,tr("Select the members of selected relation"));
-            putValue(SMALL_ICON, ImageProvider.get("selectall"));
-            putValue(NAME, tr("Select members"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            HashSet<OsmPrimitive> members = new HashSet<OsmPrimitive>();
-            members.addAll(relation.getMemberPrimitives());
-            Main.map.mapView.getEditLayer().data.setSelected(members);
-        }
-
-    }
-
-    /**
-     * Action for downloading incomplete members of selected relation
-     *
-     */
-    class DownloadIncompleteMembersAction extends AbstractRelationAction {
-        public DownloadIncompleteMembersAction() {
-            putValue(SHORT_DESCRIPTION, tr("Download incomplete members of selected relations"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
-            putValue(NAME, tr("Download incomplete members"));
-        }
-
-        public Set<OsmPrimitive> buildSetOfIncompleteMembers(Relation r) {
-            Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
-            ret.addAll(r.getIncompleteMembers());
-            return ret;
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            if (!relation.hasIncompleteMembers()) return;
-            ArrayList<Relation> rels = new ArrayList<Relation>();
-            rels.add(relation);
-            Main.worker.submit(new DownloadRelationMemberTask(
-                    rels,
-                    buildSetOfIncompleteMembers(relation),
-                    Main.map.mapView.getEditLayer()
-                    ));
-        }
-    }
-    
     class PasteValueAction extends AbstractAction {
         public PasteValueAction() {
             putValue(NAME, tr("Paste Value"));

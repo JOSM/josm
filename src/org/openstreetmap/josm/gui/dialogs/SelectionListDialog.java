@@ -38,6 +38,9 @@ import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
+import org.openstreetmap.josm.actions.relation.EditRelationAction;
+import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.Node;
@@ -45,7 +48,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
@@ -65,8 +67,6 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.EditLayerChangeListener;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
-import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
@@ -87,8 +87,8 @@ public class SelectionListDialog extends ToggleDialog  {
     private SearchAction actSearch;
     private ZoomToJOSMSelectionAction actZoomToJOSMSelection;
     private ZoomToListSelection actZoomToListSelection;
-    private SetRelationSelection actSetRelationSelection;
-    private EditRelationSelection actEditRelationSelection;
+    private SelectInRelationListAction actSetRelationSelection;
+    private EditRelationAction actEditRelationSelection;
     private DownloadSelectedIncompleteMembersAction actDownloadSelectedIncompleteMembers;
 
     private SelectionPopup popupMenu;
@@ -141,10 +141,23 @@ public class SelectionListDialog extends ToggleDialog  {
         model.addListDataListener(actZoomToJOSMSelection);
 
         actZoomToListSelection = new ZoomToListSelection();
-        actSetRelationSelection = new SetRelationSelection();
-        actEditRelationSelection = new EditRelationSelection();
+        actSetRelationSelection = new SelectInRelationListAction();
+        actEditRelationSelection = new EditRelationAction();
         actDownloadSelectedIncompleteMembers = new DownloadSelectedIncompleteMembersAction();
 
+        lstPrimitives.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                actZoomToListSelection.valueChanged(e);
+                List<Relation> rels;
+                rels = model.getSelectedRelationsWithIncompleteMembers();
+                actDownloadSelectedIncompleteMembers.setRelations(rels); 
+                rels = OsmPrimitive.getFilteredList(model.getSelected(), Relation.class);
+                actSetRelationSelection.setRelations(rels);
+                actEditRelationSelection.setRelations(rels);
+            }
+        });
+                
         lstPrimitives.addMouseListener(new SelectionPopupMenuLauncher());
         lstPrimitives.addMouseListener(new DblClickHandler());
 
@@ -249,14 +262,17 @@ public class SelectionListDialog extends ToggleDialog  {
             setTitle(model.getJOSMSelectionSummary());
         }
 
+        @Override
         public void contentsChanged(ListDataEvent e) {
             updateTitle();
         }
 
+        @Override
         public void intervalAdded(ListDataEvent e) {
             updateTitle();
         }
 
+        @Override
         public void intervalRemoved(ListDataEvent e) {
             updateTitle();
         }
@@ -273,6 +289,7 @@ public class SelectionListDialog extends ToggleDialog  {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled()) return;
             org.openstreetmap.josm.actions.search.SearchAction.search();
@@ -282,6 +299,7 @@ public class SelectionListDialog extends ToggleDialog  {
             setEnabled(Main.main != null && Main.main.getEditLayer() != null);
         }
 
+        @Override
         public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
             updateEnabledState();
         }
@@ -328,6 +346,7 @@ public class SelectionListDialog extends ToggleDialog  {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             AutoScaleAction.autoScale("selection");
         }
@@ -336,14 +355,17 @@ public class SelectionListDialog extends ToggleDialog  {
             setEnabled(model.getSize() > 0);
         }
 
+        @Override
         public void contentsChanged(ListDataEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void intervalAdded(ListDataEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void intervalRemoved(ListDataEvent e) {
             updateEnabledState();
         }
@@ -362,6 +384,7 @@ public class SelectionListDialog extends ToggleDialog  {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             BoundingXYVisitor box = new BoundingXYVisitor();
             Collection<OsmPrimitive> sel = model.getSelected();
@@ -377,61 +400,7 @@ public class SelectionListDialog extends ToggleDialog  {
             setEnabled(!model.getSelected().isEmpty());
         }
 
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
-        }
-    }
-
-    /**
-     * The action for setting and editing a relation in relation list dialog
-     *
-     */
-    class EditRelationSelection extends SetRelationSelection {
-        public EditRelationSelection() {
-            putValue(NAME, tr("Call editor for relation"));
-            putValue(SHORT_DESCRIPTION, tr("Call relation editor for selected relation"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
-            updateEnabledState();
-        }
-
         @Override
-        public void actionPerformed(ActionEvent e) {
-            Relation relation = (Relation)model.getSelected().toArray()[0];
-            Collection<RelationMember> members = new HashSet<RelationMember>();
-            Collection<OsmPrimitive> selection = model.getAllElements();
-            for (RelationMember member: relation.getMembers()) {
-                if (selection.contains(member.getMember())) {
-                    members.add(member);
-                }
-            }
-            Main.map.relationListDialog.selectRelation(relation);
-            RelationEditor.getEditor(Main.map.mapView.getEditLayer(), relation,
-                    members).setVisible(true);
-        }
-    }
-
-    /**
-     * The action for setting a relation in relation list dialog
-     *
-     */
-    class SetRelationSelection extends AbstractAction implements ListSelectionListener{
-        public SetRelationSelection() {
-            putValue(NAME, tr("Select in relation list"));
-            putValue(SHORT_DESCRIPTION, tr("Select relation in relation list."));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "selectionlist"));
-            updateEnabledState();
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            Relation relation = (Relation)model.getSelected().toArray()[0];
-            Main.map.relationListDialog.selectRelation(relation);
-        }
-
-        public void updateEnabledState() {
-            Object[] sel = model.getSelected().toArray();
-            setEnabled(sel.length == 1 && sel[0] instanceof Relation);
-        }
-
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
@@ -662,6 +631,7 @@ public class SelectionListDialog extends ToggleDialog  {
         /* ------------------------------------------------------------------------ */
         /* interface EditLayerChangeListener                                        */
         /* ------------------------------------------------------------------------ */
+        @Override
         public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
             if (newLayer == null) {
                 setJOSMSelection(null);
@@ -675,6 +645,7 @@ public class SelectionListDialog extends ToggleDialog  {
         /* ------------------------------------------------------------------------ */
         /* interface SelectionChangeListener                                        */
         /* ------------------------------------------------------------------------ */
+        @Override
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
             setJOSMSelection(newSelection);
         }
@@ -682,37 +653,45 @@ public class SelectionListDialog extends ToggleDialog  {
         /* ------------------------------------------------------------------------ */
         /* interface DataSetListener                                                */
         /* ------------------------------------------------------------------------ */
+        @Override
         public void dataChanged(DataChangedEvent event) {
             // refresh the whole list
             fireContentsChanged(this, 0, getSize());
         }
 
+        @Override
         public void nodeMoved(NodeMovedEvent event) {
             // may influence the display name of primitives, update the data
             update(event.getPrimitives());
         }
 
+        @Override
         public void otherDatasetChange(AbstractDatasetChangedEvent event) {
             // may influence the display name of primitives, update the data
             update(event.getPrimitives());
         }
 
+        @Override
         public void relationMembersChanged(RelationMembersChangedEvent event) {
             // may influence the display name of primitives, update the data
             update(event.getPrimitives());
         }
 
+        @Override
         public void tagsChanged(TagsChangedEvent event) {
             // may influence the display name of primitives, update the data
             update(event.getPrimitives());
         }
 
+        @Override
         public void wayNodesChanged(WayNodesChangedEvent event) {
             // may influence the display name of primitives, update the data
             update(event.getPrimitives());
         }
 
+        @Override
         public void primitivesAdded(PrimitivesAddedEvent event) {/* ignored - handled by SelectionChangeListener */}
+        @Override
         public void primitivesRemoved(PrimitivesRemovedEvent event) {/* ignored - handled by SelectionChangeListener*/}
     }
 
@@ -730,6 +709,7 @@ public class SelectionListDialog extends ToggleDialog  {
             addActionListener(this);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             org.openstreetmap.josm.actions.search.SearchAction.searchWithoutHistory(s);
         }
@@ -810,6 +790,7 @@ public class SelectionListDialog extends ToggleDialog  {
             addActionListener(this);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             Main.main.getCurrentDataSet().setSelected(sel);
         }
@@ -834,47 +815,6 @@ public class SelectionListDialog extends ToggleDialog  {
         }
     }
 
-    /**
-     * Action for downloading incomplete members of selected relations
-     *
-     */
-    class DownloadSelectedIncompleteMembersAction extends AbstractAction implements ListSelectionListener {
-        public DownloadSelectedIncompleteMembersAction() {
-            putValue(SHORT_DESCRIPTION, tr("Download incomplete members of selected relations"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
-            putValue(NAME, tr("Download incomplete members"));
-            updateEnabledState();
-        }
-
-        public Set<OsmPrimitive> buildSetOfIncompleteMembers(List<Relation> rels) {
-            Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
-            for(Relation r: rels) {
-                ret.addAll(r.getIncompleteMembers());
-            }
-            return ret;
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            if (!isEnabled())
-                return;
-            List<Relation> rels = model.getSelectedRelationsWithIncompleteMembers();
-            if (rels.isEmpty()) return;
-            Main.worker.submit(new DownloadRelationMemberTask(
-                    rels,
-                    buildSetOfIncompleteMembers(rels),
-                    Main.map.mapView.getEditLayer()
-            ));
-        }
-
-        protected void updateEnabledState() {
-            setEnabled(!model.getSelectedRelationsWithIncompleteMembers().isEmpty());
-        }
-
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
-        }
-    }
-
     /** Quicker comparator, comparing just by type and ID's */
     static private class OsmPrimitiveQuickComparator implements Comparator<OsmPrimitive> {
 
@@ -896,6 +836,7 @@ public class SelectionListDialog extends ToggleDialog  {
             return -1;
         }
 
+        @Override
         public int compare(OsmPrimitive a, OsmPrimitive b) {
             if (a.getType().equals(b.getType()))
                 return compareId(a, b);

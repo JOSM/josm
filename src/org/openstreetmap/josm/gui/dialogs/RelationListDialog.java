@@ -30,6 +30,7 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -43,6 +44,11 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.relation.DownloadMembersAction;
+import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
+import org.openstreetmap.josm.actions.relation.EditRelationAction;
+import org.openstreetmap.josm.actions.relation.SelectMembersAction;
+import org.openstreetmap.josm.actions.relation.SelectRelationAction;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -50,7 +56,6 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
@@ -67,15 +72,12 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
-import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
-import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Predicate;
@@ -95,17 +97,27 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     /** the list model used */
     private final RelationListModel model;
 
-    /** the edit action */
-    private final EditAction editAction;
     /** the delete action */
     private final DeleteAction deleteAction;
     private final NewAction newAction;
     private final AddToRelation addToRelation;
+    private final DuplicateAction duplicateAction;
+    
     /** the popup menu */
     private final RelationDialogPopupMenu popupMenu;
 
     private final JTextField filter;
     
+    // Actions
+    /** the edit action */
+    private final EditRelationAction editAction;
+    private final DownloadMembersAction downloadMembersAction = new DownloadMembersAction();
+    private final DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction = new DownloadSelectedIncompleteMembersAction();
+    private final SelectMembersAction selectMemebersAction = new SelectMembersAction(false);
+    private final SelectMembersAction addMembersToSelectionAction = new SelectMembersAction(true);
+    private final SelectRelationAction selectRelationAction = new SelectRelationAction(false);
+    private final SelectRelationAction addRelationToSelectionAction = new SelectRelationAction(true);
+
     /**
      * constructor
      */
@@ -138,56 +150,44 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         // the edit action
         //
-        editAction = new EditAction();
-        displaylist.addListSelectionListener(editAction);
-
+        editAction = new EditRelationAction();
+        
         // the duplicate action
         //
-        DuplicateAction duplicateAction = new DuplicateAction();
-        displaylist.addListSelectionListener(duplicateAction);
-
+        duplicateAction = new DuplicateAction();
+        
         // the delete action
         //
         deleteAction = new DeleteAction();
-        displaylist.addListSelectionListener(deleteAction);
 
-        // the select action
+        // Add to realaion action
         //
-        SelectAction selectAction = new SelectAction(false);
-        displaylist.addListSelectionListener(selectAction);
+        addToRelation = new AddToRelation();
 
-        filter = new DisableShortcutsOnFocusGainedTextField();
-        filter.setToolTipText(tr("Relation list filter"));
-        filter.getDocument().addDocumentListener(new DocumentListener() {
+        filter = setupFilter();
 
-            private void setFilter() {
-                try {
-                    filter.setBackground(UIManager.getColor("TextField.background"));
-                    filter.setToolTipText(tr("Relation list filter"));
-                    model.setFilter(SearchCompiler.compile(filter.getText(), false, false));
-                } catch (SearchCompiler.ParseError ex) {
-                    filter.setBackground(new Color(255, 224, 224));
-                    filter.setToolTipText(ex.getMessage());
-                    model.setFilter(new SearchCompiler.Always());
-                }
-            }
-
+        displaylist.addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                setFilter();
-            }
+            public void valueChanged(ListSelectionEvent e) {
+                duplicateAction.valueChanged(e);
+                deleteAction.valueChanged(e);
+                addToRelation.valueChanged(e);
 
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                setFilter();
-            }
+                List<Relation> rels;
+                rels = model.getSelectedNonNewRelations();
+                downloadMembersAction.setRelations(rels);
 
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                setFilter();
+                rels = model.getSelectedRelationsWithIncompleteMembers();
+                downloadSelectedIncompleteMembersAction.setRelations(rels); 
+
+                rels = model.getSelectedRelations();
+                selectMemebersAction.setRelations(rels);
+                addMembersToSelectionAction.setRelations(rels);
+                selectRelationAction.setRelations(rels);
+                addRelationToSelectionAction.setRelations(rels);
             }
         });
-
+        
         JPanel pane = new JPanel(new BorderLayout());
         pane.add(filter, BorderLayout.NORTH);
         pane.add(new JScrollPane(displaylist), BorderLayout.CENTER);
@@ -196,7 +196,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 new SideButton(editAction, false),
                 new SideButton(duplicateAction, false),
                 new SideButton(deleteAction, false),
-                new SideButton(selectAction, false)
+                new SideButton(selectRelationAction, false)
         }));
 
         // activate DEL in the list of relations
@@ -206,16 +206,15 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         InputMapUtils.unassignCtrlShiftUpDown(displaylist, JComponent.WHEN_FOCUSED);
         
         // Select relation on Ctrl-Enter
-        InputMapUtils.addEnterAction(displaylist, selectAction);
+        InputMapUtils.addEnterAction(displaylist, selectRelationAction);
 
-        addToRelation = new AddToRelation();
-        popupMenu = new RelationDialogPopupMenu(displaylist);
+        popupMenu = new RelationDialogPopupMenu();
 
         // Edit relation on Ctrl-Enter
         displaylist.getActionMap().put("edit", editAction);
         displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_MASK), "edit");
     }
-
+    
     @Override public void showNotify() {
         MapView.addLayerChangeListener(newAction);
         newAction.updateEnabledState();
@@ -253,24 +252,6 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     }
 
     /**
-     * Adds a selection listener to the relation list.
-     *
-     * @param listener the listener to add
-     */
-    public void addListSelectionListener(ListSelectionListener listener) {
-        displaylist.addListSelectionListener(listener);
-    }
-
-    /**
-     * Removes a selection listener from the relation list.
-     *
-     * @param listener the listener to remove
-     */
-    public void removeListSelectionListener(ListSelectionListener listener) {
-        displaylist.removeListSelectionListener(listener);
-    }
-
-    /**
      * @return The selected relation in the list
      */
     private Relation getSelected() {
@@ -305,13 +286,48 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
     }
 
+    private JTextField  setupFilter() {
+        final JTextField f = new DisableShortcutsOnFocusGainedTextField();
+        f.setToolTipText(tr("Relation list filter"));
+        f.getDocument().addDocumentListener(new DocumentListener() {
+
+            private void setFilter() {
+                try {
+                    f.setBackground(UIManager.getColor("TextField.background"));
+                    f.setToolTipText(tr("Relation list filter"));
+                    model.setFilter(SearchCompiler.compile(filter.getText(), false, false));
+                } catch (SearchCompiler.ParseError ex) {
+                    f.setBackground(new Color(255, 224, 224));
+                    f.setToolTipText(ex.getMessage());
+                    model.setFilter(new SearchCompiler.Always());
+                }
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                setFilter();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                setFilter();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                setFilter();
+            }
+        });
+        return f;
+    }
+
     class MouseEventHandler extends MouseAdapter {
         protected void setCurrentRelationAsSelection() {
             Main.main.getCurrentDataSet().setSelected((Relation)displaylist.getSelectedValue());
         }
 
         protected void editCurrentRelation() {
-            new EditAction().launchEditor(getSelected());
+            EditRelationAction.launchEditor(getSelected());
         }
 
         @Override public void mouseClicked(MouseEvent e) {
@@ -348,46 +364,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             }
         }
     }
-
-    /**
-     * The edit action
-     *
-     */
-    class EditAction extends AbstractAction implements ListSelectionListener{
-        public EditAction() {
-            putValue(SHORT_DESCRIPTION,tr( "Open an editor for the selected relation"));
-            putValue(NAME, tr("Edit"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
-            setEnabled(false);
-        }
-        protected Collection<RelationMember> getMembersForCurrentSelection(Relation r) {
-            Collection<RelationMember> members = new HashSet<RelationMember>();
-            Collection<OsmPrimitive> selection = Main.map.mapView.getEditLayer().data.getSelected();
-            for (RelationMember member: r.getMembers()) {
-                if (selection.contains(member.getMember())) {
-                    members.add(member);
-                }
-            }
-            return members;
-        }
-
-        public void launchEditor(Relation toEdit) {
-            if (toEdit == null)
-                return;
-            RelationEditor.getEditor(Main.map.mapView.getEditLayer(),toEdit, getMembersForCurrentSelection(toEdit)).setVisible(true);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            if (!isEnabled())
-                return;
-            launchEditor(getSelected());
-        }
-
-        public void valueChanged(ListSelectionEvent e) {
-            setEnabled(displaylist.getSelectedIndices() != null && displaylist.getSelectedIndices().length == 1);
-        }
-    }
-
+    
     /**
      * The delete action
      *
@@ -497,157 +474,6 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         protected void updateEnabledState() {
             setEnabled(displaylist.getSelectedIndices() != null && displaylist.getSelectedIndices().length == 1);
-        }
-
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
-        }
-    }
-
-    /**
-     * Sets the current selection to the list of relations selected in this dialog
-     *
-     */
-    class SelectAction extends AbstractAction implements ListSelectionListener{
-        boolean add;
-        public SelectAction(boolean add) {
-            putValue(SHORT_DESCRIPTION, add ? tr("Add the selected relations to the current selection")
-                    : tr("Set the current selection to the list of selected relations"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
-            putValue(NAME, add ? tr("Select relation (add)") : tr("Select relation"));
-            this.add = add;
-            updateEnabledState();
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            if (!isEnabled()) return;
-            int [] idx = displaylist.getSelectedIndices();
-            if (idx == null || idx.length == 0) return;
-            ArrayList<OsmPrimitive> selection = new ArrayList<OsmPrimitive>(idx.length);
-            for (int i: idx) {
-                selection.add(model.getVisibleRelation(i));
-            }
-            if(add) {
-                Main.map.mapView.getEditLayer().data.addSelected(selection);
-            } else {
-                Main.map.mapView.getEditLayer().data.setSelected(selection);
-            }
-        }
-
-        protected void updateEnabledState() {
-            setEnabled(displaylist.getSelectedIndices() != null && displaylist.getSelectedIndices().length > 0);
-        }
-
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
-        }
-    }
-
-    /**
-     * Sets the current selection to the list of relations selected in this dialog
-     *
-     */
-    class SelectMembersAction extends AbstractAction implements ListSelectionListener{
-        boolean add;
-        public SelectMembersAction(boolean add) {
-            putValue(SHORT_DESCRIPTION,add ? tr("Add the members of all selected relations to current selection")
-                    : tr("Select the members of all selected relations"));
-            putValue(SMALL_ICON, ImageProvider.get("selectall"));
-            putValue(NAME, add ? tr("Select members (add)") : tr("Select members"));
-            this.add = add;
-            updateEnabledState();
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            if (!isEnabled()) return;
-            List<Relation> relations = model.getSelectedRelations();
-            HashSet<OsmPrimitive> members = new HashSet<OsmPrimitive>();
-            for(Relation r: relations) {
-                members.addAll(r.getMemberPrimitives());
-            }
-            if(add) {
-                Main.map.mapView.getEditLayer().data.addSelected(members);
-            } else {
-                Main.map.mapView.getEditLayer().data.setSelected(members);
-            }
-        }
-
-        protected void updateEnabledState() {
-            setEnabled(displaylist.getSelectedIndices() != null && displaylist.getSelectedIndices().length > 0);
-        }
-
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
-        }
-    }
-
-    /**
-     * The action for downloading members of all selected relations
-     *
-     */
-    class DownloadMembersAction extends AbstractAction implements ListSelectionListener{
-
-        public DownloadMembersAction() {
-            putValue(SHORT_DESCRIPTION,tr("Download all members of the selected relations"));
-            putValue(NAME, tr("Download members"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "downloadincomplete"));
-            putValue("help", ht("/Dialog/RelationList#DownloadMembers"));
-            updateEnabledState();
-        }
-
-        protected void updateEnabledState() {
-            setEnabled(! model.getSelectedNonNewRelations().isEmpty());
-        }
-
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            List<Relation> relations = model.getSelectedNonNewRelations();
-            if (relations.isEmpty())
-                return;
-            Main.worker.submit(new DownloadRelationTask(
-                    model.getSelectedNonNewRelations(),
-                    Main.map.mapView.getEditLayer())
-                    );
-        }
-    }
-
-    /**
-     * Action for downloading incomplete members of selected relations
-     *
-     */
-    class DownloadSelectedIncompleteMembersAction extends AbstractAction implements ListSelectionListener{
-        public DownloadSelectedIncompleteMembersAction() {
-            putValue(SHORT_DESCRIPTION, tr("Download incomplete members of selected relations"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
-            putValue(NAME, tr("Download incomplete members"));
-            updateEnabledState();
-        }
-
-        public Set<OsmPrimitive> buildSetOfIncompleteMembers(List<Relation> rels) {
-            Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
-            for(Relation r: rels) {
-                ret.addAll(r.getIncompleteMembers());
-            }
-            return ret;
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            if (!isEnabled())
-                return;
-            List<Relation> rels = model.getSelectedRelationsWithIncompleteMembers();
-            if (rels.isEmpty()) return;
-            Main.worker.submit(new DownloadRelationMemberTask(
-                    rels,
-                    buildSetOfIncompleteMembers(rels),
-                    Main.map.mapView.getEditLayer()
-                    ));
-        }
-
-        protected void updateEnabledState() {
-            setEnabled(!model.getSelectedRelationsWithIncompleteMembers().isEmpty());
         }
 
         public void valueChanged(ListSelectionEvent e) {
@@ -954,26 +780,24 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
     }
 
-    class RelationDialogPopupMenu extends ListPopupMenu {
+    class RelationDialogPopupMenu extends JPopupMenu {
 
-        public RelationDialogPopupMenu(JList list) {
-            super(list);
-
+        public RelationDialogPopupMenu() {
             // -- download members action
-            add(new DownloadMembersAction());
+            add(downloadMembersAction);
 
             // -- download incomplete members action
-            add(new DownloadSelectedIncompleteMembersAction());
+            add(downloadSelectedIncompleteMembersAction);
 
             addSeparator();
 
             // -- select members action
-            add(new SelectMembersAction(false));
-            add(new SelectMembersAction(true));
+            add(selectMemebersAction);
+            add(addMembersToSelectionAction);
 
             // -- select action
-            add(new SelectAction(false));
-            add(new SelectAction(true));
+            add(selectRelationAction);
+            add(addRelationToSelectionAction);
 
             addSeparator();
 
