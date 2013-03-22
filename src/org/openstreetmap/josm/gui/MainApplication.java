@@ -40,6 +40,7 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
@@ -279,7 +280,7 @@ public class MainApplication extends Main {
         }
         Main.pref.updateSystemProperties();
 
-        JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
+        final JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
         Main.parent = mainFrame;
 
         if (args.containsKey(Option.LOAD_PREFERENCES)) {
@@ -313,7 +314,7 @@ public class MainApplication extends Main {
             System.exit(0);
         }
 
-        SplashScreen splash = new SplashScreen();
+        final SplashScreen splash = new SplashScreen();
         final ProgressMonitor monitor = splash.getProgressMonitor();
         monitor.beginTask(tr("Initializing"));
         splash.setVisible(Main.pref.getBoolean("draw.splashscreen", true));
@@ -347,9 +348,15 @@ public class MainApplication extends Main {
         monitor.indeterminateSubTask(tr("Loading plugins"));
         PluginHandler.loadLatePlugins(splash,pluginsToLoad,  monitor.createSubTaskMonitor(1, false));
         toolbar.refreshToolbarControl();
-        splash.setVisible(false);
-        splash.dispose();
-        mainFrame.setVisible(true);
+
+        GuiHelper.runInEDT(new Runnable() {
+            public void run() {
+                splash.setVisible(false);
+                splash.dispose();
+                mainFrame.setVisible(true);
+            }
+        });
+
         Main.MasterWindowListener.setup();
 
         boolean maximized = Boolean.parseBoolean(Main.pref.get("gui.maximized"));
