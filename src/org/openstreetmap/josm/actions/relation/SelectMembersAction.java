@@ -1,23 +1,28 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.relation;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.util.HashSet;
-import static javax.swing.Action.NAME;
-import static javax.swing.Action.SHORT_DESCRIPTION;
-import static javax.swing.Action.SMALL_ICON;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 /**
-* Sets the current selection to the list of relations selected in this dialog
-*/
+ * Sets the current selection to the list of relations selected in this dialog
+ * @since 5793
+ */
 public class SelectMembersAction extends AbstractRelationAction {
-    boolean add;
+    
+    private final boolean add;
+
+    /**
+     * Constructs a new <code>SelectMembersAction</code>.
+     * @param add if <code>true</code>, the members will be added to current selection. If <code>false</code>, the members will replace the current selection.
+     */
     public SelectMembersAction(boolean add) {
         putValue(SHORT_DESCRIPTION,add ? tr("Add the members of all selected relations to current selection")
                 : tr("Select the members of all selected relations"));
@@ -28,13 +33,13 @@ public class SelectMembersAction extends AbstractRelationAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || relations.isEmpty()) return;
+        if (!isEnabled() || relations.isEmpty() || Main.map==null || Main.map.mapView==null) return;
         
         HashSet<OsmPrimitive> members = new HashSet<OsmPrimitive>();
-        for(Relation r: relations) {
+        for (Relation r: relations) {
             members.addAll(r.getMemberPrimitives());
         }
-        if(add) {
+        if (add) {
             Main.map.mapView.getEditLayer().data.addSelected(members);
         } else {
             Main.map.mapView.getEditLayer().data.setSelected(members);
