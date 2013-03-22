@@ -589,10 +589,10 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
     public void setSelected(Collection<? extends PrimitiveId> selection, boolean fireSelectionChangeEvent) {
         boolean changed;
         synchronized (selectionLock) {
-            boolean wasEmpty = selectedPrimitives.isEmpty();
+            LinkedHashSet<OsmPrimitive> oldSelection = new LinkedHashSet<OsmPrimitive>(selectedPrimitives);
             selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
-            changed = addSelected(selection, false)
-                    || (!wasEmpty && selectedPrimitives.isEmpty());
+            addSelected(selection, false);
+            changed = !oldSelection.equals(selectedPrimitives);
             if (changed) {
                 selectionSnapshot = null;
             }
