@@ -1331,6 +1331,13 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public Collection<String> getValues() {
             return Collections.singleton(value);
         }
+
+        @Override
+        public String toString() {
+            return "Key [key=" + key + ", value=" + value + ", text=" + text
+                    + ", text_context=" + text_context + ", match=" + match
+                    + "]";
+        }
     }
 
     /**
@@ -1542,6 +1549,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                         all.getLast().data.add((Item) o);
                         if (o instanceof ComboMultiSelect) {
                             ((ComboMultiSelect) o).addListEntries(listEntries);
+                        } else if (o instanceof Key) {
+                            if (((Key) o).value == null) {
+                                ((Key) o).value = ""; // Fix #8530
+                            }
                         }
                         listEntries = new LinkedList<PresetListEntry>();
                         lastrole = null;
