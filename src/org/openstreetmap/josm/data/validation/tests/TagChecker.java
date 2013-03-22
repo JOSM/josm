@@ -303,7 +303,13 @@ public class TagChecker extends Test
                 for (TaggingPreset.Item i : p.data) {
                     if (i instanceof TaggingPreset.KeyedItem) {
                         TaggingPreset.KeyedItem ky = (TaggingPreset.KeyedItem) i;
-                        presetsValueData.putAll(ky.key, ky.getValues());
+                        if (ky.key != null && ky.getValues() != null) {
+                            try {
+                                presetsValueData.putAll(ky.key, ky.getValues());
+                            } catch (NullPointerException e) {
+                                System.err.println(p+": Unable to initialize "+ky);
+                            }
+                        }
                     }
                 }
             }
