@@ -8,6 +8,8 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Stroke;
 import java.awt.Toolkit;
@@ -17,6 +19,8 @@ import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.image.FilteredImageSource;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.GrayFilter;
 import javax.swing.Icon;
@@ -211,4 +215,29 @@ public class GuiHelper {
         }
     }
     
+    /**
+     * Gets the font used to display JOSM title in about dialog and splash screen.
+     * @return By order or priority, the first font available in local fonts:
+     *         1. Helvetica Bold 20
+     *         2. Calibri Bold 23
+     *         3. Arial Bold 20
+     *         4. SansSerif Bold 20
+     * @since 5797
+     */
+    public static Font getTitleFont() {
+        List<String> fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+        // Helvetica is the preferred choice but is not available by default on Windows 
+        // (http://www.microsoft.com/typography/fonts/product.aspx?pid=161)
+        if (fonts.contains("Helvetica")) {
+            return new Font("Helvetica", Font.BOLD, 20);
+        // Calibri is the default Windows font since Windows Vista but is not available on older versions of Windows, where Arial is preferred
+        } else if (fonts.contains("Calibri")) {
+            return new Font("Calibri", Font.BOLD, 23);
+        } else if (fonts.contains("Arial")) {
+            return new Font("Arial", Font.BOLD, 20);
+        // No luck, nothing found, fallback to one of the 5 fonts provided with Java (Serif, SansSerif, Monospaced, Dialog, and DialogInput)
+        } else {
+            return new Font("SansSerif", Font.BOLD, 20);
+        }
+    }
 }
