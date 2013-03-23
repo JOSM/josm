@@ -54,8 +54,13 @@ public class AttributionSupport {
     }
 
     public void paintAttribution(Graphics g, int width, int height, Coordinate topLeft, Coordinate bottomRight, int zoom, ImageObserver observer) {
-        if (source == null || !source.requiresAttribution())
-            return;
+        if (source == null || !source.requiresAttribution()) {
+            attrToUBounds = null;
+            attrImageBounds = null;
+            attrTextBounds = null;
+            return;            
+        }
+        
         // Draw attribution
         Font font = g.getFont();
         g.setFont(ATTR_LINK_FONT);
@@ -77,6 +82,8 @@ public class AttributionSupport {
             g.drawString(attrTermsText, x + 1, y + 1);
             g.setColor(Color.white);
             g.drawString(attrTermsText, x, y);
+        } else {
+            attrToUBounds = null;
         }
 
         // Draw attribution logo
@@ -87,6 +94,8 @@ public class AttributionSupport {
             int y = termsTextY - imgHeight - termsTextHeight - 5;
             attrImageBounds = new Rectangle(x, y, imgWidth, imgHeight);
             g.drawImage(attrImage, x, y, null);
+        } else {
+            attrImageBounds = null;
         }
 
         g.setFont(ATTR_FONT);
@@ -101,6 +110,8 @@ public class AttributionSupport {
             g.setColor(Color.white);
             g.drawString(attributionText, x, y);
             attrTextBounds = new Rectangle(x, y-textHeight, (int) stringBounds.getWidth(), (int) stringBounds.getHeight());
+        } else {
+            attrTextBounds = null;
         }
 
         g.setFont(font);
