@@ -23,8 +23,10 @@ public class SelectInRelationListAction extends AbstractRelationAction {
         putValue(SMALL_ICON, ImageProvider.get("dialogs", "selectionlist"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || relations.isEmpty() || Main.map==null || Main.map.relationListDialog==null) return;
         Main.map.relationListDialog.selectRelations(relations);
+        Main.map.relationListDialog.unfurlDialog();
     }
 }

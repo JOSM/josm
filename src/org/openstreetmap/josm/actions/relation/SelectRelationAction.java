@@ -28,6 +28,7 @@ public class SelectRelationAction extends AbstractRelationAction {
         this.add = add;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || relations.isEmpty() || Main.map==null || Main.map.mapView==null) return;
         OsmDataLayer editLayer = Main.map.mapView.getEditLayer();

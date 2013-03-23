@@ -19,11 +19,12 @@ import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import javax.swing.plaf.basic.BasicArrowButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Button that is usually used in toggle dialogs
+ */
 public class SideButton extends JButton implements Destroyable {
     private final static int iconHeight = 20;
     

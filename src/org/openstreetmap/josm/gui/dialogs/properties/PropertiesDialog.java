@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +79,6 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandler;
-import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
@@ -112,63 +110,37 @@ import org.openstreetmap.josm.tools.Utils;
  * @author imi
  */
 public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetListenerAdapter.Listener {
-    /**
-     * Watches for mouse clicks
-     * @author imi
-     */
-    public class MouseClickWatch extends MouseAdapter {
-        @Override public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() < 2)
-            {
-                // single click, clear selection in other table not clicked in
-                if (e.getSource() == propertyTable) {
-                    membershipTable.clearSelection();
-                } else if (e.getSource() == membershipTable) {
-                    propertyTable.clearSelection();
-                }
-            }
-            // double click, edit or add property
-            else if (e.getSource() == propertyTable)
-            {
-                int row = propertyTable.rowAtPoint(e.getPoint());
-                if (row > -1) {
-                    boolean focusOnKey = (propertyTable.columnAtPoint(e.getPoint()) == 0);
-                    editHelper.editProperty(row, focusOnKey);
-                } else {
-                    editHelper.addProperty();
-                    btnAdd.requestFocusInWindow();
-                }
-            } else if (e.getSource() == membershipTable) {
-                int row = membershipTable.rowAtPoint(e.getPoint());
-                if (row > -1) {
-                    editMembership(row);
-                }
-            }
-            else
-            {
-                editHelper.addProperty();
-                btnAdd.requestFocusInWindow();
-            }
-        }
-        @Override public void mousePressed(MouseEvent e) {
-            if (e.getSource() == propertyTable) {
-                membershipTable.clearSelection();
-            } else if (e.getSource() == membershipTable) {
-                propertyTable.clearSelection();
-            }
-        }
-
-    }
-
     // hook for roadsigns plugin to display a small
     // button in the upper right corner of this dialog
     public static final JPanel pluginHook = new JPanel();
+
+    /**
+     * The property data of selected objects.
+     */
+    private final DefaultTableModel propertyData = new ReadOnlyTableModel();
+
+    /**
+     * The membership data of selected objects.
+     */
+    private final DefaultTableModel membershipData = new ReadOnlyTableModel();
+
+    /**
+     * The properties table.
+     */
+    private final JTable propertyTable = new JTable(propertyData);
+    /**
+     * The membership table.
+     */
+    private final JTable membershipTable = new JTable(membershipData);
 
     private JPopupMenu propertyMenu;
     private JPopupMenu membershipMenu;
 
     private final Map<String, Map<String, Integer>> valueCount = new TreeMap<String, Map<String, Integer>>();
-
+    /**
+     * This sub-object is responsible for all adding and editing of properties
+     */
+    private final TagEditHelper editHelper = new TagEditHelper(propertyData, valueCount);
     
     private final DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
     private final HelpAction helpAction = new HelpAction();
@@ -189,141 +161,44 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final SelectMembersAction addMembersToSelectionAction = new SelectMembersAction(true);
     private final SelectRelationAction selectRelationAction = new SelectRelationAction(false);
     
-    @Override
-    public void showNotify() {
-        DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IN_EDT_CONSOLIDATED);
-        SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
-        MapView.addEditLayerChangeListener(this);
-        for (JosmAction action : josmActions) {
-            Main.registerActionShortcut(action);
-        }
-        updateSelection();
-    }
-
-    @Override
-    public void hideNotify() {
-        DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
-        SelectionEventManager.getInstance().removeSelectionListener(this);
-        MapView.removeEditLayerChangeListener(this);
-        for (JosmAction action : josmActions) {
-            Main.unregisterActionShortcut(action);
-        }
-    }
-
-    /**
-     * This simply fires up an {@link RelationEditor} for the relation shown; everything else
-     * is the editor's business.
-     *
-     * @param row
-     */
-    private void editMembership(int row) {
-        Relation relation = (Relation)membershipData.getValueAt(row, 0);
-        Main.map.relationListDialog.selectRelation(relation);
-        RelationEditor.getEditor(
-                Main.map.mapView.getEditLayer(),
-                relation,
-                ((MemberInfo) membershipData.getValueAt(row, 1)).role).setVisible(true);
-    }
-
-    /**
-     * The property data of selected objects.
-     */
-    private final DefaultTableModel propertyData = new DefaultTableModel() {
-        @Override public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-        @Override public Class<?> getColumnClass(int columnIndex) {
-            return String.class;
-        }
-    };
-
-    /**
-     * The membership data of selected objects.
-     */
-    private final DefaultTableModel membershipData = new DefaultTableModel() {
-        @Override public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-        @Override public Class<?> getColumnClass(int columnIndex) {
-            return String.class;
-        }
-    };
-
-    /**
-     * The properties table.
-     */
-    private final JTable propertyTable = new JTable(propertyData);
-    /**
-     * The membership table.
-     */
-    private final JTable membershipTable = new JTable(membershipData);
-
-    /**
-     * This sub-object is responsible for all adding and editing of properties
-     */
-    private final TagEditHelper editHelper = new TagEditHelper(propertyData, valueCount);
-    
     /**
      * The Add button (needed to be able to disable it)
      */
-    private final SideButton btnAdd;
+    private final SideButton btnAdd = new SideButton(addAction);
     /**
      * The Edit button (needed to be able to disable it)
      */
-    private final SideButton btnEdit;
+    private final SideButton btnEdit = new SideButton(editAction);
     /**
      * The Delete button (needed to be able to disable it)
      */
-    private final SideButton btnDel;
+    private final SideButton btnDel = new SideButton(deleteAction);
     /**
      * Matching preset display class
      */
     private final PresetListPanel presets = new PresetListPanel();
-
+    
     /**
      * Text to display when nothing selected.
      */
     private final JLabel selectSth = new JLabel("<html><p>"
             + tr("Select objects for which to change properties.") + "</p></html>");
 
-    static class MemberInfo {
-        List<RelationMember> role = new ArrayList<RelationMember>();
-        List<Integer> position = new ArrayList<Integer>();
-        private String positionString = null;
-        void add(RelationMember r, Integer p) {
-            role.add(r);
-            position.add(p);
+    private PresetHandler presetHandler = new PresetHandler() {
+        @Override public void updateTags(List<Tag> tags) {
+            Command command = TaggingPreset.createCommand(getSelection(), tags);
+            if (command != null) Main.main.undoRedo.add(command);
         }
-        String getPositionString() {
-            if (positionString == null) {
-                Collections.sort(position);
-                positionString = String.valueOf(position.get(0));
-                int cnt = 0;
-                int last = position.get(0);
-                for (int i = 1; i < position.size(); ++i) {
-                    int cur = position.get(i);
-                    if (cur == last + 1) {
-                        ++cnt;
-                    } else if (cnt == 0) {
-                        positionString += "," + String.valueOf(cur);
-                    } else {
-                        positionString += "-" + String.valueOf(last);
-                        positionString += "," + String.valueOf(cur);
-                        cnt = 0;
-                    }
-                    last = cur;
-                }
-                if (cnt >= 1) {
-                    positionString += "-" + String.valueOf(last);
-                }
-            }
-            if (positionString.length() > 20) {
-                positionString = positionString.substring(0, 17) + "...";
-            }
-            return positionString;
-        }
-    }
 
+        @Override public Collection<OsmPrimitive> getSelection() {
+            if (Main.main == null) return null;
+            if (Main.main.getCurrentDataSet() == null) return null;
+            return Main.main.getCurrentDataSet().getSelected();
+        }
+    };
+    
+    // <editor-fold defaultstate="collapsed" desc="Dialog construction and helper methods">
+    
     /**
      * Create a new PropertiesDialog
      */
@@ -332,33 +207,61 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 Shortcut.registerShortcut("subwindow:properties", tr("Toggle: {0}", tr("Properties/Memberships")), KeyEvent.VK_P,
                         Shortcut.ALT_SHIFT), 150, true);
 
+        setupPropertiesMenu();
+        buildPropertiesTable();
+
+        setupMembershipMenu();
+        buildMembershipTable();
+        
+        // combine both tables and wrap them in a scrollPane
+        JPanel bothTables = new JPanel();
+        boolean top = Main.pref.getBoolean("properties.presets.top", true);
+        bothTables.setLayout(new GridBagLayout());
+        if(top) {
+            bothTables.add(presets, GBC.std().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2).anchor(GBC.NORTHWEST));
+            double epsilon = Double.MIN_VALUE; // need to set a weight or else anchor value is ignored
+            bothTables.add(pluginHook, GBC.eol().insets(0,1,1,1).anchor(GBC.NORTHEAST).weight(epsilon, epsilon));
+        }
+        bothTables.add(selectSth, GBC.eol().fill().insets(10, 10, 10, 10));
+        bothTables.add(propertyTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
+        bothTables.add(propertyTable, GBC.eol().fill(GBC.BOTH));
+        bothTables.add(membershipTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
+        bothTables.add(membershipTable, GBC.eol().fill(GBC.BOTH));
+        if(!top) {
+            bothTables.add(presets, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2));
+        }
+        
+        setupKeyboardShortcuts();
+
+        // Let the action know when selection in the tables change
+        propertyTable.getSelectionModel().addListSelectionListener(editAction);
+        membershipTable.getSelectionModel().addListSelectionListener(editAction);
+        propertyTable.getSelectionModel().addListSelectionListener(deleteAction);
+        membershipTable.getSelectionModel().addListSelectionListener(deleteAction);
+        
+
+        JScrollPane scrollPane = (JScrollPane) createLayout(bothTables, true, Arrays.asList(new SideButton[] {
+                this.btnAdd, this.btnEdit, this.btnDel
+        }));
+
+        MouseClickWatch mouseClickWatch = new MouseClickWatch();
+        propertyTable.addMouseListener(mouseClickWatch);
+        membershipTable.addMouseListener(mouseClickWatch);
+        scrollPane.addMouseListener(mouseClickWatch);
+
+        selectSth.setPreferredSize(scrollPane.getSize());
+        presets.setSize(scrollPane.getSize());
+
+        editHelper.loadTagsIfNeeded();
+    }
+        
+    private void buildPropertiesTable() {
         // setting up the properties table
-        propertyMenu = new JPopupMenu();
-        propertyMenu.add(pasteValueAction);
-        propertyMenu.add(copyValueAction);
-        propertyMenu.add(copyKeyValueAction);
-        propertyMenu.add(copyAllKeyValueAction);
-        propertyMenu.addSeparator();
-        propertyMenu.add(searchActionAny);
-        propertyMenu.add(searchActionSame);
-        propertyMenu.addSeparator();
-        propertyMenu.add(helpAction);
 
         propertyData.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
         propertyTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         propertyTable.getTableHeader().setReorderingAllowed(false);
-        propertyTable.addMouseListener(new PopupMenuLauncher() {
-            @Override
-            public void launch(MouseEvent evt) {
-                Point p = evt.getPoint();
-                int row = propertyTable.rowAtPoint(p);
-                if (row > -1) {
-                    propertyTable.changeSelection(row, 0, false, false);
-                    propertyMenu.show(propertyTable, p.x, p.y-3);
-                }
-            }
-        });
-
+        
         propertyTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer(){
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
@@ -384,39 +287,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 return c;
             }
         });
+    }
 
-        // setting up the membership table
-        membershipMenu = new JPopupMenu();
-        membershipMenu.add(addRelationToSelectionAction);
-        membershipMenu.add(selectRelationAction);
-        membershipMenu.add(addMembersToSelectionAction);
-        membershipMenu.add(downloadSelectedIncompleteMembersAction);
-        membershipMenu.addSeparator();
-        membershipMenu.add(helpAction);
-
+    private void buildMembershipTable() {
         membershipData.setColumnIdentifiers(new String[]{tr("Member Of"),tr("Role"),tr("Position")});
         membershipTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        membershipTable.addMouseListener(new PopupMenuLauncher() {
-            @Override
-            public void launch(MouseEvent evt) {
-                Point p = evt.getPoint();
-                int row = membershipTable.rowAtPoint(p);
-                membershipTable.changeSelection(row, 0, false, false);
-                int idx[] = membershipTable.getSelectedRows();
-                List<Relation> rels =  new ArrayList<Relation>(10);
-                if (idx!=null) {
-                    for (int i: idx) {
-                        Relation r = (Relation) (membershipData.getValueAt(i, 0));
-                        rels.add(r);
-                    }
-                }
-                selectRelationAction.setRelations(rels);
-                addMembersToSelectionAction.setRelations(rels);
-                addMembersToSelectionAction.setRelations(rels);
-                downloadSelectedIncompleteMembersAction.setRelations(rels);
-                membershipMenu.show(membershipTable, p.x, p.y-3);
-            }
-        });
 
         TableColumnModel mod = membershipTable.getColumnModel();
         membershipTable.getTableHeader().setReorderingAllowed(false);
@@ -487,26 +362,79 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         mod.getColumn(2).setPreferredWidth(20);
         mod.getColumn(1).setPreferredWidth(40);
         mod.getColumn(0).setPreferredWidth(200);
+    }
+    
+    /**
+     * creates the popup menu @field membershipMenu and its launcher on membership table
+     */
+    private void setupMembershipMenu() {
+        // setting up the membership table
+        membershipMenu = new JPopupMenu();
+        membershipMenu.add(addRelationToSelectionAction);
+        membershipMenu.add(selectRelationAction);
+        membershipMenu.add(addMembersToSelectionAction);
+        membershipMenu.add(downloadSelectedIncompleteMembersAction);
+        membershipMenu.addSeparator();
+        membershipMenu.add(helpAction);
 
-        // combine both tables and wrap them in a scrollPane
-        JPanel bothTables = new JPanel();
-        boolean top = Main.pref.getBoolean("properties.presets.top", true);
-        bothTables.setLayout(new GridBagLayout());
-        if(top) {
-            bothTables.add(presets, GBC.std().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2).anchor(GBC.NORTHWEST));
-            double epsilon = Double.MIN_VALUE; // need to set a weight or else anchor value is ignored
-            bothTables.add(pluginHook, GBC.eol().insets(0,1,1,1).anchor(GBC.NORTHEAST).weight(epsilon, epsilon));
-        }
-        bothTables.add(selectSth, GBC.eol().fill().insets(10, 10, 10, 10));
-        bothTables.add(propertyTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
-        bothTables.add(propertyTable, GBC.eol().fill(GBC.BOTH));
-        bothTables.add(membershipTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
-        bothTables.add(membershipTable, GBC.eol().fill(GBC.BOTH));
-        if(!top) {
-            bothTables.add(presets, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2));
-        }
+        membershipTable.addMouseListener(new PopupMenuLauncher() {
+            @Override
+            public void launch(MouseEvent evt) {
+                Point p = evt.getPoint();
+                int row = membershipTable.rowAtPoint(p);
+                int idx[] = membershipTable.getSelectedRows();
+                // if nothing or one row is selected, select row under mouse instead
+                if (idx.length<2 && row>-1) { 
+                    membershipTable.changeSelection(row, 0, false, false);
+                    idx = new int[]{row};
+                }
+                List<Relation> rels =  new ArrayList<Relation>(10);
+                for (int i: idx) {
+                    Relation r = (Relation) (membershipData.getValueAt(i, 0));
+                    rels.add(r);
+                }
+                selectRelationAction.setRelations(rels);
+                addMembersToSelectionAction.setRelations(rels);
+                addMembersToSelectionAction.setRelations(rels);
+                downloadSelectedIncompleteMembersAction.setRelations(rels);
+                membershipMenu.show(membershipTable, p.x, p.y-3);
+            }
+        });
+    }
+    
+    /**
+     * creates the popup menu @field propertyMenu and its launcher on property table 
+     */
+    private void setupPropertiesMenu() {
+        propertyMenu = new JPopupMenu();
+        propertyMenu.add(pasteValueAction);
+        propertyMenu.add(copyValueAction);
+        propertyMenu.add(copyKeyValueAction);
+        propertyMenu.add(copyAllKeyValueAction);
+        propertyMenu.addSeparator();
+        propertyMenu.add(searchActionAny);
+        propertyMenu.add(searchActionSame);
+        propertyMenu.addSeparator();
+        propertyMenu.add(helpAction);
+        propertyTable.addMouseListener(new PopupMenuLauncher() {
+            @Override
+            public void launch(MouseEvent evt) {
+                Point p = evt.getPoint();
+                int row = propertyTable.rowAtPoint(p);
+                if (row > -1) {
+                    propertyTable.changeSelection(row, 0, false, false);
+                    propertyMenu.show(propertyTable, p.x, p.y-3);
+                }
+            }
+        });
+    }
+    
+    /**
+     * Assignas all needed keys like Enter and Spacebar to most important actions
+     */
+    private void setupKeyboardShortcuts() {
         
-        // Open edit dialog whe enter pressed in tables
+        // ENTER = editAction, open "edit" dialog
         propertyTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),"onTableEnter");
         propertyTable.getActionMap().put("onTableEnter",editAction);
@@ -514,52 +442,85 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),"onTableEnter");
         membershipTable.getActionMap().put("onTableEnter",editAction);
         
-        // Open add property dialog when INS is pressed in tables
+        // INSERT button = addAction, open "add property" dialog 
         propertyTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0),"onTableInsert");
         propertyTable.getActionMap().put("onTableInsert",addAction);
         
-        //  unassign some standard shortcuts for JTable to allow upload / download
+        // unassign some standard shortcuts for JTable to allow upload / download
         InputMapUtils.unassignCtrlShiftUpDown(propertyTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        
-        // -- add action and shortcut
-        this.btnAdd = new SideButton(addAction);
+        // allow using enter to add tags for all look&feel configurations
         InputMapUtils.enableEnter(this.btnAdd);
-
-        // -- edit action
-        //
-        propertyTable.getSelectionModel().addListSelectionListener(editAction);
-        membershipTable.getSelectionModel().addListSelectionListener(editAction);
-        this.btnEdit = new SideButton(editAction);
-
-        // -- delete action
-        //
-        this.btnDel = new SideButton(deleteAction);
-        membershipTable.getSelectionModel().addListSelectionListener(deleteAction);
-        propertyTable.getSelectionModel().addListSelectionListener(deleteAction);
+        
+        // DEL button = deleteAction
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),"delete"
                 );
         getActionMap().put("delete", deleteAction);
-
-        JScrollPane scrollPane = (JScrollPane) createLayout(bothTables, true, Arrays.asList(new SideButton[] {
-                this.btnAdd, this.btnEdit, this.btnDel
-        }));
-
-        MouseClickWatch mouseClickWatch = new MouseClickWatch();
-        propertyTable.addMouseListener(mouseClickWatch);
-        membershipTable.addMouseListener(mouseClickWatch);
-        scrollPane.addMouseListener(mouseClickWatch);
-
-        selectSth.setPreferredSize(scrollPane.getSize());
-        presets.setSize(scrollPane.getSize());
-
-        editHelper.loadTagsIfNeeded();
-        // -- help action
-        //
+        
+        // F1 button = custom help action
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "onHelp");
         getActionMap().put("onHelp", helpAction);
+    }
+    
+         /**
+     * This simply fires up an {@link RelationEditor} for the relation shown; everything else
+     * is the editor's business.
+     *
+     * @param row
+     */
+    private void editMembership(int row) {
+        Relation relation = (Relation)membershipData.getValueAt(row, 0);
+        Main.map.relationListDialog.selectRelation(relation);
+        RelationEditor.getEditor(
+                Main.map.mapView.getEditLayer(),
+                relation,
+                ((MemberInfo) membershipData.getValueAt(row, 1)).role).setVisible(true);
+    }
+    
+    private int findRow(TableModel model, Object value) {
+        for (int i=0; i<model.getRowCount(); i++) {
+            if (model.getValueAt(i, 0).equals(value))
+                return i;
+        }
+        return -1;
+    }
+    
+    /**
+     * Update selection status, call @{link #selectionChanged} function.
+     */
+    private void updateSelection() {
+        if (Main.main.getCurrentDataSet() == null) {
+            selectionChanged(Collections.<OsmPrimitive>emptyList());
+        } else {
+            selectionChanged(Main.main.getCurrentDataSet().getSelected());
+        }
+    }
+    
+   // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Event listeners methods">
+    
+    @Override
+    public void showNotify() {
+        DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IN_EDT_CONSOLIDATED);
+        SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
+        MapView.addEditLayerChangeListener(this);
+        for (JosmAction action : josmActions) {
+            Main.registerActionShortcut(action);
+        }
+        updateSelection();
+    }
+
+    @Override
+    public void hideNotify() {
+        DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
+        SelectionEventManager.getInstance().removeSelectionListener(this);
+        MapView.removeEditLayerChangeListener(this);
+        for (JosmAction action : josmActions) {
+            Main.unregisterActionShortcut(action);
+        }
     }
 
     @Override
@@ -569,33 +530,18 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             selectionChanged(Main.main.getCurrentDataSet().getSelected());
         }
     }
-
-    private int findRow(TableModel model, Object value) {
-        for (int i=0; i<model.getRowCount(); i++) {
-            if (model.getValueAt(i, 0).equals(value))
-                return i;
+    
+    @Override
+    public void destroy() {
+        super.destroy();
+        for (JosmAction action : josmActions) {
+            action.destroy();
         }
-        return -1;
+        Container parent = pluginHook.getParent();
+        if (parent != null) {
+            parent.remove(pluginHook);
+        }
     }
-
-    private PresetHandler presetHandler = new PresetHandler() {
-
-        @Override
-        public void updateTags(List<Tag> tags) {
-            Command command = TaggingPreset.createCommand(getSelection(), tags);
-            if (command != null) {
-                Main.main.undoRedo.add(command);
-            }
-        }
-
-        @Override
-        public Collection<OsmPrimitive> getSelection() {
-            if (Main.main == null) return null;
-            if (Main.main.getCurrentDataSet() == null) return null;
-
-            return Main.main.getCurrentDataSet().getSelected();
-        }
-    };
 
     @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
@@ -724,18 +670,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             setTitle(tr("Properties / Memberships"));
         }
     }
-
-    /**
-     * Update selection status, call @{link #selectionChanged} function.
-     */
-    private void updateSelection() {
-        if (Main.main.getCurrentDataSet() == null) {
-            selectionChanged(Collections.<OsmPrimitive>emptyList());
-        } else {
-            selectionChanged(Main.main.getCurrentDataSet().getSelected());
-        }
-    }
-
+    
     /* ---------------------------------------------------------------------------------- */
     /* EditLayerChangeListener                                                            */
     /* ---------------------------------------------------------------------------------- */
@@ -752,6 +687,156 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         updateSelection();
     }
 
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Methods that are called by plugins to extend fuctionalty ">
+    public void addPropertyPopupMenuSeparator() {
+        propertyMenu.addSeparator();
+    }
+
+    public JMenuItem addPropertyPopupMenuAction(Action a) {
+        return propertyMenu.add(a);
+    }
+
+    public void addPropertyPopupMenuListener(PopupMenuListener l) {
+        propertyMenu.addPopupMenuListener(l);
+    }
+
+    public void removePropertyPopupMenuListener(PopupMenuListener l) {
+        propertyMenu.addPopupMenuListener(l);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Tag getSelectedProperty() {
+        int row = propertyTable.getSelectedRow();
+        if (row == -1) return null;
+        TreeMap<String, Integer> map = (TreeMap<String, Integer>) propertyData.getValueAt(row, 1);
+        return new Tag(
+                propertyData.getValueAt(row, 0).toString(),
+                map.size() > 1 ? "" : map.keySet().iterator().next());
+    }
+
+    public void addMembershipPopupMenuSeparator() {
+        membershipMenu.addSeparator();
+    }
+
+    public JMenuItem addMembershipPopupMenuAction(Action a) {
+        return membershipMenu.add(a);
+    }
+
+    public void addMembershipPopupMenuListener(PopupMenuListener l) {
+        membershipMenu.addPopupMenuListener(l);
+    }
+
+    public void removeMembershipPopupMenuListener(PopupMenuListener l) {
+        membershipMenu.addPopupMenuListener(l);
+    }
+
+    public IRelation getSelectedMembershipRelation() {
+        int row = membershipTable.getSelectedRow();
+        return row > -1 ? (IRelation) membershipData.getValueAt(row, 0) : null;
+    }
+        
+    // </editor-fold>
+    
+     /**
+     * Class that watches for mouse clicks
+     * @author imi
+     */
+    public class MouseClickWatch extends MouseAdapter {
+        @Override public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() < 2)
+            {
+                // single click, clear selection in other table not clicked in
+                if (e.getSource() == propertyTable) {
+                    membershipTable.clearSelection();
+                } else if (e.getSource() == membershipTable) {
+                    propertyTable.clearSelection();
+                }
+            }
+            // double click, edit or add property
+            else if (e.getSource() == propertyTable)
+            {
+                int row = propertyTable.rowAtPoint(e.getPoint());
+                if (row > -1) {
+                    boolean focusOnKey = (propertyTable.columnAtPoint(e.getPoint()) == 0);
+                    editHelper.editProperty(row, focusOnKey);
+                } else {
+                    editHelper.addProperty();
+                    btnAdd.requestFocusInWindow();
+                }
+            } else if (e.getSource() == membershipTable) {
+                int row = membershipTable.rowAtPoint(e.getPoint());
+                if (row > -1) {
+                    editMembership(row);
+                }
+            }
+            else
+            {
+                editHelper.addProperty();
+                btnAdd.requestFocusInWindow();
+            }
+        }
+        @Override public void mousePressed(MouseEvent e) {
+            if (e.getSource() == propertyTable) {
+                membershipTable.clearSelection();
+            } else if (e.getSource() == membershipTable) {
+                propertyTable.clearSelection();
+            }
+        }
+
+    }
+
+    static class MemberInfo {
+        List<RelationMember> role = new ArrayList<RelationMember>();
+        List<Integer> position = new ArrayList<Integer>();
+        private String positionString = null;
+        void add(RelationMember r, Integer p) {
+            role.add(r);
+            position.add(p);
+        }
+        String getPositionString() {
+            if (positionString == null) {
+                Collections.sort(position);
+                positionString = String.valueOf(position.get(0));
+                int cnt = 0;
+                int last = position.get(0);
+                for (int i = 1; i < position.size(); ++i) {
+                    int cur = position.get(i);
+                    if (cur == last + 1) {
+                        ++cnt;
+                    } else if (cnt == 0) {
+                        positionString += "," + String.valueOf(cur);
+                    } else {
+                        positionString += "-" + String.valueOf(last);
+                        positionString += "," + String.valueOf(cur);
+                        cnt = 0;
+                    }
+                    last = cur;
+                }
+                if (cnt >= 1) {
+                    positionString += "-" + String.valueOf(last);
+                }
+            }
+            if (positionString.length() > 20) {
+                positionString = positionString.substring(0, 17) + "...";
+            }
+            return positionString;
+        }
+    }
+
+    /**
+     * Class that allows fast creation of read-only table model with String columns
+     */
+    public static class ReadOnlyTableModel extends DefaultTableModel {
+        @Override public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+        @Override public Class<?> getColumnClass(int columnIndex) {
+            return String.class;
+        }
+    };
+    
     /**
      * Action handling delete button press in properties dialog.
      */
@@ -838,8 +923,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 int[] rows = propertyTable.getSelectedRows();
                 deleteProperties(rows);
             } else if (membershipTable.getSelectedRowCount() > 0) {
-                int row = membershipTable.getSelectedRow();
-                deleteFromRelation(row);
+                int[] rows = membershipTable.getSelectedRows();
+                // delete from last relation to convserve row numbers in the table 
+                for (int i=rows.length-1; i>=0; i--) {
+                    deleteFromRelation(rows[i]);
+                }
             }
         }
 
@@ -847,7 +935,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         protected void updateEnabledState() {
             setEnabled(
                     (propertyTable != null && propertyTable.getSelectedRowCount() >= 1)
-                    || (membershipTable != null && membershipTable.getSelectedRowCount() == 1)
+                    || (membershipTable != null && membershipTable.getSelectedRowCount() > 0)
                     );
         }
 
@@ -919,6 +1007,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 String base = Main.pref.get("url.openstreetmap-wiki", "http://wiki.openstreetmap.org/wiki/");
@@ -958,7 +1047,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 }
 
                 Main.worker.execute(new Runnable(){
-                    public void run() {
+                    @Override public void run() {
                         try {
                             // find a page that actually exists in the wiki
                             HttpURLConnection conn;
@@ -1004,53 +1093,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 e1.printStackTrace();
             }
         }
-    }
-
-    public void addPropertyPopupMenuSeparator() {
-        propertyMenu.addSeparator();
-    }
-
-    public JMenuItem addPropertyPopupMenuAction(Action a) {
-        return propertyMenu.add(a);
-    }
-
-    public void addPropertyPopupMenuListener(PopupMenuListener l) {
-        propertyMenu.addPopupMenuListener(l);
-    }
-
-    public void removePropertyPopupMenuListener(PopupMenuListener l) {
-        propertyMenu.addPopupMenuListener(l);
-    }
-
-    @SuppressWarnings("unchecked")
-    public Tag getSelectedProperty() {
-        int row = propertyTable.getSelectedRow();
-        if (row == -1) return null;
-        TreeMap<String, Integer> map = (TreeMap<String, Integer>) propertyData.getValueAt(row, 1);
-        return new Tag(
-                propertyData.getValueAt(row, 0).toString(),
-                map.size() > 1 ? "" : map.keySet().iterator().next());
-    }
-
-    public void addMembershipPopupMenuSeparator() {
-        membershipMenu.addSeparator();
-    }
-
-    public JMenuItem addMembershipPopupMenuAction(Action a) {
-        return membershipMenu.add(a);
-    }
-
-    public void addMembershipPopupMenuListener(PopupMenuListener l) {
-        membershipMenu.addPopupMenuListener(l);
-    }
-
-    public void removeMembershipPopupMenuListener(PopupMenuListener l) {
-        membershipMenu.addPopupMenuListener(l);
-    }
-
-    public IRelation getSelectedMembershipRelation() {
-        int row = membershipTable.getSelectedRow();
-        return row > -1 ? (IRelation) membershipData.getValueAt(row, 0) : null;
     }
 
     class PasteValueAction extends AbstractAction {
@@ -1154,6 +1196,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (propertyTable.getSelectedRowCount() != 1)
                 return;
@@ -1186,18 +1229,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
             SearchSetting ss = new SearchSetting(s, SearchMode.replace, true, false, false);
             org.openstreetmap.josm.actions.search.SearchAction.searchWithoutHistory(ss);
-        }
-    }
-
-    @Override
-    public void destroy() {
-        super.destroy();
-        for (JosmAction action : josmActions) {
-            action.destroy();
-        }
-        Container parent = pluginHook.getParent();
-        if (parent != null) {
-            parent.remove(pluginHook);
         }
     }
 }
