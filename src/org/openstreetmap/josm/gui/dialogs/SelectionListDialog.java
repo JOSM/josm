@@ -109,6 +109,7 @@ public class SelectionListDialog extends ToggleDialog  {
         final SideButton selectButton = new SideButton(actSelect = new SelectAction());
         lstPrimitives.getSelectionModel().addListSelectionListener(actSelect);
         selectButton.createArrow(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 SelectionHistoryPopup.launch(selectButton, model.getSelectionHistory());
             }
@@ -117,6 +118,7 @@ public class SelectionListDialog extends ToggleDialog  {
         // the search button
         final SideButton searchButton = new SideButton(actSearch = new SearchAction());
         searchButton.createArrow(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 SearchPopupMenu.launch(searchButton);
             }
@@ -317,6 +319,7 @@ public class SelectionListDialog extends ToggleDialog  {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             Collection<OsmPrimitive> sel = model.getSelected();
             if (sel.isEmpty())return;
@@ -328,6 +331,7 @@ public class SelectionListDialog extends ToggleDialog  {
             setEnabled(!model.getSelected().isEmpty());
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
@@ -486,10 +490,12 @@ public class SelectionListDialog extends ToggleDialog  {
             return history;
         }
 
+        @Override
         public Object getElementAt(int index) {
             return selection.get(index);
         }
 
+        @Override
         public int getSize() {
             return selection.size();
         }

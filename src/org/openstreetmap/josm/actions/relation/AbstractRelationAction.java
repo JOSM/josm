@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.osm.Relation;
  */
 public abstract class AbstractRelationAction extends AbstractAction {
     protected Collection<Relation> relations = Collections.<Relation>emptySet();
-    
+
     /**
      * Specifies the working set of relations.
      * @param relations The new working set of relations. Can be null or empty
