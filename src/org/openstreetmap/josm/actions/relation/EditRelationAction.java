@@ -62,6 +62,7 @@ public class EditRelationAction extends AbstractRelationAction  {
                 getMembersForCurrentSelection(toEdit)).setVisible(true);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || relations.size()!=1) return;
         launchEditor(relations.iterator().next());
