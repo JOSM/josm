@@ -394,7 +394,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     rels.add(r);
                 }
                 selectRelationAction.setRelations(rels);
-                addMembersToSelectionAction.setRelations(rels);
+                addRelationToSelectionAction.setRelations(rels);
                 addMembersToSelectionAction.setRelations(rels);
                 downloadSelectedIncompleteMembersAction.setRelations(rels);
                 membershipMenu.show(membershipTable, p.x, p.y-3);
@@ -421,8 +421,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             public void launch(MouseEvent evt) {
                 Point p = evt.getPoint();
                 int row = propertyTable.rowAtPoint(p);
-                if (row > -1) {
+                int selectedCount = propertyTable.getSelectedRowCount();
+                // if nothing or one row is selected, select row under mouse instead
+                if (selectedCount<2 && row>-1) { 
                     propertyTable.changeSelection(row, 0, false, false);
+                }
+                if (selectedCount>=2 || row>-1) {
                     propertyMenu.show(propertyTable, p.x, p.y-3);
                 }
             }
@@ -553,7 +557,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             propertyTable.getCellEditor().cancelCellEditing();
         }
 
-        String selectedTag = null;
+        String selectedTag;
         Relation selectedRelation = null;
         selectedTag = editHelper.getChangedKey(); // select last added or last edited key by default
         if (selectedTag == null && propertyTable.getSelectedRowCount() == 1) {
@@ -623,7 +627,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         List<Relation> sortedRelations = new ArrayList<Relation>(roles.keySet());
         Collections.sort(sortedRelations, new Comparator<Relation>() {
-            public int compare(Relation o1, Relation o2) {
+            @Override public int compare(Relation o1, Relation o2) {
                 int comp = Boolean.valueOf(o1.isDisabledAndHidden()).compareTo(o2.isDisabledAndHidden());
                 if (comp == 0) {
                     comp = o1.getDisplayName(DefaultNameFormatter.getInstance()).compareTo(o2.getDisplayName(DefaultNameFormatter.getInstance()));
@@ -1120,20 +1124,25 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         @Override
         public void actionPerformed(ActionEvent ae) {
-            if (propertyTable.getSelectedRowCount() != 1)
-                return;
-            String key = propertyData.getValueAt(propertyTable.getSelectedRow(), 0).toString();
-            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
-            if (sel.isEmpty())
-                return;
+            int rows[] = propertyTable.getSelectedRows();
             Set<String> values = new TreeSet<String>();
-            for (OsmPrimitive p : sel) {
-                Collection<String> s = getString(p,key);
-                if (s != null) {
-                    values.addAll(s);
+            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+            if (rows.length == 0 || sel.isEmpty()) return;
+
+            for (int row: rows) {
+                String key = propertyData.getValueAt(row, 0).toString();
+                if (sel.isEmpty())
+                    return;
+                for (OsmPrimitive p : sel) {
+                    Collection<String> s = getString(p,key);
+                    if (s != null) {
+                        values.addAll(s);
+                    }
                 }
             }
-            Utils.copyToClipboard(Utils.join("\n", values));
+            if (!values.isEmpty()) {
+                Utils.copyToClipboard(Utils.join("\n", values));
+            }
         }
     }
 
