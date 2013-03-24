@@ -56,6 +56,7 @@ import org.openstreetmap.josm.gui.mappaint.MapImage;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
+import org.openstreetmap.josm.gui.mappaint.RepeatImageElemStyle.LineImageAlignment;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.gui.mappaint.TextElement;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -594,17 +595,50 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         g.setFont(defaultFont);
     }
 
+    @Deprecated
     public void drawLinePattern(Way way, Image pattern) {
-        final int width = pattern.getWidth(null);
-        final int height = pattern.getHeight(null);
+        drawRepeatImage(way, pattern, 0f, 0f, LineImageAlignment.TOP);
+    }
+
+    /**
+     * Draw an image along a way repeatedly.
+     *
+     * @param way the way
+     * @param pattern the image
+     * @param offset offset from the way
+     * @param spacing spacing between two images
+     * @param align alignment of the image. The top, center or bottom edge
+     * can be aligned with the way.
+     */
+    public void drawRepeatImage(Way way, Image pattern, float offset, float spacing, LineImageAlignment align) {
+        final int imgWidth = pattern.getWidth(null);
+        final double repeat = imgWidth + spacing;
+        final int imgHeight = pattern.getHeight(null);
 
         Point lastP = null;
-        double wayLength = 0;
+        double currentWayLength = 0;
 
-        Iterator<Node> it = way.getNodes().iterator();
+        int dy1, dy2;
+        switch (align) {
+            case TOP:
+                dy1 = 0;
+                dy2 = imgHeight;
+                break;
+            case CENTER:
+                dy1 = - imgHeight / 2;
+                dy2 = imgHeight + dy1;
+                break;
+            case BOTTOM:
+                dy1 = -imgHeight;
+                dy2 = 0;
+                break;
+            default:
+                throw new AssertionError();
+        }
+
+        OffsetIterator it = new OffsetIterator(way.getNodes(), offset);
         while (it.hasNext()) {
-            Node n = it.next();
-            Point thisP = nc.getPoint(n);
+            Point thisP = it.next();
 
             if (lastP != null) {
                 final double segmentLength = thisP.distance(lastP);
@@ -612,33 +646,37 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 final double dx = thisP.x - lastP.x;
                 final double dy = thisP.y - lastP.y;
 
-                double dist = wayLength == 0 ? 0 : width - (wayLength % width);
+                double pos = currentWayLength == 0 ? 0 : repeat - (currentWayLength % repeat);
 
                 AffineTransform saveTransform = g.getTransform();
                 g.translate(lastP.x, lastP.y);
                 g.rotate(Math.atan2(dy, dx));
 
-                if (dist > 0) {
-                    g.drawImage(pattern, 0, 0, (int) dist, height,
-                            width - (int) dist, 0, width, height, null);
+                // draw the rest of the image from the last segment in case it
+                // is cut off
+                if (pos > spacing) {
+                    g.drawImage(pattern, 0, dy1, (int) (pos - spacing), dy2,
+                            (int) (imgWidth + spacing - pos), 0, imgWidth, imgHeight, null);
                 }
-                while (dist < segmentLength) {
-                    if (dist + width > segmentLength) {
-                        g.drawImage(pattern, (int) dist, 0, (int) segmentLength, height,
-                                0, 0, (int) segmentLength - (int) dist, height, null);
+                // draw remaining images for this segment
+                while (pos < segmentLength) {
+                    // cut off at the end?
+                    if (pos + imgWidth > segmentLength) {
+                        g.drawImage(pattern, (int) pos, dy1, (int) segmentLength, dy2,
+                                0, 0, (int) segmentLength - (int) pos, imgHeight, null);
                     } else {
-                        g.drawImage(pattern, (int) dist, 0, nc);
+                        g.drawImage(pattern, (int) pos, dy1, nc);
                     }
-                    dist += width;
+                    pos += repeat;
                 }
                 g.setTransform(saveTransform);
 
-                wayLength += segmentLength;
+                currentWayLength += segmentLength;
             }
             lastP = thisP;
         }
     }
-    
+
     @Override
     public void drawNode(Node n, Color color, int size, boolean fill) {
         if(size <= 0 && !n.isHighlighted())
