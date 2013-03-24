@@ -313,6 +313,7 @@ public class ElemStyles {
             if (osm instanceof Way) {
                 addIfNotNull(sl, AreaElemStyle.create(c));
                 addIfNotNull(sl, LinePatternElemStyle.create(env));
+                addIfNotNull(sl, RepeatImageElemStyle.create(env));
                 addIfNotNull(sl, LineElemStyle.createLine(env));
                 addIfNotNull(sl, LineElemStyle.createLeftCasing(env));
                 addIfNotNull(sl, LineElemStyle.createRightCasing(env));
@@ -330,6 +331,7 @@ public class ElemStyles {
                 if (((Relation)osm).isMultipolygon()) {
                     addIfNotNull(sl, AreaElemStyle.create(c));
                     addIfNotNull(sl, LinePatternElemStyle.create(env));
+                    addIfNotNull(sl, RepeatImageElemStyle.create(env));
                     addIfNotNull(sl, LineElemStyle.createLine(env));
                     addIfNotNull(sl, LineElemStyle.createCasing(env));
                     addIfNotNull(sl, LineTextElemStyle.create(env));

@@ -3,22 +3,26 @@ package org.openstreetmap.josm.gui.mappaint;
 
 public interface StyleKeys {
 
-    public static final String COLOR = "color";
-    public static final String DASHES = "dashes";
-    public static final String DASHES_BACKGROUND_COLOR = "dashes-background-color";
-    public static final String DASHES_BACKGROUND_OPACITY = "dashes-background-opacity";
-    public static final String DASHES_OFFSET = "dashes-offset";
-    public static final String FILL_COLOR = "fill-color";
-    public static final String FILL_IMAGE = "fill-image";
-    public static final String FILL_OPACITY = "fill-opacity";
-    public static final String ICON_IMAGE = "icon-image";
-    public static final String MODIFIER = "modifier";
-    public static final String OBJECT_Z_INDEX = "object-z-index";
-    public static final String OFFSET = "offset";
-    public static final String OPACITY = "opacity";
-    public static final String REAL_WIDTH = "real-width";
-    public static final String TEXT_POSITION = "text-position";
-    public static final String TEXT = "text";
-    public static final String WIDTH = "width";
-    public static final String Z_INDEX = "z-index";
+    String COLOR = "color";
+    String DASHES = "dashes";
+    String DASHES_BACKGROUND_COLOR = "dashes-background-color";
+    String DASHES_BACKGROUND_OPACITY = "dashes-background-opacity";
+    String DASHES_OFFSET = "dashes-offset";
+    String FILL_COLOR = "fill-color";
+    String FILL_IMAGE = "fill-image";
+    String FILL_OPACITY = "fill-opacity";
+    String ICON_IMAGE = "icon-image";
+    String MODIFIER = "modifier";
+    String OBJECT_Z_INDEX = "object-z-index";
+    String OFFSET = "offset";
+    String OPACITY = "opacity";
+    String REAL_WIDTH = "real-width";
+    String TEXT_POSITION = "text-position";
+    String TEXT = "text";
+    String WIDTH = "width";
+    String Z_INDEX = "z-index";
+    String REPEAT_IMAGE = "repeat-image";
+    String REPEAT_IMAGE_OFFSET = "repeat-image-offset";
+    String REPEAT_IMAGE_SPACING = "repeat-image-spacing";
+    String REPEAT_IMAGE_ALIGN = "repeat-image-align";
 }
