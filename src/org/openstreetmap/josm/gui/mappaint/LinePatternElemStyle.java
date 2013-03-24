@@ -8,8 +8,11 @@ import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 
 /**
- * similar to mapnik's LinePatternSymbolizer
+ * Similar to mapnik's LinePatternSymbolizer.
+ *
+ * @deprecated superseded by #{@link RepeatImageElemStyle}
  */
+@Deprecated
 public class LinePatternElemStyle extends ElemStyle {
 
     public MapImage pattern;
