@@ -1061,7 +1061,7 @@ Note that for a match, at least one positive and no negative is required.
             <check key="supervised" text="Crossing attendant" default="off" />
             <combo key="crossing_ref" text="Type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
         </item>
-        <item name="Traffic Calming" icon="presets/chicane.png" type="node">
+        <item name="Traffic Calming" icon="presets/chicane.png" type="node,way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Key:traffic_calming"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_calming"
