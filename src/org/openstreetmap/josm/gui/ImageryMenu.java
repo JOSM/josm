@@ -5,8 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Component;
+import java.awt.MenuComponent;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -78,6 +80,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
     private JMenuItem singleOffset = new JMenuItem(offsetAction);
     private JMenuItem offsetMenuItem = singleOffset;
     private Map_Rectifier_WMSmenuAction rectaction = new Map_Rectifier_WMSmenuAction();
+    private boolean bottomItemAdded = false;
 
     public ImageryMenu() {
         super(tr("Imagery"));
@@ -113,11 +116,11 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
      * (In order to have actions ready for the toolbar, see #8446.)
      */
     public void refreshImageryMenu() {
-        removeAll();
+        removeDynamicItems();
 
         // for each configured ImageryInfo, add a menu entry.
         for (final ImageryInfo u : ImageryLayerInfo.instance.getLayers()) {
-            add(new AddImageryLayerAction(u));
+            addDynamic(new AddImageryLayerAction(u));
         }
 
         // list all imagery entries where the current map location
@@ -149,18 +152,18 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
                 }
             }
             if (!inViewLayers.isEmpty()) {
-                addSeparator();
+                addDynamicSeparator();
                 for (ImageryInfo i : inViewLayers) {
-                    add(new AddImageryLayerAction(i));
+                    addDynamic(new AddImageryLayerAction(i));
                 }
             }
         }
 
-        addSeparator();
-        add(new JMenuItem(rectaction));
+        addDynamicSeparator();
+        addDynamic(rectaction);
 
-        addSeparator();
-        add(offsetMenuItem);
+        addDynamicSeparator();
+        addDynamic(offsetMenuItem);
     }
 
     private JMenuItem getNewOffsetMenu(){
@@ -215,5 +218,45 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
         if (oldLayer instanceof ImageryLayer) {
             refreshOffsetMenu();
         }
+    }
+
+    /**
+     * Collection to store temporary menu items. They will be deleted 
+     * (and possibly recreated) when refreshImageryMenu() is called.
+     * @since 5803
+     */
+    private List <Object> dynamicItems = new ArrayList<Object>(20);
+    
+    /**
+     * Remove all the items in @field dynamicItems collection
+     * @since 5803
+     */
+    private void removeDynamicItems() {
+        for (Object item : dynamicItems) {
+            if (item instanceof JMenuItem) {
+                remove((JMenuItem)item);
+            }
+            if (item instanceof MenuComponent) {
+                remove((MenuComponent)item);
+            }
+            if (item instanceof Component) {
+                remove((Component)item);
+            }
+        }
+        dynamicItems.clear();
+    }
+
+    private void addDynamicSeparator() {
+        JPopupMenu.Separator s =  new JPopupMenu.Separator();
+        dynamicItems.add(s);
+        add(s);
+    }
+    
+    private void addDynamic(Action a) {
+        dynamicItems.add( this.add(a) );
+    }
+    
+    private void addDynamic(JMenuItem it) {
+        dynamicItems.add( this.add(it) );
     }
 }
