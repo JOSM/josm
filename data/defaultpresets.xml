@@ -250,7 +250,6 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="name" text="Name" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
-                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
@@ -259,6 +258,7 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="lit" text="Lit" default="off" /> 
             </optional>
         </item>
@@ -276,7 +276,6 @@ Note that for a match, at least one positive and no negative is required.
             <optional>
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
-                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
@@ -285,6 +284,7 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="lit" text="Lit" default="off" /> 
             </optional>
         </item>
@@ -305,7 +305,6 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="name" text="Name" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
-                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
@@ -313,6 +312,7 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="lit" text="Lit" default="off" /> 
             </optional>
         </item>
@@ -330,7 +330,6 @@ Note that for a match, at least one positive and no negative is required.
             <optional>
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
-                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
@@ -338,6 +337,7 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="lit" text="Lit" default="off" /> 
             </optional>
         </item>
@@ -359,7 +359,6 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="name" text="Name" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
-                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
@@ -367,6 +366,7 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="lit" text="Lit" default="off" /> 
             </optional>
         </item>
@@ -384,7 +384,6 @@ Note that for a match, at least one positive and no negative is required.
             <optional>
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
-                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
@@ -392,6 +391,7 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="lit" text="Lit" default="off" /> 
             </optional>
         </item>
@@ -409,19 +409,19 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="unclassified" />
             <optional>
                 <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
+                <text key="maxspeed" text="Max. speed (km/h)" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="lit" text="Lit" default="off" /> 
                 <check key="passing_places" text="Passing Places" default="off" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
-                <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
-                <text key="maxspeed" text="Max. speed (km/h)" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <text key="width" text="Width (meters)" />
-                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
             </optional>
         </item>
         <item name="Residential" icon="presets/residential.png" type="way">
@@ -438,18 +438,18 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="residential" />
             <text key="name" text="Name" />
             <optional>
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
+                <text key="maxspeed" text="Max. speed (km/h)" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
-                <check key="lit" text="Lit" default="off" /> 
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
-                <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
-                <text key="maxspeed" text="Max. speed (km/h)" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
-                <text key="width" text="Width (meters)" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+                <check key="lit" text="Lit" default="off" /> 
+                <text key="width" text="Width (meters)" />
             </optional>
         </item>
         <item name="Living Street" icon="presets/living_street.png" type="way">
@@ -464,16 +464,16 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="living_street" />
             <text key="name" text="Name" />
             <optional>
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
-                <check key="lit" text="Lit" default="off" /> 
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
-                <text key="width" text="Width (meters)" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+                <check key="lit" text="Lit" default="off" /> 
+                <text key="width" text="Width (meters)" />
             </optional>
         </item>
         <item name="Pedestrian" icon="presets/pedestrian.png" type="way,closedway,relation">
@@ -491,17 +491,16 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="pedestrian" />
             <text key="name" text="Name" />
             <optional>
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="area" text="Area" default="off" />
-                <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
-                <check key="lit" text="Lit" default="off" /> 
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
-                <text key="width" text="Width (meters)" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+                <check key="lit" text="Lit" default="off" /> 
+                <text key="width" text="Width (meters)" />
             </optional>
         </item>
         <item name="Service" icon="presets/way_unclassified.png" type="way">
@@ -519,18 +518,18 @@ Note that for a match, at least one positive and no negative is required.
             <optional>
                 <combo key="service" text="Serviceway type" values="alley,driveway,parking_aisle" />
                 <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <text key="maxspeed" text="Max. speed (km/h)" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="lit" text="Lit" default="off" /> 
                 <check key="passing_places" text="Passing Places" default="off" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
-                <text key="maxspeed" text="Max. speed (km/h)" />
                 <text key="width" text="Width (meters)" />
-                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
             </optional>
         </item>
         <item name="Parking Aisle" icon="presets/way_unclassified.png" type="way">
@@ -546,8 +545,8 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="service" />
             <key key="service" value="parking_aisle" />
             <optional>
-                <check key="oneway" text="Oneway" default="off" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
+                <check key="oneway" text="Oneway" default="off" />
                 <check key="lit" text="Lit" default="off" /> 
             </optional>
         </item>
@@ -564,17 +563,17 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="road" />
             <optional>
                 <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <text key="maxspeed" text="Max. speed (km/h)" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
-                <check key="lit" text="Lit" default="off" /> 
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
-                <text key="maxspeed" text="Max. speed (km/h)" />
-                <text key="width" text="Width (meters)" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+                <check key="lit" text="Lit" default="off" /> 
+                <text key="width" text="Width (meters)" />
             </optional>
         </item>
         <item name="Construction" icon="presets/construction.png" type="way">
@@ -589,18 +588,18 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="construction" />
             <optional>
                 <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <text key="maxspeed" text="Max. speed (km/h)" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
-                <check key="lit" text="Lit" default="off" /> 
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
-                <combo key="junction" text="Junction" values="roundabout,jughandle,yes" />
-                <text key="maxspeed" text="Max. speed (km/h)" />
-                <text key="width" text="Width (meters)" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+                <check key="lit" text="Lit" default="off" /> 
+                <combo key="junction" text="Junction" values="roundabout,jughandle,yes" />
+                <text key="width" text="Width (meters)" />
             </optional>
         </item>
         <separator/>
@@ -663,15 +662,15 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="highway" text="Type" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,unclassified,residential,living_street,service,bus_guideway,construction" />
             <optional>
                 <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
                 <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
-                <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
-                <text key="width" text="Width (meters)" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+                <text key="width" text="Width (meters)" />
             </optional>
         </item>
         <item name="Bridge" icon="presets/bridge.png" type="way">
@@ -692,8 +691,8 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="1" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <text key="maxweight" text="Max. weight (tonnes)" />
-                <text key="width" text="Width (meters)" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+                <text key="width" text="Width (meters)" />
             </optional>
         </item>
         <item name="Ford" icon="presets/ford.png" type="node,way">
@@ -727,21 +726,21 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="track" />
             <optional>
                 <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <combo key="surface" text="Surface" values="paved,concrete,cobblestone,gravel,ground,grass,sand" />
-                <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" />
+                <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="lit" text="Lit" default="off" /> 
-                <check key="oneway" text="Oneway" default="off" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" />
                 <combo key="access" text="General access" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
                 <combo key="motor_vehicle" text="Motor vehicles" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
                 <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
                 <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
                 <text key="width" text="Width (meters)" />
-                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
             </optional>
         </item>
         <item name="Path" icon="presets/path.png" type="way">
@@ -758,6 +757,16 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="path" />
             <optional>
                 <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <text key="maxspeed" text="Max. speed (km/h)" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
+                <check key="oneway" text="Oneway" default="off" />
+                <check key="bridge" text="Bridge" default="off" />
+                <check key="tunnel" text="Tunnel" default="off" />
+                <check key="cutting" text="Cutting" default="off" />
+                <check key="embankment" text="Embankment" default="off" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+                <check key="lit" text="Lit" default="off" /> 
                 <combo key="sac_scale" text="SAC Scale">
                     <list_entry value="hiking" display_value="T1 - hiking trail" short_description="Trail well cleared. Area flat or slightly sloped, no fall hazard" />
                     <list_entry value="mountain_hiking" display_value="T2 - mountain hiking trail" short_description="Trail with continuous line and balanced ascent. Terrain partially steep, fall hazard possible" />
@@ -767,14 +776,7 @@ Note that for a match, at least one positive and no negative is required.
                     <list_entry value="difficult_alpine_hiking" display_value="T6 - hazardous alpine trail with climbing" short_description="climbing up to second grade. Often very exposed, precarious jagged rocks, glacier with danger to slip and fall" />
                 </combo>
                 <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <combo key="trail_visibility" text="Visibility" values="excellent,good,intermediate,bad,horrible,no" />
-                <check key="bridge" text="Bridge" default="off" />
-                <check key="tunnel" text="Tunnel" default="off" />
-                <check key="cutting" text="Cutting" default="off" />
-                <check key="embankment" text="Embankment" default="off" />
-                <check key="lit" text="Lit" default="off" /> 
-                <check key="oneway" text="Oneway" default="off" />
                 <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,no" />
                 <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,no" />
                 <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" />
@@ -782,10 +784,7 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="ski" text="Ski" values="yes,official,designated,permissive,private,no" />
                 <combo key="snowmobile" text="Snowmobile" values="yes,official,designated,permissive,destination,delivery,private,no" />
                 <!-- <combo key="motorcar" text="Motorcar" values="yes,designated,no" default="no" /> -->
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
-                <text key="maxspeed" text="Max. speed (km/h)" />
                 <text key="width" text="Width (meters)" />
-                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
             </optional>
         </item>
         <separator/>
@@ -801,17 +800,17 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="bridleway" />
             <optional>
                 <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
-                <check key="lit" text="Lit" default="off" /> 
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
-                <text key="maxspeed" text="Max. speed (km/h)" />
-                <text key="width" text="Width (meters)" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+                <check key="lit" text="Lit" default="off" /> 
+                <text key="width" text="Width (meters)" />
             </optional>
         </item>
         <item name="Cycle Lane" type="way">
@@ -846,17 +845,17 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="cycleway" />
             <optional>
                 <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="lit" text="Lit" default="off" /> 
                 <combo key="foot" text="Pedestrians" values="unknown,yes,no" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <text key="width" text="Width (meters)" />
-                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
             </optional>
         </item>
         <item name="Segregated Foot- and Cycleway" icon="presets/foot_and_cycleway_segregated.png" type="way">
@@ -871,16 +870,16 @@ Note that for a match, at least one positive and no negative is required.
             <key key="segregated" value="yes" />
             <optional>
                 <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
-                <check key="lit" text="Lit" default="off" /> 
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
-                <text key="width" text="Width (meters)" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+                <check key="lit" text="Lit" default="off" /> 
+                <text key="width" text="Width (meters)" />
             </optional>
         </item>
         <item name="Combined Foot- and Cycleway" icon="presets/foot_and_cycleway_combined.png" type="way">
@@ -895,17 +894,17 @@ Note that for a match, at least one positive and no negative is required.
             <key key="segregated" value="no" />
             <optional>
                 <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="lit" text="Lit" default="off" /> 
                 <check key="passing_places" text="Passing Places" default="off" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <text key="width" text="Width (meters)" />
-                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
             </optional>
         </item>
         <item name="Dedicated Footway" icon="presets/footway.png" type="way">
@@ -921,16 +920,16 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="footway" />
             <optional>
                 <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="lit" text="Lit" default="off" /> 
                 <check key="passing_places" text="Passing Places" default="off" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <text key="width" text="Width (meters)" />
-                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
             </optional>
         </item>
         <item name="Steps" icon="presets/steps.png" type="way">
@@ -946,16 +945,16 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="steps" />
             <optional>
                 <text key="name" text="Name" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
+                <text key="step_count" text="Amount of Steps" />
                 <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
                 <check key="tunnel" text="Tunnel" default="off" />
                 <check key="cutting" text="Cutting" default="off" />
                 <check key="embankment" text="Embankment" default="off" />
                 <check key="lit" text="Lit" default="off" /> 
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <text key="width" text="Width (meters)" />
-                <text key="step_count" text="Amount of Steps" />
             </optional>
         </item>
     </group> <!-- Ways -->
