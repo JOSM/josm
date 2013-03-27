@@ -564,7 +564,7 @@ public class SelectionListDialog extends ToggleDialog  {
             sort();
             fireContentsChanged(this, 0, getSize());
             remember(selection);
-            double dist = -1;
+            double dist = 0.0;
             SubclassFilteredCollection<OsmPrimitive, Way> ways = new SubclassFilteredCollection<OsmPrimitive, Way>(selection, OsmPrimitive.wayPredicate);
             // Compute total length of selected way(s) until an arbitrary limit set to 250 ways
             // in order to prevent performance issue if a large number of ways are selected (old behaviour kept in that case, see #8403)
