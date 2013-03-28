@@ -564,12 +564,13 @@ public class SelectionListDialog extends ToggleDialog  {
             sort();
             fireContentsChanged(this, 0, getSize());
             remember(selection);
-            double dist = 0.0;
+            double dist = -1;
             SubclassFilteredCollection<OsmPrimitive, Way> ways = new SubclassFilteredCollection<OsmPrimitive, Way>(selection, OsmPrimitive.wayPredicate);
             // Compute total length of selected way(s) until an arbitrary limit set to 250 ways
             // in order to prevent performance issue if a large number of ways are selected (old behaviour kept in that case, see #8403)
             int maxWays = Math.max(1, Main.pref.getInteger("selection.max-ways-for-statusline", 250));
             if (!ways.isEmpty() && ways.size() <= maxWays) {
+                dist = 0.0;
                 for (Way w : ways) {
                     dist += w.getLength();
                 }
