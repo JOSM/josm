@@ -80,7 +80,6 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
     private JMenuItem singleOffset = new JMenuItem(offsetAction);
     private JMenuItem offsetMenuItem = singleOffset;
     private Map_Rectifier_WMSmenuAction rectaction = new Map_Rectifier_WMSmenuAction();
-    private boolean bottomItemAdded = false;
 
     public ImageryMenu() {
         super(tr("Imagery"));
@@ -117,6 +116,9 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
      */
     public void refreshImageryMenu() {
         removeDynamicItems();
+
+        addDynamic(offsetMenuItem);
+        addDynamicSeparator();
 
         // for each configured ImageryInfo, add a menu entry.
         for (final ImageryInfo u : ImageryLayerInfo.instance.getLayers()) {
@@ -161,9 +163,6 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
 
         addDynamicSeparator();
         addDynamic(rectaction);
-
-        addDynamicSeparator();
-        addDynamic(offsetMenuItem);
     }
 
     private JMenuItem getNewOffsetMenu(){
