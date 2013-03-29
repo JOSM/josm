@@ -408,6 +408,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("type:way", "type:way ", tr("all ways"))
                 .addKeyword("type:relation", "type:relation ", tr("all relations"))
                 .addKeyword("closed", "closed ", tr("all closed ways"))
+                .addKeyword("untagged", "untagged ", tr("object without useful tags"))
                 , GBC.eol());
             right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("metadata"))
