@@ -7,7 +7,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class RepeatImageElemStyle extends ElemStyle implements StyleKeys {
@@ -30,14 +29,10 @@ public class RepeatImageElemStyle extends ElemStyle implements StyleKeys {
     }
 
     public static RepeatImageElemStyle create(Environment env) {
-        // FIXME: make use of NodeElemStyle.createIcon, in order to have
-        // -width, -height and -opacity properties.
-        Cascade c = env.mc.getCascade(env.layer);
-
-        IconReference iconRef = c.get(REPEAT_IMAGE, null, IconReference.class);
-        if (iconRef == null)
+        MapImage pattern = NodeElemStyle.createIcon(env, REPEAT_IMAGE_KEYS);
+        if (pattern == null)
             return null;
-        MapImage pattern = new MapImage(iconRef.iconName, iconRef.source);
+        Cascade c = env.mc.getCascade(env.layer);
         Float offset = c.get(REPEAT_IMAGE_OFFSET, 0f, Float.class);
         Float spacing = c.get(REPEAT_IMAGE_SPACING, 0f, Float.class);
 
