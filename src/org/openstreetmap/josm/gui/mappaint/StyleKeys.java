@@ -24,6 +24,7 @@ public interface StyleKeys {
     String REPEAT_IMAGE = "repeat-image";
     String REPEAT_IMAGE_OFFSET = "repeat-image-offset";
     String REPEAT_IMAGE_SPACING = "repeat-image-spacing";
+    String REPEAT_IMAGE_PHASE = "repeat-image-phase";
     String REPEAT_IMAGE_ALIGN = "repeat-image-align";
 
     int ICON_IMAGE_IDX = 0;
