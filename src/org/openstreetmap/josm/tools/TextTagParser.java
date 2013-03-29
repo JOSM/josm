@@ -226,7 +226,7 @@ public class TextTagParser {
     /**
      * Check tags for correctness and display warnings if needed
      * @param tags - map key->value to check
-     * @return true if the tags shoul be pasted
+     * @return true if the tags should be pasted
      */
     public static boolean validateTags(Map<String, String> tags) {
         String value;
