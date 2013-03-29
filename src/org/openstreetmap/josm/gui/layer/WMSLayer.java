@@ -162,16 +162,14 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
 
         attribution.initialize(this.info);
 
-        if(info.getUrl() != null) {
-            startGrabberThreads();
-        }
-
         Main.pref.addPreferenceChangeListener(this);
     }
 
     @Override
     public void hookUpMapView() {
         if (info.getUrl() != null) {
+            startGrabberThreads();
+
             for (WMSLayer layer: Main.map.mapView.getLayersOfType(WMSLayer.class)) {
                 if (layer.getInfo().getUrl().equals(info.getUrl())) {
                     cache = layer.cache;
