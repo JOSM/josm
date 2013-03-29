@@ -1,11 +1,14 @@
 package org.openstreetmap.josm.tools;
 
+import java.awt.GridBagLayout;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.io.XmlWriter;
@@ -223,7 +226,7 @@ public class TextTagParser {
     /**
      * Check tags for correctness and display warnings if needed
      * @param tags - map key->value to check
-     * @return true if user decision was "OK"
+     * @return true if the tags shoul be pasted
      */
     public static boolean validateTags(Map<String, String> tags) {
         String value;
@@ -233,22 +236,22 @@ public class TextTagParser {
             // Use trn() even if for english it makes no sense, as s > 30
             r=warning(trn("There was {0} tag found in the buffer, it is suspicious!",
             "There were {0} tags found in the buffer, it is suspicious!", s,
-            s), "", "toomanytags");
-            if (r==2) return false; if (r==3) return true;
+            s), "", "tags.paste.toomanytags");
+            if (r==2 || r==3) return false; if (r==4) return true;
         }
         for (String key: tags.keySet()) {
             value = tags.get(key);
             if (key.length() > MAX_KEY_LENGTH) {
-                r = warning(tr("Key is too long (max {0} characters):", MAX_KEY_LENGTH), key+"="+value, "keytoolong");
-                if (r==2) return false; if (r==3) return true;
+                r = warning(tr("Key is too long (max {0} characters):", MAX_KEY_LENGTH), key+"="+value, "tags.paste.keytoolong");
+                if (r==2 || r==3) return false; if (r==4) return true;
             }
             if (!key.matches(KEY_PATTERN)) {
-                r = warning(tr("Suspicious characters in key:"), key, "keydoesnotmatch");
-                if (r==2) return false; if (r==3) return true;
+                r = warning(tr("Suspicious characters in key:"), key, "tags.paste.keydoesnotmatch");
+                if (r==2 || r==3) return false; if (r==4) return true;
             }
             if (value.length() > MAX_VALUE_LENGTH) {
-                r = warning(tr("Value is too long (max {0} characters):", MAX_VALUE_LENGTH), value, "valuetoolong");
-                if (r==2) return false; if (r==3) return true;
+                r = warning(tr("Value is too long (max {0} characters):", MAX_VALUE_LENGTH), value, "tags.paste.valuetoolong");
+                if (r==2 || r==3) return false; if (r==4) return true;
             }
         }
         return true;
@@ -258,18 +261,50 @@ public class TextTagParser {
         ExtendedDialog ed = new ExtendedDialog(
                     Main.parent,
                     tr("Do you want to paste these tags?"),
-                    new String[]{tr("Ok"), tr("Cancel"), tr("Ignore warnings")});
-        ed.setButtonIcons(new String[]{"ok.png", "cancel.png", "pastetags.png"});
+                    new String[]{tr("Ok"), tr("Cancel"), tr("Clear buffer"), tr("Ignore warnings")});
+        ed.setButtonIcons(new String[]{"ok.png", "cancel.png", "dialogs/delete.png", "pastetags.png"});
         ed.setContent("<html><b>"+text + "</b><br/><br/><div width=\"300px\">"+XmlWriter.encode(data,true)+"</html>");
         ed.setDefaultButton(2);
         ed.setCancelButton(2);
         ed.setIcon(JOptionPane.WARNING_MESSAGE);
         ed.toggleEnable(code);
         ed.showDialog();
-        Object o = ed.getValue();
-        if (o instanceof Integer) 
-            return ((Integer)o).intValue(); 
-        else 
-            return 2;
+        int r = ed.getValue();
+        if (r==0) r = 2;
+        // clean clipboard if user asked
+        if (r==3) Utils.copyToClipboard("");
+        return r;
+    }
+
+    /**
+     * Shows message that the buffer can not be pasted, allowing user to clean the buffer
+     * @param helpUrl
+     */
+    public static void showBadBufferMessage(String helpUrl) {
+        String msg = tr("<html><p> Sorry, it is impossible to paste tags from buffer. It does not contain any JOSM object"
+            + " or suitable text. </p></html>");
+        JPanel p = new JPanel(new GridBagLayout());
+        p.add(new JLabel(msg),GBC.eop());
+        if (helpUrl != null) {
+            p.add(new UrlLabel(helpUrl), GBC.eop());
+        }
+
+        ExtendedDialog ed = new ExtendedDialog(
+                    Main.parent,
+                    tr("Warning"),
+                    new String[]{tr("Ok"), tr("Clear buffer")});
+        
+        ed.setButtonIcons(new String[]{"ok.png", "dialogs/delete.png"});
+        
+        ed.setContent(p);
+        ed.setDefaultButton(1);
+        ed.setCancelButton(1);
+        ed.setIcon(JOptionPane.WARNING_MESSAGE);
+        ed.toggleEnable("tags.paste.cleanbadbuffer");
+        ed.showDialog();
+
+        int r = ed.getValue();
+        // clean clipboard if user asked
+        if (r==2) Utils.copyToClipboard("");
     }
 }

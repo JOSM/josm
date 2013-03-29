@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -13,9 +12,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -26,13 +22,10 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
-import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.conflict.tags.PasteTagsConflictResolverDialog;
 import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.TextTagParser;
-import org.openstreetmap.josm.tools.UrlLabel;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -45,26 +38,15 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public final class PasteTagsAction extends JosmAction {
 
+    private static final String help = ht("/Action/PasteTags");
+    private static final String helpUrl = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(help));
+    
     public PasteTagsAction() {
         super(tr("Paste Tags"), "pastetags",
                 tr("Apply tags of contents of paste buffer to all selected items."),
                 Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")),
                 KeyEvent.VK_V, Shortcut.CTRL_SHIFT), true);
-        putValue("help", ht("/Action/PasteTags"));
-    }
-
-    private void showBadBufferMessage() {
-        String msg = tr("<html><p> Sorry, it is impossible to paste tags from buffer. It does not contain any JOSM object"
-            + " or suitable text. </p></html>");
-        JPanel p = new JPanel(new GridBagLayout());
-        p.add(new JLabel(msg),GBC.eop());
-        p.add(new UrlLabel(
-                HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic((String)getValue("help")))),
-                GBC.eop());
-
-        ConditionalOptionPaneUtil.showMessageDialog(
-            "paste_badbuffer", Main.parent,
-            p, tr("Warning"), JOptionPane.WARNING_MESSAGE);
+        putValue("help", help);
     }
 
     public static class TagPaster {
@@ -268,30 +250,57 @@ public final class PasteTagsAction extends JosmAction {
             return;
         
         String buf = Utils.getClipboardContent();
+        if (buf == null || buf.isEmpty() || buf.matches("(\\d+,)*\\d+")) {
+            pasteTagsFromJOSMBuffer(selection);
+        } else { 
+            // Paste tags from arbitrary text
+            pasteTagsFromText(selection, buf);
+        }
+    }
 
+    /** Paste tags from arbitrary text
+     * @return false if action was successful
+     */
+    public static boolean pasteTagsFromText(Collection<OsmPrimitive> selection, String text) {
+        Map<String, String> tags = TextTagParser.readTagsFromText(text);
         List<Command> commands = new ArrayList<Command>();
-        if (buf==null) {
-            showBadBufferMessage();
-            return;
+        if (tags==null || tags.isEmpty()) {
+            TextTagParser.showBadBufferMessage(helpUrl);
+            return false;
+        };
+        if (!TextTagParser.validateTags(tags)) return false;
+        String v;
+        for (String key: tags.keySet()) {
+            v = tags.get(key);
+            commands.add(new ChangePropertyCommand(selection, key, "".equals(v)?null:v));
         }
-        if (buf.matches("(\\d+,)*\\d+")) { // Paste tags from JOSM buffer
-            PasteTagsAction.TagPaster tagPaster = new PasteTagsAction.TagPaster(Main.pasteBuffer.getDirectlyAdded(), selection);
-            for (Tag tag: tagPaster.execute()) {
-                commands.add(new ChangePropertyCommand(selection, tag.getKey(), "".equals(tag.getValue())?null:tag.getValue()));
-            }
-        } else { // Paste tags from arbitrary text
-            Map<String, String> tags = TextTagParser.readTagsFromText(buf);
-            if (tags==null || tags.isEmpty()) {
-                showBadBufferMessage();
-                return;
-            }
-            if (!TextTagParser.validateTags(tags)) return;
-            String v;
-            for (String key: tags.keySet()) {
-                v = tags.get(key);
-                commands.add(new ChangePropertyCommand(selection, key, "".equals(v)?null:v));
-            }
+        commitCommands(selection, commands);
+        return !commands.isEmpty();
+    }
+        
+    /** Paste tags from JOSM buffer
+     * @param selection objects 
+     * @param commands
+     * @return 
+     */
+    public static boolean pasteTagsFromJOSMBuffer(Collection<OsmPrimitive> selection) {
+        List<PrimitiveData> directlyAdded = Main.pasteBuffer.getDirectlyAdded();
+        if (directlyAdded==null || directlyAdded.isEmpty()) return false;
+
+        PasteTagsAction.TagPaster tagPaster = new PasteTagsAction.TagPaster(directlyAdded, selection);
+        List<Command> commands = new ArrayList<Command>();
+        for (Tag tag : tagPaster.execute()) {
+            commands.add(new ChangePropertyCommand(selection, tag.getKey(), "".equals(tag.getValue()) ? null : tag.getValue()));
         }
+        commitCommands(selection, commands);
+        return true;
+    }
+
+    /**
+     * Create and execute SequenceCommand with descriptive title
+     * @param commands 
+     */
+    private static void commitCommands(Collection<OsmPrimitive> selection, List<Command> commands) {
         if (!commands.isEmpty()) {
             String title1 = trn("Pasting {0} tag", "Pasting {0} tags", commands.size(), commands.size());
             String title2 = trn("to {0} object", "to {0} objects", selection.size(), selection.size());
@@ -301,10 +310,8 @@ public final class PasteTagsAction extends JosmAction {
                             commands
                     ));
         }
-        
-    }
-
-
+    } 
+   
     @Override
     protected void updateEnabledState() {
         if (getCurrentDataSet() == null) {
