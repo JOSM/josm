@@ -597,7 +597,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     @Deprecated
     public void drawLinePattern(Way way, Image pattern) {
-        drawRepeatImage(way, pattern, 0f, 0f, LineImageAlignment.TOP);
+        drawRepeatImage(way, pattern, 0f, 0f, 0f, LineImageAlignment.TOP);
     }
 
     /**
@@ -607,16 +607,20 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param pattern the image
      * @param offset offset from the way
      * @param spacing spacing between two images
+     * @param phase initial spacing
      * @param align alignment of the image. The top, center or bottom edge
      * can be aligned with the way.
      */
-    public void drawRepeatImage(Way way, Image pattern, float offset, float spacing, LineImageAlignment align) {
+    public void drawRepeatImage(Way way, Image pattern, float offset, float spacing, float phase, LineImageAlignment align) {
         final int imgWidth = pattern.getWidth(null);
         final double repeat = imgWidth + spacing;
         final int imgHeight = pattern.getHeight(null);
 
         Point lastP = null;
-        double currentWayLength = 0;
+        double currentWayLength = phase % repeat;
+        if (currentWayLength < 0) {
+            currentWayLength += repeat;
+        }
 
         int dy1, dy2;
         switch (align) {
@@ -646,7 +650,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 final double dx = thisP.x - lastP.x;
                 final double dy = thisP.y - lastP.y;
 
-                double pos = currentWayLength == 0 ? 0 : repeat - (currentWayLength % repeat);
+                // pos is the position from the beginning of the current segment
+                // where an image should be painted
+                double pos = repeat - (currentWayLength % repeat);
 
                 AffineTransform saveTransform = g.getTransform();
                 g.translate(lastP.x, lastP.y);
@@ -655,8 +661,16 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 // draw the rest of the image from the last segment in case it
                 // is cut off
                 if (pos > spacing) {
-                    g.drawImage(pattern, 0, dy1, (int) (pos - spacing), dy2,
-                            (int) (imgWidth + spacing - pos), 0, imgWidth, imgHeight, null);
+                    // segment is too short for a complete image
+                    if (pos > segmentLength + spacing) {
+                        g.drawImage(pattern, 0, dy1, (int) segmentLength, dy2,
+                                (int) (repeat - pos), 0,
+                                (int) (repeat - pos + segmentLength), imgHeight, null);
+                    // rest of the image fits fully on the current segment
+                    } else {
+                        g.drawImage(pattern, 0, dy1, (int) (pos - spacing), dy2,
+                                (int) (repeat - pos), 0, imgWidth, imgHeight, null);
+                    }
                 }
                 // draw remaining images for this segment
                 while (pos < segmentLength) {
