@@ -23,16 +23,16 @@ public class ImportHandler extends RequestHandler {
      */
     public static final String command = "import";
     
-    private URL url;
+    private URL url; // parameter 'url'
+    private Boolean new_layer; // parameter 'nl'
     private Collection<DownloadTask> suitableDownloadTasks;
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException {
         try {
             if (suitableDownloadTasks != null && !suitableDownloadTasks.isEmpty()) {
-                // TODO: add new_layer parameter
                 // TODO: handle multiple suitable download tasks ?
-                suitableDownloadTasks.iterator().next().loadUrl(false, url.toExternalForm(), null);
+                suitableDownloadTasks.iterator().next().loadUrl(new_layer, url.toExternalForm(), null);
             }
         } catch (Exception ex) {
             System.out.println("RemoteControl: Error parsing import remote control request:");
@@ -69,30 +69,20 @@ public class ImportHandler extends RequestHandler {
 
     @Override
     protected void parseArgs() {
+        String req = decodeParam(this.request);
         HashMap<String, String> args = new HashMap<String, String>();
         if (request.indexOf('?') != -1) {
-            String query = request.substring(request.indexOf('?') + 1);
-            if (query.indexOf("url=") == 0) {
-                args.put("url", decodeParam(query.substring(4)));
-            } else {
-                int urlIdx = query.indexOf("&url=");
-                if (urlIdx != -1) {
-                    /*String url =*/ query.substring(urlIdx + 1);
-                    args.put("url", decodeParam(query.substring(urlIdx + 5)));
-                    query = query.substring(0, urlIdx);
-                } else {
-                    if (query.indexOf('#') != -1) {
-                        query = query.substring(0, query.indexOf('#'));
-                    }
-                }
-                String[] params = query.split("&", -1);
-                for (String param : params) {
-                    int eq = param.indexOf('=');
-                    if (eq != -1) {
-                        args.put(param.substring(0, eq), param.substring(eq + 1));
-                    }
-                }
-            }
+			String query = req.substring(req.indexOf('?') + 1);
+			if (query.indexOf('#') != -1) {
+				query = query.substring(0, query.indexOf('#'));
+			}
+			String[] params = query.split("&", -1);
+			for (String param : params) {
+				int eq = param.indexOf('=');
+				if (eq != -1) {
+					args.put(param.substring(0, eq), param.substring(eq + 1));
+				}
+			}
         }
         this.args = args;
     }
@@ -106,6 +96,18 @@ public class ImportHandler extends RequestHandler {
         } catch (MalformedURLException e) {
             throw new RequestHandlerBadRequestException("MalformedURLException: "+e.getMessage());
         }
+		
+		// See if there is a new-layer specified.
+		if(args.containsKey("nl") &&
+			args.get("nl").equals("yes"))
+		{ 
+			new_layer = true;
+		}
+		else
+		{ 
+			new_layer = false;
+		}
+		
         // Find download tasks for the given URL
         suitableDownloadTasks = Main.main.menu.openLocation.findDownloadTasks(urlString);
         if (suitableDownloadTasks.isEmpty()) {
