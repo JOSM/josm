@@ -25,4 +25,11 @@ public interface StyleKeys {
     String REPEAT_IMAGE_OFFSET = "repeat-image-offset";
     String REPEAT_IMAGE_SPACING = "repeat-image-spacing";
     String REPEAT_IMAGE_ALIGN = "repeat-image-align";
+
+    int ICON_IMAGE_IDX = 0;
+    int ICON_WIDTH_IDX = 1;
+    int ICON_HEIGHT_IDX = 2;
+    int ICON_OPACITY_IDX = 3;
+    String[] ICON_KEYS = {"icon-image", "icon-width", "icon-height", "icon-opacity"};
+    String[] REPEAT_IMAGE_KEYS = {"repeat-image", "repeat-image-width", "repeat-image-height", "repeat-image-opacity"};
 }
