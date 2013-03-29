@@ -9,20 +9,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
-import org.openstreetmap.josm.io.imagery.OffsetServer;
-import org.openstreetmap.josm.io.imagery.OsmosnimkiOffsetServer;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -36,8 +30,6 @@ public class CommonSettingsPanel extends JPanel {
     private final JButton btnFadeColor;
     private final JSlider fadeAmount = new JSlider(0, 100);
     private final JosmComboBox sharpen;
-    private final JCheckBox useOffsetServer;
-    private final JTextField offsetServerUrl;
 
     /**
      * Constructs a new {@code CommonSettingsPanel}.
@@ -79,18 +71,6 @@ public class CommonSettingsPanel extends JPanel {
         add(new JLabel(tr("Sharpen (requires layer re-add): ")));
         add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         add(this.sharpen, GBC.eol().fill(GBC.HORIZONTAL));
-
-        this.useOffsetServer = new JCheckBox(tr("Use offset server: "));
-        this.offsetServerUrl = new JTextField();
-        this.useOffsetServer.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                offsetServerUrl.setEnabled(useOffsetServer.isSelected());
-            }
-        });
-        offsetServerUrl.setEnabled(useOffsetServer.isSelected());
-        add(this.useOffsetServer, GBC.eol().fill(GBC.HORIZONTAL));
-        add(this.offsetServerUrl, GBC.eol().fill(GBC.HORIZONTAL));
     }
     
     /**
@@ -102,8 +82,6 @@ public class CommonSettingsPanel extends JPanel {
         this.btnFadeColor.setText(ColorHelper.color2html(colFadeColor));
         this.fadeAmount.setValue(ImageryLayer.PROP_FADE_AMOUNT.get());
         this.sharpen.setSelectedIndex(Math.max(0, Math.min(2, ImageryLayer.PROP_SHARPEN_LEVEL.get())));
-        this.useOffsetServer.setSelected(OffsetServer.PROP_SERVER_ENABLED.get());
-        this.offsetServerUrl.setText(OsmosnimkiOffsetServer.PROP_SERVER_URL.get());
     }
     
     /**
@@ -111,9 +89,6 @@ public class CommonSettingsPanel extends JPanel {
      * @return true when restart is required
      */
     public boolean saveSettings() {
-        OffsetServer.PROP_SERVER_ENABLED.put(useOffsetServer.isSelected());
-        OsmosnimkiOffsetServer.PROP_SERVER_URL.put(offsetServerUrl.getText());
-
         ImageryLayer.PROP_FADE_AMOUNT.put(this.fadeAmount.getValue());
         ImageryLayer.PROP_FADE_COLOR.put(this.btnFadeColor.getBackground());
         ImageryLayer.PROP_SHARPEN_LEVEL.put(sharpen.getSelectedIndex());
