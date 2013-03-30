@@ -114,22 +114,27 @@ public class GpxLayer extends Layer {
     }
     
     /**
-    * returns minimum and maximum timestamps for all tracks
+    * Returns minimum and maximum timestamps for all tracks
+    * Warning: there are lot of track with broken timestamps,
+    * so we just ingore points from future and from year before 1970 in this method
+    * works correctly @since 5815
     */
     public Date[] getMinMaxTimeForAllTracks() {
-        double min=Double.MIN_VALUE, max=Double.MAX_VALUE, t;
+        double min=1e100, max=-1e100, t;
+        double now = new Date().getTime()/1000.0;
         for (GpxTrack trk: data.tracks) {
             for (GpxTrackSegment seg : trk.getSegments()) {
                 for (WayPoint pnt : seg.getWayPoints()) {
                     t = pnt.time;
-                    if (t!=0) {
+                    if (t>0 && t<=now) {
                         if (t>max) max=t;
                         if (t<min) min=t;
                     }
                 }
             }
         }
-        if (min==Double.MIN_VALUE || max==Double.MAX_VALUE) return null;
+        //System.out.println("scanning "+data.tracks.size()+" tracks, found min,max"+min+"--"+max);
+        if (min==1e100 || max==-1e100) return null;
         return new Date[]{new Date((long) (min * 1000)), new Date((long) (max * 1000)), };
     }
     
@@ -527,25 +532,17 @@ public class GpxLayer extends Layer {
                 }
                 oldWp = null;
             }
+            double now = new Date().getTime()/1000.0;
             if (colored == colorModes.time) {
-                for (GpxTrack trk : data.tracks) {
-                    for (GpxTrackSegment segment : trk.getSegments()) {
-                        for (WayPoint trkPnt : segment.getWayPoints()) {
-                            double t=trkPnt.time;
-                            if (t==0) {
-                                continue; // skip non-dated trackpoints
-                            }
-                            if(t > maxval) {
-                                maxval = t;
-                            }
-                            if(t < minval) {
-                                minval = t;
-                            }
-                        }
-                    }
+                Date bounds[] = getMinMaxTimeForAllTracks();
+                if (bounds!=null) {
+                    minval = bounds[0].getTime()/1000.0;
+                    maxval = bounds[1].getTime()/1000.0;
+                } else {
+                    minval = 0; maxval=now;
                 }
             }
-
+            
             for (GpxTrack trk : data.tracks) {
                 for (GpxTrackSegment segment : trk.getSegments()) {
                     if (!forceLines) { // don't draw lines between segments, unless forced to
@@ -591,8 +588,9 @@ public class GpxLayer extends Layer {
                                 }
                                 break;
                             case time:
-                                if (trkPnt.time>0){
-                                    int tColor = (int) Math.round((trkPnt.time-minval)*255/(maxval-minval));
+                                double t=trkPnt.time;
+                                if (t>0 && t<=now){ // skip bad timestamps
+                                    int tColor = (int) Math.round((t-minval)*255/(maxval-minval));
                                     trkPnt.customColoring = colors[tColor];
                                 } else {
                                     trkPnt.customColoring = neutralColor;
