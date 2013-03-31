@@ -24,8 +24,7 @@ public class VersionConflictResolveCommand extends ConflictResolveCommand {
 
     /**
      * constructor
-     * @param my  my primitive (i.e. the primitive from the local dataset)
-     * @param their their primitive (i.e. the primitive from the server)
+     * @param conflict the conflict data set
      */
     public VersionConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict) {
         this.conflict = conflict;
