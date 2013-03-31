@@ -213,6 +213,6 @@ public class Version {
         if (isLocalBuild() && v != JOSM_UNKNOWN_VERSION) {
             s += " SVN";
         }
-        return "JOSM/1.5 ("+ s+" "+LanguageInfo.getJOSMLocaleCode()+")";
+        return "JOSM/1.5 ("+ s+" "+LanguageInfo.getJOSMLocaleCode()+") " + System.getProperty("os.name");
     }
 }

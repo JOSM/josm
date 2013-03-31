@@ -50,7 +50,6 @@ public class WMSGrabber extends Grabber {
         if(layer.getInfo().getCookies() != null && !layer.getInfo().getCookies().equals("")) {
             props.put("Cookie", layer.getInfo().getCookies());
         }
-        props.put("User-Agent", Main.pref.get("imagery.wms.user_agent", Version.getInstance().getAgentString()));
         Pattern pattern = Pattern.compile("\\{header\\(([^,]+),([^}]+)\\)\\}");
         StringBuffer output = new StringBuffer();
         Matcher matcher = pattern.matcher(this.baseURL);
