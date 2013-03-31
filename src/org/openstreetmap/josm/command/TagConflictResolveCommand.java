@@ -45,8 +45,7 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
     /**
      * constructor
      *
-     * @param my  my primitive
-     * @param their  their primitive
+     * @param conflict the conflict data set
      * @param mergeItems the list of merge decisions, represented as {@link TagMergeItem}s
      */
     public TagConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict, List<TagMergeItem> mergeItems) {

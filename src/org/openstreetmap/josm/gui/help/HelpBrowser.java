@@ -238,7 +238,6 @@ public class HelpBrowser extends JDialog {
      *
      * @return the current URL
      */
-
     public String getUrl() {
         return url;
     }
@@ -543,15 +542,15 @@ public class HelpBrowser extends JDialog {
         }
 
         /**
-         * Checks whether the hyperlink event originated on a <a ...> element with
+         * Checks whether the hyperlink event originated on a &lt;a ...&gt; element with
          * a relative href consisting of a URL fragment only, i.e.
-         * <a href="#thisIsALocalFragment">. If so, replies the fragment, i.e.
+         * &lt;a href="#thisIsALocalFragment"&gt;. If so, replies the fragment, i.e.
          * "thisIsALocalFragment".
          *
-         * Otherwise, replies null
+         * Otherwise, replies <code>null</code>
          *
          * @param e the hyperlink event
-         * @return the local fragment
+         * @return the local fragment or <code>null</code>
          */
         protected String getUrlFragment(HyperlinkEvent e) {
             AttributeSet set = e.getSourceElement().getAttributes();
