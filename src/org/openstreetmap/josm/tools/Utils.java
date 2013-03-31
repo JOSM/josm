@@ -553,7 +553,6 @@ public class Utils {
             throw new IllegalArgumentException("Invalid HTTP url");
         }
         HttpURLConnection connection = (HttpURLConnection) httpURL.openConnection();
-        connection.setRequestProperty("User-Agent", Version.getInstance().getAgentString());
         return connection;
     }
     
