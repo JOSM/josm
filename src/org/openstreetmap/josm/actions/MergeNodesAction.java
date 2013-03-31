@@ -271,7 +271,7 @@ public class MergeNodesAction extends JosmAction {
      * @param nodes the collection of nodes. Ignored if null.
      * @param targetNode the target node the collection of nodes is merged to. Must not be null.
      * @param targetLocationNode this node's location will be used for the targetNode.
-     * @throw IllegalArgumentException thrown if layer is null
+     * @throws IllegalArgumentException thrown if layer is null
      */
     public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode, Node targetLocationNode) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");

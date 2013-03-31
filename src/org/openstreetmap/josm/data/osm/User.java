@@ -118,7 +118,7 @@ public class User {
     /**
      * Replies the user name
      *
-     * @return the user name. Never null, but may be the empty string
+     * @return the user name. Never <code>null</code>, but may be the empty string
      */
     public String getName() {
         return Utils.join("/", names);
@@ -127,7 +127,7 @@ public class User {
     /**
      * Returns the list of user names
      *
-     * @returns list of names
+     * @return list of names
      */
     public ArrayList<String> getNames() {
         return new ArrayList<String>(names);
@@ -146,6 +146,7 @@ public class User {
      * Returns true if the name is in the names list
      *
      * @param name
+     * @return <code>true</code> if the name is in the names list
      */
     public boolean hasName(String name) {
         return names.contains(name);
@@ -159,6 +160,7 @@ public class User {
      * application is closed and there is no guarantee that a negative local user id is
      * always bound to a user with the same name.
      *
+     * @return the user id
      */
     public long getId() {
         return uid;
