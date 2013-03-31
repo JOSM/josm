@@ -10,7 +10,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
  * This is the common base class for {@link Command}s which manipulate {@link Conflict}s in
- * addition to {@link OsmPrimitive}s.
+ * addition to {@link org.openstreetmap.josm.data.osm.OsmPrimitive}s.
  *
  * A ConflictResolverCommand can remember a collection of conflicts it resolves. Upon undoing
  * it reconstitutes them.

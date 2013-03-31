@@ -25,10 +25,9 @@ public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
     private final MergeDecisionType decision;
 
     /**
-     * constructor
+     * constructor for coordinate conflict
      *
-     * @param my  my node
-     * @param their  their node
+     * @param conflict the conflict data set
      * @param decision the merge decision
      */
     public CoordinateConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict, MergeDecisionType decision) {

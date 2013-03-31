@@ -29,8 +29,7 @@ public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
     /**
      * constructor
      *
-     * @param my  my node
-     * @param their  their node
+     * @param conflict the conflict data set
      * @param decision the merge decision
      */
     public DeletedStateConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict, MergeDecisionType decision) {

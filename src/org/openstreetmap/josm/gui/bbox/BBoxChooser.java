@@ -11,7 +11,7 @@ import org.openstreetmap.josm.data.Bounds;
 public interface BBoxChooser {
 
     /**
-     * A BBoxChooser emits {@link ProperyChangeEvent}s for this property
+     * A BBoxChooser emits {@link java.beans.PropertyChangeEvent}s for this property
      * if the current bounding box changes.
      */
     String BBOX_PROP = BBoxChooser.class.getName() + ".bbox";
