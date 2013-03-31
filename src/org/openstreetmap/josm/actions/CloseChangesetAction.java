@@ -77,11 +77,6 @@ public class CloseChangesetAction extends JosmAction{
         private Exception lastException;
         private UserInfo userInfo;
 
-        /**
-         *
-         * @param model provides the user id of the current user and accepts the changesets
-         * after download
-         */
         public DownloadOpenChangesetsTask() {
             super(tr("Downloading open changesets ...", false /* don't ignore exceptions */));
         }
