@@ -872,34 +872,49 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // the node from which we make a connection
         currentBaseNode = null;
         previousNode = null;
-
+        
+        // Try to find an open way to measure angle from it. The way is not to be continued!
+        // warning: may result in changes of currentBaseNode and previousNode
+        // please remove if bugs arise
+        if (selectedWay == null && selectedNode != null) {
+            for (OsmPrimitive p: selectedNode.getReferrers()) {
+                if (p.isUsable() && p instanceof Way && ((Way) p).isFirstLastNode(selectedNode)) {
+                    if (selectedWay!=null) { // two uncontinued ways, nothing to take as reference 
+                        selectedWay=null;
+                        break;
+                    } else {
+                        // set us ~continue this way (measure angle from it)
+                        selectedWay = (Way) p;
+                    }
+                }
+            }
+        } 
+        
         if (selectedNode == null) {
             if (selectedWay == null)
                 return;
-            if (selectedWay.isFirstLastNode(lastUsedNode)) {
-                currentBaseNode = lastUsedNode;
-                if (lastUsedNode == selectedWay.getNode(selectedWay.getNodesCount()-1) && selectedWay.getNodesCount() > 1) {
-                    previousNode = selectedWay.getNode(selectedWay.getNodesCount()-2);
-                }
-            }
+            continueWayFromNode(selectedWay, lastUsedNode);
         } else if (selectedWay == null) {
             currentBaseNode = selectedNode;
         } else if (!selectedWay.isDeleted()) { // fix #7118
-            if (selectedNode == selectedWay.getNode(0)){
-                currentBaseNode = selectedNode;
-                if (selectedWay.getNodesCount()>1) {
-                    previousNode = selectedWay.getNode(1);
-                }
-            }
-            if (selectedNode == selectedWay.lastNode()) {
-                currentBaseNode = selectedNode;
-                if (selectedWay.getNodesCount()>1) {
-                    previousNode = selectedWay.getNode(selectedWay.getNodesCount()-2);
-                }
-            }
+            continueWayFromNode(selectedWay, selectedNode);
         }
     }
-
+    
+    /**
+     * if one of the ends of @param way is given @param node ,
+     * then set  currentBaseNode = node and previousNode = adjacent node of way
+     */
+    private void continueWayFromNode(Way way, Node node) {
+        int n = way.getNodesCount();
+        if (node == way.firstNode()){
+            currentBaseNode = node;
+            if (n>1) previousNode = way.getNode(1);
+        } else if (node == way.lastNode()) {
+            currentBaseNode = node;
+            if (n>1) previousNode = way.getNode(n-2);
+        }
+    }
 
     /**
      * Repaint on mouse exit so that the helper line goes away.
