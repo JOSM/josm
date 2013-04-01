@@ -15,17 +15,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
-import javax.swing.Action;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComponent;
 import javax.swing.JList;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -38,7 +35,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.relation.AddSelectionToRelations;
@@ -68,6 +64,7 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -94,8 +91,9 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
     private final NewAction newAction;
     
-    /** the popup menu */
-    private final RelationDialogPopupMenu popupMenu;
+    /** the popup menu and its handler */
+    private final JPopupMenu popupMenu = new JPopupMenu();
+    private final PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
 
     private final JTextField filter;
     
@@ -108,11 +106,11 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     private final DuplicateRelationAction duplicateAction = new DuplicateRelationAction();
     private final DownloadMembersAction downloadMembersAction = new DownloadMembersAction();
     private final DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction = new DownloadSelectedIncompleteMembersAction();
-    private final SelectMembersAction selectMemebersAction = new SelectMembersAction(false);
+    private final SelectMembersAction selectMembersAction = new SelectMembersAction(false);
     private final SelectMembersAction addMembersToSelectionAction = new SelectMembersAction(true);
     private final SelectRelationAction selectRelationAction = new SelectRelationAction(false);
     private final SelectRelationAction addRelationToSelectionAction = new SelectRelationAction(true);
-    /** add all selected primitives to the given realtions */
+    /** add all selected primitives to the given relations */
     private final AddSelectionToRelations addSelectionToRelations = new AddSelectionToRelations();
     
     /**
@@ -153,6 +151,9 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 updateActionsRelationLists();
             }
         });
+
+        // Setup popup menu handler
+        setupPopupMenuHandler();
         
         JPanel pane = new JPanel(new BorderLayout());
         pane.add(filter, BorderLayout.NORTH);
@@ -174,8 +175,6 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         // Select relation on Ctrl-Enter
         InputMapUtils.addEnterAction(displaylist, selectRelationAction);
 
-        popupMenu = new RelationDialogPopupMenu();
-
         // Edit relation on Ctrl-Enter
         displaylist.getActionMap().put("edit", editAction);
         displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_MASK), "edit");
@@ -185,22 +184,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     
     // inform all actions about list of relations they need
     private void updateActionsRelationLists() {
-        List<Relation> rels;
-        rels = model.getSelectedNonNewRelations();
-        downloadMembersAction.setRelations(rels);
-
-        rels = model.getSelectedRelationsWithIncompleteMembers();
-        downloadSelectedIncompleteMembersAction.setRelations(rels); 
-
-        rels = model.getSelectedRelations();
-        editAction.setRelations(rels);
-        deleteRelationsAction.setRelations(rels);
-        addSelectionToRelations.setRelations(rels);
-        selectMemebersAction.setRelations(rels);
-        addMembersToSelectionAction.setRelations(rels);
-        selectRelationAction.setRelations(rels);
-        addRelationToSelectionAction.setRelations(rels);
-        duplicateAction.setRelations(rels);
+        popupMenuHandler.setPrimitives(model.getSelectedRelations());
     }
     
     @Override public void showNotify() {
@@ -508,23 +492,6 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 setSelectedRelations(sel);
             }
         }
-
-        /**
-         * Replies the list of selected relations with incomplete members
-         *
-         * @return the list of selected relations with incomplete members
-         */
-        public List<Relation> getSelectedRelationsWithIncompleteMembers() {
-            List<Relation> ret = getSelectedNonNewRelations();
-            Iterator<Relation> it = ret.iterator();
-            while(it.hasNext()) {
-                Relation r = it.next();
-                if (!r.hasIncompleteMembers()) {
-                    it.remove();
-                }
-            }
-            return ret;
-        }
         
         private void updateFilteredRelations() {
             if (filter != null) {
@@ -565,26 +532,6 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         @Override
         public int getSize() {
             return getVisibleRelations().size();
-        }
-
-        /**
-         * Replies the list of selected, non-new relations. Empty list,
-         * if there are no selected, non-new relations.
-         *
-         * @return the list of selected, non-new relations.
-         */
-        public List<Relation> getSelectedNonNewRelations() {
-            ArrayList<Relation> ret = new ArrayList<Relation>();
-            for (int i=0; i<getSize();i++) {
-                if (!selectionModel.isSelectedIndex(i)) {
-                    continue;
-                }
-                if (getVisibleRelation(i).isNew()) {
-                    continue;
-                }
-                ret.add(getVisibleRelation(i));
-            }
-            return ret;
         }
 
         /**
@@ -655,49 +602,39 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
     }
 
-    class RelationDialogPopupMenu extends JPopupMenu {
+    private final void setupPopupMenuHandler() {
+        
+        // -- download members action
+        popupMenuHandler.addAction(downloadMembersAction);
 
-        public RelationDialogPopupMenu() {
-            // -- download members action
-            add(downloadMembersAction);
+        // -- download incomplete members action
+        popupMenuHandler.addAction(downloadSelectedIncompleteMembersAction);
 
-            // -- download incomplete members action
-            add(downloadSelectedIncompleteMembersAction);
+        popupMenuHandler.addSeparator();
 
-            addSeparator();
+        // -- select members action
+        popupMenuHandler.addAction(selectMembersAction);
+        popupMenuHandler.addAction(addMembersToSelectionAction);
 
-            // -- select members action
-            add(selectMemebersAction);
-            add(addMembersToSelectionAction);
+        // -- select action
+        popupMenuHandler.addAction(selectRelationAction);
+        popupMenuHandler.addAction(addRelationToSelectionAction);
 
-            // -- select action
-            add(selectRelationAction);
-            add(addRelationToSelectionAction);
+        popupMenuHandler.addSeparator();
 
-            addSeparator();
-
-            add(addSelectionToRelations);
-        }
+        popupMenuHandler.addAction(addSelectionToRelations);
     }
-
+    
     /* ---------------------------------------------------------------------------------- */
-    /* Methods that can be called from plugins                                                                    */
+    /* Methods that can be called from plugins                                            */
     /* ---------------------------------------------------------------------------------- */
 
-    public void addPopupMenuSeparator() {
-        popupMenu.addSeparator();
-    }
-
-    public JMenuItem addPopupMenuAction(Action a) {
-        return popupMenu.add(a);
-    }
-
-    public void addPopupMenuListener(PopupMenuListener l) {
-        popupMenu.addPopupMenuListener(l);
-    }
-
-    public void removePopupMenuListener(PopupMenuListener l) {
-        popupMenu.addPopupMenuListener(l);
+    /**
+     * Replies the popup menu handler.
+     * @return The popup menu handler
+     */
+    public PopupMenuHandler getPopupMenuHandler() {
+        return popupMenuHandler;
     }
 
     public Collection<Relation> getSelectedRelations() {
