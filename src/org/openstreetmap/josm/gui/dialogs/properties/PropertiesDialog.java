@@ -31,10 +31,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -43,7 +41,6 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.PopupMenuListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
@@ -76,6 +73,7 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandler;
@@ -110,8 +108,10 @@ import org.openstreetmap.josm.tools.Utils;
  * @author imi
  */
 public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetListenerAdapter.Listener {
-    // hook for roadsigns plugin to display a small
-    // button in the upper right corner of this dialog
+
+    /**
+     * hook for roadsigns plugin to display a small button in the upper right corner of this dialog
+     */
     public static final JPanel pluginHook = new JPanel();
 
     /**
@@ -133,8 +133,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      */
     private final JTable membershipTable = new JTable(membershipData);
 
-    private JPopupMenu propertyMenu;
-    private JPopupMenu membershipMenu;
+    // Popup menus
+    private final JPopupMenu propertyMenu = new JPopupMenu();
+    private final JPopupMenu membershipMenu = new JPopupMenu();
+
+    // Popup menu handlers
+    private final PopupMenuHandler propertyMenuHandler = new PopupMenuHandler(propertyMenu);
+    private final PopupMenuHandler membershipMenuHandler = new PopupMenuHandler(membershipMenu);
 
     private final Map<String, Map<String, Integer>> valueCount = new TreeMap<String, Map<String, Integer>>();
     /**
@@ -201,6 +206,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     
     /**
      * Create a new PropertiesDialog
+     * @param mapFrame The parent map fram
      */
     public PropertiesDialog(MapFrame mapFrame) {
         super(tr("Properties/Memberships"), "propertiesdialog", tr("Properties for selected objects."),
@@ -369,11 +375,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      */
     private void setupMembershipMenu() {
         // setting up the membership table
-        membershipMenu = new JPopupMenu();
-        membershipMenu.add(addRelationToSelectionAction);
-        membershipMenu.add(selectRelationAction);
-        membershipMenu.add(addMembersToSelectionAction);
-        membershipMenu.add(downloadSelectedIncompleteMembersAction);
+        membershipMenuHandler.addAction(addRelationToSelectionAction);
+        membershipMenuHandler.addAction(selectRelationAction);
+        membershipMenuHandler.addAction(addMembersToSelectionAction);
+        membershipMenuHandler.addAction(downloadSelectedIncompleteMembersAction);
         membershipMenu.addSeparator();
         membershipMenu.add(helpAction);
 
@@ -388,15 +393,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     membershipTable.changeSelection(row, 0, false, false);
                     idx = new int[]{row};
                 }
-                List<Relation> rels =  new ArrayList<Relation>(10);
+                List<Relation> rels = new ArrayList<Relation>();
                 for (int i: idx) {
                     Relation r = (Relation) (membershipData.getValueAt(i, 0));
                     rels.add(r);
                 }
-                selectRelationAction.setRelations(rels);
-                addRelationToSelectionAction.setRelations(rels);
-                addMembersToSelectionAction.setRelations(rels);
-                downloadSelectedIncompleteMembersAction.setRelations(rels);
+                membershipMenuHandler.setPrimitives(rels);
                 membershipMenu.show(membershipTable, p.x, p.y-3);
             }
         });
@@ -406,7 +408,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * creates the popup menu @field propertyMenu and its launcher on property table 
      */
     private void setupPropertiesMenu() {
-        propertyMenu = new JPopupMenu();
         propertyMenu.add(pasteValueAction);
         propertyMenu.add(copyValueAction);
         propertyMenu.add(copyKeyValueAction);
@@ -694,20 +695,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Methods that are called by plugins to extend fuctionalty ">
-    public void addPropertyPopupMenuSeparator() {
-        propertyMenu.addSeparator();
-    }
-
-    public JMenuItem addPropertyPopupMenuAction(Action a) {
-        return propertyMenu.add(a);
-    }
-
-    public void addPropertyPopupMenuListener(PopupMenuListener l) {
-        propertyMenu.addPopupMenuListener(l);
-    }
-
-    public void removePropertyPopupMenuListener(PopupMenuListener l) {
-        propertyMenu.addPopupMenuListener(l);
+    
+    /**
+     * Replies the property popup menu handler.
+     * @return The property popup menu handler
+     */
+    public PopupMenuHandler getPropertyPopupMenuHandler() {
+        return propertyMenuHandler;
     }
 
     @SuppressWarnings("unchecked")
@@ -720,20 +714,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 map.size() > 1 ? "" : map.keySet().iterator().next());
     }
 
-    public void addMembershipPopupMenuSeparator() {
-        membershipMenu.addSeparator();
-    }
-
-    public JMenuItem addMembershipPopupMenuAction(Action a) {
-        return membershipMenu.add(a);
-    }
-
-    public void addMembershipPopupMenuListener(PopupMenuListener l) {
-        membershipMenu.addPopupMenuListener(l);
-    }
-
-    public void removeMembershipPopupMenuListener(PopupMenuListener l) {
-        membershipMenu.addPopupMenuListener(l);
+    /**
+     * Replies the membership popup menu handler.
+     * @return The membership popup menu handler
+     */
+    public PopupMenuHandler getMembershipPopupMenuHandler() {
+        return membershipMenuHandler;
     }
 
     public IRelation getSelectedMembershipRelation() {

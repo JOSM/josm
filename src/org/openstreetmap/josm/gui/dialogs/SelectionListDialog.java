@@ -23,7 +23,6 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
-import javax.swing.Action;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
@@ -34,7 +33,6 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
@@ -66,6 +64,7 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.EditLayerChangeListener;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
@@ -91,7 +90,9 @@ public class SelectionListDialog extends ToggleDialog  {
     private EditRelationAction actEditRelationSelection;
     private DownloadSelectedIncompleteMembersAction actDownloadSelectedIncompleteMembers;
 
-    private SelectionPopup popupMenu;
+    /** the popup menu and its handler */
+    private final ListPopupMenu popupMenu;
+    private final PopupMenuHandler popupMenuHandler;
 
     /**
      * Builds the content panel for this dialog
@@ -147,23 +148,20 @@ public class SelectionListDialog extends ToggleDialog  {
         actEditRelationSelection = new EditRelationAction();
         actDownloadSelectedIncompleteMembers = new DownloadSelectedIncompleteMembersAction();
 
+        popupMenu = new ListPopupMenu(lstPrimitives);
+        popupMenuHandler = setupPopupMenuHandler();
+
         lstPrimitives.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 actZoomToListSelection.valueChanged(e);
-                List<Relation> rels;
-                rels = model.getSelectedRelationsWithIncompleteMembers();
-                actDownloadSelectedIncompleteMembers.setRelations(rels); 
-                rels = OsmPrimitive.getFilteredList(model.getSelected(), Relation.class);
-                actSetRelationSelection.setRelations(rels);
-                actEditRelationSelection.setRelations(rels);
+                popupMenuHandler.setPrimitives(model.getSelected());
             }
         });
                 
         lstPrimitives.addMouseListener(new SelectionPopupMenuLauncher());
         lstPrimitives.addMouseListener(new DblClickHandler());
 
-        popupMenu = new SelectionPopup(lstPrimitives);
         InputMapUtils.addEnterAction(lstPrimitives, actZoomToListSelection);
     }
 
@@ -220,36 +218,24 @@ public class SelectionListDialog extends ToggleDialog  {
         }
     }
 
+    private final PopupMenuHandler setupPopupMenuHandler() {
+        PopupMenuHandler handler = new PopupMenuHandler(popupMenu);
+        handler.addAction(actZoomToJOSMSelection);
+        handler.addAction(actZoomToListSelection);
+        handler.addSeparator();
+        handler.addAction(actSetRelationSelection);
+        handler.addAction(actEditRelationSelection);
+        handler.addSeparator();
+        handler.addAction(actDownloadSelectedIncompleteMembers);
+        return handler;
+    }
+
     /**
-     * The popup menu for the selection list
+     * Replies the popup menu handler.
+     * @return The popup menu handler
      */
-    class SelectionPopup extends ListPopupMenu {
-        public SelectionPopup(JList list) {
-            super(list);
-            add(actZoomToJOSMSelection);
-            add(actZoomToListSelection);
-            addSeparator();
-            add(actSetRelationSelection);
-            add(actEditRelationSelection);
-            addSeparator();
-            add(actDownloadSelectedIncompleteMembers);
-        }
-    }
-
-    public void addPopupMenuSeparator() {
-        popupMenu.addSeparator();
-    }
-
-    public JMenuItem addPopupMenuAction(Action a) {
-        return popupMenu.add(a);
-    }
-
-    public void addPopupMenuListener(PopupMenuListener l) {
-        popupMenu.addPopupMenuListener(l);
-    }
-
-    public void removePopupMenuListener(PopupMenuListener l) {
-        popupMenu.addPopupMenuListener(l);
+    public PopupMenuHandler getPopupMenuHandler() {
+        return popupMenuHandler;
     }
 
     public Collection<OsmPrimitive> getSelectedPrimitives() {
@@ -595,32 +581,6 @@ public class SelectionListDialog extends ToggleDialog  {
                 }
             }
             setSelected(sel);
-        }
-
-        /**
-         * Replies the list of selected relations with incomplete members
-         *
-         * @return the list of selected relations with incomplete members
-         */
-        public List<Relation> getSelectedRelationsWithIncompleteMembers() {
-            List<Relation> ret = new LinkedList<Relation>();
-            for(int i=0; i<getSize(); i++) {
-                if (!selectionModel.isSelectedIndex(i)) {
-                    continue;
-                }
-                OsmPrimitive p = selection.get(i);
-                if (! (p instanceof Relation)) {
-                    continue;
-                }
-                if (p.isNew()) {
-                    continue;
-                }
-                Relation r = (Relation)p;
-                if (r.hasIncompleteMembers()) {
-                    ret.add(r);
-                }
-            }
-            return ret;
         }
 
         /**

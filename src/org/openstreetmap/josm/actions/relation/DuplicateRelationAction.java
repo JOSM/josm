@@ -16,6 +16,10 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 5799
  */
 public class DuplicateRelationAction extends AbstractRelationAction {
+    
+    /**
+     * Constructs a new {@code DuplicateRelationAction}. 
+     */
     public DuplicateRelationAction() {
         putValue(SHORT_DESCRIPTION, tr("Create a copy of this relation and open it in another editor window"));
         putValue(SMALL_ICON, ImageProvider.get("duplicate"));
