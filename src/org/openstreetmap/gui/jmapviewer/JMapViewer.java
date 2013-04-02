@@ -1044,7 +1044,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     /**
      * Send an update to all objects registered with viewer
      *
-     * @param event to dispatch
+     * @param evt event to dispatch
      */
     void fireJMVEvent(JMVCommandEvent evt) {
         Object[] listeners = listenerList.getListenerList();
