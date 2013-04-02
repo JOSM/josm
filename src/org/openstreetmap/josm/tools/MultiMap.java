@@ -4,11 +4,11 @@ package org.openstreetmap.josm.tools;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * MultiMap - maps keys to multiple values
@@ -37,7 +37,7 @@ public class MultiMap<A, B> {
     public void put(A key, B value) {
         Set<B> vals = map.get(key);
         if (vals == null) {
-            vals = new TreeSet<B>();
+            vals = new LinkedHashSet<B>();
             map.put(key, vals);
         }
         vals.add(value);
@@ -52,7 +52,7 @@ public class MultiMap<A, B> {
     public void putVoid(A key) {
         if (map.containsKey(key))
             return;
-        map.put(key, new TreeSet<B>());
+        map.put(key, new LinkedHashSet<B>());
     }
 
     /**
@@ -63,7 +63,7 @@ public class MultiMap<A, B> {
     public void putAll(A key, Collection<B> values) {
         Set<B> vals = map.get(key);
         if (vals == null) {
-            vals = new TreeSet<B>(values);
+            vals = new LinkedHashSet<B>(values);
             map.put(key, vals);
         }
         vals.addAll(values);
@@ -92,7 +92,7 @@ public class MultiMap<A, B> {
      */
     public Set<B> getValues(A key) {
         if (!map.containsKey(key))
-            return new TreeSet<B>();
+            return new LinkedHashSet<B>();
         return map.get(key);
     }
 
