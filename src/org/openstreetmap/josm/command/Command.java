@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
@@ -216,8 +217,9 @@ abstract public class Command extends PseudoCommand {
     }
 
     private static boolean isOutlying(OsmPrimitive osm, Area area) {
-        if (osm instanceof Node) {
-            return !osm.isNewOrUndeleted() && !area.contains(((Node) osm).getCoor());
+        if (osm instanceof Node && !osm.isNewOrUndeleted()) {
+            LatLon coor = ((Node) osm).getCoor();
+            return coor != null && !area.contains(coor);
         } else if (osm instanceof Way) {
             for (Node n : ((Way) osm).getNodes()) {
                 if (isOutlying(n, area)) {
