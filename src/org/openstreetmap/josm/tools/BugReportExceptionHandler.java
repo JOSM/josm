@@ -5,10 +5,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.GridBagLayout;
+import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.util.zip.GZIPOutputStream;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -117,15 +119,20 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                                 }
                                 urltext += "...<snip>...\n";
                             }
+                            
+                            ByteArrayOutputStream out = new ByteArrayOutputStream();
+                            GZIPOutputStream gzip = new GZIPOutputStream(out);
+                            gzip.write(urltext.getBytes("UTF-8"));
+                            gzip.close();
 
                             URL url = new URL("http://josm.openstreetmap.de/josmticket?" +
-                                    "tdata="+Base64.encode(ByteBuffer.wrap(urltext.getBytes("UTF8")), true));
+                                    "gdata="+Base64.encode(ByteBuffer.wrap(out.toByteArray()), true));
 
                             JPanel p = new JPanel(new GridBagLayout());
                             p.add(new JMultilineLabel(
                                     tr("You have encountered an error in JOSM. Before you file a bug report " +
                                             "make sure you have updated to the latest version of JOSM here:")), GBC.eol());
-                            p.add(new UrlLabel("http://josm.openstreetmap.de/#Download",2), GBC.eop().insets(8,0,0,0));
+                            p.add(new UrlLabel("http://josm.openstreetmap.de",2), GBC.eop().insets(8,0,0,0));
                             p.add(new JMultilineLabel(
                                     tr("You should also update your plugins. If neither of those help please " +
                                             "file a bug report in our bugtracker using this link:")), GBC.eol());
