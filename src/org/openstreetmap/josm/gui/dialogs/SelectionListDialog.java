@@ -80,15 +80,16 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
  */
 public class SelectionListDialog extends ToggleDialog  {
     private JList lstPrimitives;
-    private SelectionListModel model;
+    private DefaultListSelectionModel selectionModel  = new DefaultListSelectionModel();
+    private SelectionListModel model = new SelectionListModel(selectionModel);
 
-    private SelectAction actSelect;
-    private SearchAction actSearch;
-    private ZoomToJOSMSelectionAction actZoomToJOSMSelection;
-    private ZoomToListSelection actZoomToListSelection;
-    private SelectInRelationListAction actSetRelationSelection;
-    private EditRelationAction actEditRelationSelection;
-    private DownloadSelectedIncompleteMembersAction actDownloadSelectedIncompleteMembers;
+    private SelectAction actSelect = new SelectAction();
+    private SearchAction actSearch = new SearchAction();
+    private ZoomToJOSMSelectionAction actZoomToJOSMSelection = new ZoomToJOSMSelectionAction();
+    private ZoomToListSelection actZoomToListSelection = new ZoomToListSelection();
+    private SelectInRelationListAction actSetRelationSelection = new SelectInRelationListAction();
+    private EditRelationAction actEditRelationSelection = new EditRelationAction();
+    private DownloadSelectedIncompleteMembersAction actDownloadSelectedIncompleteMembers = new DownloadSelectedIncompleteMembersAction();
 
     /** the popup menu and its handler */
     private final ListPopupMenu popupMenu;
@@ -98,8 +99,6 @@ public class SelectionListDialog extends ToggleDialog  {
      * Builds the content panel for this dialog
      */
     protected void buildContentPanel() {
-        DefaultListSelectionModel selectionModel  = new DefaultListSelectionModel();
-        model = new SelectionListModel(selectionModel);
         lstPrimitives = new JList(model);
         lstPrimitives.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstPrimitives.setSelectionModel(selectionModel);
@@ -107,7 +106,7 @@ public class SelectionListDialog extends ToggleDialog  {
         lstPrimitives.setTransferHandler(null); // Fix #6290. Drag & Drop is not supported anyway and Copy/Paste is better propagated to main window
 
         // the select action
-        final SideButton selectButton = new SideButton(actSelect = new SelectAction());
+        final SideButton selectButton = new SideButton(actSelect);
         lstPrimitives.getSelectionModel().addListSelectionListener(actSelect);
         selectButton.createArrow(new ActionListener() {
             @Override
@@ -117,7 +116,7 @@ public class SelectionListDialog extends ToggleDialog  {
         });
 
         // the search button
-        final SideButton searchButton = new SideButton(actSearch = new SearchAction());
+        final SideButton searchButton = new SideButton(actSearch);
         searchButton.createArrow(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -140,13 +139,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
         buildContentPanel();
         model.addListDataListener(new TitleUpdater());
-        actZoomToJOSMSelection = new ZoomToJOSMSelectionAction();
         model.addListDataListener(actZoomToJOSMSelection);
-
-        actZoomToListSelection = new ZoomToListSelection();
-        actSetRelationSelection = new SelectInRelationListAction();
-        actEditRelationSelection = new EditRelationAction();
-        actDownloadSelectedIncompleteMembers = new DownloadSelectedIncompleteMembersAction();
 
         popupMenu = new ListPopupMenu(lstPrimitives);
         popupMenuHandler = setupPopupMenuHandler();
@@ -218,7 +211,7 @@ public class SelectionListDialog extends ToggleDialog  {
         }
     }
 
-    private final PopupMenuHandler setupPopupMenuHandler() {
+    private PopupMenuHandler setupPopupMenuHandler() {
         PopupMenuHandler handler = new PopupMenuHandler(popupMenu);
         handler.addAction(actZoomToJOSMSelection);
         handler.addAction(actZoomToListSelection);
