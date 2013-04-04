@@ -48,7 +48,9 @@ import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.actions.relation.DownloadMembersAction;
 import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
+import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
 import org.openstreetmap.josm.actions.relation.SelectMembersAction;
 import org.openstreetmap.josm.actions.relation.SelectRelationAction;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
@@ -161,10 +163,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final JosmAction[] josmActions = new JosmAction[]{addAction, editAction, deleteAction};
 
     // relation actions
-    private final DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction = new DownloadSelectedIncompleteMembersAction();
-    private final SelectRelationAction addRelationToSelectionAction = new SelectRelationAction(true);
-    private final SelectMembersAction addMembersToSelectionAction = new SelectMembersAction(true);
+    private final SelectInRelationListAction setRelationSelectionAction = new SelectInRelationListAction();
     private final SelectRelationAction selectRelationAction = new SelectRelationAction(false);
+    private final SelectRelationAction addRelationToSelectionAction = new SelectRelationAction(true);
+    
+    private final DownloadMembersAction downloadMembersAction = new DownloadMembersAction();
+    private final DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction = new DownloadSelectedIncompleteMembersAction();
+    
+    private final SelectMembersAction selectMembersAction = new SelectMembersAction(false);
+    private final SelectMembersAction addMembersToSelectionAction = new SelectMembersAction(true);
     
     /**
      * The Add button (needed to be able to disable it)
@@ -375,9 +382,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      */
     private void setupMembershipMenu() {
         // setting up the membership table
-        membershipMenuHandler.addAction(addRelationToSelectionAction);
+        membershipMenuHandler.addAction(setRelationSelectionAction);
         membershipMenuHandler.addAction(selectRelationAction);
+        membershipMenuHandler.addAction(addRelationToSelectionAction);
+        membershipMenuHandler.addAction(selectMembersAction);
         membershipMenuHandler.addAction(addMembersToSelectionAction);
+        membershipMenu.addSeparator();
+        membershipMenuHandler.addAction(downloadMembersAction);
         membershipMenuHandler.addAction(downloadSelectedIncompleteMembersAction);
         membershipMenu.addSeparator();
         membershipMenu.add(helpAction);
@@ -694,7 +705,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Methods that are called by plugins to extend fuctionalty ">
+    // <editor-fold defaultstate="collapsed" desc="Methods that are called by plugins to extend fuctionality ">
     
     /**
      * Replies the property popup menu handler.
