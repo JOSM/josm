@@ -311,7 +311,9 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         doInEDT(new Runnable() {
             @Override
             public void run() {
-                dialog.setInBackgroundPossible(PleaseWaitProgressMonitor.this.taskId != null && Main.isDisplayingMapView());
+                if (dialog != null) {
+                    dialog.setInBackgroundPossible(PleaseWaitProgressMonitor.this.taskId != null && Main.isDisplayingMapView());
+                }
             }
         });
     }
