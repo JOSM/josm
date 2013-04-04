@@ -604,6 +604,15 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
     private final void setupPopupMenuHandler() {
         
+        // -- select action
+        popupMenuHandler.addAction(selectRelationAction);
+        popupMenuHandler.addAction(addRelationToSelectionAction);
+
+        // -- select members action
+        popupMenuHandler.addAction(selectMembersAction);
+        popupMenuHandler.addAction(addMembersToSelectionAction);
+
+        popupMenuHandler.addSeparator();
         // -- download members action
         popupMenuHandler.addAction(downloadMembersAction);
 
@@ -611,17 +620,10 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         popupMenuHandler.addAction(downloadSelectedIncompleteMembersAction);
 
         popupMenuHandler.addSeparator();
-
-        // -- select members action
-        popupMenuHandler.addAction(selectMembersAction);
-        popupMenuHandler.addAction(addMembersToSelectionAction);
-
-        // -- select action
-        popupMenuHandler.addAction(selectRelationAction);
-        popupMenuHandler.addAction(addRelationToSelectionAction);
-
-        popupMenuHandler.addSeparator();
-
+        popupMenuHandler.addAction(editAction).setVisible(false);
+        popupMenuHandler.addAction(duplicateAction).setVisible(false);
+        popupMenuHandler.addAction(deleteRelationsAction).setVisible(false);
+        
         popupMenuHandler.addAction(addSelectionToRelations);
     }
     
