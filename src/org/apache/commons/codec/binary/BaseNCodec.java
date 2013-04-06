@@ -31,7 +31,7 @@ import org.apache.commons.codec.EncoderException;
  * This class is thread-safe.
  * </p>
  *
- * @version $Id: BaseNCodec.java 1465178 2013-04-06 03:49:08Z ggregory $
+ * @version $Id: BaseNCodec.java 1465182 2013-04-06 04:03:12Z ggregory $
  */
 public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
 
@@ -100,8 +100,8 @@ public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
         @SuppressWarnings("boxing") // OK to ignore boxing here
         @Override
         public String toString() {
-            return String.format("%s[buffer=%s, currentLinePos=%s, eof=%s, ibitWorkArea=%s, lbitWorkArea=%s, "
-                    + "modulus=%s, pos=%s, readPos=%s]", this.getClass().getSimpleName(), Arrays.toString(buffer),
+            return String.format("%s[buffer=%s, currentLinePos=%s, eof=%s, ibitWorkArea=%s, lbitWorkArea=%s, " +
+                    "modulus=%s, pos=%s, readPos=%s]", this.getClass().getSimpleName(), Arrays.toString(buffer),
                     currentLinePos, eof, ibitWorkArea, lbitWorkArea, modulus, pos, readPos);
         }
     }
