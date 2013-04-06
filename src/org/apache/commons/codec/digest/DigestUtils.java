@@ -28,7 +28,7 @@ import org.apache.commons.codec.binary.StringUtils;
 /**
  * Operations to simplify common {@link java.security.MessageDigest} tasks. This class is thread safe.
  *
- * @version $Id: DigestUtils.java 1462710 2013-03-30 06:21:43Z ggregory $
+ * @version $Id: DigestUtils.java 1465180 2013-04-06 03:53:30Z ggregory $
  */
 public class DigestUtils {
 
@@ -786,7 +786,7 @@ public class DigestUtils {
      * @return MD5 digest
      * @throws IOException
      *             On error reading from the stream
-     * @since 1.8             
+     * @since 1.8
      */
     public static MessageDigest updateDigest(final MessageDigest digest, final InputStream data) throws IOException {
         final byte[] buffer = new byte[STREAM_BUFFER_LENGTH];
