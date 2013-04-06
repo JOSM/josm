@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -209,5 +211,24 @@ public class RelationChecker extends Test {
                 }
             }
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.openstreetmap.josm.data.validation.Test#fixError(org.openstreetmap.josm.data.validation.TestError)
+     */
+    @Override
+    public Command fixError(TestError testError) {
+        if (isFixable(testError)) {
+            return new DeleteCommand(testError.getPrimitives());
+        }
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.openstreetmap.josm.data.validation.Test#isFixable(org.openstreetmap.josm.data.validation.TestError)
+     */
+    @Override
+    public boolean isFixable(TestError testError) {
+        return testError.getCode() == RELATION_EMPTY && testError.getPrimitives().iterator().next().isNew();
     }
 }
