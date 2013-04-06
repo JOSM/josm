@@ -63,11 +63,11 @@ public class MainApplication extends Main {
     public MainApplication() {}
 
     /**
-     * Construct an main frame, ready sized and operating. Does not
-     * display the frame.
+     * Constructs a main frame, ready sized and operating. Does not display the frame.
+     * @param mainFrame The main JFrame of the application
      */
     public MainApplication(JFrame mainFrame) {
-        super();
+        addListener();
         mainFrame.setContentPane(contentPanePrivate);
         mainFrame.setJMenuBar(menu);
         geometry.applySafe(mainFrame);
@@ -222,6 +222,7 @@ public class MainApplication extends Main {
 
     /**
      * Main application Startup
+     * @param argArray Command-line arguments
      */
     public static void main(final String[] argArray) {
         I18n.init();
@@ -342,7 +343,6 @@ public class MainApplication extends Main {
         preConstructorInit(args);
 
         monitor.indeterminateSubTask(tr("Creating main GUI"));
-        Main.addListener();
         final Main main = new MainApplication(mainFrame);
 
         monitor.indeterminateSubTask(tr("Loading plugins"));
@@ -403,7 +403,7 @@ public class MainApplication extends Main {
                     autosaveTask.schedule();
                 }
 
-                main.postConstructorProcessCmdLine(args_final);
+                postConstructorProcessCmdLine(args_final);
 
                 DownloadDialog.autostartIfNeeded();
             }
