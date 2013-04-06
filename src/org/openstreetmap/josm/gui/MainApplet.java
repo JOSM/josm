@@ -48,9 +48,11 @@ public class MainApplet extends JApplet {
     }
 
     private final class MainCaller extends Main {
-        private MainCaller() {
+        private MainCaller(Map<Option, Collection<String>> mapargs) {
+            addListener();
             setContentPane(contentPanePrivate);
             setJMenuBar(menu);
+            postConstructorProcessCmdLine(mapargs);
         }
     }
 
@@ -130,9 +132,8 @@ public class MainApplet extends JApplet {
 
         Main.preConstructorInit(Option.fromStringMap(args));
         Main.parent = frame;
-        Main.addListener();
 
-        new MainCaller().postConstructorProcessCmdLine(Option.fromStringMap(args));
+        new MainCaller(Option.fromStringMap(args));
 
         MainMenu m = Main.main.menu; // shortcut
 

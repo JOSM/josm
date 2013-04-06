@@ -94,6 +94,10 @@ import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * Abstract class holding various static global variables and methods used in large parts of JOSM application.
+ * @since 98
+ */
 abstract public class Main {
 
     /**
@@ -107,20 +111,24 @@ abstract public class Main {
         if (map.mapView == null) return false;
         return true;
     }
+    
     /**
      * Global parent component for all dialogs and message boxes
      */
     public static Component parent;
+    
     /**
      * Global application.
      */
     public static Main main;
+    
     /**
      * The worker thread slave. This is for executing all long and intensive
      * calculations. The executed runnables are guaranteed to be executed separately
      * and sequential.
      */
     public final static ExecutorService worker = new ProgressMonitorExecutor();
+    
     /**
      * Global application preferences
      */
@@ -130,12 +138,17 @@ abstract public class Main {
      * The global paste buffer.
      */
     public static final PrimitiveDeepCopy pasteBuffer = new PrimitiveDeepCopy();
+    
+    /**
+     * The layer source from which {@link Main#pasteBuffer} data comes from.
+     */
     public static Layer pasteSource;
 
     /**
-     * The MapFrame. Use setMapFrame to set or clear it.
+     * The MapFrame. Use {@link Main#setMapFrame} to set or clear it.
      */
     public static MapFrame map;
+    
     /**
      * Set to <code>true</code>, when in applet mode
      */
@@ -146,6 +159,9 @@ abstract public class Main {
      */
     public static ToolbarPreferences toolbar;
 
+    /**
+     * The commands undo/redo handler.
+     */
     public UndoRedoHandler undoRedo = new UndoRedoHandler();
 
     public static PleaseWaitProgressMonitor currentProgressMonitor;
@@ -239,6 +255,7 @@ abstract public class Main {
 
     /**
      * Set or clear (if passed <code>null</code>) the map.
+     * @param map The map to set {@link Main#map} to. Can be null.
      */
     public final void setMapFrame(final MapFrame map) {
         MapFrame old = Main.map;
@@ -531,6 +548,9 @@ abstract public class Main {
     //  Implementation part
     ///////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Global panel. 
+     */
     public static final JPanel panel = new JPanel(new BorderLayout());
 
     protected static WindowGeometry geometry;
@@ -591,7 +611,7 @@ abstract public class Main {
             !args.containsKey(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
     }
 
-    public void postConstructorProcessCmdLine(Map<Option, Collection<String>> args) {
+    protected static void postConstructorProcessCmdLine(Map<Option, Collection<String>> args) {
         if (args.containsKey(Option.DOWNLOAD)) {
             List<File> fileList = new ArrayList<File>();
             for (String s : args.get(Option.DOWNLOAD)) {
@@ -704,10 +724,16 @@ abstract public class Main {
         return true;
     }
 
+    /**
+     * Closes JOSM and optionally terminates the Java Virtual Machine (JVM). If there are some unsaved data layers, asks first for user confirmation.
+     * @param exit If {@code true}, the JVM is terminated by running {@link System#exit} with a return code of 0.
+     * @return {@code true} if JOSM has been closed, {@code false} if the user has cancelled the operation.
+     * @since 3378
+     */
     public static boolean exitJosm(boolean exit) {
         if (Main.saveUnsavedModifications()) {
             geometry.remember("gui.geometry");
-            if (map  != null) {
+            if (map != null) {
                 map.rememberToggleDialogWidth();
             }
             pref.put("gui.maximized", (windowState & JFrame.MAXIMIZED_BOTH) != 0);
@@ -720,11 +746,10 @@ abstract public class Main {
             }
             if (exit) {
                 System.exit(0);
-                return true;
-            } else
-                return true;
-        } else
-            return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -738,7 +763,7 @@ abstract public class Main {
      * @param s A parameter string
      * @return The guessed parameter type
      */
-    private DownloadParamType paramType(String s) {
+    private static DownloadParamType paramType(String s) {
         if(s.startsWith("http:")) return DownloadParamType.httpUrl;
         if(s.startsWith("file:")) return DownloadParamType.fileUrl;
         String coorPattern = "\\s*[+-]?[0-9]+(\\.[0-9]+)?\\s*";
@@ -797,6 +822,10 @@ abstract public class Main {
         Main.worker.execute(new PostDownloadHandler(task, future));
     }
 
+    /**
+     * Identifies the current operating system family and initializes the platform hook accordingly.
+     * @since 1849
+     */
     public static void determinePlatformHook() {
         String os = System.getProperty("os.name");
         if (os == null) {
@@ -852,16 +881,22 @@ abstract public class Main {
             }
         }
     }
-    public static void addListener() {
+    
+    protected static void addListener() {
         parent.addComponentListener(new WindowPositionSizeListener());
         ((JFrame)parent).addWindowStateListener(new WindowPositionSizeListener());
     }
 
+    /**
+     * Checks that JOSM is at least running with Java 6.
+     * @since 3815
+     */
     public static void checkJava6() {
         String version = System.getProperty("java.version");
         if (version != null) {
             if (version.startsWith("1.6") || version.startsWith("6") ||
-                    version.startsWith("1.7") || version.startsWith("7"))
+                    version.startsWith("1.7") || version.startsWith("7") ||
+                    version.startsWith("1.8") || version.startsWith("8"))
                 return;
             if (version.startsWith("1.5") || version.startsWith("5")) {
                 JLabel ho = new JLabel("<html>"+
