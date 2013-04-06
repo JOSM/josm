@@ -7,7 +7,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.lang.management.ManagementFactory;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -65,6 +68,19 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append("\n");
         text.append("Operating system: "+ System.getProperty("os.name"));
         text.append("\n");
+        try {
+            List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+            if (!vmArguments.isEmpty()) {
+                text.append("VM arguments: "+ vmArguments);
+                text.append("\n");
+            }
+        } catch (SecurityException e) {
+            // Ignore exception
+        }
+        if (Main.commandLineArgs.length > 0) {
+            text.append("Program arguments: "+ Arrays.toString(Main.commandLineArgs));
+            text.append("\n");
+        }
         DataSet dataset = Main.main.getCurrentDataSet();
         if (dataset != null) {
             String result = DatasetConsistencyTest.runTests(dataset);
