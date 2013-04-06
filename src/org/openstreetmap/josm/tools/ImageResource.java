@@ -54,6 +54,9 @@ class ImageResource {
         }
         if (svg != null) {
             img = ImageProvider.createImageFromSvg(svg, dim);
+            if (img == null) {
+                return null;
+            }
             imgCache.put(dim, img);
             return new ImageIcon(img);
         } else {
