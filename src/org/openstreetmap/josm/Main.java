@@ -123,6 +123,11 @@ abstract public class Main {
     public static Main main;
     
     /**
+     * Command-line arguments used to run the application.
+     */
+    public static String[] commandLineArgs;
+    
+    /**
      * The worker thread slave. This is for executing all long and intensive
      * calculations. The executed runnables are guaranteed to be executed separately
      * and sequential.
@@ -164,6 +169,9 @@ abstract public class Main {
      */
     public UndoRedoHandler undoRedo = new UndoRedoHandler();
 
+    /**
+     * The progress monitor being currently displayed.
+     */
     public static PleaseWaitProgressMonitor currentProgressMonitor;
 
     /**
@@ -281,6 +289,7 @@ abstract public class Main {
     /**
      * Remove the specified layer from the map. If it is the last layer,
      * remove the map as well.
+     * @param layer The layer to remove
      */
     public final void removeLayer(final Layer layer) {
         if (map != null) {
