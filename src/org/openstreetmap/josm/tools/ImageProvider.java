@@ -866,6 +866,9 @@ public class ImageProvider {
             scaleX = scaleY = (double) height / realHeight;
             width = (int) Math.round(realWidth * scaleX);
         }
+        if (width == 0 || height == 0) {
+            return null;
+        }
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = img.createGraphics();
         g.setClip(0, 0, width, height);
