@@ -263,6 +263,8 @@ public class MainApplication extends Main {
         } catch (IllegalArgumentException e) {
             System.exit(1);
         }
+        
+        Main.commandLineArgs = argArray;
 
         if (args.containsKey(Option.VERSION)) {
             System.out.println(Version.getInstance().getAgentString());
