@@ -64,7 +64,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
     /**
      * Replies true if this layer should be uploaded to the server; false, otherwise
      *
-     * @return true if this layer should be uploaded to the server; false, otherwise
+     * @return {@code true} if this layer should be uploaded to the server; {@code false}, otherwise
      */
     public boolean isDoUploadToServer() {
         return doUploadToServer;
@@ -73,7 +73,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
     /**
      * Sets whether this layer should be uploaded to a file
      *
-     * @param doSaveToFile true to upload; false, to skip uploading
+     * @param doUploadToServer {@code true} to upload; {@code false}, to skip uploading
      */
 
     public void setDoUploadToServer(boolean doUploadToServer) {
@@ -141,9 +141,9 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
     /**
      * Replies the upload state of {@link #getLayer()}.
      * <ul>
-     *   <li>{@link UploadOrSaveState#OK} if {@link #getLayer() was successfully uploaded</li>
-     *   <li>{@link UploadOrSaveState#canceled} if uploading {@link #getLayer() was canceled</li>
-     *   <li>{@link UploadOrSaveState#FAILED} if uploading {@link #getLayer() has failed</li>
+     *   <li>{@link UploadOrSaveState#OK} if {@link #getLayer()} was successfully uploaded</li>
+     *   <li>{@link UploadOrSaveState#CANCELED} if uploading {@link #getLayer()} was canceled</li>
+     *   <li>{@link UploadOrSaveState#FAILED} if uploading {@link #getLayer()} has failed</li>
      * </ul>
      *
      * @return the upload state
@@ -164,9 +164,9 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
     /**
      * Replies the save state of {@link #getLayer()}.
      * <ul>
-     *   <li>{@link UploadOrSaveState#OK} if {@link #getLayer() was successfully saved to file</li>
-     *   <li>{@link UploadOrSaveState#canceled} if saving {@link #getLayer() was canceled</li>
-     *   <li>{@link UploadOrSaveState#FAILED} if saving {@link #getLayer() has failed</li>
+     *   <li>{@link UploadOrSaveState#OK} if {@link #getLayer()} was successfully saved to file</li>
+     *   <li>{@link UploadOrSaveState#CANCELED} if saving {@link #getLayer()} was canceled</li>
+     *   <li>{@link UploadOrSaveState#FAILED} if saving {@link #getLayer()} has failed</li>
      * </ul>
      *
      * @return the save state

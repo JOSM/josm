@@ -68,7 +68,7 @@ public abstract class Plugin {
     /**
      * Sets the plugin information object for this plugin
      *
-     * @parma info the plugin information object
+     * @param info the plugin information object
      */
     public void setPluginInformation(PluginInformation info) {
         this.info = info;

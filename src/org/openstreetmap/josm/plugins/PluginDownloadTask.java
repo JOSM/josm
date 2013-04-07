@@ -44,9 +44,9 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     /**
      * Creates the download task
      *
-     * @param parent the parent component relative to which the {@link PleaseWaitDialog} is displayed
+     * @param parent the parent component relative to which the {@link org.openstreetmap.josm.gui.PleaseWaitDialog} is displayed
      * @param toUpdate a collection of plugin descriptions for plugins to update/download. Must not be null.
-     * @param title the title to display in the {@link PleaseWaitDialog}
+     * @param title the title to display in the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}
      * @throws IllegalArgumentException thrown if toUpdate is null
      */
     public PluginDownloadTask(Component parent, Collection<PluginInformation> toUpdate, String title) throws IllegalArgumentException{
@@ -60,7 +60,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
      *
      * @param monitor a progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
      * @param toUpdate a collection of plugin descriptions for plugins to update/download. Must not be null.
-     * @param title the title to display in the {@link PleaseWaitDialog}
+     * @param title the title to display in the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}
      * @throws IllegalArgumentException thrown if toUpdate is null
      */
     public PluginDownloadTask(ProgressMonitor monitor, Collection<PluginInformation> toUpdate, String title) {
@@ -177,7 +177,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     /**
      * Replies true if the task was canceled by the user
      *
-     * @return
+     * @return <code>true</code> if the task was stopped by the user
      */
     public boolean isCanceled() {
         return canceled;

@@ -293,7 +293,7 @@ public class PluginInformation {
     /**
      * Load and instantiate the plugin
      *
-     * @param the plugin class
+     * @param klass the plugin class
      * @return the instantiated and initialized plugin
      */
     public PluginProxy load(Class<?> klass) throws PluginException{
