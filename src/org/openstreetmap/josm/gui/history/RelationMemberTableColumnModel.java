@@ -7,7 +7,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
 /**
- * The {@link TableColumnModel} for the table with the list of relation members.
+ * The {@link javax.swing.table.TableColumnModel} for the table with the list of relation members.
  *
  */
 public class RelationMemberTableColumnModel extends DefaultTableColumnModel {

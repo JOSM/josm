@@ -2,9 +2,9 @@
 package org.openstreetmap.josm.gui.history;
 
 /**
- * PointInTimeType enumerates two points in time in the {@link History} of an {@link OsmPrimitive}.
+ * PointInTimeType enumerates two points in time in the {@link org.openstreetmap.josm.data.osm.history.History}
+ * of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive}.
  * @author karl
- *
  */
 public enum PointInTimeType {
     /** the point in time selected as reference point when comparing two version */

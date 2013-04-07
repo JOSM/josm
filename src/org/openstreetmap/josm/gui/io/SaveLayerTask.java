@@ -9,8 +9,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * SaveLayerTask saves the data managed by an {@link OsmDataLayer} to the
- * {@link OsmDataLayer#getAssociatedFile()}.
+ * SaveLayerTask saves the data managed by an {@link org.openstreetmap.josm.gui.layer.OsmDataLayer} to the
+ * {@link org.openstreetmap.josm.gui.layer.OsmDataLayer#getAssociatedFile()}.
  *
  * <pre>
  *     ExecutorService executorService = ...
