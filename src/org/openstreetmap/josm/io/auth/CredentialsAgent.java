@@ -23,8 +23,9 @@ public interface CredentialsAgent {
     /**
      * Looks up the credentials for a given type.
      *
-     * @param the type of service. {@link RequestorType#SERVER} for the OSM API server, {@link RequestorType#PROXY}
+     * @param requestorType the type of service. {@link RequestorType#SERVER} for the OSM API server, {@link RequestorType#PROXY}
      * for a proxy server
+     * @param host the hostname for these credentials
      * @return the credentials
      * @throws CredentialsAgentException thrown if a problem occurs in a implementation of this interface
      */
@@ -33,8 +34,9 @@ public interface CredentialsAgent {
     /**
      * Saves the credentials in <code>credentials</code> for the given service type.
      *
-     * @param the type of service. {@link RequestorType#SERVER} for the OSM API server, {@link RequestorType#PROXY}
+     * @param requestorType the type of service. {@link RequestorType#SERVER} for the OSM API server, {@link RequestorType#PROXY}
      * for a proxy server
+     * @param host the hostname for these credentials
      * @param credentials the credentials
      * @throws CredentialsManagerException thrown if a problem occurs in a implementation of this interface
      */
@@ -42,8 +44,9 @@ public interface CredentialsAgent {
 
     /**
      *
-     * @param requestorType  the type of service. {@link RequestorType#SERVER} for the OSM API server, {@link RequestorType#PROXY}
+     * @param requestorType the type of service. {@link RequestorType#SERVER} for the OSM API server, {@link RequestorType#PROXY}
      * for a proxy server
+     * @param host the hostname for these credentials
      * @param noSuccessWithLastResponse true, if the last request with the supplied credentials failed; false otherwise.
      * If true, implementations of this interface are advised to prompt the user for new credentials.
      * @throws CredentialsAgentException thrown if a problem occurs in a implementation of this interface

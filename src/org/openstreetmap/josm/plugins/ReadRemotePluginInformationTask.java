@@ -371,7 +371,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
 
     /**
      * Replies true if the task was canceled
-     * @return
+     * @return <code>true</code> if the task was stopped by the user
      */
     public boolean isCanceled() {
         return canceled;

@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
  * This is an asynchronous task for reading plugin information from the files
  * in the local plugin repositories.
  *
- * It scans the files in the local plugins repository (see {@link Preferences#getPluginsDirectory()}
+ * It scans the files in the local plugins repository (see {@link org.openstreetmap.josm.data.Preferences#getPluginsDirectory()}
  * and extracts plugin information from three kind of files:
  * <ul>
  *   <li>.jar files, assuming that they represent plugin jars</li>
