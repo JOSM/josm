@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 
 /**
  * This is a {@link TreeModel} which provides the hierarchical structure of {@link Relation}s
- * to a  {@link JTree}.
+ * to a {@link javax.swing.tree.JTree}.
  *
  * The model is initialized with a root relation or with a list of {@link RelationMember}s, see
  * {@link #populate(Relation)} and {@link #populate(List)} respectively.

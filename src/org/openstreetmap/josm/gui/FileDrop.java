@@ -18,8 +18,8 @@ import org.openstreetmap.josm.actions.OpenFileAction;
 
 /**
  * This class makes it easy to drag and drop files from the operating
- * system to a Java program. Any <tt>java.awt.Component</tt> can be
- * dropped onto, but only <tt>javax.swing.JComponent</tt>s will indicate
+ * system to a Java program. Any {@link java.awt.Component} can be
+ * dropped onto, but only {@link javax.swing.JComponent}s will indicate
  * the drop event with a changed border.
  * <p/>
  * To use this class, construct a new <tt>FileDrop</tt> by passing
@@ -38,7 +38,7 @@ import org.openstreetmap.josm.actions.OpenFileAction;
  * </pre></code>
  * <p/>
  * You can specify the border that will appear when files are being dragged by
- * calling the constructor with a <tt>javax.swing.border.Border</tt>. Only
+ * calling the constructor with a {@link javax.swing.border.Border}. Only
  * <tt>JComponent</tt>s will show any indication with a border.
  * <p/>
  * You can turn on some debugging features by passing a <tt>PrintStream</tt>
@@ -629,8 +629,8 @@ public class FileDrop
 
     /**
      * This is the event that is passed to the
-     * {@link FileDropListener#filesDropped filesDropped(...)} method in
-     * your {@link FileDropListener} when files are dropped onto
+     * {@link FileDrop.Listener#filesDropped filesDropped(...)} method in
+     * your {@link FileDrop.Listener} when files are dropped onto
      * a registered drop target.
      *
      * <p>I'm releasing this code into the Public Domain. Enjoy.</p>
@@ -649,7 +649,7 @@ public class FileDrop
          * {@link FileDrop} that initiated the event.
          *
          * @param files The array of files that were dropped
-         * @source The event source
+         * @param source The event source
          * @since 1.1
          */
         public Event( java.io.File[] files, Object source ) {
@@ -886,8 +886,6 @@ public class FileDrop
          * {@link #getObject getObject()} method will be called.
          *
          * @author Robert Harder
-         * @copyright 2001
-         * @version 1.1
          * @since 1.1
          */
         public static interface Fetcher

@@ -134,7 +134,6 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     /**
      * render the row id
      * @param row the row index
-     * @param isSelected
      */
     protected  void renderRowId(int row) {
         setBorder(rowNumberBorder);
