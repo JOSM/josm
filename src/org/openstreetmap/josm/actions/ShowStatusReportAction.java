@@ -71,7 +71,7 @@ public final class ShowStatusReportAction extends JosmAction {
         try {
             List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
             if (!vmArguments.isEmpty()) {
-                text.append("VM arguments: "+ vmArguments);
+                text.append("VM arguments: "+ vmArguments.toString().replace("\\\\", "\\"));
                 text.append("\n");
             }
         } catch (SecurityException e) {
@@ -130,10 +130,10 @@ public final class ShowStatusReportAction extends JosmAction {
                 new String[] {tr("Copy to clipboard and close"), tr("Close") });
         ed.setButtonIcons(new String[] {"copy.png", "cancel.png" });
         ed.setContent(sp, false);
-        ed.setMinimumSize(new Dimension(500, 0));
-        ed.showDialog();
+        ed.setMinimumSize(new Dimension(380, 200));
+        ed.setPreferredSize(new Dimension(700, Main.parent.getHeight()-50));
 
-        if(ed.getValue() != 1) return;
+        if (ed.showDialog().getValue() != 1) return;
         Utils.copyToClipboard(text.toString());
     }
 }
