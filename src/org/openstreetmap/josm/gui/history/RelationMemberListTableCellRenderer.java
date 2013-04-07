@@ -18,7 +18,7 @@ import org.openstreetmap.josm.gui.history.TwoColumnDiff.Item;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * The {@link TableCellRenderer} for a list of relation members in {@link HistoryBrower}
+ * The {@link TableCellRenderer} for a list of relation members in {@link HistoryBrowser}
  *
  *
  */

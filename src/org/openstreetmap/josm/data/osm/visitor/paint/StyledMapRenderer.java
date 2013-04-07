@@ -328,9 +328,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     private boolean leftHandTraffic;
 
-    /**
-     * {@inheritDoc}
-     */
     public StyledMapRenderer(Graphics2D g, NavigatableComponent nc, boolean isInactiveMode) {
         super(g, nc, isInactiveMode);
     }
