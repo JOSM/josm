@@ -36,9 +36,13 @@ public class WikiReader {
      */
     public String read(String url) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url).openStream(), "utf-8"));
-        if (url.startsWith(baseurl) && !url.endsWith("?format=txt"))
-            return readFromTrac(in);
-        return readNormal(in);
+        try {
+            if (url.startsWith(baseurl) && !url.endsWith("?format=txt"))
+                return readFromTrac(in);
+            return readNormal(in);
+        } finally {
+            in.close();
+        }
     }
 
     public String readLang(String text) throws IOException {
@@ -56,7 +60,11 @@ public class WikiReader {
 
     private String readLang(URL url) throws IOException {
         InputStream in = url.openStream();
-        return readFromTrac(new BufferedReader(new InputStreamReader(in, "utf-8")));
+        try {
+            return readFromTrac(new BufferedReader(new InputStreamReader(in, "utf-8")));
+        } finally {
+            in.close();
+        }
     }
 
     private String readNormal(BufferedReader in) throws IOException {
