@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 
 /**
- * This is the {@link TableModel} used in the tables of the {@link TagMerger}.
+ * This is the {@link javax.swing.table.TableModel} used in the tables of the {@link TagMerger}.
  *
  * The model can {@link #populate(OsmPrimitive, OsmPrimitive)} itself from the conflicts
  * in the tag sets of two {@link OsmPrimitive}s. Internally, it keeps a list of {@link TagMergeItem}s.
@@ -141,7 +141,7 @@ public class TagMergeModel extends DefaultTableModel {
      * set the merge decision of the {@link TagMergeItem} in row <code>row</code>
      * to <code>decision</code>.
      *
-     * @param row  the row
+     * @param row the row
      * @param decision the decision
      */
     public void decide(int row, MergeDecisionType decision) {
@@ -154,10 +154,9 @@ public class TagMergeModel extends DefaultTableModel {
      * set the merge decision of all {@link TagMergeItem} given by indices in <code>rows</code>
      * to <code>decision</code>.
      *
-     * @param row  the array of row indices
+     * @param rows the array of row indices
      * @param decision the decision
      */
-
     public void decide(int [] rows, MergeDecisionType decision) {
         if (rows == null || rows.length == 0)
             return;

@@ -21,7 +21,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * Reads the history of an {@link OsmPrimitive} from the OSM API server.
+ * Reads the history of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive} from the OSM API server.
  *
  */
 public class OsmServerChangesetReader extends OsmServerReader {

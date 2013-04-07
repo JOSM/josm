@@ -13,7 +13,7 @@ import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
 /**
- * The {@link TableCellRenderer} for a list of tagsin {@link HistoryBrower}
+ * The {@link TableCellRenderer} for a list of tags in {@link HistoryBrowser}
  *
  */
 public class TagTableCellRenderer extends JLabel implements TableCellRenderer {

@@ -16,7 +16,7 @@ import javax.swing.event.TableModelListener;
 import org.openstreetmap.josm.data.osm.history.History;
 /**
  * RelationMemberListViewer is a UI component which displays the  list of relation members of two
- * version of a {@link Relation} in a {@link History}.
+ * version of a {@link org.openstreetmap.josm.data.osm.Relation} in a {@link org.openstreetmap.josm.data.osm.history.History}.
  *
  * <ul>
  *   <li>on the left, it displays the list of relation members for the version at {@link PointInTimeType#REFERENCE_POINT_IN_TIME}</li>

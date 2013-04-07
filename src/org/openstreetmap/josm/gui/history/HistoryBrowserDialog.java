@@ -31,7 +31,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This is non-modal dialog, always showing on top, which displays history information
- * about a given {@link OsmPrimitive}.
+ * about a given {@link org.openstreetmap.josm.data.osm.OsmPrimitive}.
  *
  */
 public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListener{
