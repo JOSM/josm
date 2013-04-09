@@ -39,10 +39,6 @@ public class ImageryHandler extends RequestHandler {
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException {
-        if (Main.map == null) //Avoid exception when creating ImageryLayer with null MapFrame
-        {
-            throw new RequestHandlerErrorException();
-        }
         String url = args.get("url");
         String title = args.get("title");
         String type = args.get("type");

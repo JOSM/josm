@@ -190,9 +190,10 @@ public class RequestProcessor extends Thread {
                     }
                     usage.append("</li>");
                 }
+                String websiteDoc = "http://josm.openstreetmap.de/wiki/Help/Preferences/RemoteControl";
                 String help = "No command specified! The following commands are available:<ul>"
                         + usage.toString()
-                        + "</ul>";
+                        + "</ul>" + "See <a href=\""+websiteDoc+"\">"+websiteDoc+"</a> for complete documentation.";
                 sendBadRequest(out, help);
             } else {
                 // create handler object
