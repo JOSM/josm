@@ -22,11 +22,13 @@ import java.security.MessageDigest;
 /**
  * Standard {@link MessageDigest} algorithm names from the <cite>Java Cryptography Architecture Standard Algorithm Name
  * Documentation</cite>.
+ * <p>
+ * This class is immutable and thread-safe.
  *
  * @see <a href="http://docs.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html">Java Cryptography
  *      Architecture Standard Algorithm Name Documentation</a>
  * @since 1.7
- * @version $Id: MessageDigestAlgorithms.java 1379782 2012-09-01 15:57:33Z ggregory $
+ * @version $Id: MessageDigestAlgorithms.java 1465850 2013-04-09 00:46:31Z sebb $
  */
 public class MessageDigestAlgorithms {
 
