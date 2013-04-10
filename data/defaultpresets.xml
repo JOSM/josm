@@ -2417,7 +2417,7 @@ Note that for a match, at least one positive and no negative is required.
         </item>
     </group> <!-- Bicycle -->
     <group name="Public Transport" icon="presets/bus.png">
-        <item name="Route" icon="presets/path.png" type="relation">
+        <item name="Public transport route" icon="presets/path.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Route"/>
             <label text="Edit Route"/>
             <key key="type" value="route"/>
@@ -5885,7 +5885,7 @@ Note that for a match, at least one positive and no negative is required.
             </roles>
         </item>
         <separator/>
-        <item name="Route (legacy)" icon="presets/path.png" type="relation">
+        <item name="General route" icon="presets/path.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:route"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:route"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Relation:route"
@@ -5893,7 +5893,7 @@ Note that for a match, at least one positive and no negative is required.
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Relation:route"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Relation:route"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Relation:route"/>
-            <label text="Edit Route (legacy)" />
+            <label text="Edit general route" />
             <key key="type" value="route" />
             <combo key="route" text="Route type" values="bicycle,bus,road,ferry,ski,foot,hiking,tram,detour,railway,subway" />
             <text key="name" text="Name" />
