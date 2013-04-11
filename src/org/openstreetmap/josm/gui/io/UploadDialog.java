@@ -5,8 +5,10 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -14,6 +16,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +47,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -50,11 +55,16 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 /**
  * This is a dialog for entering upload options like the parameters for
  * the upload changeset and the strategy for opening/closing a changeset.
- *
+ * 
  */
 public class UploadDialog extends JDialog implements PropertyChangeListener, PreferenceChangedListener{
     /**  the unique instance of the upload dialog */
     static private UploadDialog uploadDialog;
+
+    /**
+     * List of custom components that can be added by plugins at JOSM startup.
+     */
+    static private final Collection<Component> customComponents = new ArrayList<Component>();
 
     /**
      * Replies the unique instance of the upload dialog
@@ -94,16 +104,19 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
      * @return the content panel
      */
     protected JPanel buildContentPanel() {
-        JPanel pnl = new JPanel();
+        JPanel pnl = new JPanel(new GridBagLayout());
         pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-        pnl.setLayout(new BorderLayout());
 
         // the panel with the list of uploaded objects
         //
-        pnl.add(pnlUploadedObjects = new UploadedObjectsSummaryPanel(), BorderLayout.CENTER);
+        pnl.add(pnlUploadedObjects = new UploadedObjectsSummaryPanel(), GBC.eol().fill(GBC.BOTH));
+        
+        // Custom components
+        for (Component c : customComponents) {
+            pnl.add(c, GBC.eol().fill(GBC.HORIZONTAL));
+        }
 
-        // a tabbed pane with two configuration panels in the
-        // lower half
+        // a tabbed pane with configuration panels in the lower half
         //
         tpConfigPanels = new JTabbedPane() {
             @Override
@@ -113,37 +126,33 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
                 return super.getMinimumSize();
             }
         };
-        tpConfigPanels.add(new JPanel());
-        tpConfigPanels.add(new JPanel());
-        tpConfigPanels.add(new JPanel());
-        tpConfigPanels.add(new JPanel());
 
         changesetCommentModel = new ChangesetCommentModel();
 
-        tpConfigPanels.setComponentAt(0, pnlBasicUploadSettings = new BasicUploadSettingsPanel(changesetCommentModel));
+        tpConfigPanels.add(pnlBasicUploadSettings = new BasicUploadSettingsPanel(changesetCommentModel));
         tpConfigPanels.setTitleAt(0, tr("Settings"));
         tpConfigPanels.setToolTipTextAt(0, tr("Decide how to upload the data and which changeset to use"));
 
-        tpConfigPanels.setComponentAt(1,pnlTagSettings = new TagSettingsPanel(changesetCommentModel));
+        tpConfigPanels.add(pnlTagSettings = new TagSettingsPanel(changesetCommentModel));
         tpConfigPanels.setTitleAt(1, tr("Tags of new changeset"));
         tpConfigPanels.setToolTipTextAt(1, tr("Apply tags to the changeset data is uploaded to"));
 
-        tpConfigPanels.setComponentAt(2,pnlChangesetManagement = new ChangesetManagementPanel(changesetCommentModel));
+        tpConfigPanels.add(pnlChangesetManagement = new ChangesetManagementPanel(changesetCommentModel));
         tpConfigPanels.setTitleAt(2, tr("Changesets"));
         tpConfigPanels.setToolTipTextAt(2, tr("Manage open changesets and select a changeset to upload to"));
 
-        tpConfigPanels.setComponentAt(3, pnlUploadStrategySelectionPanel = new UploadStrategySelectionPanel());
+        tpConfigPanels.add(pnlUploadStrategySelectionPanel = new UploadStrategySelectionPanel());
         tpConfigPanels.setTitleAt(3, tr("Advanced"));
         tpConfigPanels.setToolTipTextAt(3, tr("Configure advanced settings"));
 
-        pnl.add(tpConfigPanels, BorderLayout.SOUTH);
+        pnl.add(tpConfigPanels, GBC.eol().fill(GBC.HORIZONTAL));
         return pnl;
     }
 
     /**
      * builds the panel with the OK and CANCEL buttons
      *
-     * @return
+     * @return The panel with the OK and CANCEL buttons
      */
     protected JPanel buildActionPanel() {
         JPanel pnl = new JPanel();
@@ -359,6 +368,20 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }
         super.setVisible(visible);
+    }
+    
+    /**
+     * Adds a custom component to this dialog. 
+     * Custom components added at JOSM startup are displayed between the objects list and the properties tab pane.
+     * @param c The custom component to add. If {@code null}, this method does nothing.
+     * @return {@code true} if the collection of custom components changed as a result of the call
+     * @since 5842
+     */
+    public static boolean addCustomComponent(Component c) {
+        if (c != null) {
+            return customComponents.add(c);
+        }
+        return false;
     }
 
     /**
