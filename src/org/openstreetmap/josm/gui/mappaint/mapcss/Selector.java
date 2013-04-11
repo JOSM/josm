@@ -2,10 +2,10 @@
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -195,21 +195,52 @@ public interface Selector {
             return left +" "+ (parentSelector? "<" : ">")+link+" " +right;
         }
     }
+    
+    /**
+     * Super class of {@link GeneralSelector} and {@link LinkSelector}
+     * @since 5841
+     */
+    public static abstract class AbstractSelector implements Selector {
 
-    public static class LinkSelector implements Selector {
-        protected List<Condition> conditions;
+        protected final List<Condition> conds;
+        
+        protected AbstractSelector(List<Condition> conditions) {
+            if (conditions == null || conditions.isEmpty()) {
+                this.conds = null;
+            } else {
+                this.conds = conditions;
+            }
+        }
+
+        /**
+         * Determines if all conditions match the given environment.
+         * @param env The environment to check
+         * @return {@code true} if all conditions apply, false otherwise.
+         */
+        public final boolean matchesConditions(Environment env) {
+            if (conds == null) return true;
+            for (Condition c : conds) {
+                try {
+                    if (!c.applies(env)) return false;
+                } catch (PatternSyntaxException e) {
+                    System.err.println("PatternSyntaxException while applying condition" + c +": "+e.getMessage());
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    public static class LinkSelector extends AbstractSelector {
 
         public LinkSelector(List<Condition> conditions) {
-            this.conditions = conditions;
+            super(conditions);
         }
 
         @Override
         public boolean matches(Environment env) {
             Utils.ensure(env.isLinkContext(), "Requires LINK context in environment, got ''{0}''", env.getContext());
-            for (Condition c: conditions) {
-                if (!c.applies(env)) return false;
-            }
-            return true;
+            return matchesConditions(env);
         }
 
         @Override
@@ -224,17 +255,17 @@ public interface Selector {
 
         @Override
         public String toString() {
-            return "LinkSelector{" + "conditions=" + conditions + '}';
+            return "LinkSelector{" + "conditions=" + conds + '}';
         }
     }
 
-    public static class GeneralSelector implements Selector {
+    public static class GeneralSelector extends AbstractSelector {
         private String base;
         public Range range;
-        private List<Condition> conds;
         private String subpart;
 
         public GeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, String subpart) {
+            super(conds);
             this.base = base;
             if (zoom != null) {
                 int a = zoom.a == null ? 0 : zoom.a;
@@ -245,11 +276,6 @@ public interface Selector {
             }
             if (range == null) {
                 range = new Range();
-            }
-            if (conds == null || conds.isEmpty()) {
-                this.conds = null;
-            } else {
-                this.conds = conds;
             }
             this.subpart = subpart;
         }
@@ -278,15 +304,6 @@ public interface Selector {
                 }
             }
             return false;
-        }
-
-        public boolean matchesConditions(Environment e){
-            if (conds == null) return true;
-            for (Condition c : conds) {
-                if (!c.applies(e))
-                    return false;
-            }
-            return true;
         }
 
         @Override
