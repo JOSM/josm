@@ -8,9 +8,11 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -28,7 +30,6 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
-
 /**
  * @author xeen
  *
@@ -36,6 +37,10 @@ import org.openstreetmap.josm.tools.Utils;
  * Also includes preferences with stripped username and password
  */
 public final class ShowStatusReportAction extends JosmAction {
+    
+    /**
+     * Constructs a new {@code ShowStatusReportAction}
+     */
     public ShowStatusReportAction() {
         super(
                 tr("Show Status Report"),
@@ -69,7 +74,15 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append("Operating system: "+ System.getProperty("os.name"));
         text.append("\n");
         try {
-            List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+            // Build a new list of VM parameters to modify it below if needed (default implementation returns an UnmodifiableList instance)
+            List<String> vmArguments = new ArrayList<String>(ManagementFactory.getRuntimeMXBean().getInputArguments());
+            // Hide some parameters for privacy concerns
+            for (ListIterator<String> it = vmArguments.listIterator(); it.hasNext(); ) {
+                String value = it.next();
+                if (value.contains("=") && value.toLowerCase().startsWith("-dproxy")) {
+                    it.set(value.split("=")[0]+"=xxx");
+                }
+            }
             if (!vmArguments.isEmpty()) {
                 text.append("VM arguments: "+ vmArguments.toString().replace("\\\\", "\\"));
                 text.append("\n");
