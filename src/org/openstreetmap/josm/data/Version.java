@@ -39,8 +39,12 @@ public class Version {
         try {
             in = new BufferedReader(new InputStreamReader(resource.openStream(), "UTF-8"));
             StringBuffer sb = new StringBuffer();
-            for (String line = in.readLine(); line != null; line = in.readLine()) {
-                sb.append(line).append("\n");
+            try {
+                for (String line = in.readLine(); line != null; line = in.readLine()) {
+                    sb.append(line).append("\n");
+                }
+            } finally {
+                in.close();
             }
             s = sb.toString();
         } catch (IOException e) {
