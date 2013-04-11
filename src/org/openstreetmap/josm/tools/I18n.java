@@ -468,17 +468,21 @@ public class I18n {
             if(tr == null || !languages.containsKey(l))
                 return false;
         }
-        try
-        {
-            if(load(en.openStream(), tr.openStream(), false))
-            {
+        InputStream enStream = null;
+        InputStream trStream = null;
+        try {
+            enStream = en.openStream();
+            trStream = tr.openStream();
+            if (load(enStream, trStream, false)) {
                 pluralMode = languages.get(l);
                 loadedCode = l;
                 return true;
             }
-        }
-        catch(IOException e)
-        {
+        } catch(IOException e) {
+            // Ignore exception
+        } finally {
+            if (trStream != null) try {trStream.close();} catch(IOException e) {}
+            if (enStream != null) try {enStream.close();} catch(IOException e) {}
         }
         return false;
     }
