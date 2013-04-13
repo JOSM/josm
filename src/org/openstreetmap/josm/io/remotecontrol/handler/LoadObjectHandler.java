@@ -8,6 +8,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DownloadPrimitiveAction;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 
 /**
@@ -35,11 +36,14 @@ public class LoadObjectHandler extends RequestHandler {
             System.out.println("RemoteControl: download forbidden by preferences");
         }
         if (!ps.isEmpty()) {
-            boolean newLayer = isLoadInNewLayer();
-            boolean relationMembers = Boolean.parseBoolean(args.get("relation_members"));
-            DownloadPrimitiveAction.processItems(newLayer, ps, true, relationMembers);
-            Main.worker.submit(new Runnable() {
-    
+            final boolean newLayer = isLoadInNewLayer();
+            final boolean relationMembers = Boolean.parseBoolean(args.get("relation_members"));
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override public void run() {
+                    DownloadPrimitiveAction.processItems(newLayer, ps, true, relationMembers);
+                }
+            });
+            GuiHelper.executeByMainWorkerInEDT(new Runnable() {
                 @Override
                 public void run() {
                     Main.main.getCurrentDataSet().setSelected(ps);

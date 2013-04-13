@@ -15,6 +15,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 
@@ -37,23 +38,12 @@ public class AddWayHandler extends RequestHandler {
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException, RequestHandlerBadRequestException {
-        Way way = new Way();
-        List<Command> commands = new LinkedList<Command>();
-        for (LatLon ll : allCoordinates) {
-            Node node = new Node(ll);
-            way.addNode(node);
-            commands.add(new AddCommand(node));
-        }
-        allCoordinates.clear();
-        commands.add(new AddCommand(way));
-        Main.main.undoRedo.add(new SequenceCommand(tr("Add way"), commands));
-        Main.main.getCurrentDataSet().setSelected(way);
-        if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
-            AutoScaleAction.autoScale("selection");
-        } else {
-            Main.map.mapView.repaint();
-        }
-        // parse parameter addtags=tag1=value1|tag2=vlaue2
+        GuiHelper.runInEDTAndWait(new Runnable() {
+            @Override public void run() {
+                addWay();
+            }
+        });
+        // parse parameter addtags=tag1=value1|tag2=value2
         LoadAndZoomHandler.addTags(args);        
     }
 
@@ -91,6 +81,28 @@ public class AddWayHandler extends RequestHandler {
         }
         if (!Main.main.hasEditLayer()) {
              throw new RequestHandlerBadRequestException(tr("There is no layer opened to add way"));
+        }
+    }
+
+    /*
+     * This function creates the way with given coordinates of nodes
+     */
+    private void addWay() {
+        Way way = new Way();
+        List<Command> commands = new LinkedList<Command>();
+        for (LatLon ll : allCoordinates) {
+            Node node = new Node(ll);
+            way.addNode(node);
+            commands.add(new AddCommand(node));
+        }
+        allCoordinates.clear();
+        commands.add(new AddCommand(way));
+        Main.main.undoRedo.add(new SequenceCommand(tr("Add way"), commands));
+        Main.main.getCurrentDataSet().setSelected(way);
+        if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
+            AutoScaleAction.autoScale("selection");
+        } else {
+            Main.map.mapView.repaint();
         }
     }
 }
