@@ -12,11 +12,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import javax.swing.AbstractAction;
+import javax.swing.DefaultCellEditor;
 
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
@@ -26,6 +29,7 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.util.TableCellEditorSupport;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -66,9 +70,10 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
 
 
         DefaultTableModel tm = new DefaultTableModel(new String[] {tr("Assume"), tr("Key"), tr("Value")}, tags.length) {
+            final Class<?> types[] = {Boolean.class, String.class, Object.class};
             @Override
             public Class getColumnClass(int c) {
-                return getValueAt(0, c).getClass();
+                return types[c];
             }
 
         };
@@ -96,6 +101,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         propertyTable = new JTable(tm) {
 
             private static final long serialVersionUID = 1L;
+            ///private final DefaultCellEditor textEditor = new DefaultCellEditor( new JTextField() );
 
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
@@ -108,6 +114,14 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
                     c.setForeground(new Color(0, 0, 0));
                 }
                 return c;
+            }
+
+            @Override
+            public TableCellEditor getCellEditor(int row, int column) {
+                Object value = getValueAt(row,column);
+                System.out.println(value);
+                if (value instanceof DeleteTagMarker) return null;
+                return getDefaultEditor(value.getClass());
             }
         };
         

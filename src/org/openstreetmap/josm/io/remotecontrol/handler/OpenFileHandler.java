@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 import java.io.File;
 import java.util.Arrays;
 import org.openstreetmap.josm.actions.OpenFileAction;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -28,7 +29,11 @@ public class OpenFileHandler extends RequestHandler {
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException, RequestHandlerBadRequestException {
-        OpenFileAction.openFiles(Arrays.asList(new File(args.get("filename"))));
+        GuiHelper.runInEDTAndWait(new Runnable() {
+            @Override public void run() {
+                OpenFileAction.openFiles(Arrays.asList(new File(args.get("filename"))));
+            }
+        });
     }
 
     @Override

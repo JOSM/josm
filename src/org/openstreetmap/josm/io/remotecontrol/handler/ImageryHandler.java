@@ -8,6 +8,7 @@ import java.util.HashMap;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 
 /**
@@ -46,7 +47,7 @@ public class ImageryHandler extends RequestHandler {
             title = tr("Remote imagery");
         }
         String cookies = args.get("cookies");
-        ImageryInfo imgInfo = new ImageryInfo(title, url, type, null, cookies);
+        final ImageryInfo imgInfo = new ImageryInfo(title, url, type, null, cookies);
         String min_zoom = args.get("min_zoom");
         if (min_zoom != null && !min_zoom.isEmpty()) {
             try {
@@ -63,7 +64,11 @@ public class ImageryHandler extends RequestHandler {
                 System.err.println("NumberFormatException ("+e.getMessage()+")");
             }
         }
-        Main.main.addLayer(ImageryLayer.create(imgInfo));
+        GuiHelper.runInEDT(new Runnable() {
+            @Override public void run() {
+                Main.main.addLayer(ImageryLayer.create(imgInfo));
+            }
+        });
     }
 
     @Override
