@@ -152,6 +152,9 @@ public class Version {
         releaseDescription = sb.toString();
     }
 
+    /**
+     * Initializes version info
+     */
     public void init() {
         URL u = Main.class.getResource("/REVISION");
         if (u == null) {
@@ -208,6 +211,10 @@ public class Version {
         return isLocalBuild;
     }
 
+    /**
+     * Returns the User-Agent string
+     * @return The User-Agent
+     */
     public String getAgentString() {
         int v = getVersion();
         String s = (v == JOSM_UNKNOWN_VERSION) ? "UNKNOWN" : Integer.toString(v);
@@ -217,6 +224,6 @@ public class Version {
         if (isLocalBuild() && v != JOSM_UNKNOWN_VERSION) {
             s += " SVN";
         }
-        return "JOSM/1.5 ("+ s+" "+LanguageInfo.getJOSMLocaleCode()+") " + System.getProperty("os.name");
+        return "JOSM/1.5 ("+ s+" "+LanguageInfo.getJOSMLocaleCode()+") " + Main.platform.getOSDescription();
     }
 }
