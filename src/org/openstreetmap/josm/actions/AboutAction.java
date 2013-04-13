@@ -4,7 +4,6 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -21,10 +20,12 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.UrlLabel;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Nice about screen. I guess every application need one these days.. *sigh*
@@ -82,7 +83,7 @@ public class AboutAction extends JosmAction {
         info.add(new UrlLabel("http://josm.openstreetmap.de",2), GBC.eol().fill(GBC.HORIZONTAL));
         info.add(GBC.glue(0,5), GBC.eol());
         info.add(new JLabel(tr("Bug Reports")), GBC.std().insets(10,0,10,0));
-        info.add(new UrlLabel("http://josm.openstreetmap.de/newticket",2), GBC.eol().fill(GBC.HORIZONTAL));
+        info.add(BugReportExceptionHandler.getBugReportUrlLabel(Utils.strip(ShowStatusReportAction.getReportHeader())), GBC.eol().fill(GBC.HORIZONTAL));
 
         about.addTab(tr("Info"), info);
         about.addTab(tr("Readme"), createScrollPane(readme));
