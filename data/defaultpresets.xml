@@ -2819,9 +2819,13 @@ Note that for a match, at least one positive and no negative is required.
             <text key="email" text="Email Address" />
         </item>
         <item name="Guest House" icon="styles/standard/accommodation/guest_house.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=guest_house"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=guest_house"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:tourism=guest_house" />
             <label text="Edit Guest House" />
             <key key="tourism" value="guest_house" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
             <space />
             <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
@@ -2842,6 +2846,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Chalet" />
             <key key="tourism" value="chalet" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
             <space />
             <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
@@ -2858,7 +2863,8 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=hostel"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:tourism=hostel"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:tourism=hostel"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:tourism=hostel" />
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:tourism=hostel"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:tourism=hostel" />
             <label text="Edit Hostel" />
             <key key="tourism" value="hostel" />
             <text key="name" text="Name" />
@@ -2876,6 +2882,11 @@ Note that for a match, at least one positive and no negative is required.
             <text key="email" text="Email Address" />
         </item>
         <item name="Alpine Hut" icon="styles/standard/accommodation/alpine_hut.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=alpine_hut"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=alpine_hut"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:tourism=alpine_hut"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:tourism=alpine_hut"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:tourism=alpine_hut" />
             <label text="Edit Alpine Hut" />
             <key key="tourism" value="alpine_hut" />
             <text key="name" text="Name" />
@@ -2894,9 +2905,13 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <separator/>
         <item name="Caravan Site" icon="presets/caravan2.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=caravan_site"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=caravan_site"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:tourism=caravan_site" />
             <label text="Edit Caravan Site" />
             <key key="tourism" value="caravan_site" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
             <space />
             <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
@@ -2920,10 +2935,12 @@ Note that for a match, at least one positive and no negative is required.
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:tourism=camp_site"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:tourism=camp_site"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:tourism=camp_site"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:tourism=camp_site" />
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:tourism=camp_site"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:tourism=camp_site" />
             <label text="Edit Camping Site" />
             <key key="tourism" value="camp_site" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
             <space />
             <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
@@ -2991,10 +3008,12 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Food Court" icon="presets/fastfood.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=food_court"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=food_court"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=food_court" />
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=food_court"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=food_court" />
             <label text="Edit Food Court" />
             <key key="amenity" value="food_court" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
             <space />
             <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
@@ -3009,10 +3028,12 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Cafe" icon="presets/cafe.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=cafe"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=cafe"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=cafe"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:amenity=cafe"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=cafe"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=cafe" />
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=cafe"
+                  zh_CN.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:amenity=cafe" />
             <label text="Edit Cafe" />
             <key key="amenity" value="cafe" />
             <text key="name" text="Name" />
@@ -3054,9 +3075,16 @@ Note that for a match, at least one positive and no negative is required.
             <text key="email" text="Email Address" />
         </item>
         <item name="Biergarten" icon="presets/biergarten.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=biergarten"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=biergarten"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=biergarten"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=biergarten"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=biergarten" />
             <label text="Edit Biergarten" />
             <key key="amenity" value="biergarten" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
+            <check key="microbrewery" text="Microbrewery" default="off" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
             <space />
             <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
@@ -3076,10 +3104,12 @@ Note that for a match, at least one positive and no negative is required.
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=bar"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=bar"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=bar"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=bar" />
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=bar"
+                  zh_CN.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:amenity=bar" />
             <label text="Edit Bar" />
             <key key="amenity" value="bar" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
             <space />
             <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
@@ -3103,8 +3133,33 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Nightclub" />
             <key key="amenity" value="nightclub" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
             <space />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" />
+            <space />
+            <text key="phone" text="Phone Number" />
+            <text key="fax" text="Fax Number" />
+            <text key="website" text="Website" />
+            <text key="email" text="Email Address" />
+        </item>
+        <item name="Stripclub" icon="styles/standard/leisure/stripclub.png" type="node,closedway">
+            <label text="Edit Stripclub" />
+            <space />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=stripclub"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=stripclub"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=stripclub"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=stripclub" />
+            <label text="Edit Stripclub" de.text="bearbeite Stripclub" />
+            <space />
+            <key key="amenity" value="stripclub" />
+            <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
+            <combo key="opening_hours" text="Opening Hours" de.text="Öffnungszeiten" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,no" />
             <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" />
             <combo key="wheelchair" text="Wheelchairs" values="yes,no" />
             <space />
@@ -3233,6 +3288,8 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Cinema" />
             <key key="amenity" value="cinema" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" de.text="Betreiber" />            
+            <combo key="opening_hours" text="Opening Hours" de.text="Öffnungszeiten" values="Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" /> 
         </item>
         <item name="Zoo" icon="presets/zoo.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=zoo"
@@ -3243,6 +3300,11 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
             <text key="wikipedia" text="Wikipedia" />
+            <space />
+            <text key="phone" text="Phone Number" />
+            <text key="fax" text="Fax Number" />
+            <text key="website" text="Website" />
+            <text key="email" text="Email Address" />
         </item>
         <item name="Dog Park" icon="presets/dogpark.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=dog_park"
@@ -3262,27 +3324,75 @@ Note that for a match, at least one positive and no negative is required.
             <check key="lit" text="Lit" default="off" />
         </item>  
         <item name="Theme Park" icon="presets/theme_park.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=theme_park"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:tourism=theme_park"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:tourism=theme_park"  />	
             <label text="Edit Theme Park" />
             <key key="tourism" value="theme_park" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" de.text="Betreiber" />            
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
+            <space />
+            <text key="phone" text="Phone Number" />
+            <text key="fax" text="Fax Number" />
+            <text key="website" text="Website" />
+            <text key="email" text="Email Address" />
         </item>
         <item name="Water Park" icon="presets/swimming.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=water_park"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=water_park"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=water_park"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=water_park"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=water_park"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisurem=water_park"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:leisure=water_park"  />	
             <label text="Edit Water Park" />
             <key key="leisure" value="water_park" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" de.text="Betreiber" />            
+            <combo key="opening_hours" text="Opening Hours" de.text="Öffnungszeiten" values="Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" /> 
+            <space />
+            <text key="phone" text="Phone Number" />
+            <text key="fax" text="Fax Number" />
+            <text key="website" text="Website" />
+            <text key="email" text="Email Address" />
         </item>
         <item name="Sauna" de.name="Sauna" icon="presets/sauna.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=sauna"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=sauna"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=sauna"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=sauna" />
             <label text="Edit Sauna" />
-            <space />         	
-            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Sauna" />
-            <label text="Edit Sauna" de.text="bearbeite Sauna" />
-            <space />            
             <key key="leisure" value="sauna" />
             <text key="name" text="Name" />            
             <text key="operator" text="Operator" de.text="Betreiber" />            
             <combo key="opening_hours" text="Opening Hours" de.text="Öffnungszeiten" values="Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" /> 
             <combo key="access" text="Access" values="yes,permissive,private,unknown" />                                           
+            <space />
+            <text key="phone" text="Phone Number" />
+            <text key="fax" text="Fax Number" />
+            <text key="website" text="Website" />
+            <text key="email" text="Email Address" />
+        </item>
+        <item name="Brothel" de.name="Bordell" icon="styles/standard/leisure/stripclub.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=brothel"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=brothel"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=brothel"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=brothel"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=brothel" />
+            <label text="Edit Brothel" />
+            <key key="amenity" value="brothel" />
+            <text key="name" text="Name" />
+            <text key="operator" text="Operator" de.text="Betreiber" />
+            <combo key="opening_hours" text="Opening Hours" de.text="Öffnungszeiten" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
+            <space />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" />
+            <space />
+            <text key="phone" text="Phone Number" />
+            <text key="fax" text="Fax Number" />
+            <text key="website" text="Website" />
+            <text key="email" text="Email Address" />
         </item> 
         <separator/>
         <item name="Playground" icon="styles/standard/leisure/playground.png" type="node,closedway">
@@ -3319,6 +3429,10 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="fuel" text="Fuel" text_context="grill" values="charcoal,electric,wood" />                               
         </item>     	
         <item name="Fishing" icon="presets/fishing.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=fishing"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:leisure=fishing"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=fishing"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=fishing" />
             <label text="Edit Fishing" />
             <key key="leisure" value="fishing" />
             <text key="name" text="Name" />
@@ -3331,11 +3445,13 @@ Note that for a match, at least one positive and no negative is required.
     <group name="Culture" icon="presets/theater.png">
         <item name="Museum" icon="presets/State_Public.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=museum"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:tourism=museum"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:tourism=museum"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:tourism=museum" />
             <label text="Edit Museum" />
             <key key="tourism" value="museum" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" de.text="Betreiber" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
             <text key="wikipedia" text="Wikipedia" />
         </item>
@@ -3348,6 +3464,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Theatre" />
             <key key="amenity" value="theatre" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" de.text="Betreiber" />
         </item>
         <item name="Library" icon="styles/standard/shop/rental/library.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=library"
@@ -3360,6 +3477,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Library" />
             <key key="amenity" value="library" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" de.text="Betreiber" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
         </item>
         <item name="Arts Centre" icon="presets/arts_centre.png" type="node,closedway,relation">
