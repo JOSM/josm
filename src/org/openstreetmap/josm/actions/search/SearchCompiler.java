@@ -373,50 +373,51 @@ public class SearchCompiler {
     }
 
     /**
-     * Matches objects with the given object ID.
+     * Matches objects with ID in the given range.
      */
-    private static class Id extends Match {
-        private long id;
-        public Id(long id) {
-            this.id = id;
-        }
+    private static class Id extends RangeMatch {
+        public Id(Range range) {super(range);}
         public Id(PushbackTokenizer tokenizer) throws ParseError {
-            this(tokenizer.readNumber(tr("Primitive id expected")));
+            this(tokenizer.readRange(tr("Range of primitive ids expected")));
         }
-        @Override public boolean match(OsmPrimitive osm) {
-            return id == 0?osm.isNew():osm.getUniqueId() == id;
+        @Override protected Long getNumber(OsmPrimitive osm) {
+            return osm.isNew() ? 0 : osm.getUniqueId();
         }
-        @Override public String toString() {return "id="+id;}
+        @Override protected String getString() {
+            return "id";
+        }
     }
 
     /**
-     * Matches objects with the given changeset ID.
+     * Matches objects with a changeset ID in the given range.
      */
-    private static class ChangesetId extends Match {
-        private long changesetid;
-        public ChangesetId(long changesetid) {this.changesetid = changesetid;}
+    private static class ChangesetId extends RangeMatch {
+        public ChangesetId(Range range) {super(range);}
         public ChangesetId(PushbackTokenizer tokenizer) throws ParseError {
-            this(tokenizer.readNumber(tr("Changeset id expected")));
+            this(tokenizer.readRange(tr("Range of changeset ids expected")));
         }
-        @Override public boolean match(OsmPrimitive osm) {
-            return osm.getChangesetId() == changesetid;
+        @Override protected Long getNumber(OsmPrimitive osm) {
+            return (long) osm.getChangesetId();
         }
-        @Override public String toString() {return "changeset="+changesetid;}
+        @Override protected String getString() {
+            return "changeset";
+        }
     }
 
     /**
-     * Matches objects with the given version number.
+     * Matches objects with a version number in the given range.
      */
-    private static class Version extends Match {
-        private long version;
-        public Version(long version) {this.version = version;}
+    private static class Version extends RangeMatch {
+        public Version(Range range) {super(range);}
         public Version(PushbackTokenizer tokenizer) throws ParseError {
-            this(tokenizer.readNumber(tr("Version expected")));
+            this(tokenizer.readRange(tr("Range of versions expected")));
         }
-        @Override public boolean match(OsmPrimitive osm) {
-            return osm.getVersion() == version;
+        @Override protected Long getNumber(OsmPrimitive osm) {
+            return (long) osm.getVersion();
         }
-        @Override public String toString() {return "version="+version;}
+        @Override protected String getString() {
+            return "version";
+        }
     }
 
     /**
@@ -832,36 +833,36 @@ public class SearchCompiler {
     /**
      * Matches objects with properties in a certain range.
      */
-    private abstract static class CountRange extends Match {
+    private abstract static class RangeMatch extends Match {
 
-        private long minCount;
-        private long maxCount;
+        private final long min;
+        private final long max;
 
-        public CountRange(long minCount, long maxCount) {
-            this.minCount = Math.min(minCount, maxCount);
-            this.maxCount = Math.max(minCount, maxCount);
+        public RangeMatch(long min, long max) {
+            this.min = Math.min(min, max);
+            this.max = Math.max(min, max);
         }
 
-        public CountRange(Range range) {
+        public RangeMatch(Range range) {
             this(range.getStart(), range.getEnd());
         }
 
-        protected abstract Long getCount(OsmPrimitive osm);
+        protected abstract Long getNumber(OsmPrimitive osm);
 
-        protected abstract String getCountString();
+        protected abstract String getString();
 
         @Override
         public boolean match(OsmPrimitive osm) {
-            Long count = getCount(osm);
-            if (count == null)
+            Long num = getNumber(osm);
+            if (num == null)
                 return false;
             else
-                return (count >= minCount) && (count <= maxCount);
+                return (num >= min) && (num <= max);
         }
 
         @Override
         public String toString() {
-            return getCountString() + "=" + minCount + "-" + maxCount;
+            return getString() + "=" + min + "-" + max;
         }
     }
 
@@ -869,7 +870,7 @@ public class SearchCompiler {
     /**
      * Matches ways with a number of nodes in given range
      */
-    private static class NodeCountRange extends CountRange {
+    private static class NodeCountRange extends RangeMatch {
         public NodeCountRange(Range range) {
             super(range);
         }
@@ -879,7 +880,7 @@ public class SearchCompiler {
         }
 
         @Override
-        protected Long getCount(OsmPrimitive osm) {
+        protected Long getNumber(OsmPrimitive osm) {
             if (!(osm instanceof Way))
                 return null;
             else
@@ -887,7 +888,7 @@ public class SearchCompiler {
         }
 
         @Override
-        protected String getCountString() {
+        protected String getString() {
             return "nodes";
         }
     }
@@ -895,7 +896,7 @@ public class SearchCompiler {
     /**
      * Matches objects with a number of tags in given range
      */
-    private static class TagCountRange extends CountRange {
+    private static class TagCountRange extends RangeMatch {
         public TagCountRange(Range range) {
             super(range);
         }
@@ -905,12 +906,12 @@ public class SearchCompiler {
         }
 
         @Override
-        protected Long getCount(OsmPrimitive osm) {
+        protected Long getNumber(OsmPrimitive osm) {
             return (long) osm.getKeys().size();
         }
 
         @Override
-        protected String getCountString() {
+        protected String getString() {
             return "tags";
         }
     }
@@ -918,19 +919,19 @@ public class SearchCompiler {
     /**
      * Matches objects with a timestamp in given range
      */
-    private static class TimestampRange extends CountRange {
+    private static class TimestampRange extends RangeMatch {
 
         public TimestampRange(long minCount, long maxCount) {
             super(minCount, maxCount);
         }
 
         @Override
-        protected Long getCount(OsmPrimitive osm) {
+        protected Long getNumber(OsmPrimitive osm) {
             return osm.getTimestamp().getTime();
         }
 
         @Override
-        protected String getCountString() {
+        protected String getString() {
             return "timestamp";
         }
 
@@ -1050,7 +1051,7 @@ public class SearchCompiler {
      *
      * @author Ole Jørgen Brønner
      */
-    private static class AreaSize extends CountRange {
+    private static class AreaSize extends RangeMatch {
 
         public AreaSize(Range range) {
             super(range);
@@ -1061,7 +1062,7 @@ public class SearchCompiler {
         }
 
         @Override
-        protected Long getCount(OsmPrimitive osm) {
+        protected Long getNumber(OsmPrimitive osm) {
             if (!(osm instanceof Way && ((Way) osm).isClosed()))
                 return null;
             Way way = (Way) osm;
@@ -1069,7 +1070,7 @@ public class SearchCompiler {
         }
 
         @Override
-        protected String getCountString() {
+        protected String getString() {
             return "areasize";
         }
     }
