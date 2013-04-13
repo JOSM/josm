@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -465,6 +466,14 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         
         // unassign some standard shortcuts for JTable to allow upload / download
         InputMapUtils.unassignCtrlShiftUpDown(propertyTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        
+        // unassign some standard shortcuts for correct copy-pasting, fix #8508
+        propertyTable.setTransferHandler(null);
+  
+        propertyTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK),"onCopy");
+        propertyTable.getActionMap().put("onCopy",copyKeyValueAction);
+
         // allow using enter to add tags for all look&feel configurations
         InputMapUtils.enableEnter(this.btnAdd);
         
