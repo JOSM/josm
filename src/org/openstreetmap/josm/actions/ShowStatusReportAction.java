@@ -27,6 +27,8 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.tools.BugReportExceptionHandler;
+import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -112,7 +114,8 @@ public final class ShowStatusReportAction extends JosmAction {
 
     public void actionPerformed(ActionEvent e) {
         StringBuilder text = new StringBuilder();
-        text.append(getReportHeader());
+        String reportHeader = getReportHeader();
+        text.append(reportHeader);
         try {
             Map<String, Setting> settings = Main.pref.getAllSettings();
             settings.remove("osm-server.username");
@@ -140,13 +143,16 @@ public final class ShowStatusReportAction extends JosmAction {
 
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
                 tr("Status Report"),
-                new String[] {tr("Copy to clipboard and close"), tr("Close") });
-        ed.setButtonIcons(new String[] {"copy.png", "cancel.png" });
+                new String[] {tr("Copy to clipboard and close"), tr("Report bug"), tr("Close") });
+        ed.setButtonIcons(new String[] {"copy.png", "bug.png", "cancel.png" });
         ed.setContent(sp, false);
         ed.setMinimumSize(new Dimension(380, 200));
         ed.setPreferredSize(new Dimension(700, Main.parent.getHeight()-50));
 
-        if (ed.showDialog().getValue() != 1) return;
-        Utils.copyToClipboard(text.toString());
+        switch (ed.showDialog().getValue()) {
+            case 1: Utils.copyToClipboard(text.toString()); break;
+            case 2: OpenBrowser.displayUrl(BugReportExceptionHandler.getBugReportUrl(
+                        Utils.strip(reportHeader)).toExternalForm()) ; break;
+        }
     }
 }
