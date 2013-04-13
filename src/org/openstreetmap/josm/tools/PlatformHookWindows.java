@@ -11,7 +11,6 @@ import static java.awt.event.KeyEvent.VK_DELETE;
 import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_ENTER;
 import static java.awt.event.KeyEvent.VK_ESCAPE;
-import static java.awt.event.KeyEvent.VK_F1;
 import static java.awt.event.KeyEvent.VK_F10;
 import static java.awt.event.KeyEvent.VK_F4;
 import static java.awt.event.KeyEvent.VK_LEFT;
@@ -122,5 +121,14 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         if(to.exists())
             to.delete();
         return from.renameTo(to);
+    }
+
+    /* (non-Javadoc)
+     * @see org.openstreetmap.josm.tools.PlatformHookUnixoid#getOSDescription()
+     */
+    @Override
+    public String getOSDescription() {
+        return Utils.strip(System.getProperty("os.name")) + " " + 
+                ((System.getenv("ProgramFiles(x86)") == null) ? "32" : "64") + "-Bit";
     }
 }
