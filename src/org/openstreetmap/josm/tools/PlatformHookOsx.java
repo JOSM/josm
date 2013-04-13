@@ -249,4 +249,12 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
     {
         return false;
     }
+    
+    /* (non-Javadoc)
+     * @see org.openstreetmap.josm.tools.PlatformHookUnixoid#getOSDescription()
+     */
+    @Override
+    public String getOSDescription() {
+        return System.getProperty("os.name");
+    }
 }

@@ -5,11 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-
-import org.openstreetmap.josm.Main;
+import java.io.InputStreamReader;
 
 /**
  * see PlatformHook.java
@@ -84,5 +83,24 @@ public class PlatformHookUnixoid implements PlatformHook {
     public boolean rename(File from, File to)
     {
         return from.renameTo(to);
+    }
+
+    @Override
+    public String getOSDescription() {
+        String osName = System.getProperty("os.name");
+        if ("Linux".equalsIgnoreCase(osName)) {
+            try {
+                Process p = Runtime.getRuntime().exec("lsb_release -ds");
+                BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                String line = Utils.strip(input.readLine());
+                input.close();
+                if (line != null && !line.isEmpty()) {
+                    return line; 
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return osName;
     }
 }

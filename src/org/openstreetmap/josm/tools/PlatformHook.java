@@ -3,7 +3,6 @@ package org.openstreetmap.josm.tools;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * This interface allows platfrom (operating system) dependent code
@@ -92,4 +91,11 @@ public interface PlatformHook {
     public boolean canFullscreen();
 
     public boolean rename(File from, File to);
+    
+    /**
+     * Returns a detailed OS description (at least family + version).
+     * @return A detailed OS description.
+     * @since 5850
+     */
+    public String getOSDescription();
 }
