@@ -883,7 +883,7 @@ public class SearchCompiler {
             if (!(osm instanceof Way))
                 return null;
             else
-                return (long) ((Way) osm).getNodesCount();
+                return (long) ((Way) osm).getRealNodesCount();
         }
 
         @Override

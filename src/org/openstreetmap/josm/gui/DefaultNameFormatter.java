@@ -266,10 +266,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 preset.nameTemplate.appendText(name, way);
             }
 
-            int nodesNo = way.getNodesCount();
-            if (nodesNo > 1 && way.isClosed()) {
-                nodesNo--;
-            }
+            int nodesNo = way.getRealNodesCount();
             /* note: length == 0 should no longer happen, but leave the bracket code
                nevertheless, who knows what future brings */
             /* I18n: count of nodes as parameter */
