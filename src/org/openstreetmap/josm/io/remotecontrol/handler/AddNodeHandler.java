@@ -3,12 +3,14 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Point;
 import java.util.HashMap;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
@@ -63,11 +65,24 @@ public class AddNodeHandler extends RequestHandler {
 
         // Create a new node
         LatLon ll = new LatLon(lat, lon);
-        Node nnew = new Node(ll);
 
-        // Now execute the commands to add this node.
-        Main.main.undoRedo.add(new AddCommand(nnew));
-        Main.main.getCurrentDataSet().setSelected(nnew);
+        Node nd = null;
+        
+        if (Main.map != null &&  Main.map.mapView != null) {
+            Point p = Main.map.mapView.getPoint(ll);
+            nd = Main.map.mapView.getNearestNode(p, OsmPrimitive.isUsablePredicate);
+            if (nd!=null && nd.getCoor().greatCircleDistance(ll) > Main.pref.getDouble("remotecontrol.tolerance", 0.1)) {
+                nd = null; // node is too far
+            }
+        }
+
+        if (nd==null) {
+            nd = new Node(ll);
+            // Now execute the commands to add this node.
+            Main.main.undoRedo.add(new AddCommand(nd));
+        }
+        
+        Main.main.getCurrentDataSet().setSelected(nd);
         if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
             AutoScaleAction.autoScale("selection");
         } else {

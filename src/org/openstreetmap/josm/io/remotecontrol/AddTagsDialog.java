@@ -5,19 +5,20 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.Collection;
+import java.util.HashMap;
 import javax.swing.AbstractAction;
-import javax.swing.DefaultCellEditor;
 
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -29,7 +30,6 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.util.TableCellEditorSupport;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -49,6 +49,9 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
     private Collection<? extends OsmPrimitive> sel;
     int[] count;
 
+    /**
+     * Class for displaying "delete from ... objects" in the table
+     */
     static class DeleteTagMarker {
         int num;
         public DeleteTagMarker(int num) {
@@ -59,6 +62,52 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         }
     }
     
+    /**
+     * Class for displaying list of existing tag values in the table
+     */
+    static class ExistingValues {
+        String tag;
+        HashMap<String, Integer> valueCount;
+        public ExistingValues(String tag) {
+            this.tag=tag; valueCount=new HashMap<String, Integer>();
+        }
+        
+        int addValue(String val) {
+            Integer c = valueCount.get(val);
+            int r = c==null? 1 : (c.intValue()+1);
+            valueCount.put(val, r);
+            return r;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb=new StringBuilder();
+            for (String k: valueCount.keySet()) {
+                if (sb.length()>0) sb.append(", ");
+                sb.append(k);
+            }
+            return sb.toString();
+        }
+
+        private String getToolTip() {
+            StringBuilder sb=new StringBuilder();
+            sb.append("<html>");
+            sb.append(tr("Old values of"));
+            sb.append(" <b>");
+            sb.append(tag);
+            sb.append("</b><br/>");
+            for (String k: valueCount.keySet()) {
+                sb.append("<b>");
+                sb.append(valueCount.get(k));
+                sb.append(" x </b>");
+                sb.append(k);
+                sb.append("<br/>");
+            }
+            sb.append("</html>");
+            return sb.toString();
+            
+        }
+    }
             
     public AddTagsDialog(String[][] tags) {
         super(Main.parent, tr("Add tags to selected objects"), new String[] { tr("Add selected tags"), tr("Add all tags"),  tr("Cancel")},
@@ -69,8 +118,8 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         DataSet.addSelectionListener(this);
 
 
-        DefaultTableModel tm = new DefaultTableModel(new String[] {tr("Assume"), tr("Key"), tr("Value")}, tags.length) {
-            final Class<?> types[] = {Boolean.class, String.class, Object.class};
+        final DefaultTableModel tm = new DefaultTableModel(new String[] {tr("Assume"), tr("Key"), tr("Value"), tr("Existing values")}, tags.length) {
+            final Class<?> types[] = {Boolean.class, String.class, Object.class, ExistingValues.class};
             @Override
             public Class getColumnClass(int c) {
                 return types[c];
@@ -84,20 +133,25 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         for (int i = 0; i<tags.length; i++) {
             count[i] = 0;
             String key = tags[i][0];
-            String value = tags[i][1];
+            String value = tags[i][1], oldValue;
             Boolean b = Boolean.TRUE;
+            ExistingValues old = new ExistingValues(key);
             for (OsmPrimitive osm : sel) {
-                if (osm.keySet().contains(key) && !osm.get(key).equals(value)) {
-                    b = Boolean.FALSE;
-                    count[i]++;
-                    break;
+                oldValue  = osm.get(key);
+                if (oldValue!=null) {
+                    old.addValue(oldValue);
+                    if (!oldValue.equals(value)) {
+                        b = Boolean.FALSE;
+                        count[i]++;
+                    }
                 }
             }
             tm.setValueAt(b, i, 0);
             tm.setValueAt(tags[i][0], i, 1);
             tm.setValueAt(tags[i][1].isEmpty() ? new DeleteTagMarker(count[i]) : tags[i][1], i, 2);
+            tm.setValueAt(old , i, 3);
         }
-
+        
         propertyTable = new JTable(tm) {
 
             private static final long serialVersionUID = 1L;
@@ -119,17 +173,29 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
             @Override
             public TableCellEditor getCellEditor(int row, int column) {
                 Object value = getValueAt(row,column);
-                System.out.println(value);
                 if (value instanceof DeleteTagMarker) return null;
+                if (value instanceof ExistingValues) return null;
                 return getDefaultEditor(value.getClass());
             }
+
+            @Override
+            public String getToolTipText(MouseEvent event) {
+                int r = rowAtPoint(event.getPoint());
+                int c = columnAtPoint(event.getPoint());
+                Object o = getValueAt(r, c);
+                if (c==1 || c==2) return o.toString();
+                if (c==3) return ((ExistingValues)o).getToolTip();
+                return tr("Enable the checkbox to accept the value");
+            }
+            
         };
         
         propertyTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         // a checkbox has a size of 15 px
         propertyTable.getColumnModel().getColumn(0).setMaxWidth(15);
-        TableHelper.adjustColumnWidth(propertyTable, 1, 200);
-        TableHelper.adjustColumnWidth(propertyTable, 2, 700);
+        TableHelper.adjustColumnWidth(propertyTable, 1, 150);
+        TableHelper.adjustColumnWidth(propertyTable, 2, 400);
+        TableHelper.adjustColumnWidth(propertyTable, 3, 300);
         // get edit results if the table looses the focus, for example if a user clicks "add tags"
         propertyTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         propertyTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_MASK), "shiftenter");
@@ -138,7 +204,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
                 buttonAction(1, e); // add all tags on Shift-Enter
             }
         });
-
+        
         // set the content of this AddTagsDialog consisting of the tableHeader and the table itself.
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new GridBagLayout());
