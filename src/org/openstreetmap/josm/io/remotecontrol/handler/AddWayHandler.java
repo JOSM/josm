@@ -2,8 +2,10 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
@@ -30,6 +33,11 @@ public class AddWayHandler extends RequestHandler {
     public static final String command = "add_way";
     
     private final List<LatLon> allCoordinates = new ArrayList<LatLon>();
+
+    /**
+     * The place to remeber already added nodes (they are reused if needed @since 5845
+     */
+    HashMap<LatLon, Node> addedNodes;
 
     @Override
     public String[] getMandatoryParams() {
@@ -83,17 +91,51 @@ public class AddWayHandler extends RequestHandler {
              throw new RequestHandlerBadRequestException(tr("There is no layer opened to add way"));
         }
     }
+    
+    /**
+     * Find the node with almost the same ccords in dataset or in already added nodes 
+     * @since 5845
+     **/
+    Node findOrCreateNode(LatLon ll,  List<Command> commands) {
+        Node nd = null;     
+         
+        if (Main.map != null && Main.map.mapView != null) {
+            Point p = Main.map.mapView.getPoint(ll);
+            nd = Main.map.mapView.getNearestNode(p, OsmPrimitive.isUsablePredicate);
+            if (nd!=null && nd.getCoor().greatCircleDistance(ll) > Main.pref.getDouble("remote.tolerance", 0.1)) {
+                nd = null; // node is too far
+            }
+        }
+        
+        Node prev = null;
+        for (LatLon lOld: addedNodes.keySet()) {
+            if (lOld.greatCircleDistance(ll) < Main.pref.getDouble("remotecontrol.tolerance", 0.1)) {
+                prev = addedNodes.get(lOld);
+                break;
+            }
+        }
 
+        if (prev!=null) {
+            nd = prev;
+        } else if (nd==null) {
+            nd = new Node(ll);
+            // Now execute the commands to add this node.
+            commands.add(new AddCommand(nd));
+            addedNodes.put(ll, nd);
+        }
+        return nd;
+    }
+    
     /*
      * This function creates the way with given coordinates of nodes
      */
     private void addWay() {
+        addedNodes = new HashMap<LatLon, Node>();
         Way way = new Way();
         List<Command> commands = new LinkedList<Command>();
         for (LatLon ll : allCoordinates) {
-            Node node = new Node(ll);
+            Node node = findOrCreateNode(ll, commands);
             way.addNode(node);
-            commands.add(new AddCommand(node));
         }
         allCoordinates.clear();
         commands.add(new AddCommand(way));
