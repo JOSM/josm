@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
@@ -120,14 +121,6 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                                 urltext += "...<snip>...\n";
                             }
                             
-                            ByteArrayOutputStream out = new ByteArrayOutputStream();
-                            GZIPOutputStream gzip = new GZIPOutputStream(out);
-                            gzip.write(urltext.getBytes("UTF-8"));
-                            gzip.close();
-
-                            URL url = new URL("http://josm.openstreetmap.de/josmticket?" +
-                                    "gdata="+Base64.encode(ByteBuffer.wrap(out.toByteArray()), true));
-
                             JPanel p = new JPanel(new GridBagLayout());
                             p.add(new JMultilineLabel(
                                     tr("You have encountered an error in JOSM. Before you file a bug report " +
@@ -136,7 +129,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                             p.add(new JMultilineLabel(
                                     tr("You should also update your plugins. If neither of those help please " +
                                             "file a bug report in our bugtracker using this link:")), GBC.eol());
-                            p.add(new UrlLabel(url.toString(), "http://josm.openstreetmap.de/josmticket?...",2), GBC.eop().insets(8,0,0,0));
+                            p.add(getBugReportUrlLabel(urltext), GBC.eop().insets(8,0,0,0));
                             p.add(new JMultilineLabel(
                                     tr("There the error information provided below should already be " +
                                             "filled in for you. Please include information on how to reproduce " +
@@ -173,5 +166,40 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
     }
     public static boolean exceptionHandlingInProgress() {
         return handlingInProgress;
+    }
+    
+    /**
+     * Replies the URL to create a JOSM bug report with the given debug text
+     * @param debugText The debug text to provide us
+     * @return The URL to create a JOSM bug report with the given debug text
+     * @since 5849
+     */
+    public static URL getBugReportUrl(String debugText) {
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            GZIPOutputStream gzip = new GZIPOutputStream(out);
+            gzip.write(debugText.getBytes("UTF-8"));
+            gzip.close();
+    
+            return new URL("http://josm.openstreetmap.de/josmticket?" +
+                    "gdata="+Base64.encode(ByteBuffer.wrap(out.toByteArray()), true));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Replies the URL label to create a JOSM bug report with the given debug text
+     * @param debugText The debug text to provide us
+     * @return The URL label to create a JOSM bug report with the given debug text
+     * @since 5849
+     */
+    public static final UrlLabel getBugReportUrlLabel(String debugText) {
+        URL url = getBugReportUrl(debugText);
+        if (url != null) {
+            return new UrlLabel(url.toString(), "http://josm.openstreetmap.de/josmticket?...", 2);
+        }
+        return null;
     }
 }
