@@ -101,6 +101,7 @@ public class MainApplet extends JApplet {
 
         String lang = getParameter("language");
         I18n.set(lang != null ? lang : Main.pref.get("language", null));
+        Main.pref.updateSystemProperties();
 
         try
         {
@@ -131,6 +132,7 @@ public class MainApplet extends JApplet {
         }
 
         Main.preConstructorInit(Option.fromStringMap(args));
+        Main.pref.updateSystemProperties();
         Main.parent = frame;
 
         new MainCaller(Option.fromStringMap(args));
