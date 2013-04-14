@@ -34,6 +34,14 @@ public class RemoteControl
     }
 
     /**
+     * Stops the remote control server
+     * @since 5861
+     */
+    public static void stop() {
+        RemoteControlHttpServer.stopRemoteControlHttpServer();
+    }
+
+    /**
      * Adds external request handler.
      * Can be used by plugins that want to use remote control.
      * 

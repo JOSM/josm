@@ -31,9 +31,7 @@ public class RemoteControlHttpServer extends Thread {
      */
     public static void restartRemoteControlHttpServer() {
         try {
-            if (instance != null) {
-                instance.stopServer();
-            }
+            stopRemoteControlHttpServer();
 
             instance = new RemoteControlHttpServer(DEFAULT_PORT);
             instance.start();
@@ -42,6 +40,21 @@ public class RemoteControlHttpServer extends Thread {
                     Integer.toString(DEFAULT_PORT), ex.getLocalizedMessage()));
         } catch (IOException ioe) {
             ioe.printStackTrace();
+        }
+    }
+
+    /**
+     * Stops the HTTP server
+     * @since 5861
+     */
+    public static void stopRemoteControlHttpServer() {
+        if (instance != null) {
+            try {
+                instance.stopServer();
+                instance = null;
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
         }
     }
 
@@ -95,5 +108,6 @@ public class RemoteControlHttpServer extends Thread {
     public void stopServer() throws IOException
     {
         server.close();
+        System.out.println("RemoteControl::Server stopped.");
     }
 }
