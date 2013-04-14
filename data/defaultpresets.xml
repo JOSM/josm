@@ -3376,7 +3376,7 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Brothel" de.name="Bordell" icon="styles/standard/leisure/stripclub.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=brothel"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=brothel"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=brothel"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=brothel"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=brothel"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=brothel" />
