@@ -21,6 +21,6 @@ public class OsmGzipImporter extends OsmImporter {
 
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
-        importData(getGZipInputStream(new FileInputStream(file)), file);
+        importData(getGZipInputStream(new FileInputStream(file)), file, progressMonitor);
     }
 }

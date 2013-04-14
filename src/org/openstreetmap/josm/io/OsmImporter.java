@@ -51,12 +51,16 @@ public class OsmImporter extends FileImporter {
         super(filter);
     }
 
+    /**
+     * Imports OSM data from file @param file
+     * This method supports progress monitoring and canceling by using @param progressMonitor
+     */
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         FileInputStream in = null;
         try {
             in = new FileInputStream(file);
-            importData(in, file);
+            importData(in, file, progressMonitor);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             throw new IOException(tr("File ''{0}'' does not exist.", file.getName()));
@@ -67,9 +71,20 @@ public class OsmImporter extends FileImporter {
         }
     }
 
+    /**
+     * Imports OSM data from stream @param in , sitle will be generated from name of file @param associatedFile
+     */
     protected void importData(InputStream in, final File associatedFile) throws IllegalDataException {
+        importData(in, associatedFile, NullProgressMonitor.INSTANCE);
+    }
+    
+    /**
+     * Imports OSM data from stream @param in , layer name will be generated from name of file @param associatedFile
+     * This method supports progress monitoring and canceling by using @param progressMonitor
+     */
+    protected void importData(InputStream in, final File associatedFile, ProgressMonitor pm) throws IllegalDataException {
         final OsmImporterData data = loadLayer(in, associatedFile,
-                associatedFile == null ? OsmDataLayer.createNewName() : associatedFile.getName(), NullProgressMonitor.INSTANCE);
+                associatedFile == null ? OsmDataLayer.createNewName() : associatedFile.getName(), pm);
 
         // FIXME: remove UI stuff from IO subsystem
         GuiHelper.runInEDT(new Runnable() {

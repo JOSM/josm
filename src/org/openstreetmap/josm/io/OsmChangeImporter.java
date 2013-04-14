@@ -37,11 +37,11 @@ public class OsmChangeImporter extends FileImporter {
             FileInputStream in = new FileInputStream(file);
             
             if (file.getName().endsWith(".osc")) {
-                importData(in, file);
+                importData(in, file, progressMonitor);
             } else if (file.getName().endsWith(".gz")) {
-                importData(getGZipInputStream(in), file);
+                importData(getGZipInputStream(in), file, progressMonitor);
             } else {
-                importData(getBZip2InputStream(in), file);
+                importData(getBZip2InputStream(in), file, progressMonitor);
             }
             
         } catch (FileNotFoundException e) {
@@ -51,7 +51,11 @@ public class OsmChangeImporter extends FileImporter {
     }
 
     protected void importData(InputStream in, final File associatedFile) throws IllegalDataException {
-        final DataSet dataSet = OsmChangeReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
+        importData(in, associatedFile, NullProgressMonitor.INSTANCE);
+    }
+    
+    protected void importData(InputStream in, final File associatedFile, ProgressMonitor  progressMonitor) throws IllegalDataException {
+        final DataSet dataSet = OsmChangeReader.parseDataSet(in, progressMonitor);
         final OsmDataLayer layer = new OsmDataLayer(dataSet, associatedFile.getName(), associatedFile);
         addDataLayer(dataSet, layer, associatedFile.getPath()); 
     }

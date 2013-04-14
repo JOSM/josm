@@ -160,8 +160,6 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     @Override
     protected void cancel() {
         System.out.println("Cancel!");
-        //OsmApi.getOsmApi().cancel();
-        // fix #8601 : could not cancel when server is extremely slow
         if (reader!=null) reader.cancel();
         canceled = true;
     }

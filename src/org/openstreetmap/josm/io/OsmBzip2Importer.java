@@ -21,6 +21,6 @@ public class OsmBzip2Importer extends OsmImporter {
 
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
-        importData(getBZip2InputStream(new FileInputStream(file)), file);
+        importData(getBZip2InputStream(new FileInputStream(file)), file, progressMonitor);
     }
 }
