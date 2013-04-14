@@ -24,7 +24,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
 
     /**
-     * @see CredentialsAgent#lookup(RequestorType)
+     * @see CredentialsAgent#lookup
      */
     @Override
     public PasswordAuthentication lookup(RequestorType requestorType, String host) throws CredentialsAgentException{
@@ -58,7 +58,7 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
     }
 
     /**
-     * @see CredentialsAgent#store(RequestorType, PasswordAuthentication)
+     * @see CredentialsAgent#store
      */
     @Override
     public void store(RequestorType requestorType, String host, PasswordAuthentication credentials) throws CredentialsAgentException {

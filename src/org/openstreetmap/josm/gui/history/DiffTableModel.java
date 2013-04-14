@@ -9,9 +9,8 @@ import javax.swing.table.AbstractTableModel;
 import org.openstreetmap.josm.gui.history.TwoColumnDiff.Item.DiffItemType;
 
 /**
- * Simple model storing "diff cells" in a list. Could probably have used a DefaultTableModel instead..
- *
- * {@link NodeListDiffTableCellRenderer}
+ * Simple model storing "diff cells" in a list. Could probably have
+ * used a {@link javax.swing.table.DefaultTableModel} instead.
  */
 class DiffTableModel extends AbstractTableModel {
     private List<TwoColumnDiff.Item> rows;

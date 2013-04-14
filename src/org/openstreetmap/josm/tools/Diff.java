@@ -625,14 +625,14 @@ public class Diff {
             discard(discarded);
         }
 
-        /** Mark to be discarded each line that matches no line of another file.
-       If a line matches many lines, mark it as provisionally discardable.
-       @see equivCount()
-       @param counts The count of each equivalence number for the other file.
-       @return 0=nondiscardable, 1=discardable or 2=provisionally discardable
-        for each line
+        /**
+         * Mark to be discarded each line that matches no line of another file.
+         * If a line matches many lines, mark it as provisionally discardable.
+         * @see #equivCount()
+         * @param counts The count of each equivalence number for the other file.
+         * @return 0=nondiscardable, 1=discardable or 2=provisionally discardable
+         *  for each line
          */
-
         private byte[] discardable(final int[] counts) {
             final int end = buffered_lines;
             final byte[] discards = new byte[end];
@@ -641,7 +641,7 @@ public class Diff {
             int tem = end / 64;
 
             /* Multiply MANY by approximate square root of number of lines.
-     That is the threshold for provisionally discardable lines.  */
+               That is the threshold for provisionally discardable lines.  */
             while ((tem = tem >> 2) > 0) {
                 many *= 2;
             }
@@ -662,10 +662,11 @@ public class Diff {
             return discards;
         }
 
-        /** Don't really discard the provisional lines except when they occur
-       in a run of discardables, with nonprovisionals at the beginning
-       and end.  */
-
+        /**
+         * Don't really discard the provisional lines except when they occur
+         * in a run of discardables, with nonprovisionals at the beginning
+         * and end.
+         */
         private void filterDiscards(final byte[] discards) {
             final int end = buffered_lines;
 

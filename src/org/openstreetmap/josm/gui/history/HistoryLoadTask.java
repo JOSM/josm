@@ -60,9 +60,10 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     /**
      * Creates a new task
      *
-     * @param parent the component to be used as reference to find the parent for {@link PleaseWaitDialog}.
-     * Must not be null.
-     * @throws IllegalArgumentException thrown if parent is null
+     * @param parent the component to be used as reference to find the
+     * parent for {@link org.openstreetmap.josm.gui.PleaseWaitDialog}.
+     * Must not be <code>null</code>.
+     * @throws IllegalArgumentException thrown if parent is <code>null</code>
      */
     public HistoryLoadTask(Component parent) {
         super(parent, tr("Load history"), true);
@@ -141,10 +142,11 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     /**
      * Adds a collection of objects to loaded, specified by a collection of OSM primitives.
      *
-     * @param primitive the OSM primitive. Must not be null. primitive.getId() > 0 required.
+     * @param primitives the OSM primitives. Must not be <code>null</code>.
+     * <code>primitive.getId() > 0</code> required.
      * @return this task
-     * @throws IllegalArgumentException thrown if primitives is null
-     * @throws IllegalArgumentException thrown if one of the ids in the collection <= 0
+     * @throws IllegalArgumentException thrown if primitives is <code>null</code>
+     * @throws IllegalArgumentException thrown if one of the ids in the collection &lt;= 0
      */
     public HistoryLoadTask add(Collection<? extends OsmPrimitive> primitives) {
         CheckParameterUtil.ensureParameterNotNull(primitives, "primitives");
@@ -159,8 +161,9 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     @Override
     protected void cancel() {
-        System.out.println("Cancel!");
-        if (reader!=null) reader.cancel();
+        if (reader != null) {
+            reader.cancel();
+        }
         canceled = true;
     }
 

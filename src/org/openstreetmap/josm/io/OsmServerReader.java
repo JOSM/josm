@@ -37,9 +37,11 @@ public abstract class OsmServerReader extends OsmConnection {
     /**
      * Open a connection to the given url and return a reader on the input stream
      * from that connection. In case of user cancel, return <code>null</code>.
-     * @param urlStr The exact url to connect to.
-     * @param pleaseWaitDlg
+     * Relative URL's are directed to API base URL.
+     * @param urlStr The url to connect to.
+     * @param progressMonitor progress monitoring and abort handler
      * @return An reader reading the input stream (servers answer) or <code>null</code>.
+     * @throws OsmTransferException thrown if data transfer errors occur
      */
     protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException  {
         try {
@@ -51,10 +53,22 @@ public abstract class OsmServerReader extends OsmConnection {
         }
     }
 
+    /**
+     * Retrun the base URL for relative URL requests
+     * @return base url of API
+     */
     protected String getBaseUrl() {
         return api.getBaseUrl();
     }
 
+    /**
+     * Open a connection to the given url and return a reader on the input stream
+     * from that connection. In case of user cancel, return <code>null</code>.
+     * @param urlStr The exact url to connect to.
+     * @param progressMonitor progress monitoring and abort handler
+     * @return An reader reading the input stream (servers answer) or <code>null</code>.
+     * @throws OsmTransferException thrown if data transfer errors occur
+     */
     protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException {
         try {
             URL url = null;
