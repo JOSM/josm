@@ -95,7 +95,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                 String line = Utils.strip(input.readLine());
                 input.close();
                 if (line != null && !line.isEmpty()) {
-                    line = line.replaceAll("[\"']+","");
+                    line = line.replaceAll("\"+","");
                     if(!line.isEmpty())
                         return "Linux " + line;
                 }
