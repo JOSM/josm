@@ -50,6 +50,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     private Exception lastException  = null;
     private HashSet<PrimitiveId> toLoad;
     private HistoryDataSet loadedData;
+    private OsmServerHistoryReader reader = null;
 
     public HistoryLoadTask() {
         super(tr("Load history"), true);
@@ -158,7 +159,10 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     @Override
     protected void cancel() {
-        OsmApi.getOsmApi().cancel();
+        System.out.println("Cancel!");
+        //OsmApi.getOsmApi().cancel();
+        // fix #8601 : could not cancel when server is extremely slow
+        if (reader!=null) reader.cancel();
         canceled = true;
     }
 
@@ -190,7 +194,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
                 }
                 progressMonitor.indeterminateSubTask(tr(msg,
                         Long.toString(pid.getUniqueId())));
-                OsmServerHistoryReader reader = null;
+                reader = null;
                 HistoryDataSet ds = null;
                 try {
                     reader = new OsmServerHistoryReader(pid.getType(), pid.getUniqueId());
