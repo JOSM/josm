@@ -49,6 +49,8 @@ public class OsmReader extends AbstractReader {
 
     protected XMLStreamReader parser;
 
+    protected boolean cancel;
+
     /** Used by plugins to register themselves as data postprocessors. */
     public static ArrayList<OsmServerReadPostprocessor> postprocessors;
 
@@ -127,6 +129,12 @@ public class OsmReader extends AbstractReader {
         }
         while (true) {
             int event = parser.next();
+            
+            if (cancel) {
+                cancel = false;
+                throwException(tr("Reading was canceled"));
+            }
+            
             if (event == XMLStreamConstants.START_ELEMENT) {
                 if (parser.getLocalName().equals("bounds")) {
                     parseBounds(generator);
@@ -560,6 +568,12 @@ public class OsmReader extends AbstractReader {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
+        ProgressMonitor.CancelListener cancelListener = new ProgressMonitor.CancelListener() {
+            @Override public void operationCanceled() {
+                cancel = true;
+            }
+        };
+        progressMonitor.addCancelListener(cancelListener);
         CheckParameterUtil.ensureParameterNotNull(source, "source");
         try {
             progressMonitor.beginTask(tr("Prepare OSM data...", 2));
@@ -602,6 +616,7 @@ public class OsmReader extends AbstractReader {
             throw new IllegalDataException(e);
         } finally {
             progressMonitor.finishTask();
+            progressMonitor.removeCancelListener(cancelListener);
         }
     }
 
