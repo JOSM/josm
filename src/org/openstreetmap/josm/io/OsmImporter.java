@@ -52,8 +52,9 @@ public class OsmImporter extends FileImporter {
     }
 
     /**
-     * Imports OSM data from file @param file
-     * This method supports progress monitoring and canceling by using @param progressMonitor
+     * Imports OSM data from file
+     * @param file file to read data from
+     * @param progressMonitor handler for progress monitoring and canceling
      */
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
@@ -72,15 +73,19 @@ public class OsmImporter extends FileImporter {
     }
 
     /**
-     * Imports OSM data from stream @param in , sitle will be generated from name of file @param associatedFile
+     * Imports OSM data from stream
+     * @param in input stream
+     * @param associatedFile filename of data
      */
     protected void importData(InputStream in, final File associatedFile) throws IllegalDataException {
         importData(in, associatedFile, NullProgressMonitor.INSTANCE);
     }
     
     /**
-     * Imports OSM data from stream @param in , layer name will be generated from name of file @param associatedFile
-     * This method supports progress monitoring and canceling by using @param progressMonitor
+     * Imports OSM data from stream
+     * @param in input stream
+     * @param associatedFile filename of data (layer name will be generated from name of file)
+     * @param pm handler for progress monitoring and canceling
      */
     protected void importData(InputStream in, final File associatedFile, ProgressMonitor pm) throws IllegalDataException {
         final OsmImporterData data = loadLayer(in, associatedFile,
@@ -99,7 +104,10 @@ public class OsmImporter extends FileImporter {
 
     /**
      * Load osm data layer from InputStream.
-     * associatedFile can be null if the stream does not come from a file.
+     * @param in input stream
+     * @param associatedFile filename of data (can be <code>null</code> if the stream does not come from a file)
+     * @param layerName name of generated layer
+     * @param progressMonitor handler for progress monitoring and canceling
      */
     public OsmImporterData loadLayer(InputStream in, final File associatedFile, final String layerName, ProgressMonitor progressMonitor) throws IllegalDataException {
         final DataSet dataSet = parseDataSet(in, progressMonitor);
