@@ -340,7 +340,7 @@ public class ImageProvider {
 
     /**
      * {@code data:[<mediatype>][;base64],<data>}
-     * @see RFC2397
+     * @see <a href="http://tools.ietf.org/html/rfc2397">RFC2397</a>
      */
     private static final Pattern dataUrlPattern = Pattern.compile(
             "^data:([a-zA-Z]+/[a-zA-Z+]+)?(;base64)?,(.+)$");

@@ -14,7 +14,7 @@ abstract public class AbstractCredentialsAgent implements CredentialsAgent {
     protected Map<RequestorType, PasswordAuthentication> memoryCredentialsCache = new HashMap<RequestorType, PasswordAuthentication>();
 
     /**
-     * @see CredentialsAgent#getCredentials(RequestorType, String, boolean)
+     * @see CredentialsAgent#getCredentials
      */
     @Override
     public CredentialsAgentResponse getCredentials(final RequestorType requestorType, final String host, boolean noSuccessWithLastResponse) throws CredentialsAgentException{
