@@ -404,6 +404,8 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                         addTab(null, icon, new PreferencePanel(tps), tps.getTooltip());
                     }
                 }
+            } else if (!(setting instanceof SubPreferenceSetting)) {
+                Main.warn("Ignoring preferences "+setting);
             }
         }
         try {
