@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui;
 import java.awt.Component;
 
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
@@ -11,6 +12,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -67,7 +69,12 @@ public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer 
     private Component renderer(Component def, OsmPrimitive value) {
         if (def != null && value != null && def instanceof JLabel) {
             ((JLabel)def).setText(getComponentText(value));
-            ((JLabel)def).setIcon(ImageProvider.get(value.getDisplayType()));
+            ImageIcon icon = ImageProvider.get(value.getDisplayType());
+            if (icon != null) {
+                ((JLabel)def).setIcon(icon);
+            } else {
+                Main.warn("Null icon for "+value.getDisplayType());
+            }
             ((JLabel)def).setToolTipText(getComponentToolTipText(value));
         }
         return def;
