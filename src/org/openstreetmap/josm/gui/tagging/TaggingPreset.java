@@ -1083,6 +1083,14 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         protected Object getSelectedItem() {
             return list.getSelectedItem();
         }
+
+        @Override
+        public void addCommands(List<Tag> changedTags) {
+            // Do not create any commands if list has been disabled because of an unknown value (fix #8605)
+            if (list.isEnabled()) {
+                super.addCommands(changedTags);
+            }
+        }
     }
 
     /**
