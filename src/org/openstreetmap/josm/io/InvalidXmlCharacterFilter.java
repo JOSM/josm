@@ -49,7 +49,7 @@ public class InvalidXmlCharacterFilter extends FilterInputStream {
         if (n == -1) {
             return -1;
         }
-        for (int i = off; i < off + len; ++i) {
+        for (int i = off; i < off + n; ++i) {
             b[i] = filter(b[i]);
         }
         return n;
