@@ -5272,6 +5272,17 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
         </item>
+        <item name="Newsagent's shop" icon="presets/kiosk.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=newsagent"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=newsagent"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:shop=newsagent"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=newsagent"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=newsagent" />
+            <label text="Edit Newsagent's shop" />
+            <key key="shop" value="newsagent" />
+            <text key="name" text="Name" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
+        </item>
         <separator/>
         <item name="Travel Agency" icon="presets/travel.png" type="node,closedway">
             <label text="Edit Travel Agency" />

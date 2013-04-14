@@ -33,6 +33,9 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class RemoteControlPreference extends DefaultTabPreferenceSetting {
 
+    /**
+     * Factory used to build a new instance of this preference setting
+     */
     public static class Factory implements PreferenceSettingFactory {
 
         @Override
@@ -119,6 +122,13 @@ public class RemoteControlPreference extends DefaultTabPreferenceSetting {
             Main.pref.put(RequestHandler.loadInNewLayerKey, loadInNewLayer.isSelected());
             Main.pref.put(RequestHandler.globalConfirmationKey, alwaysAskUserConfirm.isSelected());
         }
-        return changed;
+        if (changed) {
+            if (enabled) {
+                RemoteControl.start();
+            } else {
+                RemoteControl.stop();
+            }
+        }
+        return false;
     }
 }
