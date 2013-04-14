@@ -1066,7 +1066,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                                 conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
 
                                 if (conn.getResponseCode() != 200) {
-                                    Main.info("INFO: {0} does not exist", u);
+                                    Main.info("{0} does not exist", u);
                                     conn.disconnect();
                                 } else {
                                     int osize = conn.getContentLength();
@@ -1083,10 +1083,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                                      *  content lengths, so we have to be fuzzy.. (this is UGLY, recode if u know better)
                                      */
                                     if (Math.abs(conn.getContentLength() - osize) > 200) {
-                                        Main.info("INFO: {0} is a mediawiki redirect", u);
+                                        Main.info("{0} is a mediawiki redirect", u);
                                         conn.disconnect();
                                     } else {
-                                        Main.info("INFO: browsing to {0}", u);
+                                        Main.info("browsing to {0}", u);
                                         conn.disconnect();
 
                                         OpenBrowser.displayUrl(u.toString());

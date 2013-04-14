@@ -422,14 +422,21 @@ public class GpxReader implements GpxConstants {
     /**
      * Parse the input stream and store the result in trackData and markerData
      *
+     * @param source the source input stream
+     * @throws IOException if an IO error occurs, e.g. the input stream is closed.
      */
     public GpxReader(InputStream source) throws IOException {
-        this.inputSource = new InputSource(UTFInputStreamReader.create(source, "UTF-8"));
+        InputStream filtered = new InvalidXmlCharacterFilter(source);
+        this.inputSource = new InputSource(UTFInputStreamReader.create(filtered, "UTF-8"));
     }
 
     /**
+     * Parse the GPX data.
      *
-     * @return True if file was properly parsed, false if there was error during parsing but some data were parsed anyway
+     * @param tryToFinish true, if the reader should return at least part of the GPX
+     * data in case of an error.
+     * @return true if file was properly parsed, false if there was error during
+     * parsing but some data were parsed anyway
      * @throws SAXException
      * @throws IOException
      */

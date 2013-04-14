@@ -199,7 +199,7 @@ abstract public class Main {
     static public void warn(String msg) {
         if (log_level < 1)
             return;
-        System.out.println(msg);
+        System.err.println(tr("WARNING: {0}", msg));
     }
     /**
      * Print an informational message if logging is on.
@@ -208,7 +208,7 @@ abstract public class Main {
     static public void info(String msg) {
         if (log_level < 2)
             return;
-        System.out.println(msg);
+        System.err.println(tr("INFO: {0}", msg));
     }
     /**
      * Print an debug message if logging is on.
@@ -217,7 +217,7 @@ abstract public class Main {
     static public void debug(String msg) {
         if (log_level < 3)
             return;
-        System.out.println(msg);
+        System.err.println(tr("DEBUG: {0}", msg));
     }
     /**
      * Print a formated warning message if logging is on. Calls {@link MessageFormat#format}
