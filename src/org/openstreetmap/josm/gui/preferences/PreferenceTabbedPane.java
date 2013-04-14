@@ -28,7 +28,10 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.preferences.advanced.AdvancedPreference;
 import org.openstreetmap.josm.gui.preferences.display.ColorPreference;
 import org.openstreetmap.josm.gui.preferences.display.DisplayPreference;
@@ -284,12 +287,28 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                 }
                 if (requiresRestart) {
                     sb.append(tr("You have to restart JOSM for some settings to take effect."));
+                    sb.append("<br/><br/>");
+                    sb.append(tr("Would you like to restart now?"));
                 }
                 sb.append("</html>");
 
                 // display the message, if necessary
                 //
-                if ((task != null && !task.isCanceled()) || requiresRestart) {
+                if (requiresRestart) {
+                    final ButtonSpec [] options = RestartAction.getButtonSpecs();
+                    if (0 == HelpAwareOptionPane.showOptionDialog(
+                            Main.parent,
+                            sb.toString(),
+                            tr("Restart"),
+                            JOptionPane.INFORMATION_MESSAGE,
+                            null, /* no special icon */
+                            options,
+                            options[0],
+                            null /* no special help */
+                            )) {
+                        Main.main.menu.restart.actionPerformed(null);
+                    }
+                } else if (task != null && !task.isCanceled()) {
                     JOptionPane.showMessageDialog(
                             Main.parent,
                             sb.toString(),

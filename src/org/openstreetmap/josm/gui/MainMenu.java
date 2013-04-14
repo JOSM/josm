@@ -67,6 +67,7 @@ import org.openstreetmap.josm.actions.PasteTagsAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.actions.PurgeAction;
 import org.openstreetmap.josm.actions.RedoAction;
+import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.actions.ReverseWayAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
@@ -137,6 +138,7 @@ public class MainMenu extends JMenuBar {
     public final JosmAction updateModified = new UpdateModifiedAction();
     public final JosmAction upload = new UploadAction();
     public final JosmAction uploadSelection = new UploadSelectionAction();
+    public final JosmAction restart = new RestartAction();
     public final JosmAction exit = new ExitAction();
 
     /* Edit menu */
@@ -453,6 +455,7 @@ public class MainMenu extends JMenuBar {
         ExpertToggleAction.addVisibilitySwitcher(sep);
         add(fileMenu, closeChangesetAction, true);
         fileMenu.addSeparator();
+        add(fileMenu, restart);
         add(fileMenu, exit);
 
         add(editMenu, undo);
