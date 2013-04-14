@@ -314,7 +314,7 @@ public class Preferences {
         if (path != null) {
             cacheDirFile = new File(path).getAbsoluteFile();
         } else {
-            path = Main.pref.get("cache.folder", null);
+            path = get("cache.folder", null);
             if (path != null) {
                 cacheDirFile = new File(path);
             } else {
@@ -338,7 +338,7 @@ public class Preferences {
      */
     public Collection<String> getAllPossiblePreferenceDirs() {
         LinkedList<String> locations = new LinkedList<String>();
-        locations.add(Main.pref.getPreferencesDir());
+        locations.add(getPreferencesDir());
         String s;
         if ((s = System.getenv("JOSM_RESOURCES")) != null) {
             if (!s.endsWith(File.separator)) {
@@ -1318,7 +1318,7 @@ public class Preferences {
      */
     public void updateSystemProperties() {
         updateSystemProperty("http.agent", Version.getInstance().getAgentString());
-        updateSystemProperty("user.language", Main.pref.get("language"));
+        updateSystemProperty("user.language", get("language"));
         // Workaround to fix a Java bug.
         // Force AWT toolkit to update its internal preferences (fix #3645).
         // This ugly hack comes from Sun bug database: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6292739
