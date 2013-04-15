@@ -823,16 +823,6 @@ public class Preferences {
         return def;
     }
 
-    synchronized public double getDouble(String key, String def) {
-        putDefault(key, def);
-        String v = get(key);
-        if(v != null && v.length() != 0) {
-            try { return Double.parseDouble(v); } catch(NumberFormatException e) {}
-        }
-        try { return Double.parseDouble(def); } catch(NumberFormatException e) {}
-        return 0.0;
-    }
-
     /**
      * Get a list of values for a certain key
      * @param key the identifier for the setting

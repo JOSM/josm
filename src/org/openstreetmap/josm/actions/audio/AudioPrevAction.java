@@ -11,8 +11,16 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Play the sound track from the Audio Marker before the one most recently played.<br/>
+ * Play from the first such Marker if none has been played or already at the first marker. 
+ * @since 547
+ */
 public class AudioPrevAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code AudioPrevAction}.
+     */
     public AudioPrevAction() {
         super(trc("audio", "Previous Marker"), "audio-prev", trc("audio", "Play previous marker."),
         Shortcut.registerShortcut("audio:prev", tr("Audio: {0}", trc("audio", "Previous Marker")), KeyEvent.VK_F5, Shortcut.DIRECT), true);

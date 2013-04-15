@@ -19,7 +19,7 @@ import org.openstreetmap.josm.Main;
  * Creates and controls a separate audio player thread.
  *
  * @author David Earl <david@frankieandshadow.com>
- *
+ * @since 547
  */
 public class AudioPlayer extends Thread {
 
@@ -103,7 +103,7 @@ public class AudioPlayer extends Thread {
      * Plays a WAV audio file from the beginning. See also the variant which doesn't
      * start at the beginning of the stream
      * @param url The resource to play, which must be a WAV file or stream
-     * @throws audio fault exception, e.g. can't open stream,  unhandleable audio format
+     * @throws Exception audio fault exception, e.g. can't open stream,  unhandleable audio format
      */
     public static void play(URL url) throws Exception {
         AudioPlayer.get().command.play(url, 0.0, 1.0);
@@ -113,7 +113,7 @@ public class AudioPlayer extends Thread {
      * Plays a WAV audio file from a specified position.
      * @param url The resource to play, which must be a WAV file or stream
      * @param seconds The number of seconds into the audio to start playing
-     * @throws audio fault exception, e.g. can't open stream,  unhandleable audio format
+     * @throws Exception audio fault exception, e.g. can't open stream,  unhandleable audio format
      */
     public static void play(URL url, double seconds) throws Exception {
         AudioPlayer.get().command.play(url, seconds, 1.0);
@@ -124,7 +124,7 @@ public class AudioPlayer extends Thread {
      * @param url The resource to play, which must be a WAV file or stream
      * @param seconds The number of seconds into the audio to start playing
      * @param speed Rate at which audio playes (1.0 = real time, > 1 is faster)
-     * @throws audio fault exception, e.g. can't open stream,  unhandleable audio format
+     * @throws Exception audio fault exception, e.g. can't open stream,  unhandleable audio format
      */
     public static void play(URL url, double seconds, double speed) throws Exception {
         AudioPlayer.get().command.play(url, seconds, speed);
@@ -132,7 +132,7 @@ public class AudioPlayer extends Thread {
 
     /**
      * Pauses the currently playing audio stream. Does nothing if nothing playing.
-     * @throws audio fault exception, e.g. can't open stream,  unhandleable audio format
+     * @throws Exception audio fault exception, e.g. can't open stream,  unhandleable audio format
      */
     public static void pause() throws Exception {
         AudioPlayer.get().command.pause();
@@ -193,6 +193,9 @@ public class AudioPlayer extends Thread {
         }
     }
 
+    /**
+     * Resets the audio player.
+     */
     public static void reset() {
         if(audioPlayer != null)
         {
@@ -207,8 +210,8 @@ public class AudioPlayer extends Thread {
         state = State.INITIALIZING;
         command = new Execute();
         playingUrl = null;
-        leadIn = Main.pref.getDouble("audio.leadin", "1.0" /* default, seconds */);
-        calibration = Main.pref.getDouble("audio.calibration", "1.0" /* default, ratio */);
+        leadIn = Main.pref.getDouble("audio.leadin", 1.0 /* default, seconds */);
+        calibration = Main.pref.getDouble("audio.calibration", 1.0 /* default, ratio */);
         start();
         while (state == State.INITIALIZING) { yield(); }
     }
@@ -337,6 +340,10 @@ public class AudioPlayer extends Thread {
         }
     }
 
+    /**
+     * Shows a popup audio error message for the given exception. 
+     * @param ex The exception used as error reason. Cannot be {@code null}.
+     */
     public static void audioMalfunction(Exception ex) {
         String msg = ex.getMessage();
         if(msg == null)
