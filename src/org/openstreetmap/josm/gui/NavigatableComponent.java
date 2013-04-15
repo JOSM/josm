@@ -1235,22 +1235,60 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @since 3406
      */
     public static class SystemOfMeasurement {
+        
+        /** First value, in meters, used to translate unit according to above formula. */
         public final double aValue;
+        /** Second value, in meters, used to translate unit according to above formula. */
         public final double bValue;
+        /** First unit used to format text. */
         public final String aName;
+        /** Second unit used to format text. */
         public final String bName;
+        /** Specific optional area value, in squared meters, between {@code aValue*aValue} and {@code bValue*bValue}. Set to {@code -1} if not used.
+         *  @since 5870 */
+        public final double areaCustomValue;
+        /** Specific optional area unit. Set to {@code null} if not used. 
+         *  @since 5870 */
+        public final String areaCustomName;
 
         /**
          * System of measurement. Currently covers only length (and area) units.
          *
          * If a quantity x is given in m (x_m) and in unit a (x_a) then it translates as
          * x_a == x_m / aValue
+         * 
+         * @param aValue First value, in meters, used to translate unit according to above formula.
+         * @param aName First unit used to format text.
+         * @param bValue Second value, in meters, used to translate unit according to above formula.
+         * @param bName Second unit used to format text.
          */
         public SystemOfMeasurement(double aValue, String aName, double bValue, String bName) {
+            this(aValue, aName, bValue, bName, -1, null);
+        }
+        
+        /**
+         * System of measurement. Currently covers only length (and area) units.
+         *
+         * If a quantity x is given in m (x_m) and in unit a (x_a) then it translates as
+         * x_a == x_m / aValue
+         * 
+         * @param aValue First value, in meters, used to translate unit according to above formula.
+         * @param aName First unit used to format text.
+         * @param bValue Second value, in meters, used to translate unit according to above formula.
+         * @param bName Second unit used to format text.
+         * @param areaCustomValue Specific optional area value, in squared meters, between {@code aValue*aValue} and {@code bValue*bValue}. 
+         *                        Set to {@code -1} if not used.
+         * @param areaCustomName Specific optional area unit. Set to {@code null} if not used.
+         * 
+         * @since 5870
+         */
+        public SystemOfMeasurement(double aValue, String aName, double bValue, String bName, double areaCustomValue, String areaCustomName) {
             this.aValue = aValue;
             this.aName = aName;
             this.bValue = bValue;
             this.bName = bName;
+            this.areaCustomValue = areaCustomValue;
+            this.areaCustomName = areaCustomName;
         }
 
         /**
@@ -1260,13 +1298,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
          */
         public String getDistText(double dist) {
             double a = dist / aValue;
-            if (!Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false) && a > bValue / aValue) {
-                double b = dist / bValue;
-                return String.format(Locale.US, "%." + (b<10 ? 2 : 1) + "f %s", b, bName);
-            } else if (a < 0.01)
+            if (!Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false) && a > bValue / aValue)
+                return formatText(dist / bValue, bName);
+            else if (a < 0.01)
                 return "< 0.01 " + aName;
             else
-                return String.format(Locale.US, "%." + (a<10 ? 2 : 1) + "f %s", a, aName);
+                return formatText(a, aName);
         }
 
         /**
@@ -1277,13 +1314,19 @@ public class NavigatableComponent extends JComponent implements Helpful {
          */
         public String getAreaText(double area) {
             double a = area / (aValue*aValue);
-            if (!Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false) && a > bValue / aValue) {
-                double b = area / (bValue*bValue);
-                return String.format(Locale.US, "%." + (b<10 ? 2 : 1) + "f %s", b, bName+"\u00b2");
-            } else if (a < 0.01)
-                return "< 0.01 " + aName;
+            boolean lowerOnly = Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false);
+            if (!lowerOnly && areaCustomValue > 0 && a > areaCustomValue / aValue*aValue && a < bValue*bValue / aValue*aValue)
+                return formatText(area / areaCustomValue, areaCustomName);
+            else if (!lowerOnly && a >= bValue*bValue / aValue*aValue)
+                return formatText(area / (bValue*bValue), bName+"\u00b2");
+            else if (a < 0.01)
+                return "< 0.01 " + aName+"\u00b2";
             else
-                return String.format(Locale.US, "%." + (a<10 ? 2 : 1) + "f %s", a, aName+"\u00b2");
+                return formatText(a, aName+"\u00b2");
+        }
+        
+        private static String formatText(double v, String unit) {
+            return String.format(Locale.US, "%." + (v<9.999999 ? 2 : 1) + "f %s", v, unit);
         }
     }
 
@@ -1291,7 +1334,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Metric system (international standard).
      * @since 3406
      */
-    public static final SystemOfMeasurement METRIC_SOM = new SystemOfMeasurement(1, "m", 1000, "km");
+    public static final SystemOfMeasurement METRIC_SOM = new SystemOfMeasurement(1, "m", 1000, "km", 10000, "ha");
     
     /**
      * Chinese system.
