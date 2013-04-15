@@ -12,8 +12,17 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * If not playing, play the sound track from the first Audio Marker, or from the point at which it was paused.<br/>
+ * If playing, pause the sound.<br/>
+ * If fast forwarding or slow forwarding, resume normal speed. 
+ * @since 547
+ */
 public class AudioPlayPauseAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code AudioPlayPauseAction}.
+     */
     public AudioPlayPauseAction() {
         super(trc("audio", "Play/Pause"), "audio-playpause", tr("Play/pause audio."),
         Shortcut.registerShortcut("audio:pause", tr("Audio: {0}", trc("audio", "Play/Pause")), KeyEvent.VK_PERIOD, Shortcut.DIRECT), true);

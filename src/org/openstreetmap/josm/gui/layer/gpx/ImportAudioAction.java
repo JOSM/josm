@@ -30,6 +30,10 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+/**
+ * Import audio files into a GPX layer to enable audio playback functions.
+ * @since 5715
+ */
 public class ImportAudioAction extends AbstractAction {
     private final GpxLayer layer;
     
@@ -38,6 +42,10 @@ public class ImportAudioAction extends AbstractAction {
         public boolean untimedMarkersOmitted = false;
     }
 
+    /**
+     * Constructs a new {@code ImportAudioAction}.
+     * @param layer The associated GPX layer
+     */
     public ImportAudioAction(final GpxLayer layer) {
         super(tr("Import Audio"), ImageProvider.get("importaudio"));
         this.layer = layer;
@@ -104,7 +112,7 @@ public class ImportAudioAction extends AbstractAction {
         }
     }
     
-        /**
+    /**
      * Makes a new marker layer derived from this GpxLayer containing at least one audio marker
      * which the given audio file is associated with. Markers are derived from the following (a)
      * explict waypoints in the GPX layer, or (b) named trackpoints in the GPX layer, or (d)
@@ -212,7 +220,7 @@ public class ImportAudioAction extends AbstractAction {
             double duration = AudioUtil.getCalibratedDuration(wavFile);
             double startTime = lastModified - duration;
             startTime = firstStartTime + (startTime - firstStartTime)
-                    / Main.pref.getDouble("audio.calibration", "1.0" /* default, ratio */);
+                    / Main.pref.getDouble("audio.calibration", 1.0 /* default, ratio */);
             WayPoint w1 = null;
             WayPoint w2 = null;
 
@@ -313,6 +321,4 @@ public class ImportAudioAction extends AbstractAction {
             markers.untimedMarkersOmitted = untimedMarkersOmitted;
         }
     }
-
-    
 }
