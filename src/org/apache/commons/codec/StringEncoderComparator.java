@@ -26,9 +26,10 @@ import java.util.Comparator;
  *
  * <p>This class is immutable and thread-safe.</p>
  *
- * @version $Id: StringEncoderComparator.java 1465689 2013-04-08 17:26:42Z sebb $
+ * @version $Id: StringEncoderComparator.java 1468177 2013-04-15 18:35:15Z ggregory $
  */
-@SuppressWarnings("rawtypes") // TODO ought to implement Comparator<String> but that's not possible whilst maintaining binary compatibility 
+@SuppressWarnings("rawtypes")
+// TODO ought to implement Comparator<String> but that's not possible whilst maintaining binary compatibility.
 public class StringEncoderComparator implements Comparator {
 
     /**
