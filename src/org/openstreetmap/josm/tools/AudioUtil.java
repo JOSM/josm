@@ -11,12 +11,18 @@ import javax.sound.sampled.AudioSystem;
 import org.openstreetmap.josm.Main;
 
 /**
- * Returns calibrated length of recording in seconds.
+ * Utils functions for audio.
  *
  * @author David Earl <david@frankieandshadow.com>
- *
+ * @since 1462
  */
 public class AudioUtil {
+    
+    /**
+     * Returns calibrated length of recording in seconds.
+     * @param wavFile the recording file (WAV format)
+     * @return the calibrated length of recording in seconds.
+     */
     static public double getCalibratedDuration(File wavFile) {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
@@ -27,7 +33,7 @@ public class AudioUtil {
                 * audioFormat.getFrameSize() /* bytes per frame */;
             double naturalLength = filesize / bytesPerSecond;
             audioInputStream.close();
-            double calibration = Main.pref.getDouble("audio.calibration", "1.0" /* default, ratio */);
+            double calibration = Main.pref.getDouble("audio.calibration", 1.0 /* default, ratio */);
             return naturalLength / calibration;
         } catch (Exception e) {
             return 0.0;
