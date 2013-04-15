@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -14,6 +13,7 @@ import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Provides basic information about the currently used JOSM build.
@@ -34,10 +34,9 @@ public class Version {
      */
     static public String loadResourceFile(URL resource) {
         if (resource == null) return null;
-        BufferedReader in;
         String s = null;
         try {
-            in = new BufferedReader(new InputStreamReader(resource.openStream(), "UTF-8"));
+            BufferedReader in = Utils.openURLReader(resource);
             StringBuffer sb = new StringBuffer();
             try {
                 for (String line = in.readLine(); line != null; line = in.readLine()) {
@@ -225,5 +224,14 @@ public class Version {
             s += " SVN";
         }
         return "JOSM/1.5 ("+ s+" "+LanguageInfo.getJOSMLocaleCode()+") " + Main.platform.getOSDescription();
+    }
+
+    /**
+     * Returns the full User-Agent string
+     * @return The User-Agent
+     * @since 5866
+     */
+    public String getFullAgentString() {
+        return getAgentString() + " Java/"+System.getProperty("java.version");
     }
 }
