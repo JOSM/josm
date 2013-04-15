@@ -9,14 +9,17 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
@@ -27,6 +30,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 
 /**
@@ -553,9 +557,36 @@ public class Utils {
             throw new IllegalArgumentException("Invalid HTTP url");
         }
         HttpURLConnection connection = (HttpURLConnection) httpURL.openConnection();
+        connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
         return connection;
     }
     
+    /**
+     * Opens a connection to the given URL and sets the User-Agent property to JOSM's one.
+     * @param url The url to open
+     * @return An stream for the given URL
+     * @throws IOException if an I/O exception occurs.
+     * @since 5867
+     */
+    public static InputStream openURL(URL url) throws IOException {
+        URLConnection connection = url.openConnection();
+        connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
+        connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
+        connection.setReadTimeout(Main.pref.getInteger("socket.timeout.read",30)*1000);
+        return connection.getInputStream();
+    }
+
+    /**
+     * Opens a connection to the given URL and sets the User-Agent property to JOSM's one.
+     * @param url The url to open
+     * @return An buffered stream reader for the given URL (using UTF-8)
+     * @throws IOException if an I/O exception occurs.
+     * @since 5867
+     */
+    public static BufferedReader openURLReader(URL url) throws IOException {
+        return new BufferedReader(new InputStreamReader(openURL(url), "utf-8"));
+    }
+
     /**
      * Opens a HTTP connection to the given URL, sets the User-Agent property to JOSM's one and optionnaly disables Keep-Alive.
      * @param httpURL The HTTP url to open (must use http:// or https://)

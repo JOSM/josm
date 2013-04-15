@@ -50,6 +50,7 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Main window class application.
@@ -291,8 +292,7 @@ public class MainApplication extends Main {
             for (String i : args.get(Option.LOAD_PREFERENCES)) {
                 System.out.println("Reading preferences from " + i);
                 try {
-                    URL url = new URL(i);
-                    config.openAndReadXML(url.openStream());
+                    config.openAndReadXML(Utils.openURL(new URL(i)));
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }

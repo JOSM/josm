@@ -70,10 +70,7 @@ public class MirroredInputStream extends InputStream {
                 }
             } else {
                 if (Main.applet) {
-                    URLConnection conn = url.openConnection();
-                    conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
-                    conn.setReadTimeout(Main.pref.getInteger("socket.timeout.read",30)*1000);
-                    fs = new BufferedInputStream(conn.getInputStream());
+                    fs = new BufferedInputStream(Utils.openURL(url));
                     file = new File(url.getFile());
                 } else {
                     file = checkLocal(url, destDir, maxTime);

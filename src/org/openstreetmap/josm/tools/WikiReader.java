@@ -4,7 +4,6 @@ package org.openstreetmap.josm.tools;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 
 import org.openstreetmap.josm.Main;
@@ -35,7 +34,7 @@ public class WikiReader {
      * @throws IOException Throws, if the page could not be loaded.
      */
     public String read(String url) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url).openStream(), "utf-8"));
+        BufferedReader in = Utils.openURLReader(new URL(url));
         try {
             if (url.startsWith(baseurl) && !url.endsWith("?format=txt"))
                 return readFromTrac(in);
@@ -59,9 +58,9 @@ public class WikiReader {
     }
 
     private String readLang(URL url) throws IOException {
-        InputStream in = url.openStream();
+        BufferedReader in = Utils.openURLReader(url);
         try {
-            return readFromTrac(new BufferedReader(new InputStreamReader(in, "utf-8")));
+            return readFromTrac(in);
         } finally {
             in.close();
         }
@@ -77,7 +76,7 @@ public class WikiReader {
         return "<html>" + b + "</html>";
     }
 
-    private String readFromTrac(BufferedReader in) throws IOException {
+    protected String readFromTrac(BufferedReader in) throws IOException {
         boolean inside = false;
         boolean transl = false;
         boolean skip = false;

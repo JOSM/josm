@@ -76,6 +76,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
 import org.openstreetmap.josm.io.CacheCustomContent;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -320,7 +321,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             @Override
             protected byte[] updateData() throws IOException {
                 URL u = getAttributionUrl();
-                UTFInputStreamReader in = UTFInputStreamReader.create(u.openStream(), "utf-8");
+                UTFInputStreamReader in = UTFInputStreamReader.create(Utils.openURL(u), "utf-8");
                 String r = new Scanner(in).useDelimiter("\\A").next();
                 in.close();
                 System.out.println("Successfully loaded Bing attribution data.");

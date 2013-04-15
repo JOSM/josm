@@ -20,13 +20,8 @@ import org.openstreetmap.josm.tools.WikiReader;
  *
  * It also has to be <strong>transformed</strong> because the internal help browser required slightly
  * different HTML than what is provided by the Wiki.
- *
- * @see WikiReader
  */
-public class HelpContentReader {
-
-    /** the base url */
-    private String baseUrl;
+public class HelpContentReader extends WikiReader {
 
     /**
      * constructor
@@ -34,7 +29,7 @@ public class HelpContentReader {
      * @param baseUrl the base url of the JOSM help wiki, i.e. http://josm.openstreetmap.org
      */
     public HelpContentReader(String baseUrl) {
-        this.baseUrl = baseUrl;
+        super(baseUrl);
     }
 
     /**
@@ -89,58 +84,14 @@ public class HelpContentReader {
      * @throws MissingHelpContentException thrown, if the content read isn't a help page
      */
     protected String prepareHelpContent(BufferedReader in, boolean dotest) throws HelpContentReaderException {
-        boolean isInContent = false;
-        boolean isInTranslationsSideBar = false;
-        boolean isExistingHelpPage = false;
-        StringBuffer sball = new StringBuffer();
-        StringBuffer sb = new StringBuffer();
+        String s = "";
         try {
-            for (String line = in.readLine(); line != null; line = in.readLine()) {
-                sball.append(line);
-                sball.append("\n");
-                if (line.contains("<div id=\"searchable\">")) {
-                    isInContent = true;
-                } else if (line.contains("<div class=\"wiki-toc trac-nav\"")) {
-                    isInTranslationsSideBar = true;
-                } else if (line.contains("<div class=\"wikipage searchable\">")) {
-                    isInContent = true;
-                } else if (line.contains("<div class=\"buttons\">")) {
-                    isInContent = false;
-                } else if (line.contains("<h3>Attachments</h3>")) {
-                    isInContent = false;
-                } else if (line.contains("<div id=\"attachments\">")) {
-                    isInContent = false;
-                } else if (line.contains("<div class=\"trac-modifiedby\">")) {
-                    continue;
-                } else if (line.contains("<input type=\"submit\" name=\"attachfilebutton\"")) {
-                    // heuristic: if we find a button for uploading images we are in an
-                    // existing pages. Otherwise this is probably the stub page for a not yet
-                    // existing help page
-                    isExistingHelpPage = true;
-                }
-                if (isInContent && !isInTranslationsSideBar) {
-                    // add a border="0" attribute to images, otherwise the internal help browser
-                    // will render a thick  border around images inside an <a> element
-                    //
-                    // Also make sure image URLs are absolute
-                    //
-                    line = line.replaceAll("<img ([^>]*)src=\"/", "<img border=\"0\" \\1src=\"" + baseUrl + "/").replaceAll("href=\"/",
-                            "href=\"" + baseUrl + "/").replaceAll(" />", ">");
-                    sb.append(line);
-                    sb.append("\n");
-                } else if (isInTranslationsSideBar && line.contains("</div>")) {
-                    isInTranslationsSideBar = false;
-                }
-            }
+            s = readFromTrac(in);
         } catch(IOException e) {
             throw new HelpContentReaderException(e);
         }
-        if(!dotest && sb.length() == 0)
-            sb = sball;
-        else if (dotest && !isExistingHelpPage)
+        if(dotest && s.isEmpty())
             throw new MissingHelpContentException();
-        sb.insert(0, "<html>");
-        sb.append("<html>");
-        return sb.toString();
+        return s;
     }
 }
