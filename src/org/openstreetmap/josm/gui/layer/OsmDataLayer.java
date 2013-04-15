@@ -360,6 +360,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
      * this layer
      *
      * @param from  the source data set
+     * @param progressMonitor the progress monitor, can be {@code null}
      */
     public void mergeFrom(final DataSet from, ProgressMonitor progressMonitor) {
         final DataSetMerger visitor = new DataSetMerger(data,from);
@@ -406,7 +407,10 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         if (Main.map != null && Main.map.mapView != null) {
             Main.map.mapView.repaint();
         }
-        Main.map.conflictDialog.warnNumNewConflicts(numNewConflicts);
+        // warn about new conflicts
+        if (numNewConflicts > 0 && Main.map != null && Main.map.conflictDialog != null) {
+            Main.map.conflictDialog.warnNumNewConflicts(numNewConflicts);
+        }
     }
 
     @Override public boolean isMergable(final Layer other) {
