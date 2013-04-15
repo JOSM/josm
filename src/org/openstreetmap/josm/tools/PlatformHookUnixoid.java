@@ -96,7 +96,9 @@ public class PlatformHookUnixoid implements PlatformHook {
                 input.close();
                 if (line != null && !line.isEmpty()) {
                     line = line.replaceAll("\"+","");
-                    if(!line.isEmpty())
+                    if(line.startsWith("Linux ")) // e.g. Linux Mint
+                        return line;
+                    else if(!line.isEmpty())
                         return "Linux " + line;
                 }
             } catch (IOException e) {
