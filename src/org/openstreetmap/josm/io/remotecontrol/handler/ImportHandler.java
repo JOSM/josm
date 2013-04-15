@@ -30,9 +30,8 @@ public class ImportHandler extends RequestHandler {
     protected void handleRequest() throws RequestHandlerErrorException {
         try {
             if (suitableDownloadTasks != null && !suitableDownloadTasks.isEmpty()) {
-                // TODO: add new_layer parameter
                 // TODO: handle multiple suitable download tasks ?
-                suitableDownloadTasks.iterator().next().loadUrl(false, url.toExternalForm(), null);
+                suitableDownloadTasks.iterator().next().loadUrl(isLoadInNewLayer(), url.toExternalForm(), null);
             }
         } catch (Exception ex) {
             System.out.println("RemoteControl: Error parsing import remote control request:");
