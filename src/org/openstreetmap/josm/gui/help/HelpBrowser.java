@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class HelpBrowser extends JDialog {
@@ -140,11 +141,12 @@ public class HelpBrowser extends JDialog {
                 css.append(line);
                 css.append("\n");
             }
-            reader.close();
         } catch(Exception e) {
             System.err.println(tr("Failed to read CSS file ''help-browser.css''. Exception is: {0}", e.toString()));
             e.printStackTrace();
             return ss;
+        } finally {
+            Utils.close(reader);
         }
         ss.addRule(css.toString());
         return ss;

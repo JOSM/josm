@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Export a WMS layer to a serialized binary file that can be imported later via {@link WMSLayerImporter}. 
@@ -33,7 +34,7 @@ public class WMSLayerExporter extends FileExporter {
             try {
                 ((WMSLayer)layer).writeExternal(oos);
             } finally {
-                oos.close();
+                Utils.close(oos);
             }
         }
     }

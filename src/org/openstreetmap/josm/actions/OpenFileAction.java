@@ -37,6 +37,7 @@ import org.openstreetmap.josm.io.FileImporter;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -47,6 +48,9 @@ import org.xml.sax.SAXException;
  */
 public class OpenFileAction extends DiskAccessAction {
 
+    /**
+     * The {@link ExtensionFileFilter} matching .url files
+     */
     public static final ExtensionFileFilter urlFileFilter = new ExtensionFileFilter("url", "url", tr("URL Files") + " (*.url)");
 
     /**
@@ -56,7 +60,6 @@ public class OpenFileAction extends DiskAccessAction {
         super(tr("Open..."), "open", tr("Open a file."),
                 Shortcut.registerShortcut("system:open", tr("File: {0}", tr("Open...")), KeyEvent.VK_O, Shortcut.CTRL));
         putValue("help", ht("/Action/Open"));
-
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -295,7 +298,7 @@ public class OpenFileAction extends DiskAccessAction {
                                 Main.main.menu.openLocation.openUrl(false, url);
                             }
                         }
-                        reader.close();
+                        Utils.close(reader);
                     } catch (Exception e) {
                         System.err.println(e.getMessage());
                     }
@@ -332,6 +335,10 @@ public class OpenFileAction extends DiskAccessAction {
             }
         }
 
+        /**
+         * Replies the list of files that have been successfully opened.
+         * @return The list of files that have been successfully opened.
+         */
         public List<File> getSuccessfullyOpenedFiles() {
             return successfullyOpenedFiles;
         }

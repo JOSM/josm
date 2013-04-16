@@ -37,6 +37,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmExporter;
 import org.openstreetmap.josm.io.OsmImporter;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Saves data layers periodically so they can be recovered in case of a crash.
@@ -155,7 +156,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                         File pidFile = new File(autosaveDir, filename+".pid");
                         PrintStream ps = new PrintStream(pidFile);
                         ps.println(ManagementFactory.getRuntimeMXBean().getName());
-                        ps.close();
+                        Utils.close(ps);
                     } catch (Throwable t) {
                         System.err.println(t.getMessage());
                     }
@@ -298,7 +299,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                         } catch (Throwable t) {
                             System.err.println(t.getClass()+":"+t.getMessage());
                         } finally {
-                            reader.close();
+                            Utils.close(reader);
                         }
                     } catch (Throwable t) {
                         System.err.println(t.getClass()+":"+t.getMessage());

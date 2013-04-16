@@ -1589,10 +1589,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             try {
                 tp = TaggingPreset.readAll(new BufferedReader(r), validate);
             } finally {
-                r.close();
+                Utils.close(r);
             }
         } finally {
-            s.close();
+            Utils.close(s);
         }
         return tp;
     }

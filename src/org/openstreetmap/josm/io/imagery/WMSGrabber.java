@@ -177,7 +177,7 @@ public class WMSGrabber extends Grabber {
         try {
             Utils.copyStream(is, baos);
         } finally {
-            is.close();
+            Utils.close(is);
         }
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
@@ -200,7 +200,7 @@ public class WMSGrabber extends Grabber {
             }
             return exception.toString();
         } finally {
-            br.close();
+            Utils.close(br);
         }
     }
 }

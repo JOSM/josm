@@ -10,6 +10,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 public class BoundingBoxDownloader extends OsmServerReader {
@@ -51,7 +52,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
             } else{
                 done = true;
             }
-            in.close();
+            Utils.close(in);
             activeConnection = null;
         }
         result.fromServer = true;
@@ -144,9 +145,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
-            if (in != null) {
-                try {in.close();} catch(IOException e) {}
-            }
+            Utils.close(in);
             activeConnection = null;
         }
     }

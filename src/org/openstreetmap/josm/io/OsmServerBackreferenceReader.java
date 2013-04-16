@@ -17,10 +17,11 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * OsmServerBackreferenceReader fetches the primitives from the OSM server which
- * refer to a specific primitive. For a {@link Node}, ways and relations are retrieved
+ * refer to a specific primitive. For a {@link org.openstreetmap.josm.data.osm.Node Node}, ways and relations are retrieved
  * which refer to the node. For a {@link Way} or a {@link Relation}, only relations are
  * read.
  *
@@ -149,12 +150,8 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
-            if (in != null) {
-                try {
-                    in.close();
-                } catch(Exception e) {}
-                activeConnection = null;
-            }
+            Utils.close(in);
+            activeConnection = null;
         }
     }
 
@@ -187,12 +184,8 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
-            if (in != null) {
-                try {
-                    in.close();
-                } catch(Exception e) {}
-                activeConnection = null;
-            }
+            Utils.close(in);
+            activeConnection = null;
         }
     }
 

@@ -20,6 +20,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.Utils;
 
 public class OsmExporter extends FileExporter {
 
@@ -63,7 +64,7 @@ public class OsmExporter extends FileExporter {
             // a truncated file.  That can destroy lots of work.
             if (file.exists()) {
                 tmpFile = new File(file.getPath() + "~");
-                copy(file, tmpFile);
+                Utils.copyFile(file, tmpFile);
             }
 
             // create outputstream and wrap it with gzip or bzip, if necessary
@@ -74,8 +75,8 @@ public class OsmExporter extends FileExporter {
             layer.data.getReadLock().lock();
             try {
                 w.writeLayer(layer);
-                w.close();
             } finally {
+                Utils.close(w);
                 layer.data.getReadLock().unlock();
             }
             // FIXME - how to close?
@@ -98,7 +99,7 @@ public class OsmExporter extends FileExporter {
                 // if the file save failed, then the tempfile will not
                 // be deleted.  So, restore the backup if we made one.
                 if (tmpFile != null && tmpFile.exists()) {
-                    copy(tmpFile, file);
+                    Utils.copyFile(tmpFile, file);
                 }
             } catch (IOException e2) {
                 e2.printStackTrace();
@@ -111,25 +112,4 @@ public class OsmExporter extends FileExporter {
             }
         }
     }
-
-    private void copy(File src, File dst) throws IOException {
-        FileInputStream srcStream;
-        FileOutputStream dstStream;
-        try {
-            srcStream = new FileInputStream(src);
-            dstStream = new FileOutputStream(dst);
-        } catch (FileNotFoundException e) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Could not back up file. Exception is: {0}", e
-                    .getMessage()), tr("Error"), JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        byte buf[] = new byte[1 << 16];
-        int len;
-        while ((len = srcStream.read(buf)) != -1) {
-            dstStream.write(buf, 0, len);
-        }
-        srcStream.close();
-        dstStream.close();
-    }
-
 }

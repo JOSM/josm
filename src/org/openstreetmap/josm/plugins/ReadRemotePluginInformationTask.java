@@ -217,8 +217,6 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
             for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
                 out.write(buffer, 0, read);
             }
-            out.close();
-            in.close();
         } catch(MalformedURLException e) {
             if (canceled) return;
             e.printStackTrace();
@@ -228,6 +226,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
             e.printStackTrace();
             return;
         } finally {
+            Utils.close(out);
             synchronized(this) {
                 if (connection != null) {
                     connection.disconnect();
@@ -273,7 +272,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
         } finally {
             if (writer != null) {
                 writer.flush();
-                writer.close();
+                Utils.close(writer);
             }
         }
     }

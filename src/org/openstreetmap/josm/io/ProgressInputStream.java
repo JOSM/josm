@@ -48,8 +48,11 @@ public class ProgressInputStream extends InputStream {
     }
 
     @Override public void close() throws IOException {
-        in.close();
-        progressMonitor.finishTask();
+        try {
+            in.close();
+        } finally {
+            progressMonitor.finishTask();
+        }
     }
 
     @Override public int read(byte[] b, int off, int len) throws IOException {

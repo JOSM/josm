@@ -21,6 +21,7 @@ import javax.xml.stream.XMLStreamException;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.tools.Base64;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This class tweak the Preferences class to provide server side preference settings, as example
@@ -90,8 +91,8 @@ public class ServerSidePreferences extends Preferences {
                 con.connect();
                 PrintWriter out = new PrintWriter(new OutputStreamWriter(con.getOutputStream()));
                 out.println(s);
-                out.close();
-                con.getInputStream().close();
+                Utils.close(out);
+                Utils.close(con.getInputStream());
                 con.disconnect();
                 JOptionPane.showMessageDialog(
                         Main.parent,

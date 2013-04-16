@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -143,11 +144,7 @@ public class OsmServerObjectReader extends OsmServerReader {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
-            if (in!=null) {
-                try {
-                    in.close();
-                } catch(Exception e) {/* ignore this exception */}
-            }
+            Utils.close(in);
             activeConnection = null;
         }
     }

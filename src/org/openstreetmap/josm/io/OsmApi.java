@@ -624,7 +624,7 @@ public class OsmApi extends OsmConnection {
                         bwr.write(requestBody);
                         bwr.flush();
                     }
-                    out.close();
+                    Utils.close(out);
                 }
 
                 activeConnection.connect();

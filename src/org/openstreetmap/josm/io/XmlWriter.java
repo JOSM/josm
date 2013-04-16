@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.io;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
@@ -9,16 +11,21 @@ import java.util.HashMap;
  *
  * @author imi
  */
-public class XmlWriter {
+public class XmlWriter implements Closeable {
 
-    protected PrintWriter out;
+    protected final PrintWriter out;
 
     public XmlWriter(PrintWriter out) {
         this.out = out;
     }
 
+    /**
+     * Flushes the stream.
+     */
     public void flush() {
-        out.flush();
+        if (out != null) {
+            out.flush();
+        }
     }
 
     public static String encode(String unencoded) {
@@ -67,5 +74,12 @@ public class XmlWriter {
         encoding.put('\n', "&#xA;");
         encoding.put('\r', "&#xD;");
         encoding.put('\t', "&#x9;");
+    }
+    
+    @Override
+    public void close() throws IOException {
+        if (out != null) {
+            out.close();
+        }
     }
 }

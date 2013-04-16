@@ -3,7 +3,6 @@ package org.openstreetmap.josm.tools;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 
 import org.openstreetmap.josm.Main;
@@ -40,7 +39,7 @@ public class WikiReader {
                 return readFromTrac(in);
             return readNormal(in);
         } finally {
-            in.close();
+            Utils.close(in);
         }
     }
 
@@ -62,7 +61,7 @@ public class WikiReader {
         try {
             return readFromTrac(in);
         } finally {
-            in.close();
+            Utils.close(in);
         }
     }
 

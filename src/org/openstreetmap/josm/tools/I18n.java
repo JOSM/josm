@@ -421,26 +421,13 @@ public class I18n {
                 if(found)
                     load(jar, jarTrans, true);
             }
-        }
-        catch(IOException e)
-        {
-        }
-        finally
-        {
-            try
-            {
-                if(jar != null)
-                    jar.close();
-                if(fis != null)
-                    fis.close();
-                if(jarTrans != null)
-                    jarTrans.close();
-                if(fisTrans != null)
-                    fisTrans.close();
-            }
-            catch(IOException e)
-            {
-            }
+        } catch(IOException e) {
+            // Ignore
+        } finally {
+            Utils.close(jar);
+            Utils.close(fis);
+            Utils.close(jarTrans);
+            Utils.close(fisTrans);
         }
     }
 
@@ -481,8 +468,8 @@ public class I18n {
         } catch(IOException e) {
             // Ignore exception
         } finally {
-            if (trStream != null) try {trStream.close();} catch(IOException e) {}
-            if (enStream != null) try {enStream.close();} catch(IOException e) {}
+            Utils.close(trStream);
+            Utils.close(enStream);
         }
         return false;
     }

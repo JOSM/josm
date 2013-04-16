@@ -61,13 +61,7 @@ public class HelpContentReader extends WikiReader {
             }
             throw ex;
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch(IOException e) {
-                    // ignore
-                }
-            }
+            Utils.close(in);
         }
     }
 

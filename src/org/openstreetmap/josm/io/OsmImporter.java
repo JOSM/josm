@@ -18,6 +18,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Utils;
 
 public class OsmImporter extends FileImporter {
 
@@ -66,9 +67,7 @@ public class OsmImporter extends FileImporter {
             e.printStackTrace();
             throw new IOException(tr("File ''{0}'' does not exist.", file.getName()));
         } finally {
-            if (in != null) {
-                in.close();
-            }
+            Utils.close(in);
         }
     }
 

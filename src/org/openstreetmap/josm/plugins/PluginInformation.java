@@ -28,6 +28,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Encapsulate general information about a plugin. This information is available
@@ -99,16 +100,8 @@ public class PluginInformation {
         } catch (IOException e) {
             throw new PluginException(name, e);
         } finally {
-            if (jar != null) {
-                try {
-                    jar.close();
-                } catch(IOException e) { /* ignore */ }
-            }
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch(IOException e) { /* ignore */ }
-            }
+            Utils.close(jar);
+            Utils.close(fis);
         }
     }
 
