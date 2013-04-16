@@ -14,6 +14,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * For all purposes of loading dynamic resources, the Plugin's class loader should be used
@@ -109,14 +110,19 @@ public abstract class Plugin {
         if (!pluginDir.exists()) {
             pluginDir.mkdirs();
         }
-        FileOutputStream out = new FileOutputStream(new File(pluginDirName, to));
-        InputStream in = getClass().getResourceAsStream(from);
-        byte[] buffer = new byte[8192];
-        for(int len = in.read(buffer); len > 0; len = in.read(buffer)) {
-            out.write(buffer, 0, len);
+        FileOutputStream out = null;
+        InputStream in = null;
+        try {
+            out = new FileOutputStream(new File(pluginDirName, to));
+            in = getClass().getResourceAsStream(from);
+            byte[] buffer = new byte[8192];
+            for(int len = in.read(buffer); len > 0; len = in.read(buffer)) {
+                out.write(buffer, 0, len);
+            }
+        } finally {
+            Utils.close(in);
+            Utils.close(out);
         }
-        in.close();
-        out.close();
     }
 
     /**

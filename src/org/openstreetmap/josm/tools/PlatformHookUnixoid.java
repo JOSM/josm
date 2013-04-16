@@ -93,7 +93,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                 Process p = Runtime.getRuntime().exec("lsb_release -ds");
                 BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 String line = Utils.strip(input.readLine());
-                input.close();
+                Utils.close(input);
                 if (line != null && !line.isEmpty()) {
                     line = line.replaceAll("\"+","");
                     if(line.startsWith("Linux ")) // e.g. Linux Mint

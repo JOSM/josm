@@ -44,6 +44,8 @@ import java.util.Map;
 
 import javax.swing.UIManager;
 
+import org.openstreetmap.josm.tools.Utils;
+
 /**
  * The MultiSplitLayout layout manager recursively arranges its
  * components in row and column groups called "Splits".  Elements of
@@ -1258,7 +1260,7 @@ public class MultiSplitLayout implements LayoutManager {
             System.err.println(e);
         }
         finally {
-            try { r.close(); } catch (IOException ignore) {}
+            Utils.close(r);
         }
         return null;
     }

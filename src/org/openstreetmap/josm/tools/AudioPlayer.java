@@ -255,7 +255,7 @@ public class AudioPlayer extends Thread {
                         audioOutputLine.drain();
                         audioOutputLine.close();
                         audioOutputLine = null;
-                        audioInputStream.close();
+                        Utils.close(audioInputStream);
                         audioInputStream = null;
                         playingUrl = null;
                         state = State.NOTPLAYING;
@@ -276,7 +276,7 @@ public class AudioPlayer extends Thread {
                                     offset != 0.0)
                             {
                                 if (audioInputStream != null) {
-                                    audioInputStream.close();
+                                    Utils.close(audioInputStream);
                                     audioInputStream = null;
                                 }
                                 playingUrl = command.url();

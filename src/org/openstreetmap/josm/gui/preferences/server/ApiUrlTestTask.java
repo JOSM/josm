@@ -215,11 +215,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
             alertConnectionFailed();
             return;
         } finally {
-            if (bin != null) {
-                try {
-                    bin.close();
-                } catch(IOException e){/* ignore */}
-            }
+            Utils.close(bin);
         }
     }
 

@@ -1,8 +1,5 @@
 package org.openstreetmap.josm.data;
 
-import javax.script.ScriptException;
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences.Setting;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedInputStream;
@@ -11,11 +8,8 @@ import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,8 +23,10 @@ import java.util.TreeMap;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.DocumentBuilder;
@@ -41,11 +37,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences.Setting;
 import org.openstreetmap.josm.gui.io.DownloadFileTask;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -440,11 +439,7 @@ public class CustomConfigurator {
             } catch (Exception ex) {
                 log("Error reading custom preferences: "+ex.getMessage());
             } finally {
-                try {
-                    if (is != null) {
-                        is.close();
-                    }
-                } catch (IOException ex) {         }
+                Utils.close(is);
             }
             log("-- Reading complete --");
         }

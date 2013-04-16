@@ -246,7 +246,7 @@ public class SessionWriter {
             ZipEntry entry = new ZipEntry("session.jos");
             zipOut.putNextEntry(entry);
             writeJos(doc, zipOut);
-            zipOut.close();
+            Utils.close(zipOut);
         } else {
             writeJos(doc, new BufferedOutputStream(out));
         }

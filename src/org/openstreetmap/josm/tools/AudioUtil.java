@@ -32,7 +32,7 @@ public class AudioUtil {
             double bytesPerSecond = audioFormat.getFrameRate() /* frames per second */
                 * audioFormat.getFrameSize() /* bytes per frame */;
             double naturalLength = filesize / bytesPerSecond;
-            audioInputStream.close();
+            Utils.close(audioInputStream);
             double calibration = Main.pref.getDouble("audio.calibration", 1.0 /* default, ratio */);
             return naturalLength / calibration;
         } catch (Exception e) {

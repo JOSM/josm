@@ -17,7 +17,6 @@ import java.io.Reader;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -136,65 +135,100 @@ public class Preferences {
         Setting<T> getNullInstance();
     }
 
+    /**
+     * Base abstract class of all settings, holding the setting value.
+     *
+     * @param <T> The setting type
+     */
     abstract public static class AbstractSetting<T> implements Setting<T> {
-        private T value;
+        private final T value;
+        /**
+         * Constructs a new {@code AbstractSetting} with the given value
+         * @param value The setting value
+         */
         public AbstractSetting(T value) {
             this.value = value;
         }
-        @Override
-        public T getValue() {
+        @Override public T getValue() {
             return value;
         }
-        @Override
-        public String toString() {
+        @Override public String toString() {
             return value != null ? value.toString() : "null";
         }
     }
 
+    /**
+     * Setting containing a {@link String} value.
+     */
     public static class StringSetting extends AbstractSetting<String> {
+        /**
+         * Constructs a new {@code StringSetting} with the given value
+         * @param value The setting value
+         */
         public StringSetting(String value) {
             super(value);
         }
-        public void visit(SettingVisitor visitor) {
+        @Override public void visit(SettingVisitor visitor) {
             visitor.visit(this);
         }
-        public StringSetting getNullInstance() {
+        @Override public StringSetting getNullInstance() {
             return new StringSetting(null);
         }
     }
 
+    /**
+     * Setting containing a {@link List} of {@link String} values.
+     */
     public static class ListSetting extends AbstractSetting<List<String>> {
+        /**
+         * Constructs a new {@code ListSetting} with the given value
+         * @param value The setting value
+         */
         public ListSetting(List<String> value) {
             super(value);
         }
-        public void visit(SettingVisitor visitor) {
+        @Override public void visit(SettingVisitor visitor) {
             visitor.visit(this);
         }
-        public ListSetting getNullInstance() {
+        @Override public ListSetting getNullInstance() {
             return new ListSetting(null);
         }
     }
 
+    /**
+     * Setting containing a {@link List} of {@code List}s of {@link String} values.
+     */
     public static class ListListSetting extends AbstractSetting<List<List<String>>> {
+        /**
+         * Constructs a new {@code ListListSetting} with the given value
+         * @param value The setting value
+         */
         public ListListSetting(List<List<String>> value) {
             super(value);
         }
-        public void visit(SettingVisitor visitor) {
+        @Override public void visit(SettingVisitor visitor) {
             visitor.visit(this);
         }
-        public ListListSetting getNullInstance() {
+        @Override public ListListSetting getNullInstance() {
             return new ListListSetting(null);
         }
     }
 
+    /**
+     * Setting containing a {@link List} of {@link Map}s of {@link String} values.
+     */
     public static class MapListSetting extends AbstractSetting<List<Map<String, String>>> {
+        /**
+         * Constructs a new {@code MapListSetting} with the given value
+         * @param value The setting value
+         */
         public MapListSetting(List<Map<String, String>> value) {
             super(value);
         }
-        public void visit(SettingVisitor visitor) {
+        @Override public void visit(SettingVisitor visitor) {
             visitor.visit(this);
         }
-        public MapListSetting getNullInstance() {
+        @Override public MapListSetting getNullInstance() {
             return new MapListSetting(null);
         }
     }
@@ -264,7 +298,8 @@ public class Preferences {
     }
 
     /**
-     * Return the location of the user defined preferences file
+     * Returns the location of the user defined preferences directory
+     * @return The location of the user defined preferences directory
      */
     public String getPreferencesDir() {
         final String path = getPreferencesDirFile().getPath();
@@ -273,6 +308,10 @@ public class Preferences {
         return path + File.separator;
     }
 
+    /**
+     * Returns the user defined preferences directory
+     * @return The user defined preferences directory
+     */
     public File getPreferencesDirFile() {
         if (preferencesDirFile != null)
             return preferencesDirFile;
@@ -291,10 +330,18 @@ public class Preferences {
         return preferencesDirFile;
     }
 
+    /**
+     * Returns the user preferences file
+     * @return The user preferences file
+     */
     public File getPreferenceFile() {
         return new File(getPreferencesDirFile(), "preferences.xml");
     }
 
+    /**
+     * Returns the user plugin directory
+     * @return The user plugin directory
+     */
     public File getPluginsDirectory() {
         return new File(getPreferencesDirFile(), "plugins");
     }
@@ -550,17 +597,17 @@ public class Preferences {
         File backupFile = new File(prefFile + "_backup");
 
         // Backup old preferences if there are old preferences
-        if(prefFile.exists()) {
-            copyFile(prefFile, backupFile);
+        if (prefFile.exists()) {
+            Utils.copyFile(prefFile, backupFile);
         }
 
         final PrintWriter out = new PrintWriter(new OutputStreamWriter(
                 new FileOutputStream(prefFile + "_tmp"), "utf-8"), false);
         out.print(toXML(false));
-        out.close();
+        Utils.close(out);
 
         File tmpFile = new File(prefFile + "_tmp");
-        copyFile(tmpFile, prefFile);
+        Utils.copyFile(tmpFile, prefFile);
         tmpFile.delete();
 
         setCorrectPermissions(prefFile);
@@ -576,33 +623,6 @@ public class Preferences {
         file.setWritable(true, true);
     }
 
-    /**
-     * Simple file copy function that will overwrite the target file
-     * Taken from http://www.rgagnon.com/javadetails/java-0064.html (CC-NC-BY-SA)
-     * @param in
-     * @param out
-     * @throws IOException
-     */
-    public static void copyFile(File in, File out) throws IOException  {
-        FileChannel inChannel = new FileInputStream(in).getChannel();
-        FileChannel outChannel = new FileOutputStream(out).getChannel();
-        try {
-            inChannel.transferTo(0, inChannel.size(),
-                    outChannel);
-        }
-        catch (IOException e) {
-            throw e;
-        }
-        finally {
-            if (inChannel != null) {
-                inChannel.close();
-            }
-            if (outChannel != null) {
-                outChannel.close();
-            }
-        }
-    }
-
     public void load() throws Exception {
         properties.clear();
         if (!Main.applet) {
@@ -614,7 +634,7 @@ public class Preferences {
                 in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), "utf-8"));
                 fromXML(in);
             } finally {
-                in.close();
+                Utils.close(in);
             }
         }
         updateSystemProperties();

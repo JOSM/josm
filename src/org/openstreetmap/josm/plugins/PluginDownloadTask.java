@@ -128,8 +128,6 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
             for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
                 out.write(buffer, 0, read);
             }
-            out.close();
-            in.close();
         } catch(MalformedURLException e) {
             String msg = tr("Warning: Cannot download plugin ''{0}''. Its download link ''{1}'' is not a valid URL. Skipping download.", pi.name, pi.downloadlink);
             System.err.println(msg);

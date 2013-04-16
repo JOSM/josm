@@ -43,7 +43,7 @@ public class Version {
                     sb.append(line).append("\n");
                 }
             } finally {
-                in.close();
+                Utils.close(in);
             }
             s = sb.toString();
         } catch (IOException e) {

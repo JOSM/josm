@@ -37,14 +37,8 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
         super(new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, "UTF-8"))));
     }
 
-    public GpxWriter() {
-        super(null);
-        //sorry for this one here, this will be cleaned up once the new scheme works
-    }
-
     private GpxData data;
     private String indent = "";
-    public String creator = "JOSM GPX export";
 
     private final static int WAY_POINT = 0;
     private final static int ROUTE_POINT = 1;

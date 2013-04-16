@@ -43,10 +43,18 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
     }
 
     //http://stuffthathappens.com/blog/2007/10/15/one-more-note-on-uncaught-exception-handlers/
+    /**
+     * Handles the given throwable object
+     * @param t The throwable object
+     */
     public void handle(Throwable t) {
         handleException(t);
     }
 
+    /**
+     * Handles the given exception
+     * @param e the exception
+     */
     public static void handleException(final Throwable e) {
         if (handlingInProgress)
             return;                  // we do not handle secondary exceptions, this gets too messy
@@ -164,6 +172,11 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             handlingInProgress = false;
         }
     }
+    
+    /**
+     * Determines if an exception is currently being handled
+     * @return {@code true} if an exception is currently being handled, {@code false} otherwise
+     */
     public static boolean exceptionHandlingInProgress() {
         return handlingInProgress;
     }
@@ -179,7 +192,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             GZIPOutputStream gzip = new GZIPOutputStream(out);
             gzip.write(debugText.getBytes("UTF-8"));
-            gzip.close();
+            Utils.close(gzip);
     
             return new URL("http://josm.openstreetmap.de/josmticket?" +
                     "gdata="+Base64.encode(ByteBuffer.wrap(out.toByteArray()), true));

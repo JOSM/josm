@@ -70,6 +70,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     public void header() {
         header(null);
     }
+    
     public void header(Boolean upload) {
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
         out.print("<osm version='");
@@ -80,6 +81,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         }
         out.println("' generator='JOSM'>");
     }
+    
     public void footer() {
         out.println("</osm>");
     }
@@ -311,14 +313,5 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         } else if (osm.getChangesetId() > 0 && !osm.isNew()) {
             out.print(" changeset='"+osm.getChangesetId()+"'" );
         }
-    }
-
-    public void close() {
-        out.close();
-    }
-
-    @Override
-    public void flush() {
-        out.flush();
     }
 }

@@ -56,6 +56,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  *
@@ -166,14 +167,16 @@ public class OsmValidator implements LayerChangeListener {
     }
 
     public static void saveIgnoredErrors() {
+        PrintWriter out = null;
         try {
-            final PrintWriter out = new PrintWriter(new FileWriter(getValidatorDir() + "ignorederrors"), false);
+            out = new PrintWriter(new FileWriter(getValidatorDir() + "ignorederrors"), false);
             for (String e : ignoredErrors) {
                 out.println(e);
             }
-            out.close();
-        } catch (final IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            Utils.close(out);
         }
     }
 

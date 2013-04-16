@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.tools.DateUtils;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Read a nmea file. Based on information from
@@ -175,9 +176,9 @@ public class NmeaReader {
         data = new GpxData();
         Collection<Collection<WayPoint>> currentTrack = new ArrayList<Collection<WayPoint>>();
 
+        BufferedReader rd = null;
         try {
-            BufferedReader rd =
-                new BufferedReader(new InputStreamReader(source));
+            rd = new BufferedReader(new InputStreamReader(source));
 
             StringBuffer sb = new StringBuffer(1024);
             int loopstart_char = rd.read();
@@ -205,12 +206,13 @@ public class NmeaReader {
                     sb.append((char)c);
                 }
             }
-            rd.close();
             currentTrack.add(ps.waypoints);
             data.tracks.add(new ImmutableGpxTrack(currentTrack, Collections.<String, Object>emptyMap()));
 
-        } catch (final IOException e) {
+        } catch (IOException e) {
             // TODO tell user about the problem?
+        } finally {
+            Utils.close(rd);
         }
     }
     private static class NMEAParserState {

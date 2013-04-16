@@ -25,6 +25,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.openstreetmap.josm.tools.Utils;
+
 /**
  * Models the NTv2 format Grid Shift File and exposes methods to shift
  * coordinate values using the Sub Grids contained in the file.
@@ -150,7 +152,7 @@ public class NTV2GridShiftFile implements Serializable {
         topLevelSubGrid = createSubGridTree(subGrid);
         lastSubGrid = topLevelSubGrid[0];
 
-        in.close();
+        Utils.close(in);
     }
 
     /**

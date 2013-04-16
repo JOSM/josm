@@ -22,7 +22,6 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
-
 /**
  * Asynchronous task for downloading and unpacking arbitrary file lists
  * Shows progress bar when downloading
@@ -37,8 +36,11 @@ public class DownloadFileTask extends PleaseWaitRunnable{
      * Creates the download task
      *
      * @param parent the parent component relative to which the {@link PleaseWaitDialog} is displayed
-     * @param title the title to display in the {@link PleaseWaitDialog}
-     * @throws IllegalArgumentException thrown if toUpdate is null
+     * @param address the URL to download
+     * @param file The destination file
+     * @param mkdir {@code true} if the destination directory must be created, {@code false} otherwise
+     * @param unpack {@code true} if zip archives must be unpacked recursively, {@code false} otherwise
+     * @throws IllegalArgumentException if {@code parent} is null
      */
     public DownloadFileTask(Component parent, String address, File file, boolean mkdir, boolean unpack) {
         super(parent, tr("Downloading file"), false);
@@ -46,7 +48,6 @@ public class DownloadFileTask extends PleaseWaitRunnable{
         this.file = file;
         this.mkdir = mkdir;
         this.unpack = unpack;
-                
     }    
     
     private static class DownloadException extends Exception {
@@ -75,6 +76,10 @@ public class DownloadFileTask extends PleaseWaitRunnable{
     @Override 
     protected void finish() {}
 
+    /**
+     * Performs download.
+     * @throws DownloadException if the URL is invalid or if any I/O error occurs.
+     */
     public void download() throws DownloadException {
         OutputStream out = null;
         InputStream in = null;
@@ -106,19 +111,21 @@ public class DownloadFileTask extends PleaseWaitRunnable{
             for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
                 out.write(buffer, 0, read);
                 count+=read;
-                if (canceled) return;                            
+                if (canceled) break;                            
                 p2 = 100 * count / size;
                 if (p2!=p1) {
                     progressMonitor.setTicks(p2);
                     p1=p2;
                 }
             }
-            out.close();
-            System.out.println(tr("Download finished"));
-            if (unpack) {
-                System.out.println(tr("Unpacking {0} into {1}", file.getAbsolutePath(), file.getParent()));
-                unzipFileRecursively(file, file.getParent());
-                file.delete();
+            Utils.close(out);
+            if (!canceled) {
+                System.out.println(tr("Download finished"));
+                if (unpack) {
+                    System.out.println(tr("Unpacking {0} into {1}", file.getAbsolutePath(), file.getParent()));
+                    unzipFileRecursively(file, file.getParent());
+                    file.delete();
+                }
             }
         } catch(MalformedURLException e) {
             String msg = tr("Warning: Cannot download file ''{0}''. Its download link ''{1}'' is not a valid URL. Skipping download.", file.getName(), address);
@@ -147,7 +154,7 @@ public class DownloadFileTask extends PleaseWaitRunnable{
     /**
      * Replies true if the task was canceled by the user
      *
-     * @return
+     * @return {@code true} if the task was canceled by the user, {@code false} otherwise
      */
     public boolean isCanceled() {
         return canceled;
@@ -181,13 +188,12 @@ public class DownloadFileTask extends PleaseWaitRunnable{
                     while ((read = is.read(buffer)) != -1) {
                         os.write(buffer, 0, read);
                     }
-                    os.close();
-                    is.close();
+                    Utils.close(os);
+                    Utils.close(is);
                 }
             }
-            zf.close();
         } finally {
-            if (zf!=null) zf.close();
+            Utils.close(zf);
         }
     }
 }
