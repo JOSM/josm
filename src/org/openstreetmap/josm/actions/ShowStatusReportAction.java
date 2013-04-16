@@ -56,6 +56,10 @@ public final class ShowStatusReportAction extends JosmAction {
         Main.toolbar.register(this);
     }
 
+    /**
+     * Replies the report header (software and system info)
+     * @return The report header (software and system info)
+     */
     public static String getReportHeader()
     {
         StringBuilder text = new StringBuilder();
@@ -72,8 +76,6 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append(" MB allocated, but free)");
         text.append("\n");
         text.append("Java version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor") + ", " + System.getProperty("java.vm.name"));
-        text.append("\n");
-        text.append("Operating system: "+ Main.platform.getOSDescription());
         text.append("\n");
         try {
             // Build a new list of VM parameters to modify it below if needed (default implementation returns an UnmodifiableList instance)
