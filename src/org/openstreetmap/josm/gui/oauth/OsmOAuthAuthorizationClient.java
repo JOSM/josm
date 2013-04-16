@@ -404,7 +404,7 @@ public class OsmOAuthAuthorizationClient {
             dout = new DataOutputStream(connection.getOutputStream());
             dout.writeBytes(request);
             dout.flush();
-            dout.close();
+            Utils.close(dout);
 
             // after a successful login the OSM website sends a redirect to a follow up page. Everything
             // else, including a 200 OK, is a failed login. A 200 OK is replied if the login form with
@@ -418,11 +418,7 @@ public class OsmOAuthAuthorizationClient {
         } catch(IOException e) {
             throw new OsmLoginFailedException(e);
         } finally {
-            if (dout != null) {
-                try {
-                    dout.close();
-                } catch(IOException e) { /* ignore */ }
-            }
+            Utils.close(dout);
             synchronized(this) {
                 connection = null;
             }
@@ -495,7 +491,6 @@ public class OsmOAuthAuthorizationClient {
             dout = new DataOutputStream(connection.getOutputStream());
             dout.writeBytes(request);
             dout.flush();
-            dout.close();
 
             int retCode = connection.getResponseCode();
             if (retCode != HttpURLConnection.HTTP_OK)
@@ -505,11 +500,7 @@ public class OsmOAuthAuthorizationClient {
         } catch(IOException e) {
             throw new OsmOAuthAuthorizationException(e);
         } finally {
-            if (dout != null) {
-                try {
-                    dout.close();
-                } catch(IOException e) { /* ignore */ }
-            }
+            Utils.close(dout);
             synchronized(this) {
                 connection = null;
             }

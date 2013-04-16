@@ -323,7 +323,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 URL u = getAttributionUrl();
                 UTFInputStreamReader in = UTFInputStreamReader.create(Utils.openURL(u), "utf-8");
                 String r = new Scanner(in).useDelimiter("\\A").next();
-                in.close();
+                Utils.close(in);
                 System.out.println("Successfully loaded Bing attribution data.");
                 return r.getBytes("utf-8");
             }

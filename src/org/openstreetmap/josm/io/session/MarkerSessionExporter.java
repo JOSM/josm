@@ -100,7 +100,6 @@ public class MarkerSessionExporter implements SessionLayerExporter {
 
         public MarkerWriter(PrintWriter out) {
             super(out);
-            creator = "JOSM Marker export";
         }
 
         public void write(MarkerLayer layer) {

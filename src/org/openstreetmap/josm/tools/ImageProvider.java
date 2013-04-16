@@ -555,20 +555,13 @@ public class ImageProvider {
                         throw new AssertionError();
                     }
                 } finally {
-                    if (is != null) {
-                        is.close();
-                    }
+                    Utils.close(is);
                 }
             }
         } catch (Exception e) {
             System.err.println(tr("Warning: failed to handle zip file ''{0}''. Exception was: {1}", archive.getName(), e.toString()));
         } finally {
-            if (zipFile != null) {
-                try {
-                    zipFile.close();
-                } catch (IOException ex) {
-                }
-            }
+            Utils.close(zipFile);
         }
         return null;
     }

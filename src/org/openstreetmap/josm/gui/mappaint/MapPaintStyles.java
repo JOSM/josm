@@ -30,6 +30,7 @@ import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference.MapPaintPre
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This class manages the ElemStyles instance. The object you get with
@@ -246,12 +247,7 @@ public class MapPaintStyles {
             System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", entry.url, e.toString()));
             e.printStackTrace();
         } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException ex) {
-            }
+            Utils.close(in);
         }
         return null;
     }

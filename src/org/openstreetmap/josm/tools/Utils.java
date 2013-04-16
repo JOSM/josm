@@ -10,16 +10,19 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.ZipFile;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
@@ -236,6 +240,32 @@ public class Utils {
         return new Color(255 - clr.getRed(), 255 - clr.getGreen(), 255 - clr.getBlue(), clr.getAlpha());
     }
 
+    /**
+     * Simple file copy function that will overwrite the target file.<br/>
+     * Taken from <a href="http://www.rgagnon.com/javadetails/java-0064.html">this article</a> (CC-NC-BY-SA)
+     * @param in The source file
+     * @param out The destination file
+     * @throws IOException If any I/O error occurs
+     */
+    public static void copyFile(File in, File out) throws IOException  {
+        // TODO: remove this function when we move to Java 7 (use Files.copy instead) 
+        FileInputStream inStream = null;
+        FileOutputStream outStream = null;
+        try {
+            inStream = new FileInputStream(in);
+            outStream = new FileOutputStream(out);
+            FileChannel inChannel = inStream.getChannel();
+            inChannel.transferTo(0, inChannel.size(), outStream.getChannel());
+        }
+        catch (IOException e) {
+            throw e;
+        }
+        finally {
+            close(outStream);
+            close(inStream);
+        }
+    }
+    
     public static int copyStream(InputStream source, OutputStream destination) throws IOException {
         int count = 0;
         byte[] b = new byte[512];
@@ -263,43 +293,29 @@ public class Utils {
     }
 
     /**
-     * <p>Utility method for closing an input stream.</p>
+     * <p>Utility method for closing a {@link Closeable} object.</p>
      *
-     * @param is the input stream. May be null.
+     * @param c the closeable object. May be null.
      */
-    public static void close(InputStream is){
-        if (is == null) return;
+    public static void close(Closeable c) {
+        if (c == null) return;
         try {
-            is.close();
-        } catch(IOException e){
+            c.close();
+        } catch(IOException e) {
             // ignore
         }
     }
-
+    
     /**
-     * <p>Utility method for closing an output stream.</p>
+     * <p>Utility method for closing a {@link ZipFile}.</p>
      *
-     * @param os the output stream. May be null.
+     * @param zip the zip file. May be null.
      */
-    public static void close(OutputStream os){
-        if (os == null) return;
+    public static void close(ZipFile zip) {
+        if (zip == null) return;
         try {
-            os.close();
-        } catch(IOException e){
-            // ignore
-        }
-    }
-
-    /**
-     * <p>Utility method for closing a reader.</p>
-     *
-     * @param reader the reader. May be null.
-     */
-    public static void close(Reader reader){
-        if (reader == null) return;
-        try {
-            reader.close();
-        } catch(IOException e){
+            zip.close();
+        } catch(IOException e) {
             // ignore
         }
     }

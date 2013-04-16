@@ -1173,15 +1173,8 @@ public abstract class SourceEditor extends JPanel {
         @Override
         protected void cancel() {
             canceled = true;
-            if (reader!= null) {
-                try {
-                    reader.close();
-                } catch(IOException e) {
-                    // ignore
-                }
-            }
+            Utils.close(reader);
         }
-
 
         protected void warn(Exception e) {
             String emsg = e.getMessage() != null ? e.getMessage() : e.toString();

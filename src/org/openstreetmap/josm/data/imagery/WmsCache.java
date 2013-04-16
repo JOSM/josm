@@ -155,16 +155,8 @@ public class WmsCache {
                 }
             }
         } finally {
-            try {
-                if (fis != null) {
-                    fis.close();
-                }
-                if (fos != null) {
-                    fos.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Utils.close(fos);
+            Utils.close(fis);
         }
 
         return cacheDirName;
@@ -531,7 +523,7 @@ public class WmsCache {
             try {
                 totalFileSize += Utils.copyStream(imageData, os);
             } finally {
-                os.close();
+                Utils.close(os);
             }
         }
     }

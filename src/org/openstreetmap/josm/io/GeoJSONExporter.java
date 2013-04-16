@@ -13,6 +13,7 @@ import java.io.Writer;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.Utils;
 
 public class GeoJSONExporter extends FileExporter {
 
@@ -31,7 +32,7 @@ public class GeoJSONExporter extends FileExporter {
             try {
                 out.write(json);
             } finally {
-                out.close();
+                Utils.close(out);
             }
         } else {
             throw new IllegalArgumentException(tr("Layer ''{0}'' not supported", layer.getClass().toString()));

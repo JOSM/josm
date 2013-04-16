@@ -123,7 +123,7 @@ public class MirroredInputStream extends InputStream {
             if (resentry != null) {
                 res = zipFile.getInputStream(resentry);
             } else {
-                zipFile.close();
+                Utils.close(zipFile);
             }
         } catch (Exception e) {
             if(file.getName().endsWith(".zip")) {
@@ -223,10 +223,10 @@ public class MirroredInputStream extends InputStream {
             while ((length = bis.read(buffer)) > -1) {
                 bos.write(buffer, 0, length);
             }
-            bos.close();
+            Utils.close(bos);
             bos = null;
             /* close fos as well to be sure! */
-            fos.close();
+            Utils.close(fos);
             fos = null;
             localFile = new File(destDir, localPath);
             if(Main.platform.rename(destDirFile, localFile)) {
@@ -303,7 +303,7 @@ public class MirroredInputStream extends InputStream {
     { return fs.available(); }
     @Override
     public void close() throws IOException
-    { fs.close(); }
+    { Utils.close(fs); }
     @Override
     public int read() throws IOException
     { return fs.read(); }

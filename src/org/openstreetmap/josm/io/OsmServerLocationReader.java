@@ -12,6 +12,7 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 public class OsmServerLocationReader extends OsmServerReader {
@@ -39,13 +40,9 @@ public class OsmServerLocationReader extends OsmServerReader {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
-            try {
-                activeConnection = null;
-                if (parser.in != null) {
-                    parser.in.close();
-                    parser.in = null;
-                }
-            } catch(Exception e) {/* ignore it */}
+            activeConnection = null;
+            Utils.close(parser.in);
+            parser.in = null;
         }
     }
 

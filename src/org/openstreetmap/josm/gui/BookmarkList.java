@@ -31,6 +31,7 @@ import javax.swing.UIManager;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * List class that read and save its content from the bookmark file.
@@ -150,7 +151,7 @@ public class BookmarkList extends JList {
                         b.setArea(new Bounds(values));
                         bookmarks.add(b);
                     }
-                    in.close();
+                    Utils.close(in);
                     Collections.sort(bookmarks);
                     for (Bookmark b : bookmarks) {
                         model.addElement(b);
