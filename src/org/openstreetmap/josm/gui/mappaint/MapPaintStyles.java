@@ -212,12 +212,12 @@ public class MapPaintStyles {
         MirroredInputStream in = null;
         try {
             in = new MirroredInputStream(entry.url);
-            InputStream zip = in.getZipEntry("xml", "style");
-            if (zip != null)
-                return new XmlStyleSource(entry);
-            zip = in.getZipEntry("mapcss", "style");
+            InputStream zip = in.getZipEntry("mapcss", "style");
             if (zip != null)
                 return new MapCSSStyleSource(entry);
+            zip = in.getZipEntry("xml", "style");
+            if (zip != null)
+                return new XmlStyleSource(entry);
             if (entry.url.toLowerCase().endsWith(".mapcss"))
                 return new MapCSSStyleSource(entry);
             if (entry.url.toLowerCase().endsWith(".xml"))
