@@ -1,21 +1,23 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.io.Writer;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddWayHandler;
@@ -135,19 +137,11 @@ public class RequestProcessor extends Thread {
             OutputStream raw = new BufferedOutputStream(
                     request.getOutputStream());
             out = new OutputStreamWriter(raw);
-            Reader in = new InputStreamReader(new BufferedInputStream(
-                    request.getInputStream()), "ASCII");
+            BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream(), "ASCII"));
+            
+            String get = in.readLine();
+            System.out.println("RemoteControl received: " + get);
 
-            StringBuffer requestLine = new StringBuffer();
-            while (requestLine.length() < 1024 * 1024) {
-                int c = in.read();
-                if (c == -1 || c == '\r' || c == '\n')
-                    break;
-                requestLine.append((char) c);
-            }
-
-            System.out.println("RemoteControl received: " + requestLine);
-            String get = requestLine.toString();
             StringTokenizer st = new StringTokenizer(get);
             if (!st.hasMoreTokens()) {
                 sendError(out);
@@ -164,18 +158,44 @@ public class RequestProcessor extends Thread {
                 sendNotImplemented(out);
                 return;
             }
-
-            String command = null;
+            
             int questionPos = url.indexOf('?');
-            if(questionPos < 0)
-            {
-                command = url;
+            
+            String command = questionPos < 0 ? url : url.substring(0, questionPos);
+            
+            Map <String,String> headers = new HashMap<String, String>();
+            int k=0, MAX_HEADERS=20;
+            while (k<MAX_HEADERS) {
+                get=in.readLine();
+                if (get==null) break;
+                k++;
+                String h[] = get.split(": ", 2);
+                if (h.length==2) {
+                    headers.put(h[0], h[1]);
+                } else break;
             }
-            else
-            {
-                command = url.substring(0, questionPos);
+            
+            // Who sent the request: trying our best to detect
+            // not from localhost => sender = IP
+            // from localhost: sender = referer header, if exists
+            String sender = null;
+            
+            if (!request.getInetAddress().isLoopbackAddress()) {
+                sender = request.getInetAddress().getHostAddress();
+            } else {
+                String ref = headers.get("Referer");
+                Pattern r = Pattern.compile("(https?://)?([^/]*)");
+                if (ref!=null) {
+                    Matcher m = r.matcher(ref);
+                    if (m.find()) {
+                        sender = m.group(2);
+                    }
+                }
+                if (sender == null) {
+                    sender = "localhost";
+                } 
             }
-
+            
             // find a handler for this command
             Class<? extends RequestHandler> handlerClass = handlers.get(command);
             if (handlerClass == null) {
@@ -201,6 +221,7 @@ public class RequestProcessor extends Thread {
                 try {
                     handler.setCommand(command);
                     handler.setUrl(url);
+                    handler.setSender(sender);
                     handler.handle();
                     sendHeader(out, "200 OK", handler.getContentType(), false);
                     out.write("Content-length: " + handler.getContent().length()

@@ -5,10 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 
@@ -190,46 +187,7 @@ public class LoadAndZoomHandler extends RequestHandler
             zoom(bbox);
         }
 
-        addTags(args);
-    }
-
-    /*
-     * parse addtags parameters Example URL (part):
-     * addtags=wikipedia:de%3DResidenzschloss Dresden|name:en%3DDresden Castle
-     */
-    static void addTags(final Map<String, String> args) {
-        if (args.containsKey("addtags")) {
-            GuiHelper.executeByMainWorkerInEDT(new Runnable() {
-
-                public void run() {
-                    String[] tags = null;
-                    try {
-                        tags = URLDecoder.decode(args.get("addtags"), "UTF-8").split("\\|");
-                    } catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException();
-                    }
-                    Set<String> tagSet = new HashSet<String>();
-                    for (String tag : tags) {
-                        if (!tag.trim().isEmpty() && tag.contains("=")) {
-                            tagSet.add(tag.trim());
-                        }
-                    }
-                    if (!tagSet.isEmpty()) {
-                        String[][] keyValue = new String[tagSet.size()][2];
-                        int i = 0;
-                        for (String tag : tagSet) {
-                            // support a  =   b===c as "a"="b===c"
-                            String [] pair = tag.split("\\s*=\\s*",2); 
-                            keyValue[i][0] = pair[0];
-                            keyValue[i][1] = pair.length<2 ? "": pair[1];
-                            i++;
-                        }
-    
-                        new AddTagsDialog(keyValue).showDialog();
-                    }
-                }
-            });
-        }
+        AddTagsDialog.addTags(args, sender);
     }
 
     protected void zoom(final Bounds bounds) {
