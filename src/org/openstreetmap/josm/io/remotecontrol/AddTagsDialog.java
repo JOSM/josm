@@ -10,15 +10,19 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.AbstractAction;
+import javax.swing.JCheckBox;
 
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -30,6 +34,7 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -45,10 +50,16 @@ import org.openstreetmap.josm.tools.GBC;
 public class AddTagsDialog extends ExtendedDialog implements SelectionChangedListener {
 
 
+    /** initially given tags  **/
+    String[][] tags; 
+    
     private final JTable propertyTable;
     private Collection<? extends OsmPrimitive> sel;
     int[] count;
 
+    String sender;
+    static Set<String> trustedSenders = new HashSet<String>();
+    
     /**
      * Class for displaying "delete from ... objects" in the table
      */
@@ -109,12 +120,14 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         }
     }
             
-    public AddTagsDialog(String[][] tags) {
+    public AddTagsDialog(String[][] tags, String senderName) {
         super(Main.parent, tr("Add tags to selected objects"), new String[] { tr("Add selected tags"), tr("Add all tags"),  tr("Cancel")},
                 false,
                 true);
         setToolTipTexts(new String[]{tr("Add checked tags to selected objects"), tr("Shift+Enter: Add all tags to selected objects"), ""});
-     
+
+        this.sender = senderName;
+        
         DataSet.addSelectionListener(this);
 
 
@@ -210,6 +223,18 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         tablePanel.setLayout(new GridBagLayout());
         tablePanel.add(propertyTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
         tablePanel.add(propertyTable, GBC.eol().fill(GBC.BOTH));
+        if (!trustedSenders.contains(sender)) {
+            final JCheckBox c = new JCheckBox();
+            c.setAction(new AbstractAction(tr("Accept all tags from {0} for this session", sender) ) {
+                @Override public void actionPerformed(ActionEvent e) {
+                    if (c.isSelected())
+                        trustedSenders.add(sender);
+                    else 
+                        trustedSenders.remove(sender);
+                }
+            } );
+            tablePanel.add(c , GBC.eol().insets(20,10,0,0));
+        }
         setContent(tablePanel);
         setDefaultButton(2);
     }
@@ -250,6 +275,9 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
                             key, value instanceof String ? (String) value : ""));
                 }
             }
+        } 
+        if (buttonIndex == 2) {
+            trustedSenders.remove(sender);
         }
         setVisible(false);
     }
@@ -259,5 +287,57 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         sel = newSelection;
         findExistingTags();
     }
+    
+     /*
+     * parse addtags parameters Example URL (part):
+     * addtags=wikipedia:de%3DResidenzschloss Dresden|name:en%3DDresden Castle
+     */
+    public static void addTags(final Map<String, String> args, final String sender) {
+        if (args.containsKey("addtags")) {
+            GuiHelper.executeByMainWorkerInEDT(new Runnable() {
 
+                public void run() {
+                    String[] tags = null;
+                    try {
+                        tags = URLDecoder.decode(args.get("addtags"), "UTF-8").split("\\|");
+                    } catch (UnsupportedEncodingException e) {
+                        throw new RuntimeException();
+                    }
+                    Set<String> tagSet = new HashSet<String>();
+                    for (String tag : tags) {
+                        if (!tag.trim().isEmpty() && tag.contains("=")) {
+                            tagSet.add(tag.trim());
+                        }
+                    }
+                    if (!tagSet.isEmpty()) {
+                        String[][] keyValue = new String[tagSet.size()][2];
+                        int i = 0;
+                        for (String tag : tagSet) {
+                            // support a  =   b===c as "a"="b===c"
+                            String [] pair = tag.split("\\s*=\\s*",2); 
+                            keyValue[i][0] = pair[0];
+                            keyValue[i][1] = pair.length<2 ? "": pair[1];
+                            i++;
+                        }
+                        addTagsIfNeeded(keyValue, sender);
+                    }
+                }
+
+                
+            });
+        }
+    }
+    
+    private static void addTagsIfNeeded(String[][] keyValue, String sender) {
+        if (trustedSenders.contains(sender)) {
+            if (Main.main.getCurrentDataSet() != null) {
+                Collection<OsmPrimitive> s = Main.main.getCurrentDataSet().getSelected();
+                for (int j = 0; j < keyValue.length; j++) {
+                    Main.main.undoRedo.add(new ChangePropertyCommand(s, keyValue[j][0], keyValue[j][1]));
+                }
+            }
+        } else {
+            new AddTagsDialog(keyValue, sender).showDialog();
+        }
+    }
 }
