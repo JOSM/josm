@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 
@@ -89,7 +90,7 @@ public class AddNodeHandler extends RequestHandler {
             Main.map.mapView.repaint();
         }
         // parse parameter addtags=tag1=value1|tag2=vlaue2
-        LoadAndZoomHandler.addTags(args);
+        AddTagsDialog.addTags(args, sender);        
     }
 
     @Override

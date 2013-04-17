@@ -9,6 +9,7 @@ import org.openstreetmap.josm.actions.DownloadPrimitiveAction;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 
 /**
@@ -47,7 +48,7 @@ public class LoadObjectHandler extends RequestHandler {
                 @Override
                 public void run() {
                     Main.main.getCurrentDataSet().setSelected(ps);
-                    LoadAndZoomHandler.addTags(args);
+                    AddTagsDialog.addTags(args, sender);        
                     ps.clear();
                 }
             });
