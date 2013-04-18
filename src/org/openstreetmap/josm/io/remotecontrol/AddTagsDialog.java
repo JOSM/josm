@@ -137,7 +137,6 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
             public Class getColumnClass(int c) {
                 return types[c];
             }
-
         };
 
         sel = Main.main.getCurrentDataSet().getSelected();
@@ -223,7 +222,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         tablePanel.setLayout(new GridBagLayout());
         tablePanel.add(propertyTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
         tablePanel.add(propertyTable, GBC.eol().fill(GBC.BOTH));
-        if (!trustedSenders.contains(sender)) {
+        if (!sender.isEmpty() && !trustedSenders.contains(sender)) {
             final JCheckBox c = new JCheckBox();
             c.setAction(new AbstractAction(tr("Accept all tags from {0} for this session", sender) ) {
                 @Override public void actionPerformed(ActionEvent e) {
@@ -319,7 +318,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
                             keyValue[i][1] = pair.length<2 ? "": pair[1];
                             i++;
                         }
-                        addTagsIfNeeded(keyValue, sender);
+                        addTags(keyValue, sender);
                     }
                 }
 
@@ -328,7 +327,12 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         }
     }
     
-    private static void addTagsIfNeeded(String[][] keyValue, String sender) {
+    /**
+     * Ask user and add the tags he confirm
+     * @param keyValue is a table or {{tag1,val1},{tag2,val2},...}
+     * @param sender is a string for skipping confirmations. Use epmty string for always confirmed adding.
+     */
+    public static void addTags(String[][] keyValue, String sender) {
         if (trustedSenders.contains(sender)) {
             if (Main.main.getCurrentDataSet() != null) {
                 Collection<OsmPrimitive> s = Main.main.getCurrentDataSet().getSelected();
