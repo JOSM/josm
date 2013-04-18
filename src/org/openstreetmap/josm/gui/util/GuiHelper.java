@@ -171,8 +171,8 @@ public class GuiHelper {
     
     /**
      * Return s new BasicStroke object with given thickness and style
-     * @param code = 3.5 -> thickness=3.5px
-     * @param code = 3.5 10 5 -> thickness=3.5px, dashed: 10px filled + 5px empty
+     * @param code = 3.5 -> thickness=3.5px; 3.5 10 5 -> thickness=3.5px, dashed: 10px filled + 5px empty
+     * @return stroke for drawing
      */
     public static Stroke getCustomizedStroke(String code) {
         String[] s = code.trim().split("[^\\.0-9]+");

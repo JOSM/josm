@@ -597,7 +597,7 @@ public class Utils {
      * @param url The url to open
      * @return An buffered stream reader for the given URL (using UTF-8)
      * @throws IOException if an I/O exception occurs.
-     * @since 5867
+     * @since 5868
      */
     public static BufferedReader openURLReader(URL url) throws IOException {
         return new BufferedReader(new InputStreamReader(openURL(url), "utf-8"));

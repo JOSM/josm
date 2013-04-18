@@ -295,8 +295,7 @@ public class OsmApi extends OsmConnection {
 
     /**
      * Makes an XML string from an OSM primitive. Uses the OsmWriter class.
-     * @param o the OSM primitive
-     * @param addBody true to generate the full XML, false to only generate the encapsulating tag
+     * @param s the changeset
      * @return XML string
      */
     private String toXml(Changeset s) {
