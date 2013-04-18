@@ -63,6 +63,7 @@ public class GettingStarted extends JPanel {
         }
 
         final private int myVersion = Version.getInstance().getVersion();
+        final private String myJava = System.getProperty("java.version");
         final private String myLang = LanguageInfo.getWikiLanguagePrefix();
 
         /**
@@ -74,6 +75,7 @@ public class GettingStarted extends JPanel {
             String motd = new WikiReader().readLang("StartupPage");
             // Save this to prefs in case JOSM is updated so MOTD can be refreshed
             Main.pref.putInteger("cache.motd.html.version", myVersion);
+            Main.pref.put("cache.motd.html.lang", myJava);
             Main.pref.put("cache.motd.html.lang", myLang);
             try {
                 return motd.getBytes("utf-8");
@@ -93,6 +95,7 @@ public class GettingStarted extends JPanel {
             // 2. Cannot be written (e.g. while developing). Obviously we don't want to update
             // everytime because of something we can't read.
             return (Main.pref.getInteger("cache.motd.html.version", -999) == myVersion)
+            && Main.pref.get("cache.motd.html.java").equals(myJava)
             && Main.pref.get("cache.motd.html.lang").equals(myLang);
         }
     }
