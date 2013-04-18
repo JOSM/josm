@@ -75,7 +75,7 @@ public class GettingStarted extends JPanel {
             String motd = new WikiReader().readLang("StartupPage");
             // Save this to prefs in case JOSM is updated so MOTD can be refreshed
             Main.pref.putInteger("cache.motd.html.version", myVersion);
-            Main.pref.put("cache.motd.html.lang", myJava);
+            Main.pref.put("cache.motd.html.java", myJava);
             Main.pref.put("cache.motd.html.lang", myLang);
             try {
                 return motd.getBytes("utf-8");
