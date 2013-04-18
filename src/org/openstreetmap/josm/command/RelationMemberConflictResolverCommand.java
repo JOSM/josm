@@ -37,7 +37,7 @@ public class RelationMemberConflictResolverCommand extends Command {
      *
      * @param my my relation
      * @param their their relation
-     * @param mergedNodeList  the list of merged relation members
+     * @param mergedMembers the list of merged relation members
      */
     public RelationMemberConflictResolverCommand(Relation my, Relation their, List<RelationMember> mergedMembers) {
         this.my = my;

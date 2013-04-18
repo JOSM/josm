@@ -19,7 +19,7 @@ public class OsmChangeReader extends OsmReader {
     /**
      * constructor (for private and subclasses use only)
      *
-     * @see #parseDataSet(InputStream, DataSet, ProgressMonitor)
+     * @see #parseDataSet(InputStream, ProgressMonitor)
      */
     protected OsmChangeReader() {
     }
@@ -89,12 +89,13 @@ public class OsmChangeReader extends OsmReader {
     /**
      * Parse the given input source and return the dataset.
      *
-     * @param source the source input stream. Must not be null.
-     * @param progressMonitor  the progress monitor. If null, {@link NullProgressMonitor#INSTANCE} is assumed
+     * @param source the source input stream. Must not be <code>null</code>.
+     * @param progressMonitor  the progress monitor. If <code>null</code>,
+     * {@link org.openstreetmap.josm.gui.progress.NullProgressMonitor#INSTANCE} is assumed
      *
      * @return the dataset with the parsed data
      * @throws IllegalDataException thrown if the an error was found while parsing the data from the source
-     * @throws IllegalArgumentException thrown if source is null
+     * @throws IllegalArgumentException thrown if source is <code>null</code>
      */
     public static DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
         return new OsmChangeReader().doParseDataSet(source, progressMonitor);

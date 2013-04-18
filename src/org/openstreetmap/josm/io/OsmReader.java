@@ -72,7 +72,7 @@ public class OsmReader extends AbstractReader {
     /**
      * constructor (for private and subclasses use only)
      *
-     * @see #parseDataSet(InputStream, DataSet, ProgressMonitor)
+     * @see #parseDataSet(InputStream, ProgressMonitor)
      */
     protected OsmReader() {
     }

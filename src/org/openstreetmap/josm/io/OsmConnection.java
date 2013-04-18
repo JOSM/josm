@@ -141,7 +141,6 @@ public class OsmConnection {
      * Replies true if this connection is canceled
      *
      * @return true if this connection is canceled
-     * @return
      */
     public boolean isCanceled() {
         return cancel;

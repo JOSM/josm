@@ -229,7 +229,7 @@ public class Version {
     /**
      * Returns the full User-Agent string
      * @return The User-Agent
-     * @since 5866
+     * @since 5868
      */
     public String getFullAgentString() {
         return getAgentString() + " Java/"+System.getProperty("java.version");

@@ -15,7 +15,7 @@ import javax.swing.text.html.StyleSheet;
  * This panel can be used to display larger sections of formatted text in
  * HTML.
  *
- * It displays HTML text in the same font as {@link JLabel}. Hyperlinks are rendered in
+ * It displays HTML text in the same font as {@link javax.swing.JLabel}. Hyperlinks are rendered in
  * blue and they are underlined. There is also a CSS rule for the HTML tag &lt;strong&gt;
  * configured.
  *

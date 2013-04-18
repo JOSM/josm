@@ -82,11 +82,11 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
       */
     private DataSet ds;
 
-    /** Helper variable for {@link #drawSgement} */
+    /** Helper variable for {@link #drawSegment} */
     private static final double PHI = Math.toRadians(20);
-    /** Helper variable for {@link #drawSgement} */
+    /** Helper variable for {@link #drawSegment} */
     private static final double cosPHI = Math.cos(PHI);
-    /** Helper variable for {@link #drawSgement} */
+    /** Helper variable for {@link #drawSegment} */
     private static final double sinPHI = Math.sin(PHI);
 
     /** Helper variable for {@link #visit(Relation)} */
