@@ -98,6 +98,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                 Utils.close(input);
                 if (line != null && !line.isEmpty()) {
                     line = line.replaceAll("\"+","");
+                    line = line.replaceAll("NAME=",""); // strange code for some Gentoo's
                     if(line.startsWith("Linux ")) // e.g. Linux Mint
                         return line;
                     else if(!line.isEmpty())

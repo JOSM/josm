@@ -32,8 +32,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * Parser for OSM history data.
  *
  * It is slightly different from {@link OsmReader} because we don't build an internal graph of
- * {@link OsmPrimitive}s. We use objects derived from {@link HistoryOsmPrimitive} instead and we
- * keep the data in a dedicated {@link HistoryDataSet}.
+ * {@link org.openstreetmap.josm.data.osm.OsmPrimitive}s. We use objects derived from
+ * {@link HistoryOsmPrimitive} instead and we keep the data in a dedicated {@link HistoryDataSet}.
  *
  */
 public class OsmHistoryReader {

@@ -47,9 +47,9 @@ public class DataSetMerger {
     /**
      * constructor
      *
-     * The visitor will merge <code>theirDataSet</code> onto <code>myDataSet</code>
+     * The visitor will merge <code>sourceDataSet</code> onto <code>targetDataSet</code>
      *
-     * @param targetDataSet  dataset with my primitives. Must not be null.
+     * @param targetDataSet dataset with my primitives. Must not be null.
      * @param sourceDataSet dataset with their primitives. Ignored, if null.
      * @throws IllegalArgumentException thrown if myDataSet is null
      */
@@ -64,18 +64,18 @@ public class DataSetMerger {
     }
 
     /**
-     * Merges a primitive <code>other</code> of type <P> onto my primitives.
+     * Merges a primitive onto primitives dataset.
      *
      * If other.id != 0 it tries to merge it with an corresponding primitive from
      * my dataset with the same id. If this is not possible a conflict is remembered
      * in {@link #conflicts}.
      *
-     * If other.id == 0 it tries to find a primitive in my dataset with id == 0 which
+     * If other.id == 0 (new primitive) it tries to find a primitive in my dataset with id == 0 which
      * is semantically equal. If it finds one it merges its technical attributes onto
      * my primitive.
      *
-     * @param <P>  the type of the other primitive
-     * @param source  the other primitive
+     * @param source the primitive to merge
+     * @param candidates a set of possible candidates for a new primitive
      */
     protected void mergePrimitive(OsmPrimitive source, Collection<? extends OsmPrimitive> candidates) {
         if (!source.isNew() ) {
@@ -384,7 +384,7 @@ public class DataSetMerger {
 
     /**
      * Runs the merge operation. Successfully merged {@link OsmPrimitive}s are in
-     * {@link #getMyDataSet()}.
+     * {@link #getTargetDataSet()}.
      *
      * See {@link #getConflicts()} for a map of conflicts after the merge operation.
      */
@@ -394,7 +394,7 @@ public class DataSetMerger {
 
     /**
      * Runs the merge operation. Successfully merged {@link OsmPrimitive}s are in
-     * {@link #getMyDataSet()}.
+     * {@link #getTargetDataSet()}.
      *
      * See {@link #getConflicts()} for a map of conflicts after the merge operation.
      */
@@ -442,7 +442,7 @@ public class DataSetMerger {
     /**
      * replies my dataset
      *
-     * @return
+     * @return the own (target) data set
      */
     public DataSet getTargetDataSet() {
         return targetDataSet;

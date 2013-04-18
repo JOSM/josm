@@ -131,7 +131,7 @@ public class AutoCompletionList extends AbstractTableModel {
      * adds a list of strings to this list. Only strings which
      * are not null and which do not exist yet in the list are added.
      *
-     * @param value a list of strings to add
+     * @param values a list of strings to add
      * @param priority the priority to use
      */
     public void add(Collection<String> values, AutoCompletionItemPritority priority) {
