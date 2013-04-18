@@ -5,8 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import javax.swing.text.JTextComponent;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
 /**
  * A text field designed to enter a single OSM changeset ID.
  * @since 5765
@@ -14,7 +12,7 @@ import com.sun.org.apache.bcel.internal.generic.NEW;
 public class ChangesetIdTextField extends AbstractIdTextField<ChangesetIdTextField.ChangesetIdValidator> {
 
     /**
-     * Constructs a {@link NEW} {@link ChangesetIdTextField}
+     * Constructs a new {@link ChangesetIdTextField}
      */
     public ChangesetIdTextField() {
         super(ChangesetIdValidator.class, 10);
