@@ -23,7 +23,6 @@ import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -46,13 +45,14 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * This dialog is used to get a user confirmation that a collection of primitives can be removed
  * from their parent relations.
- *
+ * @since 2308
  */
 public class DeleteFromRelationConfirmationDialog extends JDialog implements TableModelListener {
     /** the unique instance of this dialog */
@@ -61,7 +61,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
     /**
      * Replies the unique instance of this dialog
      *
-     * @return
+     * @return The unique instance of this dialog
      */
     static public DeleteFromRelationConfirmationDialog getInstance() {
         if (instance == null) {
@@ -72,13 +72,13 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
 
     /** the data model */
     private RelationMemberTableModel model;
-    private JEditorPane jepMessage;
+    private JosmEditorPane jepMessage;
     private boolean canceled;
     private SideButton btnOK;
 
     protected JPanel buildMessagePanel() {
         JPanel pnl = new JPanel(new BorderLayout());
-        jepMessage = new JEditorPane("text/html", "");
+        jepMessage = new JosmEditorPane("text/html", "");
         jepMessage.setOpaque(false);
         jepMessage.setEditable(false);
         Font f = UIManager.getFont("Label.font");
@@ -168,6 +168,9 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         }
     }
 
+    /**
+     * Constructs a new {@code DeleteFromRelationConfirmationDialog}.
+     */
     public DeleteFromRelationConfirmationDialog() {
         super(JOptionPane.getFrameForComponent(Main.parent), "", ModalityType.DOCUMENT_MODAL);
         build();
@@ -224,6 +227,9 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
     public static class RelationMemberTableModel extends DefaultTableModel {
         private ArrayList<RelationToChildReference> data;
 
+        /**
+         * Constructs a new {@code RelationMemberTableModel}.
+         */
         public RelationMemberTableModel() {
             data = new ArrayList<RelationToChildReference>();
         }

@@ -16,6 +16,7 @@ import javax.swing.*;
 
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -157,9 +158,7 @@ public class HelpAwareOptionPane {
         }
 
         if (msg instanceof String) {
-            JEditorPane pane = new JEditorPane();
-            pane.setContentType("text/html");
-            pane.setText((String) msg);
+            JosmEditorPane pane = new JosmEditorPane("text/html", (String) msg);
             pane.setEditable(false);
             pane.setOpaque(false);
             msg = pane;

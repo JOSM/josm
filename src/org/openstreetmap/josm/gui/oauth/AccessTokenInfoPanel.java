@@ -10,10 +10,10 @@ import java.awt.Insets;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * Displays the key and the secret of an OAuth Access Token.
@@ -21,8 +21,8 @@ import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
  */
 public class AccessTokenInfoPanel extends JPanel {
 
-    private JTextField tfAccessTokenKey;
-    private JTextField tfAccessTokenSecret;
+    private JosmTextField tfAccessTokenKey;
+    private JosmTextField tfAccessTokenSecret;
     private JCheckBox cbSaveAccessTokenInPreferences;
 
     protected void build() {
@@ -38,7 +38,7 @@ public class AccessTokenInfoPanel extends JPanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfAccessTokenKey = new JTextField(), gc);
+        add(tfAccessTokenKey = new JosmTextField(), gc);
         tfAccessTokenKey.setEditable(false);
 
         // the access token secret
@@ -50,7 +50,7 @@ public class AccessTokenInfoPanel extends JPanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfAccessTokenSecret = new JTextField(), gc);
+        add(tfAccessTokenSecret = new JosmTextField(), gc);
         tfAccessTokenSecret.setEditable(false);
 
         // the checkbox

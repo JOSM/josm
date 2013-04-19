@@ -11,18 +11,17 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 
 public class FullyAutomaticPropertiesPanel extends JPanel {
 
-    private JTextField tfUserName;
-    private JPasswordField tfPassword;
+    private JosmTextField tfUserName;
+    private JosmPasswordField tfPassword;
     private UserNameValidator valUserName;
 
     private JCheckBox cbWriteMapData;
@@ -42,7 +41,7 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfUserName = new JTextField(), gc);
+        pnl.add(tfUserName = new JosmTextField(), gc);
         SelectAllOnFocusGainedDecorator.decorate(tfUserName);
         valUserName = new UserNameValidator(tfUserName);
         valUserName.validate();

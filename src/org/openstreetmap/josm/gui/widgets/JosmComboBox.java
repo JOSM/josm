@@ -4,6 +4,10 @@ package org.openstreetmap.josm.gui.widgets;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,6 +19,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.plaf.basic.ComboPopup;
+import javax.swing.text.JTextComponent;
 
 /**
  * Class overriding each {@link JComboBox} in JOSM to control consistently the number of displayed items at once.<br/>
@@ -183,6 +188,63 @@ public class JosmComboBox extends JComboBox {
                 }
             }
             setMaximumRowCount(Math.max(getMaximumRowCount(), maxsize));
+        }
+        // Handle text contextual menus for editable comboboxes
+        ContextMenuHandler handler = new ContextMenuHandler();
+        addPropertyChangeListener("editable", handler);
+        addPropertyChangeListener("editor", handler);
+    }
+    
+    protected class ContextMenuHandler extends MouseAdapter implements PropertyChangeListener {
+
+        private JTextComponent component;
+        private PopupMenuLauncher launcher;
+        
+        @Override public void propertyChange(PropertyChangeEvent evt) {
+            if (evt.getPropertyName().equals("editable")) {
+                if (evt.getNewValue().equals(true)) {
+                    enableMenu();
+                } else {
+                    disableMenu();
+                }
+            } else if (evt.getPropertyName().equals("editor")) {
+                disableMenu();
+                if (isEditable()) {
+                    enableMenu();
+                }
+            }
+        }
+        
+        private void enableMenu() {
+            if (launcher == null) {
+                Component editorComponent = getEditor().getEditorComponent();
+                if (editorComponent instanceof JTextComponent) {
+                    component = (JTextComponent) editorComponent;
+                    component.addMouseListener(this);
+                    launcher = TextContextualPopupMenu.enableMenuFor(component);
+                }
+            }
+        }
+
+        private void disableMenu() {
+            if (launcher != null) {
+                TextContextualPopupMenu.disableMenuFor(component, launcher);
+                launcher = null;
+                component.removeMouseListener(this);
+                component = null;
+            }
+        }
+        
+        @Override public void mousePressed(MouseEvent e) { processEvent(e); }
+        @Override public void mouseClicked(MouseEvent e) { processEvent(e); }
+        @Override public void mouseReleased(MouseEvent e) { processEvent(e); }
+        
+        private void processEvent(MouseEvent e) {
+            if (launcher != null && !e.isPopupTrigger()) {
+                if (launcher.getMenu().isShowing()) {
+                    launcher.getMenu().setVisible(false);
+                }
+            }
         }
     }
     

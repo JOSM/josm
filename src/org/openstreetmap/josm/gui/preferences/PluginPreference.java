@@ -29,7 +29,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
@@ -52,6 +51,7 @@ import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
 import org.openstreetmap.josm.plugins.ReadRemotePluginInformationTask;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 public class PluginPreference extends DefaultTabPreferenceSetting {
     public static class Factory implements PreferenceSettingFactory {
@@ -97,7 +97,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
         return sb.toString();
     }
 
-    private JTextField tfFilter;
+    private JosmTextField tfFilter;
     private PluginListPanel pnlPluginPreferences;
     private PluginPreferencesModel model;
     private JScrollPane spPluginPreferences;
@@ -122,7 +122,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfFilter = new JTextField(), gc);
+        pnl.add(tfFilter = new JosmTextField(), gc);
         tfFilter.setToolTipText(tr("Enter a search expression"));
         SelectAllOnFocusGainedDecorator.decorate(tfFilter);
         tfFilter.getDocument().addDocumentListener(new SearchFieldAdapter());

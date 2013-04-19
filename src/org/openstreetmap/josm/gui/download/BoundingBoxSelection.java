@@ -22,8 +22,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
@@ -33,6 +31,8 @@ import javax.swing.text.JTextComponent;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
@@ -48,9 +48,9 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class BoundingBoxSelection implements DownloadSelection {
 
-    private JTextField[] latlon = null;
-    private final JTextArea tfOsmUrl = new JTextArea();
-    private final JTextArea showUrl = new JTextArea();
+    private JosmTextField[] latlon = null;
+    private final JosmTextArea tfOsmUrl = new JosmTextArea();
+    private final JosmTextArea showUrl = new JosmTextArea();
     private DownloadDialog parent;
 
     protected void registerBoundingBoxBuilder() {
@@ -62,10 +62,10 @@ public class BoundingBoxSelection implements DownloadSelection {
     }
 
     protected void buildDownloadAreaInputFields() {
-        latlon = new JTextField[4];
+        latlon = new JosmTextField[4];
         for(int i=0; i< 4; i++) {
-            latlon[i] = new JTextField(11);
-            latlon[i].setMinimumSize(new Dimension(100,new JTextField().getMinimumSize().height));
+            latlon[i] = new JosmTextField(11);
+            latlon[i].setMinimumSize(new Dimension(100,new JosmTextField().getMinimumSize().height));
             latlon[i].addFocusListener(new SelectAllOnFocusHandler(latlon[i]));
         }
         LatValueChecker latChecker = new LatValueChecker(latlon[0]);
@@ -159,6 +159,10 @@ public class BoundingBoxSelection implements DownloadSelection {
         updateUrl(area);
     }
 
+    /**
+     * Replies the download area.
+     * @return The download area
+     */
     public Bounds getDownloadArea() {
         double[] values = new double[4];
         for (int i=0; i < 4; i++) {
@@ -190,7 +194,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         latlon[1].setText(area.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES));
         latlon[2].setText(area.getMax().latToString(CoordinateFormat.DECIMAL_DEGREES));
         latlon[3].setText(area.getMax().lonToString(CoordinateFormat.DECIMAL_DEGREES));
-        for (JTextField tf: latlon) {
+        for (JosmTextField tf: latlon) {
             resetErrorMessage(tf);
         }
     }
@@ -202,20 +206,20 @@ public class BoundingBoxSelection implements DownloadSelection {
 
     private Border errorBorder = BorderFactory.createLineBorder(Color.RED, 1);
 
-    protected void setErrorMessage(JTextField tf, String msg) {
+    protected void setErrorMessage(JosmTextField tf, String msg) {
         tf.setBorder(errorBorder);
         tf.setToolTipText(msg);
     }
 
-    protected void resetErrorMessage(JTextField tf) {
+    protected void resetErrorMessage(JosmTextField tf) {
         tf.setBorder(UIManager.getBorder("TextField.border"));
         tf.setToolTipText("");
     }
 
     class LatValueChecker extends FocusAdapter implements ActionListener{
-        private JTextField tfLatValue;
+        private JosmTextField tfLatValue;
 
-        public LatValueChecker(JTextField tfLatValue) {
+        public LatValueChecker(JosmTextField tfLatValue) {
             this.tfLatValue = tfLatValue;
         }
 
@@ -245,9 +249,9 @@ public class BoundingBoxSelection implements DownloadSelection {
     }
 
     class LonValueChecker extends FocusAdapter implements ActionListener {
-        private JTextField tfLonValue;
+        private JosmTextField tfLonValue;
 
-        public LonValueChecker(JTextField tfLonValue) {
+        public LonValueChecker(JosmTextField tfLonValue) {
             this.tfLonValue = tfLonValue;
         }
 

@@ -23,7 +23,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -39,15 +38,16 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
-import javax.swing.text.html.HTML.Tag;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainMenu;
+import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Utils;
@@ -105,7 +105,7 @@ public class HelpBrowser extends JDialog {
     }
 
     /** the help browser */
-    private JEditorPane help;
+    private JosmEditorPane help;
 
     /** the help browser history */
     private HelpBrowserHistory history;
@@ -165,7 +165,7 @@ public class HelpBrowser extends JDialog {
     }
 
     protected void build() {
-        help = new JEditorPane();
+        help = new JosmEditorPane();
         HTMLEditorKit kit = new HTMLEditorKit();
         kit.setStyleSheet(buildStyleSheet());
         help.setEditorKit(kit);

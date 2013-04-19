@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
-import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -12,7 +12,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @param <T> The ID validator class
  * @since 5765
  */
-public abstract class AbstractIdTextField<T extends AbstractTextComponentValidator> extends JTextField {
+public abstract class AbstractIdTextField<T extends AbstractTextComponentValidator> extends JosmTextField {
 
     protected final T validator;
 

@@ -28,7 +28,6 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -61,6 +60,7 @@ import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -662,14 +662,14 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
             URL url = null;
             try {
                 url = new URL(eulaUrl.replaceAll("\\{lang\\}", LanguageInfo.getWikiLanguagePrefix()));
-                JEditorPane htmlPane = null;
+                JosmEditorPane htmlPane = null;
                 try {
-                    htmlPane = new JEditorPane(url);
+                    htmlPane = new JosmEditorPane(url);
                 } catch (IOException e1) {
                     // give a second chance with a default Locale 'en'
                     try {
                         url = new URL(eulaUrl.replaceAll("\\{lang\\}", ""));
-                        htmlPane = new JEditorPane(url);
+                        htmlPane = new JosmEditorPane(url);
                     } catch (IOException e2) {
                         JOptionPane.showMessageDialog(gui ,tr("EULA license URL not available: {0}", eulaUrl));
                         return false;

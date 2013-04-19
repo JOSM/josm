@@ -14,7 +14,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
@@ -25,6 +24,7 @@ import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * Panel allowing the user to setup advanced OAuth parameters:
@@ -40,11 +40,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
     private JCheckBox cbUseDefaults;
-    private JTextField tfConsumerKey;
-    private JTextField tfConsumerSecret;
-    private JTextField tfRequestTokenURL;
-    private JTextField tfAccessTokenURL;
-    private JTextField tfAuthoriseURL;
+    private JosmTextField tfConsumerKey;
+    private JosmTextField tfConsumerSecret;
+    private JosmTextField tfRequestTokenURL;
+    private JosmTextField tfAccessTokenURL;
+    private JosmTextField tfAuthoriseURL;
     private UseDefaultItemListener ilUseDefault;
     private String apiUrl;
 
@@ -69,7 +69,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfConsumerKey = new JTextField(), gc);
+        add(tfConsumerKey = new JosmTextField(), gc);
         SelectAllOnFocusGainedDecorator.decorate(tfConsumerKey);
 
         // -- consumer secret
@@ -80,7 +80,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfConsumerSecret = new JTextField(), gc);
+        add(tfConsumerSecret = new JosmTextField(), gc);
         SelectAllOnFocusGainedDecorator.decorate(tfConsumerSecret);
 
         // -- request token URL
@@ -91,7 +91,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfRequestTokenURL = new JTextField(), gc);
+        add(tfRequestTokenURL = new JosmTextField(), gc);
         SelectAllOnFocusGainedDecorator.decorate(tfRequestTokenURL);
 
         // -- access token URL
@@ -102,7 +102,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfAccessTokenURL = new JTextField(), gc);
+        add(tfAccessTokenURL = new JosmTextField(), gc);
         SelectAllOnFocusGainedDecorator.decorate(tfAccessTokenURL);
 
 
@@ -114,7 +114,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfAuthoriseURL = new JTextField(), gc);
+        add(tfAuthoriseURL = new JosmTextField(), gc);
         SelectAllOnFocusGainedDecorator.decorate(tfAuthoriseURL);
 
         cbUseDefaults.addItemListener(ilUseDefault = new UseDefaultItemListener());
@@ -176,7 +176,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
     protected void setChildComponentsEnabled(boolean enabled){
         for (Component c: getComponents()) {
-            if (c instanceof JTextField || c instanceof JLabel) {
+            if (c instanceof JosmTextField || c instanceof JLabel) {
                 c.setEnabled(enabled);
             }
         }

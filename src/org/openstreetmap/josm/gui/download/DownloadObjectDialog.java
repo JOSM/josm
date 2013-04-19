@@ -21,7 +21,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.border.EtchedBorder;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
@@ -35,6 +34,7 @@ import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.OsmIdTextField;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitiveTypesComboBox;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * Dialog prompt to user to let him choose OSM primitives to download by specifying their type and IDs
@@ -81,7 +81,7 @@ public class DownloadObjectDialog extends ExtendedDialog implements WindowListen
         
         cbId.setEditor(new BasicComboBoxEditor() {
             @Override
-            protected JTextField createEditorComponent() {
+            protected JosmTextField createEditorComponent() {
                 return tfId;
             }
         });

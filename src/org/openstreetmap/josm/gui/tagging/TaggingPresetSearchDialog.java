@@ -30,7 +30,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -49,6 +48,8 @@ import org.openstreetmap.josm.gui.tagging.TaggingPreset.Key;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.PresetType;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.Role;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.Roles;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
+
 
 public class TaggingPresetSearchDialog extends ExtendedDialog implements SelectionChangedListener {
 
@@ -191,7 +192,7 @@ public class TaggingPresetSearchDialog extends ExtendedDialog implements Selecti
         return instance;
     }
 
-    private JTextField edSearchText;
+    private JosmTextField edSearchText;
     private JList lsResult;
     private JCheckBox ckOnlyApplicable;
     private JCheckBox ckSearchInTags;
@@ -238,7 +239,7 @@ public class TaggingPresetSearchDialog extends ExtendedDialog implements Selecti
         JPanel content = new JPanel();
         content.setLayout(new BorderLayout());
 
-        edSearchText = new JTextField();
+        edSearchText = new JosmTextField();
         edSearchText.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override

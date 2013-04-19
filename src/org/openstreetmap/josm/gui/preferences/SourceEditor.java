@@ -58,7 +58,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
@@ -73,7 +72,6 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
@@ -84,6 +82,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.JFileChooserManager;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
@@ -679,8 +678,8 @@ public abstract class SourceEditor extends JPanel {
 
     protected class EditSourceEntryDialog extends ExtendedDialog {
 
-        private JTextField tfTitle;
-        private JTextField tfURL;
+        private JosmTextField tfTitle;
+        private JosmTextField tfURL;
         private JCheckBox cbActive;
 
         public EditSourceEntryDialog(Component parent, String title, SourceEntry e) {
@@ -690,11 +689,11 @@ public abstract class SourceEditor extends JPanel {
 
             JPanel p = new JPanel(new GridBagLayout());
 
-            tfTitle = new JTextField(60);
+            tfTitle = new JosmTextField(60);
             p.add(new JLabel(tr("Name (optional):")), GBC.std().insets(15, 0, 5, 5));
             p.add(tfTitle, GBC.eol().insets(0, 0, 5, 5));
 
-            tfURL = new JTextField(60);
+            tfURL = new JosmTextField(60);
             p.add(new JLabel(tr("URL / File:")), GBC.std().insets(15, 0, 5, 0));
             p.add(tfURL, GBC.std().insets(0, 0, 5, 5));
             JButton fileChooser = new JButton(new LaunchFileChooserAction());
@@ -1317,7 +1316,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     class FileOrUrlCellEditor extends JPanel implements TableCellEditor {
-        private JTextField tfFileName;
+        private JosmTextField tfFileName;
         private CopyOnWriteArrayList<CellEditorListener> listeners;
         private String value;
         private boolean isFile;
@@ -1333,7 +1332,7 @@ public abstract class SourceEditor extends JPanel {
             gc.fill = GridBagConstraints.BOTH;
             gc.weightx = 1.0;
             gc.weighty = 1.0;
-            add(tfFileName = new JTextField(), gc);
+            add(tfFileName = new JosmTextField(), gc);
 
             gc.gridx = 1;
             gc.gridy = 0;

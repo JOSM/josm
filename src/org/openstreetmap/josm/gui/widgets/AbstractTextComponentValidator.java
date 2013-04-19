@@ -10,7 +10,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
@@ -19,6 +18,7 @@ import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * This is an abstract class for a validator on a text component.
@@ -109,8 +109,8 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
             tc.getDocument().addDocumentListener(this);
         }
         if (addActionListener) {
-            if (tc instanceof JTextField) {
-                JTextField tf = (JTextField)tc;
+            if (tc instanceof JosmTextField) {
+                JosmTextField tf = (JosmTextField)tc;
                 tf.addActionListener(this);
             }
         }

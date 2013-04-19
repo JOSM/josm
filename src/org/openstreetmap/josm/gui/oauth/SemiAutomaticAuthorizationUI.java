@@ -19,7 +19,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
@@ -30,6 +29,7 @@ import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * This is the UI for running a semic-automic authorisation procedure.
@@ -206,7 +206,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
      */
     private class RetrieveAccessTokenPanel extends JPanel {
 
-        private JTextField tfAuthoriseUrl;
+        private JosmTextField tfAuthoriseUrl;
 
         protected JPanel buildTitlePanel() {
             JPanel pnl = new JPanel(new BorderLayout());
@@ -245,7 +245,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
             gc.gridx = 1;
             gc.weightx = 1.0;
-            pnl.add(tfAuthoriseUrl = new JTextField(), gc);
+            pnl.add(tfAuthoriseUrl = new JosmTextField(), gc);
             tfAuthoriseUrl.setEditable(false);
 
             return pnl;

@@ -21,8 +21,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import org.openstreetmap.josm.Main;
@@ -33,6 +31,8 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
@@ -41,6 +41,9 @@ public class GpxExporter extends FileExporter implements GpxConstants {
     private final static String warningGpl = "<html><font color='red' size='-2'>"
         + tr("Note: GPL is not compatible with the OSM license. Do not upload GPL licensed tracks.") + "</html>";
 
+    /**
+     * Constructs a new {@code GpxExporter}.
+     */
     public GpxExporter() {
         super(GpxImporter.FILE_FILTER);
     }
@@ -80,7 +83,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         }
 
         p.add(new JLabel(tr("GPS track description")), GBC.eol());
-        JTextArea desc = new JTextArea(3, 40);
+        JosmTextArea desc = new JosmTextArea(3, 40);
         desc.setWrapStyleWord(true);
         desc.setLineWrap(true);
         desc.setText((String) gpxData.attr.get(META_DESC));
@@ -90,21 +93,21 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         p.add(author, GBC.eol());
         JLabel nameLabel = new JLabel(tr("Real name"));
         p.add(nameLabel, GBC.std().insets(10, 0, 5, 0));
-        JTextField authorName = new JTextField();
+        JosmTextField authorName = new JosmTextField();
         p.add(authorName, GBC.eol().fill(GBC.HORIZONTAL));
         JLabel emailLabel = new JLabel(tr("E-Mail"));
         p.add(emailLabel, GBC.std().insets(10, 0, 5, 0));
-        JTextField email = new JTextField();
+        JosmTextField email = new JosmTextField();
         p.add(email, GBC.eol().fill(GBC.HORIZONTAL));
         JLabel copyrightLabel = new JLabel(tr("Copyright (URL)"));
         p.add(copyrightLabel, GBC.std().insets(10, 0, 5, 0));
-        JTextField copyright = new JTextField();
+        JosmTextField copyright = new JosmTextField();
         p.add(copyright, GBC.std().fill(GBC.HORIZONTAL));
         JButton predefined = new JButton(tr("Predefined"));
         p.add(predefined, GBC.eol().insets(5, 0, 0, 0));
         JLabel copyrightYearLabel = new JLabel(tr("Copyright year"));
         p.add(copyrightYearLabel, GBC.std().insets(10, 0, 5, 5));
-        JTextField copyrightYear = new JTextField("");
+        JosmTextField copyrightYear = new JosmTextField("");
         p.add(copyrightYear, GBC.eol().fill(GBC.HORIZONTAL));
         JLabel warning = new JLabel("<html><font size='-2'>&nbsp;</html");
         p.add(warning, GBC.eol().fill(GBC.HORIZONTAL).insets(15, 0, 0, 0));
@@ -112,7 +115,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
                 copyrightLabel, copyrightYearLabel, warning);
 
         p.add(new JLabel(tr("Keywords")), GBC.eol());
-        JTextField keywords = new JTextField();
+        JosmTextField keywords = new JosmTextField();
         keywords.setText((String) gpxData.attr.get(META_KEYWORDS));
         p.add(keywords, GBC.eop().fill(GBC.HORIZONTAL));
 
@@ -183,8 +186,8 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         }
     }
 
-    private static void enableCopyright(final GpxData data, final JTextField copyright, final JButton predefined,
-            final JTextField copyrightYear, final JLabel copyrightLabel, final JLabel copyrightYearLabel,
+    private static void enableCopyright(final GpxData data, final JosmTextField copyright, final JButton predefined,
+            final JosmTextField copyrightYear, final JLabel copyrightLabel, final JLabel copyrightYearLabel,
             final JLabel warning, boolean enable) {
         copyright.setEnabled(enable);
         predefined.setEnabled(enable);
@@ -226,11 +229,11 @@ public class GpxExporter extends FileExporter implements GpxConstants {
     private static void addDependencies(
             final GpxData data,
             final JCheckBox author,
-            final JTextField authorName,
-            final JTextField email,
-            final JTextField copyright,
+            final JosmTextField authorName,
+            final JosmTextField email,
+            final JosmTextField copyright,
             final JButton predefined,
-            final JTextField copyrightYear,
+            final JosmTextField copyrightYear,
             final JLabel nameLabel,
             final JLabel emailLabel,
             final JLabel copyrightLabel,

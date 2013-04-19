@@ -18,7 +18,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.Setting;
@@ -26,6 +25,7 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -137,7 +137,7 @@ public final class ShowStatusReportAction extends JosmAction {
             x.printStackTrace();
         }
 
-        JTextArea ta = new JTextArea(text.toString());
+        JosmTextArea ta = new JosmTextArea(text.toString());
         ta.setWrapStyleWord(true);
         ta.setLineWrap(true);
         ta.setEditable(false);

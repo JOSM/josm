@@ -45,7 +45,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
@@ -91,6 +90,8 @@ import org.openstreetmap.josm.tools.template_engine.ParseError;
 import org.openstreetmap.josm.tools.template_engine.TemplateEntry;
 import org.openstreetmap.josm.tools.template_engine.TemplateParser;
 import org.xml.sax.SAXException;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
+
 
 /**
  * This class read encapsulate one tagging preset. A class method can
@@ -521,8 +522,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         private static String getValue(Component comp) {
             if (comp instanceof JosmComboBox) {
                 return ((JosmComboBox) comp).getEditor().getItem().toString();
-            } else if (comp instanceof JTextField) {
-                return ((JTextField) comp).getText();
+            } else if (comp instanceof JosmTextField) {
+                return ((JosmTextField) comp).getText();
             } else if (comp instanceof JPanel) {
                 return getValue(((JPanel)comp).getComponent(0));
             } else {

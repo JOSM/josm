@@ -25,7 +25,6 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
@@ -149,7 +148,7 @@ public class CredentialDialog extends JDialog {
 
     protected static class CredentialPanel extends JPanel {
         protected JTextField tfUserName;
-        protected JPasswordField tfPassword;
+        protected JosmPasswordField tfPassword;
         protected JCheckBox cbSaveCredentials;
         protected JMultilineLabel lblHeading;
         protected JMultilineLabel lblWarning;

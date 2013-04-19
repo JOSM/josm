@@ -32,7 +32,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
@@ -49,6 +48,7 @@ import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * TileSelectionBBoxChooser allows to select a bounding box (i.e. for downloading) based
@@ -209,10 +209,10 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
     static private class TileGridInputPanel extends JPanel implements PropertyChangeListener{
         static public final String TILE_BOUNDS_PROP = TileGridInputPanel.class.getName() + ".tileBounds";
 
-        private JTextField tfMaxY;
-        private JTextField tfMinY;
-        private JTextField tfMaxX;
-        private JTextField tfMinX;
+        private JosmTextField tfMaxY;
+        private JosmTextField tfMinY;
+        private JosmTextField tfMaxX;
+        private JosmTextField tfMinX;
         private TileCoordinateValidator valMaxY;
         private TileCoordinateValidator valMinY;
         private TileCoordinateValidator valMaxX;
@@ -266,7 +266,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
             gc.gridx = 1;
             gc.weightx = 0.5;
-            pnl.add(tfMinX = new JTextField(), gc);
+            pnl.add(tfMinX = new JosmTextField(), gc);
             valMinX = new TileCoordinateValidator(tfMinX);
             SelectAllOnFocusGainedDecorator.decorate(tfMinX);
             tfMinX.addActionListener(tileBoundsBuilder);
@@ -274,7 +274,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
             gc.gridx = 2;
             gc.weightx = 0.5;
-            pnl.add(tfMaxX = new JTextField(), gc);
+            pnl.add(tfMaxX = new JosmTextField(), gc);
             valMaxX = new TileCoordinateValidator(tfMaxX);
             SelectAllOnFocusGainedDecorator.decorate(tfMaxX);
             tfMaxX.addActionListener(tileBoundsBuilder);
@@ -287,7 +287,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
             gc.gridx = 1;
             gc.weightx = 0.5;
-            pnl.add(tfMinY = new JTextField(), gc);
+            pnl.add(tfMinY = new JosmTextField(), gc);
             valMinY = new TileCoordinateValidator(tfMinY);
             SelectAllOnFocusGainedDecorator.decorate(tfMinY);
             tfMinY.addActionListener(tileBoundsBuilder);
@@ -295,7 +295,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
             gc.gridx = 2;
             gc.weightx = 0.5;
-            pnl.add(tfMaxY = new JTextField(), gc);
+            pnl.add(tfMaxY = new JosmTextField(), gc);
             valMaxY = new TileCoordinateValidator(tfMaxY);
             SelectAllOnFocusGainedDecorator.decorate(tfMaxY);
             tfMaxY.addActionListener(tileBoundsBuilder);
@@ -427,7 +427,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
         static public final String TILE_BOUNDS_PROP = TileAddressInputPanel.class.getName() + ".tileBounds";
 
-        private JTextField tfTileAddress;
+        private JosmTextField tfTileAddress;
         private TileAddressValidator valTileAddress;
 
         protected JPanel buildTextPanel() {
@@ -451,7 +451,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
             gc.weightx = 1.0;
             gc.gridx = 1;
-            pnl.add(tfTileAddress = new JTextField(), gc);
+            pnl.add(tfTileAddress = new JosmTextField(), gc);
             valTileAddress = new TileAddressValidator(tfTileAddress);
             SelectAllOnFocusGainedDecorator.decorate(tfTileAddress);
 

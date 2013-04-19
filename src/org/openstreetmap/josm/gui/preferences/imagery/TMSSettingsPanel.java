@@ -9,11 +9,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * {@code JPanel} giving access to TMS settings.
@@ -27,7 +27,7 @@ public class TMSSettingsPanel extends JPanel {
     private final JSpinner minZoomLvl;
     private final JSpinner maxZoomLvl;
     private final JCheckBox addToSlippyMapChosser = new JCheckBox();
-    private final JTextField tilecacheDir = new JTextField();
+    private final JosmTextField tilecacheDir = new JosmTextField();
 
     /**
      * Constructs a new {@code TMSSettingsPanel}.

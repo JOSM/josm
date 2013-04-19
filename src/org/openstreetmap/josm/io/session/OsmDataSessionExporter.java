@@ -31,7 +31,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import org.w3c.dom.Element;
@@ -40,6 +39,7 @@ import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.io.OsmWriterFactory;
 import org.openstreetmap.josm.io.session.SessionWriter.ExportSupport;
@@ -108,7 +108,7 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
         final LayerSaveAction saveAction = new LayerSaveAction();
         final JButton save = new JButton(saveAction);
         if (file != null) {
-            JTextField tf = new JTextField();
+            JosmTextField tf = new JosmTextField();
             tf.setText(file.getPath());
             tf.setEditable(false);
             cardLink.add(tf, GBC.std());

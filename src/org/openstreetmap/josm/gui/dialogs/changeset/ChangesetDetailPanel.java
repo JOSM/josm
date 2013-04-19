@@ -25,8 +25,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
 import org.openstreetmap.josm.Main;
@@ -39,7 +37,10 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.EditLayerChangeListener;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.ImageProvider;
+
 
 /**
  * This panel displays the properties of the currently selected changeset in the
@@ -48,12 +49,12 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class ChangesetDetailPanel extends JPanel implements PropertyChangeListener{
 
-    private JTextField tfID;
-    private JTextArea taComment;
-    private JTextField tfOpen;
-    private JTextField tfUser;
-    private JTextField tfCreatedOn;
-    private JTextField tfClosedOn;
+    private JosmTextField tfID;
+    private JosmTextArea taComment;
+    private JosmTextField tfOpen;
+    private JosmTextField tfUser;
+    private JosmTextField tfCreatedOn;
+    private JosmTextField tfClosedOn;
     private DonwloadChangesetContentAction actDownloadChangesetContent;
     private UpdateChangesetAction actUpdateChangesets;
     private RemoveFromCacheAction actRemoveFromCache;
@@ -117,7 +118,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
         gc.gridx = 1;
-        pnl.add(tfID = new JTextField(10), gc);
+        pnl.add(tfID = new JosmTextField(10), gc);
         tfID.setEditable(false);
 
         //-- comment
@@ -131,7 +132,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         gc.weightx = 1.0;
         gc.weighty = 1.0;
         gc.gridx = 1;
-        pnl.add(taComment= new JTextArea(5,40), gc);
+        pnl.add(taComment= new JosmTextArea(5,40), gc);
         taComment.setEditable(false);
 
         //-- Open/Closed
@@ -144,7 +145,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.gridx = 1;
-        pnl.add(tfOpen= new JTextField(10), gc);
+        pnl.add(tfOpen= new JosmTextField(10), gc);
         tfOpen.setEditable(false);
 
         //-- Created by:
@@ -157,7 +158,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
         gc.gridx = 1;
-        pnl.add(tfUser= new JTextField(""), gc);
+        pnl.add(tfUser= new JosmTextField(""), gc);
         tfUser.setEditable(false);
 
         //-- Created On:
@@ -169,7 +170,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.gridx = 1;
-        pnl.add(tfCreatedOn= new JTextField(20), gc);
+        pnl.add(tfCreatedOn= new JosmTextField(20), gc);
         tfCreatedOn.setEditable(false);
 
         //-- Closed On:
@@ -181,7 +182,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.gridx = 1;
-        pnl.add(tfClosedOn= new JTextField(20), gc);
+        pnl.add(tfClosedOn= new JosmTextField(20), gc);
         tfClosedOn.setEditable(false);
 
         return pnl;
@@ -229,6 +230,9 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         tfClosedOn.setText(cs.getClosedAt() == null ? "" : sdf.format(cs.getClosedAt()));
     }
 
+    /**
+     * Constructs a new {@code ChangesetDetailPanel}.
+     */
     public ChangesetDetailPanel() {
         build();
     }

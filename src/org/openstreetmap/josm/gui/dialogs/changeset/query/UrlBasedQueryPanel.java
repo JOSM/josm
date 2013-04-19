@@ -15,7 +15,6 @@ import java.net.URL;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.HyperlinkEvent;
@@ -26,11 +25,12 @@ import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlException;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 
 public class UrlBasedQueryPanel extends JPanel {
 
-    private JTextField tfUrl;
+    private JosmTextField tfUrl;
     private JLabel lblValid;
 
     protected JPanel buildURLPanel() {
@@ -44,7 +44,7 @@ public class UrlBasedQueryPanel extends JPanel {
         gc.gridx = 1;
         gc.weightx = 1.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        pnl.add(tfUrl = new JTextField(), gc);
+        pnl.add(tfUrl = new JosmTextField(), gc);
         tfUrl.getDocument().addDocumentListener(new ChangetQueryUrlValidator());
         tfUrl.addFocusListener(
                 new FocusAdapter() {

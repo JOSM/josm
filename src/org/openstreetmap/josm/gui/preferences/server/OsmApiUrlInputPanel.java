@@ -20,7 +20,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -33,13 +32,14 @@ import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 public class OsmApiUrlInputPanel extends JPanel {
     static public final String API_URL_PROP = OsmApiUrlInputPanel.class.getName() + ".apiUrl";
 
     private JLabel lblValid;
     private JLabel lblApiUrl;
-    private JTextField tfOsmServerUrl;
+    private JosmTextField tfOsmServerUrl;
     private ApiUrlValidator valOsmServerUrl;
     private SideButton btnTest;
     /** indicates whether to use the default OSM URL or not */
@@ -89,7 +89,7 @@ public class OsmApiUrlInputPanel extends JPanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfOsmServerUrl = new JTextField(), gc);
+        add(tfOsmServerUrl = new JosmTextField(), gc);
         SelectAllOnFocusGainedDecorator.decorate(tfOsmServerUrl);
         valOsmServerUrl = new ApiUrlValidator(tfOsmServerUrl);
         valOsmServerUrl.validate();

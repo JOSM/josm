@@ -29,7 +29,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 import javax.swing.text.BadLocationException;
 
 import org.openstreetmap.josm.Main;
@@ -50,6 +49,8 @@ import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Property;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
+
 
 public class SearchAction extends JosmAction implements ParameterizedAction {
 
@@ -194,7 +195,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         try {
-                            JTextField tf = (JTextField) hcb.getEditor().getEditorComponent();
+                            JosmTextField tf = (JosmTextField) hcb.getEditor().getEditorComponent();
                             tf.getDocument().insertString(tf.getCaretPosition(), " " + insertText, null);
                         } catch (BadLocationException ex) {
                             throw new RuntimeException(ex.getMessage(), ex);

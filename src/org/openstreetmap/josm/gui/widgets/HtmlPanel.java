@@ -21,11 +21,11 @@ import javax.swing.text.html.StyleSheet;
  *
  */
 public class HtmlPanel extends JPanel {
-    private JEditorPane jepMessage;
+    private JosmEditorPane jepMessage;
 
     protected void build() {
         setLayout(new BorderLayout());
-        jepMessage = new JEditorPane("text/html", "");
+        jepMessage = new JosmEditorPane("text/html", "");
         jepMessage.setOpaque(false);
         jepMessage.setEditable(false);
         Font f = UIManager.getFont("Label.font");
@@ -56,10 +56,17 @@ public class HtmlPanel extends JPanel {
         add(jepMessage, BorderLayout.CENTER);
     }
 
+    /**
+     * Constructs a new {@code HtmlPanel}.
+     */
     public HtmlPanel() {
         build();
     }
 
+    /**
+     * Constructs a new {@code HtmlPanel} with the given HTML text.
+     * @param text the text to display
+     */
     public HtmlPanel(String text) {
         this();
         setText(text);

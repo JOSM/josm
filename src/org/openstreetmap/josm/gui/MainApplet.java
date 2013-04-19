@@ -21,14 +21,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.ServerSidePreferences;
 import org.openstreetmap.josm.gui.MainApplication.Option;
 import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -113,10 +112,10 @@ public class MainApplet extends JApplet {
                 JPanel p = new JPanel(new GridBagLayout());
                 p.add(new JLabel(tr(e.realm)), GBC.eol().fill(GBC.HORIZONTAL));
                 p.add(new JLabel(tr("Username")), GBC.std().insets(0,0,20,0));
-                JTextField user = new JTextField(username == null ? "" : username);
+                JosmTextField user = new JosmTextField(username == null ? "" : username);
                 p.add(user, GBC.eol().fill(GBC.HORIZONTAL));
                 p.add(new JLabel(tr("Password")), GBC.std().insets(0,0,20,0));
-                JPasswordField pass = new JosmPasswordField(password == null ? "" : password);
+                JosmPasswordField pass = new JosmPasswordField(password == null ? "" : password);
                 p.add(pass, GBC.eol().fill(GBC.HORIZONTAL));
                 JOptionPane.showMessageDialog(null, p);
                 username = user.getText();

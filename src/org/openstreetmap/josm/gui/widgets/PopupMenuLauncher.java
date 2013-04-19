@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
+import java.awt.Component;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -12,6 +15,7 @@ import javax.swing.JPopupMenu;
  */
 public class PopupMenuLauncher extends MouseAdapter {
     private final JPopupMenu menu;
+    private final boolean checkEnabled;
 
     /**
      * Creates a new {@link PopupMenuLauncher} with no defined menu. 
@@ -27,26 +31,26 @@ public class PopupMenuLauncher extends MouseAdapter {
      * @param menu The popup menu to display
      */
     public PopupMenuLauncher(JPopupMenu menu) {
+        this(menu, false);
+    }
+
+    /**
+     * Creates a new {@link PopupMenuLauncher} with the given menu.
+     * @param menu The popup menu to display
+     * @param checkEnabled if {@code true}, the popup menu will only be displayed if the component triggering the mouse event is enabled
+     * @since 5885
+     */
+    public PopupMenuLauncher(JPopupMenu menu, boolean checkEnabled) {
         this.menu = menu;
+        this.checkEnabled = checkEnabled;
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-            launch(e);
-        }
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-            launch(e);
-        }
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        if (e.isPopupTrigger()) {
+    @Override public void mousePressed(MouseEvent e) { processEvent(e); }
+    @Override public void mouseClicked(MouseEvent e) { processEvent(e); }
+    @Override public void mouseReleased(MouseEvent e) { processEvent(e); }
+    
+    private void processEvent(MouseEvent e) {
+        if (e.isPopupTrigger() && (!checkEnabled || e.getComponent().isEnabled())) {
             launch(e);
         }
     }
@@ -56,12 +60,23 @@ public class PopupMenuLauncher extends MouseAdapter {
      * This method needs to be overriden if the default constructor has been called.
      * @param evt A mouse event
      */
-    public void launch(MouseEvent evt) {
+    public void launch(final MouseEvent evt) {
         if (menu != null) {
-            menu.show(evt.getComponent(), evt.getX(), evt.getY());
+            final Component component = evt.getComponent();
+            if (component != null && component.isFocusable() && !component.hasFocus() && component.requestFocusInWindow()) {
+                component.addFocusListener(new FocusListener() {
+                    @Override public void focusLost(FocusEvent e) {}
+                    @Override public void focusGained(FocusEvent e) {
+                        menu.show(component, evt.getX(), evt.getY());
+                        component.removeFocusListener(this);
+                    }
+                });
+            } else {
+                menu.show(component, evt.getX(), evt.getY());
+            }
         }
     }
-
+    
     /**
      * @return the popup menu if defined, {@code null} otherwise.
      * @since 5884
