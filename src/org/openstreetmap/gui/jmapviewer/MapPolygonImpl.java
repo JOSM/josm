@@ -1,42 +1,58 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.gui.jmapviewer;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.Stroke;
+import java.util.Arrays;
 import java.util.List;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
 
 /**
  * @author Vincent
  *
  */
-public class MapPolygonImpl implements MapPolygon {
+public class MapPolygonImpl extends MapObjectImpl implements MapPolygon {
 
-    private List<Coordinate> points;
-    private Color color;
-    private Stroke stroke;
+    private List<ICoordinate> points;
 
-    public MapPolygonImpl(List<Coordinate> points) {
-        this(points, Color.BLUE, new BasicStroke(2));
+    public MapPolygonImpl(ICoordinate ... points) {
+        this(null, null, points);
     }
-
-    public MapPolygonImpl(List<Coordinate> points, Color color, Stroke stroke) {
+    public MapPolygonImpl(String name, List<ICoordinate> points) {
+        this(null, name, points);
+    }
+    public MapPolygonImpl(String name, ICoordinate ... points) {
+        this(null, name, points);
+    }
+    public MapPolygonImpl(Layer layer, List<ICoordinate> points) {
+        this(layer, null, points);
+    }
+    public MapPolygonImpl(Layer layer, String name, List<ICoordinate> points) {
+        this(layer, name, points, getDefaultStyle());
+    }
+    public MapPolygonImpl(Layer layer, String name, ICoordinate ... points) {
+        this(layer, name, Arrays.asList(points), getDefaultStyle());
+    }
+    public MapPolygonImpl(Layer layer, String name, List<ICoordinate> points, Style style) {
+        super(layer, name, style);
         this.points = points;
-        this.color = color;
-        this.stroke = stroke;
     }
 
     /* (non-Javadoc)
      * @see org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon#getPoints()
      */
     @Override
-    public List<Coordinate> getPoints() {
+    public List<ICoordinate> getPoints() {
         return this.points;
     }
 
@@ -59,22 +75,38 @@ public class MapPolygonImpl implements MapPolygon {
     public void paint(Graphics g, Polygon polygon) {
         // Prepare graphics
         Color oldColor = g.getColor();
-        g.setColor(color);
+        g.setColor(getColor());
+        
         Stroke oldStroke = null;
         if (g instanceof Graphics2D) {
             Graphics2D g2 = (Graphics2D) g;
             oldStroke = g2.getStroke();
-            g2.setStroke(stroke);
+            g2.setStroke(getStroke());
         }
         // Draw
         g.drawPolygon(polygon);
+        if (g instanceof Graphics2D && getBackColor()!=null) {
+            Graphics2D g2 = (Graphics2D) g;
+            Composite oldComposite = g2.getComposite();
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+            g2.setPaint(getBackColor());
+            g2.fillPolygon(polygon);
+            g2.setComposite(oldComposite);
+        }
         // Restore graphics
         g.setColor(oldColor);
         if (g instanceof Graphics2D) {
             ((Graphics2D) g).setStroke(oldStroke);
         }
+        Rectangle rec = polygon.getBounds();
+        Point corner = rec.getLocation();
+        Point p= new Point(corner.x+(rec.width/2), corner.y+(rec.height/2));
+        if(getLayer()==null||getLayer().isVisibleTexts()) paintText(g, p);
     }
 
+    public static Style getDefaultStyle(){
+        return new Style(Color.BLUE, new Color(100,100,100,50), new BasicStroke(2), getDefaultFont());
+    }
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */

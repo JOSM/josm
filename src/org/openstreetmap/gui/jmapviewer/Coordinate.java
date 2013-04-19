@@ -8,6 +8,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
+
 /**
  * This class encapsulates a Point2D.Double and provide access
  * via <tt>lat</tt> and <tt>lon</tt>.
@@ -15,7 +17,7 @@ import java.io.Serializable;
  * @author Jan Peter Stotz
  *
  */
-public class Coordinate implements Serializable {
+public class Coordinate implements Serializable, ICoordinate {
     private transient Point2D.Double data;
 
     public Coordinate(double lat, double lon) {

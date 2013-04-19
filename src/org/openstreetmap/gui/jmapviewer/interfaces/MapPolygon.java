@@ -13,12 +13,12 @@ import org.openstreetmap.gui.jmapviewer.Coordinate;
  *
  * @author Vincent
  */
-public interface MapPolygon {
+public interface MapPolygon extends MapObject{
 
     /**
      * @return Latitude/Longitude of each point of polygon
      */
-    public List<Coordinate> getPoints();
+    public List<ICoordinate> getPoints();
 
     /**
      * Paints the map rectangle on the map. The <code>points</code> 

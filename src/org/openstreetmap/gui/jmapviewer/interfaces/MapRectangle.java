@@ -15,7 +15,7 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
  * @see JMapViewer#addMapRectangle(MapRectangle)
  * @see JMapViewer#getMapRectangleList()
  */
-public interface MapRectangle {
+public interface MapRectangle extends MapObject{
 
     /**
      * @return Latitude/Longitude of top left of rectangle

@@ -3,8 +3,6 @@ package org.openstreetmap.gui.jmapviewer;
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
@@ -16,43 +14,30 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
  * @author Jan Peter Stotz
  *
  */
-public class MapMarkerDot implements MapMarker {
+public class MapMarkerDot extends MapMarkerCircle {
 
-    double lat;
-    double lon;
-    Color color;
+    public static final int DOT_RADIUS = 5;
 
-    public MapMarkerDot(double lat, double lon) {
-        this(Color.YELLOW, lat, lon);
+    public MapMarkerDot(String name, Coordinate coord) {
+        this(null, name, coord);
     }
-
-    public MapMarkerDot(Color color, double lat, double lon) {
-        super();
-        this.color = color;
-        this.lat = lat;
-        this.lon = lon;
+    public MapMarkerDot(Layer layer, Coordinate coord) {
+        this(layer, null, coord);
     }
-
-    public double getLat() {
-        return lat;
+    public MapMarkerDot(Layer layer, String name, Coordinate coord) {
+        this(layer, name, coord, getDefaultStyle());
     }
-
-    public double getLon() {
-        return lon;
+    public MapMarkerDot(Layer layer, double lat, double lon) {
+        this(layer, null, lat, lon);
     }
-
-    public void paint(Graphics g, Point position) {
-        int size_h = 5;
-        int size = size_h * 2;
-        g.setColor(color);
-        g.fillOval(position.x - size_h, position.y - size_h, size, size);
-        g.setColor(Color.BLACK);
-        g.drawOval(position.x - size_h, position.y - size_h, size, size);
+    public MapMarkerDot(Layer layer, String name, double lat, double lon) {
+        this(layer, name, new Coordinate(lat, lon), getDefaultStyle());
     }
-
-    @Override
-    public String toString() {
-        return "MapMarker at " + lat + " " + lon;
+    public MapMarkerDot(Layer layer, String name, Coordinate coord, Style style) {
+        super(layer, name, coord, DOT_RADIUS, STYLE.FIXED, style);
     }
-
+    
+    public static Style getDefaultStyle(){
+        return new Style(Color.BLACK, Color.YELLOW, null, getDefaultFont());
+    }
 }

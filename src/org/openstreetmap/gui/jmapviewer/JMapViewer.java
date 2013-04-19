@@ -23,6 +23,7 @@ import javax.swing.event.EventListenerList;
 
 import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
 import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent.COMMAND;
+import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
@@ -268,33 +269,39 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
         if (markers) {
             for (MapMarker marker : mapMarkerList) {
-                int x = OsmMercator.LonToX(marker.getLon(), mapZoomMax);
-                int y = OsmMercator.LatToY(marker.getLat(), mapZoomMax);
-                x_max = Math.max(x_max, x);
-                y_max = Math.max(y_max, y);
-                x_min = Math.min(x_min, x);
-                y_min = Math.min(y_min, y);
+                if(marker.isVisible()){
+                    int x = OsmMercator.LonToX(marker.getLon(), mapZoomMax);
+                    int y = OsmMercator.LatToY(marker.getLat(), mapZoomMax);
+                    x_max = Math.max(x_max, x);
+                    y_max = Math.max(y_max, y);
+                    x_min = Math.min(x_min, x);
+                    y_min = Math.min(y_min, y);
+                }
             }
         }
 
         if (rectangles) {
             for (MapRectangle rectangle : mapRectangleList) {
-                x_max = Math.max(x_max, OsmMercator.LonToX(rectangle.getBottomRight().getLon(), mapZoomMax));
-                y_max = Math.max(y_max, OsmMercator.LatToY(rectangle.getTopLeft().getLat(), mapZoomMax));
-                x_min = Math.min(x_min, OsmMercator.LonToX(rectangle.getTopLeft().getLon(), mapZoomMax));
-                y_min = Math.min(y_min, OsmMercator.LatToY(rectangle.getBottomRight().getLat(), mapZoomMax));
+                if(rectangle.isVisible()){
+                    x_max = Math.max(x_max, OsmMercator.LonToX(rectangle.getBottomRight().getLon(), mapZoomMax));
+                    y_max = Math.max(y_max, OsmMercator.LatToY(rectangle.getTopLeft().getLat(), mapZoomMax));
+                    x_min = Math.min(x_min, OsmMercator.LonToX(rectangle.getTopLeft().getLon(), mapZoomMax));
+                    y_min = Math.min(y_min, OsmMercator.LatToY(rectangle.getBottomRight().getLat(), mapZoomMax));
+                }
             }
         }
 
         if (polygons) {
             for (MapPolygon polygon : mapPolygonList) {
-                for (Coordinate c : polygon.getPoints()) {
-                    int x = OsmMercator.LonToX(c.getLon(), mapZoomMax);
-                    int y = OsmMercator.LatToY(c.getLat(), mapZoomMax);
-                    x_max = Math.max(x_max, x);
-                    y_max = Math.max(y_max, y);
-                    x_min = Math.min(x_min, x);
-                    y_min = Math.min(y_min, y);
+                if(polygon.isVisible()){
+                    for (ICoordinate c : polygon.getPoints()) {
+                        int x = OsmMercator.LonToX(c.getLon(), mapZoomMax);
+                        int y = OsmMercator.LatToY(c.getLat(), mapZoomMax);
+                        x_max = Math.max(x_max, x);
+                        y_max = Math.max(y_max, y);
+                        x_min = Math.min(x_min, x);
+                        y_min = Math.min(y_min, y);
+                    }
                 }
             }
         }
@@ -417,6 +424,24 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         }
         return new Point(x, y);
     }
+    
+    /**
+     * Calculates the position on the map of a given coordinate
+     *
+     * @param lat Latitude
+     * @param offset Offset respect Latitude
+     * @param checkOutside
+     * @return Integer the radius in pixels
+     */
+    public Integer getLatOffset(double lat, double offset, boolean checkOutside) {
+        int y = OsmMercator.LatToY(lat+offset, zoom);
+        y -= center.y - getHeight() / 2;
+        if (checkOutside) {
+            if (y < 0 || y > getHeight())
+                return null;
+        }
+        return y;
+    }
 
     /**
      * Calculates the position on the map of a given coordinate
@@ -427,6 +452,22 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      */
     public Point getMapPosition(double lat, double lon) {
         return getMapPosition(lat, lon, true);
+    }
+    
+    /**
+     * Calculates the position on the map of a given coordinate
+     *
+     * @param marker MapMarker object that define the x,y coordinate
+     * @return Integer the radius in pixels
+     */
+    public Integer getRadius(MapMarker marker, Point p) {
+        if(marker.getMarkerStyle() == MapMarker.STYLE.FIXED)
+            return (int)marker.getRadius();
+        else if(p!=null){
+            Integer radius = getLatOffset(marker.getLat(), marker.getRadius(), false);
+            radius = radius==null?null:p.y-radius.intValue();
+            return radius;
+        }else return null;
     }
 
     /**
@@ -449,7 +490,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * @return point on the map or <code>null</code> if the point is not visible
      *         and checkOutside set to <code>true</code>
      */
-    public Point getMapPosition(Coordinate coord, boolean checkOutside) {
+    public Point getMapPosition(ICoordinate coord, boolean checkOutside) {
         if (coord != null)
             return getMapPosition(coord.getLat(), coord.getLon(), checkOutside);
         else
@@ -578,19 +619,19 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         
         if (mapPolygonsVisible && mapPolygonList != null) {
             for (MapPolygon polygon : mapPolygonList) {
-                paintPolygon(g, polygon);
+                if(polygon.isVisible()) paintPolygon(g, polygon);
             }
         }
 
         if (mapRectanglesVisible && mapRectangleList != null) {
             for (MapRectangle rectangle : mapRectangleList) {
-                paintRectangle(g, rectangle);
+                if(rectangle.isVisible()) paintRectangle(g, rectangle);
             }
         }
 
         if (mapMarkersVisible && mapMarkerList != null) {
             for (MapMarker marker : mapMarkerList) {
-                paintMarker(g, marker);
+                if(marker.isVisible())paintMarker(g, marker);
             }
         }
 
@@ -601,29 +642,31 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * Paint a single marker.
      */
     protected void paintMarker(Graphics g, MapMarker marker) {
-        Point p = getMapPosition(marker.getLat(), marker.getLon());
+        Point p = getMapPosition(marker.getLat(), marker.getLon(), marker.getMarkerStyle()==MapMarker.STYLE.FIXED);
+        Integer radius = getRadius(marker, p);
         if (scrollWrapEnabled) {
             int tilesize = tileSource.getTileSize();
             int mapSize = tilesize << zoom;
             if (p == null) {
                 p = getMapPosition(marker.getLat(), marker.getLon(), false);
+                radius = getRadius(marker, p);
             }
-            marker.paint(g, p);
+            marker.paint(g, p, radius);
             int xSave = p.x;
             int xWrap = xSave;
             // overscan of 15 allows up to 30-pixel markers to gracefully scroll off the edge of the panel
             while ((xWrap -= mapSize) >= -15) {
                 p.x = xWrap;
-                marker.paint(g, p);
+                marker.paint(g, p, radius);
             }
             xWrap = xSave;
             while ((xWrap += mapSize) <= getWidth() + 15) {
                 p.x = xWrap;
-                marker.paint(g, p);
+                marker.paint(g, p, radius);
             }
         } else {
             if (p != null) {
-                marker.paint(g, p);
+                marker.paint(g, p, radius);
             }
         }
     }
@@ -670,10 +713,10 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * Paint a single polygon.
      */
     protected void paintPolygon(Graphics g, MapPolygon polygon) {
-        List<Coordinate> coords = polygon.getPoints();
+        List<ICoordinate> coords = polygon.getPoints();
         if (coords != null && coords.size() >= 3) {
             List<Point> points = new LinkedList<Point>();
-            for (Coordinate c : coords) {
+            for (ICoordinate c : coords) {
                 Point p = getMapPosition(c, false);
                 if (p == null) {
                     return;
