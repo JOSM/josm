@@ -11,7 +11,6 @@ import java.util.Set;
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.text.Document;
 
@@ -19,6 +18,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * A JTextField that disabled all JOSM shortcuts composed of a single key without modifier (except F1 to F12),
@@ -26,7 +26,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * This allows to include text fields in toggle dialogs (needed for relation filter).
  * @since 5696
  */
-public class DisableShortcutsOnFocusGainedTextField extends JTextField implements FocusListener {
+public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implements FocusListener {
 
     /**
      * Constructs a new <code>TextField</code>.  A default model is created,

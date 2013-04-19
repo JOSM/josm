@@ -16,7 +16,6 @@ import java.util.Map.Entry;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.SingleSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -45,6 +44,7 @@ import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -60,8 +60,8 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     protected List<OsmPrimitive> primitives;
     protected OsmDataLayer layer;
-    private JTextArea txtData;
-    private JTextArea txtMappaint;
+    private JosmTextArea txtData;
+    private JosmTextArea txtMappaint;
     boolean mappaintTabLoaded;
 
     public InspectPrimitiveDialog(Collection<OsmPrimitive> primitives, OsmDataLayer layer) {
@@ -93,7 +93,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     protected JPanel buildDataPanel() {
         JPanel p = new JPanel(new GridBagLayout());
-        txtData = new JTextArea();
+        txtData = new JosmTextArea();
         txtData.setFont(new Font("Monospaced", txtData.getFont().getStyle(), txtData.getFont().getSize()));
         txtData.setEditable(false);
         txtData.setText(buildDataText());
@@ -320,7 +320,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     protected void buildMapPaintPanel(JPanel p) {
         p.setLayout(new GridBagLayout());
-        txtMappaint = new JTextArea();
+        txtMappaint = new JosmTextArea();
         txtMappaint.setFont(new Font("Monospaced", txtMappaint.getFont().getStyle(), txtMappaint.getFont().getSize()));
         txtMappaint.setEditable(false);
 

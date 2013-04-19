@@ -8,8 +8,6 @@ import java.util.Collection;
 
 import javax.swing.AbstractButton;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -17,6 +15,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * An abstract imagery panel used to add WMS/TMS imagery sources. See implementations.
@@ -26,8 +26,8 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
  */
 public abstract class AddImageryPanel extends JPanel {
 
-    protected final JTextArea rawUrl = new JTextArea(3, 40);
-    protected final JTextField name = new JTextField();
+    protected final JosmTextArea rawUrl = new JosmTextArea(3, 40);
+    protected final JosmTextField name = new JosmTextField();
     
     protected final Collection<ContentValidationListener> listeners = new ArrayList<ContentValidationListener>();
     

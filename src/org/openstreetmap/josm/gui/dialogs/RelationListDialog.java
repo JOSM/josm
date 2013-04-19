@@ -26,7 +26,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -75,6 +74,7 @@ import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * A dialog showing all known relations, with buttons to add, edit, and
@@ -95,7 +95,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     private final JPopupMenu popupMenu = new JPopupMenu();
     private final PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
 
-    private final JTextField filter;
+    private final JosmTextField filter;
     
     // Actions
     /** the edit action */
@@ -259,8 +259,8 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
     }
 
-    private JTextField  setupFilter() {
-        final JTextField f = new DisableShortcutsOnFocusGainedTextField();
+    private JosmTextField  setupFilter() {
+        final JosmTextField f = new DisableShortcutsOnFocusGainedTextField();
         f.setToolTipText(tr("Relation list filter"));
         f.getDocument().addDocumentListener(new DocumentListener() {
 

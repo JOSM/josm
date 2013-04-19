@@ -13,11 +13,11 @@ import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * Action to rename an specific layer. Provides the option to rename the
@@ -43,7 +43,7 @@ public class RenameLayerAction extends AbstractAction {
 
     public void actionPerformed(ActionEvent e) {
         Box panel = Box.createVerticalBox();
-        final JTextField name = new JTextField(layer.getName());
+        final JosmTextField name = new JosmTextField(layer.getName());
         panel.add(name);
         JCheckBox filerename = new JCheckBox(tr("Also rename the file"));
         if (Main.applet) {

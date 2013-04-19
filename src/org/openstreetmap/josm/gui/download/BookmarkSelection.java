@@ -16,18 +16,17 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.gui.BookmarkList;
 import org.openstreetmap.josm.gui.BookmarkList.Bookmark;
 import org.openstreetmap.josm.gui.JMultilineLabel;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -49,7 +48,7 @@ public class BookmarkSelection implements DownloadSelection {
 
     /** displays information about the current download area */
     private JMultilineLabel lblCurrentDownloadArea;
-    final private JTextArea bboxDisplay = new JTextArea();
+    final private JosmTextArea bboxDisplay = new JosmTextArea();
     /** the add action */
     private AddAction actAdd;
 

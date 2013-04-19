@@ -28,7 +28,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
@@ -47,6 +46,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * This is the keyboard preferences content.
@@ -137,7 +137,7 @@ public class PrefJPanel extends JPanel {
 
     JTable shortcutTable = new JTable();
 
-    private JTextField filterField = new JTextField();
+    private JosmTextField filterField = new JosmTextField();
 
     /** Creates new form prefJPanel */
     // Ain't those auto-generated comments helpful or what? <g>

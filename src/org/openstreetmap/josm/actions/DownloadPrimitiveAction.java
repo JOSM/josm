@@ -18,7 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
@@ -31,6 +30,7 @@ import org.openstreetmap.josm.gui.download.DownloadObjectDialog;
 import org.openstreetmap.josm.gui.io.DownloadPrimitivesTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -42,6 +42,9 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class DownloadPrimitiveAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code DownloadPrimitiveAction}.
+     */
     public DownloadPrimitiveAction() {
         super(tr("Download object..."), "downloadprimitive", tr("Download OSM object by ID."),
                 Shortcut.registerShortcut("system:download_primitive", tr("File: {0}", tr("Download object...")), KeyEvent.VK_O, Shortcut.CTRL_SHIFT), true);
@@ -143,7 +146,7 @@ public class DownloadPrimitiveAction extends JosmAction {
             missing.setFont(missing.getFont().deriveFont(Font.PLAIN));
             p.add(missing, GBC.eol());
         }
-        JTextArea txt = new JTextArea();
+        JosmTextArea txt = new JosmTextArea();
         txt.setFont(new Font("Monospaced", txt.getFont().getStyle(), txt.getFont().getSize()));
         txt.setEditable(false);
         txt.setBackground(p.getBackground());

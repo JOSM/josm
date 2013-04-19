@@ -17,12 +17,12 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableCellEditor;
 
 import org.openstreetmap.josm.actions.SaveActionBase;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * This is a {@link TableCellEditor} for filenames. It provides a text input field and
@@ -31,7 +31,7 @@ import org.openstreetmap.josm.actions.SaveActionBase;
  *
  */
 class FilenameCellEditor extends JPanel implements TableCellEditor {
-    private JTextField tfFileName;
+    private JosmTextField tfFileName;
     private CopyOnWriteArrayList<CellEditorListener> listeners;
     private File value;
 
@@ -46,7 +46,7 @@ class FilenameCellEditor extends JPanel implements TableCellEditor {
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
-        add(tfFileName = new JTextField(), gc);
+        add(tfFileName = new JosmTextField(), gc);
 
         gc.gridx = 1;
         gc.gridy = 0;

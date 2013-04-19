@@ -33,7 +33,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 import javax.swing.UIManager;
@@ -49,6 +48,7 @@ import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor.ProgressMon
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * A component that manages some status information display about the map.
@@ -150,7 +150,7 @@ public class MapStatus extends JPanel implements Helpful {
 
     final ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 11);
     final ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20);
-    final JTextField helpText = new JTextField();
+    final JosmTextField helpText = new JosmTextField();
     final ImageLabel latText = new ImageLabel("lat", tr("The geographic latitude at the mouse pointer."), 11);
     final ImageLabel angleText = new ImageLabel("angle", tr("The angle between the previous and the current way segment."), 6);
     final ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6);

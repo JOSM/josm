@@ -18,13 +18,13 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.JMultilineLabel;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.plugins.PluginHandler;
 
 /**
@@ -150,7 +150,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                                 p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")), GBC.eop());
                             }
 
-                            JTextArea info = new JTextArea(text, 18, 60);
+                            JosmTextArea info = new JosmTextArea(text, 18, 60);
                             info.setCaretPosition(0);
                             info.setEditable(false);
                             p.add(new JScrollPane(info), GBC.eop());

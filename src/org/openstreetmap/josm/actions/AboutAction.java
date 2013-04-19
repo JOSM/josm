@@ -14,11 +14,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.GBC;
@@ -37,6 +37,9 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class AboutAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code AboutAction}.
+     */
     public AboutAction() {
         super(tr("About"), "about", tr("Display the about screen."),
             Shortcut.registerShortcut("system:about", tr("About"),
@@ -48,22 +51,22 @@ public class AboutAction extends JosmAction {
 
         Version version = Version.getInstance();
 
-        JTextArea readme = new JTextArea();
+        JosmTextArea readme = new JosmTextArea();
         readme.setEditable(false);
         readme.setText(Version.loadResourceFile(Main.class.getResource("/README")));
         readme.setCaretPosition(0);
 
-        JTextArea revision = new JTextArea();
+        JosmTextArea revision = new JosmTextArea();
         revision.setEditable(false);
         revision.setText(version.getReleaseAttributes());
         revision.setCaretPosition(0);
 
-        JTextArea contribution = new JTextArea();
+        JosmTextArea contribution = new JosmTextArea();
         contribution.setEditable(false);
         contribution.setText(Version.loadResourceFile(Main.class.getResource("/CONTRIBUTION")));
         contribution.setCaretPosition(0);
 
-        JTextArea license = new JTextArea();
+        JosmTextArea license = new JosmTextArea();
         license.setEditable(false);
         license.setText(Version.loadResourceFile(Main.class.getResource("/LICENSE")));
         license.setCaretPosition(0);
@@ -102,7 +105,7 @@ public class AboutAction extends JosmAction {
                 JOptionPane.INFORMATION_MESSAGE, ImageProvider.get("logo"));
     }
 
-    private JScrollPane createScrollPane(JTextArea area) {
+    private JScrollPane createScrollPane(JosmTextArea area) {
         area.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         area.setOpaque(false);
         JScrollPane sp = new JScrollPane(area);

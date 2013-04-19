@@ -34,7 +34,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
@@ -71,6 +70,7 @@ import org.openstreetmap.josm.tools.MultikeyActionsHandler;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction.MultikeyInfo;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * This is a toggle dialog which displays the list of layers. Actions allow to
@@ -193,7 +193,7 @@ public class LayerListDialog extends ToggleDialog {
         layerList.getColumnModel().getColumn(1).setPreferredWidth(16);
         layerList.getColumnModel().getColumn(1).setResizable(false);
         layerList.getColumnModel().getColumn(2).setCellRenderer(new LayerNameCellRenderer());
-        layerList.getColumnModel().getColumn(2).setCellEditor(new LayerNameCellEditor(new JTextField()));
+        layerList.getColumnModel().getColumn(2).setCellEditor(new LayerNameCellEditor(new JosmTextField()));
         for (KeyStroke ks : new KeyStroke[] {
                 KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK),
@@ -1008,13 +1008,13 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     private static class LayerNameCellEditor extends DefaultCellEditor {
-        public LayerNameCellEditor(JTextField tf) {
+        public LayerNameCellEditor(JosmTextField tf) {
             super(tf);
         }
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            JTextField tf = (JTextField) super.getTableCellEditorComponent(table, value, isSelected, row, column);
+            JosmTextField tf = (JosmTextField) super.getTableCellEditorComponent(table, value, isSelected, row, column);
             tf.setText(value == null ? "" : ((Layer) value).getName());
             return tf;
         }

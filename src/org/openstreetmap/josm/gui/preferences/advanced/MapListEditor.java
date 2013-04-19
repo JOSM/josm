@@ -22,17 +22,17 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableCellEditor;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellEditor;
 
 import org.openstreetmap.josm.data.Preferences.MapListSetting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.advanced.AdvancedPreference.PrefEntry;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -116,7 +116,7 @@ public class MapListEditor extends ExtendedDialog {
         table.putClientProperty("terminateEditOnFocusLost", true);
         table.getTableHeader().getColumnModel().getColumn(0).setHeaderValue(tr("Key"));
         table.getTableHeader().getColumnModel().getColumn(1).setHeaderValue(tr("Value"));
-        DefaultCellEditor editor = new DefaultCellEditor(new JTextField());
+        DefaultCellEditor editor = new DefaultCellEditor(new JosmTextField());
         editor.setClickCountToStart(1);
         table.setDefaultEditor(table.getColumnClass(0), editor);
 

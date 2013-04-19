@@ -37,7 +37,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
@@ -78,6 +77,7 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.GBC;
@@ -696,7 +696,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
             } else {
                 JPanel p = new JPanel(new GridBagLayout());
                 p.add(new JLabel(tr("Following problems found:")), GBC.eol());
-                JTextArea info = new JTextArea(result, 20, 60);
+                JosmTextArea info = new JosmTextArea(result, 20, 60);
                 info.setCaretPosition(0);
                 info.setEditable(false);
                 p.add(new JScrollPane(info), GBC.eop());

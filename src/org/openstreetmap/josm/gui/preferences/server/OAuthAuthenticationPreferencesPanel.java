@@ -21,7 +21,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
@@ -33,6 +32,7 @@ import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.oauth.TestAccessTokenTask;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * The preferences panel for the OAuth preferences. This just a summary panel
@@ -213,8 +213,8 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      *
      */
     private class AlreadyAuthorisedPanel extends JPanel {
-        private JTextField tfAccessTokenKey;
-        private JTextField tfAccessTokenSecret;
+        private JosmTextField tfAccessTokenKey;
+        private JosmTextField tfAccessTokenSecret;
 
         protected void build() {
             setLayout(new GridBagLayout());
@@ -237,7 +237,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
             gc.gridx = 1;
             gc.weightx = 1.0;
-            add(tfAccessTokenKey = new JTextField(), gc);
+            add(tfAccessTokenKey = new JosmTextField(), gc);
             tfAccessTokenKey.setEditable(false);
 
             // -- access token secret
@@ -249,7 +249,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
             gc.gridx = 1;
             gc.weightx = 1.0;
-            add(tfAccessTokenSecret = new JTextField(), gc);
+            add(tfAccessTokenSecret = new JosmTextField(), gc);
             tfAccessTokenSecret.setEditable(false);
 
             // -- access token secret

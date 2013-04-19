@@ -19,11 +19,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor.ProgressMonitorDialog;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -37,7 +37,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
     private JButton btnCancel;
     private JButton btnInBackground;
     /** the text area and the scroll pane for the log */
-    private JTextArea taLog = new JTextArea(5,50);
+    private JosmTextArea taLog = new JosmTextArea(5,50);
     private  JScrollPane spLog;
 
     private void initDialog() {

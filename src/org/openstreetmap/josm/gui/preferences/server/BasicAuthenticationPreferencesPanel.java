@@ -7,21 +7,20 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.net.PasswordAuthentication;
 import java.net.Authenticator.RequestorType;
+import java.net.PasswordAuthentication;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 
 import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.CredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
-import org.openstreetmap.josm.io.OsmApi;
 
 /**
  * The preferences panel for parameters necessary for the Basic Authentication
@@ -31,10 +30,10 @@ import org.openstreetmap.josm.io.OsmApi;
 public class BasicAuthenticationPreferencesPanel extends JPanel {
 
     /** the OSM user name */
-    private JTextField tfOsmUserName;
+    private JosmTextField tfOsmUserName;
     private UserNameValidator valUserName;
     /** the OSM password */
-    private JPasswordField tfOsmPassword;
+    private JosmPasswordField tfOsmPassword;
     /** a panel with further information, e.g. some warnings */
     private JPanel decorationPanel;
 
@@ -55,7 +54,7 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfOsmUserName = new JTextField(), gc);
+        add(tfOsmUserName = new JosmTextField(), gc);
         SelectAllOnFocusGainedDecorator.decorate(tfOsmUserName);
         valUserName = new UserNameValidator(tfOsmUserName);
         valUserName.validate();

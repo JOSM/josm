@@ -11,9 +11,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
 import java.net.ProxySelector;
-import java.net.Authenticator.RequestorType;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,14 +21,13 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.auth.CredentialsAgent;
@@ -74,12 +73,12 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
     private ButtonGroup bgProxyPolicy;
     private Map<ProxyPolicy, JRadioButton> rbProxyPolicy;
-    private JTextField tfProxyHttpHost;
-    private JTextField tfProxyHttpPort;
-    private JTextField tfProxySocksHost;
-    private JTextField tfProxySocksPort;
-    private JTextField tfProxyHttpUser;
-    private JPasswordField tfProxyHttpPassword;
+    private JosmTextField tfProxyHttpHost;
+    private JosmTextField tfProxyHttpPort;
+    private JosmTextField tfProxySocksHost;
+    private JosmTextField tfProxySocksPort;
+    private JosmTextField tfProxyHttpUser;
+    private JosmPasswordField tfProxyHttpPassword;
 
     private JPanel pnlHttpProxyConfigurationPanel;
     private JPanel pnlSocksProxyConfigurationPanel;
@@ -106,7 +105,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxyHttpHost = new JTextField(),gc);
+        pnl.add(tfProxyHttpHost = new JosmTextField(),gc);
 
         gc.gridy = 1;
         gc.gridx = 0;
@@ -116,7 +115,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxyHttpPort = new JTextField(5),gc);
+        pnl.add(tfProxyHttpPort = new JosmTextField(5),gc);
         tfProxyHttpPort.setMinimumSize(tfProxyHttpPort.getPreferredSize());
 
         gc.gridy = 2;
@@ -136,7 +135,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         gc.gridy = 3;
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxyHttpUser = new JTextField(20),gc);
+        pnl.add(tfProxyHttpUser = new JosmTextField(20),gc);
         tfProxyHttpUser.setMinimumSize(tfProxyHttpUser.getPreferredSize());
 
         gc.gridy = 4;
@@ -181,7 +180,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxySocksHost = new JTextField(20),gc);
+        pnl.add(tfProxySocksHost = new JosmTextField(20),gc);
 
         gc.gridy = 1;
         gc.gridx = 0;
@@ -191,7 +190,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxySocksPort = new JTextField(5), gc);
+        pnl.add(tfProxySocksPort = new JosmTextField(5), gc);
         tfProxySocksPort.setMinimumSize(tfProxySocksPort.getPreferredSize());
 
         // add an extra spacer, otherwise the layout is broken

@@ -29,12 +29,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.io.session.SessionWriter.ExportSupport;
 import org.openstreetmap.josm.tools.GBC;
@@ -78,7 +78,7 @@ public class GpxTracksSessionExporter implements SessionLayerExporter {
         JPanel cardLink = new JPanel(new GridBagLayout());
         final File file = layer.getAssociatedFile();
         if (file != null) {
-            JTextField tf = new JTextField();
+            JosmTextField tf = new JosmTextField();
             tf.setText(file.getPath());
             tf.setEditable(false);
             cardLink.add(tf, GBC.std());
