@@ -17,10 +17,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
@@ -31,9 +31,12 @@ public class AddWMSLayerPanel extends AddImageryPanel {
     private final JCheckBox endpoint = new JCheckBox(tr("Store WMS endpoint only, select layers at usage"));
     private final WMSLayerTree tree = new WMSLayerTree();
     private final JLabel wmsInstruction;
-    private final JTextArea wmsUrl = new JTextArea(3, 40);
+    private final JosmTextArea wmsUrl = new JosmTextArea(3, 40);
     private final JButton showBounds = new JButton(tr("Show bounds"));
 
+    /**
+     * Constructs a new {@code AddWMSLayerPanel}.
+     */
     public AddWMSLayerPanel() {
 
         add(new JLabel(tr("1. Enter service URL")), GBC.eol());

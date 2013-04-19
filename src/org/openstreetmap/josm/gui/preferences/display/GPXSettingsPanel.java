@@ -16,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -29,6 +28,7 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
 import org.openstreetmap.josm.tools.template_engine.TemplateParser;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
@@ -44,9 +44,9 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private JRadioButton drawRawGpsLinesLocal = new JRadioButton(tr("Local files"));
     private JRadioButton drawRawGpsLinesNone = new JRadioButton(tr("None"));
     private ActionListener drawRawGpsLinesActionListener;
-    private JTextField drawRawGpsMaxLineLength = new JTextField(8);
-    private JTextField drawRawGpsMaxLineLengthLocal = new JTextField(8);
-    private JTextField drawLineWidth = new JTextField(2);
+    private JosmTextField drawRawGpsMaxLineLength = new JosmTextField(8);
+    private JosmTextField drawRawGpsMaxLineLengthLocal = new JosmTextField(8);
+    private JosmTextField drawLineWidth = new JosmTextField(2);
     private JCheckBox forceRawGpsLines = new JCheckBox(tr("Force lines if no segments imported"));
     private JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points"));
     private JCheckBox hdopCircleGpsPoints = new JCheckBox(tr("Draw a circle from HDOP value"));
@@ -61,12 +61,12 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private JCheckBox makeAutoMarkers = new JCheckBox(tr("Create markers when reading GPX"));
     private JCheckBox drawGpsArrows = new JCheckBox(tr("Draw Direction Arrows"));
     private JCheckBox drawGpsArrowsFast = new JCheckBox(tr("Fast drawing (looks uglier)"));
-    private JTextField drawGpsArrowsMinDist = new JTextField(8);
+    private JosmTextField drawGpsArrowsMinDist = new JosmTextField(8);
     private JCheckBox colorDynamic = new JCheckBox(tr("Dynamic color range based on data limits"));
     private JosmComboBox waypointLabel = new JosmComboBox(LABEL_PATTERN_DESC);
-    private JTextField waypointLabelPattern = new JTextField();
+    private JosmTextField waypointLabelPattern = new JosmTextField();
     private JosmComboBox audioWaypointLabel = new JosmComboBox(LABEL_PATTERN_DESC);
-    private JTextField audioWaypointLabelPattern = new JTextField();
+    private JosmTextField audioWaypointLabelPattern = new JosmTextField();
     private JCheckBox useGpsAntialiasing = new JCheckBox(tr("Smooth GPX graphics (antialiasing)"));
 
     private String layerName;
@@ -421,7 +421,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         savePreferences(null, false);
     }
 
-    private void updateWaypointLabelCombobox(JosmComboBox cb, JTextField tf, TemplateEntryProperty property) {
+    private void updateWaypointLabelCombobox(JosmComboBox cb, JosmTextField tf, TemplateEntryProperty property) {
         String labelPattern = property.getAsString();
         boolean found = false;
         for (int i=0; i<LABEL_PATTERN_TEMPLATE.length; i++) {
@@ -438,7 +438,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         }
     }
 
-    private void updateWaypointPattern(JosmComboBox cb, JTextField tf) {
+    private void updateWaypointPattern(JosmComboBox cb, JosmTextField tf) {
         if (cb.getSelectedIndex() == WAYPOINT_LABEL_CUSTOM) {
             tf.setEnabled(true);
         } else {

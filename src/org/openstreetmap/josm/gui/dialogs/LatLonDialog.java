@@ -6,11 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
@@ -19,13 +16,11 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -38,15 +33,15 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class LatLonDialog extends ExtendedDialog {
     private static final Color BG_COLOR_ERROR = new Color(255,224,224);
 
     public JTabbedPane tabs;
-    private JTextField tfLatLon, tfEastNorth;
+    private JosmTextField tfLatLon, tfEastNorth;
     private LatLon latLonCoordinates;
     private EastNorth eastNorthCoordinates;
 
@@ -76,7 +71,7 @@ public class LatLonDialog extends ExtendedDialog {
         pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
         pnl.add(new JLabel(tr("Coordinates:")), GBC.std().insets(0,10,5,0));
-        tfLatLon = new JTextField(24);
+        tfLatLon = new JosmTextField(24);
         pnl.add(tfLatLon, GBC.eol().insets(0,10,0,0).fill(GBC.HORIZONTAL).weight(1.0, 0.0));
 
         pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0,5,0,5));
@@ -128,7 +123,7 @@ public class LatLonDialog extends ExtendedDialog {
         pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
         pnl.add(new JLabel(tr("Projected coordinates:")), GBC.std().insets(0,10,5,0));
-        tfEastNorth = new JTextField(24);
+        tfEastNorth = new JosmTextField(24);
 
         pnl.add(tfEastNorth, GBC.eol().insets(0,10,0,0).fill(GBC.HORIZONTAL).weight(1.0, 0.0));
 
@@ -207,13 +202,13 @@ public class LatLonDialog extends ExtendedDialog {
         return eastNorthCoordinates;
     }
 
-    protected void setErrorFeedback(JTextField tf, String message) {
+    protected void setErrorFeedback(JosmTextField tf, String message) {
         tf.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
         tf.setToolTipText(message);
         tf.setBackground(BG_COLOR_ERROR);
     }
 
-    protected void clearErrorFeedback(JTextField tf, String message) {
+    protected void clearErrorFeedback(JosmTextField tf, String message) {
         tf.setBorder(UIManager.getBorder("TextField.border"));
         tf.setToolTipText(message);
         tf.setBackground(UIManager.getColor("TextField.background"));
@@ -328,8 +323,8 @@ public class LatLonDialog extends ExtendedDialog {
     static class TextFieldFocusHandler implements FocusListener {
         public void focusGained(FocusEvent e) {
             Component c = e.getComponent();
-            if (c instanceof JTextField) {
-                JTextField tf = (JTextField)c;
+            if (c instanceof JosmTextField) {
+                JosmTextField tf = (JosmTextField)c;
                 tf.selectAll();
             }
         }

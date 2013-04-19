@@ -14,7 +14,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -22,6 +21,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * A panel for configuring whether JOSM shall update plugins at startup.
@@ -58,7 +58,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
     private ButtonGroup bgTimeBasedUpdatePolicy;
     private Map<Policy, JRadioButton> rbVersionBasedUpatePolicy;
     private Map<Policy, JRadioButton> rbTimeBasedUpatePolicy;
-    private JTextField tfUpdateInterval;
+    private JosmTextField tfUpdateInterval;
     private JLabel lblUpdateInterval;
 
     protected JPanel buildVersionBasedUpdatePolicyPanel() {
@@ -95,7 +95,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
     protected JPanel buildUpdateIntervalPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pnl.add(lblUpdateInterval = new JLabel(tr("Update interval (in days):")));
-        pnl.add(tfUpdateInterval = new JTextField(5));
+        pnl.add(tfUpdateInterval = new JosmTextField(5));
         SelectAllOnFocusGainedDecorator.decorate(tfUpdateInterval);
         return pnl;
     }

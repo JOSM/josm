@@ -18,7 +18,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
@@ -31,6 +30,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  *
@@ -38,14 +38,14 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class BoundingBoxSelectionPanel extends JPanel {
 
-    private JTextField[] tfLatLon = null;
-    private final JTextField tfOsmUrl = new JTextField();
+    private JosmTextField[] tfLatLon = null;
+    private final JosmTextField tfOsmUrl = new JosmTextField();
 
     protected void buildInputFields() {
-        tfLatLon = new JTextField[4];
+        tfLatLon = new JosmTextField[4];
         for(int i=0; i< 4; i++) {
-            tfLatLon[i] = new JTextField(11);
-            tfLatLon[i].setMinimumSize(new Dimension(100,new JTextField().getMinimumSize().height));
+            tfLatLon[i] = new JosmTextField(11);
+            tfLatLon[i].setMinimumSize(new Dimension(100,new JosmTextField().getMinimumSize().height));
             SelectAllOnFocusGainedDecorator.decorate(tfLatLon[i]);
         }
         LatitudeValidator.decorate(tfLatLon[0]);

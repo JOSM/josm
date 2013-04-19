@@ -9,18 +9,18 @@ import java.awt.event.KeyEvent;
 import java.util.Arrays;
 
 import javax.swing.JLabel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.text.View;
 
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 
 public class AddTMSLayerPanel extends AddImageryPanel {
 
-    private final JTextField tmsZoom = new JTextField();
-    private final JTextArea tmsUrl = new JTextArea(3, 40);
+    private final JosmTextField tmsZoom = new JosmTextField();
+    private final JosmTextArea tmsUrl = new JosmTextArea(3, 40);
     private final KeyAdapter keyAdapter = new KeyAdapter() {
         @Override
         public void keyReleased(KeyEvent e) {
@@ -28,6 +28,9 @@ public class AddTMSLayerPanel extends AddImageryPanel {
         }
     };
 
+    /**
+     * Constructs a new {@code AddTMSLayerPanel}.
+     */
     public AddTMSLayerPanel() {
 
         add(new JLabel(tr("1. Enter URL")), GBC.eol());

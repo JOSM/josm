@@ -7,18 +7,18 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import org.openstreetmap.josm.data.Preferences.StringSetting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.advanced.AdvancedPreference.PrefEntry;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 
 public class StringEditor extends ExtendedDialog {
 
     PrefEntry entry;
-    JTextField tvalue;
+    JosmTextField tvalue;
 
     public StringEditor(final PreferenceTabbedPane gui, PrefEntry entry, StringSetting setting) {
         super(gui, tr("Change string setting"), new String[] {tr("OK"), tr("Cancel")});
@@ -36,7 +36,7 @@ public class StringEditor extends ExtendedDialog {
         p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.eol().insets(0,0,5,0));
 
         p.add(new JLabel(tr("Value: ")), GBC.std());
-        tvalue = new JTextField(orig, 50);
+        tvalue = new JosmTextField(orig, 50);
         p.add(tvalue, GBC.eop().insets(5,0,0,0).fill(GBC.HORIZONTAL));
 
         return p;

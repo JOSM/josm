@@ -9,10 +9,10 @@ import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /*
  * marker.audiosampleminsecs
@@ -49,10 +49,10 @@ public class AudioPreference extends DefaultTabPreferenceSetting {
     private JCheckBox audioMarkersFromWavTimestamps = new JCheckBox(tr("Modified times (time stamps) of audio files."));
     private JCheckBox audioMarkersFromStart = new JCheckBox(tr("Start of track (will always do this if no other markers available)."));
 
-    private JTextField audioLeadIn = new JTextField(8);
-    private JTextField audioForwardBackAmount = new JTextField(8);
-    private JTextField audioFastForwardMultiplier = new JTextField(8);
-    private JTextField audioCalibration = new JTextField(8);
+    private JosmTextField audioLeadIn = new JosmTextField(8);
+    private JosmTextField audioForwardBackAmount = new JosmTextField(8);
+    private JosmTextField audioFastForwardMultiplier = new JosmTextField(8);
+    private JosmTextField audioCalibration = new JosmTextField(8);
 
     public void addGui(PreferenceTabbedPane gui) {
         JPanel audio = new JPanel(new GridBagLayout());

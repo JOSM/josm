@@ -20,7 +20,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import org.openstreetmap.josm.Main;
@@ -36,6 +35,7 @@ import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 public class CustomProjectionChoice extends AbstractProjectionChoice implements SubPrefsOptions {
 
@@ -47,7 +47,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
 
     private static class PreferencePanel extends JPanel {
 
-        public JTextField input;
+        public JosmTextField input;
         private HistoryComboBox cbInput;
 
         public PreferencePanel(String initialText, ActionListener listener) {
@@ -55,12 +55,12 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
         }
 
         private void build(String initialText, final ActionListener listener) {
-            input = new JTextField(30);
+            input = new JosmTextField(30);
             cbInput = new HistoryComboBox();
             cbInput.setPrototypeDisplayValue(new AutoCompletionListItem("xxxx"));
             cbInput.setEditor(new BasicComboBoxEditor() {
                 @Override
-                protected JTextField createEditorComponent() {
+                protected JosmTextField createEditorComponent() {
                     return input;
                 }
             });

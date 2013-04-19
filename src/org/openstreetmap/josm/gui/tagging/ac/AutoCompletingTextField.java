@@ -10,7 +10,6 @@ import java.util.EventObject;
 
 import javax.swing.ComboBoxEditor;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.event.CellEditorListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.text.AttributeSet;
@@ -21,6 +20,8 @@ import javax.swing.text.StyleConstants;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.TableCellEditorSupport;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
+
 
 /**
  * AutoCompletingTextField is an text field with autocompletion behaviour. It
@@ -31,7 +32,7 @@ import org.openstreetmap.josm.gui.util.TableCellEditorSupport;
  *
  *
  */
-public class AutoCompletingTextField extends JTextField implements ComboBoxEditor, TableCellEditor {
+public class AutoCompletingTextField extends JosmTextField implements ComboBoxEditor, TableCellEditor {
 
     private Integer maxChars;
     

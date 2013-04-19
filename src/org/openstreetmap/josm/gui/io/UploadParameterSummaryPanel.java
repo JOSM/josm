@@ -11,7 +11,6 @@ import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 
 import javax.swing.BorderFactory;
-import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -21,13 +20,14 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class UploadParameterSummaryPanel extends JPanel implements HyperlinkListener, PropertyChangeListener{
     private UploadStrategySpecification spec = new UploadStrategySpecification();
     private int numObjects;
-    private JEditorPane jepMessage;
+    private JosmEditorPane jepMessage;
     private JLabel lblWarning;
 
     private Changeset selectedChangeset;
@@ -102,7 +102,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     }
 
     protected void build() {
-        jepMessage = new JEditorPane("text/html", "");
+        jepMessage = new JosmEditorPane("text/html", "");
         jepMessage.setOpaque(false);
         jepMessage.setEditable(false);
         jepMessage.addHyperlinkListener(this);
@@ -141,6 +141,9 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         add(pnl, BorderLayout.WEST);
     }
 
+    /**
+     * Constructs a new {@code UploadParameterSummaryPanel}.
+     */
     public UploadParameterSummaryPanel() {
         build();
         updateSummary();

@@ -7,10 +7,11 @@ import java.awt.event.FocusEvent;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
+
 
 /**
  * {@link TableCellEditor} for the role column in a table for {@link RelationMember}s.
@@ -18,10 +19,13 @@ import org.openstreetmap.josm.data.osm.RelationMember;
  */
 public class RelationMemberTableCellEditor extends AbstractCellEditor implements TableCellEditor{
 
-    private final JTextField editor;
+    private final JosmTextField editor;
 
+    /**
+     * Constructs a new {@code RelationMemberTableCellEditor}.
+     */
     public RelationMemberTableCellEditor() {
-        editor = new JTextField();
+        editor = new JosmTextField();
         editor.addFocusListener(
                 new FocusAdapter() {
                     @Override

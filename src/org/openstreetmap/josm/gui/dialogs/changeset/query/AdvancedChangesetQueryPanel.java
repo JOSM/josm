@@ -24,7 +24,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
@@ -38,6 +37,8 @@ import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
+
 
 /**
  * This panel allows to specify a changeset query
@@ -374,9 +375,9 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         private JRadioButton rbRestrictToMyself;
         private JRadioButton rbRestrictToUid;
         private JRadioButton rbRestrictToUserName;
-        private JTextField tfUid;
+        private JosmTextField tfUid;
         private UidInputFieldValidator valUid;
-        private JTextField tfUserName;
+        private JosmTextField tfUserName;
         private UserNameInputValidator valUserName;
         private JMultilineLabel lblRestrictedToMyself;
 
@@ -389,7 +390,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             pnl.add(new JLabel(tr("User ID:")), gc);
 
             gc.gridx = 1;
-            pnl.add(tfUid = new JTextField(10),gc);
+            pnl.add(tfUid = new JosmTextField(10),gc);
             SelectAllOnFocusGainedDecorator.decorate(tfUid);
             valUid = UidInputFieldValidator.decorate(tfUid);
 
@@ -409,7 +410,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             pnl.add(new JLabel(tr("User name:")), gc);
 
             gc.gridx = 1;
-            pnl.add(tfUserName = new JTextField(10),gc);
+            pnl.add(tfUserName = new JosmTextField(10),gc);
             SelectAllOnFocusGainedDecorator.decorate(tfUserName);
             valUserName = UserNameInputValidator.decorate(tfUserName);
 
@@ -634,17 +635,17 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
         private JRadioButton rbClosedAfter;
         private JRadioButton rbClosedAfterAndCreatedBefore;
-        private JTextField tfClosedAfterDate1;
+        private JosmTextField tfClosedAfterDate1;
         private DateValidator valClosedAfterDate1;
-        private JTextField tfClosedAfterTime1;
+        private JosmTextField tfClosedAfterTime1;
         private TimeValidator valClosedAfterTime1;
-        private JTextField tfClosedAfterDate2;
+        private JosmTextField tfClosedAfterDate2;
         private DateValidator valClosedAfterDate2;
-        private JTextField tfClosedAfterTime2;
+        private JosmTextField tfClosedAfterTime2;
         private TimeValidator valClosedAfterTime2;
-        private JTextField tfCreatedBeforeDate;
+        private JosmTextField tfCreatedBeforeDate;
         private DateValidator valCreatedBeforeDate;
-        private JTextField tfCreatedBeforeTime;
+        private JosmTextField tfCreatedBeforeTime;
         private TimeValidator valCreatedBeforeTime;
 
         protected JPanel buildClosedAfterInputPanel() {
@@ -657,7 +658,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
             gc.gridx = 1;
             gc.weightx = 0.7;
-            pnl.add(tfClosedAfterDate1 = new JTextField(),gc);
+            pnl.add(tfClosedAfterDate1 = new JosmTextField(),gc);
             SelectAllOnFocusGainedDecorator.decorate(tfClosedAfterDate1);
             valClosedAfterDate1 = DateValidator.decorate(tfClosedAfterDate1);
             tfClosedAfterDate1.setToolTipText(valClosedAfterDate1.getStandardTooltipTextAsHtml());
@@ -668,7 +669,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
             gc.gridx = 3;
             gc.weightx = 0.3;
-            pnl.add(tfClosedAfterTime1 = new JTextField(),gc);
+            pnl.add(tfClosedAfterTime1 = new JosmTextField(),gc);
             SelectAllOnFocusGainedDecorator.decorate(tfClosedAfterTime1);
             valClosedAfterTime1 = TimeValidator.decorate(tfClosedAfterTime1);
             tfClosedAfterTime1.setToolTipText(valClosedAfterTime1.getStandardTooltipTextAsHtml());
@@ -691,7 +692,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
             gc.gridx = 2;
             gc.weightx = 0.7;
-            pnl.add(tfClosedAfterDate2 = new JTextField(),gc);
+            pnl.add(tfClosedAfterDate2 = new JosmTextField(),gc);
             SelectAllOnFocusGainedDecorator.decorate(tfClosedAfterDate2);
             valClosedAfterDate2 = DateValidator.decorate(tfClosedAfterDate2);
             tfClosedAfterDate2.setToolTipText(valClosedAfterDate2.getStandardTooltipTextAsHtml());
@@ -701,7 +702,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
             gc.gridx = 4;
             gc.weightx = 0.3;
-            pnl.add(tfClosedAfterTime2 = new JTextField(),gc);
+            pnl.add(tfClosedAfterTime2 = new JosmTextField(),gc);
             SelectAllOnFocusGainedDecorator.decorate(tfClosedAfterTime2);
             valClosedAfterTime2 = TimeValidator.decorate(tfClosedAfterTime2);
             tfClosedAfterTime2.setToolTipText(valClosedAfterTime2.getStandardTooltipTextAsHtml());
@@ -721,7 +722,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
             gc.gridx = 2;
             gc.weightx = 0.7;
-            pnl.add(tfCreatedBeforeDate = new JTextField(),gc);
+            pnl.add(tfCreatedBeforeDate = new JosmTextField(),gc);
             SelectAllOnFocusGainedDecorator.decorate(tfCreatedBeforeDate);
             valCreatedBeforeDate = DateValidator.decorate(tfCreatedBeforeDate);
             tfCreatedBeforeDate.setToolTipText(valCreatedBeforeDate.getStandardTooltipTextAsHtml());
@@ -732,7 +733,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
             gc.gridx = 4;
             gc.weightx = 0.3;
-            pnl.add(tfCreatedBeforeTime = new JTextField(),gc);
+            pnl.add(tfCreatedBeforeTime = new JosmTextField(),gc);
             SelectAllOnFocusGainedDecorator.decorate(tfCreatedBeforeTime);
             valCreatedBeforeTime = TimeValidator.decorate(tfCreatedBeforeTime);
             tfCreatedBeforeTime.setToolTipText(valCreatedBeforeDate.getStandardTooltipTextAsHtml());

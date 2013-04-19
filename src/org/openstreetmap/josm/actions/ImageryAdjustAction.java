@@ -19,7 +19,6 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
@@ -30,6 +29,7 @@ import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 
 public class ImageryAdjustAction extends MapMode implements MouseListener, MouseMotionListener, AWTEventListener{
@@ -148,8 +148,8 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
     }
 
     class ImageryOffsetDialog extends ExtendedDialog implements FocusListener {
-        public final JTextField tOffset = new JTextField();
-        JTextField tBookmarkName = new JTextField();
+        public final JosmTextField tOffset = new JosmTextField();
+        JosmTextField tBookmarkName = new JosmTextField();
         private boolean ignoreListener;
         public ImageryOffsetDialog() {
             super(Main.parent,

@@ -41,7 +41,6 @@ import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
@@ -49,7 +48,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -78,7 +76,6 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -503,32 +500,11 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                     PROPERTY_FIX_TAG_LOCALE.put(sel);
                 }
             });
-            JMenuItem pasteK = new JMenuItem(
-                new AbstractAction(tr("Paste tag")){
-                public void actionPerformed(ActionEvent e) {
-                    String buf = Utils.getClipboardContent().trim();
-                    if (buf.isEmpty()) return;
-                    keys.setSelectedItem(buf);
-                }
-            });
-            JMenuItem pasteV = new JMenuItem(
-                new AbstractAction(tr("Paste value")){
-                public void actionPerformed(ActionEvent e) {
-                    String buf = Utils.getClipboardContent().trim();
-                    if (buf.isEmpty()) return;
-                    values.setSelectedItem(buf);
-                }
-            });
-            
             {
-                add(pasteK);
-                add(pasteV);
-                addSeparator();
                 add(fixTagLanguageCb);
                 fixTagLanguageCb.setState(PROPERTY_FIX_TAG_LOCALE.get());
             }
         };
-                
     }
 
     class AddTagsDialog extends AbstractTagsDialog {

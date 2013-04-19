@@ -1,17 +1,18 @@
 package org.openstreetmap.josm.gui.actionsupport;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import javax.swing.*;
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.preferences.advanced.AdvancedPreference;
-import org.openstreetmap.josm.gui.widgets.HtmlPanel;
-import org.openstreetmap.josm.tools.GBC;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * Generic dialog with message and scrolling area
@@ -33,7 +34,7 @@ public class LogShowDialog extends ExtendedDialog {
         lbl.setFont(lbl.getFont().deriveFont(0, 14));
         
         p.add(lbl, GBC.eol().insets(5,0,5,0));
-        JEditorPane txt = new JEditorPane();
+        JosmEditorPane txt = new JosmEditorPane();
         txt.setContentType("text/html");
         txt.setText(log);
         txt.setEditable(false);
@@ -49,5 +50,3 @@ public class LogShowDialog extends ExtendedDialog {
         return p;
     }
 }
- 
-

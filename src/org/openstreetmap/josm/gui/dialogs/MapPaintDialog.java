@@ -38,7 +38,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.SingleSelectionModel;
@@ -71,6 +70,7 @@ import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JFileChooserManager;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -90,6 +90,9 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
     protected MoveUpDownAction downAction;
     protected JCheckBox cbWireframe;
 
+    /**
+     * Constructs a new {@code MapPaintDialog}.
+     */
     public MapPaintDialog() {
         super(tr("Map Paint Styles"), "mapstyle", tr("configure the map painting style"),
                 Shortcut.registerShortcut("subwindow:mappaint", tr("Toggle: {0}", tr("MapPaint")),
@@ -405,6 +408,9 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
      * Opens preferences window and selects the mappaint tab.
      */
     public static class LaunchMapPaintPreferencesAction extends AbstractAction {
+        /**
+         * Constructs a new {@code LaunchMapPaintPreferencesAction}.
+         */
         public LaunchMapPaintPreferencesAction() {
             putValue(NAME, tr("Preferences"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "mappaintpreference"));
@@ -651,7 +657,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
         }
 
         private void buildSourcePanel(StyleSource s, JPanel p) {
-            JTextArea txtSource = new JTextArea();
+            JosmTextArea txtSource = new JosmTextArea();
             txtSource.setFont(new Font("Monospaced", txtSource.getFont().getStyle(), txtSource.getFont().getSize()));
             txtSource.setEditable(false);
             p.add(new JScrollPane(txtSource), GBC.std().fill());
@@ -672,7 +678,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
         }
 
         private void buildErrorsPanel(StyleSource s, JPanel p) {
-            JTextArea txtErrors = new JTextArea();
+            JosmTextArea txtErrors = new JosmTextArea();
             txtErrors.setFont(new Font("Monospaced", txtErrors.getFont().getStyle(), txtErrors.getFont().getSize()));
             txtErrors.setEditable(false);
             p.add(new JScrollPane(txtErrors), GBC.std().fill());
@@ -701,6 +707,9 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
     }
 
     public class MapPaintPopup extends JPopupMenu {
+        /**
+         * Constructs a new {@code MapPaintPopup}.
+         */
         public MapPaintPopup() {
             add(reloadAction);
             add(new SaveAsAction());

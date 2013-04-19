@@ -44,7 +44,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
@@ -58,6 +57,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
@@ -1199,7 +1199,7 @@ public class PluginHandler {
                         b.append(e.getValue());
                         b.append("\n");
                     }
-                    JTextArea a = new JTextArea(10, 40);
+                    JosmTextArea a = new JosmTextArea(10, 40);
                     a.setEditable(false);
                     a.setText(b.toString());
                     a.setCaretPosition(0);
@@ -1208,7 +1208,7 @@ public class PluginHandler {
                 }
             }), GBC.eol());
 
-            JTextArea description = new JTextArea((info.description == null ? tr("no description available")
+            JosmTextArea description = new JosmTextArea((info.description == null ? tr("no description available")
                     : info.description));
             description.setEditable(false);
             description.setFont(new JLabel().getFont().deriveFont(Font.ITALIC));

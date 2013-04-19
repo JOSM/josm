@@ -13,7 +13,6 @@ import java.awt.event.MouseListener;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -24,8 +23,12 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 public class JumpToAction extends JosmAction implements MouseListener {
+    /**
+     * Constructs a new {@code JumpToAction}.
+     */
     public JumpToAction() {
         super(tr("Jump To Position"), null, tr("Opens a dialog that allows to jump to a specific location"), Shortcut.registerShortcut("tools:jumpto", tr("Tool: {0}", tr("Jump To Position")),
         KeyEvent.VK_J, Shortcut.CTRL), false);
@@ -33,10 +36,10 @@ public class JumpToAction extends JosmAction implements MouseListener {
         Main.toolbar.register(this);
     }
 
-    private JTextField url = new JTextField();
-    private JTextField lat = new JTextField();
-    private JTextField lon = new JTextField();
-    private JTextField zm = new JTextField();
+    private JosmTextField url = new JosmTextField();
+    private JosmTextField lat = new JosmTextField();
+    private JosmTextField lon = new JosmTextField();
+    private JosmTextField zm = new JosmTextField();
 
     private double zoomFactor = 0;
     public void showJumpToDialog() {

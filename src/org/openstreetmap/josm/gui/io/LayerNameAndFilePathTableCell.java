@@ -21,7 +21,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableCellEditor;
@@ -29,7 +28,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.tools.GBC;
-
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer, TableCellEditor {
     private final static Color colorError = new Color(255,197,197);
@@ -38,7 +37,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
 
     private final JLabel lblLayerName = new JLabel();
     private final JLabel lblFilename = new JLabel("");
-    private final JTextField tfFilename = new JTextField();
+    private final JosmTextField tfFilename = new JosmTextField();
     private final JButton btnFileChooser = new JButton(new LaunchFileChooserAction());
 
     private final static GBC defaultCellStyle = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);

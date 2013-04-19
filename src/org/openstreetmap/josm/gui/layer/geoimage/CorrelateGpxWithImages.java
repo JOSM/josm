@@ -52,7 +52,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
@@ -80,6 +79,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.PrimaryDateParser;
 import org.xml.sax.SAXException;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /** This class displays the window to select the GPX file and the offset (timezone + delta).
  * Then it correlates the images of the layer with that GPX file.
@@ -118,8 +118,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
     Vector<GpxDataWrapper> gpxLst = new Vector<GpxDataWrapper>();
     JPanel outerPanel;
     JosmComboBox cbGpx;
-    JTextField tfTimezone;
-    JTextField tfOffset;
+    JosmTextField tfTimezone;
+    JosmTextField tfOffset;
     JCheckBox cbExifImg;
     JCheckBox cbTaggedImg;
     JCheckBox cbShowThumbs;
@@ -223,7 +223,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     private class SetOffsetActionListener implements ActionListener {
         JPanel panel;
         JLabel lbExifTime;
-        JTextField tfGpsTime;
+        JosmTextField tfGpsTime;
         JosmComboBox cbTimezones;
         ImageDisplay imgDisp;
         JList imgList;
@@ -268,7 +268,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             gc.anchor = GridBagConstraints.WEST;
             panelTf.add(new JLabel(tr("Gps time (read from the above photo): ")), gc);
 
-            tfGpsTime = new JTextField(12);
+            tfGpsTime = new JosmTextField(12);
             tfGpsTime.setEnabled(false);
             tfGpsTime.setMinimumSize(new Dimension(155, tfGpsTime.getMinimumSize().height));
             gc.gridx = 1;
@@ -494,7 +494,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             timezone = 0;
         }
 
-        tfTimezone = new JTextField(10);
+        tfTimezone = new JosmTextField(10);
         tfTimezone.setText(formatTimezone(timezone));
 
         try {
@@ -504,7 +504,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
         delta = delta / 1000;  // milliseconds -> seconds
 
-        tfOffset = new JTextField(10);
+        tfOffset = new JosmTextField(10);
         tfOffset.setText(Long.toString(delta));
 
         JButton buttonViewGpsPhoto = new JButton(tr("<html>Use photo of an accurate clock,<br>"

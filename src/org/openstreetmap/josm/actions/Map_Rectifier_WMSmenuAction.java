@@ -16,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -26,6 +25,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.UrlLabel;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 public class Map_Rectifier_WMSmenuAction extends JosmAction {
     /**
@@ -110,7 +110,7 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.add(new JLabel(tr("Supported Rectifier Services:")), GBC.eol());
 
-        JTextField tfWmsUrl = new JTextField(30);
+        JosmTextField tfWmsUrl = new JosmTextField(30);
 
         String clip = Utils.getClipboardContent();
         clip = clip == null ? "" : clip.trim();

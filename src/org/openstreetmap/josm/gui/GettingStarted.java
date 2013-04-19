@@ -15,7 +15,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
-import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
@@ -25,6 +24,7 @@ import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.io.CacheCustomContent;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -38,7 +38,12 @@ public class GettingStarted extends JPanel {
             + ".icon {font-size: 0; }\n"
             + "</style>\n";
 
-    public static class LinkGeneral extends JEditorPane implements HyperlinkListener {
+    public static class LinkGeneral extends JosmEditorPane implements HyperlinkListener {
+        
+        /**
+         * Constructs a new {@code LinkGeneral} with the given HTML text
+         * @param text The text to display
+         */
         public LinkGeneral(String text) {
             setContentType("text/html");
             setText(text);

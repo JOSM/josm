@@ -33,7 +33,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
@@ -55,6 +54,7 @@ import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
@@ -143,12 +143,12 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
     private AllSettingsTableModel model;
     protected List<PrefEntry> data;
     protected List<PrefEntry> displayData;
-    protected JTextField txtFilter;
+    protected JosmTextField txtFilter;
 
     public void addGui(final PreferenceTabbedPane gui) {
         JPanel p = gui.createPreferenceTab(this);
 
-        txtFilter = new JTextField();
+        txtFilter = new JosmTextField();
         JLabel lbFilter = new JLabel(tr("Search: "));
         lbFilter.setLabelFor(txtFilter);
         p.add(lbFilter);
@@ -452,7 +452,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
 
     private static class SettingCellEditor extends DefaultCellEditor {
         public SettingCellEditor() {
-            super(new JTextField());
+            super(new JosmTextField());
         }
 
         @Override
@@ -522,7 +522,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
     private void addPreference(final PreferenceTabbedPane gui) {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("Key")), GBC.std().insets(0,0,5,0));
-        JTextField tkey = new JTextField("", 50);
+        JosmTextField tkey = new JosmTextField("", 50);
         p.add(tkey, GBC.eop().insets(5,0,0,0).fill(GBC.HORIZONTAL));
 
         p.add(new JLabel(tr("Select Setting Type:")), GBC.eol().insets(5,15,5,0));
