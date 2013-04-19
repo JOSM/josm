@@ -207,6 +207,8 @@ public class PlatformHookUnixoid implements PlatformHook {
             if (result != null && !result.isEmpty() && prefix != null && !prefix.isEmpty()) {
                 result = prefix + result;
             }
+            if(result != null)
+                result = result.replaceAll("\"+","");
             return result;
         }
     }
