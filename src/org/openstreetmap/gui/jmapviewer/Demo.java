@@ -49,6 +49,9 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
     private JLabel mperpLabelName=null;
     private JLabel mperpLabelValue = null;
 
+    /**
+     * Constructs the {@code Demo}.
+     */
     public Demo() {
         super("JMapViewer Demo");
         setSize(400, 400);
@@ -92,14 +95,14 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
                 map().setDisplayToFitMapMarkers();
             }
         });
-        JComboBox<TileSource> tileSourceSelector = new JComboBox(new TileSource[] { new OsmTileSource.Mapnik(),
+        JComboBox tileSourceSelector = new JComboBox(new TileSource[] { new OsmTileSource.Mapnik(),
                 new OsmTileSource.CycleMap(), new BingAerialTileSource(), new MapQuestOsmTileSource(), new MapQuestOpenAerialTileSource() });
         tileSourceSelector.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 map().setTileSource((TileSource) e.getItem());
             }
         });
-        JComboBox<TileLoader> tileLoaderSelector;
+        JComboBox tileLoaderSelector;
         try {
             tileLoaderSelector = new JComboBox(new TileLoader[] { new OsmFileCacheTileLoader(map()),
                     new OsmTileLoader(map()) });

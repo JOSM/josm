@@ -25,7 +25,6 @@ public class CheckBoxNodeData {
             return layer.isVisible();
     }
     public void setSelected(final Boolean newValue) {
-        System.out.println("CheckBoxNodeData "+layer+" changed to "+newValue);
         layer.setVisible(newValue);
     }
     public String getText() {

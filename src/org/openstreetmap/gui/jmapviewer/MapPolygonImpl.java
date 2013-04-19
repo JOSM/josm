@@ -23,27 +23,30 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
  */
 public class MapPolygonImpl extends MapObjectImpl implements MapPolygon {
 
-    private List<ICoordinate> points;
+    private List<? extends ICoordinate> points;
 
     public MapPolygonImpl(ICoordinate ... points) {
         this(null, null, points);
     }
-    public MapPolygonImpl(String name, List<ICoordinate> points) {
+    public MapPolygonImpl(List<? extends ICoordinate> points) {
+        this(null, null, points);
+    }
+    public MapPolygonImpl(String name, List<? extends ICoordinate> points) {
         this(null, name, points);
     }
     public MapPolygonImpl(String name, ICoordinate ... points) {
         this(null, name, points);
     }
-    public MapPolygonImpl(Layer layer, List<ICoordinate> points) {
+    public MapPolygonImpl(Layer layer, List<? extends ICoordinate> points) {
         this(layer, null, points);
     }
-    public MapPolygonImpl(Layer layer, String name, List<ICoordinate> points) {
+    public MapPolygonImpl(Layer layer, String name, List<? extends ICoordinate> points) {
         this(layer, name, points, getDefaultStyle());
     }
     public MapPolygonImpl(Layer layer, String name, ICoordinate ... points) {
         this(layer, name, Arrays.asList(points), getDefaultStyle());
     }
-    public MapPolygonImpl(Layer layer, String name, List<ICoordinate> points, Style style) {
+    public MapPolygonImpl(Layer layer, String name, List<? extends ICoordinate> points, Style style) {
         super(layer, name, style);
         this.points = points;
     }
@@ -52,7 +55,7 @@ public class MapPolygonImpl extends MapObjectImpl implements MapPolygon {
      * @see org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon#getPoints()
      */
     @Override
-    public List<ICoordinate> getPoints() {
+    public List<? extends ICoordinate> getPoints() {
         return this.points;
     }
 

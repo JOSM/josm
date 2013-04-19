@@ -713,7 +713,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * Paint a single polygon.
      */
     protected void paintPolygon(Graphics g, MapPolygon polygon) {
-        List<ICoordinate> coords = polygon.getPoints();
+        List<? extends ICoordinate> coords = polygon.getPoints();
         if (coords != null && coords.size() >= 3) {
             List<Point> points = new LinkedList<Point>();
             for (ICoordinate c : coords) {

@@ -6,8 +6,6 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.util.List;
 
-import org.openstreetmap.gui.jmapviewer.Coordinate;
-
 /**
  * Interface to be implemented by polygons that can be displayed on the map.
  *
@@ -18,7 +16,7 @@ public interface MapPolygon extends MapObject{
     /**
      * @return Latitude/Longitude of each point of polygon
      */
-    public List<ICoordinate> getPoints();
+    public List<? extends ICoordinate> getPoints();
 
     /**
      * Paints the map rectangle on the map. The <code>points</code> 

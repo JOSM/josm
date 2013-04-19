@@ -1,9 +1,7 @@
 package org.openstreetmap.gui.jmapviewer.interfaces;
 
-import java.awt.Image;
 import java.io.IOException;
 
-import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
