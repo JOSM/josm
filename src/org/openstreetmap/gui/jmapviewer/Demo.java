@@ -187,6 +187,9 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
         map().addMapMarker(empty);
         Layer franceLayer = treeMap.addLayer("France");
         map().addMapMarker(new MapMarkerDot(franceLayer, "La Gallerie", 48.71, -1));
+        map().addMapMarker(new MapMarkerDot(43.604, 1.444));
+        map().addMapMarker(new MapMarkerCircle(53.343, -6.267, 0.666));
+        map().addMapRectangle(new MapRectangleImpl(new Coordinate(53.343, -6.267), new Coordinate(43.604, 1.444)));
         map().addMapMarker(darmstadt);
         treeMap.addLayer(germanyWestLayer);
         treeMap.addLayer(germanyEastLayer);

@@ -25,11 +25,17 @@ public class MapMarkerCircle extends MapObjectImpl implements MapMarker {
     double radius;
     STYLE markerStyle;
 
+    public MapMarkerCircle(Coordinate coord, double radius) {
+        this(null, null, coord, radius);
+    }
     public MapMarkerCircle(String name, Coordinate coord, double radius) {
         this(null, name, coord, radius);
     }
     public MapMarkerCircle(Layer layer, Coordinate coord, double radius) {
         this(layer, null, coord, radius);
+    }
+    public MapMarkerCircle(double lat, double lon, double radius) {
+        this(null, null, new Coordinate(lat,lon), radius);
     }
     public MapMarkerCircle(Layer layer, double lat, double lon, double radius) {
         this(layer, null, new Coordinate(lat,lon), radius);
@@ -98,5 +104,4 @@ public class MapMarkerCircle extends MapObjectImpl implements MapMarker {
         if(coord==null) coord = new Coordinate(0,lon);
         else coord.setLon(lon);
     }
-
 }

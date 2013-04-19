@@ -19,6 +19,9 @@ public class MapRectangleImpl extends MapObjectImpl implements MapRectangle {
     private Coordinate topLeft;
     private Coordinate bottomRight;
 
+    public MapRectangleImpl(Coordinate topLeft, Coordinate bottomRight) {
+        this(null, null, topLeft, bottomRight);
+    }
     public MapRectangleImpl(String name, Coordinate topLeft, Coordinate bottomRight) {
         this(null, name, topLeft, bottomRight);
     }
@@ -81,6 +84,6 @@ public class MapRectangleImpl extends MapObjectImpl implements MapRectangle {
     }
     @Override
     public String toString() {
-        return "MapRectangle from " + topLeft + " to " + bottomRight;
+        return "MapRectangle from " + getTopLeft() + " to " + getBottomRight();
     }
 }

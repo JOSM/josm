@@ -36,13 +36,14 @@ public abstract class MapObjectImpl {
         return style;
     }
     public Style getStyleAssigned(){
-        return style==null?layer.getStyle():style;
+        return style == null ? (layer == null ? null : layer.getStyle()) : style;
     }
     public void setStyle(Style style){
         this.style = style;
     }
     public Color getColor() {
-        return getStyleAssigned().getColor();
+        Style styleAssigned = getStyleAssigned();
+        return styleAssigned == null ? null : getStyleAssigned().getColor();
     }
     public void setColor(Color color) {
         if(style==null&&color!=null) style=new Style();
@@ -50,7 +51,8 @@ public abstract class MapObjectImpl {
     }
 
     public Color getBackColor() {
-        return getStyleAssigned().getBackColor();
+        Style styleAssigned = getStyleAssigned();
+        return styleAssigned == null ? null : getStyleAssigned().getBackColor();
     }
     public void setBackColor(Color backColor) {
         if(style==null&&backColor!=null) style=new Style();
@@ -58,7 +60,8 @@ public abstract class MapObjectImpl {
     }
 
     public Stroke getStroke() {
-        return getStyleAssigned().getStroke();
+        Style styleAssigned = getStyleAssigned();
+        return styleAssigned == null ? null : getStyleAssigned().getStroke();
     }
     public void setStroke(Stroke stroke) {
         if(style==null&&stroke!=null) style=new Style();
@@ -66,7 +69,8 @@ public abstract class MapObjectImpl {
     }
     
     public Font getFont() {
-        return getStyleAssigned().getFont();
+        Style styleAssigned = getStyleAssigned();
+        return styleAssigned == null ? null : getStyleAssigned().getFont();
     }
     public void setFont(Font font) {
         if(style==null&&font!=null) style=new Style();

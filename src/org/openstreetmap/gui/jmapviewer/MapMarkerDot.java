@@ -18,6 +18,9 @@ public class MapMarkerDot extends MapMarkerCircle {
 
     public static final int DOT_RADIUS = 5;
 
+    public MapMarkerDot(Coordinate coord) {
+        this(null, null, coord);
+    }
     public MapMarkerDot(String name, Coordinate coord) {
         this(null, name, coord);
     }
@@ -26,6 +29,13 @@ public class MapMarkerDot extends MapMarkerCircle {
     }
     public MapMarkerDot(Layer layer, String name, Coordinate coord) {
         this(layer, name, coord, getDefaultStyle());
+    }
+    public MapMarkerDot(Color color, double lat, double lon) {
+        this(null, null, lat, lon);
+        setColor(color);
+    }
+    public MapMarkerDot(double lat, double lon) {
+        this(null, null, lat, lon);
     }
     public MapMarkerDot(Layer layer, double lat, double lon) {
         this(layer, null, lat, lon);
