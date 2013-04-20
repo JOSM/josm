@@ -585,11 +585,22 @@ public class Utils {
      * @since 5867
      */
     public static InputStream openURL(URL url) throws IOException {
-        URLConnection connection = url.openConnection();
-        connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
-        connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
-        connection.setReadTimeout(Main.pref.getInteger("socket.timeout.read",30)*1000);
-        return connection.getInputStream();
+        return setupURLConnection(url.openConnection()).getInputStream();
+    }
+
+    /***
+     * Setups the given URL connection to match JOSM needs by setting its User-Agent and timeout properties.
+     * @param connection The connection to setup
+     * @return {@code connection}, with updated properties
+     * @since 5887
+     */
+    public static URLConnection setupURLConnection(URLConnection connection) {
+        if (connection != null) {
+            connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
+            connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
+            connection.setReadTimeout(Main.pref.getInteger("socket.timeout.read",30)*1000);
+        }
+        return connection;
     }
 
     /**
