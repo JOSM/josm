@@ -36,9 +36,8 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
     private Component parent;
 
     /**
-     *
-     * @param model provides the user id of the current user and accepts the changesets
-     * after download
+     * Constructs the task
+     * @param parent is a component to show error messages
      */
     public DownloadOpenChangesetsTask(Component parent) {
         super(parent, tr("Downloading open changesets ..."), false /* don't ignore exceptions */);
@@ -86,7 +85,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
         }
         SwingUtilities.invokeLater(
                 new Runnable() {
-                    public void run() {
+                    @Override public void run() {
                         ChangesetCache.getInstance().update(changesets);
                     }
                 }
@@ -101,8 +100,8 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
     protected void refreshUserIdentity(){
         JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
         try {
-            OsmServerUserInfoReader reader = new OsmServerUserInfoReader();
-            UserInfo info = reader.fetchUserInfo(getProgressMonitor().createSubTaskMonitor(1, false));
+            OsmServerUserInfoReader infoReader = new OsmServerUserInfoReader();
+            UserInfo info = infoReader.fetchUserInfo(getProgressMonitor().createSubTaskMonitor(1, false));
             im.setFullyIdentified(info.getDisplayName(), info);
         } catch(OsmTransferException e) {
             // retrieving the user info can fail if the current user is not authorised to

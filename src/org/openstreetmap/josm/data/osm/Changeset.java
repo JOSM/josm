@@ -161,10 +161,12 @@ public final class Changeset implements Tagged {
         this.max = max;
     }
 
+    @Override
     public Map<String, String> getKeys() {
         return tags;
     }
 
+    @Override
     public void setKeys(Map<String, String> keys) {
         this.tags = keys;
     }
@@ -177,18 +179,22 @@ public final class Changeset implements Tagged {
         this.incomplete = incomplete;
     }
 
+    @Override
     public void put(String key, String value) {
         this.tags.put(key, value);
     }
 
+    @Override
     public String get(String key) {
         return this.tags.get(key);
     }
 
+    @Override
     public void remove(String key) {
         this.tags.remove(key);
     }
 
+    @Override
     public void removeAll() {
         this.tags.clear();
     }
@@ -255,10 +261,12 @@ public final class Changeset implements Tagged {
         return this == obj;
     }
 
+    @Override
     public boolean hasKeys() {
         return !tags.keySet().isEmpty();
     }
 
+    @Override
     public Collection<String> keySet() {
         return tags.keySet();
     }

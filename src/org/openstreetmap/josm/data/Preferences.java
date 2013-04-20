@@ -1355,8 +1355,6 @@ public class Preferences {
 
     /**
      * Replies the collection of plugin site URLs from where plugin lists can be downloaded
-     *
-     * @return
      */
     public Collection<String> getPluginSites() {
         return getCollection("pluginmanager.sites", Arrays.asList(DEFAULT_PLUGIN_SITE));
