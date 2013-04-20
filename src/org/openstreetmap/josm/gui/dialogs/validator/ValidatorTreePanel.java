@@ -53,6 +53,7 @@ public class ValidatorTreePanel extends JTree {
      */
     private Set<OsmPrimitive> filter = null;
 
+    /** a counter to check if tree has been rebuild */
     private int updateCount;
 
     /**
@@ -287,7 +288,7 @@ public class ValidatorTreePanel extends JTree {
 
     /**
      * Clears the current error list and adds these errors to it
-     * @param errors The validation errors
+     * @param newerrors The validation errors
      */
     public void setErrors(List<TestError> newerrors) {
         if (errors == null)
@@ -305,16 +306,24 @@ public class ValidatorTreePanel extends JTree {
 
     /**
      * Returns the errors of the tree
-     * @return  the errors of the tree
+     * @return the errors of the tree
      */
     public List<TestError> getErrors() {
         return errors != null ? errors : Collections.<TestError> emptyList();
     }
 
+    /**
+     * Returns the filter list
+     * @return the list of primitives used for filtering
+     */
     public Set<OsmPrimitive> getFilter() {
         return filter;
     }
 
+    /**
+     * Set the filter list to a set of primitives
+     * @param filter the list of primitives used for filtering
+     */
     public void setFilter(Set<OsmPrimitive> filter) {
         if (filter != null && filter.isEmpty()) {
             this.filter = null;
@@ -328,7 +337,6 @@ public class ValidatorTreePanel extends JTree {
 
     /**
      * Updates the current errors list
-     * @param errors The validation errors
      */
     public void resetErrors() {
         List<TestError> e = new ArrayList<TestError>(errors);
@@ -336,7 +344,7 @@ public class ValidatorTreePanel extends JTree {
     }
 
     /**
-     * Expands all tree
+     * Expands complete tree
      */
     @SuppressWarnings("unchecked")
     public void expandAll() {
@@ -358,6 +366,10 @@ public class ValidatorTreePanel extends JTree {
         return (DefaultMutableTreeNode) valTreeModel.getRoot();
     }
 
+    /**
+     * Returns a value to check if tree has been rebuild
+     * @return the current counter
+     */
     public int getUpdateCount() {
         return updateCount;
     }
