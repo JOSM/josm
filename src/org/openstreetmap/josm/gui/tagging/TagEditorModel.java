@@ -46,7 +46,7 @@ public class TagEditorModel extends AbstractTableModel {
      * Creates a new tag editor model. Internally allocates two selection models
      * for row selection and column selection.
      *
-     * To create a {@link JTable} with this model:
+     * To create a {@link javax.swing.JTable} with this model:
      * <pre>
      *    TagEditorModel model = new TagEditorModel();
      *    TagTable tbl  = new TagTabel(model);
@@ -358,9 +358,9 @@ public class TagEditorModel extends AbstractTableModel {
     }
 
     /**
-     * initializes the model with the tags of an OSM primitive
+     * Initializes the model with the tags of an OSM primitive
      *
-     * @param primitive the OSM primitive
+     * @param tags the tags of an OSM primitive
      */
     public void initFromTags(Map<String,String> tags) {
         this.tags.clear();
