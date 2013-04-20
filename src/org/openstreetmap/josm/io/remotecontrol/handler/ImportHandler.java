@@ -76,7 +76,6 @@ public class ImportHandler extends RequestHandler {
             } else {
                 int urlIdx = query.indexOf("&url=");
                 if (urlIdx != -1) {
-                    /*String url =*/ query.substring(urlIdx + 1);
                     args.put("url", decodeParam(query.substring(urlIdx + 5)));
                     query = query.substring(0, urlIdx);
                 } else {
