@@ -1,11 +1,12 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.imagery;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
@@ -15,9 +16,10 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
+
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 
-public class WMSLayerTree implements Serializable {
+public class WMSLayerTree {
     private final MutableTreeNode treeRootNode = new DefaultMutableTreeNode();
     private final DefaultTreeModel treeData = new DefaultTreeModel(treeRootNode);
     private final JTree layerTree = new JTree(treeData);
@@ -36,10 +38,12 @@ public class WMSLayerTree implements Serializable {
         return selectedLayers;
     }
 
+    /**
+     * Constructs a new {@code WMSLayerTree}.
+     */
     public WMSLayerTree() {
         layerTree.setCellRenderer(new LayerTreeCellRenderer());
         layerTree.addTreeSelectionListener(new WMSTreeSelectionListener());
-
     }
 
     void addLayersToTreeData(MutableTreeNode parent, List<WMSImagery.LayerDetails> layers) {

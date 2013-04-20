@@ -134,12 +134,15 @@ public class RequestProcessor extends Thread {
     public void run() {
         Writer out = null;
         try {
-            OutputStream raw = new BufferedOutputStream(
-                    request.getOutputStream());
+            OutputStream raw = new BufferedOutputStream(request.getOutputStream());
             out = new OutputStreamWriter(raw);
             BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream(), "ASCII"));
             
             String get = in.readLine();
+            if (get == null) {
+                sendError(out);
+                return;
+            }
             System.out.println("RemoteControl received: " + get);
 
             StringTokenizer st = new StringTokenizer(get);

@@ -80,19 +80,17 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
-    private static LinkedList<SearchSetting> searchHistory = null;
-
-    public static Collection<SearchSetting> getSearchHistory() {
-        if (searchHistory == null) {
-            searchHistory = new LinkedList<SearchSetting>();
-            for (String s: Main.pref.getCollection("search.history", Collections.<String>emptyList())) {
-                SearchSetting ss = SearchSetting.readFromString(s);
-                if (ss != null) {
-                    searchHistory.add(ss);
-                }
+    private static final LinkedList<SearchSetting> searchHistory = new LinkedList<SearchSetting>();
+    static {
+        for (String s: Main.pref.getCollection("search.history", Collections.<String>emptyList())) {
+            SearchSetting ss = SearchSetting.readFromString(s);
+            if (ss != null) {
+                searchHistory.add(ss);
             }
         }
-
+    }
+    
+    public static Collection<SearchSetting> getSearchHistory() {
         return searchHistory;
     }
 

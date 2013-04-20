@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.WikiReader;
 
-public class GettingStarted extends JPanel {
+public final class GettingStarted extends JPanel {
     private String content = "";
     private static final String STYLE = "<style type=\"text/css\">\n"
             + "body {font-family: sans-serif; font-weight: bold; }\n"

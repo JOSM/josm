@@ -164,7 +164,7 @@ public class Projections {
         Projection proj = projectionsByCode_cache.get(code);
         if (proj != null) return proj;
         ProjectionChoice pc = allProjectionChoicesByCode.get(code);
-        if (pc != null) {
+        if (pc == null) {
             Pair<String, String> pair = inits.get(code);
             if (pair == null) return null;
             String name = pair.a;
@@ -182,5 +182,4 @@ public class Projections {
     public static Collection<String> getAllProjectionCodes() {
         return Collections.unmodifiableCollection(allCodes);
     }
-
 }

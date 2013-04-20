@@ -454,7 +454,9 @@ abstract public class Main {
         // bootstrapping problem: make sure the layer list dialog is going to
         // listen to change events of the very first layer
         //
-        firstLayer.addPropertyChangeListener(LayerListDialog.getInstance().getModel());
+        if (firstLayer != null) {
+            firstLayer.addPropertyChangeListener(LayerListDialog.getInstance().getModel());
+        }
     }
 
     /**
