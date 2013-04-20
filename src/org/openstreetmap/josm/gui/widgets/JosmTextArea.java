@@ -6,7 +6,7 @@ import javax.swing.text.Document;
 
 /**
  * Subclass of {@link JTextArea} that adds a "native" context menu (cut/copy/paste/select all).
- * @since 5885
+ * @since 5886
  */
 public class JosmTextArea extends JTextArea {
 

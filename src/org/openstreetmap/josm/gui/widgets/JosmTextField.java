@@ -6,7 +6,7 @@ import javax.swing.text.Document;
 
 /**
  * Subclass of {@link JTextField} that adds a "native" context menu (cut/copy/paste/select all).
- * @since 5885
+ * @since 5886
  */
 public class JosmTextField extends JTextField {
 

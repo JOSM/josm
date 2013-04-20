@@ -38,7 +38,7 @@ public class PopupMenuLauncher extends MouseAdapter {
      * Creates a new {@link PopupMenuLauncher} with the given menu.
      * @param menu The popup menu to display
      * @param checkEnabled if {@code true}, the popup menu will only be displayed if the component triggering the mouse event is enabled
-     * @since 5885
+     * @since 5886
      */
     public PopupMenuLauncher(JPopupMenu menu, boolean checkEnabled) {
         this.menu = menu;
