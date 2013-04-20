@@ -365,8 +365,10 @@ public class CustomProjection extends AbstractProjection {
     }
 
     public static double parseDouble(Map<String, String> parameters, String parameterName) throws ProjectionConfigurationException {
+        if (!parameters.containsKey(parameterName))
+            throw new IllegalArgumentException(tr("Unknown parameter ''{0}''", parameterName));
         String doubleStr = parameters.get(parameterName);
-        if (doubleStr == null && parameters.containsKey(parameterName))
+        if (doubleStr == null)
             throw new ProjectionConfigurationException(
                     tr("Expected number argument for parameter ''{0}''", parameterName));
         return parseDouble(doubleStr, parameterName);

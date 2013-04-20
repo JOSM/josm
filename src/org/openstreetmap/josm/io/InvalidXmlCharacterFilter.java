@@ -40,7 +40,7 @@ public class InvalidXmlCharacterFilter extends FilterInputStream {
 
     @Override
     public int read() throws IOException {
-        return filter((byte)read());
+        return filter((byte)super.read());
     }
 
     @Override

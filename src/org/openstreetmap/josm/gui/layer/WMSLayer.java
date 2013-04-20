@@ -117,7 +117,6 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     protected final int serializeFormatVersion = 5;
     protected boolean autoDownloadEnabled = true;
     protected boolean settingsChanged;
-    protected ImageryInfo info;
     public WmsCache cache;
     private AttributionSupport attribution = new AttributionSupport();
 
@@ -158,7 +157,6 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         imageSize = PROP_IMAGE_SIZE.get();
         setBackgroundLayer(true); /* set global background variable */
         initializeImages();
-        this.info = new ImageryInfo(info);
 
         attribution.initialize(this.info);
 

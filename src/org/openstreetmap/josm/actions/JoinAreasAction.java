@@ -46,7 +46,6 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
-
 /**
  * Join Areas (i.e. closed ways and multipolygons)
  */
@@ -54,7 +53,6 @@ public class JoinAreasAction extends JosmAction {
     // This will be used to commit commands and unite them into one large command sequence at the end
     private LinkedList<Command> cmds = new LinkedList<Command>();
     private int cmdsCount = 0;
-
 
     /**
      * This helper class describes join ares action result.
@@ -798,7 +796,7 @@ public class JoinAreasAction extends JosmAction {
             }
 
             //if odd number of crossings, invert orientation
-            if (intersectionCount % 2 == 1) {
+            if (intersectionCount % 2 != 0) {
                 curWayInsideToTheRight = !curWayInsideToTheRight;
             }
 

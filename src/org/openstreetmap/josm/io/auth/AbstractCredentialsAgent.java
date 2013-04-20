@@ -49,10 +49,10 @@ abstract public class AbstractCredentialsAgent implements CredentialsAgent {
                 @Override
                 public void run() {
                     CredentialDialog dialog = null;
-                    switch(requestorType) {
-                    case SERVER: dialog = CredentialDialog.getOsmApiCredentialDialog(username, password, host, getSaveUsernameAndPasswordCheckboxText()); break;
-                    case PROXY: dialog = CredentialDialog.getHttpProxyCredentialDialog(username, password, host, getSaveUsernameAndPasswordCheckboxText()); break;
-                    }
+                    if (requestorType.equals(RequestorType.PROXY))
+                        dialog = CredentialDialog.getHttpProxyCredentialDialog(username, password, host, getSaveUsernameAndPasswordCheckboxText());
+                    else 
+                        dialog = CredentialDialog.getOsmApiCredentialDialog(username, password, host, getSaveUsernameAndPasswordCheckboxText());
                     dialog.setVisible(true);
                     response.setCanceled(dialog.isCanceled());
                     if (dialog.isCanceled())
