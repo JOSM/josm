@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * <li>Delete</li>
  * <li>Select All</li>
  * </ul>
- * @since 5885
+ * @since 5886
  */
 public class TextContextualPopupMenu extends JPopupMenu {
 

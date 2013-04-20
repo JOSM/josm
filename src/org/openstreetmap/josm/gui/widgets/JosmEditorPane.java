@@ -2,13 +2,18 @@
 package org.openstreetmap.josm.gui.widgets;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 
 import javax.swing.JEditorPane;
 
+import org.openstreetmap.josm.tools.Utils;
+
 /**
- * Subclass of {@link JEditorPane} that adds a "native" context menu (cut/copy/paste/select all).
- * @since 5885
+ * Subclass of {@link JEditorPane} that adds a "native" context menu (cut/copy/paste/select all)
+ * and effectively uses JOSM user agent when performing HTTP request in {@link #setPage(URL)} method.
+ * @since 5886
  */
 public class JosmEditorPane extends JEditorPane {
 
@@ -57,5 +62,16 @@ public class JosmEditorPane extends JEditorPane {
         this();
         setContentType(type);
         setText(text);
+    }
+
+    @Override
+    protected InputStream getStream(URL page) throws IOException {
+        URLConnection conn = Utils.setupURLConnection(page.openConnection());
+        InputStream result = conn.getInputStream();
+        String type = conn.getContentType();
+        if (type != null) {
+            setContentType(type);
+        }
+        return result;
     }
 }
