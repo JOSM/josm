@@ -64,7 +64,7 @@ public class ChangesetCache implements PreferenceChangedListener{
 
     protected void fireChangesetCacheEvent(final ChangesetCacheEvent e) {
         GuiHelper.runInEDT(new Runnable() {
-            public void run() {
+            @Override public void run() {
                 for(ChangesetCacheListener l: listeners) {
                     l.changesetCacheUpdated(e);
                 }
@@ -187,6 +187,7 @@ public class ChangesetCache implements PreferenceChangedListener{
     /* ------------------------------------------------------------------------- */
     /* interface PreferenceChangedListener                                       */
     /* ------------------------------------------------------------------------- */
+    @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
         if (e.getKey() == null || ! e.getKey().equals("osm-server.url"))
             return;

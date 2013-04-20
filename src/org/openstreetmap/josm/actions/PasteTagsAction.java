@@ -243,6 +243,7 @@ public final class PasteTagsAction extends JosmAction {
 
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
 
@@ -258,8 +259,8 @@ public final class PasteTagsAction extends JosmAction {
         }
     }
 
-    /** Paste tags from arbitrary text
-     * @return false if action was successful
+    /** Paste tags from arbitrary text, not using JOSM buffer
+     * @return true if action was successful
      */
     public static boolean pasteTagsFromText(Collection<OsmPrimitive> selection, String text) {
         Map<String, String> tags = TextTagParser.readTagsFromText(text);
@@ -267,7 +268,7 @@ public final class PasteTagsAction extends JosmAction {
         if (tags==null || tags.isEmpty()) {
             TextTagParser.showBadBufferMessage(helpUrl);
             return false;
-        };
+        }
         if (!TextTagParser.validateTags(tags)) return false;
         String v;
         for (String key: tags.keySet()) {
@@ -279,9 +280,8 @@ public final class PasteTagsAction extends JosmAction {
     }
         
     /** Paste tags from JOSM buffer
-     * @param selection objects 
-     * @param commands
-     * @return 
+     * @param selection objects that will have the tags
+     * @return false if JOSM buffer was empty 
      */
     public static boolean pasteTagsFromJOSMBuffer(Collection<OsmPrimitive> selection) {
         List<PrimitiveData> directlyAdded = Main.pasteBuffer.getDirectlyAdded();

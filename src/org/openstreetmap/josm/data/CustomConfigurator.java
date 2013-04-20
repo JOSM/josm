@@ -200,7 +200,7 @@ public class CustomConfigurator {
      * This function exports part of user preferences to specified file.
      * Default values are not saved.
      * Preference keys matching specified pattern are saved
-     * @param filename - where to export
+     * @param fileName - where to export
      * @param append - if true, resulting file cause appending to exuisting preferences
      * @param pattern - Regexp pattern forh preferences keys you need to export (".*imagery.*", for example)
      */

@@ -343,6 +343,7 @@ public class ChangesetCacheManager extends JFrame {
             destroyInstance();
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             cancelAndClose();
         }
@@ -358,6 +359,7 @@ public class ChangesetCacheManager extends JFrame {
             putValue(SHORT_DESCRIPTION, tr("Launch the dialog for querying changesets"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             ChangesetQueryDialog dialog = new ChangesetQueryDialog(ChangesetCacheManager.this);
             dialog.initForUserInput();
@@ -388,6 +390,7 @@ public class ChangesetCacheManager extends JFrame {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             List<Changeset> selected = model.getSelectedChangesets();
             ChangesetCache.getInstance().remove(selected);
@@ -397,6 +400,7 @@ public class ChangesetCacheManager extends JFrame {
             setEnabled(model.hasSelectedChangesets());
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
 
@@ -415,6 +419,7 @@ public class ChangesetCacheManager extends JFrame {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             List<Changeset> selected = model.getSelectedChangesets();
             Main.worker.submit(new CloseChangesetTask(selected));
@@ -438,6 +443,7 @@ public class ChangesetCacheManager extends JFrame {
             setEnabled(false);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
@@ -455,6 +461,7 @@ public class ChangesetCacheManager extends JFrame {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             List<Changeset> selected = model.getSelectedChangesets();
             ChangesetHeaderDownloadTask task =ChangesetHeaderDownloadTask.buildTaskForChangesets(ChangesetCacheManager.this,selected);
@@ -465,6 +472,7 @@ public class ChangesetCacheManager extends JFrame {
             setEnabled(model.hasSelectedChangesets());
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
@@ -482,6 +490,7 @@ public class ChangesetCacheManager extends JFrame {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             ChangesetContentDownloadTask task = new ChangesetContentDownloadTask(ChangesetCacheManager.this,model.getSelectedChangesetIds());
             ChangesetCacheManager.getInstance().runDownloadTask(task);
@@ -491,6 +500,7 @@ public class ChangesetCacheManager extends JFrame {
             setEnabled(model.hasSelectedChangesets());
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
@@ -504,6 +514,7 @@ public class ChangesetCacheManager extends JFrame {
             model.setChangesetInDetailView(selected.get(0));
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             showDetails();
         }
@@ -529,6 +540,7 @@ public class ChangesetCacheManager extends JFrame {
             );
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
             if (im.isAnonymous()) {
@@ -579,6 +591,7 @@ public class ChangesetCacheManager extends JFrame {
     }
 
     class ChangesetDetailViewSynchronizer implements ListSelectionListener {
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             List<Changeset> selected = model.getSelectedChangesets();
             if (selected.size() == 1) {
@@ -627,7 +640,7 @@ public class ChangesetCacheManager extends JFrame {
     public void runDownloadTask(final ChangesetDownloadTask task) {
         Main.worker.submit(task);
         Runnable r = new Runnable() {
-            public void run() {
+            @Override public void run() {
                 if (task.isCanceled() || task.isFailed()) return;
                 setSelectedChangesets(task.getDownloadedChangesets());
             }

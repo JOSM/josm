@@ -124,14 +124,17 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
         selectionModel.setSelectionInterval(row, row);
     }
 
+    @Override
     public int getColumnCount() {
         return 5;
     }
 
+    @Override
     public int getRowCount() {
         return data.size();
     }
 
+    @Override
     public Object getValueAt(int row, int column) {
         return data.get(row);
     }
@@ -160,7 +163,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
         Collections.sort(
                 this.data,
                 new Comparator<Changeset>() {
-                    public int compare(Changeset o1, Changeset o2) {
+                    @Override public int compare(Changeset o1, Changeset o2) {
                         if (o1.getId() < o2.getId()) return 1;
                         if (o1.getId() == o2.getId()) return 0;
                         return -1;
@@ -172,6 +175,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
     /* ------------------------------------------------------------------------------ */
     /* interface ChangesetCacheListener                                               */
     /* ------------------------------------------------------------------------------ */
+    @Override
     public void changesetCacheUpdated(ChangesetCacheEvent event) {
         List<Changeset> selected = getSelectedChangesets();
         for (Changeset cs: event.getAddedChangesets()) {
