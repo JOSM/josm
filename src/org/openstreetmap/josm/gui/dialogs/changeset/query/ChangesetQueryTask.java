@@ -116,7 +116,7 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
         // Run on the EDT because UI updates are triggered.
         //
         Runnable r = new Runnable() {
-            public void run() {
+            @Override public void run() {
                 ChangesetCache.getInstance().update(downloadedChangesets);
             }
         };
@@ -186,7 +186,6 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
         } catch(OsmTransferCanceledException e) {
             // thrown if user cancel the authentication dialog
             canceled = true;
-            return;
         }  catch(OsmTransferException e) {
             if (canceled)
                 return;
@@ -197,14 +196,17 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
     /* ------------------------------------------------------------------------------- */
     /* interface ChangesetDownloadTask                                                 */
     /* ------------------------------------------------------------------------------- */
+    @Override
     public Set<Changeset> getDownloadedChangesets() {
         return downloadedChangesets;
     }
 
+    @Override
     public boolean isCanceled() {
         return canceled;
     }
 
+    @Override
     public boolean isFailed() {
         return lastException != null;
     }
