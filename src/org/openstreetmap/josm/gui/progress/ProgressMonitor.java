@@ -35,6 +35,7 @@ public interface ProgressMonitor {
         void operationCanceled();
     }
 
+    /** Ticks count used, when no other value is supplied */
     public final int DEFAULT_TICKS = 10000;
 
     /**
@@ -43,12 +44,17 @@ public interface ProgressMonitor {
      */
     public final int ALL_TICKS = -1;
 
+    /**
+     * Starts this progress monitor. Must be called exactly once
+     * Ticks count is set to default value
+     * @param title title text of the task
+     */
     void beginTask(String title);
 
     /**
      * Starts this progress monitor. Must be called exactly once
-     * @param title
-     * @param ticks
+     * @param title title text of the task
+     * @param ticks number of work units (see {@link #setTicksCount(int ticks)})
      */
     void beginTask(String title, int ticks);
 
@@ -57,8 +63,8 @@ public interface ProgressMonitor {
      * that it can continue with other tasks. Must be called at least once (if called multiply times
      * then further calls are ignored)
      */
-
     void finishTask();
+
     /**
      * Can be used if method receive ProgressMonitor but it's not interested progress monitoring.
      * Basically replaces {@link #beginTask(String)} and {@link #finishTask()}
@@ -70,38 +76,51 @@ public interface ProgressMonitor {
     void invalidate();
 
     /**
-     *
+     * Set the total number of work units
      * @param ticks Number of total work units
      */
     void setTicksCount(int ticks);
+
     /**
-     *
+     * Get the total number of work units
+     * @return Number of total work units
+     */
+    int getTicksCount();
+
+    /**
+     * Set the current number of work units
      * @param ticks Number of work units already done
      */
     void setTicks(int ticks);
 
+    /**
+     * Get the current number of work units
+     * @return Number of work units already done
+     */
     int getTicks();
-    int getTicksCount();
 
     /**
      * Increase number of already done work units by ticks
-     * @param ticks
+     * @param ticks number of ticks to add
      */
     void worked(int ticks);
 
     /**
      * Subtask that will show progress running back and forth
-     * @param title Can be null, in that case task title is not changed
+     * @param title Can be {@code null}, in that case task title is not changed
      */
     void indeterminateSubTask(String title);
+
     /**
      * Normal subtask
-     * @param title Can be null, in that case task title is not changed
+     * @param title Can be {@code null}, in that case task title is not changed
      */
+
     void subTask(String title);
     /**
      * Shows additional text
      */
+
     void setCustomText(String text);
     /**
      * Show extra text after normal task title. Hack for ProgressInputStream to show number of kB
@@ -117,9 +136,27 @@ public interface ProgressMonitor {
      */
     ProgressMonitor createSubTaskMonitor(int ticks, boolean internal);
 
+    /**
+     * Returns the state of user aborts
+     * @return {@code true} if user aborted operation
+     */
     boolean isCanceled();
+
+    /**
+     * Abort current operation, usually called when user somehow requested an abort
+     */
     void cancel();
+
+    /**
+     * Add listener for user abort action
+     * @param listener the listener for cancel operation
+     */
     void addCancelListener(CancelListener listener);
+
+    /**
+     * Remove listener for user abort action
+     * @param listener the listener for cancel operation
+     */
     void removeCancelListener(CancelListener listener);
 
     /**
@@ -130,19 +167,21 @@ public interface ProgressMonitor {
     void appendLogMessage(String message);
 
     /**
-     * Should be used only by PleaseWaitRunnable. If taskId <> null then "In background" button will be shown
-     * @param taskId
+     * Set the task ID of the progress dialog
+     * Should be used only by PleaseWaitRunnable. If taskId {@code <> null} then "In background" button will be shown
+     * @param taskId the task ID
      */
     void setProgressTaskId(ProgressTaskId taskId);
 
     /**
+     * Returns the task ID of the progress dialog
      * Should be used only by PleaseWaitRunnable
-     * @param taskId
+     * @return the task ID
      */
     ProgressTaskId getProgressTaskId();
 
     /**
-     *
+     * Return the parent windows of progress dialog
      * @return component suitable as parent for dialogs that wants to be shown in front of progress dialog
      */
     Component getWindowParent();

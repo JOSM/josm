@@ -46,7 +46,7 @@ import org.openstreetmap.josm.tools.GBC;
  *      and add it to the file 'data/epsg' in JOSM trunk
  *  - Search for official references and verify the parameter values. These
  *      documents are often available in the local language only.
- *  - Use {@link #registerProjectionChoice()}, to make the entry known to JOSM.
+ *  - Use {@link #registerProjectionChoice}, to make the entry known to JOSM.
  *
  * In case there is no EPSG code:
  *  - override {@link AbstractProjectionChoice#getProjection()} and provide
@@ -404,7 +404,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     /**
      * Handles all the work related to update the projection-specific
      * preferences
-     * @param proj
+     * @param pc the choice class representing user selection
      */
     private void selectedProjectionChanged(final ProjectionChoice pc) {
         // Don't try to update if we're still starting up
@@ -430,6 +430,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
 
     /**
      * Sets up projection combobox with default values and action listener
+     * @return the choice class for user selection
      */
     private ProjectionChoice setupProjectionCombo() {
         ProjectionChoice pc = null;

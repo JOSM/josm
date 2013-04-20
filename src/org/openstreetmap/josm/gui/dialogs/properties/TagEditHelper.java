@@ -466,8 +466,6 @@ import org.openstreetmap.josm.tools.WindowGeometry;
         /**
         * Create a focus handling adapter and apply in to the editor component of value
         * autocompletion box.
-        * @param keys Box for keys entering and autocompletion
-        * @param values Box for values entering and autocompletion
         * @param autocomplete Manager handling the autocompletion
         * @param comparator Class to decide what values are offered on autocompletion
         * @return The created adapter

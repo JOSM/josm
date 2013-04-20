@@ -309,7 +309,7 @@ public class MapPaintStyles {
 
     /**
      * Move position of entries in the current list of StyleSources
-     * @param sele The indices of styles to be moved.
+     * @param sel The indices of styles to be moved.
      * @param delta The number of lines it should move. positive int moves
      *      down and negative moves up.
      */

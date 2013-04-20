@@ -1068,12 +1068,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
     /**
      * Returns a list of images that fulfill the given criteria.
      * Default setting is to return untagged images, but may be overwritten.
-     * @param boolean all -- returns all available images
-     * @param boolean noexif -- returns untagged images without EXIF-GPS coords
-     *                          this parameter is irrelevant if <code>all</code> is true
-     * @param boolean exif -- also returns images with exif-gps info
-     * @param boolean tagged -- also returns tagged images
-     * @return ArrayList<ImageEntry> matching images
+     * @param exif also returns images with exif-gps info
+     * @param tagged also returns tagged images
+     * @return matching images
      */
     private ArrayList<ImageEntry> getSortedImgList(boolean exif, boolean tagged) {
         ArrayList<ImageEntry> dateImgLst = new ArrayList<ImageEntry>(yLayer.data.size());

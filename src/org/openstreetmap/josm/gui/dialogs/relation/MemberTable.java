@@ -38,10 +38,10 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     private ZoomToGapAction zoomToGap;
 
     /**
-     * constructor
+     * constructor for relation member table
      *
-     * @param model
-     * @param columnModel
+     * @param layer the data layer of the relation
+     * @param model the table model
      */
     public MemberTable(OsmDataLayer layer, MemberTableModel model) {
         super(model, new MemberTableColumnModel(layer.data), model.getSelectionModel());

@@ -344,8 +344,8 @@ public class LayerListDialog extends ToggleDialog {
      * <code>listener</code> receives a {@link IEnabledStateUpdating#updateEnabledState()}
      * on every {@link ListDataEvent}.
      *
-     * @param listener  the listener
-     * @param listSelectionModel  the source emitting {@link ListDataEvent}s
+     * @param listener the listener
+     * @param listModel the source emitting {@link ListDataEvent}s
      */
     protected void adaptTo(final IEnabledStateUpdating listener, LayerListModel listModel) {
         listModel.addTableModelListener(
@@ -1563,7 +1563,6 @@ public class LayerListDialog extends ToggleDialog {
      * Creates a {@link ShowHideLayerAction} for <code>layer</code> in the
      * context of this {@link LayerListDialog}.
      *
-     * @param layer the layer
      * @return the action
      */
     public ShowHideLayerAction createShowHideLayerAction() {
@@ -1576,7 +1575,6 @@ public class LayerListDialog extends ToggleDialog {
      * Creates a {@link DeleteLayerAction} for <code>layer</code> in the
      * context of this {@link LayerListDialog}.
      *
-     * @param layer the layer
      * @return the action
      */
     public DeleteLayerAction createDeleteLayerAction() {
