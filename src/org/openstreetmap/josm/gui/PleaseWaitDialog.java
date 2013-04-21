@@ -78,6 +78,10 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
         });
     }
 
+    /**
+     * Constructs a new {@code PleaseWaitDialog}.
+     * @param parent the {@code Component} from which the dialog is displayed. Can be {@code null}. 
+     */
     public PleaseWaitDialog(Component parent) {
         super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         initDialog();
@@ -90,6 +94,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
 
     protected void adjustLayout() {
         invalidate();
+        setDropTarget(null); // Workaround to JDK bug 7027598/7100524/7169912 (#8613)
         pack();
         setSize(Main.pref.getInteger("progressdialog.size", 600), getSize().height);
     }
