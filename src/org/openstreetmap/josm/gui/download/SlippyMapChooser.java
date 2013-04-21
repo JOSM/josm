@@ -5,9 +5,7 @@ package org.openstreetmap.josm.gui.download;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Toolkit;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
