@@ -41,8 +41,11 @@ import javax.swing.text.JTextComponent;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
+import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -119,6 +122,9 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         pnlTileGrid.addPropertyChangeListener(new TileBoundsChangeListener());
     }
 
+    /**
+     * Constructs a new {@code TileSelectionBBoxChooser}.
+     */
     public TileSelectionBBoxChooser() {
         build();
     }
@@ -654,6 +660,10 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
         public TileBoundsMapView() {
             setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+            TileLoader loader = tileController.getTileLoader();
+            if (loader instanceof OsmTileLoader) {
+                ((OsmTileLoader)loader).headers.put("User-Agent", Version.getInstance().getFullAgentString());
+            }
         }
 
         public void setBoundingBox(Bounds bbox){
