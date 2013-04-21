@@ -46,7 +46,7 @@ public class MergeLayerAction extends AbstractMergeAction {
                             }
                         }
                         targetLayer.mergeFrom(sourceLayer);
-                        Main.map.mapView.removeLayer(sourceLayer);
+                        Main.main.removeLayer(sourceLayer);
                         layerMerged = true;
                     }
                 }

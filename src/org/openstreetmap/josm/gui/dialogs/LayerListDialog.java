@@ -56,12 +56,12 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -70,7 +70,6 @@ import org.openstreetmap.josm.tools.MultikeyActionsHandler;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction.MultikeyInfo;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * This is a toggle dialog which displays the list of layers. Actions allow to
@@ -91,7 +90,6 @@ public class LayerListDialog extends ToggleDialog {
         if (instance != null)
             throw new IllegalStateException("Dialog was already created");
         instance = new LayerListDialog(mapFrame);
-
     }
 
     /**
