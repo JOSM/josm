@@ -47,8 +47,8 @@ public class ElemStyles {
      *
      * @param osm the primitive
      * @param scale the scale (in meters per 100 pixel)
-     * @param nc
-     * @return
+     * @param nc display component
+     * @return list of styles
      */
     public StyleList get(OsmPrimitive osm, double scale, NavigatableComponent nc) {
         return getStyleCacheWithRange(osm, scale, nc).a;

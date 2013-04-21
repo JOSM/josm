@@ -14,7 +14,7 @@ public interface DownloadSelection  {
      * Sets the current download area. The area may be null to clear
      * the current download area.
      *
-     * @param are the current download area
+     * @param area the current download area
      */
     public void setDownloadArea(Bounds area);
 }

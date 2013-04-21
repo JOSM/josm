@@ -70,7 +70,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     /**
      * Builds the panel with the three privileges the user can grant JOSM
      *
-     * @return
+     * @return constructed panel for the privileges
      */
     protected VerticallyScrollablePanel buildGrantsPanel() {
         pnlOsmPrivileges = new OsmPrivilegesPanel();
@@ -80,7 +80,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     /**
      * Builds the panel for entering the username and password
      *
-     * @return
+     * @return constructed panel for the creditentials
      */
     protected VerticallyScrollablePanel buildUserNamePasswordPanel() {
         VerticallyScrollablePanel pnl = new VerticallyScrollablePanel(new GridBagLayout());
@@ -179,6 +179,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
     /**
      * Initializes the panel with values from the preferences
+     * @param pref Preferences structure
      */
     @Override
     public void initFromPreferences(Preferences pref) {
@@ -203,7 +204,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     /**
      * Builds the panel with the action button  for starting the authorisation
      *
-     * @return
+     * @return constructed button panel
      */
     protected JPanel buildActionButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -218,7 +219,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     /**
      * Builds the panel which displays the generated Access Token.
      *
-     * @return
+     * @return constructed panel for the results
      */
     protected JPanel buildResultsPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());

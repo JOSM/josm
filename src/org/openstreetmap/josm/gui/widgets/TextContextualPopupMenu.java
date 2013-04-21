@@ -60,7 +60,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
      * A menu can only be attached to a single component.
      * @param component The text component that will display the menu and handle its actions.
      * @return {@code this}
-     * @see #detach(JTextComponent)
+     * @see #detach()
      */
     protected TextContextualPopupMenu attach(JTextComponent component) {
         if (component != null && !isAttached()) {

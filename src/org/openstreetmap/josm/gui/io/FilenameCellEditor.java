@@ -26,9 +26,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * This is a {@link TableCellEditor} for filenames. It provides a text input field and
- * a button for launchinig a {@link JFileChooser}.
- *
- *
+ * a button for launchinig a {@link javax.swing.JFileChooser}.
  */
 class FilenameCellEditor extends JPanel implements TableCellEditor {
     private JosmTextField tfFileName;

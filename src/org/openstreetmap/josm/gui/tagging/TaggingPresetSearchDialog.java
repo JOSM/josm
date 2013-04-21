@@ -342,11 +342,6 @@ public class TaggingPresetSearchDialog extends ExtendedDialog implements Selecti
 
     /**
      * Search expression can be in form: "group1/group2/name" where names can contain multiple words
-     *
-     * When groups are given,
-     *
-     *
-     * @param text
      */
     private void filterPresets() {
         //TODO Save favorites to file
