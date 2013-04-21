@@ -291,7 +291,7 @@ abstract public class Main {
      * remove the map as well.
      * @param layer The layer to remove
      */
-    public final void removeLayer(final Layer layer) {
+    public final synchronized void removeLayer(final Layer layer) {
         if (map != null) {
             map.mapView.removeLayer(layer);
             if (map != null && map.mapView.getAllLayers().isEmpty()) {
