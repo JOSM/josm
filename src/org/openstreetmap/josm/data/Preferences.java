@@ -1327,6 +1327,10 @@ public class Preferences {
      *
      */
     public void updateSystemProperties() {
+        if(getBoolean("prefer.ipv6", true)) {
+            // never set this to false, only true!
+            updateSystemProperty("java.net.preferIPv6Addresses", "true");
+        }
         updateSystemProperty("http.agent", Version.getInstance().getAgentString());
         updateSystemProperty("user.language", get("language"));
         // Workaround to fix a Java bug.
