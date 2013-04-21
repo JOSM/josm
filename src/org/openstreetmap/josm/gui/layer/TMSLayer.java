@@ -56,6 +56,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -132,7 +133,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             String cachePath = TMSLayer.PROP_TILECACHE_DIR.get();
             if (cachePath != null && !cachePath.isEmpty()) {
                 try {
-                    return new OsmFileCacheTileLoader(listener, new File(cachePath));
+                    OsmFileCacheTileLoader loader = new OsmFileCacheTileLoader(listener, new File(cachePath));
+                    loader.headers.put("User-Agent", Version.getInstance().getFullAgentString());
+                    return loader;
                 } catch (IOException e) {
                 }
             }
@@ -417,6 +420,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 tileLoader.headers.put(e.getKey(), e.getValue());
             }
         }
+        tileLoader.headers.put("User-Agent", Version.getInstance().getFullAgentString());
     }
 
     @Override
