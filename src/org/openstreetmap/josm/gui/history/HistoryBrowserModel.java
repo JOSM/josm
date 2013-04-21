@@ -336,8 +336,8 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      * Sets the {@link HistoryOsmPrimitive} which plays the role of the current point
      * in time (see {@link PointInTimeType}).
      *
-     * @param reference the reference history primitive. Must not be null.
-     * @throws IllegalArgumentException thrown if reference is null
+     * @param current the reference history primitive. Must not be {@code null}.
+     * @throws IllegalArgumentException thrown if reference is {@code null}
      * @throws IllegalStateException thrown if this model isn't a assigned a history yet
      * @throws IllegalArgumentException if reference isn't an history primitive for the history managed by this mode
      *

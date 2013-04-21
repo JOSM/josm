@@ -27,7 +27,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
  * <ul>
  *   <li>the content of the text component changes (the validator is a {@link DocumentListener})</li>
  *   <li>the text component loses focus (the validator is a {@link FocusListener})</li>
- *   <li>the text component is a {@link JTextField} and an {@link ActionEvent} is detected</li>
+ *   <li>the text component is a {@link JosmTextField} and an {@link ActionEvent} is detected</li>
  * </ul>
  *
  *

@@ -54,7 +54,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     /**
      * Builds the panel for entering the advanced OAuth parameters
      *
-     * @return
+     * @return panel with advanced settings
      */
     protected JPanel buildAdvancedPropertiesPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());

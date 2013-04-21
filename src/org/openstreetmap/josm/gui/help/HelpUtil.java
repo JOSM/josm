@@ -208,7 +208,7 @@ public class HelpUtil {
      * Replies the global help action, if available. Otherwise, creates an instance
      * of {@link HelpAction}.
      *
-     * @return
+     * @return instance of help action
      */
     static private Action getHelpAction() {
         try {
@@ -226,7 +226,7 @@ public class HelpUtil {
      * is not.
      *
      * @param component the component  the component
-     * @param topic the help topic. Set to the default help topic if null.
+     * @param relativeHelpTopic the help topic. Set to the default help topic if null.
      */
     static public void setHelpContext(JComponent component, String relativeHelpTopic) {
         if (relativeHelpTopic == null) {
