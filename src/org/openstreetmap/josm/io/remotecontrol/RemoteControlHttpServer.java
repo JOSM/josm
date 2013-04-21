@@ -20,9 +20,6 @@ import org.openstreetmap.josm.Main;
  */
 public class RemoteControlHttpServer extends Thread {
 
-    /** Default port for the HTTP server */
-    public static final int DEFAULT_PORT = 8111;
-
     /** The server socket */
     private ServerSocket server;
 
@@ -32,14 +29,15 @@ public class RemoteControlHttpServer extends Thread {
      * Starts or restarts the HTTP server
      */
     public static void restartRemoteControlHttpServer() {
+        int port = Main.pref.getInteger("remote.control.port", 8111);
         try {
             stopRemoteControlHttpServer();
 
-            instance = new RemoteControlHttpServer(Main.pref.getInteger("remote.control.port", DEFAULT_PORT));
+            instance = new RemoteControlHttpServer(port);
             instance.start();
         } catch (BindException ex) {
             Main.warn(marktr("Warning: Cannot start remotecontrol server on port {0}: {1}"),
-                    Integer.toString(DEFAULT_PORT), ex.getLocalizedMessage());
+                    Integer.toString(port), ex.getLocalizedMessage());
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
