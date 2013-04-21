@@ -308,7 +308,7 @@ public class OsmValidator implements LayerChangeListener {
         }
         if (Main.map.mapView.getLayersOfType(OsmDataLayer.class).isEmpty()) {
             if (errorLayer != null) {
-                Main.map.mapView.removeLayer(errorLayer);
+                Main.main.removeLayer(errorLayer);
             }
         }
     }
