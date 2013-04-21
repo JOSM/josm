@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.io.IOException;
 import java.net.BindException;
@@ -9,6 +9,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.InetAddress;
+
+import org.openstreetmap.josm.Main;
 
 /**
  * Simple HTTP server that spawns a {@link RequestProcessor} for every
@@ -33,11 +35,11 @@ public class RemoteControlHttpServer extends Thread {
         try {
             stopRemoteControlHttpServer();
 
-            instance = new RemoteControlHttpServer(DEFAULT_PORT);
+            instance = new RemoteControlHttpServer(Main.pref.getInteger("remote.control.port", DEFAULT_PORT));
             instance.start();
         } catch (BindException ex) {
-            System.err.println(tr("Warning: Cannot start remotecontrol server on port {0}: {1}",
-                    Integer.toString(DEFAULT_PORT), ex.getLocalizedMessage()));
+            Main.warn(marktr("Warning: Cannot start remotecontrol server on port {0}: {1}"),
+                    Integer.toString(DEFAULT_PORT), ex.getLocalizedMessage());
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -71,8 +73,9 @@ public class RemoteControlHttpServer extends Thread {
         // Start the server socket with only 1 connection.
         // Also make sure we only listen
         // on the local interface so nobody from the outside can connect!
+        // NOTE: On a dual stack machine with old Windows OS this may not listen on both interfaces!
         this.server = new ServerSocket(port, 1,
-            InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
+            InetAddress.getByName(Main.pref.get("remote.control.host", "localhost")));
     }
 
     /**
@@ -80,7 +83,8 @@ public class RemoteControlHttpServer extends Thread {
      */
     public void run()
     {
-        System.out.println("RemoteControl::Accepting connections on port " + server.getLocalPort());
+        Main.info(marktr("RemoteControl::Accepting connections on port {0}"),
+             Integer.toString(server.getLocalPort()));
         while (true)
         {
             try
@@ -108,6 +112,6 @@ public class RemoteControlHttpServer extends Thread {
     public void stopServer() throws IOException
     {
         server.close();
-        System.out.println("RemoteControl::Server stopped.");
+        Main.info(marktr("RemoteControl::Server stopped."));
     }
 }
