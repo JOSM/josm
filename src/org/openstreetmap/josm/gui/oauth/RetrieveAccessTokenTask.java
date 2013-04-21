@@ -99,7 +99,7 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
     /**
      * Replies true if the task was canceled.
      *
-     * @return
+     * @return {@code true} if user aborted operation
      */
     public boolean isCanceled() {
         return canceled;

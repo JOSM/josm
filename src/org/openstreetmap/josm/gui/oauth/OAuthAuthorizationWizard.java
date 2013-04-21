@@ -68,7 +68,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     /**
      * Builds the row with the action buttons
      *
-     * @return
+     * @return panel with buttons
      */
     protected JPanel buildButtonRow(){
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -88,7 +88,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     /**
      * Builds the panel with general information in the header
      *
-     * @return
+     * @return panel woth information display
      */
     protected JPanel buildHeaderInfoPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());

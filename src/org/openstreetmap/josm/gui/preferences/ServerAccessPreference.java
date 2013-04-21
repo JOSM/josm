@@ -53,7 +53,7 @@ public class ServerAccessPreference extends DefaultTabPreferenceSetting {
     /**
      * Builds the tabbed pane with the server preferences
      *
-     * @return
+     * @return panel with server preferences tabs
      */
     protected JPanel buildTabbedServerPreferences() {
         JPanel pnl = new JPanel(new BorderLayout());
@@ -76,7 +76,7 @@ public class ServerAccessPreference extends DefaultTabPreferenceSetting {
     /**
      * Builds the panel for entering the server access preferences
      *
-     * @return
+     * @return preferences panel for server settings
      */
     protected JPanel buildContentPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());

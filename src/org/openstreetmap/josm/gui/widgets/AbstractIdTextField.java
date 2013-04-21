@@ -28,7 +28,7 @@ public abstract class AbstractIdTextField<T extends AbstractTextComponentValidat
      * Constructs a new {@link AbstractIdTextField}
      * @param klass The validator class
      * @param columns The number of columns to use to calculate the preferred width
-     * @see JTextField#JTextField(int)
+     * @see JosmTextField#JosmTextField(int)
      */
     public AbstractIdTextField(Class<T> klass, int columns) {
         super(columns);

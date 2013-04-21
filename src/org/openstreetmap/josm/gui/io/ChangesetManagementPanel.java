@@ -36,7 +36,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * It is displayed as one of the configuration panels in the {@link UploadDialog}.
  *
- * ChangesetManagementPanel is a source for {@link PropertyChangeEvent}s. Clients can listen
+ * ChangesetManagementPanel is a source for {@link java.beans.PropertyChangeEvent}s. Clients can listen
  * to
  * <ul>
  *   <li>{@link #SELECTED_CHANGESET_PROP}  - the new value in the property change event is

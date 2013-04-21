@@ -86,7 +86,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
     /**
      * Builds the panel for the HTTP proxy configuration
      *
-     * @return
+     * @return panel with HTTP proxy configuration
      */
     protected JPanel buildHttpProxyConfigurationPanel() {
         JPanel pnl = new JPanel(new GridBagLayout()) {
@@ -162,7 +162,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
     /**
      * Builds the panel for the SOCKS proxy configuration
      *
-     * @return
+     * @return panel with SOCKS proxy configuration
      */
     protected JPanel buildSocksProxyConfigurationPanel() {
         JPanel pnl = new JPanel(new GridBagLayout()) {
