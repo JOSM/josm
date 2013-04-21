@@ -57,9 +57,12 @@ public class OsmTileLoader implements TileLoader {
                         tile.setError("No tile at this zoom level");
                     } else {
                         input = conn.getInputStream();
-                        tile.loadImage(input);
-                        input.close();
-                        input = null;
+                        try {
+                            tile.loadImage(input);
+                        } finally { 
+                            input.close();
+                            input = null;
+                        }
                     }
                     tile.setLoaded(true);
                     listener.tileLoadingFinished(tile, true);
