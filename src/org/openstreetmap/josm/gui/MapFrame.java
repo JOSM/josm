@@ -90,7 +90,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     /**
      * The view control displayed.
      */
-    public MapView mapView;
+    public final MapView mapView;
     /**
      * The toolbar with the action icons. To add new toggle dialog actions, use addToggleDialog
      * instead of adding directly to this list. To add a new mode use addMapMode.
@@ -154,7 +154,6 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     public MapFrame(JPanel contentPane, ViewportData viewportData) {
         setSize(400,400);
         setLayout(new BorderLayout());
-
 
         mapView = new MapView(contentPane, viewportData);
 

@@ -752,7 +752,7 @@ abstract public class Main {
             if (Main.isDisplayingMapView()) {
                 Collection<Layer> layers = new ArrayList<Layer>(Main.map.mapView.getAllLayers());
                 for (Layer l: layers) {
-                    Main.map.mapView.removeLayer(l);
+                    Main.main.removeLayer(l);
                 }
             }
             if (exit) {
