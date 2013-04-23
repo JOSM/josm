@@ -1327,7 +1327,7 @@ public class Preferences {
      *
      */
     public void updateSystemProperties() {
-        if(getBoolean("prefer.ipv6", true)) {
+        if(getBoolean("prefer.ipv6", false)) {
             // never set this to false, only true!
             updateSystemProperty("java.net.preferIPv6Addresses", "true");
         }
