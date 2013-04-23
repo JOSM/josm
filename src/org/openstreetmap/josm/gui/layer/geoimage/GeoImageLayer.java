@@ -393,8 +393,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds bounds) {
-        int width = Main.map.mapView.getWidth();
-        int height = Main.map.mapView.getHeight();
+        int width = mv.getWidth();
+        int height = mv.getHeight();
         Rectangle clip = g.getClipBounds();
         if (useThumbs) {
             if (null == offscreenBuffer || offscreenBuffer.getWidth() != width  // reuse the old buffer if possible
