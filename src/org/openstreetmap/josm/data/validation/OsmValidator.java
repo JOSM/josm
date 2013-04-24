@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.validation.tests.DuplicateNode;
 import org.openstreetmap.josm.data.validation.tests.DuplicateRelation;
 import org.openstreetmap.josm.data.validation.tests.DuplicateWay;
 import org.openstreetmap.josm.data.validation.tests.DuplicatedWayNodes;
+import org.openstreetmap.josm.data.validation.tests.Highways;
 import org.openstreetmap.josm.data.validation.tests.MultipolygonTest;
 import org.openstreetmap.josm.data.validation.tests.NameMismatch;
 import org.openstreetmap.josm.data.validation.tests.NodesDuplicatingWayTags;
@@ -109,8 +110,12 @@ public class OsmValidator implements LayerChangeListener {
         NodesDuplicatingWayTags.class, // ID 2401 .. 2499
         PowerLines.class, // ID 2501 .. 2599
         Addresses.class, // ID 2601 .. 2699
+        Highways.class, // ID 2701 .. 2799
     };
 
+    /**
+     * Constructs a new {@code OsmValidator}.
+     */
     public OsmValidator() {
         checkValidatorDir();
         initializeGridDetail();
