@@ -9,6 +9,9 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
@@ -51,42 +54,37 @@ public class RestartAction extends JosmAction {
         if (!Main.exitJosm(false)) return;
         try {
             // java binary
-            String java = System.getProperty("java.home") + "/bin/java";
+            final List<String> cmd = new ArrayList<String>(Collections.singleton(System.getProperty("java.home") + "/bin/java"));
             // vm arguments
-            List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
-            StringBuffer vmArgsOneLine = new StringBuffer();
-            for (String arg : vmArguments) {
+            for (String arg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
                 // if it's the agent argument : we ignore it otherwise the
                 // address of the old application and the new one will be in conflict
                 if (!arg.contains("-agentlib")) {
-                    vmArgsOneLine.append(arg);
-                    vmArgsOneLine.append(" ");
+                    cmd.add(arg);
                 }
             }
-            // init the command to execute, add the vm args
-            final StringBuffer cmd = new StringBuffer("\"" + java + "\" " + vmArgsOneLine);
             // program main and program arguments (be careful a sun property. might not be supported by all JVM) 
             String[] mainCommand = System.getProperty("sun.java.command").split(" ");
             // program main is a jar
             if (mainCommand[0].endsWith(".jar")) {
                 // if it's a jar, add -jar mainJar
-                cmd.append("-jar " + new File(mainCommand[0]).getPath());
+                cmd.add("-jar");
+                cmd.add(new File(mainCommand[0]).getPath());
             } else {
                 // else it's a .class, add the classpath and mainClass
-                cmd.append("-cp \"" + System.getProperty("java.class.path") + "\" " + mainCommand[0]);
+                cmd.add("-cp");
+                cmd.add("\"" + System.getProperty("java.class.path") + "\"");
+                cmd.add(mainCommand[0]);
             }
             // finally add program arguments
-            for (String arg : Main.commandLineArgs) {
-                cmd.append(" ");
-                cmd.append(arg);
-            }
+            cmd.addAll(Arrays.asList(Main.commandLineArgs));
             // execute the command in a shutdown hook, to be sure that all the
             // resources have been disposed before restarting the application
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
                     try {
-                        Runtime.getRuntime().exec(cmd.toString());
+                        Runtime.getRuntime().exec(cmd.toArray(new String[]{}));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
