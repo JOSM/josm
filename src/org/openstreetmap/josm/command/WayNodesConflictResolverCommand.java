@@ -29,10 +29,8 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
     private final List<Node> mergedNodeList;
 
     /**
-     *
-     * @param my my may
-     * @param their their way
-     * @param mergedNodeList  the list of merged nodes
+     * @param conflict the conflict data set
+     * @param mergedNodeList the list of merged nodes
      */
     @SuppressWarnings("unchecked")
     public WayNodesConflictResolverCommand(Conflict<? extends OsmPrimitive> conflict, List<Node> mergedNodeList) {

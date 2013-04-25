@@ -278,9 +278,9 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     }
 
     /**
-     *
-     * @param primitive
-     * @return List of primitives whose filtering can be affected by change in primitive
+     * Returns the list of primitives whose filtering can be affected by change in primitive
+     * @param primitives list of primitives to check
+     * @return List of primitives whose filtering can be affected by change in source primitives
      */
     private Collection<OsmPrimitive> getAffectedPrimitives(Collection<? extends OsmPrimitive> primitives) {
         // Filters can use nested parent/child expression so complete tree is necessary
