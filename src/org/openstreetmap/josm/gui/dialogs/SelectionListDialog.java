@@ -463,7 +463,7 @@ public class SelectionListDialog extends ToggleDialog  {
         /**
          * Replies the history of JOSM selections
          *
-         * @return
+         * @return history of JOSM selections
          */
         public List<Collection<? extends OsmPrimitive>> getSelectionHistory() {
             return history;
@@ -483,7 +483,7 @@ public class SelectionListDialog extends ToggleDialog  {
          * Replies the collection of OSM primitives currently selected in the view
          * of this model
          *
-         * @return
+         * @return choosen elements in the view
          */
         public Collection<OsmPrimitive> getSelected() {
             Set<OsmPrimitive> sel = new HashSet<OsmPrimitive>();
@@ -499,7 +499,7 @@ public class SelectionListDialog extends ToggleDialog  {
          * Replies the collection of OSM primitives in the view
          * of this model
          *
-         * @return
+         * @return complete content of the view
          */
         public Collection<OsmPrimitive> getAllElements() {
             return selection;

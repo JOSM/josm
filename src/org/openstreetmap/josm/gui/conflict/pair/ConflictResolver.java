@@ -162,6 +162,10 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
 
     /**
      * handles property change events
+     * @param evt the event
+     * @see TagMergeModel
+     * @see ListMergeModel
+     * @see PropertiesMergeModel
      */
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(TagMergeModel.PROP_NUM_UNDECIDED_TAGS)) {
@@ -222,9 +226,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     /**
      * populates the conflict resolver with the conflicts between my and their
      *
-     * @param my   my primitive (i.e. the primitive in the local dataset)
-     * @param their their primitive (i.e. the primitive in the server dataset)
-     *
+     * @param conflict the conflict data set
      */
     public void populate(Conflict<? extends OsmPrimitive> conflict) {
         setMy(conflict.getMy());

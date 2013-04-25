@@ -52,7 +52,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
      *
      * Ignores null values and changesets with {@link Changeset#isNew()} == true.
      *
-     * @param parent the parent component relative to which the {@link PleaseWaitDialog} is displayed.
+     * @param parent the parent component relative to which the {@link org.openstreetmap.josm.gui.PleaseWaitDialog} is displayed.
      * Must not be null.
      * @param changesets the collection of changesets. Assumes an empty collection if null.
      * @return the download task
@@ -100,7 +100,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
     }
 
     /**
-     * Creates the download task for a collection of changeset ids. Uses a {@link PleaseWaitDialog}
+     * Creates the download task for a collection of changeset ids. Uses a {@link org.openstreetmap.josm.gui.PleaseWaitDialog}
      * whose parent is {@link Main#parent}.
      *
      * Null ids or or ids <= 0 in the id collection are ignored.
@@ -114,12 +114,12 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
     }
 
     /**
-     * Creates the download task for a collection of changeset ids. Uses a {@link PleaseWaitDialog}
+     * Creates the download task for a collection of changeset ids. Uses a {@link org.openstreetmap.josm.gui.PleaseWaitDialog}
      * whose parent is the parent window of <code>dialogParent</code>.
      *
      * Null ids or or ids <= 0 in the id collection are ignored.
      *
-     * @param dialogParent the parent reference component for the {@link PleaseWaitDialog}. Must not be null.
+     * @param dialogParent the parent reference component for the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}. Must not be null.
      * @param ids the collection of ids. Empty collection assumed if null.
      * @throws IllegalArgumentException thrown if dialogParent is null
      */

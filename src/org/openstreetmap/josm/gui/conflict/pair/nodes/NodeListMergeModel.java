@@ -51,8 +51,7 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
     /**
      * Builds the command to resolve conflicts in the node list of a way
      *
-     * @param my  my way. Must not be null.
-     * @param their  their way. Must not be null
+     * @param conflict the conflict data set
      * @return the command
      * @exception IllegalStateException thrown, if the merge is not yet frozen
      */
