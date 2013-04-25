@@ -54,12 +54,12 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  * A ListMergeModel can be ''frozen''. If it's frozen, it doesn't accept additional merge
  * decisions. {@link PropertyChangeListener}s can register for property value changes of
- * {@link #PROP_FROZEN}.
+ * {@link #FROZEN_PROP}.
  *
  * ListMergeModel is an abstract class. Three methods have to be implemented by subclasses:
  * <ul>
- *   <li>{@link ListMergeModel#cloneEntryForMergedList(Object)} - clones an entry of type T</li>
- *   <li>{@link ListMergeModel#isEqualEntry(Object, Object)} - checks whether two entries are equals </li>
+ *   <li>{@link ListMergeModel#cloneEntryForMergedList} - clones an entry of type T</li>
+ *   <li>{@link ListMergeModel#isEqualEntry} - checks whether two entries are equals </li>
  *   <li>{@link ListMergeModel#setValueAt(DefaultTableModel, Object, int, int)} - handles values edited in
  *     a JTable, dispatched from {@link TableModel#setValueAt(Object, int, int)} </li>
  * </ul>
@@ -585,7 +585,6 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      *
      * From the point of view of the {@link JTable} it is a {@link TableModel}.
      *
-     * @param <T>
      * @see ListMergeModel#getMyTableModel()
      * @see ListMergeModel#getTheirTableModel()
      * @see ListMergeModel#getMergedTableModel()

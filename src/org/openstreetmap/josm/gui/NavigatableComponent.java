@@ -346,7 +346,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * Zoom to the given coordinate.
      * @param newCenter The center x-value (easting) to zoom to.
-     * @param scale The scale to use.
+     * @param newScale The scale to use.
      */
     public void zoomTo(EastNorth newCenter, double newScale) {
         Bounds b = getProjection().getWorldBoundsLatLon();
@@ -395,7 +395,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * Zoom to the given coordinate without adding to the zoom undo buffer.
      * @param newCenter The center x-value (easting) to zoom to.
-     * @param scale The scale to use.
+     * @param newScale The scale to use.
      */
     private void zoomNoUndoTo(EastNorth newCenter, double newScale) {
         if (!newCenter.equals(center)) {
@@ -928,7 +928,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *
      * @return The nearest way to point p,
      *      prefer a selected way if there are multiple nearest.
-     * @see #getNearestWaySegment(Point, Collection, Predicate)
+     * @see #getNearestWaySegment(Point, Predicate)
      *
      * @param p the point for which to search the nearest segment.
      * @param predicate the returned object has to fulfill certain properties.
@@ -984,7 +984,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * It solely depends on the distance to point p.
      *
      * @return Primitives nearest to the given screen point.
-     * @see #getNearests(Point, Collection, Predicate)
+     * @see #getNearestNodesOrWays(Point, Collection, Predicate)
      *
      * @param p The point on screen.
      * @param predicate the returned object has to fulfill certain properties.
@@ -1034,9 +1034,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *
      * @return A primitive within snap-distance to point p,
      *      that is chosen by the algorithm described.
-     * @see getNearestNode(Point, Predicate)
-     * @see getNearestNodesImpl(Point, Predicate)
-     * @see getNearestWay(Point, Predicate)
+     * @see #getNearestNode(Point, Predicate)
+     * @see #getNearestNodesImpl(Point, Predicate)
+     * @see #getNearestWay(Point, Predicate)
      *
      * @param p The point on screen.
      * @param predicate the returned object has to fulfill certain properties.

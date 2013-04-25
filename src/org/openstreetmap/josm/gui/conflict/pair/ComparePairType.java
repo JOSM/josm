@@ -12,17 +12,17 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 public enum ComparePairType {
 
     /**
-     * compare my version of an {@link OsmPrimitive} with their version
+     * compare my version of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive} with their version
      */
     MY_WITH_THEIR (tr("My with Their"), new ListRole[] {MY_ENTRIES, THEIR_ENTRIES}),
 
     /**
-     * compare my version of an {@link OsmPrimitive} with the merged version
+     * compare my version of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive} with the merged version
      */
     MY_WITH_MERGED (tr("My with Merged"),  new ListRole[] {MY_ENTRIES, MERGED_ENTRIES}),
 
     /**
-     * compare their version of an {@link OsmPrimitive} with the merged veresion
+     * compare their version of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive} with the merged veresion
      */
     THEIR_WITH_MERGED(tr("Their with Merged"),  new ListRole[] {THEIR_ENTRIES, MERGED_ENTRIES});
 

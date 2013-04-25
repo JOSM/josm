@@ -428,7 +428,7 @@ public class GenericRelationEditor extends RelationEditor  {
     /**
      * builds the panel with the table displaying the currently selected primitives
      *
-     * @return
+     * @return panel with current selection
      */
     protected JPanel buildSelectionTablePanel() {
         JPanel pnl = new JPanel();
@@ -465,7 +465,7 @@ public class GenericRelationEditor extends RelationEditor  {
     /**
      * build the panel with the buttons on the left
      *
-     * @return
+     * @return left button panel
      */
     protected JToolBar buildLeftButtonPanel() {
         JToolBar tb = new JToolBar();
@@ -534,7 +534,7 @@ public class GenericRelationEditor extends RelationEditor  {
     /**
      * build the panel with the buttons for adding or removing the current selection
      *
-     * @return
+     * @return control buttons panel for selection/members
      */
     protected JToolBar buildSelectionControlButtonPanel() {
         JToolBar tb = new JToolBar(JToolBar.VERTICAL);

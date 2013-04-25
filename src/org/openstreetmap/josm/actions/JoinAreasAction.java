@@ -389,8 +389,8 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * Tests if the areas have some intersections to join.
-     * @param areas
-     * @return
+     * @param areas Areas to test
+     * @return @{code true} if areas are joinable
      */
     private boolean testJoin(List<Multipolygon> areas) {
         List<Way> allStartingWays = new ArrayList<Way>();
@@ -407,7 +407,7 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * Will join two or more overlapping areas
-     * @param areas - list of areas to join
+     * @param areas list of areas to join
      * @return new area formed.
      */
     private JoinAreasResult joinAreas(List<Multipolygon> areas) throws UserCancelException {
@@ -524,9 +524,8 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * Checks if tags of two given ways differ, and presents the user a dialog to solve conflicts
-     * @param Way First way to check
-     * @param Way Second Way to check
-     * @return boolean True if all conflicts are resolved, False if conflicts remain.
+     * @param polygons ways to check
+     * @return {@code true} if all conflicts are resolved, {@code false} if conflicts remain.
      */
     private boolean resolveTagConflicts(List<Multipolygon> polygons) {
 
@@ -553,8 +552,8 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * This method removes duplicate points (if any) from the input way.
-     * @param way the way to process
-     * @return true if any changes where made
+     * @param ways the ways to process
+     * @return {@code true} if any changes where made
      */
     private boolean removeDuplicateNodes(List<Way> ways) {
         //TODO: maybe join nodes with JoinNodesAction, rather than reconnect the ways.
@@ -616,7 +615,7 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * Commits the command list with a description
-     * @param String The description of what the commands do
+     * @param description The description of what the commands do
      */
     private void commitCommands(String description) {
         switch(cmds.size()) {
@@ -862,9 +861,9 @@ public class JoinAreasAction extends JosmAction {
 
 
     /**
-     * This method finds witch ways are outer and witch are inner.
-     * @param boundaryWays
-     * @return
+     * This method finds which ways are outer and which are inner.
+     * @param boundaries list of joined boundaries to search in
+     * @return outer ways
      */
     private List<AssembledMultipolygon> findPolygons(Collection<AssembledPolygon> boundaries) {
 
@@ -883,6 +882,7 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * Collects outer way and corresponding inner ways from all boundaries.
+     * @param level depth level
      * @param boundaryWays
      * @return the outermostWay.
      */
@@ -1072,9 +1072,9 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * Tests if way is inside other way
-     * @param outside
-     * @param inside
-     * @return
+     * @param outside outer polygon description
+     * @param inside inner polygon description
+     * @return {@code true} if inner is inside outer
      */
     public static boolean wayInsideWay(AssembledPolygon inside, AssembledPolygon outside) {
         Set<Node> outsideNodes = new HashSet<Node>(outside.getNodes());
@@ -1093,8 +1093,8 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * Joins the lists of ways.
-     * @param Collection<Way> The list of outer ways that belong to that multigon.
-     * @return Way The newly created outer way
+     * @param polygon The list of outer ways that belong to that multigon.
+     * @return The newly created outer way
      */
     private Multipolygon  joinPolygon(AssembledMultipolygon polygon) throws UserCancelException {
         Multipolygon result = new Multipolygon(joinWays(polygon.outerWay.ways));
@@ -1108,8 +1108,8 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * Joins the outer ways and deletes all short ways that can't be part of a multipolygon anyway.
-     * @param Collection<Way> The list of outer ways that belong to that multigon.
-     * @return Way The newly created outer way
+     * @param ways The list of outer ways that belong to that multigon.
+     * @return The newly created outer way
      */
     private Way joinWays(List<WayInPolygon> ways) throws UserCancelException {
 
@@ -1136,8 +1136,8 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * Joins a list of ways (using CombineWayAction and ReverseWayAction as specified in WayInPath)
-     * @param ArrayList<Way> The list of ways to join and reverse
-     * @return Way The newly created way
+     * @param ways The list of ways to join and reverse
+     * @return The newly created way
      */
     private Way joinOrientedWays(List<WayInPolygon> ways) throws UserCancelException{
         if (ways.size() < 2)
@@ -1263,9 +1263,9 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * This method filters the list of relations that form the multipolygons.
-     * @param relations
-     * @param polygons
-     * @return
+     * @param relations all relations
+     * @param polygons polygons for filtering
+     * @return relations which don't form the polygons
      */
     private List<Relation> filterOwnMultipolygonRelations(Collection<Relation> relations, List<Multipolygon> polygons) {
 
@@ -1286,9 +1286,9 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * Will add own multipolygon relation to the "previously existing" relations. Fixup is done by fixRelations
-     * @param Collection<Way> List of already closed inner ways
-     * @param Way The outer way
-     * @param ArrayList<RelationRole> The list of relation with roles to add own relation to
+     * @param inner List of already closed inner ways
+     * @param outer The outer way
+     * @return The list of relation with roles to add own relation to
      */
     private RelationRole addOwnMultigonRelation(Collection<Way> inner, Way outer) {
         if (inner.size() == 0) return null;
@@ -1307,8 +1307,8 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * Removes a given OsmPrimitive from all relations
-     * @param OsmPrimitive Element to remove from all relations
-     * @return ArrayList<RelationRole> List of relations with roles the primitives was part of
+     * @param osm Element to remove from all relations
+     * @return List of relations with roles the primitives was part of
      */
     private ArrayList<RelationRole> removeFromAllRelations(OsmPrimitive osm) {
         ArrayList<RelationRole> result = new ArrayList<RelationRole>();
@@ -1344,9 +1344,10 @@ public class JoinAreasAction extends JosmAction {
      * Adds the previously removed relations again to the outer way. If there are multiple multipolygon
      * relations where the joined areas were in "outer" role a new relation is created instead with all
      * members of both. This function depends on multigon relations to be valid already, it won't fix them.
-     * @param ArrayList<RelationRole> List of relations with roles the (original) ways were part of
-     * @param Way The newly created outer area/way
-     * @param relationsToDelete - set of relations to delete.
+     * @param rels List of relations with roles the (original) ways were part of
+     * @param outer The newly created outer area/way
+     * @param ownMultipol elements to directly add as outer
+     * @param relationsToDelete set of relations to delete.
      */
     private void fixRelations(ArrayList<RelationRole> rels, Way outer, RelationRole ownMultipol, Set<Relation> relationsToDelete) {
         ArrayList<RelationRole> multiouters = new ArrayList<RelationRole>();
@@ -1398,7 +1399,8 @@ public class JoinAreasAction extends JosmAction {
     }
 
     /**
-     * @param Collection<Way> The List of Ways to remove all tags from
+     * Remove all tags from the all the way
+     * @param ways The List of Ways to remove all tags from
      */
     private void stripTags(Collection<Way> ways) {
         for (Way w : ways) {
@@ -1409,7 +1411,8 @@ public class JoinAreasAction extends JosmAction {
     }
 
     /**
-     * @param Way The Way to remove all tags from
+     * Remove all tags from the way
+     * @param x The Way to remove all tags from
      */
     private void stripTags(Way x) {
         if (x.getKeys() == null)
@@ -1424,7 +1427,7 @@ public class JoinAreasAction extends JosmAction {
     /**
      * Takes the last cmdsCount actions back and combines them into a single action
      * (for when the user wants to undo the join action)
-     * @param String The commit message to display
+     * @param message The commit message to display
      */
     private void makeCommitsOneAction(String message) {
         UndoRedoHandler ur = Main.main.undoRedo;

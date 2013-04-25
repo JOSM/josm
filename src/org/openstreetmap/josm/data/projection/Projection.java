@@ -14,7 +14,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
  */
 public interface Projection {
     /**
-     * The default scale factor in east/north units per pixel ({@link #NavigatableComponent#scale})).
+     * The default scale factor in east/north units per pixel
+     * ({@link org.openstreetmap.josm.gui.NavigatableComponent#scale})).
      * FIXME: misnomer
      * @return the scale factor
      */
