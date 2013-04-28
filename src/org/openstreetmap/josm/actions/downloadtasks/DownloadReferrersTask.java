@@ -77,9 +77,8 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
      * constructor
      *
      * @param targetLayer  the target layer for the downloaded primitives. Must not be null.
-     * @param primitives  the collection of children for which parents are to be downloaded. Children
+     * @param children  the collection of children for which parents are to be downloaded. Children
      * are specified by their id and  their type.
-     *
      */
     public DownloadReferrersTask(OsmDataLayer targetLayer, Map<Long, OsmPrimitiveType> children) {
         super("Download referrers", false /* don't ignore exception*/);

@@ -581,7 +581,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Replies true if for every key there is one tag only, i.e. exactly one value.
      *
-     * @return
+     * @return {@code true} if for every key there is one tag only
      */
     public boolean isApplicableToPrimitive() {
         return size() == getKeys().size();

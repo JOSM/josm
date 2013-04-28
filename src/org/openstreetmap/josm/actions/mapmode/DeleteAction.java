@@ -383,10 +383,10 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * This function takes any mouse event argument and builds the list of elements
      * that should be deleted but does not actually delete them.
      * @param e MouseEvent from which modifiers and position are taken
-     * @param modifiers For explanation: @see updateCursor
-     * @param silet Set to true if the user should not be bugged with additional
+     * @param modifiers For explanation, see {@link #updateCursor}
+     * @param silent Set to true if the user should not be bugged with additional
      *        dialogs
-     * @return
+     * @return delete command
      */
     private Command buildDeleteCommands(MouseEvent e, int modifiers, boolean silent) {
         DeleteParameters parameters = getDeleteParameters(e, modifiers);

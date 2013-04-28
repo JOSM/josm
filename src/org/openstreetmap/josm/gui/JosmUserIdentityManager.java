@@ -111,7 +111,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
      * Remembers the fact that the current JOSM user is fully identified with a
      * verified pair of user name and user id.
      *
-     * @param userName the user name. Must not be null. Must not be empty.
+     * @param username the user name. Must not be null. Must not be empty.
      * @param userinfo additional information about the user, retrieved from the OSM server and including the user id
      * @throws IllegalArgumentException thrown if userName is null
      * @throws IllegalArgumentException thrown if userName is empty
@@ -129,7 +129,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     /**
      * Replies true if the current JOSM user is anonymous.
      *
-     * @return true if the current user is anonymous.
+     * @return {@code true} if the current user is anonymous.
      */
     public boolean isAnonymous() {
         return userName == null && userInfo == null;

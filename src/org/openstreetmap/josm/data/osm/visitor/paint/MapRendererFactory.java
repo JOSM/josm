@@ -88,7 +88,7 @@ public class MapRendererFactory {
 
     /**
      * Replies the unique instance
-     * @return
+     * @return instance of map rending class
      */
     public static MapRendererFactory getInstance() {
         if (instance == null) {

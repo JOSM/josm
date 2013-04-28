@@ -410,8 +410,8 @@ public class MapStatus extends JPanel implements Helpful {
         /**
          * Call this with a set of primitives to cycle through them. Method
          * will automatically select the next item and update the map
-         * @param osms
-         * @param mouse modifiers
+         * @param osms primitives to cycle through
+         * @param mods modifiers (i.e. control keys)
          */
         private final void popupCycleSelection(Collection<OsmPrimitive> osms, int mods) {
             DataSet ds = Main.main.getCurrentDataSet();
@@ -451,7 +451,6 @@ public class MapStatus extends JPanel implements Helpful {
 
         /**
          * Tries to hide the given popup
-         * @param popup
          */
         private final void popupHidePopup() {
             popupLabels = null;
@@ -464,9 +463,10 @@ public class MapStatus extends JPanel implements Helpful {
         }
 
         /**
-         * Tries to show the given popup, can be hidden using popupHideOldPopup
+         * Tries to show the given popup, can be hidden using {@link #popupHidePopup}
          * If an old popup exists, it will be automatically hidden
-         * @param popup
+         * @param newPopup popup to show
+         * @param lbls lables to show (see {@link #popupLabels})
          */
         private final void popupShowPopup(Popup newPopup, List<JLabel> lbls) {
             final Popup staticPopup = newPopup;
@@ -524,7 +524,7 @@ public class MapStatus extends JPanel implements Helpful {
          * Builds the labels with all necessary listeners for the info popup for the
          * given OsmPrimitive
          * @param osm  The primitive to create the label for
-         * @return
+         * @return labels for info popup
          */
         private final JLabel popupBuildPrimitiveLabels(final OsmPrimitive osm) {
             final StringBuilder text = new StringBuilder();
