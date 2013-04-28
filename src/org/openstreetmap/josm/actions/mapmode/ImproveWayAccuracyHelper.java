@@ -27,9 +27,9 @@ class ImproveWayAccuracyHelper {
      * Finds the way to work on. If the mouse is on the node, extracts one of
      * the ways containing it. If the mouse is on the way, simply returns it.
      *
-     * @param mv
-     * @param p
-     * @return Way or null in case there is nothing under the cursor.
+     * @param mv the current map view
+     * @param p the cursor position
+     * @return {@code Way} or {@code null} in case there is nothing under the cursor.
      */
     public static Way findWay(MapView mv, Point p) {
         if (mv == null || p == null) {
@@ -63,10 +63,10 @@ class ImproveWayAccuracyHelper {
      * are neglected. This is to avoid way self-intersection after moving the
      * candidateNode to a new place.
      *
-     * @param mv
-     * @param w
-     * @param p
-     * @return
+     * @param mv the current map view
+     * @param w the way to check
+     * @param p the cursor position
+     * @return nearest node to cursor
      */
     public static Node findCandidateNode(MapView mv, Way w, Point p) {
         if (mv == null || w == null || p == null) {
@@ -113,10 +113,10 @@ class ImproveWayAccuracyHelper {
      * The priority is given to segments where c is in ab. Otherwise, a segment
      * with the largest angle apb is chosen.
      *
-     * @param mv
-     * @param w
-     * @param p
-     * @return
+     * @param mv the current map view
+     * @param w the way to check
+     * @param p the cursor position
+     * @return nearest way segment to cursor
      */
     public static WaySegment findCandidateSegment(MapView mv, Way w, Point p) {
         if (mv == null || w == null || p == null) {

@@ -84,10 +84,15 @@ public class Addresses extends Test {
     @Override
     public void visit(Node n) {
         List<Relation> associatedStreets = getAndCheckAssociatedStreets(n);
-        // Find house number without proper location (neither addr:street, associatedStreet or addr:place)
+        // Find house number without proper location (neither addr:street, associatedStreet, addr:place or addr:interpolation)
         if (n.hasKey(ADDR_HOUSE_NUMBER) && !n.hasKey(ADDR_STREET) && !n.hasKey(ADDR_PLACE)) {
             for (Relation r : associatedStreets) {
                 if (r.hasTag("type", ASSOCIATED_STREET)) {
+                    return;
+                }
+            }
+            for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
+                if (w.hasKey(ADDR_INTERPOLATION) && w.hasKey(ADDR_STREET)) {
                     return;
                 }
             }

@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
  * Class that encapsulates the filter logic, i.e.&nbsp;applies a list of
  * filters to a primitive.
  *
- * Uses {@link SearchCompiler.Match#match} to see if the filter expression matches,
+ * Uses {@link Match#match} to see if the filter expression matches,
  * cares for "inverted-flag" of the filters and combines the results of all active
  * filters.
  *

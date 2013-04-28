@@ -683,19 +683,19 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     /**
-     * Prevent creation of ways that look like this: <---->
+     * Prevent creation of ways that look like this: &lt;----&gt;
      * This happens if users want to draw a no-exit-sideway from the main way like this:
      * ^
-     * |<---->
+     * |&lt;----&gt;
      * |
      * The solution isn't ideal because the main way will end in the side way, which is bad for
      * navigation software ("drive straight on") but at least easier to fix. Maybe users will fix
      * it on their own, too. At least it's better than producing an error.
      *
-     * @param Way the way to check
-     * @param Node the current node (i.e. the one the connection will be made from)
-     * @param Node the target node (i.e. the one the connection will be made to)
-     * @return Boolean True if this would create a selfcontaining way, false otherwise.
+     * @param selectedWay the way to check
+     * @param currentNode the current node (i.e. the one the connection will be made from)
+     * @param targetNode the target node (i.e. the one the connection will be made to)
+     * @return {@code true} if this would create a selfcontaining way, {@code false} otherwise.
      */
     private boolean isSelfContainedWay(Way selectedWay, Node currentNode, Node targetNode) {
         if(selectedWay != null) {

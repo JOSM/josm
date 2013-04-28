@@ -227,8 +227,8 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     /**
      * handles adding highlights and updating the cursor for the given mouse event.
      * Please note that the highlighting for merging while moving is handled via mouseDragged.
-     * @param MouseEvent which should be used as base for the feedback
-     * @return true if repaint is required
+     * @param e {@code MouseEvent} which should be used as base for the feedback
+     * @return {@code true} if repaint is required
      */
     private boolean giveUserFeedback(MouseEvent e) {
         return giveUserFeedback(e, e.getModifiers());
@@ -237,9 +237,9 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     /**
      * handles adding highlights and updating the cursor for the given mouse event.
      * Please note that the highlighting for merging while moving is handled via mouseDragged.
-     * @param MouseEvent which should be used as base for the feedback
-     * @param define custom keyboard modifiers if the ones from MouseEvent are outdated or similar
-     * @return true if repaint is required
+     * @param e {@code MouseEvent} which should be used as base for the feedback
+     * @param modifiers define custom keyboard modifiers if the ones from MouseEvent are outdated or similar
+     * @return {@code true} if repaint is required
      */
     private boolean giveUserFeedback(MouseEvent e, int modifiers) {
         Collection<OsmPrimitive> c = MapView.asColl(
@@ -1057,7 +1057,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
          * user drags the crosshair node, it will be added to all ways in
          * <code>virtualWays</code>.
          *
-         * @param e contains the point clicked
+         * @param p the point clicked
          * @return whether
          * <code>virtualNode</code> and
          * <code>virtualWays</code> were setup.

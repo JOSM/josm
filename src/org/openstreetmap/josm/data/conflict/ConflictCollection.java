@@ -162,7 +162,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * Replies the conflict for the {@link OsmPrimitive} <code>their</code>, null
      * if no such conflict exists.
      *
-     * @param my  my primitive
+     * @param their their primitive
      * @return the conflict for the {@link OsmPrimitive} <code>their</code>, null
      * if no such conflict exists.
      */

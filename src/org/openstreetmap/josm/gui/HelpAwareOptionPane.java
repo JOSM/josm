@@ -237,13 +237,14 @@ public class HelpAwareOptionPane {
     }
 
     /**
+     * Displays an option dialog which is aware of a help context.
      *
-     * @param parentComponent
-     * @param msg
-     * @param title
-     * @param messageType
-     * @param helpTopic
-     * @return
+     * @param parentComponent the parent component
+     * @param msg the message
+     * @param title the title
+     * @param messageType the message type (see {@link JOptionPane})
+     * @param helpTopic the help topic. Can be null.
+     * @return the index of the selected option or {@link JOptionPane#CLOSED_OPTION}
      * @see #showOptionDialog(Component, Object, String, int, Icon, ButtonSpec[], ButtonSpec, String)
      */
     static public int showOptionDialog(Component parentComponent, Object msg, String title, int messageType,final String helpTopic)  {

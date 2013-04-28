@@ -34,7 +34,7 @@ public class MultipolygonCreate {
 
         /**
          * Creates a polygon from single way.
-         * @param way
+         * @param way the way to form the polygon
          */
         public JoinedPolygon(Way way) {
             this.ways = Collections.singletonList(way);
@@ -45,7 +45,7 @@ public class MultipolygonCreate {
 
         /**
          * Builds a list of nodes for this polygon. First node is not duplicated as last node.
-         * @return
+         * @return list of nodes
          */
         private List<Node> getNodes() {
             List<Node> nodes = new ArrayList<Node>();
@@ -102,9 +102,10 @@ public class MultipolygonCreate {
     }
 
     /**
-     * Splits ways into inner and outer JoinedWays. Sets innerWays and outerWays to the result.
-     *  TODO: Currently cannot process touching polygons. See code in JoinAreasAction.
-     * @return error description if the ways cannot be split. Null if all fine.
+     * Splits ways into inner and outer JoinedWays. Sets {@link #innerWays} and {@link #outerWays} to the result.
+     * TODO: Currently cannot process touching polygons. See code in JoinAreasAction.
+     * @param ways ways to analyze
+     * @return error description if the ways cannot be split, {@code null} if all fine.
      */
     public String makeFromWays(Collection<Way> ways){
         List<JoinedPolygon> joinedWays = new ArrayList<JoinedPolygon>();
@@ -184,9 +185,9 @@ public class MultipolygonCreate {
     }
 
     /**
-     * This method analyzes which ways are inner and which outer. Sets innerWays and outerWays to the result.
-     * @param joinedWays
-     * @return error description if the ways cannot be split. Null if all fine.
+     * This method analyzes which ways are inner and which outer. Sets {@link #innerWays} and {@link #outerWays} to the result.
+     * @param polygons polygons to analyze
+     * @return error description if the ways cannot be split, {@code null} if all fine.
      */
     private String makeFromPolygons(List<JoinedPolygon> polygons) {
         List<PolygonLevel> list = findOuterWaysRecursive(0, polygons);
@@ -214,7 +215,7 @@ public class MultipolygonCreate {
     /**
      * Collects outer way and corresponding inner ways from all boundaries.
      * @param boundaryWays
-     * @return the outermostWay, or null if intersection found.
+     * @return the outermostWay, or {@code null} if intersection found.
      */
     private List<PolygonLevel> findOuterWaysRecursive(int level, Collection<JoinedPolygon> boundaryWays) {
 

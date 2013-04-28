@@ -182,8 +182,8 @@ public class UnGlueAction extends JosmAction {
      * not make sense. Due to the call order in actionPerformed, this is only called when the
      * node is only part of one or less ways.
      *
-     * @param The selection to check against
-     * @return Selection is suitable
+     * @param selection The selection to check against
+     * @return {@code true} if selection is suitable
      */
     private boolean checkForUnglueNode(Collection<? extends OsmPrimitive> selection) {
         if (selection.size() != 1)
