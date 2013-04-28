@@ -1203,8 +1203,9 @@ public class SearchCompiler {
      * Parse expression, showing the specified error message if parsing fails.
      *
      * @param errorMessage to display if parsing error occurs
-     * @return
+     * @return match determined by parsing expression
      * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError
+     * @see #parseExpression()
      */
     private Match parseExpression(String errorMessage) throws ParseError {
         Match expression = parseExpression();

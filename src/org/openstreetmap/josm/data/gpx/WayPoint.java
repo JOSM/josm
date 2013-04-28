@@ -78,11 +78,10 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      * Internally caches the projected coordinates.</p>
      *
      * <p><strong>Caveat:</strong> doesn't listen to projection changes. Clients must
-     * {@link #reproject() trigger a reprojection} or {@link #invalidateEastNorthCache() invalidate the internal cache}.</p>
+     * {@link #invalidateEastNorthCache() invalidate the internal cache}.</p>
      *
      * @return the east north coordinates or {@code null}
      * @see #invalidateEastNorthCache()
-     *
      */
     public final EastNorth getEastNorth() {
         if (Double.isNaN(east) || Double.isNaN(north)) {

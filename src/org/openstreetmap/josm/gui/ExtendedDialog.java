@@ -547,8 +547,7 @@ public class ExtendedDialog extends JDialog {
     /**
      * Used in combination with toggle:
      * If the user presses 'cancel' the toggle settings are ignored and not saved to the pref
-     * @param cancelButton index of the button that stands for cancel, accepts
-     *                     multiple values
+     * @param cancelButtonIdx index of the button that stands for cancel, accepts multiple values
      */
     public ExtendedDialog setCancelButton(Integer... cancelButtonIdx) {
         this.cancelButtonIdx = Arrays.<Integer>asList(cancelButtonIdx);

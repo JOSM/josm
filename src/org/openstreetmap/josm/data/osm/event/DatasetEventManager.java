@@ -29,7 +29,13 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
     private static final DatasetEventManager instance = new DatasetEventManager();
 
     public enum FireMode {
+        /**
+         * Fire in calling thread immediately.
+         */
         IMMEDIATELY,
+        /**
+         * Fire in event dispatch thread.
+         */
         IN_EDT,
         /**
          * Fire in event dispatch thread. If more than one event arrived when event queue is checked, merged them to
@@ -72,9 +78,10 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
 
     /**
      * Register listener, that will receive events from currently active dataset
-     * @param listener
-     * @param fireInEDT If true, listener will be notified in event dispatch thread
-     * instead of thread that caused the dataset change
+     * @param listener the listener to be registered
+     * @param fireMode If {@link FireMode#IN_EDT} or {@link FireMode#IN_EDT_CONSOLIDATED},
+     * listener will be notified in event dispatch thread instead of thread that caused
+     * the dataset change
      */
     public void addDatasetListener(DataSetListener listener, FireMode fireMode) {
         if (fireMode == FireMode.IN_EDT || fireMode == FireMode.IN_EDT_CONSOLIDATED) {

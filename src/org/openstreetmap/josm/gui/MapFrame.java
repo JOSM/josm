@@ -147,7 +147,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     /**
      * Constructs a new {@code MapFrame}.
      * @param contentPane The content pane used to register shortcuts in its
-     * {@link InputMap} and {@link ActionMap}
+     * {@link javax.swing.InputMap} and {@link javax.swing.ActionMap}
      * @param viewportData the initial viewport of the map. Can be null, then
      * the viewport is derived from the layer data.
      */
@@ -337,6 +337,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
     /**
      * Fires an property changed event "visible".
+     * @param aFlag {@code true} if display should be visible
      */
     @Override public void setVisible(boolean aFlag) {
         boolean old = isVisible();
@@ -351,8 +352,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      * old MapMode and register on the new one. Now this function also verifies
      * if new map mode is correct mode for current layer and does not change mode
      * in such cases.
-     * @param mapMode   The new mode to set.
-     * @return
+     * @param newMapMode The new mode to set.
+     * @return {@code true} if mode is really selected
      */
     public boolean selectMapMode(MapMode newMapMode) {
         return selectMapMode(newMapMode, mapView.getActiveLayer());
@@ -361,9 +362,9 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     /**
      * Another version of the selectMapMode for changing layer action.
      * Pass newly selected layer to this method.
-     * @param newMapMode
-     * @param newLayer
-     * @return True if mode is really selected
+     * @param newMapMode The new mode to set.
+     * @param newLayer newly selected layer
+     * @return {@code true} if mode is really selected
      */
     public boolean selectMapMode(MapMode newMapMode, Layer newLayer) {
         if (newMapMode == null || !newMapMode.layerIsSupported(newLayer))

@@ -293,7 +293,7 @@ public class UploadSelectionAction extends JosmAction{
          * Replies the collection of deleted OSM primitives for which we have to check whether
          * there are dangling references on the server.
          *
-         * @return
+         * @return primitives to check
          */
         protected Set<OsmPrimitive> getPrimitivesToCheckForParents() {
             HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();

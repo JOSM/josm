@@ -21,17 +21,25 @@ public final class WaySegment implements Comparable<WaySegment> {
         lowerIndex = i;
     }
 
-    public Node getFirstNode(){
+    /**
+     * Returns the first node of the way segment.
+     * @return the first node
+     */
+    public Node getFirstNode() {
         return way.getNode(lowerIndex);
     }
 
+    /**
+     * Returns the second (last) node of the way segment.
+     * @return the second node
+     */
     public Node getSecondNode(){
         return way.getNode(lowerIndex + 1);
     }
 
     /**
-     * returns this way segment as complete way.
-     * @return
+     * Returns this way segment as complete way.
+     * @return the way segment as {@code Way}
      */
     public Way toWay() {
         Way w = new Way();

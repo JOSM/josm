@@ -334,28 +334,32 @@ public class NTV2SubGrid implements Cloneable, Serializable {
         return clone;
     }
     /**
-     * @return
+     * Get maximum latitude value
+     * @return maximum latitude
      */
     public double getMaxLat() {
         return maxLat;
     }
 
     /**
-     * @return
+     * Get maximum longitude value
+     * @return maximum longitude
      */
     public double getMaxLon() {
         return maxLon;
     }
 
     /**
-     * @return
+     * Get minimum latitude value
+     * @return minimum latitude
      */
     public double getMinLat() {
         return minLat;
     }
 
     /**
-     * @return
+     * Get minimum longitude value
+     * @return minimum longitude
      */
     public double getMinLon() {
         return minLon;

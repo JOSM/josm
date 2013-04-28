@@ -91,7 +91,7 @@ public class LatLon extends Coordinate {
     /**
      * Returns a valid OSM longitude [-180,+180] for the given extended longitude value.
      * For example, a value of -181 will return +179, a value of +181 will return -179.
-     * @param lon A longitude value not restricted to the [-180,+180] range.
+     * @param value A longitude value not restricted to the [-180,+180] range.
      */
     public static double toIntervalLon(double value) {
         if (isValidLon(value))

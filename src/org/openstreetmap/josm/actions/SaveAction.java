@@ -23,7 +23,6 @@ public class SaveAction extends SaveActionBase {
 
     /**
      * Construct the action with "Save" as label.
-     * @param layer Save this layer.
      */
     private SaveAction() {
         super(tr("Save"), "save", tr("Save the current data."),

@@ -21,8 +21,9 @@ public class DownloadOsmChangeCompressedTask extends DownloadOsmChangeTask {
         
     /**
      * Loads a given URL
-     * @param True if the data should be saved to a new layer
-     * @param The URL as String
+     * @param new_layer {@code true} if the data should be saved to a new layer
+     * @param url The URL as String
+     * @param progressMonitor progress monitor for user interaction
      */
     public Future<?> loadUrl(boolean new_layer, final String url, ProgressMonitor progressMonitor) {
         downloadTask = new DownloadTask(new_layer, new OsmServerLocationReader(url), progressMonitor) {

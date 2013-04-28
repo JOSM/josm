@@ -241,8 +241,9 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
      * Checks if the given segment is in the visible area.
      * NOTE: This will return true for a small number of non-visible
      *       segments.
-     * @param ls The segment to check
-     * @return true if the segment is visible
+     * @param n1 The first point of the segment to check
+     * @param n2 The second point of the segment to check
+     * @return {@code true} if the segment is visible
      */
     protected boolean isSegmentVisible(Node n1, Node n2) {
         Point p1 = mv.getPoint(n1);
