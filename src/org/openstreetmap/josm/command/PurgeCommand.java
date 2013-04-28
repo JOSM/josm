@@ -132,6 +132,9 @@ public class PurgeCommand extends Command {
 
         List<OsmPrimitive> out = new ArrayList<OsmPrimitive>(in.size());
 
+        // Nodes not deleted in the first pass
+        Set<OsmPrimitive> remainingNodes = new HashSet<OsmPrimitive>(in.size());
+
         /**
          *  First add nodes that have no way referrer.
          */
@@ -142,6 +145,8 @@ public class PurgeCommand extends Command {
                     Node n = (Node) u;
                     for (OsmPrimitive ref : n.getReferrers()) {
                         if (ref instanceof Way && in.contains(ref)) {
+                            it.remove();
+                            remainingNodes.add(n);
                             continue outer;
                         }
                     }
@@ -153,24 +158,23 @@ public class PurgeCommand extends Command {
         /**
          * Then add all ways, each preceded by its (remaining) nodes.
          */
-        top: while (!in.isEmpty()) {
-            for (Iterator<OsmPrimitive> it = in.iterator(); it.hasNext();) {
-                OsmPrimitive u = it.next();
-                if (u instanceof Way) {
-                    Way w = (Way) u;
-                    it.remove();
-                    for (Node n : w.getNodes()) {
-                        if (in.contains(n)) {
-                            in.remove(n);
-                            out.add(n);
-                        }
+        for (Iterator<OsmPrimitive> it = in.iterator(); it.hasNext();) {
+            OsmPrimitive u = it.next();
+            if (u instanceof Way) {
+                Way w = (Way) u;
+                it.remove();
+                for (Node n : w.getNodes()) {
+                    if (remainingNodes.contains(n)) {
+                        remainingNodes.remove(n);
+                        out.add(n);
                     }
-                    out.add(w);
-                    continue top;
                 }
+                out.add(w);
             }
-            break; // no more ways left
         }
+
+        if (!remainingNodes.isEmpty())
+            throw new AssertionError("topo sort algorithm failed (nodes remaining)");
 
         /**
             * Rest are relations. Do topological sorting on a DAG where each
