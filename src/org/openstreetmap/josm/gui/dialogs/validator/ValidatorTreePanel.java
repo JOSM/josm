@@ -21,11 +21,13 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
 import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.MultiMap;
 
 /**
@@ -35,7 +37,7 @@ import org.openstreetmap.josm.tools.MultiMap;
  *
  * @author frsantos
  */
-public class ValidatorTreePanel extends JTree {
+public class ValidatorTreePanel extends JTree implements Destroyable {
     /** Serializable ID */
     private static final long serialVersionUID = 2952292777351992696L;
 
@@ -293,10 +295,14 @@ public class ValidatorTreePanel extends JTree {
     public void setErrors(List<TestError> newerrors) {
         if (errors == null)
             return;
-        errors.clear();
+        clearErrors();
+        DataSet ds = Main.main.getCurrentDataSet();
         for (TestError error : newerrors) {
             if (!error.getIgnored()) {
                 errors.add(error);
+                if (ds != null) {
+                    ds.addDataSetListener(error);
+                }
             }
         }
         if (isVisible()) {
@@ -372,5 +378,22 @@ public class ValidatorTreePanel extends JTree {
      */
     public int getUpdateCount() {
         return updateCount;
+    }
+    
+    private void clearErrors() {
+        if (errors != null) {
+            DataSet ds = Main.main.getCurrentDataSet();
+            if (ds != null) {
+                for (TestError e : errors) {
+                    ds.removeDataSetListener(e);
+                }
+            }
+            errors.clear();
+        }
+    }
+
+    @Override
+    public void destroy() {
+        clearErrors();
     }
 }

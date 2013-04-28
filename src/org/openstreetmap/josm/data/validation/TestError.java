@@ -7,19 +7,29 @@ import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListener;
+import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
+import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
+import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
+import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
 
 /**
  * Validation error
  * @author frsantos
  */
-public class TestError implements Comparable<TestError> {
+public class TestError implements Comparable<TestError>, DataSetListener {
     /** is this error on the ignore list */
     private Boolean ignored = false;
     /** Severity */
@@ -288,5 +298,31 @@ public class TestError implements Comparable<TestError> {
         v1.visit(getPrimitives());
         v2.visit(o.getPrimitives());
         return v1.toString().compareToIgnoreCase(v2.toString());
+    }
+
+    @Override public void primitivesRemoved(PrimitivesRemovedEvent event) {
+        // Remove purged primitives (fix #8639)
+        try {
+            primitives.removeAll(event.getPrimitives());
+        } catch (UnsupportedOperationException e) {
+            if (event.getPrimitives().containsAll(primitives)) {
+                primitives = Collections.emptyList();
+            } else {
+                Main.warn("Unable to remove primitives from "+this);
+            }
+        }
+    }
+
+    @Override public void primitivesAdded(PrimitivesAddedEvent event) {}
+    @Override public void tagsChanged(TagsChangedEvent event) {}
+    @Override public void nodeMoved(NodeMovedEvent event) {}
+    @Override public void wayNodesChanged(WayNodesChangedEvent event) {}
+    @Override public void relationMembersChanged(RelationMembersChangedEvent event) {}
+    @Override public void otherDatasetChange(AbstractDatasetChangedEvent event) {}
+    @Override public void dataChanged(DataChangedEvent event) {}
+
+    @Override
+    public String toString() {
+        return "TestError [tester=" + tester + ", code=" + code + "]";
     }
 }
