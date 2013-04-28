@@ -97,19 +97,23 @@ public class PurgeAction extends JosmAction {
 
         // Add referrer, unless the object to purge is not new
         // and the parent is a relation
+        HashSet<OsmPrimitive> toPurgeRecursive = new HashSet<OsmPrimitive>();
         while (!toPurge.isEmpty()) {
-            OsmPrimitive osm = toPurge.iterator().next();
-            for (OsmPrimitive parent: osm.getReferrers()) {
-                if (toPurge.contains(parent) || toPurgeChecked.contains(parent)) {
-                    continue;
+
+            for (OsmPrimitive osm: toPurge) {
+                for (OsmPrimitive parent: osm.getReferrers()) {
+                    if (toPurge.contains(parent) || toPurgeChecked.contains(parent) || toPurgeRecursive.contains(parent)) {
+                        continue;
+                    }
+                    if (parent instanceof Way || (parent instanceof Relation && osm.isNew())) {
+                        toPurgeAdditionally.add(parent);
+                        toPurgeRecursive.add(parent);
+                    }
                 }
-                if (parent instanceof Way || (parent instanceof Relation && osm.isNew())) {
-                    toPurgeAdditionally.add(parent);
-                    toPurge.add(parent);
-                }
+                toPurgeChecked.add(osm);
             }
-            toPurge.remove(osm);
-            toPurgeChecked.add(osm);
+            toPurge = toPurgeRecursive;
+            toPurgeRecursive = new HashSet<OsmPrimitive>();
         }
 
         makeIncomplete = new HashSet<OsmPrimitive>();
