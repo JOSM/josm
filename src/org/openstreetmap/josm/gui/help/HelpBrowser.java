@@ -49,6 +49,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -260,8 +261,8 @@ public class HelpBrowser extends JDialog {
                 + "</p></html>",
                 relativeHelpTopic,
                 Locale.getDefault().getDisplayName(),
-                getHelpTopicEditUrl(buildAbsoluteHelpTopic(relativeHelpTopic)),
-                getHelpTopicEditUrl(buildAbsoluteHelpTopic(relativeHelpTopic, Locale.ENGLISH))
+                getHelpTopicEditUrl(buildAbsoluteHelpTopic(relativeHelpTopic, LocaleType.DEFAULT)),
+                getHelpTopicEditUrl(buildAbsoluteHelpTopic(relativeHelpTopic, LocaleType.ENGLISH))
         );
         loadTopic(message);
     }
@@ -293,21 +294,30 @@ public class HelpBrowser extends JDialog {
      * @param relativeHelpTopic the relative help topic
      */
     protected void loadRelativeHelpTopic(String relativeHelpTopic) {
-        String url = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(relativeHelpTopic));
+        String url = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(relativeHelpTopic, LocaleType.DEFAULTNOTENGLISH));
         String content = null;
         try {
             content = reader.fetchHelpTopicContent(url, true);
         } catch(MissingHelpContentException e) {
-            url = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(relativeHelpTopic, Locale.ENGLISH));
+            url = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(relativeHelpTopic, LocaleType.BASELANGUAGE));
             try {
                 content = reader.fetchHelpTopicContent(url, true);
             } catch(MissingHelpContentException e1) {
-                this.url = url;
-                handleMissingHelpContent(relativeHelpTopic);
-                return;
+                url = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(relativeHelpTopic, LocaleType.ENGLISH));
+                try {
+                    content = reader.fetchHelpTopicContent(url, true);
+                } catch(MissingHelpContentException e2) {
+                    this.url = url;
+                    handleMissingHelpContent(relativeHelpTopic);
+                    return;
+                } catch(HelpContentReaderException e2) {
+                    e2.printStackTrace();
+                    handleHelpContentReaderException(relativeHelpTopic, e2);
+                    return;
+                }
             } catch(HelpContentReaderException e1) {
                 e1.printStackTrace();
-                handleHelpContentReaderException(relativeHelpTopic,e1);
+                handleHelpContentReaderException(relativeHelpTopic, e1);
                 return;
             }
         } catch(HelpContentReaderException e) {

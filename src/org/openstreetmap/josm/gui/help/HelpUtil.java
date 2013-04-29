@@ -13,6 +13,7 @@ import javax.swing.KeyStroke;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.HelpAction;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 
 public class HelpUtil {
 
@@ -39,13 +40,14 @@ public class HelpUtil {
      *
      * @param absoluteHelpTopic the absolute help topic
      * @return the url
-     * @see #buildAbsoluteHelpTopic(String)
-     * @see #buildAbsoluteHelpTopic(String, Locale)
+     * @see #buildAbsoluteHelpTopic
      */
     static public String getHelpTopicUrl(String absoluteHelpTopic) {
+        if(absoluteHelpTopic == null)
+            return null;
         String ret = getWikiBaseHelpUrl();
         ret = ret.replaceAll("\\/+$", "");
-        absoluteHelpTopic  =absoluteHelpTopic.replace(" ", "%20");
+        absoluteHelpTopic = absoluteHelpTopic.replace(" ", "%20");
         absoluteHelpTopic = absoluteHelpTopic.replaceAll("^\\/+", "/");
         return ret + absoluteHelpTopic;
     }
@@ -71,10 +73,12 @@ public class HelpUtil {
      */
     static public String extractRelativeHelpTopic(String url) {
         String topic = extractAbsoluteHelpTopic(url);
-        if (topic == null) return null;
-        String pattern = "/[A-Z][a-z]:" + getHelpTopicPrefix(Locale.ENGLISH).replaceAll("^\\/+", "");
-        if (url.matches(pattern))
+        if (topic == null)
+            return null;
+        String pattern = "/[A-Z][a-z]{1,2}(_[A-Z]{2})?:" + getHelpTopicPrefix(LocaleType.ENGLISH).replaceAll("^\\/+", "");
+        if (url.matches(pattern)) {
             return topic.substring(pattern.length());
+        }
         return null;
     }
 
@@ -88,29 +92,15 @@ public class HelpUtil {
     static public String extractAbsoluteHelpTopic(String url) {
         if (!url.startsWith(getWikiBaseHelpUrl())) return null;
         url = url.substring(getWikiBaseHelpUrl().length());
-        String prefix = getHelpTopicPrefix(Locale.ENGLISH);
+        String prefix = getHelpTopicPrefix(LocaleType.ENGLISH);
         if (url.startsWith(prefix))
             return url;
 
-        String pattern = "/[A-Z][a-z]:" + prefix.replaceAll("^\\/+", "");
+        String pattern = "/[A-Z][a-z]{1,2}(_[A-Z]{2})?:" + prefix.replaceAll("^\\/+", "");
         if (url.matches(pattern))
             return url;
 
         return null;
-    }
-
-    /**
-     * Replies the help topic prefix for the current locale. Examples:
-     * <ul>
-     *   <li>/Help if the current locale is a locale with language "en"</li>
-     *   <li>/De:Help if the current locale is a locale with language "de"</li>
-     * </ul>
-     *
-     * @return the help topic prefix
-     * @see #getHelpTopicPrefix(Locale)
-     */
-    static public String getHelpTopicPrefix() {
-        return getHelpTopicPrefix(Locale.getDefault());
     }
 
     /**
@@ -120,18 +110,15 @@ public class HelpUtil {
      *   <li>/De:Help if the  locale is a locale with language "de"</li>
      * </ul>
      *
-     * @param locale the locale. {@link Locale#ENGLISH} assumed, if null.
+     * @param type the type of the locale to use
      * @return the help topic prefix
-     * @see #getHelpTopicPrefix(Locale)
      */
-    static public String getHelpTopicPrefix(Locale locale) {
-        if (locale == null) {
-            locale = Locale.ENGLISH;
-        }
-        String ret = Main.pref.get("help.pathhelp", "/Help");
-        ret = ret.replaceAll("^\\/+", ""); // remove leading /
-        ret = "/" + LanguageInfo.getWikiLanguagePrefix(locale) + ret;
-        return ret;
+    static private String getHelpTopicPrefix(LocaleType type) {
+        String ret = LanguageInfo.getWikiLanguagePrefix(type);
+        if(ret == null)
+            return ret;
+        ret = "/" + ret + Main.pref.get("help.pathhelp", "/Help").replaceAll("^\\/+", ""); // remove leading /;
+        return ret.replaceAll("\\/+", "\\/"); // collapse sequences of //
     }
 
     /**
@@ -141,36 +128,15 @@ public class HelpUtil {
      * replies "/De:Help/Dialog/RelationEditor"
      *
      * @param topic the relative help topic. Home help topic assumed, if null.
-     * @param locale the locale. {@link Locale#ENGLISH} assumed, if null.
+     * @param type the locale. {@link Locale#ENGLISH} assumed, if null.
      * @return the absolute, localized help topic
      */
-    static public String buildAbsoluteHelpTopic(String topic, Locale locale) {
-        if (locale == null) {
-            locale = Locale.ENGLISH;
-        }
-        if (topic == null || topic.trim().length() == 0 || topic.trim().equals("/"))
-            return getHelpTopicPrefix(locale);
-        String ret = getHelpTopicPrefix(locale);
-        if (topic.startsWith("/")) {
-            ret += topic;
-        } else {
-            ret += "/" + topic;
-        }
-        ret = ret.replaceAll("\\/+", "\\/"); // just in case, collapse sequences of //
-        return ret;
-    }
-
-    /**
-     * Replies the absolute, localized help topic for the given topic and the
-     * current locale.
-     *
-     * @param topic the relative help topic. Home help topic assumed, if null.
-     * @return the absolute, localized help topic
-     * @see Locale#getDefault()
-     * @see #buildAbsoluteHelpTopic(String, Locale)
-     */
-    static public String buildAbsoluteHelpTopic(String topic) {
-        return buildAbsoluteHelpTopic(topic, Locale.getDefault());
+    static public String buildAbsoluteHelpTopic(String topic, LocaleType type) {
+        String prefix = getHelpTopicPrefix(type);
+        if (prefix == null || topic == null || topic.trim().length() == 0 || topic.trim().equals("/"))
+            return prefix;
+        prefix += "/" + topic;
+        return prefix.replaceAll("\\/+", "\\/"); // collapse sequences of //
     }
 
     /**
