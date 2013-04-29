@@ -10,8 +10,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.io.XmlWriter;
+import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
@@ -278,13 +280,15 @@ public class TextTagParser {
 
     /**
      * Shows message that the buffer can not be pasted, allowing user to clean the buffer
-     * @param helpUrl
+     * @param helpTopic the help topic of the parent action
+     * TODO: Replace by proper HelpAwareOptionPane instead of self-made help link
      */
-    public static void showBadBufferMessage(String helpUrl) {
+    public static void showBadBufferMessage(String helpTopic) {
         String msg = tr("<html><p> Sorry, it is impossible to paste tags from buffer. It does not contain any JOSM object"
             + " or suitable text. </p></html>");
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(msg),GBC.eop());
+        String helpUrl = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(helpTopic, LocaleType.DEFAULT));
         if (helpUrl != null) {
             p.add(new UrlLabel(helpUrl), GBC.eop());
         }

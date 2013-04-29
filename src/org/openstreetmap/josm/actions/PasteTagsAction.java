@@ -23,7 +23,6 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.gui.conflict.tags.PasteTagsConflictResolverDialog;
-import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.TextTagParser;
 import org.openstreetmap.josm.tools.Utils;
@@ -39,7 +38,6 @@ import org.openstreetmap.josm.tools.Utils;
 public final class PasteTagsAction extends JosmAction {
 
     private static final String help = ht("/Action/PasteTags");
-    private static final String helpUrl = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(help));
     
     public PasteTagsAction() {
         super(tr("Paste Tags"), "pastetags",
@@ -266,7 +264,7 @@ public final class PasteTagsAction extends JosmAction {
         Map<String, String> tags = TextTagParser.readTagsFromText(text);
         List<Command> commands = new ArrayList<Command>();
         if (tags==null || tags.isEmpty()) {
-            TextTagParser.showBadBufferMessage(helpUrl);
+            TextTagParser.showBadBufferMessage(help);
             return false;
         }
         if (!TextTagParser.validateTags(tags)) return false;
