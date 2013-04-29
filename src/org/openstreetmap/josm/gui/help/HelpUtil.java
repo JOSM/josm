@@ -112,6 +112,7 @@ public class HelpUtil {
      *
      * @param type the type of the locale to use
      * @return the help topic prefix
+     * @since 5915
      */
     static private String getHelpTopicPrefix(LocaleType type) {
         String ret = LanguageInfo.getWikiLanguagePrefix(type);
@@ -130,6 +131,7 @@ public class HelpUtil {
      * @param topic the relative help topic. Home help topic assumed, if null.
      * @param type the locale. {@link Locale#ENGLISH} assumed, if null.
      * @return the absolute, localized help topic
+     * @since 5915
      */
     static public String buildAbsoluteHelpTopic(String topic, LocaleType type) {
         String prefix = getHelpTopicPrefix(type);

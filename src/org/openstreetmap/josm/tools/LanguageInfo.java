@@ -8,7 +8,10 @@ import org.openstreetmap.josm.Main;
 import java.util.Locale;
 
 public class LanguageInfo {
-    /** Type of the locale to use */
+    /**
+     * Type of the locale to use
+     * @since 5915
+     */
     public enum LocaleType {
         /** The current default language */
         DEFAULT,
@@ -28,7 +31,7 @@ public class LanguageInfo {
      * @param type the type 
      * @return the wiki language prefix or {@code null} for {@link LocaleType#BASELANGUAGE}, when
      * base language is identical to default or english
-     * @since 8636
+     * @since 5915
      */
     static public String getWikiLanguagePrefix(LocaleType type) {
         if(type == LocaleType.ENGLISH)
