@@ -79,6 +79,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -90,7 +91,6 @@ import org.openstreetmap.josm.tools.template_engine.ParseError;
 import org.openstreetmap.josm.tools.template_engine.TemplateEntry;
 import org.openstreetmap.josm.tools.template_engine.TemplateParser;
 import org.xml.sax.SAXException;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 
 /**
@@ -1011,7 +1011,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 clearSelection();
             } else {
                 String s = o.toString();
-                HashSet<String> parts = new HashSet<String>(Arrays.asList(s.split(delimiter)));
+                TreeSet<String> parts = new TreeSet<String>(Arrays.asList(s.split(delimiter)));
                 ListModel lm = getModel();
                 int[] intParts = new int[lm.getSize()];
                 int j = 0;
@@ -1024,7 +1024,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 // check if we have actually managed to represent the full
                 // value with our presets. if not, cop out; we will not offer
                 // a selection list that threatens to ruin the value.
-                setEnabled(s.equals(getSelectedItem()));
+                setEnabled(Utils.join(delimiter, parts).equals(getSelectedItem()));
             }
         }
         public String getSelectedItem() {
