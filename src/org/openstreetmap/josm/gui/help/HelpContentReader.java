@@ -41,6 +41,8 @@ public class HelpContentReader extends WikiReader {
      * @throws MissingHelpContentException thrown if this helpTopicUrl doesn't point to an existing Wiki help page
      */
     public String fetchHelpTopicContent(String helpTopicUrl, boolean dotest) throws HelpContentReaderException {
+        if(helpTopicUrl == null)
+            throw new MissingHelpContentException();
         HttpURLConnection con = null;
         BufferedReader in = null;
         try {

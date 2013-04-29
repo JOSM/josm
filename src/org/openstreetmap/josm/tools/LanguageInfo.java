@@ -1,33 +1,50 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.marktr;
+
+import org.openstreetmap.josm.Main;
 
 import java.util.Locale;
 
 public class LanguageInfo {
+    /** Type of the locale to use */
+    public enum LocaleType {
+        /** The current default language */
+        DEFAULT,
+        /** The current default language, but not english */
+        DEFAULTNOTENGLISH,
+        /** The base language (i.e. pt for pt_BR) */
+        BASELANGUAGE,
+        /** The standard english texts */
+        ENGLISH
+    };
 
     /**
      * Replies the wiki language prefix for the given locale. The wiki language
      * prefix has the form 'Xy:' where 'Xy' is a ISO 639 language code in title
-     * case.
+     * case (or Xy_AB: for sub languages).
      *
-     * @param locale  the locale
-     * @return the wiki language prefix
+     * @param type the type 
+     * @return the wiki language prefix or {@code null} for {@link LocaleType#BASELANGUAGE}, when
+     * base language is identical to default or english
+     * @since 8636
      */
-    static public String getWikiLanguagePrefix(Locale locale) {
-        String code = getJOSMLocaleCode(locale);
-        if (code.length() == 2) {
-            if (code.equals("en")) return "";
-        } else if (code.equals("zh_TW") || code.equals("zh_CN")) {
-            /* do nothing */
-        } else if (code.matches("[^_]+_[^_]+")) {
-            code = code.substring(0,2);
-            if (code.equals("en")) return "";
-        } else {
-            System.err.println(tr("Warning: failed to derive wiki language prefix from JOSM locale code ''{0}''. Using default code ''en''.", code));
-            return "";
-        }
+    static public String getWikiLanguagePrefix(LocaleType type) {
+        if(type == LocaleType.ENGLISH)
+          return "";
+
+        String code = getJOSMLocaleCode();
+        if(type == LocaleType.BASELANGUAGE) {
+            if(code.matches("[^_]+_[^_]+")) {
+                code = code.substring(0,2);
+                if(code == "en")
+                    return null;
+            } else {
+                return null;
+            }
+        } else if(type == LocaleType.DEFAULTNOTENGLISH && code == "en")
+            return null;
         return code.substring(0,1).toUpperCase() + code.substring(1) + ":";
     }
 
@@ -36,10 +53,10 @@ public class LanguageInfo {
      *
      * @return the wiki language prefix
      * @see Locale#getDefault()
-     * @see #getWikiLanguagePrefix(Locale)
+     * @see #getWikiLanguagePrefix(LocaleType)
      */
     static public String getWikiLanguagePrefix() {
-        return getWikiLanguagePrefix(Locale.getDefault());
+        return getWikiLanguagePrefix(LocaleType.DEFAULT);
     }
 
     /**
