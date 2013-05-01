@@ -32,6 +32,10 @@ import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 
+/**
+ * Task allowing to download OsmChange data (http://wiki.openstreetmap.org/wiki/OsmChange).
+ * @since 4530
+ */
 public class DownloadOsmChangeTask extends DownloadOsmTask {
 
     @Override
@@ -176,7 +180,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                         }
                         data.setTimestamp(hp.getTimestamp());
                         data.setKeys(hp.getTags());
-                        data.setOsmId(hp.getChangesetId(), (int) hp.getVersion());
+                        data.setOsmId(hp.getId(), (int) hp.getVersion());
 
                         // Load the history data
                         try {
