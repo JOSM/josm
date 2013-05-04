@@ -51,7 +51,7 @@ public class HelpBrowserHistory extends Observable {
     public void setCurrentUrl(String url) {
         boolean add=true;
 
-        if (historyPos >= 0 && historyPos < history.size() && history.get(historyPos).toString().equals(url.toString())) {
+        if (historyPos >= 0 && historyPos < history.size() && history.get(historyPos).equals(url.toString())) {
             add = false;
         } else if (historyPos == history.size() -1) {
             // do nothing just append
@@ -64,8 +64,8 @@ public class HelpBrowserHistory extends Observable {
         }
         if(add)
         {
-          history.add(url);
-          historyPos = history.size()-1;
+            history.add(url);
+            historyPos = history.size()-1;
         }
         setChanged();
         notifyObservers();
