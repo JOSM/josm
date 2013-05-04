@@ -465,6 +465,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <optional>
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
@@ -492,6 +493,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <optional>
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="area" text="Area" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
@@ -519,6 +521,7 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="service" text="Serviceway type" values="alley,driveway,parking_aisle" />
                 <text key="name" text="Name" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
@@ -564,6 +567,7 @@ Note that for a match, at least one positive and no negative is required.
             <optional>
                 <text key="name" text="Name" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
@@ -589,6 +593,7 @@ Note that for a match, at least one positive and no negative is required.
             <optional>
                 <text key="name" text="Name" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
@@ -758,7 +763,6 @@ Note that for a match, at least one positive and no negative is required.
             <optional>
                 <text key="name" text="Name" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
-                <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
                 <check key="oneway" text="Oneway" default="off" />
                 <check key="bridge" text="Bridge" default="off" />
