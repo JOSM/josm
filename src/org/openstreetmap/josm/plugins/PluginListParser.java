@@ -37,7 +37,7 @@ public class PluginListParser {
                     new ByteArrayInputStream(manifest.getBytes("utf-8")),
                     name.substring(0, name.length() - 4),
                     url
-            );
+                    );
         } catch(UnsupportedEncodingException e) {
             throw new PluginListParseException(tr("Failed to create plugin information from manifest for plugin ''{0}''", name), e);
         } catch (PluginException e) {
@@ -72,7 +72,7 @@ public class PluginListParser {
                     C;
                 }
                 B;
-            */
+             */
             for (String line = r.readLine(); line != null; line = r.readLine()) {
                 if (line.startsWith("\t")) {
                     line = line.substring(1);
@@ -86,7 +86,7 @@ public class PluginListParser {
                 addPluginInformation(ret, name, url, manifest.toString());
                 String x[] = line.split(";");
                 if(x.length != 2)
-                  throw new IOException(tr("Illegal entry in plugin list."));
+                    throw new IOException(tr("Illegal entry in plugin list."));
                 name = x[0];
                 url = x[1];
                 manifest = new StringBuilder();
@@ -102,7 +102,7 @@ public class PluginListParser {
     private static void addPluginInformation(List<PluginInformation> ret, String name, String url, String manifest) {
         try {
             if (name != null) {
-                PluginInformation info = createInfo(name, url, manifest.toString());
+                PluginInformation info = createInfo(name, url, manifest);
                 if (info != null) {
                     for (PluginProxy plugin : PluginHandler.pluginList) {
                         if (plugin.getPluginInformation().name.equals(info.getName())) {

@@ -221,6 +221,9 @@ public class HelpBrowser extends JDialog {
         super.setVisible(visible);
     }
 
+    /**
+     * Constructs a new {@code HelpBrowser}.
+     */
     public HelpBrowser() {
         reader = new HelpContentReader(HelpUtil.getWikiBaseUrl());
         build();
@@ -385,7 +388,7 @@ public class HelpBrowser extends JDialog {
                                 "<html>Failed to open help page for url {0}.<br>"
                                 + "This is most likely due to a network problem, please check<br>"
                                 + "your internet connection</html>",
-                                url.toString()
+                                url
                         ),
                         tr("Failed to open URL"),
                         JOptionPane.ERROR_MESSAGE,
