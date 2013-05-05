@@ -1,4 +1,8 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.gpx;
+
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -6,12 +10,14 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -19,9 +25,6 @@ import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
 import org.openstreetmap.josm.gui.layer.Layer.MultiLayerAction;
 import org.openstreetmap.josm.gui.preferences.display.GPXSettingsPanel;
 import org.openstreetmap.josm.tools.ImageProvider;
-
-import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class CustomizeDrawingAction extends AbstractAction implements LayerAction, MultiLayerAction {
     List<Layer> layers;

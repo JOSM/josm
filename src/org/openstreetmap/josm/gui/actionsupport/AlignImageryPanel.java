@@ -1,5 +1,5 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.actionsupport;
-
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -21,7 +21,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
-
 
 /**
  * The panel to nag a user ONCE that he/she has to align imagery.

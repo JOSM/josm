@@ -1,7 +1,9 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+
 import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JButton;

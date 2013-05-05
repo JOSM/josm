@@ -1,6 +1,8 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.util;
 
 import java.awt.Component;
+
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
