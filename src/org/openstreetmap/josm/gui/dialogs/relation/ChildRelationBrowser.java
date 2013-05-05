@@ -415,10 +415,10 @@ public class ChildRelationBrowser extends JPanel {
                     refreshView(r);
                 }
                 SwingUtilities.invokeLater(new Runnable() { 
-	                public void run() { 
-	                	Main.map.repaint(); 
-	                } 
-	            }); 
+                    public void run() { 
+                        Main.map.repaint(); 
+                    } 
+                }); 
             } catch (Exception e) {
                 if (canceled) {
                     System.out.println(tr("Warning: Ignoring exception because task was canceled. Exception: {0}", e

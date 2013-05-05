@@ -131,12 +131,12 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @return the list of selectable primitives affected by this error
      */
     public Collection<? extends OsmPrimitive> getSelectablePrimitives() {
-	List<OsmPrimitive> selectablePrimitives = new ArrayList<OsmPrimitive>(primitives.size());
-	for (OsmPrimitive o : primitives) {
-	    if (o.isSelectable()) {
-		selectablePrimitives.add(o);
-	    }
-	}
+    List<OsmPrimitive> selectablePrimitives = new ArrayList<OsmPrimitive>(primitives.size());
+    for (OsmPrimitive o : primitives) {
+        if (o.isSelectable()) {
+        selectablePrimitives.add(o);
+        }
+    }
         return selectablePrimitives;
     }
 

@@ -406,7 +406,7 @@ public class DataSetMerger {
         }
         targetDataSet.beginUpdate();
         try {
-        	ArrayList<? extends OsmPrimitive> candidates = new ArrayList<Node>(targetDataSet.getNodes());
+            ArrayList<? extends OsmPrimitive> candidates = new ArrayList<Node>(targetDataSet.getNodes());
             for (Node node: sourceDataSet.getNodes()) {
                 mergePrimitive(node, candidates);
                 if (progressMonitor != null) {
