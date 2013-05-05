@@ -1,10 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
-
-import org.openstreetmap.josm.Main;
-
 import java.util.Locale;
 
 public class LanguageInfo {

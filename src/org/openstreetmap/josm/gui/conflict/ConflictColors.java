@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.conflict;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.Color;
-import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.ColorKey;

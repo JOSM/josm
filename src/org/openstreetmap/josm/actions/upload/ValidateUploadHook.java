@@ -1,15 +1,14 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.actions.upload;
 
-import java.awt.Dimension;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 

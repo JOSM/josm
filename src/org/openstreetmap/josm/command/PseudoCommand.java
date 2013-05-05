@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.command;
 
 import java.util.Collection;
+
 import javax.swing.Icon;
-import javax.swing.JLabel;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 

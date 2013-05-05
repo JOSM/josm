@@ -9,8 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import javax.swing.Icon;
 
-import javax.swing.JLabel;
-
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;

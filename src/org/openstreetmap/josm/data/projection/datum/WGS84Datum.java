@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.projection.datum;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 
 /**
