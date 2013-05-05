@@ -150,7 +150,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
     public void mouseReleased(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
 
-        	if (isSelecting && e.getClickCount() == 1) {
+            if (isSelecting && e.getClickCount() == 1) {
                 iSlippyMapChooser.setSelection(iStartSelectionPoint, e.getPoint());
 
                 // reset the selections start and end
@@ -158,7 +158,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
                 iStartSelectionPoint = null;
                 isSelecting = false;
                 
-        	} else {
+            } else {
                 int sourceButton = iSourceButton.hit(e.getPoint());
 
                 if (iSizeButton.hit(e.getPoint())) {
@@ -172,7 +172,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
                 } else if (sourceButton != 0) {
                     iSlippyMapChooser.toggleMapSource(iSourceButton.hitToTileSource(sourceButton));
                 }
-        	}
+            }
         }
     }
 

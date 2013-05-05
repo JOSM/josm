@@ -78,15 +78,15 @@ public class LatLonDialog extends ExtendedDialog {
 
         pnl.add(new HtmlPanel(
                 tr("Enter the coordinates for the new node.<br/>You can separate longitude and latitude with space, comma or semicolon.<br/>" +
-                		"Use positive numbers or N, E characters to indicate North or East cardinal direction.<br/>" +
-                		"For South and West cardinal directions you can use either negative numbers or S, W characters.<br/>" +
-                		"Coordinate value can be in one of three formats:<ul>" +
+                        "Use positive numbers or N, E characters to indicate North or East cardinal direction.<br/>" +
+                        "For South and West cardinal directions you can use either negative numbers or S, W characters.<br/>" +
+                        "Coordinate value can be in one of three formats:<ul>" +
                         "<li><i>degrees</i><tt>&deg;</tt></li>" +
                         "<li><i>degrees</i><tt>&deg;</tt> <i>minutes</i><tt>&#39;</tt></li>" +
                         "<li><i>degrees</i><tt>&deg;</tt> <i>minutes</i><tt>&#39;</tt> <i>seconds</i><tt>&quot</tt></li>" +
-                		"</ul>" +
-                		"Symbols <tt>&deg;</tt>, <tt>&#39;</tt>, <tt>&prime;</tt>, <tt>&quot;</tt>, <tt>&Prime;</tt> are optional.<br/><br/>" +
-                		"Some examples:<ul>" +
+                        "</ul>" +
+                        "Symbols <tt>&deg;</tt>, <tt>&#39;</tt>, <tt>&prime;</tt>, <tt>&quot;</tt>, <tt>&Prime;</tt> are optional.<br/><br/>" +
+                        "Some examples:<ul>" +
                         "<li>49.29918&deg; 19.24788&deg;</li>" +
                         "<li>N 49.29918 E 19.24788</li>" +
                         "<li>W 49&deg;29.918&#39; S 19&deg;24.788&#39;</li>" +
@@ -103,7 +103,7 @@ public class LatLonDialog extends ExtendedDialog {
                         "<li>49 29.4 19 24.5</li>" +
                         "<li>-49 29.4 N -19 24.5 W</li></ul>" +
                         "<li>48 deg 42&#39; 52.13\" N, 21 deg 11&#39; 47.60\" E</li></ul>"
-                		)),
+                        )),
                 GBC.eol().fill().weight(1.0, 1.0));
 
         // parse and verify input on the fly

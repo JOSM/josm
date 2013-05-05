@@ -28,9 +28,9 @@ public class InfoAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent ae) {
         DataSet set = getCurrentDataSet();
-		if (set != null) {
-			new InspectPrimitiveDialog(set.getAllSelected(), Main.map.mapView.getEditLayer()).showDialog();
-		}
+        if (set != null) {
+            new InspectPrimitiveDialog(set.getAllSelected(), Main.map.mapView.getEditLayer()).showDialog();
+        }
     }
 
     @Override
