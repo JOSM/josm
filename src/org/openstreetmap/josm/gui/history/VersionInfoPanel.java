@@ -93,15 +93,20 @@ public class VersionInfoPanel extends JPanel implements Observer{
                     getEditLayer() == null ? tr("unknown") : getEditLayer().getName()
                     );
         } else {
+            String date = "?";
+            if (primitive.getTimestamp() != null) {
+                date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(primitive.getTimestamp());
+            }
             text = tr(
                     "<html>Version <strong>{0}</strong> created on <strong>{1}</strong></html>",
-                    Long.toString(primitive.getVersion()),
-                    DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(primitive.getTimestamp())
-                    );
+                    Long.toString(primitive.getVersion()), date);
         }
         return text;
     }
 
+    /**
+     * Constructs a new {@code VersionInfoPanel}.
+     */
     public VersionInfoPanel() {
         pointInTimeType = null;
         model = null;
