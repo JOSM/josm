@@ -5,8 +5,6 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.Action;
-
 public interface ParameterizedAction extends AdaptableAction {
 
     List<ActionParameter<?>> getActionParameters();

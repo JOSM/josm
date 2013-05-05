@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.GeorefImage.State;

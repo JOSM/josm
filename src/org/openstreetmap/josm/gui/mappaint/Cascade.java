@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
-import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.tools.Utils;
 
 /**

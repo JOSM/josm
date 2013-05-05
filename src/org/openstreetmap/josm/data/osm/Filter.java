@@ -7,7 +7,6 @@ import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.data.Preferences.pref;
 import org.openstreetmap.josm.data.Preferences.writeExplicitly;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  *

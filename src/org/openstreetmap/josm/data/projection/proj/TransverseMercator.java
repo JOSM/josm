@@ -5,7 +5,6 @@ import static java.lang.Math.*;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
 /**
