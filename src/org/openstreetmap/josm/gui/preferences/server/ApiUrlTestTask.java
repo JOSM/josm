@@ -13,7 +13,6 @@ import java.net.URL;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;

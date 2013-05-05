@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.InputStream;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.MirroredInputStream;
 
 /**

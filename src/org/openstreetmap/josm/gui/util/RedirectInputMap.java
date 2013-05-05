@@ -6,8 +6,6 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
-import org.openstreetmap.josm.Main;
-
 /**
  * Make shortcuts from main window work in dialog windows.
  *

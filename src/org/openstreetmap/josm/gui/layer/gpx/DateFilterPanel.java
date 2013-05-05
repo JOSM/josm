@@ -1,26 +1,25 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui.layer.gpx;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
+
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.GBC;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.widgets.DateEditorWithSlider;
+import org.openstreetmap.josm.tools.GBC;
 
 public class DateFilterPanel extends JPanel {
     DateEditorWithSlider dateFrom = new DateEditorWithSlider(tr("From"));
