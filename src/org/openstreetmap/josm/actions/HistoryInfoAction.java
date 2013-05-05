@@ -16,35 +16,35 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 public class HistoryInfoAction extends JosmAction {
 
-	public HistoryInfoAction() {
-		super(tr("History"), "about",
-				tr("Display history information about OSM ways, nodes, or relations."),
-				Shortcut.registerShortcut("core:historyinfo",
-				tr("History"), KeyEvent.VK_H, Shortcut.CTRL), false);
-		putValue("help", ht("/Action/ObjectHistory"));
-		putValue("toolbar", "action/historyinfo");
-		Main.toolbar.register(this);
-	}
+    public HistoryInfoAction() {
+        super(tr("History"), "about",
+                tr("Display history information about OSM ways, nodes, or relations."),
+                Shortcut.registerShortcut("core:historyinfo",
+                tr("History"), KeyEvent.VK_H, Shortcut.CTRL), false);
+        putValue("help", ht("/Action/ObjectHistory"));
+        putValue("toolbar", "action/historyinfo");
+        Main.toolbar.register(this);
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		DataSet set = getCurrentDataSet();
-		if (set != null) {
-			HistoryBrowserDialogManager.getInstance().showHistory(set.getAllSelected());
-		}
-	}
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        DataSet set = getCurrentDataSet();
+        if (set != null) {
+            HistoryBrowserDialogManager.getInstance().showHistory(set.getAllSelected());
+        }
+    }
 
-	@Override
-	public void updateEnabledState() {
-		if (getCurrentDataSet() == null) {
-			setEnabled(false);
-		} else {
-			updateEnabledState(getCurrentDataSet().getAllSelected());
-		}
-	}
+    @Override
+    public void updateEnabledState() {
+        if (getCurrentDataSet() == null) {
+            setEnabled(false);
+        } else {
+            updateEnabledState(getCurrentDataSet().getAllSelected());
+        }
+    }
 
-	@Override
-	protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-		setEnabled(!selection.isEmpty());
-	}
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        setEnabled(!selection.isEmpty());
+    }
 }

@@ -61,9 +61,9 @@ public class WireframeToggleAction extends JosmAction {
         //Main.pref.put("draw.wireframe", selected);
          if (selected){ 
          MapRendererFactory.getInstance().activate(WireframeMapRenderer.class); 
-	        } else { 
-	            MapRendererFactory.getInstance().activate(StyledMapRenderer.class); 
-	        } 
+            } else { 
+                MapRendererFactory.getInstance().activate(StyledMapRenderer.class); 
+            } 
         
         notifySelectedState();
         if (Main.isDisplayingMapView()) {
