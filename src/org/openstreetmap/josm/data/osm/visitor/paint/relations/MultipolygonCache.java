@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.visitor.paint.relations;
 
 import java.util.ArrayList;

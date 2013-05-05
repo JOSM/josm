@@ -1,10 +1,14 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.gpx;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.AbstractAction;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -28,8 +32,6 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.SAXException;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class DownloadWmsAlongTrackAction extends AbstractAction {
 

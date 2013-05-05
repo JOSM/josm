@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
 import java.awt.event.FocusEvent;
@@ -18,7 +19,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * A JTextField that disabled all JOSM shortcuts composed of a single key without modifier (except F1 to F12),

@@ -1,3 +1,4 @@
+// License: GPL.
 package org.openstreetmap.josm.tools;
 
 //// Taken from http://www.bmsi.com/java/#diff

@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
 import java.awt.event.ActionEvent;

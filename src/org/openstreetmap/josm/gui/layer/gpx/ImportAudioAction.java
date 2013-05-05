@@ -1,4 +1,8 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.gpx;
+
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -9,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -21,14 +26,11 @@ import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.AudioUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Import audio files into a GPX layer to enable audio playback functions.

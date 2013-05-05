@@ -1,4 +1,8 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.GridBagLayout;
 import java.util.Arrays;
@@ -6,17 +10,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trn;
 
 /**
  * Class that helps to parse tags from arbitrary text
