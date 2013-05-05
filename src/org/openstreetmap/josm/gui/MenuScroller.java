@@ -1,5 +1,6 @@
 /**
  * @(#)MenuScroller.java    1.5.0 04/02/12
+ * License: use / modify without restrictions (see http://tips4java.wordpress.com/about/)
  */
 package org.openstreetmap.josm.gui;
 

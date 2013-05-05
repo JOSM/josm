@@ -1,9 +1,11 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DownloadPrimitiveAction;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
