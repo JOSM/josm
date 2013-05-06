@@ -3149,18 +3149,16 @@ Note that for a match, at least one positive and no negative is required.
             <text key="email" text="Email Address" />
         </item>
         <item name="Stripclub" icon="styles/standard/leisure/stripclub.png" type="node,closedway">
-            <label text="Edit Stripclub" />
-            <space />
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=stripclub"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=stripclub"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=stripclub"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=stripclub" />
-            <label text="Edit Stripclub" de.text="bearbeite Stripclub" />
+            <label text="Edit Stripclub" />
             <space />
             <key key="amenity" value="stripclub" />
             <text key="name" text="Name" />
             <text key="operator" text="Operator" />
-            <combo key="opening_hours" text="Opening Hours" de.text="Öffnungszeiten" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
             <space />
             <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
             <combo key="internet_access:fee" text="Internet access fee" values="yes,no" />
@@ -3292,8 +3290,8 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Cinema" />
             <key key="amenity" value="cinema" />
             <text key="name" text="Name" />
-            <text key="operator" text="Operator" de.text="Betreiber" />            
-            <combo key="opening_hours" text="Opening Hours" de.text="Öffnungszeiten" values="Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" /> 
+            <text key="operator" text="Operator" />            
+            <combo key="opening_hours" text="Opening Hours" values="Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" /> 
         </item>
         <item name="Zoo" icon="presets/zoo.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=zoo"
@@ -3334,7 +3332,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Theme Park" />
             <key key="tourism" value="theme_park" />
             <text key="name" text="Name" />
-            <text key="operator" text="Operator" de.text="Betreiber" />            
+            <text key="operator" text="Operator" />            
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
             <space />
             <text key="phone" text="Phone Number" />
@@ -3353,8 +3351,8 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Water Park" />
             <key key="leisure" value="water_park" />
             <text key="name" text="Name" />
-            <text key="operator" text="Operator" de.text="Betreiber" />            
-            <combo key="opening_hours" text="Opening Hours" de.text="Öffnungszeiten" values="Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" /> 
+            <text key="operator" text="Operator" />            
+            <combo key="opening_hours" text="Opening Hours" values="Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" /> 
             <space />
             <text key="phone" text="Phone Number" />
             <text key="fax" text="Fax Number" />
@@ -3369,8 +3367,8 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Sauna" />
             <key key="leisure" value="sauna" />
             <text key="name" text="Name" />            
-            <text key="operator" text="Operator" de.text="Betreiber" />            
-            <combo key="opening_hours" text="Opening Hours" de.text="Öffnungszeiten" values="Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" /> 
+            <text key="operator" text="Operator" />            
+            <combo key="opening_hours" text="Opening Hours" values="Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" /> 
             <combo key="access" text="Access" values="yes,permissive,private,unknown" />                                           
             <space />
             <text key="phone" text="Phone Number" />
@@ -3387,8 +3385,8 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Brothel" />
             <key key="amenity" value="brothel" />
             <text key="name" text="Name" />
-            <text key="operator" text="Operator" de.text="Betreiber" />
-            <combo key="opening_hours" text="Opening Hours" de.text="Öffnungszeiten" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
+            <text key="operator" text="Operator" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
             <space />
             <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" />
             <combo key="wheelchair" text="Wheelchairs" values="yes,no" />
@@ -3455,7 +3453,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Museum" />
             <key key="tourism" value="museum" />
             <text key="name" text="Name" />
-            <text key="operator" text="Operator" de.text="Betreiber" />
+            <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
             <text key="wikipedia" text="Wikipedia" />
         </item>
@@ -3468,7 +3466,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Theatre" />
             <key key="amenity" value="theatre" />
             <text key="name" text="Name" />
-            <text key="operator" text="Operator" de.text="Betreiber" />
+            <text key="operator" text="Operator" />
         </item>
         <item name="Library" icon="styles/standard/shop/rental/library.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=library"
@@ -3481,7 +3479,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Library" />
             <key key="amenity" value="library" />
             <text key="name" text="Name" />
-            <text key="operator" text="Operator" de.text="Betreiber" />
+            <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
         </item>
         <item name="Arts Centre" icon="presets/arts_centre.png" type="node,closedway,relation">
