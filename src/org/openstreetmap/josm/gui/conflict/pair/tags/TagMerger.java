@@ -230,6 +230,9 @@ public class TagMerger extends JPanel implements IConflictResolver {
 
     }
 
+    /**
+     * Constructs a new {@code TagMerger}.
+     */
     public TagMerger() {
         model = new TagMergeModel();
         build();
@@ -423,7 +426,9 @@ public class TagMerger extends JPanel implements IConflictResolver {
 
     public void populate(Conflict<? extends OsmPrimitive> conflict) {
         model.populate(conflict.getMy(), conflict.getTheir());
-        mineTable.getSelectionModel().setSelectionInterval(0, 0);
-        theirTable.getSelectionModel().setSelectionInterval(0, 0);
+        for (JTable table : new JTable[]{mineTable, theirTable}) {
+            int index = table.getRowCount() > 0 ? 0 : -1;
+            table.getSelectionModel().setSelectionInterval(index, index);
+        }
     }
 }
