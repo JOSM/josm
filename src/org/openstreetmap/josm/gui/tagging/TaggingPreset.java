@@ -1759,13 +1759,15 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
 
             class PresetDialog extends ExtendedDialog {
-                public PresetDialog(Component content, String title, boolean disableApply) {
+                public PresetDialog(Component content, String title, ImageIcon icon, boolean disableApply) {
                     super(Main.parent,
                             title,
                             showNewRelation?
                                     new String[] { tr("Apply Preset"), tr("New relation"), tr("Cancel") }:
                                         new String[] { tr("Apply Preset"), tr("Cancel") },
                                         true);
+                    if (icon != null)
+                        setIconImage(icon.getImage());
                     contentInsets = new Insets(10,5,0,5);
                     if (showNewRelation) {
                         setButtonIcons(new String[] {"ok.png", "dialogs/addrelation.png", "cancel.png" });
@@ -1787,7 +1789,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 }
             }
 
-            answer = new PresetDialog(p, title, (sel.size() == 0)).getValue();
+            answer = new PresetDialog(p, title, (ImageIcon) getValue(Action.SMALL_ICON), (sel.size() == 0)).getValue();
         }
         if (!showNewRelation && answer == 2)
             return DIALOG_ANSWER_CANCEL;
