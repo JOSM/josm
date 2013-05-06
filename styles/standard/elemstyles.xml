@@ -2163,6 +2163,20 @@ For external files the <rules> should have following elements:
 		<area colour="amenity_light#f7efb7"/>
 	</rule>
 
+<!--office tags -->
+
+    <rule>
+        <condition k="office" v="company"/>
+        <icon annotate="true" src="icons/office_blue.png"/>
+        <area colour="office#de5696"/>
+    </rule>
+
+    <rule>
+        <condition k="office" v="government"/>
+        <icon annotate="true" src="icons/office_pink.png"/>
+        <area colour="office#de5696"/>
+    </rule>
+
 <!--shop tags -->
 
 	<rule>
