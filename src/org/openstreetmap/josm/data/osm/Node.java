@@ -112,8 +112,10 @@ public final class Node extends OsmPrimitive implements INode {
             this.lat = Double.NaN;
             this.lon = Double.NaN;
             invalidateEastNorthCache();
+            if (isVisible()) {
+                setIncomplete(true);
+            }
         }
-        setIncomplete(isVisible() && !isLatLonKnown());
     }
 
     protected Node(long id, boolean allowNegative) {
