@@ -79,7 +79,7 @@ public class HelpContentReader extends WikiReader {
      * @return the content
      * @throws HelpContentReaderException thrown if an exception occurs
      * @throws MissingHelpContentException thrown, if the content read isn't a help page
-     * @since 5935
+     * @since 5936
      */
     protected String prepareHelpContent(BufferedReader in, boolean dotest, URL url) throws HelpContentReaderException {
         String s = "";
