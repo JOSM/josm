@@ -46,10 +46,11 @@ public class HelpContentReader extends WikiReader {
         HttpURLConnection con = null;
         BufferedReader in = null;
         try {
-            con = Utils.openHttpConnection(new URL(helpTopicUrl));
+            URL u = new URL(helpTopicUrl);
+            con = Utils.openHttpConnection(u);
             con.connect();
             in = new BufferedReader(new InputStreamReader(con.getInputStream(),"utf-8"));
-            return prepareHelpContent(in, dotest);
+            return prepareHelpContent(in, dotest, u);
         } catch(MalformedURLException e) {
             throw new HelpContentReaderException(e);
         } catch(IOException e) {
@@ -78,11 +79,12 @@ public class HelpContentReader extends WikiReader {
      * @return the content
      * @throws HelpContentReaderException thrown if an exception occurs
      * @throws MissingHelpContentException thrown, if the content read isn't a help page
+     * @since 5935
      */
-    protected String prepareHelpContent(BufferedReader in, boolean dotest) throws HelpContentReaderException {
+    protected String prepareHelpContent(BufferedReader in, boolean dotest, URL url) throws HelpContentReaderException {
         String s = "";
         try {
-            s = readFromTrac(in);
+            s = readFromTrac(in, url);
         } catch(IOException e) {
             throw new HelpContentReaderException(e);
         }
