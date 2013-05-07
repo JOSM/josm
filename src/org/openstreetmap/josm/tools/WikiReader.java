@@ -34,10 +34,11 @@ public class WikiReader {
      * @throws IOException Throws, if the page could not be loaded.
      */
     public String read(String url) throws IOException {
-        BufferedReader in = Utils.openURLReader(new URL(url));
+        URL u = new URL(url);
+        BufferedReader in = Utils.openURLReader(u);
         try {
             if (url.startsWith(baseurl) && !url.endsWith("?format=txt"))
-                return readFromTrac(in);
+                return readFromTrac(in, u);
             return readNormal(in);
         } finally {
             Utils.close(in);
@@ -77,7 +78,7 @@ public class WikiReader {
     private String readLang(URL url) throws IOException {
         BufferedReader in = Utils.openURLReader(url);
         try {
-            return readFromTrac(in);
+            return readFromTrac(in, url);
         } finally {
             Utils.close(in);
         }
@@ -93,12 +94,14 @@ public class WikiReader {
         return "<html>" + b + "</html>";
     }
 
-    protected String readFromTrac(BufferedReader in) throws IOException {
+    protected String readFromTrac(BufferedReader in, URL url) throws IOException {
         boolean inside = false;
         boolean transl = false;
         boolean skip = false;
         String b = "";
+        String full = "";
         for (String line = in.readLine(); line != null; line = in.readLine()) {
+            full += line;
             if (line.contains("<div id=\"searchable\">")) {
                 inside = true;
             } else if (line.contains("<div class=\"wiki-toc trac-nav\"")) {
@@ -118,7 +121,11 @@ public class WikiReader {
                 // add a border="0" attribute to images, otherwise the internal help browser
                 // will render a thick  border around images inside an <a> element
                 //
-                b += line.replaceAll("<img ", "<img border=\"0\" ").replaceAll(" />", ">") + "\n";
+                b += line.replaceAll("<img ", "<img border=\"0\" ")
+                         .replaceAll("<span class=\"icon\">.</span>", "")
+                         .replaceAll("href=\"/", "href=\"" + baseurl + "/")
+                         .replaceAll(" />", ">")
+                         + "\n";
             } else if (transl && line.contains("</div>")) {
                 transl = false;
             }
@@ -129,6 +136,8 @@ public class WikiReader {
         if (b.indexOf("      Describe ") >= 0
         || b.indexOf(" does not exist. You can create it here.</p>") >= 0)
             return "";
-        return "<html><base href=\""+baseurl+"\"> " + b + "</html>";
+        if(b.isEmpty())
+            b = full;
+        return "<html><base href=\""+url.toExternalForm() +"\"> " + b + "</html>";
     }
 }
