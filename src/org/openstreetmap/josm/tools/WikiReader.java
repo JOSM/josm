@@ -99,7 +99,9 @@ public class WikiReader {
         boolean transl = false;
         boolean skip = false;
         String b = "";
+        String full = "";
         for (String line = in.readLine(); line != null; line = in.readLine()) {
+            full += line;
             if (line.contains("<div id=\"searchable\">")) {
                 inside = true;
             } else if (line.contains("<div class=\"wiki-toc trac-nav\"")) {
@@ -120,6 +122,7 @@ public class WikiReader {
                 // will render a thick  border around images inside an <a> element
                 //
                 b += line.replaceAll("<img ", "<img border=\"0\" ")
+                         .replaceAll("<span class=\"icon\">.</span>", "")
                          .replaceAll("href=\"/", "href=\"" + baseurl + "/")
                          .replaceAll(" />", ">")
                          + "\n";
@@ -133,6 +136,8 @@ public class WikiReader {
         if (b.indexOf("      Describe ") >= 0
         || b.indexOf(" does not exist. You can create it here.</p>") >= 0)
             return "";
+        if(b.isEmpty())
+            b = full;
         return "<html><base href=\""+url.toExternalForm() +"\"> " + b + "</html>";
     }
 }
