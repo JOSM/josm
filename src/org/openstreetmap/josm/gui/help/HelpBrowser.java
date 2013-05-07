@@ -583,7 +583,7 @@ public class HelpBrowser extends JDialog {
         public void hyperlinkUpdate(HyperlinkEvent e) {
             if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED)
                 return;
-            if (e.getURL() == null) {
+            if (e.getURL() == null || e.getURL().toString().startsWith(url+"#")) {
                 // Probably hyperlink event on a an A-element with a href consisting of
                 // a fragment only, i.e. "#ALocalFragment".
                 //
