@@ -1175,10 +1175,10 @@ Note that for a match, at least one positive and no negative is required.
             </optional>
         </item> <!-- bollard -->
         <item name="Cycle Barrier" icon="styles/standard/vehicle/cycle_barrier.png" type="node">
-            <link href="wiki.openstreetmap.org/wiki/Tag:barrier=cycle_barrier"
-                  de.href="wiki.openstreetmap.org/wiki/DE:Tag:barrier=cycle_barrier"
-                  fr.href="wiki.openstreetmap.org/wiki/FR:Tag:barrier=cycle_barrier"
-                  pl.href="wiki.openstreetmap.org/wiki/Pl:Tag:barrier=cycle_barrier" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=cycle_barrier"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:barrier=cycle_barrier"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:barrier=cycle_barrier"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=cycle_barrier" />
             <label text="Edit Cycle Barrier" />
             <space />
             <key key="barrier" value="cycle_barrier" />
