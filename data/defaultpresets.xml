@@ -1139,6 +1139,20 @@ Note that for a match, at least one positive and no negative is required.
     <group name="Barriers" icon="presets/barrier.png">
 
         <!-- *** node barriers *** -->
+        <item name="Block" icon="presets/block.png" type="node,way,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=block"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=block"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=block" />
+            <label text="Edit Block" />
+            <space />
+            <key key="barrier" value="block" />
+            <label text="Allowed traffic:" />
+            <space />
+            <check key="foot" text="Foot" default="on" />
+            <check key="bicycle" text="Bicycle" default="on" />
+            <check key="horse" text="Horse" default="off" />
+            <check key="motorcycle" text="Motorcycle" default="off" />
+        </item> <!-- block -->
         <item name="Bollard" icon="presets/bollard.png" type="node,way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=bollard"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:barrier=bollard"
@@ -1155,9 +1169,18 @@ Note that for a match, at least one positive and no negative is required.
             <check key="bicycle" text="Bicycle" default="on" />
             <check key="horse" text="Horse" default="off" />
             <check key="motorcycle" text="Motorcycle" default="off" />
+            <optional>
+                <text key="maxwidth" text="Max. width (meters)" length="7" />
+                <combo key="bollard" text="Bollard type" values="rising,removable" />
+            </optional>
         </item> <!-- bollard -->
         <item name="Cycle Barrier" icon="styles/standard/vehicle/cycle_barrier.png" type="node">
-            <link href="http://de.wikipedia.org/wiki/Umlaufgitter" />
+            <link href="wiki.openstreetmap.org/wiki/Tag:barrier=cycle_barrier"
+                  de.href="wiki.openstreetmap.org/wiki/DE:Tag:barrier=cycle_barrier"
+                  fr.href="wiki.openstreetmap.org/wiki/FR:Tag:barrier=cycle_barrier"
+                  pl.href="wiki.openstreetmap.org/wiki/Pl:Tag:barrier=cycle_barrier" />
+            <label text="Edit Cycle Barrier" />
+            <space />
             <key key="barrier" value="cycle_barrier" />
             <label text="Allowed traffic:" />
             <space />
@@ -1165,16 +1188,10 @@ Note that for a match, at least one positive and no negative is required.
             <check key="bicycle" text="Bicycle" default="on" />
             <check key="horse" text="Horse" default="off" />
             <check key="motorcycle" text="Motorcycle" default="off" />
+            <optional>
+                <text key="maxwidth" text="Max. width (meters)" length="7" />
+            </optional>
         </item> <!-- cycle_barrier -->
-        <item name="Block" icon="presets/block.png" type="node,way,closedway">
-            <key key="barrier" value="block" />
-            <label text="Allowed traffic:" />
-            <space />
-            <check key="foot" text="Foot" default="on" />
-            <check key="bicycle" text="Bicycle" default="on" />
-            <check key="horse" text="Horse" default="off" />
-            <check key="motorcycle" text="Motorcycle" default="off" />
-        </item> <!-- block -->
         <item name="Cattle Grid" icon="presets/cattle_grid.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cattle_grid" />
             <label text="Edit Cattle Grid" />
@@ -1188,7 +1205,14 @@ Note that for a match, at least one positive and no negative is required.
             <check key="motorcar" text="Motorcar" default="off" />
         </item> <!-- cattle_grid -->
         <item name="Bus Trap" icon="presets/empty.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=bus_trap"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=bus_trap" />
+            <label text="Edit Bus Trap" />
+            <space />
             <key key="barrier" value="bus_trap" />
+            <optional>
+                <text key="maxwidth" text="Max. width (meters)" length="7" />
+            </optional>
         </item> <!-- bus_trap -->
         <item name="Spikes" icon="presets/empty.png" type="node">
             <label text="Edit Spikes" />
@@ -1206,8 +1230,11 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=toll_booth"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:barrier=toll_booth"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:barrier=toll_booth"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:barrier=toll_booth"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=toll_booth"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:barrier=toll_booth"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=toll_booth" />
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=toll_booth"
+                  zh_CN.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:barrier=toll_booth" />
             <label text="Edit Toll Booth" />
             <space />
             <key key="barrier" value="toll_booth" />
@@ -1237,9 +1264,18 @@ Note that for a match, at least one positive and no negative is required.
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:barrier=hedge"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:barrier=hedge"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:barrier=hedge"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=hedge"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:barrier=hedge"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=hedge" />
+            <label text="Edit Hedge" />
+            <space />
             <key key="barrier" value="hedge" />
+            <optional>
+                <text key="height" text="Height (meters)" length="7" />
+                <text key="genus" text="Genus" />
+                <text key="species" text="Species" />
+                <text key="taxon" text="Taxon" />
+            </optional>
         </item> <!-- hedge -->
         <item name="Fence" icon="presets/fence.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=fence"
@@ -1250,19 +1286,51 @@ Note that for a match, at least one positive and no negative is required.
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=fence"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:barrier=fence"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=fence" />
+            <label text="Edit Fence" />
+            <space />
             <key key="barrier" value="fence" />
             <optional>
+<!--                <combo key="fence_type" text="Type" values="barbed_wire,chain_link,electric,roundpole,split_rail,wood" /> -->
                 <combo key="fence_type" text="Type" values="barbed_wire,chain,electric,hedge,pole,split_rail,wood" />
+                <text key="height" text="Height (meters)" length="7" />
             </optional>
         </item> <!-- fence -->
+        <item name="Guard Rail" icon="" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=guard_rail" />
+            <label text="Edit Guard Rail" />
+            <space />
+            <key key="barrier" value="guard_rail" />
+            <optional>
+                <text key="height" text="Height (meters)" length="7" />
+            </optional>
+        </item> <!-- guard_rail -->
         <item name="Wall" icon="presets/wall.png" type="way,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=wall"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:barrier=wall"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:barrier=wall"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:barrier=wall"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=wall"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:barrier=wall"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=wall"
+                  zh_CN.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:barrier=wall" />
+            <label text="Edit Wall" />
+            <space />
             <key key="barrier" value="wall" />
+            <optional>
+                <text key="height" text="Height (meters)" length="7" />
+            </optional>
         </item> <!-- wall -->
         <item name="City Wall" icon="presets/city_wall.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=city_wall"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=city_wall"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:barrier=city_wall"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=city_wall" />
+            <label text="Edit City Wall" />
+            <space />
             <key key="barrier" value="city_wall" />
+            <optional>
+                <text key="height" text="Height (meters)" length="7" />
+            </optional>
         </item> <!-- city_wall -->
         <item name="Retaining Wall" icon="presets/retaining_wall.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=retaining_wall"
@@ -1271,22 +1339,41 @@ Note that for a match, at least one positive and no negative is required.
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=retaining_wall"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:barrier=retaining_wall"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=retaining_wall" />
+            <label text="Edit Retaining Wall" />
+            <space />
             <key key="barrier" value="retaining_wall" />
+            <optional>
+                <text key="height" text="Height (meters)" length="7" />
+            </optional>
         </item> <!-- retaining_wall -->
-        <item name="Ditch" type="way">
+        <item name="Ditch" name_context="Barrier" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=ditch"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:barrier=ditch"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=ditch"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:barrier=ditch"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=ditch" />
+            <label text="Edit Ditch" />
+            <space />
             <key key="barrier" value="ditch" />
             <optional>
-                <text key="width" text="Width (meters)" />
+                <text key="width" text="Width (meters)" length="7" />
             </optional>
         </item> <!-- ditch -->
+        <item name="Kerb" icon="" type="way,closedway">
+            <label text="Edit Kerb" />
+            <space />
+            <key key="barrier" value="kerb" />
+            <optional>
+                <text key="height" text="Height (meters)" length="7" />
+            </optional>
+        </item> <!-- kerb -->
         <separator/>
 
         <!-- *** access *** -->
         <item name="Entrance" icon="styles/standard/vehicle/entrance.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=entrance"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=entrance"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=entrance" />
             <label text="Edit Entrance" />
             <space />
             <key key="barrier" value="entrance" />
@@ -1297,11 +1384,15 @@ Note that for a match, at least one positive and no negative is required.
             <check key="horse" text="Horse" default="off" />
             <check key="motorcycle" text="Motorcycle" default="off" />
             <check key="motorcar" text="Motorcar" default="off" />
+            <optional>
+                <text key="maxwidth" text="Max. width (meters)" length="7" />
+            </optional>
         </item> <!-- entrance -->
         <item name="Gate" icon="presets/gate.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=gate"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:barrier=gate"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:barrier=gate"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=gate"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:barrier=gate"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=gate" />
             <label text="Edit Gate" />
@@ -1314,8 +1405,17 @@ Note that for a match, at least one positive and no negative is required.
             <check key="horse" text="Horse" default="off" />
             <check key="motorcycle" text="Motorcycle" default="off" />
             <check key="motorcar" text="Motorcar" default="off" />
+            <optional>
+                <text key="maxwidth" text="Max. width (meters)" length="7" />
+            </optional>
         </item> <!-- gate -->
         <item name="Lift Gate" icon="presets/lift_gate.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=lift_gate"
+                  de.href="http://wiki.openstreetmap.org/wiki/FR:Tag:barrier=lift_gate"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:barrier=lift_gate"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=lift_gate"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:barrier=lift_gate"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=lift_gate" />
             <label text="Edit Lift Gate" />
             <space />
             <key key="barrier" value="lift_gate" />
@@ -1326,6 +1426,9 @@ Note that for a match, at least one positive and no negative is required.
             <check key="horse" text="Horse" default="off" />
             <check key="motorcycle" text="Motorcycle" default="off" />
             <check key="motorcar" text="Motorcar" default="off" />
+            <optional>
+                <text key="maxwidth" text="Max. width (meters)" length="7" />
+            </optional>
         </item> <!-- lift_gate -->
         <item name="Hampshire Gate" icon="presets/empty.png" type="node">
             <label text="Edit Hampshire Gate" />
@@ -1338,6 +1441,9 @@ Note that for a match, at least one positive and no negative is required.
             <check key="horse" text="Horse" default="off" />
             <check key="motorcycle" text="Motorcycle" default="off" />
             <check key="motorcar" text="Motorcar" default="off" />
+            <optional>
+                <text key="maxwidth" text="Max. width (meters)" length="7" />
+            </optional>
         </item> <!-- hampshire_gate -->
         <item name="Bump Gate" icon="presets/empty.png" type="node">
             <label text="Edit Bump Gate" />
@@ -1350,8 +1456,12 @@ Note that for a match, at least one positive and no negative is required.
             <check key="horse" text="Horse" default="off" />
             <check key="motorcycle" text="Motorcycle" default="off" />
             <check key="motorcar" text="Motorcar" default="off" />
+            <optional>
+                <text key="maxwidth" text="Max. width (meters)" length="7" />
+            </optional>
         </item> <!-- bump_gate -->
         <item name="Kissing Gate" icon="presets/empty.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=kissing_gate" />
             <label text="Edit Kissing Gate" />
             <space />
             <key key="barrier" value="kissing_gate" />
@@ -1359,18 +1469,45 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <check key="foot" text="Foot" default="on" />
             <check key="bicycle" text="Bicycle" default="off" />
+            <optional>
+                <text key="maxwidth" text="Max. width (meters)" length="7" />
+            </optional>
         </item> <!-- kissing_gate -->
+        <item name="Chain" icon="" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=chain"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=chain" />
+            <label text="Edit Chain" />
+            <space />
+            <key key="barrier" value="chain" />
+            <label text="Allowed traffic:" />
+            <space />
+            <check key="foot" text="Foot" default="on" />
+            <check key="bicycle" text="Bicycle" default="on" />
+            <check key="horse" text="Horse" default="off" />
+            <check key="motorcycle" text="Motorcycle" default="off" />
+            <check key="motorcar" text="Motorcar" default="off" />
+            <optional>
+                <text key="maxwidth" text="Max. width (meters)" length="7" />
+            </optional>
+        </item> <!-- chain -->
         <item name="Stile" icon="presets/stile.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=stile" />
             <label text="Edit Stile" />
             <space />
             <key key="barrier" value="stile" />
+            <optional>
+                <combo key="stile" text="Type" values="ladder,squeezer,stepover" />
+                <combo key="material" text="Material" values="metal.stone.wood" />
+            </optional>
             <label text="Allowed traffic:" />
             <space />
             <check key="foot" text="Foot" default="on" />
             <check key="bicycle" text="Bicycle" default="off" />
         </item> <!-- stile -->
         <item name="Turnstile" icon="styles/standard/vehicle/turnstile.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=stile"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:highway=stile"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=stile" />
             <label text="Edit Turnstile" />
             <space />
             <key key="barrier" value="turnstile" />
@@ -1380,6 +1517,9 @@ Note that for a match, at least one positive and no negative is required.
             <check key="bicycle" text="Bicycle" default="off" />
         </item> <!-- turnstile -->
         <item name="Sally Port" icon="styles/standard/vehicle/sally_port.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=sally_port"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=sally_port"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=sally_port" />
             <label text="Edit Sally Port" />
             <space />
             <key key="barrier" value="sally_port" />
@@ -1390,6 +1530,10 @@ Note that for a match, at least one positive and no negative is required.
             <check key="horse" text="Horse" default="off" />
             <check key="motorcycle" text="Motorcycle" default="off" />
             <check key="motorcar" text="Motorcar" default="off" />
+            <optional>
+                <text key="maxheight" text="Max. height (meters)" length="7" />
+                <text key="maxwidth" text="Max. width (meters)" length="7" />
+            </optional>
         </item> <!-- sally_port -->
 
     </group> <!-- Barriers -->
@@ -4406,7 +4550,7 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:building"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Key:building"
                   no.href="http://wiki.openstreetmap.org/wiki/NO:Key:building"
-                  pl.href="http://wiki.openstreetmap.org/wiki/PL:Key:building"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:building"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building" />
             <label text="Edit Residential Building" />
             <combo key="building" text="Building" values="residential,apartments,house,hut,terrace,detached,roof" default="residential" match="keyvalue" />
