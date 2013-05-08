@@ -1295,7 +1295,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="height" text="Height (meters)" length="7" />
             </optional>
         </item> <!-- fence -->
-        <item name="Guard Rail" icon="" type="way">
+        <item name="Guard Rail" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=guard_rail" />
             <label text="Edit Guard Rail" />
             <space />
@@ -1359,7 +1359,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="width" text="Width (meters)" length="7" />
             </optional>
         </item> <!-- ditch -->
-        <item name="Kerb" icon="" type="way,closedway">
+        <item name="Kerb" type="way,closedway">
             <label text="Edit Kerb" />
             <space />
             <key key="barrier" value="kerb" />
@@ -1473,7 +1473,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="maxwidth" text="Max. width (meters)" length="7" />
             </optional>
         </item> <!-- kissing_gate -->
-        <item name="Chain" icon="" type="node">
+        <item name="Chain" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=chain"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=chain" />
             <label text="Edit Chain" />
