@@ -3707,6 +3707,13 @@ Note that for a match, at least one positive and no negative is required.
             <key key="amenity" value="hospital" />
             <text key="name" text="Name" />
         </item>
+        <item name="Clinic" icon="styles/standard/health/hospital.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=clinic"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=clinic" />
+            <label text="Edit Clinic" />
+            <key key="amenity" value="clinic" />
+            <text key="name" text="Name" />
+        </item>
         <item name="Doctors" icon="styles/standard/health/doctor.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=doctors"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=doctors"

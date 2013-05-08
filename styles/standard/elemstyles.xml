@@ -2003,6 +2003,12 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="health/hospital.png"/>
 	</rule>
 
+    <rule>
+        <condition k="amenity" v="clinic"/>
+        <area colour="health#eeeeee"/>
+        <icon annotate="true" src="health/hospital.png"/>
+    </rule>
+    
 	<rule>
 		<condition k="amenity" v="nursery"/>
 		<area colour="health#eeeeee"/>
