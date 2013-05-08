@@ -3520,6 +3520,20 @@ Note that for a match, at least one positive and no negative is required.
             <text key="website" text="Website" />
             <text key="email" text="Email Address" />
         </item>
+        <item name="Horse riding" icon="presets/equestrian.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=horse_riding" />
+            <label text="Edit Horse riding" />
+            <key key="leisure" value="horse_riding" />
+            <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
+            <combo key="opening_hours" text="Opening Hours" values="Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
+            <text key="fee" text="Fee" />
+            <space />
+            <text key="phone" text="Phone Number" />
+            <text key="fax" text="Fax Number" />
+            <text key="website" text="Website" />
+            <text key="email" text="Email Address" />
+        </item>
         <item name="Brothel" de.name="Bordell" icon="styles/standard/leisure/stripclub.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=brothel"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=brothel"
@@ -4248,14 +4262,16 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Equestrian" />
             <key key="sport" value="equestrian" />
             <text key="name" text="Name" />
-            <combo key="leisure" text="type" values="horse_riding,pitch,sports_centre,stadium,track" default="horse_riding" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" values_context="riding" />
+            <combo key="surface" text="Surface" values="grass,sand,clay,dirt,fine_gravel,ground,mud,unpaved,compacted" />
         </item>
         <item name="Horse Racing" icon="presets/equestrian.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=horse_racing" />
             <label text="Edit Horse Racing" />
             <key key="sport" value="horse_racing" />
             <text key="name" text="Name" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" values_context="riding" />
+            <combo key="surface" text="Surface" values="grass,sand,clay,dirt,fine_gravel,ground,mud,unpaved,compacted" />
         </item>
         <item name="Gymnastics" icon="presets/gymnastics.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=gymnastics" />
