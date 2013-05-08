@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.net.URL;
 
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -39,8 +40,14 @@ public class AudioPlayPauseAction extends JosmAction {
                 else
                     AudioPlayer.pause();
             } else {
-                // find first audio marker to play
-                MarkerLayer.playAudio();
+                // play the last-played marker again, if there is one
+                AudioMarker lastPlayed = AudioMarker.recentlyPlayedMarker();
+                if (lastPlayed != null) {
+                    lastPlayed.play();
+                } else {
+                    // If no marker was played recently, play the first one
+                    MarkerLayer.playAudio();
+                }
             }
         } catch (Exception ex) {
             AudioPlayer.audioMalfunction(ex);
