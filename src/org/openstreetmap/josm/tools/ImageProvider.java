@@ -598,7 +598,7 @@ public class ImageProvider {
         } else {
             try {
                 File f = new File(path, name);
-                if (f.exists())
+                if ((path != null || f.isAbsolute()) && f.exists())
                     return f.toURI().toURL();
             } catch (MalformedURLException e) {
             }
