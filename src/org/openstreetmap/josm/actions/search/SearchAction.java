@@ -30,12 +30,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ActionParameter;
+import org.openstreetmap.josm.actions.ActionParameter.SearchSettingsActionParameter;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
-import org.openstreetmap.josm.actions.ActionParameter.SearchSettingsActionParameter;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
@@ -49,7 +50,6 @@ import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Property;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 
 public class SearchAction extends JosmAction implements ParameterizedAction {
@@ -193,7 +193,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         try {
-                            JosmTextField tf = (JosmTextField) hcb.getEditor().getEditorComponent();
+                            JTextComponent tf = (JTextComponent) hcb.getEditor().getEditorComponent();
                             tf.getDocument().insertString(tf.getCaretPosition(), " " + insertText, null);
                         } catch (BadLocationException ex) {
                             throw new RuntimeException(ex.getMessage(), ex);
