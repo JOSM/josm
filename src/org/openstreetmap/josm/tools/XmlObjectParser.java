@@ -184,7 +184,8 @@ public class XmlObjectParser implements Iterable<Object> {
                 if (f == null && fieldName.startsWith(lang)) {
                     f = entry.getField("locale_" + fieldName.substring(lang.length()));
                 }
-                if (f != null && Modifier.isPublic(f.getModifiers()) && String.class.equals(f.getType())) {
+                if (f != null && Modifier.isPublic(f.getModifiers()) && (
+                        String.class.equals(f.getType()) || boolean.class.equals(f.getType()))) {
                     f.set(c, getValueForClass(f.getType(), value));
                 } else {
                     if (fieldName.startsWith(lang)) {
