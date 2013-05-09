@@ -468,7 +468,9 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
                     List<Node> nodeList = new ArrayList<Node>();
                     nodeList.add(candidateNode);
                     Command deleteCmd = DeleteCommand.delete(getEditLayer(), nodeList, true);
-                    Main.main.undoRedo.add(deleteCmd);
+                    if (deleteCmd != null) {
+                        Main.main.undoRedo.add(deleteCmd);
+                    }
                 }
 
 

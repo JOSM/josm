@@ -506,8 +506,11 @@ public class JoinAreasAction extends JosmAction {
 
         // Delete the discarded inner ways
         if (discardedWays.size() > 0) {
-            cmds.add(DeleteCommand.delete(Main.map.mapView.getEditLayer(), discardedWays, true));
-            commitCommands(marktr("Delete Ways that are not part of an inner multipolygon"));
+            Command deleteCmd = DeleteCommand.delete(Main.map.mapView.getEditLayer(), discardedWays, true);
+            if (deleteCmd != null) {
+                cmds.add(deleteCmd);
+                commitCommands(marktr("Delete Ways that are not part of an inner multipolygon"));
+            }
         }
 
         makeCommitsOneAction(marktr("Joined overlapping areas"));
