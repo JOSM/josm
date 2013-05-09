@@ -1497,7 +1497,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="barrier" value="stile" />
             <optional>
                 <combo key="stile" text="Type" values="ladder,squeezer,stepover" />
-                <combo key="material" text="Material" values="metal.stone.wood" />
+                <combo key="material" text="Material" values="metal,stone,wood" />
             </optional>
             <label text="Allowed traffic:" />
             <space />
