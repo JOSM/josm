@@ -36,6 +36,7 @@ public class RestartAction extends JosmAction {
         putValue("help", ht("/Action/Restart"));
         putValue("toolbar", "action/restart");
         Main.toolbar.register(this);
+        setEnabled(isRestartSupported());
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -47,11 +48,20 @@ public class RestartAction extends JosmAction {
     }
     
     /**
+     * Determines if restartting the application should be possible on this platform.
+     * @return {@code true} if the mandatory system property {@code sun.java.command} is defined, {@code false} otherwise.
+     * @since 5951
+     */
+    public static boolean isRestartSupported() {
+        return System.getProperty("sun.java.command") != null;
+    }
+    
+    /**
      * Restarts the current Java application
      * @throws IOException
      */
     public static void restartJOSM() throws IOException {
-        if (!Main.exitJosm(false)) return;
+        if (isRestartSupported() && !Main.exitJosm(false)) return;
         try {
             // java binary
             final List<String> cmd = new ArrayList<String>(Collections.singleton(System.getProperty("java.home") + "/bin/java"));
@@ -107,7 +117,8 @@ public class RestartAction extends JosmAction {
                 tr("Restart"),
                 ImageProvider.get("restart"),
                 tr("Restart the application."),
-                ht("/Action/Restart")
+                ht("/Action/Restart"),
+                isRestartSupported()
         );
     }
 
