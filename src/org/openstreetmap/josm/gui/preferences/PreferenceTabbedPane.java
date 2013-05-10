@@ -243,6 +243,10 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
     public final ImageryPreference getImageryPreference() {
         return getSetting(ImageryPreference.class);
     }
+    
+    public final ShortcutPreference getShortcutPreference() {
+        return getSetting(ShortcutPreference.class);
+    }
 
     public void savePreferences() {
         if(Main.applet)

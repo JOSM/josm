@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.tagging;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +15,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
+import org.openstreetmap.josm.Main;
 
 import org.openstreetmap.josm.tools.PresetTextComparator;
 
@@ -56,11 +59,13 @@ public class TaggingPresetMenu extends TaggingPreset {
         if(menu != null && s instanceof Component)
         {
             Component co = (Component)s;
+
             JPopupMenu pm = new JPopupMenu(getName());
             for (Component c : menu.getMenuComponents()) {
                 pm.add(copyMenuComponent(c));
             }
-            pm.show(co, co.getWidth()/2, co.getHeight()/2);
+            Point p = MouseInfo.getPointerInfo().getLocation();
+            pm.show(Main.parent, p.x-Main.parent.getX(), p.y-Main.parent.getY());
         }
     }
     /**
