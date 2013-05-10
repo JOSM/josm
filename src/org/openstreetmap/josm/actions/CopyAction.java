@@ -17,8 +17,15 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Copy OSM primitives to clipboard in order to paste them, or their tags, somewhere else.  
+ * @since 404
+ */
 public final class CopyAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code CopyAction}.
+     */
     public CopyAction() {
         super(tr("Copy"), "copy",
                 tr("Copy selected objects to paste buffer."),
@@ -34,6 +41,11 @@ public final class CopyAction extends JosmAction {
         copy(getEditLayer(), selection);
     }
 
+    /**
+     * Copies the given primitive ids to the clipboard.
+     * @param source The OSM data layer source
+     * @param primitives The OSM primitives to copy
+     */
     public static void copy(OsmDataLayer source, Collection<OsmPrimitive> primitives) {
         /* copy ids to the clipboard */
         StringBuilder idsBuilder = new StringBuilder();
