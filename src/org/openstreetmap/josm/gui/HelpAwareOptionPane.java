@@ -32,23 +32,38 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 public class HelpAwareOptionPane {
 
     public static class ButtonSpec {
-        public String text;
-        public Icon icon;
-        public String tooltipText;
-        public String helpTopic;
-
+        public final String text;
+        public final Icon icon;
+        public final String tooltipText;
+        public final String helpTopic;
+        public final boolean enabled;
+       
         /**
-         *
-         * @param text  the button text
-         * @param icon  the icon to display. Can be null
-         * @param tooltipText  the tooltip text. Can be null.
+         * Constructs a new {@code ButtonSpec}.
+         * @param text the button text
+         * @param icon the icon to display. Can be null
+         * @param tooltipText the tooltip text. Can be null.
          * @param helpTopic the help topic. Can be null.
          */
         public ButtonSpec(String text, Icon icon, String tooltipText, String helpTopic) {
+            this(text, icon, tooltipText, helpTopic, true);
+        }
+
+        /**
+         * Constructs a new {@code ButtonSpec}.
+         * @param text the button text
+         * @param icon the icon to display. Can be null
+         * @param tooltipText the tooltip text. Can be null.
+         * @param helpTopic the help topic. Can be null.
+         * @param enabled the enabled status
+         * @since 5951
+         */
+        public ButtonSpec(String text, Icon icon, String tooltipText, String helpTopic, boolean enabled) {
             this.text = text;
             this.icon = icon;
             this.tooltipText = tooltipText;
             this.helpTopic = helpTopic;
+            this.enabled = enabled;
         }
     }
 
@@ -94,6 +109,7 @@ public class HelpAwareOptionPane {
                     HelpUtil.setHelpContext(b, helpTopic);
                 }
                 b.setFocusable(true);
+                b.setEnabled(spec.enabled);
                 buttons.add(b);
             }
         }
