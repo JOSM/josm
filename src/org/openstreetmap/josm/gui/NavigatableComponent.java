@@ -1315,9 +1315,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
         public String getAreaText(double area) {
             double a = area / (aValue*aValue);
             boolean lowerOnly = Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false);
-            if (!lowerOnly && areaCustomValue > 0 && a > areaCustomValue / aValue*aValue && a < bValue*bValue / aValue*aValue)
+            boolean customAreaOnly = Main.pref.getBoolean("system_of_measurement.use_only_custom_area_unit", false);
+            if ((!lowerOnly && areaCustomValue > 0 && a > areaCustomValue / (aValue*aValue) && a < (bValue*bValue) / (aValue*aValue)) || customAreaOnly)
                 return formatText(area / areaCustomValue, areaCustomName);
-            else if (!lowerOnly && a >= bValue*bValue / aValue*aValue)
+            else if (!lowerOnly && a >= (bValue*bValue) / (aValue*aValue))
                 return formatText(area / (bValue*bValue), bName+"\u00b2");
             else if (a < 0.01)
                 return "< 0.01 " + aName+"\u00b2";
@@ -1346,7 +1347,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Imperial system (British Commonwealth and former British Empire).
      * @since 3406
      */
-    public static final SystemOfMeasurement IMPERIAL_SOM = new SystemOfMeasurement(0.3048, "ft", 1609.344, "mi");
+    public static final SystemOfMeasurement IMPERIAL_SOM = new SystemOfMeasurement(0.3048, "ft", 1609.344, "mi", 4046.86, "ac");
     
     /**
      * Nautical mile system (navigation, polar exploration).
