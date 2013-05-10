@@ -146,6 +146,13 @@ public class PrefJPanel extends JPanel {
         initComponents();
     }
 
+    /**
+     * Show only shortcuts with descriptions coontaing given substring
+     */
+    public void filter(String substring) {
+        filterField.setText(substring);
+    }
+
     private class ShortcutTableCellRenderer extends DefaultTableCellRenderer {
 
         private boolean name;
@@ -283,6 +290,7 @@ public class PrefJPanel extends JPanel {
         public CbAction (PrefJPanel panel) {
             this.panel = panel;
         }
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             ListSelectionModel lsm = panel.shortcutTable.getSelectionModel(); // can't use e here
             if (!lsm.isSelectionEmpty()) {
@@ -312,6 +320,7 @@ public class PrefJPanel extends JPanel {
                 panel.tfKey.setEnabled(false);
             }
         }
+        @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
             ListSelectionModel lsm = panel.shortcutTable.getSelectionModel();
             if (lsm != null && !lsm.isSelectionEmpty()) {
@@ -377,8 +386,11 @@ public class PrefJPanel extends JPanel {
             catch (ClassCastException ex2) { /* eliminate warning */  }
         }
 
+        @Override
         public void changedUpdate(DocumentEvent arg0) { filter(); }
+        @Override
         public void insertUpdate(DocumentEvent arg0) {  filter(); }
+        @Override
         public void removeUpdate(DocumentEvent arg0) { filter(); }
     }
 

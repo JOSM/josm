@@ -16,6 +16,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -60,12 +61,14 @@ import javax.swing.tree.TreePath;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ActionParameter;
 import org.openstreetmap.josm.actions.AdaptableAction;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
 import org.openstreetmap.josm.actions.ParameterizedActionDecorator;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public class ToolbarPreferences implements PreferenceSettingFactory {
 
@@ -140,6 +143,14 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         public static ActionDefinition getSeparator() {
             return new ActionDefinition(null);
+        }
+        
+        public boolean hasParameters() {
+            if (!(getAction() instanceof ParameterizedAction)) return false;
+            for (Object o: parameters.values()) {
+                if (o!=null) return true;
+            } 
+            return false;
         }
     }
 
@@ -294,10 +305,12 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         private ActionDefinition currentAction = ActionDefinition.getSeparator();
 
+        @Override
         public int getColumnCount() {
             return 2;
         }
 
+        @Override
         public int getRowCount() {
             int adaptable = ((currentAction.getAction() instanceof AdaptableAction) ? 2 : 0);
             if (currentAction.isSeparator() || !(currentAction.getAction() instanceof ParameterizedAction))
@@ -312,6 +325,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             return (ActionParameter<Object>) pa.getActionParameters().get(index);
         }
 
+        @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             if(currentAction.getAction() instanceof AdaptableAction)
             {
@@ -374,7 +388,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             if(action != null) {
                 add(tr("Remove from toolbar",action.getDisplayName()))
                         .addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
+                            @Override public void actionPerformed(ActionEvent e) {
                                 Collection<String> t = new LinkedList<String>(getToolString());
                                 ActionParser parser = new ActionParser(null);
                                 // get text definition of current action
@@ -388,13 +402,23 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             }
             
             add(tr("Configure toolbar")).addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
+                @Override public void actionPerformed(ActionEvent e) {
                     final PreferenceDialog p =new PreferenceDialog(Main.parent);
                     p.selectPreferencesTabByName("toolbar");
                     p.setVisible(true);
                 }
             });
-            
+
+            add(tr("Edit shortcut")).addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    final PreferenceDialog p =new PreferenceDialog(Main.parent);
+                    p.getTabbedPane().getShortcutPreference().setDefaultFilter(action.getDisplayName());
+                    p.selectPreferencesTabByName("shortcuts");
+                    p.setVisible(true);
+                    // refresh toolbar to accept changes of shortcuts without restart
+                    Main.toolbar.refreshToolbarControl(); 
+                }
+            });
         }
     }
 
@@ -409,6 +433,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
     public JToolBar control = new JToolBar();
 
+    @Override
     public PreferenceSetting createPreferenceSetting() {
         return new Settings(rootActionsNode);
     }
@@ -416,6 +441,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     public class Settings extends DefaultTabPreferenceSetting {
 
         private final class Move implements ActionListener {
+            @Override 
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("<") && actionsTree.getSelectionCount() > 0) {
 
@@ -467,14 +493,17 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 this.actions = actions;
             }
 
+            @Override
             public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
                 return actions;
             }
 
+            @Override
             public DataFlavor[] getTransferDataFlavors() {
                 return flavors;
             }
 
+            @Override
             public boolean isDataFlavorSupported(DataFlavor flavor) {
                 return flavors[0] == flavor;
             }
@@ -527,6 +556,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             addButton.setEnabled(actionsTree.getSelectionCount() > 0);
         }
 
+        @Override
         public void addGui(PreferenceTabbedPane gui) {
             actionsTree.setCellRenderer(new DefaultTreeCellRenderer() {
                 @Override
@@ -567,6 +597,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             };
             selectedList.setCellRenderer(renderer);
             selectedList.addListSelectionListener(new ListSelectionListener(){
+                @Override
                 public void valueChanged(ListSelectionEvent e) {
                     boolean sel = selectedList.getSelectedIndex() != -1;
                     if (sel) {
@@ -714,7 +745,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             });
             actionsTree.setDragEnabled(true);
             actionsTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
-                public void valueChanged(TreeSelectionEvent e) {
+                @Override public void valueChanged(TreeSelectionEvent e) {
                     updateEnabledState();
                 }
             });
@@ -736,19 +767,24 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
             final JPanel p = new JPanel();
             p.setLayout(new LayoutManager(){
+                @Override
                 public void addLayoutComponent(String name, Component comp) {}
+                @Override
                 public void removeLayoutComponent(Component comp) {}
+                @Override
                 public Dimension minimumLayoutSize(Container parent) {
                     Dimension l = left.getMinimumSize();
                     Dimension r = right.getMinimumSize();
                     Dimension b = buttons.getMinimumSize();
                     return new Dimension(l.width+b.width+10+r.width,l.height+b.height+10+r.height);
                 }
+                @Override
                 public Dimension preferredLayoutSize(Container parent) {
                     Dimension l = new Dimension(200, 200); //left.getPreferredSize();
                     Dimension r = new Dimension(200, 200); //right.getPreferredSize();
                     return new Dimension(l.width+r.width+10+buttons.getPreferredSize().width,Math.max(l.height, r.height));
                 }
+                @Override
                 public void layoutContainer(Container parent) {
                     Dimension d = p.getSize();
                     Dimension b = buttons.getPreferredSize();
@@ -779,6 +815,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             }
         }
 
+        @Override
         public boolean ok() {
             Collection<String> t = new LinkedList<String>();
             ActionParser parser = new ActionParser(null);
@@ -883,7 +920,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     public static Collection<String> getToolString() {
 
         Collection<String> toolStr = Main.pref.getCollection("toolbar", Arrays.asList(deftoolbar));
-        if (toolStr == null || toolStr.size() == 0) {
+        if (toolStr == null || toolStr.isEmpty()) {
             toolStr = Arrays.asList(deftoolbar);
         }
         return toolStr;
@@ -946,10 +983,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             if (action.isSeparator()) {
                 control.addSeparator();
             } else {
-                final JButton b = control.add(action.getParametrizedAction());
-                String tt = action.getDisplayTooltip();
-                if (tt != null && !tt.isEmpty())
-                    b.setToolTipText(tt);
+                final JButton b = addButtonAndShortcut(action);
+                
                 Icon i = action.getDisplayIcon();
                 if (i != null) {
                     b.setIcon(i);
@@ -969,6 +1004,47 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             }
         }
         control.setVisible(control.getComponentCount() != 0);
+    }
+    
+    private JButton addButtonAndShortcut(ActionDefinition action) {
+        Action act = action.getParametrizedAction();
+        JButton b = control.add(act);
+        
+        Shortcut sc = null;
+        if (action.getAction() instanceof JosmAction) {
+            sc = ((JosmAction) action.getAction()).getShortcut();
+            if (sc.getAssignedKey() == KeyEvent.CHAR_UNDEFINED) sc = null;
+        }
+
+        long paramCode = 0;
+        if (action.hasParameters()) {
+            paramCode =  action.parameters.hashCode();
+        }
+        
+        String tt = action.getDisplayTooltip();
+        if (tt==null) tt="";
+
+        if (sc == null || paramCode != 0) {
+            String name = (String) action.getAction().getValue("toolbar");
+            if (name==null) name=action.getDisplayName();
+            if (paramCode!=0) name = name+paramCode;
+            String desc = action.getDisplayName() + ((paramCode==0)?"":action.parameters.toString());
+            sc = Shortcut.registerShortcut("toolbar:"+name, tr("Toolbar: {0}", desc),
+                KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
+            Main.unregisterShortcut(sc);
+            Main.registerActionShortcut(act, sc);
+            
+            // add shortcut info to the tooltip if needed
+            if (sc.getAssignedUser()) {
+                if (tt.startsWith("<html>") && tt.endsWith("</html>")) {
+                    tt = tt.substring(6,tt.length()-6);
+                }
+                tt = Main.platform.makeTooltip(tt, sc);
+            }
+        }
+        
+        if (!tt.isEmpty()) b.setToolTipText(tt);
+        return b;
     }
 
     private static DataFlavor ACTION_FLAVOR = new DataFlavor(
