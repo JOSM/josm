@@ -64,6 +64,7 @@ import org.openstreetmap.josm.gui.GettingStarted;
 import org.openstreetmap.josm.gui.MainApplication.Option;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent.ViewportData;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -80,7 +81,6 @@ import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.io.OsmApi;
-import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -188,6 +188,8 @@ abstract public class Main {
      */
     private GettingStarted gettingStarted = new GettingStarted();
 
+    private static final Collection<MapFrameListener> mapFrameListeners = new ArrayList<MapFrameListener>();
+
     /**
      * Logging level (3 = debug, 2 = info, 1 = warn, 0 = none).
      */
@@ -280,7 +282,9 @@ abstract public class Main {
 
         Main.map = map;
 
-        PluginHandler.notifyMapFrameChanged(old, map);
+        for (MapFrameListener listener : mapFrameListeners ) {
+            listener.mapFrameInitialized(old, map);
+        }
         if (map == null && currentProgressMonitor != null) {
             currentProgressMonitor.showForegroundDialog();
         }
@@ -1207,4 +1211,23 @@ abstract public class Main {
         }
     }
 
+    /**
+     * Registers a new {@code MapFrameListener} that will be notified of MapFrame changes
+     * @param listener The MapFrameListener
+     * @return {@code true} if the listeners collection changed as a result of the call
+     * @since 5957
+     */
+    public static boolean addMapFrameListener(MapFrameListener listener) {
+        return listener != null ? mapFrameListeners.add(listener) : false;
+    }
+
+    /**
+     * Unregisters the given {@code MapFrameListener} from MapFrame changes
+     * @param listener The MapFrameListener
+     * @return {@code true} if the listeners collection changed as a result of the call
+     * @since 5957
+     */
+    public static boolean removeMapFrameListener(MapFrameListener listener) {
+        return listener != null ? mapFrameListeners.remove(listener) : false;
+    }
 }
