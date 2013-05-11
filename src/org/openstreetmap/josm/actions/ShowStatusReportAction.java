@@ -98,13 +98,15 @@ public final class ShowStatusReportAction extends JosmAction {
             text.append("Program arguments: "+ Arrays.toString(Main.commandLineArgs));
             text.append("\n");
         }
-        DataSet dataset = Main.main.getCurrentDataSet();
-        if (dataset != null) {
-            String result = DatasetConsistencyTest.runTests(dataset);
-            if (result.length() == 0) {
-                text.append("Dataset consistency test: No problems found\n");
-            } else {
-                text.append("\nDataset consistency test:\n"+result+"\n");
+        if (Main.main != null) {
+            DataSet dataset = Main.main.getCurrentDataSet();
+            if (dataset != null) {
+                String result = DatasetConsistencyTest.runTests(dataset);
+                if (result.length() == 0) {
+                    text.append("Dataset consistency test: No problems found\n");
+                } else {
+                    text.append("\nDataset consistency test:\n"+result+"\n");
+                }
             }
         }
         text.append("\n");
