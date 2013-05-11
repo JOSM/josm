@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.tools.Utils;
@@ -37,7 +38,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author Immanuel.Scholz
  */
-public abstract class Plugin {
+public abstract class Plugin implements MapFrameListener {
 
     /**
      * This is the info available for this plugin. You can access this from your
@@ -82,11 +83,7 @@ public abstract class Plugin {
         return new File(Main.pref.getPluginsDirectory(), info.name).getPath();
     }
 
-    /**
-     * Called after Main.mapFrame is initalized. (After the first data is loaded).
-     * You can use this callback to tweak the newFrame to your needs, as example install
-     * an alternative Painter.
-     */
+    @Override
     public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {}
 
     /**
