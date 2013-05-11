@@ -83,7 +83,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
         if (tags.get("comment") == null) {
             tags.put("comment", currentComment);
         }
-        String agent = Version.getInstance().getAgentString();
+        String agent = Version.getInstance().getAgentString(false);
         String created_by = tags.get("created_by");
         if (created_by == null || created_by.isEmpty()) {
             tags.put("created_by", agent);

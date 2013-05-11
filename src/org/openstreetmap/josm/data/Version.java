@@ -215,6 +215,16 @@ public class Version {
      * @return The User-Agent
      */
     public String getAgentString() {
+        return getAgentString(true);
+    }
+
+    /**
+     * Returns the User-Agent string, with or without OS details
+     * @param includeOsDetails Append Operating System details at the end of the User-Agent
+     * @return The User-Agent
+     * @since 5956
+     */
+    public String getAgentString(boolean includeOsDetails) {
         int v = getVersion();
         String s = (v == JOSM_UNKNOWN_VERSION) ? "UNKNOWN" : Integer.toString(v);
         if (buildName != null) {
@@ -223,7 +233,11 @@ public class Version {
         if (isLocalBuild() && v != JOSM_UNKNOWN_VERSION) {
             s += " SVN";
         }
-        return "JOSM/1.5 ("+ s+" "+LanguageInfo.getJOSMLocaleCode()+") " + Main.platform.getOSDescription();
+        String result = "JOSM/1.5 ("+ s+" "+LanguageInfo.getJOSMLocaleCode()+")";
+        if (includeOsDetails) {
+            result += " " + Main.platform.getOSDescription();
+        }
+        return result;
     }
 
     /**
