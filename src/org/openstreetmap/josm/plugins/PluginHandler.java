@@ -507,7 +507,9 @@ public class PluginHandler {
             Class<?> klass = plugin.loadClass(pluginClassLoader);
             if (klass != null) {
                 System.out.println(tr("loading plugin ''{0}'' (version {1})", plugin.name, plugin.localversion));
-                pluginList.add(plugin.load(klass));
+                PluginProxy pluginProxy = plugin.load(klass);
+                pluginList.add(pluginProxy);
+                Main.addMapFrameListener(pluginProxy);
             }
             msg = null;
         } catch (PluginException e) {
@@ -916,18 +918,6 @@ public class PluginHandler {
                 null // FIXME: add help topic
         );
         return ret == 0;
-    }
-
-    /**
-     * Notified loaded plugins about a new map frame
-     *
-     * @param old the old map frame
-     * @param map the new map frame
-     */
-    public static void notifyMapFrameChanged(MapFrame old, MapFrame map) {
-        for (PluginProxy plugin : pluginList) {
-            plugin.mapFrameInitialized(old, map);
-        }
     }
 
     public static Object getPlugin(String name) {
