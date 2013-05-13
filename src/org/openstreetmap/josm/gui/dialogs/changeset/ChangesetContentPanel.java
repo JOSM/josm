@@ -9,8 +9,6 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -30,7 +28,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -49,6 +46,8 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.history.HistoryLoadTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -108,7 +107,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                 new ChangesetContentTableColumnModel(),
                 model.getSelectionModel()
         );
-        tblContent.addMouseListener(new ChangesetContentTablePopupMenuLauncher());
+        tblContent.addMouseListener(new PopupMenuLauncher(new ChangesetContentTablePopupMenu()));
         pnl.add(new JScrollPane(tblContent), BorderLayout.CENTER);
         return pnl;
     }
@@ -138,10 +137,17 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
     }
 
+    /**
+     * Constructs a new {@code ChangesetContentPanel}.
+     */
     public ChangesetContentPanel() {
         build();
     }
 
+    /**
+     * Replies the changeset content model
+     * @return The model
+     */
     public ChangesetContentTableModel getModel() {
         return model;
     }
@@ -203,36 +209,6 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
     }
 
-    class ChangesetContentTablePopupMenuLauncher extends MouseAdapter {
-        ChangesetContentTablePopupMenu menu = new ChangesetContentTablePopupMenu();
-
-        protected void launch(MouseEvent evt) {
-            if (! evt.isPopupTrigger()) return;
-            if (! model.hasSelectedPrimitives()) {
-                int row = tblContent.rowAtPoint(evt.getPoint());
-                if (row >= 0) {
-                    model.setSelectedByIdx(row);
-                }
-            }
-            menu.show(tblContent, evt.getPoint().x, evt.getPoint().y);
-        }
-
-        @Override
-        public void mouseClicked(MouseEvent evt) {
-            launch(evt);
-        }
-
-        @Override
-        public void mousePressed(MouseEvent evt) {
-            launch(evt);
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent evt) {
-            launch(evt);
-        }
-    }
-
     class ChangesetContentTablePopupMenu extends JPopupMenu {
         public ChangesetContentTablePopupMenu() {
             add(actDownloadContentAction);
@@ -276,14 +252,18 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                 public void run() {
                     try {
                         for (HistoryOsmPrimitive p : primitives) {
-                            History h = HistoryDataSet.getInstance().getHistory(p.getPrimitiveId());
+                            final History h = HistoryDataSet.getInstance().getHistory(p.getPrimitiveId());
                             if (h == null) {
                                 continue;
                             }
-                            HistoryBrowserDialogManager.getInstance().show(h);
+                            GuiHelper.runInEDT(new Runnable() {
+                                @Override public void run() {
+                                    HistoryBrowserDialogManager.getInstance().show(h);
+                                }
+                            });
                         }
                     } catch (final Exception e) {
-                        SwingUtilities.invokeLater(new Runnable() {
+                        GuiHelper.runInEDT(new Runnable() {
                             public void run() {
                                 BugReportExceptionHandler.handleException(e);
                             }

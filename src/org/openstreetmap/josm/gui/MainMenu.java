@@ -8,6 +8,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -165,6 +167,7 @@ public class MainMenu extends JMenuBar {
     public final InfoWebAction infoweb = new InfoWebAction();
     public final HistoryInfoAction historyinfo = new HistoryInfoAction();
     public final HistoryInfoWebAction historyinfoweb = new HistoryInfoWebAction();
+    public final Map<String, AutoScaleAction> autoScaleActions = new HashMap<String, AutoScaleAction>();
 
     /* Tools menu */
     public final JosmAction splitWay = new SplitWayAction();
@@ -493,7 +496,8 @@ public class MainMenu extends JMenuBar {
         add(viewMenu, new ZoomOutAction());
         viewMenu.addSeparator();
         for (String mode : AutoScaleAction.MODES) {
-            JosmAction autoScaleAction = new AutoScaleAction(mode);
+            AutoScaleAction autoScaleAction = new AutoScaleAction(mode);
+            autoScaleActions.put(mode, autoScaleAction);
             add(viewMenu, autoScaleAction);
         }
 

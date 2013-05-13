@@ -12,14 +12,22 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
+import org.openstreetmap.josm.gui.dialogs.ValidatorDialog.ValidatorBoundingXYVisitor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -35,8 +43,14 @@ public class AutoScaleAction extends JosmAction {
         marktr("selection"),
         marktr("conflict"),
         marktr("download"),
+        marktr("problem"),
         marktr("previous"),
         marktr("next")};
+    
+    private final String mode;
+
+    protected ZoomChangeAdapter zoomChangeAdapter;
+    protected MapFrameAdapter mapFrameAdapter;
 
     /**
      * Zooms the current map view to the currently selected primitives.
@@ -76,8 +90,6 @@ public class AutoScaleAction extends JosmAction {
         new AutoScaleAction(mode, false).autoScale();
     }
 
-    private final String mode;
-
     private static int getModeShortcut(String mode) {
         int shortcut = -1;
 
@@ -87,6 +99,7 @@ public class AutoScaleAction extends JosmAction {
         else if (mode.equals("selection")) { shortcut = KeyEvent.VK_3; }
         else if (mode.equals("conflict")) { shortcut = KeyEvent.VK_4; }
         else if (mode.equals("download")) { shortcut = KeyEvent.VK_5; }
+        else if (mode.equals("problem")) { shortcut = KeyEvent.VK_6; }
         else if (mode.equals("previous")) { shortcut = KeyEvent.VK_8; }
         else if (mode.equals("next")) { shortcut = KeyEvent.VK_9; }
 
@@ -94,8 +107,8 @@ public class AutoScaleAction extends JosmAction {
     }
 
     /**
-     *
-     * @param mode
+     * Constructs a new {@code AutoScaleAction}.
+     * @param mode The autoscale mode (one of {@link AutoScaleAction#MODES})
      * @param marker Used only to differentiate from default constructor
      */
     private AutoScaleAction(String mode, boolean marker) {
@@ -103,10 +116,14 @@ public class AutoScaleAction extends JosmAction {
         this.mode = mode;
     }
 
-
-    public AutoScaleAction(String mode) {
+    /**
+     * Constructs a new {@code AutoScaleAction}.
+     * @param mode The autoscale mode (one of {@link AutoScaleAction#MODES})
+     */
+    public AutoScaleAction(final String mode) {
         super(tr("Zoom to {0}", tr(mode)), "dialogs/autoscale/" + mode, tr("Zoom the view to {0}.", tr(mode)),
-                Shortcut.registerShortcut("view:zoom"+mode, tr("View: {0}", tr("Zoom to {0}", tr(mode))), getModeShortcut(mode), Shortcut.DIRECT), true);
+                Shortcut.registerShortcut("view:zoom"+mode, tr("View: {0}", tr("Zoom to {0}", tr(mode))), getModeShortcut(mode), Shortcut.DIRECT), 
+                true, null, false);
         String modeHelp = Character.toUpperCase(mode.charAt(0)) + mode.substring(1);
         putValue("help", "Action/AutoScale/" + modeHelp);
         this.mode = mode;
@@ -118,13 +135,18 @@ public class AutoScaleAction extends JosmAction {
             putValue("help", ht("/Action/ZoomToSelection"));
         } else if (mode.equals("conflict")) {
             putValue("help", ht("/Action/ZoomToConflict"));
+        } else if (mode.equals("problem")) {
+            putValue("help", ht("/Action/ZoomToProblem"));
         } else if (mode.equals("download")) {
             putValue("help", ht("/Action/ZoomToDownload"));
         } else if (mode.equals("previous")) {
             putValue("help", ht("/Action/ZoomToPrevious"));
         } else if (mode.equals("next")) {
             putValue("help", ht("/Action/ZoomToNext"));
+        } else {
+            throw new IllegalArgumentException("Unknown mode: "+mode);
         }
+        installAdapters();
     }
 
     public void autoScale()  {
@@ -170,8 +192,15 @@ public class AutoScaleAction extends JosmAction {
     }
 
     private BoundingXYVisitor getBoundingBox() {
-        BoundingXYVisitor v = new BoundingXYVisitor();
-        if (mode.equals("data")) {
+        BoundingXYVisitor v = mode.equals("problem") ? new ValidatorBoundingXYVisitor() : new BoundingXYVisitor();
+
+        if (mode.equals("problem")) {
+            TestError error = Main.map.validatorDialog.getSelectedError();
+            if (error == null) return null;
+            ((ValidatorBoundingXYVisitor) v).visit(error);
+            if (v.getBounds() == null) return null;
+            v.enlargeBoundingBox(Main.pref.getDouble("validator.zoom-enlarge-bbox", 0.0002));
+        } else if (mode.equals("data")) {
             for (Layer l : Main.map.mapView.getAllLayers()) {
                 l.visitBoundingBox(v);
             }
@@ -235,6 +264,10 @@ public class AutoScaleAction extends JosmAction {
                 // FIXME: should also check for whether a layer is selected in the layer list dialog
                 setEnabled(true);
             }
+        } else if ("conflict".equals(mode)) {
+            setEnabled(Main.map != null && Main.map.conflictDialog.getSelectedConflict() != null);
+        } else if ("problem".equals(mode)) {
+            setEnabled(Main.map != null && Main.map.validatorDialog.getSelectedError() != null);
         } else if ("previous".equals(mode)) {
             setEnabled(Main.isDisplayingMapView() && Main.map.mapView.hasZoomUndoEntries());
         } else if ("next".equals(mode)) {
@@ -257,16 +290,15 @@ public class AutoScaleAction extends JosmAction {
     @Override
     protected void installAdapters() {
         super.installAdapters();
-        // make this action listen to zoom change events
+        // make this action listen to zoom and mapframe change events
         //
-        zoomChangeAdapter = new ZoomChangeAdapter();
-        MapView.addZoomChangeListener(zoomChangeAdapter);
+        MapView.addZoomChangeListener(zoomChangeAdapter = new ZoomChangeAdapter());
+        Main.addMapFrameListener(mapFrameAdapter = new MapFrameAdapter());
         initEnabledState();
     }
 
     /**
-     * Adapter for selection change events
-     *
+     * Adapter for zoom change events
      */
     private class ZoomChangeAdapter implements MapView.ZoomChangeListener {
         public void zoomChanged() {
@@ -274,5 +306,43 @@ public class AutoScaleAction extends JosmAction {
         }
     }
 
-    private ZoomChangeAdapter zoomChangeAdapter;
+    /**
+     * Adapter for MapFrame change events
+     */
+    private class MapFrameAdapter implements MapFrameListener {
+        private ListSelectionListener conflictSelectionListener;
+        private TreeSelectionListener validatorSelectionListener;
+
+        public MapFrameAdapter() {
+            if (mode.equals("conflict")) {
+                conflictSelectionListener = new ListSelectionListener() {
+                    @Override public void valueChanged(ListSelectionEvent e) {
+                        updateEnabledState();
+                    }
+                };
+            } else if (mode.equals("problem")) {
+                validatorSelectionListener = new TreeSelectionListener() {
+                    @Override public void valueChanged(TreeSelectionEvent e) {
+                        updateEnabledState();
+                    }
+                };
+            }
+        }
+
+        @Override public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
+            if (conflictSelectionListener != null) {
+                if (newFrame != null) {
+                    newFrame.conflictDialog.addListSelectionListener(conflictSelectionListener);
+                } else if (oldFrame != null) {
+                    oldFrame.conflictDialog.removeListSelectionListener(conflictSelectionListener);
+                }
+            } else if (validatorSelectionListener != null) {
+                if (newFrame != null) {
+                    newFrame.validatorDialog.addTreeSelectionListener(validatorSelectionListener);
+                } else if (oldFrame != null) {
+                    oldFrame.validatorDialog.removeTreeSelectionListener(validatorSelectionListener);
+                }
+            }
+        }
+    }
 }
