@@ -693,19 +693,19 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
         public void launch(MouseEvent evt) {
             if (cbWireframe.isSelected())
                 return;
-            Point p = evt.getPoint();
-            int index = tblStyles.rowAtPoint(p);
-            if (index < 0) return;
-            if (!tblStyles.getCellRect(index, 1, false).contains(evt.getPoint()))
-                return;
-            if (!tblStyles.isRowSelected(index)) {
-                tblStyles.setRowSelectionInterval(index, index);
-            }
-            MapPaintPopup menu = new MapPaintPopup();
-            menu.show(tblStyles, p.x, p.y);
+            super.launch(evt);
+        }
+
+        @Override
+        protected void showMenu(MouseEvent evt) {
+            menu = new MapPaintPopup();
+            super.showMenu(evt);
         }
     }
 
+    /**
+     * The popup menu displayed when right-clicking a map paint entry
+     */
     public class MapPaintPopup extends JPopupMenu {
         /**
          * Constructs a new {@code MapPaintPopup}.

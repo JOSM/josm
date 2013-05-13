@@ -9,7 +9,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -32,7 +31,6 @@ import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -248,8 +246,7 @@ public class ChangesetCacheManager extends JFrame {
                 new ChangesetCacheTableColumnModel(),
                 model.getSelectionModel()
         );
-        tblChangesets.addMouseListener(new ChangesetTablePopupMenuLauncher());
-        tblChangesets.addMouseListener(new DblClickHandler());
+        tblChangesets.addMouseListener(new MouseEventHandler());
         tblChangesets.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "showDetails");
         tblChangesets.getActionMap().put("showDetails", new ShowDetailAction());
         model.getSelectionModel().addListSelectionListener(new ChangesetDetailViewSynchronizer());
@@ -558,26 +555,17 @@ public class ChangesetCacheManager extends JFrame {
         }
     }
 
-    class DblClickHandler extends MouseAdapter {
+    class MouseEventHandler extends PopupMenuLauncher {
+        
+        public MouseEventHandler() {
+            super(new ChangesetTablePopupMenu());
+        }
+        
         @Override
         public void mouseClicked(MouseEvent evt) {
-            if (! SwingUtilities.isLeftMouseButton(evt) || evt.getClickCount()<2)
-                return;
-            new ShowDetailAction().showDetails();
-        }
-    }
-
-    class ChangesetTablePopupMenuLauncher extends PopupMenuLauncher {
-        ChangesetTablePopupMenu menu = new ChangesetTablePopupMenu();
-        @Override
-        public void launch(MouseEvent evt) {
-            if (! model.hasSelectedChangesets()) {
-                int row = tblChangesets.rowAtPoint(evt.getPoint());
-                if (row >= 0) {
-                    model.setSelectedByIdx(row);
-                }
+            if (isDoubleClick(evt)) {
+                new ShowDetailAction().showDetails();
             }
-            menu.show(tblChangesets, evt.getPoint().x, evt.getPoint().y);
         }
     }
 

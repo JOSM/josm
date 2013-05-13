@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -80,7 +79,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         super(tr("Command Stack"), "commandstack", tr("Open a list of all commands (undo buffer)."),
                 Shortcut.registerShortcut("subwindow:commandstack", tr("Toggle: {0}",
                 tr("Command Stack")), KeyEvent.VK_O, Shortcut.ALT_SHIFT), 100, true);
-        undoTree.addMouseListener(new PopupMenuHandler());
+        undoTree.addMouseListener(new MouseEventHandler());
         undoTree.setRootVisible(false);
         undoTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         undoTree.setShowsRootHandles(true);
@@ -90,7 +89,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         undoTree.getSelectionModel().addTreeSelectionListener(undoSelectionListener);
         InputMapUtils.unassignCtrlShiftUpDown(undoTree, JComponent.WHEN_FOCUSED);
         
-        redoTree.addMouseListener(new PopupMenuHandler());
+        redoTree.addMouseListener(new MouseEventHandler());
         redoTree.setRootVisible(false);
         redoTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         redoTree.setShowsRootHandles(true);
@@ -381,7 +380,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     /**
      * undo / redo switch to reduce duplicate code
      */
-    protected enum UndoRedoType {UNDO, REDO};
+    protected enum UndoRedoType {UNDO, REDO}
 
     /**
      * Action to undo or redo all commands up to (and including) the seleced item.
@@ -443,35 +442,19 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         }
     }
 
-    class PopupMenuHandler extends PopupMenuLauncher {
+    class MouseEventHandler extends PopupMenuLauncher {
+
+        public MouseEventHandler() {
+            super(new CommandStackPopup());
+        }
         
         @Override
         public void mouseClicked(MouseEvent evt) {
-            super.mouseClicked(evt);
-            if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount()>1) {
+            if (isDoubleClick(evt)) {
                 selectAndZoomAction.actionPerformed(null);
             }
         }
-        
-        @Override
-        public void launch(MouseEvent evt) {
-            Point p = evt.getPoint();
-            JTree tree = (JTree) evt.getSource();
-            int row = tree.getRowForLocation(p.x, p.y);
-            if (row != -1) {
-                TreePath path = tree.getPathForLocation(p.x, p.y);
-                // right click on unselected element -> select it first
-                if (!tree.isPathSelected(path)) {
-                    tree.setSelectionPath(path);
-                }
-                TreePath[] selPaths = tree.getSelectionPaths();
-
-                CommandStackPopup menu = new CommandStackPopup();
-                menu.show(tree, p.x, p.y-3);
-            }
-        }
     }
-
     
     private class CommandStackPopup extends JPopupMenu {
         public CommandStackPopup(){

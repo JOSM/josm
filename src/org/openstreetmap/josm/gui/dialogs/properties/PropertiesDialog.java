@@ -394,24 +394,16 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         membershipMenu.addSeparator();
         membershipMenu.add(helpAction);
 
-        membershipTable.addMouseListener(new PopupMenuLauncher() {
+        membershipTable.addMouseListener(new PopupMenuLauncher(membershipMenu) {
             @Override
-            public void launch(MouseEvent evt) {
-                Point p = evt.getPoint();
-                int row = membershipTable.rowAtPoint(p);
-                int idx[] = membershipTable.getSelectedRows();
-                // if nothing or one row is selected, select row under mouse instead
-                if (idx.length<2 && row>-1) { 
-                    membershipTable.changeSelection(row, 0, false, false);
-                    idx = new int[]{row};
-                }
+            protected int checkTableSelection(JTable table, Point p) {
+                int row = super.checkTableSelection(table, p);
                 List<Relation> rels = new ArrayList<Relation>();
-                for (int i: idx) {
-                    Relation r = (Relation) (membershipData.getValueAt(i, 0));
-                    rels.add(r);
+                for (int i: table.getSelectedRows()) {
+                    rels.add((Relation) table.getValueAt(i, 0));
                 }
                 membershipMenuHandler.setPrimitives(rels);
-                membershipMenu.show(membershipTable, p.x, p.y-3);
+                return row;
             }
         });
     }
@@ -429,21 +421,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyMenu.add(searchActionSame);
         propertyMenu.addSeparator();
         propertyMenu.add(helpAction);
-        propertyTable.addMouseListener(new PopupMenuLauncher() {
-            @Override
-            public void launch(MouseEvent evt) {
-                Point p = evt.getPoint();
-                int row = propertyTable.rowAtPoint(p);
-                int selectedCount = propertyTable.getSelectedRowCount();
-                // if nothing or one row is selected, select row under mouse instead
-                if (selectedCount<2 && row>-1) { 
-                    propertyTable.changeSelection(row, 0, false, false);
-                }
-                if (selectedCount>=2 || row>-1) {
-                    propertyMenu.show(propertyTable, p.x, p.y-3);
-                }
-            }
-        });
+        propertyTable.addMouseListener(new PopupMenuLauncher(propertyMenu));
     }
     
     /**

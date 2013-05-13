@@ -106,10 +106,6 @@ public class ChangesetDialog extends ToggleDialog{
         DblClickHandler dblClickHandler = new DblClickHandler();
         lstInSelection.addMouseListener(dblClickHandler);
         lstInActiveDataLayer.addMouseListener(dblClickHandler);
-
-        ChangesetPopupMenuLauncher popupMenuLauncher = new ChangesetPopupMenuLauncher();
-        lstInSelection.addMouseListener(popupMenuLauncher);
-        lstInActiveDataLayer.addMouseListener(popupMenuLauncher);
     }
 
     protected void registerAsListener() {
@@ -210,6 +206,10 @@ public class ChangesetDialog extends ToggleDialog{
         
         popupMenu = new ChangesetDialogPopup(lstInActiveDataLayer, lstInSelection);
 
+        PopupMenuLauncher popupMenuLauncher = new PopupMenuLauncher(popupMenu);
+        lstInSelection.addMouseListener(popupMenuLauncher);
+        lstInActiveDataLayer.addMouseListener(popupMenuLauncher);
+        
         createLayout(pnl, false, Arrays.asList(new SideButton[] {
             new SideButton(selectObjectsAction, false),
             new SideButton(readChangesetAction, false),
@@ -518,20 +518,6 @@ public class ChangesetDialog extends ToggleDialog{
         }
 
         public void valueChanged(ListSelectionEvent e) {
-        }
-    }
-
-    class ChangesetPopupMenuLauncher extends PopupMenuLauncher {
-        @Override
-        public void launch(MouseEvent evt) {
-            JList lst = getCurrentChangesetList();
-            if (lst.getSelectedIndices().length == 0) {
-                int idx = lst.locationToIndex(evt.getPoint());
-                if (idx >=0) {
-                    lst.getSelectionModel().addSelectionInterval(idx, idx);
-                }
-            }
-            popupMenu.show(lst, evt.getX(), evt.getY());
         }
     }
 

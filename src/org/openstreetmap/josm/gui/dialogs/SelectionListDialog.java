@@ -9,7 +9,6 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +27,6 @@ import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
@@ -152,8 +150,7 @@ public class SelectionListDialog extends ToggleDialog  {
             }
         });
                 
-        lstPrimitives.addMouseListener(new SelectionPopupMenuLauncher());
-        lstPrimitives.addMouseListener(new DblClickHandler());
+        lstPrimitives.addMouseListener(new MouseEventHandler());
 
         InputMapUtils.addEnterAction(lstPrimitives, actZoomToListSelection);
     }
@@ -181,33 +178,23 @@ public class SelectionListDialog extends ToggleDialog  {
     }
 
     /**
-     * Responds to double clicks on the list of selected objects
+     * Responds to double clicks on the list of selected objects and launches the popup menu
      */
-    class DblClickHandler extends MouseAdapter {
+    class MouseEventHandler extends PopupMenuLauncher {
+        
+        public MouseEventHandler() {
+            super(popupMenu);
+        }
+        
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() < 2 || ! SwingUtilities.isLeftMouseButton(e)) return;
-            int idx = lstPrimitives.locationToIndex(e.getPoint());
-            if (idx < 0) return;
-            OsmDataLayer layer = Main.main.getEditLayer();
-            if(layer == null) return;
-            layer.data.setSelected(Collections.singleton((OsmPrimitive)model.getElementAt(idx)));
-        }
-    }
-
-    /**
-     * The popup menu launcher
-     */
-    class SelectionPopupMenuLauncher extends PopupMenuLauncher {
-
-        @Override
-        public void launch(MouseEvent evt) {
-            if (model.getSelected().isEmpty()) {
-                int idx = lstPrimitives.locationToIndex(evt.getPoint());
+            if (isDoubleClick(e)) {
+                int idx = lstPrimitives.locationToIndex(e.getPoint());
                 if (idx < 0) return;
-                model.setSelected(Collections.singleton((OsmPrimitive)model.getElementAt(idx)));
+                OsmDataLayer layer = Main.main.getEditLayer();
+                if (layer == null) return;
+                layer.data.setSelected(Collections.singleton((OsmPrimitive)model.getElementAt(idx)));
             }
-            popupMenu.show(lstPrimitives, evt.getX(), evt.getY());
         }
     }
 
@@ -757,8 +744,7 @@ public class SelectionListDialog extends ToggleDialog  {
     }
 
     /**
-     * The popup menue for the JOSM selection history entries
-     *
+     * The popup menu for the JOSM selection history entries
      */
     protected static class SelectionHistoryPopup extends JPopupMenu {
         static public void launch(Component parent, Collection<Collection<? extends OsmPrimitive>> history) {

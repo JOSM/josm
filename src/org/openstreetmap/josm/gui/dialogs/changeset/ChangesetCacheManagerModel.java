@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.ChangesetCacheEvent;
 import org.openstreetmap.josm.data.osm.ChangesetCacheListener;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * This is the model for the changeset cache manager dialog.
@@ -103,25 +104,23 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
      * @param selected the collection of changesets to select. Ignored if empty.
      */
     public void setSelectedChangesets(Collection<Changeset> selected) {
-        selectionModel.clearSelection();
+        GuiHelper.runInEDTAndWait(new Runnable() {
+            @Override public void run() {
+                selectionModel.clearSelection();
+            }
+        });
         if (selected == null || selected.isEmpty())
             return;
         for (Changeset cs: selected) {
-            int idx = data.indexOf(cs);
+            final int idx = data.indexOf(cs);
             if (idx >= 0) {
-                selectionModel.addSelectionInterval(idx,idx);
+                GuiHelper.runInEDTAndWait(new Runnable() {
+                    @Override public void run() {
+                        selectionModel.addSelectionInterval(idx,idx);
+                    }
+                });
             }
         }
-    }
-
-    /**
-     * Selects the changeset displayed at row <code>row</code>
-     *
-     * @param row the row. Ignored if < 0 or >= {@link #getRowCount()}
-     */
-    public void setSelectedByIdx(int row) {
-        if (row < 0 || row >= getRowCount()) return;
-        selectionModel.setSelectionInterval(row, row);
     }
 
     @Override

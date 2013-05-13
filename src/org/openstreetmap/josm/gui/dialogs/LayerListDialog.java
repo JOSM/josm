@@ -1019,19 +1019,10 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     class PopupMenuHandler extends PopupMenuLauncher {
-        @Override
-        public void launch(MouseEvent evt) {
-            Point p = evt.getPoint();
-            int index = layerList.rowAtPoint(p);
-            if (index < 0) return;
-            if (!layerList.getCellRect(index, 2, false).contains(evt.getPoint()))
-                return;
-            if (!layerList.isRowSelected(index)) {
-                layerList.setRowSelectionInterval(index, index);
-            }
-            Layer layer = model.getLayer(index);
-            LayerListPopup menu = new LayerListPopup(getModel().getSelectedLayers(), layer);
-            menu.show(layerList, p.x, p.y-3);
+        @Override public void launch(MouseEvent evt) {
+            Layer layer = getModel().getLayer(layerList.getSelectedRow());
+            menu = new LayerListPopup(getModel().getSelectedLayers(), layer);
+            super.launch(evt);
         }
     }
 

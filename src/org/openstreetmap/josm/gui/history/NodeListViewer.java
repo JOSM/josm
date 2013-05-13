@@ -28,6 +28,8 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -65,7 +67,7 @@ public class NodeListViewer extends JPanel {
         table.setName("table.referencenodelisttable");
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
-        table.addMouseListener(new PopupMenuLauncher(table));
+        table.addMouseListener(new InternalPopupMenuLauncher());
         table.addMouseListener(new DoubleClickAdapter(table));
         return table;
     }
@@ -78,7 +80,7 @@ public class NodeListViewer extends JPanel {
         table.setName("table.currentnodelisttable");
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
-        table.addMouseListener(new PopupMenuLauncher(table));
+        table.addMouseListener(new InternalPopupMenuLauncher());
         table.addMouseListener(new DoubleClickAdapter(table));
         return table;
     }
@@ -114,6 +116,8 @@ public class NodeListViewer extends JPanel {
         adjustmentSynchronizer = new AdjustmentSynchronizer();
         selectionSynchronizer = new SelectionSynchronizer();
 
+        popupMenu = new NodeListPopupMenu();
+
         // ---------------------------
         gc.gridx = 0;
         gc.gridy = 1;
@@ -134,8 +138,6 @@ public class NodeListViewer extends JPanel {
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.NORTHWEST;
         add(embeddInScrollPane(buildCurrentNodeListTable()),gc);
-
-        popupMenu = new NodeListPopupMenu();
     }
 
     public NodeListViewer(HistoryBrowserModel model) {
@@ -171,8 +173,8 @@ public class NodeListViewer extends JPanel {
     }
 
     static class NodeListPopupMenu extends JPopupMenu {
-        private ZoomToNodeAction zoomToNodeAction;
-        private ShowHistoryAction showHistoryAction;
+        private final ZoomToNodeAction zoomToNodeAction;
+        private final ShowHistoryAction showHistoryAction;
 
         public NodeListPopupMenu() {
             zoomToNodeAction = new ZoomToNodeAction();
@@ -261,10 +263,14 @@ public class NodeListViewer extends JPanel {
             }
             Runnable r = new Runnable() {
                 public void run() {
-                    History h = HistoryDataSet.getInstance().getHistory(primitiveId);
+                    final History h = HistoryDataSet.getInstance().getHistory(primitiveId);
                     if (h == null)
                         return;
-                    HistoryBrowserDialogManager.getInstance().show(h);
+                    GuiHelper.runInEDT(new Runnable() {
+                        @Override public void run() {
+                            HistoryBrowserDialogManager.getInstance().show(h);
+                        }
+                    });
                 }
             };
             Main.worker.submit(r);
@@ -282,33 +288,15 @@ public class NodeListViewer extends JPanel {
         return new SimplePrimitiveId(id, OsmPrimitiveType.NODE);
     }
 
-    class PopupMenuLauncher extends MouseAdapter {
-        private JTable table;
-
-        public PopupMenuLauncher(JTable table) {
-            this.table = table;
+    class InternalPopupMenuLauncher extends PopupMenuLauncher {
+        public InternalPopupMenuLauncher() {
+            super(popupMenu);
         }
 
-        @Override
-        public void mousePressed(MouseEvent e) {
-            showPopup(e);
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            showPopup(e);
-        }
-
-        private void showPopup(MouseEvent e) {
-            if (!e.isPopupTrigger()) return;
-            Point p = e.getPoint();
-            int row = table.rowAtPoint(p);
-
-            PrimitiveId pid = primitiveIdAtRow(table.getModel(), row);
-            if (pid == null)
-                return;
-            popupMenu.prepare(pid);
-            popupMenu.show(e.getComponent(), e.getX(), e.getY());
+        @Override protected int checkTableSelection(JTable table, Point p) {
+            int row = super.checkTableSelection(table, p);
+            popupMenu.prepare(primitiveIdAtRow(table.getModel(), row));
+            return row;
         }
     }
 
