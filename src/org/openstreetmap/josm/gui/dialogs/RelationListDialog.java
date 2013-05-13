@@ -5,10 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +26,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -69,12 +66,13 @@ import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * A dialog showing all known relations, with buttons to add, edit, and
@@ -294,7 +292,12 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         return f;
     }
 
-    class MouseEventHandler extends MouseAdapter {
+    class MouseEventHandler extends PopupMenuLauncher {
+        
+        public MouseEventHandler() {
+            super(popupMenu);
+        }
+        
         protected void setCurrentRelationAsSelection() {
             Main.main.getCurrentDataSet().setSelected((Relation)displaylist.getSelectedValue());
         }
@@ -305,35 +308,12 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         @Override public void mouseClicked(MouseEvent e) {
             if (Main.main.getEditLayer() == null) return;
-            if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+            if (isDoubleClick(e)) {
                 if (e.isControlDown()) {
                     editCurrentRelation();
                 } else {
                     setCurrentRelationAsSelection();
                 }
-            }
-        }
-        private void openPopup(MouseEvent e) {
-            Point p = e.getPoint();
-            int index = displaylist.locationToIndex(p);
-            if (index < 0) return;
-            if (!displaylist.getCellBounds(index, index).contains(e.getPoint()))
-                return;
-            if (! displaylist.isSelectedIndex(index)) {
-                displaylist.setSelectedIndex(index);
-            }
-            popupMenu.show(displaylist, p.x, p.y-3);
-        }
-        @Override public void mousePressed(MouseEvent e) {
-            if (Main.main.getEditLayer() == null) return;
-            if (e.isPopupTrigger()) {
-                openPopup(e);
-            }
-        }
-        @Override public void mouseReleased(MouseEvent e) {
-            if (Main.main.getEditLayer() == null) return;
-            if (e.isPopupTrigger()) {
-                openPopup(e);
             }
         }
     }

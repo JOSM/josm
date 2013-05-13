@@ -5,11 +5,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Observable;
 import java.util.Observer;
@@ -29,6 +29,7 @@ import javax.swing.table.TableCellRenderer;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -84,20 +85,14 @@ public class VersionTable extends JTable implements Observer{
         repaint();
     }
 
-    protected void showPopupMenu(MouseEvent evt) {
-        HistoryBrowserModel.VersionTableModel model = getVersionTableModel();
-        int row = rowAtPoint(evt.getPoint());
-        if (row > -1 && !model.isLatest(row)) {
-            HistoryOsmPrimitive primitive = model.getPrimitive(row);
-            popupMenu.prepare(primitive);
-            popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+    class MouseListener extends PopupMenuLauncher {
+        public MouseListener() {
+            super(popupMenu);
         }
-    }
-
-    class MouseListener extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
-            if (!showPopup(e) && e.getButton() == MouseEvent.BUTTON1) {
+            super.mousePressed(e);
+            if (!e.isPopupTrigger() && e.getButton() == MouseEvent.BUTTON1) {
                 int row = rowAtPoint(e.getPoint());
                 int col = columnAtPoint(e.getPoint());
                 if (row > 0 && (col == VersionTableColumnModel.COL_DATE || col == VersionTableColumnModel.COL_USER)) {
@@ -107,15 +102,13 @@ public class VersionTable extends JTable implements Observer{
             }
         }
         @Override
-        public void mouseReleased(MouseEvent e) {
-            showPopup(e);
-        }
-        private boolean showPopup(MouseEvent e) {
-            if (e.isPopupTrigger()) {
-                showPopupMenu(e);
-                return true;
+        protected int checkTableSelection(JTable table, Point p) {
+            HistoryBrowserModel.VersionTableModel model = getVersionTableModel();
+            int row = rowAtPoint(p);
+            if (row > -1 && !model.isLatest(row)) {
+                popupMenu.prepare(model.getPrimitive(row));
             }
-            return false;
+            return row;
         }
     }
 

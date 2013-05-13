@@ -36,7 +36,7 @@ public abstract class OsmPrimitivesTable extends JTable {
 
     public OsmPrimitivesTable(OsmPrimitivesTableModel dm, TableColumnModel cm, ListSelectionModel sm) {
         super(dm, cm, sm);
-        addMouseListener(new PopupListener());
+        addMouseListener(new PopupMenuLauncher(getPopUpMenu()));
         addMouseListener(new DblClickHandler());
     }
     
@@ -75,24 +75,6 @@ public abstract class OsmPrimitivesTable extends JTable {
         return getOsmPrimitivesTableModel().getReferredPrimitive(row);
     }
 
-    protected class PopupListener extends MouseAdapter {
-        @Override
-        public void mousePressed(MouseEvent e) {
-            showPopup(e);
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            showPopup(e);
-        }
-
-        private void showPopup(MouseEvent e) {
-            if (e.isPopupTrigger()) {
-                getPopUpMenu().show(e.getComponent(), e.getX(), e.getY());
-            }
-        }
-    }
-    
     protected class DblClickHandler extends MouseAdapter {
 
         protected void setSelection(MouseEvent e) {

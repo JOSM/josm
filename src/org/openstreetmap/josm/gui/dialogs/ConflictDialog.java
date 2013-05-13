@@ -11,7 +11,6 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,6 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
@@ -45,13 +45,15 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -80,6 +82,9 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     private ConflictListModel model;
     /** the list widget for the list of conflicts */
     private JList lstConflicts;
+    
+    private final JPopupMenu popupMenu = new JPopupMenu();
+    private final PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
 
     private ResolveAction actResolve;
     private SelectAction actSelect;
@@ -93,28 +98,24 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         lstConflicts = new JList(model);
         lstConflicts.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstConflicts.setCellRenderer(new OsmPrimitivRenderer());
-        lstConflicts.addMouseListener(new MouseAdapter(){
-            @Override public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() >= 2) {
-                    resolve();
-                }
-            }
-        });
-        lstConflicts.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+        lstConflicts.addMouseListener(new MouseEventHandler());
+        addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent e) {
                 Main.map.mapView.repaint();
             }
         });
 
         SideButton btnResolve = new SideButton(actResolve = new ResolveAction());
-        lstConflicts.getSelectionModel().addListSelectionListener(actResolve);
+        addListSelectionListener(actResolve);
 
         SideButton btnSelect = new SideButton(actSelect = new SelectAction());
-        lstConflicts.getSelectionModel().addListSelectionListener(actSelect);
+        addListSelectionListener(actSelect);
 
         createLayout(lstConflicts, true, Arrays.asList(new SideButton[] {
             btnResolve, btnSelect
         }));
+        
+        popupMenuHandler.addAction(Main.main.menu.autoScaleActions.get("conflict"));
     }
 
     /**
@@ -140,6 +141,33 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     public void hideNotify() {
         MapView.removeEditLayerChangeListener(this);
         DataSet.removeSelectionListener(this);
+    }
+    
+    /**
+     * Add a list selection listener to the conflicts list.
+     * @param listener the ListSelectionListener
+     * @since 5958
+     */
+    public void addListSelectionListener(ListSelectionListener listener) {
+        lstConflicts.getSelectionModel().addListSelectionListener(listener);
+    }
+    
+    /**
+     * Remove the given list selection listener from the conflicts list.
+     * @param listener the ListSelectionListener
+     * @since 5958
+     */
+    public void removeListSelectionListener(ListSelectionListener listener) {
+        lstConflicts.getSelectionModel().removeListSelectionListener(listener);
+    }
+    
+    /**
+     * Replies the popup menu handler.
+     * @return The popup menu handler
+     * @since 5958
+     */
+    public PopupMenuHandler getPopupMenuHandler() {
+        return popupMenuHandler;
     }
 
     /**
@@ -301,6 +329,17 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     @Override
     public String helpTopic() {
         return ht("/Dialog/ConflictList");
+    }
+    
+    class MouseEventHandler extends PopupMenuLauncher {
+        public MouseEventHandler() {
+            super(popupMenu);
+        }
+        @Override public void mouseClicked(MouseEvent e) {
+            if (isDoubleClick(e)) {
+                resolve();
+            }
+        }
     }
 
     /**

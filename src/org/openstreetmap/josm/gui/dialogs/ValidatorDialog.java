@@ -4,9 +4,7 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -20,7 +18,6 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -44,12 +41,14 @@ import org.openstreetmap.josm.data.validation.ValidatorVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.validator.ValidatorTreePanel;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -64,8 +63,6 @@ import org.xml.sax.SAXException;
  * @author frsantos
  */
 public class ValidatorDialog extends ToggleDialog implements SelectionChangedListener, LayerChangeListener {
-    /** Serializable ID */
-    private static final long serialVersionUID = 2952292777351992696L;
 
     /** The display tree */
     public ValidatorTreePanel tree;
@@ -77,9 +74,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     /** The select button */
     private SideButton selectButton;
 
-    private JPopupMenu popupMenu;
-    private TestError popupMenuError = null;
-
+    private final JPopupMenu popupMenu = new JPopupMenu();
+    private final PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
+    
     /** Last selected element */
     private DefaultMutableTreeNode lastSelectedNode = null;
 
@@ -93,20 +90,11 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 Shortcut.registerShortcut("subwindow:validator", tr("Toggle: {0}", tr("Validation results")),
                         KeyEvent.VK_V, Shortcut.ALT_SHIFT), 150, false, ValidatorPreference.class);
 
-        popupMenu = new JPopupMenu();
-
-        JMenuItem zoomTo = new JMenuItem(tr("Zoom to problem"));
-        zoomTo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                zoomToProblem();
-            }
-        });
-        popupMenu.add(zoomTo);
+        popupMenuHandler.addAction(Main.main.menu.autoScaleActions.get("problem"));
 
         tree = new ValidatorTreePanel();
-        tree.addMouseListener(new ClickWatch());
-        tree.addTreeSelectionListener(new SelectionWatch());
+        tree.addMouseListener(new MouseEventHandler());
+        addTreeSelectionListener(new SelectionWatch());
         InputMapUtils.unassignCtrlShiftUpDown(tree, JComponent.WHEN_FOCUSED);
 
         List<SideButton> buttons = new LinkedList<SideButton>();
@@ -316,31 +304,6 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         }
     }
 
-    private void showPopupMenu(MouseEvent e) {
-        if (!e.isPopupTrigger())
-            return;
-        popupMenuError = null;
-        TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-        if (selPath == null)
-            return;
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getPathComponent(selPath.getPathCount() - 1);
-        if (!(node.getUserObject() instanceof TestError))
-            return;
-        popupMenuError = (TestError) node.getUserObject();
-        popupMenu.show(e.getComponent(), e.getX(), e.getY());
-    }
-
-    private void zoomToProblem() {
-        if (popupMenuError == null)
-            return;
-        ValidatorBoundingXYVisitor bbox = new ValidatorBoundingXYVisitor();
-        bbox.visit(popupMenuError);
-        if (bbox.getBounds() == null)
-            return;
-        bbox.enlargeBoundingBox(Main.pref.getDouble("validator.zoom-enlarge-bbox", 0.0002));
-        Main.map.mapView.recalculateCenterScale(bbox);
-    }
-
     /**
      * Sets the selection of the map to the current selected items.
      */
@@ -446,9 +409,57 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     }
 
     /**
-     * Watches for clicks.
+     * Add a tree selection listener to the validator tree.
+     * @param listener the TreeSelectionListener
+     * @since 5958
      */
-    public class ClickWatch extends MouseAdapter {
+    public void addTreeSelectionListener(TreeSelectionListener listener) {
+        tree.addTreeSelectionListener(listener);
+    }
+    
+    /**
+     * Remove the given tree selection listener from the validator tree.
+     * @param listener the TreeSelectionListener
+     * @since 5958
+     */
+    public void removeTreeSelectionListener(TreeSelectionListener listener) {
+        tree.removeTreeSelectionListener(listener);
+    }
+    
+    /**
+     * Replies the popup menu handler.
+     * @return The popup menu handler
+     * @since 5958
+     */
+    public PopupMenuHandler getPopupMenuHandler() {
+        return popupMenuHandler;
+    }
+    
+    /**
+     * Replies the currently selected error, or {@code null}.
+     * @return The selected error, if any.
+     * @since 5958
+     */
+    public TestError getSelectedError() {
+        Object comp = tree.getLastSelectedPathComponent();
+        if (comp instanceof DefaultMutableTreeNode) {
+            Object object = ((DefaultMutableTreeNode)comp).getUserObject();
+            if (object instanceof TestError) {
+                return (TestError) object;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Watches for double clicks and launches the popup menu.
+     */
+    class MouseEventHandler extends PopupMenuLauncher {
+        
+        public MouseEventHandler() {
+            super(popupMenu);
+        }
+        
         @Override
         public void mouseClicked(MouseEvent e) {
             fixButton.setEnabled(false);
@@ -457,7 +468,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             }
             selectButton.setEnabled(false);
 
-            boolean isDblClick = e.getClickCount() > 1;
+            boolean isDblClick = isDoubleClick(e);
 
             Collection<OsmPrimitive> sel = isDblClick ? new HashSet<OsmPrimitive>(40) : null;
 
@@ -466,20 +477,20 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
             if (isDblClick) {
                 Main.main.getCurrentDataSet().setSelected(sel);
-                if(Main.pref.getBoolean("validator.autozoom", false)) {
+                if (Main.pref.getBoolean("validator.autozoom", false)) {
                     AutoScaleAction.zoomTo(sel);
                 }
             }
         }
-
-        @Override
-        public void mousePressed(MouseEvent e) {
-            showPopupMenu(e);
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            showPopupMenu(e);
+        
+        @Override public void launch(MouseEvent e) {
+            TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+            if (selPath == null)
+                return;
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getPathComponent(selPath.getPathCount() - 1);
+            if (!(node.getUserObject() instanceof TestError))
+                return;
+            super.launch(e);
         }
 
     }
