@@ -51,7 +51,6 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.JMultilineLabel;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -104,6 +103,7 @@ public class PluginHandler {
             new DeprecatedPlugin("multipoly", IN_CORE),
             new DeprecatedPlugin("remotecontrol", IN_CORE),
             new DeprecatedPlugin("imagery", IN_CORE),
+            new DeprecatedPlugin("imageryadjust", IN_CORE),
             new DeprecatedPlugin("slippymap", IN_CORE),
             new DeprecatedPlugin("wmsplugin", IN_CORE),
             new DeprecatedPlugin("ParallelWay", IN_CORE),
