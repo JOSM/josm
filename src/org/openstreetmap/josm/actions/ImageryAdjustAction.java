@@ -114,6 +114,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             return;
 
         if (layer.isVisible()) {
+            requestFocusInMapView();
             prevEastNorth=Main.map.mapView.getEastNorth(e.getX(),e.getY());
             Main.map.mapView.setNewCursor(Cursor.MOVE_CURSOR, this);
         }
