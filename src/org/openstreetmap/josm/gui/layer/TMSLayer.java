@@ -1486,7 +1486,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     @Override
     public String getToolTipText() {
-        return null;
+        return tr("TMS layer ({0}), downloading in zoom {1}", getName(), currentZoomLevel);
     }
 
     @Override

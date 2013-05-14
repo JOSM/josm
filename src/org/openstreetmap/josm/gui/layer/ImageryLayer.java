@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -21,8 +22,10 @@ import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
@@ -35,7 +38,9 @@ import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MenuScroller;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.UrlLabel;
 
 public abstract class ImageryLayer extends Layer {
 
@@ -119,7 +124,19 @@ public abstract class ImageryLayer extends Layer {
 
     @Override
     public Object getInfoComponent() {
-        return getToolTipText();
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.add(new JLabel(getToolTipText()), GBC.eol());
+        if (info != null) {
+            String url = info.getUrl();
+            if (url != null) {
+                panel.add(new JLabel(tr("URL: ")), GBC.std().insets(0, 5, 2, 0)); 
+                panel.add(new UrlLabel(url), GBC.eol().insets(2, 5, 10, 0));
+            }
+            if (dx != 0.0 || dy != 0.0) {
+                panel.add(new JLabel(tr("Offset: ") + dx + ";" + dy), GBC.eol().insets(0, 5, 10, 0));
+            }
+        }
+        return panel;
     }
 
     public static ImageryLayer create(ImageryInfo info) {
