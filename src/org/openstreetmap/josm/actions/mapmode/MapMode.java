@@ -48,11 +48,18 @@ abstract public class MapMode extends JosmAction implements MouseListener, Mouse
         this.cursor = cursor;
     }
 
+    /**
+     * Makes this map mode active.
+     */
     public void enterMode() {
         putValue("active", true);
         Main.map.mapView.setNewCursor(cursor, this);
         updateStatusLine();
     }
+    
+    /**
+     * Makes this map mode inactive.
+     */
     public void exitMode() {
         putValue("active", false);
         Main.map.mapView.resetCursor(this);
@@ -94,10 +101,17 @@ abstract public class MapMode extends JosmAction implements MouseListener, Mouse
         alt = (modifiers & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
         shift = (modifiers & ActionEvent.SHIFT_MASK) != 0;
     }
+    
+    protected void requestFocusInMapView() {
+        if (isEnabled()) {
+            // request focus in order to enable the expected keyboard shortcuts (see #8710)
+            Main.map.mapView.requestFocus();
+        }
+    }
 
-    public void mouseReleased(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {requestFocusInMapView();}
     public void mouseExited(MouseEvent e) {}
-    public void mousePressed(MouseEvent e) {}
+    public void mousePressed(MouseEvent e) {requestFocusInMapView();}
     public void mouseClicked(MouseEvent e) {}
     public void mouseEntered(MouseEvent e) {}
     public void mouseMoved(MouseEvent e) {}
