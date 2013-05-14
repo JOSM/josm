@@ -236,7 +236,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             return;
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
-
+        
+        requestFocusInMapView();
         updateKeyModifiers(e);
         
         selectedNode = Main.map.mapView.getNearestNode(e.getPoint(), OsmPrimitive.isSelectablePredicate);
