@@ -159,7 +159,7 @@ public class GpxLayer extends Layer {
                 ts += dtf.format(bounds[0]) + " - " + dtf.format(bounds[1]);
             }
 
-            int diff = (int) (bounds[1].getTime() - bounds[0].getTime());
+            int diff = (int) (bounds[1].getTime() - bounds[0].getTime()) / 1000;
             ts += String.format(" (%d:%02d)", diff / 3600, (diff % 3600) / 60);
         }
         return ts;
