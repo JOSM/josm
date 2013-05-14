@@ -290,6 +290,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
 
     @Override
     public void mousePressed(MouseEvent e) {
+        requestFocusInMapView();
         updateModifiersState(e);
         // Other buttons are off limit, but we still get events.
         if (e.getButton() != MouseEvent.BUTTON1)

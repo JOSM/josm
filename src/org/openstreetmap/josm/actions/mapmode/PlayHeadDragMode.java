@@ -24,6 +24,10 @@ public class PlayHeadDragMode extends MapMode {
     private Point mouseStart = null;
     private PlayHeadMarker playHeadMarker = null;
 
+    /**
+     * Constructs a new {@code PlayHeadDragMode}.
+     * @param m Audio marker
+     */
     public PlayHeadDragMode(PlayHeadMarker m) {
         super(tr("Drag play head"), "playheaddrag", tr("Drag play head"), null,
                 Main.map, Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
@@ -67,6 +71,7 @@ public class PlayHeadDragMode extends MapMode {
         if (ev.getButton() != MouseEvent.BUTTON1 || p == null || ! dragging)
             return;
 
+        requestFocusInMapView();
         updateKeyModifiers(ev);
 
         EastNorth en = Main.map.mapView.getEastNorth(ev.getX(), ev.getY());
