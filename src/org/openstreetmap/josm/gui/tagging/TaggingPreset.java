@@ -19,6 +19,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -665,6 +667,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
         public String locale_text;
         public String values;
+        public String values_from;
         public String values_context;
         public String display_values;
         public String locale_display_values;
@@ -759,7 +762,32 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         private String[] initListEntriesFromAttributes() {
             char delChar = getDelChar();
 
-            String[] value_array = splitEscaped(delChar, values);
+            String[] value_array = null;
+            
+            if (values_from != null) {
+                String[] class_method = values_from.split("#");
+                if (class_method != null && class_method.length == 2) {
+                    try {
+                        Method method = Class.forName(class_method[0]).getMethod(class_method[1]);
+                        // Check method is public static String[] methodName();
+                        int mod = method.getModifiers();
+                        if (Modifier.isPublic(mod) && Modifier.isStatic(mod) 
+                                && method.getReturnType().equals(String[].class) && method.getParameterTypes().length == 0) {
+                            value_array = (String[]) method.invoke(null);
+                        } else {
+                            System.err.println(tr("Broken tagging preset \"{0}-{1}\" - Java method given in ''values_from'' is not \"{2}\"", key, text,
+                                    "public static String[] methodName()"));
+                        }
+                    } catch (Exception e) {
+                        System.err.println(tr("Broken tagging preset \"{0}-{1}\" - Java method given in ''values_from'' threw {2} ({3})", key, text,
+                                e.getClass().getName(), e.getMessage()));
+                    }
+                }
+            }
+            
+            if (value_array == null) {
+                value_array = splitEscaped(delChar, values);
+            }
 
             final String displ = Utils.firstNonNull(locale_display_values, display_values);
             String[] display_array = displ == null ? value_array : splitEscaped(delChar, displ);
