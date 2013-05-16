@@ -47,6 +47,9 @@ combo: combo box, with multiple choices and possible to enter free form text
   key: key to set
   text: fixed label to display
   values: comma separated list of values
+  values_from: to use instead of "values" if the list of values has to be obtained with a Java method 
+               of this form: public static String[] getValues();
+               The value must be: "full.package.name.ClassName#methodName"
   display_values: comma separated list of values to be displayed instead of the
                   database values, order and number must be equal to values
   short_descriptions: comma separated list of texts to be displayed below each
@@ -66,6 +69,9 @@ multiselect: list of values from which zero or more can be selected
   delimiter: character that separates values (default: semicolon) - this
              will also be used to separate selected values in the tag.
   values: delimiter-separated list of values (delimiter can be escaped with backslash)
+  values_from: to use instead of "values" if the list of values has to be obtained with a Java method 
+               of this form: public static String[] getValues();
+               The value must be: "full.package.name.ClassName#methodName"
   rows: specify the number of rows to display (default -1)
   display_values: delimiter-separated list of values to be displayed instead of the
                   database values, order and number must be equal to values
@@ -6051,7 +6057,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="addr:street" text="Street name" use_last_as_default="force" match="key" />
                 <text key="addr:city" text="City name" use_last_as_default="force" match="key" />
                 <text key="addr:postcode" text="Post code" use_last_as_default="force" match="key" />
-                <combo key="addr:country" text="Country code" values="AT,CH,DE,FR,GB,IT,RS,US" use_last_as_default="force" match="key" />
+                <combo key="addr:country" text="Country code" values_from="java.util.Locale#getISOCountries" use_last_as_default="force" match="key" />
             </optional>
         </item>
         <item name="Address Interpolation" icon="presets/interpolation.png" type="way">
