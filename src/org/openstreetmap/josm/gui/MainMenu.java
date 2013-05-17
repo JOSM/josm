@@ -35,6 +35,7 @@ import org.openstreetmap.josm.actions.CopyCoordinatesAction;
 import org.openstreetmap.josm.actions.CreateCircleAction;
 import org.openstreetmap.josm.actions.CreateMultipolygonAction;
 import org.openstreetmap.josm.actions.DeleteAction;
+import org.openstreetmap.josm.actions.DialogsToggleAction;
 import org.openstreetmap.josm.actions.DistributeAction;
 import org.openstreetmap.josm.actions.DownloadAction;
 import org.openstreetmap.josm.actions.DownloadPrimitiveAction;
@@ -64,8 +65,10 @@ import org.openstreetmap.josm.actions.NewAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.OpenLocationAction;
 import org.openstreetmap.josm.actions.OrthogonalizeAction;
+import org.openstreetmap.josm.actions.OrthogonalizeAction.Undo;
 import org.openstreetmap.josm.actions.PasteAction;
 import org.openstreetmap.josm.actions.PasteTagsAction;
+import org.openstreetmap.josm.actions.PreferenceToggleAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.actions.PurgeAction;
 import org.openstreetmap.josm.actions.RedoAction;
@@ -92,8 +95,6 @@ import org.openstreetmap.josm.actions.ViewportFollowToggleAction;
 import org.openstreetmap.josm.actions.WireframeToggleAction;
 import org.openstreetmap.josm.actions.ZoomInAction;
 import org.openstreetmap.josm.actions.ZoomOutAction;
-import org.openstreetmap.josm.actions.OrthogonalizeAction.Undo;
-import org.openstreetmap.josm.actions.PreferenceToggleAction;
 import org.openstreetmap.josm.actions.audio.AudioBackAction;
 import org.openstreetmap.josm.actions.audio.AudioFasterAction;
 import org.openstreetmap.josm.actions.audio.AudioFwdAction;
@@ -232,6 +233,7 @@ public class MainMenu extends JMenuBar {
     public final JumpToAction jumpToAct = new JumpToAction();
 
     public final TaggingPresetSearchAction presetSearchAction = new TaggingPresetSearchAction();
+    public final DialogsToggleAction dialogsToggleAction = new DialogsToggleAction();
     public FullscreenToggleAction fullscreenToggleAction = null;
 
     /** this menu listener hides unnecessary JSeparators in a menu list but does not remove them.
@@ -518,6 +520,13 @@ public class MainMenu extends JMenuBar {
             fullscreen.setAccelerator(fullscreenToggleAction.getShortcut().getKeyStroke());
             fullscreenToggleAction.addButtonModel(fullscreen.getModel());
         }
+
+        // -- dialogs panel toggle action
+        final JCheckBoxMenuItem dialogsToggle = new JCheckBoxMenuItem(dialogsToggleAction);
+        dialogsToggle.setAccelerator(dialogsToggleAction.getShortcut().getKeyStroke());
+        dialogsToggleAction.addButtonModel(dialogsToggle.getModel());
+        viewMenu.add(dialogsToggle);
+
         viewMenu.addSeparator();
         add(viewMenu, info);
         add(viewMenu, infoweb);
@@ -626,14 +635,17 @@ public class MainMenu extends JMenuBar {
             );
         }
 
+        @Override
         public void activeLayerChange(Layer oldLayer, Layer newLayer) {
             refreshEnabled();
         }
 
+        @Override
         public void layerAdded(Layer newLayer) {
             refreshEnabled();
         }
 
+        @Override
         public void layerRemoved(Layer oldLayer) {
             refreshEnabled();
         }

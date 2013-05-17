@@ -29,12 +29,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -50,6 +52,8 @@ import javax.swing.MenuElement;
 import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -65,13 +69,11 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
 import org.openstreetmap.josm.actions.ParameterizedActionDecorator;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class ToolbarPreferences implements PreferenceSettingFactory {
-
 
     private static final String EMPTY_TOOLBAR_MARKER = "<!-empty-!>";
 
@@ -227,10 +229,11 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     String paramName = readTillChar('=', '=');
                     skip('=');
                     String paramValue = readTillChar(',','}');
-                    if ("icon".equals(paramName) && paramValue.length() > 0)
+                    if ("icon".equals(paramName) && paramValue.length() > 0) {
                         result.setIcon(paramValue);
-                    else if("name".equals(paramName) && paramValue.length() > 0)
+                    } else if("name".equals(paramName) && paramValue.length() > 0) {
                         result.setName(paramValue);
+                    }
                     skip(',');
                 }
                 skip('}');
@@ -293,8 +296,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     escape(tmp);
                     first = false;
                 }
-                if(!first)
+                if(!first) {
                     result.append('}');
+            }
             }
 
             return result.toString();
@@ -338,8 +342,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     default:
                         return null;
                     }
-                } else
+                } else {
                     rowIndex -= 2;
+            }
             }
             ActionParameter<Object> param = getParam(rowIndex);
             switch (columnIndex) {
@@ -367,8 +372,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 } else if (rowIndex == 1) {
                      currentAction.setIcon((String)aValue);
                      return;
-                } else
+                } else {
                     rowIndex -= 2;
+            }
             }
             ActionParameter<Object> param = getParam(rowIndex);
             currentAction.getParameters().put(param.getName(), param.readFromString((String)aValue));
@@ -382,45 +388,81 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
     }
 
-    private static class ToolbarPopupMenu extends JPopupMenu {
-        public ToolbarPopupMenu(final ActionDefinition action) {
+    private class ToolbarPopupMenu extends JPopupMenu  {
+        ActionDefinition act;
 
-            if(action != null) {
-                add(tr("Remove from toolbar",action.getDisplayName()))
-                        .addActionListener(new ActionListener() {
-                            @Override public void actionPerformed(ActionEvent e) {
+        private void setActionAndAdapt(ActionDefinition action) {
+            this.act = action;
+            doNotHide.setSelected(Main.pref.getBoolean("toolbar.always-visible", true));
+            remove.setVisible(act!=null);
+            shortcutEdit.setVisible(act!=null);
+        }
+
+        JMenuItem remove = new JMenuItem(new AbstractAction(tr("Remove from toolbar")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                                 Collection<String> t = new LinkedList<String>(getToolString());
                                 ActionParser parser = new ActionParser(null);
                                 // get text definition of current action
-                                String res = parser.saveAction(action);
+                String res = parser.saveAction(act);
                                 // remove the button from toolbar preferences
                                 t.remove( res );
                                 Main.pref.putCollection("toolbar", t);
                                 Main.toolbar.refreshToolbarControl();
                             }
                 });
-            }
             
-            add(tr("Configure toolbar")).addActionListener(new ActionListener() {
-                @Override public void actionPerformed(ActionEvent e) {
+        JMenuItem configure = new JMenuItem(new AbstractAction(tr("Configure toolbar")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                     final PreferenceDialog p =new PreferenceDialog(Main.parent);
                     p.selectPreferencesTabByName("toolbar");
                     p.setVisible(true);
                 }
             });
 
-            add(tr("Edit shortcut")).addActionListener(new ActionListener() {
-                @Override public void actionPerformed(ActionEvent e) {
+        JMenuItem shortcutEdit = new JMenuItem(new AbstractAction(tr("Edit shortcut")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                     final PreferenceDialog p =new PreferenceDialog(Main.parent);
-                    p.getTabbedPane().getShortcutPreference().setDefaultFilter(action.getDisplayName());
+                p.getTabbedPane().getShortcutPreference().setDefaultFilter(act.getDisplayName());
                     p.selectPreferencesTabByName("shortcuts");
                     p.setVisible(true);
-                    // refresh toolbar to accept changes of shortcuts without restart
+                // refresh toolbar to try using changed shortcuts without restart
                     Main.toolbar.refreshToolbarControl(); 
                 }
             });
+
+        JCheckBoxMenuItem doNotHide = new JCheckBoxMenuItem(new AbstractAction(tr("getSt hide toolbar and menu")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
+                Main.pref.put("toolbar.always-visible", sel);
+                Main.pref.put("menu.always-visible", sel);
+        }
+        });
+        {
+            addPopupMenuListener(new PopupMenuListener() {
+                @Override
+                public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                    setActionAndAdapt(buttonActions.get(
+                            ((JPopupMenu)e.getSource()).getInvoker()
+                    ));
+    }
+                @Override
+                public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
+
+                @Override
+                public void popupMenuCanceled(PopupMenuEvent e) {}
+            });
+            add(remove);
+            add(configure);
+            add(shortcutEdit);
+            add(doNotHide);
         }
     }
+
+    private ToolbarPopupMenu popupMenu = new ToolbarPopupMenu();
 
     /**
      * Key: Registered name (property "toolbar" of action).
@@ -432,6 +474,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     private DefaultMutableTreeNode rootActionsNode = new DefaultMutableTreeNode(tr("Actions"));
 
     public JToolBar control = new JToolBar();
+    private HashMap<Object, ActionDefinition> buttonActions = new HashMap<Object, ActionDefinition>(30);
 
     @Override
     public PreferenceSetting createPreferenceSetting() {
@@ -825,9 +868,10 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     t.add("|");
                 } else {
                     String res = parser.saveAction(action);
-                    if(res != null)
+                    if(res != null) {
                         t.add(res);
                 }
+            }
             }
             if (t.isEmpty()) {
                 t = Collections.singletonList(EMPTY_TOOLBAR_MARKER);
@@ -841,7 +885,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
     public ToolbarPreferences() {
         control.setFloatable(false);
-        control.addMouseListener(new PopupMenuLauncher(new ToolbarPopupMenu(null)));
+        control.setComponentPopupMenu(popupMenu);
     }
 
     private void loadAction(DefaultMutableTreeNode node, MenuElement menu) {
@@ -978,12 +1022,14 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
      */
     public void refreshToolbarControl() {
         control.removeAll();
+        buttonActions.clear();
 
         for (ActionDefinition action : getDefinedActions()) {
             if (action.isSeparator()) {
                 control.addSeparator();
             } else {
                 final JButton b = addButtonAndShortcut(action);
+                buttonActions.put(b, action);
                 
                 Icon i = action.getDisplayIcon();
                 if (i != null) {
@@ -1000,7 +1046,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                         }
                     });
                 }
-                b.addMouseListener(new PopupMenuLauncher( new ToolbarPopupMenu(action)));
+                b.setInheritsPopupMenu(true);
             }
         }
         control.setVisible(control.getComponentCount() != 0);
@@ -1013,7 +1059,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         Shortcut sc = null;
         if (action.getAction() instanceof JosmAction) {
             sc = ((JosmAction) action.getAction()).getShortcut();
-            if (sc.getAssignedKey() == KeyEvent.CHAR_UNDEFINED) sc = null;
+            if (sc.getAssignedKey() == KeyEvent.CHAR_UNDEFINED) {
+                sc = null;
+        }
         }
 
         long paramCode = 0;
@@ -1022,12 +1070,18 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         }
         
         String tt = action.getDisplayTooltip();
-        if (tt==null) tt="";
+        if (tt==null) {
+            tt="";
+        }
 
         if (sc == null || paramCode != 0) {
             String name = (String) action.getAction().getValue("toolbar");
-            if (name==null) name=action.getDisplayName();
-            if (paramCode!=0) name = name+paramCode;
+            if (name==null) {
+                name=action.getDisplayName();
+            }
+            if (paramCode!=0) {
+                name = name+paramCode;
+            }
             String desc = action.getDisplayName() + ((paramCode==0)?"":action.parameters.toString());
             sc = Shortcut.registerShortcut("toolbar:"+name, tr("Toolbar: {0}", desc),
                 KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
@@ -1043,7 +1097,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             }
         }
         
-        if (!tt.isEmpty()) b.setToolTipText(tt);
+        if (!tt.isEmpty()) {
+            b.setToolTipText(tt);
+        }
         return b;
     }
 
