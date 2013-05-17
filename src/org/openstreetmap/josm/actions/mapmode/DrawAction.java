@@ -1723,7 +1723,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 repeatedCb.setState(Main.pref.getBoolean("draw.anglesnap.toggleOnRepeatedA",true));
                 add(repeatedCb);
                 add(helperCb);
-                add(projectionCb);;
+                add(projectionCb);
                 add(new AbstractAction(tr("Disable")) {
                     @Override public void actionPerformed(ActionEvent e) {
                         saveAngles("180");
