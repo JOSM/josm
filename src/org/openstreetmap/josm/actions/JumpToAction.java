@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
-public class JumpToAction extends JosmAction implements MouseListener {
+public class JumpToAction extends JosmAction {
     /**
      * Constructs a new {@code JumpToAction}.
      */
@@ -66,15 +66,15 @@ public class JumpToAction extends JosmAction implements MouseListener {
                   BorderLayout.NORTH);
 
         class osmURLListener implements DocumentListener {
-            public void changedUpdate(DocumentEvent e) { parseURL(); }
-            public void insertUpdate(DocumentEvent e) { parseURL(); }
-            public void removeUpdate(DocumentEvent e) { parseURL(); }
+            @Override public void changedUpdate(DocumentEvent e) { parseURL(); }
+            @Override public void insertUpdate(DocumentEvent e) { parseURL(); }
+            @Override public void removeUpdate(DocumentEvent e) { parseURL(); }
         }
 
         class osmLonLatListener implements DocumentListener {
-            public void changedUpdate(DocumentEvent e) { updateUrl(false); }
-            public void insertUpdate(DocumentEvent e) { updateUrl(false); }
-            public void removeUpdate(DocumentEvent e) { updateUrl(false); }
+            @Override public void changedUpdate(DocumentEvent e) { updateUrl(false); }
+            @Override public void insertUpdate(DocumentEvent e) { updateUrl(false); }
+            @Override public void removeUpdate(DocumentEvent e) { updateUrl(false); }
         }
 
         osmLonLatListener x=new osmLonLatListener();
@@ -169,18 +169,6 @@ public class JumpToAction extends JosmAction implements MouseListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        showJumpToDialog();
-    }
-
-    public void mousePressed(MouseEvent e) {}
-
-    public void mouseReleased(MouseEvent e) {}
-
-    public void mouseEntered(MouseEvent e) {}
-
-    public void mouseExited(MouseEvent e) {}
-
-    public void mouseClicked(MouseEvent e) {
         showJumpToDialog();
     }
 }

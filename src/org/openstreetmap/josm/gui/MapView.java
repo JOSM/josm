@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -260,10 +259,10 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
         //store the last mouse action
         this.addMouseMotionListener(new MouseMotionListener() {
-            public void mouseDragged(MouseEvent e) {
+            @Override public void mouseDragged(MouseEvent e) {
                 mouseMoved(e);
             }
-            public void mouseMoved(MouseEvent e) {
+            @Override public void mouseMoved(MouseEvent e) {
                 lastMEvent = e;
             }
         });
@@ -482,7 +481,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         Collections.sort(
                 ret,
                 new Comparator<Layer>() {
-                    public int compare(Layer l1, Layer l2) {
+                    @Override public int compare(Layer l1, Layer l2) {
                         if (l1 instanceof OsmDataLayer && l2 instanceof OsmDataLayer) {
                             if (l1 == getActiveLayer()) return -1;
                             if (l2 == getActiveLayer()) return 1;
@@ -779,16 +778,14 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
          * the user to re-select the tool after i.e. moving a layer. While testing I found
          * that I switch layers and actions at the same time and it was annoying to mind the
          * order. This way it works as visual clue for new users */
-        for (Enumeration<AbstractButton> e = Main.map.toolGroup.getElements() ; e.hasMoreElements() ;) {
-            AbstractButton button = e.nextElement();
-            MapMode mode = (MapMode)button.getAction();
-            boolean isLayerSupported = mode.layerIsSupported(layer);
-            button.setEnabled(isLayerSupported);
-            // Also update associated shortcut (fix #6876)
-            if (isLayerSupported) {
-                Main.registerActionShortcut(mode, mode.getShortcut());
+        for (AbstractButton b: Main.map.allMapModeButtons) {
+            MapMode mode = (MapMode)b.getAction();
+            if (mode.layerIsSupported(layer)) {
+                Main.registerActionShortcut(mode, mode.getShortcut()); //fix #6876
+                b.setEnabled(true);
             } else {
                 Main.unregisterShortcut(mode.getShortcut());
+                b.setEnabled(false);
             }
         }
         AudioPlayer.reset();
@@ -858,6 +855,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         return temporaryLayers.remove(mvp);
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(Layer.VISIBLE_PROP)) {
             repaint();
@@ -893,7 +891,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     }
 
     private SelectionChangedListener repaintSelectionChangedListener = new SelectionChangedListener(){
-        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        @Override public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
             repaint();
         }
     };
