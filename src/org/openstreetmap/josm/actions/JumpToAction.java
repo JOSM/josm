@@ -7,8 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import javax.swing.Icon;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,6 +19,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.MapView;
+
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -30,10 +30,8 @@ public class JumpToAction extends JosmAction {
      * Constructs a new {@code JumpToAction}.
      */
     public JumpToAction() {
-        super(tr("Jump To Position"), null, tr("Opens a dialog that allows to jump to a specific location"), Shortcut.registerShortcut("tools:jumpto", tr("Tool: {0}", tr("Jump To Position")),
-        KeyEvent.VK_J, Shortcut.CTRL), false);
-        putValue("toolbar", "action/jumpto");
-        Main.toolbar.register(this);
+        super(tr("Jump To Position"), (Icon) null, tr("Opens a dialog that allows to jump to a specific location"), Shortcut.registerShortcut("tools:jumpto", tr("Tool: {0}", tr("Jump To Position")),
+        KeyEvent.VK_J, Shortcut.CTRL), true, "action/jumpto", false);
     }
 
     private JosmTextField url = new JosmTextField();
@@ -168,6 +166,7 @@ public class JumpToAction extends JosmAction {
         } catch (NumberFormatException x) {}
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         showJumpToDialog();
     }
