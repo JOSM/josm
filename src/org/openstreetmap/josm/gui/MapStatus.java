@@ -78,7 +78,7 @@ public class MapStatus extends JPanel implements Helpful {
      */
     final MapView mv;
     final Collector collector;
-
+    
     public class BackgroundProgressMonitor implements ProgressMonitorDialog {
 
         private String title;
@@ -140,6 +140,8 @@ public class MapStatus extends JPanel implements Helpful {
     final ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 10);
     final JProgressBar progressBar = new JProgressBar();
     public final BackgroundProgressMonitor progressMonitor = new BackgroundProgressMonitor();
+    
+    private MouseListener jumpToOnLeftClick;
 
     /**
      * This is the thread that runs in the background and collects the information displayed.
@@ -700,6 +702,16 @@ public class MapStatus extends JPanel implements Helpful {
                 add(doNotHide);
             }
         });
+        
+        // also show Jump To dialog on mouse click (except context menu)
+        jumpToOnLeftClick = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() != MouseEvent.BUTTON3) {
+                    Main.main.menu.jumpToAct.showJumpToDialog();
+                }
+            }
+        };
 
         // Listen for mouse movements and set the position text field
         mv.addMouseMotionListener(new MouseMotionListener(){
@@ -739,6 +751,9 @@ public class MapStatus extends JPanel implements Helpful {
         add(angleText, GBC.std().insets(3,0,0,0));
         add(distText, GBC.std().insets(3,0,0,0));
 
+        latText.addMouseListener(jumpToOnLeftClick);
+        lonText.addMouseListener(jumpToOnLeftClick);
+        
         helpText.setEditable(false);
         add(nameText, GBC.std().insets(3,0,0,0));
         add(helpText, GBC.std().insets(3,0,0,0).fill(GBC.HORIZONTAL));
