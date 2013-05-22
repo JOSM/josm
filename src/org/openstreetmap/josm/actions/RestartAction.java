@@ -17,6 +17,7 @@ import java.util.List;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -48,7 +49,7 @@ public class RestartAction extends JosmAction {
     }
     
     /**
-     * Determines if restartting the application should be possible on this platform.
+     * Determines if restarting the application should be possible on this platform.
      * @return {@code true} if the mandatory system property {@code sun.java.command} is defined, {@code false} otherwise.
      * @since 5951
      */
@@ -64,7 +65,12 @@ public class RestartAction extends JosmAction {
         if (isRestartSupported() && !Main.exitJosm(false)) return;
         try {
             // java binary
-            final List<String> cmd = new ArrayList<String>(Collections.singleton(System.getProperty("java.home") + "/bin/java"));
+            final String java = System.getProperty("java.home") + File.separator + "bin" + File.separator + 
+                    (Main.platform instanceof PlatformHookWindows ? "java.exe" : "java");
+            if (!new File(java).isFile()) {
+                throw new IOException("Unable to find suitable java runtime at "+java);
+            }
+            final List<String> cmd = new ArrayList<String>(Collections.singleton(java));
             // vm arguments
             for (String arg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
                 // if it's the agent argument : we ignore it otherwise the
@@ -88,6 +94,7 @@ public class RestartAction extends JosmAction {
             }
             // finally add program arguments
             cmd.addAll(Arrays.asList(Main.commandLineArgs));
+            Main.info("Restart "+cmd);
             // execute the command in a shutdown hook, to be sure that all the
             // resources have been disposed before restarting the application
             Runtime.getRuntime().addShutdownHook(new Thread() {
