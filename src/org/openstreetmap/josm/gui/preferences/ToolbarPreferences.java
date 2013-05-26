@@ -433,7 +433,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 }
             });
 
-        JCheckBoxMenuItem doNotHide = new JCheckBoxMenuItem(new AbstractAction(tr("getSt hide toolbar and menu")) {
+        JCheckBoxMenuItem doNotHide = new JCheckBoxMenuItem(new AbstractAction(tr("Hide toolbar and menu")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
@@ -448,7 +448,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     setActionAndAdapt(buttonActions.get(
                             ((JPopupMenu)e.getSource()).getInvoker()
                     ));
-    }
+                }
                 @Override
                 public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
 
