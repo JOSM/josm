@@ -96,7 +96,13 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
     }
 
-    private static final ObjectFactory OBJECT_FACTORY = null; // Fake reference to keep build scripts from removing ObjectFactory class. This class is not used directly but it's necessary for jaxb to work
+    // Fake reference to keep build scripts from removing ObjectFactory class. This class is not used directly but it's necessary for jaxb to work
+    private static final ObjectFactory OBJECT_FACTORY = null;
+
+    // these values correspond to the zoom levels used throughout OSM and are in meters/pixel from zoom level 0 to 18.
+    // taken from http://wiki.openstreetmap.org/wiki/Zoom_levels
+    private static final Double[] snapLevels = { 156412.0, 78206.0, 39103.0, 19551.0, 9776.0, 4888.0,
+        2444.0, 1222.0, 610.984, 305.492, 152.746, 76.373, 38.187, 19.093, 9.547, 4.773, 2.387, 1.193, 0.596 };
 
     public static final BooleanProperty PROP_ALPHA_CHANNEL = new BooleanProperty("imagery.wms.alpha_channel", true);
     public static final IntegerProperty PROP_SIMULTANEOUS_CONNECTIONS = new IntegerProperty("imagery.wms.simultaneousConnections", 3);
@@ -106,7 +112,8 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     public static final IntegerProperty PROP_IMAGE_SIZE = new IntegerProperty("imagery.wms.imageSize", 500);
 
     public int messageNum = 5; //limit for messages per layer
-    protected String resolution;
+    protected double resolution;
+    protected String resolutionText;
     protected int imageSize;
     protected int dax = 10;
     protected int day = 10;
@@ -116,6 +123,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     protected GeorefImage[][] images;
     protected final int serializeFormatVersion = 5;
     protected boolean autoDownloadEnabled = true;
+    protected boolean autoResolutionEnabled = true;
     protected boolean settingsChanged;
     public WmsCache cache;
     private AttributionSupport attribution = new AttributionSupport();
@@ -179,10 +187,11 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                 cache.loadIndex();
             }
         }
-        if(this.info.getPixelPerDegree() == 0.0) {
-            this.info.setPixelPerDegree(getPPD());
-        }
-        resolution = Main.map.mapView.getDist100PixelText();
+
+        // if automatic resolution is enabled, ensure that the first zoom level
+        // is already snapped. Otherwise it may load tiles that will never get
+        // used again when zooming.
+        updateResolutionSetting(this, autoResolutionEnabled);
 
         final MouseAdapter adapter = new MouseAdapter() {
             @Override
@@ -286,9 +295,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
 
     @Override public String getToolTipText() {
         if(autoDownloadEnabled)
-            return tr("WMS layer ({0}), automatically downloading in zoom {1}", getName(), resolution);
+            return tr("WMS layer ({0}), automatically downloading in zoom {1}", getName(), resolutionText);
         else
-            return tr("WMS layer ({0}), downloading in zoom {1}", getName(), resolution);
+            return tr("WMS layer ({0}), downloading in zoom {1}", getName(), resolutionText);
     }
 
     private int modulo (int a, int b) {
@@ -302,6 +311,10 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
 
     @Override public void paint(Graphics2D g, final MapView mv, Bounds b) {
         if(info.getUrl() == null || (usesInvalidUrl && !isInvalidUrlConfirmed)) return;
+
+        if (autoResolutionEnabled && getBestZoom() != mv.getDist100Pixel()) {
+            changeResolution(this, true);
+        }
 
         settingsChanged = false;
 
@@ -477,10 +490,11 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                 new LayerSaveAsAction(this),
                 new BookmarkWmsAction(),
                 SeparatorLayerAction.INSTANCE,
-                new ZoomToNativeResolution(),
                 new StartStopAction(),
                 new ToggleAlphaAction(),
+                new ToggleAutoResolutionAction(),
                 new ChangeResolutionAction(),
+                new ZoomToNativeResolution(),
                 new ReloadErrorTilesAction(),
                 new DownloadAction(),
                 SeparatorLayerAction.INSTANCE,
@@ -666,20 +680,71 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
     }
 
-    public static class ChangeResolutionAction extends AbstractAction implements LayerAction {
-        public ChangeResolutionAction() {
-            super(tr("Change resolution"));
+    /**
+     * Finds the most suitable resolution for the current zoom level, but prefers
+     * higher resolutions. Snaps to values defined in snapLevels.
+     * @return
+     */
+    private static double getBestZoom() {
+        // not sure why getDist100Pixel returns values corresponding to
+        // the snapLevels, which are in meters per pixel. It works, though.
+        double dist = Main.map.mapView.getDist100Pixel();
+        for(int i = snapLevels.length-2; i >= 0; i--) {
+            if(snapLevels[i+1]/3 + snapLevels[i]*2/3 > dist)
+                return snapLevels[i+1];
         }
+        return snapLevels[0];
+    }
 
-        private void changeResolution(WMSLayer layer) {
-            layer.resolution = Main.map.mapView.getDist100PixelText();
-            layer.info.setPixelPerDegree(layer.getPPD());
-            layer.settingsChanged = true;
+    /**
+     * Updates the given layer’s resolution settings to the current zoom level. Does
+     * not update existing tiles, only new ones will be subject to the new settings.
+     *
+     * @param layer
+     * @param snap  Set to true if the resolution should snap to certain values instead of
+     *              matching the current zoom level perfectly
+     */
+    private static void updateResolutionSetting(WMSLayer layer, boolean snap) {
+        if(snap) {
+            layer.resolution = getBestZoom();
+            layer.resolutionText = MapView.getDistText(layer.resolution);
+        } else {
+            layer.resolution = Main.map.mapView.getDist100Pixel();
+            layer.resolutionText = Main.map.mapView.getDist100PixelText();
+        }
+        layer.info.setPixelPerDegree(layer.getPPD());
+    }
+
+    /**
+     * Updates the given layer’s resolution settings to the current zoom level and
+     * updates existing tiles. If round is true, tiles will be updated gradually, if
+     * false they will be removed instantly (and redrawn only after the new resolution
+     * image has been loaded).
+     * @param layer
+     * @param snap  Set to true if the resolution should snap to certain values instead of
+     *              matching the current zoom level perfectly
+     */
+    private static void changeResolution(WMSLayer layer, boolean snap) {
+        updateResolutionSetting(layer, snap);
+
+        layer.settingsChanged = true;
+
+        // Don’t move tiles off screen when the resolution is rounded. This
+        // prevents some flickering when zooming with auto-resolution enabled
+        // and instead gradually updates each tile.
+        if(!snap) {
             for(int x = 0; x<layer.dax; ++x) {
                 for(int y = 0; y<layer.day; ++y) {
                     layer.images[x][y].changePosition(-1, -1);
                 }
             }
+        }
+    }
+
+
+    public static class ChangeResolutionAction extends AbstractAction implements LayerAction {
+        public ChangeResolutionAction() {
+            super(tr("Change resolution"));
         }
 
         @Override
@@ -690,7 +755,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
 
             List<Layer> layers = LayerListDialog.getInstance().getModel().getSelectedLayers();
             for (Layer l: layers) {
-                changeResolution((WMSLayer) l);
+                changeResolution((WMSLayer) l, false);
             }
             Main.map.mapView.repaint();
         }
@@ -761,6 +826,31 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             item.setSelected(PROP_ALPHA_CHANNEL.get());
             return item;
         }
+        @Override
+        public boolean supportLayers(List<Layer> layers) {
+            return layers.size() == 1 && layers.get(0) instanceof WMSLayer;
+        }
+    }
+
+
+    public class ToggleAutoResolutionAction extends AbstractAction implements LayerAction {
+        public ToggleAutoResolutionAction() {
+            super(tr("Automatically change resolution"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ev) {
+            JCheckBoxMenuItem checkbox = (JCheckBoxMenuItem) ev.getSource();
+            autoResolutionEnabled = checkbox.isSelected();
+        }
+
+        @Override
+        public Component createMenuComponent() {
+            JCheckBoxMenuItem item = new JCheckBoxMenuItem(this);
+            item.setSelected(autoResolutionEnabled);
+            return item;
+        }
+
         @Override
         public boolean supportLayers(List<Layer> layers) {
             return layers.size() == 1 && layers.get(0) instanceof WMSLayer;
