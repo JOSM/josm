@@ -23,6 +23,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -81,6 +82,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.TagModel;
+import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -752,6 +754,7 @@ public class GenericRelationEditor extends RelationEditor  {
 
     public static Command addPrimitivesToRelation(final Relation orig, Collection<? extends OsmPrimitive> primitivesToAdd) {
         try {
+            final Collection<TaggingPreset> presets = TaggingPreset.getMatchingPresets(EnumSet.of(TaggingPreset.PresetType.RELATION), orig.getKeys(), false);
             Relation relation = new Relation(orig);
             boolean modified = false;
             for (OsmPrimitive p : primitivesToAdd) {
@@ -762,7 +765,8 @@ public class GenericRelationEditor extends RelationEditor  {
                         && !confirmAddingPrimitive(p)) {
                     continue;
                 }
-                relation.addMember(new RelationMember("", p));
+                final String role = presets.isEmpty() ? null : presets.iterator().next().suggestRoleForOsmPrimitive(p);
+                relation.addMember(new RelationMember(role == null ? "" : role, p));
                 modified = true;
             }
             return modified ? new ChangeCommand(orig, relation) : null;
