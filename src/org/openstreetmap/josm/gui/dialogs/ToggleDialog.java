@@ -477,8 +477,6 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             lblTitle_weak.setMinimumSize(new Dimension(0,20));
             add(lblTitle_weak, GBC.std().fill(GBC.HORIZONTAL));
 
-            addMouseListener(new MouseEventHandler());
-
             if(Main.pref.getBoolean("dialog.dynamic.buttons", true)) {
                 buttonsHide = new JButton(ImageProvider.get("misc", buttonHiding != ButtonHiddingType.ALWAYS_SHOWN ? "buttonhide" : "buttonshow"));
                 buttonsHide.setToolTipText(tr("Toggle dynamic buttons"));
@@ -587,6 +585,10 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                     add(action);
                 }
             }
+        }
+        
+        public void registerMouseListener() {
+            addMouseListener(new MouseEventHandler());
         }
         
         class MouseEventHandler extends PopupMenuLauncher {
@@ -859,6 +861,10 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         } else if (buttonsHide != null) {
             buttonsHide.setVisible(false);
         }
+        
+        // Register title bar mouse listener only after buttonActions has been initialized to have a complete popup menu
+        titleBar.registerMouseListener();
+        
         return data;
     }
 
