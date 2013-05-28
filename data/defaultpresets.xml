@@ -402,7 +402,7 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="lit" text="Lit" default="off" /> 
             </optional>
         </item>
-        <item name="Unclassified" icon="presets/way_unclassified.png" type="way">
+        <item name="Unclassified" icon="presets/way_unclassified.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=unclassified"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=unclassified"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=unclassified"
@@ -431,7 +431,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="width" text="Width (meters)" />
             </optional>
         </item>
-        <item name="Residential" icon="presets/residential.png" type="way">
+        <item name="Residential" icon="presets/residential.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=residential"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=residential"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=residential"
@@ -459,7 +459,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="width" text="Width (meters)" />
             </optional>
         </item>
-        <item name="Living Street" icon="presets/living_street.png" type="way">
+        <item name="Living Street" icon="presets/living_street.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=living_street"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=living_street"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=living_street"
@@ -512,7 +512,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="width" text="Width (meters)" />
             </optional>
         </item>
-        <item name="Service" icon="presets/way_unclassified.png" type="way">
+        <item name="Service" icon="presets/way_unclassified.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=service"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=service"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=service"
@@ -542,7 +542,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="width" text="Width (meters)" />
             </optional>
         </item>
-        <item name="Parking Aisle" icon="presets/way_unclassified.png" type="way">
+        <item name="Parking Aisle" icon="presets/way_unclassified.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:service=parking_aisle"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:service=parking_aisle"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:service=parking_aisle"
@@ -560,7 +560,7 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="lit" text="Lit" default="off" /> 
             </optional>
         </item>
-        <item name="Road (Unknown Type)" icon="presets/way_unclassified.png" type="way">
+        <item name="Road (Unknown Type)" icon="presets/way_unclassified.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=road"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=road"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=road"
@@ -587,7 +587,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="width" text="Width (meters)" />
             </optional>
         </item>
-        <item name="Construction" icon="presets/construction.png" type="way">
+        <item name="Construction" icon="presets/construction.png" type="way,closedway">
             <label text="Edit Highway Under Construction" />
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=construction"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:construction"
@@ -721,7 +721,7 @@ Note that for a match, at least one positive and no negative is required.
         </item>
     </group> <!-- Streets -->
     <group name="Ways" icon="presets/way_unclassified.png">
-        <item name="Track" icon="presets/track1.png" type="way">
+        <item name="Track" icon="presets/track1.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=track"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:highway=track"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=track"
@@ -755,7 +755,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="width" text="Width (meters)" />
             </optional>
         </item>
-        <item name="Path" icon="presets/path.png" type="way">
+        <item name="Path" icon="presets/path.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=path"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=path"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=path"

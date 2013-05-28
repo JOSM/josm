@@ -296,6 +296,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                             str = (String) entry.getKey();
                         }
                     }
+                    ((JLabel)c).putClientProperty("html.disable", Boolean.TRUE); // Fix #8730
                     ((JLabel)c).setText(str);
                 }
                 return c;
