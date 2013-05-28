@@ -56,11 +56,12 @@ combo: combo box, with multiple choices and possible to enter free form text
                       display_value. (Only if it is not possible to describe
                       the entry in 2-3 words.) Instead of comma separeted list
   instead using values, display_values and short_descriptions, the following form is also supported:
-    <list_entry value="" display_value="' short_description="" icon="" icon_size=""/>
+    <list_entry value="" display_value="" short_description="" icon="" icon_size=""/>
         icon: location of icon
         icon_size: maximal size of icon. If tag is not setup it is taken default size of icon file
   default: default string to display (defaults to "")
   use_last_as_default: true/false/force (default is "false")
+  editable: allow to add other values as text (default is "true")
   match: none/key/key!/keyvalue (default is none, see below for more information)
 
 multiselect: list of values from which zero or more can be selected
@@ -3121,7 +3122,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="amenity" value="restaurant" />
             <text key="name" text="Name" />
             <text key="operator" text="Operator" />
-            <multiselect key="cuisine" text="Cuisine" values="italian;chinese;pizza;burger;greek;german;indian;regional;kebab;turkish;asian;thai;mexican;japanese;french;sandwich;sushi"/>
+            <multiselect key="cuisine" text="Cuisine" values="italian;chinese;pizza;burger;greek;german;indian;regional;kebab;turkish;asian;thai;mexican;japanese;french;sandwich;sushi" />
             <check key="microbrewery" text="Microbrewery" default="off" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
