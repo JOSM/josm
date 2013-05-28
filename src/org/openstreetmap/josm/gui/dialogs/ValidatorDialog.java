@@ -509,7 +509,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
             boolean hasFixes = setSelection(null, false);
             fixButton.setEnabled(hasFixes);
-            Main.map.repaint();
+            if (Main.map != null) {
+                Main.map.repaint();
+            }
         }
     }
 
