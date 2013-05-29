@@ -103,7 +103,6 @@ public class PluginHandler {
             new DeprecatedPlugin("multipoly", IN_CORE),
             new DeprecatedPlugin("remotecontrol", IN_CORE),
             new DeprecatedPlugin("imagery", IN_CORE),
-            new DeprecatedPlugin("imageryadjust", IN_CORE),
             new DeprecatedPlugin("slippymap", IN_CORE),
             new DeprecatedPlugin("wmsplugin", IN_CORE),
             new DeprecatedPlugin("ParallelWay", IN_CORE),
