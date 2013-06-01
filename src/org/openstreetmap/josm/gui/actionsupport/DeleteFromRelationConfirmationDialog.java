@@ -263,6 +263,10 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
             return null;
         }
 
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
     }
 
     private static class RelationMemberTableColumnModel extends DefaultTableColumnModel{
