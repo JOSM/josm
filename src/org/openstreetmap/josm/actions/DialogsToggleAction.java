@@ -29,7 +29,7 @@ public class DialogsToggleAction extends JosmAction {
                 tr("Toggle dialogs panel"),
                 (Icon) null, /* no icon */
                 tr("Toggle dialogs panel, maximize mapview"),
-                Shortcut.registerShortcut("menu:view:dialogspanel", tr("Toggle dialogs panel"),KeyEvent.CHAR_UNDEFINED, Shortcut.NONE),
+                Shortcut.registerShortcut("menu:view:dialogspanel", tr("Toggle dialogs panel"),KeyEvent.VK_TAB, Shortcut.DIRECT),
                 true, "dialogspanel", /* register in toolbar */
                 false
         );

@@ -127,7 +127,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 mapFrame, ImageProvider.getCursor("crosshair", null));
 
         snappingShortcut = Shortcut.registerShortcut("mapmode:drawanglesnapping",
-                tr("Mode: Draw Angle snapping"), KeyEvent.VK_TAB, Shortcut.DIRECT);
+                tr("Mode: Draw Angle snapping"), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
         snapChangeAction = new SnapChangeAction();
         snapCheckboxMenuItem = addMenuItem();
         snapHelper.setMenuCheckBox(snapCheckboxMenuItem);

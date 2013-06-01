@@ -11,6 +11,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Area;
@@ -54,6 +55,7 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * This is a component used in the {@link MapFrame} for browsing the map. It use is to
@@ -266,6 +268,11 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 lastMEvent = e;
             }
         });
+
+        if (Shortcut.findShortcut(KeyEvent.VK_TAB, 0)!=null)
+        {
+            setFocusTraversalKeysEnabled(false);
+        }
     }
 
     /**
