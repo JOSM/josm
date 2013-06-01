@@ -246,9 +246,13 @@ public class Geometry {
      * Finds the intersection of two line segments
      * @return EastNorth null if no intersection was found, the EastNorth coordinates of the intersection otherwise
      */
-    public static EastNorth getSegmentSegmentIntersection(
-            EastNorth p1, EastNorth p2,
-            EastNorth p3, EastNorth p4) {
+    public static EastNorth getSegmentSegmentIntersection(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
+        
+        CheckParameterUtil.ensureValidCoordinates(p1, "p1");
+        CheckParameterUtil.ensureValidCoordinates(p2, "p2");
+        CheckParameterUtil.ensureValidCoordinates(p3, "p3");
+        CheckParameterUtil.ensureValidCoordinates(p4, "p4");
+        
         double x1 = p1.getX();
         double y1 = p1.getY();
         double x2 = p2.getX();
@@ -283,9 +287,17 @@ public class Geometry {
     /**
      * Finds the intersection of two lines of infinite length.
      * @return EastNorth null if no intersection was found, the coordinates of the intersection otherwise
+     * @throws IllegalArgumentException if a parameter is null or without valid coordinates
      */
     public static EastNorth getLineLineIntersection(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
 
+        CheckParameterUtil.ensureValidCoordinates(p1, "p1");
+        CheckParameterUtil.ensureValidCoordinates(p2, "p2");
+        CheckParameterUtil.ensureValidCoordinates(p3, "p3");
+        CheckParameterUtil.ensureValidCoordinates(p4, "p4");
+        
+        if (!p1.isValid()) throw new IllegalArgumentException();
+        
         // Convert line from (point, point) form to ax+by=c
         double a1 = p2.getY() - p1.getY();
         double b1 = p1.getX() - p2.getX();
@@ -304,6 +316,12 @@ public class Geometry {
     }
 
     public static boolean segmentsParallel(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
+
+        CheckParameterUtil.ensureValidCoordinates(p1, "p1");
+        CheckParameterUtil.ensureValidCoordinates(p2, "p2");
+        CheckParameterUtil.ensureValidCoordinates(p3, "p3");
+        CheckParameterUtil.ensureValidCoordinates(p4, "p4");
+
         // Convert line from (point, point) form to ax+by=c
         double a1 = p2.getY() - p1.getY();
         double b1 = p1.getX() - p2.getX();
@@ -383,6 +401,11 @@ public class Geometry {
      * @return true if first vector is clockwise before second vector.
      */
     public static boolean angleIsClockwise(EastNorth commonNode, EastNorth firstNode, EastNorth secondNode) {
+        
+        CheckParameterUtil.ensureValidCoordinates(commonNode, "commonNode");
+        CheckParameterUtil.ensureValidCoordinates(firstNode, "firstNode");
+        CheckParameterUtil.ensureValidCoordinates(secondNode, "secondNode");
+        
         double dy1 = (firstNode.getY() - commonNode.getY());
         double dy2 = (secondNode.getY() - commonNode.getY());
         double dx1 = (firstNode.getX() - commonNode.getX());
@@ -582,6 +605,10 @@ public class Geometry {
      * @return Angle in radians (-pi, pi]
      */
     public static double getSegmentAngle(EastNorth p1, EastNorth p2) {
+        
+        CheckParameterUtil.ensureValidCoordinates(p1, "p1");
+        CheckParameterUtil.ensureValidCoordinates(p2, "p2");
+        
         return Math.atan2(p2.north() - p1.north(), p2.east() - p1.east());
     }
 
@@ -594,6 +621,11 @@ public class Geometry {
      * @return Angle in radians (-pi, pi]
      */
     public static double getCornerAngle(EastNorth p1, EastNorth p2, EastNorth p3) {
+        
+        CheckParameterUtil.ensureValidCoordinates(p1, "p1");
+        CheckParameterUtil.ensureValidCoordinates(p2, "p2");
+        CheckParameterUtil.ensureValidCoordinates(p3, "p3");
+        
         Double result = getSegmentAngle(p2, p1) - getSegmentAngle(p2, p3);
         if (result <= -Math.PI) {
             result += 2 * Math.PI;
@@ -650,8 +682,12 @@ public class Geometry {
      * @param ap
      * @return Intersection coordinate or null
      */
-    public static EastNorth getSegmentAltituteIntersection(EastNorth sp1,
-            EastNorth sp2, EastNorth ap) {
+    public static EastNorth getSegmentAltituteIntersection(EastNorth sp1, EastNorth sp2, EastNorth ap) {
+        
+        CheckParameterUtil.ensureValidCoordinates(sp1, "sp1");
+        CheckParameterUtil.ensureValidCoordinates(sp2, "sp2");
+        CheckParameterUtil.ensureValidCoordinates(ap, "ap");
+
         Double segmentLenght = sp1.distance(sp2);
         Double altitudeAngle = getSegmentAngle(sp1, sp2) + Math.PI / 2;
 
