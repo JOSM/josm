@@ -65,6 +65,7 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -127,6 +128,9 @@ public class SelectionListDialog extends ToggleDialog  {
         }));
     }
 
+    /**
+     * Constructs a new {@code SelectionListDialog}.
+     */
     public SelectionListDialog() {
         super(tr("Selection"), "selectionlist", tr("Open a selection list window."),
                 Shortcut.registerShortcut("subwindow:selection", tr("Toggle: {0}",
@@ -218,6 +222,10 @@ public class SelectionListDialog extends ToggleDialog  {
         return popupMenuHandler;
     }
 
+    /**
+     * Replies the selected OSM primitives.
+     * @return The selected OSM primitives
+     */
     public Collection<OsmPrimitive> getSelectedPrimitives() {
         return model.getSelected();
     }
@@ -483,16 +491,6 @@ public class SelectionListDialog extends ToggleDialog  {
         }
 
         /**
-         * Replies the collection of OSM primitives in the view
-         * of this model
-         *
-         * @return complete content of the view
-         */
-        public Collection<OsmPrimitive> getAllElements() {
-            return selection;
-        }
-
-        /**
          * Sets the OSM primitives to be selected in the view of this model
          *
          * @param sel the collection of primitives to select
@@ -520,28 +518,32 @@ public class SelectionListDialog extends ToggleDialog  {
          *
          * @param selection the collection of currently selected OSM objects
          */
-        public void setJOSMSelection(Collection<? extends OsmPrimitive> selection) {
+        public void setJOSMSelection(final Collection<? extends OsmPrimitive> selection) {
             this.selection.clear();
-            if (selection == null) {
-                fireContentsChanged(this, 0, getSize());
-                return;
+            if (selection != null) {
+                this.selection.addAll(selection);
+                sort();
             }
-            this.selection.addAll(selection);
-            sort();
-            fireContentsChanged(this, 0, getSize());
-            remember(selection);
-            double dist = -1;
-            SubclassFilteredCollection<OsmPrimitive, Way> ways = new SubclassFilteredCollection<OsmPrimitive, Way>(selection, OsmPrimitive.wayPredicate);
-            // Compute total length of selected way(s) until an arbitrary limit set to 250 ways
-            // in order to prevent performance issue if a large number of ways are selected (old behaviour kept in that case, see #8403)
-            int maxWays = Math.max(1, Main.pref.getInteger("selection.max-ways-for-statusline", 250));
-            if (!ways.isEmpty() && ways.size() <= maxWays) {
-                dist = 0.0;
-                for (Way w : ways) {
-                    dist += w.getLength();
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override public void run() {
+                    fireContentsChanged(this, 0, getSize());
+                    if (selection != null) {
+                        remember(selection);
+                        double dist = -1;
+                        SubclassFilteredCollection<OsmPrimitive, Way> ways = new SubclassFilteredCollection<OsmPrimitive, Way>(selection, OsmPrimitive.wayPredicate);
+                        // Compute total length of selected way(s) until an arbitrary limit set to 250 ways
+                        // in order to prevent performance issue if a large number of ways are selected (old behaviour kept in that case, see #8403)
+                        int maxWays = Math.max(1, Main.pref.getInteger("selection.max-ways-for-statusline", 250));
+                        if (!ways.isEmpty() && ways.size() <= maxWays) {
+                            dist = 0.0;
+                            for (Way w : ways) {
+                                dist += w.getLength();
+                            }
+                        }
+                        Main.map.statusLine.setDist(dist);
+                    }
                 }
-            }
-            Main.map.statusLine.setDist(dist);
+            });
         }
 
         /**
