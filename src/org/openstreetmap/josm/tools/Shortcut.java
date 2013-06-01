@@ -245,7 +245,7 @@ public class Shortcut {
     private static Map<Integer, Integer> groups= new HashMap<Integer, Integer>();
 
     // check if something collides with an existing shortcut
-    private static Shortcut findShortcut(int requestedKey, int modifier) {
+    public static Shortcut findShortcut(int requestedKey, int modifier) {
         if (modifier == getGroupModifier(NONE))
             return null;
         for (Shortcut sc : shortcuts.values()) {
