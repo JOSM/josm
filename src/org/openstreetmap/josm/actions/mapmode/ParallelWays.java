@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.CombineWayAction;
@@ -35,7 +37,7 @@ public class ParallelWays {
     public ParallelWays(Collection<Way> sourceWays, boolean copyTags, int refWayIndex) {
         // Possible/sensible to use PrimetiveDeepCopy here?
 
-        //// Make a deep copy of the ways, keeping the copied ways connected
+        // Make a deep copy of the ways, keeping the copied ways connected
         // TODO: This assumes the first/last nodes of the ways are the only possible shared nodes.
         HashMap<Node, Node> splitNodeMap = new HashMap<Node, Node>(sourceWays.size());
         for (Way w : sourceWays) {
@@ -61,13 +63,31 @@ public class ParallelWays {
         }
         sourceWays = null; // Ensure that we only use the copies from now
 
-        //// Find a linear ordering of the nodes. Fail if there isn't one.
+        // Find a linear ordering of the nodes. Fail if there isn't one.
         CombineWayAction.NodeGraph nodeGraph = CombineWayAction.NodeGraph.createUndirectedGraphFromNodeWays(ways);
-        sortedNodes = nodeGraph.buildSpanningPath();
-        if (sortedNodes == null)
+        List<Node> sortedNodesPath = nodeGraph.buildSpanningPath();
+        if (sortedNodesPath == null)
             throw new IllegalArgumentException("Ways must have spanning path"); // Create a dedicated exception?
+        
+        // Fix #8631 - Remove duplicated nodes from graph to be robust with self-intersecting ways
+        Set<Node> removedNodes = new HashSet<Node>();
+        sortedNodes = new ArrayList<Node>();
+        for (int i = 0; i < sortedNodesPath.size(); i++) {
+            Node n = sortedNodesPath.get(i);
+            if (i < sortedNodesPath.size()-1) {
+                if (sortedNodesPath.get(i+1).getCoor().equals(n.getCoor())) {
+                    removedNodes.add(n);
+                    for (Way w : ways)
+                        w.removeNode(n);
+                    continue;
+                }
+            }
+            if (!removedNodes.contains(n)) {
+                sortedNodes.add(n);
+            }
+        }
 
-        //// Ugly method of ensuring that the offset isn't inverted. I'm sure there is a better and more elegant way, but I'm starting to get sleepy, so I do this for now.
+        // Ugly method of ensuring that the offset isn't inverted. I'm sure there is a better and more elegant way, but I'm starting to get sleepy, so I do this for now.
         {
             Way refWay = ways.get(refWayIndex);
             boolean refWayReversed = true;
@@ -82,7 +102,7 @@ public class ParallelWays {
             }
         }
 
-        //// Initialize the required parameters. (segment normals, etc.)
+        // Initialize the required parameters. (segment normals, etc.)
         nodeCount = sortedNodes.size();
         pts = new EastNorth[nodeCount];
         normals = new EastNorth[nodeCount - 1];
@@ -109,11 +129,9 @@ public class ParallelWays {
      * @param d
      */
     public void changeOffset(double d) {
-        //// This is the core algorithm:
-        /* 1. Calculate a parallel line, offset by 'd', to each segment in
-         *    the path
-         * 2. Find the intersection of lines belonging to neighboring
-         *    segments. These become the new node positions
+        // This is the core algorithm:
+        /* 1. Calculate a parallel line, offset by 'd', to each segment in the path
+         * 2. Find the intersection of lines belonging to neighboring segments. These become the new node positions
          * 3. Do some special casing for closed paths
          *
          * Simple and probably not even close to optimal performance wise
@@ -160,11 +178,8 @@ public class ParallelWays {
 
     private List<Command> makeAddWayAndNodesCommandList() {
         ArrayList<Command> commands = new ArrayList<Command>(sortedNodes.size() + ways.size());
-        for (int i = 0; i < sortedNodes.size() - 1; i++) {
+        for (int i = 0; i < sortedNodes.size() - (isClosedPath() ? 1 : 0); i++) {
             commands.add(new AddCommand(sortedNodes.get(i)));
-        }
-        if (!isClosedPath()) {
-            commands.add(new AddCommand(sortedNodes.get(sortedNodes.size() - 1)));
         }
         for (Way w : ways) {
             commands.add(new AddCommand(w));
