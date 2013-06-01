@@ -84,6 +84,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.PresetType;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -682,8 +683,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
         if (newLayer == null) editHelper.saveTagsIfNeeded();
         // it is time to save history of tags
-            
-        updateSelection();
+        GuiHelper.runInEDT(new Runnable() {
+            @Override public void run() {
+                updateSelection();
+            }
+        });
     }
 
     @Override

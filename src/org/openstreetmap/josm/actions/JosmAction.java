@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -222,16 +223,23 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
      *
      */
     private class LayerChangeAdapter implements MapView.LayerChangeListener {
+        private void updateEnabledStateInEDT() {
+            GuiHelper.runInEDT(new Runnable() {
+                @Override public void run() {
+                    updateEnabledState();
+                }
+            });
+        }
         public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-            updateEnabledState();
+            updateEnabledStateInEDT();
         }
 
         public void layerAdded(Layer newLayer) {
-            updateEnabledState();
+            updateEnabledStateInEDT();
         }
 
         public void layerRemoved(Layer oldLayer) {
-            updateEnabledState();
+            updateEnabledStateInEDT();
         }
     }
 
