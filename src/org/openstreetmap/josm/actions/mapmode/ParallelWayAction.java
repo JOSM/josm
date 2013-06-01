@@ -23,6 +23,8 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -78,9 +80,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author Ole Jørgen Brønner (olejorgenb)
  */
-public class ParallelWayAction extends MapMode implements AWTEventListener, MapViewPaintable {
-
-    private static final long serialVersionUID = 1L;
+public class ParallelWayAction extends MapMode implements AWTEventListener, MapViewPaintable, PreferenceChangedListener {
 
     private enum Mode {
         dragging, normal
@@ -99,6 +99,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
     private double snapDistanceMetric;
     private double snapDistanceImperial;
     private double snapDistanceChinese;
+    private double snapDistanceNautical;
 
     private ModifiersSpec snapModifierCombo;
     private ModifiersSpec copyTagsModifierCombo;
@@ -118,7 +119,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
 
     private WaySegment referenceSegment;
     private ParallelWays pWays;
-    LinkedHashSet<Way> sourceWays;
+    private LinkedHashSet<Way> sourceWays;
     private EastNorth helperLineStart;
     private EastNorth helperLineEnd;
 
@@ -130,6 +131,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         putValue("help", ht("/Action/Parallel"));
         mv = mapFrame.mapView;
         updateModeLocalPreferences();
+        Main.pref.addPreferenceChangeListener(this);
     }
 
     @Override
@@ -198,7 +200,6 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
 
     private void updateModeLocalPreferences() {
         // @formatter:off
-        //snapThreshold        = Main.pref.getDouble (prefKey("snap-threshold"), 0.35); // Old preference was stored in meters, hence the new name (percent)
         snapThreshold        = Main.pref.getDouble (prefKey("snap-threshold-percent"), 0.70);
         snapDefault          = Main.pref.getBoolean(prefKey("snap-default"),      true);
         copyTagsDefault      = Main.pref.getBoolean(prefKey("copy-tags-default"), true);
@@ -206,6 +207,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         snapDistanceMetric   = Main.pref.getDouble(prefKey("snap-distance-metric"), 0.5);
         snapDistanceImperial = Main.pref.getDouble(prefKey("snap-distance-imperial"), 1);
         snapDistanceChinese  = Main.pref.getDouble(prefKey("snap-distance-chinese"), 1);
+        snapDistanceNautical = Main.pref.getDouble(prefKey("snap-distance-nautical"), 0.1);
 
         snapModifierCombo           = new ModifiersSpec(getStringPref("snap-modifier-combo",             "?sC"));
         copyTagsModifierCombo       = new ModifiersSpec(getStringPref("copy-tags-modifier-combo",        "As?"));
@@ -399,7 +401,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
             setMode(Mode.dragging);
         }
 
-        //// Calculate distance to the reference line
+        // Calculate distance to the reference line
         EastNorth enp = mv.getEastNorth((int) p.getX(), (int) p.getY());
         EastNorth nearestPointOnRefLine = Geometry.closestPointToLine(referenceSegment.getFirstNode().getEastNorth(),
                 referenceSegment.getSecondNode().getEastNorth(), enp);
@@ -422,6 +424,8 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
                 snapDistance = snapDistanceChinese * NavigatableComponent.CHINESE_SOM.aValue;
             } else if (som.equals(NavigatableComponent.IMPERIAL_SOM)) {
                 snapDistance = snapDistanceImperial * NavigatableComponent.IMPERIAL_SOM.aValue;
+            } else if (som.equals(NavigatableComponent.NAUTICAL_MILE_SOM)) {
+                snapDistance = snapDistanceNautical * NavigatableComponent.NAUTICAL_MILE_SOM.aValue;
             } else {
                 snapDistance = snapDistanceMetric; // Metric system by default
             }
@@ -575,5 +579,12 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
 
     private String getStringPref(String subKey) {
         return getStringPref(subKey, null);
+    }
+
+    @Override
+    public void preferenceChanged(PreferenceChangeEvent e) {
+        if (e.getKey().startsWith(prefKey(""))) {
+            updateAllPreferences();
+        }
     }
 }
