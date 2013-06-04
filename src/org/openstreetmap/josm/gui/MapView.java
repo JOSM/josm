@@ -677,14 +677,14 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * @return An unmodifiable collection of all layers
      */
     public Collection<Layer> getAllLayers() {
-        return Collections.unmodifiableCollection(layers);
+        return Collections.unmodifiableCollection(new ArrayList<Layer>(layers));
     }
 
     /**
      * @return An unmodifiable ordered list of all layers
      */
     public List<Layer> getAllLayersAsList() {
-        return Collections.unmodifiableList(layers);
+        return Collections.unmodifiableList(new ArrayList<Layer>(layers));
     }
 
     /**
