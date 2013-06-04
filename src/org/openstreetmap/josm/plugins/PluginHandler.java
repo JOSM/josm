@@ -423,8 +423,14 @@ public class PluginHandler {
             alertJOSMUpdateRequired(parent, plugin.name, plugin.localmainversion);
             return false;
         }
+        
+        // Add all plugins already loaded (to include early plugins when checking late ones)
+        Collection<PluginInformation> allPlugins = new HashSet<PluginInformation>(plugins);
+        for (PluginProxy proxy : pluginList) {
+            allPlugins.add(proxy.getPluginInformation());
+        }
 
-        return checkRequiredPluginsPreconditions(parent, plugins, plugin, true);
+        return checkRequiredPluginsPreconditions(parent, allPlugins, plugin, true);
     }
 
     /**
@@ -512,12 +518,16 @@ public class PluginHandler {
             }
             msg = null;
         } catch (PluginException e) {
-            System.err.print(e.getMessage());
+            System.err.println(e.getMessage());
             Throwable cause = e.getCause();
             if (cause != null) {
-                System.err.print(". " + cause.getClass().getName() + ": " + cause.getLocalizedMessage());
+                msg = cause.getLocalizedMessage();
+                if (msg != null) {
+                    System.err.println("Cause: " + cause.getClass().getName()+": " + msg);
+                } else {
+                    cause.printStackTrace();
+                }
             }
-            System.err.println();
             if (e.getCause() instanceof ClassNotFoundException) {
                 msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
                         + "Delete from preferences?</html>", plugin.name, plugin.className);

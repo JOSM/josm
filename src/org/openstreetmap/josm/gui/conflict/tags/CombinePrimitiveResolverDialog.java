@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
@@ -96,7 +97,11 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     @Deprecated
     public static CombinePrimitiveResolverDialog getInstance() {
         if (instance == null) {
-            instance = new CombinePrimitiveResolverDialog(Main.parent);
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override public void run() {
+                    instance = new CombinePrimitiveResolverDialog(Main.parent);
+                }
+            });
         }
         return instance;
     }
@@ -128,14 +133,18 @@ public class CombinePrimitiveResolverDialog extends JDialog {
      *
      * @param primitive the target primitive
      */
-    public void setTargetPrimitive(OsmPrimitive primitive) {
+    public void setTargetPrimitive(final OsmPrimitive primitive) {
         this.targetPrimitive = primitive;
-        updateTitle();
-        if (primitive instanceof Way) {
-            pnlRelationMemberConflictResolver.initForWayCombining();
-        } else if (primitive instanceof Node) {
-            pnlRelationMemberConflictResolver.initForNodeMerging();
-        }
+        GuiHelper.runInEDTAndWait(new Runnable() {
+            @Override public void run() {
+                updateTitle();
+                if (primitive instanceof Way) {
+                    pnlRelationMemberConflictResolver.initForWayCombining();
+                } else if (primitive instanceof Node) {
+                    pnlRelationMemberConflictResolver.initForNodeMerging();
+                }
+            }
+        });
     }
 
     protected void updateTitle() {
