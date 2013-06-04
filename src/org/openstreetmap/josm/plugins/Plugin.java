@@ -112,6 +112,9 @@ public abstract class Plugin implements MapFrameListener {
         try {
             out = new FileOutputStream(new File(pluginDirName, to));
             in = getClass().getResourceAsStream(from);
+            if (in == null) {
+                throw new IOException("Resource not found: "+from);
+            }
             byte[] buffer = new byte[8192];
             for(int len = in.read(buffer); len > 0; len = in.read(buffer)) {
                 out.write(buffer, 0, len);
