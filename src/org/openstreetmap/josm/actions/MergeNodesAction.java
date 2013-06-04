@@ -152,20 +152,28 @@ public class MergeNodesAction extends JosmAction {
      * @return the selected target node
      */
     public static Node selectTargetNode(Collection<Node> candidates) {
+        Node oldestNode = null;
         Node targetNode = null;
         Node lastNode = null;
         for (Node n : candidates) {
             if (!n.isNew()) {
-                if (targetNode == null) {
-                    targetNode = n;
-                } else if (n.getId() < targetNode.getId()) {
-                    targetNode = n;
+                // Among existing nodes, try to keep the oldest used one
+                if (!n.getReferrers().isEmpty()) {
+                    if (targetNode == null) {
+                        targetNode = n;
+                    } else if (n.getId() < targetNode.getId()) {
+                        targetNode = n;
+                    }
+                } else if (oldestNode == null) {
+                    oldestNode = n;
+                } else if (n.getId() < oldestNode.getId()) {
+                    oldestNode = n;
                 }
             }
             lastNode = n;
         }
         if (targetNode == null) {
-            targetNode = lastNode;
+            targetNode = (oldestNode != null ? oldestNode : lastNode);
         }
         return targetNode;
     }
