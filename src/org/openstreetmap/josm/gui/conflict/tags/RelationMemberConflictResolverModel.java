@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * This model manages a list of conflicting relation members.
@@ -190,7 +191,11 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      */
     public void refresh() {
         updateNumConflicts();
-        fireTableDataChanged();
+        GuiHelper.runInEDTAndWait(new Runnable() {
+            @Override public void run() {
+                fireTableDataChanged();
+            }
+        });
     }
 
     /**
