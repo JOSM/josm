@@ -710,26 +710,44 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         } else {
             startEN = currentEN; // drag can continue after scaling/rotation
     
+            if (mode != Mode.rotate && mode != Mode.scale) {
+                return false;
+            }
+            
+            getCurrentDataSet().beginUpdate();
+            
             if (mode == Mode.rotate) {
-                getCurrentDataSet().beginUpdate();
                 if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
                     ((RotateCommand) c).handleEvent(currentEN);
                 } else {
                     Main.main.undoRedo.add(new RotateCommand(selection, currentEN));
                 }
             } else if (mode == Mode.scale) {
-                getCurrentDataSet().beginUpdate();
                 if (c instanceof ScaleCommand && affectedNodes.equals(((ScaleCommand) c).getTransformedNodes())) {
                     ((ScaleCommand) c).handleEvent(currentEN);
                 } else {
                     Main.main.undoRedo.add(new ScaleCommand(selection, currentEN));
                 }
-            } else {
-                return false;
+            }
+            
+            Collection<Way> ways = getCurrentDataSet().getSelectedWays();
+            if (doesImpactStatusLine(affectedNodes, ways)) {
+                Main.map.statusLine.setDist(ways);
             }
         }
         getCurrentDataSet().endUpdate();
         return true;
+    }
+    
+    private boolean doesImpactStatusLine(Collection<Node> affectedNodes, Collection<Way> selectedWays) {
+        for (Way w : selectedWays) {
+            for (Node n : w.getNodes()) {
+                if (affectedNodes.contains(n)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     
     /**
