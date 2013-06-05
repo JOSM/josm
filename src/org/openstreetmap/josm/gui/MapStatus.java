@@ -30,7 +30,6 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -49,6 +48,7 @@ import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor.ProgressMonitorDialog;
@@ -834,8 +834,30 @@ public class MapStatus extends JPanel implements Helpful {
     public void setHeading(double h) {
         headingText.setText(h < 0 ? "--" : Math.round(h*10)/10.0 + " \u00B0");
     }
+    /**
+     * Sets the distance text to the given value
+     * @param dist The distance value to display, in meters
+     */
     public void setDist(double dist) {
         distText.setText(dist < 0 ? "--" : NavigatableComponent.getDistText(dist));
+    }
+    /**
+     * Sets the distance text to the total sum of given ways length
+     * @param ways The ways to consider for the total distance
+     * @since 5991
+     */
+    public void setDist(Collection<Way> ways) {
+        double dist = -1;
+        // Compute total length of selected way(s) until an arbitrary limit set to 250 ways
+        // in order to prevent performance issue if a large number of ways are selected (old behaviour kept in that case, see #8403)
+        int maxWays = Math.max(1, Main.pref.getInteger("selection.max-ways-for-statusline", 250));
+        if (!ways.isEmpty() && ways.size() <= maxWays) {
+            dist = 0.0;
+            for (Way w : ways) {
+                dist += w.getLength();
+            }
+        }
+        setDist(dist);
     }
     public void activateAnglePanel(boolean activeFlag) {
         angleText.setBackground(activeFlag ? ImageLabel.backColorActive : ImageLabel.backColor);
