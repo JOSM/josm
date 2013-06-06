@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -56,6 +57,12 @@ public final class ShowStatusReportAction extends JosmAction {
         Main.toolbar.register(this);
     }
 
+    private static void shortenParam(ListIterator<String> it, String[] param, String source, String target) {
+        if (source != null && target.length() < source.length() && param[1].startsWith(source)) {
+            it.set(param[0] + "=" + param[1].replace(source, target));
+        }
+    }
+    
     /**
      * Replies the report header (software and system info)
      * @return The report header (software and system info)
@@ -78,13 +85,24 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append("Java version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor") + ", " + System.getProperty("java.vm.name"));
         text.append("\n");
         try {
+            final String env_java_home = System.getenv("JAVA_HOME");
+            final String env_java_home_alt = Main.platform instanceof PlatformHookWindows ? "%JAVA_HOME%" : "${JAVA_HOME}";
+            final String prop_java_home = System.getProperty("java.home");
+            final String prop_java_home_alt = "<java.home>";
             // Build a new list of VM parameters to modify it below if needed (default implementation returns an UnmodifiableList instance)
             List<String> vmArguments = new ArrayList<String>(ManagementFactory.getRuntimeMXBean().getInputArguments());
-            // Hide some parameters for privacy concerns
             for (ListIterator<String> it = vmArguments.listIterator(); it.hasNext(); ) {
                 String value = it.next();
-                if (value.contains("=") && value.toLowerCase().startsWith("-dproxy")) {
-                    it.set(value.split("=")[0]+"=xxx");
+                if (value.contains("=")) {
+                    String[] param = value.split("=");
+                    // Hide some parameters for privacy concerns
+                    if (param[0].toLowerCase().startsWith("-dproxy")) {
+                        it.set(param[0]+"=xxx");
+                    // Shorten some parameters for readability concerns
+                    } else {
+                        shortenParam(it, param, env_java_home, env_java_home_alt);
+                        shortenParam(it, param, prop_java_home, prop_java_home_alt);
+                    }
                 }
             }
             if (!vmArguments.isEmpty()) {
