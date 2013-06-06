@@ -14,6 +14,8 @@ import java.util.Set;
 
 import javax.swing.Icon;
 
+import org.openstreetmap.josm.data.conflict.Conflict;
+import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
@@ -36,6 +38,8 @@ public class PurgeCommand extends Command {
     protected Storage<PrimitiveData> makeIncompleteData;
 
     protected Map<PrimitiveId, PrimitiveData> makeIncompleteData_byPrimId;
+    
+    protected final ConflictCollection purgedConflicts = new ConflictCollection();
 
     final protected DataSet ds;
 
@@ -75,6 +79,7 @@ public class PurgeCommand extends Command {
     public boolean executeCommand() {
         ds.beginUpdate();
         try {
+            purgedConflicts.get().clear();
             /**
              * Loop from back to front to keep referential integrity.
              */
@@ -96,6 +101,11 @@ public class PurgeCommand extends Command {
                     osm.load(empty);
                 } else {
                     ds.removePrimitive(osm);
+                    Conflict<?> conflict = getLayer().getConflicts().getConflictForMy(osm);
+                    if (conflict != null) {
+                        purgedConflicts.add(conflict);
+                        getLayer().getConflicts().remove(conflict);
+                    }
                 }
             }
         } finally {
@@ -120,6 +130,10 @@ public class PurgeCommand extends Command {
                     throw new AssertionError(String.format("Primitive %s was removed when purging, but is still there on undo", osm));
                 ds.addPrimitive(osm);
             }
+        }
+        
+        for (Conflict<?> conflict : purgedConflicts) {
+            getLayer().getConflicts().add(conflict);
         }
     }
 
