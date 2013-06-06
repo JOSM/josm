@@ -20,6 +20,9 @@ import java.io.InputStreamReader;
  * hooks are subclasses of this class.
  */
 public class PlatformHookUnixoid implements PlatformHook {
+    
+    private String osDescription;
+    
     @Override
     public void preStartupHook(){
     }
@@ -86,8 +89,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         return from.renameTo(to);
     }
 
-    @Override
-    public String getOSDescription() {
+    protected String buildOSDescription() {
         String osName = System.getProperty("os.name");
         if ("Linux".equalsIgnoreCase(osName)) {
             try {
@@ -123,6 +125,14 @@ public class PlatformHookUnixoid implements PlatformHook {
             }
         }
         return osName;
+    }
+    
+    @Override
+    public String getOSDescription() {
+        if (osDescription == null) {
+            osDescription = buildOSDescription();
+        }
+        return osDescription;
     }
     
     protected static class LinuxReleaseInfo {
