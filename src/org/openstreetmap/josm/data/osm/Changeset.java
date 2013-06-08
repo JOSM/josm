@@ -47,8 +47,7 @@ public final class Changeset implements Tagged {
      * Creates a new changeset with id 0.
      */
     public Changeset() {
-        this.id = 0;
-        this.tags = new HashMap<String, String>();
+        this(0);
     }
 
     /**
