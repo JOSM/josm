@@ -118,7 +118,7 @@
 		<attribute name="use_last_as_default" type="tns:last_default" />
 		<attribute name="auto_increment" type="string" />
 		<attribute name="match" type="tns:match" />
-        <attribute name="length" type="positiveInteger" />
+		<attribute name="length" type="positiveInteger" />
 
 		<attribute name="type" use="prohibited" />
 		<attribute name="name" use="prohibited" />
@@ -152,6 +152,7 @@
 		<attribute name="use_last_as_default" type="tns:last_default" />
 		<attribute name="editable" type="boolean" />
 		<attribute name="match" type="tns:match" />
+		<attribute name="length" type="positiveInteger" />
 
 		<attribute name="type" use="prohibited" />
 		<attribute name="value" use="prohibited" />
