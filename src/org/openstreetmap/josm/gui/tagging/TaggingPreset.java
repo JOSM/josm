@@ -946,6 +946,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
         public boolean editable = true;
         protected JosmComboBox combo;
+        public String length;
 
         public Combo() {
             delimiter = ",";
@@ -972,6 +973,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             combo.reinitialize(lhm.values());
             AutoCompletingTextField tf = new AutoCompletingTextField();
             initAutoCompletionField(tf, key);
+            if (length != null && !length.isEmpty()) {
+                tf.setMaxChars(new Integer(length));
+            }
             AutoCompletionList acList = tf.getAutoCompletionList();
             if (acList != null) {
                 acList.add(getDisplayValues(), AutoCompletionItemPritority.IS_IN_STANDARD);
