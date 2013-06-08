@@ -319,10 +319,14 @@ public class OsmReader extends AbstractReader {
     }
 
     private void parseChangeset(Long uploadChangesetId) throws XMLStreamException {
-        long id = getLong("id");
 
-        if (id == uploadChangesetId) {
-            uploadChangeset = new Changeset((int) getLong("id"));
+        Long id = null;
+        if (parser.getAttributeValue(null, "id") != null) {
+            id = getLong("id");
+        }
+        // Read changeset info if neither upload-changeset nor id are set, or if they are both set to the same value
+        if (id == uploadChangesetId || (id != null && id.equals(uploadChangesetId))) {
+            uploadChangeset = new Changeset(id != null ? id.intValue() : 0);
             while (true) {
                 int event = parser.next();
                 if (event == XMLStreamConstants.START_ELEMENT) {
