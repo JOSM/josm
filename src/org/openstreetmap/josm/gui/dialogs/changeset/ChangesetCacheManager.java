@@ -300,7 +300,7 @@ public class ChangesetCacheManager extends JFrame {
             needsSplitPaneAdjustment = true;
             model.init();
 
-        } else if (!visible && isShowing()){
+        } else if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
             model.tearDown();
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }

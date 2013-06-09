@@ -318,7 +318,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerOnScreen(new Dimension(400,300))
             ).applySafe(this);
-        } else {
+        } else if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }
         super.setVisible(visible);
