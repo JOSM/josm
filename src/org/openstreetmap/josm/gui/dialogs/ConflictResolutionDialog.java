@@ -55,7 +55,9 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
             new WindowGeometry(geom, WindowGeometry.centerInWindow(Main.parent,
                 new Dimension(600, 400))).applySafe(this);
         } else {
-            new WindowGeometry(this).remember(geom);
+            if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
+                new WindowGeometry(this).remember(geom);
+            }
             unregisterListeners();
         }
         super.setVisible(isVisible);

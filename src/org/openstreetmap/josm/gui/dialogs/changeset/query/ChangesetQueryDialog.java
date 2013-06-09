@@ -151,7 +151,7 @@ public class ChangesetQueryDialog extends JDialog {
             ).applySafe(this);
             setCanceled(false);
             startUserInput();
-        } else if (!visible && isShowing()){
+        } else if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
             pnlAdvancedQueries.rememberSettings();
         }

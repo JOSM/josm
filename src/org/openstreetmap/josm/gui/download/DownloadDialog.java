@@ -365,7 +365,7 @@ public class DownloadDialog extends JDialog  {
                             new Dimension(1000,600)
                     )
             ).applySafe(this);
-        } else if (!visible && isShowing()){
+        } else if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }
         super.setVisible(visible);
