@@ -1,26 +1,35 @@
 /*
- * SVGRoot.java
+ * SVG Salamander
+ * Copyright (c) 2004, Mark McKay
+ * All rights reserved.
  *
+ * Redistribution and use in source and binary forms, with or 
+ * without modification, are permitted provided that the following
+ * conditions are met:
  *
- *  The Salamander Project - 2D and 3D graphics libraries in Java
- *  Copyright (C) 2004 Mark McKay
+ *   - Redistributions of source code must retain the above 
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer.
+ *   - Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer in the documentation and/or other materials 
+ *     provided with the distribution.
  *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Lesser General Public
- *  License as published by the Free Software Foundation; either
- *  version 2.1 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- *  Lesser General Public License for more details.
- *
- *  You should have received a copy of the GNU Lesser General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
- *  Mark McKay can be contacted at mark@kitfox.com.  Salamander and other
- *  projects can be found at http://www.kitfox.com
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * 
+ * Mark McKay can be contacted at mark@kitfox.com.  Salamander and other
+ * projects can be found at http://www.kitfox.com
  *
  * Created on February 18, 2004, 5:33 PM
  */
@@ -29,8 +38,12 @@ package com.kitfox.svg;
 
 import com.kitfox.svg.xml.NumberWithUnits;
 import com.kitfox.svg.xml.StyleAttribute;
-import java.awt.geom.*;
-import java.awt.*;
+import com.kitfox.svg.xml.StyleSheet;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
 /**
  * The root element of an SVG tree.
@@ -40,13 +53,13 @@ import java.awt.*;
  */
 public class SVGRoot extends Group
 {
+    public static final String TAG_NAME = "svg";
+
     NumberWithUnits x;
     NumberWithUnits y;
     NumberWithUnits width;
     NumberWithUnits height;
 
-    
-//    final Rectangle2D.Float viewBox = new Rectangle2D.Float();
     Rectangle2D.Float viewBox = null;
 
     public static final int PA_X_NONE = 0;
@@ -69,57 +82,17 @@ public class SVGRoot extends Group
     final AffineTransform viewXform = new AffineTransform();
     final Rectangle2D.Float clipRect = new Rectangle2D.Float();
 
+    private StyleSheet styleSheet;
+    
     /** Creates a new instance of SVGRoot */
     public SVGRoot()
     {
     }
-/*
-    public void loaderStartElement(SVGLoaderHelper helper, Attributes attrs, SVGElement parent)
+
+    public String getTagName()
     {
-		//Load style string
-        super.loaderStartElement(helper, attrs, parent);
-
-        x = XMLParseUtil.parseNumberWithUnits(attrs.getValue("x"));
-        y = XMLParseUtil.parseNumberWithUnits(attrs.getValue("y"));
-        width = XMLParseUtil.parseNumberWithUnits(attrs.getValue("width"));
-        height = XMLParseUtil.parseNumberWithUnits(attrs.getValue("height"));
-
-        String viewBox = attrs.getValue("viewBox");
-        float[] coords = XMLParseUtil.parseFloatList(viewBox);
-
-        if (coords == null)
-        {
-            //this.viewBox.setRect(0, 0, width.getValue(), height.getValue());
-            this.viewBox = null;
-        }
-        else
-        {
-            this.viewBox = new Rectangle2D.Float(coords[0], coords[1], coords[2], coords[3]);
-        }
-
-        String par = attrs.getValue("preserveAspectRatio");
-        if (par != null)
-        {
-            String[] parList = XMLParseUtil.parseStringList(par);
-
-            if (parList[0].equals("none")) { parAlignX = PA_X_NONE; parAlignY = PA_Y_NONE; }
-            else if (parList[0].equals("xMinYMin")) { parAlignX = PA_X_MIN; parAlignY = PA_Y_MIN; }
-            else if (parList[0].equals("xMidYMin")) { parAlignX = PA_X_MID; parAlignY = PA_Y_MIN; }
-            else if (parList[0].equals("xMaxYMin")) { parAlignX = PA_X_MAX; parAlignY = PA_Y_MIN; }
-            else if (parList[0].equals("xMinYMid")) { parAlignX = PA_X_MIN; parAlignY = PA_Y_MID; }
-            else if (parList[0].equals("xMidYMid")) { parAlignX = PA_X_MID; parAlignY = PA_Y_MID; }
-            else if (parList[0].equals("xMaxYMid")) { parAlignX = PA_X_MAX; parAlignY = PA_Y_MID; }
-            else if (parList[0].equals("xMinYMax")) { parAlignX = PA_X_MIN; parAlignY = PA_Y_MAX; }
-            else if (parList[0].equals("xMidYMax")) { parAlignX = PA_X_MID; parAlignY = PA_Y_MAX; }
-            else if (parList[0].equals("xMaxYMax")) { parAlignX = PA_X_MAX; parAlignY = PA_Y_MAX; }
-
-            if (parList[1].equals("meet")) parSpecifier = PS_MEET;
-            else if (parList[1].equals("slice")) parSpecifier = PS_SLICE;
-        }
-
-        build();
+        return TAG_NAME;
     }
-*/
     
     public void build() throws SVGException
     {
@@ -127,13 +100,25 @@ public class SVGRoot extends Group
         
         StyleAttribute sty = new StyleAttribute();
         
-        if (getPres(sty.setName("x"))) x = sty.getNumberWithUnits();
+        if (getPres(sty.setName("x")))
+        {
+            x = sty.getNumberWithUnits();
+        }
         
-        if (getPres(sty.setName("y"))) y = sty.getNumberWithUnits();
+        if (getPres(sty.setName("y")))
+        {
+            y = sty.getNumberWithUnits();
+        }
         
-        if (getPres(sty.setName("width"))) width = sty.getNumberWithUnits();
+        if (getPres(sty.setName("width")))
+        {
+            width = sty.getNumberWithUnits();
+        }
         
-        if (getPres(sty.setName("height"))) height = sty.getNumberWithUnits();
+        if (getPres(sty.setName("height")))
+        {
+            height = sty.getNumberWithUnits();
+        }
         
         if (getPres(sty.setName("viewBox"))) 
         {
@@ -156,26 +141,14 @@ public class SVGRoot extends Group
             else if (contains(preserve, "xMidYMax")) { parAlignX = PA_X_MID; parAlignY = PA_Y_MAX; }
             else if (contains(preserve, "xMaxYMax")) { parAlignX = PA_X_MAX; parAlignY = PA_Y_MAX; }
 
-            if (contains(preserve, "meet")) parSpecifier = PS_MEET;
-            else if (contains(preserve, "slice")) parSpecifier = PS_SLICE;
-            
-            /*
-            String[] parList = sty.getStringList();
-
-            if (parList[0].equals("none")) { parAlignX = PA_X_NONE; parAlignY = PA_Y_NONE; }
-            else if (parList[0].equals("xMinYMin")) { parAlignX = PA_X_MIN; parAlignY = PA_Y_MIN; }
-            else if (parList[0].equals("xMidYMin")) { parAlignX = PA_X_MID; parAlignY = PA_Y_MIN; }
-            else if (parList[0].equals("xMaxYMin")) { parAlignX = PA_X_MAX; parAlignY = PA_Y_MIN; }
-            else if (parList[0].equals("xMinYMid")) { parAlignX = PA_X_MIN; parAlignY = PA_Y_MID; }
-            else if (parList[0].equals("xMidYMid")) { parAlignX = PA_X_MID; parAlignY = PA_Y_MID; }
-            else if (parList[0].equals("xMaxYMid")) { parAlignX = PA_X_MAX; parAlignY = PA_Y_MID; }
-            else if (parList[0].equals("xMinYMax")) { parAlignX = PA_X_MIN; parAlignY = PA_Y_MAX; }
-            else if (parList[0].equals("xMidYMax")) { parAlignX = PA_X_MID; parAlignY = PA_Y_MAX; }
-            else if (parList[0].equals("xMaxYMax")) { parAlignX = PA_X_MAX; parAlignY = PA_Y_MAX; }
-
-            if (parList[1].equals("meet")) parSpecifier = PS_MEET;
-            else if (parList[1].equals("slice")) parSpecifier = PS_SLICE;
-             */
+            if (contains(preserve, "meet"))
+            {
+                parSpecifier = PS_MEET;
+            }
+            else if (contains(preserve, "slice"))
+            {
+                parSpecifier = PS_SLICE;
+            }
         }
         
         prepareViewport();
@@ -184,6 +157,11 @@ public class SVGRoot extends Group
     private boolean contains(String text, String find) 
     {
         return (text.indexOf(find) != -1);
+    }
+
+    public SVGRoot getRoot()
+    {
+        return this;
     }
     
     protected void prepareViewport()
@@ -194,7 +172,8 @@ public class SVGRoot extends Group
         try
         {
             defaultBounds = getBoundingBox();
-        } catch (SVGException ex)
+        }
+        catch (SVGException ex)
         {
             defaultBounds= new Rectangle2D.Float();
         }
@@ -212,8 +191,6 @@ public class SVGRoot extends Group
             {
                 ww = StyleAttribute.convertUnitsToPixels(width.getUnits(), width.getValue());
             }
-//            setAttribute("x", AnimationElement.AT_XML, "" + xx);
-//            setAttribute("width", AnimationElement.AT_XML, "" + ww);
         }
         else if (viewBox != null)
         {
@@ -272,12 +249,6 @@ public class SVGRoot extends Group
             viewXform.scale(1 / viewBox.width, 1 / viewBox.height);
             viewXform.translate(-viewBox.x, -viewBox.y);
         }
-
-        
-        //For now, treat all preserveAspectRatio as 'none'
-//        viewXform.setToTranslation(viewBox.x, viewBox.y);
-//        viewXform.scale(clipRect.width / viewBox.width, clipRect.height / viewBox.height);
-//        viewXform.translate(-clipRect.x, -clipRect.y);
     }
 
     public void render(Graphics2D g) throws SVGException
@@ -390,6 +361,34 @@ public class SVGRoot extends Group
         }
 
         return changeState || shapeChange;
+    }
+
+    /**
+     * @return the styleSheet
+     */
+    public StyleSheet getStyleSheet()
+    {
+        if (styleSheet == null)
+        {
+            for (int i = 0; i < getNumChildren(); ++i)
+            {
+                SVGElement ele = getChild(i);
+                if (ele instanceof Style)
+                {
+                    return ((Style)ele).getStyleSheet();
+                }
+            }
+        }
+        
+        return styleSheet;
+    }
+
+    /**
+     * @param styleSheet the styleSheet to set
+     */
+    public void setStyleSheet(StyleSheet styleSheet)
+    {
+        this.styleSheet = styleSheet;
     }
 
 }
