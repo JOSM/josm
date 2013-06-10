@@ -1987,6 +1987,7 @@ Note that for a match, at least one positive and no negative is required.
     <group name="Railway" icon="presets/railway.png">
         <item name="Rail" icon="presets/railway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=rail"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:railway=rail"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=rail"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:railway=rail"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:railway=rail"
@@ -1995,29 +1996,33 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="railway" value="rail" />
             <optional>
-                <combo key="usage" text="Usage" values="main,branch,industrial,military,tourism" />
+                <combo key="usage" text="Usage" values="main,branch,industrial,military,tourism,freight" />
                 <combo key="service" text="Service/Type" values="yard,siding,spur" />
-                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" />
+                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" />
-                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" />
+                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" lenght="5" />
+                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" length="4"/>
             </optional>
         </item>
         <item name="Narrow Gauge Rail" icon="presets/railway.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=light_rail"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:railway=light_rail" />
             <label text="Edit Narrow Gauge Rail" />
             <space />
             <key key="railway" value="narrow_gauge" />
             <optional>
-                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" />
+                <combo key="usage" text="Usage" values="main,branch,industrial,military,tourism,freight" />
                 <combo key="service" text="Types" values="yard,siding,spur" />
+                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" />
-                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" />
+                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" length="5" />
+                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" length="4" />
             </optional>
         </item>
         <item name="Monorail" icon="presets/railway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=monorail"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=monorail"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=monorail"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:railway=monorail" />
             <label text="Edit Monorail" />
             <space />
@@ -2025,56 +2030,69 @@ Note that for a match, at least one positive and no negative is required.
             <optional>
                 <combo key="service" text="Types" values="yard,siding,spur" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" />
-                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" />
+                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" length="5" />
+                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" length="4" />
             </optional>
         </item>
         <item name="Preserved" icon="presets/rail_preserved.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=preserved" />
             <label text="Edit Preserved Railway" />
             <space />
             <key key="railway" value="preserved" />
             <optional>
-                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" />
                 <combo key="service" text="Types" values="yard,siding,spur" />
+                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" />
-                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" />
+                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" length="5" />
+                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" length="4" />
             </optional>
         </item>
         <item name="Light Rail" icon="presets/rail_light.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=light_rail" />
             <label text="Edit Light Rail" />
             <space />
             <key key="railway" value="light_rail" />
             <optional>
-                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" />
                 <combo key="service" text="Types" values="yard,siding,spur" />
+                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" />
-                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" />
+                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" length="5" />
+                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" length="4" />
             </optional>
         </item>
         <item name="Subway" icon="presets/rail_light.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=subway"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=subway"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:railway=subway"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:railway=subway" />
+            <label text="Edit Tram" />
             <label text="Edit Subway" />
             <space />
             <key key="railway" value="subway" />
             <optional>
-                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" />
                 <combo key="service" text="Types" values="yard,siding,spur" />
+                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" />
-                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" />
+                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" length="5" />
+                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" length="4" />
             </optional>
         </item>
         <item name="Tram" icon="presets/tram.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=tram"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=tram"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=tram"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:railway=tram"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:railway=tram"
+                  uk.href="http://wiki.openstreetmap.org/wiki/UK:Tag:railway=tram" />
             <label text="Edit Tram" />
             <space />
             <key key="railway" value="tram" />
             <optional>
-                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" />
                 <combo key="service" text="Types" values="yard,siding,spur" />
+                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" />
-                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" />
+                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" length="5" />
+                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" length="4" />
             </optional>
         </item>
         <item name="Bus Guideway" icon="presets/busway.png" type="way">
@@ -2100,13 +2118,23 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <separator/>
         <item name="Disused Rail" icon="presets/railway.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=disused" />
             <label text="Edit Disused Railway" />
             <space />
             <key key="railway" value="disused" />
-            <combo key="service" text="Optional Types" values="yard,siding,spur" />
+            <optional>
+                <combo key="service" text="Types" values="yard,siding,spur" />
+            </optional>
         </item>
         <item name="Abandoned Rail" icon="presets/railway.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=abandoned"
+                  de.href="http://wiki.openstreetmap.org/wiki/Tag:railway=abandoned" />
+            <label text="Edit Abandoned Railway" />
+            <space />
             <key key="railway" value="abandoned" />
+            <optional>
+                <combo key="service" text="Types" values="yard,siding,spur" />
+            </optional>
         </item>
         <separator/>
         <item name="Level Crossing" icon="presets/level_crossing.png" type="node">
@@ -2122,20 +2150,29 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:railway=level_crossing" />
             <key key="railway" value="level_crossing" />
             <optional>
+                <check key="supervised" text="Supervised" default="off" />
                 <check key="crossing:light" text="Traffic lights" default="off" />
                 <check key="crossing:bell" text="Sound signals" default="off" />
-                <check key="supervised" text="Supervised" default="off" />
                 <combo key="crossing:barrier" text="Barrier" values="yes,no,half,full,double_half" />
             </optional>
         </item>
         <item name="Crossing" icon="presets/crossing.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Key:crossing" />
+            <link href="http://wiki.openstreetmap.org/wiki/Key:crossing"
+                  bg.href="http://wiki.openstreetmap.org/wiki/Bg:Key:crossing"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:crossing"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:crossing"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:crossing"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:crossing"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:crossing" />
             <key key="railway" value="crossing" />
             <optional>
-                 <combo key="crossing" text="Crossing type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" />
-                 <check key="horse" text="Cross on horseback" default="off" />
-                 <check key="bicycle" text="Cross by bicycle" default="off" />
-                 <check key="supervised" text="Crossing attendant" default="off" />
+                <combo key="crossing" text="Crossing type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" />
+                <check key="horse" text="Cross on horseback" default="off" />
+                <check key="bicycle" text="Cross by bicycle" default="off" />
+                <check key="supervised" text="Supervised" default="off" />
+                <check key="crossing:light" text="Traffic lights" default="off" />
+                <check key="crossing:bell" text="Sound signals" default="off" />
+                <combo key="crossing:barrier" text="Barrier" values="yes,no,half,full,double_half" />
             </optional>
         </item>
         <item name="Turntable" icon="presets/turntable.png" type="node,closedway">
