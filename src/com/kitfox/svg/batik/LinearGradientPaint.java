@@ -8,6 +8,7 @@
 
 package com.kitfox.svg.batik;
 
+import com.kitfox.svg.SVGConst;
 import java.awt.Color;
 import java.awt.PaintContext;
 import java.awt.Rectangle;
@@ -17,6 +18,8 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ColorModel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The <code>LinearGradientPaint</code> class provides a way to fill
@@ -322,9 +325,9 @@ public final class LinearGradientPaint extends MultipleGradientPaint {
                                                   cycleMethod,
                                                   colorSpace);
         }
-	
-        catch(NoninvertibleTransformException e) {
-            e.printStackTrace();
+        catch(NoninvertibleTransformException e)
+        {
+            Logger.getLogger(SVGConst.SVG_LOGGER).log(Level.WARNING, null, e);
             throw new IllegalArgumentException("transform should be" + 
                                                "invertible");
         }

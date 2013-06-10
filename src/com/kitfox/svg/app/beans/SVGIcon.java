@@ -1,18 +1,47 @@
 /*
- * SVGIcon.java
+ * SVG Salamander
+ * Copyright (c) 2004, Mark McKay
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or 
+ * without modification, are permitted provided that the following
+ * conditions are met:
+ *
+ *   - Redistributions of source code must retain the above 
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer.
+ *   - Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer in the documentation and/or other materials 
+ *     provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * 
+ * Mark McKay can be contacted at mark@kitfox.com.  Salamander and other
+ * projects can be found at http://www.kitfox.com
  *
  * Created on April 21, 2005, 10:45 AM
  */
 
 package com.kitfox.svg.app.beans;
 
-import javax.swing.*;
+import com.kitfox.svg.*;
 import java.awt.*;
 import java.awt.geom.*;
-import java.net.*;
 import java.beans.*;
-
-import com.kitfox.svg.*;
+import java.net.*;
+import javax.swing.*;
 
 /**
  *
@@ -68,7 +97,10 @@ public class SVGIcon implements Icon
         }
         
         SVGDiagram diagram = svgUniverse.getDiagram(svgURI);
-        if (diagram == null) return 0;
+        if (diagram == null)
+        {
+            return 0;
+        }
         return (int)diagram.getHeight();
     }
     
@@ -83,7 +115,10 @@ public class SVGIcon implements Icon
         }
         
         SVGDiagram diagram = svgUniverse.getDiagram(svgURI);
-        if (diagram == null) return 0;
+        if (diagram == null)
+        {
+            return 0;
+        }
         return (int)diagram.getWidth();
     }
     
@@ -96,8 +131,14 @@ public class SVGIcon implements Icon
      */
     public void paintIcon(Component comp, Graphics gg, int x, int y)
     {
-        Graphics2D g = (Graphics2D)gg;
-        
+        //Copy graphics object so that 
+        Graphics2D g = (Graphics2D)gg.create();
+        paintIcon(comp, g, x, y);
+        g.dispose();
+    }
+    
+    private void paintIcon(Component comp, Graphics2D g, int x, int y)
+    {
         Object oldAliasHint = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
         
@@ -117,7 +158,10 @@ public class SVGIcon implements Icon
         
         
         SVGDiagram diagram = svgUniverse.getDiagram(svgURI);
-        if (diagram == null) return;
+        if (diagram == null)
+        {
+            return;
+        }
         
         g.translate(x, y);
         diagram.setIgnoringClipHeuristic(!clipToViewbox);
@@ -188,7 +232,10 @@ public class SVGIcon implements Icon
         g.translate(-x, -y);
         
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, oldAliasHint);
-        if (oldInterpolationHint != null) g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, oldInterpolationHint);
+        if (oldInterpolationHint != null)
+        {
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, oldInterpolationHint);
+        }
     }
     
     /**
