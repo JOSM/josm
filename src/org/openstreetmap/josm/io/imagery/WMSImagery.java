@@ -9,9 +9,9 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -50,6 +50,7 @@ public class WMSImagery {
 
     private List<LayerDetails> layers;
     private URL serviceUrl;
+    private List<String> formats;
 
     public List<LayerDetails> getLayers() {
         return layers;
@@ -57,6 +58,10 @@ public class WMSImagery {
 
     public URL getServiceUrl() {
         return serviceUrl;
+    }
+
+    public List<String> getFormats() {
+        return formats;
     }
 
     String buildRootUrl() {
@@ -82,8 +87,12 @@ public class WMSImagery {
     }
 
     public String buildGetMapUrl(Collection<LayerDetails> selectedLayers) {
+        return buildGetMapUrl(selectedLayers, "image/jpeg");
+    }
+
+    public String buildGetMapUrl(Collection<LayerDetails> selectedLayers, String format) {
         return buildRootUrl()
-                + "FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS="
+                + "FORMAT=" + format + "&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS="
                 + Utils.join(",", Utils.transform(selectedLayers, new Utils.Function<LayerDetails, String>() {
             @Override
             public String apply(LayerDetails x) {
@@ -150,6 +159,14 @@ public class WMSImagery {
             Element child = getChild(document.getDocumentElement(), "Capability");
             child = getChild(child, "Request");
             child = getChild(child, "GetMap");
+
+            formats = new ArrayList<String>(Utils.transform(getChildren(child, "Format"), new Utils.Function<Element, String>() {
+                @Override
+                public String apply(Element x) {
+                    return x.getTextContent();
+                }
+            }));
+
             child = getChild(child, "DCPType");
             child = getChild(child, "HTTP");
             child = getChild(child, "Get");
@@ -184,7 +201,7 @@ public class WMSImagery {
     }
 
     private List<LayerDetails> parseLayers(List<Element> children, Set<String> parentCrs) {
-        List<LayerDetails> details = new LinkedList<LayerDetails>();
+        List<LayerDetails> details = new ArrayList<LayerDetails>();
         for (Element element : children) {
             details.add(parseLayer(element, parentCrs));
         }
@@ -280,7 +297,7 @@ public class WMSImagery {
     }
 
     private static List<Element> getChildren(Element parent, String name) {
-        List<Element> retVal = new LinkedList<Element>();
+        List<Element> retVal = new ArrayList<Element>();
         for (Node child = parent.getFirstChild(); child != null; child = child.getNextSibling()) {
             if (child instanceof Element && name.equals(child.getNodeName())) {
                 retVal.add((Element) child);

@@ -4,12 +4,15 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -19,6 +22,7 @@ import org.openstreetmap.josm.gui.actionsupport.AlignImageryPanel;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.gui.preferences.imagery.WMSLayerTree;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class AddImageryLayerAction extends JosmAction implements AdaptableAction {
@@ -76,16 +80,22 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             System.out.println(wms.getLayers());
             final WMSLayerTree tree = new WMSLayerTree();
             tree.updateTree(wms);
+            final JComboBox formats = new JComboBox(wms.getFormats().toArray());
+            formats.setToolTipText(tr("Select image format for WMS layer"));
 
             if (1 != new ExtendedDialog(Main.parent, tr("Select WMS layers"), new String[]{tr("Add layers"), tr("Cancel")}) {{
                 final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
-                setContent(scrollPane);
                 scrollPane.setPreferredSize(new Dimension(400, 400));
+                final JPanel panel = new JPanel(new GridBagLayout());
+                panel.add(scrollPane, GBC.eol().fill());
+                panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
+                setContent(panel);
             }}.showDialog().getValue()) {
                 return null;
             }
 
-            String url = wms.buildGetMapUrl(tree.getSelectedLayers());
+            final String url = wms.buildGetMapUrl(
+                    tree.getSelectedLayers(), (String) formats.getSelectedItem());
             return new ImageryInfo(info.getName(), url, "wms", info.getEulaAcceptanceRequired(), info.getCookies());
         } // exception handling from AddWMSLayerPanel.java
         catch (MalformedURLException ex) {
