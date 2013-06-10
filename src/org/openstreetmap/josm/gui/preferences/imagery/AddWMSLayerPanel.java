@@ -11,9 +11,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import javax.swing.DefaultComboBoxModel;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -30,6 +32,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
     private final WMSImagery wms = new WMSImagery();
     private final JCheckBox endpoint = new JCheckBox(tr("Store WMS endpoint only, select layers at usage"));
     private final WMSLayerTree tree = new WMSLayerTree();
+    private final JComboBox formats = new JComboBox();
     private final JLabel wmsInstruction;
     private final JosmTextArea wmsUrl = new JosmTextArea(3, 40);
     private final JButton showBounds = new JButton(tr("Show bounds"));
@@ -52,11 +55,14 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         showBounds.setEnabled(false);
         add(new JScrollPane(showBounds), GBC.eop().fill());
 
-        add(wmsInstruction = new JLabel(tr("3. Verify generated WMS URL")), GBC.eol());
+        add(new JLabel(tr("3. Select image format")), GBC.eol());
+        add(formats, GBC.eol().fill());
+
+        add(wmsInstruction = new JLabel(tr("4. Verify generated WMS URL")), GBC.eol());
         add(wmsUrl, GBC.eop().fill());
         wmsUrl.setLineWrap(true);
 
-        add(new JLabel(tr("4. Enter name for this layer")), GBC.eol());
+        add(new JLabel(tr("5. Enter name for this layer")), GBC.eol());
         add(name, GBC.eop().fill());
 
         getLayers.addActionListener(new ActionListener() {
@@ -65,6 +71,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                 try {
                     wms.attemptGetCapabilities(rawUrl.getText());
                     tree.updateTree(wms);
+                    formats.setModel(new DefaultComboBoxModel(wms.getFormats().toArray()));
                 } catch (MalformedURLException ex) {
                     JOptionPane.showMessageDialog(getParent(), tr("Invalid service URL."),
                             tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
@@ -86,6 +93,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                 tree.getLayerTree().setEnabled(!endpoint.isSelected());
                 showBounds.setEnabled(!endpoint.isSelected());
                 wmsInstruction.setEnabled(!endpoint.isSelected());
+                formats.setEnabled(!endpoint.isSelected());
                 wmsUrl.setEnabled(!endpoint.isSelected());
                 if (endpoint.isSelected()) {
                     name.setText(wms.getServiceUrl().getHost());
@@ -98,6 +106,13 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         tree.getLayerTree().addPropertyChangeListener("selectedLayers", new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) { 
+                onLayerSelectionChanged();
+            }
+        });
+
+        formats.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 onLayerSelectionChanged();
             }
         });
@@ -123,7 +138,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
     
     protected final void onLayerSelectionChanged() {
         if (wms.getServiceUrl() != null) {
-            wmsUrl.setText(wms.buildGetMapUrl(tree.getSelectedLayers()));
+            wmsUrl.setText(wms.buildGetMapUrl(tree.getSelectedLayers(), (String) formats.getSelectedItem()));
             name.setText(wms.getServiceUrl().getHost() + ": " + Utils.join(", ", tree.getSelectedLayers()));
         }
         showBounds.setEnabled(tree.getSelectedLayers().size() == 1);
