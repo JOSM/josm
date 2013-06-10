@@ -1,30 +1,38 @@
 /*
- * Rect.java
+ * SVG Salamander
+ * Copyright (c) 2004, Mark McKay
+ * All rights reserved.
  *
+ * Redistribution and use in source and binary forms, with or 
+ * without modification, are permitted provided that the following
+ * conditions are met:
  *
- *  The Salamander Project - 2D and 3D graphics libraries in Java
- *  Copyright (C) 2004 Mark McKay
+ *   - Redistributions of source code must retain the above 
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer.
+ *   - Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer in the documentation and/or other materials 
+ *     provided with the distribution.
  *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Lesser General Public
- *  License as published by the Free Software Foundation; either
- *  version 2.1 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- *  Lesser General Public License for more details.
- *
- *  You should have received a copy of the GNU Lesser General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
- *  Mark McKay can be contacted at mark@kitfox.com.  Salamander and other
- *  projects can be found at http://www.kitfox.com
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * 
+ * Mark McKay can be contacted at mark@kitfox.com.  Salamander and other
+ * projects can be found at http://www.kitfox.com
  *
  * Created on January 26, 2004, 5:25 PM
  */
-
 package com.kitfox.svg;
 
 import com.kitfox.svg.xml.StyleAttribute;
@@ -37,56 +45,56 @@ import java.awt.geom.Rectangle2D;
  * @author Mark McKay
  * @author <a href="mailto:mark@kitfox.com">Mark McKay</a>
  */
-public class Line extends ShapeElement {
-
+public class Line extends ShapeElement
+{
+    public static final String TAG_NAME = "line";
+    
     float x1 = 0f;
     float y1 = 0f;
     float x2 = 0f;
     float y2 = 0f;
-
     Line2D.Float line;
-//    RectangularShape rect;
 
-    /** Creates a new instance of Rect */
-    public Line() {
-    }
-
-    /*
-    public void loaderStartElement(SVGLoaderHelper helper, Attributes attrs, SVGElement parent)
+    /**
+     * Creates a new instance of Rect
+     */
+    public Line()
     {
-		//Load style string
-        super.loaderStartElement(helper, attrs, parent);
-
-        String x1 = attrs.getValue("x1");
-        String y1 = attrs.getValue("y1");
-        String x2 = attrs.getValue("x2");
-        String y2 = attrs.getValue("y2");
-
-        this.x1 = XMLParseUtil.parseFloat(x1);
-        this.y1 = XMLParseUtil.parseFloat(y1);
-        this.x2 = XMLParseUtil.parseFloat(x2);
-        this.y2 = XMLParseUtil.parseFloat(y2);
-
-        build();
     }
-*/
+
+    public String getTagName()
+    {
+        return TAG_NAME;
+    }
+
     protected void build() throws SVGException
     {
         super.build();
-        
+
         StyleAttribute sty = new StyleAttribute();
-        
-        if (getPres(sty.setName("x1"))) x1 = sty.getFloatValueWithUnits();
 
-        if (getPres(sty.setName("y1"))) y1 = sty.getFloatValueWithUnits();
+        if (getPres(sty.setName("x1")))
+        {
+            x1 = sty.getFloatValueWithUnits();
+        }
 
-        if (getPres(sty.setName("x2"))) x2 = sty.getFloatValueWithUnits();
+        if (getPres(sty.setName("y1")))
+        {
+            y1 = sty.getFloatValueWithUnits();
+        }
 
-        if (getPres(sty.setName("y2"))) y2 = sty.getFloatValueWithUnits();
+        if (getPres(sty.setName("x2")))
+        {
+            x2 = sty.getFloatValueWithUnits();
+        }
+
+        if (getPres(sty.setName("y2")))
+        {
+            y2 = sty.getFloatValueWithUnits();
+        }
 
         line = new Line2D.Float(x1, y1, x2, y2);
     }
-    
 
     public void render(Graphics2D g) throws SVGException
     {
@@ -106,8 +114,9 @@ public class Line extends ShapeElement {
     }
 
     /**
-     * Updates all attributes in this diagram associated with a time event.
-     * Ie, all attributes with track information.
+     * Updates all attributes in this diagram associated with a time event. Ie,
+     * all attributes with track information.
+     *
      * @return - true if this node has changed state as a result of the time
      * update
      */
@@ -119,7 +128,7 @@ public class Line extends ShapeElement {
         //Get current values for parameters
         StyleAttribute sty = new StyleAttribute();
         boolean shapeChange = false;
-        
+
         if (getPres(sty.setName("x1")))
         {
             float newVal = sty.getFloatValueWithUnits();
@@ -163,10 +172,8 @@ public class Line extends ShapeElement {
         if (shapeChange)
         {
             build();
-//            line = new Line2D.Float(x1, y1, x2, y2);
-//            return true;
         }
-        
+
         return changeState || shapeChange;
     }
 }

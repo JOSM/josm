@@ -1,26 +1,35 @@
 /*
- * ShapeElement.java
+ * SVG Salamander
+ * Copyright (c) 2004, Mark McKay
+ * All rights reserved.
  *
+ * Redistribution and use in source and binary forms, with or 
+ * without modification, are permitted provided that the following
+ * conditions are met:
  *
- *  The Salamander Project - 2D and 3D graphics libraries in Java
- *  Copyright (C) 2004 Mark McKay
+ *   - Redistributions of source code must retain the above 
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer.
+ *   - Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the following
+ *     disclaimer in the documentation and/or other materials 
+ *     provided with the distribution.
  *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Lesser General Public
- *  License as published by the Free Software Foundation; either
- *  version 2.1 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- *  Lesser General Public License for more details.
- *
- *  You should have received a copy of the GNU Lesser General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
- *  Mark McKay can be contacted at mark@kitfox.com.  Salamander and other
- *  projects can be found at http://www.kitfox.com
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * 
+ * Mark McKay can be contacted at mark@kitfox.com.  Salamander and other
+ * projects can be found at http://www.kitfox.com
  *
  * Created on January 26, 2004, 5:21 PM
  */
@@ -95,6 +104,26 @@ abstract public class ShapeElement extends RenderableElement
         }
     }
 
+    private Paint handleCurrentColor(StyleAttribute styleAttrib) throws SVGException
+    {
+        if (styleAttrib.getStringValue().equals("currentColor"))
+        {
+            StyleAttribute currentColorAttrib = new StyleAttribute();
+            if (getStyle(currentColorAttrib.setName("color")))
+            {
+                if (!currentColorAttrib.getStringValue().equals("none"))
+                {
+                    return currentColorAttrib.getColorValue();
+                }
+            }
+            return null;
+        }
+        else
+        {
+            return styleAttrib.getColorValue();
+        }
+    }
+
     protected void renderShape(Graphics2D g, Shape shape) throws SVGException
     {
 //g.setColor(Color.green);
@@ -119,7 +148,7 @@ abstract public class ShapeElement extends RenderableElement
             if (styleAttrib.getStringValue().equals("none")) fillPaint = null;
             else
             {
-                fillPaint = styleAttrib.getColorValue();
+                fillPaint = handleCurrentColor(styleAttrib);
                 if (fillPaint == null)
                 {
                     URI uri = styleAttrib.getURIValue(getXMLBase());
@@ -129,7 +158,10 @@ abstract public class ShapeElement extends RenderableElement
                         AffineTransform xform = g.getTransform();
 
                         SVGElement ele = diagram.getUniverse().getElement(uri);
-                        fillPaint = ((FillElement)ele).getPaint(bounds, xform);
+                        if (ele != null)
+                        {
+                            fillPaint = ((FillElement)ele).getPaint(bounds, xform);
+                        }
                     }
                 }
             }
@@ -155,7 +187,7 @@ abstract public class ShapeElement extends RenderableElement
             if (styleAttrib.getStringValue().equals("none")) strokePaint = null;
             else
             {
-                strokePaint = styleAttrib.getColorValue();
+                strokePaint = handleCurrentColor(styleAttrib);
                 if (strokePaint == null)
                 {
                     URI uri = styleAttrib.getURIValue(getXMLBase());
@@ -165,7 +197,10 @@ abstract public class ShapeElement extends RenderableElement
                         AffineTransform xform = g.getTransform();
 
                         SVGElement ele = diagram.getUniverse().getElement(uri);
-                        strokePaint = ((FillElement)ele).getPaint(bounds, xform);
+                        if (ele != null)
+                        {
+                            strokePaint = ((FillElement)ele).getPaint(bounds, xform);
+                        }
                     }
                 }
             }
@@ -302,26 +337,50 @@ abstract public class ShapeElement extends RenderableElement
                 stroke = new BasicStroke(strokeWidth, strokeLinecap, strokeLinejoin, strokeMiterLimit, strokeDashArray, strokeDashOffset);
             }
 
-            Shape strokeShape = stroke.createStrokedShape(shape);
+            Shape strokeShape;
+            AffineTransform cacheXform = g.getTransform();
+            if (vectorEffect == VECTOR_EFFECT_NON_SCALING_STROKE)
+            {
+                strokeShape = cacheXform.createTransformedShape(shape);
+                strokeShape = stroke.createStrokedShape(strokeShape);
+            }
+            else
+            {
+                strokeShape = stroke.createStrokedShape(shape);
+            }
 
             if (strokeOpacity <= 0)
             {
                 //Do nothing
             }
-            else if (strokeOpacity < 1f)
-            {
-                Composite cachedComposite = g.getComposite();
-                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, strokeOpacity));
-
-                g.setPaint(strokePaint);
-                g.fill(strokeShape);
-
-                g.setComposite(cachedComposite);
-            }
             else
             {
+                Composite cachedComposite = g.getComposite();
+
+                if (strokeOpacity < 1f)
+                {
+                    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, strokeOpacity));
+                }
+
+                if (vectorEffect == VECTOR_EFFECT_NON_SCALING_STROKE)
+                {
+                    //Set to identity
+                    g.setTransform(new AffineTransform());
+                }
+
                 g.setPaint(strokePaint);
                 g.fill(strokeShape);
+
+                if (vectorEffect == VECTOR_EFFECT_NON_SCALING_STROKE)
+                {
+                    //Set to identity
+                    g.setTransform(cacheXform);
+                }
+
+                if (strokeOpacity < 1f)
+                {
+                    g.setComposite(cachedComposite);
+                }
             }
         }
 
