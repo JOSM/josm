@@ -164,16 +164,22 @@ public class Projections {
         Projection proj = projectionsByCode_cache.get(code);
         if (proj != null) return proj;
         ProjectionChoice pc = allProjectionChoicesByCode.get(code);
-        if (pc == null) {
+        if (pc != null) {
+            Collection<String> pref = pc.getPreferencesFromCode(code);
+            pc.setPreferences(pref);
+            try {
+                proj = pc.getProjection();
+            } catch (Throwable t) {
+                String cause = t.getMessage();
+                Main.warn("Unable to get projection "+code+" with "+pc + (cause != null ? ". "+cause : ""));
+            }
+        }
+        if (proj == null) {
             Pair<String, String> pair = inits.get(code);
             if (pair == null) return null;
             String name = pair.a;
             String init = pair.b;
             proj = new CustomProjection(name, code, init, null);
-        } else {
-            Collection<String> pref = pc.getPreferencesFromCode(code);
-            pc.setPreferences(pref);
-            proj = pc.getProjection();
         }
         projectionsByCode_cache.put(code, proj);
         return proj;
