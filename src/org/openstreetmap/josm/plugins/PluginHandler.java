@@ -481,7 +481,14 @@ public class PluginHandler {
         // iterate all plugins and collect all libraries of all plugins:
         List<URL> allPluginLibraries = new LinkedList<URL>();
         File pluginDir = Main.pref.getPluginsDirectory();
-        for (PluginInformation info : plugins) {
+        
+        // Add all plugins already loaded (to include early plugins in the classloader, allowing late plugins to rely on early ones)
+        Collection<PluginInformation> allPlugins = new HashSet<PluginInformation>(plugins);
+        for (PluginProxy proxy : pluginList) {
+            allPlugins.add(proxy.getPluginInformation());
+        }
+        
+        for (PluginInformation info : allPlugins) {
             if (info.libraries == null) {
                 continue;
             }
