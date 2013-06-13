@@ -532,7 +532,7 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
-    <!-- display path with bicycle/foot=designated/official as if it was cycleway/footway -->
+	<!-- display path with bicycle/foot=designated/official as if it was cycleway/footway -->
 	<rule>
 		<condition k="highway" v="path"/>
 		<condition k="bicycle" v="designated"/>
@@ -613,10 +613,10 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="vehicle/restriction/stop.png"/>
 	</rule>
 
-    <rule>
-        <condition k="highway" v="give_way"/>
-        <icon annotate="true" src="vehicle/restriction/right_of_way.png"/>
-    </rule>
+	<rule>
+		<condition k="highway" v="give_way"/>
+		<icon annotate="true" src="vehicle/restriction/right_of_way.png"/>
+	</rule>
 
 	<rule>
 		<condition k="highway" v="traffic_signals"/>
@@ -693,7 +693,7 @@ For external files the <rules> should have following elements:
 		<line width="2" colour="highway_platform#c0c0c0"/>
 		<area colour="highway_platform#c0c0c0" closed="true"/>
 	</rule>
-    
+
 	<rule>
 		<condition k="highway" v="turning_circle"/>
 		<icon annotate="true" src="vehicle/turning_circle.png"/>
@@ -1005,8 +1005,8 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
-    <!-- disused often appears together with highway=xy -->
-    <!-- -> normal display with line, linemod for combinations -->
+	<!-- disused often appears together with highway=xy -->
+	<!-- -> normal display with line, linemod for combinations -->
 	<rule>
 		<condition k="railway" v="disused"/>
 		<line width="1" colour="oldrail#404040" dashed="true" priority="-10000"/>
@@ -1014,8 +1014,8 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
-    <!-- abandoned often appears together with highway=xy -->
-    <!-- -> normal display with line, linemod for combinations -->
+	<!-- abandoned often appears together with highway=xy -->
+	<!-- -> normal display with line, linemod for combinations -->
 	<rule>
 		<condition k="railway" v="abandoned"/>
 		<line width="1" colour="oldrail#404040" dashed="true" priority="-10000"/>
@@ -1273,13 +1273,13 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="misc/landmark/power.png"/>
 	</rule>
 
-        <rule>
+	<rule>
 		<condition k="power" v="transformer"/>
 		<icon annotate="true" src="misc/landmark/power/transformer.png"/>
 		<area colour="power#eeeeee"/>
 	</rule>
 
-    <!-- power_source is depricated by the wiki, but still in use -->
+	<!-- power_source is depricated by the wiki, but still in use -->
 	<rule>
 		<condition k="power_source" v="wind"/>
 		<icon annotate="true" src="misc/landmark/power/wind.png"/>
@@ -1322,7 +1322,7 @@ For external files the <rules> should have following elements:
 		<area colour="power#eeeeee"/>
 	</rule>
 
-    <!-- generator:source replaces power_source -->
+	<!-- generator:source replaces power_source -->
 	<rule>
 		<condition k="generator:source" v="wind"/>
 		<icon annotate="true" src="misc/landmark/power/wind.png"/>
@@ -1733,6 +1733,19 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="amenity" v="parking_space"/>
+		<icon annotate="true" src="vehicle/parking.png" priority="-500" />
+		<area colour="amenity_traffic#f7efb7"/>
+	</rule>
+
+	<rule>
+		<condition k="amenity" v="parking_space"/>
+		<condition k="wheelchair" b="yes"/>
+		<icon annotate="true" src="vehicle/parking/handicapped.png"/>
+		<area colour="amenity_traffic#f7efb7"/>
+	</rule>
+	
+	<rule>
 		<condition k="amenity" v="bicycle_rental"/>
 		<icon annotate="true" src="vehicle/rental/bicycle.png"/>
 		<area colour="amenity_traffic#f7efb7"/>
@@ -1789,13 +1802,13 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="service/clock.png"/>
 	</rule>
 
-    <!-- Rule to delete by end of 2013 if this deprecated tag has finally been replaced by emergency=phone below-->
-    <rule>
-        <condition k="amenity" v="emergency_phone"/>
-        <icon annotate="true" src="vehicle/emergency_phone.png"/>
-        <area colour="amenity_light#f7efb7"/>
-    </rule>
-    
+	<!-- Rule to delete by end of 2013 if this deprecated tag has finally been replaced by emergency=phone below-->
+	<rule>
+		<condition k="amenity" v="emergency_phone"/>
+		<icon annotate="true" src="vehicle/emergency_phone.png"/>
+		<area colour="amenity_light#f7efb7"/>
+	</rule>
+
 	<rule>
 		<condition k="emergency" v="phone"/>
 		<icon annotate="true" src="vehicle/emergency_phone.png"/>
@@ -2003,12 +2016,12 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="health/hospital.png"/>
 	</rule>
 
-    <rule>
-        <condition k="amenity" v="clinic"/>
-        <area colour="health#eeeeee"/>
-        <icon annotate="true" src="health/hospital.png"/>
-    </rule>
-    
+	<rule>
+		<condition k="amenity" v="clinic"/>
+		<area colour="health#eeeeee"/>
+		<icon annotate="true" src="health/hospital.png"/>
+	</rule>
+
 	<rule>
 		<condition k="amenity" v="nursery"/>
 		<area colour="health#eeeeee"/>
@@ -2171,17 +2184,17 @@ For external files the <rules> should have following elements:
 
 <!--office tags -->
 
-    <rule>
-        <condition k="office" v="company"/>
-        <icon annotate="true" src="icons/office_blue.png"/>
-        <area colour="office#de5696"/>
-    </rule>
+	<rule>
+		<condition k="office" v="company"/>
+		<icon annotate="true" src="icons/office_blue.png"/>
+		<area colour="office#de5696"/>
+	</rule>
 
-    <rule>
-        <condition k="office" v="government"/>
-        <icon annotate="true" src="icons/office_pink.png"/>
-        <area colour="office#de5696"/>
-    </rule>
+	<rule>
+		<condition k="office" v="government"/>
+		<icon annotate="true" src="icons/office_pink.png"/>
+		<area colour="office#de5696"/>
+	</rule>
 
 <!--shop tags -->
 
@@ -2390,7 +2403,7 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-        <!-- superseeded by greengrocer -->
+		<!-- superseeded by greengrocer -->
 		<condition k="shop" v="groceries"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<area colour="deprecated#ff0000"/>
@@ -2989,12 +3002,12 @@ For external files the <rules> should have following elements:
 		<icon src="misc/landmark/trees.png"/>
 		<area colour="woodarea#008000"/>
 	</rule>
-    
-    <rule>
-        <condition k="natural" v="grassland"/>
-        <icon src="misc/no_icon.png"/>
-        <area colour="green#b1e0c2"/>
-    </rule>
+
+	<rule>
+		<condition k="natural" v="grassland"/>
+		<icon src="misc/no_icon.png"/>
+		<area colour="green#b1e0c2"/>
+	</rule>
 
 	<rule>
 		<condition k="natural" v="wetland"/>
@@ -3690,39 +3703,39 @@ For external files the <rules> should have following elements:
 		<area colour="building#cb9999" priority="-10000"/>
 	</rule>
 
-    <rule>
-        <condition k="building" v="entrance" />
-        <icon annotate="true" src="misc/entrance-yes.png" priority="100"/>
-    </rule>
+	<rule>
+		<condition k="building" v="entrance" />
+		<icon annotate="true" src="misc/entrance-yes.png" priority="100"/>
+	</rule>
 
-    <rule>
-        <condition k="entrance" v="yes" />
-        <icon annotate="true" src="misc/entrance-yes.png"/>
-    </rule>
+	<rule>
+		<condition k="entrance" v="yes" />
+		<icon annotate="true" src="misc/entrance-yes.png"/>
+	</rule>
 
-    <rule>
-        <condition k="entrance" v="main" />
-        <icon annotate="true" src="misc/entrance-main.png"/>
-    </rule>
+	<rule>
+		<condition k="entrance" v="main" />
+		<icon annotate="true" src="misc/entrance-main.png"/>
+	</rule>
 
-    <rule>
-        <condition k="entrance" v="service" />
-        <icon annotate="true" src="misc/entrance-service.png"/>
-    </rule>
+	<rule>
+		<condition k="entrance" v="service" />
+		<icon annotate="true" src="misc/entrance-service.png"/>
+	</rule>
 
-    <rule>
-        <condition k="entrance" v="exit" />
-        <icon annotate="true" src="misc/entrance-exit.png"/>
-    </rule>
+	<rule>
+		<condition k="entrance" v="exit" />
+		<icon annotate="true" src="misc/entrance-exit.png"/>
+	</rule>
 
-    <rule>
-        <condition k="entrance" v="emergency" />
-        <icon annotate="true" src="misc/entrance-emergency.png"/>
-    </rule>
+	<rule>
+		<condition k="entrance" v="emergency" />
+		<icon annotate="true" src="misc/entrance-emergency.png"/>
+	</rule>
 
-    <rule>
-        <condition k="area" b="yes"/>
-        <area colour="area#ffffff" priority="-10000"/>
+	<rule>
+		<condition k="area" b="yes"/>
+		<area colour="area#ffffff" priority="-10000"/>
 	</rule>
 
 	<rule>
@@ -3753,13 +3766,13 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="addr:interpolation" v="alphabetic"/>
 		<line width="1" realwidth="1" dashed="1,1" colour="address#1C86EE"/>
-    </rule>
+	</rule>
 
 <!--"work in progress" tags -->
 
-    <rule> 
-        <condition k="fixme"/>
-        <icon annotate="true" src="misc/fixme.png" priority="10000"/>
+	<rule>
+		<condition k="fixme"/>
+		<icon annotate="true" src="misc/fixme.png" priority="10000"/>
 	</rule> 
 
 	<rule> 
@@ -3773,81 +3786,81 @@ For external files the <rules> should have following elements:
 	</rule> 
 
 <!--public_transport tags --> 
-    <rule>
-        <condition k="public_transport" v="stop_position"/>
-        <condition k="train" v="yes"/>
-        <icon annotate="true" src="transport/railway_small.png" priority="10" />
-    </rule>
+	<rule>
+		<condition k="public_transport" v="stop_position"/>
+		<condition k="train" v="yes"/>
+		<icon annotate="true" src="transport/railway_small.png" priority="10" />
+	</rule>
 
-    <rule>
-        <condition k="public_transport" v="stop_position"/>
-        <condition k="tram" v="yes"/>
-        <icon annotate="true" src="transport/tram.png"  priority="8" />
-    </rule>
+	<rule>
+		<condition k="public_transport" v="stop_position"/>
+		<condition k="tram" v="yes"/>
+		<icon annotate="true" src="transport/tram.png"  priority="8" />
+	</rule>
 
-    <rule>
-        <condition k="public_transport" v="stop_position"/>
-        <condition k="ferry" v="yes"/>
-        <icon annotate="true" src="transport/ferry.png"  priority="7" />
-    </rule>
+	<rule>
+		<condition k="public_transport" v="stop_position"/>
+		<condition k="ferry" v="yes"/>
+		<icon annotate="true" src="transport/ferry.png"  priority="7" />
+	</rule>
 
-    <rule>
-        <condition k="public_transport" v="stop_position"/>
-        <condition k="aerial" v="yes"/>
-        <icon annotate="true" src="transport/aerialway.png"  priority="6" />
-    </rule>
+	<rule>
+		<condition k="public_transport" v="stop_position"/>
+		<condition k="aerial" v="yes"/>
+		<icon annotate="true" src="transport/aerialway.png"  priority="6" />
+	</rule>
 
-    <rule>
-        <condition k="public_transport" v="stop_position"/>
-        <condition k="bus" v="yes"/>
-        <icon annotate="true" src="transport/bus_small.png"  priority="4" />
-    </rule>
+	<rule>
+		<condition k="public_transport" v="stop_position"/>
+		<condition k="bus" v="yes"/>
+		<icon annotate="true" src="transport/bus_small.png"  priority="4" />
+	</rule>
 
-    <rule>
-        <condition k="public_transport" v="stop_position"/>
-        <icon annotate="true" src="transport/railway_small.png" priority="-10"/>
-    </rule>
+	<rule>
+		<condition k="public_transport" v="stop_position"/>
+		<icon annotate="true" src="transport/railway_small.png" priority="-10"/>
+	</rule>
 
-    <rule>
-        <condition k="public_transport" v="platform"/>
-        <condition k="train" v="yes"/>
-        <icon annotate="true" src="transport/railway_station.png"  priority="10" />
-        <line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
-    </rule>
-    
-    <rule>
-        <condition k="public_transport" v="platform"/>
-        <condition k="tram" v="yes"/>
-        <icon annotate="true" src="transport/railway_station.png"  priority="8" />
-        <line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
-    </rule>
-    
-    <rule>
-        <condition k="public_transport" v="platform"/>
-        <condition k="ferry" v="yes"/>
-        <icon annotate="true" src="transport/ferry.png"  priority="7" />
-        <line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
-    </rule>
-    
-    <rule>
-        <condition k="public_transport" v="platform"/>
-        <condition k="aerial" v="yes"/>
-        <icon annotate="true" src="transport/aerialway/station.png"  priority="6" />
-        <line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
-    </rule>
-    
-    <rule>
-        <condition k="public_transport" v="platform"/>
-        <condition k="bus" v="yes"/>
-        <icon annotate="true" src="transport/bus_small.png"  priority="4" />
-        <line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
-    </rule>
+	<rule>
+		<condition k="public_transport" v="platform"/>
+		<condition k="train" v="yes"/>
+		<icon annotate="true" src="transport/railway_station.png"  priority="10" />
+		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
+	</rule>
 
-    <rule>
-        <condition k="public_transport" v="platform"/>
-        <icon annotate="true" src="transport/bus_small.png" priority="-10"/>
-        <line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
-    </rule>
+	<rule>
+		<condition k="public_transport" v="platform"/>
+		<condition k="tram" v="yes"/>
+		<icon annotate="true" src="transport/railway_station.png"  priority="8" />
+		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
+	</rule>
+
+	<rule>
+		<condition k="public_transport" v="platform"/>
+		<condition k="ferry" v="yes"/>
+		<icon annotate="true" src="transport/ferry.png"  priority="7" />
+		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
+	</rule>
+
+	<rule>
+		<condition k="public_transport" v="platform"/>
+		<condition k="aerial" v="yes"/>
+		<icon annotate="true" src="transport/aerialway/station.png"  priority="6" />
+		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
+	</rule>
+
+	<rule>
+		<condition k="public_transport" v="platform"/>
+		<condition k="bus" v="yes"/>
+		<icon annotate="true" src="transport/bus_small.png"  priority="4" />
+		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
+	</rule>
+
+	<rule>
+		<condition k="public_transport" v="platform"/>
+		<icon annotate="true" src="transport/bus_small.png" priority="-10"/>
+		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
+	</rule>
 
 <!--"deprecated" tags -->
 
