@@ -650,16 +650,18 @@ public class Geometry {
             EastNorth n0 = nodes.get(i).getEastNorth();
             EastNorth n1 = nodes.get((i+1) % nodes.size()).getEastNorth();
 
-            BigDecimal x0 = new BigDecimal(n0.east());
-            BigDecimal y0 = new BigDecimal(n0.north());
-            BigDecimal x1 = new BigDecimal(n1.east());
-            BigDecimal y1 = new BigDecimal(n1.north());
-
-            BigDecimal k = x0.multiply(y1, MathContext.DECIMAL128).subtract(y0.multiply(x1, MathContext.DECIMAL128));
-
-            area = area.add(k, MathContext.DECIMAL128);
-            east = east.add(k.multiply(x0.add(x1, MathContext.DECIMAL128), MathContext.DECIMAL128));
-            north = north.add(k.multiply(y0.add(y1, MathContext.DECIMAL128), MathContext.DECIMAL128));
+            if (n0.isValid() && n1.isValid()) {
+                BigDecimal x0 = new BigDecimal(n0.east());
+                BigDecimal y0 = new BigDecimal(n0.north());
+                BigDecimal x1 = new BigDecimal(n1.east());
+                BigDecimal y1 = new BigDecimal(n1.north());
+    
+                BigDecimal k = x0.multiply(y1, MathContext.DECIMAL128).subtract(y0.multiply(x1, MathContext.DECIMAL128));
+    
+                area = area.add(k, MathContext.DECIMAL128);
+                east = east.add(k.multiply(x0.add(x1, MathContext.DECIMAL128), MathContext.DECIMAL128));
+                north = north.add(k.multiply(y0.add(y1, MathContext.DECIMAL128), MathContext.DECIMAL128));
+            }
         }
 
         BigDecimal d = new BigDecimal(3, MathContext.DECIMAL128); // 1/2 * 6 = 3
