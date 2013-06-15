@@ -433,6 +433,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         Collection<Command> cmds = new LinkedList<Command>();
         Way wnew = new Way(selectedSegment.way);
         boolean wayWasModified = false;
+        boolean wayWasSingleSegment = wnew.getNodesCount() == 2;
         int insertionPoint = selectedSegment.lowerIndex + 1;
 
         //find if the new points overlap existing segments (in case of 90 degree angles)
@@ -472,7 +473,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         }
 
         //the way was a single segment, close the way
-        if (wnew.getNodesCount() == 4) {
+        if (wayWasSingleSegment) {
             wnew.addNode(selectedSegment.getFirstNode());
             wayWasModified = true;
         }
