@@ -29,7 +29,7 @@ import org.apache.commons.codec.binary.StringUtils;
  * Operations to simplify common {@link java.security.MessageDigest} tasks.
  * This class is immutable and thread-safe.
  *
- * @version $Id: DigestUtils.java 1493409 2013-06-15 19:51:14Z sebb $
+ * @version $Id: DigestUtils.java 1493418 2013-06-15 20:56:28Z sebb $
  */
 public class DigestUtils {
 
@@ -42,7 +42,7 @@ public class DigestUtils {
      *            The MessageDigest to use (e.g. MD5)
      * @param data
      *            Data to digest
-     * @return MD5 digest
+     * @return the digest
      * @throws IOException
      *             On error reading from the stream
      */
@@ -58,7 +58,7 @@ public class DigestUtils {
      *            href="http://java.sun.com/j2se/1.3/docs/guide/security/CryptoSpec.html#AppA">Appendix A in the Java
      *            Cryptography Architecture API Specification & Reference</a> for information about standard algorithm
      *            names.
-     * @return An MD5 digest instance.
+     * @return A digest instance.
      * @see MessageDigest#getInstance(String)
      * @throws IllegalArgumentException
      *             when a {@link NoSuchAlgorithmException} is caught.
@@ -784,7 +784,7 @@ public class DigestUtils {
      *            The MessageDigest to use (e.g. MD5)
      * @param data
      *            Data to digest
-     * @return MD5 digest
+     * @return the digest
      * @throws IOException
      *             On error reading from the stream
      * @since 1.8
