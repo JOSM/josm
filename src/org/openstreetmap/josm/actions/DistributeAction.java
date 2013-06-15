@@ -1,13 +1,16 @@
 // License: GPL. Copyright 2009 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -27,13 +30,16 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public final class DistributeAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code DistributeAction}.
+     */
     public DistributeAction() {
         super(tr("Distribute Nodes"), "distribute", tr("Distribute the selected nodes to equal distances along a line."),
                 Shortcut.registerShortcut("tools:distribute", tr("Tool: {0}", tr("Distribute Nodes")), KeyEvent.VK_B,
                 Shortcut.SHIFT), true);
         putValue("help", ht("/Action/DistributeNodes"));
     }
-
+    
     /**
      * The general algorithm here is to find the two selected nodes
      * that are furthest apart, and then to distribute all other selected
@@ -58,6 +64,13 @@ public final class DistributeAction extends JosmAction {
                     nodes.addAll(((Way)osm).getNodes());
                     itnodes.addAll(((Way)osm).getNodes());
                 }
+        }
+        
+        Set<Node> ignoredNodes = removeNodesWithoutCoordinates(nodes);
+        ignoredNodes.addAll(removeNodesWithoutCoordinates(itnodes));
+        if (!ignoredNodes.isEmpty()) {
+            Main.warn(tr("Ignoring {0} nodes with null coordinates", ignoredNodes.size()));
+            ignoredNodes.clear();
         }
 
         if (nodes.size() < 3) {
@@ -134,6 +147,18 @@ public final class DistributeAction extends JosmAction {
         // Do it!
         Main.main.undoRedo.add(new SequenceCommand(tr("Distribute Nodes"), cmds));
         Main.map.repaint();
+    }
+    
+    private Set<Node> removeNodesWithoutCoordinates(Collection<Node> col) {
+        Set<Node> result = new HashSet<Node>();
+        for (Iterator<Node> it = col.iterator(); it.hasNext();) {
+            Node n = it.next();
+            if (n.getCoor() == null) {
+                it.remove();
+                result.add(n);
+            }
+        }
+        return result;
     }
 
     @Override
