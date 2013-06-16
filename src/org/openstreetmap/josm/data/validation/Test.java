@@ -141,7 +141,7 @@ public class Test extends AbstractVisitor
         progressMonitor.setTicksCount(selection.size());
         for (OsmPrimitive p : selection) {
             if (p.isUsable()) {
-                p.visit(this);
+                p.accept(this);
             }
             progressMonitor.worked(1);
         }

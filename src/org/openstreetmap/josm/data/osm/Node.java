@@ -195,12 +195,12 @@ public final class Node extends OsmPrimitive implements INode {
     }
 
     @Override
-    public void visit(Visitor visitor) {
+    public void accept(Visitor visitor) {
         visitor.visit(this);
     }
 
     @Override
-    public void visit(PrimitiveVisitor visitor) {
+    public void accept(PrimitiveVisitor visitor) {
         visitor.visit(this);
     }
 

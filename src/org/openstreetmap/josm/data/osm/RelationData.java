@@ -63,7 +63,7 @@ public class RelationData extends PrimitiveData implements IRelation {
     }
 
     @Override
-    public void visit(PrimitiveVisitor visitor) {
+    public void accept(PrimitiveVisitor visitor) {
         visitor.visit(this);
     }
 

@@ -68,14 +68,14 @@ public class PrimitiveDeepCopy {
                 (firstIteration ? directlyAdded : referenced).add(r.save());
                 firstIteration = false;
                 for (RelationMember m : r.getMembers()) {
-                    m.getMember().visit(this);
+                    m.getMember().accept(this);
                 }
             }
 
             public void visitAll() {
                 for (OsmPrimitive osm : primitives) {
                     firstIteration = true;
-                    osm.visit(this);
+                    osm.accept(this);
                 }
             }
         }.visitAll();

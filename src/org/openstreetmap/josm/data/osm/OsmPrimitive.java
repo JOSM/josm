@@ -980,13 +980,13 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         else if (this.referrers instanceof OsmPrimitive) {
             OsmPrimitive ref = (OsmPrimitive) this.referrers;
             if (ref.dataSet == dataSet) {
-                ref.visit(visitor);
+                ref.accept(visitor);
             }
         } else if (this.referrers instanceof OsmPrimitive[]) {
             OsmPrimitive[] refs = (OsmPrimitive[]) this.referrers;
             for (OsmPrimitive ref: refs) {
                 if (ref.dataSet == dataSet) {
-                    ref.visit(visitor);
+                    ref.accept(visitor);
                 }
             }
         }
@@ -1026,7 +1026,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * visitor function.
      * @param visitor The visitor from which the visit() function must be called.
      */
-    abstract public void visit(Visitor visitor);
+    abstract public void accept(Visitor visitor);
 
     /**
      * Get and write all attributes from the parameter. Does not fire any listener, so

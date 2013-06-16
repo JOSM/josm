@@ -85,7 +85,7 @@ abstract public class Command extends PseudoCommand {
         Collection<OsmPrimitive> all = new ArrayList<OsmPrimitive>();
         fillModifiedData(all, all, all);
         for (OsmPrimitive osm : all) {
-            osm.visit(visitor);
+            osm.accept(visitor);
         }
         cloneMap = visitor.orig;
         return true;

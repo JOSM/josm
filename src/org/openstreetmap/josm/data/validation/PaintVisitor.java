@@ -121,7 +121,7 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
     @Override
     public void visit(OsmPrimitive p) {
         if (p.isUsable()) {
-            p.visit(this);
+            p.accept(this);
         }
     }
 
