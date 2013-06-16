@@ -29,7 +29,7 @@
 		<key>ClassPath</key>
 		<string>$JAVAROOT/josm-custom.jar</string>
 		<key>JVMVersion</key>
-		<string>1.5+</string>
+		<string>1.6+</string>
 		<key>MainClass</key>
 		<string>org.openstreetmap.josm.gui.MainApplication</string>
 		<key>Properties</key>
@@ -42,5 +42,7 @@
 		<key>WorkingDirectory</key>
 		<string>$APP_PACKAGE/Contents/Resources/Java</string>
 	</dict>
+    <key>NSHighResolutionCapable</key>
+    <string>True</string>
 </dict>
 </plist>
