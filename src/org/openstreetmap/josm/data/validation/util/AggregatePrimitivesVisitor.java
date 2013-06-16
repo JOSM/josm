@@ -29,7 +29,7 @@ public class AggregatePrimitivesVisitor extends AbstractVisitor {
      */
     public Collection<OsmPrimitive> visit(Collection<OsmPrimitive> data) {
         for (OsmPrimitive osm : data) {
-            osm.visit(this);
+            osm.accept(this);
         }
 
         return aggregatedData;
@@ -57,7 +57,7 @@ public class AggregatePrimitivesVisitor extends AbstractVisitor {
         if (!aggregatedData.contains(r)) {
             aggregatedData.add(r);
             for (RelationMember m : r.getMembers()) {
-                m.getMember().visit(this);
+                m.getMember().accept(this);
             }
         }
     }

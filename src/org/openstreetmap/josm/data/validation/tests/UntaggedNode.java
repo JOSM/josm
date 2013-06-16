@@ -47,7 +47,7 @@ public class UntaggedNode extends Test {
     public void visit(Collection<OsmPrimitive> selection) {
         for (OsmPrimitive p : selection) {
             if (p.isUsable() && p instanceof Node) {
-                p.visit(this);
+                p.accept(this);
             }
         }
     }

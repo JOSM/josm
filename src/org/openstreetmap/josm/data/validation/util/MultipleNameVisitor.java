@@ -49,7 +49,7 @@ public class MultipleNameVisitor extends NameVisitor
                 multipleName += name;
             }
 
-            osm.visit(this);
+            osm.accept(this);
             if (multipleClassname == null) {
                 multipleClassname = className;
                 multiplePluralClassname = classNamePlural;

@@ -47,13 +47,16 @@ public class AllNodesVisitor extends AbstractVisitor {
         for (RelationMember m : e.getMembers())
             if (m.isNode()) visit(m.getNode());
     }
+    
     /**
-     * @return All nodes the given primitive has.
+     * Replies all nodes contained by the given primitives
+     * @param osms The OSM primitives to inspect
+     * @return All nodes the given primitives have.
      */
     public static Collection<Node> getAllNodes(Collection<? extends OsmPrimitive> osms) {
         AllNodesVisitor v = new AllNodesVisitor();
         for (OsmPrimitive osm : osms)
-            osm.visit(v);
+            osm.accept(v);
         return v.nodes;
     }
 }
