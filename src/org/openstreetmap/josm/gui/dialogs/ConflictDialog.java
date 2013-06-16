@@ -255,7 +255,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
                     visited.add(e);
                     try {
                         for (RelationMember em : e.getMembers()) {
-                            em.getMember().visit(this);
+                            em.getMember().accept(this);
                         }
                     } finally {
                         visited.remove(e);
@@ -267,7 +267,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             if (conflicts == null || !conflicts.hasConflictForMy((OsmPrimitive)o)) {
                 continue;
             }
-            conflicts.getConflictForMy((OsmPrimitive)o).getTheir().visit(conflictPainter);
+            conflicts.getConflictForMy((OsmPrimitive)o).getTheir().accept(conflictPainter);
         }
     }
 

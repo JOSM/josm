@@ -42,11 +42,11 @@ public class OsmChangeBuilder {
         if (p.isDeleted()) {
             switchMode("delete");
             osmwriter.setWithBody(false);
-            p.visit(osmwriter);
+            p.accept(osmwriter);
         } else {
             switchMode(p.isNew() ? "create" : "modify");
             osmwriter.setWithBody(true);
-            p.visit(osmwriter);
+            p.accept(osmwriter);
         }
     }
 

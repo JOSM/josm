@@ -287,7 +287,7 @@ public class OsmApi extends OsmConnection {
         osmWriter.setWithBody(addBody);
         osmWriter.setChangeset(changeset);
         osmWriter.header();
-        o.visit(osmWriter);
+        o.accept(osmWriter);
         osmWriter.footer();
         osmWriter.flush();
         return swriter.toString();

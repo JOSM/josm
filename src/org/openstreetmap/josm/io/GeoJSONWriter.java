@@ -98,7 +98,7 @@ public class GeoJSONWriter implements Visitor {
         }
         { // append primitive specific
             out.append("\t\"geometry\": {");
-            p.visit(this);
+            p.accept(this);
             out.append("}");
         }
         out.append("}");

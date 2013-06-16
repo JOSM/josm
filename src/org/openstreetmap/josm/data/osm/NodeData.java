@@ -72,7 +72,7 @@ public class NodeData extends PrimitiveData implements INode {
     }
 
     @Override
-    public void visit(PrimitiveVisitor visitor) {
+    public void accept(PrimitiveVisitor visitor) {
         visitor.visit(this);
     }
 
