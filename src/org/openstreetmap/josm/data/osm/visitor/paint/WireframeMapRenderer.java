@@ -160,7 +160,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         
         for (final Relation rel : data.searchRelations(bbox)) {
             if (rel.isDrawable() && !ds.isSelected(rel) && !rel.isDisabledAndHidden()) {
-                rel.visit(this);
+                rel.accept(this);
             }
         }
 
@@ -175,7 +175,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
                 } else if (!way.isTagged()) {
                     untaggedWays.add(way);
                 } else {
-                    way.visit(this);
+                    way.accept(this);
                 }
             }
         }
@@ -184,7 +184,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         // Display highlighted ways after the other ones (fix #8276)
         for (List<Way> specialWays : Arrays.asList(new List[]{untaggedWays, highlightedWays})) {
             for (final Way way : specialWays){
-                way.visit(this);
+                way.accept(this);
             }
             specialWays.clear();
             displaySegments();
@@ -192,7 +192,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         
         for (final OsmPrimitive osm : data.getSelected()) {
             if (osm.isDrawable()) {
-                osm.visit(this);
+                osm.accept(this);
             }
         }
         displaySegments();
@@ -200,7 +200,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         for (final OsmPrimitive osm: data.searchNodes(bbox)) {
             if (osm.isDrawable() && !ds.isSelected(osm) && !osm.isDisabledAndHidden())
             {
-                osm.visit(this);
+                osm.accept(this);
             }
         }
         drawVirtualNodes(data, bbox);
