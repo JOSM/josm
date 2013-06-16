@@ -805,7 +805,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
 
         public HistoryOsmPrimitive build(OsmPrimitive primitive) {
-            primitive.visit(this);
+            primitive.accept(this);
             return clone;
         }
     }

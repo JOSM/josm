@@ -519,7 +519,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         @Override
         public void visit(OsmPrimitive p) {
             if (p.isUsable()) {
-                p.visit(this);
+                p.accept(this);
             }
         }
 

@@ -203,7 +203,7 @@ public class UploadSelectionAction extends JosmAction{
                 for (Node n: w.getNodes()) {
                     // we upload modified nodes even if they aren't in the current
                     // selection.
-                    n.visit(this);
+                    n.accept(this);
                 }
             }
         }
@@ -217,7 +217,7 @@ public class UploadSelectionAction extends JosmAction{
                     // so wont check here for deleted primitives here
                     //
                     if (p.isNewOrUndeleted()) {
-                        p.visit(this);
+                        p.accept(this);
                     }
                 }
             }
@@ -239,7 +239,7 @@ public class UploadSelectionAction extends JosmAction{
             CheckParameterUtil.ensureParameterNotNull(base, "base");
             hull = new HashSet<OsmPrimitive>();
             for (OsmPrimitive p: base) {
-                p.visit(this);
+                p.accept(this);
             }
             return hull;
         }

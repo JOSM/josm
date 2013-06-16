@@ -234,7 +234,7 @@ public class AutoScaleAction extends JosmAction {
                 return null;
             }
             for (OsmPrimitive osm : sel) {
-                osm.visit(v);
+                osm.accept(v);
             }
             // increase bbox by 0.001 degrees on each side. this is required
             // especially if the bbox contains one single node, but helpful

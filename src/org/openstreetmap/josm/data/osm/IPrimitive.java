@@ -30,7 +30,7 @@ public interface IPrimitive extends Tagged, PrimitiveId {
     int getChangesetId();
     void setChangesetId(int changesetId);
 
-    void visit(PrimitiveVisitor visitor);
+    void accept(PrimitiveVisitor visitor);
     String getName();
     String getLocalName();
 

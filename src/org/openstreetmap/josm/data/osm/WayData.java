@@ -59,7 +59,7 @@ public class WayData extends PrimitiveData implements IWay {
     }
 
     @Override
-    public void visit(PrimitiveVisitor visitor) {
+    public void accept(PrimitiveVisitor visitor) {
         visitor.visit(this);
     }
 

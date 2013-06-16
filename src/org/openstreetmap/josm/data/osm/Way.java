@@ -208,11 +208,11 @@ public final class Way extends OsmPrimitive implements IWay {
         return chunkSet;
     }
 
-    @Override public void visit(Visitor visitor) {
+    @Override public void accept(Visitor visitor) {
         visitor.visit(this);
     }
 
-    @Override public void visit(PrimitiveVisitor visitor) {
+    @Override public void accept(PrimitiveVisitor visitor) {
         visitor.visit(this);
     }
 

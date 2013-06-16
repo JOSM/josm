@@ -39,7 +39,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
         // only use direct members
         for (RelationMember m : e.getMembers()) {
             if (!m.isRelation()) {
-                m.getMember().visit(this);
+                m.getMember().accept(this);
             }
         }
     }
@@ -129,7 +129,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
             if (p == null) {
                 continue;
             }
-            p.visit(this);
+            p.accept(this);
         }
     }
 }

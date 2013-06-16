@@ -454,7 +454,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     @Override public Object getInfoComponent() {
         final DataCountVisitor counter = new DataCountVisitor();
         for (final OsmPrimitive osm : data.allPrimitives()) {
-            osm.visit(counter);
+            osm.accept(counter);
         }
         final JPanel p = new JPanel(new GridBagLayout());
 

@@ -71,7 +71,7 @@ public class ChangePropertyKeyCommand extends Command {
         String text = tr( "Replace \"{0}\" by \"{1}\" for", key, newKey);
         if (objects.size() == 1) {
             NameVisitor v = new NameVisitor();
-            objects.iterator().next().visit(v);
+            objects.iterator().next().accept(v);
             text += " "+tr(v.className)+" "+v.name;
         } else {
             text += " "+objects.size()+" "+trn("object","objects",objects.size());
@@ -92,7 +92,7 @@ public class ChangePropertyKeyCommand extends Command {
 
         final NameVisitor v = new NameVisitor();
         for (final OsmPrimitive osm : objects) {
-            osm.visit(v);
+            osm.accept(v);
             children.add(new PseudoCommand() {
                 @Override
                 public String getDescriptionText() {
