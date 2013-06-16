@@ -146,10 +146,18 @@ public abstract class SaveActionBase extends DiskAccessAction {
     private static File checkFileAndConfirmOverWrite(JFileChooser fc, String extension) {
         if (fc == null) return null;
         File file = fc.getSelectedFile();
-        String fn = file.getPath();
-        if (fn.indexOf('.') == -1)
-        {
-            FileFilter ff = fc.getFileFilter();
+        
+        FileFilter ff = fc.getFileFilter();
+        if (!ff.accept(file)) {
+            // Extension of another filefilter given ?
+            for (FileFilter cff : fc.getChoosableFileFilters()) {
+                if (cff.accept(file)) {
+                    fc.setFileFilter(cff);
+                    return file;
+                }
+            }
+            // No filefilter accepts current filename, add default extension
+            String fn = file.getPath();
             if (ff instanceof ExtensionFileFilter) {
                 fn += "." + ((ExtensionFileFilter)ff).getDefaultExtension();
             } else if (extension != null) {
