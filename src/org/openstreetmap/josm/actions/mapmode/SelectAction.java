@@ -849,14 +849,14 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         // Virtual Ways: if non-empty the cursor is above a virtual node. So don't highlight
         // anything if about to drag the virtual node (i.e. !released) but continue if the
         // cursor is only released above a virtual node by accident (i.e. released). See #7018
-        if ((shift && ctrl) || (ctrl && !released) || (virtualManager.hasVirtualWaysToBeConstructed() && !released))
+        if (ds == null || (shift && ctrl) || (ctrl && !released) || (virtualManager.hasVirtualWaysToBeConstructed() && !released))
             return;
 
         if (!released) {
             // Don't replace the selection if the user clicked on a
             // selected object (it breaks moving of selected groups).
             // Do it later, on mouse release.
-            shift |= getCurrentDataSet().getSelected().containsAll(prims);
+            shift |= ds.getSelected().containsAll(prims);
         }
 
         if (ctrl) {
