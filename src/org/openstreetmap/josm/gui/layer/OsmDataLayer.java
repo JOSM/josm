@@ -564,12 +564,11 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
             if (n.isIncomplete() || n.isDeleted() || doneNodes.contains(n)) {
                 continue;
             }
-            String name = n.get("name");
-            if (name == null) {
-                continue;
-            }
             WayPoint wpt = new WayPoint(n.getCoor());
-            wpt.attr.put("name", name);
+            String name = n.get("name");
+            if (name != null) {
+                wpt.attr.put("name", name);
+            }
             if (!n.isTimestampEmpty()) {
                 wpt.attr.put("time", DateUtils.fromDate(n.getTimestamp()));
                 wpt.setTime();
