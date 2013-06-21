@@ -11,8 +11,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import javax.swing.DefaultComboBoxModel;
+import java.net.URL;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -96,7 +97,10 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                 formats.setEnabled(!endpoint.isSelected());
                 wmsUrl.setEnabled(!endpoint.isSelected());
                 if (endpoint.isSelected()) {
-                    name.setText(wms.getServiceUrl().getHost());
+                    URL url = wms.getServiceUrl();
+                    if (url != null) {
+                        name.setText(url.getHost());
+                    }
                 } else {
                     onLayerSelectionChanged();
                 }
