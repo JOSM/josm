@@ -12,8 +12,8 @@ import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
@@ -260,12 +260,17 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         DataSet.addSelectionListener(repaintSelectionChangedListener);
 
         //store the last mouse action
-        this.addMouseMotionListener(new MouseMotionListener() {
+        this.addMouseListener(new MouseAdapter() {
             @Override public void mouseDragged(MouseEvent e) {
                 mouseMoved(e);
             }
             @Override public void mouseMoved(MouseEvent e) {
                 lastMEvent = e;
+            }            
+            @Override
+            public void mousePressed(MouseEvent me) {
+                // focus the MapView component when mouse is pressed inside it
+                requestFocus();
             }
         });
 
