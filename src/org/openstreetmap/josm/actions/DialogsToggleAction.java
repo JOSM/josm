@@ -81,6 +81,7 @@ public class DialogsToggleAction extends JosmAction {
             if (!Main.pref.getBoolean("sidetoolbar.always-visible", true)) {
                 Main.pref.put("sidetoolbar.visible", selected);
             }
+            Main.map.mapView.rememberLastPositionOnScreen();
         }
     }
 
