@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -40,6 +41,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
@@ -280,6 +282,18 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         }
     }
 
+    // remebered geometry of the component
+    private Dimension oldSize = null;
+    private Point oldLoc = null;
+    
+    /*
+     * Call this method to keep map position on screen during next repaint
+     */
+    public void rememberLastPositionOnScreen() {
+        oldSize = getSize();
+        oldLoc  = getLocationOnScreen();
+    }
+    
     /**
      * Adds a GPX layer. A GPX layer is added below the lowest data layer.
      *
@@ -525,6 +539,17 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         if (center == null)
             return; // no data loaded yet.
 
+        // if the position was remembered, we need to adjust center once before repainting
+        if (oldLoc != null && oldSize != null) {
+            Point l1  = getLocationOnScreen();
+            final EastNorth newCenter = new EastNorth(
+                    center.getX()+ (l1.x-oldLoc.x - (oldSize.width-getWidth())/2.0)*getScale(),
+                    center.getY()+ (oldLoc.y-l1.y + (oldSize.height-getHeight())/2.0)*getScale()
+                    );
+            oldLoc = null; oldSize = null;
+            zoomTo(newCenter);
+        }
+        
         List<Layer> visibleLayers = getVisibleLayersInZOrder();
 
         int nonChangedLayersCount = 0;
