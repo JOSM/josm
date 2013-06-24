@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Vector;
 
 import javax.accessibility.Accessible;
+import javax.swing.ComboBoxEditor;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -217,11 +218,14 @@ public class JosmComboBox extends JComboBox {
         
         private void enableMenu() {
             if (launcher == null) {
-                Component editorComponent = getEditor().getEditorComponent();
-                if (editorComponent instanceof JTextComponent) {
-                    component = (JTextComponent) editorComponent;
-                    component.addMouseListener(this);
-                    launcher = TextContextualPopupMenu.enableMenuFor(component);
+                ComboBoxEditor editor = getEditor();
+                if (editor != null) {
+                    Component editorComponent = editor.getEditorComponent();
+                    if (editorComponent instanceof JTextComponent) {
+                        component = (JTextComponent) editorComponent;
+                        component.addMouseListener(this);
+                        launcher = TextContextualPopupMenu.enableMenuFor(component);
+                    }
                 }
             }
         }
