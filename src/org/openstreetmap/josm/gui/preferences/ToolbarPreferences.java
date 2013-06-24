@@ -1023,6 +1023,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     public void refreshToolbarControl() {
         control.removeAll();
         buttonActions.clear();
+        boolean unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0)!=null;
 
         for (ActionDefinition action : getDefinedActions()) {
             if (action.isSeparator()) {
@@ -1047,8 +1048,10 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     });
                 }
                 b.setInheritsPopupMenu(true);
+                b.setFocusTraversalKeysEnabled(!unregisterTab);
             }
         }
+        control.setFocusTraversalKeysEnabled(!unregisterTab);
         control.setVisible(control.getComponentCount() != 0);
     }
     

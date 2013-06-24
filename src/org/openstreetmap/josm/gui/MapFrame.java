@@ -9,7 +9,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
-import java.awt.KeyboardFocusManager;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -18,7 +17,6 @@ import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -75,6 +73,7 @@ import org.openstreetmap.josm.gui.dialogs.properties.PropertiesDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Shortcut;
 
 
 /**
@@ -144,6 +143,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     private final JPanel leftPanel;
     private final DialogsPanel dialogsPanel;
 
+    private final boolean unregisterTab;
+    
     /**
      * Default width of the toggle dialog area.
      */
@@ -236,6 +237,12 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         // status line below the map
         statusLine = new MapStatus(this);
         MapView.addLayerChangeListener(this);
+
+        unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0)!=null;
+        if (unregisterTab) {
+            for (JComponent c: allDialogButtons) c.setFocusTraversalKeysEnabled(false);
+            for (JComponent c: allMapModeButtons) c.setFocusTraversalKeysEnabled(false);
+        }
     }
 
     public boolean selectSelectTool(boolean onlyIfModeless) {
@@ -403,9 +410,9 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         toolBarActions.setAlignmentX(0.5f);
             toolBarActions.setInheritsPopupMenu(true);
             sideToolBar.add(toolBarActions);
-        listAllMapModesButton.setAlignmentX(0.5f);
-        listAllMapModesButton.setBorder(null);
-        listAllMapModesButton.setFont(listAllMapModesButton.getFont().deriveFont(Font.PLAIN));
+            listAllMapModesButton.setAlignmentX(0.5f);
+            listAllMapModesButton.setBorder(null);
+            listAllMapModesButton.setFont(listAllMapModesButton.getFont().deriveFont(Font.PLAIN));
             listAllMapModesButton.setInheritsPopupMenu(true);
             sideToolBar.add(listAllMapModesButton);
         }

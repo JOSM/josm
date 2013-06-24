@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -228,6 +229,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      */
     public MapView(final JPanel contentPane, final ViewportData viewportData) {
         Main.pref.addPreferenceChangeListener(this);
+        final boolean unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0)!=null;
 
         addComponentListener(new ComponentAdapter(){
             @Override public void componentResized(ComponentEvent e) {
@@ -236,6 +238,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 MapSlider zoomSlider = new MapSlider(MapView.this);
                 add(zoomSlider);
                 zoomSlider.setBounds(3, 0, 114, 30);
+                zoomSlider.setFocusTraversalKeysEnabled(!unregisterTab);
 
                 MapScaler scaler = new MapScaler(MapView.this);
                 add(scaler);
@@ -276,8 +279,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             }
         });
 
-        if (Shortcut.findShortcut(KeyEvent.VK_TAB, 0)!=null)
-        {
+        if (Shortcut.findShortcut(KeyEvent.VK_TAB, 0)!=null) {
             setFocusTraversalKeysEnabled(false);
         }
     }
