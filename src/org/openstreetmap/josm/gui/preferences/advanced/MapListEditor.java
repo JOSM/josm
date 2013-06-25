@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultCellEditor;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -30,8 +31,6 @@ import javax.swing.table.TableCellEditor;
 
 import org.openstreetmap.josm.data.Preferences.MapListSetting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.preferences.advanced.AdvancedPreference.PrefEntry;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -50,7 +49,7 @@ public class MapListEditor extends ExtendedDialog {
     List<List<String>> dataValues;
     Integer entryIdx;
 
-    public MapListEditor(PreferenceTabbedPane gui, PrefEntry entry, MapListSetting setting) {
+    public MapListEditor(JComponent gui, PrefEntry entry, MapListSetting setting) {
         super(gui, tr("Change list of maps setting"), new String[] {tr("OK"), tr("Cancel")});
         this.entry = entry;
         List<Map<String, String>> orig = setting.getValue();
