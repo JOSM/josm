@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultCellEditor;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -17,8 +18,6 @@ import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.data.Preferences.ListSetting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.preferences.advanced.AdvancedPreference.PrefEntry;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -28,7 +27,7 @@ public class ListEditor extends ExtendedDialog {
     List<String> data;
     PrefEntry entry;
 
-    public ListEditor(final PreferenceTabbedPane gui, PrefEntry entry, ListSetting setting) {
+    public ListEditor(final JComponent gui, PrefEntry entry, ListSetting setting) {
         super(gui, tr("Change list setting"), new String[] {tr("OK"), tr("Cancel")});
         this.entry = entry;
         List<String> orig = setting.getValue();

@@ -4,14 +4,13 @@ package org.openstreetmap.josm.gui.preferences.advanced;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
+import javax.swing.JComponent;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.Preferences.StringSetting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.preferences.advanced.AdvancedPreference.PrefEntry;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -20,7 +19,7 @@ public class StringEditor extends ExtendedDialog {
     PrefEntry entry;
     JosmTextField tvalue;
 
-    public StringEditor(final PreferenceTabbedPane gui, PrefEntry entry, StringSetting setting) {
+    public StringEditor(final JComponent gui, PrefEntry entry, StringSetting setting) {
         super(gui, tr("Change string setting"), new String[] {tr("OK"), tr("Cancel")});
         this.entry = entry;
         setButtonIcons(new String[] {"ok.png", "cancel.png"});
