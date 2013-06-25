@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.preferences.advanced;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,12 +22,15 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
@@ -41,7 +46,6 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class AdvancedPreference extends DefaultTabPreferenceSetting {
 
@@ -254,18 +258,20 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
 
         readPreferences(tmpPrefs);
         // sorting after modification - first modified, then non-default, then default entries
-        Collections.sort(allData, new Comparator<PrefEntry>() {
-            @Override
-            public int compare(PrefEntry o1, PrefEntry o2) {
-                if (o1.isChanged() && !o2.isChanged()) return -1;
-                if (o2.isChanged() && !o1.isChanged()) return 1;
-                if (!(o1.isDefault()) && o2.isDefault()) return -1;
-                if (!(o2.isDefault()) && o1.isDefault()) return 1;
-                return o1.compareTo(o2);
-            }
-        });
+        Collections.sort(allData, customComparator);
         applyFilter();
     }
+    
+    private Comparator<PrefEntry> customComparator = new Comparator<PrefEntry>() {
+        @Override
+        public int compare(PrefEntry o1, PrefEntry o2) {
+            if (o1.isChanged() && !o2.isChanged()) return -1;
+            if (o2.isChanged() && !o1.isChanged()) return 1;
+            if (!(o1.isDefault()) && o2.isDefault()) return -1;
+            if (!(o2.isDefault()) && o1.isDefault()) return 1;
+            return o1.compareTo(o2);
+        }
+    };
                 
     private List<PrefEntry> prepareData(Map<String, Setting> loaded, Map<String, Setting> orig, Map<String, Setting> defaults) {
         List<PrefEntry> data = new ArrayList<PrefEntry>();
@@ -300,8 +306,22 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
         return data;
     }
     
+    Map<String,String> profileTypes = new LinkedHashMap<String, String>();
+    
     private JPopupMenu buildPopupMenu() {
         JPopupMenu menu = new JPopupMenu();
+        profileTypes.put(marktr("shortcut"), "shortcut\\..*");
+        profileTypes.put(marktr("color"), "color\\..*");
+        profileTypes.put(marktr("toolbar"), "toolbar.*");
+        profileTypes.put(marktr("imagery"), "imagery.*");
+        
+        for (Entry<String,String> e: profileTypes.entrySet()) {
+            menu.add(new ExportProfileAction(Main.pref, e.getKey(), e.getValue()));
+        }
+        
+        menu.addSeparator();
+        menu.add(getProfileMenu());
+        menu.addSeparator();
         menu.add(new AbstractAction(tr("Reset preferences")) {
             @Override public void actionPerformed(ActionEvent ae) {
                 if (!GuiHelper.warnUser(tr("Reset preferences"),
@@ -318,6 +338,66 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
             }
         });
         return menu;
+    }
+    
+    private JMenu getProfileMenu() {
+        final JMenu p =new JMenu(tr("Load profile"));
+        p.addMenuListener(new MenuListener() {
+            @Override
+            public void menuSelected(MenuEvent me) {
+                p.removeAll();
+                for (File f: new File(".").listFiles()) {
+                   String s = f.getName();
+                   int idx = s.indexOf("_");
+                   if (idx>=0) {
+                        String t=s.substring(0,idx);
+                        System.out.println(t);
+                        if (profileTypes.containsKey(t))
+                            p.add(new ImportProfileAction(s, f, t));
+                   }
+                }
+                for (File f: Main.pref.getPreferencesDirFile().listFiles()) {
+                   String s = f.getName();
+                   int idx = s.indexOf("_");
+                   if (idx>=0) {
+                        String t=s.substring(0,idx);
+                        if (profileTypes.containsKey(t))
+                            p.add(new ImportProfileAction(s, f, t));
+                   }
+                }
+            }
+            @Override public void menuDeselected(MenuEvent me) { }
+            @Override public void menuCanceled(MenuEvent me) { }
+        });
+        return p;
+    }
+    
+    private class ImportProfileAction extends AbstractAction {
+        private final File file;
+        private final String type;
+        
+        public ImportProfileAction(String name, File file, String type) {
+            super(name);
+            this.file = file;
+            this.type = type;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            Preferences tmpPrefs = CustomConfigurator.clonePreferences(Main.pref);
+            CustomConfigurator.readXML(file, tmpPrefs);
+            readPreferences(tmpPrefs);
+            String prefRegex = profileTypes.get(type);
+            // clean all the preferences from the chosen group
+            for (PrefEntry p : allData) {
+               if (p.getKey().matches(prefRegex) && !p.isDefault()) {
+                    p.reset();
+               }
+            }
+            // allow user to review the changes in table
+            Collections.sort(allData, customComparator);
+            applyFilter();
+        }
     }
 
     private void applyFilter() {
@@ -344,7 +424,6 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
                 displayData.add(e);
             }
         }
-        System.out.println(displayData.size())  ;
         if (table!=null) table.fireDataChanged();
     }
 
