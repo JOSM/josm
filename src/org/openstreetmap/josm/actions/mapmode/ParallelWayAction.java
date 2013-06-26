@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AWTEvent;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
@@ -30,6 +29,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -37,7 +37,9 @@ import org.openstreetmap.josm.gui.NavigatableComponent.SystemOfMeasurement;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Geometry;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -122,6 +124,10 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
     private LinkedHashSet<Way> sourceWays;
     private EastNorth helperLineStart;
     private EastNorth helperLineEnd;
+    
+    Stroke helpLineStroke;
+    Stroke refLineStroke;
+    Color mainColor;
 
     public ParallelWayAction(MapFrame mapFrame) {
         super(tr("Parallel"), "parallel", tr("Make parallel copies of ways"),
@@ -147,6 +153,11 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         mv.addMouseMotionListener(this);
         mv.addTemporaryLayer(this);
 
+        helpLineStroke = GuiHelper.getCustomizedStroke(getStringPref("stroke.hepler-line", "1" ));
+        refLineStroke = GuiHelper.getCustomizedStroke(getStringPref("stroke.ref-line", "1 2 2"));
+        mainColor = Main.pref.getColor(marktr("make parallel helper line"), null);
+        if (mainColor == null) mainColor = PaintColors.SELECTED.get();                
+        
         //// Needed to update the mouse cursor if modifiers are changed when the mouse is motionless
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
@@ -467,17 +478,14 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
                 return;
 
             // FIXME: should clip the line (gets insanely slow when zoomed in on a very long line
-            Stroke refLineStroke = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 10.0f, new float[] {
-                    2f, 2f }, 0f);
             g.setStroke(refLineStroke);
-            g.setColor(Color.RED);
+            g.setColor(mainColor);
             Point p1 = mv.getPoint(referenceSegment.getFirstNode().getEastNorth());
             Point p2 = mv.getPoint(referenceSegment.getSecondNode().getEastNorth());
             g.drawLine(p1.x, p1.y, p2.x, p2.y);
 
-            Stroke helpLineStroke = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL);
             g.setStroke(helpLineStroke);
-            g.setColor(Color.RED);
+            g.setColor(mainColor);
             p1 = mv.getPoint(helperLineStart);
             p2 = mv.getPoint(helperLineEnd);
             g.drawLine(p1.x, p1.y, p2.x, p2.y);

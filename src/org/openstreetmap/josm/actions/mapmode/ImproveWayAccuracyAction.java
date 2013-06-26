@@ -1,15 +1,16 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.actions.mapmode;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.AWTEvent;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.InputEvent;
@@ -45,6 +46,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -80,12 +82,13 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     final private Cursor cursorImproveAddLock;
     final private Cursor cursorImproveLock;
 
-    private final Color guideColor;
-    private final BasicStroke selectTargetWayStroke;
-    private final BasicStroke moveNodeStroke;
-    private final BasicStroke addNodeStroke;
-    private final BasicStroke deleteNodeStroke;
-
+    private Color guideColor;
+    private Stroke selectTargetWayStroke;
+    private Stroke moveNodeStroke;
+    private Stroke addNodeStroke;
+    private Stroke deleteNodeStroke;
+    private int dotSize;
+    
     private boolean selectionChangedBlocked = false;
 
     protected String oldModeHelpText;
@@ -106,16 +109,6 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
                 "add_node_lock");
         cursorImproveLock = ImageProvider.getCursor("crosshair", "lock");
 
-        guideColor = PaintColors.HIGHLIGHT.get();
-        selectTargetWayStroke = new BasicStroke(2, BasicStroke.CAP_ROUND,
-                BasicStroke.JOIN_ROUND);
-        float dash1[] = {4.0f};
-        moveNodeStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
-        addNodeStroke = new BasicStroke(1, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER);
-        deleteNodeStroke = new BasicStroke(1, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER);
     }
 
     // -------------------------------------------------------------------------
@@ -128,6 +121,15 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         }
         super.enterMode();
 
+        guideColor = Main.pref.getColor(marktr("iwa guide"), null);
+        if (guideColor == null) guideColor = PaintColors.HIGHLIGHT.get();
+
+        selectTargetWayStroke = GuiHelper.getCustomizedStroke(Main.pref.get("iwa.stroke.select-target", "2"));
+        moveNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("iwa.stroke.move-node", "1 6"));
+        addNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("iwa.stroke.add-node", "1"));
+        deleteNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("iwa.stroke.delete-node", "1"));
+        dotSize = Main.pref.getInteger("iwa.dot-size",6);
+                
         mv = Main.map.mapView;
         mousePos = null;
         oldModeHelpText = "";
@@ -308,7 +310,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
             // Highlighting candidateNode
             if (candidateNode != null) {
                 p1 = mv.getPoint(candidateNode);
-                g.fillRect(p1.x - 2, p1.y - 2, 6, 6);
+                g.fillRect(p1.x - dotSize/2, p1.y - dotSize/2, dotSize, dotSize);
             }
 
         }
