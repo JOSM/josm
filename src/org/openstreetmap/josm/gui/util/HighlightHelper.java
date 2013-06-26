@@ -2,7 +2,9 @@
 package org.openstreetmap.josm.gui.util;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -19,30 +21,50 @@ public class HighlightHelper {
     /**
      * Highlight and remember given primitives
      * @param prims - primitives to highlight/unhighlight
-     * @param flag - true to highlight
      */
-    public void highlight(Collection <? extends OsmPrimitive> prims, boolean flag) {
-        for (OsmPrimitive p: prims) {
-            highlight(p, flag);
+    public boolean highlight(Collection <? extends OsmPrimitive> prims) {
+        return highlight(prims, false);
+    }
+    
+    /**
+     * Highlight and remember given primitives
+     * @param prims - primitives to highlight/unhighlight
+     * @param only - remove previous highlighting
+     */
+    public boolean highlight(Collection <? extends OsmPrimitive> prims, boolean only) {
+        boolean needsRepaint = false;
+        if (only) {
+            Iterator<OsmPrimitive> it = highlightedPrimitives.iterator();
+            while (it.hasNext()) {
+                OsmPrimitive p = it.next();
+                if (!prims.contains(p)) {
+                    p.setHighlighted(false);
+                    it.remove();
+                    needsRepaint = true;
+                }
+            }
         }
+        for (OsmPrimitive p: prims) {
+            needsRepaint |= setHighlight(p, true);
+        }
+        //return true;
+        return needsRepaint;
     }
     
     /**
      * Highlight and remember given primitives, forgetting previously highlighted by this instance
      * @param prims - primitives to highlight/unhighlight
      */
-    public void highlightOnly(Collection <? extends OsmPrimitive> prims) {
-        clear();
-        highlight(prims, true);
+    public boolean highlightOnly(Collection <? extends OsmPrimitive> prims) {
+        return highlight(prims, true);
     }
     
     /**
      * Highlight and remember given primitive, forgetting previously highlighted by this instance
      * @param p - primitives to highlight/unhighlight
      */
-    public void highlightOnly(OsmPrimitive p) {
-        clear();
-        highlight(p, true);
+    public boolean highlightOnly(OsmPrimitive p) {
+        return highlight(Collections.singleton(p), true);
     }
     
     /**
@@ -50,21 +72,26 @@ public class HighlightHelper {
      * @param prims - primitives to highlight/unhighlight
      * @param flag - true to highlight
      */
-    public void highlight(OsmPrimitive p, boolean flag) {
+    public boolean setHighlight(OsmPrimitive p, boolean flag) {
         if (p instanceof Relation) {
+            boolean needRepaint = false;
             for (OsmPrimitive m: ((Relation) p).getMemberPrimitives()) {
-                highlight(m, flag);
+                needRepaint |= setHighlight(m, flag);
             }
+            return needRepaint;
         } else
         if (flag) {
             if (highlightedPrimitives.add(p)) {
                 p.setHighlighted(true);
+                return true;
             }
         } else {
             if (highlightedPrimitives.remove(p)) {
                 p.setHighlighted(false);
+                return true;
             }
         }
+        return false;
     }
     
     /**
@@ -80,7 +107,7 @@ public class HighlightHelper {
     /**
      * Slow method to import all currently highlighted primitives into this instance
      */
-    public void findAllHighligted() {
+    public void findAllHighlighted() {
         DataSet ds = Main.main.getCurrentDataSet();
         if (ds!=null) {
             highlightedPrimitives.addAll( ds.allNonDeletedPrimitives() );
@@ -88,9 +115,9 @@ public class HighlightHelper {
     }
     
     /**
-     * Slow method to import all currently highlighted primitives into this instance
+     * Slow method to remove highlights from all primitives
      */
-    public static void clearAllHighligted() {
+    public static void clearAllHighlighted() {
         DataSet ds = Main.main.getCurrentDataSet();
         if (ds!=null) {
             for (OsmPrimitive p: ds.allNonDeletedPrimitives()) {
