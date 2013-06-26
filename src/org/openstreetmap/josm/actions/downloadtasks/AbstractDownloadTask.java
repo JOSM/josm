@@ -49,17 +49,19 @@ public abstract class AbstractDownloadTask implements DownloadTask {
     
     @Override
     public String acceptsDocumentationSummary() {
-        StringBuilder buf = new StringBuilder();
+        StringBuilder buf = new StringBuilder("<tr><td>");
         buf.append(getTitle());
-        String patterns[] =  getPatterns();
+        buf.append(":</td><td>");
+        String patterns[] = getPatterns();
         if (patterns.length>0) {
-            buf.append(":<br/><ul>");
+            buf.append("<ul>");
             for (String pattern: patterns) {
                 buf.append("<li>");
                 buf.append(XmlWriter.encode(pattern));
             } 
             buf.append("</ul>");
         }
+        buf.append("</td></tr>");
         return buf.toString();
     }
 
