@@ -65,6 +65,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
@@ -110,6 +111,8 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     private final SelectRelationAction addRelationToSelectionAction = new SelectRelationAction(true);
     /** add all selected primitives to the given relations */
     private final AddSelectionToRelations addSelectionToRelations = new AddSelectionToRelations();
+    
+    HighlightHelper highlightHelper = new HighlightHelper();
     
     /**
      * Constructs <code>RelationListDialog</code>
@@ -182,7 +185,14 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     
     // inform all actions about list of relations they need
     private void updateActionsRelationLists() {
-        popupMenuHandler.setPrimitives(model.getSelectedRelations());
+        List<Relation> sel = model.getSelectedRelations();
+        popupMenuHandler.setPrimitives(sel);
+        
+        //update highlights
+        if (Main.isDisplayingMapView()) {
+            highlightHelper.highlightOnly(sel);
+            Main.map.mapView.repaint();
+        }
     }
     
     @Override public void showNotify() {
@@ -297,6 +307,11 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         public MouseEventHandler() {
             super(popupMenu);
         }
+
+        @Override
+        public void mouseExited(MouseEvent me) {
+            highlightHelper.clear();
+        }
         
         protected void setCurrentRelationAsSelection() {
             Main.main.getCurrentDataSet().setSelected((Relation)displaylist.getSelectedValue());
@@ -305,7 +320,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         protected void editCurrentRelation() {
             EditRelationAction.launchEditor(getSelected());
         }
-
+        
         @Override public void mouseClicked(MouseEvent e) {
             if (Main.main.getEditLayer() == null) return;
             if (isDoubleClick(e)) {

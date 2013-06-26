@@ -66,6 +66,7 @@ import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -185,6 +186,7 @@ public class SelectionListDialog extends ToggleDialog  {
      * Responds to double clicks on the list of selected objects and launches the popup menu
      */
     class MouseEventHandler extends PopupMenuLauncher {
+        private final HighlightHelper helper = new HighlightHelper();
         
         public MouseEventHandler() {
             super(popupMenu);
@@ -192,13 +194,22 @@ public class SelectionListDialog extends ToggleDialog  {
         
         @Override
         public void mouseClicked(MouseEvent e) {
+            int idx = lstPrimitives.locationToIndex(e.getPoint());
+            if (idx < 0) return;
             if (isDoubleClick(e)) {
-                int idx = lstPrimitives.locationToIndex(e.getPoint());
-                if (idx < 0) return;
                 OsmDataLayer layer = Main.main.getEditLayer();
                 if (layer == null) return;
                 layer.data.setSelected(Collections.singleton((OsmPrimitive)model.getElementAt(idx)));
+            } else if (Main.isDisplayingMapView()) {
+                helper.highlightOnly((OsmPrimitive)model.getElementAt(idx));
+                Main.map.mapView.repaint();
             }
+        }
+
+        @Override
+        public void mouseExited(MouseEvent me) {
+            helper.clear();
+            super.mouseExited(me);
         }
     }
 
