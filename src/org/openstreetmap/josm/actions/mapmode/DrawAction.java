@@ -427,8 +427,15 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         boolean newNode = false;
         Node n = null;
 
-        if (!ctrl) {
-            n = Main.map.mapView.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
+        n = Main.map.mapView.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
+        if (ctrl) {
+            Iterator<Way> it = getCurrentDataSet().getSelectedWays().iterator();
+            if (it.hasNext()) {
+                // ctrl-click on node of selected way = reuse node despite of ctrl
+                if (!it.next().containsNode(n)) n = null;
+            } else {
+                n=null; // ctrl-click + no selected way = new node
+            }
         }
 
         if (n != null && !snapHelper.isActive()) {
