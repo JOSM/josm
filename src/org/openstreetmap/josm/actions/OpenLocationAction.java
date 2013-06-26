@@ -19,20 +19,20 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmChangeCompressedTask;
-import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmCompressedTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmChangeTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmCompressedTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmUrlTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -149,7 +149,8 @@ public class OpenLocationAction extends JosmAction {
 
     /**
      * Summarizes acceptable urls for error message purposes.
-     * @since 6030
+     * @return The HTML message to be displayed
+     * @since 6031
      */
     public String findSummaryDocumentation() {
         String result = "";
@@ -185,17 +186,17 @@ public class OpenLocationAction extends JosmAction {
             Main.worker.submit(new PostDownloadHandler(task, future));
         } else {
             final String details = findSummaryDocumentation();    // Explain what patterns are supported
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    JOptionPane.showMessageDialog(Main.parent, tr(
-                            "<html><p>Cannot open URL ''{0}''<br/>The following load tasks accept the URL patterns shown:<br/>{1}</p></html>",
-                            url, details), tr("Download Location"), JOptionPane.ERROR_MESSAGE);
-                }
-            });
+            HelpAwareOptionPane.showMessageDialogInEDT(Main.parent, tr(
+                    "<html><p>Cannot open URL ''{0}''<br/>The following download tasks accept the URL patterns shown:<br/>{1}</p></html>",
+                    url, details), tr("Download Location"), JOptionPane.ERROR_MESSAGE, HelpUtil.ht("/Action/OpenLocation"));
         }
     }
     
+    /**
+     * Adds a new download task to the supported ones.
+     * @param taskClass The new download task to add
+     * @return <tt>true</tt> (as specified by {@link Collection#add})
+     */
     public boolean addDownloadTaskClass(Class<? extends DownloadTask> taskClass) {
         return this.downloadTasks.add(taskClass);
     }
