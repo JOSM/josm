@@ -85,6 +85,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.PresetType;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -175,6 +176,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final SelectMembersAction selectMembersAction = new SelectMembersAction(false);
     private final SelectMembersAction addMembersToSelectionAction = new SelectMembersAction(true);
     
+    private final HighlightHelper highlightHelper= new HighlightHelper();
+    
     /**
      * The Add button (needed to be able to disable it)
      */
@@ -254,7 +257,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyTable.getSelectionModel().addListSelectionListener(deleteAction);
         membershipTable.getSelectionModel().addListSelectionListener(deleteAction);
         
-
+        
         JScrollPane scrollPane = (JScrollPane) createLayout(bothTables, true, Arrays.asList(new SideButton[] {
                 this.btnAdd, this.btnEdit, this.btnDel
         }));
@@ -406,6 +409,24 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 }
                 membershipMenuHandler.setPrimitives(rels);
                 return row;
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //update highlights
+                if (Main.isDisplayingMapView()) {
+                    int row = membershipTable.rowAtPoint(e.getPoint());
+                    if (row>=0) {
+                        highlightHelper.highlightOnly((Relation) membershipTable.getValueAt(row, 0));
+                        Main.map.mapView.repaint();
+                    }
+                }
+                super.mouseClicked(e);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent me) {
+                highlightHelper.clear();
             }
         });
     }
