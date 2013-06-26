@@ -32,6 +32,7 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -147,6 +148,26 @@ public class OpenLocationAction extends JosmAction {
     }
 
     /**
+     * Summarizes acceptable urls for error message purposes.
+     * @since 6030
+     */
+    public String findSummaryDocumentation() {
+        String result = "";
+        for (int i = 0; i < downloadTasks.size(); i++) {
+            Class<? extends DownloadTask> taskClass = downloadTasks.get(i);
+            if (taskClass != null) {
+                try {
+                    DownloadTask task = taskClass.getConstructor().newInstance();
+                    result += "<br/>" + task.acceptsDocumentationSummary();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * Open the given URL.
      * @param new_layer true if the URL needs to be opened in a new layer, false otherwise
      * @param url The URL to open
@@ -163,11 +184,13 @@ public class OpenLocationAction extends JosmAction {
         if (future != null) {
             Main.worker.submit(new PostDownloadHandler(task, future));
         } else {
+            final String details = findSummaryDocumentation();    // Explain what patterns are supported
             SwingUtilities.invokeLater(new Runnable() {
+                @Override
                 public void run() {
                     JOptionPane.showMessageDialog(Main.parent, tr(
-                            "<html>Cannot open URL ''{0}'' because no suitable download task is available.</html>",
-                            url), tr("Download Location"), JOptionPane.ERROR_MESSAGE);
+                            "<html><p>Cannot open URL ''{0}''<br/>The following load tasks accept the URL patterns shown:<br/>{1}</p></html>",
+                            url, details), tr("Download Location"), JOptionPane.ERROR_MESSAGE);
                 }
             });
         }

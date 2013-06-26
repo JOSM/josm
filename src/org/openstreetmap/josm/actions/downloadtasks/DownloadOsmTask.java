@@ -48,6 +48,25 @@ public class DownloadOsmTask extends AbstractDownloadTask {
     protected OsmDataLayer targetLayer;
     
     protected String newLayerName = null;
+    
+    @Override
+    public String[] getPatterns() {
+        if (this.getClass() == DownloadOsmTask.class) {
+            return new String[]{PATTERN_OSM_API_URL, PATTERN_OVERPASS_API_URL, 
+                PATTERN_OVERPASS_API_XAPI_URL, PATTERN_EXTERNAL_OSM_FILE};
+        } else {
+            return super.getPatterns();
+        }
+    }
+
+    @Override
+    public String getTitle() {
+        if (this.getClass() == DownloadOsmTask.class) {
+            return tr("Download OSM");
+        } else {
+            return super.getTitle();
+        }
+    }
 
     protected void rememberDownloadedData(DataSet ds) {
         this.downloadedData = ds;
@@ -135,6 +154,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
      * @param new_layer True if the data should be saved to a new layer
      * @param url The URL as String
      */
+    @Override
     public Future<?> loadUrl(boolean new_layer, String url, ProgressMonitor progressMonitor) {
         if (url.matches(PATTERN_OVERPASS_API_URL)) {
             url = encodePartialUrl(url, "/interpreter?data="); // encode only the part after the = sign
@@ -155,20 +175,8 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         Matcher matcher = Pattern.compile(pattern).matcher(url);
         newLayerName = matcher.matches() ? matcher.group(1) : null;
     }
-    
-    /* (non-Javadoc)
-     * @see org.openstreetmap.josm.actions.downloadtasks.DownloadTask#acceptsUrl(java.lang.String)
-     */
-    @Override
-    public boolean acceptsUrl(String url) {
-        return url != null && (
-                url.matches(PATTERN_OSM_API_URL)           // OSM API 0.6 and XAPI
-             || url.matches(PATTERN_OVERPASS_API_URL)      // Overpass API
-             || url.matches(PATTERN_OVERPASS_API_XAPI_URL) // Overpass API XAPI compatibility layer
-             || url.matches(PATTERN_EXTERNAL_OSM_FILE)     // Remote .osm files
-                );
-    }
 
+    @Override
     public void cancel() {
         if (downloadTask != null) {
             downloadTask.cancel();

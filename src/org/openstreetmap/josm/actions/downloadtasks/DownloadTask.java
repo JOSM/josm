@@ -79,6 +79,21 @@ public interface DownloadTask {
     boolean acceptsUrl(String url);
 
     /**
+     * Returns a short html documentation string, describing acceptable URLs.
+     */
+    String acceptsDocumentationSummary();
+    
+    /**
+     * Returns human-readable description of the task
+     */
+    String getTitle();
+    
+    /**
+     * Returns regular expression that match the URLs
+     */
+    String[] getPatterns();
+
+    /**
      * Replies the error objects of the task. Empty list, if no error messages are available.
      *
      * Error objects are either {@link String}s with error messages or {@link Exception}s.

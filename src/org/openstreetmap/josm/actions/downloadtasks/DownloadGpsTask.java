@@ -44,6 +44,17 @@ public class DownloadGpsTask extends AbstractDownloadTask {
 
     protected String newLayerName = null;
 
+    @Override
+    public String[] getPatterns() {
+        return new String[] {PATTERN_EXTERNAL_GPX_FILE, PATTERN_EXTERNAL_GPX_SCRIPT, PATTERN_TRACE_ID, PATTERN_TRACKPOINTS_BBOX};
+    }
+
+    @Override
+    public String getTitle() {
+        return tr("Download GPS");
+    }
+
+    @Override
     public Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
         downloadTask = new DownloadTask(newLayer,
                 new BoundingBoxDownloader(downloadArea), progressMonitor);
@@ -52,6 +63,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
         return Main.worker.submit(downloadTask);
     }
 
+    @Override
     public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
         if (url != null && (url.matches(PATTERN_TRACE_ID) || url.matches(PATTERN_EXTERNAL_GPX_SCRIPT) || url.matches(PATTERN_EXTERNAL_GPX_FILE))) {
             downloadTask = new DownloadTask(newLayer,
@@ -73,15 +85,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.openstreetmap.josm.actions.downloadtasks.DownloadTask#acceptsUrl(java.lang.String)
-     */
     @Override
-    public boolean acceptsUrl(String url) {
-        return url != null && (url.matches(PATTERN_TRACE_ID) || url.matches(PATTERN_TRACKPOINTS_BBOX)
-                || url.matches(PATTERN_EXTERNAL_GPX_SCRIPT) || url.matches(PATTERN_EXTERNAL_GPX_FILE));
-    }
-
     public void cancel() {
         if (downloadTask != null) {
             downloadTask.cancel();

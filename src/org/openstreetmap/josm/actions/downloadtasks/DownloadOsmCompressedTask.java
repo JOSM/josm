@@ -3,6 +3,8 @@ package org.openstreetmap.josm.actions.downloadtasks;
 
 import java.util.concurrent.Future;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -11,13 +13,17 @@ import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 
 public class DownloadOsmCompressedTask extends DownloadOsmTask {
-    
-    /* (non-Javadoc)
-     * @see org.openstreetmap.josm.actions.downloadtasks.DownloadTask#acceptsUrl(java.lang.String)
-     */
+
+    String PATTERN_GZ =  "https?://.*/.*\\.osm.(gz|bz2?)";
+
     @Override
-    public boolean acceptsUrl(String url) {
-        return url != null && url.matches("https?://.*/.*\\.osm.(gz|bz2?)"); // Remote .osm.gz / .osm.bz / .osm.bz2 files
+    public String[] getPatterns() {
+        return new String[]{PATTERN_GZ};
+    }
+
+    @Override
+    public String getTitle() {
+        return tr("Download Compressed OSM");
     }
     
     /* (non-Javadoc)
@@ -35,6 +41,7 @@ public class DownloadOsmCompressedTask extends DownloadOsmTask {
      * @param url The URL as String
      * @param progressMonitor progress monitor for user interaction
      */
+    @Override
     public Future<?> loadUrl(boolean new_layer, final String url, ProgressMonitor progressMonitor) {
         downloadTask = new DownloadTask(new_layer, new OsmServerLocationReader(url), progressMonitor) {
             @Override
