@@ -131,21 +131,19 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @return the list of selectable primitives affected by this error
      */
     public Collection<? extends OsmPrimitive> getSelectablePrimitives() {
-    List<OsmPrimitive> selectablePrimitives = new ArrayList<OsmPrimitive>(primitives.size());
-    for (OsmPrimitive o : primitives) {
-        if (o.isSelectable()) {
-        selectablePrimitives.add(o);
+        List<OsmPrimitive> selectablePrimitives = new ArrayList<OsmPrimitive>(primitives.size());
+        for (OsmPrimitive o : primitives) {
+            if (o.isSelectable()) {
+                selectablePrimitives.add(o);
+            }
         }
-    }
         return selectablePrimitives;
     }
-
 
     /**
      * Sets the list of primitives affected by this error
      * @param primitives the list of primitives affected by this error
      */
-
     public void setPrimitives(List<OsmPrimitive> primitives) {
         this.primitives = primitives;
     }
@@ -243,7 +241,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @return The command to fix the error
      */
     public Command getFix() {
-        if (tester == null || !tester.isFixable(this))
+        if (tester == null || !tester.isFixable(this) || primitives.isEmpty())
             return null;
 
         return tester.fixError(this);
