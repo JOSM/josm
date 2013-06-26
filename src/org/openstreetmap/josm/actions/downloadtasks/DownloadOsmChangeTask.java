@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -40,13 +42,17 @@ import org.openstreetmap.josm.io.OsmTransferException;
 public class DownloadOsmChangeTask extends DownloadOsmTask {
 
     @Override
-    public boolean acceptsUrl(String url) {
-        return url != null && (
-                url.matches("http://.*/api/0.6/changeset/\\p{Digit}+/download") // OSM API 0.6 changesets
-             || url.matches("https?://.*/.*\\.osc")                             // Remote .osc files
-                );
+    public String[] getPatterns() {
+        return new String[]{"http://.*/api/0.6/changeset/\\p{Digit}+/download", // OSM API 0.6 changesets
+            "https?://.*/.*\\.osc" // Remote .osc files
+        };
     }
 
+    @Override
+    public String getTitle() {
+        return tr("Download OSM Change");
+    }
+        
     /* (non-Javadoc)
      * @see org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask#download(boolean, org.openstreetmap.josm.data.Bounds, org.openstreetmap.josm.gui.progress.ProgressMonitor)
      */
