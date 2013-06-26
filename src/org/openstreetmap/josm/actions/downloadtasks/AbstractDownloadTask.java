@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.openstreetmap.josm.io.XmlWriter;
 
+/**
+ * Common abstract implementation of other download tasks
+ * @since 2322
+ */
 public abstract class AbstractDownloadTask implements DownloadTask {
     private List<Object> errorMessages;
     private boolean canceled = false;

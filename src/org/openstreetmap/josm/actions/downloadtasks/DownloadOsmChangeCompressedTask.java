@@ -11,6 +11,10 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 
+/**
+ * Task allowing to download compressed OSM-Change files (gzip and bzip2)
+ * @since 5361
+ */
 public class DownloadOsmChangeCompressedTask extends DownloadOsmChangeTask {
 
     @Override

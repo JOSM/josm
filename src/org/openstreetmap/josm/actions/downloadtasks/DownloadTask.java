@@ -79,17 +79,23 @@ public interface DownloadTask {
     boolean acceptsUrl(String url);
 
     /**
-     * Returns a short html documentation string, describing acceptable URLs.
+     * Returns a short HTML documentation string, describing acceptable URLs.
+     * @return The HTML documentation
+     * @since 6031
      */
     String acceptsDocumentationSummary();
     
     /**
      * Returns human-readable description of the task
+     * @return The task description
+     * @since 6031
      */
     String getTitle();
     
     /**
-     * Returns regular expression that match the URLs
+     * Returns regular expressions that match the URLs
+     * @return The array of accepted URL patterns
+     * @since 6031
      */
     String[] getPatterns();
 

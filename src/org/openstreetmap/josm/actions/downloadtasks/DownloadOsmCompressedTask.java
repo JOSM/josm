@@ -12,6 +12,10 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 
+/**
+ * Task allowing to download compressed OSM files (gzip and bzip2)
+ * @since 5317
+ */
 public class DownloadOsmCompressedTask extends DownloadOsmTask {
 
     String PATTERN_GZ =  "https?://.*/.*\\.osm.(gz|bz2?)";

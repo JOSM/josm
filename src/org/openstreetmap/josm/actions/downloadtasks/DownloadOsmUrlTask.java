@@ -8,6 +8,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 
+/**
+ * Task allowing to download an OSM url containing coordinates
+ * @since 4996
+ */
 public class DownloadOsmUrlTask extends DownloadOsmTask {
 
     @Override
