@@ -13,6 +13,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -354,6 +355,7 @@ public class GenericRelationEditor extends RelationEditor  {
         tfRole.addActionListener(setRoleAction);
         memberTableModel.getSelectionModel().addListSelectionListener(
                 new ListSelectionListener() {
+                    @Override
                     public void valueChanged(ListSelectionEvent e) {
                         tfRole.setEnabled(memberTable.getSelectedRowCount() > 0);
                     }
@@ -668,7 +670,14 @@ public class GenericRelationEditor extends RelationEditor  {
         }
     }
 
+    
     private void registerCopyPasteAction(AbstractAction action, Object actionName, KeyStroke shortcut) {
+        int mods = shortcut.getModifiers();
+        int code = shortcut.getKeyCode();
+        if (code!=KeyEvent.VK_INSERT && (mods == 0 || mods == InputEvent.SHIFT_DOWN_MASK)) {
+            Main.info(tr("Sorry, shortcut \"{0}\" can not be enabled in Relation editor dialog"), shortcut);
+            return;
+        }
         getRootPane().getActionMap().put(actionName, action);
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(shortcut, actionName);
         // Assign also to JTables because they have their own Copy&Paste implementation (which is disabled in this case but eats key shortcuts anyway)
@@ -817,6 +826,7 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(selectionTableModel.getRowCount() > 0);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 List<OsmPrimitive> toAdd = filterConfirmedPrimitives(selectionTableModel.getSelection());
@@ -826,6 +836,7 @@ public class GenericRelationEditor extends RelationEditor  {
             }
         }
 
+        @Override
         public void tableChanged(TableModelEvent e) {
             refreshEnabled();
         }
@@ -843,6 +854,7 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(selectionTableModel.getRowCount() > 0);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 List<OsmPrimitive> toAdd = filterConfirmedPrimitives(selectionTableModel.getSelection());
@@ -852,6 +864,7 @@ public class GenericRelationEditor extends RelationEditor  {
             }
         }
 
+        @Override
         public void tableChanged(TableModelEvent e) {
             refreshEnabled();
         }
@@ -871,6 +884,7 @@ public class GenericRelationEditor extends RelationEditor  {
                     && memberTableModel.getSelectionModel().getMinSelectionIndex() >= 0);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 List<OsmPrimitive> toAdd = filterConfirmedPrimitives(selectionTableModel.getSelection());
@@ -882,10 +896,12 @@ public class GenericRelationEditor extends RelationEditor  {
 
         }
 
+        @Override
         public void tableChanged(TableModelEvent e) {
             refreshEnabled();
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             refreshEnabled();
         }
@@ -905,6 +921,7 @@ public class GenericRelationEditor extends RelationEditor  {
                     && memberTableModel.getSelectionModel().getMinSelectionIndex() >= 0);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 List<OsmPrimitive> toAdd = filterConfirmedPrimitives(selectionTableModel.getSelection());
@@ -915,10 +932,12 @@ public class GenericRelationEditor extends RelationEditor  {
             }
         }
 
+        @Override
         public void tableChanged(TableModelEvent e) {
             refreshEnabled();
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             refreshEnabled();
         }
@@ -944,10 +963,12 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(memberTableModel.hasMembersReferringTo(ds.getSelected()));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             memberTableModel.removeMembersReferringTo(selectionTableModel.getSelection());
         }
 
+        @Override
         public void tableChanged(TableModelEvent e) {
             updateEnabledState();
         }
@@ -977,10 +998,12 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(enabled);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             memberTableModel.selectMembersReferringTo(getLayer().data.getSelected());
         }
 
+        @Override
         public void tableChanged(TableModelEvent e) {
             updateEnabledState();
 
@@ -1003,10 +1026,12 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(memberTable.getSelectedRowCount() > 0);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             getLayer().data.setSelected(memberTableModel.getSelectedChildPrimitives());
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
@@ -1024,6 +1049,7 @@ public class GenericRelationEditor extends RelationEditor  {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             memberTableModel.sort();
         }
@@ -1032,6 +1058,7 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(memberTableModel.getRowCount() > 0);
         }
 
+        @Override
         public void tableChanged(TableModelEvent e) {
             updateEnabledState();
         }
@@ -1047,6 +1074,7 @@ public class GenericRelationEditor extends RelationEditor  {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             memberTableModel.reverse();
         }
@@ -1055,6 +1083,7 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(memberTableModel.getRowCount() > 0);
         }
 
+        @Override
         public void tableChanged(TableModelEvent e) {
             updateEnabledState();
         }
@@ -1072,10 +1101,12 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             memberTableModel.moveUp(memberTable.getSelectedRows());
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(memberTableModel.canMoveUp(memberTable.getSelectedRows()));
         }
@@ -1093,10 +1124,12 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             memberTableModel.moveDown(memberTable.getSelectedRows());
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(memberTableModel.canMoveDown(memberTable.getSelectedRows()));
         }
@@ -1114,10 +1147,12 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             memberTableModel.remove(memberTable.getSelectedRows());
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(memberTableModel.canRemove(memberTable.getSelectedRows()));
         }
@@ -1141,6 +1176,7 @@ public class GenericRelationEditor extends RelationEditor  {
             );
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             run();
         }
@@ -1149,6 +1185,7 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(getRelationSnapshot() != null);
         }
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(RELATION_SNAPSHOT_PROP)) {
                 updateEnabledState();
@@ -1304,6 +1341,7 @@ public class GenericRelationEditor extends RelationEditor  {
             }
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             run();
         }
@@ -1339,6 +1377,7 @@ public class GenericRelationEditor extends RelationEditor  {
             setVisible(false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             run();
         }
@@ -1356,6 +1395,7 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(true);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (!memberTableModel.hasSameMembersAs(getRelationSnapshot()) || tagEditorPanel.getModel().isDirty()) {
                 //give the user a chance to save the changes
@@ -1434,6 +1474,7 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(true);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             tagEditorPanel.getModel().appendNewTag();
         }
@@ -1451,6 +1492,7 @@ public class GenericRelationEditor extends RelationEditor  {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
@@ -1466,6 +1508,7 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(memberTableModel.hasIncompleteMembers());
         }
 
+        @Override
         public void tableChanged(TableModelEvent e) {
             updateEnabledState();
         }
@@ -1481,6 +1524,7 @@ public class GenericRelationEditor extends RelationEditor  {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
@@ -1496,10 +1540,12 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(memberTableModel.hasIncompleteSelectedMembers());
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void tableChanged(TableModelEvent e) {
             updateEnabledState();
         }
@@ -1551,6 +1597,7 @@ public class GenericRelationEditor extends RelationEditor  {
             }
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (isEmptyRole()) {
                 if (! confirmSettingEmptyRole(memberTable.getSelectedRowCount()))
@@ -1559,18 +1606,22 @@ public class GenericRelationEditor extends RelationEditor  {
             memberTableModel.updateRole(memberTable.getSelectedRows(), tfRole.getText());
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             refreshEnabled();
         }
 
+        @Override
         public void changedUpdate(DocumentEvent e) {
             refreshEnabled();
         }
 
+        @Override
         public void insertUpdate(DocumentEvent e) {
             refreshEnabled();
         }
 
+        @Override
         public void removeUpdate(DocumentEvent e) {
             refreshEnabled();
         }
@@ -1589,6 +1640,7 @@ public class GenericRelationEditor extends RelationEditor  {
             setEnabled(true);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             Relation copy = new Relation();
             tagEditorPanel.getModel().applyToPrimitive(copy);
@@ -1642,12 +1694,14 @@ public class GenericRelationEditor extends RelationEditor  {
             editor.setVisible(true);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
             run();
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             refreshEnabled();
         }
