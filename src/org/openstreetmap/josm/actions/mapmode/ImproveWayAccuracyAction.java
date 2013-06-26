@@ -121,14 +121,14 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         }
         super.enterMode();
 
-        guideColor = Main.pref.getColor(marktr("iwa guide"), null);
+        guideColor = Main.pref.getColor(marktr("improve way accuracy helper line"), null);
         if (guideColor == null) guideColor = PaintColors.HIGHLIGHT.get();
 
-        selectTargetWayStroke = GuiHelper.getCustomizedStroke(Main.pref.get("iwa.stroke.select-target", "2"));
-        moveNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("iwa.stroke.move-node", "1 6"));
-        addNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("iwa.stroke.add-node", "1"));
-        deleteNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("iwa.stroke.delete-node", "1"));
-        dotSize = Main.pref.getInteger("iwa.dot-size",6);
+        selectTargetWayStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.select-target", "2"));
+        moveNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.move-node", "1 6"));
+        addNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.add-node", "1"));
+        deleteNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.delete-node", "1"));
+        dotSize = Main.pref.getInteger("improvewayaccuracy.dot-size",6);
                 
         mv = Main.map.mapView;
         mousePos = null;
