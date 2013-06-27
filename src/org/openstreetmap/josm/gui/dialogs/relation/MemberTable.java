@@ -7,6 +7,9 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -23,6 +26,8 @@ import javax.swing.event.ListSelectionListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.ZoomToAction;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
@@ -30,12 +35,14 @@ import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
 
 public class MemberTable extends OsmPrimitivesTable implements IMemberModelListener {
 
     /** the additional actions in popup menu */
     private ZoomToGapAction zoomToGap;
+    private HighlightHelper highlightHelper = new HighlightHelper();
 
     /**
      * constructor for relation member table
@@ -65,6 +72,8 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), "selectNextColumnCell");
 
+        initHighlighting();
+        
         // install custom navigation actions
         //
         getActionMap().put("selectNextColumnCell", new SelectNextColumnCellAction());
@@ -88,7 +97,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         menu.add(new SelectNextGapAction());
         return menu;
     }
-
+    
     @Override
     public Dimension getPreferredSize(){
         Container c = getParent();
@@ -103,8 +112,32 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         return super.getPreferredSize();
     }
 
+    @Override
     public void makeMemberVisible(int index) {
         scrollRectToVisible(getCellRect(index, 0, true));
+    }
+
+    private void initHighlighting() {
+        getMemberTableModel().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent lse) {
+                if (Main.isDisplayingMapView()) {
+                    Collection<RelationMember> sel = getMemberTableModel().getSelectedMembers();
+                    ArrayList<OsmPrimitive> toHighlight = new ArrayList<OsmPrimitive>();
+                    for (RelationMember r: sel) {
+                        if (r.getMember().isUsable()) {
+                            toHighlight.add(r.getMember());
+                        }
+                    }
+                    if (highlightHelper.highlightOnly(toHighlight)) {
+                        Main.map.mapView.repaint();
+                    }
+                }
+            }});
+        if (Main.isDisplayingMapView()) {
+            HighlightHelper.clearAllHighlighted();
+            Main.map.mapView.repaint();
+        }
     }
 
     /**
@@ -144,6 +177,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
      */
     private class SelectPreviousColumnCellAction extends AbstractAction {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int col = getSelectedColumn();
             int row = getSelectedRow();
@@ -165,6 +199,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     public void unlinkAsListener() {
         super.unlinkAsListener();
         MapView.removeLayerChangeListener(zoomToGap);
+        highlightHelper.clear();
     }
 
     private class SelectPreviousGapAction extends AbstractAction {
