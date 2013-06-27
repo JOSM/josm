@@ -65,6 +65,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      * If true, when extruding create new node even if segments parallel.
      */
     private boolean alwaysCreateNodes = false;
+    private boolean nodeDragWithoutCtrl;
 
     private long mouseDownTime = 0;
     private WaySegment selectedSegment = null;
@@ -209,7 +210,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         helperStrokeDash = GuiHelper.getCustomizedStroke(Main.pref.get("extrude.stroke.helper-line", "1 4"));
         helperStrokeRA = new BasicStroke(1);
         symbolSize = Main.pref.getDouble("extrude.angle-symbol-radius", 8);
-        
+        nodeDragWithoutCtrl = Main.pref.getBoolean("extrude.drag-nodes-without-ctrl", true);
         oldLineStroke = GuiHelper.getCustomizedStroke(Main.pref.get("extrude.ctrl.stroke.old-line", "1"));
         mainStroke = GuiHelper.getCustomizedStroke(Main.pref.get("extrude.stroke.main", "3"));
     }
@@ -247,14 +248,16 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         if (selectedSegment == null && selectedNode == null) return;
         
         if (selectedNode != null) {
-            movingNodeList = new ArrayList<OsmPrimitive>();
-            movingNodeList.add(selectedNode);
-            calculatePossibleDirectionsByNode();
-            if (possibleMoveDirections.isEmpty()) { 
-                // if no directions fould, do not enter dragging mode
-                return;
+            if (ctrl || nodeDragWithoutCtrl) {
+                movingNodeList = new ArrayList<OsmPrimitive>();
+                movingNodeList.add(selectedNode);
+                calculatePossibleDirectionsByNode();
+                if (possibleMoveDirections.isEmpty()) { 
+                    // if no directions fould, do not enter dragging mode
+                    return;
+                }
+                mode = Mode.translate_node;
             }
-            mode = Mode.translate_node;
         } else {
             // Otherwise switch to another mode
             if (ctrl) {
