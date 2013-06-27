@@ -14,10 +14,16 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.dialogs.MapPaintDialog;
 import org.openstreetmap.josm.gui.dialogs.MapPaintDialog.LaunchMapPaintPreferencesAction;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
 import org.openstreetmap.josm.gui.util.StayOpenCheckBoxMenuItem;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * The View -> Map Paint Styles menu
+ * @since 5086
+ */
 public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
 
     private static class MapPaintAction extends JosmAction {
@@ -57,7 +63,16 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
 
         @Override
         public void updateEnabledState() {
-            setEnabled(Main.isDisplayingMapView() && Main.main.getEditLayer() != null);
+            setEnabled(Main.isDisplayingMapView() && (Main.main.getEditLayer() != null || mapHasGpxLayer()));
+        }
+
+        private boolean mapHasGpxLayer() {
+            for (Layer layer : Main.map.mapView.getAllLayers()) {
+                if (layer instanceof GpxLayer) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
     private final Map<String, MapPaintAction> actions = new HashMap<String, MapPaintAction>();
@@ -68,6 +83,9 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
         }
     };
 
+    /**
+     * Constructs a new {@code MapPaintMenu}
+     */
     public MapPaintMenu() {
         super(tr("Map Paint Styles"));
         setIcon(ImageProvider.get("dialogs", "mapstyle"));
