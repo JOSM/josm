@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -27,7 +28,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
+import javax.swing.AbstractButton;
+import javax.swing.FocusManager;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
@@ -318,6 +320,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private static final double sinPHI = Math.sin(PHI);
 
     private Collection<WaySegment> highlightWaySegments;
+    
+    // highlight customization fields
+    private int highlightLineWidth;
+    private int highlightPointRadius;
+    private int widerHighlight;
+    private int highlightStep;
+    
+    //flag that activate wider highlight mode
+    private boolean useWiderHighlight;
 
     private boolean useStrokes;
     private boolean showNames;
@@ -330,6 +341,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     public StyledMapRenderer(Graphics2D g, NavigatableComponent nc, boolean isInactiveMode) {
         super(g, nc, isInactiveMode);
+
+        if (nc!=null) {
+            Component focusOwner = FocusManager.getCurrentManager().getFocusOwner();
+            useWiderHighlight = !(focusOwner instanceof AbstractButton || focusOwner == nc);
+        }
     }
 
     private Polygon buildPolygon(Point center, int radius, int sides) {
@@ -731,7 +747,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         g.setPaintMode();
         if (selected || member)
         {
-            Color color = null;
+            Color color;
             if (isInactiveMode || n.isDisabled()) {
                 color = inactiveColor;
             } else if (selected) {
@@ -844,11 +860,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if(path == null)
             return;
         g.setColor(highlightColorTransparent);
-        float w = (line.getLineWidth() + 4);
+        float w = (line.getLineWidth() + highlightLineWidth);
+        if (useWiderHighlight) w+=widerHighlight;
         while(w >= line.getLineWidth()) {
             g.setStroke(new BasicStroke(w, line.getEndCap(), line.getLineJoin(), line.getMiterLimit()));
             g.draw(path);
-            w -= 4;
+            w -= highlightStep;
         }
     }
     /**
@@ -857,14 +874,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      */
     private void drawPointHighlight(Point p, int size) {
         g.setColor(highlightColorTransparent);
-        int s = size + 7;
+        int s = size + highlightPointRadius;
+        if (useWiderHighlight) s+=widerHighlight;
         while(s >= size) {
             int r = (int) Math.floor(s/2);
             g.fillRoundRect(p.x-r, p.y-r, s, s, r, r);
-            s -= 4;
+            s -= highlightStep;
         }
     }
-
+    
     public void drawRestriction(Image img, Point pVia, double vx, double vx2, double vy, double vy2, double angle, boolean selected) {
         /* rotate image with direction last node in from to */
         Image rotatedImg = ImageProvider.createRotatedImage(null , img, angle);
@@ -965,7 +983,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
 
         /* find the "direct" nodes before the via node */
-        Node fromNode = null;
+        Node fromNode;
         if(fromWay.firstNode() == via) {
             fromNode = fromWay.getNode(1);
         } else {
@@ -1304,6 +1322,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 Main.pref.getBoolean("mappaint.use-antialiasing", true) ?
                         RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
+
+        highlightLineWidth = Main.pref.getInteger("mappaint.highlight.width", 4);
+        highlightPointRadius = Main.pref.getInteger("mappaint.highlight.radius", 7);
+        widerHighlight = Main.pref.getInteger("mappaint.highlight.bigger-increment", 5);
+        highlightStep = Main.pref.getInteger("mappaint.highlight.step", 4);
     }
 
     private Path2D.Double getPath(Way w) {
