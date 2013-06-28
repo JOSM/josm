@@ -417,8 +417,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 if (Main.isDisplayingMapView()) {
                     int row = membershipTable.rowAtPoint(e.getPoint());
                     if (row>=0) {
-                        highlightHelper.highlightOnly((Relation) membershipTable.getValueAt(row, 0));
-                        Main.map.mapView.repaint();
+                        if (highlightHelper.highlightOnly((Relation) membershipTable.getValueAt(row, 0))) {
+                            Main.map.mapView.repaint();
+                        }
                     }
                 }
                 super.mouseClicked(e);

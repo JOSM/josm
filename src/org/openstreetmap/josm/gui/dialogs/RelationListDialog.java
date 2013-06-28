@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -19,6 +20,7 @@ import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.FocusManager;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -188,10 +190,13 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         List<Relation> sel = model.getSelectedRelations();
         popupMenuHandler.setPrimitives(sel);
         
+        Component focused = FocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+        
         //update highlights
-        if (Main.isDisplayingMapView()) {
-            highlightHelper.highlightOnly(sel);
-            Main.map.mapView.repaint();
+        if (focused==displaylist && Main.isDisplayingMapView()) {
+            if (highlightHelper.highlightOnly(sel)) {
+                Main.map.mapView.repaint();
+            }
         }
     }
     
