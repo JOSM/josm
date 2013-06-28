@@ -40,7 +40,6 @@ import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 import org.openstreetmap.josm.Main;
@@ -48,6 +47,7 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
+import org.openstreetmap.josm.gui.widgets.JosmHTMLEditorKit;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -167,7 +167,7 @@ public class HelpBrowser extends JDialog {
 
     protected void build() {
         help = new JosmEditorPane();
-        HTMLEditorKit kit = new HTMLEditorKit();
+        JosmHTMLEditorKit kit = new JosmHTMLEditorKit();
         kit.setStyleSheet(buildStyleSheet());
         help.setEditorKit(kit);
         help.setEditable(false);

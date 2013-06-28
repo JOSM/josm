@@ -16,14 +16,15 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
+import org.openstreetmap.josm.gui.widgets.JosmHTMLEditorKit;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+// FIXME this class should extend HtmlPanel instead (duplicated code in here)
 public class UploadParameterSummaryPanel extends JPanel implements HyperlinkListener, PropertyChangeListener{
     private UploadStrategySpecification spec = new UploadStrategySpecification();
     private int numObjects;
@@ -126,7 +127,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         rule = "strong {" + rule + "}";
         ss.addRule(rule);
         ss.addRule("a {text-decoration: underline; color: blue}");
-        HTMLEditorKit kit = new HTMLEditorKit();
+        JosmHTMLEditorKit kit = new JosmHTMLEditorKit();
         kit.setStyleSheet(ss);
         jepMessage.setEditorKit(kit);
 
