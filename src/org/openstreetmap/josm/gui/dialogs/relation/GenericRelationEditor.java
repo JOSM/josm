@@ -608,6 +608,7 @@ public class GenericRelationEditor extends RelationEditor  {
         } else {
             // make sure all registered listeners are unregistered
             //
+            memberTable.stopHighlighting();
             selectionTableModel.unregister();
             memberTableModel.unregister();
             memberTable.unlinkAsListener();
@@ -1357,6 +1358,7 @@ public class GenericRelationEditor extends RelationEditor  {
 
         public void run() {
             Main.pref.put("relation.editor.generic.lastrole", tfRole.getText());
+            memberTable.stopHighlighting();
             if (getRelation() == null) {
                 applyNewRelation();
             } else if (!memberTableModel.hasSameMembersAs(getRelationSnapshot())
@@ -1397,6 +1399,7 @@ public class GenericRelationEditor extends RelationEditor  {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            memberTable.stopHighlighting();
             if (!memberTableModel.hasSameMembersAs(getRelationSnapshot()) || tagEditorPanel.getModel().isDirty()) {
                 //give the user a chance to save the changes
                 int ret = confirmClosingByCancel();

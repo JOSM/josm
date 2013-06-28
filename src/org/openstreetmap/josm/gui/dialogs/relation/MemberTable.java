@@ -20,6 +20,7 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -117,23 +118,30 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         scrollRectToVisible(getCellRect(index, 0, true));
     }
 
-    private void initHighlighting() {
-        getMemberTableModel().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+    ListSelectionListener highlighterListener = new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent lse) {
                 if (Main.isDisplayingMapView()) {
                     Collection<RelationMember> sel = getMemberTableModel().getSelectedMembers();
-                    ArrayList<OsmPrimitive> toHighlight = new ArrayList<OsmPrimitive>();
+                    final ArrayList<OsmPrimitive> toHighlight = new ArrayList<OsmPrimitive>();
                     for (RelationMember r: sel) {
                         if (r.getMember().isUsable()) {
                             toHighlight.add(r.getMember());
                         }
                     }
-                    if (highlightHelper.highlightOnly(toHighlight)) {
-                        Main.map.mapView.repaint();
-                    }
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (highlightHelper.highlightOnly(toHighlight)) {
+                                Main.map.mapView.repaint();
+                            }
+                        }
+                    });
                 }
-            }});
+            }};
+    
+    private void initHighlighting() {
+        getMemberTableModel().getSelectionModel().addListSelectionListener(highlighterListener);
         if (Main.isDisplayingMapView()) {
             HighlightHelper.clearAllHighlighted();
             Main.map.mapView.repaint();
@@ -199,7 +207,16 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     public void unlinkAsListener() {
         super.unlinkAsListener();
         MapView.removeLayerChangeListener(zoomToGap);
-        highlightHelper.clear();
+    }
+    
+    public void stopHighlighting() {
+        if (highlighterListener == null) return;
+        getMemberTableModel().getSelectionModel().removeListSelectionListener(highlighterListener);
+        highlighterListener = null;
+        if (Main.isDisplayingMapView()) {
+            HighlightHelper.clearAllHighlighted();
+            Main.map.mapView.repaint();
+        }
     }
 
     private class SelectPreviousGapAction extends AbstractAction {

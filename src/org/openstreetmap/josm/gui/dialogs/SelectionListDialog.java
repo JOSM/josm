@@ -201,8 +201,9 @@ public class SelectionListDialog extends ToggleDialog  {
                 if (layer == null) return;
                 layer.data.setSelected(Collections.singleton((OsmPrimitive)model.getElementAt(idx)));
             } else if (Main.isDisplayingMapView()) {
-                helper.highlightOnly((OsmPrimitive)model.getElementAt(idx));
-                Main.map.mapView.repaint();
+                if (helper.highlightOnly((OsmPrimitive)model.getElementAt(idx))) {
+                    Main.map.mapView.repaint();
+                }
             }
         }
 
