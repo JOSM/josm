@@ -507,8 +507,13 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                 LayerListDialog.getInstance().createMergeLayerAction(this),
                 new LayerSaveAction(this),
                 new LayerSaveAsAction(this),
-                new LayerGpxExportAction(this),
-                new ConvertToGpxLayerAction(),
+        }));
+        if (ExpertToggleAction.isExpert()) {
+            actions.addAll(Arrays.asList(new Action[]{
+                    new LayerGpxExportAction(this),
+                    new ConvertToGpxLayerAction()}));
+        }
+        actions.addAll(Arrays.asList(new Action[]{
                 SeparatorLayerAction.INSTANCE,
                 new RenameLayerAction(getAssociatedFile(), this)}));
         if (ExpertToggleAction.isExpert() && Main.pref.getBoolean("data.layer.upload_discouragement.menu_item", false)) {
