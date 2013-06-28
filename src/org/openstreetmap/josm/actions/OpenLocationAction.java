@@ -153,18 +153,18 @@ public class OpenLocationAction extends JosmAction {
      * @since 6031
      */
     public String findSummaryDocumentation() {
-        String result = "";
-        for (int i = 0; i < downloadTasks.size(); i++) {
-            Class<? extends DownloadTask> taskClass = downloadTasks.get(i);
+        String result = "<table>";
+        for (Class<? extends DownloadTask> taskClass : downloadTasks) {
             if (taskClass != null) {
                 try {
                     DownloadTask task = taskClass.getConstructor().newInstance();
-                    result += "<br/>" + task.acceptsDocumentationSummary();
+                    result += task.acceptsDocumentationSummary();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
+        result += "</table>";
         return result;
     }
 
@@ -186,9 +186,9 @@ public class OpenLocationAction extends JosmAction {
             Main.worker.submit(new PostDownloadHandler(task, future));
         } else {
             final String details = findSummaryDocumentation();    // Explain what patterns are supported
-            HelpAwareOptionPane.showMessageDialogInEDT(Main.parent, tr(
-                    "<html><p>Cannot open URL ''{0}''<br/>The following download tasks accept the URL patterns shown:<br/>{1}</p></html>",
-                    url, details), tr("Download Location"), JOptionPane.ERROR_MESSAGE, HelpUtil.ht("/Action/OpenLocation"));
+            HelpAwareOptionPane.showMessageDialogInEDT(Main.parent, "<html><p>" + tr(
+                    "Cannot open URL ''{0}''<br>The following download tasks accept the URL patterns shown:<br>{1}",
+                    url, details) + "</p></html>", tr("Download Location"), JOptionPane.ERROR_MESSAGE, HelpUtil.ht("/Action/OpenLocation"));
         }
     }
     

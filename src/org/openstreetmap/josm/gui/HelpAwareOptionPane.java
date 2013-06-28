@@ -20,10 +20,10 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -283,7 +283,7 @@ public class HelpAwareOptionPane {
      * e.g. from PleaseWaitRunnable
      */
     static public void showMessageDialogInEDT(final Component parentComponent, final Object msg, final String title, final int messageType, final String helpTopic)  {
-        SwingUtilities.invokeLater(new Runnable() {
+        GuiHelper.runInEDT(new Runnable() {
             public void run() {
                 showOptionDialog(parentComponent, msg, title, messageType, null, null, null, helpTopic);
             }

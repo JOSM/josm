@@ -58,6 +58,7 @@ public abstract class AbstractDownloadTask implements DownloadTask {
             for (String pattern: patterns) {
                 buf.append("<li>");
                 buf.append(XmlWriter.encode(pattern));
+                buf.append("</li>");
             } 
             buf.append("</ul>");
         }

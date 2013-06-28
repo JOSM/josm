@@ -8,7 +8,6 @@ import java.text.MessageFormat;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
-import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 /**
@@ -18,7 +17,7 @@ import javax.swing.text.html.StyleSheet;
  * It displays HTML text in the same font as {@link javax.swing.JLabel}. Hyperlinks are rendered in
  * blue and they are underlined. There is also a CSS rule for the HTML tag &lt;strong&gt;
  * configured.
- *
+ * @since 2688
  */
 public class HtmlPanel extends JPanel {
     private JosmEditorPane jepMessage;
@@ -49,7 +48,7 @@ public class HtmlPanel extends JPanel {
         ss.addRule(rule);
         ss.addRule("a {text-decoration: underline; color: blue}");
         ss.addRule("ul {margin-left: 1cm; list-style-type: disc}");
-        HTMLEditorKit kit = new HTMLEditorKit();
+        JosmHTMLEditorKit kit = new JosmHTMLEditorKit();
         kit.setStyleSheet(ss);
         jepMessage.setEditorKit(kit);
 
