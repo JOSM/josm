@@ -47,7 +47,7 @@ public class HighlightHelper {
         for (OsmPrimitive p: prims) {
             needsRepaint |= setHighlight(p, true);
         }
-        //return true;
+
         return needsRepaint;
     }
     
