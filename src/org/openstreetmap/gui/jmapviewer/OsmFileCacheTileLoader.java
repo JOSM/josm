@@ -25,6 +25,8 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.CachedTileLoader;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileClearController;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
@@ -39,7 +41,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource.TileUpdate;
  * @author Jan Peter Stotz
  * @author Stefan Zeller
  */
-public class OsmFileCacheTileLoader extends OsmTileLoader {
+public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileLoader {
 
     private static final Logger log = Logger.getLogger(OsmFileCacheTileLoader.class.getName());
 
@@ -139,10 +141,12 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
             this.tile = tile;
         }
 
+        @Override
         public Tile getTile() {
             return tile;
         }
 
+        @Override
         public void run() {
             synchronized (tile) {
                 if ((tile.isLoaded() && !tile.hasError()) || tile.isLoading())
@@ -158,9 +162,11 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
             if (fileTilePainted) {
                 TileJob job = new TileJob() {
 
+                    @Override
                     public void run() {
                         loadOrUpdateTile();
                     }
+                    @Override
                     public Tile getTile() {
                         return tile;
                     }
@@ -485,24 +491,13 @@ public class OsmFileCacheTileLoader extends OsmTileLoader {
         dir.mkdirs();
         this.cacheDirBase = dir.getAbsolutePath();
     }
-    
-    public static interface TileClearController {
-
-        void initClearDir(File dir);
-
-        void initClearFiles(File[] files);
-
-        boolean cancel();
-
-        void fileDeleted(File file);
-
-        void clearFinished();
-    }
-    
+   
+    @Override
     public void clearCache(TileSource source) {
         clearCache(source, null);
     }
     
+    @Override
     public void clearCache(TileSource source, TileClearController controller) {
         File dir = getSourceCacheDir(source);
         if (dir != null) {

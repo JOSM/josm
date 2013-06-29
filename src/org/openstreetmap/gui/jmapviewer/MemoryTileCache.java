@@ -36,6 +36,7 @@ public class MemoryTileCache implements TileCache {
         lruTiles = new CacheLinkedListElement();
     }
 
+    @Override
     public void addTile(Tile tile) {
         CacheEntry entry = createCacheEntry(tile);
         hashtable.put(tile.getKey(), entry);
@@ -44,6 +45,7 @@ public class MemoryTileCache implements TileCache {
             removeOldEntries();
     }
 
+    @Override
     public Tile getTile(TileSource source, int x, int y, int z) {
         CacheEntry entry = hashtable.get(Tile.getTileKey(source, x, y, z));
         if (entry == null)
@@ -89,6 +91,7 @@ public class MemoryTileCache implements TileCache {
         }
     }
 
+    @Override
     public int getTileCount() {
         return hashtable.size();
     }
@@ -165,6 +168,7 @@ public class MemoryTileCache implements TileCache {
          * @param element new element to be added
          */
         public synchronized void addFirst(CacheEntry element) {
+            if (element == null) return;
             if (elementCount == 0) {
                 firstElement = element;
                 lastElement = element;
@@ -185,6 +189,7 @@ public class MemoryTileCache implements TileCache {
          * @param element element to be removed
          */
         public synchronized void removeEntry(CacheEntry element) {
+            if (element == null) return;
             if (element.next != null) {
                 element.next.prev = element.prev;
             }
