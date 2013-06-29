@@ -43,10 +43,11 @@ import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JobDispatcher;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
-import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader.TileClearController;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.interfaces.CachedTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileClearController;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
@@ -228,8 +229,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
      */
     void clearTileCache(ProgressMonitor monitor) {
         tileCache.clear();
-        if (tileLoader instanceof OsmFileCacheTileLoader) {
-            ((OsmFileCacheTileLoader)tileLoader).clearCache(tileSource, new TmsTileClearController(monitor));
+        if (tileLoader instanceof CachedTileLoader) {
+            ((CachedTileLoader)tileLoader).clearCache(tileSource, new TmsTileClearController(monitor));
         }
     }
 
