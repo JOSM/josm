@@ -101,6 +101,7 @@ public class PluginHandler {
             new DeprecatedPlugin("ghost", IN_CORE),
             new DeprecatedPlugin("validator", IN_CORE),
             new DeprecatedPlugin("multipoly", IN_CORE),
+            new DeprecatedPlugin("multipoly-convert", IN_CORE),
             new DeprecatedPlugin("remotecontrol", IN_CORE),
             new DeprecatedPlugin("imagery", IN_CORE),
             new DeprecatedPlugin("slippymap", IN_CORE),
