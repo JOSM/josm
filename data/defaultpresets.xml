@@ -4039,11 +4039,11 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=toilets"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=toilets" />
             <key key="amenity" value="toilets" />
-            <text key="operator" text="Operator" />
-            <text key="ref" text="Reference number" />
+            <text key="description" text="Description" />
+            <combo key="drinking_water" text="Drinking water" values="yes,no" />
             <combo key="fee" text="Fee" values="yes,no" />
+            <text key="operator" text="Operator" />
             <combo key="wheelchair" text="Wheelchair" values="no,limited,yes" />
-            <text key="note" text="Note" />
         </item>
         <item name="Post Box" icon="styles/standard/service/post_box.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=post_box"
@@ -4165,9 +4165,13 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=drinking_water"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=drinking_water"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=drinking_water" />
-            <label text="Edit Drinking Water" />
+            <label text="Edit Source of Potable Water" />
             <key key="amenity" value="drinking_water" />
-            <text key="name" text="Name" />
+            <combo key="indoor" text="Indoor" values="yes,no" />
+            <optional>
+                <text key="name" text="Name" />
+                <text key="description" text="Description" />
+            </optional>
         </item>
         <item name="Fire Hydrant" icon="presets/fire_hydrant.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=fire_hydrant"
@@ -5105,7 +5109,8 @@ Note that for a match, at least one positive and no negative is required.
             <key key="amenity" value="marketplace" />
             <text key="name" text="Name" />
             <text key="operator" text="Operator" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />                      
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
+            <text key="website" text="Website" />
         </item>     	
         <item name="Greengrocer" icon="presets/greengrocer.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=greengrocer"
@@ -5116,8 +5121,22 @@ Note that for a match, at least one positive and no negative is required.
             <space />            
             <key key="shop" value="greengrocer" />
             <text key="name" text="Name" />            
-            <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
+            <text key="website" text="Website" />
+        </item>
+        <item name="Farm Stand" icon="presets/apple.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=farm"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=farm"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=farm"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=farm"/>
+            <label text="Edit Farm Stand" />
+            <space />
+            <key key="shop" value="farm" />
+            <text key="name" text="Name" />
+            <text key="description" text="Description" />
+            <text key="phone" text="Phone Number" match="key" />
+            <text key="website" text="Website" />
+            <combo key="organic" text="Organic" values="yes,no,only" />
         </item>
         <separator/>
         <item name="Organic" type="node,closedway">
