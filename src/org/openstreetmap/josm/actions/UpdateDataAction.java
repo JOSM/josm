@@ -43,6 +43,7 @@ public class UpdateDataAction extends JosmAction{
 
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (! isEnabled())
             return;
@@ -82,7 +83,7 @@ public class UpdateDataAction extends JosmAction{
             // no bounds defined in the dataset? we update all primitives in the data set
             // using a series of multi fetch requests
             //
-            new UpdateSelectionAction().updatePrimitives(getEditLayer().data.allPrimitives());
+            UpdateSelectionAction.updatePrimitives(getEditLayer().data.allPrimitives());
         } else {
             // bounds defined? => use the bbox downloader
             //
@@ -90,6 +91,7 @@ public class UpdateDataAction extends JosmAction{
             final Future<?> future = new DownloadOsmTaskList().download(false /* no new layer */, areasToDownload, monitor);
             Main.worker.submit(
                     new Runnable() {
+                        @Override
                         public void run() {
                             try {
                                 future.get();

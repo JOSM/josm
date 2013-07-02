@@ -293,7 +293,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      */
     protected void handleGone(OsmApiPrimitiveGoneException e) {
         if (e.isKnownPrimitive()) {
-            new UpdateSelectionAction().handlePrimitiveGoneException(e.getPrimitiveId(),e.getPrimitiveType());
+            UpdateSelectionAction.handlePrimitiveGoneException(e.getPrimitiveId(),e.getPrimitiveType());
         } else {
             ExceptionDialogUtil.explainGoneForUnknownPrimitive(e);
         }
