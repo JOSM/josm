@@ -18,7 +18,6 @@ import java.util.Set;
 import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UpdateSelectionAction;
@@ -31,6 +30,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -73,6 +73,7 @@ public class DownloadOsmTaskList {
             osmTasks.add(dt);
         }
         progressMonitor.addCancelListener(new CancelListener() {
+            @Override
             public void operationCanceled() {
                 for (DownloadTask dt : osmTasks) {
                     dt.cancel();
@@ -133,8 +134,8 @@ public class DownloadOsmTaskList {
             }
         }
         EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new UpdateSelectionAction().updatePrimitives(toSelect);
+            @Override public void run() {
+                UpdateSelectionAction.updatePrimitives(toSelect);
             }
         });
     }
@@ -216,6 +217,7 @@ public class DownloadOsmTaskList {
         /**
          * Grabs and displays the error messages after all download threads have finished.
          */
+        @Override
         public void run() {
             progressMonitor.finishTask();
 
@@ -246,7 +248,7 @@ public class DownloadOsmTaskList {
                 sb.insert(0, "<ul>");
                 sb.append("</ul>");
 
-                SwingUtilities.invokeLater(new Runnable() {
+                GuiHelper.runInEDT(new Runnable() {
                     @Override
                     public void run() {
                         JOptionPane.showMessageDialog(Main.parent, "<html>"
@@ -271,7 +273,7 @@ public class DownloadOsmTaskList {
             }
             final OsmDataLayer editLayer = Main.map.mapView.getEditLayer();
             if (editLayer != null) {
-                Set<OsmPrimitive> myPrimitives = getCompletePrimitives(editLayer.data);
+                final Set<OsmPrimitive> myPrimitives = getCompletePrimitives(editLayer.data);
                 for (DownloadTask task : osmTasks) {
                     if (task instanceof DownloadOsmTask) {
                         DataSet ds = ((DownloadOsmTask) task).getDownloadedData();
@@ -284,7 +286,11 @@ public class DownloadOsmTaskList {
                     }
                 }
                 if (!myPrimitives.isEmpty()) {
-                    handlePotentiallyDeletedPrimitives(myPrimitives);
+                    GuiHelper.runInEDT(new Runnable() {
+                        @Override public void run() {
+                            handlePotentiallyDeletedPrimitives(myPrimitives);
+                        }
+                    });
                 }
             }
         }
