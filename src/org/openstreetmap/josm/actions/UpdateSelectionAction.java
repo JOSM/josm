@@ -34,7 +34,7 @@ public class UpdateSelectionAction extends JosmAction {
      *
      * @param id the primitive id
      */
-    public void handlePrimitiveGoneException(long id, OsmPrimitiveType type) {
+    public static void handlePrimitiveGoneException(long id, OsmPrimitiveType type) {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         reader.append(getCurrentDataSet(),id, type);
         try {
@@ -52,7 +52,7 @@ public class UpdateSelectionAction extends JosmAction {
      * @param selection a collection of {@link OsmPrimitive}s to update
      *
      */
-    public void updatePrimitives(final Collection<OsmPrimitive> selection) {
+    public static void updatePrimitives(final Collection<OsmPrimitive> selection) {
         UpdatePrimitivesTask task = new UpdatePrimitivesTask(Main.main.getEditLayer(),selection);
         Main.worker.submit(task);
     }
@@ -68,7 +68,7 @@ public class UpdateSelectionAction extends JosmAction {
      * @exception IllegalStateException thrown if there is no current dataset
      *
      */
-    public void updatePrimitive(PrimitiveId id) throws IllegalStateException, IllegalArgumentException{
+    public static void updatePrimitive(PrimitiveId id) throws IllegalStateException, IllegalArgumentException{
         ensureParameterNotNull(id, "id");
         if (getEditLayer() == null)
             throw new IllegalStateException(tr("No current dataset found"));
@@ -113,11 +113,12 @@ public class UpdateSelectionAction extends JosmAction {
     /**
      * action handler
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (! isEnabled())
             return;
         Collection<OsmPrimitive> toUpdate =getData();
-        if (toUpdate.size() == 0) {
+        if (toUpdate.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("There are no selected objects to update."),
