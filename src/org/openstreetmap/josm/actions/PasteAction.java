@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -21,10 +22,10 @@ import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
+import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy.PasteBufferChangedListener;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.WayData;
-import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy.PasteBufferChangedListener;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -85,7 +86,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
 
         // default to paste in center of map (pasted via menu or cursor not in MapView)
         EastNorth mPosition = Main.map.mapView.getCenter();
-        if((e.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
+        if((e.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0) {
             final Point mp = MouseInfo.getPointerInfo().getLocation();
             final Point tl = Main.map.mapView.getLocationOnScreen();
             final Point pos = new Point(mp.x-tl.x, mp.y-tl.y);
