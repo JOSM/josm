@@ -95,7 +95,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     protected void download(PluginInformation pi, File file) throws PluginDownloadException{
         if (pi.mainversion > Version.getInstance().getVersion()) {
             ExtendedDialog dialog = new ExtendedDialog(
-                    Main.parent,
+                    progressMonitor.getWindowParent(),
                     tr("Skip download"),
                     new String[] {
                         tr("Download Plugin"),
