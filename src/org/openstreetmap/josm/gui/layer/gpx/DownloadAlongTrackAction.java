@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadTaskList;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
@@ -259,7 +259,7 @@ public class DownloadAlongTrackAction extends AbstractAction {
             }
         }
         final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));
-        final Future<?> future = new DownloadOsmTaskList().download(false, toDownload, monitor);
+        final Future<?> future = new DownloadTaskList().download(false, toDownload, true, false, monitor);
         Main.worker.submit(new Runnable() {
             @Override
             public void run() {
