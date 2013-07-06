@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
-
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -56,6 +55,7 @@ import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -817,14 +817,22 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
          * the user to re-select the tool after i.e. moving a layer. While testing I found
          * that I switch layers and actions at the same time and it was annoying to mind the
          * order. This way it works as visual clue for new users */
-        for (AbstractButton b: Main.map.allMapModeButtons) {
+        for (final AbstractButton b: Main.map.allMapModeButtons) {
             MapMode mode = (MapMode)b.getAction();
             if (mode.layerIsSupported(layer)) {
                 Main.registerActionShortcut(mode, mode.getShortcut()); //fix #6876
-                b.setEnabled(true);
+                GuiHelper.runInEDTAndWait(new Runnable() {
+                    @Override public void run() {
+                        b.setEnabled(true);
+                    }
+                });
             } else {
                 Main.unregisterShortcut(mode.getShortcut());
-                b.setEnabled(false);
+                GuiHelper.runInEDTAndWait(new Runnable() {
+                    @Override public void run() {
+                        b.setEnabled(false);
+                    }
+                });
             }
         }
         AudioPlayer.reset();
