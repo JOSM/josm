@@ -210,7 +210,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         helperStrokeDash = GuiHelper.getCustomizedStroke(Main.pref.get("extrude.stroke.helper-line", "1 4"));
         helperStrokeRA = new BasicStroke(1);
         symbolSize = Main.pref.getDouble("extrude.angle-symbol-radius", 8);
-        nodeDragWithoutCtrl = Main.pref.getBoolean("extrude.drag-nodes-without-ctrl", true);
+        nodeDragWithoutCtrl = Main.pref.getBoolean("extrude.drag-nodes-without-ctrl", false);
         oldLineStroke = GuiHelper.getCustomizedStroke(Main.pref.get("extrude.ctrl.stroke.old-line", "1"));
         mainStroke = GuiHelper.getCustomizedStroke(Main.pref.get("extrude.stroke.main", "3"));
     }
