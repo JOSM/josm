@@ -370,7 +370,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         }
 
         int i = unitsCombo.getSelectedIndex();
-        PROP_SYSTEM_OF_MEASUREMENT.put(unitsValues[i]);
+        NavigatableComponent.setSystemOfMeasurement(unitsValues[i]);
 
         return false;
     }

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.List;
+import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -49,12 +50,15 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.NavigatableComponent.SoMChangeListener;
 import org.openstreetmap.josm.gui.help.Helpful;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor.ProgressMonitorDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.ImageLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -71,7 +75,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author imi
  */
-public class MapStatus extends JPanel implements Helpful {
+public class MapStatus extends JPanel implements Helpful, Destroyable {
 
     /**
      * The MapView this status belongs to.
@@ -141,13 +145,16 @@ public class MapStatus extends JPanel implements Helpful {
     final JProgressBar progressBar = new JProgressBar();
     public final BackgroundProgressMonitor progressMonitor = new BackgroundProgressMonitor();
     
-    private MouseListener jumpToOnLeftClick;
+    private final MouseListener jumpToOnLeftClick;
+    private final SoMChangeListener somListener;
+    
+    private double distValue; // Distance value displayed in distText, stored if refresh needed after a change of system of measurement
 
     /**
      * This is the thread that runs in the background and collects the information displayed.
-     * It gets destroyed by MapFrame.java/destroy() when the MapFrame itself is destroyed.
+     * It gets destroyed by destroy() when the MapFrame itself is destroyed.
      */
-    public Thread thread;
+    private Thread thread;
 
     private final List<StatusTextHistory> statusText = new ArrayList<StatusTextHistory>();
 
@@ -750,7 +757,24 @@ public class MapStatus extends JPanel implements Helpful {
         add(headingText, GBC.std().insets(3,0,0,0));
         add(angleText, GBC.std().insets(3,0,0,0));
         add(distText, GBC.std().insets(3,0,0,0));
-
+        
+        distText.addMouseListener(new MouseAdapter() {
+            private final List<String> soms = new ArrayList<String>(new TreeSet<String>(NavigatableComponent.SYSTEMS_OF_MEASUREMENT.keySet()));
+            
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                String som = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
+                String newsom = soms.get((soms.indexOf(som)+1)%soms.size());
+                NavigatableComponent.setSystemOfMeasurement(newsom);
+            }
+        });
+        
+        NavigatableComponent.addSoMChangeListener(somListener = new SoMChangeListener() {
+            @Override public void systemOfMeasurementChanged(String oldSoM, String newSoM) {
+                setDist(distValue);
+            }
+        });
+        
         latText.addMouseListener(jumpToOnLeftClick);
         lonText.addMouseListener(jumpToOnLeftClick);
         
@@ -839,6 +863,7 @@ public class MapStatus extends JPanel implements Helpful {
      * @param dist The distance value to display, in meters
      */
     public void setDist(double dist) {
+        distValue = dist;
         distText.setText(dist < 0 ? "--" : NavigatableComponent.getDistText(dist));
     }
     /**
@@ -861,5 +886,20 @@ public class MapStatus extends JPanel implements Helpful {
     }
     public void activateAnglePanel(boolean activeFlag) {
         angleText.setBackground(activeFlag ? ImageLabel.backColorActive : ImageLabel.backColor);
+    }
+
+    @Override
+    public void destroy() {
+        NavigatableComponent.removeSoMChangeListener(somListener);
+        
+        // MapFrame gets destroyed when the last layer is removed, but the status line background
+        // thread that collects the information doesn't get destroyed automatically.
+        if (thread != null) {
+            try {
+                thread.interrupt();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

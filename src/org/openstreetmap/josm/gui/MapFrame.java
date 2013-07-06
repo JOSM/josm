@@ -286,15 +286,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
             }
         }
 
-        // MapFrame gets destroyed when the last layer is removed, but the status line background
-        // thread that collects the information doesn't get destroyed automatically.
-        if(statusLine.thread != null) {
-            try {
-                statusLine.thread.interrupt();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        statusLine.destroy();
         mapView.destroy();
     }
 
