@@ -10,6 +10,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -20,6 +22,8 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -36,7 +40,9 @@ public class HelpAwareOptionPane {
         public final Icon icon;
         public final String tooltipText;
         public final String helpTopic;
-        public final boolean enabled;
+        private boolean enabled;
+        
+        private final Collection<ChangeListener> listeners = new HashSet<ChangeListener>();
        
         /**
          * Constructs a new {@code ButtonSpec}.
@@ -63,7 +69,35 @@ public class HelpAwareOptionPane {
             this.icon = icon;
             this.tooltipText = tooltipText;
             this.helpTopic = helpTopic;
-            this.enabled = enabled;
+            setEnabled(enabled);
+        }
+        
+        /**
+         * Determines if this button spec is enabled
+         * @return {@code true} if this button spec is enabled, {@code false} otherwise
+         * @since 6051
+         */
+        public final boolean isEnabled() {
+            return enabled;
+        }
+        
+        /**
+         * Enables or disables this button spec, depending on the value of the parameter {@code b}.
+         * @param enabled if {@code true}, this button spec is enabled; otherwise this button spec is disabled
+         * @since 6051
+         */
+        public final void setEnabled(boolean enabled) {
+            if (this.enabled != enabled) {
+                this.enabled = enabled;
+                ChangeEvent event = new ChangeEvent(this);
+                for (ChangeListener listener : listeners) {
+                    listener.stateChanged(event);
+                }
+            }
+        }
+        
+        private final boolean addChangeListener(ChangeListener listener) {
+            return listener != null ? listeners.add(listener) : false;
         }
     }
 
@@ -101,15 +135,20 @@ public class HelpAwareOptionPane {
             b.setFocusable(true);
             buttons.add(b);
         } else {
-            for (ButtonSpec spec: options) {
-                JButton b = new JButton(spec.text);
+            for (final ButtonSpec spec: options) {
+                final JButton b = new JButton(spec.text);
                 b.setIcon(spec.icon);
                 b.setToolTipText(spec.tooltipText == null? "" : spec.tooltipText);
                 if (helpTopic != null) {
                     HelpUtil.setHelpContext(b, helpTopic);
                 }
                 b.setFocusable(true);
-                b.setEnabled(spec.enabled);
+                b.setEnabled(spec.isEnabled());
+                spec.addChangeListener(new ChangeListener() {
+                    @Override public void stateChanged(ChangeEvent e) {
+                        b.setEnabled(spec.isEnabled());
+                    }
+                });
                 buttons.add(b);
             }
         }
