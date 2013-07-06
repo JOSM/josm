@@ -39,58 +39,71 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * large to download in one go. Error messages will be collected for all downloads and displayed as
  * a list in the end.
  * @author xeen
- *
+ * @since 6053
  */
-public class DownloadOsmTaskList {
-    private List<DownloadTask> osmTasks = new LinkedList<DownloadTask>();
-    private List<Future<?>> osmTaskFutures = new LinkedList<Future<?>>();
+public class DownloadTaskList {
+    private List<DownloadTask> tasks = new LinkedList<DownloadTask>();
+    private List<Future<?>> taskFutures = new LinkedList<Future<?>>();
     private ProgressMonitor progressMonitor;
-
+    
+    private void addDownloadTask(DownloadTask dt, Rectangle2D td, int i, int n) {
+        ProgressMonitor childProgress = progressMonitor.createSubTaskMonitor(1, false);
+        childProgress.setCustomText(tr("Download {0} of {1} ({2} left)", i, n, n - i));
+        Future<?> future = dt.download(false, new Bounds(td), childProgress);
+        taskFutures.add(future);
+        tasks.add(dt);
+    }
+    
     /**
      * Downloads a list of areas from the OSM Server
      * @param newLayer Set to true if all areas should be put into a single new layer
      * @param rects The List of Rectangle2D to download
+     * @param osmData Set to true if OSM data should be downloaded
+     * @param gpxData Set to true if GPX data should be downloaded
      * @param progressMonitor The progress monitor 
      * @return The Future representing the asynchronous download task
      */
-    public Future<?> download(boolean newLayer, List<Rectangle2D> rects, ProgressMonitor progressMonitor) {
+    public Future<?> download(boolean newLayer, List<Rectangle2D> rects, boolean osmData, boolean gpxData, ProgressMonitor progressMonitor) {
         this.progressMonitor = progressMonitor;
         if (newLayer) {
             Layer l = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
             Main.main.addLayer(l);
             Main.map.mapView.setActiveLayer(l);
         }
-
-        progressMonitor.beginTask(null, rects.size());
+        
+        int n = (osmData && gpxData ? 2 : 1)*rects.size();
+        progressMonitor.beginTask(null, n);
         int i = 0;
         for (Rectangle2D td : rects) {
             i++;
-            DownloadTask dt = new DownloadOsmTask();
-            ProgressMonitor childProgress = progressMonitor.createSubTaskMonitor(1, false);
-            childProgress.setCustomText(tr("Download {0} of {1} ({2} left)", i, rects.size(), rects.size() - i));
-            Future<?> future = dt.download(false, new Bounds(td), childProgress);
-            osmTaskFutures.add(future);
-            osmTasks.add(dt);
+            if (osmData) {
+                addDownloadTask(new DownloadOsmTask(), td, i, n);
+            }
+            if (gpxData) {
+                addDownloadTask(new DownloadGpsTask(), td, i, n);
+            }
         }
         progressMonitor.addCancelListener(new CancelListener() {
             @Override
             public void operationCanceled() {
-                for (DownloadTask dt : osmTasks) {
+                for (DownloadTask dt : tasks) {
                     dt.cancel();
                 }
             }
         });
-        return Main.worker.submit(new PostDownloadProcessor());
+        return Main.worker.submit(new PostDownloadProcessor(osmData));
     }
 
     /**
      * Downloads a list of areas from the OSM Server
      * @param newLayer Set to true if all areas should be put into a single new layer
      * @param areas The Collection of Areas to download
+     * @param osmData Set to true if OSM data should be downloaded
+     * @param gpxData Set to true if GPX data should be downloaded
      * @param progressMonitor The progress monitor
      * @return The Future representing the asynchronous download task
      */
-    public Future<?> download(boolean newLayer, Collection<Area> areas, ProgressMonitor progressMonitor) {
+    public Future<?> download(boolean newLayer, Collection<Area> areas, boolean osmData, boolean gpxData, ProgressMonitor progressMonitor) {
         progressMonitor.beginTask(tr("Updating data"));
         try {
             List<Rectangle2D> rects = new ArrayList<Rectangle2D>(areas.size());
@@ -98,7 +111,7 @@ public class DownloadOsmTaskList {
                 rects.add(a.getBounds2D());
             }
 
-            return download(newLayer, rects, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            return download(newLayer, rects, osmData, gpxData, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
         } finally {
             progressMonitor.finishTask();
         }
@@ -202,7 +215,7 @@ public class DownloadOsmTaskList {
      */
     public Set<OsmPrimitive> getDownloadedPrimitives() {
         HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
-        for (DownloadTask task : osmTasks) {
+        for (DownloadTask task : tasks) {
             if (task instanceof DownloadOsmTask) {
                 DataSet ds = ((DownloadOsmTask) task).getDownloadedData();
                 if (ds != null) {
@@ -214,6 +227,13 @@ public class DownloadOsmTaskList {
     }
 
     class PostDownloadProcessor implements Runnable {
+
+        private final boolean osmData;
+        
+        public PostDownloadProcessor(boolean osmData) {
+            this.osmData = osmData;
+        }
+
         /**
          * Grabs and displays the error messages after all download threads have finished.
          */
@@ -223,7 +243,7 @@ public class DownloadOsmTaskList {
 
             // wait for all download tasks to finish
             //
-            for (Future<?> future : osmTaskFutures) {
+            for (Future<?> future : taskFutures) {
                 try {
                     future.get();
                 } catch (Exception e) {
@@ -232,7 +252,7 @@ public class DownloadOsmTaskList {
                 }
             }
             LinkedHashSet<Object> errors = new LinkedHashSet<Object>();
-            for (DownloadTask dt : osmTasks) {
+            for (DownloadTask dt : tasks) {
                 errors.addAll(dt.getErrorObjects());
             }
             if (!errors.isEmpty()) {
@@ -261,20 +281,19 @@ public class DownloadOsmTaskList {
             }
 
             // FIXME: this is a hack. We assume that the user canceled the whole download if at
-            // least
-            // one task was canceled or if it failed
+            // least one task was canceled or if it failed
             //
-            for (DownloadTask task : osmTasks) {
-                if (task instanceof DownloadOsmTask) {
-                    DownloadOsmTask osmTask = (DownloadOsmTask) task;
-                    if (osmTask.isCanceled() || osmTask.isFailed())
+            for (DownloadTask task : tasks) {
+                if (task instanceof AbstractDownloadTask) {
+                    AbstractDownloadTask absTask = (AbstractDownloadTask) task;
+                    if (absTask.isCanceled() || absTask.isFailed())
                         return;
                 }
             }
             final OsmDataLayer editLayer = Main.map.mapView.getEditLayer();
-            if (editLayer != null) {
+            if (editLayer != null && osmData) {
                 final Set<OsmPrimitive> myPrimitives = getCompletePrimitives(editLayer.data);
-                for (DownloadTask task : osmTasks) {
+                for (DownloadTask task : tasks) {
                     if (task instanceof DownloadOsmTask) {
                         DataSet ds = ((DownloadOsmTask) task).getDownloadedData();
                         if (ds != null) {
