@@ -50,14 +50,15 @@ public class Geometry {
 
         //stupid java, cannot instantiate array of generic classes..
         @SuppressWarnings("unchecked")
-        ArrayList<Node>[] newNodes = new ArrayList[ways.size()];
-        BBox[] wayBounds = new BBox[ways.size()];
-        boolean[] changedWays = new boolean[ways.size()];
+        int n = ways.size();
+        ArrayList<Node>[] newNodes = new ArrayList[n];
+        BBox[] wayBounds = new BBox[n];
+        boolean[] changedWays = new boolean[n];
 
         Set<Node> intersectionNodes = new LinkedHashSet<Node>();
 
         //copy node arrays for local usage.
-        for (int pos = 0; pos < ways.size(); pos ++) {
+        for (int pos = 0; pos < n; pos ++) {
             newNodes[pos] = new ArrayList<Node>(ways.get(pos).getNodes());
             wayBounds[pos] = getNodesBounds(newNodes[pos]);
             changedWays[pos] = false;
@@ -65,9 +66,8 @@ public class Geometry {
 
         //iterate over all way pairs and introduce the intersections
         Comparator<Node> coordsComparator = new NodePositionComparator();
-
-        WayLoop: for (int seg1Way = 0; seg1Way < ways.size(); seg1Way ++) {
-            for (int seg2Way = seg1Way; seg2Way < ways.size(); seg2Way ++) {
+        WayLoop: for (int seg1Way = 0; seg1Way < n; seg1Way ++) {
+            for (int seg2Way = seg1Way; seg2Way < n; seg2Way ++) {
 
                 //do not waste time on bounds that do not intersect
                 if (!wayBounds[seg1Way].intersects(wayBounds[seg2Way])) {
@@ -127,7 +127,6 @@ public class Geometry {
                                 Node intNode = newNode;
                                 boolean insertInSeg1 = false;
                                 boolean insertInSeg2 = false;
-
                                 //find if the intersection point is at end point of one of the segments, if so use that point
 
                                 //segment 1
@@ -263,25 +262,42 @@ public class Geometry {
         double y4 = p4.getY();
 
         //TODO: do this locally.
+        //TODO: remove this check after careful testing
         if (!Line2D.linesIntersect(x1, y1, x2, y2, x3, y3, x4, y4)) return null;
 
-        // Convert line from (point, point) form to ax+by=c
-        double a1 = y2 - y1;
-        double b1 = x1 - x2;
-        double c1 = x2*y1 - x1*y2;
+        // solve line-line intersection in parametric form:
+        // (x1,y1) + (x2-x1,y2-y1)* u  = (x3,y3) + (x4-x3,y4-y3)* v
+        // (x2-x1,y2-y1)*u - (x4-x3,y4-y3)*v = (x3-x1,y3-y1)
+        // if 0<= u,v <=1, intersection exists at ( x1+ (x2-x1)*u, y1 + (y2-y1)*u )
+        
+        double a1 = x2 - x1;
+        double b1 = x3 - x4;
+        double c1 = x3 - x1;
 
-        double a2 = y4 - y3;
-        double b2 = x3 - x4;
-        double c2 = x4*y3 - x3*y4;
+        double a2 = y2 - y1;
+        double b2 = y3 - y4;
+        double c2 = y3 - y1;
 
         // Solve the equations
         double det = a1*b2 - a2*b1;
-        if (det == 0) return null; // Lines are parallel
-
-        double x = (b1*c2 - b2*c1)/det;
-        double y = (a2*c1 -a1*c2)/det;
-
-        return new EastNorth(x, y);
+        
+        double uu = b2*c1 - b1*c2 ;
+        double vv = a1*c2 - a2*c1;
+        double mag = Math.abs(uu)+Math.abs(vv);
+                
+        if (Math.abs(det) > 1e-12 * mag) {
+            double u = uu/det, v = vv/det;
+            if (u>-1e-8 && u < 1+1e-8 && v>-1e-8 && v < 1+1e-8 ) {
+                if (u<0) u=0;
+                if (u>1) u=1.0;
+                return new EastNorth(x1+a1*u, y1+a2*u);
+            } else {
+                return null;
+            }
+        } else {
+            // parallel lines
+            return null;
+        } 
     }
 
     /**
