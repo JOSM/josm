@@ -1632,7 +1632,11 @@ public class Preferences {
      */
     public void removeObsolete() {
         String[] obsolete = {
-                "color.Imagery fade",              // 08/2012 - wrong property caused by #6723, can be removed mid-2013
+                "downloadAlong.downloadAlongTrack.distance",   // 07/2013 - can be removed mid-2014. Replaced by downloadAlongWay.distance
+                "downloadAlong.downloadAlongTrack.area",       // 07/2013 - can be removed mid-2014. Replaced by downloadAlongWay.area
+                "gpxLayer.downloadAlongTrack.distance",        // 07/2013 - can be removed mid-2014. Replaced by downloadAlongTrack.distance
+                "gpxLayer.downloadAlongTrack.area",            // 07/2013 - can be removed mid-2014. Replaced by downloadAlongTrack.area
+                "gpxLayer.downloadAlongTrack.near",            // 07/2013 - can be removed mid-2014. Replaced by downloadAlongTrack.near
         };
         for (String key : obsolete) {
             boolean removed = false;
