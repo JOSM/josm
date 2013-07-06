@@ -314,6 +314,7 @@ public class JoinAreasAction extends JosmAction {
      * Gets called whenever the shortcut is pressed or the menu entry is selected
      * Checks whether the selected objects are suitable to join and joins them if so
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         LinkedList<Way> ways = new LinkedList<Way>(Main.main.getCurrentDataSet().getSelectedWays());
 
@@ -1294,7 +1295,7 @@ public class JoinAreasAction extends JosmAction {
      * @return The list of relation with roles to add own relation to
      */
     private RelationRole addOwnMultigonRelation(Collection<Way> inner, Way outer) {
-        if (inner.size() == 0) return null;
+        if (inner.isEmpty()) return null;
         // Create new multipolygon relation and add all inner ways to it
         Relation newRel = new Relation();
         newRel.put("type", "multipolygon");
@@ -1370,7 +1371,7 @@ public class JoinAreasAction extends JosmAction {
             cmds.add(new ChangeCommand(r.rel, newRel));
         }
 
-        Relation newRel = null;
+        Relation newRel;
         switch (multiouters.size()) {
         case 0:
             return;
