@@ -63,7 +63,20 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public interface ZoomChangeListener {
         void zoomChanged();
     }
-
+    
+    /**
+     * Interface to notify listeners of the change of the system of measurement.
+     * @since 6056
+     */
+    public interface SoMChangeListener {
+        /**
+         * The current SoM has changed.
+         * @param oldSoM The old system of measurement
+         * @param newSoM The new (current) system of measurement
+         */
+        void systemOfMeasurementChanged(String oldSoM, String newSoM);
+    }
+    
     /**
      * Simple data class that keeps map center and scale in one object.
      */
@@ -126,6 +139,39 @@ public class NavigatableComponent extends JComponent implements Helpful {
     protected static void fireZoomChanged() {
         for (ZoomChangeListener l : zoomChangeListeners) {
             l.zoomChanged();
+        }
+    }
+
+    /**
+     * the SoM listeners
+     */
+    private static final CopyOnWriteArrayList<SoMChangeListener> somChangeListeners = new CopyOnWriteArrayList<SoMChangeListener>();
+
+    /**
+     * Removes a SoM change listener
+     * 
+     * @param listener the listener. Ignored if null or already absent
+     * @since 6056
+     */
+    public static void removeSoMChangeListener(NavigatableComponent.SoMChangeListener listener) {
+        somChangeListeners.remove(listener);
+    }
+
+    /**
+     * Adds a SoM change listener
+     * 
+     * @param listener the listener. Ignored if null or already registered.
+     * @since 6056
+     */
+    public static void addSoMChangeListener(NavigatableComponent.SoMChangeListener listener) {
+        if (listener != null) {
+            somChangeListeners.addIfAbsent(listener);
+        }
+    }
+    
+    protected static void fireSoMChanged(String oldSoM, String newSoM) {
+        for (SoMChangeListener l : somChangeListeners) {
+            l.systemOfMeasurementChanged(oldSoM, newSoM);
         }
     }
 
@@ -1228,6 +1274,22 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if (som == null)
             return METRIC_SOM;
         return som;
+    }
+
+    /**
+     * Sets the current system of measurement.
+     * @param somKey The system of measurement key. Must be defined in {@link NavigatableComponent#SYSTEMS_OF_MEASUREMENT}.
+     * @since 6056
+     * @throws IllegalArgumentException if {@code somKey} is not known
+     */
+    public static void setSystemOfMeasurement(String somKey) {
+        if (!SYSTEMS_OF_MEASUREMENT.containsKey(somKey)) {
+            throw new IllegalArgumentException("Invalid system of measurement: "+somKey);
+        }
+        String oldKey = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
+        if (ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.put(somKey)) {
+            fireSoMChanged(oldKey, somKey);
+        }
     }
 
     /**
