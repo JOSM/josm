@@ -164,6 +164,10 @@
 	</complexType>
 
 	<complexType name="multiselect">
+        <!-- use either list_entry's or a combination of values/display_values -->
+        <sequence>
+            <element name="list_entry" type="tns:list_entry" minOccurs="0" maxOccurs="unbounded" />
+        </sequence>
 		<attribute name="key" type="string" use="required" />
 		<attribute name="text" type="string" />
 		<attribute name="text_context" type="string" />
