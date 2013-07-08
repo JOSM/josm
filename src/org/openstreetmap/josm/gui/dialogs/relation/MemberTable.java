@@ -7,8 +7,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,6 +42,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     /** the additional actions in popup menu */
     private ZoomToGapAction zoomToGap;
     private HighlightHelper highlightHelper = new HighlightHelper();
+    private boolean highlightEnabled;
 
     /**
      * constructor for relation member table
@@ -141,6 +140,8 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
             }};
     
     private void initHighlighting() {
+        highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
+        if (!highlightEnabled) return;
         getMemberTableModel().getSelectionModel().addListSelectionListener(highlighterListener);
         if (Main.isDisplayingMapView()) {
             HighlightHelper.clearAllHighlighted();
@@ -157,6 +158,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
      *
      */
     class SelectNextColumnCellAction extends AbstractAction {
+        @Override
         public void actionPerformed(ActionEvent e) {
             run();
         }
@@ -211,6 +213,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     
     public void stopHighlighting() {
         if (highlighterListener == null) return;
+        if (!highlightEnabled) return;
         getMemberTableModel().getSelectionModel().removeListSelectionListener(highlighterListener);
         highlighterListener = null;
         if (Main.isDisplayingMapView()) {
