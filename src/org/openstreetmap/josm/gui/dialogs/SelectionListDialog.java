@@ -187,7 +187,7 @@ public class SelectionListDialog extends ToggleDialog  {
      */
     class MouseEventHandler extends PopupMenuLauncher {
         private final HighlightHelper helper = new HighlightHelper();
-        
+        private boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
         public MouseEventHandler() {
             super(popupMenu);
         }
@@ -200,7 +200,7 @@ public class SelectionListDialog extends ToggleDialog  {
                 OsmDataLayer layer = Main.main.getEditLayer();
                 if (layer == null) return;
                 layer.data.setSelected(Collections.singleton((OsmPrimitive)model.getElementAt(idx)));
-            } else if (Main.isDisplayingMapView()) {
+            } else if (highlightEnabled && Main.isDisplayingMapView()) {
                 if (helper.highlightOnly((OsmPrimitive)model.getElementAt(idx))) {
                     Main.map.mapView.repaint();
                 }
@@ -209,7 +209,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
         @Override
         public void mouseExited(MouseEvent me) {
-            helper.clear();
+            if (highlightEnabled) helper.clear();
             super.mouseExited(me);
         }
     }
