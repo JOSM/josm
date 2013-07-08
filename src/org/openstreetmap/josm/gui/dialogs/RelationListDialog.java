@@ -115,7 +115,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     private final AddSelectionToRelations addSelectionToRelations = new AddSelectionToRelations();
     
     HighlightHelper highlightHelper = new HighlightHelper();
-    
+    private boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
     /**
      * Constructs <code>RelationListDialog</code>
      */
@@ -193,7 +193,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         Component focused = FocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
         
         //update highlights
-        if (focused==displaylist && Main.isDisplayingMapView()) {
+        if (highlightEnabled && focused==displaylist && Main.isDisplayingMapView()) {
             if (highlightHelper.highlightOnly(sel)) {
                 Main.map.mapView.repaint();
             }
@@ -315,7 +315,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         @Override
         public void mouseExited(MouseEvent me) {
-            highlightHelper.clear();
+            if (highlightEnabled) highlightHelper.clear();
         }
         
         protected void setCurrentRelationAsSelection() {
