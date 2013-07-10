@@ -95,7 +95,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     };
 
     /** The action to toggle this dialog */
-    protected ToggleDialogAction toggleAction;
+    protected final ToggleDialogAction toggleAction;
     protected String preferencePrefix;
     final protected String name;
 
@@ -241,14 +241,16 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             }
             if (isShowing) {
                 hideDialog();
-                dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
+                if (dialogsPanel != null) {
+                    dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
+                }
                 hideNotify();
             } else {
                 showDialog();
                 if (isDocked && isCollapsed) {
                     expand();
                 }
-                if (isDocked) {
+                if (isDocked && dialogsPanel != null) {
                     dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
                 }
                 showNotify();
