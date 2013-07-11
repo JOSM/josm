@@ -229,6 +229,7 @@ public class RelationChecker extends Test {
      */
     @Override
     public boolean isFixable(TestError testError) {
-        return testError.getCode() == RELATION_EMPTY && testError.getPrimitives().iterator().next().isNew();
+        Collection<? extends OsmPrimitive> primitives = testError.getPrimitives();
+        return testError.getCode() == RELATION_EMPTY && !primitives.isEmpty() && primitives.iterator().next().isNew();
     }
 }
