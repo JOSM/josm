@@ -112,14 +112,17 @@ public class TagEditorModel extends AbstractTableModel {
         }
     }
 
+    @Override
     public int getColumnCount() {
         return 2;
     }
 
+    @Override
     public int getRowCount() {
         return tags.size();
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (rowIndex >= getRowCount())
             throw new IndexOutOfBoundsException("unexpected rowIndex: rowIndex=" + rowIndex);
@@ -334,7 +337,7 @@ public class TagEditorModel extends AbstractTableModel {
      * makes sure the model includes at least one (empty) tag
      */
     public void ensureOneTag() {
-        if (tags.size() == 0) {
+        if (tags.isEmpty()) {
             appendNewTag();
         }
     }
@@ -527,6 +530,7 @@ public class TagEditorModel extends AbstractTableModel {
         java.util.Collections.sort(
                 tags,
                 new Comparator<TagModel>() {
+                    @Override
                     public int compare(TagModel self, TagModel other) {
                         return self.getName().compareTo(other.getName());
                     }

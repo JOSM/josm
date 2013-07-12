@@ -2,9 +2,12 @@
 package org.openstreetmap.josm.gui.tagging;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.EnumSet;
 
 import javax.swing.BoxLayout;
@@ -57,6 +60,10 @@ public class TagEditorPanel extends JPanel {
         return pnl;
     }
 
+    public void setNextFocusComponent(Component nextFocusComponent) {
+        tagTable.setNextFocusComponent(nextFocusComponent);
+    }
+    
     /**
      * builds the panel with the button row
      *
@@ -115,6 +122,12 @@ public class TagEditorPanel extends JPanel {
                 }
             });
         }
+        
+        addFocusListener(new FocusAdapter() {
+            @Override public void focusGained(FocusEvent e) {
+                tagTable.requestFocusInCell(0, 0);
+            }
+        });
     }
 
     /**

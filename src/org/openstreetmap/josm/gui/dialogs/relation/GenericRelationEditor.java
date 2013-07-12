@@ -188,6 +188,7 @@ public class GenericRelationEditor extends RelationEditor  {
         tabbedPane.add(tr("Child Relations"), new ChildRelationBrowser(getLayer(), relation));
         tabbedPane.addChangeListener(
                 new ChangeListener() {
+                    @Override
                     public void stateChanged(ChangeEvent e) {
                         JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
                         int index = sourceTabbedPane.getSelectedIndex();
@@ -213,7 +214,9 @@ public class GenericRelationEditor extends RelationEditor  {
                     }
                 }
         );
-
+        
+        tagEditorPanel.setNextFocusComponent(memberTable);
+        selectionTable.setFocusable(false);
         memberTableModel.setSelectedMembers(selectedMembers);
         HelpUtil.setHelpContext(getRootPane(),ht("/Dialog/RelationEditor"));
     }
@@ -605,6 +608,7 @@ public class GenericRelationEditor extends RelationEditor  {
             if(windowMenuItem == null) {
                 addToWindowMenu();
             }
+            tagEditorPanel.requestFocusInWindow();
         } else {
             // make sure all registered listeners are unregistered
             //
