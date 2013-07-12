@@ -44,7 +44,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class TagTable extends JTable  {
     /** the table cell editor used by this table */
     private TagCellEditor editor = null;
-
+    private final TagEditorModel model;
+    private Component nextFocusComponent;
+        
     /** a list of components to which focus can be transferred without stopping
      * cell editing this table.
      */
@@ -90,6 +92,7 @@ public class TagTable extends JTable  {
      *
      */
     class SelectNextColumnCellAction extends AbstractAction  {
+        @Override
         public void actionPerformed(ActionEvent e) {
             run();
         }
@@ -100,7 +103,12 @@ public class TagTable extends JTable  {
             if (getCellEditor() != null) {
                 getCellEditor().stopCellEditing();
             }
-
+            
+            if (row==-1 && col==-1) {
+                requestFocusInCell(0, 0);
+                return;
+            }
+        
             if (col == 0) {
                 col++;
             } else if (col == 1 && row < getRowCount()-1) {
@@ -109,12 +117,18 @@ public class TagTable extends JTable  {
             } else if (col == 1 && row == getRowCount()-1){
                 // we are at the end. Append an empty row and move the focus
                 // to its second column
-                TagEditorModel model = (TagEditorModel)getModel();
-                model.appendNewTag();
-                col=0;
-                row++;
+                String key = ((TagModel)model.getValueAt(row, 0)).getName();
+                if (!key.trim().isEmpty()) {
+                    model.appendNewTag();
+                    col=0;
+                    row++;
+                } else {
+                    clearSelection();
+                    if (nextFocusComponent!=null)
+                        nextFocusComponent.requestFocusInWindow();
+                    return;
+                }
             }
-            changeSelection(row, col, false, false);
             requestFocusInCell(row,col);
         }
     }
@@ -142,7 +156,6 @@ public class TagTable extends JTable  {
                 col = 1;
                 row--;
             }
-            changeSelection(row, col, false, false);
             requestFocusInCell(row,col);
         }
     }
@@ -183,7 +196,6 @@ public class TagTable extends JTable  {
          */
         protected void deleteTagNames() {
             int[] rows = getSelectedRows();
-            TagEditorModel model = (TagEditorModel)getModel();
             model.deleteTagNames(rows);
         }
 
@@ -192,7 +204,6 @@ public class TagTable extends JTable  {
          */
         protected void deleteTagValues() {
             int[] rows = getSelectedRows();
-            TagEditorModel model = (TagEditorModel)getModel();
             model.deleteTagValues(rows);
         }
 
@@ -201,7 +212,6 @@ public class TagTable extends JTable  {
          */
         protected void deleteTags() {
             int[] rows = getSelectedRows();
-            TagEditorModel model = (TagEditorModel)getModel();
             model.deleteTags(rows);
         }
 
@@ -229,7 +239,6 @@ public class TagTable extends JTable  {
                 }
             }
 
-            TagEditorModel model = (TagEditorModel)getModel();
             if (model.getRowCount() == 0) {
                 model.ensureOneTag();
                 requestFocusInCell(0, 0);
@@ -276,11 +285,14 @@ public class TagTable extends JTable  {
             if (editor != null) {
                 getCellEditor().stopCellEditing();
             }
-            ((TagEditorModel)getModel()).appendNewTag();
-            final int rowIdx = getModel().getRowCount()-1;
-            requestFocusInCell(rowIdx, 0);
+            final int rowIdx = model.getRowCount()-1;
+            String key = ((TagModel)model.getValueAt(rowIdx, 0)).getName();
+            if (!key.trim().isEmpty()) {
+                model.appendNewTag();
+            } 
+            requestFocusInCell(model.getRowCount()-1, 0);
         }
-
+            
         protected void updateEnabledState() {
             setEnabled(TagTable.this.isEnabled());
         }
@@ -355,6 +367,7 @@ public class TagTable extends JTable  {
      */
     public TagTable(TagEditorModel model) {
         super(model, new TagTableColumnModel(model.getColumnSelectionModel()), model.getRowSelectionModel());
+        this.model = model;
         init();
     }
 
@@ -418,6 +431,10 @@ public class TagTable extends JTable  {
             return null;
     }
 
+    public void setNextFocusComponent(Component nextFocusComponent) {
+        this.nextFocusComponent = nextFocusComponent;
+    }
+    
     public TagCellEditor getTableCellEditor() {
         return editor;
     }
@@ -444,6 +461,7 @@ public class TagTable extends JTable  {
     }
 
     public void requestFocusInCell(final int row, final int col) {
+        changeSelection(row, col, false, false);
         editCellAt(row, col);
         Component c = getEditorComponent();
         if (c!=null) {
