@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -175,6 +176,11 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
             } else if (row < getRowCount() - 1) {
                 col = 0;
                 row++;
+            } else {
+                // go to next component, no more rows in this table
+                KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+                manager.focusNextComponent();
+                return;
             }
             changeSelection(row, col, false, false);
         }
