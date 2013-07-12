@@ -4,18 +4,12 @@ package org.openstreetmap.josm.gui.tagging;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.applet.Applet;
-import java.awt.AWTException;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Robot;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
@@ -36,6 +30,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
+import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.gui.dialogs.relation.RunnableAction;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
@@ -131,6 +126,7 @@ public class TagTable extends JTable  {
      */
     class SelectPreviousColumnCellAction extends AbstractAction  {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int col = getSelectedColumn();
             int row = getSelectedRow();
@@ -243,6 +239,7 @@ public class TagTable extends JTable  {
         /**
          * listens to the table selection model
          */
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
@@ -288,6 +285,7 @@ public class TagTable extends JTable  {
             setEnabled(TagTable.this.isEnabled());
         }
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             updateEnabledState();
         }
@@ -446,36 +444,17 @@ public class TagTable extends JTable  {
     }
 
     public void requestFocusInCell(final int row, final int col) {
-
-        // the following code doesn't work reliably. If a table cell
-        // gains focus using editCellAt() and requestFocusInWindow()
-        // it isn't possible to tab to the next table cell using TAB or
-        // ENTER. Don't know why.
-        //
-        // tblTagEditor.editCellAt(row, col);
-        // if (tblTagEditor.getEditorComponent() != null) {
-        //  tblTagEditor.getEditorComponent().requestFocusInWindow();
-        // }
-
-        // this is a workaround. We move the focus to the respective cell
-        // using a simulated mouse click. In this case one can tab out of
-        // the cell using TAB and ENTER.
-        //
-        Rectangle r = getCellRect(row,col, false);
-        Point p = new Point(r.x + r.width/2, r.y + r.height/2);
-        SwingUtilities.convertPointToScreen(p, this);
-        Point before = MouseInfo.getPointerInfo().getLocation();
-
-        try {
-            Robot robot = new Robot();
-            robot.mouseMove(p.x,p.y);
-            robot.mousePress(InputEvent.BUTTON1_MASK);
-            robot.mouseRelease(InputEvent.BUTTON1_MASK);
-            robot.mouseMove(before.x, before.y);
-        } catch(AWTException e) {
-            System.out.println("Failed to simulate mouse click event at (" + r.x + "," + r.y + "). Exception: " + e.toString());
-            return;
+        editCellAt(row, col);
+        Component c = getEditorComponent();
+        if (c!=null) {
+            c.requestFocusInWindow();
+            if ( c instanceof JTextComponent ) {
+                 ( (JTextComponent)c ).selectAll();
+            }
         }
+        // there was a bug here - on older 1.6 Java versions Tab was not working
+        // after such activation. In 1.7 it works OK, 
+        // previous solution of usint awt.Robot was resetting mouse speed on Windows
     }
 
     public void addComponentNotStoppingCellEditing(Component component) {
@@ -552,6 +531,7 @@ public class TagTable extends JTable  {
             this.focusManager = fm;
         }
 
+        @Override
         public void propertyChange(PropertyChangeEvent ev) {
             if (!isEditing())
                 return;
