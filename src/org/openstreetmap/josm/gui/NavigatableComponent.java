@@ -725,38 +725,80 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *        give the nearest node that is tagged.
      */
     public final Node getNearestNode(Point p, Predicate<OsmPrimitive> predicate, boolean use_selected) {
-        Node n = null;
-
+        return getNearestNode(p, predicate, use_selected, null);
+    }
+    
+    /**
+     * The *result* depends on the current map selection state IF use_selected is true
+     *
+     * If more than one node within node.snap-distance pixels is found,
+     * the nearest node selected is returned IF use_selected is true.
+     * 
+     * If there are no selected nodes near that point, the node that is related to some of the preferredRefs
+     *
+     * Else the nearest new/id=0 node within about the same distance
+     * as the true nearest node is returned.
+     *
+     * If no such node is found either, the true nearest
+     * node to p is returned.
+     *
+     * Finally, if a node is not found at all, null is returned.
+     * @since 6065
+     * @return A node within snap-distance to point p,
+     *      that is chosen by the algorithm described.
+     *
+     * @param p the screen point
+     * @param predicate this parameter imposes a condition on the returned object, e.g.
+     *        give the nearest node that is tagged.
+     * @param preferredRefs primitives, whose nodes we prefer
+     */
+    public final Node getNearestNode(Point p, Predicate<OsmPrimitive> predicate,
+            boolean use_selected, Collection<OsmPrimitive> preferredRefs) {
+        
         Map<Double, List<Node>> nlists = getNearestNodesImpl(p, predicate);
-        if (!nlists.isEmpty()) {
-            Node ntsel = null, ntnew = null;
-            double minDistSq = nlists.keySet().iterator().next();
+        if (nlists.isEmpty()) return null;
+        
+        if (preferredRefs != null && preferredRefs.isEmpty()) preferredRefs = null;
+        Node ntsel = null, ntnew = null, ntref = null;
+        boolean useNtsel = use_selected;
+        double minDistSq = nlists.keySet().iterator().next();
 
-            for (Double distSq : nlists.keySet()) {
-                for (Node nd : nlists.get(distSq)) {
-                    // find the nearest selected node
-                    if (ntsel == null && nd.isSelected()) {
-                        ntsel = nd;
-                        // if there are multiple nearest nodes, prefer the one
-                        // that is selected. This is required in order to drag
-                        // the selected node if multiple nodes have the same
-                        // coordinates (e.g. after unglue)
-                        use_selected |= (distSq == minDistSq);
-                    }
-                    // find the nearest newest node that is within about the same
-                    // distance as the true nearest node
-                    if (ntnew == null && nd.isNew() && (distSq-minDistSq < 1)) {
-                        ntnew = nd;
+        for (Double distSq : nlists.keySet()) {
+            for (Node nd : nlists.get(distSq)) {
+                // find the nearest selected node
+                if (ntsel == null && nd.isSelected()) {
+                    ntsel = nd;
+                    // if there are multiple nearest nodes, prefer the one
+                    // that is selected. This is required in order to drag
+                    // the selected node if multiple nodes have the same
+                    // coordinates (e.g. after unglue)
+                    useNtsel |= (distSq == minDistSq);
+                }
+                if (ntref == null && preferredRefs != null && distSq == minDistSq) {
+                    List<OsmPrimitive> ndRefs = nd.getReferrers();
+                    for (OsmPrimitive ref: preferredRefs) {
+                        if (ndRefs.contains(ref)) {
+                            ntref = nd;
+                            break;
+                        }
                     }
                 }
+                // find the nearest newest node that is within about the same
+                // distance as the true nearest node
+                if (ntnew == null && nd.isNew() && (distSq-minDistSq < 1)) {
+                    ntnew = nd;
+                }
             }
-
-            // take nearest selected, nearest new or true nearest node to p, in that order
-            n = (ntsel != null && use_selected) ? ntsel
-                    : (ntnew != null) ? ntnew
-                            : nlists.values().iterator().next().get(0);
         }
-        return n;
+
+        // take nearest selected, nearest new or true nearest node to p, in that order
+        if (ntsel != null && useNtsel) 
+            return ntsel;
+        if (ntref != null) 
+            return ntref;
+        if (ntnew != null) 
+            return ntnew;
+        return nlists.values().iterator().next().get(0);
     }
 
     /**
@@ -913,6 +955,59 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
         return (ntsel != null && use_selected) ? ntsel : wayseg;
     }
+    
+     /**
+     * The *result* depends on the current map selection state IF use_selected is true.
+     *
+     * @return The nearest way segment to point p,
+     *      and, depending on use_selected, prefers a selected way segment, if found.
+     * Also prefers segments of ways that are related to one of preferredRefs primitives
+     * @see #getNearestWaySegments(Point, Collection, Predicate)
+     * @since 6065
+     * @param p the point for which to search the nearest segment.
+     * @param predicate the returned object has to fulfill certain properties.
+     * @param use_selected whether selected way segments should be preferred.
+     * @param preferredRefs - prefer segments related to these primitives, may be null
+     */
+    public final WaySegment getNearestWaySegment(Point p, Predicate<OsmPrimitive> predicate,
+            boolean use_selected,  Collection<OsmPrimitive> preferredRefs) {
+        WaySegment wayseg = null, ntsel = null, ntref = null;
+        if (preferredRefs != null && preferredRefs.isEmpty()) preferredRefs = null;
+        
+        searchLoop: for (List<WaySegment> wslist : getNearestWaySegmentsImpl(p, predicate).values()) {
+            for (WaySegment ws : wslist) {
+                if (wayseg == null) {
+                    wayseg = ws;
+                }
+                if (ntsel == null && ws.way.isSelected()) {
+                    ntsel = ws;
+                    break searchLoop;
+                }
+                if (ntref == null && preferredRefs != null) {
+                    // prefer ways containing given nodes
+                    for (Node nd: ws.way.getNodes()) {
+                        if (preferredRefs.contains(nd)) {
+                            ntref = ws;
+                            break searchLoop;
+                        }
+                    }
+                    Collection<OsmPrimitive> wayRefs = ws.way.getReferrers();
+                    // prefer member of the given relations
+                    for (OsmPrimitive ref: preferredRefs) {
+                        if (ref instanceof Relation && wayRefs.contains(ref)) {
+                            ntref = ws;
+                            break searchLoop;
+                        }
+                    }
+                }
+            }
+        }
+        if (ntsel != null && use_selected) 
+            return ntsel;
+        if (ntref != null)
+            return ntref;
+        return wayseg;
+    }
 
     /**
      * Convenience method to {@link #getNearestWaySegment(Point, Predicate, boolean)}.
@@ -1050,17 +1145,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param use_selected whether to prefer selected nodes
      */
     private boolean isPrecedenceNode(Node osm, Point p, boolean use_selected) {
-        boolean ret = false;
-
         if (osm != null) {
-            ret |= !(p.distanceSq(getPoint2D(osm)) > (4)*(4));
-            ret |= osm.isTagged();
-            if (use_selected) {
-                ret |= osm.isSelected();
-            }
+            if (!(p.distanceSq(getPoint2D(osm)) > (4)*(4))) return true;
+            if (osm.isTagged()) return true;
+            if (use_selected && osm.isSelected()) return true;
         }
-
-        return ret;
+        return false;
     }
 
     /**
@@ -1086,36 +1176,39 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *
      * @param p The point on screen.
      * @param predicate the returned object has to fulfill certain properties.
-     * @param use_selected whether to prefer primitives that are currently selected.
+     * @param use_selected whether to prefer primitives that are currently selected or referred by selected primitives
      */
     public final OsmPrimitive getNearestNodeOrWay(Point p, Predicate<OsmPrimitive> predicate, boolean use_selected) {
-        OsmPrimitive osm = getNearestNode(p, predicate, use_selected);
-        WaySegment ws = null;
+        Collection<OsmPrimitive> sel = 
+                use_selected ? getCurrentDataSet().getSelected() : null;
+        OsmPrimitive osm = getNearestNode(p, predicate, use_selected, sel);
 
-        if (!isPrecedenceNode((Node)osm, p, use_selected)) {
+        if (isPrecedenceNode((Node)osm, p, use_selected)) return osm;
+        WaySegment ws;
+        if (use_selected) {
+            ws = getNearestWaySegment(p, predicate, use_selected, sel);
+        } else {
             ws = getNearestWaySegment(p, predicate, use_selected);
+        }
+        if (ws == null) return osm;
 
-            if (ws != null) {
-                if ((ws.way.isSelected() && use_selected) || osm == null) {
-                    // either (no _selected_ nearest node found, if desired) or no nearest node was found
-                    osm = ws.way;
-                } else {
-                    int maxWaySegLenSq = 3*PROP_SNAP_DISTANCE.get();
-                    maxWaySegLenSq *= maxWaySegLenSq;
+        if ((ws.way.isSelected() && use_selected) || osm == null) {
+            // either (no _selected_ nearest node found, if desired) or no nearest node was found
+            osm = ws.way;
+        } else {
+            int maxWaySegLenSq = 3*PROP_SNAP_DISTANCE.get();
+            maxWaySegLenSq *= maxWaySegLenSq;
 
-                    Point2D wp1 = getPoint2D(ws.way.getNode(ws.lowerIndex));
-                    Point2D wp2 = getPoint2D(ws.way.getNode(ws.lowerIndex+1));
+            Point2D wp1 = getPoint2D(ws.way.getNode(ws.lowerIndex));
+            Point2D wp2 = getPoint2D(ws.way.getNode(ws.lowerIndex+1));
 
-                    // is wayseg shorter than maxWaySegLenSq and
-                    // is p closer to the middle of wayseg  than  to the nearest node?
-                    if (wp1.distanceSq(wp2) < maxWaySegLenSq &&
-                            p.distanceSq(project(0.5, wp1, wp2)) < p.distanceSq(getPoint2D((Node)osm))) {
-                        osm = ws.way;
-                    }
-                }
+            // is wayseg shorter than maxWaySegLenSq and
+            // is p closer to the middle of wayseg  than  to the nearest node?
+            if (wp1.distanceSq(wp2) < maxWaySegLenSq &&
+                    p.distanceSq(project(0.5, wp1, wp2)) < p.distanceSq(getPoint2D((Node)osm))) {
+                osm = ws.way;
             }
         }
-
         return osm;
     }
 
@@ -1248,6 +1341,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return Main.getProjection();
     }
 
+    @Override
     public String helpTopic() {
         String n = getClass().getName();
         return n.substring(n.lastIndexOf('.')+1);
