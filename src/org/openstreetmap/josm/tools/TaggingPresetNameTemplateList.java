@@ -9,7 +9,7 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset.PresetType;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
 
 /**
  * List of tagging presets with name templates, allows to find appropriate template based on existing primitive
@@ -39,7 +39,7 @@ public class TaggingPresetNameTemplateList {
     public TaggingPreset findPresetTemplate(OsmPrimitive primitive) {
 
         for (TaggingPreset t : presetsWithPattern) {
-            Collection<PresetType> type = Collections.singleton(PresetType.forPrimitive(primitive));
+            Collection<TaggingPresetType> type = Collections.singleton(TaggingPresetType.forPrimitive(primitive));
             if (t.typeMatches(type)) {
                 if (t.nameTemplateFilter != null) {
                     if (t.nameTemplateFilter.match(primitive))
