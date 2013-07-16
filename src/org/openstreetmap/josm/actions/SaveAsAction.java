@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class SaveAsAction extends SaveActionBase {
     private static SaveAsAction instance = new SaveAsAction();
-    
+
     /**
      * Construct the action with "Save" as label.
      */
@@ -27,7 +27,7 @@ public class SaveAsAction extends SaveActionBase {
             KeyEvent.VK_S, Shortcut.CTRL_SHIFT));
         putValue("help", ht("/Action/SaveAs"));
     }
-    
+
     public static SaveAsAction getInstance() {
         return instance;
     }

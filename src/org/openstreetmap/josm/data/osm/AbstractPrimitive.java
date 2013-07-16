@@ -657,9 +657,9 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     public boolean hasSameTags(OsmPrimitive other) {
         // We cannot directly use Arrays.equals(keys, other.keys) as keys is not ordered by key
-        // but we can at least check if both arrays are null or of the same size before creating 
+        // but we can at least check if both arrays are null or of the same size before creating
         // and comparing the key maps (costly operation, see #7159)
-        return (keys == null && other.keys == null) 
+        return (keys == null && other.keys == null)
             || (keys != null && other.keys != null && keys.length == other.keys.length && (keys.length == 0 || getKeys().equals(other.getKeys())));
     }
 

@@ -144,7 +144,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     private final DialogsPanel dialogsPanel;
 
     private final boolean unregisterTab;
-    
+
     /**
      * Default width of the toggle dialog area.
      */

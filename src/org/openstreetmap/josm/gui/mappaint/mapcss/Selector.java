@@ -33,13 +33,13 @@ public interface Selector {
 
     /**
      * <p>Represents a child selector or a parent selector.</p>
-     * 
+     *
      * <p>In addition to the standard CSS notation for child selectors, JOSM also supports
      * an "inverse" notation:</p>
      * <pre>
      *    selector_a > selector_b { ... }       // the standard notation (child selector)
      *    relation[type=route] > way { ... }    // example (all ways of a route)
-     * 
+     *
      *    selector_a < selector_b { ... }       // the inverse notation (parent selector)
      *    node[traffic_calming] < way { ... }   // example (way that has a traffic calming node)
      * </pre>
@@ -54,7 +54,7 @@ public interface Selector {
         private final boolean parentSelector;
 
         /**
-         * 
+         *
          * @param a the first selector
          * @param b the second selector
          * @param parentSelector if true, this is a parent selector; otherwise a child selector
@@ -68,11 +68,11 @@ public interface Selector {
 
         /**
          * <p>Finds the first referrer matching {@link #left}</p>
-         * 
+         *
          * <p>The visitor works on an environment and it saves the matching
          * referrer in {@code e.parent} and its relative position in the
          * list referrers "child list" in {@code e.index}.</p>
-         * 
+         *
          * <p>If after execution {@code e.parent} is null, no matching
          * referrer was found.</p>
          *
@@ -195,7 +195,7 @@ public interface Selector {
             return left +" "+ (parentSelector? "<" : ">")+link+" " +right;
         }
     }
-    
+
     /**
      * Super class of {@link GeneralSelector} and {@link LinkSelector}
      * @since 5841
@@ -203,7 +203,7 @@ public interface Selector {
     public static abstract class AbstractSelector implements Selector {
 
         protected final List<Condition> conds;
-        
+
         protected AbstractSelector(List<Condition> conditions) {
             if (conditions == null || conditions.isEmpty()) {
                 this.conds = null;

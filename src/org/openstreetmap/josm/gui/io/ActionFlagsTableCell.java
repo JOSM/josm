@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.GBC;
  * This class creates a table cell that features two checkboxes, Upload and Save. It
  * handles everything on its own, in other words it renders itself and also functions
  * as editor so the checkboxes may be set by the user.
- * 
+ *
  * Intended usage is like this:
  * ActionFlagsTableCell aftc = new ActionFlagsTableCell();
  * col = new TableColumn(0);

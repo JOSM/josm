@@ -28,16 +28,16 @@ public abstract class AddImageryPanel extends JPanel {
 
     protected final JosmTextArea rawUrl = new JosmTextArea(3, 40);
     protected final JosmTextField name = new JosmTextField();
-    
+
     protected final Collection<ContentValidationListener> listeners = new ArrayList<ContentValidationListener>();
-    
+
     /**
      * A listener notified when the validation status of this panel change.
      */
     public interface ContentValidationListener {
         /**
          * Called when the validation status of this panel changed
-         * @param isValid true if the conditions required to close this panel are met   
+         * @param isValid true if the conditions required to close this panel are met
          */
         public void contentChanged(boolean isValid);
     }
@@ -70,7 +70,7 @@ public abstract class AddImageryPanel extends JPanel {
     protected static String sanitize(String s) {
         return s.replaceAll("[\r\n]+", "").trim();
     }
-    
+
     protected final String getImageryName() {
         return sanitize(name.getText());
     }
@@ -78,7 +78,7 @@ public abstract class AddImageryPanel extends JPanel {
     protected final String getImageryRawUrl() {
         return sanitize(rawUrl.getText());
     }
-    
+
     protected abstract boolean isImageryValid();
 
     /**

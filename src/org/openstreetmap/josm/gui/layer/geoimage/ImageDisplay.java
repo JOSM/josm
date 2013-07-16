@@ -36,7 +36,7 @@ public class ImageDisplay extends JComponent {
 
     /** The image currently displayed */
     private Image image = null;
-    
+
     /** The image currently displayed */
     private boolean errorLoading = false;
 
@@ -98,10 +98,10 @@ public class ImageDisplay extends JComponent {
                 if (!error) {
                     ImageDisplay.this.image = img;
                     visibleRect = new Rectangle(0, 0, img.getWidth(null), img.getHeight(null));
-    
+
                     final int w = (int) visibleRect.getWidth();
                     final int h = (int) visibleRect.getHeight();
-    
+
                     outer: {
                         final int hh, ww, q;
                         final double ax, ay;
@@ -130,13 +130,13 @@ public class ImageDisplay extends JComponent {
                         default:
                             break outer;
                         }
-    
+
                         final BufferedImage rot = new BufferedImage(ww, hh, BufferedImage.TYPE_INT_RGB);
                         final AffineTransform xform = AffineTransform.getQuadrantRotateInstance(q, ax, ay);
                         final Graphics2D g = rot.createGraphics();
                         g.drawImage(image, xform, null);
                         g.dispose();
-    
+
                         visibleRect.setSize(ww, hh);
                         image.flush();
                         ImageDisplay.this.image = rot;

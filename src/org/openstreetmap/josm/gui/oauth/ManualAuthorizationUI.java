@@ -142,7 +142,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
     @Override
     public void setApiUrl(String apiUrl) {
         super.setApiUrl(apiUrl);
-        if (pnlMessage != null) { 
+        if (pnlMessage != null) {
             pnlMessage.setText(tr("<html><body>"
                     + "Please enter an OAuth Access Token which is authorized to access the OSM server "
                     + "''{0}''."

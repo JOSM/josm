@@ -27,7 +27,7 @@ public class OsmApiException extends OsmTransferException {
         this.errorBody = errorBody;
         this.accessedUrl = accessedUrl;
     }
-    
+
     /**
      * Constructs an {@code OsmApiException} with the specified response code, error header and error body
      * @param responseCode The HTTP response code replied by the OSM server. See {@link java.net.HttpURLConnection HttpURLConnection} for predefined HTTP response code values
@@ -51,11 +51,11 @@ public class OsmApiException extends OsmTransferException {
     }
 
     /**
-     * Constructs an {@code OsmApiException} with the specified cause and a detail message of 
-     * <tt>(cause==null ? null : cause.toString())</tt> 
+     * Constructs an {@code OsmApiException} with the specified cause and a detail message of
+     * <tt>(cause==null ? null : cause.toString())</tt>
      * (which typically contains the class and detail message of <tt>cause</tt>).
      *
-     * @param cause the cause (which is saved for later retrieval by the {@link #getCause} method). 
+     * @param cause the cause (which is saved for later retrieval by the {@link #getCause} method).
      *              A <tt>null</tt> value is permitted, and indicates that the cause is nonexistent or unknown.
      */
     public OsmApiException(Throwable cause) {
@@ -65,7 +65,7 @@ public class OsmApiException extends OsmTransferException {
     /**
      * Constructs an {@code OsmApiException} with the specified detail message and cause.
      *
-     * <p> Note that the detail message associated with {@code cause} is <i>not</i> automatically incorporated 
+     * <p> Note that the detail message associated with {@code cause} is <i>not</i> automatically incorporated
      * into this exception's detail message.
      *
      * @param message The detail message (which is saved for later retrieval by the {@link #getMessage} method)

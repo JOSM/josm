@@ -85,7 +85,7 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
                 gpxLayer = (GpxLayer) layer;
             }
         }
-        
+
         return new GeoImageLayer(entries, gpxLayer);
     }
 

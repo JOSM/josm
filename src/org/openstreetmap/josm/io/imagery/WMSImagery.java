@@ -66,7 +66,7 @@ public class WMSImagery {
 
     String buildRootUrl() {
         if (serviceUrl == null) {
-            return null; 
+            return null;
         }
         StringBuilder a = new StringBuilder(serviceUrl.getProtocol());
         a.append("://");

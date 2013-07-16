@@ -197,7 +197,7 @@ public class ImageProvider {
         this.maxHeight = maxSize.height;
         return this;
     }
-    
+
     /**
      * Convenience method, see {@link #setMaxSize(Dimension)}.
      */

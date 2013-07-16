@@ -25,7 +25,7 @@ public class AddNodeHandler extends RequestHandler {
      * The remote control command name used to add a node.
      */
     public static final String command = "add_node";
-    
+
     private double lat;
     private double lon;
 
@@ -68,7 +68,7 @@ public class AddNodeHandler extends RequestHandler {
         LatLon ll = new LatLon(lat, lon);
 
         Node nd = null;
-        
+
         if (Main.map != null &&  Main.map.mapView != null) {
             Point p = Main.map.mapView.getPoint(ll);
             nd = Main.map.mapView.getNearestNode(p, OsmPrimitive.isUsablePredicate);
@@ -82,7 +82,7 @@ public class AddNodeHandler extends RequestHandler {
             // Now execute the commands to add this node.
             Main.main.undoRedo.add(new AddCommand(nd));
         }
-        
+
         Main.main.getCurrentDataSet().setSelected(nd);
         if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
             AutoScaleAction.autoScale("selection");
@@ -90,7 +90,7 @@ public class AddNodeHandler extends RequestHandler {
             Main.map.mapView.repaint();
         }
         // parse parameter addtags=tag1=value1|tag2=vlaue2
-        AddTagsDialog.addTags(args, sender);        
+        AddTagsDialog.addTags(args, sender);
     }
 
     @Override

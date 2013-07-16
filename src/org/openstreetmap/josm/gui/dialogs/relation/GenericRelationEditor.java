@@ -215,7 +215,7 @@ public class GenericRelationEditor extends RelationEditor  {
                     }
                 }
         );
-        
+
         tagEditorPanel.setNextFocusComponent(memberTable);
         selectionTable.setFocusable(false);
         memberTableModel.setSelectedMembers(selectedMembers);
@@ -491,20 +491,20 @@ public class GenericRelationEditor extends RelationEditor  {
         memberTableModel.getSelectionModel().addListSelectionListener(moveDownAction);
         tb.add(moveDownAction);
         memberTable.getActionMap().put("moveDown", moveDownAction);
-        
+
         tb.addSeparator();
 
         // -- edit action
         EditAction editAction = new EditAction();
         memberTableModel.getSelectionModel().addListSelectionListener(editAction);
         tb.add(editAction);
-        
+
         // -- delete action
         RemoveAction removeSelectedAction = new RemoveAction();
         memberTable.getSelectionModel().addListSelectionListener(removeSelectedAction);
         tb.add(removeSelectedAction);
         memberTable.getActionMap().put("removeSelected", removeSelectedAction);
-        
+
         tb.addSeparator();
         // -- sort action
         SortAction sortAction = new SortAction();
@@ -535,7 +535,7 @@ public class GenericRelationEditor extends RelationEditor  {
         inputMap.put((KeyStroke) moveUpAction.getValue(AbstractAction.ACCELERATOR_KEY),"moveUp");
         inputMap.put((KeyStroke) moveDownAction.getValue(AbstractAction.ACCELERATOR_KEY),"moveDown");
         inputMap.put((KeyStroke) downloadIncompleteMembersAction.getValue(AbstractAction.ACCELERATOR_KEY),"downloadIncomplete");
-        
+
         return tb;
     }
 
@@ -676,7 +676,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
     }
 
-    
+
     private void registerCopyPasteAction(AbstractAction action, Object actionName, KeyStroke shortcut) {
         int mods = shortcut.getModifiers();
         int code = shortcut.getKeyCode();

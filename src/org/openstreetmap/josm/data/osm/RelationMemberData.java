@@ -20,11 +20,11 @@ public class RelationMemberData implements PrimitiveId {
     public long getMemberId() {
         return memberId;
     }
-    
+
     public String getRole() {
         return role;
     }
-    
+
     public OsmPrimitiveType getMemberType() {
         return memberType;
     }

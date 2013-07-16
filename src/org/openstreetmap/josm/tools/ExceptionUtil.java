@@ -278,7 +278,7 @@ public class ExceptionUtil {
         } else {
             msg = body;
         }
-        
+
         if (msg != null && !msg.isEmpty()) {
             return tr("<html>"
                     + "Authorisation at the OSM server failed.<br>"
@@ -545,10 +545,10 @@ public class ExceptionUtil {
         e.printStackTrace();
         return message;
     }
-    
+
     /**
      * Explains a {@link OsmApiException} which was thrown because of
-     * bandwidth limit exceeded (HTTP error 509) 
+     * bandwidth limit exceeded (HTTP error 509)
      *
      * @param e the exception
      */
@@ -558,7 +558,7 @@ public class ExceptionUtil {
         e.printStackTrace();
         return message;
     }
-    
+
 
     /**
      * Explains a {@link OsmApiException} which was thrown because a resource wasn't found.
@@ -693,7 +693,7 @@ public class ExceptionUtil {
         e.printStackTrace();
         return msg;
     }
-    
+
     /**
      * Replaces some HTML reserved characters (<, > and &) by their equivalent entity (&lt;, &gt; and &amp;);
      * @param s The unescaped string

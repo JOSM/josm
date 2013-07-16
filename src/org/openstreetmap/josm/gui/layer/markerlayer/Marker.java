@@ -320,7 +320,7 @@ public class Marker implements TemplateEngineDataProvider {
      * Convert Marker to WayPoint so it can be exported to a GPX file.
      *
      * Override in subclasses to add all necessary attributes.
-     * 
+     *
      * @return the corresponding WayPoint with all relevant attributes
      */
     public WayPoint convertToWayPoint() {

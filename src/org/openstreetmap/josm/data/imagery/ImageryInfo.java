@@ -47,7 +47,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         public String getUrlString() {
             return urlString;
         }
-        
+
         public static ImageryType fromUrlString(String s) {
             for (ImageryType type : ImageryType.values()) {
                 if (type.getUrlString().equals(s)) {

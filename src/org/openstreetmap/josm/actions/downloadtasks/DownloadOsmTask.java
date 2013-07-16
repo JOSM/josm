@@ -35,24 +35,24 @@ import org.xml.sax.SAXException;
  * Run in the worker thread.
  */
 public class DownloadOsmTask extends AbstractDownloadTask {
-    
+
     private static final String PATTERN_OSM_API_URL           = "http://.*/api/0.6/(map|nodes?|ways?|relations?|\\*).*";
     private static final String PATTERN_OVERPASS_API_URL      = "http://.*/interpreter\\?data=.*";
     private static final String PATTERN_OVERPASS_API_XAPI_URL = "http://.*/xapi\\?.*\\[@meta\\].*";
     private static final String PATTERN_EXTERNAL_OSM_FILE     = "https?://.*/.*\\.osm";
-    
+
     protected Bounds currentBounds;
     protected DataSet downloadedData;
     protected DownloadTask downloadTask;
-    
+
     protected OsmDataLayer targetLayer;
-    
+
     protected String newLayerName = null;
-    
+
     @Override
     public String[] getPatterns() {
         if (this.getClass() == DownloadOsmTask.class) {
-            return new String[]{PATTERN_OSM_API_URL, PATTERN_OVERPASS_API_URL, 
+            return new String[]{PATTERN_OSM_API_URL, PATTERN_OVERPASS_API_URL,
                 PATTERN_OVERPASS_API_XAPI_URL, PATTERN_EXTERNAL_OSM_FILE};
         } else {
             return super.getPatterns();
@@ -148,7 +148,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         }
         return url;
     }
-    
+
     /**
      * Loads a given URL from the OSM Server
      * @param new_layer True if the data should be saved to a new layer
@@ -158,7 +158,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
     public Future<?> loadUrl(boolean new_layer, String url, ProgressMonitor progressMonitor) {
         if (url.matches(PATTERN_OVERPASS_API_URL)) {
             url = encodePartialUrl(url, "/interpreter?data="); // encode only the part after the = sign
-            
+
         } else if (url.matches(PATTERN_OVERPASS_API_XAPI_URL)) {
             url = encodePartialUrl(url, "/xapi?"); // encode only the part after the ? sign
         }
@@ -170,7 +170,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         extractOsmFilename("https?://.*/(.*\\.osm)", url);
         return Main.worker.submit(downloadTask);
     }
-    
+
     protected final void extractOsmFilename(String pattern, String url) {
         Matcher matcher = Pattern.compile(pattern).matcher(url);
         newLayerName = matcher.matches() ? matcher.group(1) : null;
@@ -193,7 +193,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
             this.reader = reader;
             this.newLayer = newLayer;
         }
-        
+
         protected DataSet parseDataSet() throws OsmTransferException {
             return reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
         }
@@ -246,14 +246,14 @@ public class DownloadOsmTask extends AbstractDownloadTask {
             }
             return null;
         }
-        
+
         protected OsmDataLayer createNewLayer(String layerName) {
             if (layerName == null || layerName.isEmpty()) {
                 layerName = OsmDataLayer.createNewName();
             }
             return new OsmDataLayer(dataSet, layerName, null);
         }
-        
+
         protected OsmDataLayer createNewLayer() {
             return createNewLayer(null);
         }
@@ -296,7 +296,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 targetLayer.onPostDownloadFromServer();
             }
         }
-        
+
         protected void computeBboxAndCenterScale() {
             BoundingXYVisitor v = new BoundingXYVisitor();
             if (currentBounds != null) {

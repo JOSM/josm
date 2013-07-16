@@ -162,7 +162,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     public interface CommandQueueListener {
         void commandChanged(int queueSize, int redoSize);
     }
-    
+
     /**
      * Listener called when a state of this layer has changed.
      */
@@ -174,9 +174,9 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
          */
         void uploadDiscouragedChanged(OsmDataLayer layer, boolean newValue);
     }
-    
+
     private final CopyOnWriteArrayList<LayerStateChangeListener> layerStateChangeListeners = new CopyOnWriteArrayList<LayerStateChangeListener>();
-    
+
     /**
      * Adds a layer state change listener
      *
@@ -188,7 +188,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
             layerStateChangeListeners.addIfAbsent(listener);
         }
     }
-    
+
     /**
      * Removes a layer property change listener
      *
@@ -258,7 +258,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     protected Icon getBaseIcon() {
         return ImageProvider.get("layer", "osmdata_small");
     }
-    
+
     /**
      * TODO: @return Return a dynamic drawn icon of the map data. The icon is
      *         updated by a background thread to not disturb the running programm.
@@ -354,7 +354,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     public void mergeFrom(final DataSet from) {
         mergeFrom(from, null);
     }
-    
+
     /**
      * merges the primitives in dataset <code>from</code> into the dataset of
      * this layer
@@ -414,7 +414,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     }
 
     @Override public boolean isMergable(final Layer other) {
-        // isUploadDiscouraged commented to allow merging between normal layers and discouraged layers with a warning (see #7684) 
+        // isUploadDiscouraged commented to allow merging between normal layers and discouraged layers with a warning (see #7684)
         return other instanceof OsmDataLayer;// && (isUploadDiscouraged() == ((OsmDataLayer)other).isUploadDiscouraged());
     }
 
@@ -780,7 +780,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         }
         return true;
     }
-    
+
     /**
      * Check the data set if it would be empty on save. It is empty, if it contains
      * no objects (after all objects that are created and deleted without being

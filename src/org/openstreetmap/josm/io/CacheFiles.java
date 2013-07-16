@@ -64,7 +64,7 @@ public class CacheFiles {
      * @param isPlugin Whether this is a plugin or not (changes cache path)
      */
     public CacheFiles(String ident, boolean isPlugin) {
-        String pref = isPlugin ? 
+        String pref = isPlugin ?
                 Main.pref.getPluginsDirectory().getPath() + File.separator + "cache" :
                 Main.pref.getCacheDirectory().getPath();
 

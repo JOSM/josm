@@ -75,7 +75,7 @@ public class XmlWriter implements Closeable {
         encoding.put('\r', "&#xD;");
         encoding.put('\t', "&#x9;");
     }
-    
+
     @Override
     public void close() throws IOException {
         if (out != null) {

@@ -341,7 +341,7 @@ public class AudioPlayer extends Thread {
     }
 
     /**
-     * Shows a popup audio error message for the given exception. 
+     * Shows a popup audio error message for the given exception.
      * @param ex The exception used as error reason. Cannot be {@code null}.
      */
     public static void audioMalfunction(Exception ex) {

@@ -76,7 +76,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
     private final JPopupMenu popupMenu = new JPopupMenu();
     private final PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
-    
+
     /** Last selected element */
     private DefaultMutableTreeNode lastSelectedNode = null;
 
@@ -416,7 +416,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     public void addTreeSelectionListener(TreeSelectionListener listener) {
         tree.addTreeSelectionListener(listener);
     }
-    
+
     /**
      * Remove the given tree selection listener from the validator tree.
      * @param listener the TreeSelectionListener
@@ -425,7 +425,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     public void removeTreeSelectionListener(TreeSelectionListener listener) {
         tree.removeTreeSelectionListener(listener);
     }
-    
+
     /**
      * Replies the popup menu handler.
      * @return The popup menu handler
@@ -434,7 +434,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     public PopupMenuHandler getPopupMenuHandler() {
         return popupMenuHandler;
     }
-    
+
     /**
      * Replies the currently selected error, or {@code null}.
      * @return The selected error, if any.
@@ -450,16 +450,16 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         }
         return null;
     }
-    
+
     /**
      * Watches for double clicks and launches the popup menu.
      */
     class MouseEventHandler extends PopupMenuLauncher {
-        
+
         public MouseEventHandler() {
             super(popupMenu);
         }
-        
+
         @Override
         public void mouseClicked(MouseEvent e) {
             fixButton.setEnabled(false);
@@ -482,7 +482,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 }
             }
         }
-        
+
         @Override public void launch(MouseEvent e) {
             TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
             if (selPath == null)
@@ -584,7 +584,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         protected void finish() {
             // do nothing
         }
-        
+
         protected void fixError(TestError error) throws InterruptedException, InvocationTargetException {
             if (error.isFixable()) {
                 final Command fixCommand = error.getFix();

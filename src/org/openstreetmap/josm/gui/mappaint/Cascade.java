@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Simple map of properties with dynamic typing.
  */
 public class Cascade implements Cloneable {
-    
+
     public static final Cascade EMPTY_CASCADE = new Cascade();
 
     protected Map<String, Object> prop = new HashMap<String, Object>();
@@ -27,7 +27,7 @@ public class Cascade implements Cloneable {
     public <T> T get(String key, T def, Class<T> klass) {
         return get(key, def, klass, false);
     }
-    
+
     /**
      * Get value for the given key
      * @param <T> the expected type
@@ -181,7 +181,7 @@ public class Cascade implements Cloneable {
 
     @Override
     public Cascade clone() {
-        @SuppressWarnings("unchecked") 
+        @SuppressWarnings("unchecked")
         HashMap<String, Object> clonedProp = (HashMap) ((HashMap) this.prop).clone();
         Cascade c = new Cascade();
         c.prop = clonedProp;

@@ -20,7 +20,7 @@ public class JosmTextField extends JTextField {
      *      a default will be provided by calling the
      *      <code>createDefaultModel</code> method
      * @param text  the initial string to display, or <code>null</code>
-     * @param columns  the number of columns to use to calculate 
+     * @param columns  the number of columns to use to calculate
      *   the preferred width >= 0; if <code>columns</code>
      *   is set to zero, the preferred width will be whatever
      *   naturally results from the component implementation
@@ -36,7 +36,7 @@ public class JosmTextField extends JTextField {
      * specified text and columns.  A default model is created.
      *
      * @param text the text to be displayed, or <code>null</code>
-     * @param columns  the number of columns to use to calculate 
+     * @param columns  the number of columns to use to calculate
      *   the preferred width; if columns is set to zero, the
      *   preferred width will be whatever naturally results from
      *   the component implementation
@@ -62,11 +62,11 @@ public class JosmTextField extends JTextField {
      * A default model is created and the initial string is set to
      * <code>null</code>.
      *
-     * @param columns  the number of columns to use to calculate 
+     * @param columns  the number of columns to use to calculate
      *   the preferred width; if columns is set to zero, the
      *   preferred width will be whatever naturally results from
      *   the component implementation
-     */ 
+     */
     public JosmTextField(int columns) {
         this(null, null, columns);
     }

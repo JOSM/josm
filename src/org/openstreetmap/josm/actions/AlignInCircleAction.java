@@ -239,7 +239,7 @@ public final class AlignInCircleAction extends JosmAction {
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         setEnabled(selection != null && !selection.isEmpty());
     }
-    
+
     /**
      * Determines if a regular polygon is allowed to be created with the given nodes collection.
      * @param nodes The nodes collection to check.

@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.Geometry;
 
 /**
  * Helper for ParallelWayAction
- * 
+ *
  * @author Ole Jørgen Brønner (olejorgenb)
  */
 public class ParallelWays {
@@ -68,7 +68,7 @@ public class ParallelWays {
         List<Node> sortedNodesPath = nodeGraph.buildSpanningPath();
         if (sortedNodesPath == null)
             throw new IllegalArgumentException("Ways must have spanning path"); // Create a dedicated exception?
-        
+
         // Fix #8631 - Remove duplicated nodes from graph to be robust with self-intersecting ways
         Set<Node> removedNodes = new HashSet<Node>();
         sortedNodes = new ArrayList<Node>();

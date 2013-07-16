@@ -27,7 +27,7 @@ public class WMSLayerImporter extends FileImporter {
      */
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
             "wms", "wms", tr("WMS Files (*.wms)"));
-    
+
     private final WMSLayer wmsLayer;
 
     /**
@@ -57,7 +57,7 @@ public class WMSLayerImporter extends FileImporter {
         } finally {
             Utils.close(ois);
         }
-        
+
         // FIXME: remove UI stuff from IO subsystem
         GuiHelper.runInEDT(new Runnable() {
             @Override

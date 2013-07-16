@@ -156,7 +156,7 @@ public class TurnrestrictionTest extends Test {
                 for (int i = 1; i < via.size(); i++) {
                     Way previous = (Way) via.get(i - 1);
                     Way current = (Way) via.get(i);
-                    checkIfConnected(previous, current, 
+                    checkIfConnected(previous, current,
                             tr("The \"via\" ways are not connected."), UNCONNECTED_VIA);
                 }
             }
@@ -164,7 +164,7 @@ public class TurnrestrictionTest extends Test {
                 errors.add(new TestError(this, Severity.WARNING, tr("Superfluous turnrestriction as \"to\" way is oneway"), SUPERFLUOUS, r));
                 return;
             }
-            checkIfConnected((Way) via.get(via.size() - 1), toWay, 
+            checkIfConnected((Way) via.get(via.size() - 1), toWay,
                     tr("The last \"via\" and the \"to\" way are not connected."), TO_VIA_WAY);
 
         }

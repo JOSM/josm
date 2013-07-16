@@ -42,7 +42,7 @@ public class LanguagePreference implements SubPreferenceSetting {
     public void addGui(final PreferenceTabbedPane gui) {
         model = new LanguageComboBoxModel();
         // Selecting the language BEFORE the JComboBox listens to model changes speed up initialization by ~35ms (see #7386)
-        // See http://stackoverflow.com/questions/3194958/fast-replacement-for-jcombobox-basiccomboboxui 
+        // See http://stackoverflow.com/questions/3194958/fast-replacement-for-jcombobox-basiccomboboxui
         model.selectLanguage(Main.pref.get("language"));
         langCombo = new JosmComboBox(model);
         langCombo.setRenderer(new LanguageCellRenderer(langCombo.getRenderer()));
@@ -53,7 +53,7 @@ public class LanguagePreference implements SubPreferenceSetting {
         panel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
         panel.add(langCombo, GBC.eol().fill(GBC.HORIZONTAL));
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
-        
+
         TabPreferenceSetting tabPref = lafPreference.getTabPreferenceSetting(gui);
         tabPref.registerSubTab(this, tabPref.getSubTab(lafPreference));
     }

@@ -144,10 +144,10 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
         );
         return pnlMessage;
     }
-    
+
     @Override
     public String getSaveUsernameAndPasswordCheckboxText() {
         return tr("Save user and password (unencrypted)");
     }
-    
+
 }

@@ -33,7 +33,7 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
     public CustomizeColor(Layer l) {
         this();
         layers = new LinkedList<Layer>();
-        layers.add(l); 
+        layers.add(l);
     }
 
     private CustomizeColor() {

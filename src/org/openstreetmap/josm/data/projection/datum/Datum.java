@@ -6,7 +6,7 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
 
 /**
  * Represents a geodetic datum.
- * 
+ *
  * Basically it provides conversion functions from and to the WGS84 datum.
  */
 public interface Datum {
@@ -22,7 +22,7 @@ public interface Datum {
      * If no id exists, return null.
      */
     String getProj4Id();
-    
+
     /**
      * @return the ellipsoid associated with this datum
      */
@@ -32,7 +32,7 @@ public interface Datum {
      * Convert lat/lon from this datum to WGS84 datum.
      */
     LatLon toWGS84(LatLon ll);
-    
+
     /**
      * Convert lat/lon from WGS84 to this datum.
      */

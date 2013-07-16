@@ -27,7 +27,7 @@ public class ViewportFollowToggleAction extends JosmAction {
                 true /* register shortcut */
         );
         putValue("help", ht("/Action/ViewportFollowing"));
-        selected = false; 
+        selected = false;
         notifySelectedState();
     }
 

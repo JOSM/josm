@@ -20,9 +20,9 @@ import java.io.InputStreamReader;
  * hooks are subclasses of this class.
  */
 public class PlatformHookUnixoid implements PlatformHook {
-    
+
     private String osDescription;
-    
+
     @Override
     public void preStartupHook(){
     }
@@ -126,7 +126,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         }
         return osName;
     }
-    
+
     @Override
     public String getOSDescription() {
         if (osDescription == null) {
@@ -134,7 +134,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         }
         return osDescription;
     }
-    
+
     protected static class LinuxReleaseInfo {
         private final String path;
         private final String descriptionField;
@@ -142,7 +142,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         private final String releaseField;
         private final boolean plainText;
         private final String prefix;
-        
+
         public LinuxReleaseInfo(String path, String descriptionField, String idField, String releaseField) {
             this(path, descriptionField, idField, releaseField, false, null);
         }
@@ -154,7 +154,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         public LinuxReleaseInfo(String path, String prefix) {
             this(path, null, null, null, true, prefix);
         }
-        
+
         private LinuxReleaseInfo(String path, String descriptionField, String idField, String releaseField, boolean plainText, String prefix) {
             this.path = path;
             this.descriptionField = descriptionField;
@@ -165,10 +165,10 @@ public class PlatformHookUnixoid implements PlatformHook {
         }
 
         @Override public String toString() {
-            return "ReleaseInfo [path=" + path + ", descriptionField=" + descriptionField + 
+            return "ReleaseInfo [path=" + path + ", descriptionField=" + descriptionField +
                     ", idField=" + idField + ", releaseField=" + releaseField + "]";
         }
-        
+
         /**
          * Extracts OS detailed information from a Linux release file (/etc/xxx-release)
          * @return The OS detailed information, or {@code null}

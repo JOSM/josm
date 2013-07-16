@@ -46,7 +46,7 @@ public class TagTable extends JTable  {
     private TagCellEditor editor = null;
     private final TagEditorModel model;
     private Component nextFocusComponent;
-        
+
     /** a list of components to which focus can be transferred without stopping
      * cell editing this table.
      */
@@ -103,12 +103,12 @@ public class TagTable extends JTable  {
             if (getCellEditor() != null) {
                 getCellEditor().stopCellEditing();
             }
-            
+
             if (row==-1 && col==-1) {
                 requestFocusInCell(0, 0);
                 return;
             }
-        
+
             if (col == 0) {
                 col++;
             } else if (col == 1 && row < getRowCount()-1) {
@@ -289,10 +289,10 @@ public class TagTable extends JTable  {
             String key = ((TagModel)model.getValueAt(rowIdx, 0)).getName();
             if (!key.trim().isEmpty()) {
                 model.appendNewTag();
-            } 
+            }
             requestFocusInCell(model.getRowCount()-1, 0);
         }
-            
+
         protected void updateEnabledState() {
             setEnabled(TagTable.this.isEnabled());
         }
@@ -434,7 +434,7 @@ public class TagTable extends JTable  {
     public void setNextFocusComponent(Component nextFocusComponent) {
         this.nextFocusComponent = nextFocusComponent;
     }
-    
+
     public TagCellEditor getTableCellEditor() {
         return editor;
     }
@@ -471,7 +471,7 @@ public class TagTable extends JTable  {
             }
         }
         // there was a bug here - on older 1.6 Java versions Tab was not working
-        // after such activation. In 1.7 it works OK, 
+        // after such activation. In 1.7 it works OK,
         // previous solution of usint awt.Robot was resetting mouse speed on Windows
     }
 

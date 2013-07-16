@@ -55,7 +55,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 /**
  * This is a dialog for entering upload options like the parameters for
  * the upload changeset and the strategy for opening/closing a changeset.
- * 
+ *
  */
 public class UploadDialog extends JDialog implements PropertyChangeListener, PreferenceChangedListener{
     /**  the unique instance of the upload dialog */
@@ -110,7 +110,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         // the panel with the list of uploaded objects
         //
         pnl.add(pnlUploadedObjects = new UploadedObjectsSummaryPanel(), GBC.eol().fill(GBC.BOTH));
-        
+
         // Custom components
         for (Component c : customComponents) {
             pnl.add(c, GBC.eol().fill(GBC.HORIZONTAL));
@@ -308,11 +308,11 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
 
     public void setDefaultChangesetTags(Map<String, String> tags) {
         pnlTagSettings.setDefaultTags(tags);
-         for (String key: tags.keySet()) { 
-            if (key.equals("comment")) { 
+         for (String key: tags.keySet()) {
+            if (key.equals("comment")) {
                 changesetCommentModel.setComment(tags.get(key));
-            } 
-        } 
+            }
+        }
     }
 
     /**
@@ -369,9 +369,9 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         }
         super.setVisible(visible);
     }
-    
+
     /**
-     * Adds a custom component to this dialog. 
+     * Adds a custom component to this dialog.
      * Custom components added at JOSM startup are displayed between the objects list and the properties tab pane.
      * @param c The custom component to add. If {@code null}, this method does nothing.
      * @return {@code true} if the collection of custom components changed as a result of the call

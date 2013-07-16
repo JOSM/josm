@@ -39,7 +39,7 @@ public final class GettingStarted extends JPanel {
             + "</style>\n";
 
     public static class LinkGeneral extends JosmEditorPane implements HyperlinkListener {
-        
+
         /**
          * Constructs a new {@code LinkGeneral} with the given HTML text
          * @param text The text to display

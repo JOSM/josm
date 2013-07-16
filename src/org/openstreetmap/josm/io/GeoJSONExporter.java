@@ -19,7 +19,7 @@ public class GeoJSONExporter extends FileExporter {
 
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
             "json,geojson", "json", tr("GeoJSON Files") + " (*.json *.geojson)");
-    
+
     public GeoJSONExporter() {
         super(FILE_FILTER);
     }

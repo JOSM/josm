@@ -62,7 +62,7 @@ public class SlippyMapChooser extends JPanel implements DownloadSelection, Prope
                 // make the each dimension 90% of the absolute display size
                 w = iScreenSize.width * 90 / 100;
                 h = iScreenSize.height * 90 / 100;
-                iDownloadDialogDimension = iGui.getSize(); 
+                iDownloadDialogDimension = iGui.getSize();
             }
             // shrink
             else {
@@ -72,8 +72,8 @@ public class SlippyMapChooser extends JPanel implements DownloadSelection, Prope
                 iDownloadDialogDimension = null;
             }
 
-            // resize and center the DownloadDialog 
-            iGui.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h); 
+            // resize and center the DownloadDialog
+            iGui.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h);
             repaint();
         }
     }

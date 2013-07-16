@@ -29,12 +29,12 @@ public class Bounds {
     public LatLon getMax() {
         return new LatLon(maxLat, maxLon);
     }
-    
+
     public enum ParseMethod {
         MINLAT_MINLON_MAXLAT_MAXLON,
         LEFT_BOTTOM_RIGHT_TOP
     }
-    
+
     /**
      * Construct bounds out of two points
      */
@@ -49,7 +49,7 @@ public class Bounds {
     public Bounds(LatLon b) {
         this(b, true);
     }
-    
+
     public Bounds(LatLon b, boolean roundToOsmPrecision) {
         // Do not call this(b, b) to avoid GPX performance issue (see #7028) until roundToOsmPrecision() is improved
         if (roundToOsmPrecision) {
@@ -123,7 +123,7 @@ public class Bounds {
                 throw new IllegalArgumentException(MessageFormat.format("Illegal double value ''{0}''", components[i]));
             }
         }
-        
+
         switch (parseMethod) {
             case LEFT_BOTTOM_RIGHT_TOP:
                 this.minLat = initLat(values[1], roundToOsmPrecision);
@@ -139,7 +139,7 @@ public class Bounds {
                 this.maxLon = initLon(values[3], roundToOsmPrecision);
         }
     }
-    
+
     protected static double initLat(double value, boolean roundToOsmPrecision) {
         if (!LatLon.isValidLat(value))
             throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", value));
@@ -245,7 +245,7 @@ public class Bounds {
         extend(b.getMin());
         extend(b.getMax());
     }
-    
+
     /**
      * Is the given point within this bounds?
      */
@@ -265,7 +265,7 @@ public class Bounds {
     private static boolean intersectsLonCrossing(Bounds crossing, Bounds notCrossing) {
         return notCrossing.minLon <= crossing.maxLon || notCrossing.maxLon >= crossing.minLon;
     }
-    
+
     /**
      * The two bounds intersect? Compared to java Shape.intersects, if does not use
      * the interior but the closure. (">=" instead of ">")
@@ -273,7 +273,7 @@ public class Bounds {
     public boolean intersects(Bounds b) {
         if (b.maxLat < minLat || b.minLat > maxLat)
             return false;
-        
+
         if (crosses180thMeridian() && !b.crosses180thMeridian()) {
             return intersectsLonCrossing(this, b);
         } else if (!crosses180thMeridian() && b.crosses180thMeridian()) {
@@ -293,7 +293,7 @@ public class Bounds {
     public boolean crosses180thMeridian() {
         return this.minLon > this.maxLon;
     }
-    
+
     /**
      * Converts the lat/lon bounding box to an object of type Rectangle2D.Double
      * @return the bounding box to Rectangle2D.Double
@@ -319,7 +319,7 @@ public class Bounds {
     /**
      * <p>Replies true, if this bounds are <em>collapsed</em>, i.e. if the min
      * and the max corner are equal.</p>
-     * 
+     *
      * @return true, if this bounds are <em>collapsed</em>
      */
     public boolean isCollapsed() {

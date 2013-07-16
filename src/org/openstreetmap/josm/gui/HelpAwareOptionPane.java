@@ -41,9 +41,9 @@ public class HelpAwareOptionPane {
         public final String tooltipText;
         public final String helpTopic;
         private boolean enabled;
-        
+
         private final Collection<ChangeListener> listeners = new HashSet<ChangeListener>();
-       
+
         /**
          * Constructs a new {@code ButtonSpec}.
          * @param text the button text
@@ -71,7 +71,7 @@ public class HelpAwareOptionPane {
             this.helpTopic = helpTopic;
             setEnabled(enabled);
         }
-        
+
         /**
          * Determines if this button spec is enabled
          * @return {@code true} if this button spec is enabled, {@code false} otherwise
@@ -80,7 +80,7 @@ public class HelpAwareOptionPane {
         public final boolean isEnabled() {
             return enabled;
         }
-        
+
         /**
          * Enables or disables this button spec, depending on the value of the parameter {@code b}.
          * @param enabled if {@code true}, this button spec is enabled; otherwise this button spec is disabled
@@ -95,7 +95,7 @@ public class HelpAwareOptionPane {
                 }
             }
         }
-        
+
         private final boolean addChangeListener(ChangeListener listener) {
             return listener != null ? listeners.add(listener) : false;
         }

@@ -123,7 +123,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
 
     /**
      * appends a {@link OsmPrimitive} id to the list of ids which will be fetched from the server.
-     * 
+     *
      * @param ds the {@link DataSet} to which the primitive belongs
      * @param id the primitive id
      * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
@@ -415,23 +415,23 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     public Set<PrimitiveId> getMissingPrimitives() {
         return missingPrimitives;
     }
-    
+
     /**
-     * The class holding the results given by {@link Fetcher}. 
+     * The class holding the results given by {@link Fetcher}.
      * It is only a wrapper of the resulting {@link DataSet} and the collection of {@link PrimitiveId} that could not have been loaded.
      */
     protected static class FetchResult {
-        
+
         /**
          * The resulting data set
          */
         public final DataSet dataSet;
-        
+
         /**
          * The collection of primitive ids that could not have been loaded
          */
         public final Set<PrimitiveId> missingPrimitives;
-        
+
         /**
          * Constructs a {@code FetchResult}
          * @param dataSet The resulting data set
@@ -442,7 +442,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
             this.missingPrimitives = missingPrimitives;
         }
     }
-    
+
     /**
      * The class that actually download data from OSM API. Several instances of this class are used by {@link MultiFetchServerObjectReader} (one per set of primitives to fetch).
      * The inheritance of {@link OsmServerReader} is only explained by the need to have a distinct OSM connection by {@code Fetcher} instance.
@@ -471,12 +471,12 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
             // This method is implemented because of the OsmServerReader inheritance, but not used, as the main target of this class is the call() method.
             return fetch(progressMonitor).dataSet;
         }
-        
+
         @Override
         public FetchResult call() throws Exception {
             return fetch(progressMonitor);
         }
-        
+
         /**
          * fetches the requested primitives and updates the specified progress monitor.
          * @param progressMonitor the progress monitor
@@ -495,7 +495,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
                 }
             }
         }
-        
+
         /**
          * invokes a Multi Get for a set of ids and a given {@link OsmPrimitiveType}.
          * The retrieved primitives are merged to {@link #outputDataSet}.

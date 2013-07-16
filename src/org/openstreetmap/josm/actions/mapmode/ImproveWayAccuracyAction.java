@@ -88,7 +88,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     private Stroke addNodeStroke;
     private Stroke deleteNodeStroke;
     private int dotSize;
-    
+
     private boolean selectionChangedBlocked = false;
 
     protected String oldModeHelpText;
@@ -129,7 +129,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         addNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.add-node", "1"));
         deleteNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.delete-node", "1"));
         dotSize = Main.pref.getInteger("improvewayaccuracy.dot-size",6);
-                
+
         mv = Main.map.mapView;
         mousePos = null;
         oldModeHelpText = "";

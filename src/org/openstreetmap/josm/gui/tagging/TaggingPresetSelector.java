@@ -464,8 +464,8 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         this.dblClickListener = dblClickListener;
     }
     
-    public void setClickListener(ActionListener сlickListener) {
-        this.clickListener = сlickListener;
+    public void setClickListener(ActionListener clickListener) {
+        this.clickListener = clickListener;
     }
     
 }

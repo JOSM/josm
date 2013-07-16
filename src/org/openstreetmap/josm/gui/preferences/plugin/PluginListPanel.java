@@ -87,7 +87,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
         );
         add(hint, gbc);
     }
-    
+
     /**
      * A plugin checkbox.
      *
@@ -101,7 +101,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
             addActionListener(new PluginCbActionListener(this));
         }
     }
-    
+
     /**
      * Listener called when the user selects/unselects a plugin checkbox.
      *
@@ -138,7 +138,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
                     if (!pi.equals(cb.pi) && pi.requires != null && model.isSelectedPlugin(pi.getName())) {
                         for (String s : pi.getRequiredPlugins()) {
                             if (s.equals(cb.pi.getName())) {
-                                otherPlugins.add(pi.getName()); 
+                                otherPlugins.add(pi.getName());
                                 break;
                             }
                         }
@@ -150,7 +150,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
             }
         }
     };
-    
+
 
     /**
      * Alerts the user if an unselected plugin is still required by another plugins

@@ -16,7 +16,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /*
-* Action that hides or shows toggle dialogs panel and other panels 
+* Action that hides or shows toggle dialogs panel and other panels
 * to free more space for drawing (GIMP-like)
 * @author cmuelle8
 */

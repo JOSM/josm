@@ -577,7 +577,7 @@ public class MainMenu extends JMenuBar {
         if (!Main.pref.getBoolean("audio.menuinvisible", false)) {
             showAudioMenu(true);
         }
-        
+
         Main.pref.addPreferenceChangeListener(new PreferenceChangedListener() {
             @Override
             public void preferenceChanged(PreferenceChangeEvent e) {
@@ -599,7 +599,7 @@ public class MainMenu extends JMenuBar {
 
         new PresetsMenuEnabler(presetsMenu).refreshEnabled();
     }
-    
+
     protected void showAudioMenu(boolean showMenu) {
         if (showMenu && audioMenu == null) {
             audioMenu = addMenu(marktr("Audio"), KeyEvent.VK_U, defaultMenuPos, ht("/Menu/Audio"));

@@ -125,15 +125,15 @@ public class DownloadGpsTask extends AbstractDownloadTask {
             if (rawData == null)
                 return;
             String name = newLayerName != null ? newLayerName : tr("Downloaded GPX Data");
-            
+
             GpxImporterData layers = GpxImporter.loadLayers(rawData, reader.isGpxParsedProperly(), name, tr("Markers from {0}", name));
-            
+
             GpxLayer gpxLayer = addOrMergeLayer(layers.getGpxLayer(), findGpxMergeLayer());
             addOrMergeLayer(layers.getMarkerLayer(), findMarkerMergeLayer(gpxLayer));
-            
+
             layers.getPostLayerTask().run();
         }
-        
+
         private <L extends Layer> L addOrMergeLayer(L layer, L mergeLayer) {
             if (layer == null) return null;
             if (newLayer || mergeLayer == null) {
@@ -159,7 +159,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
             }
             return null;
         }
-        
+
         private MarkerLayer findMarkerMergeLayer(GpxLayer fromLayer) {
             if (!Main.isDisplayingMapView())
                 return null;
@@ -188,7 +188,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
         // TODO
         return null;
     }
-    
+
     /**
      * Determines if the given URL denotes an OSM gpx-related API call.
      * @param url The url to check

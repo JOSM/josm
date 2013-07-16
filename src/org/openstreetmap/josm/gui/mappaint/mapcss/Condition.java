@@ -135,7 +135,7 @@ abstract public class Condition {
 
     /**
      * <p>Represents a key/value condition which is either applied to a primitive.</p>
-     * 
+     *
      */
     public static class KeyValueCondition extends Condition {
 
@@ -145,7 +145,7 @@ abstract public class Condition {
 
         /**
          * <p>Creates a key/value-condition.</p>
-         * 
+         *
          * @param k the key
          * @param v the value
          * @param op the operation
@@ -207,7 +207,7 @@ abstract public class Condition {
      *     ["a label"]  PRIMITIVE:   the primitive has a tag "a label"
      *                  LINK:        the parent is a relation and it has at least one member with the role
      *                               "a label" referring to the child
-     * 
+     *
      *     [!"a label"]  PRIMITIVE:  the primitive doesn't have a tag "a label"
      *                   LINK:       the parent is a relation but doesn't have a member with the role
      *                               "a label" referring to the child
@@ -223,7 +223,7 @@ abstract public class Condition {
         private boolean questionMarkPresent;
 
         /**
-         * 
+         *
          * @param label
          * @param exclamationMarkPresent
          * @param questionMarkPresent

@@ -29,8 +29,8 @@ public class OsmIdTextField extends AbstractIdTextField<OsmIdTextField.OsmIdVali
     /**
      * Sets the type of primitive object
      * @param type The type of primitive object (
-     *      {@link OsmPrimitiveType#NODE NODE}, 
-     *      {@link OsmPrimitiveType#WAY WAY}, 
+     *      {@link OsmPrimitiveType#NODE NODE},
+     *      {@link OsmPrimitiveType#WAY WAY},
      *      {@link OsmPrimitiveType#RELATION RELATION})
      */
     public void setType(OsmPrimitiveType type) {

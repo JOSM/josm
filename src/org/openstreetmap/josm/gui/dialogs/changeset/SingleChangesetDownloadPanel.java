@@ -50,8 +50,8 @@ public class SingleChangesetDownloadPanel extends JPanel {
         tfChangesetId.addActionListener(actDownload);
         tfChangesetId.getDocument().addDocumentListener(actDownload);
         add(btn);
-        
-        if (Main.pref.getBoolean("downloadchangeset.autopaste", true)) { 
+
+        if (Main.pref.getBoolean("downloadchangeset.autopaste", true)) {
             tfChangesetId.tryToPasteFromClipboard();
         }
     }

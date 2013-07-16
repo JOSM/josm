@@ -39,7 +39,7 @@ public final class DistributeAction extends JosmAction {
                 Shortcut.SHIFT), true);
         putValue("help", ht("/Action/DistributeNodes"));
     }
-    
+
     /**
      * The general algorithm here is to find the two selected nodes
      * that are furthest apart, and then to distribute all other selected
@@ -65,7 +65,7 @@ public final class DistributeAction extends JosmAction {
                     itnodes.addAll(((Way)osm).getNodes());
                 }
         }
-        
+
         Set<Node> ignoredNodes = removeNodesWithoutCoordinates(nodes);
         ignoredNodes.addAll(removeNodesWithoutCoordinates(itnodes));
         if (!ignoredNodes.isEmpty()) {
@@ -148,7 +148,7 @@ public final class DistributeAction extends JosmAction {
         Main.main.undoRedo.add(new SequenceCommand(tr("Distribute Nodes"), cmds));
         Main.map.repaint();
     }
-    
+
     private Set<Node> removeNodesWithoutCoordinates(Collection<Node> col) {
         Set<Node> result = new HashSet<Node>();
         for (Iterator<Node> it = col.iterator(); it.hasNext();) {

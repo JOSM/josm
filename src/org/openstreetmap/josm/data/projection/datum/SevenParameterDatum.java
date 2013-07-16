@@ -6,21 +6,21 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
 
 /**
  * Datum provides general conversion from one ellipsoid to another.
- * 
+ *
  * Seven parameters can be specified:
  * - 3D offset
  * - general rotation
  * - scale
- * 
+ *
  * This method is described by EPSG as EPSG::9606.
  * Also known as Bursa-Wolf.
  */
 public class SevenParameterDatum extends AbstractDatum {
-    
+
     protected double dx, dy, dz, rx, ry, rz, s;
 
     /**
-     * 
+     *
      * @param name name of the datum
      * @param proj4Id Proj.4 identifier for this datum (or null)
      * @param ellps the ellipsoid used
@@ -60,5 +60,5 @@ public class SevenParameterDatum extends AbstractDatum {
         double z = (1-s)*(-dz + xyz[2] + ((-dy+xyz[1])*(-rx) - (-dx+xyz[0])*(-ry)));
         return this.ellps.cart2LatLon(new double[] { x, y, z });
     }
-    
+
 }

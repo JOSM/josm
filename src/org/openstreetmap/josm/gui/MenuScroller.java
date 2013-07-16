@@ -481,7 +481,7 @@ public class MenuScroller {
             parent.repaint();
         }
     }
-    
+
     private class MenuScrollListener implements PopupMenuListener {
 
         @Override
@@ -596,7 +596,7 @@ public class MenuScroller {
             return 10;
         }
     }
-    
+
     private class MouseScrollListener implements MouseWheelListener {
         public void mouseWheelMoved(MouseWheelEvent mwe) {
             if (menu.getComponents().length > scrollCount) {

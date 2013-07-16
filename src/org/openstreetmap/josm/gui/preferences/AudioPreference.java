@@ -33,7 +33,7 @@ public class AudioPreference extends DefaultTabPreferenceSetting {
             return new AudioPreference();
         }
     }
-    
+
     private AudioPreference() {
         super("audio", tr("Audio Settings"), tr("Settings for the audio player and audio markers."));
     }
@@ -56,7 +56,7 @@ public class AudioPreference extends DefaultTabPreferenceSetting {
 
     public void addGui(PreferenceTabbedPane gui) {
         JPanel audio = new JPanel(new GridBagLayout());
-        
+
         // audioMenuVisible
         audioMenuVisible.setSelected(! Main.pref.getBoolean("audio.menuinvisible"));
         audioMenuVisible.setToolTipText(tr("Show or hide the audio menu entry on the main menu bar."));

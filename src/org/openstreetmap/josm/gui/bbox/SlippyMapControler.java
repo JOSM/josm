@@ -55,7 +55,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
 
     private SizeButton iSizeButton = null;
     private SourceButton iSourceButton = null;
-    
+
     private boolean isSelecting;
 
     /**
@@ -78,7 +78,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
         }
         iSizeButton = sizeButton;
         iSourceButton = sourceButton;
-        
+
         isSelecting = false;
 
         InputMap inputMap = navComp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -157,7 +157,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
                 iEndSelectionPoint = null;
                 iStartSelectionPoint = null;
                 isSelecting = false;
-                
+
             } else {
                 int sourceButton = iSourceButton.hit(e.getPoint());
 

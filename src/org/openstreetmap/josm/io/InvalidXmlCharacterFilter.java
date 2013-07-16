@@ -23,7 +23,7 @@ public class InvalidXmlCharacterFilter extends FilterInputStream {
     public static boolean firstWarning = true;
 
     public static final boolean[] INVALID_CHARS;
-    
+
     static {
         INVALID_CHARS = new boolean[0x20];
         for (int i = 0; i < INVALID_CHARS.length; ++i) {

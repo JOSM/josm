@@ -22,13 +22,13 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  */
 public class JpgImporter extends FileImporter {
     private GpxLayer gpx;
-    
+
     /**
      * The default file filter (only *.jpg files).
      */
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
             "jpg", "jpg", tr("Image Files") + " (*.jpg)");
-    
+
     /**
      * An alternate file filter that also includes folders.
      * @since 5438

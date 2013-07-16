@@ -48,8 +48,8 @@ public class DownloadFileTask extends PleaseWaitRunnable{
         this.file = file;
         this.mkdir = mkdir;
         this.unpack = unpack;
-    }    
-    
+    }
+
     private static class DownloadException extends Exception {
         public DownloadException(String msg) {
             super(msg);
@@ -67,13 +67,13 @@ public class DownloadFileTask extends PleaseWaitRunnable{
     }
 
 
-    @Override 
+    @Override
     protected void cancel() {
         this.canceled = true;
         closeConnectionIfNeeded();
     }
 
-    @Override 
+    @Override
     protected void finish() {}
 
     /**
@@ -90,7 +90,7 @@ public class DownloadFileTask extends PleaseWaitRunnable{
                     newDir.mkdirs();
                 }
             }
-            
+
             URL url = new URL(address);
             int size;
             synchronized(this) {
@@ -99,10 +99,10 @@ public class DownloadFileTask extends PleaseWaitRunnable{
                 downloadConnection.connect();
                 size = downloadConnection.getContentLength();
             }
-            
+
             progressMonitor.setTicksCount(100);
             progressMonitor.subTask(tr("Downloading File {0}: {1} bytes...", file.getName(),size));
-            
+
             in = downloadConnection.getInputStream();
             out = new FileOutputStream(file);
             byte[] buffer = new byte[32768];
@@ -111,7 +111,7 @@ public class DownloadFileTask extends PleaseWaitRunnable{
             for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
                 out.write(buffer, 0, read);
                 count+=read;
-                if (canceled) break;                            
+                if (canceled) break;
                 p2 = 100 * count / size;
                 if (p2!=p1) {
                     progressMonitor.setTicks(p2);
@@ -141,7 +141,7 @@ public class DownloadFileTask extends PleaseWaitRunnable{
         }
     }
 
-    @Override 
+    @Override
     protected void realRun() throws SAXException, IOException {
         if (canceled) return;
         try {
@@ -159,13 +159,13 @@ public class DownloadFileTask extends PleaseWaitRunnable{
     public boolean isCanceled() {
         return canceled;
     }
-    
+
     /**
      * Recursive unzipping function
      * TODO: May be placed somewhere else - Tools.Utils?
      * @param file
      * @param dir
-     * @throws IOException 
+     * @throws IOException
      */
     public static void unzipFileRecursively(File file, String dir) throws IOException {
         OutputStream os = null;

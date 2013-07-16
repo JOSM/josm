@@ -39,9 +39,9 @@ import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
- * 
+ *
  * @author master
- * 
+ *
  * Dialog to add tags as part of the remotecontrol
  * Existing Keys get grey color and unchecked selectboxes so they will not overwrite the old Key-Value-Pairs by default.
  * You can choose the tags you want to add by selectboxes. You can edit the tags before you apply them.
@@ -51,15 +51,15 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
 
 
     /** initially given tags  **/
-    String[][] tags; 
-    
+    String[][] tags;
+
     private final JTable propertyTable;
     private Collection<? extends OsmPrimitive> sel;
     int[] count;
 
     String sender;
     static Set<String> trustedSenders = new HashSet<String>();
-    
+
     /**
      * Class for displaying "delete from ... objects" in the table
      */
@@ -72,7 +72,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
             return tr("<delete from {0} objects>", num);
         }
     }
-    
+
     /**
      * Class for displaying list of existing tag values in the table
      */
@@ -82,7 +82,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         public ExistingValues(String tag) {
             this.tag=tag; valueCount=new HashMap<String, Integer>();
         }
-        
+
         int addValue(String val) {
             Integer c = valueCount.get(val);
             int r = c==null? 1 : (c.intValue()+1);
@@ -116,10 +116,10 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
             }
             sb.append("</html>");
             return sb.toString();
-            
+
         }
     }
-            
+
     public AddTagsDialog(String[][] tags, String senderName) {
         super(Main.parent, tr("Add tags to selected objects"), new String[] { tr("Add selected tags"), tr("Add all tags"),  tr("Cancel")},
                 false,
@@ -127,7 +127,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         setToolTipTexts(new String[]{tr("Add checked tags to selected objects"), tr("Shift+Enter: Add all tags to selected objects"), ""});
 
         this.sender = senderName;
-        
+
         DataSet.addSelectionListener(this);
 
 
@@ -141,7 +141,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
 
         sel = Main.main.getCurrentDataSet().getSelected();
         count = new int[tags.length];
-        
+
         for (int i = 0; i<tags.length; i++) {
             count[i] = 0;
             String key = tags[i][0];
@@ -163,7 +163,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
             tm.setValueAt(tags[i][1].isEmpty() ? new DeleteTagMarker(count[i]) : tags[i][1], i, 2);
             tm.setValueAt(old , i, 3);
         }
-        
+
         propertyTable = new JTable(tm) {
 
             private static final long serialVersionUID = 1L;
@@ -199,9 +199,9 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
                 if (c==3) return ((ExistingValues)o).getToolTip();
                 return tr("Enable the checkbox to accept the value");
             }
-            
+
         };
-        
+
         propertyTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         // a checkbox has a size of 15 px
         propertyTable.getColumnModel().getColumn(0).setMaxWidth(15);
@@ -212,11 +212,11 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         propertyTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         propertyTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_MASK), "shiftenter");
         propertyTable.getActionMap().put("shiftenter", new AbstractAction() {
-            @Override  public void actionPerformed(ActionEvent e) { 
+            @Override  public void actionPerformed(ActionEvent e) {
                 buttonAction(1, e); // add all tags on Shift-Enter
             }
         });
-        
+
         // set the content of this AddTagsDialog consisting of the tableHeader and the table itself.
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new GridBagLayout());
@@ -228,7 +228,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
                 @Override public void actionPerformed(ActionEvent e) {
                     if (c.isSelected())
                         trustedSenders.add(sender);
-                    else 
+                    else
                         trustedSenders.remove(sender);
                 }
             } );
@@ -274,7 +274,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
                             key, value instanceof String ? (String) value : ""));
                 }
             }
-        } 
+        }
         if (buttonIndex == 2) {
             trustedSenders.remove(sender);
         }
@@ -286,7 +286,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         sel = newSelection;
         findExistingTags();
     }
-    
+
      /*
      * parse addtags parameters Example URL (part):
      * addtags=wikipedia:de%3DResidenzschloss Dresden|name:en%3DDresden Castle
@@ -313,7 +313,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
                         int i = 0;
                         for (String tag : tagSet) {
                             // support a  =   b===c as "a"="b===c"
-                            String [] pair = tag.split("\\s*=\\s*",2); 
+                            String [] pair = tag.split("\\s*=\\s*",2);
                             keyValue[i][0] = pair[0];
                             keyValue[i][1] = pair.length<2 ? "": pair[1];
                             i++;
@@ -322,11 +322,11 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
                     }
                 }
 
-                
+
             });
         }
     }
-    
+
     /**
      * Ask user and add the tags he confirm
      * @param keyValue is a table or {{tag1,val1},{tag2,val2},...}

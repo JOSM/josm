@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class ImportAudioAction extends AbstractAction {
     private final GpxLayer layer;
-    
+
     private static class Markers {
         public boolean timedMarkersOmitted = false;
         public boolean untimedMarkersOmitted = false;
@@ -113,7 +113,7 @@ public class ImportAudioAction extends AbstractAction {
             Main.map.repaint();
         }
     }
-    
+
     /**
      * Makes a new marker layer derived from this GpxLayer containing at least one audio marker
      * which the given audio file is associated with. Markers are derived from the following (a)

@@ -43,5 +43,5 @@ public class MarkersFromNamedPointsAction extends AbstractAction {
             Main.main.addLayer(ml);
         }
     }
-    
+
 }

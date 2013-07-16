@@ -251,10 +251,10 @@ public class MultipolygonTest extends Test {
             }
         }
     }
-    
+
     private void addRelationIfNeeded(TestError error, Relation r) {
-        // Fix #8212 : if the error references only incomplete primitives, 
-        // add multipolygon in order to let user select something and fix the error 
+        // Fix #8212 : if the error references only incomplete primitives,
+        // add multipolygon in order to let user select something and fix the error
         Collection<? extends OsmPrimitive> primitives = error.getPrimitives();
         if (!primitives.contains(r)) {
             for (OsmPrimitive p : primitives) {
@@ -267,7 +267,7 @@ public class MultipolygonTest extends Test {
             error.setPrimitives(newPrimitives);
         }
     }
-    
+
     private void addError(Relation r, TestError error) {
         addRelationIfNeeded(error, r);
         errors.add(error);

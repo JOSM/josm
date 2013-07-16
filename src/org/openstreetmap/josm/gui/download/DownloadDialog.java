@@ -143,7 +143,7 @@ public class DownloadDialog extends JDialog  {
         pnl.add(cbStartup, GBC.std().anchor(GBC.WEST).insets(15,5,5,5));
 
         pnl.add(sizeCheck,  GBC.eol().anchor(GBC.EAST).insets(5,5,5,2));
-        
+
         if (!ExpertToggleAction.isExpert()) {
             JLabel infoLabel  = new JLabel(tr("Use left click&drag to select area, arrows or right mouse button to scroll map, wheel or +/- to zoom."));
             pnl.add(infoLabel,GBC.eol().anchor(GBC.SOUTH).insets(0,0,0,0));
@@ -164,7 +164,7 @@ public class DownloadDialog extends JDialog  {
         // -- download button
         pnl.add(btnDownload = new SideButton(actDownload = new DownloadAction()));
         InputMapUtils.enableEnter(btnDownload);
-        
+
         makeCheckBoxRespondToEnter(cbDownloadGpxData);
         makeCheckBoxRespondToEnter(cbDownloadOsmData);
         makeCheckBoxRespondToEnter(cbNewLayer);
@@ -307,7 +307,7 @@ public class DownloadDialog extends JDialog  {
         cbDownloadOsmData.setSelected(Main.pref.getBoolean("download.osm", true));
         cbDownloadGpxData.setSelected(Main.pref.getBoolean("download.gps", false));
         cbNewLayer.setSelected(Main.pref.getBoolean("download.newlayer", false));
-        cbStartup.setSelected( isAutorunEnabled() ); 
+        cbStartup.setSelected( isAutorunEnabled() );
         int idx = Main.pref.getInteger("download.tab", 0);
         if (idx < 0 || idx > tpDownloadAreaSelectors.getTabCount()) {
             idx = 0;

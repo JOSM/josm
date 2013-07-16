@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
 /**
  * The base class for OSM objects ({@link Node}, {@link Way}, {@link Relation}).
- * 
+ *
  * It can be created, deleted and uploaded to the OSM-Server.
  *
  * Although OsmPrimitive is designed as a base class, it is not to be meant to subclass
@@ -619,7 +619,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     private static volatile Collection<String> workinprogress = null;
     private static volatile Collection<String> uninteresting = null;
     private static volatile Collection<String> discardable = null;
-    
+
     /**
      * Returns a list of "uninteresting" keys that do not make an object
      * "tagged".  Entries that end with ':' are causing a whole namespace to be considered
@@ -657,7 +657,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         }
         return discardable;
     }
-    
+
     /**
      * Returns a list of "work in progress" keys that do not make an object
      * "tagged" but "annotated".
@@ -761,7 +761,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     public boolean isTagged() {
         return (flags & FLAG_TAGGED) != 0;
     }
-    
+
     /**
      * Determines if this object is considered "annotated". To be "annotated", an object
      * must have one or more "work in progress" tags, such as "note" or "fixme".

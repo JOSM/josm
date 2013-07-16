@@ -151,7 +151,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * This sub-object is responsible for all adding and editing of properties
      */
     private final TagEditHelper editHelper = new TagEditHelper(propertyData, valueCount);
-    
+
     private final DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
     private final HelpAction helpAction = new HelpAction();
     private final PasteValueAction pasteValueAction = new PasteValueAction();
@@ -169,15 +169,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final SelectInRelationListAction setRelationSelectionAction = new SelectInRelationListAction();
     private final SelectRelationAction selectRelationAction = new SelectRelationAction(false);
     private final SelectRelationAction addRelationToSelectionAction = new SelectRelationAction(true);
-    
+
     private final DownloadMembersAction downloadMembersAction = new DownloadMembersAction();
     private final DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction = new DownloadSelectedIncompleteMembersAction();
-    
+
     private final SelectMembersAction selectMembersAction = new SelectMembersAction(false);
     private final SelectMembersAction addMembersToSelectionAction = new SelectMembersAction(true);
-    
+
     private final HighlightHelper highlightHelper= new HighlightHelper();
-    
+
     /**
      * The Add button (needed to be able to disable it)
      */
@@ -194,7 +194,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * Matching preset display class
      */
     private final PresetListPanel presets = new PresetListPanel();
-    
+
     /**
      * Text to display when nothing selected.
      */
@@ -213,9 +213,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             return Main.main.getCurrentDataSet().getSelected();
         }
     };
-    
+
     // <editor-fold defaultstate="collapsed" desc="Dialog construction and helper methods">
-    
+
     /**
      * Create a new PropertiesDialog
      * @param mapFrame The parent map fram
@@ -230,7 +230,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         setupMembershipMenu();
         buildMembershipTable();
-        
+
         // combine both tables and wrap them in a scrollPane
         JPanel bothTables = new JPanel();
         boolean top = Main.pref.getBoolean("properties.presets.top", true);
@@ -248,7 +248,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         if(!top) {
             bothTables.add(presets, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2));
         }
-        
+
         setupKeyboardShortcuts();
 
         // Let the action know when selection in the tables change
@@ -256,8 +256,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         membershipTable.getSelectionModel().addListSelectionListener(editAction);
         propertyTable.getSelectionModel().addListSelectionListener(deleteAction);
         membershipTable.getSelectionModel().addListSelectionListener(deleteAction);
-        
-        
+
+
         JScrollPane scrollPane = (JScrollPane) createLayout(bothTables, true, Arrays.asList(new SideButton[] {
                 this.btnAdd, this.btnEdit, this.btnDel
         }));
@@ -272,14 +272,14 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         editHelper.loadTagsIfNeeded();
     }
-        
+
     private void buildPropertiesTable() {
         // setting up the properties table
 
         propertyData.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
         propertyTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         propertyTable.getTableHeader().setReorderingAllowed(false);
-        
+
         propertyTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer(){
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
@@ -382,7 +382,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         mod.getColumn(1).setPreferredWidth(40);
         mod.getColumn(0).setPreferredWidth(200);
     }
-    
+
     /**
      * creates the popup menu @field membershipMenu and its launcher on membership table
      */
@@ -431,9 +431,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         });
     }
-    
+
     /**
-     * creates the popup menu @field propertyMenu and its launcher on property table 
+     * creates the popup menu @field propertyMenu and its launcher on property table
      */
     private void setupPropertiesMenu() {
         propertyMenu.add(pasteValueAction);
@@ -447,12 +447,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyMenu.add(helpAction);
         propertyTable.addMouseListener(new PopupMenuLauncher(propertyMenu));
     }
-    
+
     /**
      * Assignas all needed keys like Enter and Spacebar to most important actions
      */
     private void setupKeyboardShortcuts() {
-        
+
         // ENTER = editAction, open "edit" dialog
         propertyTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),"onTableEnter");
@@ -460,37 +460,37 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         membershipTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),"onTableEnter");
         membershipTable.getActionMap().put("onTableEnter",editAction);
-        
-        // INSERT button = addAction, open "add property" dialog 
+
+        // INSERT button = addAction, open "add property" dialog
         propertyTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0),"onTableInsert");
         propertyTable.getActionMap().put("onTableInsert",addAction);
-        
+
         // unassign some standard shortcuts for JTable to allow upload / download
         InputMapUtils.unassignCtrlShiftUpDown(propertyTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        
+
         // unassign some standard shortcuts for correct copy-pasting, fix #8508
         propertyTable.setTransferHandler(null);
-  
+
         propertyTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK),"onCopy");
         propertyTable.getActionMap().put("onCopy",copyKeyValueAction);
 
         // allow using enter to add tags for all look&feel configurations
         InputMapUtils.enableEnter(this.btnAdd);
-        
+
         // DEL button = deleteAction
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),"delete"
                 );
         getActionMap().put("delete", deleteAction);
-        
+
         // F1 button = custom help action
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "onHelp");
         getActionMap().put("onHelp", helpAction);
     }
-    
+
          /**
      * This simply fires up an {@link RelationEditor} for the relation shown; everything else
      * is the editor's business.
@@ -505,7 +505,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 relation,
                 ((MemberInfo) membershipData.getValueAt(row, 1)).role).setVisible(true);
     }
-    
+
     private int findRow(TableModel model, Object value) {
         for (int i=0; i<model.getRowCount(); i++) {
             if (model.getValueAt(i, 0).equals(value))
@@ -513,7 +513,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
         return -1;
     }
-    
+
     /**
      * Update selection status, call @{link #selectionChanged} function.
      */
@@ -524,11 +524,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             selectionChanged(Main.main.getCurrentDataSet().getSelected());
         }
     }
-    
+
    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Event listeners methods">
-    
+
     @Override
     public void showNotify() {
         DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IN_EDT_CONSOLIDATED);
@@ -557,7 +557,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             selectionChanged(Main.main.getCurrentDataSet().getSelected());
         }
     }
-    
+
     @Override
     public void destroy() {
         super.destroy();
@@ -624,7 +624,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             tags.put(e.getKey(), e.getValue().size() == 1
                     ? e.getValue().keySet().iterator().next() : tr("<different>"));
         }
-        
+
         membershipData.setRowCount(0);
 
         Map<Relation, MemberInfo> roles = new HashMap<Relation, MemberInfo>();
@@ -697,7 +697,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             setTitle(tr("Properties / Memberships"));
         }
     }
-    
+
     /* ---------------------------------------------------------------------------------- */
     /* EditLayerChangeListener                                                            */
     /* ---------------------------------------------------------------------------------- */
@@ -720,7 +720,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Methods that are called by plugins to extend fuctionality ">
-    
+
     /**
      * Replies the property popup menu handler.
      * @return The property popup menu handler
@@ -751,9 +751,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         int row = membershipTable.getSelectedRow();
         return row > -1 ? (IRelation) membershipData.getValueAt(row, 0) : null;
     }
-        
+
     // </editor-fold>
-    
+
      /**
      * Class that watches for mouse clicks
      * @author imi
@@ -851,7 +851,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             return String.class;
         }
     };
-    
+
     /**
      * Action handling delete button press in properties dialog.
      */
@@ -939,7 +939,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 deleteProperties(rows);
             } else if (membershipTable.getSelectedRowCount() > 0) {
                 int[] rows = membershipTable.getSelectedRows();
-                // delete from last relation to convserve row numbers in the table 
+                // delete from last relation to convserve row numbers in the table
                 for (int i=rows.length-1; i>=0; i--) {
                     deleteFromRelation(rows[i]);
                 }

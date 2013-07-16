@@ -12,7 +12,7 @@ import java.util.List;
  * Represents the server capabilities
  *
  * Example capabilites document:
- * 
+ *
  * <osm version="0.6" generator="OpenStreetMap server">
  *   <api>
  *     <version minimum="0.6" maximum="0.6"/>
@@ -31,7 +31,7 @@ import java.util.List;
  *     </imagery>
  *   </policy>
  * </osm>
- * 
+ *
  * This class is used in conjunction with a very primitive parser
  * and simply stuffs the each tag and its attributes into a hash
  * of hashes, with the exception of the "blacklist" tag which gets

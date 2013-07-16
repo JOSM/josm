@@ -160,7 +160,7 @@ public class PrefJPanel extends JPanel {
         public ShortcutTableCellRenderer(boolean name) {
             this.name = name;
         }
-        
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean
                 isSelected, boolean hasFocus, int row, int column) {
@@ -185,7 +185,7 @@ public class PrefJPanel extends JPanel {
             return label;
         }
     }
-    
+
     private void initComponents() {
         JPanel listPane = new JPanel();
         JScrollPane listScrollPane = new JScrollPane();

@@ -97,7 +97,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
     private boolean snap;
     private boolean snapDefault;
 
-    private double snapThreshold; 
+    private double snapThreshold;
     private double snapDistanceMetric;
     private double snapDistanceImperial;
     private double snapDistanceChinese;
@@ -124,7 +124,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
     private LinkedHashSet<Way> sourceWays;
     private EastNorth helperLineStart;
     private EastNorth helperLineEnd;
-    
+
     Stroke helpLineStroke;
     Stroke refLineStroke;
     Color mainColor;
@@ -156,8 +156,8 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         helpLineStroke = GuiHelper.getCustomizedStroke(getStringPref("stroke.hepler-line", "1" ));
         refLineStroke = GuiHelper.getCustomizedStroke(getStringPref("stroke.ref-line", "1 2 2"));
         mainColor = Main.pref.getColor(marktr("make parallel helper line"), null);
-        if (mainColor == null) mainColor = PaintColors.SELECTED.get();                
-        
+        if (mainColor == null) mainColor = PaintColors.SELECTED.get();
+
         //// Needed to update the mouse cursor if modifiers are changed when the mouse is motionless
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);

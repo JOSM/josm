@@ -4,7 +4,7 @@ package org.openstreetmap.josm.data.projection.datum;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 
 abstract public class AbstractDatum implements Datum {
-    
+
     protected String name;
     protected String proj4Id;
     protected Ellipsoid ellps;

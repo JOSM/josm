@@ -27,7 +27,7 @@ public abstract class AbstractMapRenderer implements Rendering {
     protected Graphics2D g;
     /** the map viewport - provides projection and hit detection functionality */
     protected NavigatableComponent nc;
-    
+
     /** if true, the paint visitor shall render OSM objects such that they
      * look inactive. Example: rendering of data in an inactive layer using light gray as color only. */
     protected boolean isInactiveMode;
@@ -49,10 +49,10 @@ public abstract class AbstractMapRenderer implements Rendering {
 
     /** Preference: minimum space (displayed way length) to display segment numbers */
     protected int segmentNumberSpace;
-    
+
     /**
      * <p>Creates an abstract paint visitor</p>
-     * 
+     *
      * @param g the graphics context. Must not be null.
      * @param nc the map viewport. Must not be null.
      * @param isInactiveMode if true, the paint visitor shall render OSM objects such that they
@@ -67,7 +67,7 @@ public abstract class AbstractMapRenderer implements Rendering {
         this.nc = nc;
         this.isInactiveMode = isInactiveMode;
     }
-    
+
     /**
      * Draw the node as small rectangle with the given color.
      *
@@ -79,7 +79,7 @@ public abstract class AbstractMapRenderer implements Rendering {
     /**
      * Draw an number of the order of the two consecutive nodes within the
      * parents way
-     * 
+     *
      * @param p1 First point of the way segment.
      * @param p2 Second point of the way segment.
      * @param orderNumber The number of the segment in the way.
@@ -101,7 +101,7 @@ public abstract class AbstractMapRenderer implements Rendering {
             g.drawString(on, x, y);
         }
     }
-    
+
     /**
      * Draws virtual nodes.
      *
@@ -133,7 +133,7 @@ public abstract class AbstractMapRenderer implements Rendering {
             g.setColor(highlightColor);
             g.draw(path);
         } catch (ArrayIndexOutOfBoundsException e) {
-            // Silently ignore any ArrayIndexOutOfBoundsException that may be raised 
+            // Silently ignore any ArrayIndexOutOfBoundsException that may be raised
             // if the way has changed while being rendered (fix #7979)
             // TODO: proper solution ?
             // Idea from bastiK: avoid the WaySegment class and add another data class with { Way way; Node firstNode, secondNode; int firstIdx; }.
@@ -141,7 +141,7 @@ public abstract class AbstractMapRenderer implements Rendering {
             // and report changes in a more controlled manner.
         }
     }
-    
+
     /**
      * Reads the color definitions from preferences. This function is <code>public</code>, so that
      * color names in preferences can be displayed even without calling the wireframe display before.
@@ -153,7 +153,7 @@ public abstract class AbstractMapRenderer implements Rendering {
         this.nodeColor = PaintColors.NODE.get();
         this.highlightColor = PaintColors.HIGHLIGHT.get();
     }
-    
+
     /**
      * Reads all the settings from preferences. Calls the @{link #getColors}
      * function.
@@ -166,7 +166,7 @@ public abstract class AbstractMapRenderer implements Rendering {
         this.segmentNumberSpace = Main.pref.getInteger("mappaint.segmentnumber.space", 40);
         getColors();
     }
-    
+
     /**
      * Checks if a way segemnt is large enough for additional information display.
      *
@@ -180,7 +180,7 @@ public abstract class AbstractMapRenderer implements Rendering {
         double yd = Math.abs(p1.getY()-p2.getY());
         return (xd+yd > space);
     }
-    
+
     /**
      * Checks if segment is visible in display.
      *
@@ -195,7 +195,7 @@ public abstract class AbstractMapRenderer implements Rendering {
         if ((p1.y > nc.getHeight()) && (p2.y > nc.getHeight())) return false;
         return true;
     }
-    
+
     /**
      * Creates path for drawing virtual nodes for one way.
      *

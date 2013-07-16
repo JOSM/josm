@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.Utils;
 public final class PasteTagsAction extends JosmAction {
 
     private static final String help = ht("/Action/PasteTags");
-    
+
     public PasteTagsAction() {
         super(tr("Paste Tags"), "pastetags",
                 tr("Apply tags of contents of paste buffer to all selected items."),
@@ -169,7 +169,7 @@ public final class PasteTagsAction extends JosmAction {
         }
 
         /**
-         * Replies true if there is at least one primitive of type <code>type</code> 
+         * Replies true if there is at least one primitive of type <code>type</code>
          * is in the target collection
          *
          * @param <T>
@@ -247,11 +247,11 @@ public final class PasteTagsAction extends JosmAction {
 
         if (selection.isEmpty())
             return;
-        
+
         String buf = Utils.getClipboardContent();
         if (buf == null || buf.isEmpty() || buf.matches("(\\d+,)*\\d+")) {
             pasteTagsFromJOSMBuffer(selection);
-        } else { 
+        } else {
             // Paste tags from arbitrary text
             pasteTagsFromText(selection, buf);
         }
@@ -276,10 +276,10 @@ public final class PasteTagsAction extends JosmAction {
         commitCommands(selection, commands);
         return !commands.isEmpty();
     }
-        
+
     /** Paste tags from JOSM buffer
      * @param selection objects that will have the tags
-     * @return false if JOSM buffer was empty 
+     * @return false if JOSM buffer was empty
      */
     public static boolean pasteTagsFromJOSMBuffer(Collection<OsmPrimitive> selection) {
         List<PrimitiveData> directlyAdded = Main.pasteBuffer.getDirectlyAdded();
@@ -296,7 +296,7 @@ public final class PasteTagsAction extends JosmAction {
 
     /**
      * Create and execute SequenceCommand with descriptive title
-     * @param commands 
+     * @param commands
      */
     private static void commitCommands(Collection<OsmPrimitive> selection, List<Command> commands) {
         if (!commands.isEmpty()) {
@@ -308,8 +308,8 @@ public final class PasteTagsAction extends JosmAction {
                             commands
                     ));
         }
-    } 
-   
+    }
+
     @Override
     protected void updateEnabledState() {
         if (getCurrentDataSet() == null) {

@@ -47,5 +47,5 @@ public class ImagerySessionImporter implements SessionLayerImporter {
         final ImageryLayer layer = ImageryLayer.create(i);
         return layer;
     }
-    
+
 }

@@ -61,5 +61,5 @@ public class ImportImagesAction extends AbstractAction {
             }
         }
     }
-    
+
 }

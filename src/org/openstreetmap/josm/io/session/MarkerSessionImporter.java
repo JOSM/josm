@@ -56,7 +56,7 @@ public class MarkerSessionImporter implements SessionLayerImporter {
 
             MarkerLayer markerLayer = importData.getMarkerLayer();
             markerLayer.fromLayer = gpxLayer;
-            
+
             return markerLayer;
 
         } catch (XPathExpressionException e) {

@@ -56,7 +56,7 @@ public class MergeLayerAction extends AbstractMergeAction {
             }
         });
     }
-    
+
     public void merge(List<Layer> sourceLayers) {
         doMerge(sourceLayers, sourceLayers);
     }
@@ -92,7 +92,7 @@ public class MergeLayerAction extends AbstractMergeAction {
             }
         });
     }
-    
+
     /**
      * returns true if the user wants to cancel, false if they want to continue
      */

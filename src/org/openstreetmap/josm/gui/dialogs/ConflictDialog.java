@@ -66,7 +66,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
     /**
      * Replies the color used to paint conflicts.
-     * 
+     *
      * @return the color used to paint conflicts
      * @since 1221
      * @see #paintConflicts
@@ -82,7 +82,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     private ConflictListModel model;
     /** the list widget for the list of conflicts */
     private JList lstConflicts;
-    
+
     private final JPopupMenu popupMenu = new JPopupMenu();
     private final PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
 
@@ -114,7 +114,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         createLayout(lstConflicts, true, Arrays.asList(new SideButton[] {
             btnResolve, btnSelect
         }));
-        
+
         popupMenuHandler.addAction(Main.main.menu.autoScaleActions.get("conflict"));
     }
 
@@ -142,7 +142,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         MapView.removeEditLayerChangeListener(this);
         DataSet.removeSelectionListener(this);
     }
-    
+
     /**
      * Add a list selection listener to the conflicts list.
      * @param listener the ListSelectionListener
@@ -151,7 +151,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     public void addListSelectionListener(ListSelectionListener listener) {
         lstConflicts.getSelectionModel().addListSelectionListener(listener);
     }
-    
+
     /**
      * Remove the given list selection listener from the conflicts list.
      * @param listener the ListSelectionListener
@@ -160,7 +160,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     public void removeListSelectionListener(ListSelectionListener listener) {
         lstConflicts.getSelectionModel().removeListSelectionListener(listener);
     }
-    
+
     /**
      * Replies the popup menu handler.
      * @return The popup menu handler
@@ -217,7 +217,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
     /**
      * Paints all conflicts that can be expressed on the main window.
-     * 
+     *
      * @param g The {@code Graphics} used to paint
      * @param nc The {@code NavigatableComponent} used to get screen coordinates of nodes
      * @since 86
@@ -293,7 +293,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
     /**
      * returns the first selected item of the conflicts list
-     * 
+     *
      * @return Conflict
      */
     public Conflict<? extends OsmPrimitive> getSelectedConflict() {
@@ -330,7 +330,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     public String helpTopic() {
         return ht("/Dialog/ConflictList");
     }
-    
+
     class MouseEventHandler extends PopupMenuLauncher {
         public MouseEventHandler() {
             super(popupMenu);
@@ -437,7 +437,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
                 sel.add((OsmPrimitive)o);
             }
             DataSet ds = Main.main.getCurrentDataSet();
-            if (ds != null) { // Can't see how it is possible but it happened in #7942 
+            if (ds != null) { // Can't see how it is possible but it happened in #7942
                 ds.setSelected(sel);
             }
         }
@@ -449,7 +449,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             setEnabled(enabled);
         }
     }
-    
+
     /**
      * Warns the user about the number of detected conflicts
      *

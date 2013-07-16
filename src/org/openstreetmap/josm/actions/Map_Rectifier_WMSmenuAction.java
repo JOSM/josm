@@ -38,7 +38,7 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
         private final Pattern urlRegEx;
         private final Pattern idValidator;
         public JRadioButton btn;
-        
+
         /**
          * @param name Name of the rectifing service
          * @param url URL to the service where users can register, upload, etc.

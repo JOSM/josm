@@ -154,7 +154,7 @@ public class SelectionListDialog extends ToggleDialog  {
                 popupMenuHandler.setPrimitives(model.getSelected());
             }
         });
-                
+
         lstPrimitives.addMouseListener(new MouseEventHandler());
 
         InputMapUtils.addEnterAction(lstPrimitives, actZoomToListSelection);
@@ -191,7 +191,7 @@ public class SelectionListDialog extends ToggleDialog  {
         public MouseEventHandler() {
             super(popupMenu);
         }
-        
+
         @Override
         public void mouseClicked(MouseEvent e) {
             int idx = lstPrimitives.locationToIndex(e.getPoint());
@@ -726,7 +726,7 @@ public class SelectionListDialog extends ToggleDialog  {
             if(ways + nodes + relations == 0) {
                 text.append(tr("Unselectable now"));
                 this.sel=new ArrayList<OsmPrimitive>(); // empty selection
-            }            
+            }
             if(ways + nodes + relations == 1)
             {
                 text.append(": ");

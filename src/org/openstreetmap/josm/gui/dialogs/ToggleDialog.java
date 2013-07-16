@@ -143,7 +143,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      * toggle the checkbox on show/hide
      */
     protected JCheckBoxMenuItem windowMenuItem;
-    
+
     /**
      * The linked preferences class (optional). If set, accessible from the title bar with a dedicated button
      */
@@ -151,7 +151,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     /**
      * Constructor
-     * 
+     *
      * @param name  the name of the dialog
      * @param iconName the name of the icon to be displayed
      * @param tooltip  the tool tip
@@ -492,7 +492,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                         );
                 add(buttonsHide);
             }
-            
+
             // show the pref button if applicable
             if (preferenceClass != null) {
                 inIcon = ImageProvider.get("preference");
@@ -557,7 +557,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         public String getTitle() {
             return lblTitle.getText();
         }
-        
+
         public class DialogPopupMenu extends JPopupMenu {
             public final JMenu buttonHidingMenu = new JMenu(tr("Side buttons"));
             public final JRadioButtonMenuItem alwaysShown = new JRadioButtonMenuItem(new AbstractAction(tr("Always shown")) {
@@ -588,11 +588,11 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 }
             }
         }
-        
+
         public void registerMouseListener() {
             addMouseListener(new MouseEventHandler());
         }
-        
+
         class MouseEventHandler extends PopupMenuLauncher {
             public MouseEventHandler() {
                 super(new DialogPopupMenu());
@@ -863,10 +863,10 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         } else if (buttonsHide != null) {
             buttonsHide.setVisible(false);
         }
-        
+
         // Register title bar mouse listener only after buttonActions has been initialized to have a complete popup menu
         titleBar.registerMouseListener();
-        
+
         return data;
     }
 

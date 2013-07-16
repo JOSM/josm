@@ -25,7 +25,7 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.session.SessionReader;
 
 public class SessionLoadAction extends DiskAccessAction {
-    
+
     public SessionLoadAction() {
         super(tr("Load Session"), "open", tr("Load a session from file."), null, true, "load-session", true);
         putValue("help", ht("/Action/SessionLoad"));

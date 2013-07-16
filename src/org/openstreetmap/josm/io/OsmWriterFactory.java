@@ -6,11 +6,11 @@ import java.io.PrintWriter;
 /**
  * This factory is called by everyone who needs an OsmWriter object,
  * instead of directly calling the OsmWriter constructor.
- * 
+ *
  * This enables plugins to substitute the original OsmWriter with
  * their own version, altering the way JOSM writes objects to the
  * server, and to disk.
- * 
+ *
  * @author Frederik Ramm
  *
  */

@@ -1345,13 +1345,13 @@ public class Preferences {
         }
         // Workaround to fix another Java bug
         // Force Java 7 to use old sorting algorithm of Arrays.sort (fix #8712).
-        // See Oracle bug database: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7075600 
+        // See Oracle bug database: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7075600
         // and http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6923200
         if (Main.pref.getBoolean("jdk.Arrays.useLegacyMergeSort", !Version.getInstance().isLocalBuild())) {
             updateSystemProperty("java.util.Arrays.useLegacyMergeSort", "true");
         }
     }
-    
+
     private void updateSystemProperty(String key, String value) {
         if (value != null) {
             System.setProperty(key, value);
@@ -1654,8 +1654,8 @@ public class Preferences {
         if (a==null) return false;
         if (b==null) return false;
         if (a==b) return true;
-        
-        if (a instanceof StringSetting) 
+
+        if (a instanceof StringSetting)
             return (a.getValue().equals(b.getValue()));
         if (a instanceof ListSetting) {
             @SuppressWarnings("unchecked") Collection<String> aValue = (Collection) a.getValue();

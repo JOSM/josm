@@ -36,7 +36,7 @@ import org.xml.sax.SAXException;
 public class DownloadWmsAlongTrackAction extends AbstractAction {
 
     private final GpxData data;
-    
+
     public DownloadWmsAlongTrackAction(final GpxData data) {
         super(tr("Precache imagery tiles along this track"), ImageProvider.get("downloadalongtrack"));
         this.data = data;
@@ -117,5 +117,5 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
     protected void warnNoImageryLayers() {
         JOptionPane.showMessageDialog(Main.parent, tr("There are no imagery layers."), tr("No imagery layers"), JOptionPane.WARNING_MESSAGE);
     }
-    
+
 }

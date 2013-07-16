@@ -462,12 +462,12 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     }
 
     /**
-     * Replies the list of {@link Command commands} needed to resolve specified conflicts, 
+     * Replies the list of {@link Command commands} needed to resolve specified conflicts,
      * by displaying if necessary a {@link CombinePrimitiveResolverDialog} to the user.
      * This dialog will allow the user to choose conflict resolution actions.
-     * 
+     *
      * Non-expert users are informed first of the meaning of these operations, allowing them to cancel.
-     * 
+     *
      * @param tagsOfPrimitives The tag collection of the primitives to be combined.
      *                         Should generally be equal to {@code TagCollection.unionOfAllPrimitives(primitives)}
      * @param primitives The primitives to be combined
@@ -479,7 +479,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             final TagCollection tagsOfPrimitives,
             final Collection<? extends OsmPrimitive> primitives,
             final Collection<? extends OsmPrimitive> targetPrimitives) throws UserCancelException {
-        
+
         CheckParameterUtil.ensureParameterNotNull(tagsOfPrimitives, "tagsOfPrimitives");
         CheckParameterUtil.ensureParameterNotNull(primitives, "primitives");
         CheckParameterUtil.ensureParameterNotNull(targetPrimitives, "targetPrimitives");
@@ -510,7 +510,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         dialog.getTagConflictResolverModel().populate(tagsToEdit, completeWayTags.getKeysWithMultipleValues());
         dialog.getRelationMemberConflictResolverModel().populate(parentRelations, primitives);
         dialog.prepareDefaultDecisions();
-        
+
         // Ensure a proper title is displayed instead of a previous target (fix #7925)
         if (targetPrimitives.size() == 1) {
             dialog.setTargetPrimitive(targetPrimitives.iterator().next());
@@ -554,7 +554,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                 + "Do you want to continue?",
                 parentRelations.size(), parentRelations.size(), primitives.size(),
                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(parentRelations));
-        
+
         if (!ConditionalOptionPaneUtil.showConfirmationDialog(
                 "combine_tags",
                 Main.parent,
@@ -595,7 +595,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                 + "If you want to continue, you are shown a dialog to fix the conflicting tags.<br/><br/>"
                 + "Do you want to continue?",
                 primitives.size(), conflicts);
-        
+
         if (!ConditionalOptionPaneUtil.showConfirmationDialog(
                 "combine_tags",
                 Main.parent,

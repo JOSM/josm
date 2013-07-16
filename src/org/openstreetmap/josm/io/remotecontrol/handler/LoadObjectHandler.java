@@ -25,7 +25,7 @@ public class LoadObjectHandler extends RequestHandler {
      * The remote control command name used to load objects using their ID.
      */
     public static final String command = "load_object";
-    
+
     private final List<PrimitiveId> ps = new LinkedList<PrimitiveId>();
 
     @Override
@@ -50,7 +50,7 @@ public class LoadObjectHandler extends RequestHandler {
                 @Override
                 public void run() {
                     Main.main.getCurrentDataSet().setSelected(ps);
-                    AddTagsDialog.addTags(args, sender);        
+                    AddTagsDialog.addTags(args, sender);
                     ps.clear();
                 }
             });

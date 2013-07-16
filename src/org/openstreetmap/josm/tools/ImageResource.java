@@ -12,19 +12,19 @@ import javax.swing.ImageIcon;
 /**
  * Holds data for one particular image.
  * It can be backed by a svg or raster image.
- * 
- * In the first case, 'svg' is not null and in the latter case, 'imgCache' has 
+ *
+ * In the first case, 'svg' is not null and in the latter case, 'imgCache' has
  * at least one entry for the key DEFAULT_DIMENSION.
  */
 class ImageResource {
-    
+
     /**
      * Caches the image data for resized versions of the same image.
      */
     private HashMap<Dimension, BufferedImage> imgCache = new HashMap<Dimension, BufferedImage>();
     private SVGDiagram svg;
     public static final Dimension DEFAULT_DIMENSION = new Dimension(-1, -1);
- 
+
     public ImageResource(BufferedImage img) {
         CheckParameterUtil.ensureParameterNotNull(img);
         imgCache.put(DEFAULT_DIMENSION, img);
@@ -62,7 +62,7 @@ class ImageResource {
         } else {
             BufferedImage base = imgCache.get(DEFAULT_DIMENSION);
             if (base == null) throw new AssertionError();
-            
+
             int width = dim.width;
             int height = dim.height;
             ImageIcon icon = new ImageIcon(base);

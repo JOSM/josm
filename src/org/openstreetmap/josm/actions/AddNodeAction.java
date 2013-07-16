@@ -43,7 +43,7 @@ public final class AddNodeAction extends JosmAction {
         }
 
         dialog.showDialog();
-        
+
         if (dialog.getValue() != 1)
             return;
 

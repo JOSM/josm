@@ -40,7 +40,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Also includes preferences with stripped username and password
  */
 public final class ShowStatusReportAction extends JosmAction {
-    
+
     /**
      * Constructs a new {@code ShowStatusReportAction}
      */
@@ -62,7 +62,7 @@ public final class ShowStatusReportAction extends JosmAction {
             it.set(param[0] + "=" + param[1].replace(source, target));
         }
     }
-    
+
     /**
      * Replies the report header (software and system info)
      * @return The report header (software and system info)

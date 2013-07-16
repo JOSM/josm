@@ -23,7 +23,7 @@ public class OsmChangeImporter extends FileImporter {
 
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
             "osc,osc.bz2,osc.bz,osc.gz", "osc", tr("OsmChange File") + " (*.osc *.osc.bz2 *.osc.bz *.osc.gz)");
-    
+
     public OsmChangeImporter() {
         super(FILE_FILTER);
     }
@@ -35,7 +35,7 @@ public class OsmChangeImporter extends FileImporter {
     @Override public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         try {
             FileInputStream in = new FileInputStream(file);
-            
+
             if (file.getName().endsWith(".osc")) {
                 importData(in, file, progressMonitor);
             } else if (file.getName().endsWith(".gz")) {
@@ -43,7 +43,7 @@ public class OsmChangeImporter extends FileImporter {
             } else {
                 importData(getBZip2InputStream(in), file, progressMonitor);
             }
-            
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             throw new IOException(tr("File ''{0}'' does not exist.", file.getName()));
@@ -53,14 +53,14 @@ public class OsmChangeImporter extends FileImporter {
     protected void importData(InputStream in, final File associatedFile) throws IllegalDataException {
         importData(in, associatedFile, NullProgressMonitor.INSTANCE);
     }
-    
+
     protected void importData(InputStream in, final File associatedFile, ProgressMonitor  progressMonitor) throws IllegalDataException {
         final DataSet dataSet = OsmChangeReader.parseDataSet(in, progressMonitor);
         final OsmDataLayer layer = new OsmDataLayer(dataSet, associatedFile.getName(), associatedFile);
-        addDataLayer(dataSet, layer, associatedFile.getPath()); 
+        addDataLayer(dataSet, layer, associatedFile.getPath());
     }
-        
-    protected void addDataLayer(final DataSet dataSet, final OsmDataLayer layer, final String filePath) { 
+
+    protected void addDataLayer(final DataSet dataSet, final OsmDataLayer layer, final String filePath) {
         // FIXME: remove UI stuff from IO subsystem
         //
         GuiHelper.runInEDT(new Runnable() {

@@ -208,7 +208,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
     @Override
     public String getCurrentCode() {
         // not needed - getProjection() is overridden
-        throw new UnsupportedOperationException(); 
+        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -79,20 +79,20 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * @author imi
      */
     public interface LayerChangeListener {
-        
+
         /**
          * Notifies this listener that the active layer has changed.
          * @param oldLayer The previous active layer
          * @param newLayer The new activer layer
          */
         void activeLayerChange(Layer oldLayer, Layer newLayer);
-        
+
         /**
          * Notifies this listener that a layer has been added.
          * @param newLayer The new added layer
          */
         void layerAdded(Layer newLayer);
-        
+
         /**
          * Notifies this listener that a layer has been removed.
          * @param oldLayer The old removed layer
@@ -271,7 +271,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             }
             @Override public void mouseMoved(MouseEvent e) {
                 lastMEvent = e;
-            }            
+            }
             @Override
             public void mousePressed(MouseEvent me) {
                 // focus the MapView component when mouse is pressed inside it
@@ -287,7 +287,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     // remebered geometry of the component
     private Dimension oldSize = null;
     private Point oldLoc = null;
-    
+
     /*
      * Call this method to keep map position on screen during next repaint
      */
@@ -295,7 +295,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         oldSize = getSize();
         oldLoc  = getLocationOnScreen();
     }
-    
+
     /**
      * Adds a GPX layer. A GPX layer is added below the lowest data layer.
      *
@@ -431,7 +431,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         if (layer == activeLayer) {
             setActiveLayer(determineNextActiveLayer(layersList), false);
         }
-        
+
         if (layer instanceof OsmDataLayer) {
             ((OsmDataLayer)layer).removeLayerPropertyChangeListener(this);
         }
@@ -551,7 +551,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             oldLoc = null; oldSize = null;
             zoomTo(newCenter);
         }
-        
+
         List<Layer> visibleLayers = getVisibleLayersInZOrder();
 
         int nonChangedLayersCount = 0;
@@ -564,7 +564,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         }
 
         boolean canUseBuffer;
-        
+
         synchronized (this) {
             canUseBuffer = !paintPreferencesChanged;
             paintPreferencesChanged = false;

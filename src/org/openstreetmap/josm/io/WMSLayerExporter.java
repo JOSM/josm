@@ -12,8 +12,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Export a WMS layer to a serialized binary file that can be imported later via {@link WMSLayerImporter}. 
- * 
+ * Export a WMS layer to a serialized binary file that can be imported later via {@link WMSLayerImporter}.
+ *
  * @since 5457
  */
 public class WMSLayerExporter extends FileExporter {

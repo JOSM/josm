@@ -246,7 +246,7 @@ public class ExceptionDialogUtil {
     private static boolean isOAuth() {
         return Main.pref.get("osm-server.auth-method", "basic").equals("oauth");
     }
-    
+
     /**
      * Explains a {@link OsmApiException} which was thrown because the authentication at
      * the OSM server failed
@@ -277,12 +277,12 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainAuthorizationFailed(OsmApiException e) {
-        
+
         Matcher m;
         String msg;
         String url = e.getAccessedUrl();
         Pattern p = Pattern.compile("http://.*/api/0.6/(node|way|relation)/(\\d+)/(\\d+)");
-        
+
         // Special case for individual access to redacted versions
         // See http://wiki.openstreetmap.org/wiki/Open_Database_License/Changes_in_the_API
         if (url != null && (m = p.matcher(url)).matches()) {
@@ -297,7 +297,7 @@ public class ExceptionDialogUtil {
         } else {
             msg = ExceptionUtil.explainFailedAuthorisation(e);
         }
-        
+
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
                 msg,
