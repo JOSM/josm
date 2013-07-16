@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset.PresetType;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
 import org.openstreetmap.josm.tools.GBC;
 
 public class PresetListPanel extends JPanel {
@@ -76,7 +76,7 @@ public class PresetListPanel extends JPanel {
         public void mouseReleased(MouseEvent arg0) {}
     }
 
-    public void updatePresets(final Collection<PresetType> types, final Map<String, String> tags, PresetHandler presetHandler) {
+    public void updatePresets(final Collection<TaggingPresetType> types, final Map<String, String> tags, PresetHandler presetHandler) {
 
         removeAll();
         if (types.isEmpty()) {

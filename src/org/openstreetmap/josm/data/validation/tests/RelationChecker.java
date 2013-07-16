@@ -24,7 +24,11 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset.PresetType;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItem;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Key;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Roles;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
 
 /**
  * Check for wrong relations
@@ -64,8 +68,8 @@ public class RelationChecker extends Test {
         Collection<TaggingPreset> presets = TaggingPresetPreference.taggingPresets;
         if (presets != null) {
             for (TaggingPreset p : presets) {
-                for (TaggingPreset.Item i : p.data) {
-                    if (i instanceof TaggingPreset.Roles) {
+                for (TaggingPresetItem i : p.data) {
+                    if (i instanceof Roles) {
                         relationpresets.add(p);
                         break;
                     }
@@ -85,19 +89,19 @@ public class RelationChecker extends Test {
 
     @Override
     public void visit(Relation n) {
-        LinkedList<TaggingPreset.Role> allroles = new LinkedList<TaggingPreset.Role>();
+        LinkedList<Role> allroles = new LinkedList<Role>();
         for (TaggingPreset p : relationpresets) {
             boolean matches = true;
-            TaggingPreset.Roles r = null;
-            for (TaggingPreset.Item i : p.data) {
-                if (i instanceof TaggingPreset.Key) {
-                    TaggingPreset.Key k = (TaggingPreset.Key) i;
+            Roles r = null;
+            for (TaggingPresetItem i : p.data) {
+                if (i instanceof Key) {
+                    Key k = (Key) i;
                     if (!k.value.equals(n.get(k.key))) {
                         matches = false;
                         break;
                     }
-                } else if (i instanceof TaggingPreset.Roles) {
-                    r = (TaggingPreset.Roles) i;
+                } else if (i instanceof Roles) {
+                    r = (Roles) i;
                 }
             }
             if (matches && r != null) {
@@ -139,7 +143,7 @@ public class RelationChecker extends Test {
                         RELATION_EMPTY, n) );
             } else {
                 LinkedList<String> done = new LinkedList<String>();
-                for (TaggingPreset.Role r : allroles) {
+                for (Role r : allroles) {
                     done.add(r.key);
                     String keyname = r.key;
                     if ("".equals(keyname)) {
@@ -167,13 +171,13 @@ public class RelationChecker extends Test {
                     if (ri != null) {
                         Set<OsmPrimitive> wrongTypes = new HashSet<OsmPrimitive>();
                         if (r.types != null) {
-                            if (!r.types.contains(PresetType.WAY)) {
-                                wrongTypes.addAll(r.types.contains(PresetType.CLOSEDWAY) ? ri.openways : ri.ways);
+                            if (!r.types.contains(TaggingPresetType.WAY)) {
+                                wrongTypes.addAll(r.types.contains(TaggingPresetType.CLOSEDWAY) ? ri.openways : ri.ways);
                             }
-                            if (!r.types.contains(PresetType.NODE)) {
+                            if (!r.types.contains(TaggingPresetType.NODE)) {
                                 wrongTypes.addAll(ri.nodes);
                             }
-                            if (!r.types.contains(PresetType.RELATION)) {
+                            if (!r.types.contains(TaggingPresetType.RELATION)) {
                                 wrongTypes.addAll(ri.relations);
                             }
                         }

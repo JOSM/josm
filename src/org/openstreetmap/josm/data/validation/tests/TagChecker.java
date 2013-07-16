@@ -56,6 +56,8 @@ import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItem;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.KeyedItem;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.MultiMap;
@@ -300,9 +302,9 @@ public class TagChecker extends Test
                 presetsValueData.putVoid(a);
             }
             for (TaggingPreset p : presets) {
-                for (TaggingPreset.Item i : p.data) {
-                    if (i instanceof TaggingPreset.KeyedItem) {
-                        TaggingPreset.KeyedItem ky = (TaggingPreset.KeyedItem) i;
+                for (TaggingPresetItem i : p.data) {
+                    if (i instanceof KeyedItem) {
+                        KeyedItem ky = (KeyedItem) i;
                         if (ky.key != null && ky.getValues() != null) {
                             try {
                                 presetsValueData.putAll(ky.key, ky.getValues());
