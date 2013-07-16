@@ -224,7 +224,7 @@ public class Test extends AbstractVisitor
     public boolean isCanceled() {
         return progressMonitor.isCanceled();
     }
-    
+
     /**
      * Build a Delete command on all primitives that have not yet been deleted manually by user, or by another error fix.
      * If all primitives have already been deleted, null is returned.

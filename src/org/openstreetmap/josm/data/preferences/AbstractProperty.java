@@ -52,14 +52,14 @@ public abstract class AbstractProperty<T> {
     public void remove() {
         Main.pref.put(getKey(), String.valueOf(getDefaultValue()));
     }
-    
+
     /**
      * Replies the value of this property.
      * @return the value of this property
      * @since 5464
      */
     public abstract T get();
-    
+
     /**
      * Sets this property to the specified value.
      * @param value The new value of this property

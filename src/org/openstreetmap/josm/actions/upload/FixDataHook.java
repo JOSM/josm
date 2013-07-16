@@ -98,7 +98,7 @@ public class FixDataHook implements UploadHook {
             return changed;
         }
     }
-    
+
     /**
      * Data fix to cleanup wrong spelled keys
      */
@@ -129,7 +129,7 @@ public class FixDataHook implements UploadHook {
             return false;
         }
     }
-    
+
     /**
      * Data fix to cleanup wrong spelled tags
      */
@@ -169,7 +169,7 @@ public class FixDataHook implements UploadHook {
             return false;
         }
     }
-    
+
     /**
      * Checks the upload for deprecated or wrong tags.
      * @param apiDataSet the data to upload

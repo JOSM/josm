@@ -46,7 +46,7 @@ public abstract class AbstractDownloadTask implements DownloadTask {
     public List<Object> getErrorObjects() {
         return errorMessages;
     }
-    
+
     @Override
     public String acceptsDocumentationSummary() {
         StringBuilder buf = new StringBuilder("<tr><td>");
@@ -59,7 +59,7 @@ public abstract class AbstractDownloadTask implements DownloadTask {
                 buf.append("<li>");
                 buf.append(XmlWriter.encode(pattern));
                 buf.append("</li>");
-            } 
+            }
             buf.append("</ul>");
         }
         buf.append("</td></tr>");
@@ -89,5 +89,5 @@ public abstract class AbstractDownloadTask implements DownloadTask {
     public String[] getPatterns() {
         return new String[]{};
     }
-    
+
 }

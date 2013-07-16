@@ -418,9 +418,9 @@ public class TagChecker extends Test
             }
             if (checkValues && value != null && value.length() > 0 && presetsValueData != null) {
                 final Set<String> values = presetsValueData.get(key);
-                final boolean keyInPresets = values != null;  
+                final boolean keyInPresets = values != null;
                 final boolean tagInPresets = values != null && (values.isEmpty() || values.contains(prop.getValue()));
-                
+
                 boolean ignore = false;
                 for (String a : ignoreDataStartsWith) {
                     if (key.startsWith(a)) {
@@ -437,7 +437,7 @@ public class TagChecker extends Test
                         ignore = true;
                     }
                 }
-                
+
                 if (!tagInPresets) {
                     for (IgnoreKeyPair a : ignoreDataKeyPair) {
                         if (key.equals(a.key) && value.equals(a.value)) {
@@ -445,7 +445,7 @@ public class TagChecker extends Test
                         }
                     }
                 }
-                
+
                 if (!ignore) {
                     if (!keyInPresets) {
                         String i = marktr("Key ''{0}'' not in presets.");

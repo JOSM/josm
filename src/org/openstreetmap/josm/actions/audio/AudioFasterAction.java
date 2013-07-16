@@ -11,7 +11,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Increase the speed of audio playback.
- * Each use increases the speed further until one of the other controls is used. 
+ * Each use increases the speed further until one of the other controls is used.
  * @since 563
  */
 public class AudioFasterAction extends AudioFastSlowAction {

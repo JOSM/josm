@@ -47,7 +47,7 @@ public class RestartAction extends JosmAction {
             ex.printStackTrace();
         }
     }
-    
+
     /**
      * Determines if restarting the application should be possible on this platform.
      * @return {@code true} if the mandatory system property {@code sun.java.command} is defined, {@code false} otherwise.
@@ -56,7 +56,7 @@ public class RestartAction extends JosmAction {
     public static boolean isRestartSupported() {
         return System.getProperty("sun.java.command") != null;
     }
-    
+
     /**
      * Restarts the current Java application
      * @throws IOException
@@ -65,7 +65,7 @@ public class RestartAction extends JosmAction {
         if (isRestartSupported() && !Main.exitJosm(false)) return;
         try {
             // java binary
-            final String java = System.getProperty("java.home") + File.separator + "bin" + File.separator + 
+            final String java = System.getProperty("java.home") + File.separator + "bin" + File.separator +
                     (Main.platform instanceof PlatformHookWindows ? "java.exe" : "java");
             if (!new File(java).isFile()) {
                 throw new IOException("Unable to find suitable java runtime at "+java);
@@ -79,7 +79,7 @@ public class RestartAction extends JosmAction {
                     cmd.add(arg);
                 }
             }
-            // program main and program arguments (be careful a sun property. might not be supported by all JVM) 
+            // program main and program arguments (be careful a sun property. might not be supported by all JVM)
             String[] mainCommand = System.getProperty("sun.java.command").split(" ");
             // program main is a jar
             if (mainCommand[0].endsWith(".jar")) {
@@ -114,7 +114,7 @@ public class RestartAction extends JosmAction {
             throw new IOException("Error while trying to restart the application", e);
         }
     }
-    
+
     /**
      * Returns a new {@code ButtonSpec} instance that performs this action.
      * @return A new {@code ButtonSpec} instance that performs this action.
@@ -141,7 +141,7 @@ public class RestartAction extends JosmAction {
                 null /* no specific help context */
         );
     }
-    
+
     /**
      * Returns default {@code ButtonSpec} instances for this action (Restart/Cancel).
      * @return Default {@code ButtonSpec} instances for this action.

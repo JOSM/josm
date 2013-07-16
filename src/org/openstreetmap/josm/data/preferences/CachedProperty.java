@@ -49,10 +49,10 @@ public abstract class CachedProperty<T> extends AbstractProperty<T> implements P
     public int getUpdateCount() {
         return updateCount;
     }
-    
-    @Override 
-    public T getDefaultValue() { 
-        return fromString(getDefaultValueAsString()); 
+
+    @Override
+    public T getDefaultValue() {
+        return fromString(getDefaultValueAsString());
     }
 
     public String getDefaultValueAsString() {

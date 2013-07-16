@@ -87,7 +87,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
         this.timestamp = timestamp;
         tags = new HashMap<String, String>();
     }
-    
+
     /**
      * Constructs a new {@code HistoryOsmPrimitive} from an existing {@link OsmPrimitive}.
      * @param p the primitive

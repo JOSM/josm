@@ -20,9 +20,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for entry complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="entry">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "entry", propOrder = {
@@ -69,7 +69,7 @@ public class EntryType {
 
     /**
      * Gets the value of the pixelPerDegree property.
-     * 
+     *
      */
     public double getPixelPerDegree() {
         return pixelPerDegree;
@@ -77,7 +77,7 @@ public class EntryType {
 
     /**
      * Sets the value of the pixelPerDegree property.
-     * 
+     *
      */
     public void setPixelPerDegree(double value) {
         this.pixelPerDegree = value;
@@ -85,7 +85,7 @@ public class EntryType {
 
     /**
      * Gets the value of the east property.
-     * 
+     *
      */
     public double getEast() {
         return east;
@@ -93,7 +93,7 @@ public class EntryType {
 
     /**
      * Sets the value of the east property.
-     * 
+     *
      */
     public void setEast(double value) {
         this.east = value;
@@ -101,7 +101,7 @@ public class EntryType {
 
     /**
      * Gets the value of the north property.
-     * 
+     *
      */
     public double getNorth() {
         return north;
@@ -109,7 +109,7 @@ public class EntryType {
 
     /**
      * Sets the value of the north property.
-     * 
+     *
      */
     public void setNorth(double value) {
         this.north = value;
@@ -117,11 +117,11 @@ public class EntryType {
 
     /**
      * Gets the value of the lastUsed property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     * 
+     *
      */
     public Calendar getLastUsed() {
         return lastUsed;
@@ -129,11 +129,11 @@ public class EntryType {
 
     /**
      * Sets the value of the lastUsed property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     * 
+     *
      */
     public void setLastUsed(Calendar value) {
         this.lastUsed = value;
@@ -141,11 +141,11 @@ public class EntryType {
 
     /**
      * Gets the value of the lastModified property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     * 
+     *
      */
     public Calendar getLastModified() {
         return lastModified;
@@ -153,11 +153,11 @@ public class EntryType {
 
     /**
      * Sets the value of the lastModified property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     * 
+     *
      */
     public void setLastModified(Calendar value) {
         this.lastModified = value;
@@ -165,11 +165,11 @@ public class EntryType {
 
     /**
      * Gets the value of the filename property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     * 
+     *
      */
     public String getFilename() {
         return filename;
@@ -177,11 +177,11 @@ public class EntryType {
 
     /**
      * Sets the value of the filename property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     * 
+     *
      */
     public void setFilename(String value) {
         this.filename = value;

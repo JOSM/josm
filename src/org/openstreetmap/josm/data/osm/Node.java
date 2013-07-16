@@ -62,18 +62,18 @@ public final class Node extends OsmPrimitive implements INode {
 
     /**
      * <p>Replies the projected east/north coordinates.</p>
-     * 
+     *
      * <p>Uses the {@link Main#getProjection() global projection} to project the lan/lon-coordinates.
      * Internally caches the projected coordinates.</p>
      *
      * <p><strong>Caveat:</strong> doesn't listen to projection changes. Clients must
      * {@link #invalidateEastNorthCache() invalidate the internal cache}.</p>
-     * 
+     *
      * <p>Replies {@code null} if this node doesn't know lat/lon-coordinates, i.e. because it is an incomplete node.
-     * 
+     *
      * @return the east north coordinates or {@code null}
      * @see #invalidateEastNorthCache()
-     * 
+     *
      */
     @Override
     public final EastNorth getEastNorth() {
@@ -304,7 +304,7 @@ public final class Node extends OsmPrimitive implements INode {
     @Override
     public void updatePosition() {
     }
-    
+
     @Override
     public boolean isDrawable() {
         // Not possible to draw a node without coordinates.
@@ -313,9 +313,9 @@ public final class Node extends OsmPrimitive implements INode {
 
     /**
      * Check whether this node connects 2 ways.
-     * 
+     *
      * @return true if isReferredByWays(2) returns true
-     * @see #isReferredByWays(int) 
+     * @see #isReferredByWays(int)
      */
     public boolean isConnectionNode() {
         return isReferredByWays(2);

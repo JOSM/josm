@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Copy OSM primitives to clipboard in order to paste them, or their tags, somewhere else.  
+ * Copy OSM primitives to clipboard in order to paste them, or their tags, somewhere else.
  * @since 404
  */
 public final class CopyAction extends JosmAction {

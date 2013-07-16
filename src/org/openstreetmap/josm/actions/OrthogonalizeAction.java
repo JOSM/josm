@@ -197,7 +197,7 @@ public final class OrthogonalizeAction extends JosmAction {
             }
         }
     }
-    
+
     /**
      * Collect groups of ways with common nodes in order to orthogonalize each group separately.
      */
@@ -215,7 +215,7 @@ public final class OrthogonalizeAction extends JosmAction {
         }
         return groups;
     }
-    
+
     private static void extendGroupRec(List<WayData> group, WayData newGroupMember, List<WayData> remaining) {
         group.add(newGroupMember);
         for (int i = 0; i < remaining.size(); ++i) {
@@ -426,7 +426,7 @@ public final class OrthogonalizeAction extends JosmAction {
          * direction <code>pInitialDirection</code>.
          * Then sum up all horizontal / vertical segments to have a good guess for the
          * heading of the entire way.
-         * @throws InvalidUserInputException 
+         * @throws InvalidUserInputException
          */
         public void calcDirections(Direction pInitialDirection) throws InvalidUserInputException {
             final EastNorth[] en = new EastNorth[nNode]; // alias: way.getNodes().get(i).getEastNorth() ---> en[i]

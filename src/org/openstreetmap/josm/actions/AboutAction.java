@@ -99,7 +99,7 @@ public class AboutAction extends JosmAction {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setPreferredSize(new Dimension(600, 300));
         panel.add(about, GBC.std().fill());
-        
+
         GuiHelper.prepareResizeableOptionPane(panel, panel.getPreferredSize());
         JOptionPane.showMessageDialog(Main.parent, panel, tr("About JOSM..."),
                 JOptionPane.INFORMATION_MESSAGE, ImageProvider.get("logo"));

@@ -6,11 +6,11 @@ import org.openstreetmap.josm.data.projection.Projection;
 
 /**
  * LatLon class that maintains a cache of projected EastNorth coordinates.
- * 
+ *
  * This class is convenient to use, but has relatively high memory costs.
- * It keeps a pointer to the last known projection in order to detect projection 
+ * It keeps a pointer to the last known projection in order to detect projection
  * changes.
- * 
+ *
  * Node and WayPoint have another, optimized, cache for projected coordinates.
  */
 public class CachedLatLon extends LatLon {
@@ -46,7 +46,7 @@ public class CachedLatLon extends LatLon {
 
     /**
      * Replies the projected east/north coordinates.
-     * 
+     *
      * @return the internally cached east/north coordinates. null, if the globally defined projection is null
      */
     public final EastNorth getEastNorth() {

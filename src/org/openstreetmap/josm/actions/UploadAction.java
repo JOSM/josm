@@ -154,7 +154,7 @@ public class UploadAction extends JosmAction{
                 HelpUtil.ht("/Action/Upload#PrimitivesParticipateInConflicts")
         );
     }
-    
+
     /**
      * returns true if the user wants to cancel, false if they
      * want to continue

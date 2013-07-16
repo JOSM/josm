@@ -57,20 +57,20 @@ import org.w3c.dom.NodeList;
  */
 public class CustomConfigurator {
     private static StringBuilder summary = new StringBuilder();
-        
+
     public static void log(String fmt, Object... vars) {
         summary.append(String.format(fmt, vars));
     }
-    
+
     public static void log(String s) {
         summary.append(s);
         summary.append("\n");
     }
-    
+
     public static String getLog() {
         return summary.toString();
     }
-    
+
     public static void readXML(String dir, String fileName) {
         readXML(new File(dir, fileName));
     }
@@ -86,11 +86,11 @@ public class CustomConfigurator {
         }
         new XMLCommandProcessor(prefs).openAndReadXML(file);
         synchronized(CustomConfigurator.class) {
-            CustomConfigurator.class.notifyAll(); 
+            CustomConfigurator.class.notifyAll();
             busy=false;
         }
     }
-    
+
     /**
      * Read configuration script from XML file, modifying main preferences
      * @param file - file to open for reading XML
@@ -98,11 +98,11 @@ public class CustomConfigurator {
     public static void readXML(File file) {
         readXML(file, Main.pref);
     }
-    
+
     /**
      * Downloads file to one of JOSM standard folders
      * @param address - URL to download
-     * @param path - file path relative to base where to put downloaded file 
+     * @param path - file path relative to base where to put downloaded file
      * @param base - only "prefs", "cache" and "plugins" allowed for standard folders
      */
     public static void downloadFile(String address, String path, String base) {
@@ -112,7 +112,7 @@ public class CustomConfigurator {
     /**
      * Downloads file to one of JOSM standard folders nad unpack it as ZIP/JAR file
      * @param address - URL to download
-     * @param path - file path relative to base where to put downloaded file 
+     * @param path - file path relative to base where to put downloaded file
      * @param base - only "prefs", "cache" and "plugins" allowed for standard folders
      */
     public static void downloadAndUnpackFile(String address, String path, String base) {
@@ -122,7 +122,7 @@ public class CustomConfigurator {
     /**
      * Downloads file to arbitrary folder
      * @param address - URL to download
-     * @param path - file path relative to parentDir where to put downloaded file 
+     * @param path - file path relative to parentDir where to put downloaded file
      * @param parentDir - folder where to put file
      * @param mkdir - if true, non-existing directories will be created
      * @param unzip - if true file wil be unzipped and deleted after download
@@ -138,12 +138,12 @@ public class CustomConfigurator {
         Future f = Main.worker.submit(downloadFileTask);
         log("Info: downloading file from %s to %s in background ", parentDir, fOut.getAbsolutePath());
         if (unzip) log("and unpacking it"); else log("");
-        
+
     }
 
     /**
      * Simple function to show messageBox, may be used from JS API and from other code
-     * @param type - 'i','w','e','q','p' for Information, Warning, Error, Question, Message 
+     * @param type - 'i','w','e','q','p' for Information, Warning, Error, Question, Message
      * @param text - message to display, HTML allowed
      */
     public static void messageBox(String type, String text) {
@@ -157,7 +157,7 @@ public class CustomConfigurator {
             case 'p': JOptionPane.showMessageDialog(Main.parent, text, tr("Message"), JOptionPane.PLAIN_MESSAGE); break;
         }
     }
-    
+
     /**
      * Simple function for choose window, may be used from JS API and from other code
      * @param text - message to show, HTML allowed
@@ -213,7 +213,7 @@ public class CustomConfigurator {
         }
         exportPreferencesKeysToFile(fileName, append, keySet);
     }
-    
+
     /**
      * Export specified preferences keys to configuration file
      * @param filename - name of file
@@ -240,10 +240,10 @@ public class CustomConfigurator {
         }
         if (root==null) return;
         try {
-            
+
             Element newRoot = exportDocument.createElement("config");
             exportDocument.appendChild(newRoot);
-            
+
             Element prefElem = exportDocument.createElement("preferences");
             prefElem.setAttribute("operation", append?"append":"replace");
             newRoot.appendChild(prefElem);
@@ -269,8 +269,8 @@ public class CustomConfigurator {
             ex.printStackTrace();
         }
     }
-    
-    
+
+
         public static void deleteFile(String path, String base) {
         String dir = getDirectoryByAbbr(base);
         if (dir==null) {
@@ -291,12 +291,12 @@ public class CustomConfigurator {
     public static void deleteFileOrDirectory(String path) {
         deleteFileOrDirectory(new File(path));
     }
-    
+
     public static void deleteFileOrDirectory(File f) {
         if (f.isDirectory()) {
             for (File f1: f.listFiles()) {
                 deleteFileOrDirectory(f1);
-            } 
+            }
         }
         try {
             f.delete();
@@ -307,7 +307,7 @@ public class CustomConfigurator {
 
     private static boolean busy=false;
 
-    
+
     public static void pluginOperation(String install, String uninstall, String delete)  {
         final List<String> installList = new ArrayList<String>();
         final List<String> removeList = new ArrayList<String>();
@@ -316,7 +316,7 @@ public class CustomConfigurator {
         Collections.addAll(removeList, uninstall.toLowerCase().split(";"));
         Collections.addAll(deleteList, delete.toLowerCase().split(";"));
         installList.remove("");removeList.remove("");deleteList.remove("");
-        
+
         if (!installList.isEmpty()) {
             log("Plugins install: "+installList);
         }
@@ -331,11 +331,11 @@ public class CustomConfigurator {
         Runnable r = new Runnable() {
             public void run() {
                 if (task.isCanceled()) return;
-                synchronized (CustomConfigurator.class) { 
+                synchronized (CustomConfigurator.class) {
                 try { // proceed only after all other tasks were finished
                     while (busy) CustomConfigurator.class.wait();
                 } catch (InterruptedException ex) { }
-                        
+
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         List<PluginInformation> availablePlugins = task.getAvailablePlugins();
@@ -375,7 +375,7 @@ public class CustomConfigurator {
         Main.worker.submit(task);
         Main.worker.submit(r);
     }
-    
+
     private static String getDirectoryByAbbr(String base) {
             String dir;
             if ("prefs".equals(base) || base.length()==0) {
@@ -401,19 +401,19 @@ public class CustomConfigurator {
         tmp.listOfStructsDefaults.putAll(   pref.listOfStructsDefaults );
         tmp.listOfStructsProperties.putAll( pref.listOfStructsProperties );
         tmp.colornames.putAll( pref.colornames );
-        
+
         return tmp;
     }
 
 
     public static class XMLCommandProcessor {
-        
+
         Preferences mainPrefs;
         Map<String,Element> tasksMap = new HashMap<String,Element>();
-        
+
         private boolean lastV; // last If condition result
-        
-        
+
+
         ScriptEngine engine ;
 
         public void openAndReadXML(File file) {
@@ -451,7 +451,7 @@ public class CustomConfigurator {
                 CustomConfigurator.summary = new StringBuilder();
                 engine = new ScriptEngineManager().getEngineByName("rhino");
                 engine.eval("API={}; API.pref={}; API.fragments={};");
-                
+
                 engine.eval("homeDir='"+normalizeDirName(Main.pref.getPreferencesDir()) +"';");
                 engine.eval("josmVersion="+Version.getInstance().getVersion()+";");
                 String className =  CustomConfigurator.class.getName();
@@ -492,11 +492,11 @@ public class CustomConfigurator {
                 } else if ("runtask".equals(elementName)) {
                     if (processRunTaskElement(elem)) return;
                 } else if ("ask".equals(elementName)) {
-                    processAskElement(elem); 
+                    processAskElement(elem);
                 } else if ("if".equals(elementName)) {
-                    processIfElement(elem); 
+                    processIfElement(elem);
                 } else if ("else".equals(elementName)) {
-                    processElseElement(elem); 
+                    processElseElement(elem);
                 } else if ("break".equals(elementName)) {
                     return;
                 } else if ("plugin".equals(elementName)) {
@@ -514,7 +514,7 @@ public class CustomConfigurator {
                 } else {
                     log("Error: Unknown element " + elementName);
                 }
-                
+
             }
         }
 
@@ -523,8 +523,8 @@ public class CustomConfigurator {
         private void processPreferencesElement(Element item) {
             String oper = evalVars(item.getAttribute("operation"));
             String id = evalVars(item.getAttribute("id"));
-            
-            
+
+
             if ("delete-keys".equals(oper)) {
                 String pattern = evalVars(item.getAttribute("pattern"));
                 String key = evalVars(item.getAttribute("key"));
@@ -536,10 +536,10 @@ public class CustomConfigurator {
                 }
                 return;
             }
-            
+
             Preferences tmpPref = readPreferencesFromDOMElement(item);
             PreferencesUtils.showPrefs(tmpPref);
-            
+
             if (id.length()>0) {
                 try {
                     String fragmentVar = "API.fragments['"+id+"']";
@@ -550,7 +550,7 @@ public class CustomConfigurator {
                     log("Error: can not load preferences fragment : "+ex.getMessage());
                 }
             }
-            
+
             if ("replace".equals(oper)) {
                 log("Preferences replace: %d keys: %s\n",
                    tmpPref.getAllSettings().size(), tmpPref.getAllSettings().keySet().toString());
@@ -563,7 +563,7 @@ public class CustomConfigurator {
                 PreferencesUtils.deletePreferenceValues(tmpPref, mainPrefs);
             }
         }
-        
+
          private void processDeleteElement(Element item) {
             String path = evalVars(item.getAttribute("path"));
             String base = evalVars(item.getAttribute("base"));
@@ -582,7 +582,7 @@ public class CustomConfigurator {
                 log("Error: Can not find directory to place file, use base=cache, base=prefs or base=plugins attribute.");
                 return;
             }
-            
+
             if (path.contains("..") || path.startsWith("/") || path.contains(":")) {
                 return; // some basic protection
             }
@@ -592,14 +592,14 @@ public class CustomConfigurator {
             }
             processDownloadOperation(address, path, dir, "true".equals(mkdir), "true".equals(unzip));
         }
-        
+
         private void processPluginInstallElement(Element elem) {
             String install = elem.getAttribute("install");
             String uninstall = elem.getAttribute("remove");
             String delete = elem.getAttribute("delete");
             pluginOperation(install, uninstall, delete);
         }
-        
+
         private void processMsgBoxElement(Element elem) {
             String text = evalVars(elem.getAttribute("text"));
             String locText = evalVars(elem.getAttribute(LanguageInfo.getJOSMLocaleCode()+".text"));
@@ -608,7 +608,7 @@ public class CustomConfigurator {
             String type = evalVars(elem.getAttribute("type"));
             messageBox(type, text);
         }
-        
+
 
         private void processAskElement(Element elem) {
             String text = evalVars(elem.getAttribute("text"));
@@ -616,7 +616,7 @@ public class CustomConfigurator {
             if (locText.length()>0) text=locText;
             String var = elem.getAttribute("var");
             if (var.length()==0) var="result";
-            
+
             String input = evalVars(elem.getAttribute("input"));
             if ("true".equals(input)) {
                 setVar(var, askForText(text));
@@ -635,7 +635,7 @@ public class CustomConfigurator {
                 log("Error: Can not assign variable: %s=%s  : %s\n", name, value, ex.getMessage());
             }
         }
-        
+
         private void processIfElement(Element elem) {
             String realValue = evalVars(elem.getAttribute("test"));
             boolean v=false;
@@ -644,14 +644,14 @@ public class CustomConfigurator {
             {
                 log("Error: Illegal test expression in if: %s=%s\n", elem.getAttribute("test"), realValue);
             }
-                
-            if (v) processXmlFragment(elem); 
+
+            if (v) processXmlFragment(elem);
             lastV = v;
         }
 
         private void processElseElement(Element elem) {
             if (!lastV) {
-                processXmlFragment(elem); 
+                processXmlFragment(elem);
             }
         }
 
@@ -667,8 +667,8 @@ public class CustomConfigurator {
             }
             return false;
         }
-        
-                
+
+
         private void processScriptElement(Element elem) {
             String js = elem.getChildNodes().item(0).getTextContent();
             log("Processing script...");
@@ -680,7 +680,7 @@ public class CustomConfigurator {
             }
             log("Script finished");
         }
-        
+
         /**
          * subsititute ${expression} = expression evaluated by JavaScript
          */
@@ -709,14 +709,14 @@ public class CustomConfigurator {
                 StreamResult out = new StreamResult(outputWriter);
 
                 xformer.transform(new DOMSource(item), out);
-                
+
                 String fragmentWithReplacedVars= evalVars(outputWriter.toString());
 
                 CharArrayReader reader = new CharArrayReader(fragmentWithReplacedVars.toCharArray());
                 tmpPref.fromXML(reader);
             } catch (Exception ex) {
                 log("Error: can not read XML fragment :" + ex.getMessage());
-            } 
+            }
 
             return tmpPref;
         }
@@ -736,7 +736,7 @@ public class CustomConfigurator {
      * Also contains functions that convert preferences object to JavaScript object and back
      */
     public static class PreferencesUtils {
-    
+
         private static void replacePreferences(Preferences fragment, Preferences mainpref) {
             // normal prefs
             for (Entry<String, String> entry : fragment.properties.entrySet()) {
@@ -797,14 +797,14 @@ public class CustomConfigurator {
                 mainpref.putArray(entry.getKey(), newLists);
             }
 
-            /// "maps" 
+            /// "maps"
             for (Entry<String, List<Map<String, String>>> entry : fragment.listOfStructsProperties.entrySet()) {
                 String key = entry.getKey();
 
                 List<Map<String, String>> newMaps = getListOfStructs(mainpref, key, true);
                 if (newMaps == null) continue;
 
-                // get existing properties as list of maps 
+                // get existing properties as list of maps
 
                 for (Map<String, String> map : entry.getValue()) {
                     // add nonexisting map (equals comparison for maps is used implicitly)
@@ -815,7 +815,7 @@ public class CustomConfigurator {
                 mainpref.putListOfStructs(entry.getKey(), newMaps);
             }
         }
-        
+
         /**
      * Delete items from @param mainpref collections that match items from @param fragment collections
      */
@@ -849,10 +849,10 @@ public class CustomConfigurator {
         for (Entry<String, List<List<String>>> entry : fragment.arrayProperties.entrySet()) {
             String key = entry.getKey();
 
-            
+
             Collection<Collection<String>> newLists = getArray(mainpref, key, true);
             if (newLists == null) continue;
-            
+
             // if items are found in one of lists, remove that list!
             Iterator<Collection<String>> listIterator = newLists.iterator();
             while (listIterator.hasNext()) {
@@ -869,13 +869,13 @@ public class CustomConfigurator {
             mainpref.putArray(entry.getKey(), newLists);
         }
 
-        /// "maps" 
+        /// "maps"
         for (Entry<String, List<Map<String, String>>> entry : fragment.listOfStructsProperties.entrySet()) {
             String key = entry.getKey();
 
             List<Map<String, String>> newMaps = getListOfStructs(mainpref, key, true);
             if (newMaps == null) continue;
-                
+
             Iterator<Map<String, String>> mapIterator = newMaps.iterator();
             while (mapIterator.hasNext()) {
                 Map<String, String> map = mapIterator.next();
@@ -890,7 +890,7 @@ public class CustomConfigurator {
             mainpref.putListOfStructs(entry.getKey(), newMaps);
         }
     }
-        
+
     private static void deletePreferenceKeyByPattern(String pattern, Preferences pref) {
         Map<String, Setting> allSettings = pref.getAllSettings();
         for (String key : allSettings.keySet()) {
@@ -908,7 +908,7 @@ public class CustomConfigurator {
             pref.putSetting(key, allSettings.get(key).getNullInstance());
         }
     }
-    
+
     private static Collection<String> getCollection(Preferences mainpref, String key, boolean warnUnknownDefault)  {
         Collection<String> existing = mainpref.collectionProperties.get(key);
         Collection<String> defaults = mainpref.collectionDefaults.get(key);
@@ -920,7 +920,7 @@ public class CustomConfigurator {
         return  (existing != null)
                 ? new ArrayList<String>(existing) : new ArrayList<String>(defaults);
     }
-    
+
     private static Collection<Collection<String>> getArray(Preferences mainpref, String key, boolean warnUnknownDefault)  {
         Collection<List<String>> existing = mainpref.arrayProperties.get(key);
         Collection<List<String>> defaults = mainpref.arrayDefaults.get(key);
@@ -946,8 +946,8 @@ public class CustomConfigurator {
         return (existing != null)
                 ? new ArrayList<Map<String, String>>(existing) : new ArrayList<Map<String, String>>(defaults);
     }
-    
-    
+
+
 
     private static void defaultUnknownWarning(String key) {
         log("Warning: Unknown default value of %s , skipped\n", key);
@@ -964,20 +964,20 @@ public class CustomConfigurator {
         System.out.println("arrays: " + tmpPref.arrayProperties);
         System.out.println("maps: " + tmpPref.listOfStructsProperties);
     }
-    
+
     private static void modifyPreferencesByScript(ScriptEngine engine, Preferences tmpPref, String js) throws ScriptException {
         loadPrefsToJS(engine, tmpPref, "API.pref", true);
         engine.eval(js);
         readPrefsFromJS(engine, tmpPref, "API.pref");
     }
 
-    
+
      /**
      * Convert JavaScript preferences object to preferences data structures
      * @param engine - JS engine to put object
      * @param tmpPref - preferences to fill from JS
      * @param varInJS - JS variable name, where preferences are stored
-     * @throws ScriptException 
+     * @throws ScriptException
      */
     public static void readPrefsFromJS(ScriptEngine engine, Preferences tmpPref, String varInJS) throws ScriptException {
         String finish =
@@ -1057,17 +1057,17 @@ public class CustomConfigurator {
             if (Preferences.equalListOfStructs(e.getValue(), tmpPref.listOfStructsDefaults.get(e.getKey()))) continue;
             tmpPref.listOfStructsProperties.put(e.getKey(), e.getValue());
         }
-            
+
     }
-    
-    
+
+
     /**
      * Convert preferences data structures to JavaScript object
      * @param engine - JS engine to put object
      * @param tmpPref - preferences to convert
      * @param whereToPutInJS - variable name to store preferences in JS
      * @param includeDefaults - include known default values to JS objects
-     * @throws ScriptException 
+     * @throws ScriptException
      */
     public static void loadPrefsToJS(ScriptEngine engine, Preferences tmpPref, String whereToPutInJS, boolean includeDefaults) throws ScriptException {
         Map<String, String> stringMap =  new TreeMap<String, String>();
@@ -1150,7 +1150,7 @@ public class CustomConfigurator {
             "  jslistmap.type = 'listmap';"+
             whereToPutInJS+"[String(e.getKey())] = jslistmap;"+
             "}\n";
-                
+
         //System.out.println("map1: "+stringMap );
         //System.out.println("lists1: "+listMap );
         //System.out.println("listlist1: "+listlistMap );
@@ -1158,7 +1158,7 @@ public class CustomConfigurator {
 
         // Execute conversion script
         engine.eval(init);
-            
+
     }
     }
 }

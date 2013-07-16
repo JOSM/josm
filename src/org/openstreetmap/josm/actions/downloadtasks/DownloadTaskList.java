@@ -45,7 +45,7 @@ public class DownloadTaskList {
     private List<DownloadTask> tasks = new LinkedList<DownloadTask>();
     private List<Future<?>> taskFutures = new LinkedList<Future<?>>();
     private ProgressMonitor progressMonitor;
-    
+
     private void addDownloadTask(DownloadTask dt, Rectangle2D td, int i, int n) {
         ProgressMonitor childProgress = progressMonitor.createSubTaskMonitor(1, false);
         childProgress.setCustomText(tr("Download {0} of {1} ({2} left)", i, n, n - i));
@@ -53,14 +53,14 @@ public class DownloadTaskList {
         taskFutures.add(future);
         tasks.add(dt);
     }
-    
+
     /**
      * Downloads a list of areas from the OSM Server
      * @param newLayer Set to true if all areas should be put into a single new layer
      * @param rects The List of Rectangle2D to download
      * @param osmData Set to true if OSM data should be downloaded
      * @param gpxData Set to true if GPX data should be downloaded
-     * @param progressMonitor The progress monitor 
+     * @param progressMonitor The progress monitor
      * @return The Future representing the asynchronous download task
      */
     public Future<?> download(boolean newLayer, List<Rectangle2D> rects, boolean osmData, boolean gpxData, ProgressMonitor progressMonitor) {
@@ -70,7 +70,7 @@ public class DownloadTaskList {
             Main.main.addLayer(l);
             Main.map.mapView.setActiveLayer(l);
         }
-        
+
         int n = (osmData && gpxData ? 2 : 1)*rects.size();
         progressMonitor.beginTask(null, n);
         int i = 0;
@@ -229,7 +229,7 @@ public class DownloadTaskList {
     class PostDownloadProcessor implements Runnable {
 
         private final boolean osmData;
-        
+
         public PostDownloadProcessor(boolean osmData) {
             this.osmData = osmData;
         }

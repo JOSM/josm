@@ -144,7 +144,7 @@ public class DuplicateNode extends Test {
                 // Do not report this as an error
                 continue;
             }
-            
+
             // report errors
             errors.addAll(buildTestErrors(this, nodes));
         }
@@ -400,7 +400,7 @@ public class DuplicateNode extends Test {
             if (target == null) {
                 target = nodes.iterator().next();
             }
-    
+
             if (DeleteCommand.checkAndConfirmOutlyingDelete(Main.main.getCurrentDataSet().getDataSourceArea(), nodes, Collections.singleton(target)))
                 return MergeNodesAction.mergeNodes(Main.main.getEditLayer(), nodes, target);
         }

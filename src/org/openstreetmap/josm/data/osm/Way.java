@@ -104,13 +104,13 @@ public final class Way extends OsmPrimitive implements IWay {
     public int getNodesCount() {
         return nodes.length;
     }
-    
+
     /**
      * Replies the real number of nodes in this way (full number of nodes minus one if this way is closed)
      *
      * @return the real number of nodes in this way.
      * @since 5847
-     * 
+     *
      * @see #getNodesCount()
      * @see #isClosed()
      */
@@ -182,9 +182,9 @@ public final class Way extends OsmPrimitive implements IWay {
     }
 
     /**
-     * Replies the ordered {@link List} of chunks of this way. Each chunk is replied as a {@link Pair} of {@link Node nodes}. 
-     * @param sort If true, the nodes of each pair are sorted as defined by {@link Pair#sort}. 
-     *             If false, Pair.a and Pair.b are in the way order (i.e for a given Pair(n), Pair(n-1).b == Pair(n).a, Pair(n).b == Pair(n+1).a, etc.) 
+     * Replies the ordered {@link List} of chunks of this way. Each chunk is replied as a {@link Pair} of {@link Node nodes}.
+     * @param sort If true, the nodes of each pair are sorted as defined by {@link Pair#sort}.
+     *             If false, Pair.a and Pair.b are in the way order (i.e for a given Pair(n), Pair(n-1).b == Pair(n).a, Pair(n).b == Pair(n+1).a, etc.)
      * @return The ordered list of chunks of this way.
      * @since 3348
      */
@@ -493,7 +493,7 @@ public final class Way extends OsmPrimitive implements IWay {
         Node[] nodes = this.nodes;
         return nodes.length >= 3 && nodes[nodes.length-1] == nodes[0];
     }
-    
+
     /**
      * Determines if this way denotes an area (closed way with at least three distinct nodes).
      * @return {@code true} if this way is closed and contains at least three distinct nodes
@@ -681,7 +681,7 @@ public final class Way extends OsmPrimitive implements IWay {
 
     /**
      * Tests if this way is a oneway.
-     * @return {@code 1} if the way is a oneway, 
+     * @return {@code 1} if the way is a oneway,
      *         {@code -1} if the way is a reversed oneway,
      *         {@code 0} otherwise.
      * @since 5199

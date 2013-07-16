@@ -23,7 +23,7 @@ public class  Conflict<T extends OsmPrimitive> {
     private final T my;
     private final T their;
     private final boolean isMyDeleted;
-    
+
     // mergedMap is only set if the conflict results from merging two layers
     private Map<PrimitiveId, PrimitiveId> mergedMap;
 

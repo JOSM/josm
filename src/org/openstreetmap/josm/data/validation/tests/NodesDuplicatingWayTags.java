@@ -19,7 +19,7 @@ import org.openstreetmap.josm.data.validation.TestError;
  * no warning for a way and a node that only have a "source=PGS" tag).
  * <p>
  * See JOSM ticket #7639 for the original request.
- * 
+ *
  * @author Mrwojo
  */
 public class NodesDuplicatingWayTags extends Test {

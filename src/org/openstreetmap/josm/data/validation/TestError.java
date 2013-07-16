@@ -289,7 +289,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
     @Override
     public int compareTo(TestError o) {
         if (equals(o)) return 0;
-        
+
         MultipleNameVisitor v1 = new MultipleNameVisitor();
         MultipleNameVisitor v2 = new MultipleNameVisitor();
 

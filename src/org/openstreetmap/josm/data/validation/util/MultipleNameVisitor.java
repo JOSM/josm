@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class MultipleNameVisitor extends NameVisitor
 {
     public static final int MULTIPLE_NAME_MAX_LENGTH = 80;
-    
+
     /** The class name of the combined primitives */
     private String multipleClassname;
     /* name to be displayed */

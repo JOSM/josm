@@ -112,7 +112,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         }
         return null;
     }
-    
+
     protected boolean isLayerAlreadyPresent() {
         if (Main.isDisplayingMapView()) {
             for (ImageryLayer layer : Main.map.mapView.getLayersOfType(ImageryLayer.class)) {

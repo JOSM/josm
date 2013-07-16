@@ -62,12 +62,12 @@ public class FollowLineAction extends JosmAction {
         if (osmLayer == null)
             return;
         if (!(Main.map.mapMode instanceof DrawAction)) return; // We are not on draw mode
-        
+
         Collection<Node> selectedPoints = osmLayer.data.getSelectedNodes();
         Collection<Way> selectedLines = osmLayer.data.getSelectedWays();
         if ((selectedPoints.size() > 1) || (selectedLines.size() != 1)) // Unsuitable selection
             return;
-        
+
         Node last = ((DrawAction) Main.map.mapMode).getCurrentBaseNode();
         if (last == null)
             return;
@@ -82,8 +82,8 @@ public class FollowLineAction extends JosmAction {
         }
         List<OsmPrimitive> referrers = last.getReferrers();
         if (referrers.size() < 2) return; // There's nothing to follow
-        
-        Node newPoint = null;        
+
+        Node newPoint = null;
         Iterator<OsmPrimitive> i = referrers.iterator();
         while (i.hasNext()) {
             OsmPrimitive referrer = i.next();
@@ -118,8 +118,8 @@ public class FollowLineAction extends JosmAction {
             osmLayer.data.clearSelection();
             osmLayer.data.addSelected(newFollower);
             osmLayer.data.addSelected(newPoint);
-            // "viewport following" mode for tracing long features 
-            // from aerial imagery or GPS tracks. 
+            // "viewport following" mode for tracing long features
+            // from aerial imagery or GPS tracks.
             if (Main.map.mapView.viewportFollowing) {
                 Main.map.mapView.smoothScrollTo(newPoint.getEastNorth());
             };

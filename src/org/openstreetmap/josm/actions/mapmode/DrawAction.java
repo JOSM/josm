@@ -120,7 +120,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private boolean useRepeatedShortcut;
     private Stroke rubberLineStroke;
     private static final BasicStroke BASIC_STROKE = new BasicStroke(1);
-    
+
     public DrawAction(MapFrame mapFrame) {
         super(tr("Draw"), "node/autonode", tr("Draw nodes"),
                 Shortcut.registerShortcut("mapmode:draw", tr("Mode: {0}", tr("Draw")), KeyEvent.VK_A, Shortcut.DIRECT),
@@ -203,10 +203,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if (!isEnabled())
             return;
         super.enterMode();
-        
+
         rubberLineColor = Main.pref.getColor(marktr("helper line"), null);
         if (rubberLineColor == null) rubberLineColor = PaintColors.SELECTED.get();
-        
+
         rubberLineStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.stroke.helper-line","3"));
         drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
@@ -772,13 +772,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // if that can ever happen but better be safe.
         updateKeyModifiers(e);
         mousePos = e.getPoint();
-        if (snapHelper.isSnapOn() && ctrl) 
+        if (snapHelper.isSnapOn() && ctrl)
             tryToSetBaseSegmentForAngleSnap();
-         
+
         computeHelperLine();
         addHighlighting();
     }
-    
+
     /**
      * This method is used to detect segment under mouse and use it as reference for angle snapping
      */
@@ -887,14 +887,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // the node from which we make a connection
         currentBaseNode = null;
         previousNode = null;
-        
+
         // Try to find an open way to measure angle from it. The way is not to be continued!
         // warning: may result in changes of currentBaseNode and previousNode
         // please remove if bugs arise
         if (selectedWay == null && selectedNode != null) {
             for (OsmPrimitive p: selectedNode.getReferrers()) {
                 if (p.isUsable() && p instanceof Way && ((Way) p).isFirstLastNode(selectedNode)) {
-                    if (selectedWay!=null) { // two uncontinued ways, nothing to take as reference 
+                    if (selectedWay!=null) { // two uncontinued ways, nothing to take as reference
                         selectedWay=null;
                         break;
                     } else {
@@ -903,8 +903,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     }
                 }
             }
-        } 
-        
+        }
+
         if (selectedNode == null) {
             if (selectedWay == null)
                 return;
@@ -915,7 +915,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             continueWayFromNode(selectedWay, selectedNode);
         }
     }
-    
+
     /**
      * if one of the ends of @param way is given @param node ,
      * then set  currentBaseNode = node and previousNode = adjacent node of way
@@ -1348,7 +1348,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         JCheckBoxMenuItem checkBox;
         public final Color ORANGE_TRANSPARENT = new Color(Color.ORANGE.getRed(),Color.ORANGE.getGreen(),Color.ORANGE.getBlue(),128);
-    
+
         public void init() {
             snapOn=false;
             checkBox.setState(snapOn);

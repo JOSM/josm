@@ -134,7 +134,7 @@ public class DataSetMerger {
             return null;
         return targetDataSet.getPrimitiveById(targetId);
     }
-    
+
     protected void addConflict(Conflict<?> c) {
         c.setMergedMap(mergedMap);
         conflicts.add(c);
@@ -220,7 +220,7 @@ public class DataSetMerger {
             }
         }
     }
-    
+
     private final void resetPrimitive(OsmPrimitive osm) {
         if (osm instanceof Way) {
             ((Way) osm).setNodes(null);

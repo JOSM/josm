@@ -20,26 +20,26 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 /**
  * <p>MapRendererFactory manages a list of map renderer classes and associated
  * meta data (display name, description).</p>
- * 
+ *
  * <p>Plugins can implement and supply their own map renderers.</p>
  * <strong>Sample code in a plugin</strong>
  * <pre>
  * public class MyMapRenderer extends AbstractMapRenderer {
  *    // ....
  * }
- * 
+ *
  * // to be called when the plugin is created
  * MapRendererFactory factory = MapRendererFactory.getInstance();
  * factory.register(MyMapRenderer.class, "My map renderer", "This is is a fast map renderer");
  * factory.activate(MyMapRenderer.class);
- * 
+ *
  * </pre>
  *
  */
 public class MapRendererFactory {
 
     /** preference key for the renderer class name. Default: class name for {@link StyledMapRenderer}
-     * 
+     *
      */
     static public final String PREF_KEY_RENDERER_CLASS_NAME = "mappaint.renderer-class-name";
 
@@ -160,7 +160,7 @@ public class MapRendererFactory {
     /**
      * <p>Replies true, if {@code Renderer} is already a registered map renderer
      * class.</p>
-     * 
+     *
      * @param renderer the map renderer class. Must not be null.
      * @return true, if {@code Renderer} is already a registered map renderer
      * class
@@ -176,7 +176,7 @@ public class MapRendererFactory {
 
     /**
      * <p>Registers a map renderer class.</p>
-     * 
+     *
      * @param renderer the map renderer class. Must not be null.
      * @param displayName the display name to be displayed in UIs (i.e. in the preference dialog)
      * @param description the description
@@ -200,9 +200,9 @@ public class MapRendererFactory {
      *
      * <p>If the respective class is also the active renderer, the renderer is reset
      * to the default renderer.</p>
-     * 
+     *
      * @param renderer the map renderer class. Must not be null.
-     * 
+     *
      */
     public void unregister(Class<? extends AbstractMapRenderer> renderer) {
         if (renderer == null) return;
@@ -224,11 +224,11 @@ public class MapRendererFactory {
      * <p>Activates a map renderer class.</p>
      *
      * <p>The renderer class must already be registered.</p>
-     * 
+     *
      * @param renderer the map renderer class. Must not be null.
      * @throws IllegalArgumentException thrown if {@code renderer} is null
      * @throws IllegalStateException thrown if {@code renderer} isn't registered yet
-     * 
+     *
      */
     public void activate(Class<? extends AbstractMapRenderer> renderer) throws IllegalArgumentException, IllegalStateException{
         CheckParameterUtil.ensureParameterNotNull(renderer);
@@ -246,7 +246,7 @@ public class MapRendererFactory {
      * <p>Activates the default map renderer.</p>
      *
      * @throws IllegalStateException thrown if the default renderer {@link StyledMapRenderer} isn't registered
-     * 
+     *
      */
     public void activateDefault() throws IllegalStateException{
         Class<? extends AbstractMapRenderer> defaultRenderer = StyledMapRenderer.class;
@@ -282,7 +282,7 @@ public class MapRendererFactory {
 
     /**
      * <p>Replies the (unmodifiable) list of map renderer descriptors.</p>
-     * 
+     *
      * @return the descriptors
      */
     public List<Descriptor> getMapRendererDescriptors() {
@@ -292,12 +292,12 @@ public class MapRendererFactory {
     /**
      * <p>Replies true, if currently the wireframe map renderer is active. Otherwise,
      * false.</p>
-     * 
+     *
      * <p>There is a specific method for {@link WireframeMapRenderer} for legacy support.
      * Until 03/2011 there were only two possible map renderers in JOSM: the wireframe
      * renderer and the styled renderer. For the time being there are still UI elements
      * (menu entries, etc.) which toggle between these two renderers only.</p>
-     * 
+     *
      * @return true, if currently the wireframe map renderer is active. Otherwise,
      * false
      */

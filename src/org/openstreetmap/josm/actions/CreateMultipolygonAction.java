@@ -129,7 +129,7 @@ public class CreateMultipolygonAction extends JosmAction {
         }
     }
 
-    /** 
+    /**
       * Enable this action only if something is selected
       *
       * @param selection the current selection, gets tested for emptyness
@@ -184,7 +184,7 @@ public class CreateMultipolygonAction extends JosmAction {
 
     /**
      * This method removes tags/value pairs from inner and outer ways and put them on relation if necessary
-     * Function was extended in reltoolbox plugin by Zverikk and copied back to the core 
+     * Function was extended in reltoolbox plugin by Zverikk and copied back to the core
      * @param relation the multipolygon style relation to process
      * @return a list of commands to execute
      */
@@ -211,7 +211,7 @@ public class CreateMultipolygonAction extends JosmAction {
             if( m.hasRole() && "outer".equals(m.getRole()) && m.isWay() && m.getWay().hasKeys() ) {
                 Way way = m.getWay();
                 outerWays.add(way);
-                
+
                 for( String key : way.keySet() ) {
                     if( !values.containsKey(key) ) { //relation values take precedence
                         values.put(key, way.get(key));

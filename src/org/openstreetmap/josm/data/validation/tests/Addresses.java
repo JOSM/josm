@@ -38,13 +38,13 @@ public class Addresses extends Test {
     protected static final int MULTIPLE_STREET_NAMES = 2603;
     protected static final int MULTIPLE_STREET_RELATIONS = 2604;
     protected static final int HOUSE_NUMBER_TOO_FAR = 2605;
-    
+
     protected static final String ADDR_HOUSE_NUMBER  = "addr:housenumber";
     protected static final String ADDR_INTERPOLATION = "addr:interpolation";
     protected static final String ADDR_PLACE         = "addr:place";
     protected static final String ADDR_STREET        = "addr:street";
     protected static final String ASSOCIATED_STREET  = "associatedStreet";
-    
+
     protected class AddressError extends TestError {
 
         public AddressError(int code, OsmPrimitive p, String message) {
@@ -57,14 +57,14 @@ public class Addresses extends Test {
             super(Addresses.this, Severity.WARNING, message, description, description_en, code, collection);
         }
     }
-    
+
     /**
      * Constructor
      */
     public Addresses() {
         super(tr("Addresses"), tr("Checks for errors in addresses and associatedStreet relations."));
     }
-    
+
     protected List<Relation> getAndCheckAssociatedStreets(OsmPrimitive p) {
         List<Relation> list = OsmPrimitive.getFilteredList(p.getReferrers(), Relation.class);
         for (Iterator<Relation> it = list.iterator(); it.hasNext();) {
@@ -149,13 +149,13 @@ public class Addresses extends Test {
             for (String key : map.keySet()) {
                 List<OsmPrimitive> list = map.get(key);
                 if (list.size() > 1) {
-                    errors.add(new AddressError(DUPLICATE_HOUSE_NUMBER, list, 
+                    errors.add(new AddressError(DUPLICATE_HOUSE_NUMBER, list,
                             tr("Duplicate house numbers"), tr(description_en, key), description_en));
                 }
             }
             // Report wrong street names
             if (!wrongStreetNames.isEmpty()) {
-                errors.add(new AddressError(MULTIPLE_STREET_NAMES, wrongStreetNames, 
+                errors.add(new AddressError(MULTIPLE_STREET_NAMES, wrongStreetNames,
                         tr("Multiple street names in relation")));
             }
             // Report addresses too far away
@@ -168,7 +168,7 @@ public class Addresses extends Test {
             }
         }
     }
-    
+
     protected void checkDistance(OsmPrimitive house, Collection<Way> street) {
         EastNorth centroid;
         if (house instanceof Node) {
@@ -206,7 +206,7 @@ public class Addresses extends Test {
         if (hasIncompleteWays) return;
         List<OsmPrimitive> errorList = new ArrayList<OsmPrimitive>(street);
         errorList.add(0, house);
-        errors.add(new AddressError(HOUSE_NUMBER_TOO_FAR, errorList, 
+        errors.add(new AddressError(HOUSE_NUMBER_TOO_FAR, errorList,
                 tr("House number too far from street")));
     }
 }

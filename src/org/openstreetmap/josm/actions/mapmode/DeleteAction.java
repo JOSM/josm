@@ -256,7 +256,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * Gives the user feedback for the action he/she is about to do. Currently
      * calls the cursor and target highlighting routines. Allows for modifiers
      * not taken from the given mouse event.
-     * 
+     *
      * Normally the mouse event also contains the modifiers. However, when the
      * mouse is not moved and only modifier keys are pressed, no mouse event
      * occurs. We can use AWTEvent to catch those but still lack a proper

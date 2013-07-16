@@ -38,7 +38,7 @@ public class PurgeCommand extends Command {
     protected Storage<PrimitiveData> makeIncompleteData;
 
     protected Map<PrimitiveId, PrimitiveData> makeIncompleteData_byPrimId;
-    
+
     protected final ConflictCollection purgedConflicts = new ConflictCollection();
 
     final protected DataSet ds;
@@ -131,7 +131,7 @@ public class PurgeCommand extends Command {
                 ds.addPrimitive(osm);
             }
         }
-        
+
         for (Conflict<?> conflict : purgedConflicts) {
             getLayer().getConflicts().add(conflict);
         }

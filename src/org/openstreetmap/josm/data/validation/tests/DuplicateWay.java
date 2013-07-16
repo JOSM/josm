@@ -91,7 +91,7 @@ public class DuplicateWay extends Test
 
     /** Bag of all ways, regardless of tags */
     private MultiMap<WayPairNoTags, OsmPrimitive> waysNoTags;
-    
+
     /** Set of known hashcodes for list of coordinates **/
     private Set<Integer> knownHashCodes;
 

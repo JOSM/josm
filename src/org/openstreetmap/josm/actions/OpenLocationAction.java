@@ -45,7 +45,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class OpenLocationAction extends JosmAction {
 
     protected final List<Class<? extends DownloadTask>> downloadTasks;
-    
+
     /**
      * Create an open action. The name is "Open a file".
      */
@@ -122,7 +122,7 @@ public class OpenLocationAction extends JosmAction {
         remindUploadAddressHistory(uploadAddresses);
         openUrl(layer.isSelected(), Utils.strip(uploadAddresses.getText()));
     }
-    
+
     /**
      * Replies the list of download tasks accepting the given url.
      * @param url The URL to open
@@ -191,7 +191,7 @@ public class OpenLocationAction extends JosmAction {
                     url, details) + "</p></html>", tr("Download Location"), JOptionPane.ERROR_MESSAGE, HelpUtil.ht("/Action/OpenLocation"));
         }
     }
-    
+
     /**
      * Adds a new download task to the supported ones.
      * @param taskClass The new download task to add
