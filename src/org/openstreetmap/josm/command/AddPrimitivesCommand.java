@@ -58,7 +58,7 @@ public class AddPrimitivesCommand extends Command {
         super(layer);
         init(data, toSelect);
     }
-    
+
     private final void init(List<PrimitiveData> data, List<PrimitiveData> toSelect) {
         CheckParameterUtil.ensureParameterNotNull(data, "data");
         this.data.addAll(data);
@@ -112,11 +112,11 @@ public class AddPrimitivesCommand extends Command {
 
     @Override public void undoCommand() {
         DataSet ds = getLayer().data;
-        
+
         if (createdPrimitives == null) {
             createdPrimitives = new ArrayList<OsmPrimitive>(data.size());
             createdPrimitivesToSelect = new ArrayList<OsmPrimitive>(toSelect.size());
-            
+
             for (PrimitiveData pd : data) {
                 OsmPrimitive p = ds.getPrimitiveById(pd);
                 createdPrimitives.add(p);
@@ -125,13 +125,13 @@ public class AddPrimitivesCommand extends Command {
                 }
             }
             createdPrimitives = PurgeCommand.topoSort(createdPrimitives);
-            
+
             for (PrimitiveData p : data) {
                 ds.removePrimitive(p);
             }
             data = null;
             toSelect = null;
-            
+
         } else {
             for (OsmPrimitive osm : createdPrimitives) {
                 ds.removePrimitive(osm);
@@ -160,7 +160,7 @@ public class AddPrimitivesCommand extends Command {
     public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
         if (createdPrimitives != null)
             return createdPrimitives;
-        
+
         Collection<OsmPrimitive> prims = new HashSet<OsmPrimitive>();
         for (PrimitiveData d : data) {
             OsmPrimitive osm = getLayer().data.getPrimitiveById(d);

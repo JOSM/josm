@@ -59,10 +59,10 @@ public class EastNorth extends Coordinate {
         if(hd < 0) hd = 2 * Math.PI + hd;
         return hd;
     }
-    
+
     /**
      * Replies true if east and north are different from Double.NaN
-     * 
+     *
      * @return true if east and north are different from Double.NaN
      */
     public boolean isValid() {

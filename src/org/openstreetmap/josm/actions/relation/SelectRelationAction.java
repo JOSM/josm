@@ -10,11 +10,11 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Sets the current selection to specified list of relations 
+ * Sets the current selection to specified list of relations
  * @since 5793
  */
 public class SelectRelationAction extends AbstractRelationAction {
-    
+
     private final boolean add;
 
     /**

@@ -221,7 +221,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
         }
     }
-    
+
     private static class StyleRecord implements Comparable<StyleRecord> {
         final ElemStyle style;
         final OsmPrimitive osm;
@@ -309,7 +309,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     private Color relationSelectedColor;
     private Color highlightColorTransparent;
-    
+
     private static final int FLAG_NORMAL = 0;
     private static final int FLAG_DISABLED = 1;
     private static final int FLAG_MEMBER_OF_SELECTED = 2;
@@ -320,13 +320,13 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private static final double sinPHI = Math.sin(PHI);
 
     private Collection<WaySegment> highlightWaySegments;
-    
+
     // highlight customization fields
     private int highlightLineWidth;
     private int highlightPointRadius;
     private int widerHighlight;
     private int highlightStep;
-    
+
     //flag that activate wider highlight mode
     private boolean useWiderHighlight;
 
@@ -440,7 +440,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             g.setStroke(new BasicStroke());
         }
     }
-    
+
     protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, TextElement text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());
@@ -513,7 +513,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
         }
     }
-    
+
     public void drawArea(Relation r, Color color, MapImage fillImage, TextElement text) {
         Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);
         if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
@@ -528,7 +528,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
         }
     }
-    
+
     public void drawArea(Way w, Color color, MapImage fillImage, TextElement text) {
         drawArea(w, getPath(w), color, fillImage, text);
     }
@@ -731,7 +731,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
         }
     }
-    
+
     public void drawNodeIcon(Node n, Image img, float alpha, boolean selected, boolean member) {
         Point p = nc.getPoint(n);
 
@@ -759,7 +759,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             g.drawRect(p.x-w/2-2, p.y-h/2-2, w+4, h+4);
         }
     }
-    
+
     public void drawNodeSymbol(Node n, Symbol s, Color fillColor, Color strokeColor) {
         Point p = nc.getPoint(n);
         int radius = s.size / 2;
@@ -849,7 +849,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         Point p2 = nc.getPoint(n2);
         StyledMapRenderer.this.drawOrderNumber(p1, p2, orderNumber, clr);
     }
-    
+
     /**
      * highlights a given GeneralPath using the settings from BasicStroke to match the line's
      * style. Width of the highlight is hard coded.
@@ -882,7 +882,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             s -= highlightStep;
         }
     }
-    
+
     public void drawRestriction(Image img, Point pVia, double vx, double vx2, double vy, double vy2, double angle, boolean selected) {
         /* rotate image with direction last node in from to */
         Image rotatedImg = ImageProvider.createRotatedImage(null , img, angle);
@@ -897,7 +897,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             g.drawRect((int)(pVia.x+vx+vx2)-w/2-2,(int)(pVia.y+vy+vy2)-h/2-2, w+4, h+4);
         }
     }
-    
+
     public void drawRestriction(Relation r, MapImage icon) {
         Way fromWay = null;
         Way toWay = null;
@@ -1072,7 +1072,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         drawRestriction(isInactiveMode || r.isDisabled() ? icon.getDisabled() : icon.getImage(),
                 pVia, vx, vx2, vy, vy2, iconAngle, r.isSelected());
     }
-    
+
     public void drawTextOnPath(Way way, TextElement text) {
         if (way == null || text == null)
             return;
@@ -1109,7 +1109,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         double[] p1 = pointAt(t1, poly, pathLength);
         double[] p2 = pointAt(t2, poly, pathLength);
-        
+
         if (p1 == null || p2 == null)
             return;
 
@@ -1163,7 +1163,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             g.drawGlyphVector(gv, 0, 0);
         }
     }
-    
+
     /**
      * draw way
      * @param showOrientation show arrows that indicate the technical orientation of
@@ -1303,7 +1303,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         this.highlightColorTransparent = new Color(highlightColor.getRed(), highlightColor.getGreen(), highlightColor.getBlue(), 100);
         this.backgroundColor = PaintColors.getBackgroundColor();
     }
-    
+
     @Override
     protected void getSettings(boolean virtual) {
         super.getSettings(virtual);

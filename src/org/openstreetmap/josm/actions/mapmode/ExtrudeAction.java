@@ -72,7 +72,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     private Node selectedNode = null;
     private Color mainColor;
     private Stroke mainStroke;
-    
+
     /**
      * drawing settings for helper lines
      */
@@ -87,7 +87,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      */
     private List<ReferenceSegment> possibleMoveDirections;
 
-    
+
     /**
      * Collection of nodes that is moved
      */
@@ -237,22 +237,22 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             return;
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
-        
+
         requestFocusInMapView();
         updateKeyModifiers(e);
-        
+
         selectedNode = Main.map.mapView.getNearestNode(e.getPoint(), OsmPrimitive.isSelectablePredicate);
         selectedSegment = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive.isSelectablePredicate);
-        
+
         // If nothing gets caught, stay in select mode
         if (selectedSegment == null && selectedNode == null) return;
-        
+
         if (selectedNode != null) {
             if (ctrl || nodeDragWithoutCtrl) {
                 movingNodeList = new ArrayList<OsmPrimitive>();
                 movingNodeList.add(selectedNode);
                 calculatePossibleDirectionsByNode();
-                if (possibleMoveDirections.isEmpty()) { 
+                if (possibleMoveDirections.isEmpty()) {
                     // if no directions fould, do not enter dragging mode
                     return;
                 }
@@ -277,7 +277,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             }
             calculatePossibleDirectionsBySegment();
         }
-        
+
         // Signifies that nothing has happened yet
         newN1en = null;
         newN2en = null;
@@ -385,10 +385,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             Main.map.mapView.repaint();
         }
     }
-    
+
     /**
      * Insert node into nearby segment
-     * @param e - current mouse point 
+     * @param e - current mouse point
      */
     private void addNewNode(MouseEvent e) {
         // Should maybe do the same as in DrawAction and fetch all nearby segments?
@@ -487,7 +487,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         Command c = new SequenceCommand(tr("Extrude Way"), cmds);
         Main.main.undoRedo.add(c);
     }
-    
+
     /**
      * This method tests if a node has other ways apart from the given one.
      * @param node
@@ -501,17 +501,17 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         }
         return false;
     }
-    
+
     /**
      * Determine best movenemnt from initialMousePos  to current position @param mouseEn,
      * choosing one of the directions @field possibleMoveDirections
-     * @return movement vector 
+     * @return movement vector
      */
     private EastNorth calculateBestMovement(EastNorth mouseEn) {
-        
+
         EastNorth initialMouseEn = Main.map.mapView.getEastNorth(initialMousePos.x, initialMousePos.y);
         EastNorth mouseMovement = initialMouseEn.sub(mouseEn);
-        
+
         double bestDistance = Double.POSITIVE_INFINITY;
         EastNorth bestMovement = null;
         activeMoveDirection = null;
@@ -564,7 +564,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         // remember initial positions for segment nodes.
         initialN1en = selectedSegment.getFirstNode().getEastNorth();
         initialN2en = selectedSegment.getSecondNode().getEastNorth();
-            
+
         //add direction perpendicular to the selected segment
         possibleMoveDirections = new ArrayList<ReferenceSegment>();
         possibleMoveDirections.add(new ReferenceSegment(new EastNorth(
@@ -572,7 +572,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                 initialN2en.getX() - initialN1en.getX()
                 ), initialN1en, initialN2en, true));
 
-        
+
         //add directions parallel to neighbor segments
         Node prevNode = getPreviousNode(selectedSegment.lowerIndex);
         if (prevNode != null) {
@@ -592,7 +592,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     ), initialN2en,  en, false));
         }
     }
-    
+
     /**
      * Gather possible move directions - along all adjacent segments
      */
@@ -608,12 +608,12 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     possibleMoveDirections.add(new ReferenceSegment(new EastNorth(
                         initialN1en.getX() - en.getX(),
                         initialN1en.getY() - en.getY()
-                    ), initialN1en, en, false));                                    
+                    ), initialN1en, en, false));
                 }
             }
         }
     }
-    
+
     /**
      * Gets a node from selected way before given index.
      * @param index  index of current node
@@ -684,7 +684,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                 Point p4 = mv.getPoint(newN2en);
 
                 EastNorth normalUnitVector = getNormalUniVector();
-                
+
                 if (mode == Mode.extrude || mode == Mode.create_new) {
                     g2.setColor(mainColor);
                     g2.setStroke(mainStroke);
@@ -721,7 +721,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     g2.setColor(mainColor);
                     if (p1.distance(p2) < 3) {
                         g2.setStroke(mainStroke);
-                        g2.drawOval((int)(p1.x-symbolSize/2), (int)(p1.y-symbolSize/2), 
+                        g2.drawOval((int)(p1.x-symbolSize/2), (int)(p1.y-symbolSize/2),
                                 (int)(symbolSize), (int)(symbolSize));
                     } else {
                         Line2D oldline = new Line2D.Double(p1, p2);
@@ -751,7 +751,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             g2.setStroke(helperStrokeRA); // restore default stroke to prevent starnge occasional drawings
         }
     }
-    
+
     private EastNorth getNormalUniVector() {
         double fac = 1.0 / activeMoveDirection.en.distance(0,0);
         // mult by factor to get unit vector.
@@ -769,19 +769,19 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         normalUnitVector.setLocation(normalUnitVector.getX(), -normalUnitVector.getY());
         return normalUnitVector;
     }
-    
+
     private void drawAngleSymbol(Graphics2D g2, Point2D center, EastNorth normal, boolean mirror) {
         // EastNorth units per pixel
         double factor = 1.0/g2.getTransform().getScaleX();
         double raoffsetx = symbolSize*factor*normal.getX();
         double raoffsety = symbolSize*factor*normal.getY();
-        
-        double cx = center.getX(), cy = center.getY(); 
+
+        double cx = center.getX(), cy = center.getY();
         double k = (mirror ? -1 : 1);
         Point2D ra1 = new Point2D.Double(cx + raoffsetx, cy + raoffsety);
         Point2D ra3 = new Point2D.Double(cx - raoffsety*k, cy + raoffsetx*k);
         Point2D ra2 = new Point2D.Double(ra1.getX() - raoffsety*k, ra1.getY() + raoffsetx*k);
-        
+
         GeneralPath ra = new GeneralPath();
         ra.moveTo((float)ra1.getX(), (float)ra1.getY());
         ra.lineTo((float)ra2.getX(), (float)ra2.getY());

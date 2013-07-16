@@ -17,7 +17,7 @@ abstract public class DiskAccessAction extends JosmAction {
 
     /**
      * Constructs a new {@code DiskAccessAction}.
-     * 
+     *
      * @param name The action's text as displayed on the menu (if it is added to a menu)
      * @param iconName The filename of the icon to use
      * @param tooltip A longer description of the action that will be displayed in the tooltip
@@ -46,7 +46,7 @@ abstract public class DiskAccessAction extends JosmAction {
 
     /**
      * Creates a new {@link JFileChooser} and makes it visible.
-     * @param open If true, pops up an "Open File" dialog. If false, pops up a "Save File" dialog 
+     * @param open If true, pops up an "Open File" dialog. If false, pops up a "Save File" dialog
      * @param multiple If true, makes the dialog allow multiple file selections
      * @param title The string that goes in the dialog window's title bar
      * @return The {@code JFileChooser}.
@@ -58,7 +58,7 @@ abstract public class DiskAccessAction extends JosmAction {
 
     /**
      * Creates a new {@link JFileChooser} and makes it visible.
-     * @param open If true, pops up an "Open File" dialog. If false, pops up a "Save File" dialog 
+     * @param open If true, pops up an "Open File" dialog. If false, pops up a "Save File" dialog
      * @param multiple If true, makes the dialog allow multiple file selections
      * @param title The string that goes in the dialog window's title bar
      * @param extension The file extension that will be selected as the default file filter
@@ -71,17 +71,17 @@ abstract public class DiskAccessAction extends JosmAction {
 
     /**
      * Creates a new {@link JFileChooser} and makes it visible.
-     * @param open If true, pops up an "Open File" dialog. If false, pops up a "Save File" dialog 
+     * @param open If true, pops up an "Open File" dialog. If false, pops up a "Save File" dialog
      * @param multiple If true, makes the dialog allow multiple file selections
      * @param title The string that goes in the dialog window's title bar
      * @param extension The file extension that will be selected as the default file filter
      * @param selectionMode The selection mode that allows the user to:<br/>
-     *                      <li>just select files ({@code JFileChooser.FILES_ONLY})</li> 
-     *                      <li>just select directories ({@code JFileChooser.DIRECTORIES_ONLY})</li> 
+     *                      <li>just select files ({@code JFileChooser.FILES_ONLY})</li>
+     *                      <li>just select directories ({@code JFileChooser.DIRECTORIES_ONLY})</li>
      *                      <li>select both files and directories ({@code JFileChooser.FILES_AND_DIRECTORIES})</li>
-     * @param allTypes If true, all the files types known by JOSM will be proposed in the "file type" combobox. 
+     * @param allTypes If true, all the files types known by JOSM will be proposed in the "file type" combobox.
      *                 If false, only the file filters that include {@code extension} will be proposed
-     * @param lastDirProperty The name of the property used to setup the JFileChooser initial directory. 
+     * @param lastDirProperty The name of the property used to setup the JFileChooser initial directory.
      *        This property will then be updated to the new "last directory" chosen by the user. If null, the default property "lastDirectory" will be used.
      * @return The {@code JFileChooser}.
      * @since 5438
@@ -92,13 +92,13 @@ abstract public class DiskAccessAction extends JosmAction {
 
     /**
      * Creates a new {@link JFileChooser} for a single {@link FileFilter} and makes it visible.
-     * @param open If true, pops up an "Open File" dialog. If false, pops up a "Save File" dialog 
+     * @param open If true, pops up an "Open File" dialog. If false, pops up a "Save File" dialog
      * @param multiple If true, makes the dialog allow multiple file selections
      * @param title The string that goes in the dialog window's title bar
      * @param filter The only file filter that will be proposed by the dialog
      * @param selectionMode The selection mode that allows the user to:<br/>
-     *                      <li>just select files ({@code JFileChooser.FILES_ONLY})</li> 
-     *                      <li>just select directories ({@code JFileChooser.DIRECTORIES_ONLY})</li> 
+     *                      <li>just select files ({@code JFileChooser.FILES_ONLY})</li>
+     *                      <li>just select directories ({@code JFileChooser.DIRECTORIES_ONLY})</li>
      *                      <li>select both files and directories ({@code JFileChooser.FILES_AND_DIRECTORIES})</li>
      * @param lastDirProperty The name of the property used to setup the JFileChooser initial directory. This property will then be updated to the new "last directory" chosen by the user
      * @return The {@code JFileChooser}.
@@ -110,20 +110,20 @@ abstract public class DiskAccessAction extends JosmAction {
 
     /**
      * Creates a new {@link JFileChooser} for several {@link FileFilter}s and makes it visible.
-     * @param open If true, pops up an "Open File" dialog. If false, pops up a "Save File" dialog 
+     * @param open If true, pops up an "Open File" dialog. If false, pops up a "Save File" dialog
      * @param multiple If true, makes the dialog allow multiple file selections
      * @param title The string that goes in the dialog window's title bar
      * @param filters The file filters that will be proposed by the dialog
      * @param defaultFilter The file filter that will be selected by default
      * @param selectionMode The selection mode that allows the user to:<br/>
-     *                      <li>just select files ({@code JFileChooser.FILES_ONLY})</li> 
-     *                      <li>just select directories ({@code JFileChooser.DIRECTORIES_ONLY})</li> 
+     *                      <li>just select files ({@code JFileChooser.FILES_ONLY})</li>
+     *                      <li>just select directories ({@code JFileChooser.DIRECTORIES_ONLY})</li>
      *                      <li>select both files and directories ({@code JFileChooser.FILES_AND_DIRECTORIES})</li>
      * @param lastDirProperty The name of the property used to setup the JFileChooser initial directory. This property will then be updated to the new "last directory" chosen by the user
      * @return The {@code JFileChooser}.
      * @since 5438
      */
-    public static JFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title, 
+    public static JFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title,
             Collection<? extends FileFilter> filters, FileFilter defaultFilter, int selectionMode, String lastDirProperty) {
         return new JFileChooserManager(open, lastDirProperty).createFileChooser(multiple, title, filters, defaultFilter, selectionMode).openFileChooser();
     }

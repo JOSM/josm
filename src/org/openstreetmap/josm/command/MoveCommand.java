@@ -30,7 +30,7 @@ public class MoveCommand extends Command {
      */
     private Collection<Node> nodes = new LinkedList<Node>();
     /**
-     * Starting position, base command point, current (mouse-drag) position = startEN + (x,y) = 
+     * Starting position, base command point, current (mouse-drag) position = startEN + (x,y) =
      */
     private EastNorth startEN;
 
@@ -72,7 +72,7 @@ public class MoveCommand extends Command {
     public MoveCommand(Collection<OsmPrimitive> objects, EastNorth offset) {
         this(objects, offset.getX(), offset.getY());
     }
-    
+
     /**
      * Create a MoveCommand and assign the initial object set and movement vector.
      */
@@ -101,7 +101,7 @@ public class MoveCommand extends Command {
          this(Collections.singleton(p), end.getX()-start.getX(), end.getY()-start.getY());
          startEN =  start;
      }
-     
+
     /**
      * Move the same set of objects again by the specified vector. The vectors
      * are added together and so the resulting will be moved to the previous
@@ -121,13 +121,13 @@ public class MoveCommand extends Command {
     public void moveAgainTo(double x, double y) {
         moveAgain(x - this.x, y - this.y);
     }
-    
+
     /**
-     * Change the displacement vector to have endpoint @param currentEN 
+     * Change the displacement vector to have endpoint @param currentEN
      * starting point is  startEN
      */
     public void applyVectorTo(EastNorth currentEN) {
-        if (startEN == null) 
+        if (startEN == null)
             return;
         x = currentEN.getX() - startEN.getX();
         y = currentEN.getY() - startEN.getY();

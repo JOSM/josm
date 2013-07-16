@@ -63,7 +63,7 @@ public class OAuthParameters {
      * Replies a set of default parameters for a consumer accessing an OSM server
      * at the given API url. URL parameters are only set if the URL equals {@link OsmApi#DEFAULT_API_URL}
      * or references the domain "dev.openstreetmap.org", otherwise they may be <code>null</code>.
-     * 
+     *
      * @param apiUrl The API URL for which the OAuth default parameters are created. If null or empty, the default OSM API url is used.
      * @return a set of default parameters for the given {@code apiUrl}
      * @since 5422
@@ -132,7 +132,7 @@ public class OAuthParameters {
 
     /**
      * Constructs a new, unitialized, {@code OAuthParameters}.
-     * 
+     *
      * @see #createDefault
      * @see #createFromPreferences
      */
@@ -161,7 +161,7 @@ public class OAuthParameters {
     public String getConsumerKey() {
         return consumerKey;
     }
-    
+
     /**
      * Sets the consumer key.
      * @param consumerKey The consumer key
@@ -169,15 +169,15 @@ public class OAuthParameters {
     public void setConsumerKey(String consumerKey) {
         this.consumerKey = consumerKey;
     }
-    
+
     /**
-     * Gets the consumer secret. 
+     * Gets the consumer secret.
      * @return The consumer secret
      */
     public String getConsumerSecret() {
         return consumerSecret;
     }
-    
+
     /**
      * Sets the consumer secret.
      * @param consumerSecret The consumer secret
@@ -185,7 +185,7 @@ public class OAuthParameters {
     public void setConsumerSecret(String consumerSecret) {
         this.consumerSecret = consumerSecret;
     }
-    
+
     /**
      * Gets the request token URL.
      * @return The request token URL
@@ -193,7 +193,7 @@ public class OAuthParameters {
     public String getRequestTokenUrl() {
         return requestTokenUrl;
     }
-    
+
     /**
      * Sets the request token URL.
      * @param requestTokenUrl the request token URL
@@ -201,7 +201,7 @@ public class OAuthParameters {
     public void setRequestTokenUrl(String requestTokenUrl) {
         this.requestTokenUrl = requestTokenUrl;
     }
-    
+
     /**
      * Gets the access token URL.
      * @return The access token URL
@@ -209,7 +209,7 @@ public class OAuthParameters {
     public String getAccessTokenUrl() {
         return accessTokenUrl;
     }
-    
+
     /**
      * Sets the access token URL.
      * @param accessTokenUrl The access token URL
@@ -217,7 +217,7 @@ public class OAuthParameters {
     public void setAccessTokenUrl(String accessTokenUrl) {
         this.accessTokenUrl = accessTokenUrl;
     }
-    
+
     /**
      * Gets the authorise URL.
      * @return The authorise URL
@@ -225,7 +225,7 @@ public class OAuthParameters {
     public String getAuthoriseUrl() {
         return authoriseUrl;
     }
-    
+
     /**
      * Sets the authorise URL.
      * @param authoriseUrl The authorise URL

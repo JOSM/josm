@@ -16,7 +16,7 @@ public class NTV2GridShiftFileWrapper {
 
     public final static NTV2GridShiftFileWrapper BETA2007 = new NTV2GridShiftFileWrapper("resource://data/BETA2007.gsb");
     public final static NTV2GridShiftFileWrapper ntf_rgf93 = new NTV2GridShiftFileWrapper("resource://data/ntf_r93_b.gsb");
-    
+
 
     private NTV2GridShiftFile instance = null;
     private String gridFileName;

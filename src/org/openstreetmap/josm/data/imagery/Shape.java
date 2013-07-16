@@ -20,7 +20,7 @@ import org.openstreetmap.josm.tools.Geometry;
 public class Shape {
 
     private List<Coordinate> coords = new ArrayList<Coordinate>();
-    
+
     public Shape(String asString, String separator) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(asString, "asString");
         String[] components = asString.split(separator);
@@ -48,7 +48,7 @@ public class Shape {
     public List<Coordinate> getPoints() {
         return coords;
     }
-    
+
     public boolean contains(LatLon latlon) {
         if (latlon == null)
             return false;
@@ -64,7 +64,7 @@ public class Shape {
         CheckParameterUtil.ensureParameterNotNull(sLon, "sLon");
 
         double lat, lon;
-        
+
         try {
             lat = Double.parseDouble(sLat);
             if (!LatLon.isValidLat(lat))
@@ -80,7 +80,7 @@ public class Shape {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(MessageFormat.format("Illegal double value ''{0}''", sLon));
         }
-        
+
         coords.add(new Coordinate(LatLon.roundToOsmPrecision(lat), LatLon.roundToOsmPrecision(lon)));
     }
 }

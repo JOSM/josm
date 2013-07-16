@@ -49,10 +49,10 @@ public class Multipolygon {
      * <p>Kind of strategy object which is responsible for deciding whether a given
      * member role indicates that the member belongs to an <em>outer</em> or an
      * <em>inner</em> polygon.</p>
-     * 
+     *
      * <p>The decision is taken based on preference settings, see the four preference keys
      * above.</p>
-     * 
+     *
      */
     private static class MultipolygonRoleMatcher implements PreferenceChangedListener{
         private final List<String> outerExactRoles = new ArrayList<String>();
@@ -208,7 +208,7 @@ public class Multipolygon {
             this.poly.setWindingRule(Path2D.WIND_EVEN_ODD);
             buildPoly();
         }
-        
+
         private void buildPoly() {
             boolean initial = true;
             for (Node n : nodes) {
@@ -237,7 +237,7 @@ public class Multipolygon {
             this.nodes = new ArrayList<Node>(copy.nodes);
             this.inners = new ArrayList<Multipolygon.PolyData>(copy.inners);
         }
-        
+
         public Intersection contains(Path2D.Double p) {
             int contains = 0;
             int total = 0;
@@ -261,7 +261,7 @@ public class Multipolygon {
             inners.add(inner);
             appendInner(inner.poly);
         }
-        
+
         private void appendInner(Path2D.Double inner) {
             poly.append(inner.getPathIterator(null), false);
         }
@@ -276,11 +276,11 @@ public class Multipolygon {
             }
             return bounds;
         }
-        
+
         public Collection<Long> getWayIds() {
             return wayIds;
         }
-        
+
         private void resetNodes(DataSet dataSet) {
             if (!nodes.isEmpty()) {
                 DataSet ds = dataSet;
@@ -308,13 +308,13 @@ public class Multipolygon {
                 resetPoly();
             }
         }
-        
+
         private void resetPoly() {
             poly.reset();
             buildPoly();
             bounds = null;
         }
-        
+
         public void nodeMoved(NodeMovedEvent event) {
             final Node n = event.getNode();
             boolean innerChanged = false;
@@ -328,7 +328,7 @@ public class Multipolygon {
                 resetPoly();
             }
         }
-        
+
         public void wayNodesChanged(WayNodesChangedEvent event) {
             final Long wayId = event.getChangedWay().getUniqueId();
             boolean innerChanged = false;
@@ -349,7 +349,7 @@ public class Multipolygon {
     private final List<PolyData> innerPolygons = new ArrayList<PolyData>();
     private final List<PolyData> outerPolygons = new ArrayList<PolyData>();
     private final List<PolyData> combinedPolygons = new ArrayList<PolyData>();
-    
+
     private boolean incomplete;
 
     public Multipolygon(Relation r) {
@@ -388,7 +388,7 @@ public class Multipolygon {
             addInnerToOuters();
         }
     }
-    
+
     public final boolean isIncomplete() {
         return incomplete;
     }
@@ -517,7 +517,7 @@ public class Multipolygon {
                 intersectingCount++;
             }
         }
-        
+
         if (insideCount == 1)
             return insidePolygon;
         else if (intersectingCount == 1)
@@ -559,7 +559,7 @@ public class Multipolygon {
                 o.addInner(pdInner);
             }
         }
-        
+
         // Clear inner and outer polygons to reduce memory footprint
         innerPolygons.clear();
         outerPolygons.clear();

@@ -18,7 +18,7 @@ abstract public class AudioFastSlowAction extends JosmAction {
 
     /**
      * Constructs a new {@code AudioFastSlowAction}.
-     * 
+     *
      * @param name the action's text as displayed on the menu (if it is added to a menu)
      * @param iconName the filename of the icon to use
      * @param tooltip  a longer description of the action that will be displayed in the tooltip.

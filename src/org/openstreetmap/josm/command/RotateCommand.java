@@ -60,7 +60,7 @@ public class RotateCommand extends TransformNodesCommand {
 
         handleEvent(currentEN);
     }
-    
+
     /**
      * Get angle between the horizontal axis and the line formed by the pivot and give points.
      **/

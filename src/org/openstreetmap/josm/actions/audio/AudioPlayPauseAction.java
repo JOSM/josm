@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * If not playing, play the sound track from the first Audio Marker, or from the point at which it was paused.<br/>
  * If playing, pause the sound.<br/>
- * If fast forwarding or slow forwarding, resume normal speed. 
+ * If fast forwarding or slow forwarding, resume normal speed.
  * @since 547
  */
 public class AudioPlayPauseAction extends JosmAction {

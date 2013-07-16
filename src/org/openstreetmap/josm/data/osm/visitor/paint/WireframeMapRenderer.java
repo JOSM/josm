@@ -95,7 +95,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
 
     /**
      * Creates an wireframe render
-     * 
+     *
      * @param g the graphics context. Must not be null.
      * @param nc the map viewport. Must not be null.
      * @param isInactiveMode if true, the paint visitor shall render OSM objects such that they
@@ -157,7 +157,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         BBox bbox = new BBox(bounds);
         this.ds = data;
         getSettings(virtual);
-        
+
         for (final Relation rel : data.searchRelations(bbox)) {
             if (rel.isDrawable() && !ds.isSelected(rel) && !rel.isDisabledAndHidden()) {
                 rel.accept(this);
@@ -180,7 +180,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
             }
         }
         displaySegments();
-        
+
         // Display highlighted ways after the other ones (fix #8276)
         for (List<Way> specialWays : Arrays.asList(new List[]{untaggedWays, highlightedWays})) {
             for (final Way way : specialWays){
@@ -189,7 +189,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
             specialWays.clear();
             displaySegments();
         }
-        
+
         for (final OsmPrimitive osm : data.getSelected()) {
             if (osm.isDrawable()) {
                 osm.accept(this);
@@ -273,7 +273,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
             drawNode(n, color, size, fill);
         }
     }
-    
+
     private boolean isNodeTagged(Node n) {
         return n.isTagged() || n.isAnnotated();
     }

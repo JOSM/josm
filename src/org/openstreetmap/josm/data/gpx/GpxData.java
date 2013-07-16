@@ -77,7 +77,7 @@ public class GpxData extends WithAttributes {
      * calculates the bounding box of available data and returns it.
      * The bounds are not stored internally, but recalculated every time
      * this function is called.
-     * 
+     *
      * FIXME might perhaps use visitor pattern?
      */
     public Bounds recalculateBounds() {
@@ -123,7 +123,7 @@ public class GpxData extends WithAttributes {
 
         return result;
     }
-    
+
      /**
      * Makes a WayPoint at the projection of point P onto the track providing P is less than
      * tolerance away from the track

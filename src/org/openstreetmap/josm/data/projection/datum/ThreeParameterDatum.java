@@ -8,7 +8,7 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
  * Datum provides 3 dimensional offset and ellipsoid conversion.
  */
 public class ThreeParameterDatum extends AbstractDatum {
-    
+
     protected double dx, dy, dz;
 
     public ThreeParameterDatum(String name, String proj4Id, Ellipsoid ellps, double dx, double dy, double dz) {
@@ -35,5 +35,5 @@ public class ThreeParameterDatum extends AbstractDatum {
         xyz[2] -= dz;
         return this.ellps.cart2LatLon(xyz);
     }
-    
+
 }

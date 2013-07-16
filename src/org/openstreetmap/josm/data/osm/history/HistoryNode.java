@@ -14,13 +14,13 @@ import org.openstreetmap.josm.data.osm.User;
  *
  */
 public class HistoryNode extends HistoryOsmPrimitive {
-    
+
     /** the coordinates. May be null for deleted nodes */
     private LatLon coords;
 
     /**
      * Constructs a new {@code HistoryNode}.
-     * 
+     *
      * @param id the id (> 0 required)
      * @param version the version (> 0 required)
      * @param visible whether the node is still visible
@@ -37,7 +37,7 @@ public class HistoryNode extends HistoryOsmPrimitive {
     /**
      * Constructs a new {@code HistoryNode} with a configurable checking of historic parameters.
      * This is needed to build virtual HistoryNodes for modified nodes, which do not have a timestamp and a changeset id.
-     * 
+     *
      * @param id the id (> 0 required)
      * @param version the version (> 0 required)
      * @param visible whether the node is still visible

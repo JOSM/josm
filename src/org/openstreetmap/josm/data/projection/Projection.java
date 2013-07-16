@@ -49,7 +49,7 @@ public interface Projection {
      * This should be a unique identifier.
      * If projection supports parameters, return a different code
      * for each set of parameters.
-     * 
+     *
      * The EPSG code can be used (if defined for the projection).
      *
      * @return the projection identifier

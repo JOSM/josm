@@ -18,11 +18,11 @@ public interface IWithAttributes {
     Object get(String key);
 
     /**
-     * Returns the String value to which the specified key is mapped, 
+     * Returns the String value to which the specified key is mapped,
      * or {@code null} if this map contains no String mapping for the key.
-     *  
+     *
      * @param key the key whose associated value is to be returned
-     * @return the String value to which the specified key is mapped, 
+     * @return the String value to which the specified key is mapped,
      *         or {@code null} if this map contains no String mapping for the key
      */
     String getString(String key);

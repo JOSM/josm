@@ -114,15 +114,15 @@ public class MoveAction extends JosmAction {
         Command c = !Main.main.undoRedo.commands.isEmpty()
         ? Main.main.undoRedo.commands.getLast() : null;
 
-        getCurrentDataSet().beginUpdate(); 
+        getCurrentDataSet().beginUpdate();
         if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand)c).getParticipatingPrimitives())) {
             ((MoveCommand)c).moveAgain(distx, disty);
         } else {
             Main.main.undoRedo.add(
                     c = new MoveCommand(selection, distx, disty));
         }
-        getCurrentDataSet().endUpdate(); 
-        
+        getCurrentDataSet().endUpdate();
+
         for (Node n : affectedNodes) {
             if (n.getCoor().isOutSideWorld()) {
                 // Revert move

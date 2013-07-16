@@ -29,7 +29,7 @@ public class WireframeToggleAction extends JosmAction {
                 Shortcut.registerShortcut("menu:view:wireframe", tr("Toggle Wireframe view"),KeyEvent.VK_W, Shortcut.CTRL),
                 false /* register toolbar */
         );
-        putValue("toolbar", "wireframe"); 
+        putValue("toolbar", "wireframe");
         Main.toolbar.register(this);
         selected = MapRendererFactory.getInstance().isWireframeMapRendererActive();
         notifySelectedState();
@@ -59,18 +59,18 @@ public class WireframeToggleAction extends JosmAction {
     protected void toggleSelectedState() {
         selected = !selected;
         //Main.pref.put("draw.wireframe", selected);
-         if (selected){ 
-         MapRendererFactory.getInstance().activate(WireframeMapRenderer.class); 
-            } else { 
-                MapRendererFactory.getInstance().activate(StyledMapRenderer.class); 
-            } 
-        
+         if (selected){
+         MapRendererFactory.getInstance().activate(WireframeMapRenderer.class);
+            } else {
+                MapRendererFactory.getInstance().activate(StyledMapRenderer.class);
+            }
+
         notifySelectedState();
         if (Main.isDisplayingMapView()) {
             Main.map.mapView.repaint();
         }
     }
-    
+
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState();
     }

@@ -286,7 +286,7 @@ public class OpenFileAction extends DiskAccessAction {
                         }
                     }
                 }
-                
+
                 for (File urlFile: urlFiles) {
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader(urlFile));

@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 547
  */
 public class AudioFwdAction extends JosmAction {
-    
+
     /**
      * Constructs a new {@code AudioFwdAction}.
      */

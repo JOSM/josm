@@ -10,13 +10,13 @@ import org.openstreetmap.josm.data.osm.IWay;
  * @since 4100
  */
 public interface PrimitiveVisitor {
-    
+
     /**
      * Visiting call for points.
      * @param n The node to inspect.
      */
     void visit(INode n);
-    
+
     /**
      * Visiting call for lines.
      * @param w The way to inspect.

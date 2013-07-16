@@ -44,7 +44,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                     Pattern.CASE_INSENSITIVE);
         }
     }
-    
+
     private static final Collection<Pattern> ignoredKeys = new ArrayList<Pattern>();
     static {
         for (String s : OsmPrimitive.getUninterestingKeys()) {
@@ -57,7 +57,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             ignoredKeys.add(getPatternFor(s, true));
         }
     }
-    
+
     private static class StringSwitcher {
 
         private final String a;
@@ -92,7 +92,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
      * @since 5787
      */
     public static class TagSwitcher {
-        
+
         /**
          * Reverses a given tag.
          * @param tag The tag to reverse
@@ -101,7 +101,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         public static final Tag apply(final Tag tag) {
             return apply(tag.getKey(), tag.getValue());
         }
-        
+
         /**
          * Reverses a given tag (key=value).
          * @param key The tag key
@@ -127,7 +127,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             } else if (key.endsWith(":forward") || key.endsWith(":backward")) {
                 // Change key but not left/right value (fix #8518)
                 newKey = FORWARD_BACKWARD.apply(key);
-                
+
             } else if (!ignoreKeyForCorrection(key)) {
                 for (StringSwitcher prefixSuffixSwitcher : stringSwitchers) {
                     newKey = prefixSuffixSwitcher.apply(key);
@@ -143,7 +143,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             return new Tag(newKey, newValue);
         }
     }
-    
+
     private static final StringSwitcher FORWARD_BACKWARD = new StringSwitcher("forward", "backward");
     private static final StringSwitcher UP_DOWN = new StringSwitcher("up", "down");
 

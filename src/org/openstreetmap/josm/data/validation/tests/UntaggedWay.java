@@ -51,7 +51,7 @@ public class UntaggedWay extends Test
         NAMED_WAYS.add( "residential" );
         NAMED_WAYS.add( "pedestrian" ); ;
     }
-    
+
     /** Whitelist of roles allowed to reference an untagged way */
     public static final Set<String> WHITELIST = new HashSet<String>();
     static {

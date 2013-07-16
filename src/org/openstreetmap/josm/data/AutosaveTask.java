@@ -274,7 +274,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     private final File getPidFile(File osmFile) {
         return new File(autosaveDir, osmFile.getName().replaceFirst("[.][^.]+$", ".pid"));
     }
-    
+
     /**
      * Replies the list of .osm files still present in autosave dir, that are not currently managed by another instance of JOSM.
      * These files are hence unsaved layers from an old instance of JOSM that crashed and may be recovered by this instance.
@@ -314,7 +314,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         }
         return result;
     }
-    
+
     private boolean jvmPerfDataFileExists(final String jvmId) {
         File jvmDir = new File(System.getProperty("java.io.tmpdir") + File.separator + "hsperfdata_" + System.getProperty("user.name"));
         if (jvmDir.exists() && jvmDir.canRead()) {
@@ -353,7 +353,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     private void moveToDeletedLayersFolder(File f) {
         File backupFile = new File(deletedLayersDir, f.getName());
         File pidFile = getPidFile(f);
-        
+
         if (backupFile.exists()) {
             deletedLayers.remove(backupFile);
             if (!backupFile.delete()) {

@@ -38,7 +38,7 @@ public class MergeSelectionAction extends AbstractMergeAction {
         Layer targetLayer = askTargetLayer(targetLayers);
         if (targetLayer == null)
             return;
-        if (getEditLayer().isUploadDiscouraged() && targetLayer instanceof OsmDataLayer && !((OsmDataLayer)targetLayer).isUploadDiscouraged() 
+        if (getEditLayer().isUploadDiscouraged() && targetLayer instanceof OsmDataLayer && !((OsmDataLayer)targetLayer).isUploadDiscouraged()
                 && getEditLayer().data.getAllSelected().size() > 1) {
             if (warnMergingUploadDiscouragedObjects(targetLayer)) {
                 return;
@@ -67,7 +67,7 @@ public class MergeSelectionAction extends AbstractMergeAction {
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         setEnabled(selection != null && !selection.isEmpty());
     }
-    
+
     /**
      * returns true if the user wants to cancel, false if they want to continue
      */

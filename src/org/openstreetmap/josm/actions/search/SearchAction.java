@@ -89,7 +89,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             }
         }
     }
-    
+
     public static Collection<SearchSetting> getSearchHistory() {
         return searchHistory;
     }

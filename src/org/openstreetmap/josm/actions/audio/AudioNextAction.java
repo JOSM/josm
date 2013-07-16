@@ -13,7 +13,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Play the sound track from the Audio Marker after the one most recently played.<br/>
- * Play from the first such Marker if none has been played, or repeat the last marker if at the end. 
+ * Play from the first such Marker if none has been played, or repeat the last marker if at the end.
  * @since 547
  */
 public class AudioNextAction extends JosmAction {

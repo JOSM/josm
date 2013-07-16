@@ -24,7 +24,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
 
     /**
      * Constructs a new {@code HistoryWay}.
-     * 
+     *
      * @param id the id (> 0 required)
      * @param version the version (> 0 required)
      * @param visible whether the node is still visible
@@ -40,7 +40,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
     /**
      * Constructs a new {@code HistoryWay} with a configurable checking of historic parameters.
      * This is needed to build virtual HistoryWays for modified ways, which do not have a timestamp and a changeset id.
-     * 
+     *
      * @param id the id (> 0 required)
      * @param version the version (> 0 required)
      * @param visible whether the node is still visible
@@ -57,7 +57,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
 
     /**
      * Constructs a new {@code HistoryWay} with a given list of node ids.
-     * 
+     *
      * @param id the id (> 0 required)
      * @param version the version (> 0 required)
      * @param visible whether the node is still visible

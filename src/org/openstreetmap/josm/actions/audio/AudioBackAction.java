@@ -15,7 +15,7 @@ import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * Jump the audio backward 10 seconds and start playing if paused. 
+ * Jump the audio backward 10 seconds and start playing if paused.
  * @since 547
  */
 public class AudioBackAction extends JosmAction {

@@ -72,7 +72,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
                 break;
             }
         }
-        
+
         FileFilter joz = new ExtensionFileFilter("joz", "joz", tr("Session file (archive) (*.joz)"));
         FileFilter jos = new ExtensionFileFilter("jos", "jos", tr("Session file (*.jos)"));
 
