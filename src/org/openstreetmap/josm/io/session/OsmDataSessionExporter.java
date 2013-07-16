@@ -67,7 +67,7 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
     private class LayerSaveAction extends AbstractAction {
         public LayerSaveAction() {
             putValue(SMALL_ICON, new ImageProvider("save").setWidth(16).get());
-            putValue(SHORT_DESCRIPTION, layer.requiresSaveToFile() ? 
+            putValue(SHORT_DESCRIPTION, layer.requiresSaveToFile() ?
                     tr("Layer contains unsaved data - save to file.") :
                     tr("Layer does not contain unsaved data."));
             updateEnabledState();

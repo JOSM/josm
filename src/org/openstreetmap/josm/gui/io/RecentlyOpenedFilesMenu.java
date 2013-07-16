@@ -48,7 +48,7 @@ public class RecentlyOpenedFilesMenu extends JMenu {
             }
         });
     }
-    
+
     private void rebuild() {
         removeAll();
         Collection<String> fileHistory = Main.pref.getCollection("file-open.history");

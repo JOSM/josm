@@ -18,11 +18,11 @@ public class OsmApiInitializationException extends OsmTransferException {
     }
 
     /**
-     * Constructs an {@code OsmApiInitializationException} with the specified cause and a detail message of 
-     * <tt>(cause==null ? null : cause.toString())</tt> 
+     * Constructs an {@code OsmApiInitializationException} with the specified cause and a detail message of
+     * <tt>(cause==null ? null : cause.toString())</tt>
      * (which typically contains the class and detail message of <tt>cause</tt>).
      *
-     * @param cause the cause (which is saved for later retrieval by the {@link #getCause} method). 
+     * @param cause the cause (which is saved for later retrieval by the {@link #getCause} method).
      *              A <tt>null</tt> value is permitted, and indicates that the cause is nonexistent or unknown.
      */
     public OsmApiInitializationException(Throwable cause) {
@@ -32,7 +32,7 @@ public class OsmApiInitializationException extends OsmTransferException {
     /**
      * Constructs an {@code OsmApiInitializationException} with the specified detail message and cause.
      *
-     * <p> Note that the detail message associated with {@code cause} is <i>not</i> automatically incorporated 
+     * <p> Note that the detail message associated with {@code cause} is <i>not</i> automatically incorporated
      * into this exception's detail message.
      *
      * @param message The detail message (which is saved for later retrieval by the {@link #getMessage} method)

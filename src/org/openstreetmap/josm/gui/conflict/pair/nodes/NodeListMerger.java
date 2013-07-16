@@ -59,7 +59,7 @@ public class NodeListMerger extends ListMerger<Node> implements IConflictResolve
         myEntriesTable.setLayer(findLayerFor(myWay));
         theirEntriesTable.setLayer(findLayerFor(theirWay));
     }
-    
+
     public void deletePrimitive(boolean deleted) {
         if (deleted) {
             model.setFrozen(true);

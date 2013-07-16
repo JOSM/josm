@@ -27,7 +27,7 @@ public class UrlLabel extends JLabel implements MouseListener {
     public UrlLabel(String url) {
         this (url, url, 0);
     }
-    
+
     public UrlLabel(String url, int fontPlus) {
         this (url, url, fontPlus);
     }
@@ -35,7 +35,7 @@ public class UrlLabel extends JLabel implements MouseListener {
     public UrlLabel(String url, String description) {
         this (url, url, 0);
     }
-    
+
     public UrlLabel(String url, String description, int fontPlus) {
         this();
         setUrl(url);

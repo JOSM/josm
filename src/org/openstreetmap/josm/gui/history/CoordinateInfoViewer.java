@@ -258,7 +258,7 @@ public class CoordinateInfoViewer extends JPanel {
 
             LatLon coord = node.getCoords();
             LatLon oppositeCoord = oppositeNode.getCoords();
-            
+
             // display the coordinates
             //
             lblLat.setText(coord != null ? coord.latToString(CoordinateFormat.DECIMAL_DEGREES) : tr("(none)"));
@@ -266,13 +266,13 @@ public class CoordinateInfoViewer extends JPanel {
 
             // update background color to reflect differences in the coordinates
             //
-            if (coord == oppositeCoord || 
+            if (coord == oppositeCoord ||
                     (coord != null && oppositeCoord != null && coord.lat() == oppositeCoord.lat())) {
                 lblLat.setBackground(Color.WHITE);
             } else {
                 lblLat.setBackground(BGCOLOR_DIFFERENCE);
             }
-            if (coord == oppositeCoord || 
+            if (coord == oppositeCoord ||
                     (coord != null && oppositeCoord != null && coord.lon() == oppositeCoord.lon())) {
                 lblLon.setBackground(Color.WHITE);
             } else {
@@ -284,11 +284,11 @@ public class CoordinateInfoViewer extends JPanel {
             refresh();
         }
     }
-    
+
     private static class DistanceViewer extends LatLonViewer {
 
         private JLabel lblDistance;
-        
+
         public DistanceViewer(HistoryBrowserModel model) {
             super(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
         }
@@ -328,7 +328,7 @@ public class CoordinateInfoViewer extends JPanel {
 
             LatLon coord = node.getCoords();
             LatLon oppositeCoord = oppositeNode.getCoords();
-            
+
             // update distance
             //
             if (coord != null && oppositeCoord != null) {

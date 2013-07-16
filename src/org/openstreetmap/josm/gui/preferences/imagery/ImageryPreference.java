@@ -87,7 +87,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
     private void addSettingsSection(final JPanel p, String name, JPanel section) {
         addSettingsSection(p, name, section, GBC.eol());
     }
-    
+
     private void addSettingsSection(final JPanel p, String name, JPanel section, GBC gbc) {
         final JLabel lbl = new JLabel(name);
         lbl.setFont(lbl.getFont().deriveFont(Font.BOLD));
@@ -435,10 +435,10 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
                 } else {
                     throw new IllegalStateException("Type " + type + " not supported");
                 }
-                
+
                 final AddImageryDialog addDialog = new AddImageryDialog(gui, p);
                 addDialog.showDialog();
-                
+
                 if (addDialog.getValue() == 1) {
                     try {
                         activeModel.addRow(p.getImageryInfo());
@@ -454,7 +454,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
                 }
             }
         }
-        
+
         private class RemoveEntryAction extends AbstractAction implements ListSelectionListener {
 
             public RemoveEntryAction() {

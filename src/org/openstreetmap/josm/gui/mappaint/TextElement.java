@@ -35,7 +35,7 @@ public class TextElement implements StyleKeys {
 
     /**
      * Creates a new text element
-     * 
+     *
      * @param strategy the strategy indicating how the text is composed for a specific {@link OsmPrimitive} to be rendered.
      * If null, no label is rendered.
      * @param font the font to be used. Must not be null.
@@ -59,7 +59,7 @@ public class TextElement implements StyleKeys {
 
     /**
      * Copy constructor
-     * 
+     *
      * @param other the other element.
      */
     public TextElement(TextElement other) {
@@ -75,7 +75,7 @@ public class TextElement implements StyleKeys {
     /**
      * Derives a suitable label composition strategy from the style properties in
      * {@code c}.
-     * 
+     *
      * @param c the style properties
      * @return the label composition strategy
      */
@@ -108,7 +108,7 @@ public class TextElement implements StyleKeys {
     /**
      * Builds a text element from style properties in {@code c} and the
      * default text color {@code defaultTextColor}
-     * 
+     *
      * @param c the style properties
      * @param defaultTextColor the default text color. Must not be null.
      * @param defaultAnnotate true, if a text label shall be rendered by default, even if the style sheet
@@ -160,7 +160,7 @@ public class TextElement implements StyleKeys {
 
     /**
      * Replies the label to be rendered for the primitive {@code osm}.
-     * 
+     *
      * @param osm the OSM object
      * @return the label, or null, if {@code osm} is null or if no label can be
      * derived for {@code osm}

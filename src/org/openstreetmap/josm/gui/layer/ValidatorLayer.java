@@ -63,7 +63,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
         DefaultMutableTreeNode root = Main.map.validatorDialog.tree.getRoot();
         if (root == null || root.getChildCount() == 0)
             return;
-        
+
         PaintVisitor paintVisitor = new PaintVisitor(g, mv);
 
         DefaultMutableTreeNode severity = (DefaultMutableTreeNode) root.getLastChild();
@@ -79,7 +79,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
             // Severities in inverse order
             severity = severity.getPreviousSibling();
         }
-        
+
         paintVisitor.clearPaintedObjects();
     }
 

@@ -24,7 +24,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
     private static final Hemisphere DEFAULT_HEMISPHERE = Hemisphere.North;
 
     private Hemisphere hemisphere;
-    
+
     private final static List<String> cbEntries = new ArrayList<String>();
     static {
         for (int i = 1; i <= 60; i++) {

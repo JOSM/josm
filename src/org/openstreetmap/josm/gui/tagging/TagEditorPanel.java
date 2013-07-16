@@ -63,7 +63,7 @@ public class TagEditorPanel extends JPanel {
     public void setNextFocusComponent(Component nextFocusComponent) {
         tagTable.setNextFocusComponent(nextFocusComponent);
     }
-    
+
     /**
      * builds the panel with the button row
      *
@@ -122,7 +122,7 @@ public class TagEditorPanel extends JPanel {
                 }
             });
         }
-        
+
         addFocusListener(new FocusAdapter() {
             @Override public void focusGained(FocusEvent e) {
                 tagTable.requestFocusInCell(0, 0);

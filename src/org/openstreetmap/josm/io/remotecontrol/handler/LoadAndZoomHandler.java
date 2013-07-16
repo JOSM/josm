@@ -37,7 +37,7 @@ public class LoadAndZoomHandler extends RequestHandler
      * The remote control command name used to load data and zoom.
      */
     public static final String command = "load_and_zoom";
-    
+
     /**
      * The remote control command name used to zoom.
      */

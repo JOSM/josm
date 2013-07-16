@@ -5,7 +5,7 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.mappaint.Range;
 
 public class IconPrototype extends Prototype {
-    
+
     public IconReference icon;
     public Boolean annotate;
 

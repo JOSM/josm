@@ -208,7 +208,7 @@ public abstract class OsmServerReader extends OsmConnection {
     public void setDoAuthenticate(boolean doAuthenticate) {
         this.doAuthenticate = doAuthenticate;
     }
-    
+
     /**
      * Determines if the GPX data has been parsed properly.
      * @return true if the GPX data has been parsed properly, false otherwise

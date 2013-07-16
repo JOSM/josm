@@ -19,7 +19,7 @@ public interface ProjectionChoice {
      * Get a unique id for the projection choice.
      *
      * Will be used to save the user selection to the preference file.
-     * 
+     *
      * @return the string identifier
      */
     String getId();
@@ -66,7 +66,7 @@ public interface ProjectionChoice {
 
     /**
      * Get Preferences from projection code.
-     * 
+     *
      * @return null when code is not part of this projection choice.
      * An empty Collection as return value indicates, that the code is supported,
      * but no preferences are required to set it up.
@@ -75,7 +75,7 @@ public interface ProjectionChoice {
 
     /**
      * Short name of the projection choice as shown in the GUI (combo box).
-     * 
+     *
      * @return the name
      */
     String toString();

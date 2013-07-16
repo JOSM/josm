@@ -46,5 +46,5 @@ public enum TaggingPresetType {
         }
         return null;
     }
-    
+
 }

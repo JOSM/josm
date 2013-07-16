@@ -146,12 +146,12 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         public static ActionDefinition getSeparator() {
             return new ActionDefinition(null);
         }
-        
+
         public boolean hasParameters() {
             if (!(getAction() instanceof ParameterizedAction)) return false;
             for (Object o: parameters.values()) {
                 if (o!=null) return true;
-            } 
+            }
             return false;
         }
     }
@@ -411,7 +411,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                                 Main.toolbar.refreshToolbarControl();
                             }
                 });
-            
+
         JMenuItem configure = new JMenuItem(new AbstractAction(tr("Configure toolbar")) {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -429,7 +429,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     p.selectPreferencesTabByName("shortcuts");
                     p.setVisible(true);
                 // refresh toolbar to try using changed shortcuts without restart
-                    Main.toolbar.refreshToolbarControl(); 
+                    Main.toolbar.refreshToolbarControl();
                 }
             });
 
@@ -484,7 +484,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     public class Settings extends DefaultTabPreferenceSetting {
 
         private final class Move implements ActionListener {
-            @Override 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("<") && actionsTree.getSelectionCount() > 0) {
 
@@ -1031,7 +1031,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             } else {
                 final JButton b = addButtonAndShortcut(action);
                 buttonActions.put(b, action);
-                
+
                 Icon i = action.getDisplayIcon();
                 if (i != null) {
                     b.setIcon(i);
@@ -1054,11 +1054,11 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         control.setFocusTraversalKeysEnabled(!unregisterTab);
         control.setVisible(control.getComponentCount() != 0);
     }
-    
+
     private JButton addButtonAndShortcut(ActionDefinition action) {
         Action act = action.getParametrizedAction();
         JButton b = control.add(act);
-        
+
         Shortcut sc = null;
         if (action.getAction() instanceof JosmAction) {
             sc = ((JosmAction) action.getAction()).getShortcut();
@@ -1071,7 +1071,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         if (action.hasParameters()) {
             paramCode =  action.parameters.hashCode();
         }
-        
+
         String tt = action.getDisplayTooltip();
         if (tt==null) {
             tt="";
@@ -1090,7 +1090,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
             Main.unregisterShortcut(sc);
             Main.registerActionShortcut(act, sc);
-            
+
             // add shortcut info to the tooltip if needed
             if (sc.getAssignedUser()) {
                 if (tt.startsWith("<html>") && tt.endsWith("</html>")) {
@@ -1099,7 +1099,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 tt = Main.platform.makeTooltip(tt, sc);
             }
         }
-        
+
         if (!tt.isEmpty()) {
             b.setToolTipText(tt);
         }

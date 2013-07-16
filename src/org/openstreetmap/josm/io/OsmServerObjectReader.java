@@ -22,7 +22,7 @@ import org.xml.sax.SAXException;
  *
  * It can either download the object including or not including its immediate children.
  * The former case is called a "full download".
- * 
+ *
  * It can also download a specific version of the object (however, "full" download is not possible
  * in that case).
  *

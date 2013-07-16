@@ -150,7 +150,7 @@ public class PluginHandler {
     }
 
     final public static String [] UNMAINTAINED_PLUGINS = new String[] {"gpsbabelgui", "Intersect_way"};
-    
+
     /**
      * Default time-based update interval, in days (pluginmanager.time-based-update.interval)
      */
@@ -424,7 +424,7 @@ public class PluginHandler {
             alertJOSMUpdateRequired(parent, plugin.name, plugin.localmainversion);
             return false;
         }
-        
+
         // Add all plugins already loaded (to include early plugins when checking late ones)
         Collection<PluginInformation> allPlugins = new HashSet<PluginInformation>(plugins);
         for (PluginProxy proxy : pluginList) {
@@ -448,7 +448,7 @@ public class PluginHandler {
     public static boolean checkRequiredPluginsPreconditions(Component parent, Collection<PluginInformation> plugins, PluginInformation plugin, boolean local) {
 
         String requires = local ? plugin.localrequires : plugin.requires;
-        
+
         // make sure the dependencies to other plugins are not broken
         //
         if (requires != null) {
@@ -482,13 +482,13 @@ public class PluginHandler {
         // iterate all plugins and collect all libraries of all plugins:
         List<URL> allPluginLibraries = new LinkedList<URL>();
         File pluginDir = Main.pref.getPluginsDirectory();
-        
+
         // Add all plugins already loaded (to include early plugins in the classloader, allowing late plugins to rely on early ones)
         Collection<PluginInformation> allPlugins = new HashSet<PluginInformation>(plugins);
         for (PluginProxy proxy : pluginList) {
             allPlugins.add(proxy.getPluginInformation());
         }
-        
+
         for (PluginInformation info : allPlugins) {
             if (info.libraries == null) {
                 continue;
@@ -759,7 +759,7 @@ public class PluginHandler {
                 HelpUtil.ht("/Plugin/Loading#FailedPluginUpdated")
         );
     }
-    
+
     private static Set<PluginInformation> findRequiredPluginsToDownload(
             Collection<PluginInformation> pluginsToUpdate, List<PluginInformation> allPlugins, Set<PluginInformation> pluginsToDownload) {
         Set<PluginInformation> result = new HashSet<PluginInformation>();
@@ -817,7 +817,7 @@ public class PluginHandler {
             );
             Future<?> future = service.submit(task1);
             List<PluginInformation> allPlugins = null;
-            
+
             try {
                 future.get();
                 allPlugins = task1.getAvailablePlugins();
@@ -840,17 +840,17 @@ public class PluginHandler {
                     pluginsToUpdate.add(pi);
                 }
             }
-            
+
             if (!pluginsToUpdate.isEmpty()) {
-                
+
                 Set<PluginInformation> pluginsToDownload = new HashSet<PluginInformation>(pluginsToUpdate);
-                
+
                 if (allPlugins != null) {
                     // Updated plugins may need additional plugin dependencies currently not installed
                     //
                     Set<PluginInformation> additionalPlugins = findRequiredPluginsToDownload(pluginsToUpdate, allPlugins, pluginsToDownload);
                     pluginsToDownload.addAll(additionalPlugins);
-                    
+
                     // Iterate on required plugins, if they need themselves another plugins (i.e A needs B, but B needs C)
                     while (!additionalPlugins.isEmpty()) {
                         // Install the additional plugins to load them later
@@ -880,11 +880,11 @@ public class PluginHandler {
                     alertFailedPluginUpdate(parent, pluginsToUpdate);
                     return plugins;
                 }
-                
+
                 // Update Plugin info for downloaded plugins
                 //
                 refreshLocalUpdatedPluginInfo(task2.getDownloadedPlugins());
-                
+
                 // notify user if downloading a locally installed plugin failed
                 //
                 if (! task2.getFailedPlugins().isEmpty()) {
@@ -1004,7 +1004,7 @@ public class PluginHandler {
         }
         return;
     }
-    
+
     /**
      * Determines if the specified file is a valid and accessible JAR file.
      * @param jar The fil to check
@@ -1022,7 +1022,7 @@ public class PluginHandler {
         }
         return false;
     }
-    
+
     /**
      * Replies the updated jar file for the given plugin name.
      * @param name The plugin name to find.
@@ -1042,7 +1042,7 @@ public class PluginHandler {
         }
         return downloadedPluginFile;
     }
-    
+
     /**
      * Refreshes the given PluginInformation objects with new contents read from their corresponding jar file.
      * @param updatedPlugins The PluginInformation objects to update.

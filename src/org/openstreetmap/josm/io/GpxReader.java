@@ -33,7 +33,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Read a gpx file.
- * 
+ *
  * Bounds are not read, as we caluclate them. @see GpxData.recalculateBounds()
  * Both GPX version 1.0 and 1.1 are supported.
  *

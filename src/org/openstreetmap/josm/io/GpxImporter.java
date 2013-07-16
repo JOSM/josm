@@ -31,9 +31,9 @@ public class GpxImporter extends FileImporter {
      */
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
             "gpx,gpx.gz", "gpx", tr("GPX Files") + " (*.gpx *.gpx.gz)");
-    
+
     /**
-     * Utility class containing imported GPX and marker layers, and a task to run after they are added to MapView. 
+     * Utility class containing imported GPX and marker layers, and a task to run after they are added to MapView.
      */
     public static class GpxImporterData {
         /**
@@ -84,7 +84,7 @@ public class GpxImporter extends FileImporter {
             is = new FileInputStream(file);
         }
         String fileName = file.getName();
-        
+
         try {
             GpxReader r = new GpxReader(is);
             boolean parsedProperly = r.parse(true);
@@ -95,7 +95,7 @@ public class GpxImporter extends FileImporter {
             throw new IOException(tr("Parsing data for layer ''{0}'' failed", fileName));
         }
     }
-    
+
     /**
      * Adds the specified GPX and marker layers to Map.main
      * @param data The layers to add
@@ -125,7 +125,7 @@ public class GpxImporter extends FileImporter {
      * @return the new GPX and marker layers corresponding to the specified GPX data, to be used with {@link #addLayers}
      * @see #addLayers
      */
-    public static GpxImporterData loadLayers(final GpxData data, final boolean parsedProperly, 
+    public static GpxImporterData loadLayers(final GpxData data, final boolean parsedProperly,
             final String gpxLayerName, String markerLayerName) {
         GpxLayer gpxLayer = null;
         MarkerLayer markerLayer = null;

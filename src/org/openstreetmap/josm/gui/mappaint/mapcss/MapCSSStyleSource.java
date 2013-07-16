@@ -46,7 +46,7 @@ public class MapCSSStyleSource extends StyleSource {
     /**
      * <p>Creates a new style source from the MapCSS styles supplied in
      * {@code css}</p>
-     * 
+     *
      * @param css the MapCSS style declaration. Must not be null.
      * @throws IllegalArgumentException thrown if {@code css} is null
      */

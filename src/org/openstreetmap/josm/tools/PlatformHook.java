@@ -91,7 +91,7 @@ public interface PlatformHook {
     public boolean canFullscreen();
 
     public boolean rename(File from, File to);
-    
+
     /**
      * Returns a detailed OS description (at least family + version).
      * @return A detailed OS description.

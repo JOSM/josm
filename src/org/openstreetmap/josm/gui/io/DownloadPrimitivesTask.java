@@ -94,7 +94,7 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
             OsmPrimitive osm = layer.data.getPrimitiveById(id);
             if (osm == null) {
                 switch (id.getType()) {
-                    case NODE: 
+                    case NODE:
                         osm = new Node(id.getUniqueId());
                         break;
                     case WAY:
@@ -127,7 +127,7 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
             }
             DataSetMerger merger = new DataSetMerger(ds, theirDataSet);
             merger.merge();
-            
+
             // if incomplete relation members exist, download them too
             for (Relation r : ds.getRelations()) {
                 if (canceled) return;
@@ -164,13 +164,13 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
                     merger.merge();
                 }
             }
-            
+
         } catch(Exception e) {
             if (canceled) return;
             lastException = e;
         }
     }
-    
+
     /**
      * replies the set of ids of all primitives for which a fetch request to the
      * server was submitted but which are not available from the server (the server

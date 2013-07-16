@@ -84,7 +84,7 @@ public class ChangesetDialog extends ToggleDialog{
     private ShowChangesetInfoAction showChangesetInfoAction;
     private CloseOpenChangesetsAction closeChangesetAction;
     private LaunchChangesetManagerAction launchChangesetManagerAction;
-    
+
     private ChangesetDialogPopup popupMenu;
 
     protected void buildChangesetsLists() {
@@ -203,13 +203,13 @@ public class ChangesetDialog extends ToggleDialog{
         // -- launch changeset manager action
         launchChangesetManagerAction = new LaunchChangesetManagerAction();
         cbInSelectionOnly.addItemListener(launchChangesetManagerAction);
-        
+
         popupMenu = new ChangesetDialogPopup(lstInActiveDataLayer, lstInSelection);
 
         PopupMenuLauncher popupMenuLauncher = new PopupMenuLauncher(popupMenu);
         lstInSelection.addMouseListener(popupMenuLauncher);
         lstInActiveDataLayer.addMouseListener(popupMenuLauncher);
-        
+
         createLayout(pnl, false, Arrays.asList(new SideButton[] {
             new SideButton(selectObjectsAction, false),
             new SideButton(readChangesetAction, false),

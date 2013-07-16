@@ -67,7 +67,7 @@ public class GeoImageSessionExporter implements SessionLayerExporter {
         layerElem.setAttribute("version", "0.1");
 
         for (ImageEntry entry : layer.getImages()) {
-            
+
             Element imgElem = support.createElement("geoimage");
 
             if (entry.getFile() == null) {

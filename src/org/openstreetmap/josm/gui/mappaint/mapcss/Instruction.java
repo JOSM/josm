@@ -37,10 +37,10 @@ abstract public class Instruction implements StyleKeys {
                 Object litValue = ((LiteralExpression) val).evaluate(null);
                 if (key.equals(TEXT)) {
                     /* Special case for declaration 'text: ...'
-                     * 
+                     *
                      * - Treat the value 'auto' as keyword.
                      * - Treat any other literal value 'litval' as as reference to tag with key 'litval'
-                     * 
+                     *
                      * - Accept function expressions as is. This allows for
                      *     tag(a_tag_name)                 value of a tag
                      *     eval("a static text")           a static text

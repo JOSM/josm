@@ -294,7 +294,7 @@ public class PluginPreferencesModel extends Observable{
         }
         return ret;
     }
-    
+
     /**
      * Replies the set of all available plugins.
      *

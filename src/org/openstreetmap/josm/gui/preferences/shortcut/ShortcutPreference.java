@@ -18,13 +18,13 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class ShortcutPreference extends DefaultTabPreferenceSetting {
 
     private String defaultFilter;
-            
+
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
             return new ShortcutPreference();
         }
     }
-    
+
     private ShortcutPreference() {
         // icon source: http://www.iconfinder.net/index.php?q=key&page=icondetails&iconid=8553&size=128&q=key&s12=on&s16=on&s22=on&s32=on&s48=on&s64=on&s128=on
         // icon licence: GPL
@@ -34,7 +34,7 @@ public class ShortcutPreference extends DefaultTabPreferenceSetting {
         // modifications: icon was cropped, then resized
         super("shortcuts", tr("Keyboard Shortcuts"), tr("Changing keyboard shortcuts manually."));
     }
-    
+
     @Override
     public void addGui(PreferenceTabbedPane gui) {
         JPanel p = gui.createPreferenceTab(this);
@@ -48,7 +48,7 @@ public class ShortcutPreference extends DefaultTabPreferenceSetting {
     public boolean ok() {
         return Shortcut.savePrefs();
     }
-    
+
     public void setDefaultFilter(String substring) {
         defaultFilter = substring;
     }

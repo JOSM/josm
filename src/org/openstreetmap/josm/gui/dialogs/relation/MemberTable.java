@@ -62,7 +62,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
      * initialize the table
      */
     protected void init() {
-        MemberRoleCellEditor ce = (MemberRoleCellEditor)getColumnModel().getColumn(0).getCellEditor();  
+        MemberRoleCellEditor ce = (MemberRoleCellEditor)getColumnModel().getColumn(0).getCellEditor();
         setRowHeight(ce.getEditor().getPreferredSize().height);
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -74,18 +74,18 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
                 KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), "selectNextColumnCell");
 
         initHighlighting();
-        
+
         // install custom navigation actions
         //
         getActionMap().put("selectNextColumnCell", new SelectNextColumnCellAction());
         getActionMap().put("selectPreviousColumnCell", new SelectPreviousColumnCellAction());
     }
-    
+
     @Override
     protected ZoomToAction buildZoomToAction() {
         return new ZoomToAction(this);
     }
-    
+
     @Override
     protected JPopupMenu buildPopupMenu() {
         JPopupMenu menu = super.buildPopupMenu();
@@ -98,7 +98,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         menu.add(new SelectNextGapAction());
         return menu;
     }
-    
+
     @Override
     public Dimension getPreferredSize(){
         Container c = getParent();
@@ -139,7 +139,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
                     });
                 }
             }};
-    
+
     private void initHighlighting() {
         highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
         if (!highlightEnabled) return;
@@ -216,7 +216,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         super.unlinkAsListener();
         MapView.removeLayerChangeListener(zoomToGap);
     }
-    
+
     public void stopHighlighting() {
         if (highlighterListener == null) return;
         if (!highlightEnabled) return;

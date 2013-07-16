@@ -190,7 +190,7 @@ public class ChangesetQueryDialog extends JDialog {
                         return;
                     }
                     break;
-    
+
                 case 2:
                     if (getChangesetQuery() == null) {
                         pnlAdvancedQueries.displayMessageIfInvalid();

@@ -125,23 +125,23 @@ public class DrawingPreference implements SubPreferenceSetting {
         panel.add(headArrow, GBC.eop().insets(40, 0, 0, 0));
         panel.add(onewayArrow, GBC.eop().insets(20,0,0,0));
         panel.add(segmentOrderNumber, GBC.eop().insets(20,0,0,0));
-        
+
         panel.add(new JLabel(tr("Select and draw mode options")),
                 GBC.eop().insets(5,10,0,0));
         panel.add(virtualNodes, GBC.eop().insets(20,0,0,0));
         panel.add(drawHelperLine, GBC.eop().insets(20, 0, 0, 0));
-        
+
         panel.add(performanceLabel, GBC.eop().insets(5,10,0,0));
         panel.add(useAntialiasing, GBC.eop().insets(20,0,0,0));
         panel.add(useWireframeAntialiasing, GBC.eop().insets(20, 0, 0, 0));
         panel.add(useHighlighting, GBC.eop().insets(20,0,0,0));
         panel.add(outlineOnly, GBC.eol().insets(20,0,0,0));
-        
+
         panel.add(new JLabel(tr("Other options")),
                 GBC.eop().insets(5,10,0,0));
         panel.add(sourceBounds, GBC.eop().insets(20,0,0,0));
         panel.add(inactive, GBC.eop().insets(20,0,0,0));
-        
+
         ExpertToggleAction.addVisibilitySwitcher(performanceLabel);
         ExpertToggleAction.addVisibilitySwitcher(useAntialiasing);
         ExpertToggleAction.addVisibilitySwitcher(useWireframeAntialiasing);

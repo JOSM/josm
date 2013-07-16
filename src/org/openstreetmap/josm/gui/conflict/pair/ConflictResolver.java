@@ -257,7 +257,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
         updateResolvedCompletely();
         selectFirstTabWithConflicts();
     }
-    
+
     public void selectFirstTabWithConflicts() {
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
             if (tabbedPane.isEnabledAt(i) && mergeIncomplete.equals(tabbedPane.getIconAt(i))) {

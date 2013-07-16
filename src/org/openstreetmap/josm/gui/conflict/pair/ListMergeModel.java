@@ -86,7 +86,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     private final List<PropertyChangeListener> listeners;
     private boolean isFrozen = false;
     private final ComparePairListModel comparePairListModel;
-    
+
     private DataSet myDataset;
     private Map<PrimitiveId, PrimitiveId> mergedMap;
 
@@ -129,7 +129,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     public OsmPrimitive getMyPrimitive(T entry) {
         return getMyPrimitiveById(entry);
     }
-    
+
     public final OsmPrimitive getMyPrimitiveById(PrimitiveId entry) {
         OsmPrimitive result = myDataset.getPrimitiveById(entry);
         if (result == null && mergedMap != null) {
@@ -335,7 +335,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
         getMergedEntries().clear();
         fireModelDataChanged();
     }
-    
+
     protected final void initPopulate(OsmPrimitive my, OsmPrimitive their, Map<PrimitiveId, PrimitiveId> mergedMap) {
         CheckParameterUtil.ensureParameterNotNull(my, "my");
         CheckParameterUtil.ensureParameterNotNull(their, "their");

@@ -379,7 +379,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
     public int getUpdateCount() {
         return updateCount;
     }
-    
+
     private void clearErrors() {
         if (errors != null) {
             DataSet ds = Main.main.getCurrentDataSet();

@@ -21,7 +21,7 @@ public class NMEAImporter extends FileImporter {
 
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
             "nmea,nme,nma,log,txt", "nmea", tr("NMEA-0183 Files") + " (*.nmea *.nme *.nma *.log *.txt)");
-    
+
     public NMEAImporter() {
         super(FILE_FILTER);
     }

@@ -39,7 +39,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * An OAuth 1.0 authorization client. 
+ * An OAuth 1.0 authorization client.
  * @since 2746
  */
 public class OsmOAuthAuthorizationClient {

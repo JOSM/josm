@@ -41,7 +41,7 @@ public class OsmHistoryReader {
     private final InputStream in;
     private final HistoryDataSet data;
 
-    // FIXME: this class has many similarities with OsmChangesetContentParser.Parser and should be merged 
+    // FIXME: this class has many similarities with OsmChangesetContentParser.Parser and should be merged
     private class Parser extends DefaultHandler {
 
         /** the current primitive to be read */

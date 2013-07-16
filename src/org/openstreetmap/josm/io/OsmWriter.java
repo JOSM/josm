@@ -70,7 +70,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     public void header() {
         header(null);
     }
-    
+
     public void header(Boolean upload) {
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
         out.print("<osm version='");
@@ -81,7 +81,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         }
         out.println("' generator='JOSM'>");
     }
-    
+
     public void footer() {
         out.println("</osm>");
     }
@@ -98,7 +98,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         Collections.sort(result, byIdComparator);
         return result;
     }
-    
+
     public void writeLayer(OsmDataLayer layer) {
         header(!layer.isUploadDiscouraged());
         writeDataSources(layer.data);
@@ -115,7 +115,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         writeWays(ds.getWays());
         writeRelations(ds.getRelations());
     }
-    
+
     /**
      * Writes the given nodes sorted by id
      * @param nodes The nodes to write
@@ -128,7 +128,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             }
         }
     }
-    
+
     /**
      * Writes the given ways sorted by id
      * @param ways The ways to write
@@ -141,7 +141,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             }
         }
     }
-    
+
     /**
      * Writes the given relations sorted by id
      * @param relations The relations to write

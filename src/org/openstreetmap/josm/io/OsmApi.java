@@ -53,22 +53,22 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  */
 public class OsmApi extends OsmConnection {
-    
-    /** 
-     * Maximum number of retries to send a request in case of HTTP 500 errors or timeouts 
+
+    /**
+     * Maximum number of retries to send a request in case of HTTP 500 errors or timeouts
      */
     static public final int DEFAULT_MAX_NUM_RETRIES = 5;
 
     /**
-     * Maximum number of concurrent download threads, imposed by 
+     * Maximum number of concurrent download threads, imposed by
      * <a href="http://wiki.openstreetmap.org/wiki/API_usage_policy#Technical_Usage_Requirements">
      * OSM API usage policy.</a>
      * @since 5386
      */
     static public final int MAX_DOWNLOAD_THREADS = 2;
-    
+
     /**
-     * Default URL of the standard OSM API. 
+     * Default URL of the standard OSM API.
      * @since 5422
      */
     static public final String DEFAULT_API_URL = "http://api.openstreetmap.org/api";
@@ -92,7 +92,7 @@ public class OsmApi extends OsmConnection {
         }
         return api;
     }
-    
+
     /**
      * Replies the {@link OsmApi} for the URL given by the preference <code>osm-server.url</code>
      *
@@ -186,7 +186,7 @@ public class OsmApi extends OsmConnection {
             this.monitor = monitor;
             this.fastFail = fastFail;
         }
-        
+
         @Override
         protected byte[] updateData() throws OsmTransferException {
             return sendRequest("GET", "capabilities", null, monitor, false, fastFail).getBytes();
@@ -195,7 +195,7 @@ public class OsmApi extends OsmConnection {
 
     /**
      * Initializes this component by negotiating a protocol version with the server.
-     * 
+     *
      * @param monitor the progress monitor
      * @throws OsmTransferCanceledException If the initialisation has been cancelled by user.
      * @throws OsmApiInitializationException If any other exception occurs. Use getCause() to get the original exception.
@@ -203,9 +203,9 @@ public class OsmApi extends OsmConnection {
     public void initialize(ProgressMonitor monitor) throws OsmTransferCanceledException, OsmApiInitializationException {
         initialize(monitor, false);
     }
-    
+
     /**
-     * Initializes this component by negotiating a protocol version with the server, with the ability to control the timeout. 
+     * Initializes this component by negotiating a protocol version with the server, with the ability to control the timeout.
      *
      * @param monitor the progress monitor
      * @param fastFail true to request quick initialisation with a small timeout (more likely to throw exception)
@@ -268,7 +268,7 @@ public class OsmApi extends OsmConnection {
             throw new OsmApiInitializationException(e);
         }
     }
-    
+
     private void initializeCapabilities(String xml) throws SAXException, IOException, ParserConfigurationException {
         InputSource inputSource = new InputSource(new StringReader(xml));
         SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new CapabilitiesParser());
@@ -733,7 +733,7 @@ public class OsmApi extends OsmConnection {
         if (changeset.getId() <= 0)
             throw new OsmTransferException(tr("ID of current changeset > 0 required. Current ID is {0}.", changeset.getId()));
     }
-    
+
     /**
      * Replies the changeset data uploads are currently directed to
      *

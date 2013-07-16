@@ -89,9 +89,9 @@ public class ProjectionPreference implements SubPreferenceSetting {
          * initially EPSG used 3785 but that has been superseded by 3857,
          * see http://www.epsg-registry.org/
          */
-        mercator = registerProjectionChoice(tr("Mercator"), "core:mercator", 
+        mercator = registerProjectionChoice(tr("Mercator"), "core:mercator",
                 3857);
-        
+
         /**
          * UTM.
          */
@@ -154,7 +154,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         registerProjectionChoice(lambert = new LambertProjectionChoice());                          // FR
         /**
          * Lambert 93 projection.
-         * 
+         *
          * As specified by the IGN in this document
          * http://professionnels.ign.fr/DISPLAY/000/526/702/5267026/NTG_87.pdf
          * @author Don-vip
@@ -470,7 +470,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
         return gui.getMapPreference();
     }
-    
+
     /**
      * Selects the given projection.
      * @param projection The projection to select.

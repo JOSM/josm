@@ -45,5 +45,5 @@ public abstract class TaggingPresetItem {
     Boolean matches(Map<String, String> tags) {
         return null;
     }
-    
+
 }

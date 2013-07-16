@@ -42,7 +42,7 @@ public abstract class RequestHandler {
 
     /** will be filled with the command assigned to the subclass */
     protected String myCommand;
-    
+
     /**
      * who send th request?
      * the host from refrerer header or IP of request sender
@@ -250,7 +250,7 @@ public abstract class RequestHandler {
     public void setSender(String sender) {
         this.sender = sender;
     }
- 
+
     public static class RequestHandlerException extends Exception {
 
         public RequestHandlerException(String message) {

@@ -52,7 +52,7 @@ public class GaussKruegerProjectionChoice extends ListProjectionChoice {
         }
         return null;
     }
-    
+
     @Override
     public String getProjectionName() {
         return tr("Gau\u00DF-Kr\u00FCger Zone {0}", index + 2);

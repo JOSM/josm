@@ -17,7 +17,7 @@ import org.openstreetmap.josm.Main;
  * @since 1462
  */
 public class AudioUtil {
-    
+
     /**
      * Returns calibrated length of recording in seconds.
      * @param wavFile the recording file (WAV format)

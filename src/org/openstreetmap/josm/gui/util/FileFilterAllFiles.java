@@ -11,7 +11,7 @@ import javax.swing.filechooser.FileFilter;
  * A FileFilter that accepts all files.
  */
 public class FileFilterAllFiles extends FileFilter {
-    
+
     private static FileFilterAllFiles INSTANCE;
 
     public static FileFilterAllFiles getInstance() {

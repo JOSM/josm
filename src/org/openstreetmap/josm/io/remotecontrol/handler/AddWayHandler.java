@@ -33,7 +33,7 @@ public class AddWayHandler extends RequestHandler {
      * The remote control command name used to add a way.
      */
     public static final String command = "add_way";
-    
+
     private final List<LatLon> allCoordinates = new ArrayList<LatLon>();
 
     /**
@@ -54,7 +54,7 @@ public class AddWayHandler extends RequestHandler {
             }
         });
         // parse parameter addtags=tag1=value1|tag2=value2
-        AddTagsDialog.addTags(args, sender);        
+        AddTagsDialog.addTags(args, sender);
     }
 
     @Override
@@ -93,14 +93,14 @@ public class AddWayHandler extends RequestHandler {
              throw new RequestHandlerBadRequestException(tr("There is no layer opened to add way"));
         }
     }
-    
+
     /**
-     * Find the node with almost the same ccords in dataset or in already added nodes 
+     * Find the node with almost the same ccords in dataset or in already added nodes
      * @since 5845
      **/
     Node findOrCreateNode(LatLon ll,  List<Command> commands) {
-        Node nd = null;     
-         
+        Node nd = null;
+
         if (Main.map != null && Main.map.mapView != null) {
             Point p = Main.map.mapView.getPoint(ll);
             nd = Main.map.mapView.getNearestNode(p, OsmPrimitive.isUsablePredicate);
@@ -108,7 +108,7 @@ public class AddWayHandler extends RequestHandler {
                 nd = null; // node is too far
             }
         }
-        
+
         Node prev = null;
         for (LatLon lOld: addedNodes.keySet()) {
             if (lOld.greatCircleDistance(ll) < Main.pref.getDouble("remotecontrol.tolerance", 0.1)) {
@@ -127,7 +127,7 @@ public class AddWayHandler extends RequestHandler {
         }
         return nd;
     }
-    
+
     /*
      * This function creates the way with given coordinates of nodes
      */

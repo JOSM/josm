@@ -30,7 +30,7 @@ public class ImagerySessionExporter implements SessionLayerExporter {
 
     private ImageryLayer layer;
     private JCheckBox export;
-    
+
     public ImagerySessionExporter(ImageryLayer layer) {
         this.layer = layer;
     }

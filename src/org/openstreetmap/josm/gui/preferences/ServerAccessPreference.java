@@ -24,7 +24,7 @@ public class ServerAccessPreference extends DefaultTabPreferenceSetting {
             return new ServerAccessPreference();
         }
     }
-    
+
     private ServerAccessPreference() {
         super("connection", tr("Connection Settings"), tr("Connection Settings for the OSM server."), false, new JTabbedPane());
     }

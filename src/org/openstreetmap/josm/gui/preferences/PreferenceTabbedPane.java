@@ -211,7 +211,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                 return tps.getClass().isAssignableFrom((Class<?>) clazz);
             }}, clazz);
     }
-    
+
     public boolean selectSubTabByPref(Class<? extends SubPreferenceSetting> clazz) {
         for (PreferenceSetting setting : settings) {
             if (clazz.isInstance(setting)) {
@@ -243,7 +243,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
     public final ImageryPreference getImageryPreference() {
         return getSetting(ImageryPreference.class);
     }
-    
+
     public final ShortcutPreference getShortcutPreference() {
         return getSetting(ShortcutPreference.class);
     }

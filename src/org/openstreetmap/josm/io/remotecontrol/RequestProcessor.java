@@ -91,7 +91,7 @@ public class RequestProcessor extends Thread {
     /**
      * Add external request handler. Message can be suppressed.
      * (for internal use)
-     * 
+     *
      * @param command The command to handle.
      * @param handler The additional request handler.
      * @param silent Don't show message if true.
@@ -137,7 +137,7 @@ public class RequestProcessor extends Thread {
             OutputStream raw = new BufferedOutputStream(request.getOutputStream());
             out = new OutputStreamWriter(raw);
             BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream(), "ASCII"));
-            
+
             String get = in.readLine();
             if (get == null) {
                 sendError(out);
@@ -161,11 +161,11 @@ public class RequestProcessor extends Thread {
                 sendNotImplemented(out);
                 return;
             }
-            
+
             int questionPos = url.indexOf('?');
-            
+
             String command = questionPos < 0 ? url : url.substring(0, questionPos);
-            
+
             Map <String,String> headers = new HashMap<String, String>();
             int k=0, MAX_HEADERS=20;
             while (k<MAX_HEADERS) {
@@ -177,12 +177,12 @@ public class RequestProcessor extends Thread {
                     headers.put(h[0], h[1]);
                 } else break;
             }
-            
+
             // Who sent the request: trying our best to detect
             // not from localhost => sender = IP
             // from localhost: sender = referer header, if exists
             String sender = null;
-            
+
             if (!request.getInetAddress().isLoopbackAddress()) {
                 sender = request.getInetAddress().getHostAddress();
             } else {
@@ -196,9 +196,9 @@ public class RequestProcessor extends Thread {
                 }
                 if (sender == null) {
                     sender = "localhost";
-                } 
+                }
             }
-            
+
             // find a handler for this command
             Class<? extends RequestHandler> handlerClass = handlers.get(command);
             if (handlerClass == null) {

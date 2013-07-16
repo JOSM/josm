@@ -36,7 +36,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
  *
  * In contrast to the fully-automatic procedure the user is dispatched to an
  * external browser for login and authorisation.
- * 
+ *
  * @since 2746
  */
 public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {

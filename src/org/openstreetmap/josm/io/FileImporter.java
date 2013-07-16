@@ -23,7 +23,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 public abstract class FileImporter implements Comparable<FileImporter>, LayerChangeListener {
 
     public final ExtensionFileFilter filter;
-    
+
     private boolean enabled;
 
     public FileImporter(ExtensionFileFilter filter) {
@@ -105,7 +105,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
     public int compareTo(FileImporter other) {
         return (new Double(this.getPriority())).compareTo(other.getPriority());
     }
-    
+
     public static CBZip2InputStream getBZip2InputStream(InputStream in) throws IOException {
         if (in == null) {
             return null;
@@ -128,7 +128,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
     }
 
     /**
-     * Returns the enabled state of this {@code FileImporter}. When enabled, it is listed and usable in "File->Open" dialog. 
+     * Returns the enabled state of this {@code FileImporter}. When enabled, it is listed and usable in "File->Open" dialog.
      * @return true if this {@code FileImporter} is enabled
      * @since 5459
      */

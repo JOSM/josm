@@ -107,7 +107,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         //
         historyTable.getSelectionModel().addListSelectionListener(showHistoryAction);
         historyTable.getSelectionModel().addListSelectionListener(reloadAction);
-        
+
         // Show history dialog on Enter/Spacebar
         InputMapUtils.addEnterAction(historyTable, showHistoryAction);
         InputMapUtils.addSpacebarAction(historyTable, showHistoryAction);

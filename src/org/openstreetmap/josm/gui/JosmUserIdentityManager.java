@@ -182,7 +182,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     public UserInfo getUserInfo() {
         return userInfo;
     }
-    
+
     /**
      * Initializes the user identity manager from Basic Authentication values in the {@link org.openstreetmap.josm.data.Preferences}
      * This method should be called if {@code osm-server.auth-method} is set to {@code basic}.
@@ -250,7 +250,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
                 }
             }
             return;
-            
+
         } else if (evt.getKey().equals("osm-server.url")) {
             if (!(evt.getNewValue() instanceof StringSetting)) return;
             String newValue = ((StringSetting) evt.getNewValue()).getValue();
@@ -259,14 +259,14 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
             } else if (isFullyIdentified()) {
                 setPartiallyIdentified(getUserName());
             }
-            
+
         } else if (evt.getKey().equals("oauth.access-token.key")) {
             accessTokenKeyChanged = true;
-            
+
         } else if (evt.getKey().equals("oauth.access-token.secret")) {
             accessTokenSecretChanged = true;
         }
-        
+
         if (accessTokenKeyChanged && accessTokenSecretChanged) {
             accessTokenKeyChanged = false;
             accessTokenSecretChanged = false;

@@ -82,7 +82,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
      */
     final MapView mv;
     final Collector collector;
-    
+
     public class BackgroundProgressMonitor implements ProgressMonitorDialog {
 
         private String title;
@@ -144,10 +144,10 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
     final ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 10);
     final JProgressBar progressBar = new JProgressBar();
     public final BackgroundProgressMonitor progressMonitor = new BackgroundProgressMonitor();
-    
+
     private final MouseListener jumpToOnLeftClick;
     private final SoMChangeListener somListener;
-    
+
     private double distValue; // Distance value displayed in distText, stored if refresh needed after a change of system of measurement
 
     /**
@@ -455,7 +455,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
             popup = null;
             EventQueue.invokeLater(new Runnable(){
                public void run() {
-                    staticPopup.hide(); 
+                    staticPopup.hide();
                 }});
         }
 
@@ -530,10 +530,10 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
                 name = "<i><b>"+ name + "*</b></i>";
             }
             text.append(name);
-            
+
             boolean idShown = Main.pref.getBoolean("osm-primitives.showid");
             // fix #7557 - do not show ID twice
-            
+
             if (!osm.isNew() && !idShown) {
                 text.append(" [id="+osm.getId()+"]");
             }
@@ -610,7 +610,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
     MouseState mouseState = new MouseState();
 
     private AWTEventListener awtListener = new AWTEventListener() {
-         @Override 
+         @Override
          public void eventDispatched(AWTEvent event) {
             if (event instanceof InputEvent &&
                     ((InputEvent)event).getComponent() == mv) {
@@ -699,7 +699,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
                 addPopupMenuListener(new PopupMenuListener() {
                     @Override
                     public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                        Component invoker = ((JPopupMenu)e.getSource()).getInvoker(); 
+                        Component invoker = ((JPopupMenu)e.getSource()).getInvoker();
                         jumpButton.setVisible(invoker == latText || invoker == lonText);
                         doNotHide.setSelected(Main.pref.getBoolean("statusbar.always-visible", true));
                     }
@@ -709,7 +709,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
                 add(doNotHide);
             }
         });
-        
+
         // also show Jump To dialog on mouse click (except context menu)
         jumpToOnLeftClick = new MouseAdapter() {
             @Override
@@ -757,10 +757,10 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
         add(headingText, GBC.std().insets(3,0,0,0));
         add(angleText, GBC.std().insets(3,0,0,0));
         add(distText, GBC.std().insets(3,0,0,0));
-        
+
         distText.addMouseListener(new MouseAdapter() {
             private final List<String> soms = new ArrayList<String>(new TreeSet<String>(NavigatableComponent.SYSTEMS_OF_MEASUREMENT.keySet()));
-            
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 String som = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
@@ -768,16 +768,16 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
                 NavigatableComponent.setSystemOfMeasurement(newsom);
             }
         });
-        
+
         NavigatableComponent.addSoMChangeListener(somListener = new SoMChangeListener() {
             @Override public void systemOfMeasurementChanged(String oldSoM, String newSoM) {
                 setDist(distValue);
             }
         });
-        
+
         latText.addMouseListener(jumpToOnLeftClick);
         lonText.addMouseListener(jumpToOnLeftClick);
-        
+
         helpText.setEditable(false);
         add(nameText, GBC.std().insets(3,0,0,0));
         add(helpText, GBC.std().insets(3,0,0,0).fill(GBC.HORIZONTAL));
@@ -802,7 +802,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
         thread.setDaemon(true);
         thread.start();
     }
-    
+
     public JPanel getAnglePanel() {
         return angleText;
     }
@@ -891,7 +891,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
     @Override
     public void destroy() {
         NavigatableComponent.removeSoMChangeListener(somListener);
-        
+
         // MapFrame gets destroyed when the last layer is removed, but the status line background
         // thread that collects the information doesn't get destroyed automatically.
         if (thread != null) {
