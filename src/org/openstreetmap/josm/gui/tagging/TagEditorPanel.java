@@ -192,7 +192,7 @@ public class TagEditorPanel extends JPanel {
 
     private void updatePresets() {
         presetListPanel.updatePresets(
-                EnumSet.of(TaggingPreset.PresetType.RELATION),
+                EnumSet.of(TaggingPresetType.RELATION),
                 model.getTags(), presetHandler);
         validate();
     }

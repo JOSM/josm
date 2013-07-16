@@ -83,7 +83,7 @@ import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandl
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset.PresetType;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
@@ -596,9 +596,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         final Map<String, Integer> keyCount = new HashMap<String, Integer>();
         final Map<String, String> tags = new HashMap<String, String>();
         valueCount.clear();
-        EnumSet<PresetType> types = EnumSet.noneOf(TaggingPreset.PresetType.class);
+        EnumSet<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
         for (OsmPrimitive osm : newSelection) {
-            types.add(PresetType.forPrimitive(osm));
+            types.add(TaggingPresetType.forPrimitive(osm));
             for (String key : osm.keySet()) {
                 String value = osm.get(key);
                 keyCount.put(key, keyCount.containsKey(key) ? keyCount.get(key) + 1 : 1);

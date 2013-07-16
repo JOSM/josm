@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionTypeCalculator;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 
 public class MemberTableModel extends AbstractTableModel implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPrimitivesTableModel {
@@ -383,7 +384,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     private void addMembersAtIndex(List<? extends OsmPrimitive> primitives, int index) {
-        final Collection<TaggingPreset> presets = TaggingPreset.getMatchingPresets(EnumSet.of(TaggingPreset.PresetType.RELATION), presetHandler.getSelection().iterator().next().getKeys(), false);
+        final Collection<TaggingPreset> presets = TaggingPreset.getMatchingPresets(EnumSet.of(TaggingPresetType.RELATION), presetHandler.getSelection().iterator().next().getKeys(), false);
         if (primitives == null)
             return;
         int idx = index;

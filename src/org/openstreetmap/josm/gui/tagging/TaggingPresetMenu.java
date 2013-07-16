@@ -21,6 +21,7 @@ import org.openstreetmap.josm.tools.PresetTextComparator;
 
 public class TaggingPresetMenu extends TaggingPreset {
     public JMenu menu = null; // set by TaggingPresetPreferences
+    @Override
     public void setDisplayName() {
         putValue(Action.NAME, getName());
         /** Tooltips should be shown for the toolbar buttons, but not in the menu. */
@@ -29,6 +30,7 @@ public class TaggingPresetMenu extends TaggingPreset {
                     tr("Preset group {0}", getLocaleName())));
         putValue("toolbar", "tagginggroup_" + getRawName());
     }
+    @Override
     public void setIcon(String iconName) {
         super.setIcon(iconName);
     }
@@ -54,6 +56,7 @@ public class TaggingPresetMenu extends TaggingPreset {
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         Object s = e.getSource();
         if(menu != null && s instanceof Component)
