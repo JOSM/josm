@@ -467,6 +467,9 @@ public class OsmOAuthAuthorizationClient {
         if (privileges.isAllowReadPrefs()) {
             parameters.put("allow_read_prefs", "yes");
         }
+        if(privileges.isAllowModifyNotes()) {
+            parameters.put("allow_write_notes", "yes");
+        }
 
         parameters.put("commit", "Save changes");
 
