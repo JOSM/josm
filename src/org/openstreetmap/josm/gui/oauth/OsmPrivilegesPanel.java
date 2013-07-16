@@ -21,6 +21,7 @@ public class OsmPrivilegesPanel extends VerticallyScrollablePanel{
     private JCheckBox cbReadGpx;
     private JCheckBox cbWritePrefs;
     private JCheckBox cbReadPrefs;
+    private JCheckBox cbModifyNotes;
 
     protected void build() {
         setLayout(new GridBagLayout());
@@ -70,8 +71,14 @@ public class OsmPrivilegesPanel extends VerticallyScrollablePanel{
         cbWritePrefs.setToolTipText(tr("Select to grant JOSM the right to write your server preferences"));
         cbWritePrefs.setSelected(true);
 
-        // filler - grab remaining space
         gc.gridy = 5;
+        add(cbModifyNotes = new JCheckBox(), gc);
+        cbModifyNotes.setText(tr("Allow modifications of notes"));
+        cbModifyNotes.setToolTipText(tr("Select to grant JOSM the right to modify notes on your behalf"));
+        cbModifyNotes.setSelected(true);
+
+        // filler - grab remaining space
+        gc.gridy = 6;
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
@@ -94,6 +101,7 @@ public class OsmPrivilegesPanel extends VerticallyScrollablePanel{
         privileges.setAllowReadGpx(cbReadGpx.isSelected());
         privileges.setAllowWritePrefs(cbWritePrefs.isSelected());
         privileges.setAllowReadPrefs(cbReadPrefs.isSelected());
+        privileges.setAllowModifyNotes(cbModifyNotes.isSelected());
         return privileges;
     }
 }

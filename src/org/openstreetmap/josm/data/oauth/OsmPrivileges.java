@@ -7,6 +7,7 @@ public class OsmPrivileges {
     private boolean allowReadGpx;
     private boolean allowReadPrefs;
     private boolean allowWritePrefs;
+    private boolean allowModifyNotes;
 
     public boolean isAllowWriteApi() {
         return allowWriteApi;
@@ -37,5 +38,13 @@ public class OsmPrivileges {
     }
     public void setAllowWritePrefs(boolean allowWritePrefs) {
         this.allowWritePrefs = allowWritePrefs;
+    }
+
+    public boolean isAllowModifyNotes() {
+        return allowModifyNotes;
+    }
+
+    public void setAllowModifyNotes(boolean allowModifyNotes) {
+        this.allowModifyNotes = allowModifyNotes;
     }
 }
