@@ -20,13 +20,21 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class OAuthParameters {
 
     /**
-     * The default JOSM OAuth consumer key.
+     * The default JOSM OAuth consumer key (created by user josmeditor).
      */
-    static public final String DEFAULT_JOSM_CONSUMER_KEY = "AdCRxTpvnbmfV8aPqrTLyA";
+    static public final String DEFAULT_JOSM_CONSUMER_KEY = "F7zPYlVCqE2BUH9Hr4SsWZSOnrKjpug1EgqkbsSb";
     /**
-     * The default JOSM OAuth consumer secret.
+     * The default JOSM OAuth consumer secret (created by user josmeditor).
      */
-    static public final String DEFAULT_JOSM_CONSUMER_SECRET = "XmYOiGY9hApytcBC3xCec3e28QBqOWz5g6DSb5UpE";
+    static public final String DEFAULT_JOSM_CONSUMER_SECRET = "rIkjpPcBNkMQxrqzcOvOC4RRuYupYr7k8mfP13H5";
+    /**
+     * The old default JOSM OAuth consumer key.
+     */
+    static public final String OLD_JOSM_CONSUMER_KEY = "AdCRxTpvnbmfV8aPqrTLyA";
+    /**
+     * The old default JOSM OAuth consumer secret.
+     */
+    static public final String OLD_JOSM_CONSUMER_SECRET = "XmYOiGY9hApytcBC3xCec3e28QBqOWz5g6DSb5UpE";
     /**
      * The default OSM OAuth request token URL.
      */
@@ -62,8 +70,8 @@ public class OAuthParameters {
      */
     static public OAuthParameters createDefault(String apiUrl) {
         OAuthParameters parameters = new OAuthParameters();
-        parameters.setConsumerKey(DEFAULT_JOSM_CONSUMER_KEY);
-        parameters.setConsumerSecret(DEFAULT_JOSM_CONSUMER_SECRET);
+        parameters.setConsumerKey(OLD_JOSM_CONSUMER_KEY);
+        parameters.setConsumerSecret(OLD_JOSM_CONSUMER_SECRET);
         if (apiUrl == null || apiUrl.isEmpty() || apiUrl.equals(OsmApi.DEFAULT_API_URL)) {
             parameters.setRequestTokenUrl(DEFAULT_REQUEST_TOKEN_URL);
             parameters.setAccessTokenUrl(DEFAULT_ACCESS_TOKEN_URL);
