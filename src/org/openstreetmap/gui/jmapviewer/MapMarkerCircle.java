@@ -60,11 +60,11 @@ public class MapMarkerCircle extends MapObjectImpl implements MapMarker {
     public double getLon() {
         return coord.getLon();
     }
-    
+
     public double getRadius() {
         return radius;
     }
-    
+
     public STYLE getMarkerStyle() {
         return markerStyle;
     }
@@ -72,7 +72,7 @@ public class MapMarkerCircle extends MapObjectImpl implements MapMarker {
     public void paint(Graphics g, Point position, int radio) {
         int size_h = radio;
         int size = size_h * 2;
-        
+
         if (g instanceof Graphics2D && getBackColor()!=null) {
             Graphics2D g2 = (Graphics2D) g;
             Composite oldComposite = g2.getComposite();
@@ -83,7 +83,7 @@ public class MapMarkerCircle extends MapObjectImpl implements MapMarker {
         }
         g.setColor(getColor());
         g.drawOval(position.x - size_h, position.y - size_h, size, size);
-        
+
         if(getLayer()==null||getLayer().isVisibleTexts()) paintText(g, position);
     }
 

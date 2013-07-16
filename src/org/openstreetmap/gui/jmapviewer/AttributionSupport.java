@@ -26,7 +26,7 @@ public class AttributionSupport {
     private String attrTermsUrl;
     public static final Font ATTR_FONT = new Font("Arial", Font.PLAIN, 10);
     public static final Font ATTR_LINK_FONT;
-    
+
     protected Rectangle attrTextBounds = null;
     protected Rectangle attrToUBounds = null;
     protected Rectangle attrImageBounds = null;
@@ -58,9 +58,9 @@ public class AttributionSupport {
             attrToUBounds = null;
             attrImageBounds = null;
             attrTextBounds = null;
-            return;            
+            return;
         }
-        
+
         // Draw attribution
         Font font = g.getFont();
         g.setFont(ATTR_LINK_FONT);
@@ -127,7 +127,7 @@ public class AttributionSupport {
         }
         return false;
     }
-    
+
     public boolean handleAttribution(Point p, boolean click) {
         if (source == null || !source.requiresAttribution())
             return false;

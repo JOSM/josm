@@ -59,7 +59,7 @@ public class OsmTileLoader implements TileLoader {
                         input = conn.getInputStream();
                         try {
                             tile.loadImage(input);
-                        } finally { 
+                        } finally {
                             input.close();
                             input = null;
                         }

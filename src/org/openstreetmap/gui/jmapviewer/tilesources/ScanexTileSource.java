@@ -64,9 +64,9 @@ public class ScanexTileSource extends AbstractTMSTileSource {
         return TileUpdate.IfNoneMatch;
     }
 
-    private static double RADIUS_E = 6378137;	/* radius of Earth at equator, m */
+    private static double RADIUS_E = 6378137;   /* radius of Earth at equator, m */
     private static double EQUATOR = 40075016.68557849; /* equator length, m */
-    private static double E = 0.0818191908426;	/* eccentricity of Earth's ellipsoid */
+    private static double E = 0.0818191908426;  /* eccentricity of Earth's ellipsoid */
 
     @Override
     public double latToTileY(double lat, int zoom) {
@@ -92,21 +92,21 @@ public class ScanexTileSource extends AbstractTMSTileSource {
 
     @Override
     public double tileYToLat(int y, int zoom) {
-	Random r= new Random();
+    Random r= new Random();
         double lat0, lat;
 
-	lat = cached_lat;
-	do {
-	    lat0 = lat;
+    lat = cached_lat;
+    do {
+        lat0 = lat;
             lat = lat - Math.toDegrees(NextTerm(Math.toRadians(lat), y, zoom));
             if (lat > OsmMercator.MAX_LAT || lat < OsmMercator.MIN_LAT) {
                 lat = OsmMercator.MIN_LAT +
                     (double )r.nextInt((int )(OsmMercator.MAX_LAT -
                     OsmMercator.MIN_LAT));
             }
-	} while ((Math.abs(lat0 - lat) > 0.000001));
+    } while ((Math.abs(lat0 - lat) > 0.000001));
 
-	cached_lat = lat;
+    cached_lat = lat;
 
         return (lat);
     }
@@ -115,13 +115,13 @@ public class ScanexTileSource extends AbstractTMSTileSource {
     private double NextTerm(double lat, double y, int zoom) {
         double sinl=Math.sin(lat);
         double cosl=Math.cos(lat);
-	double ec, f, df;
+    double ec, f, df;
 
         zoom = (int )Math.pow(2.0, zoom - 1);
-	ec = Math.exp((1 - y/zoom)*Math.PI);
+    ec = Math.exp((1 - y/zoom)*Math.PI);
 
-	f = (Math.tan(Math.PI/4+lat/2) -
-	    ec * Math.pow(Math.tan(Math.PI/4 + Math.asin(E * sinl)/2), E));
+    f = (Math.tan(Math.PI/4+lat/2) -
+        ec * Math.pow(Math.tan(Math.PI/4 + Math.asin(E * sinl)/2), E));
         df = 1/(1 - sinl) - ec * E * cosl/((1 - E * sinl) *
             (Math.sqrt (1 - E * E * sinl * sinl)));
 

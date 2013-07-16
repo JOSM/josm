@@ -54,7 +54,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
     public static final long FILE_AGE_ONE_WEEK = FILE_AGE_ONE_DAY * 7;
 
     protected String cacheDirBase;
-    
+
     protected final Map<TileSource, File> sourceCacheDirMap;
 
     protected long maxCacheFileAge = FILE_AGE_ONE_WEEK;
@@ -127,7 +127,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
         }
         return dir;
     }
-    
+
     protected class FileLoadJob implements TileJob {
         InputStream input = null;
 
@@ -341,7 +341,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
          * <li>{@link tilesources.OsmTileSource.Mapnik} - not supported</li>
          * </ul>
          *
-         * @param fileAge time of the 
+         * @param fileAge time of the
          * @return <code>true</code> if the tile on the server is newer than the
          *         file
          * @throws IOException
@@ -491,12 +491,12 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
         dir.mkdirs();
         this.cacheDirBase = dir.getAbsolutePath();
     }
-   
+
     @Override
     public void clearCache(TileSource source) {
         clearCache(source, null);
     }
-    
+
     @Override
     public void clearCache(TileSource source, TileClearController controller) {
         File dir = getSourceCacheDir(source);

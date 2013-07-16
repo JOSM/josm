@@ -19,7 +19,7 @@ public interface MapPolygon extends MapObject{
     public List<? extends ICoordinate> getPoints();
 
     /**
-     * Paints the map rectangle on the map. The <code>points</code> 
+     * Paints the map rectangle on the map. The <code>points</code>
      * are specifying the coordinates within <code>g</code>
      *
      * @param g
@@ -28,7 +28,7 @@ public interface MapPolygon extends MapObject{
     public void paint(Graphics g, List<Point> points);
 
     /**
-     * Paints the map rectangle on the map. The <code>polygon</code> 
+     * Paints the map rectangle on the map. The <code>polygon</code>
      * is specifying the coordinates within <code>g</code>
      *
      * @param g

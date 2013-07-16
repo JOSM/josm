@@ -197,18 +197,18 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
         MapPolygon bermudas = new MapPolygonImpl(c(49,1), c(45,10), c(40,5));
         map().addMapPolygon( bermudas );
         map().addMapPolygon( new MapPolygonImpl(germanyEastLayer, "Riedstadt", ebersheim, darmstadt, eberstadt, empty));
-        
+
         map().addMapMarker(new MapMarkerCircle(germanyWestLayer, "North of Suisse", new Coordinate(48, 7), .5));
         Layer spain = treeMap.addLayer("Spain");
         map().addMapMarker(new MapMarkerCircle(spain, "La Garena", new Coordinate(40.4838, -3.39), .002));
         spain.setVisible(false);
-        
+
         Layer wales = treeMap.addLayer("UK");
         map().addMapRectangle(new MapRectangleImpl(wales, "Wales", c(53.35,-4.57), c(51.64,-2.63)));
 
         // map.setDisplayPositionByLatLon(49.807, 8.6, 11);
         // map.setTileGridVisible(true);
-        
+
         map().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -217,7 +217,7 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
                 }
             }
         });
-        
+
         map().addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {

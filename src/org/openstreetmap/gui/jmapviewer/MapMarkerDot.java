@@ -46,7 +46,7 @@ public class MapMarkerDot extends MapMarkerCircle {
     public MapMarkerDot(Layer layer, String name, Coordinate coord, Style style) {
         super(layer, name, coord, DOT_RADIUS, STYLE.FIXED, style);
     }
-    
+
     public static Style getDefaultStyle(){
         return new Style(Color.BLACK, Color.YELLOW, null, getDefaultFont());
     }

@@ -7,7 +7,7 @@ import java.util.EventObject;
 /**
  * Used for passing events between UI components and other
  * objects that register as a JMapViewerEventListener
- * 
+ *
  * @author Jason Huntley
  *
  */
@@ -19,7 +19,7 @@ public class JMVCommandEvent extends EventObject {
 
     private COMMAND command;
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8701544867914969620L;
 

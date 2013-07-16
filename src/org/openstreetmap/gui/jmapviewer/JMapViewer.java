@@ -81,7 +81,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     protected JSlider zoomSlider;
     protected JButton zoomInButton;
     protected JButton zoomOutButton;
-        
+
     public static enum ZOOM_BUTTON_STYLE {
         HORIZONTAL,
         VERTICAL
@@ -424,7 +424,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         }
         return new Point(x, y);
     }
-    
+
     /**
      * Calculates the position on the map of a given coordinate
      *
@@ -453,7 +453,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     public Point getMapPosition(double lat, double lon) {
         return getMapPosition(lat, lon, true);
     }
-    
+
     /**
      * Calculates the position on the map of a given coordinate
      *
@@ -560,7 +560,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         int y_min = -tilesize;
         int x_max = getWidth();
         int y_max = getHeight();
-        
+
         // calculate the length of the grid (number of squares per edge)
         int gridLength = 1 << zoom;
 
@@ -616,7 +616,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         if (scrollWrapEnabled) {
             center.x = center.x % mapSize;
         }
-        
+
         if (mapPolygonsVisible && mapPolygonList != null) {
             for (MapPolygon polygon : mapPolygonList) {
                 if(polygon.isVisible()) paintPolygon(g, polygon);
@@ -703,7 +703,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
                         pBottomRight.x = xBottomRightWrap;
                         rectangle.paint(g, pTopLeft, pBottomRight);
                     }
-                    
+
                 }
             }
         }
@@ -1009,20 +1009,20 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         this.mapPolygonsVisible = mapPolygonsVisible;
         repaint();
     }
-    
+
     public boolean isScrollWrapEnabled() {
         return scrollWrapEnabled;
     }
-    
+
     public void setScrollWrapEnabled(boolean scrollWrapEnabled) {
         this.scrollWrapEnabled = scrollWrapEnabled;
         repaint();
     }
-    
+
     public ZOOM_BUTTON_STYLE getZoomButtonStyle() {
         return zoomButtonStyle;
     }
-    
+
     public void setZoomButtonStyle(ZOOM_BUTTON_STYLE style) {
         zoomButtonStyle = style;
         if (zoomSlider == null || zoomInButton == null || zoomOutButton == null) {
@@ -1051,7 +1051,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     public TileController getTileController() {
         return tileController;
     }
-    
+
     /**
      * Return tile information caching class
      * @see TileLoaderListener#getTileCache()

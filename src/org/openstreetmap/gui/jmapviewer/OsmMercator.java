@@ -18,7 +18,7 @@ public class OsmMercator {
     private static int TILE_SIZE = 256;
     public static final double MAX_LAT = 85.05112877980659;
     public static final double MIN_LAT = -85.05112877980659;
-    private static double EARTH_RADIUS = 6378137; // equatorial earth radius for EPSG:3857 (Mercator) 
+    private static double EARTH_RADIUS = 6378137; // equatorial earth radius for EPSG:3857 (Mercator)
 
     public static double radius(int aZoomlevel) {
         return (TILE_SIZE * (1 << aZoomlevel)) / (2.0 * Math.PI);
@@ -50,7 +50,7 @@ public class OsmMercator {
      * @param y1 the first y coordinate
      * @param x2 the second x coordinate
      * @param y2 the second y coordinate
-     * 
+     *
      * @param zoomLevel the zoom level
      * @return the distance
      * @author Jason Huntley
@@ -84,7 +84,7 @@ public class OsmMercator {
                 + Math.cos(aStartLat) * Math.cos(aEndLat)
                 * Math.cos(aEndLong - aStartLong));
 
-        return (EARTH_RADIUS * distance);		
+        return (EARTH_RADIUS * distance);
     }
 
     /**

@@ -32,12 +32,12 @@ public interface MapMarker extends MapObject, ICoordinate{
      * @return Longitude of the map marker position
      */
     public double getLon();
-    
+
     /**
      * @return Radius of the map marker position
      */
     public double getRadius();
-    
+
     /**
      * @return Style of the map marker
      */
