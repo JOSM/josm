@@ -248,7 +248,7 @@ public class Utils {
      * @throws IOException If any I/O error occurs
      */
     public static void copyFile(File in, File out) throws IOException  {
-        // TODO: remove this function when we move to Java 7 (use Files.copy instead) 
+        // TODO: remove this function when we move to Java 7 (use Files.copy instead)
         FileInputStream inStream = null;
         FileOutputStream outStream = null;
         try {
@@ -265,7 +265,7 @@ public class Utils {
             close(inStream);
         }
     }
-    
+
     public static int copyStream(InputStream source, OutputStream destination) throws IOException {
         int count = 0;
         byte[] b = new byte[512];
@@ -305,7 +305,7 @@ public class Utils {
             // ignore
         }
     }
-    
+
     /**
      * <p>Utility method for closing a {@link ZipFile}.</p>
      *
@@ -356,7 +356,7 @@ public class Utils {
         for (int tries = 0; t == null && tries < 10; tries++) {
             try {
                 t = clipboard.getContents(null);
-            } catch (IllegalStateException e) { 
+            } catch (IllegalStateException e) {
                 // Clipboard currently unavailable. On some platforms, the system clipboard is unavailable while it is accessed by another application.
                 try {
                     Thread.sleep(1);
@@ -560,7 +560,7 @@ public class Utils {
             throw new IllegalArgumentException();
         return new Color(Integer.parseInt(clr, 16));
     }
-    
+
     /**
      * Opens a HTTP connection to the given URL and sets the User-Agent property to JOSM's one.
      * @param httpURL The HTTP url to open (must use http:// or https://)
@@ -576,7 +576,7 @@ public class Utils {
         connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
         return connection;
     }
-    
+
     /**
      * Opens a connection to the given URL and sets the User-Agent property to JOSM's one.
      * @param url The url to open
@@ -617,7 +617,7 @@ public class Utils {
     /**
      * Opens a HTTP connection to the given URL, sets the User-Agent property to JOSM's one and optionnaly disables Keep-Alive.
      * @param httpURL The HTTP url to open (must use http:// or https://)
-     * @param keepAlive 
+     * @param keepAlive
      * @return An open HTTP connection to the given URL
      * @throws IOException if an I/O exception occurs.
      * @since 5587
@@ -629,13 +629,13 @@ public class Utils {
         }
         return connection;
     }
-    
+
     /**
      * An alternative to {@link String#trim()} to effectively remove all leading and trailing white characters, including Unicode ones.
      * @see <a href="http://closingbraces.net/2008/11/11/javastringtrim/">Java’s String.trim has a strange idea of whitespace</a>
-     * @see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4080617">JDK bug 4080617</a>  
+     * @see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4080617">JDK bug 4080617</a>
      * @param str The string to strip
-     * @return <code>str</code>, without leading and trailing characters, according to 
+     * @return <code>str</code>, without leading and trailing characters, according to
      *         {@link Character#isWhitespace(char)} and {@link Character#isSpaceChar(char)}.
      * @since 5772
      */

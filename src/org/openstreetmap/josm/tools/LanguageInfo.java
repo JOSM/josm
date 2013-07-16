@@ -24,7 +24,7 @@ public class LanguageInfo {
      * prefix has the form 'Xy:' where 'Xy' is a ISO 639 language code in title
      * case (or Xy_AB: for sub languages).
      *
-     * @param type the type 
+     * @param type the type
      * @return the wiki language prefix or {@code null} for {@link LocaleType#BASELANGUAGE}, when
      * base language is identical to default or english
      * @since 5915

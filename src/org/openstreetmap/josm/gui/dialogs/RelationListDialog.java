@@ -91,13 +91,13 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     private final RelationListModel model;
 
     private final NewAction newAction;
-    
+
     /** the popup menu and its handler */
     private final JPopupMenu popupMenu = new JPopupMenu();
     private final PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
 
     private final JosmTextField filter;
-    
+
     // Actions
     /** the edit action */
     private final EditRelationAction editAction = new EditRelationAction();
@@ -113,7 +113,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     private final SelectRelationAction addRelationToSelectionAction = new SelectRelationAction(true);
     /** add all selected primitives to the given relations */
     private final AddSelectionToRelations addSelectionToRelations = new AddSelectionToRelations();
-    
+
     HighlightHelper highlightHelper = new HighlightHelper();
     private boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
     /**
@@ -157,7 +157,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         // Setup popup menu handler
         setupPopupMenuHandler();
-        
+
         JPanel pane = new JPanel(new BorderLayout());
         pane.add(filter, BorderLayout.NORTH);
         pane.add(new JScrollPane(displaylist), BorderLayout.CENTER);
@@ -174,24 +174,24 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         //displaylist.getActionMap().put("deleteRelation", deleteAction);
 
         InputMapUtils.unassignCtrlShiftUpDown(displaylist, JComponent.WHEN_FOCUSED);
-        
+
         // Select relation on Ctrl-Enter
         InputMapUtils.addEnterAction(displaylist, selectRelationAction);
 
         // Edit relation on Ctrl-Enter
         displaylist.getActionMap().put("edit", editAction);
         displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_MASK), "edit");
-        
+
         updateActionsRelationLists();
     }
-    
+
     // inform all actions about list of relations they need
     private void updateActionsRelationLists() {
         List<Relation> sel = model.getSelectedRelations();
         popupMenuHandler.setPrimitives(sel);
-        
+
         Component focused = FocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
-        
+
         //update highlights
         if (highlightEnabled && focused==displaylist && Main.isDisplayingMapView()) {
             if (highlightHelper.highlightOnly(sel)) {
@@ -199,7 +199,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             }
         }
     }
-    
+
     @Override public void showNotify() {
         MapView.addLayerChangeListener(newAction);
         newAction.updateEnabledState();
@@ -213,7 +213,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         DatasetEventManager.getInstance().removeDatasetListener(this);
         DataSet.removeSelectionListener(addSelectionToRelations);
     }
-    
+
     private void resetFilter() {
         filter.setText(null);
     }
@@ -308,7 +308,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     }
 
     class MouseEventHandler extends PopupMenuLauncher {
-        
+
         public MouseEventHandler() {
             super(popupMenu);
         }
@@ -317,7 +317,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         public void mouseExited(MouseEvent me) {
             if (highlightEnabled) highlightHelper.clear();
         }
-        
+
         protected void setCurrentRelationAsSelection() {
             Main.main.getCurrentDataSet().setSelected((Relation)displaylist.getSelectedValue());
         }
@@ -325,7 +325,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         protected void editCurrentRelation() {
             EditRelationAction.launchEditor(getSelected());
         }
-        
+
         @Override public void mouseClicked(MouseEvent e) {
             if (Main.main.getEditLayer() == null) return;
             if (isDoubleClick(e)) {
@@ -337,7 +337,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             }
         }
     }
-    
+
     /**
      * The action for creating a new relation
      *
@@ -492,7 +492,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 setSelectedRelations(sel);
             }
         }
-        
+
         private void updateFilteredRelations() {
             if (filter != null) {
                 filteredRelations = new ArrayList<Relation>(Utils.filter(relations, new Predicate<Relation>() {
@@ -518,7 +518,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         private List<Relation> getVisibleRelations() {
             return filteredRelations == null ? relations : filteredRelations;
         }
-        
+
         private Relation getVisibleRelation(int index) {
             if (index < 0 || index >= getVisibleRelations().size()) return null;
             return getVisibleRelations().get(index);
@@ -583,7 +583,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 return null;
             return i;
         }
-        
+
         private Integer getVisibleRelationIndex(Relation rel) {
             int i = getVisibleRelations().indexOf(rel);
             if (i<0)
@@ -603,7 +603,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     }
 
     private final void setupPopupMenuHandler() {
-        
+
         // -- select action
         popupMenuHandler.addAction(selectRelationAction);
         popupMenuHandler.addAction(addRelationToSelectionAction);
@@ -623,10 +623,10 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         popupMenuHandler.addAction(editAction).setVisible(false);
         popupMenuHandler.addAction(duplicateAction).setVisible(false);
         popupMenuHandler.addAction(deleteRelationsAction).setVisible(false);
-        
+
         popupMenuHandler.addAction(addSelectionToRelations);
     }
-    
+
     /* ---------------------------------------------------------------------------------- */
     /* Methods that can be called from plugins                                            */
     /* ---------------------------------------------------------------------------------- */

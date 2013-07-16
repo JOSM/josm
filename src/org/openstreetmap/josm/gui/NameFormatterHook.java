@@ -14,7 +14,7 @@ public interface NameFormatterHook {
      * @return The corrected type name if needed, null otherwise.
      */
     public String checkRelationTypeName(IRelation relation, String defaultName);
-    
+
     /**
      * Check the node format. Return the corrected format if needed, null otherwise.
      * @param node The node.
@@ -22,7 +22,7 @@ public interface NameFormatterHook {
      * @return The corrected format if needed, null otherwise.
      */
     public String checkFormat(INode node, String defaultName);
-    
+
     /**
      * Check the way format. Return the corrected format if needed, null otherwise.
      * @param way The way.

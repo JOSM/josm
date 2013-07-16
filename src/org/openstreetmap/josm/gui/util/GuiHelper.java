@@ -51,11 +51,11 @@ public class GuiHelper {
             }
         }
     }
-    
+
     public static void executeByMainWorkerInEDT(final Runnable task) {
         Main.worker.submit(new Runnable() {
             public void run() {
-                runInEDTAndWait(task); 
+                runInEDTAndWait(task);
             }
         });
     }
@@ -81,7 +81,7 @@ public class GuiHelper {
             }
         }
     }
-    
+
     /**
      * returns true if the user wants to cancel, false if they
      * want to continue
@@ -103,7 +103,7 @@ public class GuiHelper {
         dlg.setCancelButton(1);
         return dlg.showDialog().getValue() != 2;
     }
-    
+
     /**
      * Replies the disabled (grayed) version of the specified image.
      * @param image The image to disable
@@ -124,7 +124,7 @@ public class GuiHelper {
     public static final ImageIcon getDisabledIcon(ImageIcon icon) {
         return new ImageIcon(getDisabledImage(icon.getImage()));
     }
-    
+
     /**
      * Attaches a {@code HierarchyListener} to the specified {@code Component} that
      * will set its parent dialog resizeable. Use it before a call to JOptionPane#showXXXXDialog
@@ -153,7 +153,7 @@ public class GuiHelper {
         }
         return pane;
     }
-    
+
     /**
      * Schedules a new Timer to be run in the future (once or several times).
      * @param initialDelay milliseconds for the initial and between-event delay if repeatable
@@ -168,7 +168,7 @@ public class GuiHelper {
         timer.start();
         return timer;
     }
-    
+
     /**
      * Return s new BasicStroke object with given thickness and style
      * @param code = 3.5 -> thickness=3.5px; 3.5 10 5 -> thickness=3.5px, dashed: 10px filled + 5px empty
@@ -176,8 +176,8 @@ public class GuiHelper {
      */
     public static Stroke getCustomizedStroke(String code) {
         String[] s = code.trim().split("[^\\.0-9]+");
-        
-        if (s.length==0) return new BasicStroke(); 
+
+        if (s.length==0) return new BasicStroke();
         float w;
         try {
             w = Float.parseFloat(s[0]);
@@ -214,7 +214,7 @@ public class GuiHelper {
             }
         }
     }
-    
+
     /**
      * Gets the font used to display JOSM title in about dialog and splash screen.
      * @return By order or priority, the first font available in local fonts:
@@ -226,7 +226,7 @@ public class GuiHelper {
      */
     public static Font getTitleFont() {
         List<String> fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
-        // Helvetica is the preferred choice but is not available by default on Windows 
+        // Helvetica is the preferred choice but is not available by default on Windows
         // (http://www.microsoft.com/typography/fonts/product.aspx?pid=161)
         if (fonts.contains("Helvetica")) {
             return new Font("Helvetica", Font.BOLD, 20);

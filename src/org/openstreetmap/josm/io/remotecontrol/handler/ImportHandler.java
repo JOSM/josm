@@ -22,7 +22,7 @@ public class ImportHandler extends RequestHandler {
      * The remote control command name used to import data.
      */
     public static final String command = "import";
-    
+
     private URL url;
     private Collection<DownloadTask> suitableDownloadTasks;
 

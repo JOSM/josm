@@ -42,10 +42,10 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class ChooseTrackVisibilityAction extends AbstractAction {
     private final GpxLayer layer;
- 
+
     DateFilterPanel dateFilter;
     JTable table;
-    
+
     public ChooseTrackVisibilityAction(final GpxLayer layer) {
         super(tr("Choose visible tracks"), ImageProvider.get("dialogs/filter"));
         this.layer = layer;
@@ -123,9 +123,9 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         t.setFillsViewportHeight(true);
         return t;
     }
-    
+
     boolean noUpdates=false;
-    
+
     /** selects all rows (=tracks) in the table that are currently visible on the layer*/
     private void selectVisibleTracksInTable() {
         // don't select any tracks if the layer is not visible
@@ -153,7 +153,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             }
         });
     }
-    
+
     private void updateVisibilityFromTable() {
         ListSelectionModel s = (ListSelectionModel) table.getSelectionModel();
         for (int i = 0; i < layer.trackVisibility.length; i++) {
@@ -162,11 +162,11 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         Main.map.mapView.preferenceChanged(null);
         Main.map.repaint(100);
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent arg0) {
         final JPanel msg = new JPanel(new GridBagLayout());
-        
+
         dateFilter = new DateFilterPanel(layer, "gpx.traces", false);
         dateFilter.setFilterAppliedListener(new ActionListener(){
             @Override public void actionPerformed(ActionEvent e) {
@@ -178,7 +178,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             }
         });
         dateFilter.loadFromPrefs();
-        
+
         final JToggleButton b = new JToggleButton(new AbstractAction(tr("Select by date")) {
             @Override public void actionPerformed(ActionEvent e) {
                 if (((JToggleButton) e.getSource()).isSelected()) {
@@ -192,7 +192,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         dateFilter.setEnabled(false);
         msg.add(b, GBC.std().insets(0,0,5,0));
         msg.add(dateFilter, GBC.eol().insets(0,0,10,0).fill(GBC.HORIZONTAL));
-        
+
         msg.add(new JLabel(tr("<html>Select all tracks that you want to be displayed. You can drag select a " + "range of tracks or use CTRL+Click to select specific ones. The map is updated live in the " + "background. Open the URLs by double clicking them.</html>")), GBC.eop().fill(GBC.HORIZONTAL));
         // build table
         final boolean[] trackVisibilityBackup = layer.trackVisibility.clone();
@@ -235,5 +235,5 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         Main.map.mapView.preferenceChanged(null);
         Main.map.repaint();
     }
-    
+
 }

@@ -285,7 +285,7 @@ public class AutoCompletingComboBox extends JosmComboBox {
     }
 
     private static InputContext privateInputContext = InputContext.getInstance();
-    
+
     @Override
     public InputContext getInputContext() {
         if (useFixedLocale) {

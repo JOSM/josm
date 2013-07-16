@@ -26,7 +26,7 @@ public class OpenBrowser {
             throw new IllegalStateException(tr("Failed to open URL. There is currently no platform set. Please set a platform first."));
         Main.platform.openUrl(uri.toString());
     }
-    
+
     /**
      * @return <code>null</code> for success or a string in case of an error.
      * @throws IllegalStateException thrown if no platform is set to which opening the URL can be dispatched,

@@ -50,9 +50,9 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * There are various options, see below.
  *
  * Note: The button indices are counted from 1 and upwards.
- * So for {@link #getValue()}, {@link #setDefaultButton(int)} and 
+ * So for {@link #getValue()}, {@link #setDefaultButton(int)} and
  * {@link #setCancelButton} the first button has index 1.
- * 
+ *
  * Simple example:
  * <pre>
  *  ExtendedDialog ed = new ExtendedDialog(
@@ -273,7 +273,7 @@ public class ExtendedDialog extends JDialog {
 
     /**
      * Retrieve the user choice after the dialog has been closed.
-     * 
+     *
      * @return <ul> <li>The selected button. The count starts with 1.</li>
      *              <li>A return value of {@link #DialogClosedOtherwise} means the dialog has been closed otherwise.</li>
      *         </ul>
@@ -451,7 +451,7 @@ public class ExtendedDialog extends JDialog {
             geometry.remember(rememberSizePref);
         }
     }
-    
+
     protected final WindowGeometry initWindowGeometry() {
         return new WindowGeometry(rememberSizePref, defaultWindowGeometry);
     }

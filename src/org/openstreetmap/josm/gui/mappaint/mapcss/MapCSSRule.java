@@ -7,7 +7,7 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.tools.Utils;
 
 public class MapCSSRule {
-    
+
     public List<Selector> selectors;
     public List<Instruction> declaration;
 
@@ -18,7 +18,7 @@ public class MapCSSRule {
 
     /**
      * <p>Executes the instructions against the environment {@code env}</p>
-     * 
+     *
      * @param env the environment
      */
     public void execute(Environment env) {

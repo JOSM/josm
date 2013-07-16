@@ -220,7 +220,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
             return;
         nc.requestPaintRect(getSelectionRectangle());
     }
-    
+
     private void paintLasso() {
         if (mousePos == null || mousePosStart == null || mousePos == mousePosStart) {
             return;

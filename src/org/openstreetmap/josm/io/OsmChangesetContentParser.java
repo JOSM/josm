@@ -43,7 +43,7 @@ public class OsmChangesetContentParser {
     private InputSource source;
     private ChangesetDataSet data;
 
-    // FIXME: this class has many similarities with OsmHistoryReader.Parser and should be merged 
+    // FIXME: this class has many similarities with OsmHistoryReader.Parser and should be merged
     private class Parser extends DefaultHandler {
 
         /** the current primitive to be read */
@@ -142,7 +142,7 @@ public class OsmChangesetContentParser {
             long version = getMandatoryAttributeLong(atts,"version");
             long changesetId = getMandatoryAttributeLong(atts,"changeset");
             boolean visible= getMandatoryAttributeBoolean(atts, "visible");
-            
+
             Long uid = getAttributeLong(atts, "uid");
             String userStr = atts.getValue("user");
             User user;

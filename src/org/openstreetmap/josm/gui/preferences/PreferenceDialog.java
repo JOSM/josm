@@ -85,7 +85,7 @@ public class PreferenceDialog extends JDialog {
         // smaller screen than before, this will reset the stored preference.
         this.setMaximumSize( Toolkit.getDefaultToolkit().getScreenSize());
     }
-    
+
     /**
      * Replies the preferences tabbed pane.
      * @return The preferences tabbed pane, or null if the dialog is not yet initialized.

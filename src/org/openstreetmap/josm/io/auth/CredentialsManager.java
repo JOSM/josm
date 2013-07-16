@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  */
 public class CredentialsManager implements CredentialsAgent {
-   
+
     private static CredentialsManager instance;
 
     /**
@@ -37,13 +37,13 @@ public class CredentialsManager implements CredentialsAgent {
         }
         return instance;
     }
-    
+
     private static CredentialsAgentFactory agentFactory;
 
     public interface CredentialsAgentFactory {
         CredentialsAgent getCredentialsAgent();
     }
-    
+
     /**
      * Plugins can register a CredentialsAgentFactory, thereby overriding
      * JOSM's default credentials agent.
@@ -58,7 +58,7 @@ public class CredentialsManager implements CredentialsAgent {
     /*****
      * non-static fields and methods
      */
-    
+
     private CredentialsAgent delegate;
 
     public CredentialsManager(CredentialsAgent delegate) {

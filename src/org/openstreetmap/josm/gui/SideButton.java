@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class SideButton extends JButton implements Destroyable {
     private final static int iconHeight = 20;
-    
+
     private PropertyChangeListener propertyChangeListener;
 
     public SideButton(Action action)

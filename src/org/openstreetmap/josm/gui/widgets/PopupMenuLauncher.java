@@ -24,7 +24,7 @@ public class PopupMenuLauncher extends MouseAdapter {
     private final boolean checkEnabled;
 
     /**
-     * Creates a new {@link PopupMenuLauncher} with no defined menu. 
+     * Creates a new {@link PopupMenuLauncher} with no defined menu.
      * It is then needed to override the {@link #launch} method.
      * @see #launch(MouseEvent)
      */
@@ -54,7 +54,7 @@ public class PopupMenuLauncher extends MouseAdapter {
     @Override public void mousePressed(MouseEvent e) { processEvent(e); }
     @Override public void mouseClicked(MouseEvent e) {}
     @Override public void mouseReleased(MouseEvent e) { processEvent(e); }
-    
+
     private void processEvent(MouseEvent e) {
         if (e.isPopupTrigger() && (!checkEnabled || e.getComponent().isEnabled())) {
             launch(e);
@@ -74,7 +74,7 @@ public class PopupMenuLauncher extends MouseAdapter {
             }
         }
     }
-    
+
     protected boolean checkSelection(Component component, Point p) {
         if (component instanceof JList) {
             return checkListSelection((JList) component, p) > -1;
@@ -85,7 +85,7 @@ public class PopupMenuLauncher extends MouseAdapter {
         }
         return true;
     }
-    
+
     protected void checkFocusAndShowMenu(final Component component, final MouseEvent evt) {
         if (component != null && component.isFocusable() && !component.hasFocus() && component.requestFocusInWindow()) {
             component.addFocusListener(new FocusListener() {
@@ -99,13 +99,13 @@ public class PopupMenuLauncher extends MouseAdapter {
             showMenu(evt);
         }
     }
-    
+
     protected void showMenu(MouseEvent evt) {
         if (menu != null && evt != null) {
             menu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }
-    
+
     protected int checkListSelection(JList list, Point p) {
         int idx = list.locationToIndex(p);
         if (idx >= 0 && idx < list.getModel().getSize() && list.getSelectedIndices().length < 2 && !list.isSelectedIndex(idx)) {
@@ -121,7 +121,7 @@ public class PopupMenuLauncher extends MouseAdapter {
         }
         return row;
     }
-    
+
     protected TreePath checkTreeSelection(JTree tree, Point p) {
         TreePath path = tree.getPathForLocation(p.x, p.y);
         if (path != null && tree.getSelectionCount() < 2 && !tree.isPathSelected(path)) {
@@ -129,11 +129,11 @@ public class PopupMenuLauncher extends MouseAdapter {
         }
         return path;
     }
-    
+
     protected static boolean isDoubleClick(MouseEvent e) {
         return e != null && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2;
     }
-    
+
     /**
      * @return the popup menu if defined, {@code null} otherwise.
      * @since 5884

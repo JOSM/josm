@@ -109,7 +109,7 @@ public class WindowGeometry {
 
     /**
      * Creates a window geometry from a rectangle
-     * 
+     *
      * @param rect the position
      */
     public WindowGeometry(Rectangle rect) {
@@ -285,7 +285,7 @@ public class WindowGeometry {
     /**
      * Applies this geometry to a window. Makes sure that the window is not
      * placed outside of the coordinate range of all available screens.
-     * 
+     *
      * @param window the window
      */
     public void applySafe(Window window) {
@@ -321,7 +321,7 @@ public class WindowGeometry {
     /**
      * Find the size and position of the screen for given coordinates. Use first screen,
      * when no coordinates are stored or null is passed.
-     * 
+     *
      * @param preferenceKey the key to get size and position from
      * @return bounds of the screen
      */
@@ -335,7 +335,7 @@ public class WindowGeometry {
     /**
      * Find the size and position of the screen for given coordinates. Use first screen,
      * when no coordinates are stored or null is passed.
-     * 
+     *
      * @param g coordinates to check
      * @return bounds of the screen
      */

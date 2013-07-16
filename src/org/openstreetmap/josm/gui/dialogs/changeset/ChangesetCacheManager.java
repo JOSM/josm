@@ -556,11 +556,11 @@ public class ChangesetCacheManager extends JFrame {
     }
 
     class MouseEventHandler extends PopupMenuLauncher {
-        
+
         public MouseEventHandler() {
             super(new ChangesetTablePopupMenu());
         }
-        
+
         @Override
         public void mouseClicked(MouseEvent evt) {
             if (isDoubleClick(evt)) {

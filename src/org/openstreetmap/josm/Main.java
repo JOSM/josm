@@ -111,29 +111,29 @@ abstract public class Main {
         if (map.mapView == null) return false;
         return true;
     }
-    
+
     /**
      * Global parent component for all dialogs and message boxes
      */
     public static Component parent;
-    
+
     /**
      * Global application.
      */
     public static Main main;
-    
+
     /**
      * Command-line arguments used to run the application.
      */
     public static String[] commandLineArgs;
-    
+
     /**
      * The worker thread slave. This is for executing all long and intensive
      * calculations. The executed runnables are guaranteed to be executed separately
      * and sequential.
      */
     public final static ExecutorService worker = new ProgressMonitorExecutor();
-    
+
     /**
      * Global application preferences
      */
@@ -143,7 +143,7 @@ abstract public class Main {
      * The global paste buffer.
      */
     public static final PrimitiveDeepCopy pasteBuffer = new PrimitiveDeepCopy();
-    
+
     /**
      * The layer source from which {@link Main#pasteBuffer} data comes from.
      */
@@ -153,7 +153,7 @@ abstract public class Main {
      * The MapFrame. Use {@link Main#setMapFrame} to set or clear it.
      */
     public static MapFrame map;
-    
+
     /**
      * Set to <code>true</code>, when in applet mode
      */
@@ -542,7 +542,7 @@ abstract public class Main {
         unregisterShortcut(shortcut);
         contentPanePrivate.getActionMap().remove(action);
     }
-    
+
     /**
      * Replies the registered action for the given shortcut
      * @param shortcut The shortcut to look for
@@ -564,7 +564,7 @@ abstract public class Main {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Global panel. 
+     * Global panel.
      */
     public static final JPanel panel = new JPanel(new BorderLayout());
 
@@ -703,7 +703,7 @@ abstract public class Main {
 
     /**
      * Asks user to perform "save layer" operations (save .osm on disk and/or upload osm data to server) before osm layers deletion.
-     * 
+     *
      * @param selectedLayers The layers to check. Only instances of {@link OsmDataLayer} are considered.
      * @param exit {@code true} if JOSM is exiting, {@code false} otherwise.
      * @return {@code true} if there was nothing to save, or if the user wants to proceed to save operations. {@code false} if the user cancels.
@@ -896,7 +896,7 @@ abstract public class Main {
             }
         }
     }
-    
+
     protected static void addListener() {
         parent.addComponentListener(new WindowPositionSizeListener());
         ((JFrame)parent).addWindowStateListener(new WindowPositionSizeListener());
@@ -1045,7 +1045,7 @@ abstract public class Main {
 
     /**
      * Listener for window switch events.
-     * 
+     *
      * These are events, when the user activates a window of another application
      * or comes back to JOSM. Window switches from one JOSM window to another
      * are not reported.

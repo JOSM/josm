@@ -112,7 +112,7 @@ public class GpxLayer extends Layer {
         if (earliest==null || latest==null) return null;
         return new Date[]{earliest.getTime(), latest.getTime()};
     }
-    
+
     /**
     * Returns minimum and maximum timestamps for all tracks
     * Warning: there are lot of track with broken timestamps,
@@ -137,8 +137,8 @@ public class GpxLayer extends Layer {
         if (min==1e100 || max==-1e100) return null;
         return new Date[]{new Date((long) (min * 1000)), new Date((long) (max * 1000)), };
     }
-    
-    
+
+
     /**
      * returns a human readable string that shows the timespan of the given track
      */
@@ -287,7 +287,7 @@ public class GpxLayer extends Layer {
                 SeparatorLayerAction.INSTANCE,
                 new LayerListPopup.InfoAction(this) };
     }
-    
+
     public boolean isLocalFile() {
         return isLocalFile;
     }
@@ -334,14 +334,14 @@ public class GpxLayer extends Layer {
         else
             return true;
     }
-    
+
     public void filterTracksByDate(Date fromDate, Date toDate, boolean showWithoutDate) {
         int i = 0;
         long from = fromDate.getTime();
         long to = toDate.getTime();
         for (GpxTrack trk : data.tracks) {
             Date[] t = GpxLayer.getMinMaxTimeForTrack(trk);
-            
+
             if (t==null) continue;
             long tm = t[1].getTime();
             trackVisibility[i]= (tm==0 && showWithoutDate) || (from<=tm && tm <= to);
@@ -542,7 +542,7 @@ public class GpxLayer extends Layer {
                     minval = 0; maxval=now;
                 }
             }
-            
+
             for (GpxTrack trk : data.tracks) {
                 for (GpxTrackSegment segment : trk.getSegments()) {
                     if (!forceLines) { // don't draw lines between segments, unless forced to
@@ -879,5 +879,5 @@ public class GpxLayer extends Layer {
     public File createAndOpenSaveFileChooser() {
         return SaveActionBase.createAndOpenSaveFileChooser(tr("Save GPX file"), GpxImporter.FILE_FILTER);
     }
-    
+
 }

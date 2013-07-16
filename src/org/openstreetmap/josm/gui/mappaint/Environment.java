@@ -50,7 +50,7 @@ public class Environment {
 
     /**
      * Creates a clone of the environment {@code other}
-     * 
+     *
      * @param other the other environment. Must not be null.
      */
     public Environment(Environment other) throws IllegalArgumentException{
@@ -111,7 +111,7 @@ public class Environment {
 
     /**
      * Replies the current context.
-     * 
+     *
      * @return the current context
      */
     public Context getContext() {

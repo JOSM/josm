@@ -129,12 +129,12 @@ public class OsmReader extends AbstractReader {
         }
         while (true) {
             int event = parser.next();
-            
+
             if (cancel) {
                 cancel = false;
                 throwException(tr("Reading was canceled"));
             }
-            
+
             if (event == XMLStreamConstants.START_ELEMENT) {
                 if (parser.getLocalName().equals("bounds")) {
                     parseBounds(generator);

@@ -100,5 +100,5 @@ public class CustomizeDrawingAction extends AbstractAction implements LayerActio
         }
         Main.map.repaint();
     }
-    
+
 }

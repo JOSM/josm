@@ -38,7 +38,7 @@ public class Geometry {
      * And makes commands to add the intersection points to ways.
      *
      * Prerequisite: no two nodes have the same coordinates.
-     * 
+     *
      * @param ways  a list of ways to test
      * @param test  if false, do not build list of Commands, just return nodes
      * @param cmds  list of commands, typically empty when handed to this method.
@@ -246,12 +246,12 @@ public class Geometry {
      * @return EastNorth null if no intersection was found, the EastNorth coordinates of the intersection otherwise
      */
     public static EastNorth getSegmentSegmentIntersection(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
-        
+
         CheckParameterUtil.ensureValidCoordinates(p1, "p1");
         CheckParameterUtil.ensureValidCoordinates(p2, "p2");
         CheckParameterUtil.ensureValidCoordinates(p3, "p3");
         CheckParameterUtil.ensureValidCoordinates(p4, "p4");
-        
+
         double x1 = p1.getX();
         double y1 = p1.getY();
         double x2 = p2.getX();
@@ -269,7 +269,7 @@ public class Geometry {
         // (x1,y1) + (x2-x1,y2-y1)* u  = (x3,y3) + (x4-x3,y4-y3)* v
         // (x2-x1,y2-y1)*u - (x4-x3,y4-y3)*v = (x3-x1,y3-y1)
         // if 0<= u,v <=1, intersection exists at ( x1+ (x2-x1)*u, y1 + (y2-y1)*u )
-        
+
         double a1 = x2 - x1;
         double b1 = x3 - x4;
         double c1 = x3 - x1;
@@ -280,11 +280,11 @@ public class Geometry {
 
         // Solve the equations
         double det = a1*b2 - a2*b1;
-        
+
         double uu = b2*c1 - b1*c2 ;
         double vv = a1*c2 - a2*c1;
         double mag = Math.abs(uu)+Math.abs(vv);
-                
+
         if (Math.abs(det) > 1e-12 * mag) {
             double u = uu/det, v = vv/det;
             if (u>-1e-8 && u < 1+1e-8 && v>-1e-8 && v < 1+1e-8 ) {
@@ -297,7 +297,7 @@ public class Geometry {
         } else {
             // parallel lines
             return null;
-        } 
+        }
     }
 
     /**
@@ -311,9 +311,9 @@ public class Geometry {
         CheckParameterUtil.ensureValidCoordinates(p2, "p2");
         CheckParameterUtil.ensureValidCoordinates(p3, "p3");
         CheckParameterUtil.ensureValidCoordinates(p4, "p4");
-        
+
         if (!p1.isValid()) throw new IllegalArgumentException();
-        
+
         // Convert line from (point, point) form to ax+by=c
         double a1 = p2.getY() - p1.getY();
         double b1 = p1.getX() - p2.getX();
@@ -375,7 +375,7 @@ public class Geometry {
         else
             return new EastNorth(p1.getX() + ldx * offset, p1.getY() + ldy * offset);
     }
-    
+
     /**
      * Calculates closest point to a line segment.
      * @param segmentP1 First point determining line segment
@@ -417,11 +417,11 @@ public class Geometry {
      * @return true if first vector is clockwise before second vector.
      */
     public static boolean angleIsClockwise(EastNorth commonNode, EastNorth firstNode, EastNorth secondNode) {
-        
+
         CheckParameterUtil.ensureValidCoordinates(commonNode, "commonNode");
         CheckParameterUtil.ensureValidCoordinates(firstNode, "firstNode");
         CheckParameterUtil.ensureValidCoordinates(secondNode, "secondNode");
-        
+
         double dy1 = (firstNode.getY() - commonNode.getY());
         double dy2 = (secondNode.getY() - commonNode.getY());
         double dx1 = (firstNode.getX() - commonNode.getX());
@@ -445,10 +445,10 @@ public class Geometry {
         if (!begin) {
             path.closePath();
         }
-        
+
         return new Area(path);
     }
-    
+
     /**
      * Tests if two polygons intersect.
      * @param first
@@ -456,15 +456,15 @@ public class Geometry {
      * @return intersection kind
      */
     public static PolygonIntersection polygonIntersection(List<Node> first, List<Node> second) {
-        
+
         Area a1 = getArea(first);
         Area a2 = getArea(second);
-        
+
         Area inter = new Area(a1);
         inter.intersect(a2);
-        
+
         Rectangle bounds = inter.getBounds();
-        
+
         if (inter.isEmpty() || bounds.getHeight()*bounds.getWidth() <= 1.0) {
             return PolygonIntersection.OUTSIDE;
         } else if (inter.equals(a1)) {
@@ -621,10 +621,10 @@ public class Geometry {
      * @return Angle in radians (-pi, pi]
      */
     public static double getSegmentAngle(EastNorth p1, EastNorth p2) {
-        
+
         CheckParameterUtil.ensureValidCoordinates(p1, "p1");
         CheckParameterUtil.ensureValidCoordinates(p2, "p2");
-        
+
         return Math.atan2(p2.north() - p1.north(), p2.east() - p1.east());
     }
 
@@ -637,11 +637,11 @@ public class Geometry {
      * @return Angle in radians (-pi, pi]
      */
     public static double getCornerAngle(EastNorth p1, EastNorth p2, EastNorth p3) {
-        
+
         CheckParameterUtil.ensureValidCoordinates(p1, "p1");
         CheckParameterUtil.ensureValidCoordinates(p2, "p2");
         CheckParameterUtil.ensureValidCoordinates(p3, "p3");
-        
+
         Double result = getSegmentAngle(p2, p1) - getSegmentAngle(p2, p3);
         if (result <= -Math.PI) {
             result += 2 * Math.PI;
@@ -653,7 +653,7 @@ public class Geometry {
 
         return result;
     }
-    
+
     public static EastNorth getCentroid(List<Node> nodes) {
         // Compute the centroid of nodes
 
@@ -671,9 +671,9 @@ public class Geometry {
                 BigDecimal y0 = new BigDecimal(n0.north());
                 BigDecimal x1 = new BigDecimal(n1.east());
                 BigDecimal y1 = new BigDecimal(n1.north());
-    
+
                 BigDecimal k = x0.multiply(y1, MathContext.DECIMAL128).subtract(y0.multiply(x1, MathContext.DECIMAL128));
-    
+
                 area = area.add(k, MathContext.DECIMAL128);
                 east = east.add(k.multiply(x0.add(x1, MathContext.DECIMAL128), MathContext.DECIMAL128));
                 north = north.add(k.multiply(y0.add(y1, MathContext.DECIMAL128), MathContext.DECIMAL128));
@@ -701,7 +701,7 @@ public class Geometry {
      * @return Intersection coordinate or null
      */
     public static EastNorth getSegmentAltituteIntersection(EastNorth sp1, EastNorth sp2, EastNorth ap) {
-        
+
         CheckParameterUtil.ensureValidCoordinates(sp1, "sp1");
         CheckParameterUtil.ensureValidCoordinates(sp2, "sp2");
         CheckParameterUtil.ensureValidCoordinates(ap, "ap");

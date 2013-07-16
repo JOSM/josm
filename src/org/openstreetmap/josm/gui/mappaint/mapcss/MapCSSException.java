@@ -6,7 +6,7 @@ public class MapCSSException extends RuntimeException {
     protected String specialmessage;
     protected Integer line;
     protected Integer column;
-    
+
     public MapCSSException(String specialmessage) {
         this.specialmessage = specialmessage;
     }
@@ -18,7 +18,7 @@ public class MapCSSException extends RuntimeException {
     public void setLine(int line) {
         this.line = line;
     }
-    
+
     @Override
     public String getMessage() {
         if (line == null || column == null)

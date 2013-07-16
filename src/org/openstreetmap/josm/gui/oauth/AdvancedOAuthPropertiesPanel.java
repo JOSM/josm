@@ -33,7 +33,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
  * <li>Request token URL</li>
  * <li>Access token URL</li>
  * <li>Authorize URL</li>
- * 
+ *
  * @see OAuthParameters
  * @since 2746
  */

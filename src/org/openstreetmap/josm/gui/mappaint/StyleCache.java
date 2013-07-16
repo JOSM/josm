@@ -27,7 +27,7 @@ public class StyleCache {
     private final static Storage<StyleCache> internPool = new Storage<StyleCache>(); // TODO: clean up the intern pool from time to time (after purge or layer removal)
 
     public final static StyleCache EMPTY_STYLECACHE = (new StyleCache()).intern();
-    
+
     private StyleCache() {
         bd = new ArrayList<Double>();
         bd.add(0.0);
@@ -188,7 +188,7 @@ public class StyleCache {
             //       (----]
             bd.add(i, lower);
             data.add(i, sl);
-            
+
             //  --|--|----|--------|--
             //   i-1 i   i+1      i+2
             //       (--]
@@ -199,7 +199,7 @@ public class StyleCache {
             return;
         }
     }
-    
+
     public void consistencyTest() {
         if (bd.size() < 2) throw new AssertionError();
         if (data.size() < 1) throw new AssertionError();

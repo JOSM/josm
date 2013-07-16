@@ -129,7 +129,7 @@ public abstract class ImageryLayer extends Layer {
         if (info != null) {
             String url = info.getUrl();
             if (url != null) {
-                panel.add(new JLabel(tr("URL: ")), GBC.std().insets(0, 5, 2, 0)); 
+                panel.add(new JLabel(tr("URL: ")), GBC.std().insets(0, 5, 2, 0));
                 panel.add(new UrlLabel(url), GBC.eol().insets(2, 5, 10, 0));
             }
             if (dx != 0.0 || dy != 0.0) {

@@ -128,7 +128,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                                 }
                                 urltext += "...<snip>...\n";
                             }
-                            
+
                             JPanel p = new JPanel(new GridBagLayout());
                             p.add(new JMultilineLabel(
                                     tr("You have encountered an error in JOSM. Before you file a bug report " +
@@ -172,7 +172,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             handlingInProgress = false;
         }
     }
-    
+
     /**
      * Determines if an exception is currently being handled
      * @return {@code true} if an exception is currently being handled, {@code false} otherwise
@@ -180,7 +180,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
     public static boolean exceptionHandlingInProgress() {
         return handlingInProgress;
     }
-    
+
     /**
      * Replies the URL to create a JOSM bug report with the given debug text
      * @param debugText The debug text to provide us
@@ -193,7 +193,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             GZIPOutputStream gzip = new GZIPOutputStream(out);
             gzip.write(debugText.getBytes("UTF-8"));
             Utils.close(gzip);
-    
+
             return new URL("http://josm.openstreetmap.de/josmticket?" +
                     "gdata="+Base64.encode(ByteBuffer.wrap(out.toByteArray()), true));
         } catch (IOException e) {
@@ -201,7 +201,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             return null;
         }
     }
-    
+
     /**
      * Replies the URL label to create a JOSM bug report with the given debug text
      * @param debugText The debug text to provide us

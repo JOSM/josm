@@ -57,7 +57,7 @@ public class PluginInformation {
     public ImageIcon icon;
     public List<URL> libraries = new LinkedList<URL>();
     public final Map<String, String> attr = new TreeMap<String, String>();
-    
+
     private static final ImageIcon emptyIcon = new ImageIcon(new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB));
 
     /**
@@ -153,7 +153,7 @@ public class PluginInformation {
         this.attr.clear();
         this.attr.putAll(other.attr);
     }
-    
+
     /**
      * Updates the plugin information of this plugin information object with the
      * plugin information in a plugin information object retrieved from a plugin
@@ -172,7 +172,7 @@ public class PluginInformation {
         this.libraries = other.libraries;
         this.stage = other.stage;
     }
-    
+
     private void scanManifest(Manifest manifest, boolean oldcheck){
         String lang = LanguageInfo.getLanguageCodeManifest();
         Attributes attr = manifest.getMainAttributes();
@@ -494,28 +494,28 @@ public class PluginInformation {
         }
         return requiredPlugins;
     }
-    
+
     /**
-     * Replies the list of plugins required by the up-to-date version of this plugin. 
+     * Replies the list of plugins required by the up-to-date version of this plugin.
      * @return List of plugins required. Empty if no plugin is required.
      * @since 5601
      */
     public List<String> getRequiredPlugins() {
         return getRequiredPlugins(requires);
     }
-    
+
     /**
-     * Replies the list of plugins required by the local instance of this plugin. 
+     * Replies the list of plugins required by the local instance of this plugin.
      * @return List of plugins required. Empty if no plugin is required.
      * @since 5601
      */
     public List<String> getLocalRequiredPlugins() {
         return getRequiredPlugins(localrequires);
     }
-    
+
     /**
-     * Updates the local fields ({@link #localversion}, {@link #localmainversion}, {@link #localrequires}) 
-     * to values contained in the up-to-date fields ({@link #version}, {@link #mainversion}, {@link #requires}) 
+     * Updates the local fields ({@link #localversion}, {@link #localmainversion}, {@link #localrequires})
+     * to values contained in the up-to-date fields ({@link #version}, {@link #mainversion}, {@link #requires})
      * of the given PluginInformation.
      * @param info The plugin information to get the data from.
      * @since 5601

@@ -80,7 +80,7 @@ public class OsmServerLocationReader extends OsmServerReader {
             }
         }, progressMonitor);
     }
-    
+
     /**
      * Method to download GZip-compressed OSM files from somewhere
      */
@@ -116,7 +116,7 @@ public class OsmServerLocationReader extends OsmServerReader {
             }
         }, progressMonitor);
     }
-    
+
     /**
      * Method to download BZip2-compressed OSM Change files from somewhere
      */
@@ -134,7 +134,7 @@ public class OsmServerLocationReader extends OsmServerReader {
             }
         }, progressMonitor);
     }
-    
+
     /**
      * Method to download GZip-compressed OSM Change files from somewhere
      */

@@ -109,7 +109,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
 
         tree.getLayerTree().addPropertyChangeListener("selectedLayers", new PropertyChangeListener() {
             @Override
-            public void propertyChange(PropertyChangeEvent evt) { 
+            public void propertyChange(PropertyChangeEvent evt) {
                 onLayerSelectionChanged();
             }
         });
@@ -134,12 +134,12 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                 }
             }
         });
-        
+
         registerValidableComponent(endpoint);
         registerValidableComponent(rawUrl);
         registerValidableComponent(wmsUrl);
     }
-    
+
     protected final void onLayerSelectionChanged() {
         if (wms.getServiceUrl() != null) {
             wmsUrl.setText(wms.buildGetMapUrl(tree.getSelectedLayers(), (String) formats.getSelectedItem()));
@@ -160,11 +160,11 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         }
         return info;
     }
-    
+
     protected final String getWmsUrl() {
         return sanitize(wmsUrl.getText());
     }
-    
+
     protected boolean isImageryValid() {
         if (getImageryName().isEmpty()) {
             return false;

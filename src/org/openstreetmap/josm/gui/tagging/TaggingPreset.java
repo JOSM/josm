@@ -74,7 +74,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public String name_context;
     public String locale_name;
    public final static String OPTIONAL_TOOLTIP_TEXT = "Optional tooltip text";
-    
+
     /**
      * The types as preparsed collection.
      */
@@ -83,7 +83,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public Roles roles;
     public TemplateEntry nameTemplate;
     public Match nameTemplateFilter;
-    
+
     /**
      * Create an empty tagging preset. This will not have any items and
      * will be an empty string as text. createPanel will return null.
@@ -238,7 +238,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public String suggestRoleForOsmPrimitive(OsmPrimitive osm) {
         if (roles != null && osm != null) {
             for (Role i : roles.roles) {
-                if (i.memberExpression != null && i.memberExpression.match(osm) 
+                if (i.memberExpression != null && i.memberExpression.match(osm)
                         && (i.types == null || i.types.isEmpty() || i.types.contains(TaggingPresetType.forPrimitive(osm)) )) {
                     return i.key;
                 }

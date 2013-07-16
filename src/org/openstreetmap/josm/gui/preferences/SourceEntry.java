@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import static org.openstreetmap.josm.tools.Utils.equal;
 
 /**
- * A source entry primarily used to save the user's selection of mappaint styles, 
+ * A source entry primarily used to save the user's selection of mappaint styles,
  * but also for preset sources.
  */
 public class SourceEntry {
@@ -60,7 +60,7 @@ public class SourceEntry {
         if (obj == null || getClass() != obj.getClass())
             return false;
         final SourceEntry other = (SourceEntry) obj;
-        return equal(other.url, url) && 
+        return equal(other.url, url) &&
                 equal(other.name, name) &&
                 equal(other.title, title) &&
                 other.active == active;

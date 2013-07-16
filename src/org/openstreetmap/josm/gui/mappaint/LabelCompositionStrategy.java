@@ -14,15 +14,15 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  * <p>Provides an abstract parent class and three concrete sub classes for various
  * strategies on how to compose the text label which can be rendered close to a node
  * or within an area in an OSM map.</p>
- * 
+ *
  * <p>The three strategies below support three rules for composing a label:
  * <ul>
  *   <li>{@link StaticLabelCompositionStrategy} - the label is given by a static text
  *   specified in the MapCSS style file</li>
- * 
+ *
  *   <li>{@link TagLookupCompositionStrategy} - the label is given by the content of a
  *   tag whose name specified in the MapCSS style file</li>
- * 
+ *
  *   <li>{@link DeriveLabelFromNameTagsCompositionStrategy} - the label is given by the value
  *   of one
  *   of the configured "name tags". The list of relevant name tags can be configured
@@ -166,11 +166,11 @@ public abstract class LabelCompositionStrategy {
 
         /**
          * <p>Creates the strategy and initializes its name tags from the preferences.</p>
-         * 
+         *
          * <p><strong>Note:</strong> If the list of name tags in the preferences changes, strategy instances
          * are not notified. It's up to the client to listen to preference changes and
          * invoke {@link #initNameTagsFromPreferences()} accordingly.</p>
-         * 
+         *
          */
         public DeriveLabelFromNameTagsCompositionStrategy() {
             initNameTagsFromPreferences();
@@ -178,7 +178,7 @@ public abstract class LabelCompositionStrategy {
 
         /**
          * Sets the name tags to be looked up in order to build up the label
-         * 
+         *
          * @param nameTags the name tags. null values are ignore.
          */
         public void setNameTags(List<String> nameTags){
@@ -200,7 +200,7 @@ public abstract class LabelCompositionStrategy {
 
         /**
          * Replies an unmodifiable list of the name tags used to compose the label.
-         * 
+         *
          * @return the list of name tags
          */
         public List<String> getNameTags() {

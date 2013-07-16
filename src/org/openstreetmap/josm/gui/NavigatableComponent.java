@@ -63,7 +63,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public interface ZoomChangeListener {
         void zoomChanged();
     }
-    
+
     /**
      * Interface to notify listeners of the change of the system of measurement.
      * @since 6056
@@ -76,7 +76,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
          */
         void systemOfMeasurementChanged(String oldSoM, String newSoM);
     }
-    
+
     /**
      * Simple data class that keeps map center and scale in one object.
      */
@@ -149,7 +149,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Removes a SoM change listener
-     * 
+     *
      * @param listener the listener. Ignored if null or already absent
      * @since 6056
      */
@@ -159,7 +159,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Adds a SoM change listener
-     * 
+     *
      * @param listener the listener. Ignored if null or already registered.
      * @since 6056
      */
@@ -168,7 +168,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             somChangeListeners.addIfAbsent(listener);
         }
     }
-    
+
     protected static void fireSoMChanged(String oldSoM, String newSoM) {
         for (SoMChangeListener l : somChangeListeners) {
             l.systemOfMeasurementChanged(oldSoM, newSoM);
@@ -189,7 +189,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     private final Object paintRequestLock = new Object();
     private Rectangle paintRect = null;
     private Polygon paintPoly = null;
-    
+
     public NavigatableComponent() {
         setLayout(null);
     }
@@ -727,13 +727,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public final Node getNearestNode(Point p, Predicate<OsmPrimitive> predicate, boolean use_selected) {
         return getNearestNode(p, predicate, use_selected, null);
     }
-    
+
     /**
      * The *result* depends on the current map selection state IF use_selected is true
      *
      * If more than one node within node.snap-distance pixels is found,
      * the nearest node selected is returned IF use_selected is true.
-     * 
+     *
      * If there are no selected nodes near that point, the node that is related to some of the preferredRefs
      *
      * Else the nearest new/id=0 node within about the same distance
@@ -754,10 +754,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final Node getNearestNode(Point p, Predicate<OsmPrimitive> predicate,
             boolean use_selected, Collection<OsmPrimitive> preferredRefs) {
-        
+
         Map<Double, List<Node>> nlists = getNearestNodesImpl(p, predicate);
         if (nlists.isEmpty()) return null;
-        
+
         if (preferredRefs != null && preferredRefs.isEmpty()) preferredRefs = null;
         Node ntsel = null, ntnew = null, ntref = null;
         boolean useNtsel = use_selected;
@@ -792,11 +792,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
 
         // take nearest selected, nearest new or true nearest node to p, in that order
-        if (ntsel != null && useNtsel) 
+        if (ntsel != null && useNtsel)
             return ntsel;
-        if (ntref != null) 
+        if (ntref != null)
             return ntref;
-        if (ntnew != null) 
+        if (ntnew != null)
             return ntnew;
         return nlists.values().iterator().next().get(0);
     }
@@ -955,7 +955,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
         return (ntsel != null && use_selected) ? ntsel : wayseg;
     }
-    
+
      /**
      * The *result* depends on the current map selection state IF use_selected is true.
      *
@@ -973,7 +973,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             boolean use_selected,  Collection<OsmPrimitive> preferredRefs) {
         WaySegment wayseg = null, ntsel = null, ntref = null;
         if (preferredRefs != null && preferredRefs.isEmpty()) preferredRefs = null;
-        
+
         searchLoop: for (List<WaySegment> wslist : getNearestWaySegmentsImpl(p, predicate).values()) {
             for (WaySegment ws : wslist) {
                 if (wayseg == null) {
@@ -1002,7 +1002,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 }
             }
         }
-        if (ntsel != null && use_selected) 
+        if (ntsel != null && use_selected)
             return ntsel;
         if (ntref != null)
             return ntref;
@@ -1179,7 +1179,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param use_selected whether to prefer primitives that are currently selected or referred by selected primitives
      */
     public final OsmPrimitive getNearestNodeOrWay(Point p, Predicate<OsmPrimitive> predicate, boolean use_selected) {
-        Collection<OsmPrimitive> sel = 
+        Collection<OsmPrimitive> sel =
                 use_selected ? getCurrentDataSet().getSelected() : null;
         OsmPrimitive osm = getNearestNode(p, predicate, use_selected, sel);
 
@@ -1294,12 +1294,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 }
             }
         }
-        
+
         // add nearby nodes
         for (List<Node> nlist : getNearestNodesImpl(p, predicate).values()) {
             nearestList.addAll(nlist);
         }
-        
+
         // add parent relations of nearby nodes and ways
         Set<OsmPrimitive> parentRelations = new HashSet<OsmPrimitive>();
         for (OsmPrimitive o : nearestList) {
@@ -1310,7 +1310,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
         }
         nearestList.addAll(parentRelations);
-        
+
         if (ignore != null) {
             nearestList.removeAll(ignore);
         }
@@ -1391,7 +1391,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @since 3406
      */
     public static class SystemOfMeasurement {
-        
+
         /** First value, in meters, used to translate unit according to above formula. */
         public final double aValue;
         /** Second value, in meters, used to translate unit according to above formula. */
@@ -1403,7 +1403,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         /** Specific optional area value, in squared meters, between {@code aValue*aValue} and {@code bValue*bValue}. Set to {@code -1} if not used.
          *  @since 5870 */
         public final double areaCustomValue;
-        /** Specific optional area unit. Set to {@code null} if not used. 
+        /** Specific optional area unit. Set to {@code null} if not used.
          *  @since 5870 */
         public final String areaCustomName;
 
@@ -1412,7 +1412,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
          *
          * If a quantity x is given in m (x_m) and in unit a (x_a) then it translates as
          * x_a == x_m / aValue
-         * 
+         *
          * @param aValue First value, in meters, used to translate unit according to above formula.
          * @param aName First unit used to format text.
          * @param bValue Second value, in meters, used to translate unit according to above formula.
@@ -1421,21 +1421,21 @@ public class NavigatableComponent extends JComponent implements Helpful {
         public SystemOfMeasurement(double aValue, String aName, double bValue, String bName) {
             this(aValue, aName, bValue, bName, -1, null);
         }
-        
+
         /**
          * System of measurement. Currently covers only length (and area) units.
          *
          * If a quantity x is given in m (x_m) and in unit a (x_a) then it translates as
          * x_a == x_m / aValue
-         * 
+         *
          * @param aValue First value, in meters, used to translate unit according to above formula.
          * @param aName First unit used to format text.
          * @param bValue Second value, in meters, used to translate unit according to above formula.
          * @param bName Second unit used to format text.
-         * @param areaCustomValue Specific optional area value, in squared meters, between {@code aValue*aValue} and {@code bValue*bValue}. 
+         * @param areaCustomValue Specific optional area value, in squared meters, between {@code aValue*aValue} and {@code bValue*bValue}.
          *                        Set to {@code -1} if not used.
          * @param areaCustomName Specific optional area unit. Set to {@code null} if not used.
-         * 
+         *
          * @since 5870
          */
         public SystemOfMeasurement(double aValue, String aName, double bValue, String bName, double areaCustomValue, String areaCustomName) {
@@ -1481,7 +1481,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             else
                 return formatText(a, aName+"\u00b2");
         }
-        
+
         private static String formatText(double v, String unit) {
             return String.format(Locale.US, "%." + (v<9.999999 ? 2 : 1) + "f %s", v, unit);
         }
@@ -1492,19 +1492,19 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @since 3406
      */
     public static final SystemOfMeasurement METRIC_SOM = new SystemOfMeasurement(1, "m", 1000, "km", 10000, "ha");
-    
+
     /**
      * Chinese system.
      * @since 3406
      */
     public static final SystemOfMeasurement CHINESE_SOM = new SystemOfMeasurement(1.0/3.0, "\u5e02\u5c3a" /* chi */, 500, "\u5e02\u91cc" /* li */);
-    
+
     /**
      * Imperial system (British Commonwealth and former British Empire).
      * @since 3406
      */
     public static final SystemOfMeasurement IMPERIAL_SOM = new SystemOfMeasurement(0.3048, "ft", 1609.344, "mi", 4046.86, "ac");
-    
+
     /**
      * Nautical mile system (navigation, polar exploration).
      * @since 5549
@@ -1578,7 +1578,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
         Cursors = c;
     }
-    
+
     @Override
     public void paint(Graphics g) {
         synchronized (paintRequestLock) {
@@ -1612,7 +1612,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             repaint();
         }
     }
-    
+
     /**
      * Requests to paint the given {@code Polygon} as a polyline (unclosed polygon).
      * @param p The Polygon to draw
@@ -1627,7 +1627,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             repaint();
         }
     }
-    
+
     /**
      * Requests to clear the rectangled previously drawn.
      * @see #requestPaintRect

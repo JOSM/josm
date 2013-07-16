@@ -24,7 +24,7 @@ public class OsmImporter extends FileImporter {
 
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
             "osm,xml", "osm", tr("OSM Server Files") + " (*.osm *.xml)");
-    
+
     public static class OsmImporterData {
 
         private OsmDataLayer layer;
@@ -79,7 +79,7 @@ public class OsmImporter extends FileImporter {
     protected void importData(InputStream in, final File associatedFile) throws IllegalDataException {
         importData(in, associatedFile, NullProgressMonitor.INSTANCE);
     }
-    
+
     /**
      * Imports OSM data from stream
      * @param in input stream

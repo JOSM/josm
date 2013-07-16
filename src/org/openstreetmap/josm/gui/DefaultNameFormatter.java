@@ -391,7 +391,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             if (comp != 0)
                 return comp;
 
-            if (r1.getUniqueId() > r2.getUniqueId()) 
+            if (r1.getUniqueId() > r2.getUniqueId())
                 return 1;
             else if (r1.getUniqueId() < r2.getUniqueId())
                 return -1;

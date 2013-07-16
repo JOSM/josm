@@ -11,7 +11,7 @@ import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 
 public abstract class FileExporter implements LayerChangeListener {
-    
+
     public final ExtensionFileFilter filter;
 
     private boolean enabled;
@@ -30,7 +30,7 @@ public abstract class FileExporter implements LayerChangeListener {
     }
 
     /**
-     * Returns the enabled state of this {@code FileExporter}. When enabled, it is listed and usable in "File->Save" dialogs. 
+     * Returns the enabled state of this {@code FileExporter}. When enabled, it is listed and usable in "File->Save" dialogs.
      * @return true if this {@code FileExporter} is enabled
      * @since 5459
      */

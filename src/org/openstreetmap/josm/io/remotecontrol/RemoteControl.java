@@ -44,7 +44,7 @@ public class RemoteControl
     /**
      * Adds external request handler.
      * Can be used by plugins that want to use remote control.
-     * 
+     *
      * @param command The command name.
      * @param handlerClass The additional request handler.
      */

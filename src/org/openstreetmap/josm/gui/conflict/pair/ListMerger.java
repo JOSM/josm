@@ -887,7 +887,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
                 trn("Their version ({0} entry)", "Their version ({0} entries)", model.getTheirEntriesSize(), model.getTheirEntriesSize())
         );
     }
-    
+
     public void unlinkAsListener() {
         myEntriesTable.unlinkAsListener();
         mergedEntriesTable.unlinkAsListener();
@@ -1030,7 +1030,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
             view.setSelected(true);
         }
     }
-    
+
     protected final <P extends OsmPrimitive> OsmDataLayer findLayerFor(P primitive) {
         if (primitive != null) {
             List<OsmDataLayer> layers = Main.map.mapView.getLayersOfType(OsmDataLayer.class);

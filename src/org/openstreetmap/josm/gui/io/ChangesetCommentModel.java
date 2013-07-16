@@ -14,7 +14,7 @@ public class ChangesetCommentModel extends Observable {
     /**
      * Sets the current changeset comment and notifies observers if the comment
      * has changed.
-     * 
+     *
      * @param comment the new upload comment. Empty string assumed if null.
      */
     public void setComment(String comment) {
@@ -28,7 +28,7 @@ public class ChangesetCommentModel extends Observable {
 
     /**
      * Replies the current changeset comment in this model.
-     * 
+     *
      * @return the current changeset comment in this model.
      */
     public String getComment() {

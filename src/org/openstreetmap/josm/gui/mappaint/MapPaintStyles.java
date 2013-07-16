@@ -123,11 +123,11 @@ public class MapPaintStyles {
                 .setArchive(source.zipIcons)
                 .setOptional(true).get();
     }
-    
+
     public static ImageIcon getNodeIcon(Tag tag) {
         return getNodeIcon(tag, true);
     }
-    
+
     public static ImageIcon getNodeIcon(Tag tag, boolean includeDeprecatedIcon) {
         if (tag != null) {
             Node virtualNode = new Node();

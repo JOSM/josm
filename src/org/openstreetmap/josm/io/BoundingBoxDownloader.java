@@ -58,7 +58,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
         result.fromServer = true;
         return result;
     }
-    
+
     /**
      * Retrieve raw gps waypoints from the server API.
      * @return A list of all primitives retrieved. Currently, the list of lists
@@ -130,7 +130,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
                 if (ds2 == null)
                     return null;
                 ds.mergeFrom(ds2);
-                
+
             } else {
                 // Simple request
                 in = getInputStream(getRequestForBbox(lon1, lat1, lon2, lat2), progressMonitor.createSubTaskMonitor(9, false));

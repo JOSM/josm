@@ -43,7 +43,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
     public void initSystemShortcuts() {
         //Shortcut.registerSystemCut("system:menuexit", tr("reserved"), VK_Q, CTRL_DOWN_MASK);
         Shortcut.registerSystemShortcut("system:duplicate", tr("reserved"), VK_D, CTRL_DOWN_MASK); // not really system, but to avoid odd results
-        
+
         // Windows 7 shortcuts: http://windows.microsoft.com/en-US/windows7/Keyboard-shortcuts
 
         // Shortcuts with setAutomatic(): items with automatic shortcuts will not be added to the menu bar at all
@@ -55,7 +55,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         Shortcut.registerSystemShortcut("microsoft-reserved-01", tr("reserved"), VK_PRINTSCREEN, ALT_DOWN_MASK | SHIFT_DOWN_MASK).setAutomatic(); // Turn High Contrast on or off
         Shortcut.registerSystemShortcut("microsoft-reserved-02", tr("reserved"), VK_NUM_LOCK, ALT_DOWN_MASK | SHIFT_DOWN_MASK).setAutomatic(); // Turn Mouse Keys on or off
         //Shortcut.registerSystemCut("microsoft-reserved-03", tr("reserved"), VK_U, );// Open the Ease of Access Center (TODO: Windows-U, how to handle it in Java ?)
-        
+
         // General keyboard shortcuts
         //Shortcut.registerSystemShortcut("system:help", tr("reserved"), VK_F1, 0);                            // Display Help
         Shortcut.registerSystemShortcut("system:copy", tr("reserved"), VK_C, CTRL_DOWN_MASK);                // Copy the selected item
@@ -128,7 +128,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
      */
     @Override
     public String getOSDescription() {
-        return Utils.strip(System.getProperty("os.name")) + " " + 
+        return Utils.strip(System.getProperty("os.name")) + " " +
                 ((System.getenv("ProgramFiles(x86)") == null) ? "32" : "64") + "-Bit";
     }
 }

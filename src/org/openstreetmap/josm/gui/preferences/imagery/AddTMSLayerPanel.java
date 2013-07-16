@@ -88,7 +88,7 @@ public class AddTMSLayerPanel extends AddImageryPanel {
                 (int) Math.ceil(view.getPreferredSpan(View.X_AXIS)),
                 (int) Math.ceil(view.getPreferredSpan(View.Y_AXIS)));
     }
-    
+
     protected final String getTmsUrl() {
         return sanitize(tmsUrl.getText());
     }

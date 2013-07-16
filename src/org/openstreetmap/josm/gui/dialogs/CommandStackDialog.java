@@ -74,7 +74,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     // Actions for context menu and Enter key
     private SelectAction selectAction = new SelectAction();
     private SelectAndZoomAction selectAndZoomAction = new SelectAndZoomAction();
-    
+
     public CommandStackDialog(final MapFrame mapFrame) {
         super(tr("Command Stack"), "commandstack", tr("Open a list of all commands (undo buffer)."),
                 Shortcut.registerShortcut("subwindow:commandstack", tr("Toggle: {0}",
@@ -88,7 +88,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         undoSelectionListener = new UndoRedoSelectionListener(undoTree);
         undoTree.getSelectionModel().addTreeSelectionListener(undoSelectionListener);
         InputMapUtils.unassignCtrlShiftUpDown(undoTree, JComponent.WHEN_FOCUSED);
-        
+
         redoTree.addMouseListener(new MouseEventHandler());
         redoTree.setRootVisible(false);
         redoTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -123,7 +123,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             new SideButton(undoAction),
             new SideButton(redoAction)
         }));
-        
+
         InputMapUtils.addEnterAction(undoTree, selectAndZoomAction);
         InputMapUtils.addEnterAction(redoTree, selectAndZoomAction);
     }
@@ -302,11 +302,11 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         }
         return node;
     }
-    
+
     /**
      * Return primitives that are affected by some command
-     * @param path GUI elements 
-     * @return collection of affected primitives, onluy usable ones 
+     * @param path GUI elements
+     * @return collection of affected primitives, onluy usable ones
      */
     protected static FilteredCollection<OsmPrimitive> getAffectedPrimitives(TreePath path) {
         PseudoCommand c = ((CommandListMutableTreeNode) path.getLastPathComponent()).getCommand();
@@ -353,7 +353,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             if (Main.map == null || Main.map.mapView == null || Main.map.mapView.getEditLayer() == null) return;
             Main.map.mapView.getEditLayer().data.setSelected( getAffectedPrimitives(path));
         }
-        
+
         @Override
         public void updateEnabledState() {
             setEnabled(!undoTree.isSelectionEmpty() || !redoTree.isSelectionEmpty());
@@ -376,7 +376,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             AutoScaleAction.autoScale("selection");
         }
     }
-    
+
     /**
      * undo / redo switch to reduce duplicate code
      */
@@ -447,7 +447,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         public MouseEventHandler() {
             super(new CommandStackPopup());
         }
-        
+
         @Override
         public void mouseClicked(MouseEvent evt) {
             if (isDoubleClick(evt)) {
@@ -455,7 +455,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             }
         }
     }
-    
+
     private class CommandStackPopup extends JPopupMenu {
         public CommandStackPopup(){
             add(selectAction);

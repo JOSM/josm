@@ -94,7 +94,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
             }
         });
         readPreferences(Main.pref);
-        
+
         applyFilter();
         table = new PreferencesTable(displayData);
         JScrollPane scroll = new JScrollPane(table);
@@ -139,7 +139,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
                 readPreferencesFromXML();
             }
         });
-        
+
         JButton export = new JButton(tr("Export selected items"));
         p.add(export, GBC.std().insets(5,5,0,0));
         export.addActionListener(new ActionListener(){
@@ -147,7 +147,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
                 exportSelectedToXML();
             }
         });
-        
+
         final JButton more = new JButton(tr("More..."));
         p.add(more, GBC.std().insets(5,5,0,0));
         more.addActionListener(new ActionListener() {
@@ -177,7 +177,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
         }
         allData = prepareData(loaded, orig, defaults);
     }
-    
+
     private File[] askUserForCustomSettingsFiles(boolean saveFileFlag, String title) {
         FileFilter filter = new FileFilter() {
             @Override
@@ -194,14 +194,14 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
             File sel[] = fc.isMultiSelectionEnabled() ? fc.getSelectedFiles() : (new File[]{fc.getSelectedFile()});
             if (sel.length==1 && !sel[0].getName().contains(".")) sel[0]=new File(sel[0].getAbsolutePath()+".xml");
             return sel;
-        } 
+        }
         return new File[0];
     }
- 
+
     private void exportSelectedToXML() {
         ArrayList<String> keys = new ArrayList<String>();
         boolean hasLists = false;
-        
+
         for (PrefEntry p: table.getSelectedItems()) {
             // preferences with default values are not saved
             if (!(p.getValue() instanceof Preferences.StringSetting)) {
@@ -211,7 +211,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
                 keys.add(p.getKey());
             }
         }
-        
+
         if (keys.isEmpty()) {
             JOptionPane.showMessageDialog(Main.parent,
                     tr("Please select some preference keys not marked as default"), tr("Warning"), JOptionPane.WARNING_MESSAGE);
@@ -232,7 +232,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
         }
         CustomConfigurator.exportPreferencesKeysToFile(files[0].getAbsolutePath(), answer == 0, keys);
     }
-    
+
     private void readPreferencesFromXML() {
         File[] files = askUserForCustomSettingsFiles(false, tr("Open JOSM customization file"));
         if (files.length == 0) return;
@@ -261,7 +261,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
         Collections.sort(allData, customComparator);
         applyFilter();
     }
-    
+
     private Comparator<PrefEntry> customComparator = new Comparator<PrefEntry>() {
         @Override
         public int compare(PrefEntry o1, PrefEntry o2) {
@@ -272,7 +272,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
             return o1.compareTo(o2);
         }
     };
-                
+
     private List<PrefEntry> prepareData(Map<String, Setting> loaded, Map<String, Setting> orig, Map<String, Setting> defaults) {
         List<PrefEntry> data = new ArrayList<PrefEntry>();
         for (Entry<String, Setting> e : loaded.entrySet()) {
@@ -305,20 +305,20 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
         displayData.addAll(data);
         return data;
     }
-    
+
     Map<String,String> profileTypes = new LinkedHashMap<String, String>();
-    
+
     private JPopupMenu buildPopupMenu() {
         JPopupMenu menu = new JPopupMenu();
         profileTypes.put(marktr("shortcut"), "shortcut\\..*");
         profileTypes.put(marktr("color"), "color\\..*");
         profileTypes.put(marktr("toolbar"), "toolbar.*");
         profileTypes.put(marktr("imagery"), "imagery.*");
-        
+
         for (Entry<String,String> e: profileTypes.entrySet()) {
             menu.add(new ExportProfileAction(Main.pref, e.getKey(), e.getValue()));
         }
-        
+
         menu.addSeparator();
         menu.add(getProfileMenu());
         menu.addSeparator();
@@ -339,7 +339,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
         });
         return menu;
     }
-    
+
     private JMenu getProfileMenu() {
         final JMenu p =new JMenu(tr("Load profile"));
         p.addMenuListener(new MenuListener() {
@@ -371,11 +371,11 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
         });
         return p;
     }
-    
+
     private class ImportProfileAction extends AbstractAction {
         private final File file;
         private final String type;
-        
+
         public ImportProfileAction(String name, File file, String type) {
             super(name);
             this.file = file;

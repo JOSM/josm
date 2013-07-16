@@ -24,7 +24,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
  * @author fred
  */
 public class DownloadAlongTrackAction extends DownloadAlongAction {
-    
+
     static final int NEAR_TRACK = 0;
     static final int NEAR_WAYPOINTS = 1;
     static final int NEAR_BOTH = 2;
@@ -35,7 +35,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
     private static final String PREF_DOWNLOAD_ALONG_TRACK_DISTANCE = "downloadAlongTrack.distance";
     private static final String PREF_DOWNLOAD_ALONG_TRACK_AREA = "downloadAlongTrack.area";
     private static final String PREF_DOWNLOAD_ALONG_TRACK_NEAR = "downloadAlongTrack.near";
-    
+
     private final GpxData data;
 
     /**
@@ -49,7 +49,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        
+
         final DownloadAlongPanel panel = new DownloadAlongPanel(
                 PREF_DOWNLOAD_ALONG_TRACK_OSM, PREF_DOWNLOAD_ALONG_TRACK_GPS,
                 PREF_DOWNLOAD_ALONG_TRACK_DISTANCE, PREF_DOWNLOAD_ALONG_TRACK_AREA, PREF_DOWNLOAD_ALONG_TRACK_NEAR);
@@ -57,7 +57,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
         if (0 != panel.showInDownloadDialog(tr("Download from OSM along this track"), HelpUtil.ht("/Action/DownloadAlongTrack"))) {
             return;
         }
-        
+
         final int near = panel.getNear();
 
         /*
@@ -123,7 +123,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
                 if (cancel) {
                     return;
                 }
-                confirmAndDownloadAreas(a, max_area, panel.isDownloadOsmData(), panel.isDownloadGpxData(), 
+                confirmAndDownloadAreas(a, max_area, panel.isDownloadOsmData(), panel.isDownloadGpxData(),
                         tr("Download from OSM along this track"), progressMonitor);
             }
 

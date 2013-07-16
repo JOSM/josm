@@ -67,5 +67,5 @@ public class ConvertToDataLayerAction extends AbstractAction {
         Main.main.addLayer(new OsmDataLayer(ds, tr("Converted from: {0}", layer.getName()), layer.getAssociatedFile()));
         Main.main.removeLayer(layer);
     }
-    
+
 }
