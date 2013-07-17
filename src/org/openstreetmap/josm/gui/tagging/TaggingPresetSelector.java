@@ -404,6 +404,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     }
     
     public void init(Collection<TaggingPreset> presets) {
+        classifications.clear();
         loadPresets(presets);
         init();
     }
