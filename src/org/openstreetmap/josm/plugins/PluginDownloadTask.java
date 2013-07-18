@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
@@ -118,9 +119,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
             }
             URL url = new URL(pi.downloadlink);
             synchronized(this) {
-                downloadConnection = Utils.openHttpConnection(url);
-                downloadConnection.setRequestProperty("Cache-Control", "no-cache");
-                downloadConnection.connect();
+                downloadConnection = MirroredInputStream.connectFollowingRedirect(url);
             }
             in = downloadConnection.getInputStream();
             out = new FileOutputStream(file);
