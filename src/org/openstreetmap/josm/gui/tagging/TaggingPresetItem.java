@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 public abstract class TaggingPresetItem {
 
     protected void initAutoCompletionField(AutoCompletingTextField field, String key) {
+        if (Main.main == null) return;
         OsmDataLayer layer = Main.main.getEditLayer();
         if (layer == null) {
             return;

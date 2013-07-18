@@ -32,6 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.Node;
@@ -49,7 +51,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * GUI component to select tagging preset: the list with filter and two checkboxes
- * @since 6067
+ * @since 6068
  */
 public class TaggingPresetSelector extends JPanel implements SelectionChangedListener {
     
@@ -199,8 +201,9 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
 
     public TaggingPresetSelector() {
         super(new BorderLayout());
-        
-        loadPresets(TaggingPresetPreference.taggingPresets);
+        if (TaggingPresetPreference.taggingPresets!=null) {
+            loadPresets(TaggingPresetPreference.taggingPresets);
+        }
         
         edSearchText = new JosmTextField();
         edSearchText.getDocument().addDocumentListener(new DocumentListener() {
@@ -373,7 +376,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
             synchronized (typesInSelection) {
                 typesInSelectionDirty = false;
                 typesInSelection.clear();
-                if (Main.main.getCurrentDataSet() == null) return typesInSelection;
+                if (Main.main==null || Main.main.getCurrentDataSet() == null) return typesInSelection;
                 for (OsmPrimitive primitive : Main.main.getCurrentDataSet().getSelected()) {
                     if (primitive instanceof Node) {
                         typesInSelection.add(TaggingPresetType.NODE);
@@ -469,4 +472,13 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         this.clickListener = clickListener;
     }
     
+    public void addSelectionListener(final ActionListener selectListener) {
+        lsResult.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting())
+                    selectListener.actionPerformed(null);
+            }
+        });
+    }
 }
