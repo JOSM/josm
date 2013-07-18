@@ -258,8 +258,14 @@ public class MirroredInputStream extends InputStream {
      * is going from a http to a https URL, see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4620571">bug report</a>.
      * <p>
      * This can causes problems when downloading from certain GitHub URLs.
+     * 
+     * @param downloadUrl The resource URL to download
+     * @return The HTTP connection effectively linked to the resource, after all potential redirections
+     * @throws MalformedURLException If a redirected URL is wrong
+     * @throws IOException If any I/O operation goes wrong
+     * @since 6073
      */
-    protected HttpURLConnection connectFollowingRedirect(URL downloadUrl) throws MalformedURLException, IOException {
+    public static HttpURLConnection connectFollowingRedirect(URL downloadUrl) throws MalformedURLException, IOException {
         HttpURLConnection con = null;
         int numRedirects = 0;
         while(true) {
