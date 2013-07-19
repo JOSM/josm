@@ -28,14 +28,6 @@ public class OAuthParameters {
      */
     static public final String DEFAULT_JOSM_CONSUMER_SECRET = "rIkjpPcBNkMQxrqzcOvOC4RRuYupYr7k8mfP13H5";
     /**
-     * The old default JOSM OAuth consumer key.
-     */
-    static public final String OLD_JOSM_CONSUMER_KEY = "AdCRxTpvnbmfV8aPqrTLyA";
-    /**
-     * The old default JOSM OAuth consumer secret.
-     */
-    static public final String OLD_JOSM_CONSUMER_SECRET = "XmYOiGY9hApytcBC3xCec3e28QBqOWz5g6DSb5UpE";
-    /**
      * The default OSM OAuth request token URL.
      */
     static public final String DEFAULT_REQUEST_TOKEN_URL = "http://www.openstreetmap.org/oauth/request_token";
@@ -70,13 +62,12 @@ public class OAuthParameters {
      */
     static public OAuthParameters createDefault(String apiUrl) {
         OAuthParameters parameters = new OAuthParameters();
-        parameters.setConsumerKey(OLD_JOSM_CONSUMER_KEY);
-        parameters.setConsumerSecret(OLD_JOSM_CONSUMER_SECRET);
-        if (apiUrl == null || apiUrl.isEmpty() || apiUrl.equals(OsmApi.DEFAULT_API_URL)) {
-            parameters.setRequestTokenUrl(DEFAULT_REQUEST_TOKEN_URL);
-            parameters.setAccessTokenUrl(DEFAULT_ACCESS_TOKEN_URL);
-            parameters.setAuthoriseUrl(DEFAULT_AUTHORISE_URL);
-        } else {
+        parameters.setConsumerKey(DEFAULT_JOSM_CONSUMER_KEY);
+        parameters.setConsumerSecret(DEFAULT_JOSM_CONSUMER_SECRET);
+        parameters.setRequestTokenUrl(DEFAULT_REQUEST_TOKEN_URL);
+        parameters.setAccessTokenUrl(DEFAULT_ACCESS_TOKEN_URL);
+        parameters.setAuthoriseUrl(DEFAULT_AUTHORISE_URL);
+        if(!apiUrl.equals(OsmApi.DEFAULT_API_URL)) {
             try {
                 String host = new URL(apiUrl).getHost();
                 if (host.endsWith("dev.openstreetmap.org")) {
@@ -98,30 +89,13 @@ public class OAuthParameters {
      * @return the parameters
      */
     static public OAuthParameters createFromPreferences(Preferences pref) {
-        boolean useDefault = pref.getBoolean("oauth.settings.use-default", true );
-        if (useDefault)
-            return createDefault(pref.get("osm-server.url"));
-        OAuthParameters parameters = new OAuthParameters();
-        parameters.setConsumerKey(pref.get("oauth.settings.consumer-key", ""));
-        parameters.setConsumerSecret(pref.get("oauth.settings.consumer-secret", ""));
-        parameters.setRequestTokenUrl(pref.get("oauth.settings.request-token-url", ""));
-        parameters.setAccessTokenUrl(pref.get("oauth.settings.access-token-url", ""));
-        parameters.setAuthoriseUrl(pref.get("oauth.settings.authorise-url", ""));
+        OAuthParameters parameters = createDefault(pref.get("osm-server.url"));
+        parameters.setConsumerKey(pref.get("oauth.settings.consumer-key", DEFAULT_JOSM_CONSUMER_KEY));
+        parameters.setConsumerSecret(pref.get("oauth.settings.consumer-secret", DEFAULT_JOSM_CONSUMER_SECRET));
+        parameters.setRequestTokenUrl(pref.get("oauth.settings.request-token-url", parameters.getRequestTokenUrl()));
+        parameters.setAccessTokenUrl(pref.get("oauth.settings.access-token-url", parameters.getAccessTokenUrl()));
+        parameters.setAuthoriseUrl(pref.get("oauth.settings.authorise-url", parameters.getAuthoriseUrl()));
         return parameters;
-    }
-
-    /**
-     * Clears the preferences for OAuth parameters
-     *
-     * @param pref the preferences in which keys related to OAuth parameters are
-     * removed
-     */
-    static public void clearPreferences(Preferences pref) {
-        pref.put("oauth.settings.consumer-key", null);
-        pref.put("oauth.settings.consumer-secret", null);
-        pref.put("oauth.settings.request-token-url", null);
-        pref.put("oauth.settings.access-token-url", null);
-        pref.put("oauth.settings.authorise-url", null);
     }
 
     private String consumerKey;
@@ -264,12 +238,6 @@ public class OAuthParameters {
      * @param pref The Preferences into which are saved these OAuth parameters with the prefix "oauth.settings"
      */
     public void saveToPreferences(Preferences pref) {
-        if (this.equals(createDefault(pref.get("osm-server.url")))) {
-            pref.put("oauth.settings.use-default", true );
-            clearPreferences(pref);
-            return;
-        }
-        pref.put("oauth.settings.use-default", false);
         pref.put("oauth.settings.consumer-key", consumerKey);
         pref.put("oauth.settings.consumer-secret", consumerSecret);
         pref.put("oauth.settings.request-token-url", requestTokenUrl);
