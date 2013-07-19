@@ -90,8 +90,8 @@ public class OAuthParameters {
      */
     static public OAuthParameters createFromPreferences(Preferences pref) {
         OAuthParameters parameters = createDefault(pref.get("osm-server.url"));
-        parameters.setConsumerKey(pref.get("oauth.settings.consumer-key", DEFAULT_JOSM_CONSUMER_KEY));
-        parameters.setConsumerSecret(pref.get("oauth.settings.consumer-secret", DEFAULT_JOSM_CONSUMER_SECRET));
+        parameters.setConsumerKey(pref.get("oauth.settings.consumer-key", parameters.getConsumerKey()));
+        parameters.setConsumerSecret(pref.get("oauth.settings.consumer-secret", parameters.getConsumerSecret()));
         parameters.setRequestTokenUrl(pref.get("oauth.settings.request-token-url", parameters.getRequestTokenUrl()));
         parameters.setAccessTokenUrl(pref.get("oauth.settings.access-token-url", parameters.getAccessTokenUrl()));
         parameters.setAuthoriseUrl(pref.get("oauth.settings.authorise-url", parameters.getAuthoriseUrl()));
