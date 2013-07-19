@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
 import java.awt.BorderLayout;

@@ -6,6 +6,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 
 /**
  * Enumeration of OSM primitive types associated with names and icons
+ * @since 6068
  */
 public enum TaggingPresetType {
     NODE("Mf_node", "node"), WAY("Mf_way", "way"), RELATION("Mf_relation", "relation"), CLOSEDWAY("Mf_closedway", "closedway");

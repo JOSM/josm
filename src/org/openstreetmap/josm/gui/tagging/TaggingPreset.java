@@ -1,4 +1,4 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -55,13 +55,13 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEntry;
 import org.openstreetmap.josm.tools.template_engine.TemplateParser;
 import org.xml.sax.SAXException;
 
-
 /**
  * This class read encapsulate one tagging preset. A class method can
  * read in all predefined presets, either shipped with JOSM or that are
  * in the config directory.
  *
  * It is also able to construct dialogs out of preset definitions.
+ * @since 294
  */
 public class TaggingPreset extends AbstractAction implements MapView.LayerChangeListener {
 
@@ -73,7 +73,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public String name;
     public String name_context;
     public String locale_name;
-   public final static String OPTIONAL_TOOLTIP_TEXT = "Optional tooltip text";
+    public final static String OPTIONAL_TOOLTIP_TEXT = "Optional tooltip text";
 
     /**
      * The types as preparsed collection.

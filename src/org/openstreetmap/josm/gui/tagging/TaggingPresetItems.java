@@ -56,10 +56,9 @@ import org.openstreetmap.josm.tools.GBC;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
-
 /**
- * Class that constains all subtypes of TaggingPresetItem,
- * static supplementary data, types and methods
+ * Class that contains all subtypes of TaggingPresetItem, static supplementary data, types and methods
+ * @since 6068
  */
 public final class TaggingPresetItems {
     private TaggingPresetItems() {    }

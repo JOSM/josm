@@ -10,18 +10,27 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 
-
+/**
+ * The tagging presets search dialog (F3).
+ * @since 3388
+ */
 public class TaggingPresetSearchDialog extends ExtendedDialog {
 
     private TaggingPresetSelector selector;
 
     private static TaggingPresetSearchDialog instance;
+    
+    /**
+     * Returns the unique instance of {@code TaggingPresetSearchDialog}.
+     * @return the unique instance of {@code TaggingPresetSearchDialog}.
+     */
     public static TaggingPresetSearchDialog getInstance() {
         if (instance == null) {
             instance = new TaggingPresetSearchDialog();
         }
         return instance;
     }
+    
     private TaggingPresetSearchDialog() {
         super(Main.parent, tr("Presets"), new String[] {tr("Select"), tr("Cancel")});
         selector = new TaggingPresetSelector();
