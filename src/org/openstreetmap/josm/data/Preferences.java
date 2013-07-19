@@ -1631,6 +1631,14 @@ public class Preferences {
      * see something with an expiry date in the past, remove it from the list.
      */
     public void removeObsolete() {
+        /* update the data with old consumer key*/
+        if(getInteger("josm.version", Version.getInstance().getVersion()) < 6076) {
+            if(!get("oauth.access-token.key").isEmpty() && get("oauth.settings.consumer-key").isEmpty()) {
+                put("oauth.settings.consumer-key", "AdCRxTpvnbmfV8aPqrTLyA");
+                put("oauth.settings.consumer-secret", "XmYOiGY9hApytcBC3xCec3e28QBqOWz5g6DSb5UpE");
+            }
+        }
+
         String[] obsolete = {
                 "downloadAlong.downloadAlongTrack.distance",   // 07/2013 - can be removed mid-2014. Replaced by downloadAlongWay.distance
                 "downloadAlong.downloadAlongTrack.area",       // 07/2013 - can be removed mid-2014. Replaced by downloadAlongWay.area
