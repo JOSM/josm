@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
 import java.io.BufferedReader;
@@ -22,9 +23,15 @@ import org.openstreetmap.josm.tools.XmlObjectParser;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-
+/**
+ * The tagging presets reader.
+ * @since 6068
+ */
 public final class TaggingPresetReader {
 
+    /**
+     * Constructs a new {@code TaggingPresetReader}.
+     */
     public TaggingPresetReader() {
     }
     
@@ -39,7 +46,6 @@ public final class TaggingPresetReader {
 
         return sources;
     }
-
     
     public static List<TaggingPreset> readAll(Reader in, boolean validate) throws SAXException {
         XmlObjectParser parser = new XmlObjectParser();
@@ -69,19 +75,17 @@ public final class TaggingPresetReader {
         } else {
             parser.start(in);
         }
-        while(parser.hasNext()) {
+        while (parser.hasNext()) {
             Object o = parser.next();
             if (o instanceof TaggingPresetMenu) {
                 TaggingPresetMenu tp = (TaggingPresetMenu) o;
-                if(tp == lastmenu) {
+                if (tp == lastmenu) {
                     lastmenu = tp.group;
-                } else
-                {
+                } else {
                     tp.group = lastmenu;
                     tp.setDisplayName();
                     lastmenu = tp;
                     all.add(tp);
-
                 }
                 lastrole = null;
             } else if (o instanceof TaggingPresetSeparator) {
