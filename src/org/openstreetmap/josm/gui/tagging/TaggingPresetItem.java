@@ -1,4 +1,4 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
 import java.util.Collection;
@@ -13,8 +13,8 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 
 /**
- * This calss reperesentse single part of a preset - one field or text label that
- * is shown to user
+ * Class that represents single part of a preset - one field or text label that is shown to user
+ * @since 6068
  */
 public abstract class TaggingPresetItem {
 
@@ -46,5 +46,4 @@ public abstract class TaggingPresetItem {
     Boolean matches(Map<String, String> tags) {
         return null;
     }
-
 }

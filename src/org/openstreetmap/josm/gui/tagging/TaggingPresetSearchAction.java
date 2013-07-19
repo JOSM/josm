@@ -10,8 +10,15 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * The tagging presets search action (F3).
+ * @since 3388
+ */
 public class TaggingPresetSearchAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code TaggingPresetSearchAction}.
+     */
     public TaggingPresetSearchAction() {
         super(tr("Search preset"), "dialogs/search", tr("Show preset search dialog"),
                 Shortcut.registerShortcut("preset:search", tr("Search presets"), KeyEvent.VK_F3, Shortcut.DIRECT), false);
@@ -25,8 +32,6 @@ public class TaggingPresetSearchAction extends JosmAction {
         if (!Main.main.hasEditLayer())
             return;
 
-        TaggingPresetSearchDialog dialog = TaggingPresetSearchDialog.getInstance();
-        dialog.showDialog();
+        TaggingPresetSearchDialog.getInstance().showDialog();
     }
-
 }
