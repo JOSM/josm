@@ -16,6 +16,7 @@ import org.openstreetmap.josm.gui.dialogs.MapPaintDialog;
 import org.openstreetmap.josm.gui.dialogs.MapPaintDialog.LaunchMapPaintPreferencesAction;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
 import org.openstreetmap.josm.gui.util.StayOpenCheckBoxMenuItem;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -63,12 +64,12 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
 
         @Override
         public void updateEnabledState() {
-            setEnabled(Main.isDisplayingMapView() && (Main.main.getEditLayer() != null || mapHasGpxLayer()));
+            setEnabled(Main.isDisplayingMapView() && (Main.main.getEditLayer() != null || mapHasGpxorMarkerLayer()));
         }
 
-        private boolean mapHasGpxLayer() {
+        private boolean mapHasGpxorMarkerLayer() {
             for (Layer layer : Main.map.mapView.getAllLayers()) {
-                if (layer instanceof GpxLayer) {
+                if (layer instanceof GpxLayer || layer instanceof MarkerLayer) {
                     return true;
                 }
             }
