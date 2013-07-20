@@ -196,6 +196,9 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         }
     }
 
+    /**
+     * Constructs a new {@code TaggingPresetSelector}.
+     */
     public TaggingPresetSelector() {
         super(new BorderLayout());
         if (TaggingPresetPreference.taggingPresets!=null) {
@@ -429,11 +432,13 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
      * @return selected preset (as action)
      */
     public TaggingPreset getSelectedPreset() {
+        List<PresetClassification> presets = lsResultModel.getPresets();
+        if (presets.isEmpty()) return null;
         int idx = lsResult.getSelectedIndex();
         if (idx == -1) {
             idx = 0;
         }
-        TaggingPreset preset = lsResultModel.getPresets().get(idx).preset;
+        TaggingPreset preset = presets.get(idx).preset;
         for (PresetClassification pc: classifications) {
             if (pc.preset == preset) {
                 pc.favoriteIndex = CLASSIFICATION_IN_FAVORITES;
