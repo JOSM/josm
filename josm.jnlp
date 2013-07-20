@@ -21,6 +21,7 @@
     <resources>
         <j2se version="1.6+"/>
         <jar href="josm-tested.jar"/>
+        <property name="java.util.Arrays.useLegacyMergeSort" value="true"/>
     </resources>
     <application-desc main-class="JOSM"/>
 </jnlp>
