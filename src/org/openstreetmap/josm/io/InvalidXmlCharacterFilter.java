@@ -1,9 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import java.io.FilterInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 
 import org.openstreetmap.josm.Main;
 
@@ -18,7 +17,9 @@ import org.openstreetmap.josm.Main;
  * Only handles control characters (&lt;0x20). Invalid characters are replaced
  * by space (0x20).
  */
-public class InvalidXmlCharacterFilter extends FilterInputStream {
+public class InvalidXmlCharacterFilter extends Reader {
+
+    private Reader reader;
 
     public static boolean firstWarning = true;
 
@@ -34,18 +35,13 @@ public class InvalidXmlCharacterFilter extends FilterInputStream {
         INVALID_CHARS[0xD] = false; // CR
     }
 
-    public InvalidXmlCharacterFilter(InputStream in) {
-        super(in);
+    public InvalidXmlCharacterFilter(Reader reader) {
+        this.reader = reader;
     }
 
     @Override
-    public int read() throws IOException {
-        return filter((byte)super.read());
-    }
-
-    @Override
-    public int read(byte[] b, int off, int len) throws IOException {
-        int n = super.read(b, off, len);
+    public int read(char[] b, int off, int len) throws IOException {
+        int n = reader.read(b, off, len);
         if (n == -1) {
             return -1;
         }
@@ -55,7 +51,12 @@ public class InvalidXmlCharacterFilter extends FilterInputStream {
         return n;
     }
 
-    private byte filter(byte in) {
+    @Override
+    public void close() throws IOException {
+        reader.close();
+    }
+
+    private char filter(char in) {
         if (in < 0x20 && in >= 0 && INVALID_CHARS[in]) {
             if (firstWarning) {
                 Main.warn("Invalid xml character encountered.");
