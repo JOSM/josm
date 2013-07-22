@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -426,8 +427,9 @@ public class GpxReader implements GpxConstants {
      * @throws IOException if an IO error occurs, e.g. the input stream is closed.
      */
     public GpxReader(InputStream source) throws IOException {
-        InputStream filtered = new InvalidXmlCharacterFilter(source);
-        this.inputSource = new InputSource(UTFInputStreamReader.create(filtered, "UTF-8"));
+        Reader utf8stream = UTFInputStreamReader.create(source, "UTF-8");
+        Reader filtered = new InvalidXmlCharacterFilter(utf8stream);
+        this.inputSource = new InputSource(filtered);
     }
 
     /**
