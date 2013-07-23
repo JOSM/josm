@@ -635,7 +635,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 // Create action for reusing the tag, with keyboard shortcut Ctrl+(1-5)
                 String actionShortcutKey = "properties:recent:"+count;
                 String actionShortcutShiftKey = "properties:recent:shift:"+count;
-                Shortcut sc = Shortcut.registerShortcut(actionShortcutKey, null, KeyEvent.VK_0+count, Shortcut.CTRL);
+                Shortcut sc = Shortcut.registerShortcut(actionShortcutKey, tr("Choose recent tag {0}", count), KeyEvent.VK_0+count, Shortcut.CTRL);
                 final JosmAction action = new JosmAction(actionShortcutKey, null, tr("Use this tag again"), sc, false) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -647,7 +647,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                         selectValuesCombobox();
                     }
                 };
-                Shortcut scShift = Shortcut.registerShortcut(actionShortcutShiftKey, null, KeyEvent.VK_0+count, Shortcut.CTRL_SHIFT);
+                Shortcut scShift = Shortcut.registerShortcut(actionShortcutShiftKey, tr("Apply recent tag {0}", count), KeyEvent.VK_0+count, Shortcut.CTRL_SHIFT);
                 final JosmAction actionShift = new JosmAction(actionShortcutShiftKey, null, tr("Use this tag again"), scShift, false) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
