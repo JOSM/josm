@@ -209,22 +209,48 @@ public class MainMenu extends JMenuBar {
     public final JMenu sessionMenu = new JMenu(tr("Session")); // submenu of the file menu
     public final JMenu editMenu = addMenu(marktr("Edit"), KeyEvent.VK_E, 1, ht("/Menu/Edit"));
     public final JMenu viewMenu = addMenu(marktr("View"), KeyEvent.VK_V, 2, ht("/Menu/View"));
+    /**
+     * toolsMenu contains different geometry manipulation actions from JOSM core (most used)
+     * The plugins should use other menus
+     */
     public final JMenu toolsMenu = addMenu(marktr("Tools"), KeyEvent.VK_T, 3, ht("/Menu/Tools"));
-    public final JMenu presetsMenu = addMenu(marktr("Presets"), KeyEvent.VK_P, 4, ht("/Menu/Presets"));
+    /**
+     * moreToolsMenu contains geometry-related actions from all the plugins
+     * @since 6082 (moved from Utilsplugin2)
+     */
+    public final JMenu moreToolsMenu = addMenu(marktr("More tools"), KeyEvent.VK_M, 4, ht("/Menu/MoreTools"));
+    /**
+     * dataMenu contains plugin actions that are related to certain tagging schemes (addressing opening hours),
+     * importing external data and using external web APIs
+     * @since 6082 
+     */    
+    public final JMenu dataMenu = addMenu(marktr("Data"), KeyEvent.VK_D, 5, ht("/Menu/Data"));
+     /**
+     * selectionMenu contains all actions related to selecting different objects
+     * @since 6082 (moved from Utilsplugin2)
+     */
+    public final JMenu selectionMenu = addMenu(marktr("Selection"), KeyEvent.VK_N, 6, ht("/Menu/Selection"));
+    public final JMenu presetsMenu = addMenu(marktr("Presets"), KeyEvent.VK_P, 7, ht("/Menu/Presets"));
     public final ImageryMenu imageryMenu =
-        (ImageryMenu)addMenu(new ImageryMenu(), marktr("Imagery"), KeyEvent.VK_I, 5, ht("/Menu/Imagery"));
+        (ImageryMenu)addMenu(new ImageryMenu(), marktr("Imagery"), KeyEvent.VK_I, 8, ht("/Menu/Imagery"));
+     /**
+     * gpsMenu contains all plugin actions that are related
+     * to using GPS data, including opening, uploading and real-time tracking
+     * @since 6082 
+     */
+    public final JMenu gpsMenu = addMenu(marktr("GPS"), KeyEvent.VK_G, 9, ht("/Menu/GPS"));
     /** the window menu is split into several groups. The first is for windows that can be opened from
      * this menu any time, e.g. the changeset editor. The second group is for toggle dialogs and the third
      * group is for currently open windows that cannot be toggled, e.g. relation editors. It's recommended
      * to use WINDOW_MENU_GROUP to determine the group integer.
      */
-    public final JMenu windowMenu = addMenu(marktr("Windows"), KeyEvent.VK_W, 6, ht("/Menu/Windows"));
+    public final JMenu windowMenu = addMenu(marktr("Windows"), KeyEvent.VK_W, 10, ht("/Menu/Windows"));
     public static enum WINDOW_MENU_GROUP { ALWAYS, TOGGLE_DIALOG, VOLATILE }
 
     public JMenu audioMenu = null;
-    public final JMenu helpMenu = addMenu(marktr("Help"), KeyEvent.VK_H, 7, ht("/Menu/Help"));
+    public final JMenu helpMenu = addMenu(marktr("Help"), KeyEvent.VK_H, 11, ht("/Menu/Help"));
 
-    public final int defaultMenuPos = 7;
+    public final int defaultMenuPos = 11;
 
     public final JosmAction moveUpAction = new MoveAction(MoveAction.Direction.UP);
     public final JosmAction moveDownAction = new MoveAction(MoveAction.Direction.DOWN);
@@ -319,6 +345,8 @@ public class MainMenu extends JMenuBar {
         if (ks != null) {
             menuitem.setAccelerator(ks);
         }
+        // some menus are hidden before they are populated with some items by plugins
+        if (!menu.isVisible()) menu.setVisible(true);
         return menuitem;
     }
 
@@ -427,7 +455,11 @@ public class MainMenu extends JMenuBar {
 
     public MainMenu() {
         JMenuItem current;
-
+        
+        moreToolsMenu.setVisible(false);
+        dataMenu.setVisible(false);
+        gpsMenu.setVisible(false);
+        
         add(fileMenu, newAction);
         add(fileMenu, openFile);
         fileMenu.add(recentlyOpened);
@@ -478,9 +510,6 @@ public class MainMenu extends JMenuBar {
         editMenu.addSeparator();
         add(editMenu,merge);
         add(editMenu,mergeSelected);
-        editMenu.addSeparator();
-        add(editMenu, selectAll);
-        add(editMenu, unselectAll);
         editMenu.addSeparator();
         add(editMenu, search);
         editMenu.addSeparator();
@@ -543,6 +572,9 @@ public class MainMenu extends JMenuBar {
 
         add(presetsMenu, presetSearchAction);
         presetsMenu.addSeparator();
+        
+        add(selectionMenu, selectAll);
+        add(selectionMenu, unselectAll);
 
         add(toolsMenu, splitWay);
         add(toolsMenu, combineWay);
