@@ -155,7 +155,7 @@ public class ImageDisplay extends JComponent {
     private class ImgDisplayMouseListener implements MouseListener, MouseWheelListener, MouseMotionListener {
 
         boolean mouseIsDragging = false;
-        long lastTimeForMousePoint = 0l;
+        long lastTimeForMousePoint = 0L;
         Point mousePointInImg = null;
 
         /** Zoom in and out, trying to preserve the point of the image that was under the mouse cursor

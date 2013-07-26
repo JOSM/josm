@@ -864,7 +864,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             // Find day difference
             final int dayOffset = (int)Math.round(diffInH / 24); // days
-            double tmz = diff - dayOffset*24*60*60l;  // seconds
+            double tmz = diff - dayOffset*24*60*60L;  // seconds
 
             // In hours, rounded to two decimal places
             tmz = (double)Math.round(tmz*100/(60*60)) / 100;
@@ -1044,7 +1044,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             // Find day difference
             int dayOffset = (int)Math.round(diffInH / 24); // days
-            double tz = diff - dayOffset*24*60*60l;  // seconds
+            double tz = diff - dayOffset*24*60*60L;  // seconds
 
             // In hours, rounded to two decimal places
             tz = (double)Math.round(tz*100/(60*60)) / 100;
