@@ -293,7 +293,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     @Override
     public Date getTimestamp() {
-        return new Date(timestamp * 1000l);
+        return new Date(timestamp * 1000L);
     }
 
     @Override

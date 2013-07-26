@@ -25,7 +25,7 @@ abstract public class StyleSource extends SourceEntry {
     public File zipIcons;
 
     private ImageIcon imageIcon;
-    private long lastMTime = 0l;
+    private long lastMTime = 0L;
 
     /******
      * The following fields is additional information found in the header

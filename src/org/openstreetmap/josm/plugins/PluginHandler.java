@@ -280,7 +280,7 @@ public class PluginHandler {
             long tim = System.currentTimeMillis();
             long last = Main.pref.getLong("pluginmanager.lastupdate", 0);
             Integer maxTime = Main.pref.getInteger("pluginmanager.time-based-update.interval", DEFAULT_TIME_BASED_UPDATE_INTERVAL);
-            long d = (tim - last) / (24 * 60 * 60 * 1000l);
+            long d = (tim - last) / (24 * 60 * 60 * 1000L);
             if ((last <= 0) || (maxTime <= 0)) {
                 Main.pref.put("pluginmanager.lastupdate", Long.toString(tim));
             } else if (d > maxTime) {

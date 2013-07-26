@@ -71,7 +71,7 @@ public class OsmHistoryReader {
             if (v == null) {
                 throwException(tr("Missing mandatory attribute ''{0}''.", name));
             }
-            Long l = 0l;
+            Long l = 0L;
             try {
                 l = Long.parseLong(v);
             } catch(NumberFormatException e) {
