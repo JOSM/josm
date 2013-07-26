@@ -250,7 +250,7 @@ public class MainMenu extends JMenuBar {
     public JMenu audioMenu = null;
     public final JMenu helpMenu = addMenu(marktr("Help"), KeyEvent.VK_H, 11, ht("/Menu/Help"));
 
-    public final int defaultMenuPos = 11;
+    private final int defaultMenuPos = 11;
 
     public final JosmAction moveUpAction = new MoveAction(MoveAction.Direction.UP);
     public final JosmAction moveDownAction = new MoveAction(MoveAction.Direction.DOWN);
@@ -290,6 +290,14 @@ public class MainMenu extends JMenuBar {
             }
         }
     };
+    
+    /**
+     * @since 6088
+     * @return the default position of tnew top-level menus
+     */
+    public int getDefaultMenuPos() { 
+         return defaultMenuPos; 
+    }
 
     /**
      * Add a JosmAction at the end of a menu.
