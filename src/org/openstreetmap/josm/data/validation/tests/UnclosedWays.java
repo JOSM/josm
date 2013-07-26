@@ -94,7 +94,7 @@ public class UnclosedWays extends Test {
             set(1107, marktr("leisure type {0}"), test);
         }
         test = w.get("waterway");
-        if (test != null && test.equals("riverbank")) {
+        if ("riverbank".equals(test)) {
             set(1108, marktr("waterway type {0}"), test);
         }
         Boolean btest = OsmUtils.getOsmBoolean(w.get("building"));

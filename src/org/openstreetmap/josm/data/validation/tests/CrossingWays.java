@@ -124,8 +124,7 @@ public class CrossingWays extends Test {
                         continue;
                     }
 
-                    if ((es1.railway != null && es1.railway.equals("abandoned"))
-                            || (railway2 != null && railway2.equals("abandoned"))) {
+                    if (("abandoned".equals(es1.railway)) || ("abandoned".equals(railway2))) {
                         continue;
                     }
 
