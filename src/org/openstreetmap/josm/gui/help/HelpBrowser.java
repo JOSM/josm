@@ -83,6 +83,7 @@ public class HelpBrowser extends JDialog {
     public static void setUrlForHelpTopic(final String helpTopic) {
         final HelpBrowser browser = getInstance();
         Runnable r = new Runnable() {
+            @Override
             public void run() {
                 browser.openHelpTopic(helpTopic);
                 browser.setVisible(true);
@@ -189,6 +190,7 @@ public class HelpBrowser extends JDialog {
         p.add(buildToolBar(), BorderLayout.NORTH);
         help.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "Close");
         help.getActionMap().put("Close", new AbstractAction(){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
             }
@@ -427,6 +429,7 @@ public class HelpBrowser extends JDialog {
             putValue(SMALL_ICON, ImageProvider.get("help", "internet"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             OpenBrowser.displayUrl(getUrl());
         }
@@ -439,6 +442,7 @@ public class HelpBrowser extends JDialog {
             putValue(SMALL_ICON,ImageProvider.get("dialogs", "edit"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             String url = getUrl();
             if(url == null)
@@ -471,6 +475,7 @@ public class HelpBrowser extends JDialog {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             openUrl(getUrl());
         }
@@ -487,9 +492,11 @@ public class HelpBrowser extends JDialog {
             setEnabled(history.canGoBack());
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             history.back();
         }
+        @Override
         public void update(Observable o, Object arg) {
             //System.out.println("BackAction: canGoBoack=" + history.canGoBack() );
             setEnabled(history.canGoBack());
@@ -507,9 +514,11 @@ public class HelpBrowser extends JDialog {
             setEnabled(history.canGoForward());
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             history.forward();
         }
+        @Override
         public void update(Observable o, Object arg) {
             setEnabled(history.canGoForward());
         }
@@ -522,6 +531,7 @@ public class HelpBrowser extends JDialog {
             putValue(SMALL_ICON, ImageProvider.get("help", "home"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             openHelpTopic("/");
         }
@@ -580,6 +590,7 @@ public class HelpBrowser extends JDialog {
             return null;
         }
 
+        @Override
         public void hyperlinkUpdate(HyperlinkEvent e) {
             if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED)
                 return;

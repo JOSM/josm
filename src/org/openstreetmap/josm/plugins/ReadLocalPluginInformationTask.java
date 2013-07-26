@@ -73,6 +73,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     protected void scanSiteCacheFiles(ProgressMonitor monitor, File pluginsDirectory) {
         File[] siteCacheFiles = pluginsDirectory.listFiles(
                 new FilenameFilter() {
+                    @Override
                     public boolean accept(File dir, String name) {
                         return name.matches("^([0-9]+-)?site.*\\.txt$");
                     }
@@ -98,6 +99,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     protected void scanIconCacheFiles(ProgressMonitor monitor, File pluginsDirectory) {
         File[] siteCacheFiles = pluginsDirectory.listFiles(
                 new FilenameFilter() {
+                    @Override
                     public boolean accept(File dir, String name) {
                         return name.matches("^([0-9]+-)?site.*plugin-icons\\.zip$");
                     }
@@ -126,6 +128,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     protected void scanPluginFiles(ProgressMonitor monitor, File pluginsDirectory) {
         File[] pluginFiles = pluginsDirectory.listFiles(
                 new FilenameFilter() {
+                    @Override
                     public boolean accept(File dir, String name) {
                         return name.endsWith(".jar") || name.endsWith(".jar.new");
                     }

@@ -29,6 +29,7 @@ public class AudioBackAction extends JosmAction {
         this.putValue("help", ht("/Action/AudioBack"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         try {
             if (AudioPlayer.playing() || AudioPlayer.paused())

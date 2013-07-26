@@ -175,15 +175,19 @@ public class OAuthAuthorizationWizard extends JDialog {
         spAuthorisationProcedureUI.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         spAuthorisationProcedureUI.getVerticalScrollBar().addComponentListener(
                 new ComponentListener() {
+                    @Override
                     public void componentShown(ComponentEvent e) {
                         spAuthorisationProcedureUI.setBorder(UIManager.getBorder("ScrollPane.border"));
                     }
 
+                    @Override
                     public void componentHidden(ComponentEvent e) {
                         spAuthorisationProcedureUI.setBorder(null);
                     }
 
+                    @Override
                     public void componentResized(ComponentEvent e) {}
+                    @Override
                     public void componentMoved(ComponentEvent e) {}
                 }
         );
@@ -305,6 +309,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     }
 
     class AuthorisationProcedureChangeListener implements ItemListener {
+        @Override
         public void itemStateChanged(ItemEvent arg0) {
             refreshAuthorisationProcedurePanel();
         }
@@ -322,6 +327,7 @@ public class OAuthAuthorizationWizard extends JDialog {
             setVisible(false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             cancel();
         }
@@ -337,6 +343,7 @@ public class OAuthAuthorizationWizard extends JDialog {
             updateEnabledState(null);
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             setCanceled(false);
             setVisible(false);
@@ -346,6 +353,7 @@ public class OAuthAuthorizationWizard extends JDialog {
             setEnabled(token != null);
         }
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (!evt.getPropertyName().equals(AbstractAuthorizationUI.ACCESS_TOKEN_PROP))
                 return;
@@ -362,6 +370,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     }
 
     static class ExternalBrowserLauncher implements HyperlinkListener {
+        @Override
         public void hyperlinkUpdate(HyperlinkEvent e) {
             if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
                 OpenBrowser.displayUrl(e.getDescription());

@@ -763,6 +763,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         };
 
         mapModeListener = new MapModeChangeListener() {
+            @Override
             public void mapModeChange(MapMode oldMapMode, MapMode newMapMode) {
                 if (newMapMode == null || (newMapMode instanceof org.openstreetmap.josm.actions.mapmode.SelectAction)) {
                     Main.map.mapView.addMouseListener(mouseAdapter);
@@ -776,6 +777,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         mapModeListener.mapModeChange(null, Main.map.mapMode);
 
         MapView.addLayerChangeListener(new LayerChangeListener() {
+            @Override
             public void activeLayerChange(Layer oldLayer, Layer newLayer) {
                 if (newLayer == GeoImageLayer.this) {
                     // only in select mode it is possible to click the images
@@ -783,9 +785,11 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 }
             }
 
+            @Override
             public void layerAdded(Layer newLayer) {
             }
 
+            @Override
             public void layerRemoved(Layer oldLayer) {
                 if (oldLayer == GeoImageLayer.this) {
                     if (thumbsloader != null) {
@@ -809,6 +813,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (NavigatableComponent.PROPNAME_CENTER.equals(evt.getPropertyName()) || NavigatableComponent.PROPNAME_SCALE.equals(evt.getPropertyName())) {
             updateOffscreenBuffer = true;
@@ -842,10 +847,12 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         return gpxLayer;
     }
 
+    @Override
     public void jumpToNextMarker() {
         showNextPhoto();
     }
 
+    @Override
     public void jumpToPreviousMarker() {
         showPreviousPhoto();
     }

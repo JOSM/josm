@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 public class ServerAccessPreference extends DefaultTabPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
+        @Override
         public PreferenceSetting createPreferenceSetting() {
             return new ServerAccessPreference();
         }
@@ -105,6 +106,7 @@ public class ServerAccessPreference extends DefaultTabPreferenceSetting {
         return pnl;
     }
 
+    @Override
     public void addGui(PreferenceTabbedPane gui) {
         GridBagConstraints gc = new GridBagConstraints();
         gc.fill = GridBagConstraints.BOTH;
@@ -128,6 +130,7 @@ public class ServerAccessPreference extends DefaultTabPreferenceSetting {
     /**
      * Saves the values to the preferences
      */
+    @Override
     public boolean ok() {
         pnlApiUrlPreferences.saveToPreferences();
         pnlAuthPreferences.saveToPreferences();

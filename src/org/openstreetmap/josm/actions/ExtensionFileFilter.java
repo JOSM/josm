@@ -92,6 +92,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
                 filters,
                 new Comparator<ExtensionFileFilter>() {
                     private AllFormatsImporter all = new AllFormatsImporter();
+                    @Override
                     public int compare(ExtensionFileFilter o1, ExtensionFileFilter o2) {
                         if (o1.getDescription().equals(all.filter.getDescription())) return 1;
                         if (o2.getDescription().equals(all.filter.getDescription())) return -1;

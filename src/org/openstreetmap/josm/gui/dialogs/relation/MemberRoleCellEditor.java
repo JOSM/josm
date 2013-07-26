@@ -33,6 +33,7 @@ public class MemberRoleCellEditor extends AbstractCellEditor implements TableCel
     /**
      * replies the table cell editor
      */
+    @Override
     public Component getTableCellEditorComponent(JTable table,
             Object value, boolean isSelected, int row, int column) {
 
@@ -43,6 +44,7 @@ public class MemberRoleCellEditor extends AbstractCellEditor implements TableCel
         return editor;
     }
 
+    @Override
     public Object getCellEditorValue() {
         return editor.getText();
     }

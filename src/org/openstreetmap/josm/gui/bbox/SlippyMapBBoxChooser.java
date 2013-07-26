@@ -339,6 +339,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         PROP_MAPSTYLE.put(tileSource.getName()); // TODO Is name really unique?
     }
 
+    @Override
     public Bounds getBoundingBox() {
         return bbox;
     }
@@ -349,6 +350,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
      *
      * @param bbox the bounding box. null to reset the bounding box
      */
+    @Override
     public void setBoundingBox(Bounds bbox) {
         if (bbox == null || (bbox.getMin().lat() == 0.0 && bbox.getMin().lon() == 0.0
                 && bbox.getMax().lat() == 0.0 && bbox.getMax().lon() == 0.0)) {

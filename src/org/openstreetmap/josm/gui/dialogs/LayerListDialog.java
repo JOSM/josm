@@ -274,6 +274,7 @@ public class LayerListDialog extends ToggleDialog {
 
         // Activate layer on Enter key press
         InputMapUtils.addEnterAction(layerList, new AbstractAction() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 activateLayerAction.actionPerformed(null);
                 layerList.requestFocus();

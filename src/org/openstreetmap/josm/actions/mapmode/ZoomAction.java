@@ -50,6 +50,7 @@ public class ZoomAction extends MapMode implements SelectionEnded {
     /**
      * Zoom to the rectangle on the map.
      */
+    @Override
     public void selectionEnded(Rectangle r, MouseEvent e) {
         if (r.width >= 3 && r.height >= 3 && Main.isDisplayingMapView()) {
             MapView mv = Main.map.mapView;

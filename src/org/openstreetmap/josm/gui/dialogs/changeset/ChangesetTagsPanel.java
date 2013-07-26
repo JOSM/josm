@@ -46,6 +46,7 @@ public class ChangesetTagsPanel extends JPanel implements PropertyChangeListener
     /* ---------------------------------------------------------------------------- */
     /* interface PropertyChangeListener                                             */
     /* ---------------------------------------------------------------------------- */
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (!evt.getPropertyName().equals(ChangesetCacheManagerModel.CHANGESET_IN_DETAIL_VIEW_PROP))
             return;

@@ -126,10 +126,12 @@ public class MapListEditor extends ExtendedDialog {
     }
 
     class EntryListModel extends AbstractListModel {
+        @Override
         public Object getElementAt(int index) {
             return tr("Entry {0}", index+1);
         }
 
+        @Override
         public int getSize() {
             return dataKeys.size();
         }
@@ -154,6 +156,7 @@ public class MapListEditor extends ExtendedDialog {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             entryModel.add();
         }
@@ -171,10 +174,12 @@ public class MapListEditor extends ExtendedDialog {
             setEnabled(entryList.getSelectedIndices().length == 1);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int idx = entryList.getSelectedIndices()[0];
             entryModel.remove(idx);
@@ -182,6 +187,7 @@ public class MapListEditor extends ExtendedDialog {
     }
 
     class EntryListener implements ListSelectionListener {
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             TableCellEditor editor = table.getCellEditor();
             if (editor != null) {

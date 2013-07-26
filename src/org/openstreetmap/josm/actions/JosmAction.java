@@ -230,14 +230,17 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
                 }
             });
         }
+        @Override
         public void activeLayerChange(Layer oldLayer, Layer newLayer) {
             updateEnabledStateInEDT();
         }
 
+        @Override
         public void layerAdded(Layer newLayer) {
             updateEnabledStateInEDT();
         }
 
+        @Override
         public void layerRemoved(Layer oldLayer) {
             updateEnabledStateInEDT();
         }
@@ -248,6 +251,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
      *
      */
     private class SelectionChangeAdapter implements SelectionChangedListener {
+        @Override
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
             updateEnabledState(newSelection);
         }

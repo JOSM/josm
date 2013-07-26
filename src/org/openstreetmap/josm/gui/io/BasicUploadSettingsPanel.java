@@ -59,6 +59,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadComment.setPossibleItems(cmtHistory);
         hcbUploadComment.getEditor().addActionListener(
                 new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         changesetCommentModel.setComment(hcbUploadComment.getText());
                     }
@@ -100,13 +101,16 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadComment.getEditor().addActionListener(handler);
         hcbUploadComment.getEditor().getEditorComponent().addKeyListener(
                 new KeyListener() {
+                    @Override
                     public void keyTyped(KeyEvent e) {
                         if (e.getKeyCode() == KeyEvent.VK_TAB) {
                             handler.actionPerformed(new ActionEvent(hcbUploadComment,0, "focusDown"));
                         }
                     }
+                    @Override
                     public void keyReleased(KeyEvent e) {}
 
+                    @Override
                     public void keyPressed(KeyEvent e) {}
                 }
         );
@@ -150,6 +154,7 @@ public class BasicUploadSettingsPanel extends JPanel {
      * in sync with the current changeset comment
      */
     class ChangesetCommentObserver implements Observer {
+        @Override
         public void update(Observable o, Object arg) {
             if (!(o instanceof ChangesetCommentModel)) return;
             String newComment = (String)arg;

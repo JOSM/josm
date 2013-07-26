@@ -130,6 +130,7 @@ public class LoadAndZoomHandler extends RequestHandler
          */
         if (args.containsKey("addtags")) {
             GuiHelper.executeByMainWorkerInEDT(new Runnable() {
+                @Override
                 public void run() {
                     DataSet ds = Main.main.getCurrentDataSet();
                     if(ds == null) // e.g. download failed
@@ -143,6 +144,7 @@ public class LoadAndZoomHandler extends RequestHandler
         if (args.containsKey("select") && PermissionPrefWithDefault.CHANGE_SELECTION.isAllowed()) {
             // select objects after downloading, zoom to selection.
             GuiHelper.executeByMainWorkerInEDT(new Runnable() {
+                @Override
                 public void run() {
                     HashSet<OsmPrimitive> newSel = new HashSet<OsmPrimitive>();
                     DataSet ds = Main.main.getCurrentDataSet();
@@ -194,6 +196,7 @@ public class LoadAndZoomHandler extends RequestHandler
         // make sure this isn't called unless there *is* a MapView
         if (Main.isDisplayingMapView()) {
             GuiHelper.executeByMainWorkerInEDT(new Runnable() {
+                @Override
                 public void run() {
                     BoundingXYVisitor bbox = new BoundingXYVisitor();
                     bbox.visit(bounds);

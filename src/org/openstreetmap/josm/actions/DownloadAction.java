@@ -31,6 +31,7 @@ public class DownloadAction extends JosmAction {
         putValue("help", ht("/Action/Download"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         DownloadDialog dialog = DownloadDialog.getInstance();
         dialog.restoreSettings();

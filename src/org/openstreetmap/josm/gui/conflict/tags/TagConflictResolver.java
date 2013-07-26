@@ -51,6 +51,7 @@ public class TagConflictResolver extends JPanel {
         pnl.add(cbShowTagsWithMultiValuesOnly = new JCheckBox(tr("Show tags with multiple values only")), gc);
         cbShowTagsWithConflictsOnly.addChangeListener(
                 new ChangeListener() {
+                    @Override
                     public void stateChanged(ChangeEvent e) {
                         model.setShowTagsWithConflictsOnly(cbShowTagsWithConflictsOnly.isSelected());
                         cbShowTagsWithMultiValuesOnly.setEnabled(cbShowTagsWithConflictsOnly.isSelected());
@@ -62,6 +63,7 @@ public class TagConflictResolver extends JPanel {
         );
         cbShowTagsWithMultiValuesOnly.addChangeListener(
                 new ChangeListener() {
+                    @Override
                     public void stateChanged(ChangeEvent e) {
                         model.setShowTagsWithMultiValuesOnly(cbShowTagsWithMultiValuesOnly.isSelected());
                     }

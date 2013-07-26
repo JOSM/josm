@@ -239,6 +239,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
     }
 
     class TimeBasedPolicyChangeListener implements ChangeListener {
+        @Override
         public void stateChanged(ChangeEvent e) {
             lblUpdateInterval.setEnabled(!rbTimeBasedUpatePolicy.get(Policy.NEVER).isSelected());
             tfUpdateInterval.setEnabled(!rbTimeBasedUpatePolicy.get(Policy.NEVER).isSelected());

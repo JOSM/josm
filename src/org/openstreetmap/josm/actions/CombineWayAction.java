@@ -190,6 +190,7 @@ public class CombineWayAction extends JosmAction {
         return new Pair<Way, Command>(targetWay, sequenceCommand);
     }
 
+    @Override
     public void actionPerformed(ActionEvent event) {
         if (getCurrentDataSet() == null)
             return;
@@ -219,6 +220,7 @@ public class CombineWayAction extends JosmAction {
         if(selectedWay != null)
         {
             Runnable guiTask = new Runnable() {
+                @Override
                 public void run() {
                     getCurrentDataSet().setSelected(selectedWay);
                 }

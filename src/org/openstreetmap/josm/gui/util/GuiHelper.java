@@ -54,6 +54,7 @@ public class GuiHelper {
 
     public static void executeByMainWorkerInEDT(final Runnable task) {
         Main.worker.submit(new Runnable() {
+            @Override
             public void run() {
                 runInEDTAndWait(task);
             }
@@ -137,6 +138,7 @@ public class GuiHelper {
     public static final Component prepareResizeableOptionPane(final Component pane, final Dimension minDimension) {
         if (pane != null) {
             pane.addHierarchyListener(new HierarchyListener() {
+                @Override
                 public void hierarchyChanged(HierarchyEvent e) {
                     Window window = SwingUtilities.getWindowAncestor(pane);
                     if (window instanceof Dialog) {

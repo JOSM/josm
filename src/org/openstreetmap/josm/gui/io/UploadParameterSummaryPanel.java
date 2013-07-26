@@ -182,6 +182,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     /* --------------------------------------------------------------------- */
     /* Interface HyperlinkListener
     /* --------------------------------------------------------------------- */
+    @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
         if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
             if (e.getDescription() == null || configHandler == null)
@@ -197,6 +198,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     /* --------------------------------------------------------------------- */
     /* Interface PropertyChangeListener
     /* --------------------------------------------------------------------- */
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(ChangesetManagementPanel.SELECTED_CHANGESET_PROP)) {
             selectedChangeset = (Changeset)evt.getNewValue();

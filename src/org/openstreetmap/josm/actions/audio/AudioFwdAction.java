@@ -27,6 +27,7 @@ public class AudioFwdAction extends JosmAction {
         Shortcut.registerShortcut("audio:forward", tr("Audio: {0}", trc("audio", "Forward")), KeyEvent.VK_F7, Shortcut.DIRECT), true);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         try {
             if (AudioPlayer.playing() || AudioPlayer.paused())

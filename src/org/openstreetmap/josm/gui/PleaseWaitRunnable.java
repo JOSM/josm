@@ -85,6 +85,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
                         finish();
                     } else {
                         EventQueue.invokeAndWait(new Runnable() {
+                            @Override
                             public void run() {
                                 finish();
                             }
@@ -102,6 +103,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
                     afterFinish();
                 } else {
                     EventQueue.invokeAndWait(new Runnable() {
+                        @Override
                         public void run() {
                             afterFinish();
                         }
@@ -112,6 +114,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
             if (!ignoreException) {
                 // Exception has to thrown in EDT to be shown to user
                 SwingUtilities.invokeLater(new Runnable() {
+                    @Override
                     public void run() {
                         if (e instanceof RuntimeException) {
                             BugReportExceptionHandler.handleException(e);
@@ -131,12 +134,14 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
 
     }
 
+    @Override
     public final void run() {
         if (canceled)
             return; // since realRun isn't executed, do not call to finish
 
         if (EventQueue.isDispatchThread()) {
             new Thread(new Runnable() {
+                @Override
                 public void run() {
                     doRealRun();
                 }
@@ -146,6 +151,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
         }
     }
 
+    @Override
     public void operationCanceled() {
         cancel();
     }

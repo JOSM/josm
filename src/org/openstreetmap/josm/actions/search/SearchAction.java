@@ -125,12 +125,14 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         putValue("help", ht("/Action/Search"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
         search();
     }
 
+    @Override
     public void actionPerformed(ActionEvent e, Map<String, Object> parameters) {
         if (parameters.get(SEARCH_EXPRESSION) == null) {
             actionPerformed(e);
@@ -725,6 +727,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         setEnabled(getEditLayer() != null);
     }
 
+    @Override
     public List<ActionParameter<?>> getActionParameters() {
         return Collections.<ActionParameter<?>>singletonList(new SearchSettingsActionParameter(SEARCH_EXPRESSION));
     }

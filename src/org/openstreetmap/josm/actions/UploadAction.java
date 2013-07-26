@@ -227,6 +227,7 @@ public class UploadAction extends JosmAction{
         // after these events.
         // TODO: find better way to initialize the comment field
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 dialog.setDefaultChangesetTags(layer.data.getChangeSetTags());
             }
@@ -252,6 +253,7 @@ public class UploadAction extends JosmAction{
         );
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;

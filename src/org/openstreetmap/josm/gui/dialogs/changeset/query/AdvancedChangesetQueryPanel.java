@@ -258,6 +258,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             pnlBoundingBoxRestriction.setVisible(cbBoundingBoxRestriction.isSelected());
         }
 
+        @Override
         public void itemStateChanged(ItemEvent e) {
             if (e.getSource() == cbUserRestriction) {
                 userRestrictionStateChanged();
@@ -616,6 +617,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
 
         class UserRestrictionChangedHandler implements ItemListener {
+            @Override
             public void itemStateChanged(ItemEvent e) {
                 tfUid.setEnabled(rbRestrictToUid.isSelected());
                 tfUserName.setEnabled(rbRestrictToUserName.isSelected());
@@ -818,6 +820,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
 
         class TimeRestrictionChangedHandler implements ItemListener {
+            @Override
             public void itemStateChanged(ItemEvent e) {
                 tfClosedAfterDate1.setEnabled(rbClosedAfter.isSelected());
                 tfClosedAfterTime1.setEnabled(rbClosedAfter.isSelected());

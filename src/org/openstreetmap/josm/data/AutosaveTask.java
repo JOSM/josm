@@ -334,6 +334,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         final OpenFileTask openFileTsk = new OpenFileTask(files, null, tr("Restoring files"));
         Main.worker.submit(openFileTsk);
         Main.worker.submit(new Runnable() {
+            @Override
             public void run() {
                 for (File f: openFileTsk.getSuccessfullyOpenedFiles()) {
                     moveToDeletedLayersFolder(f);

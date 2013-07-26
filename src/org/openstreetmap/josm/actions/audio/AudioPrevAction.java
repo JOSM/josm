@@ -26,6 +26,7 @@ public class AudioPrevAction extends JosmAction {
         Shortcut.registerShortcut("audio:prev", tr("Audio: {0}", trc("audio", "Previous Marker")), KeyEvent.VK_F5, Shortcut.DIRECT), true);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         MarkerLayer.playPreviousMarker();
     }

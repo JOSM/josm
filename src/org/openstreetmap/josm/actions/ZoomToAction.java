@@ -60,6 +60,7 @@ public class ZoomToAction extends AbstractAction implements LayerChangeListener,
                 tr("Zooming disabled because there is no selected node"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (! isEnabled())
             return;
@@ -90,18 +91,22 @@ public class ZoomToAction extends AbstractAction implements LayerChangeListener,
         putValue(SHORT_DESCRIPTION, descriptionNominal);
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent e) {
         updateEnabledState();
     }
 
+    @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
         updateEnabledState();
     }
 
+    @Override
     public void layerAdded(Layer newLayer) {
         updateEnabledState();
     }
 
+    @Override
     public void layerRemoved(Layer oldLayer) {
         updateEnabledState();
     }

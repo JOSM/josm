@@ -13,6 +13,7 @@ public class ComparePairListCellRenderer extends JLabel implements ListCellRende
     public ComparePairListCellRenderer() {
         setOpaque(true);
     }
+    @Override
     public Component getListCellRendererComponent(
             JList list,
             Object value,

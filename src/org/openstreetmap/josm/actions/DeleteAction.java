@@ -20,6 +20,7 @@ public final class DeleteAction extends JosmAction {
         putValue("help", ht("/Action/Delete"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;

@@ -69,6 +69,7 @@ public class ScrollViewport extends JPanel {
     private List<JButton> buttons = new ArrayList<JButton>();
 
     private Timer timer = new Timer(100, new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             ScrollViewport.this.scroll();
         }

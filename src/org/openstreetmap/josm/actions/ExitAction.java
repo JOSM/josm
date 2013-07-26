@@ -25,6 +25,7 @@ public class ExitAction extends JosmAction {
         putValue("help", ht("/Action/Exit"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         Main.exitJosm(true);
     }

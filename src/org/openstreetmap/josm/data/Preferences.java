@@ -261,12 +261,15 @@ public class Preferences {
             this.newValue = newValue;
         }
 
+        @Override
         public String getKey() {
             return key;
         }
+        @Override
         public Setting<T> getOldValue() {
             return oldValue;
         }
+        @Override
         public Setting<T> getNewValue() {
             return newValue;
         }
@@ -1266,17 +1269,21 @@ public class Preferences {
         if (value == null) return false;
         class PutVisitor implements SettingVisitor {
             public boolean changed;
+            @Override
             public void visit(StringSetting setting) {
                 changed = put(key, setting.getValue());
             }
+            @Override
             public void visit(ListSetting setting) {
                 changed = putCollection(key, setting.getValue());
             }
+            @Override
             public void visit(ListListSetting setting) {
                 @SuppressWarnings("unchecked")
                 boolean changed = putArray(key, (Collection) setting.getValue());
                 this.changed = changed;
             }
+            @Override
             public void visit(MapListSetting setting) {
                 changed = putListOfStructs(key, setting.getValue());
             }
@@ -1549,6 +1556,7 @@ public class Preferences {
             this.key = key;
         }
 
+        @Override
         public void visit(StringSetting setting) {
             if (noPassword && key.equals("osm-server.password"))
                 return; // do not store plain password.
@@ -1564,6 +1572,7 @@ public class Preferences {
             }
         }
 
+        @Override
         public void visit(ListSetting setting) {
             b.append("  <list key='").append(XmlWriter.encode(key)).append("'>\n");
             for (String s : setting.getValue()) {
@@ -1572,6 +1581,7 @@ public class Preferences {
             b.append("  </list>\n");
         }
 
+        @Override
         public void visit(ListListSetting setting) {
             b.append("  <lists key='").append(XmlWriter.encode(key)).append("'>\n");
             for (List<String> list : setting.getValue()) {
@@ -1584,6 +1594,7 @@ public class Preferences {
             b.append("  </lists>\n");
         }
 
+        @Override
         public void visit(MapListSetting setting) {
             b.append("  <maps key='").append(XmlWriter.encode(key)).append("'>\n");
             for (Map<String, String> struct : setting.getValue()) {

@@ -68,6 +68,7 @@ class FilenameCellEditor extends JPanel implements TableCellEditor {
         build();
     }
 
+    @Override
     public void addCellEditorListener(CellEditorListener l) {
         if (l != null) {
             listeners.addIfAbsent(l);
@@ -86,26 +87,32 @@ class FilenameCellEditor extends JPanel implements TableCellEditor {
         }
     }
 
+    @Override
     public void cancelCellEditing() {
         fireEditingCanceled();
     }
 
+    @Override
     public Object getCellEditorValue() {
         return value;
     }
 
+    @Override
     public boolean isCellEditable(EventObject anEvent) {
         return true;
     }
 
+    @Override
     public void removeCellEditorListener(CellEditorListener l) {
         listeners.remove(l);
     }
 
+    @Override
     public boolean shouldSelectCell(EventObject anEvent) {
         return true;
     }
 
+    @Override
     public boolean stopCellEditing() {
         if (tfFileName.getText() == null || tfFileName.getText().trim().equals("")) {
             value = null;
@@ -125,6 +132,7 @@ class FilenameCellEditor extends JPanel implements TableCellEditor {
         }
     }
 
+    @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         SaveLayerInfo info = (SaveLayerInfo)value;
         setInitialValue(info.getFile());
@@ -138,6 +146,7 @@ class FilenameCellEditor extends JPanel implements TableCellEditor {
             putValue(SHORT_DESCRIPTION, tr("Launch a file chooser to select a file"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             File f = SaveActionBase.createAndOpenSaveFileChooser(tr("Select filename"), "osm");
             if (f != null) {

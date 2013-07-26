@@ -137,6 +137,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         public int deletedWays;
         public int deletedRelations;
 
+        @Override
         public void visit(final Node n) {
             nodes++;
             if (n.isDeleted()) {
@@ -144,6 +145,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
             }
         }
 
+        @Override
         public void visit(final Way w) {
             ways++;
             if (w.isDeleted()) {
@@ -151,6 +153,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
             }
         }
 
+        @Override
         public void visit(final Relation r) {
             relations++;
             if (r.isDeleted()) {
@@ -597,6 +600,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
             super(tr("Convert to GPX layer"), ImageProvider.get("converttogpx"));
             putValue("help", ht("/Action/ConvertToGpxLayer"));
         }
+        @Override
         public void actionPerformed(ActionEvent e) {
             Main.main.addLayer(new GpxLayer(toGpxData(), tr("Converted from: {0}", getName())));
             Main.main.removeLayer(OsmDataLayer.this);
@@ -693,6 +697,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
             super(tr("Dataset consistency test"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             String result = DatasetConsistencyTest.runTests(data);
             if (result.length() == 0) {
@@ -715,12 +720,14 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         DataSet.removeSelectionListener(this);
     }
 
+    @Override
     public void processDatasetEvent(AbstractDatasetChangedEvent event) {
         isChanged = true;
         setRequiresSaveToFile(true);
         setRequiresUploadToServer(true);
     }
 
+    @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         isChanged = true;
     }

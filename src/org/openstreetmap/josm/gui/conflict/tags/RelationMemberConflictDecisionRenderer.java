@@ -39,6 +39,7 @@ public class RelationMemberConflictDecisionRenderer extends JLabel implements Ta
     /* --------------------------------------------------------------------------------- */
     /* TableCellRenderer                                                                 */
     /* --------------------------------------------------------------------------------- */
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
         resetTableRenderer();
@@ -57,6 +58,7 @@ public class RelationMemberConflictDecisionRenderer extends JLabel implements Ta
     /* --------------------------------------------------------------------------------- */
     /* ListCellRenderer                                                                  */
     /* --------------------------------------------------------------------------------- */
+    @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
             boolean cellHasFocus) {
         resetListRenderer();

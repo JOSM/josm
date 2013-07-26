@@ -54,6 +54,7 @@ public class ImageMarker extends ButtonMarker {
         p2.add(scale);
         p.add(p2, BorderLayout.SOUTH);
         scale.addActionListener(new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent ev) {
                 p.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 if (scale.getModel().isSelected()) {

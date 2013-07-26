@@ -104,6 +104,7 @@ public class GpxImporter extends FileImporter {
     public static void addLayers(final GpxImporterData data) {
         // FIXME: remove UI stuff from the IO subsystem
         GuiHelper.runInEDT(new Runnable() {
+            @Override
             public void run() {
                 if (data.markerLayer != null) {
                     Main.main.addLayer(data.markerLayer);

@@ -127,6 +127,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         ExpertToggleAction.addVisibilitySwitcher(drawRawGpsLinesAll);
 
         drawRawGpsLinesActionListener = new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 boolean f=drawRawGpsLinesNone.isSelected()||drawRawGpsLinesGlobal.isSelected();
                 forceRawGpsLines.setEnabled(!f);
@@ -166,6 +167,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
         // drawGpsArrows
         drawGpsArrows.addActionListener(new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
                 drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
@@ -215,12 +217,14 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         colorGroup.add(colorTypeTime);
 
         colorTypeVelocity.addChangeListener(new ChangeListener(){
+            @Override
             public void stateChanged(ChangeEvent e) {
                 colorTypeVelocityTune.setEnabled(colorTypeVelocity.isSelected());
                 colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
             }
         });
         colorTypeDilution.addChangeListener(new ChangeListener(){
+            @Override
             public void stateChanged(ChangeEvent e) {
                 colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
             }

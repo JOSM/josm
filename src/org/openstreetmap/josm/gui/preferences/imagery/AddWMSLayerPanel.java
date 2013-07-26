@@ -165,6 +165,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         return sanitize(wmsUrl.getText());
     }
 
+    @Override
     protected boolean isImageryValid() {
         if (getImageryName().isEmpty()) {
             return false;

@@ -199,12 +199,14 @@ public class ChildRelationBrowser extends JPanel {
             }
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
             run();
         }
 
+        @Override
         public void valueChanged(TreeSelectionEvent e) {
             refreshEnabled();
         }
@@ -225,6 +227,7 @@ public class ChildRelationBrowser extends JPanel {
             Main.worker.submit(new DownloadAllChildrenTask(getParentDialog(), (Relation)model.getRoot()));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
@@ -261,12 +264,14 @@ public class ChildRelationBrowser extends JPanel {
             Main.worker.submit(new DownloadRelationSetTask(getParentDialog(),relations));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
             run();
         }
 
+        @Override
         public void valueChanged(TreeSelectionEvent e) {
             updateEnabledState();
         }
@@ -415,6 +420,7 @@ public class ChildRelationBrowser extends JPanel {
                     refreshView(r);
                 }
                 SwingUtilities.invokeLater(new Runnable() {
+                    @Override
                     public void run() {
                         Main.map.repaint();
                     }

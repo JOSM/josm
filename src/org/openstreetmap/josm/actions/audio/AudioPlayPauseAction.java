@@ -29,6 +29,7 @@ public class AudioPlayPauseAction extends JosmAction {
         Shortcut.registerShortcut("audio:pause", tr("Audio: {0}", trc("audio", "Play/Pause")), KeyEvent.VK_PERIOD, Shortcut.DIRECT), true);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         URL url = AudioPlayer.url();
         try {

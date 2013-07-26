@@ -28,6 +28,7 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
         propertyChange(null);
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (getModel().getValueIsAdjusting()) return;
 
@@ -53,6 +54,7 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
         preventChange=false;
     }
 
+    @Override
     public void stateChanged(ChangeEvent e) {
         if (preventChange) return;
 
@@ -64,6 +66,7 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
         this.mv.zoomTo(new ProjectionBounds(this.mv.getCenter(), es/fact, n/fact));
     }
 
+    @Override
     public String helpTopic() {
         return ht("/MapView/Slider");
     }

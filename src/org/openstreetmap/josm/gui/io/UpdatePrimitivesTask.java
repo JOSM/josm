@@ -78,6 +78,7 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
             return;
         }
         GuiHelper.runInEDTAndWait(new Runnable() {
+            @Override
             public void run() {
                 layer.mergeFrom(ds);
                 layer.onPostDownloadFromServer();

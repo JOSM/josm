@@ -86,6 +86,7 @@ public class OpenLocationAction extends JosmAction {
         Main.pref.putCollection(getClass().getName() + ".uploadAddressHistory", cbHistory.getHistory());
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         JCheckBox layer = new JCheckBox(tr("Separate Layer"));

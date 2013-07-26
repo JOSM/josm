@@ -203,14 +203,17 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
     /* ------------------------------------------------------------------------------- */
     /* interface ChangesetDownloadTask                                                 */
     /* ------------------------------------------------------------------------------- */
+    @Override
     public Set<Changeset> getDownloadedChangesets() {
         return downloadedChangesets;
     }
 
+    @Override
     public boolean isCanceled() {
         return canceled;
     }
 
+    @Override
     public boolean isFailed() {
         return lastException != null;
     }

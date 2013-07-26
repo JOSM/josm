@@ -84,6 +84,7 @@ public class BackupPreference implements SubPreferenceSetting {
             GBC.eop().fill(GBC.HORIZONTAL).insets(5,0,0,0));
 
         ActionListener autosaveEnabled = new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 boolean enabled = autosave.isSelected();
                 autosaveIntervalLabel.setEnabled(enabled);

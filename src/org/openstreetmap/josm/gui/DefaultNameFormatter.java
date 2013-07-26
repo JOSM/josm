@@ -137,6 +137,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param node the node
      * @return the name
      */
+    @Override
     public String format(Node node) {
         StringBuilder name = new StringBuilder();
         if (node.isIncomplete()) {
@@ -202,6 +203,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
     };
 
+    @Override
     public Comparator<Node> getNodeComparator() {
         return nodeComparator;
     }
@@ -213,6 +215,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param way the way
      * @return the name
      */
+    @Override
     public String format(Way way) {
         StringBuilder name = new StringBuilder();
         if (way.isIncomplete()) {
@@ -292,6 +295,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
     };
 
+    @Override
     public Comparator<Way> getWayComparator() {
         return wayComparator;
     }
@@ -303,6 +307,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param relation the relation
      * @return the name
      */
+    @Override
     public String format(Relation relation) {
         StringBuilder name = new StringBuilder();
         if (relation.isIncomplete()) {
@@ -400,6 +405,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
     };
 
+    @Override
     public Comparator<Relation> getRelationComparator() {
         return relationComparator;
     }
@@ -483,6 +489,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param changeset the changeset
      * @return the name
      */
+    @Override
     public String format(Changeset changeset) {
         return tr("Changeset {0}",changeset.getId());
     }
@@ -546,6 +553,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param node the node
      * @return the name
      */
+    @Override
     public String format(HistoryNode node) {
         StringBuilder sb = new StringBuilder();
         String name;
@@ -577,6 +585,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param way the way
      * @return the name
      */
+    @Override
     public String format(HistoryWay way) {
         StringBuilder sb = new StringBuilder();
         String name;
@@ -618,6 +627,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param relation the relation
      * @return the name
      */
+    @Override
     public String format(HistoryRelation relation) {
         StringBuilder sb = new StringBuilder();
         if (relation.get("type") != null) {

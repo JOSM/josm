@@ -64,10 +64,12 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
      * Tasks
      =======*/
 
+    @Override
     public void beginTask(String title) {
         beginTask(title, DEFAULT_TICKS);
     }
 
+    @Override
     public synchronized void beginTask(String title, int ticks) {
         this.taskTitle = title;
         checkState(State.INIT);
@@ -77,6 +79,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
         resetState();
     }
 
+    @Override
     public synchronized void finishTask() {
         if (state != State.FINISHED) {
 
@@ -90,6 +93,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
         }
     }
 
+    @Override
     public synchronized void invalidate() {
         if (state == State.INIT) {
             state = State.FINISHED;
@@ -97,6 +101,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
         }
     }
 
+    @Override
     public synchronized void subTask(final String title) {
         if (state == State.IN_SUBTASK) {
             if (title != null) {
@@ -114,6 +119,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
         }
     }
 
+    @Override
     public synchronized void indeterminateSubTask(String title) {
         if (state == State.IN_SUBTASK) {
             if (title != null) {
@@ -131,6 +137,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
         }
     }
 
+    @Override
     public synchronized void setCustomText(String text) {
         if (state == State.IN_SUBTASK) {
             requestedState.customText = text;
@@ -140,6 +147,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
         }
     }
 
+    @Override
     public synchronized void setExtraText(String text) {
         if (state == State.IN_SUBTASK) {
             requestedState.extraText = text;
@@ -152,6 +160,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
     /**
      * Default implementation is empty. Override in subclasses to display the log messages.
      */
+    @Override
     public void appendLogMessage(String message) {
         // do nothing
     }
@@ -176,18 +185,22 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
         doSetIntermediate(intermediateTask);
     }
 
+    @Override
     public void cancel() {
         cancelHandler.cancel();
     }
 
+    @Override
     public boolean isCanceled() {
         return cancelHandler.isCanceled();
     }
 
+    @Override
     public void addCancelListener(CancelListener listener) {
         cancelHandler.addCancelListener(listener);
     }
 
+    @Override
     public void removeCancelListener(CancelListener listener) {
         cancelHandler.removeCancelListener(listener);
     }
@@ -198,6 +211,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 
     abstract void updateProgress(double value);
 
+    @Override
     public synchronized void setTicks(int ticks) {
         if (ticks >= ticksCount) {
             ticks = ticksCount - 1;
@@ -206,11 +220,13 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
         internalUpdateProgress(0);
     }
 
+    @Override
     public synchronized void setTicksCount(int ticks) {
         this.ticksCount = ticks;
         internalUpdateProgress(0);
     }
 
+    @Override
     public void worked(int ticks) {
         if (ticks == ALL_TICKS) {
             setTicks(this.ticksCount - 1);
@@ -227,10 +243,12 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
         updateProgress(ticksCount == 0?0:(ticks + childProgress * childTicks) / ticksCount);
     }
 
+    @Override
     public synchronized int getTicks() {
         return ticks;
     }
 
+    @Override
     public synchronized int getTicksCount() {
         return ticksCount;
     }
@@ -239,6 +257,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
      * Subtasks
      ==========*/
 
+    @Override
     public synchronized ProgressMonitor createSubTaskMonitor(int ticks, boolean internal) {
         if (ticks == ALL_TICKS) {
             ticks = ticksCount - this.ticks;

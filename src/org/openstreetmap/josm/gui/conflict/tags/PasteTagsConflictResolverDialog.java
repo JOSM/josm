@@ -271,6 +271,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
             setEnabled(true);
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             setVisible(false);
             setCanceled(true);
@@ -286,6 +287,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             setVisible(false);
         }
@@ -304,6 +306,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
             }
         }
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(TagConflictResolverModel.NUM_CONFLICTS_PROP)) {
                 updateEnabledState();
@@ -333,6 +336,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         return resolvers.get(type).getModel().getResolution();
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(TagConflictResolverModel.NUM_CONFLICTS_PROP)) {
             TagConflictResolverModel model = (TagConflictResolverModel)evt.getSource();
@@ -470,6 +474,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
             renderStatistics(info.targetInfo);
         }
 
+        @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
             reset();

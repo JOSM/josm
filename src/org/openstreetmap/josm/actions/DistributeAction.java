@@ -45,6 +45,7 @@ public final class DistributeAction extends JosmAction {
      * that are furthest apart, and then to distribute all other selected
      * nodes along the straight line between these nodes.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;

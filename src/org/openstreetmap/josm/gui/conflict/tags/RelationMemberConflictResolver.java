@@ -147,12 +147,14 @@ public class RelationMemberConflictResolver extends JPanel {
             putValue(SHORT_DESCRIPTION, tr("Apply this role to all members"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             model.applyRole(tfRole.getText());
         }
     }
 
     class ToggleTagRelationsAction implements ChangeListener {
+        @Override
         public void stateChanged(ChangeEvent e) {
             ButtonModel buttonModel = ((AbstractButton) e.getSource()).getModel();
             tfKey.setEnabled(buttonModel.isSelected());

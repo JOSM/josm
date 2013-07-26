@@ -146,6 +146,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
             ExceptionDialogUtil.explainException(lastException);
         }
         Runnable r = new Runnable() {
+            @Override
             public void run() {
                 ChangesetCache.getInstance().update(downloadedChangesets);
             }
@@ -191,14 +192,17 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
     /* ------------------------------------------------------------------------------- */
     /* interface ChangesetDownloadTask                                                 */
     /* ------------------------------------------------------------------------------- */
+    @Override
     public Set<Changeset> getDownloadedChangesets() {
         return downloadedChangesets;
     }
 
+    @Override
     public boolean isCanceled() {
         return canceled;
     }
 
+    @Override
     public boolean isFailed() {
         return lastException != null;
     }

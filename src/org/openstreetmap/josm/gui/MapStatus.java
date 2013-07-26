@@ -454,6 +454,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
             final Popup staticPopup = popup;
             popup = null;
             EventQueue.invokeLater(new Runnable(){
+               @Override
                public void run() {
                     staticPopup.hide();
                 }});

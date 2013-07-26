@@ -62,6 +62,7 @@ public class OpenFileAction extends DiskAccessAction {
         putValue("help", ht("/Action/Open"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         JFileChooser fc = createAndOpenFileChooser(true, true, null);
         if (fc == null)
@@ -217,6 +218,7 @@ public class OpenFileAction extends DiskAccessAction {
                     if (!chosenImporter.acceptFile(f)) {
                         if (f.isDirectory()) {
                             SwingUtilities.invokeLater(new Runnable() {
+                                @Override
                                 public void run() {
                                     JOptionPane.showMessageDialog(Main.parent, tr(
                                             "<html>Cannot open directory ''{0}''.<br>Please select a file.</html>",

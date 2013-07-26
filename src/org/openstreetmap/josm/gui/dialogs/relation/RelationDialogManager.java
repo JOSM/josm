@@ -182,6 +182,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
      * called when a layer is removed
      *
      */
+    @Override
     public void layerRemoved(Layer oldLayer) {
         if (oldLayer == null || ! (oldLayer instanceof OsmDataLayer))
             return;
@@ -199,10 +200,12 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
         }
     }
 
+    @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
         // do nothing
     }
 
+    @Override
     public void layerAdded(Layer newLayer) {
         // do nothing
     }

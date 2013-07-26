@@ -54,31 +54,37 @@ class UploadAndSaveProgressRenderer extends JPanel implements ProgressRenderer, 
         setVisible(false);
     }
 
+    @Override
     public void setCustomText(String message) {
         lblCustomText.setText(message);
         repaint();
     }
 
+    @Override
     public void setIndeterminate(boolean indeterminate) {
         progressBar.setIndeterminate(indeterminate);
         repaint();
     }
 
+    @Override
     public void setMaximum(int maximum) {
         progressBar.setMaximum(maximum);
         repaint();
     }
 
+    @Override
     public void setTaskTitle(String taskTitle) {
         lblTaskTitle.setText(taskTitle);
         repaint();
     }
 
+    @Override
     public void setValue(int value) {
         progressBar.setValue(value);
         repaint();
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
             Mode mode = (Mode)evt.getNewValue();

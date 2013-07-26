@@ -484,6 +484,7 @@ public class TagCollection implements Iterable<Tag> {
      *
      * @return the iterator
      */
+    @Override
     public Iterator<Tag> iterator() {
         return tags.iterator();
     }

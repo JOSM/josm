@@ -159,6 +159,7 @@ public class ExpertToggleAction extends JosmAction {
         notifySelectedState();
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState();
     }

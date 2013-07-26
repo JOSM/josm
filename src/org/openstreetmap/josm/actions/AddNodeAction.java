@@ -29,6 +29,7 @@ public final class AddNodeAction extends JosmAction {
         putValue("help", ht("/Action/AddNode"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;

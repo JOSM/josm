@@ -280,6 +280,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     class UseDefaultItemListener implements ItemListener {
         private boolean enabled;
 
+        @Override
         public void itemStateChanged(ItemEvent e) {
             if (!enabled) return;
             switch (e.getStateChange()) {

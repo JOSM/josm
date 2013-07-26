@@ -40,6 +40,7 @@ public class RestartAction extends JosmAction {
         setEnabled(isRestartSupported());
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         try {
             restartJOSM();

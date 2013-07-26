@@ -692,6 +692,7 @@ public class ImageProvider {
             });
 
             parser.setEntityResolver(new EntityResolver() {
+                @Override
                 public InputSource resolveEntity (String publicId, String systemId) {
                     return new InputSource(new ByteArrayInputStream(new byte[0]));
                 }

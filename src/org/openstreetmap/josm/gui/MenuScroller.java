@@ -598,6 +598,7 @@ public class MenuScroller {
     }
 
     private class MouseScrollListener implements MouseWheelListener {
+        @Override
         public void mouseWheelMoved(MouseWheelEvent mwe) {
             if (menu.getComponents().length > scrollCount) {
                 firstIndex += mwe.getWheelRotation();

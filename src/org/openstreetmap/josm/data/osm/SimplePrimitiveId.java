@@ -14,14 +14,17 @@ public class SimplePrimitiveId implements PrimitiveId, Serializable {
         this.type = type;
     }
 
+    @Override
     public OsmPrimitiveType getType() {
         return type;
     }
 
+    @Override
     public long getUniqueId() {
         return id;
     }
 
+    @Override
     public boolean isNew() {
         return id <= 0;
     }

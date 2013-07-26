@@ -238,6 +238,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     /* ------------------------------------------------------------------- */
     /* interface PreferenceChangeListener                                  */
     /* ------------------------------------------------------------------- */
+    @Override
     public void preferenceChanged(PreferenceChangeEvent evt) {
         if (evt.getKey().equals("osm-server.username")) {
             if (!(evt.getNewValue() instanceof StringSetting)) return;

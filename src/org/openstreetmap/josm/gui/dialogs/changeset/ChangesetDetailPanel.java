@@ -254,6 +254,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     /* ---------------------------------------------------------------------------- */
     /* interface PropertyChangeListener                                             */
     /* ---------------------------------------------------------------------------- */
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (! evt.getPropertyName().equals(ChangesetCacheManagerModel.CHANGESET_IN_DETAIL_VIEW_PROP))
             return;
@@ -271,6 +272,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             putValue(SHORT_DESCRIPTION, tr("Remove the changeset in the detail view panel from the local cache"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             if (current == null)
                 return;
@@ -293,6 +295,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             putValue(SHORT_DESCRIPTION, tr("Download the changeset content from the OSM server"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             if (current == null) return;
             ChangesetContentDownloadTask task = new ChangesetContentDownloadTask(ChangesetDetailPanel.this,current.getId());
@@ -329,6 +332,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             putValue(SHORT_DESCRIPTION, tr("Update the changeset from the OSM server"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             if (current == null) return;
             Main.worker.submit(
@@ -377,6 +381,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             );
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             if (!isEnabled())
                 return;
@@ -403,6 +408,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             setEnabled(current != null);
         }
 
+        @Override
         public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
             updateEnabledState();
         }
@@ -436,6 +442,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             );
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             if (!isEnabled())
                 return;
@@ -463,6 +470,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             setEnabled(current != null);
         }
 
+        @Override
         public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
             updateEnabledState();
         }

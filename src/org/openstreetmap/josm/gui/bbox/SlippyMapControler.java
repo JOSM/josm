@@ -189,6 +189,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
             this.direction = direction;
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             moveTask.setDirectionX(direction);
         }
@@ -202,6 +203,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
             this.direction = direction;
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             moveTask.setDirectionY(direction);
         }
@@ -312,6 +314,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
 
     private class ZoomInAction extends AbstractAction {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             iSlippyMapChooser.zoomIn();
         }
@@ -319,6 +322,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
 
     private class ZoomOutAction extends AbstractAction {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             iSlippyMapChooser.zoomOut();
         }

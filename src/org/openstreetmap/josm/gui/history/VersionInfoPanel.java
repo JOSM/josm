@@ -132,6 +132,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
         build();
     }
 
+    @Override
     public void update(Observable o, Object arg) {
         lblInfo.setText(getInfoText());
 

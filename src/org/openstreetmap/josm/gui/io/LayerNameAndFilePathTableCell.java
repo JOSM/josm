@@ -75,6 +75,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
     }
 
     /** renderer used while not editing the file path **/
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column) {
         removeAll();
@@ -92,6 +93,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
     }
 
     /** renderer used while the file path is being edited **/
+    @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected,
             int row, int column) {
         removeAll();
@@ -177,6 +179,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
         return t;
     }
 
+    @Override
     public void addCellEditorListener(CellEditorListener l) {
         if (l != null) {
             listeners.addIfAbsent(l);
@@ -195,26 +198,32 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
         }
     }
 
+    @Override
     public void cancelCellEditing() {
         fireEditingCanceled();
     }
 
+    @Override
     public Object getCellEditorValue() {
         return value;
     }
 
+    @Override
     public boolean isCellEditable(EventObject anEvent) {
         return true;
     }
 
+    @Override
     public void removeCellEditorListener(CellEditorListener l) {
         listeners.remove(l);
     }
 
+    @Override
     public boolean shouldSelectCell(EventObject anEvent) {
         return true;
     }
 
+    @Override
     public boolean stopCellEditing() {
         if (tfFilename.getText() == null || tfFilename.getText().trim().equals("")) {
             value = null;
@@ -231,6 +240,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
             putValue(SHORT_DESCRIPTION, tr("Launch a file chooser to select a file"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             File f = SaveActionBase.createAndOpenSaveFileChooser(tr("Select filename"), "osm");
             if (f != null) {

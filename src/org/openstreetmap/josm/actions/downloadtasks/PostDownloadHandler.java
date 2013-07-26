@@ -58,6 +58,7 @@ public class PostDownloadHandler implements Runnable {
         this.futures.addAll(futures);
     }
 
+    @Override
     public void run() {
         // wait for all downloads task to finish (by waiting for the futures
         // to return a value)

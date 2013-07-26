@@ -30,10 +30,12 @@ public class PreferencesAction extends JosmAction implements Runnable {
     /**
      * Launch the preferences dialog.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         run();
     }
 
+    @Override
     public void run() {
         new PreferenceDialog(Main.parent).setVisible(true);
     }

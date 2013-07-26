@@ -339,6 +339,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             Main.worker.submit(new FullyAutomaticAuthorisationTask(FullyAutomaticAuthorizationUI.this));
         }
@@ -347,14 +348,17 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             setEnabled(valPassword.isValid() && valUserName.isValid());
         }
 
+        @Override
         public void changedUpdate(DocumentEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void insertUpdate(DocumentEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void removeUpdate(DocumentEvent e) {
             updateEnabledState();
         }
@@ -370,6 +374,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "previous"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             prepareUIForEnteringRequest();
         }
@@ -385,6 +390,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             putValue(SMALL_ICON, ImageProvider.get("about"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             Main.worker.submit(new TestAccessTokenTask(
                     FullyAutomaticAuthorizationUI.this,
@@ -510,6 +516,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         protected void handleException(final OsmOAuthAuthorizationException e) {
             Runnable r = new Runnable() {
+                @Override
                 public void run() {
                     if (e instanceof OsmLoginFailedException) {
                         alertLoginFailed((OsmLoginFailedException)e);
@@ -549,6 +556,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                 getProgressMonitor().worked(1);
                 if (canceled)return;
                 GuiHelper.runInEDT(new Runnable() {
+                    @Override
                     public void run() {
                         prepareUIForResultDisplay();
                         setAccessToken(accessToken);

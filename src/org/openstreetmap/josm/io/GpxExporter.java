@@ -241,6 +241,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             final JLabel warning) {
 
         ActionListener authorActionListener = new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 boolean b = author.isSelected();
                 authorName.setEnabled(b);
@@ -277,6 +278,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         authorName.addKeyListener(authorNameListener);
 
         predefined.addActionListener(new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 final String[] licenses = {
                         "Creative Commons By-SA",

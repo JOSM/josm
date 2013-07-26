@@ -234,6 +234,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             super(name, iconName, tooltip, shortcut, false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             toggleButtonHook();
             if(getValue("toolbarbutton") != null && getValue("toolbarbutton") instanceof JButton) {
@@ -310,6 +311,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         }
     }
 
+    @Override
     public void buttonShown() {
         unfurlDialog();
     }
@@ -485,6 +487,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 buttonsHide.setBorder(BorderFactory.createEmptyBorder());
                 buttonsHide.addActionListener(
                         new ActionListener(){
+                            @Override
                             public void actionPerformed(ActionEvent e) {
                                 setIsButtonHiding(buttonHiding == ButtonHiddingType.ALWAYS_SHOWN?ButtonHiddingType.DYNAMIC:ButtonHiddingType.ALWAYS_SHOWN);
                             }
@@ -502,6 +505,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 pref.setBorder(BorderFactory.createEmptyBorder());
                 pref.addActionListener(
                         new ActionListener(){
+                            @Override
                             @SuppressWarnings("unchecked")
                             public void actionPerformed(ActionEvent e) {
                                 final PreferenceDialog p = new PreferenceDialog(Main.parent);
@@ -523,6 +527,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             sticky.setBorder(BorderFactory.createEmptyBorder());
             sticky.addActionListener(
                     new ActionListener(){
+                        @Override
                         public void actionPerformed(ActionEvent e) {
                             detach();
                             dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
@@ -537,6 +542,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             close.setBorder(BorderFactory.createEmptyBorder());
             close.addActionListener(
                     new ActionListener(){
+                        @Override
                         public void actionPerformed(ActionEvent e) {
                             hideDialog();
                             dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
@@ -743,6 +749,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         return preferredHeight;
     }
 
+    @Override
     public String helpTopic() {
         String help = getClass().getName();
         help = help.substring(help.lastIndexOf('.')+1, help.length()-6);

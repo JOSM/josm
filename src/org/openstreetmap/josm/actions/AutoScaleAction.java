@@ -165,6 +165,7 @@ public class AutoScaleAction extends JosmAction {
         putValue("active", true);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         autoScale();
     }
@@ -301,6 +302,7 @@ public class AutoScaleAction extends JosmAction {
      * Adapter for zoom change events
      */
     private class ZoomChangeAdapter implements MapView.ZoomChangeListener {
+        @Override
         public void zoomChanged() {
             updateEnabledState();
         }

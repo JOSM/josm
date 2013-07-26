@@ -123,9 +123,12 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
     /* ----------------------------------------------------------------------------- */
     /* LayerChangeListener                                                           */
     /* ----------------------------------------------------------------------------- */
+    @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {}
+    @Override
     public void layerAdded(Layer newLayer) {}
 
+    @Override
     public void layerRemoved(Layer oldLayer) {
         // remove all history browsers if the number of layers drops to 0
         //

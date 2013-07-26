@@ -41,6 +41,7 @@ public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer 
     /**
      * Adapter method supporting the ListCellRenderer interface.
      */
+    @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         Component def = defaultListCellRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         return renderer(def, (OsmPrimitive) value);
@@ -49,6 +50,7 @@ public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer 
     /**
      * Adapter method supporting the TableCellRenderer interface.
      */
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component def = defaultTableCellRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         if (value instanceof OsmPrimitive)

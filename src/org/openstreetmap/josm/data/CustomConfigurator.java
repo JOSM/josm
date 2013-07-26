@@ -329,6 +329,7 @@ public class CustomConfigurator {
 
         final ReadLocalPluginInformationTask task = new ReadLocalPluginInformationTask();
         Runnable r = new Runnable() {
+            @Override
             public void run() {
                 if (task.isCanceled()) return;
                 synchronized (CustomConfigurator.class) {
@@ -337,6 +338,7 @@ public class CustomConfigurator {
                 } catch (InterruptedException ex) { }
 
                 SwingUtilities.invokeLater(new Runnable() {
+                    @Override
                     public void run() {
                         List<PluginInformation> availablePlugins = task.getAvailablePlugins();
                         List<PluginInformation> toInstallPlugins = new ArrayList<PluginInformation>();

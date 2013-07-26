@@ -61,6 +61,7 @@ public class OpenChangesetComboBoxModel extends DefaultComboBoxModel implements 
     /* ------------------------------------------------------------------------------------ */
     /* ChangesetCacheListener                                                               */
     /* ------------------------------------------------------------------------------------ */
+    @Override
     public void changesetCacheUpdated(ChangesetCacheEvent event) {
         refresh();
     }

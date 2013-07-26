@@ -213,9 +213,11 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         //
         pnlBasicUploadSettings.getUploadParameterSummaryPanel().setConfigurationParameterRequestListener(
                 new ConfigurationParameterRequestHandler() {
+                    @Override
                     public void handleUploadStrategyConfigurationRequest() {
                         tpConfigPanels.setSelectedIndex(3);
                     }
+                    @Override
                     public void handleChangesetConfigurationRequest() {
                         tpConfigPanels.setSelectedIndex(2);
                     }
@@ -224,6 +226,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
 
         pnlBasicUploadSettings.setUploadCommentDownFocusTraversalHandler(
                 new AbstractAction() {
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         btnUpload.requestFocusInWindow();
                     }
@@ -439,6 +442,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
             );
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (getUploadComment().trim().length() < 10) {
                 if (warnUploadComment())
@@ -472,6 +476,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
             putValue(SHORT_DESCRIPTION, tr("Cancel the upload and resume editing"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             setCanceled(true);
             setVisible(false);
@@ -505,6 +510,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
     /* -------------------------------------------------------------------------- */
     /* Interface PropertyChangeListener                                           */
     /* -------------------------------------------------------------------------- */
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(ChangesetManagementPanel.SELECTED_CHANGESET_PROP)) {
             Changeset cs = (Changeset)evt.getNewValue();
@@ -519,6 +525,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
     /* -------------------------------------------------------------------------- */
     /* Interface PreferenceChangedListener                                        */
     /* -------------------------------------------------------------------------- */
+    @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
         if (e.getKey() == null || ! e.getKey().equals("osm-server.url"))
             return;

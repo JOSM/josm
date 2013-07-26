@@ -342,6 +342,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         return ret;
     }
 
+    @Override
     public void jumpToNextMarker() {
         if (currentMarker == null) {
             currentMarker = data.get(0);
@@ -359,6 +360,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         Main.map.mapView.zoomTo(currentMarker.getEastNorth());
     }
 
+    @Override
     public void jumpToPreviousMarker() {
         if (currentMarker == null) {
             currentMarker = data.get(data.size() - 1);
@@ -461,6 +463,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         }
 
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             Main.pref.put("marker.show "+layer.getName(), layer.isTextOrIconShown() ? "hide" : "show");
             Main.map.mapView.repaint();

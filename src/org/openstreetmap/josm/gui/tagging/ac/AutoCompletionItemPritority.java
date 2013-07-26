@@ -62,6 +62,7 @@ public class AutoCompletionItemPritority implements Comparable<AutoCompletionIte
      * Imposes an ordering on the priorities.
      * Currently, being in the current DataSet is worth more than being in the Presets.
      */
+    @Override
     public int compareTo(AutoCompletionItemPritority other) {
         int sel = Boolean.valueOf(selected).compareTo(other.selected);
         if (sel != 0) return sel;
