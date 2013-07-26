@@ -187,7 +187,7 @@ public class GuiHelper {
             w = 1.0f;
         }
         if (s.length>1) {
-            float dash[]= new float[s.length-1];
+            float[] dash= new float[s.length-1];
             boolean error = false;
             float sumAbs = 0;
             try {

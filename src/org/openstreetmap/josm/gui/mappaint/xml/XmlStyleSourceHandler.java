@@ -293,7 +293,7 @@ public class XmlStyleSourceHandler extends DefaultHandler
         }
     }
 
-    @Override public void characters(char ch[], int start, int length)
+    @Override public void characters(char[] ch, int start, int length)
     {
         if (inScaleMax == true) {
             rule.scaleMax = Long.parseLong(new String(ch, start, length));

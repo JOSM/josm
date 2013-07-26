@@ -17,7 +17,7 @@ public class UTFInputStreamReader extends InputStreamReader {
      * @return A reader with the correct encoding. Starts to read after the BOM.
      */
     public static UTFInputStreamReader create(InputStream input, String defaultEncoding) throws IOException {
-        byte bom[] = new byte[4];
+        byte[] bom = new byte[4];
         String encoding = defaultEncoding;
         int unread;
         PushbackInputStream pushbackStream = new PushbackInputStream(input, 4);

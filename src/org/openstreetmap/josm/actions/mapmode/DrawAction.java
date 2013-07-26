@@ -1332,7 +1332,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         private EastNorth segmentPoint2; // remembered second point of base segment
         private EastNorth projectionSource; // point that we are projecting to the line
 
-        double snapAngles[];
+        double[] snapAngles;
         double snapAngleTolerance;
 
         double pe,pn; // (pe,pn) - direction of snapping line
