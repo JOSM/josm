@@ -51,7 +51,7 @@ public class XmlStyleSourceHandler extends DefaultHandler
 
     Color convertColor(String colString)
     {
-        int i = colString.indexOf("#");
+        int i = colString.indexOf('#');
         Color ret;
         if (i < 0) {
             ret = Main.pref.getColor("mappaint."+style.getPrefName()+"."+colString, Color.red);

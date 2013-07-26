@@ -91,7 +91,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
 
         // remove trailing slashes
         while(url.endsWith("/")) {
-            url = url.substring(0, url.lastIndexOf("/"));
+            url = url.substring(0, url.lastIndexOf('/'));
         }
         return url;
     }

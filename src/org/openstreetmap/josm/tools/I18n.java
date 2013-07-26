@@ -254,7 +254,7 @@ public class I18n {
     private static final String gettext(String text, String ctx, boolean lazy)
     {
         int i;
-        if(ctx == null && text.startsWith("_:") && (i = text.indexOf("\n")) >= 0)
+        if(ctx == null && text.startsWith("_:") && (i = text.indexOf('\n')) >= 0)
         {
             ctx = text.substring(2,i-1);
             text = text.substring(i+1);
@@ -286,7 +286,7 @@ public class I18n {
     private static final String gettextn(String text, String plural, String ctx, long num)
     {
         int i;
-        if(ctx == null && text.startsWith("_:") && (i = text.indexOf("\n")) >= 0)
+        if(ctx == null && text.startsWith("_:") && (i = text.indexOf('\n')) >= 0)
         {
             ctx = text.substring(2,i-1);
             text = text.substring(i+1);

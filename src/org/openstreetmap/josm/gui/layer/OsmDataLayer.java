@@ -523,7 +523,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                 new ConsistencyTestAction(),
                 SeparatorLayerAction.INSTANCE,
                 new LayerListPopup.InfoAction(this)}));
-        return actions.toArray(new Action[0]);
+        return actions.toArray(new Action[actions.size()]);
     }
 
     public static GpxData toGpxData(DataSet data, File file) {

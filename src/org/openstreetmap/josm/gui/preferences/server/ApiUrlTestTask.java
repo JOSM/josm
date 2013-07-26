@@ -156,7 +156,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
     protected String getNormalizedApiUrl() {
         String apiUrl = url.trim();
         while(apiUrl.endsWith("/")) {
-            apiUrl = apiUrl.substring(0, apiUrl.lastIndexOf("/"));
+            apiUrl = apiUrl.substring(0, apiUrl.lastIndexOf('/'));
         }
         return apiUrl;
     }

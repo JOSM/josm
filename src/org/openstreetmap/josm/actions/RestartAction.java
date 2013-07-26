@@ -101,7 +101,7 @@ public class RestartAction extends JosmAction {
                 @Override
                 public void run() {
                     try {
-                        Runtime.getRuntime().exec(cmd.toArray(new String[]{}));
+                        Runtime.getRuntime().exec(cmd.toArray(new String[cmd.size()]));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

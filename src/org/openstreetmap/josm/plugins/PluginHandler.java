@@ -1119,7 +1119,7 @@ public class PluginHandler {
         int pos = stack.length;
         for (PluginProxy p : pluginList) {
             String baseClass = p.getPluginInformation().className;
-            baseClass = baseClass.substring(0, baseClass.lastIndexOf("."));
+            baseClass = baseClass.substring(0, baseClass.lastIndexOf('.'));
             for (int elpos = 0; elpos < pos; ++elpos) {
                 if (stack[elpos].getClassName().startsWith(baseClass)) {
                     pos = elpos;

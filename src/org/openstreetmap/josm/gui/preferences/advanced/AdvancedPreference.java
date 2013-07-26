@@ -348,7 +348,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
                 p.removeAll();
                 for (File f: new File(".").listFiles()) {
                    String s = f.getName();
-                   int idx = s.indexOf("_");
+                   int idx = s.indexOf('_');
                    if (idx>=0) {
                         String t=s.substring(0,idx);
                         System.out.println(t);
@@ -358,7 +358,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
                 }
                 for (File f: Main.pref.getPreferencesDirFile().listFiles()) {
                    String s = f.getName();
-                   int idx = s.indexOf("_");
+                   int idx = s.indexOf('_');
                    if (idx>=0) {
                         String t=s.substring(0,idx);
                         if (profileTypes.containsKey(t))

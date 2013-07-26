@@ -121,7 +121,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                             if(urltext.length() > maxlen)
                             {
                                 urltext = urltext.substring(0,maxlen);
-                                int idx = urltext.lastIndexOf("\n");
+                                int idx = urltext.lastIndexOf('\n');
                                 /* cut whole line when not loosing too much */
                                 if(maxlen-idx < 200) {
                                     urltext = urltext.substring(0,idx+1);

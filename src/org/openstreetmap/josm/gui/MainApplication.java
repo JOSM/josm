@@ -180,7 +180,7 @@ public class MainApplication extends Main {
             los.add(new LongOpt(o.getName(), o.requiresArgument() ? LongOpt.REQUIRED_ARGUMENT : LongOpt.NO_ARGUMENT, null, 0));
         }
 
-        Getopt g = new Getopt("JOSM", args, "hv", los.toArray(new LongOpt[0]));
+        Getopt g = new Getopt("JOSM", args, "hv", los.toArray(new LongOpt[los.size()]));
 
         Map<Option, Collection<String>> argMap = new HashMap<Option, Collection<String>>();
 
