@@ -32,7 +32,7 @@ public class MirroredInputStream extends InputStream {
     InputStream fs = null;
     File file = null;
 
-    public final static long DEFAULT_MAXTIME = -1l;
+    public final static long DEFAULT_MAXTIME = -1L;
 
     public MirroredInputStream(String name) throws IOException {
         this(name, null, DEFAULT_MAXTIME);
