@@ -529,7 +529,7 @@ public class ImageDisplay extends JComponent {
                 int ascent = metrics.getAscent();
                 Color bkground = new Color(255, 255, 255, 128);
                 int lastPos = 0;
-                int pos = osdText.indexOf("\n");
+                int pos = osdText.indexOf('\n');
                 int x = 3;
                 int y = 3;
                 String line;
@@ -542,7 +542,7 @@ public class ImageDisplay extends JComponent {
                     g.drawString(line, x, y + ascent);
                     y += (int) lineSize.getHeight();
                     lastPos = pos + 1;
-                    pos = osdText.indexOf("\n", lastPos);
+                    pos = osdText.indexOf('\n', lastPos);
                 }
 
                 line = osdText.substring(lastPos);

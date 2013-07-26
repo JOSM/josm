@@ -229,7 +229,7 @@ public class PluginInformation {
                         if(mv <= myv && (mv > mainversion || mainversion > myv))
                         {
                             String v = (String)entry.getValue();
-                            int i = v.indexOf(";");
+                            int i = v.indexOf(';');
                             if(i > 0)
                             {
                                 downloadlink = v.substring(i+1);

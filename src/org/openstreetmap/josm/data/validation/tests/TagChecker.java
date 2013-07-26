@@ -244,7 +244,7 @@ public class TagChecker extends Test
                             ignoreDataEndsWith.add(line);
                         } else if (key.equals("K:")) {
                             IgnoreKeyPair tmp = new IgnoreKeyPair();
-                            int mid = line.indexOf("=");
+                            int mid = line.indexOf('=');
                             tmp.key = line.substring(0, mid);
                             tmp.value = line.substring(mid+1);
                             ignoreDataKeyPair.add(tmp);
@@ -401,7 +401,7 @@ public class TagChecker extends Test
                         tr(s, key), MessageFormat.format(s, key), INVALID_KEY, p) );
                 withErrors.put(p, "IPK");
             }
-            if (checkKeys && key.indexOf(" ") >= 0 && !withErrors.contains(p, "IPK")) {
+            if (checkKeys && key.indexOf(' ') >= 0 && !withErrors.contains(p, "IPK")) {
                 errors.add( new TestError(this, Severity.WARNING, tr("Invalid white space in property key"),
                         tr(s, key), MessageFormat.format(s, key), INVALID_KEY_SPACE, p) );
                 withErrors.put(p, "IPK");
