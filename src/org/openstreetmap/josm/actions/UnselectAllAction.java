@@ -19,6 +19,7 @@ public class UnselectAllAction extends JosmAction {
         putValue("help", ht("/Action/UnselectAll"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;

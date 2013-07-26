@@ -92,6 +92,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
     private String objKey;
 
     Comparator<AutoCompletionListItem> defaultACItemComparator = new Comparator<AutoCompletionListItem>() {
+        @Override
         public int compare(AutoCompletionListItem o1, AutoCompletionListItem o2) {
             return String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue());
         }
@@ -308,6 +309,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             p.add(Box.createHorizontalStrut(10), GBC.std());
             p.add(values, GBC.eol().fill(GBC.HORIZONTAL));
             values.getEditor().addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     buttonAction(0, null); // emulate OK button click
                 }
@@ -493,6 +495,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
         protected JPopupMenu popupMenu = new JPopupMenu() {
             JCheckBoxMenuItem fixTagLanguageCb = new JCheckBoxMenuItem(
                 new AbstractAction(tr("Use English language for tag by default")){
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
                     PROPERTY_FIX_TAG_LOCALE.put(sel);
@@ -590,12 +593,14 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             selectKeysComboBox();
             
             popupMenu.add(new AbstractAction(tr("Set number of recently added tags")) {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     selectNumberOfTags();
                 }
             });
             JCheckBoxMenuItem rememberLastTags = new JCheckBoxMenuItem(
                 new AbstractAction(tr("Remember last used tags")){
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
                     PROPERTY_REMEMBER_TAGS.put(sel);

@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 public class AudioPreference extends DefaultTabPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
+        @Override
         public PreferenceSetting createPreferenceSetting() {
             return new AudioPreference();
         }
@@ -54,6 +55,7 @@ public class AudioPreference extends DefaultTabPreferenceSetting {
     private JosmTextField audioFastForwardMultiplier = new JosmTextField(8);
     private JosmTextField audioCalibration = new JosmTextField(8);
 
+    @Override
     public void addGui(PreferenceTabbedPane gui) {
         JPanel audio = new JPanel(new GridBagLayout());
 
@@ -124,6 +126,7 @@ public class AudioPreference extends DefaultTabPreferenceSetting {
         createPreferenceTabWithScrollPane(gui, audio);
     }
 
+    @Override
     public boolean ok() {
         Main.pref.put("audio.menuinvisible", ! audioMenuVisible.isSelected());
         Main.pref.put("marker.traceaudio", markerAudioTraceVisible.isSelected());

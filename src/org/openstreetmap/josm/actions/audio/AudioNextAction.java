@@ -26,6 +26,7 @@ public class AudioNextAction extends JosmAction {
         Shortcut.registerShortcut("audio:next", tr("Audio: {0}", trc("audio", "Next Marker")), KeyEvent.VK_F8, Shortcut.DIRECT), true);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         MarkerLayer.playNextMarker();
     }

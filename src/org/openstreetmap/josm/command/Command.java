@@ -40,12 +40,15 @@ abstract public class Command extends PseudoCommand {
     private static final class CloneVisitor extends AbstractVisitor {
         public final Map<OsmPrimitive, PrimitiveData> orig = new LinkedHashMap<OsmPrimitive, PrimitiveData>();
 
+        @Override
         public void visit(Node n) {
             orig.put(n, n.save());
         }
+        @Override
         public void visit(Way w) {
             orig.put(w, w.save());
         }
+        @Override
         public void visit(Relation e) {
             orig.put(e, e.save());
         }

@@ -87,6 +87,7 @@ public class ChangesetCacheTableCellRenderer extends JLabel implements TableCell
         setToolTipText("");
     }
 
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
         if (value == null)

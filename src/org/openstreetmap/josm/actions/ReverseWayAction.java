@@ -70,6 +70,7 @@ public final class ReverseWayAction extends JosmAction {
         putValue("help", ht("/Action/ReverseWays"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (! isEnabled())
             return;

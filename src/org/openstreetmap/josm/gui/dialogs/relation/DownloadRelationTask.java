@@ -97,6 +97,7 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
 
             SwingUtilities.invokeAndWait(
                     new Runnable() {
+                        @Override
                         public void run() {
                             layer.mergeFrom(allDownloads);
                             layer.onPostDownloadFromServer();

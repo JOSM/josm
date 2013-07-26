@@ -32,6 +32,7 @@ abstract public class AudioFastSlowAction extends JosmAction {
             multiplier = 1.0 / multiplier;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         double speed = AudioPlayer.speed();
         if (speed * multiplier <= 0.1)

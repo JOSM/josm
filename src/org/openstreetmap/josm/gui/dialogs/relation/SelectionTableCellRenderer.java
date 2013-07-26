@@ -63,6 +63,7 @@ public  class SelectionTableCellRenderer extends JLabel implements TableCellRend
         setToolTipText(DefaultNameFormatter.getInstance().buildDefaultToolTip(primitive));
     }
 
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
 

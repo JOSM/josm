@@ -220,6 +220,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
         // partially uploaded. Better run on EDT.
         //
         Runnable r  = new Runnable() {
+            @Override
             public void run() {
                 layer.cleanupAfterUpload(processedPrimitives);
                 layer.onPostUploadToServer();
@@ -317,6 +318,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
         // - to the Upload Dialog
         // - to map editing
         GuiHelper.runInEDT(new Runnable() {
+            @Override
             public void run() {
                 // if the changeset is still open after this upload we want it to
                 // be selected on the next upload

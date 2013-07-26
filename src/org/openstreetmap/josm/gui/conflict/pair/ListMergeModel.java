@@ -841,20 +841,24 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
             selectedIdx = 0;
         }
 
+        @Override
         public Object getElementAt(int index) {
             if (index < compareModes.size())
                 return compareModes.get(index);
             throw new IllegalArgumentException(tr("Unexpected value of parameter ''index''. Got {0}.", index));
         }
 
+        @Override
         public int getSize() {
             return compareModes.size();
         }
 
+        @Override
         public Object getSelectedItem() {
             return compareModes.get(selectedIdx);
         }
 
+        @Override
         public void setSelectedItem(Object anItem) {
             int i = compareModes.indexOf(anItem);
             if (i < 0)

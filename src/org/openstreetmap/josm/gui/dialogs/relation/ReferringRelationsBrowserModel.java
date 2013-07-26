@@ -36,10 +36,12 @@ public class ReferringRelationsBrowserModel extends AbstractListModel {
         fireModelUpdate();
     }
 
+    @Override
     public Object getElementAt(int index) {
         return referrers.get(index);
     }
 
+    @Override
     public int getSize() {
         return referrers.size();
     }

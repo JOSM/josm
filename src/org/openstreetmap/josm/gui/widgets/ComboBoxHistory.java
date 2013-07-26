@@ -79,21 +79,25 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<Au
         fireHistoryChanged();
     }
 
+    @Override
     public Iterator<AutoCompletionListItem> iterator() {
         return new Iterator<AutoCompletionListItem>() {
 
             private int position = -1;
 
+            @Override
             public void remove() {
                 removeElementAt(position);
             }
 
+            @Override
             public boolean hasNext() {
                 if(position < getSize()-1 && getSize()>0)
                     return true;
                 return false;
             }
 
+            @Override
             public AutoCompletionListItem next() {
                 position++;
                 return (AutoCompletionListItem)getElementAt(position);

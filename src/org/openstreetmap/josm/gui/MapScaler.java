@@ -45,6 +45,7 @@ public class MapScaler extends JComponent implements Helpful {
         return Main.pref.getColor(marktr("scale"), Color.white);
     }
 
+    @Override
     public String helpTopic() {
         return ht("/MapView/Scaler");
     }

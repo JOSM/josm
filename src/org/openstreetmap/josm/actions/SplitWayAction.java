@@ -116,6 +116,7 @@ public class SplitWayAction extends JosmAction {
      * This method performs an expensive check whether the selection clearly defines one
      * of the split actions outlined above, and if yes, calls the splitWay method.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();

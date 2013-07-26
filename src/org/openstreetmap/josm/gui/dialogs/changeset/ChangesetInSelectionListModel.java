@@ -18,6 +18,7 @@ public class ChangesetInSelectionListModel extends ChangesetListModel implements
     /* ---------------------------------------------------------------------------- */
     /* Interface SelectionChangeListener                                            */
     /* ---------------------------------------------------------------------------- */
+    @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         initFromPrimitives(newSelection);
     }
@@ -25,6 +26,7 @@ public class ChangesetInSelectionListModel extends ChangesetListModel implements
     /* ---------------------------------------------------------------------------- */
     /* Interface LayerChangeListener                                                */
     /* ---------------------------------------------------------------------------- */
+    @Override
     public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
         if (newLayer == null) {
             setChangesets(null);

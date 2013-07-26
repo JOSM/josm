@@ -26,6 +26,7 @@ import org.openstreetmap.josm.tools.GBC;
 public class DrawingPreference implements SubPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
+        @Override
         public PreferenceSetting createPreferenceSetting() {
             return new DrawingPreference();
         }
@@ -47,6 +48,7 @@ public class DrawingPreference implements SubPreferenceSetting {
     private JCheckBox useWireframeAntialiasing = new JCheckBox(tr("Smooth map graphics in wireframe mode (antialiasing)"));
     private JCheckBox outlineOnly = new JCheckBox(tr("Draw only outlines of areas"));
 
+    @Override
     public void addGui(PreferenceTabbedPane gui) {
         //gui.display.setPreferredSize(new Dimension(400,600));
         gpxPanel = new GPXSettingsPanel();
@@ -61,6 +63,7 @@ public class DrawingPreference implements SubPreferenceSetting {
 
         // directionHint
         directionHint.addActionListener(new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (directionHint.isSelected()){
                     headArrow.setSelected(Main.pref.getBoolean("draw.segment.head_only", false));
@@ -154,6 +157,7 @@ public class DrawingPreference implements SubPreferenceSetting {
         gui.getDisplayPreference().addSubTab(this, tr("OSM Data"), scrollpane);
     }
 
+    @Override
     public boolean ok() {
         gpxPanel.savePreferences();
         Main.pref.put("draw.data.area_outline_only", outlineOnly.isSelected());

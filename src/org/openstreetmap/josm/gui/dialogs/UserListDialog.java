@@ -105,10 +105,12 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
      * Called when the selection in the dataset changed.
      * @param newSelection The new selection array.
      */
+    @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         refresh(newSelection);
     }
 
+    @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
         if (newLayer instanceof OsmDataLayer) {
             refresh(((OsmDataLayer) newLayer).data.getAllSelected());
@@ -117,10 +119,12 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
     }
 
+    @Override
     public void layerAdded(Layer newLayer) {
         // do nothing
     }
 
+    @Override
     public void layerRemoved(Layer oldLayer) {
         // do nothing
     }
@@ -163,6 +167,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             model.selectPrimitivesOwnedBy(userTable.getSelectedRows());
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             select();
         }
@@ -171,6 +176,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             setEnabled(userTable != null && userTable.getSelectedRowCount() > 0);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
@@ -233,6 +239,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             setEnabled(userTable != null && userTable.getSelectedRowCount() > 0);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
@@ -261,6 +268,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             this.count=count;
             this.percent = percent;
         }
+        @Override
         public int compareTo(UserInfo o) {
             if (count < o.count) return 1;
             if (count > o.count) return -1;

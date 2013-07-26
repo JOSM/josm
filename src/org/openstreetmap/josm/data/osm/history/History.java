@@ -66,6 +66,7 @@ public class History{
         Collections.sort(
                 copy,
                 new Comparator<HistoryOsmPrimitive>() {
+                    @Override
                     public int compare(HistoryOsmPrimitive o1, HistoryOsmPrimitive o2) {
                         return o1.compareTo(o2);
                     }
@@ -79,6 +80,7 @@ public class History{
         Collections.sort(
                 copy,
                 new Comparator<HistoryOsmPrimitive>() {
+                    @Override
                     public int compare(HistoryOsmPrimitive o1, HistoryOsmPrimitive o2) {
                         return o2.compareTo(o1);
                     }
@@ -91,6 +93,7 @@ public class History{
         return filter(
                 this,
                 new FilterPredicate() {
+                    @Override
                     public boolean matches(HistoryOsmPrimitive primitive) {
                         return primitive.getTimestamp().compareTo(fromDate) >= 0;
                     }
@@ -102,6 +105,7 @@ public class History{
         return filter(
                 this,
                 new FilterPredicate() {
+                    @Override
                     public boolean matches(HistoryOsmPrimitive primitive) {
                         return primitive.getTimestamp().compareTo(untilDate) <= 0;
                     }
@@ -117,6 +121,7 @@ public class History{
         return filter(
                 this,
                 new FilterPredicate() {
+                    @Override
                     public boolean matches(HistoryOsmPrimitive primitive) {
                         return primitive.getVersion() >= fromVersion;
                     }
@@ -128,6 +133,7 @@ public class History{
         return filter(
                 this,
                 new FilterPredicate() {
+                    @Override
                     public boolean matches(HistoryOsmPrimitive primitive) {
                         return primitive.getVersion() <= untilVersion;
                     }
@@ -143,6 +149,7 @@ public class History{
         return filter(
                 this,
                 new FilterPredicate() {
+                    @Override
                     public boolean matches(HistoryOsmPrimitive primitive) {
                         return primitive.getUser() != null && primitive.getUser().getId() == uid;
                     }

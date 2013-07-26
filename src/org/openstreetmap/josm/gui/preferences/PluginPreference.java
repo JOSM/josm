@@ -55,6 +55,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 public class PluginPreference extends DefaultTabPreferenceSetting {
     public static class Factory implements PreferenceSettingFactory {
+        @Override
         public PreferenceSetting createPreferenceSetting() {
             return new PluginPreference();
         }
@@ -170,6 +171,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
         return pane;
     }
 
+    @Override
     public void addGui(final PreferenceTabbedPane gui) {
         GridBagConstraints gc = new GridBagConstraints();
         gc.weightx = 1.0;
@@ -224,6 +226,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
         return model != null ? model.getPluginsScheduledForUpdateOrDownload() : null;
     }
 
+    @Override
     public boolean ok() {
         if (! pluginPreferencesActivated)
             return false;
@@ -246,9 +249,11 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
     public void readLocalPluginInformation() {
         final ReadLocalPluginInformationTask task = new ReadLocalPluginInformationTask();
         Runnable r = new Runnable() {
+            @Override
             public void run() {
                 if (task.isCanceled()) return;
                 SwingUtilities.invokeLater(new Runnable() {
+                    @Override
                     public void run() {
                         model.setAvailablePlugins(task.getAvailablePlugins());
                         pnlPluginPreferences.refreshView();
@@ -272,12 +277,15 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
             putValue(SMALL_ICON, ImageProvider.get("download"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             final ReadRemotePluginInformationTask task = new ReadRemotePluginInformationTask(Main.pref.getPluginSites());
             Runnable continuation = new Runnable() {
+                @Override
                 public void run() {
                     if (task.isCanceled()) return;
                     SwingUtilities.invokeLater(new Runnable() {
+                        @Override
                         public void run() {
                             model.updateAvailablePlugins(task.getAvailablePlugins());
                             pnlPluginPreferences.refreshView();
@@ -329,6 +337,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
         protected void alertNothingToUpdate() {
             try {
                 SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
                     public void run() {
                         HelpAwareOptionPane.showOptionDialog(
                                 pnlPluginPreferences,
@@ -344,6 +353,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
             }
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             final List<PluginInformation> toUpdate = model.getSelectedPlugins();
             // the async task for downloading plugins
@@ -358,6 +368,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
             // to be run asynchronously after the plugin download
             //
             final Runnable pluginDownloadContinuation = new Runnable() {
+                @Override
                 public void run() {
                     if (pluginDownloadTask.isCanceled())
                         return;
@@ -375,6 +386,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
             // to be run asynchronously after the plugin list download
             //
             final Runnable pluginInfoDownloadContinuation = new Runnable() {
+                @Override
                 public void run() {
                     if (pluginInfoDownloadTask.isCanceled())
                         return;
@@ -415,6 +427,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "settings"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             configureSites();
         }
@@ -434,14 +447,17 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
             pnlPluginPreferences.refreshView();
         }
 
+        @Override
         public void changedUpdate(DocumentEvent arg0) {
             filter();
         }
 
+        @Override
         public void insertUpdate(DocumentEvent arg0) {
             filter();
         }
 
+        @Override
         public void removeUpdate(DocumentEvent arg0) {
             filter();
         }
@@ -462,6 +478,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
             add(new JScrollPane(list), GBC.std().fill());
             JPanel buttons = new JPanel(new GridBagLayout());
             buttons.add(new JButton(new AbstractAction(tr("Add")){
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     String s = JOptionPane.showInputDialog(
                             JOptionPane.getFrameForComponent(PluginConfigurationSitesPanel.this),
@@ -475,6 +492,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                 }
             }), GBC.eol().fill(GBC.HORIZONTAL));
             buttons.add(new JButton(new AbstractAction(tr("Edit")){
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     if (list.getSelectedValue() == null) {
                         JOptionPane.showMessageDialog(
@@ -500,6 +518,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                 }
             }), GBC.eol().fill(GBC.HORIZONTAL));
             buttons.add(new JButton(new AbstractAction(tr("Delete")){
+                @Override
                 public void actionPerformed(ActionEvent event) {
                     if (list.getSelectedValue() == null) {
                         JOptionPane.showMessageDialog(

@@ -36,6 +36,7 @@ public class RelationMemberTableCellEditor extends AbstractCellEditor implements
         );
     }
 
+    @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         // Do not edit empty or incomplete members ! (fix #5374 and #6315)
         if (value == null)
@@ -48,6 +49,7 @@ public class RelationMemberTableCellEditor extends AbstractCellEditor implements
         return editor;
     }
 
+    @Override
     public Object getCellEditorValue() {
         return editor.getText();
     }

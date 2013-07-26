@@ -324,6 +324,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             }
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             cancel();
         }
@@ -346,10 +347,12 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             setUserAction(UserAction.PROCEED);
             closeDialog();
         }
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
                 Mode mode = (Mode)evt.getNewValue();
@@ -404,12 +407,14 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             }
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (! confirmSaveLayerInfosOK())
                 return;
             launchSafeAndUploadTask();
         }
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
                 SaveLayersModel.Mode mode = (SaveLayersModel.Mode)evt.getNewValue();
@@ -549,6 +554,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             );
         }
 
+        @Override
         public void run() {
             model.setMode(SaveLayersModel.Mode.UPLOADING_AND_SAVING);
             List<SaveLayerInfo> toUpload = model.getLayersToUpload();

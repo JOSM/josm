@@ -57,6 +57,7 @@ public class ViewportFollowToggleAction extends JosmAction {
         Main.map.mapView.viewportFollowing = selected;
         notifySelectedState();
     }
+    @Override
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState();
     }

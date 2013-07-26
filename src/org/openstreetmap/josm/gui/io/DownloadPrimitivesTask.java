@@ -80,6 +80,7 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
             return;
         }
         GuiHelper.runInEDTAndWait(new Runnable() {
+            @Override
             public void run() {
                 layer.mergeFrom(ds);
                 AutoScaleAction.zoomTo(ds.allPrimitives());

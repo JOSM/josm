@@ -41,6 +41,7 @@ public class MainApplet extends JApplet {
             super(tr("Upload Preferences"), "upload-preferences", tr("Upload the current preferences to the server"),
                     Shortcut.registerShortcut("applet:uploadprefs", tr("Upload Preferences"), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), true);
         }
+        @Override
         public void actionPerformed(ActionEvent e) {
             ((ServerSidePreferences)Main.pref).upload();
         }
@@ -163,14 +164,17 @@ public class MainApplet extends JApplet {
         MainApplet applet = new MainApplet();
         Main.pref = new ServerSidePreferences(applet.getCodeBase());
         applet.setStub(new AppletStub() {
+            @Override
             public void appletResize(int w, int h) {
                 frame.setSize(w, h);
             }
 
+            @Override
             public AppletContext getAppletContext() {
                 return null;
             }
 
+            @Override
             public URL getCodeBase() {
                 try {
                     return new File(".").toURI().toURL();
@@ -180,14 +184,17 @@ public class MainApplet extends JApplet {
                 }
             }
 
+            @Override
             public URL getDocumentBase() {
                 return getCodeBase();
             }
 
+            @Override
             public String getParameter(String k) {
                 return null;
             }
 
+            @Override
             public boolean isActive() {
                 return true;
             }

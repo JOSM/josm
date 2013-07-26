@@ -27,6 +27,7 @@ public final class MoveNodeAction extends JosmAction {
         putValue("help", ht("/Action/MoveNode"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || (getCurrentDataSet().getSelectedNodes().size() != 1))
             return;

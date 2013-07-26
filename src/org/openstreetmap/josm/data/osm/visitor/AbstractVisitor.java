@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.osm.Changeset;
  */
 public abstract class AbstractVisitor implements Visitor {
 
+    @Override
     public void visit(Changeset cs) {
         // do nothing
     }

@@ -166,11 +166,13 @@ public class TextContextualPopupMenu extends JPopupMenu {
             setEnabled(false);
         }
 
+        @Override
         public void undoableEditHappened(UndoableEditEvent e) {
             undoManager.addEdit(e.getEdit());
             setEnabled(undoManager.canUndo());
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 undoManager.undo();

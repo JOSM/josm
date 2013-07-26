@@ -121,6 +121,7 @@ public class CloseChangesetDialog extends JDialog {
             refreshEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             setCanceled(false);
             setVisible(false);
@@ -130,6 +131,7 @@ public class CloseChangesetDialog extends JDialog {
             setEnabled(lstOpenChangesets.getSelectedValues() != null && lstOpenChangesets.getSelectedValues().length > 0);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             refreshEnabledState();
         }
@@ -148,6 +150,7 @@ public class CloseChangesetDialog extends JDialog {
             setVisible(false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             cancel();
         }

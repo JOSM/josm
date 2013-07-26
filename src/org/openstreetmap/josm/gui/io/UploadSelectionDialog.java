@@ -209,6 +209,7 @@ public class UploadSelectionDialog extends JDialog {
                     data,
                     new Comparator<OsmPrimitive>() {
                         private DefaultNameFormatter formatter = DefaultNameFormatter.getInstance();
+                        @Override
                         public int compare(OsmPrimitive o1, OsmPrimitive o2) {
                             int ret = OsmPrimitiveType.from(o1).compareTo(OsmPrimitiveType.from(o2));
                             if (ret != 0) return ret;
@@ -232,12 +233,14 @@ public class UploadSelectionDialog extends JDialog {
             }
         }
 
+        @Override
         public Object getElementAt(int index) {
             if (data == null)
                 return null;
             return data.get(index);
         }
 
+        @Override
         public int getSize() {
             if (data == null)
                 return 0;
@@ -269,6 +272,7 @@ public class UploadSelectionDialog extends JDialog {
             setEnabled(true);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             setCanceled(true);
             setVisible(false);
@@ -283,6 +287,7 @@ public class UploadSelectionDialog extends JDialog {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             setCanceled(false);
             setVisible(false);
@@ -293,6 +298,7 @@ public class UploadSelectionDialog extends JDialog {
                     || lstDeletedPrimitives.getSelectedIndex() >= 0);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }

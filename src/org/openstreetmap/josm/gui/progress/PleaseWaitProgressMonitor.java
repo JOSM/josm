@@ -115,6 +115,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     }
 
     private ActionListener cancelListener = new ActionListener(){
+        @Override
         public void actionPerformed(ActionEvent e) {
             cancel();
         }
@@ -149,6 +150,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     @Override
     public void doBeginTask() {
         doInEDT(new Runnable() {
+            @Override
             public void run() {
                 Main.currentProgressMonitor = PleaseWaitProgressMonitor.this;
                 if (dialogParent instanceof Frame && dialog == null) {
@@ -183,6 +185,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         if (newValue != currentProgressValue) {
             currentProgressValue = newValue;
             doInEDT(new Runnable() {
+                @Override
                 public void run() {
                     ProgressMonitorDialog dialog = getDialog();
                     if (dialog != null) {
@@ -198,6 +201,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         checkState(State.IN_TASK, State.IN_SUBTASK);
         this.customText = title;
         doInEDT(new Runnable() {
+            @Override
             public void run() {
                 ProgressMonitorDialog dialog = getDialog();
                 if (dialog != null) {
@@ -212,6 +216,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         checkState(State.IN_TASK, State.IN_SUBTASK);
         this.title = title;
         doInEDT(new Runnable() {
+            @Override
             public void run() {
                 ProgressMonitorDialog dialog = getDialog();
                 if (dialog != null) {
@@ -225,6 +230,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     protected void doSetIntermediate(final boolean value) {
         this.indeterminate = value;
         doInEDT(new Runnable() {
+            @Override
             public void run() {
                 // Enable only if progress is at the beginning. Doing intermediate progress in the middle
                 // will hide already reached progress
@@ -239,6 +245,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     @Override
     public void appendLogMessage(final String message) {
         doInEDT(new Runnable() {
+            @Override
             public void run() {
                 ProgressMonitorDialog dialog = getDialog();
                 if (dialog != null) {

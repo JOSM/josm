@@ -26,6 +26,7 @@ public class HelpAction extends AbstractAction {
         putValue("toolbar", "help");
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand() == null) {
             String topic;

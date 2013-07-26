@@ -224,14 +224,17 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
                 setAccessToken(new OAuthToken(tfAccessTokenKey.getText().trim(), tfAccessTokenSecret.getText().trim()));
             }
         }
+        @Override
         public void changedUpdate(DocumentEvent e) {
             build();
         }
 
+        @Override
         public void insertUpdate(DocumentEvent e) {
             build();
         }
 
+        @Override
         public void removeUpdate(DocumentEvent e) {
             build();
         }
@@ -248,6 +251,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             TestAccessTokenTask task = new TestAccessTokenTask(
                     ManualAuthorizationUI.this,
@@ -262,6 +266,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
             setEnabled(hasAccessToken());
         }
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (! evt.getPropertyName().equals(AbstractAuthorizationUI.ACCESS_TOKEN_PROP))
                 return;

@@ -32,6 +32,7 @@ public class JoinNodeWayAction extends JosmAction {
         putValue("help", ht("/Action/JoinNodeWay"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;

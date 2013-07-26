@@ -81,6 +81,7 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
      *
      * @return the renderer component
      */
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value,
             boolean isSelected, boolean hasFocus, int rowIndex, int vColIndex) {
         resetRenderer();

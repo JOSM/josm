@@ -143,6 +143,7 @@ public class PluginPreferencesModel extends Observable{
         Collections.sort(
                 availablePlugins,
                 new Comparator<PluginInformation>() {
+                    @Override
                     public int compare(PluginInformation o1, PluginInformation o2) {
                         String n1 = o1.getName() == null ? "" : o1.getName().toLowerCase();
                         String n2 = o2.getName() == null ? "" : o2.getName().toLowerCase();

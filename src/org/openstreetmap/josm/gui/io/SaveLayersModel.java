@@ -64,6 +64,7 @@ public class SaveLayersModel extends DefaultTableModel {
         Collections.sort(
                 layerInfo,
                 new Comparator<SaveLayerInfo>() {
+                    @Override
                     public int compare(SaveLayerInfo o1, SaveLayerInfo o2) {
                         return o1.compareTo(o2);
                     }

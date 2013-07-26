@@ -173,6 +173,7 @@ public class TaggingPresetPreference implements SubPreferenceSetting {
         //
         gui.getMapPreference().getTabPane().addChangeListener(
                 new ChangeListener() {
+                    @Override
                     public void stateChanged(ChangeEvent e) {
                         if (gui.getMapPreference().getTabPane().getSelectedComponent() == panel) {
                             sources.initiallyLoadAvailableSources();

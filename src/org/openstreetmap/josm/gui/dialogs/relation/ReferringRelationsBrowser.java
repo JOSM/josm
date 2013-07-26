@@ -97,6 +97,7 @@ public class ReferringRelationsBrowser extends JPanel {
             setEnabled(model.canReload());
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             boolean full = cbReadFull.isSelected();
             final ParentRelationLoadingTask task = new ParentRelationLoadingTask(
@@ -107,6 +108,7 @@ public class ReferringRelationsBrowser extends JPanel {
             );
             task.setContinuation(
                     new Runnable() {
+                        @Override
                         public void run() {
                             if (task.isCanceled() || task.hasError())
                                 return;
@@ -117,14 +119,17 @@ public class ReferringRelationsBrowser extends JPanel {
             Main.worker.submit(task);
         }
 
+        @Override
         public void contentsChanged(ListDataEvent e) {
             refreshEnabled();
         }
 
+        @Override
         public void intervalAdded(ListDataEvent e) {
             refreshEnabled();
         }
 
+        @Override
         public void intervalRemoved(ListDataEvent e) {
             refreshEnabled();
         }
@@ -146,6 +151,7 @@ public class ReferringRelationsBrowser extends JPanel {
             setEnabled(referrers.getSelectionModel().getMinSelectionIndex() >=0);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             run();
         }
@@ -159,6 +165,7 @@ public class ReferringRelationsBrowser extends JPanel {
             editor.setVisible(true);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             refreshEnabled();
         }

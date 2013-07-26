@@ -112,6 +112,7 @@ public class HelpAwareOptionPane {
             this.value = value;
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             pane.setValue(value);
             dialog.setVisible(false);
@@ -167,6 +168,7 @@ public class HelpAwareOptionPane {
         b.setToolTipText(tr("Show help information"));
         HelpUtil.setHelpContext(b, helpTopic);
         Action a = new AbstractAction() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 HelpBrowser.setUrlForHelpTopic(helpTopic);
             }
@@ -270,6 +272,7 @@ public class HelpAwareOptionPane {
         });
         dialog.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "close");
         dialog.getRootPane().getActionMap().put("close", new AbstractAction() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 pane.setValue(JOptionPane.CLOSED_OPTION);
                 dialog.setVisible(false);
@@ -323,6 +326,7 @@ public class HelpAwareOptionPane {
      */
     static public void showMessageDialogInEDT(final Component parentComponent, final Object msg, final String title, final int messageType, final String helpTopic)  {
         GuiHelper.runInEDT(new Runnable() {
+            @Override
             public void run() {
                 showOptionDialog(parentComponent, msg, title, messageType, null, null, null, helpTopic);
             }

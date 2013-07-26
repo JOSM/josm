@@ -35,6 +35,7 @@ public class NMEAImporter extends FileImporter {
             final File fileFinal = file;
 
             GuiHelper.runInEDT(new Runnable() {
+                @Override
                 public void run() {
                     Main.main.addLayer(gpxLayer);
                     if (Main.pref.getBoolean("marker.makeautomarkers", true)) {

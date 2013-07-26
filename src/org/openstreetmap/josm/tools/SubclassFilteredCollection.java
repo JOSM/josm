@@ -40,11 +40,13 @@ public class SubclassFilteredCollection<S, T extends S> extends AbstractCollecti
             }
         }
 
+        @Override
         public boolean hasNext() {
             findNext();
             return current != null;
         }
 
+        @Override
         public T next() {
             findNext();
             S old = current;
@@ -54,6 +56,7 @@ public class SubclassFilteredCollection<S, T extends S> extends AbstractCollecti
             return res;
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }

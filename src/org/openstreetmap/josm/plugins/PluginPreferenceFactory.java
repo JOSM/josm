@@ -12,6 +12,7 @@ public class PluginPreferenceFactory implements PreferenceSettingFactory {
         this.plugin = plugin;
     }
 
+    @Override
     public PreferenceSetting createPreferenceSetting() {
         return plugin.getPreferenceSetting();
     }

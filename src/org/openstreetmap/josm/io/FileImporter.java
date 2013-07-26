@@ -102,6 +102,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
         return 0;
     }
 
+    @Override
     public int compareTo(FileImporter other) {
         return (new Double(this.getPriority())).compareTo(other.getPriority());
     }

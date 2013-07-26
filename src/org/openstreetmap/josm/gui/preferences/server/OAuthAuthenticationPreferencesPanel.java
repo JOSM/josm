@@ -68,6 +68,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         cbShowAdvancedParameters.setSelected(false);
         cbShowAdvancedParameters.addItemListener(
                 new ItemListener() {
+                    @Override
                     public void itemStateChanged(ItemEvent evt) {
                         pnlAdvancedProperties.setVisible(evt.getStateChange() == ItemEvent.SELECTED);
                     }
@@ -310,6 +311,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth"));
 
         }
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
                     OAuthAuthenticationPreferencesPanel.this,
@@ -335,6 +337,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth"));
 
         }
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
                     OAuthAuthenticationPreferencesPanel.this,
@@ -361,6 +364,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             OAuthToken token = OAuthAccessTokenHolder.getInstance().getAccessToken();
             OAuthParameters parameters = OAuthParameters.createFromPreferences(Main.pref);
@@ -374,6 +378,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         }
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (! evt.getPropertyName().equals(OsmApiUrlInputPanel.API_URL_PROP))
             return;

@@ -280,6 +280,7 @@ public class CoordinateInfoViewer extends JPanel {
             }
         }
 
+        @Override
         public void update(Observable o, Object arg) {
             refresh();
         }
@@ -293,6 +294,7 @@ public class CoordinateInfoViewer extends JPanel {
             super(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
         }
 
+        @Override
         protected void build() {
             setLayout(new GridBagLayout());
             setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
@@ -318,6 +320,7 @@ public class CoordinateInfoViewer extends JPanel {
             lblDistance.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
         }
 
+        @Override
         protected void refresh() {
             HistoryOsmPrimitive p = getPrimitive();
             HistoryOsmPrimitive opposite = getOppositePrimitive();

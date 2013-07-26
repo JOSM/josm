@@ -66,6 +66,7 @@ public class BookmarkList extends JList {
             return name;
         }
 
+        @Override
         public int compareTo(Bookmark b) {
             return name.toLowerCase().compareTo(b.name.toLowerCase());
         }
@@ -223,6 +224,7 @@ public class BookmarkList extends JList {
             return sb.toString();
 
         }
+        @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
 

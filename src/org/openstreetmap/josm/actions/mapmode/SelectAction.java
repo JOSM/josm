@@ -210,6 +210,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
      /**
      * This is called whenever the keyboard modifier status changes
      */
+    @Override
     public void eventDispatched(AWTEvent e) {
         if(oldEvent == null)
             return;
@@ -444,6 +445,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             useLastMoveCommandIfPossible();
             // Schedule a timer to update status line "initialMoveDelay+1" ms in the future
             GuiHelper.scheduleTimer(initialMoveDelay+1, new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent evt) {
                     updateStatusLine();
                 }
@@ -603,6 +605,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                         // We need to do it like this as otherwise drawAction will see a double
                         // click and switch back to SelectMode
                         Main.worker.execute(new Runnable() {
+                            @Override
                             public void run() {
                                 Main.map.selectDrawTool(true);
                             }

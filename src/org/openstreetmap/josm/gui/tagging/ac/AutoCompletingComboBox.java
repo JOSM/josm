@@ -168,8 +168,10 @@ public class AutoCompletingComboBox extends JosmComboBox {
         editor.setDocument(new AutoCompletingComboBoxDocument(this));
         editor.addFocusListener(
                 new FocusListener() {
+                    @Override
                     public void focusLost(FocusEvent e) {
                     }
+                    @Override
                     public void focusGained(FocusEvent e) {
                         // save unix system selection (middle mouse paste)
                         Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
@@ -304,6 +306,7 @@ public class AutoCompletingComboBox extends JosmComboBox {
             setOpaque(true);
         }
 
+        @Override
         public Component getListCellRendererComponent(
                 JList list,
                 Object value,

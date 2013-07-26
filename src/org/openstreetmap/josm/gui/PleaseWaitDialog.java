@@ -66,9 +66,13 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
         setCustomText("");
         setLocationRelativeTo(getParent());
         addComponentListener(new ComponentListener() {
+            @Override
             public void componentHidden(ComponentEvent e) {}
+            @Override
             public void componentMoved(ComponentEvent e) {}
+            @Override
             public void componentShown(ComponentEvent e) {}
+            @Override
             public void componentResized(ComponentEvent ev) {
                 int w = getWidth();
                 if(w > 200) {
@@ -87,6 +91,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
         initDialog();
     }
 
+    @Override
     public void setIndeterminate(boolean newValue) {
         UIManager.put("ProgressBar.cycleTime", UIManager.getInt("ProgressBar.repaintInterval") * 100);
         progressBar.setIndeterminate(newValue);
@@ -103,6 +108,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
      * Sets a custom text line below currentAction. Can be used to display additional information
      * @param text
      */
+    @Override
     public void setCustomText(String text) {
         if(text == null || text.trim().length() == 0) {
             customText.setVisible(false);
@@ -116,6 +122,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
         }
     }
 
+    @Override
     public void setCurrentAction(String text) {
         currentAction.setText(text);
     }
@@ -126,6 +133,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
      *
      * @param message the message to append to the log. Ignore if null or white space only.
      */
+    @Override
     public void appendLogMessage(String message) {
         if (message == null || message.trim().length() ==0 )
             return;

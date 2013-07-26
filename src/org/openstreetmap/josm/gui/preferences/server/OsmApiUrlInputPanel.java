@@ -165,15 +165,18 @@ public class OsmApiUrlInputPanel extends JPanel {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             final String url = tfOsmServerUrl.getText().trim();
             final ApiUrlTestTask task = new ApiUrlTestTask(OsmApiUrlInputPanel.this, url);
             Main.worker.submit(task);
             Runnable r = new Runnable() {
+                @Override
                 public void run() {
                     if (task.isCanceled())
                         return;
                     Runnable r = new Runnable() {
+                        @Override
                         public void run() {
                             if (task.isSuccess()) {
                                 lblValid.setIcon(ImageProvider.get("dialogs/changeset", "valid"));
@@ -202,14 +205,17 @@ public class OsmApiUrlInputPanel extends JPanel {
             setEnabled(enabled);
         }
 
+        @Override
         public void changedUpdate(DocumentEvent arg0) {
             updateEnabledState();
         }
 
+        @Override
         public void insertUpdate(DocumentEvent arg0) {
             updateEnabledState();
         }
 
+        @Override
         public void removeUpdate(DocumentEvent arg0) {
             updateEnabledState();
         }
@@ -258,6 +264,7 @@ public class OsmApiUrlInputPanel extends JPanel {
      * Handles changes in the default URL
      */
     class UseDefaultServerUrlChangeHandler implements ItemListener {
+        @Override
         public void itemStateChanged(ItemEvent e) {
             switch(e.getStateChange()) {
             case ItemEvent.SELECTED:
@@ -279,6 +286,7 @@ public class OsmApiUrlInputPanel extends JPanel {
             firePropertyChange(API_URL_PROP, null, tfOsmServerUrl.getText());
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             propagate();
         }

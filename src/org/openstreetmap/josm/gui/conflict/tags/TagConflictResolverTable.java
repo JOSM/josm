@@ -53,6 +53,7 @@ public class TagConflictResolverTable extends JTable implements MultiValueCellEd
      *
      */
     class SelectNextColumnCellAction extends AbstractAction {
+        @Override
         public void actionPerformed(ActionEvent e) {
             run();
         }
@@ -83,6 +84,7 @@ public class TagConflictResolverTable extends JTable implements MultiValueCellEd
      */
     class SelectPreviousColumnCellAction extends AbstractAction {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             run();
         }
@@ -106,10 +108,12 @@ public class TagConflictResolverTable extends JTable implements MultiValueCellEd
         }
     }
 
+    @Override
     public void gotoNextDecision() {
         selectNextColumnCellAction.run();
     }
 
+    @Override
     public void gotoPreviousDecision() {
         selectPreviousColumnCellAction.run();
     }

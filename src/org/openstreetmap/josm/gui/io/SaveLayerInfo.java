@@ -116,6 +116,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
         this.file = file;
     }
 
+    @Override
     public int compareTo(SaveLayerInfo o) {
         if (isDoSaveAndUpload()) {
             if (o.isDoSaveAndUpload())

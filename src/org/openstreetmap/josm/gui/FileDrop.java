@@ -74,6 +74,7 @@ public class FileDrop
                 BorderFactory.createMatteBorder( 2, 2, 2, 2, defaultBorderColor ), // Drag border
                 true, // Recursive
                 new FileDrop.Listener(){
+                    @Override
                     public void filesDropped( java.io.File[] files ){
                         // start asynchronous loading of files
                         OpenFileAction.OpenFileTask task = new OpenFileAction.OpenFileTask(Arrays.asList(files), null);
@@ -271,7 +272,8 @@ public class FileDrop
         if( supportsDnD() )
         {   // Make a drop listener
             dropListener = new java.awt.dnd.DropTargetListener()
-            {   public void dragEnter( java.awt.dnd.DropTargetDragEvent evt )
+            {   @Override
+                public void dragEnter( java.awt.dnd.DropTargetDragEvent evt )
             {       log( out, "FileDrop: dragEnter event." );
 
             // Is this an acceptable drag event?
@@ -298,11 +300,13 @@ public class FileDrop
             }   // end else: drag not ok
             }   // end dragEnter
 
+            @Override
             public void dragOver( java.awt.dnd.DropTargetDragEvent evt )
             {   // This is called continually as long as the mouse is
                 // over the drag target.
             }   // end dragOver
 
+            @Override
             public void drop( java.awt.dnd.DropTargetDropEvent evt )
             {   log( out, "FileDrop: drop event." );
             try
@@ -388,6 +392,7 @@ public class FileDrop
             }   // end finally
             }   // end drop
 
+            @Override
             public void dragExit( java.awt.dnd.DropTargetEvent evt )
             {   log( out, "FileDrop: dragExit event." );
             // If it's a Swing component, reset its border
@@ -398,6 +403,7 @@ public class FileDrop
             }   // end if: JComponent
             }   // end dragExit
 
+            @Override
             public void dropActionChanged( java.awt.dnd.DropTargetDragEvent evt )
             {   log( out, "FileDrop: dropActionChanged event." );
             // Is this an acceptable drag event?
@@ -480,7 +486,8 @@ public class FileDrop
 
         // Listen for hierarchy changes and remove the drop target when the parent gets cleared out.
         c.addHierarchyListener( new java.awt.event.HierarchyListener()
-        {   public void hierarchyChanged( java.awt.event.HierarchyEvent evt )
+        {   @Override
+            public void hierarchyChanged( java.awt.event.HierarchyEvent evt )
         {   log( out, "FileDrop: Hierarchy changed." );
         java.awt.Component parent = c.getParent();
         if( parent == null )
@@ -812,6 +819,7 @@ public class FileDrop
          * @return An array of supported data flavors
          * @since 1.1
          */
+        @Override
         public java.awt.datatransfer.DataFlavor[] getTransferDataFlavors()
         {
             if( customFlavor != null )
@@ -838,6 +846,7 @@ public class FileDrop
          * @return The dropped data
          * @since 1.1
          */
+        @Override
         public Object getTransferData( java.awt.datatransfer.DataFlavor flavor )
         throws java.awt.datatransfer.UnsupportedFlavorException, java.io.IOException
         {
@@ -861,6 +870,7 @@ public class FileDrop
          * @return Whether or not the flavor is supported
          * @since 1.1
          */
+        @Override
         public boolean isDataFlavorSupported( java.awt.datatransfer.DataFlavor flavor )
         {
             // Native object

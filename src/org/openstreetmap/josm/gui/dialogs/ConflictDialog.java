@@ -100,6 +100,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         lstConflicts.setCellRenderer(new OsmPrimitivRenderer());
         lstConflicts.addMouseListener(new MouseEventHandler());
         addListSelectionListener(new ListSelectionListener(){
+            @Override
             public void valueChanged(ListSelectionEvent e) {
                 Main.map.mapView.repaint();
             }
@@ -230,6 +231,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         Visitor conflictPainter = new AbstractVisitor() {
             // Manage a stack of visited relations to avoid infinite recursion with cyclic relations (fix #7938)
             private final Set<Relation> visited = new HashSet<Relation>();
+            @Override
             public void visit(Node n) {
                 Point p = nc.getPoint(n);
                 g.drawRect(p.x-1, p.y-1, 2, 2);
@@ -239,6 +241,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
                 Point p2 = nc.getPoint(n2);
                 g.drawLine(p1.x, p1.y, p2.x, p2.y);
             }
+            @Override
             public void visit(Way w) {
                 Node lastN = null;
                 for (Node n : w.getNodes()) {
@@ -250,6 +253,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
                     lastN = n;
                 }
             }
+            @Override
             public void visit(Relation e) {
                 if (!visited.contains(e)) {
                     visited.add(e);
@@ -271,6 +275,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         }
     }
 
+    @Override
     public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
         if (oldLayer != null) {
             oldLayer.getConflicts().removeConflictListener(this);
@@ -305,15 +310,18 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         return conflicts.get(index);
     }
 
+    @Override
     public void onConflictsAdded(ConflictCollection conflicts) {
         refreshView();
     }
 
+    @Override
     public void onConflictsRemoved(ConflictCollection conflicts) {
         System.err.println("1 conflict has been resolved.");
         refreshView();
     }
 
+    @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         lstConflicts.clearSelection();
         for (OsmPrimitive osm : newSelection) {
@@ -354,12 +362,14 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             listeners = new CopyOnWriteArrayList<ListDataListener>();
         }
 
+        @Override
         public void addListDataListener(ListDataListener l) {
             if (l != null) {
                 listeners.addIfAbsent(l);
             }
         }
 
+        @Override
         public void removeListDataListener(ListDataListener l) {
             listeners.remove(l);
         }
@@ -377,12 +387,14 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             }
         }
 
+        @Override
         public Object getElementAt(int index) {
             if (index < 0) return null;
             if (index >= getSize()) return null;
             return conflicts.get(index).getMy();
         }
 
+        @Override
         public int getSize() {
             if (conflicts == null) return 0;
             return conflicts.size();
@@ -411,10 +423,12 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             putValue("help", ht("/Dialog/ConflictList#ResolveAction"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             resolve();
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             ListSelectionModel model = (ListSelectionModel)e.getSource();
             boolean enabled = model.getMinSelectionIndex() >= 0
@@ -431,6 +445,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             putValue("help", ht("/Dialog/ConflictList#SelectAction"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
             for (Object o : lstConflicts.getSelectedValues()) {
@@ -442,6 +457,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             }
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             ListSelectionModel model = (ListSelectionModel)e.getSource();
             boolean enabled = model.getMinSelectionIndex() >= 0

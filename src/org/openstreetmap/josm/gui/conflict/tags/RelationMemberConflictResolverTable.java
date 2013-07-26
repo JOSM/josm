@@ -51,6 +51,7 @@ public class RelationMemberConflictResolverTable extends JTable implements Multi
      *
      */
     class SelectNextColumnCellAction extends AbstractAction {
+        @Override
         public void actionPerformed(ActionEvent e) {
             run();
         }
@@ -81,6 +82,7 @@ public class RelationMemberConflictResolverTable extends JTable implements Multi
      */
     class SelectPreviousColumnCellAction extends AbstractAction {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             run();
         }
@@ -104,10 +106,12 @@ public class RelationMemberConflictResolverTable extends JTable implements Multi
         }
     }
 
+    @Override
     public void gotoNextDecision() {
         selectNextColumnCellAction.run();
     }
 
+    @Override
     public void gotoPreviousDecision() {
         selectPreviousColumnCellAction.run();
     }

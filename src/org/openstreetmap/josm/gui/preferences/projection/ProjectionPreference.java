@@ -56,6 +56,7 @@ import org.openstreetmap.josm.tools.GBC;
 public class ProjectionPreference implements SubPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
+        @Override
         public PreferenceSetting createPreferenceSetting() {
             return new ProjectionPreference();
         }
@@ -286,6 +287,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
      */
     static private GBC projSubPrefPanelGBC = GBC.std().fill(GBC.BOTH).weight(1.0, 1.0);
 
+    @Override
     public void addGui(PreferenceTabbedPane gui) {
         ProjectionChoice pc = setupProjectionCombo();
 
@@ -449,6 +451,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
             throw new RuntimeException("Couldn't find the current projection in the list of available projections!");
 
         projectionCombo.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 ProjectionChoice pc = (ProjectionChoice) projectionCombo.getSelectedItem();
                 selectedProjectionChanged(pc);

@@ -57,6 +57,7 @@ public class MergeNodesAction extends JosmAction {
         putValue("help", ht("/Action/MergeNodes"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent event) {
         if (!isEnabled())
             return;

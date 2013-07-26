@@ -173,11 +173,13 @@ public class UploadedObjectsSummaryPanel extends JPanel {
             fireContentsChanged(this,0,getSize());
         }
 
+        @Override
         public Object getElementAt(int index) {
             if (primitives == null) return null;
             return primitives.get(index);
         }
 
+        @Override
         public int getSize() {
             if (primitives == null) return 0;
             return primitives.size();

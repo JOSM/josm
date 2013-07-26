@@ -681,6 +681,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     /* ---------------------------------------------------------------------- */
     /* DataSetListener                                                        */
     /* ---------------------------------------------------------------------- */
+    @Override
     public void nodeMoved(NodeMovedEvent event) {
         Node node = event.getNode();
         if (!node.isNew() && node.getId() == history.getId()) {
@@ -688,6 +689,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
     }
 
+    @Override
     public void primitivesAdded(PrimitivesAddedEvent event) {
         for (OsmPrimitive p: event.getPrimitives()) {
             if (canShowAsLatest(p)) {
@@ -696,6 +698,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
     }
 
+    @Override
     public void primitivesRemoved(PrimitivesRemovedEvent event) {
         for (OsmPrimitive p: event.getPrimitives()) {
             if (!p.isNew() && p.getId() == history.getId()) {
@@ -704,6 +707,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
     }
 
+    @Override
     public void relationMembersChanged(RelationMembersChangedEvent event) {
         Relation r = event.getRelation();
         if (!r.isNew() && r.getId() == history.getId()) {
@@ -711,6 +715,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
     }
 
+    @Override
     public void tagsChanged(TagsChangedEvent event) {
         OsmPrimitive prim = event.getPrimitive();
         if (!prim.isNew() && prim.getId() == history.getId()) {
@@ -718,6 +723,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
     }
 
+    @Override
     public void wayNodesChanged(WayNodesChangedEvent event) {
         Way way = event.getChangedWay();
         if (!way.isNew() && way.getId() == history.getId()) {
@@ -725,6 +731,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
     }
 
+    @Override
     public void dataChanged(DataChangedEvent event) {
         OsmPrimitive primitive = event.getDataset().getPrimitiveById(history.getId(), history.getType());
         HistoryOsmPrimitive latest;
@@ -737,6 +744,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         fireModelChange();
     }
 
+    @Override
     public void otherDatasetChange(AbstractDatasetChangedEvent event) {
         // Irrelevant
     }
@@ -744,6 +752,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     /* ---------------------------------------------------------------------- */
     /* LayerChangeListener                                                    */
     /* ---------------------------------------------------------------------- */
+    @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
         if (oldLayer != null && oldLayer instanceof OsmDataLayer) {
             OsmDataLayer l = (OsmDataLayer)oldLayer;
@@ -767,7 +776,9 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         fireModelChange();
     }
 
+    @Override
     public void layerAdded(Layer newLayer) {}
+    @Override
     public void layerRemoved(Layer oldLayer) {}
 
     /**
@@ -777,11 +788,13 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     static class HistoryPrimitiveBuilder extends AbstractVisitor {
         private HistoryOsmPrimitive clone;
 
+        @Override
         public void visit(Node n) {
             clone = new HistoryNode(n.getId(), n.getVersion(), n.isVisible(), getCurrentUser(), 0, null, n.getCoor(), false);
             clone.setTags(n.getKeys());
         }
 
+        @Override
         public void visit(Relation r) {
             clone = new HistoryRelation(r.getId(), r.getVersion(), r.isVisible(), getCurrentUser(), 0, null, false);
             clone.setTags(r.getKeys());
@@ -791,6 +804,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             }
         }
 
+        @Override
         public void visit(Way w) {
             clone = new HistoryWay(w.getId(), w.getVersion(), w.isVisible(), getCurrentUser(), 0, null, false);
             clone.setTags(w.getKeys());

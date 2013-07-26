@@ -135,6 +135,7 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         return (ImageEntry) c;
     }
 
+    @Override
     public int compareTo(ImageEntry image) {
         if (exifTime != null && image.exifTime != null)
             return exifTime.compareTo(image.exifTime);

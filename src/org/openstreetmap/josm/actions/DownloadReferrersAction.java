@@ -78,6 +78,7 @@ public class DownloadReferrersAction extends JosmAction{
         Main.worker.submit(new DownloadReferrersTask(targetLayer, id, type));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || ! Main.isDisplayingMapView())
             return;

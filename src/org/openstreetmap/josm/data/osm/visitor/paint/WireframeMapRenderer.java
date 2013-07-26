@@ -153,6 +153,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
      * @param virtual <code>true</code> if virtual nodes are used
      * @param bounds display boundaries
      */
+    @Override
     public void render(DataSet data, boolean virtual, Bounds bounds) {
         BBox bbox = new BBox(bounds);
         this.ds = data;

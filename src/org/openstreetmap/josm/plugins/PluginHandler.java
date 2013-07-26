@@ -144,6 +144,7 @@ public class PluginHandler {
             }
         }
 
+        @Override
         public int compareTo(DeprecatedPlugin o) {
             return name.compareTo(o.name);
         }
@@ -574,6 +575,7 @@ public class PluginHandler {
             Collections.sort(
                     toLoad,
                     new Comparator<PluginInformation>() {
+                        @Override
                         public int compare(PluginInformation o1, PluginInformation o2) {
                             if (o1.stage < o2.stage) return -1;
                             if (o1.stage == o2.stage) return 0;
@@ -972,6 +974,7 @@ public class PluginHandler {
             return;
 
         final File[] files = pluginDir.listFiles(new FilenameFilter() {
+            @Override
             public boolean accept(File dir, String name) {
                 return name.endsWith(".jar.new");
             }});
@@ -1198,6 +1201,7 @@ public class PluginHandler {
             pluginTab.add(new JLabel(name), GBC.std());
             pluginTab.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
             pluginTab.add(new JButton(new AbstractAction(tr("Information")) {
+                @Override
                 public void actionPerformed(ActionEvent event) {
                     StringBuilder b = new StringBuilder();
                     for (Entry<String, String> e : info.attr.entrySet()) {

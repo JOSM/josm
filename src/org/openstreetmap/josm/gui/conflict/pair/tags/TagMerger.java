@@ -279,6 +279,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
             setEnabled(false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             int rows[] = mineTable.getSelectedRows();
             if (rows == null || rows.length == 0)
@@ -287,6 +288,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
             selectNextConflict(rows);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(mineTable.getSelectedRowCount() > 0);
         }
@@ -309,6 +311,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
             setEnabled(false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             int rows[] = theirTable.getSelectedRows();
             if (rows == null || rows.length == 0)
@@ -317,6 +320,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
             selectNextConflict(rows);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(theirTable.getSelectedRowCount() > 0);
         }
@@ -345,6 +349,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
             adjustable.addAdjustmentListener(this);
         }
 
+        @Override
         public void adjustmentValueChanged(AdjustmentEvent e) {
             for (Adjustable a : synchronizedAdjustables) {
                 if (a != e.getAdjustable()) {
@@ -404,6 +409,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
             setEnabled(false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             int rows[] = mergedTable.getSelectedRows();
             if (rows == null || rows.length == 0)
@@ -411,11 +417,13 @@ public class TagMerger extends JPanel implements IConflictResolver {
             model.decide(rows, MergeDecisionType.UNDECIDED);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(mergedTable.getSelectedRowCount() > 0);
         }
     }
 
+    @Override
     public void deletePrimitive(boolean deleted) {
         // Use my entries, as it doesn't really matter
         MergeDecisionType decision = deleted?MergeDecisionType.KEEP_MINE:MergeDecisionType.UNDECIDED;
@@ -424,6 +432,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
         }
     }
 
+    @Override
     public void populate(Conflict<? extends OsmPrimitive> conflict) {
         model.populate(conflict.getMy(), conflict.getTheir());
         for (JTable table : new JTable[]{mineTable, theirTable}) {

@@ -93,6 +93,7 @@ public class AddTMSLayerPanel extends AddImageryPanel {
         return sanitize(tmsUrl.getText());
     }
 
+    @Override
     protected boolean isImageryValid() {
         return !getImageryName().isEmpty() && !getTmsUrl().isEmpty();
     }

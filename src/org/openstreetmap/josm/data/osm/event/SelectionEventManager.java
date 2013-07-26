@@ -67,6 +67,7 @@ public class SelectionEventManager implements SelectionChangedListener {
         normalListeners.remove(searchListener);
     }
 
+    @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         fireEvents(normalListeners, newSelection);
         selection = newSelection;
@@ -80,6 +81,7 @@ public class SelectionEventManager implements SelectionChangedListener {
     }
 
     private final Runnable edtRunnable = new Runnable() {
+        @Override
         public void run() {
             if (selection != null) {
                 fireEvents(inEDTListeners, selection);

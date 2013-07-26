@@ -127,6 +127,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             cbShowAdvancedParameters.setSelected(false);
             cbShowAdvancedParameters.addItemListener(
                     new ItemListener() {
+                        @Override
                         public void itemStateChanged(ItemEvent evt) {
                             getAdvancedPropertiesPanel().setVisible(evt.getStateChange() == ItemEvent.SELECTED);
                         }
@@ -284,6 +285,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "previous"));
             }
 
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 transitionToRetrieveRequestToken();
             }
@@ -358,6 +360,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "previous"));
             }
 
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 transitionToRetrieveRequestToken();
             }
@@ -379,6 +382,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             putValue(SHORT_DESCRIPTION, tr("Click to retrieve a Request Token"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             final RetrieveRequestTokenTask task = new RetrieveRequestTokenTask(
                     SemiAutomaticAuthorizationUI.this,
@@ -386,11 +390,13 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             );
             Main.worker.submit(task);
             Runnable r  = new Runnable() {
+                @Override
                 public void run() {
                     if (task.isCanceled()) return;
                     if (task.getRequestToken() == null) return;
                     requestToken = task.getRequestToken();
                     SwingUtilities.invokeLater(new Runnable() {
+                        @Override
                         public void run() {
                             transitionToRetrieveAccessToken();
                         }
@@ -412,6 +418,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             putValue(SHORT_DESCRIPTION, tr("Click to retrieve an Access Token"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             final RetrieveAccessTokenTask task = new RetrieveAccessTokenTask(
                     SemiAutomaticAuthorizationUI.this,
@@ -420,11 +427,13 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             );
             Main.worker.submit(task);
             Runnable r  = new Runnable() {
+                @Override
                 public void run() {
                     if (task.isCanceled()) return;
                     if (task.getAccessToken() == null) return;
                     setAccessToken(task.getAccessToken());
                     SwingUtilities.invokeLater(new Runnable() {
+                        @Override
                         public void run() {
                             transitionToShowAccessToken();
                         }
@@ -446,6 +455,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             putValue(SHORT_DESCRIPTION, tr("Click to test the Access Token"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             TestAccessTokenTask task = new TestAccessTokenTask(
                     SemiAutomaticAuthorizationUI.this,

@@ -286,6 +286,7 @@ public class PlayHeadMarker extends Marker {
         if (timer == null) {
             animationInterval = Main.pref.getDouble("marker.audioanimationinterval", 1.0); //milliseconds
             timer = new Timer((int)(animationInterval * 1000.0), new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     timerAction();
                 }

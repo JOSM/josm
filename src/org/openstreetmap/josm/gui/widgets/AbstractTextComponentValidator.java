@@ -134,8 +134,10 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     /* -------------------------------------------------------------------------------- */
     /* interface FocusListener                                                          */
     /* -------------------------------------------------------------------------------- */
+    @Override
     public void focusGained(FocusEvent arg0) {}
 
+    @Override
     public void focusLost(FocusEvent arg0) {
         validate();
     }
@@ -143,6 +145,7 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     /* -------------------------------------------------------------------------------- */
     /* interface ActionListener                                                         */
     /* -------------------------------------------------------------------------------- */
+    @Override
     public void actionPerformed(ActionEvent arg0) {
         validate();
     }
@@ -150,14 +153,17 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     /* -------------------------------------------------------------------------------- */
     /* interface DocumentListener                                                       */
     /* -------------------------------------------------------------------------------- */
+    @Override
     public void changedUpdate(DocumentEvent arg0) {
         validate();
     }
 
+    @Override
     public void insertUpdate(DocumentEvent arg0) {
         validate();
     }
 
+    @Override
     public void removeUpdate(DocumentEvent arg0) {
         validate();
     }
@@ -165,6 +171,7 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     /* -------------------------------------------------------------------------------- */
     /* interface PropertyChangeListener                                                 */
     /* -------------------------------------------------------------------------------- */
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("enabled")) {
             boolean enabled = (Boolean)evt.getNewValue();

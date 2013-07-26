@@ -164,6 +164,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
         visitor.merge();
         SwingUtilities.invokeLater(
                 new Runnable() {
+                    @Override
                     public void run() {
                         targetLayer.onPostDownloadFromServer();
                         Main.map.mapView.repaint();

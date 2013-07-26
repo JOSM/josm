@@ -125,10 +125,12 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         mappedPrimitives.put(primitive, clone);
     }
 
+    @Override
     public void visit(Node n) {
         rememberNode(n);
     }
 
+    @Override
     public void visit(Way w) {
         // remember all nodes this way refers to ...
         //
@@ -139,6 +141,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         rememberWay(w);
     }
 
+    @Override
     public void visit(Relation r) {
         // first, remember all primitives members refer to (only if necessary, see
         // below)

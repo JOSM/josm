@@ -244,6 +244,7 @@ public class BasicChangesetQueryPanel extends JPanel {
      *
      */
     class SelectQueryHandler implements ItemListener {
+        @Override
         public void itemStateChanged(ItemEvent e) {
             BasicQuery q = getSelectedQuery();
             if (q == null) return;

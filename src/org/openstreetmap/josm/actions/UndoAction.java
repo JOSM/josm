@@ -28,6 +28,7 @@ public class UndoAction extends JosmAction implements OsmDataLayer.CommandQueueL
         putValue("help", ht("/Action/Undo"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (Main.map == null)
             return;

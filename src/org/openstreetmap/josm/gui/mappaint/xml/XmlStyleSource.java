@@ -50,6 +50,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
         super(entry);
     }
 
+    @Override
     protected void init() {
         super.init();
         icons.clear();
@@ -89,6 +90,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
         }
     }
 
+    @Override
     public InputStream getSourceInputStream() throws IOException {
         MirroredInputStream in = new MirroredInputStream(url);
         InputStream zip = in.getZipEntry("xml", "style");

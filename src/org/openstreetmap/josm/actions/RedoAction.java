@@ -28,6 +28,7 @@ public class RedoAction extends JosmAction implements OsmDataLayer.CommandQueueL
         putValue("help", ht("/Action/Redo"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (Main.map == null)
             return;

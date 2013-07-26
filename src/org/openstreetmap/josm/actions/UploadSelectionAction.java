@@ -86,6 +86,7 @@ public class UploadSelectionAction extends JosmAction{
         return ret;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
@@ -189,6 +190,7 @@ public class UploadSelectionAction extends JosmAction{
             hull = new HashSet<OsmPrimitive>();
         }
 
+        @Override
         public void visit(Node n) {
             if (n.isNewOrUndeleted() || n.isModified() || n.isDeleted()) {
                 // upload new nodes as well as modified and deleted ones
@@ -196,6 +198,7 @@ public class UploadSelectionAction extends JosmAction{
             }
         }
 
+        @Override
         public void visit(Way w) {
             if (w.isNewOrUndeleted() || w.isModified() || w.isDeleted()) {
                 // upload new ways as well as modified and deleted ones
@@ -208,6 +211,7 @@ public class UploadSelectionAction extends JosmAction{
             }
         }
 
+        @Override
         public void visit(Relation r) {
             if (r.isNewOrUndeleted() || r.isModified() || r.isDeleted()) {
                 hull.add(r);
@@ -223,6 +227,7 @@ public class UploadSelectionAction extends JosmAction{
             }
         }
 
+        @Override
         public void visit(Changeset cs) {
             // do nothing
         }
@@ -282,6 +287,7 @@ public class UploadSelectionAction extends JosmAction{
                 return;
             }
             Runnable r = new Runnable() {
+                @Override
                 public void run() {
                     processPostParentChecker(layer, toUpload);
                 }

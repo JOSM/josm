@@ -112,6 +112,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
         }
     }
 
+    @Override
     public int compareTo(WayPoint w) {
         return Double.compare(time, w.time);
     }

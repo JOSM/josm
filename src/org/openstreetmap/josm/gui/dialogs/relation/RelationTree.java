@@ -80,10 +80,12 @@ public class RelationTree extends JTree {
      */
     class LazyRelationLoader implements TreeWillExpandListener {
 
+        @Override
         public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
             // do nothing
         }
 
+        @Override
         public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
             TreePath path  = event.getPath();
             Relation parent = (Relation)event.getPath().getLastPathComponent();
@@ -140,6 +142,7 @@ public class RelationTree extends JTree {
             final RelationTreeModel model = (RelationTreeModel)getModel();
             SwingUtilities.invokeLater(
                     new Runnable() {
+                        @Override
                         public void run() {
                             model.refreshNode(path);
                         }

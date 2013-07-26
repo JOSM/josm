@@ -78,6 +78,7 @@ public class MoveAction extends JosmAction {
         Main.toolbar.register(this);
     }
 
+    @Override
     public void actionPerformed(ActionEvent event) {
 
         if (!Main.isDisplayingMapView())

@@ -39,6 +39,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
         public ZoomerAction(String action) {
             this.action = action;
         }
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (action.equals(".") || action.equals(",")) {
                 Point mouse = nc.getMousePosition();
@@ -120,6 +121,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     /**
      * If the right (and only the right) mouse button is pressed, move the map
      */
+    @Override
     public void mouseDragged(MouseEvent e) {
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
         if ((e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK) {
@@ -186,6 +188,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
      * Zoom the map by 1/5th of current zoom per wheel-delta.
      * @param e The wheel event.
      */
+    @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         nc.zoomToFactor(e.getX(), e.getY(), Math.pow(Math.sqrt(2), e.getWheelRotation()));
     }
@@ -193,6 +196,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     /**
      * Emulates dragging on Mac OSX
      */
+    @Override
     public void mouseMoved(MouseEvent e) {
         if (!movementInPlace)
             return;

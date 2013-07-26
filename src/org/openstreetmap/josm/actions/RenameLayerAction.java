@@ -41,6 +41,7 @@ public class RenameLayerAction extends AbstractAction {
         this.putValue("help", ht("/Action/RenameLayer"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         Box panel = Box.createVerticalBox();
         final JosmTextField name = new JosmTextField(layer.getName());

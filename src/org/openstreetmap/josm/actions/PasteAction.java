@@ -46,6 +46,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
         Main.pasteBuffer.addPasteBufferChangedListener(this);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;

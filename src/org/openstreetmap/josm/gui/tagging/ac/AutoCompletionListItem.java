@@ -115,6 +115,7 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
         return true;
     }
 
+    @Override
     public int compareTo(AutoCompletionListItem other) {
         int ret = other.priority.compareTo(priority); // higher priority items come first in the list
         if (ret != 0)

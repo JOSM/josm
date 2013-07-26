@@ -55,6 +55,7 @@ public class PresetListPanel extends JPanel {
             tag = t;
             this.presetHandler = presetHandler;
         }
+        @Override
         public void mouseClicked(MouseEvent arg0) {
             Collection<OsmPrimitive> selection = tag.createSelection(presetHandler.getSelection());
             if (selection == null || selection.isEmpty())
@@ -66,13 +67,17 @@ public class PresetListPanel extends JPanel {
             }
 
         }
+        @Override
         public void mouseEntered(MouseEvent arg0) {
             label.setFont(hover);
         }
+        @Override
         public void mouseExited(MouseEvent arg0) {
             label.setFont(normal);
         }
+        @Override
         public void mousePressed(MouseEvent arg0) {}
+        @Override
         public void mouseReleased(MouseEvent arg0) {}
     }
 

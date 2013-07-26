@@ -25,6 +25,7 @@ public class AllNodesVisitor extends AbstractVisitor {
     /**
      * Nodes have only itself as nodes.
      */
+    @Override
     public void visit(Node n) {
         nodes.add(n);
     }
@@ -32,6 +33,7 @@ public class AllNodesVisitor extends AbstractVisitor {
     /**
      * Ways have their way nodes.
      */
+    @Override
     public void visit(Way w) {
         if (w.isIncomplete()) return;
         for (Node n : w.getNodes())
@@ -43,6 +45,7 @@ public class AllNodesVisitor extends AbstractVisitor {
      * FIXME: do we want to collect nodes from segs/ways that are relation members?
      * if so, use AutomatchVisitor!
      */
+    @Override
     public void visit(Relation e) {
         for (RelationMember m : e.getMembers())
             if (m.isNode()) visit(m.getNode());

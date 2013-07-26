@@ -120,6 +120,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
     /* -------------------------------------------------------------------------- */
     /* Interface TableChangeListener                                              */
     /* -------------------------------------------------------------------------- */
+    @Override
     public void tableChanged(TableModelEvent e) {
         String uploadComment = getUploadComment();
         changesetCommentModel.setComment(uploadComment);
@@ -131,6 +132,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
      *
      */
     class ChangesetCommentObserver implements Observer {
+        @Override
         public void update(Observable o, Object arg) {
             if (!(o instanceof ChangesetCommentModel)) return;
             String newValue = (String)arg;

@@ -18,6 +18,7 @@ class SaveLayersTable extends JTable implements PropertyChangeListener {
         super.getTableHeader().setReorderingAllowed(false);
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
             Mode mode = (Mode)evt.getNewValue();

@@ -31,6 +31,7 @@ public class SessionLoadAction extends DiskAccessAction {
         putValue("help", ht("/Action/SessionLoad"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         ExtensionFileFilter ff = new ExtensionFileFilter("jos,joz", "jos", tr("Session file (*.jos, *.joz)"));
         JFileChooser fc = createAndOpenFileChooser(true, false, tr("Open session"), Arrays.asList(ff, FileFilterAllFiles.getInstance()), ff, JFileChooser.FILES_ONLY, "lastDirectory");

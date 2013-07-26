@@ -118,6 +118,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
             }
         });
         cbWireframe.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Main.main.menu.wireFrameToggleAction.actionPerformed(null);
             }
@@ -314,6 +315,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
             setVerticalAlignment(SwingConstants.CENTER);
         }
 
+        @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
             if (value == null)
                 return this;
@@ -399,6 +401,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
             model.ensureSelectedIsVisible();
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
