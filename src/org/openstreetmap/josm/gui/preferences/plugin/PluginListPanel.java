@@ -44,7 +44,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
 
     protected String formatPluginRemoteVersion(PluginInformation pi) {
         StringBuilder sb = new StringBuilder();
-        if (pi.version == null || pi.version.trim().equals("")) {
+        if (pi.version == null || pi.version.trim().isEmpty()) {
             sb.append(tr("unknown"));
         } else {
             sb.append(pi.version);
@@ -57,7 +57,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
 
     protected String formatPluginLocalVersion(PluginInformation pi) {
         if (pi == null) return tr("unknown");
-        if (pi.localversion == null || pi.localversion.trim().equals(""))
+        if (pi.localversion == null || pi.localversion.trim().isEmpty())
             return tr("unknown");
         return pi.localversion;
     }

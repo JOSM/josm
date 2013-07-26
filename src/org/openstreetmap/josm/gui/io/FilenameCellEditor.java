@@ -114,7 +114,7 @@ class FilenameCellEditor extends JPanel implements TableCellEditor {
 
     @Override
     public boolean stopCellEditing() {
-        if (tfFileName.getText() == null || tfFileName.getText().trim().equals("")) {
+        if (tfFileName.getText() == null || tfFileName.getText().trim().isEmpty()) {
             value = null;
         } else {
             value = new File(tfFileName.getText());

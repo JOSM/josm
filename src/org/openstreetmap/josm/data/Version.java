@@ -78,7 +78,7 @@ public class Version {
         if (content == null) return properties;
         Pattern p = Pattern.compile("^([^:]+):(.*)$");
         for (String line: content.split("\n")) {
-            if (line == null || line.trim().equals("")) {
+            if (line == null || line.trim().isEmpty()) {
                 continue;
             }
             if (line.matches("^\\s*#.*$")) {

@@ -234,7 +234,7 @@ public class NmeaReader {
     // Returns true if the input made sence, false otherwise.
     private boolean ParseNMEASentence(String s, NMEAParserState ps) {
         try {
-            if (s.equals(""))
+            if (s.isEmpty())
                 throw new NullPointerException();
 
             // checksum check:
@@ -303,11 +303,11 @@ public class NmeaReader {
                 if(accu.equals("M")) {
                     // Ignore heights that are not in meters for now
                     accu=e[GPGGA.HEIGHT.position];
-                    if(!accu.equals("")) {
+                    if(!accu.isEmpty()) {
                         Double.parseDouble(accu);
                         // if it throws it's malformed; this should only happen if the
                         // device sends nonstandard data.
-                        if(!accu.equals("")) {
+                        if(!accu.isEmpty()) { // FIX ? same check
                             currentwp.attr.put("ele", accu);
                         }
                     }
@@ -315,18 +315,18 @@ public class NmeaReader {
                 // number of sattelites
                 accu=e[GPGGA.SATELLITE_COUNT.position];
                 int sat = 0;
-                if(!accu.equals("")) {
+                if(!accu.isEmpty()) {
                     sat = Integer.parseInt(accu);
                     currentwp.attr.put("sat", accu);
                 }
                 // h-dilution
                 accu=e[GPGGA.HDOP.position];
-                if(!accu.equals("")) {
+                if(!accu.isEmpty()) {
                     currentwp.attr.put("hdop", Float.parseFloat(accu));
                 }
                 // fix
                 accu=e[GPGGA.QUALITY.position];
-                if(!accu.equals("")) {
+                if(!accu.isEmpty()) {
                     int fixtype = Integer.parseInt(accu);
                     switch(fixtype) {
                     case 0:
@@ -352,7 +352,7 @@ public class NmeaReader {
                 if(accu.equals("T")) {
                     // other values than (T)rue are ignored
                     accu = e[GPVTG.COURSE.position];
-                    if(!accu.equals("")) {
+                    if(!accu.isEmpty()) {
                         Double.parseDouble(accu);
                         currentwp.attr.put("course", accu);
                     }
@@ -361,7 +361,7 @@ public class NmeaReader {
                 accu = e[GPVTG.SPEED_KMH_UNIT.position];
                 if(accu.startsWith("K")) {
                     accu = e[GPVTG.SPEED_KMH.position];
-                    if(!accu.equals("")) {
+                    if(!accu.isEmpty()) {
                         double speed = Double.parseDouble(accu);
                         speed /= 3.6; // speed in m/s
                         currentwp.attr.put("speed", Double.toString(speed));
@@ -370,17 +370,17 @@ public class NmeaReader {
             } else if(e[0].equals("$GPGSA") || e[0].equals("$GNGSA")) {
                 // vdop
                 accu=e[GPGSA.VDOP.position];
-                if(!accu.equals("")) {
+                if(!accu.isEmpty()) {
                     currentwp.attr.put("vdop", Float.parseFloat(accu));
                 }
                 // hdop
                 accu=e[GPGSA.HDOP.position];
-                if(!accu.equals("")) {
+                if(!accu.isEmpty()) {
                     currentwp.attr.put("hdop", Float.parseFloat(accu));
                 }
                 // pdop
                 accu=e[GPGSA.PDOP.position];
-                if(!accu.equals("")) {
+                if(!accu.isEmpty()) {
                     currentwp.attr.put("pdop", Float.parseFloat(accu));
                 }
             }
@@ -411,14 +411,14 @@ public class NmeaReader {
                 currentwp.attr.put("time", DateUtils.fromDate(d));
                 // speed
                 accu = e[GPRMC.SPEED.position];
-                if(!accu.equals("") && !currentwp.attr.containsKey("speed")) {
+                if(!accu.isEmpty() && !currentwp.attr.containsKey("speed")) {
                     double speed = Double.parseDouble(accu);
                     speed *= 0.514444444; // to m/s
                     currentwp.attr.put("speed", Double.toString(speed));
                 }
                 // course
                 accu = e[GPRMC.COURSE.position];
-                if(!accu.equals("") && !currentwp.attr.containsKey("course")) {
+                if(!accu.isEmpty() && !currentwp.attr.containsKey("course")) {
                     Double.parseDouble(accu);
                     currentwp.attr.put("course", accu);
                 }
@@ -463,7 +463,7 @@ public class NmeaReader {
 
         // return a zero latlon instead of null so it is logged as zero coordinate
         // instead of malformed sentence
-        if(widthNorth.equals("")&&lengthEast.equals("")) return new LatLon(0.0,0.0);
+        if(widthNorth.isEmpty() && lengthEast.isEmpty()) return new LatLon(0.0,0.0);
 
         // The format is xxDDLL.LLLL
         // xx optional whitespace

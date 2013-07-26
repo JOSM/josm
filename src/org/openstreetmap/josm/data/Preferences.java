@@ -440,7 +440,7 @@ public class Preferences {
     synchronized public String get(final String key, final String def) {
         putDefault(key, def);
         final String prop = properties.get(key);
-        if (prop == null || prop.equals(""))
+        if (prop == null || prop.isEmpty())
             return def;
         return prop;
     }
@@ -773,15 +773,15 @@ public class Preferences {
         }
         putDefault("color."+colKey, ColorHelper.color2html(def));
         String colStr = specName != null ? get("color."+specName) : "";
-        if(colStr.equals("")) {
+        if(colStr.isEmpty()) {
             colStr = get("color."+colKey);
         }
-        return colStr.equals("") ? def : ColorHelper.html2color(colStr);
+        return colStr.isEmpty() ? def : ColorHelper.html2color(colStr);
     }
 
     synchronized public Color getDefaultColor(String colKey) {
         String colStr = defaults.get("color."+colKey);
-        return colStr == null || "".equals(colStr) ? null : ColorHelper.html2color(colStr);
+        return colStr == null || colStr.isEmpty() ? null : ColorHelper.html2color(colStr);
     }
 
     synchronized public boolean putColor(String colKey, Color val) {

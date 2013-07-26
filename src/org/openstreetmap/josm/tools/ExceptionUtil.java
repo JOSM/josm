@@ -428,7 +428,7 @@ public class ExceptionUtil {
      */
     public static String explainGeneric(Exception e) {
         String msg = e.getMessage();
-        if (msg == null || msg.trim().equals("")) {
+        if (msg == null || msg.trim().isEmpty()) {
             msg = e.toString();
         }
         e.printStackTrace();

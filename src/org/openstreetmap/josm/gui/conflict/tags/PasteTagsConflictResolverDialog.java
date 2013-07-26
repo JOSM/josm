@@ -461,7 +461,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
                 case WAY: msg = trn("{0} way", "{0} ways", numPrimitives, numPrimitives); break;
                 case RELATION: msg = trn("{0} relation", "{0} relations", numPrimitives, numPrimitives); break;
                 }
-                text = text.equals("") ? msg : text + ", " + msg;
+                text = text.isEmpty() ? msg : text + ", " + msg;
             }
             setText(text);
         }

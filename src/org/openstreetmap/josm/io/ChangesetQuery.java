@@ -301,7 +301,7 @@ public class ChangesetQuery {
 
     public static class ChangesetQueryUrlParser {
         protected int parseUid(String value) throws ChangesetQueryUrlException {
-            if (value == null || value.trim().equals(""))
+            if (value == null || value.trim().isEmpty())
                 throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid",value));
             int id;
             try {
@@ -315,7 +315,7 @@ public class ChangesetQuery {
         }
 
         protected boolean parseOpen(String value) throws ChangesetQueryUrlException {
-            if (value == null || value.trim().equals(""))
+            if (value == null || value.trim().isEmpty())
                 throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "open",value));
             if (value.equals("true"))
                 return true;
@@ -326,7 +326,7 @@ public class ChangesetQuery {
         }
 
         protected boolean parseBoolean(String value, String parameter) throws ChangesetQueryUrlException {
-            if (value == null || value.trim().equals(""))
+            if (value == null || value.trim().isEmpty())
                 throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter,value));
             if (value.equals("true"))
                 return true;
@@ -337,7 +337,7 @@ public class ChangesetQuery {
         }
 
         protected Date parseDate(String value, String parameter) throws ChangesetQueryUrlException {
-            if (value == null || value.trim().equals(""))
+            if (value == null || value.trim().isEmpty())
                 throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter,value));
             if (value.endsWith("Z")) {
                 // OSM API generates date strings we time zone abbreviation "Z" which Java SimpleDateFormat
@@ -435,7 +435,7 @@ public class ChangesetQuery {
             if (query == null)
                 return new ChangesetQuery();
             query = query.trim();
-            if (query.equals(""))
+            if (query.isEmpty())
                 return new ChangesetQuery();
             Map<String,String> queryParams  = createMapFromQueryString(query);
             return crateFromMap(queryParams);

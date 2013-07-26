@@ -126,7 +126,7 @@ public class ImageryLayerInfo {
 
     // some additional checks to respect extended URLs in preferences (legacy workaround)
     private boolean isSimilar(String a, String b) {
-        return Utils.equal(a, b) || (a != null && b != null && !"".equals(a) && !"".equals(b) && (a.contains(b) || b.contains(a)));
+        return Utils.equal(a, b) || (a != null && b != null && !a.isEmpty() && !b.isEmpty() && (a.contains(b) || b.contains(a)));
     }
 
     public void add(ImageryInfo info) {

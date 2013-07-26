@@ -46,7 +46,7 @@ public class WMSGrabber extends Grabber {
         super(mv, layer, localOnly);
         this.info = layer.getInfo();
         this.baseURL = info.getUrl();
-        if(layer.getInfo().getCookies() != null && !layer.getInfo().getCookies().equals("")) {
+        if(layer.getInfo().getCookies() != null && !layer.getInfo().getCookies().isEmpty()) {
             props.put("Cookie", layer.getInfo().getCookies());
         }
         Pattern pattern = Pattern.compile("\\{header\\(([^,]+),([^}]+)\\)\\}");

@@ -237,7 +237,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
 
         @Override
         protected void buttonAction(int buttonIndex, ActionEvent evt) {
-            if (buttonIndex == 0 && tBookmarkName.getText() != null && !"".equals(tBookmarkName.getText()) &&
+            if (buttonIndex == 0 && tBookmarkName.getText() != null && !tBookmarkName.getText().isEmpty() &&
                     OffsetBookmark.getBookmarkByName(layer, tBookmarkName.getText()) != null) {
                 if (!confirmOverwriteBookmark()) return;
             }
@@ -251,7 +251,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             offsetDialog = null;
             if (getValue() != 1) {
                 layer.setOffset(oldDx, oldDy);
-            } else if (tBookmarkName.getText() != null && !"".equals(tBookmarkName.getText())) {
+            } else if (tBookmarkName.getText() != null && !tBookmarkName.getText().isEmpty()) {
                 OffsetBookmark.bookmarkOffset(tBookmarkName.getText(), layer);
             }
             Main.main.menu.imageryMenu.refreshOffsetMenu();

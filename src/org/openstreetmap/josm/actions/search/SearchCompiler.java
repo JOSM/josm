@@ -679,7 +679,7 @@ public class SearchCompiler {
 
         @Override public boolean match(OsmPrimitive osm) {
             if (!osm.hasKeys() && osm.getUser() == null)
-                return search.equals("");
+                return search.isEmpty();
 
             for (String key: osm.keySet()) {
                 String value = osm.get(key);
