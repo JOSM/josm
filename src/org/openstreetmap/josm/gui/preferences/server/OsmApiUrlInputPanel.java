@@ -197,7 +197,7 @@ public class OsmApiUrlInputPanel extends JPanel {
 
         protected void updateEnabledState() {
             boolean enabled =
-                !tfOsmServerUrl.getText().trim().equals("")
+                !tfOsmServerUrl.getText().trim().isEmpty()
                 && !tfOsmServerUrl.getText().trim().equals(lastTestedUrl);
             if (enabled) {
                 lblValid.setIcon(null);
@@ -235,7 +235,7 @@ public class OsmApiUrlInputPanel extends JPanel {
 
         @Override
         public boolean isValid() {
-            if (getComponent().getText().trim().equals(""))
+            if (getComponent().getText().trim().isEmpty())
                 return false;
 
             try {
@@ -248,7 +248,7 @@ public class OsmApiUrlInputPanel extends JPanel {
 
         @Override
         public void validate() {
-            if (getComponent().getText().trim().equals("")) {
+            if (getComponent().getText().trim().isEmpty()) {
                 feedbackInvalid(tr("OSM API URL must not be empty. Please enter the OSM API URL."));
                 return;
             }

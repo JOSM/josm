@@ -601,7 +601,7 @@ public class TagCollection implements Iterable<Tag> {
         if (! isApplicableToPrimitive())
             throw new IllegalStateException(tr("Tag collection cannot be applied to a primitive because there are keys with multiple values."));
         for (Tag tag: tags) {
-            if (tag.getValue() == null || tag.getValue().equals("")) {
+            if (tag.getValue() == null || tag.getValue().isEmpty()) {
                 primitive.remove(tag.getKey());
             } else {
                 primitive.put(tag.getKey(), tag.getValue());

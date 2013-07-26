@@ -125,14 +125,14 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
             // Checks clipboard contents against current service if no match has been found yet.
             // If the contents match, they will be inserted into the text field and the corresponding
             // service will be pre-selected.
-            if(!clip.equals("") && tfWmsUrl.getText().equals("")
+            if(!clip.isEmpty() && tfWmsUrl.getText().isEmpty()
                     && (s.urlRegEx.matcher(clip).find() || s.idValidator.matcher(clip).matches())) {
                 serviceBtn.setSelected(true);
                 tfWmsUrl.setText(clip);
             }
             s.btn = serviceBtn;
             group.add(serviceBtn);
-            if(!s.url.equals("")) {
+            if(!s.url.isEmpty()) {
                 panel.add(serviceBtn, GBC.std());
                 panel.add(new UrlLabel(s.url, tr("Visit Homepage")), GBC.eol().anchor(GridBagConstraints.EAST));
             } else {
@@ -141,7 +141,7 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
         }
 
         // Fallback in case no match was found
-        if(tfWmsUrl.getText().equals("") && firstBtn != null) {
+        if(tfWmsUrl.getText().isEmpty() && firstBtn != null) {
             firstBtn.setSelected(true);
         }
 
@@ -174,7 +174,7 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
 
                 // We've reached the custom WMS URL service
                 // Just set the URL and hope everything works out
-                if(s.wmsUrl.equals("")) {
+                if(s.wmsUrl.isEmpty()) {
                     addWMSLayer(s.name + " (" + text + ")", text);
                     break outer;
                 }

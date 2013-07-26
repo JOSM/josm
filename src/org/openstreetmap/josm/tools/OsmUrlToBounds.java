@@ -40,7 +40,7 @@ public class OsmUrlToBounds {
 
         try {
             if (map.containsKey("bbox")) {
-                String bbox[] = map.get("bbox").split(",");
+                String[] bbox = map.get("bbox").split(",");
                 b = new Bounds(
                         new LatLon(Double.parseDouble(bbox[1]), Double.parseDouble(bbox[0])),
                         new LatLon(Double.parseDouble(bbox[3]), Double.parseDouble(bbox[2])));

@@ -107,7 +107,7 @@ public class DefaultProxySelector extends ProxySelector {
         }
         String host = Main.pref.get(ProxyPreferencesPanel.PROXY_HTTP_HOST, null);
         int port = parseProxyPortValue(ProxyPreferencesPanel.PROXY_HTTP_PORT, Main.pref.get(ProxyPreferencesPanel.PROXY_HTTP_PORT, null));
-        if (host != null && ! host.trim().equals("") && port > 0) {
+        if (host != null && !host.trim().isEmpty() && port > 0) {
             httpProxySocketAddress = new InetSocketAddress(host,port);
         } else {
             httpProxySocketAddress = null;
@@ -119,7 +119,7 @@ public class DefaultProxySelector extends ProxySelector {
 
         host = Main.pref.get(ProxyPreferencesPanel.PROXY_SOCKS_HOST, null);
         port = parseProxyPortValue(ProxyPreferencesPanel.PROXY_SOCKS_PORT, Main.pref.get(ProxyPreferencesPanel.PROXY_SOCKS_PORT, null));
-        if (host != null && ! host.trim().equals("") && port > 0) {
+        if (host != null && !host.trim().isEmpty() && port > 0) {
             socksProxySocketAddress = new InetSocketAddress(host,port);
         } else {
             socksProxySocketAddress = null;

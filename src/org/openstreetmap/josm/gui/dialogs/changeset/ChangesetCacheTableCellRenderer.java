@@ -47,7 +47,7 @@ public class ChangesetCacheTableCellRenderer extends JLabel implements TableCell
 
     protected void renderUploadComment(Changeset cs) {
         String comment = cs.get("comment");
-        if (comment == null || comment.trim().equals("")) {
+        if (comment == null || comment.trim().isEmpty()) {
             setText(trc("changeset.upload-comment", "empty"));
             setFont(UIManager.getFont("Table.font").deriveFont(Font.ITALIC));
         } else {
@@ -68,7 +68,7 @@ public class ChangesetCacheTableCellRenderer extends JLabel implements TableCell
 
     protected void renderUser(Changeset cs) {
         User user = cs.getUser();
-        if (user == null || user.getName().trim().equals("")) {
+        if (user == null || user.getName().trim().isEmpty()) {
             setFont(UIManager.getFont("Table.font").deriveFont(Font.ITALIC));
             setText(tr("anonymous"));
         } else {

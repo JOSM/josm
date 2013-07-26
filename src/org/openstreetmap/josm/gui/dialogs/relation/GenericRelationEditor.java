@@ -1572,7 +1572,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         protected boolean isEmptyRole() {
-            return tfRole.getText() == null || tfRole.getText().trim().equals("");
+            return tfRole.getText() == null || tfRole.getText().trim().isEmpty();
         }
 
         protected boolean confirmSettingEmptyRole(int onNumMembers) {

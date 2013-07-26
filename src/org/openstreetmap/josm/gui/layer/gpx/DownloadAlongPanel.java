@@ -37,8 +37,8 @@ public class DownloadAlongPanel extends JPanel {
     private final JCheckBox cbDownloadGpxData;
 
     // Legacy list of values
-    private static final Integer dist[] = { 5000, 500, 50 };
-    private static final Integer area[] = { 20, 10, 5, 1 };
+    private static final Integer[] dist = { 5000, 500, 50 };
+    private static final Integer[] area = { 20, 10, 5, 1 };
     
     private final JList buffer;
     private final JList maxRect;
@@ -69,7 +69,7 @@ public class DownloadAlongPanel extends JPanel {
         add(cbDownloadGpxData,  GBC.eol().insets(5,5,1,5));
         
         add(new JLabel(tr("Download everything within:")), GBC.eol());
-        String s[] = new String[dist.length];
+        String[] s = new String[dist.length];
         for (int i = 0; i < dist.length; ++i) {
             s[i] = tr("{0} meters", dist[i]);
         }

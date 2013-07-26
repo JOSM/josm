@@ -84,7 +84,7 @@ public class PluginListParser {
                     continue;
                 }
                 addPluginInformation(ret, name, url, manifest.toString());
-                String x[] = line.split(";");
+                String[] x = line.split(";");
                 if(x.length != 2)
                     throw new IOException(tr("Illegal entry in plugin list."));
                 name = x[0];

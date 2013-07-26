@@ -132,7 +132,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
 
 
         final DefaultTableModel tm = new DefaultTableModel(new String[] {tr("Assume"), tr("Key"), tr("Value"), tr("Existing values")}, tags.length) {
-            final Class<?> types[] = {Boolean.class, String.class, Object.class, ExistingValues.class};
+            final Class<?>[] types = {Boolean.class, String.class, Object.class, ExistingValues.class};
             @Override
             public Class getColumnClass(int c) {
                 return types[c];

@@ -70,7 +70,7 @@ public class TextTagParser {
         }
         
         private String parseString(String stopChars) {
-            char stop[] = stopChars.toCharArray();
+            char[] stop = stopChars.toCharArray();
             Arrays.sort(stop);
             char c;
             while (pos < n) {
@@ -158,7 +158,7 @@ public class TextTagParser {
      * @param unescapeTextInQuotes - if true, matched tag and value will be analyzed more thoroughly
      */
     public static Map<String, String> readTagsByRegexp(String text, String splitRegex, String tagRegex, boolean unescapeTextInQuotes) {
-         String lines[] = text.split(splitRegex);
+         String[] lines = text.split(splitRegex);
          Pattern p = Pattern.compile(tagRegex);
          Map<String, String> tags = new HashMap<String,String>();
          String k=null, v=null;

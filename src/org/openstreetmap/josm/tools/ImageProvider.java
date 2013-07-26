@@ -402,7 +402,7 @@ public class ImageProvider {
 
             if (subdir == null) {
                 subdir = "";
-            } else if (!subdir.equals("")) {
+            } else if (!subdir.isEmpty()) {
                 subdir += "/";
             }
             String[] extensions;

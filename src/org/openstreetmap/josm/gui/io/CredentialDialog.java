@@ -229,7 +229,7 @@ public class CredentialDialog extends JDialog {
             password = password == null ? "" : password;
             tfUserName.setText(username);
             tfPassword.setText(password);
-            cbSaveCredentials.setSelected(!username.equals("") && ! password.equals(""));
+            cbSaveCredentials.setSelected(!username.isEmpty() && !password.isEmpty());
         }
 
         public void startUserInput() {

@@ -64,7 +64,7 @@ public class ZoomToAction extends AbstractAction implements LayerChangeListener,
     public void actionPerformed(ActionEvent e) {
         if (! isEnabled())
             return;
-        int rows[] = this.table.getSelectedRows();
+        int[] rows = this.table.getSelectedRows();
         if (rows == null || rows.length == 0)
             return;
         int row = rows[0];

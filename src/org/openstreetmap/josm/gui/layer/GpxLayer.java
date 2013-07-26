@@ -534,7 +534,7 @@ public class GpxLayer extends Layer {
             }
             double now = new Date().getTime()/1000.0;
             if (colored == colorModes.time) {
-                Date bounds[] = getMinMaxTimeForAllTracks();
+                Date[] bounds = getMinMaxTimeForAllTracks();
                 if (bounds!=null) {
                     minval = bounds[0].getTime()/1000.0;
                     maxval = bounds[1].getTime()/1000.0;

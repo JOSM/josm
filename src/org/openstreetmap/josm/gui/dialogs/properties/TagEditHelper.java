@@ -339,12 +339,12 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             String value = values.getEditor().getItem().toString().trim();
             // is not Java 1.5
             //value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
-            if (value.equals("")) {
+            if (value.isEmpty()) {
                 value = null; // delete the key
             }
             String newkey = keys.getEditor().getItem().toString().trim();
             //newkey = java.text.Normalizer.normalize(newkey, java.text.Normalizer.Form.NFC);
-            if (newkey.equals("")) {
+            if (newkey.isEmpty()) {
                 newkey = key;
                 value = null; // delete the key instead
             }

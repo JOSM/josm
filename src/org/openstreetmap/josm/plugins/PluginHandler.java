@@ -1182,7 +1182,7 @@ public class PluginHandler {
         for (final PluginProxy pp : pluginList) {
             PluginInformation pi = pp.getPluginInformation();
             pl.remove(pi.name);
-            pl.add(pi.name + " (" + (pi.localversion != null && !pi.localversion.equals("")
+            pl.add(pi.name + " (" + (pi.localversion != null && !pi.localversion.isEmpty()
                     ? pi.localversion : "unknown") + ")");
         }
         Collections.sort(pl);
@@ -1197,7 +1197,7 @@ public class PluginHandler {
         for (final PluginProxy p : pluginList) {
             final PluginInformation info = p.getPluginInformation();
             String name = info.name
-            + (info.version != null && !info.version.equals("") ? " Version: " + info.version : "");
+            + (info.version != null && !info.version.isEmpty() ? " Version: " + info.version : "");
             pluginTab.add(new JLabel(name), GBC.std());
             pluginTab.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
             pluginTab.add(new JButton(new AbstractAction(tr("Information")) {

@@ -1082,10 +1082,10 @@ public abstract class SourceEditor extends JPanel {
                     new Comparator<String>() {
                         @Override
                         public int compare(String o1, String o2) {
-                            if (o1.equals("") && o2.equals(""))
+                            if (o1.isEmpty() && o2.isEmpty())
                                 return 0;
-                            if (o1.equals("")) return 1;
-                            if (o2.equals("")) return -1;
+                            if (o1.isEmpty()) return 1;
+                            if (o2.isEmpty()) return -1;
                             return o1.compareTo(o2);
                         }
                     }
@@ -1240,7 +1240,7 @@ public abstract class SourceEditor extends JPanel {
                 ExtendedSourceEntry last = null;
 
                 while ((line = reader.readLine()) != null && !canceled) {
-                    if (line.trim().equals("")) {
+                    if (line.trim().isEmpty()) {
                         continue; // skip empty lines
                     }
                     if (line.startsWith("\t")) {
