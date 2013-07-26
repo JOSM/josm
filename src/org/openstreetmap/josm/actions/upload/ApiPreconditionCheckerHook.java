@@ -20,6 +20,7 @@ import org.openstreetmap.josm.io.OsmTransferCanceledException;
 
 public class ApiPreconditionCheckerHook implements UploadHook {
 
+    @Override
     public boolean checkUpload(APIDataSet apiData) {
         OsmApi api = OsmApi.getOsmApi();
         try {

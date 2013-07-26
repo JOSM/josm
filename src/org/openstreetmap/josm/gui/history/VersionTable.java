@@ -81,6 +81,7 @@ public class VersionTable extends JTable implements Observer{
         return (HistoryBrowserModel.VersionTableModel) getModel();
     }
 
+    @Override
     public void update(Observable o, Object arg) {
         repaint();
     }
@@ -163,6 +164,7 @@ public class VersionTable extends JTable implements Observer{
 
     public static class RadioButtonRenderer extends JRadioButton implements TableCellRenderer {
 
+        @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
             setSelected(value != null && (Boolean)value);
             setHorizontalAlignment(SwingConstants.CENTER);
@@ -195,6 +197,7 @@ public class VersionTable extends JTable implements Observer{
             return btn.isSelected();
         }
 
+        @Override
         public void itemStateChanged(ItemEvent e) {
             fireEditingStopped();
         }
@@ -204,6 +207,7 @@ public class VersionTable extends JTable implements Observer{
         public AlignedRenderer(int hAlignment) {
             setHorizontalAlignment(hAlignment);
         }
+        @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
             String v = value.toString();
             setText(v);

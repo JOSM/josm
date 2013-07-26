@@ -132,6 +132,7 @@ public class PlaceSelection implements DownloadSelection {
      *
      * This method is, for all intents and purposes, the constructor for this class.
      */
+    @Override
     public void addGui(final DownloadDialog gui) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -163,6 +164,7 @@ public class PlaceSelection implements DownloadSelection {
         parent = gui;
     }
 
+    @Override
     public void setDownloadArea(Bounds area) {
         tblSearchResults.clearSelection();
     }
@@ -290,6 +292,7 @@ public class PlaceSelection implements DownloadSelection {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled() || cbSearchExpression.getText().trim().length() == 0)
                 return;
@@ -303,14 +306,17 @@ public class PlaceSelection implements DownloadSelection {
             setEnabled(cbSearchExpression.getText().trim().length() > 0);
         }
 
+        @Override
         public void changedUpdate(DocumentEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void insertUpdate(DocumentEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void removeUpdate(DocumentEvent e) {
             updateEnabledState();
         }
@@ -472,6 +478,7 @@ public class PlaceSelection implements DownloadSelection {
     }
 
     class ListSelectionHandler implements ListSelectionListener {
+        @Override
         public void valueChanged(ListSelectionEvent lse) {
             SearchResult r = model.getSelectedSearchResult();
             if (r != null) {
@@ -523,6 +530,7 @@ public class PlaceSelection implements DownloadSelection {
             return ret.toString();
         }
 
+        @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
 

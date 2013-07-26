@@ -80,6 +80,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         registerBoundingBoxBuilder();
     }
 
+    @Override
     public void addGui(final DownloadDialog gui) {
         buildDownloadAreaInputFields();
         final JPanel dlg = new JPanel(new GridBagLayout());
@@ -122,6 +123,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         this.parent = gui;
     }
 
+    @Override
     public void setDownloadArea(Bounds area) {
         updateBboxFields(area);
         updateUrl(area);
@@ -211,6 +213,7 @@ public class BoundingBoxSelection implements DownloadSelection {
             check();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             check();
         }
@@ -243,6 +246,7 @@ public class BoundingBoxSelection implements DownloadSelection {
             check();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             check();
         }
@@ -261,8 +265,11 @@ public class BoundingBoxSelection implements DownloadSelection {
     }
 
     class OsmUrlRefresher implements DocumentListener {
+        @Override
         public void changedUpdate(DocumentEvent e) { parseURL(parent); }
+        @Override
         public void insertUpdate(DocumentEvent e) { parseURL(parent); }
+        @Override
         public void removeUpdate(DocumentEvent e) { parseURL(parent); }
     }
 
@@ -297,6 +304,7 @@ public class BoundingBoxSelection implements DownloadSelection {
             refreshBounds();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             refreshBounds();
         }

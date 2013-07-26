@@ -38,10 +38,12 @@ public enum PaintColors implements ColorKey {
 
     private static final MapPaintSylesUpdateListener styleOverrideListener = new MapPaintSylesUpdateListener() {
 
+        @Override
         public void mapPaintStylesUpdated() {
             backgroundColorCache = null;
         }
 
+        @Override
         public void mapPaintStyleEntryUpdated(int idx) {
             mapPaintStylesUpdated();
         }

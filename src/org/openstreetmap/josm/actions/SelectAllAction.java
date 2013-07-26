@@ -17,6 +17,7 @@ public class SelectAllAction extends JosmAction {
         putValue("help", ht("/Action/SelectAll"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;

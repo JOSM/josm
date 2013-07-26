@@ -293,34 +293,41 @@ public class LatLonDialog extends ExtendedDialog {
     }
 
     class LatLonInputVerifier implements DocumentListener {
+        @Override
         public void changedUpdate(DocumentEvent e) {
             parseLatLonUserInput();
         }
 
+        @Override
         public void insertUpdate(DocumentEvent e) {
             parseLatLonUserInput();
         }
 
+        @Override
         public void removeUpdate(DocumentEvent e) {
             parseLatLonUserInput();
         }
     }
 
     class EastNorthInputVerifier implements DocumentListener {
+        @Override
         public void changedUpdate(DocumentEvent e) {
             parseEastNorthUserInput();
         }
 
+        @Override
         public void insertUpdate(DocumentEvent e) {
             parseEastNorthUserInput();
         }
 
+        @Override
         public void removeUpdate(DocumentEvent e) {
             parseEastNorthUserInput();
         }
     }
 
     static class TextFieldFocusHandler implements FocusListener {
+        @Override
         public void focusGained(FocusEvent e) {
             Component c = e.getComponent();
             if (c instanceof JosmTextField) {
@@ -328,6 +335,7 @@ public class LatLonDialog extends ExtendedDialog {
                 tf.selectAll();
             }
         }
+        @Override
         public void focusLost(FocusEvent e) {}
     }
 

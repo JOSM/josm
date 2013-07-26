@@ -85,6 +85,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
     /**
      * replies the table cell editor
      */
+    @Override
     public Component getTableCellEditorComponent(JTable table,
             Object value, boolean isSelected, int row, int column) {
         currentTag = (TagModel) value;
@@ -114,6 +115,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
         }
     }
 
+    @Override
     public Object getCellEditorValue() {
         return editor.getText();
     }

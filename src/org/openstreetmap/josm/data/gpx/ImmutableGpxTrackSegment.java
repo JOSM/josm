@@ -46,6 +46,7 @@ public class ImmutableGpxTrackSegment implements GpxTrackSegment {
         return result;
     }
 
+    @Override
     public Bounds getBounds() {
         if (bounds == null)
             return null;
@@ -53,14 +54,17 @@ public class ImmutableGpxTrackSegment implements GpxTrackSegment {
             return new Bounds(bounds);
     }
 
+    @Override
     public Collection<WayPoint> getWayPoints() {
         return wayPoints;
     }
 
+    @Override
     public double length() {
         return length;
     }
 
+    @Override
     public int getUpdateCount() {
         return 0;
     }

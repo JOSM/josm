@@ -128,6 +128,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
         }
     }
 
+    @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         MultiValueResolutionDecision decision = (MultiValueResolutionDecision)value;
         initEditor(decision);
@@ -135,6 +136,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
         return editor;
     }
 
+    @Override
     public Object getCellEditorValue() {
         return editor.getSelectedItem();
     }
@@ -179,6 +181,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
             }
         }
 
+        @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
             renderColors(isSelected);

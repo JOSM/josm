@@ -71,6 +71,7 @@ public class WireframeToggleAction extends JosmAction {
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState();
     }

@@ -9,6 +9,7 @@ import javax.swing.JMenuItem;
 import org.openstreetmap.josm.Main;
 
 public class PresetTextComparator implements Comparator<JMenuItem>, Serializable {
+    @Override
     public int compare(JMenuItem arg0, JMenuItem arg1) {
         if (Main.main.menu.presetSearchAction.equals(arg0.getAction()))
             return -1;

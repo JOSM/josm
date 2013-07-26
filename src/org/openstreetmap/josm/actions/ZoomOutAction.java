@@ -22,6 +22,7 @@ public final class ZoomOutAction extends JosmAction {
                 KeyEvent.VK_SUBTRACT, Shortcut.DIRECT));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!Main.isDisplayingMapView()) return;
         Main.map.mapView.zoomToFactor(Math.sqrt(2));

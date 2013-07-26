@@ -42,6 +42,7 @@ public class CloseChangesetAction extends JosmAction{
         putValue("help", ht("/Action/CloseChangeset"));
 
     }
+    @Override
     public void actionPerformed(ActionEvent e) {
         Main.worker.submit(new DownloadOpenChangesetsTask());
     }
@@ -91,6 +92,7 @@ public class CloseChangesetAction extends JosmAction{
         protected void finish() {
             SwingUtilities.invokeLater(
                     new Runnable() {
+                        @Override
                         public void run() {
                             if (lastException != null) {
                                 ExceptionDialogUtil.explainException(lastException);

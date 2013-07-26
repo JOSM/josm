@@ -74,6 +74,7 @@ public final class CreateCircleAction extends JosmAction {
         return a;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;

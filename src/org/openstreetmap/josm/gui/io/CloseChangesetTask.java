@@ -58,6 +58,7 @@ public class CloseChangesetTask extends PleaseWaitRunnable {
         }
         SwingUtilities.invokeLater(
                 new Runnable() {
+                    @Override
                     public void run() {
                         ChangesetCache.getInstance().update(closedChangesets);
                     }

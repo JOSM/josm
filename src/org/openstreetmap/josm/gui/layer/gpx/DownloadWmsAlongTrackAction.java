@@ -42,6 +42,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
         this.data = data;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         final List<LatLon> points = new ArrayList<LatLon>();
         for (GpxTrack trk : data.tracks) {

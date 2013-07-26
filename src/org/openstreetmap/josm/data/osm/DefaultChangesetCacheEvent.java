@@ -20,15 +20,19 @@ public class DefaultChangesetCacheEvent implements ChangesetCacheEvent{
         removed = new HashSet<Changeset>();
     }
 
+    @Override
     public Collection<Changeset> getAddedChangesets() {
         return Collections.unmodifiableCollection(added);
     }
+    @Override
     public Collection<Changeset> getRemovedChangesets() {
         return Collections.unmodifiableCollection(removed);
     }
+    @Override
     public ChangesetCache getSource() {
         return source;
     }
+    @Override
     public Collection<Changeset> getUpdatedChangesets() {
         return Collections.unmodifiableCollection(modified);
     }

@@ -33,6 +33,7 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
     @Override
     public void doBeginTask() {
         GuiHelper.runInEDT(new Runnable() {
+            @Override
             public void run() {
                 delegate.setCustomText("");
                 delegate.setMaximum(PROGRESS_BAR_MAX);
@@ -51,6 +52,7 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
         if (newValue != currentProgressValue) {
             currentProgressValue = newValue;
             GuiHelper.runInEDT(new Runnable() {
+                @Override
                 public void run() {
                     delegate.setValue(currentProgressValue);
                 }
@@ -62,6 +64,7 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
     protected void doSetCustomText(final String title) {
         checkState(State.IN_TASK, State.IN_SUBTASK);
         GuiHelper.runInEDT(new Runnable() {
+            @Override
             public void run() {
                 delegate.setCustomText(title);
             }
@@ -72,6 +75,7 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
     protected void doSetTitle(final String title) {
         checkState(State.IN_TASK, State.IN_SUBTASK);
         GuiHelper.runInEDT(new Runnable() {
+            @Override
             public void run() {
                 delegate.setTaskTitle(title);
             }
@@ -81,6 +85,7 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
     @Override
     protected void doSetIntermediate(final boolean value) {
         GuiHelper.runInEDT(new Runnable() {
+            @Override
             public void run() {
                 delegate.setIndeterminate(value);
             }

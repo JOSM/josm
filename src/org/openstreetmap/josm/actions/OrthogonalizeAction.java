@@ -91,6 +91,7 @@ public final class OrthogonalizeAction extends JosmAction {
                             Shortcut.SHIFT),
                     true, "action/orthogonalize/undo", true);
         }
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
@@ -122,6 +123,7 @@ public final class OrthogonalizeAction extends JosmAction {
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;

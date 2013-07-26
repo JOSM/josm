@@ -352,6 +352,7 @@ public class MainApplication extends Main {
         toolbar.refreshToolbarControl();
 
         GuiHelper.runInEDT(new Runnable() {
+            @Override
             public void run() {
                 splash.setVisible(false);
                 splash.dispose();
@@ -380,6 +381,7 @@ public class MainApplication extends Main {
         final Map<Option, Collection<String>> args_final = args;
 
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 if (AutosaveTask.PROP_AUTOSAVE_ENABLED.get()) {
                     AutosaveTask autosaveTask = new AutosaveTask();

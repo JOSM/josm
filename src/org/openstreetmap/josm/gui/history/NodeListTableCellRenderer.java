@@ -46,6 +46,7 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
     }
 
     // Warning: The model pads with null-rows to match the size of the opposite table. 'value' could be null
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
 

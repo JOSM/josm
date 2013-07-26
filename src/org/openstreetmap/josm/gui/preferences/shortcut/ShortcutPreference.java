@@ -20,6 +20,7 @@ public class ShortcutPreference extends DefaultTabPreferenceSetting {
     private String defaultFilter;
 
     public static class Factory implements PreferenceSettingFactory {
+        @Override
         public PreferenceSetting createPreferenceSetting() {
             return new ShortcutPreference();
         }

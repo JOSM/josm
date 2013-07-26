@@ -330,6 +330,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
         for (String location : PluginInformation.getPluginLocations()) {
             File [] f = new File(location).listFiles(
                     new FilenameFilter() {
+                        @Override
                         public boolean accept(File dir, String name) {
                             return name.matches("^([0-9]+-)?site.*\\.txt$") ||
                             name.matches("^([0-9]+-)?site.*-icons\\.zip$");

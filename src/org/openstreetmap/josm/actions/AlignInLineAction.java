@@ -99,6 +99,7 @@ public final class AlignInLineAction extends JosmAction {
     /**
      * Operation depends on the selected objects:
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;

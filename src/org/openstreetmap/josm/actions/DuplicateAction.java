@@ -23,6 +23,7 @@ public final class DuplicateAction extends JosmAction{
         putValue("help", ht("/Action/Duplicate"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         Main.main.menu.paste.pasteData(new PrimitiveDeepCopy(getCurrentDataSet().getSelected()), getEditLayer(), e);
     }

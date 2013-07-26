@@ -120,6 +120,7 @@ public class FullscreenToggleAction extends JosmAction {
         frame.getJMenuBar().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "none");
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState();
     }

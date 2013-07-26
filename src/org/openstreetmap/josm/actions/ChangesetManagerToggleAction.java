@@ -74,6 +74,7 @@ public class ChangesetManagerToggleAction extends JosmAction {
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState();
     }

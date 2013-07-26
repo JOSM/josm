@@ -266,6 +266,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         // this is the task which will run *after* the plugins are downloaded
         //
         final Runnable continuation = new Runnable() {
+            @Override
             public void run() {
                 boolean requiresRestart = false;
                 if (task != null && !task.isCanceled()) {
@@ -331,6 +332,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
             Main.worker.submit(task);
             Main.worker.submit(
                     new Runnable() {
+                        @Override
                         public void run() {
                             SwingUtilities.invokeLater(continuation);
                         }
@@ -470,6 +472,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
      * This mouse wheel listener reacts when a scroll is carried out over the
      * tab strip and scrolls one tab/down or up, selecting it immediately.
      */
+    @Override
     public void mouseWheelMoved(MouseWheelEvent wev) {
         // Ensure the cursor is over the tab strip
         if(super.indexAtLocation(wev.getPoint().x, wev.getPoint().y) < 0)

@@ -265,6 +265,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      *
      * @return the iterator
      */
+    @Override
     public Iterator<Conflict<?>> iterator() {
         return conflicts.iterator();
     }

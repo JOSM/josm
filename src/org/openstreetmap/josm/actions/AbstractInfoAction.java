@@ -147,6 +147,7 @@ public abstract class AbstractInfoAction extends JosmAction {
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         launchInfoBrowsersForSelectedPrimitives();
     }

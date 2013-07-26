@@ -142,6 +142,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
             setEnabled(true);
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             closeDialog();
         }
@@ -158,6 +159,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
             setEnabled(true);
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             HelpBrowser.setUrlForHelpTopic(ht("/Dialog/Conflict"));
         }
@@ -179,6 +181,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
             setEnabled(resolver.isResolvedCompletely());
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             if (! resolver.isResolvedCompletely()) {
                 Object[] options = {
@@ -213,6 +216,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
             closeDialog();
         }
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(ConflictResolver.RESOLVED_COMPLETELY_PROP)) {
                 updateEnabledState();
@@ -232,6 +236,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         }
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(ConflictResolver.MY_PRIMITIVE_PROP)) {
             updateTitle((OsmPrimitive)evt.getNewValue());

@@ -30,6 +30,7 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
             needsSave.setPreferredSize(new Dimension(needsSave.getPreferredSize().width, 19));
         }
 
+        @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
             JPanel panel = new JPanel(new GridBagLayout());

@@ -143,6 +143,7 @@ public class ChangesetListModel extends DefaultListModel  implements ChangesetCa
         Collections.sort(
                 data,
                 new Comparator<Changeset>() {
+                    @Override
                     public int compare(Changeset cs1, Changeset cs2) {
                         if (cs1.getId() > cs2.getId()) return -1;
                         if (cs1.getId() == cs2.getId()) return 0;
@@ -182,6 +183,7 @@ public class ChangesetListModel extends DefaultListModel  implements ChangesetCa
     /* ---------------------------------------------------------------------------- */
     /* Interface ChangesetCacheListener                                             */
     /* ---------------------------------------------------------------------------- */
+    @Override
     public void changesetCacheUpdated(ChangesetCacheEvent event) {
         Set<Changeset> sel = getSelectedChangesets();
         for(Changeset cs: event.getAddedChangesets()) {

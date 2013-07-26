@@ -49,6 +49,7 @@ public class ContextSensitiveHelpAction extends AbstractAction {
         this.helpTopic = helpTopic;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (helpTopic != null) {
             HelpBrowser.setUrlForHelpTopic(helpTopic);

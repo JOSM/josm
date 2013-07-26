@@ -79,6 +79,7 @@ public class UrlBasedQueryPanel extends JPanel {
         );
         pnl.getEditorPane().addHyperlinkListener(
                 new HyperlinkListener() {
+                    @Override
                     public void hyperlinkUpdate(HyperlinkEvent e) {
                         if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
                             tfUrl.setText(e.getDescription());
@@ -193,14 +194,17 @@ public class UrlBasedQueryPanel extends JPanel {
                 feedbackInvalid();
             }
         }
+        @Override
         public void changedUpdate(DocumentEvent e) {
             validate();
         }
 
+        @Override
         public void insertUpdate(DocumentEvent e) {
             validate();
         }
 
+        @Override
         public void removeUpdate(DocumentEvent e) {
             validate();
         }

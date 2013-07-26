@@ -133,6 +133,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
      */
     private class LoadGpxDataActionListener implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             FileFilter filter = new FileFilter(){
                 @Override public boolean accept(File f) {
@@ -228,6 +229,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         ImageDisplay imgDisp;
         JList imgList;
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
@@ -328,10 +330,12 @@ public class CorrelateGpxWithImages extends AbstractAction {
             panelLst.setLayout(new BorderLayout());
 
             imgList = new JList(new AbstractListModel() {
+                @Override
                 public Object getElementAt(int i) {
                     return yLayer.data.get(i).getFile().getName();
                 }
 
+                @Override
                 public int getSize() {
                     return yLayer.data.size();
                 }
@@ -339,6 +343,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             imgList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             imgList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
+                @Override
                 public void valueChanged(ListSelectionEvent arg0) {
                     int index = imgList.getSelectedIndex();
                     Integer orientation = null;
@@ -367,6 +372,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             JButton openButton = new JButton(tr("Open another photo"));
             openButton.addActionListener(new ActionListener() {
 
+                @Override
                 public void actionPerformed(ActionEvent arg0) {
                     JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, JpegFileFilter.getInstance(), JFileChooser.FILES_ONLY, "geoimage.lastdirectory");
                     if (fc == null)
@@ -440,6 +446,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent arg0) {
         // Construct the list of loaded GPX tracks
         Collection<Layer> layerLst = Main.map.mapView.getAllLayers();
@@ -770,17 +777,22 @@ public class CorrelateGpxWithImages extends AbstractAction {
             this.doRepaint = doRepaint;
         }
 
+        @Override
         public void insertUpdate(DocumentEvent ev) {
             updateStatusBar();
         }
+        @Override
         public void removeUpdate(DocumentEvent ev) {
             updateStatusBar();
         }
+        @Override
         public void changedUpdate(DocumentEvent ev) {
         }
+        @Override
         public void itemStateChanged(ItemEvent e) {
             updateStatusBar();
         }
+        @Override
         public void actionPerformed(ActionEvent e) {
             updateStatusBar();
         }
@@ -828,9 +840,11 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
     RepaintTheMapListener repaintTheMap = new RepaintTheMapListener();
     private class RepaintTheMapListener implements FocusListener {
+        @Override
         public void focusGained(FocusEvent e) { // do nothing
         }
 
+        @Override
         public void focusLost(FocusEvent e) {
             yLayer.updateBufferAndRepaint();
         }
@@ -841,6 +855,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
      */
     private class AdjustActionListener implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
 
             long diff = delta + Math.round(timezone*60*60);
@@ -891,6 +906,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             // This is called whenever one of the sliders is moved.
             // It updates the labels and also calls the "match photos" code
             class sliderListener implements ChangeListener {
+                @Override
                 public void stateChanged(ChangeEvent e) {
                     // parse slider position into real timezone
                     double tz = Math.abs(sldTimezone.getValue());
@@ -974,6 +990,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
     private class AutoGuessActionListener implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             GpxDataWrapper gpxW = selectedGPX(true);
             if (gpxW == null)
@@ -1095,6 +1112,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
 
         Collections.sort(dateImgLst, new Comparator<ImageEntry>() {
+            @Override
             public int compare(ImageEntry arg0, ImageEntry arg1) {
                 return arg0.getExifTime().compareTo(arg1.getExifTime());
             }

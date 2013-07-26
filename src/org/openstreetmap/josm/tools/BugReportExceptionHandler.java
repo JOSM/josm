@@ -38,6 +38,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
     private static int exceptionCounter = 0;
     private static boolean suppressExceptionDialogs = false;
 
+    @Override
     public void uncaughtException(Thread t, Throwable e) {
         handleException(e);
     }

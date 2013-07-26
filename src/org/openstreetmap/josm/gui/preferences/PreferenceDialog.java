@@ -47,6 +47,7 @@ public class PreferenceDialog extends JDialog {
         JCheckBox expert = new JCheckBox(tr("Expert mode"));
         expert.setSelected(ExpertToggleAction.isExpert());
         expert.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 ExpertToggleAction.getInstance().actionPerformed(null);
             }
@@ -151,6 +152,7 @@ public class PreferenceDialog extends JDialog {
             tpPreferences.validationListeners.clear();
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             cancel();
         }
@@ -163,6 +165,7 @@ public class PreferenceDialog extends JDialog {
             putValue(SHORT_DESCRIPTION, tr("Save the preferences and close the dialog"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             for (ValidationListener listener: tpPreferences.validationListeners) {
                 if (!listener.validatePreferences())

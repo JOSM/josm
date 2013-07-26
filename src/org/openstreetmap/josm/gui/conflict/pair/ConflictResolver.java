@@ -167,6 +167,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
      * @see ListMergeModel
      * @see PropertiesMergeModel
      */
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(TagMergeModel.PROP_NUM_UNDECIDED_TAGS)) {
             int newValue = (Integer)evt.getNewValue();

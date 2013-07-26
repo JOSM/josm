@@ -20,6 +20,7 @@ public class NewAction extends JosmAction {
         putValue("help", ht("/Action/NewLayer"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         Main.main.addLayer(new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null));
     }

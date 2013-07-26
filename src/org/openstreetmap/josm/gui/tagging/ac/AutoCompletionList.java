@@ -275,15 +275,18 @@ public class AutoCompletionList extends AbstractTableModel {
         fireTableDataChanged();
     }
 
+    @Override
     public int getColumnCount() {
         return 1;
     }
 
+    @Override
     public int getRowCount() {
 
         return list == null ? 0 : getFilteredSize();
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         return list == null ? null : getFilteredItem(rowIndex);
     }

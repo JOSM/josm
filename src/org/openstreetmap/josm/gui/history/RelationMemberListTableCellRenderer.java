@@ -75,6 +75,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
     }
 
     // Warning: The model pads with null-rows to match the size of the opposite table. 'value' could be null
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
 

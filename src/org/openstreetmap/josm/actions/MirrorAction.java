@@ -37,6 +37,7 @@ public final class MirrorAction extends JosmAction {
         putValue("help", ht("/Action/Mirror"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
         HashSet<Node> nodes = new HashSet<Node>();

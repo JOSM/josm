@@ -167,6 +167,7 @@ public class ImageViewerDialog extends ToggleDialog {
             putValue(SMALL_ICON, icon);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (COMMAND_NEXT.equals(action)) {
                 if (currentLayer != null) {

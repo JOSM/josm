@@ -134,6 +134,7 @@ public final class ShowStatusReportAction extends JosmAction {
         return text.toString();
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         StringBuilder text = new StringBuilder();
         String reportHeader = getReportHeader();

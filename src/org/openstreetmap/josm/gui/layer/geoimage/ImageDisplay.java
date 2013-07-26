@@ -66,6 +66,7 @@ public class ImageDisplay extends JComponent {
             this.orientation = orientation == null ? -1 : orientation;
         }
 
+        @Override
         public void run() {
             Image img = Toolkit.getDefaultToolkit().createImage(file.getPath());
             tracker.addImage(img, 1);
@@ -159,6 +160,7 @@ public class ImageDisplay extends JComponent {
 
         /** Zoom in and out, trying to preserve the point of the image that was under the mouse cursor
          * at the same place */
+        @Override
         public void mouseWheelMoved(MouseWheelEvent e) {
             File file;
             Image image;
@@ -231,6 +233,7 @@ public class ImageDisplay extends JComponent {
         }
 
         /** Center the display on the point that has been clicked */
+        @Override
         public void mouseClicked(MouseEvent e) {
             // Move the center to the clicked point.
             File file;
@@ -268,6 +271,7 @@ public class ImageDisplay extends JComponent {
 
         /** Initialize the dragging, either with button 1 (simple dragging) or button 3 (selection of
          * a picture part) */
+        @Override
         public void mousePressed(MouseEvent e) {
             if (image == null) {
                 mouseIsDragging = false;
@@ -302,6 +306,7 @@ public class ImageDisplay extends JComponent {
             }
         }
 
+        @Override
         public void mouseDragged(MouseEvent e) {
             if (! mouseIsDragging && selectedRect == null)
                 return;
@@ -350,6 +355,7 @@ public class ImageDisplay extends JComponent {
 
         }
 
+        @Override
         public void mouseReleased(MouseEvent e) {
             if (! mouseIsDragging && selectedRect == null)
                 return;
@@ -413,12 +419,15 @@ public class ImageDisplay extends JComponent {
             }
         }
 
+        @Override
         public void mouseEntered(MouseEvent e) {
         }
 
+        @Override
         public void mouseExited(MouseEvent e) {
         }
 
+        @Override
         public void mouseMoved(MouseEvent e) {
         }
 

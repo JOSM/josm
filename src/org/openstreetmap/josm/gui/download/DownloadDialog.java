@@ -135,6 +135,7 @@ public class DownloadDialog extends JDialog  {
         cbStartup = new JCheckBox(tr("Open this dialog on startup"));
         cbStartup.setToolTipText(tr("<html>Autostart ''Download from OSM'' dialog every time JOSM is started.<br>You can open it manually from File menu or toolbar.</html>"));
         cbStartup.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                  Main.pref.put("download.autorun", cbStartup.isSelected());
             }});
@@ -152,6 +153,7 @@ public class DownloadDialog extends JDialog  {
     }
 
     /* This should not be necessary, but if not here, repaint is not always correct in SlippyMap! */
+    @Override
     public void paint(Graphics g) {
         tpDownloadAreaSelectors.getSelectedComponent().paint(g);
         super.paint(g);
@@ -197,6 +199,7 @@ public class DownloadDialog extends JDialog  {
                 KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK), "checkClipboardContents");
 
         getRootPane().getActionMap().put("checkClipboardContents", new AbstractAction() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 String clip = Utils.getClipboardContent();
                 if (clip == null) {
@@ -399,6 +402,7 @@ public class DownloadDialog extends JDialog  {
             setVisible(false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             run();
         }
@@ -438,6 +442,7 @@ public class DownloadDialog extends JDialog  {
             setVisible(false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             run();
         }

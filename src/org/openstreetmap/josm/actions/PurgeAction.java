@@ -236,6 +236,7 @@ public class PurgeAction extends JosmAction {
                             ImageProvider.get("warning-small"), JLabel.LEFT), GBC.eol().fill(GBC.HORIZONTAL));
 
             Collections.sort(toPurgeAdditionally, new Comparator<OsmPrimitive>() {
+                @Override
                 public int compare(OsmPrimitive o1, OsmPrimitive o2) {
                     int type = o2.getType().compareTo(o1.getType());
                     if (type != 0)
@@ -266,6 +267,7 @@ public class PurgeAction extends JosmAction {
                     putValue(SMALL_ICON, ImageProvider.get("dialogs","select"));
                 }
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     layer.data.addSelected(toPurgeAdditionally);
                 }

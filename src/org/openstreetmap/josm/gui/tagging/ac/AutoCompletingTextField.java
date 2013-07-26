@@ -193,14 +193,17 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
         this.autoCompletionList = autoCompletionList;
     }
 
+    @Override
     public Component getEditorComponent() {
         return this;
     }
 
+    @Override
     public Object getItem() {
         return getText();
     }
 
+    @Override
     public void setItem(Object anObject) {
         if (anObject == null) {
             setText("");
@@ -225,6 +228,7 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
     private TableCellEditorSupport tableCellEditorSupport;
     private String originalValue;
 
+    @Override
     public void addCellEditorListener(CellEditorListener l) {
         tableCellEditorSupport.addCellEditorListener(l);
     }
@@ -237,32 +241,39 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
         setText(originalValue);
     }
 
+    @Override
     public void removeCellEditorListener(CellEditorListener l) {
         tableCellEditorSupport.removeCellEditorListener(l);
     }
+    @Override
     public void cancelCellEditing() {
         restoreOriginalValue();
         tableCellEditorSupport.fireEditingCanceled();
 
     }
 
+    @Override
     public Object getCellEditorValue() {
         return getText();
     }
 
+    @Override
     public boolean isCellEditable(EventObject anEvent) {
         return true;
     }
 
+    @Override
     public boolean shouldSelectCell(EventObject anEvent) {
         return true;
     }
 
+    @Override
     public boolean stopCellEditing() {
         tableCellEditorSupport.fireEditingStopped();
         return true;
     }
 
+    @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         setText( value == null ? "" : value.toString());
         rememberOriginalValue(getText());

@@ -10,8 +10,10 @@ public abstract class RunnableAction extends AbstractAction implements Runnable 
     public RunnableAction() {
     }
 
+    @Override
     public abstract void run();
 
+    @Override
     public void actionPerformed(ActionEvent arg0) {
         run();
     }

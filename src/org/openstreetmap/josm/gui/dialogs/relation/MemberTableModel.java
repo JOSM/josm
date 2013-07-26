@@ -86,6 +86,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     /* --------------------------------------------------------------------------- */
     /* Interface SelectionChangedListener                                          */
     /* --------------------------------------------------------------------------- */
+    @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         if (Main.main.getEditLayer() != this.layer) return;
         // just trigger a repaint
@@ -97,6 +98,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     /* --------------------------------------------------------------------------- */
     /* Interface DataSetListener                                                   */
     /* --------------------------------------------------------------------------- */
+    @Override
     public void dataChanged(DataChangedEvent event) {
         // just trigger a repaint - the display name of the relation members may
         // have changed
@@ -105,21 +107,26 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         setSelectedMembers(sel);
     }
 
+    @Override
     public void nodeMoved(NodeMovedEvent event) {/* ignore */}
+    @Override
     public void primitivesAdded(PrimitivesAddedEvent event) {/* ignore */}
 
+    @Override
     public void primitivesRemoved(PrimitivesRemovedEvent event) {
         // ignore - the relation in the editor might become out of sync with the relation
         // in the dataset. We will deal with it when the relation editor is closed or
         // when the changes in the editor are applied.
     }
 
+    @Override
     public void relationMembersChanged(RelationMembersChangedEvent event) {
         // ignore - the relation in the editor might become out of sync with the relation
         // in the dataset. We will deal with it when the relation editor is closed or
         // when the changes in the editor are applied.
     }
 
+    @Override
     public void tagsChanged(TagsChangedEvent event) {
         // just refresh the respective table cells
         //
@@ -132,8 +139,10 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         setSelectedMembers(sel);
     }
 
+    @Override
     public void wayNodesChanged(WayNodesChangedEvent event) {/* ignore */}
 
+    @Override
     public void otherDatasetChange(AbstractDatasetChangedEvent event) {/* ignore */}
     /* --------------------------------------------------------------------------- */
 
@@ -163,14 +172,17 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         fireTableDataChanged();
     }
 
+    @Override
     public int getColumnCount() {
         return 3;
     }
 
+    @Override
     public int getRowCount() {
         return members.size();
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         switch (columnIndex) {
         case 0:
@@ -725,6 +737,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         return connectionType.get(i);
     }
 
+    @Override
     public void tableChanged(TableModelEvent e) {
         connectionType = null;
     }

@@ -23,6 +23,7 @@ public abstract class CorrectionTableModel<C extends Correction> extends
         applyColumn = getColumnCount() - 1;
     }
 
+    @Override
     abstract public int getColumnCount();
 
     abstract protected boolean isBoldCell(int row, int column);
@@ -41,6 +42,7 @@ public abstract class CorrectionTableModel<C extends Correction> extends
         return apply[i];
     }
 
+    @Override
     public int getRowCount() {
         return corrections.size();
     }
@@ -71,6 +73,7 @@ public abstract class CorrectionTableModel<C extends Correction> extends
             apply[rowIndex] = (Boolean)aValue;
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int colIndex) {
         if (colIndex == applyColumn)
             return apply[rowIndex];

@@ -83,6 +83,7 @@ public class ChangesetContentTableModel extends AbstractTableModel {
         Collections.sort(
                 data,
                 new Comparator<ChangesetDataSetEntry>() {
+                    @Override
                     public int compare(ChangesetDataSetEntry c1, ChangesetDataSetEntry c2) {
                         if (c1.getModificationType().equals(c2.getModificationType())) {
                             long id1 = c1.getPrimitive().getId();
@@ -114,14 +115,17 @@ public class ChangesetContentTableModel extends AbstractTableModel {
     /* -------------------------------------------------------------- */
     /* interface TableModel                                           */
     /* -------------------------------------------------------------- */
+    @Override
     public int getColumnCount() {
         return 3;
     }
 
+    @Override
     public int getRowCount() {
         return data.size();
     }
 
+    @Override
     public Object getValueAt(int row, int col) {
         switch(col) {
         case 0: return data.get(row).getModificationType();
@@ -147,9 +151,11 @@ public class ChangesetContentTableModel extends AbstractTableModel {
             this(entry.getModificationType(), entry.getPrimitive());
         }
 
+        @Override
         public ChangesetModificationType getModificationType() {
             return modificationType;
         }
+        @Override
         public HistoryOsmPrimitive getPrimitive() {
             return primitive;
         }

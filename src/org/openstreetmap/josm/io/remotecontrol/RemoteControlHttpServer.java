@@ -79,6 +79,7 @@ public class RemoteControlHttpServer extends Thread {
     /**
      * The main loop, spawns a {@link RequestProcessor} for each connection
      */
+    @Override
     public void run()
     {
         Main.info(marktr("RemoteControl::Accepting connections on port {0}"),

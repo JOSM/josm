@@ -188,38 +188,46 @@ public class RelationTreeModel implements TreeModel {
     /* ----------------------------------------------------------------------- */
     /* interface TreeModel                                                     */
     /* ----------------------------------------------------------------------- */
+    @Override
     public Object getChild(Object parent, int index) {
         return getRelationChildByIdx((Relation)parent, index);
     }
 
+    @Override
     public int getChildCount(Object parent) {
         return getNumRelationChildren((Relation)parent);
     }
 
+    @Override
     public int getIndexOfChild(Object parent, Object child) {
         return getIndexForRelationChild((Relation)parent, (Relation)child);
     }
 
+    @Override
     public Object getRoot() {
         return root;
     }
 
+    @Override
     public boolean isLeaf(Object node) {
         Relation r = (Relation)node;
         if (r.isIncomplete()) return false;
         return getNumRelationChildren(r) == 0;
     }
 
+    @Override
     public void addTreeModelListener(TreeModelListener l) {
         if (l != null) {
             listeners.addIfAbsent(l);
         }
     }
 
+    @Override
     public void removeTreeModelListener(TreeModelListener l) {
         listeners.remove(l);
     }
 
+    @Override
     public void valueForPathChanged(TreePath path, Object newValue) {
         // do nothing
     }

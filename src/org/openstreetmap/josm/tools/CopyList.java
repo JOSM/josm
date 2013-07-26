@@ -177,10 +177,12 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
          */
         int expectedModCount = modCount;
 
+        @Override
         public boolean hasNext() {
             return cursor != size;
         }
 
+        @Override
         public E next() {
             checkForComodification();
             try {
@@ -193,6 +195,7 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
             }
         }
 
+        @Override
         public void remove() {
             if (lastRet == -1)
                 throw new IllegalStateException();

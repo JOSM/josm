@@ -51,6 +51,7 @@ public class DownloadPrimitiveAction extends JosmAction {
         putValue("help", ht("/Action/DownloadObject"));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         DownloadObjectDialog dialog = new DownloadObjectDialog();

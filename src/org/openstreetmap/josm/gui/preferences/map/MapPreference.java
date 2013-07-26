@@ -13,6 +13,7 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class MapPreference extends DefaultTabPreferenceSetting {
     public static class Factory implements PreferenceSettingFactory {
+        @Override
         public PreferenceSetting createPreferenceSetting() {
             return new MapPreference();
         }

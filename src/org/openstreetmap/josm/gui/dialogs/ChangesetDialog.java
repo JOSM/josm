@@ -267,6 +267,7 @@ public class ChangesetDialog extends ToggleDialog{
     }
 
     class FilterChangeHandler implements ItemListener {
+        @Override
         public void itemStateChanged(ItemEvent e) {
             Main.pref.put("changeset-dialog.for-selected-objects-only", cbInSelectionOnly.isSelected());
             pnlList.removeAll();
@@ -304,6 +305,7 @@ public class ChangesetDialog extends ToggleDialog{
             ds.setSelected(sel);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (Main.main.getEditLayer() == null)
                 return;
@@ -320,11 +322,13 @@ public class ChangesetDialog extends ToggleDialog{
             setEnabled(getCurrentChangesetList().getSelectedIndices().length > 0);
         }
 
+        @Override
         public void itemStateChanged(ItemEvent arg0) {
             updateEnabledState();
 
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
@@ -342,6 +346,7 @@ public class ChangesetDialog extends ToggleDialog{
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             ChangesetListModel model = getCurrentChangesetListModel();
             Set<Integer> sel = model.getSelectedChangesetIds();
@@ -355,11 +360,13 @@ public class ChangesetDialog extends ToggleDialog{
             setEnabled(getCurrentChangesetList().getSelectedIndices().length > 0);
         }
 
+        @Override
         public void itemStateChanged(ItemEvent arg0) {
             updateEnabledState();
 
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
@@ -377,6 +384,7 @@ public class ChangesetDialog extends ToggleDialog{
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             List<Changeset> sel = getCurrentChangesetListModel().getSelectedOpenChangesets();
             if (sel.isEmpty())
@@ -388,10 +396,12 @@ public class ChangesetDialog extends ToggleDialog{
             setEnabled(getCurrentChangesetListModel().hasSelectedOpenChangesets());
         }
 
+        @Override
         public void itemStateChanged(ItemEvent arg0) {
             updateEnabledState();
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
@@ -409,6 +419,7 @@ public class ChangesetDialog extends ToggleDialog{
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             Set<Changeset> sel = getCurrentChangesetListModel().getSelectedChangesets();
             if (sel.isEmpty())
@@ -428,10 +439,12 @@ public class ChangesetDialog extends ToggleDialog{
             setEnabled(getCurrentChangesetList().getSelectedIndices().length > 0);
         }
 
+        @Override
         public void itemStateChanged(ItemEvent arg0) {
             updateEnabledState();
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
@@ -462,6 +475,7 @@ public class ChangesetDialog extends ToggleDialog{
             cm.setSelectedChangesetsById(toSelect);
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             ChangesetListModel model = getCurrentChangesetListModel();
             Set<Integer> sel = model.getSelectedChangesetIds();
@@ -484,6 +498,7 @@ public class ChangesetDialog extends ToggleDialog{
             }
 
             Runnable r = new Runnable() {
+                @Override
                 public void run() {
                     // first, wait for the download task to finish, if a download
                     // task was launched
@@ -514,9 +529,11 @@ public class ChangesetDialog extends ToggleDialog{
             Main.worker.submit(r);
         }
 
+        @Override
         public void itemStateChanged(ItemEvent arg0) {
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
         }
     }

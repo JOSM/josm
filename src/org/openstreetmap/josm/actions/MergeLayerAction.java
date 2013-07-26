@@ -72,6 +72,7 @@ public class MergeLayerAction extends AbstractMergeAction {
         doMerge(targetLayers, Collections.singleton(sourceLayer));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         Layer sourceLayer = Main.main.getEditLayer();
         if (sourceLayer == null)

@@ -47,11 +47,13 @@ public class MapPaintPreference implements SubPreferenceSetting {
     }
 
     public static class Factory implements PreferenceSettingFactory {
+        @Override
         public PreferenceSetting createPreferenceSetting() {
             return new MapPaintPreference();
         }
     }
 
+    @Override
     public void addGui(final PreferenceTabbedPane gui) {
         enableIconDefault = new JCheckBox(tr("Enable built-in icon defaults"),
                 Main.pref.getBoolean("mappaint.icon.enable-defaults", true));
@@ -71,6 +73,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
         //
         gui.getMapPreference().getTabPane().addChangeListener(
                 new ChangeListener() {
+                    @Override
                     public void stateChanged(ChangeEvent e) {
                         if (gui.getMapPreference().getTabPane().getSelectedComponent() == panel) {
                             sources.initiallyLoadAvailableSources();
@@ -159,6 +162,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
 
     }
 
+    @Override
     public boolean ok() {
         boolean reload = Main.pref.put("mappaint.icon.enable-defaults", enableIconDefault.isSelected());
         reload |= sources.finish();

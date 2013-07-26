@@ -104,10 +104,12 @@ public class ListListEditor extends ExtendedDialog {
     }
 
     class EntryListModel extends AbstractListModel {
+        @Override
         public Object getElementAt(int index) {
             return (index+1) + ": " + data.get(index).toString();
         }
 
+        @Override
         public int getSize() {
             return data.size();
         }
@@ -130,6 +132,7 @@ public class ListListEditor extends ExtendedDialog {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             entryModel.add(new ArrayList<String>());
         }
@@ -147,10 +150,12 @@ public class ListListEditor extends ExtendedDialog {
             setEnabled(entryList.getSelectedIndices().length == 1);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int idx = entryList.getSelectedIndices()[0];
             entryModel.remove(idx);
@@ -158,6 +163,7 @@ public class ListListEditor extends ExtendedDialog {
     }
 
     class EntryListener implements ListSelectionListener {
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             TableCellEditor editor = table.getCellEditor();
             if (editor != null) {

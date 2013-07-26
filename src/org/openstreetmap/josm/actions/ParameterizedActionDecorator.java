@@ -18,24 +18,31 @@ public class ParameterizedActionDecorator implements Action {
         this.parameters = new HashMap<String, Object>(parameters);
     }
 
+    @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         action.addPropertyChangeListener(listener);
     }
+    @Override
     public Object getValue(String key) {
         return action.getValue(key);
     }
+    @Override
     public boolean isEnabled() {
         return action.isEnabled();
     }
+    @Override
     public void putValue(String key, Object value) {
         action.putValue(key, value);
     }
+    @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         action.removePropertyChangeListener(listener);
     }
+    @Override
     public void setEnabled(boolean b) {
         action.setEnabled(b);
     }
+    @Override
     public void actionPerformed(ActionEvent e) {
         action.actionPerformed(e, parameters);
     }

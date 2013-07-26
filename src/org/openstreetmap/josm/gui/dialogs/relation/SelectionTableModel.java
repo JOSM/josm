@@ -44,20 +44,24 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
         MapView.removeLayerChangeListener(this);
     }
 
+    @Override
     public int getColumnCount() {
         return 1;
     }
 
+    @Override
     public int getRowCount() {
         if (Main.map.mapView.getEditLayer() != layer)
             return 0;
         return cache.size();
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         return cache.get(rowIndex);
     }
 
+    @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
         if (oldLayer  == layer) {
             cache.clear();
@@ -68,10 +72,12 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
         fireTableDataChanged();
     }
 
+    @Override
     public void layerAdded(Layer newLayer) {
         // do nothing
     }
 
+    @Override
     public void layerRemoved(Layer oldLayer) {
         if (oldLayer == layer) {
             unregister();
@@ -80,6 +86,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
         fireTableDataChanged();
     }
 
+    @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         if (layer == Main.map.mapView.getEditLayer()) {
             cache.clear();

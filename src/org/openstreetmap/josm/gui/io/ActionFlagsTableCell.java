@@ -39,6 +39,7 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
     private CopyOnWriteArrayList<CellEditorListener> listeners;
 
     private ActionListener al = new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
             fireEditingStopped();
         }
@@ -59,6 +60,7 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
             b.setPreferredSize(new Dimension(b.getPreferredSize().width, 19));
             b.addActionListener(al);
             am.put(b.getText(), new AbstractAction() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     b.setSelected(!b.isSelected());
                     fireEditingStopped();
@@ -84,11 +86,13 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
         }
     }
 
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         updateCheckboxes(value);
         return this;
     }
 
+    @Override
     public void addCellEditorListener(CellEditorListener l) {
         if (l != null) {
             listeners.addIfAbsent(l);
@@ -107,10 +111,12 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
         }
     }
 
+    @Override
     public void cancelCellEditing() {
         fireEditingCanceled();
     }
 
+    @Override
     public Object getCellEditorValue() {
         boolean[] values = new boolean[2];
         values[0] = checkBoxes[0].isSelected();
@@ -118,23 +124,28 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
         return values;
     }
 
+    @Override
     public boolean isCellEditable(EventObject anEvent) {
         return true;
     }
 
+    @Override
     public void removeCellEditorListener(CellEditorListener l) {
         listeners.remove(l);
     }
 
+    @Override
     public boolean shouldSelectCell(EventObject anEvent) {
         return true;
     }
 
+    @Override
     public boolean stopCellEditing() {
         fireEditingStopped();
         return true;
     }
 
+    @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         updateCheckboxes(value);
         return this;

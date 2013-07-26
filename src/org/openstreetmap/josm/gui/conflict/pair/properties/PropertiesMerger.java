@@ -380,6 +380,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         lblTheirReferrers.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
     }
 
+    @Override
     public void update(Observable o, Object arg) {
         updateCoordinates();
         updateDeletedState();
@@ -396,10 +397,12 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
             putValue(Action.SHORT_DESCRIPTION, tr("Keep my coordinates"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             model.decideCoordsConflict(MergeDecisionType.KEEP_MINE);
         }
 
+        @Override
         public void update(Observable o, Object arg) {
             setEnabled(model.hasCoordConflict() && ! model.isDecidedCoord());
         }
@@ -411,10 +414,12 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
             putValue(Action.SHORT_DESCRIPTION, tr("Keep their coordinates"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             model.decideCoordsConflict(MergeDecisionType.KEEP_THEIR);
         }
 
+        @Override
         public void update(Observable o, Object arg) {
             setEnabled(model.hasCoordConflict() && ! model.isDecidedCoord());
         }
@@ -426,10 +431,12 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
             putValue(Action.SHORT_DESCRIPTION, tr("Undecide conflict between different coordinates"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             model.decideCoordsConflict(MergeDecisionType.UNDECIDED);
         }
 
+        @Override
         public void update(Observable o, Object arg) {
             setEnabled(model.hasCoordConflict() && model.isDecidedCoord());
         }
@@ -441,10 +448,12 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
             putValue(Action.SHORT_DESCRIPTION, tr("Keep my deleted state"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             model.decideDeletedStateConflict(MergeDecisionType.KEEP_MINE);
         }
 
+        @Override
         public void update(Observable o, Object arg) {
             setEnabled(model.hasDeletedStateConflict() && ! model.isDecidedDeletedState());
         }
@@ -456,10 +465,12 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
             putValue(Action.SHORT_DESCRIPTION, tr("Keep their deleted state"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             model.decideDeletedStateConflict(MergeDecisionType.KEEP_THEIR);
         }
 
+        @Override
         public void update(Observable o, Object arg) {
             setEnabled(model.hasDeletedStateConflict() && ! model.isDecidedDeletedState());
         }
@@ -471,15 +482,18 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
             putValue(Action.SHORT_DESCRIPTION, tr("Undecide conflict between deleted state"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             model.decideDeletedStateConflict(MergeDecisionType.UNDECIDED);
         }
 
+        @Override
         public void update(Observable o, Object arg) {
             setEnabled(model.hasDeletedStateConflict() && model.isDecidedDeletedState());
         }
     }
 
+    @Override
     public void deletePrimitive(boolean deleted) {
         if (deleted) {
             if (model.getMergedCoords() == null) {
@@ -490,6 +504,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         }
     }
 
+    @Override
     public void populate(Conflict<? extends OsmPrimitive> conflict) {
         model.populate(conflict);
     }

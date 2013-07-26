@@ -74,6 +74,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         setFont(font);
     }
 
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
 

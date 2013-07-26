@@ -572,6 +572,7 @@ abstract public class Main {
     protected static int windowState = JFrame.NORMAL;
 
     private final CommandQueueListener redoUndoListener = new CommandQueueListener(){
+        @Override
         public void commandChanged(final int queueSize, final int redoSize) {
             menu.undo.setEnabled(queueSize > 0);
             menu.redo.setEnabled(redoSize > 0);

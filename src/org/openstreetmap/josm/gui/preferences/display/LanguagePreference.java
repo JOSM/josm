@@ -29,6 +29,7 @@ import org.openstreetmap.josm.tools.I18n;
 
 public class LanguagePreference implements SubPreferenceSetting {
     public static class Factory implements PreferenceSettingFactory {
+        @Override
         public PreferenceSetting createPreferenceSetting() {
             return new LanguagePreference();
         }
@@ -39,6 +40,7 @@ public class LanguagePreference implements SubPreferenceSetting {
     /** the model for the combo box */
     private LanguageComboBoxModel model;
 
+    @Override
     public void addGui(final PreferenceTabbedPane gui) {
         model = new LanguageComboBoxModel();
         // Selecting the language BEFORE the JComboBox listens to model changes speed up initialization by ~35ms (see #7386)
@@ -58,6 +60,7 @@ public class LanguagePreference implements SubPreferenceSetting {
         tabPref.registerSubTab(this, tabPref.getSubTab(lafPreference));
     }
 
+    @Override
     public boolean ok() {
         if(langCombo.getSelectedItem() == null)
             return Main.pref.put("language", null);

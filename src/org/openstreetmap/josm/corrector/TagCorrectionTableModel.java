@@ -31,6 +31,7 @@ public class TagCorrectionTableModel extends CorrectionTableModel<TagCorrection>
         return null;
     }
 
+    @Override
     public Object getCorrectionValueAt(int rowIndex, int colIndex) {
         TagCorrection tagCorrection = getCorrections().get(rowIndex);
 
@@ -47,6 +48,7 @@ public class TagCorrectionTableModel extends CorrectionTableModel<TagCorrection>
         return null;
     }
 
+    @Override
     protected boolean isBoldCell(int row, int column) {
         TagCorrection tagCorrection = getCorrections().get(row);
         return (column == 2 && tagCorrection.isKeyChanged())

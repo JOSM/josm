@@ -84,6 +84,7 @@ public class SimplifyWayAction extends JosmAction {
         return ret == 0;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         DataSet ds = getCurrentDataSet();
         ds.beginUpdate();

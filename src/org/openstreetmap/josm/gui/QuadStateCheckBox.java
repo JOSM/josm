@@ -40,6 +40,7 @@ public class QuadStateCheckBox extends JCheckBox {
         // Reset the keyboard action map
         ActionMap map = new ActionMapUIResource();
         map.put("pressed", new AbstractAction() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 grabFocus();
                 model.nextState();
@@ -134,53 +135,53 @@ public class QuadStateCheckBox extends JCheckBox {
             }
         }
         /** Filter: No one may change the armed/selected/pressed status except us. */
-        public void setArmed(boolean b) { }
-        public void setSelected(boolean b) { }
-        public void setPressed(boolean b) { }
+        @Override public void setArmed(boolean b) { }
+        @Override public void setSelected(boolean b) { }
+        @Override public void setPressed(boolean b) { }
         /** We disable focusing on the component when it is not
          * enabled. */
-        public void setEnabled(boolean b) {
+        @Override public void setEnabled(boolean b) {
             setFocusable(b);
             other.setEnabled(b);
         }
         /** All these methods simply delegate to the "other" model
          * that is being decorated. */
-        public boolean isArmed() { return other.isArmed(); }
-        public boolean isSelected() { return other.isSelected(); }
-        public boolean isEnabled() { return other.isEnabled(); }
-        public boolean isPressed() { return other.isPressed(); }
-        public boolean isRollover() { return other.isRollover(); }
-        public void setRollover(boolean b) { other.setRollover(b); }
-        public void setMnemonic(int key) { other.setMnemonic(key); }
-        public int getMnemonic() { return other.getMnemonic(); }
-        public void setActionCommand(String s) {
+        @Override public boolean isArmed() { return other.isArmed(); }
+        @Override public boolean isSelected() { return other.isSelected(); }
+        @Override public boolean isEnabled() { return other.isEnabled(); }
+        @Override public boolean isPressed() { return other.isPressed(); }
+        @Override public boolean isRollover() { return other.isRollover(); }
+        @Override public void setRollover(boolean b) { other.setRollover(b); }
+        @Override public void setMnemonic(int key) { other.setMnemonic(key); }
+        @Override public int getMnemonic() { return other.getMnemonic(); }
+        @Override public void setActionCommand(String s) {
             other.setActionCommand(s);
         }
-        public String getActionCommand() {
+        @Override public String getActionCommand() {
             return other.getActionCommand();
         }
-        public void setGroup(ButtonGroup group) {
+        @Override public void setGroup(ButtonGroup group) {
             other.setGroup(group);
         }
-        public void addActionListener(ActionListener l) {
+        @Override public void addActionListener(ActionListener l) {
             other.addActionListener(l);
         }
-        public void removeActionListener(ActionListener l) {
+        @Override public void removeActionListener(ActionListener l) {
             other.removeActionListener(l);
         }
-        public void addItemListener(ItemListener l) {
+        @Override public void addItemListener(ItemListener l) {
             other.addItemListener(l);
         }
-        public void removeItemListener(ItemListener l) {
+        @Override public void removeItemListener(ItemListener l) {
             other.removeItemListener(l);
         }
-        public void addChangeListener(ChangeListener l) {
+        @Override public void addChangeListener(ChangeListener l) {
             other.addChangeListener(l);
         }
-        public void removeChangeListener(ChangeListener l) {
+        @Override public void removeChangeListener(ChangeListener l) {
             other.removeChangeListener(l);
         }
-        public Object[] getSelectedObjects() {
+        @Override public Object[] getSelectedObjects() {
             return other.getSelectedObjects();
         }
     }

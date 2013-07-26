@@ -201,6 +201,7 @@ public class NodeListViewer extends JPanel {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "zoomin"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled()) return;
             OsmPrimitive p = getPrimitiveToZoom();
@@ -247,6 +248,7 @@ public class NodeListViewer extends JPanel {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "history"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled()) return;
             run();
@@ -262,6 +264,7 @@ public class NodeListViewer extends JPanel {
                 Main.worker.submit(new HistoryLoadTask().add(primitiveId));
             }
             Runnable r = new Runnable() {
+                @Override
                 public void run() {
                     final History h = HistoryDataSet.getInstance().getHistory(primitiveId);
                     if (h == null)

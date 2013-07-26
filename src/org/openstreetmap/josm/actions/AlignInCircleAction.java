@@ -84,6 +84,7 @@ public final class AlignInCircleAction extends JosmAction {
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;

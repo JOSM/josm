@@ -159,10 +159,12 @@ public class ChangesetDataSet {
             this.primitive = primitive;
         }
 
+        @Override
         public ChangesetModificationType getModificationType() {
             return modificationType;
         }
 
+        @Override
         public HistoryOsmPrimitive getPrimitive() {
             return primitive;
         }
@@ -175,10 +177,12 @@ public class ChangesetDataSet {
             typeIterator = modificationTypes.entrySet().iterator();
         }
 
+        @Override
         public boolean hasNext() {
             return typeIterator.hasNext();
         }
 
+        @Override
         public ChangesetDataSetEntry next() {
             Entry<PrimitiveId, ChangesetModificationType> next = typeIterator.next();
             ChangesetModificationType type = next.getValue();
@@ -186,6 +190,7 @@ public class ChangesetDataSet {
             return new DefaultChangesetDataSetEntry(type, primitive);
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }

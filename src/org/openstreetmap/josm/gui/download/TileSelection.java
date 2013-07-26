@@ -30,15 +30,18 @@ public class TileSelection implements DownloadSelection, PropertyChangeListener 
         build();
     }
 
+    @Override
     public void addGui(final DownloadDialog gui) {
         gui.addDownloadAreaSelector(chooser, tr("Tile Numbers"));
         parent = gui;
     }
 
+    @Override
     public void setDownloadArea(Bounds area) {
         chooser.setBoundingBox(area);
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(BBoxChooser.BBOX_PROP)) {
             Bounds bbox = (Bounds)evt.getNewValue();

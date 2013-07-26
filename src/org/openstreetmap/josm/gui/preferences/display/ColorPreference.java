@@ -51,6 +51,7 @@ import org.openstreetmap.josm.tools.GBC;
 public class ColorPreference implements SubPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
+        @Override
         public PreferenceSetting createPreferenceSetting() {
             return new ColorPreference();
         }
@@ -140,12 +141,14 @@ public class ColorPreference implements SubPreferenceSetting {
         return Main.pref.getColorName(o);
     }
 
+    @Override
     public void addGui(final PreferenceTabbedPane gui) {
         fixColorPrefixes();
         setColorModel(Main.pref.getAllColors());
 
         colorEdit = new JButton(tr("Choose"));
         colorEdit.addActionListener(new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int sel = colors.getSelectedRow();
                 JColorChooser chooser = new JColorChooser((Color)colors.getValueAt(sel, 1));
@@ -161,6 +164,7 @@ public class ColorPreference implements SubPreferenceSetting {
         });
         defaultSet = new JButton(tr("Set to default"));
         defaultSet.addActionListener(new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int sel = colors.getSelectedRow();
                 String name = (String)colors.getValueAt(sel, 0);
@@ -172,6 +176,7 @@ public class ColorPreference implements SubPreferenceSetting {
         });
         JButton defaultAll = new JButton(tr("Set all to default"));
         defaultAll.addActionListener(new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 for(int i = 0; i < colors.getRowCount(); ++i)
                 {
@@ -185,6 +190,7 @@ public class ColorPreference implements SubPreferenceSetting {
         });
         remove = new JButton(tr("Remove"));
         remove.addActionListener(new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int sel = colors.getSelectedRow();
                 del.add((String)colors.getValueAt(sel, 0));
@@ -210,6 +216,7 @@ public class ColorPreference implements SubPreferenceSetting {
         colors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         final TableCellRenderer oldColorsRenderer = colors.getDefaultRenderer(Object.class);
         colors.setDefaultRenderer(Object.class, new TableCellRenderer(){
+            @Override
             public Component getTableCellRendererComponent(JTable t, Object o, boolean selected, boolean focus, int row, int column) {
                 if (o == null)
                     return new JLabel();
@@ -261,6 +268,7 @@ public class ColorPreference implements SubPreferenceSetting {
         ConflictDialog.getColor();
     }
 
+    @Override
     public boolean ok() {
         Boolean ret = false;
         for(String d : del) {

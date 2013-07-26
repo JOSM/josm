@@ -48,11 +48,13 @@ public class PrimitiveDeepCopy {
         new AbstractVisitor() {
             boolean firstIteration;
 
+            @Override
             public void visit(Node n) {
                 if (!visitedNodeIds.add(n.getUniqueId()))
                     return;
                 (firstIteration ? directlyAdded : referenced).add(n.save());
             }
+            @Override
             public void visit(Way w) {
                 if (!visitedWayIds.add(w.getUniqueId()))
                     return;
@@ -62,6 +64,7 @@ public class PrimitiveDeepCopy {
                     visit(n);
                 }
             }
+            @Override
             public void visit(Relation r) {
                 if (!visitedRelationIds.add(r.getUniqueId()))
                     return;

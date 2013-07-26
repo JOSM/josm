@@ -483,10 +483,12 @@ public abstract class SourceEditor extends JPanel {
             this.data = new ArrayList<SourceEntry>();
         }
 
+        @Override
         public int getColumnCount() {
             return isMapPaint ? 2 : 1;
         }
 
+        @Override
         public int getRowCount() {
             return data == null ? 0 : data.size();
         }
@@ -747,6 +749,7 @@ public abstract class SourceEditor extends JPanel {
                 }
             }
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 FileFilter ff;
                 if (isMapPaint) {
@@ -787,6 +790,7 @@ public abstract class SourceEditor extends JPanel {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             EditSourceEntryDialog editEntryDialog = new EditSourceEntryDialog(
                     SourceEditor.this,
@@ -819,10 +823,12 @@ public abstract class SourceEditor extends JPanel {
             setEnabled(tblActiveSources.getSelectedRowCount() > 0);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             activeSourcesModel.removeSelected();
         }
@@ -840,10 +846,12 @@ public abstract class SourceEditor extends JPanel {
             setEnabled(tblActiveSources.getSelectedRowCount() == 1);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             int pos = tblActiveSources.getSelectedRow();
             if (pos < 0 || pos >= tblActiveSources.getRowCount())
@@ -891,10 +899,12 @@ public abstract class SourceEditor extends JPanel {
             activeSourcesModel.move(increment);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void tableChanged(TableModelEvent e) {
             updateEnabledState();
         }
@@ -911,10 +921,12 @@ public abstract class SourceEditor extends JPanel {
             setEnabled(lstAvailableSources.getSelectedIndices().length > 0);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             List<ExtendedSourceEntry> sources = availableSourcesModel.getSelected();
             int josmVersion = Version.getInstance().getVersion();
@@ -960,6 +972,7 @@ public abstract class SourceEditor extends JPanel {
             putValue(SMALL_ICON, ImageProvider.get("preferences", "reset"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             activeSourcesModel.setActiveSources(getDefault());
         }
@@ -976,6 +989,7 @@ public abstract class SourceEditor extends JPanel {
             this.sourceProviders = sourceProviders;
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             MirroredInputStream.cleanup(url);
             reloadAvailableSources(url, sourceProviders);
@@ -991,14 +1005,17 @@ public abstract class SourceEditor extends JPanel {
             this.data = new ArrayList<String>();
         }
 
+        @Override
         public int getColumnCount() {
             return 1;
         }
 
+        @Override
         public int getRowCount() {
             return data == null ? 0 : data.size();
         }
 
+        @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             return data.get(rowIndex);
         }
@@ -1063,6 +1080,7 @@ public abstract class SourceEditor extends JPanel {
             Collections.sort(
                     data,
                     new Comparator<String>() {
+                        @Override
                         public int compare(String o1, String o2) {
                             if (o1.equals("") && o2.equals(""))
                                 return 0;
@@ -1086,6 +1104,7 @@ public abstract class SourceEditor extends JPanel {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             iconPathsModel.addPath("");
             tblIconPaths.editCellAt(iconPathsModel.getRowCount() -1,0);
@@ -1104,10 +1123,12 @@ public abstract class SourceEditor extends JPanel {
             setEnabled(tblIconPaths.getSelectedRowCount() > 0);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             iconPathsModel.removeSelected();
         }
@@ -1125,10 +1146,12 @@ public abstract class SourceEditor extends JPanel {
             setEnabled(tblIconPaths.getSelectedRowCount() == 1);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int row = tblIconPaths.getSelectedRow();
             tblIconPaths.editCellAt(row, 0);
@@ -1136,6 +1159,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     static class SourceEntryListCellRenderer extends JLabel implements ListCellRenderer {
+        @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
             String s = value.toString();
@@ -1357,6 +1381,7 @@ public abstract class SourceEditor extends JPanel {
             build();
         }
 
+        @Override
         public void addCellEditorListener(CellEditorListener l) {
             if (l != null) {
                 listeners.addIfAbsent(l);
@@ -1375,28 +1400,34 @@ public abstract class SourceEditor extends JPanel {
             }
         }
 
+        @Override
         public void cancelCellEditing() {
             fireEditingCanceled();
         }
 
+        @Override
         public Object getCellEditorValue() {
             return value;
         }
 
+        @Override
         public boolean isCellEditable(EventObject anEvent) {
             if (anEvent instanceof MouseEvent)
                 return ((MouseEvent)anEvent).getClickCount() >= 2;
                 return true;
         }
 
+        @Override
         public void removeCellEditorListener(CellEditorListener l) {
             listeners.remove(l);
         }
 
+        @Override
         public boolean shouldSelectCell(EventObject anEvent) {
             return true;
         }
 
+        @Override
         public boolean stopCellEditing() {
             value = tfFileName.getText();
             fireEditingStopped();
@@ -1412,6 +1443,7 @@ public abstract class SourceEditor extends JPanel {
             }
         }
 
+        @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             setInitialValue((String)value);
             tfFileName.selectAll();
@@ -1450,6 +1482,7 @@ public abstract class SourceEditor extends JPanel {
                 }
             }
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooserManager fcm = new JFileChooserManager(true).createFileChooser();
                 if (!isFile) {

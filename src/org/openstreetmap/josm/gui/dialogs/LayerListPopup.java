@@ -34,6 +34,7 @@ public class LayerListPopup extends JPopupMenu {
             putValue("help", ht("/Action/LayerInfo"));
             this.layer = layer;
         }
+        @Override
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(
                     Main.parent,

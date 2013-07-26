@@ -34,22 +34,27 @@ public class VerticallyScrollablePanel extends JPanel implements Scrollable {
         super(layout);
     }
 
+    @Override
     public Dimension getPreferredScrollableViewportSize() {
         return getPreferredSize();
     }
 
+    @Override
     public int getScrollableBlockIncrement(Rectangle arg0, int arg1, int arg2) {
         return 20;
     }
 
+    @Override
     public boolean getScrollableTracksViewportHeight() {
         return false;
     }
 
+    @Override
     public boolean getScrollableTracksViewportWidth() {
         return true;
     }
 
+    @Override
     public int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2) {
         return 10;
     }

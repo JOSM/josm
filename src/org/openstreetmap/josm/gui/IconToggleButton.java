@@ -59,6 +59,7 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
         ExpertToggleAction.addExpertModeChangeListener(this);
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("active")) {
             setSelected((Boolean)evt.getNewValue());
@@ -68,6 +69,7 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
         }
     }
 
+    @Override
     public void destroy() {
         Action action = getAction();
         if (action instanceof Destroyable) {

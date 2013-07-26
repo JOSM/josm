@@ -133,6 +133,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
      * Replies the current bounding box. null, if no valid bounding box is currently selected.
      *
      */
+    @Override
     public Bounds getBoundingBox() {
         return bbox;
     }
@@ -142,6 +143,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
      *
      * @param bbox the bounding box. null, if this widget isn't initialized with a bounding box
      */
+    @Override
     public void setBoundingBox(Bounds bbox) {
         pnlTileGrid.initFromBoundingBox(bbox);
     }
@@ -195,6 +197,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
      * property change events for {@link BBoxChooser#BBOX_PROP}
      */
     class TileBoundsChangeListener implements PropertyChangeListener {
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (!evt.getPropertyName().equals(TileGridInputPanel.TILE_BOUNDS_PROP)) return;
             TileBounds tb = (TileBounds)evt.getNewValue();
@@ -370,6 +373,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             spZoomLevel.setValue(tileBounds.zoomLevel);
         }
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(TileAddressInputPanel.TILE_BOUNDS_PROP)) {
                 TileBounds tb = (TileBounds)evt.getNewValue();
@@ -384,6 +388,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         }
 
         class ZomeLevelChangeHandler implements ChangeListener {
+            @Override
             public void stateChanged(ChangeEvent e) {
                 int zoomLevel = (Integer)spZoomLevel.getValue();
                 valMaxX.setZoomLevel(zoomLevel);
@@ -409,16 +414,20 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
                 fireTileBoundsChanged(tb);
             }
 
+            @Override
             public void focusGained(FocusEvent e) {/* irrelevant */}
 
+            @Override
             public void focusLost(FocusEvent e) {
                 buildTileBounds();
             }
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 buildTileBounds();
             }
 
+            @Override
             public void stateChanged(ChangeEvent e) {
                 buildTileBounds();
             }
@@ -505,6 +514,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
                 putValue(SHORT_DESCRIPTION, tr("Apply the tile address"));
             }
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 TileBounds tb = valTileAddress.getTileBounds();
                 if (tb != null) {

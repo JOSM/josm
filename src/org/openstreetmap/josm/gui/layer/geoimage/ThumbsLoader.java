@@ -34,6 +34,7 @@ public class ThumbsLoader implements Runnable {
         }
     }
 
+    @Override
     public void run() {
         System.err.println("Load Thumbnails");
         tracker = new MediaTracker(Main.map.mapView);

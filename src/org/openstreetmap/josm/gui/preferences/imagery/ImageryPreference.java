@@ -426,6 +426,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
                 this.type = type;
             }
 
+            @Override
             public void actionPerformed(ActionEvent evt) {
                 final AddImageryPanel p;
                 if (ImageryInfo.ImageryType.WMS.equals(type)) {
@@ -551,6 +552,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
             }
 
+            @Override
             public void actionPerformed(ActionEvent evt) {
                 layerInfo.loadDefaults(true);
                 defaultModel.fireTableDataChanged();

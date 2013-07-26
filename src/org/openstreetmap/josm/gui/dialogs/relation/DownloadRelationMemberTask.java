@@ -134,6 +134,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
 
             SwingUtilities.invokeLater(
                     new Runnable() {
+                        @Override
                         public void run() {
                             curLayer.mergeFrom(dataSet);
                             curLayer.onPostDownloadFromServer();

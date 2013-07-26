@@ -295,6 +295,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         if (args.containsKey("addtags")) {
             GuiHelper.executeByMainWorkerInEDT(new Runnable() {
 
+                @Override
                 public void run() {
                     String[] tags = null;
                     try {

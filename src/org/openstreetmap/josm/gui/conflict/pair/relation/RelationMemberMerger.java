@@ -48,6 +48,7 @@ public class RelationMemberMerger extends ListMerger<RelationMember> implements 
         return embeddInScrollPane(theirEntriesTable);
     }
 
+    @Override
     public void populate(Conflict<? extends OsmPrimitive> conflict) {
         Relation myRel = (Relation)conflict.getMy();
         Relation theirRel = (Relation)conflict.getTheir();
@@ -60,6 +61,7 @@ public class RelationMemberMerger extends ListMerger<RelationMember> implements 
         super(new RelationMemberListMergeModel());
     }
 
+    @Override
     public void deletePrimitive(boolean deleted) {
         if (deleted) {
             model.clearMerged();

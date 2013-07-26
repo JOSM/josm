@@ -22,6 +22,7 @@ public class RelationMemberConflictDecisionEditor extends JosmComboBox implement
     /* --------------------------------------------------------------------------------- */
     /* TableCellEditor                                                                   */
     /* --------------------------------------------------------------------------------- */
+    @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         setSelectedItem(value);
         this.originalValue = (RelationMemberConflictDecisionType)value;
@@ -31,31 +32,38 @@ public class RelationMemberConflictDecisionEditor extends JosmComboBox implement
     private TableCellEditorSupport tableCellEditorSupport;
     private RelationMemberConflictDecisionType originalValue;
 
+    @Override
     public void addCellEditorListener(CellEditorListener l) {
         tableCellEditorSupport.addCellEditorListener(l);
     }
 
+    @Override
     public void cancelCellEditing() {
         setSelectedItem(originalValue);
         tableCellEditorSupport.fireEditingCanceled();
     }
 
+    @Override
     public Object getCellEditorValue() {
         return getSelectedItem();
     }
 
+    @Override
     public boolean isCellEditable(EventObject anEvent) {
         return true;
     }
 
+    @Override
     public void removeCellEditorListener(CellEditorListener l) {
         tableCellEditorSupport.removeCellEditorListener(l);
     }
 
+    @Override
     public boolean shouldSelectCell(EventObject anEvent) {
         return true;
     }
 
+    @Override
     public boolean stopCellEditing() {
         tableCellEditorSupport.fireEditingStopped();
         return true;

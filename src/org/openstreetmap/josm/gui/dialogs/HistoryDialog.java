@@ -133,10 +133,12 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
     /* ----------------------------------------------------------------------------- */
     /* interface HistoryDataSetListener                                              */
     /* ----------------------------------------------------------------------------- */
+    @Override
     public void historyUpdated(HistoryDataSet source, PrimitiveId primitiveId) {
         model.refresh();
     }
 
+    @Override
     public void historyDataSetCleared(HistoryDataSet source) {
         model.refresh();
     }
@@ -206,6 +208,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
             selectPrimitives(selectedPrimitives);
         }
 
+        @Override
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
             data.clear();
             selectionModel.clearSelection();
@@ -267,6 +270,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int [] rows = historyTable.getSelectedRows();
             if (rows == null || rows.length == 0) return;
@@ -281,6 +285,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
             setEnabled(historyTable.getSelectedRowCount() > 0);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
@@ -307,6 +312,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int [] rows = historyTable.getSelectedRows();
             if (rows == null || rows.length == 0) return;
@@ -317,6 +323,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
             setEnabled(historyTable.getSelectedRowCount() > 0);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }

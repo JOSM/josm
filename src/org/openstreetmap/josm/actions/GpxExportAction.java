@@ -44,6 +44,7 @@ public class GpxExportAction extends DiskAccessAction {
         return (layer instanceof GpxLayer || layer instanceof OsmDataLayer) ? layer : null;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;

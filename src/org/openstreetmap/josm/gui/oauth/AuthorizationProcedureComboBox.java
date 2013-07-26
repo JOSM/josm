@@ -75,6 +75,7 @@ public class AuthorizationProcedureComboBox extends JosmComboBox {
             }
         }
 
+        @Override
         public Component getListCellRendererComponent(JList list, Object value, int idx, boolean isSelected, boolean hasFocus) {
             AuthorizationProcedure procedure = (AuthorizationProcedure)value;
             renderColors(isSelected);

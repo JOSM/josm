@@ -174,6 +174,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         super.setVisible(visible);
     }
 
+    @Override
     public void tableChanged(TableModelEvent e) {
         updateMessage();
         updateTitle();
@@ -204,6 +205,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
                     data,
                     new Comparator<RelationToChildReference>() {
                         private NameFormatter nf = DefaultNameFormatter.getInstance();
+                        @Override
                         public int compare(RelationToChildReference o1, RelationToChildReference o2) {
                             int cmp = o1.getChild().getDisplayName(nf).compareTo(o2.getChild().getDisplayName(nf));
                             if (cmp != 0) return cmp;
@@ -321,6 +323,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
             putValue(SHORT_DESCRIPTION, tr("Click to close the dialog and remove the object from the relations"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             setCanceled(false);
             setVisible(false);
@@ -334,6 +337,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
             putValue(SHORT_DESCRIPTION, tr("Click to close the dialog and to abort deleting the objects"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             setCanceled(true);
             setVisible(false);

@@ -96,6 +96,7 @@ public class RelationUploadOrderHook implements UploadHook {
         dialog.showDialog();
     }
 
+    @Override
     public boolean checkUpload(APIDataSet apiDataSet) {
         this.data = apiDataSet;
         try {

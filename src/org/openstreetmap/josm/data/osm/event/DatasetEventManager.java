@@ -97,6 +97,7 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
         normalListeners.remove(searchListener);
     }
 
+    @Override
     public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
         if (oldLayer != null) {
             oldLayer.data.removeDataSetListener(myListener);
@@ -126,6 +127,7 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
         }
     }
 
+    @Override
     public void processDatasetEvent(AbstractDatasetChangedEvent event) {
         fireEvents(normalListeners, event);
         eventsInEDT.add(event);
@@ -133,6 +135,7 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
     }
 
     private final Runnable edtRunnable = new Runnable() {
+        @Override
         public void run() {
             while (!eventsInEDT.isEmpty()) {
                 List<AbstractDatasetChangedEvent> events = new ArrayList<AbstractDatasetChangedEvent>();

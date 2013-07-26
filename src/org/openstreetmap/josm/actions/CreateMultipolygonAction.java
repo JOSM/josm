@@ -59,6 +59,7 @@ public class CreateMultipolygonAction extends JosmAction {
      *
      * @param e Action Event
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (Main.main.getEditLayer() == null) {
             JOptionPane.showMessageDialog(Main.parent, tr("No data loaded."));
@@ -111,6 +112,7 @@ public class CreateMultipolygonAction extends JosmAction {
             // uses 'SwingUtilities.invokeLater' to fire events so we have to do
             // the same.)
             SwingUtilities.invokeLater(new Runnable() {
+                @Override
                 public void run() {
                     Main.map.relationListDialog.selectRelation(relation);
                 }

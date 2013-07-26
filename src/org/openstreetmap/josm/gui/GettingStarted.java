@@ -52,6 +52,7 @@ public final class GettingStarted extends JPanel {
             addHyperlinkListener(this);
         }
 
+        @Override
         public void hyperlinkUpdate(HyperlinkEvent e) {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                 OpenBrowser.displayUrl(e.getDescription());

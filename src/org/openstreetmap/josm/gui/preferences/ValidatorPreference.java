@@ -95,6 +95,7 @@ public class ValidatorPreference extends DefaultTabPreferenceSetting {
         testPanel.add(prefOtherUpload, GBC.eol());
 
         ActionListener otherUploadEnabled = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 prefOtherUpload.setEnabled(prefOther.isSelected());
             }

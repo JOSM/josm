@@ -136,6 +136,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
      * Listens to changes in the authentication method
      */
     class AuthenticationMethodChangeListener implements ItemListener {
+        @Override
         public void itemStateChanged(ItemEvent e) {
             if (rbBasicAuthentication.isSelected()) {
                 pnlAuthenticationParameteters.removeAll();
@@ -150,6 +151,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         }
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (pnlOAuthPreferences != null) {
             pnlOAuthPreferences.propertyChange(evt);

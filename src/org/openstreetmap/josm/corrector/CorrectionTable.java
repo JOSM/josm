@@ -17,6 +17,7 @@ public abstract class CorrectionTable<TM extends CorrectionTableModel<?>>
     public static class BoldRenderer extends JLabel implements
             TableCellRenderer {
 
+        @Override
         public Component getTableCellRendererComponent(JTable table,
                 Object value, boolean isSelected, boolean hasFocus, int row,
                 int column) {
@@ -45,6 +46,7 @@ public abstract class CorrectionTable<TM extends CorrectionTableModel<?>>
         setRowSelectionAllowed(false);
     }
 
+    @Override
     public TableCellRenderer getCellRenderer(int row, int column) {
         if (getCorrectionTableModel().isBoldCell(row, column)) {
             if (boldRenderer == null)

@@ -121,6 +121,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
                 }
             }
         }
+        @Override
         public void actionPerformed(ActionEvent e) {
             // Select/unselect corresponding plugin in the model
             model.setPluginSelected(cb.pi.getName(), cb.isSelected());
@@ -227,6 +228,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
             HtmlPanel description = new HtmlPanel();
             description.setText(pi.getDescriptionAsHtml());
             description.getEditorPane().addHyperlinkListener(new HyperlinkListener() {
+                @Override
                 public void hyperlinkUpdate(HyperlinkEvent e) {
                     if(e.getEventType() == EventType.ACTIVATED) {
                         OpenBrowser.displayUrl(e.getURL().toString());

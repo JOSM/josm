@@ -153,6 +153,7 @@ public class SplashScreen extends JFrame {
             build();
         }
 
+        @Override
         public void setCustomText(String message) {
             if(message.isEmpty())
                 message = " "; /* prevent killing of additional line */
@@ -160,11 +161,13 @@ public class SplashScreen extends JFrame {
             repaint();
         }
 
+        @Override
         public void setIndeterminate(boolean indeterminate) {
             progressBar.setIndeterminate(indeterminate);
             repaint();
         }
 
+        @Override
         public void setMaximum(int maximum) {
             progressBar.setMaximum(maximum);
             repaint();
@@ -178,6 +181,7 @@ public class SplashScreen extends JFrame {
          * Stores and displays the {@code MAX_NUMBER_OF_MESSAGES} most recent
          * task titles together with their execution time.
          */
+        @Override
         public void setTaskTitle(String taskTitle) {
 
             while (messages.size() >= MAX_NUMBER_OF_MESSAGES) {
@@ -206,6 +210,7 @@ public class SplashScreen extends JFrame {
             repaint();
         }
 
+        @Override
         public void setValue(int value) {
             progressBar.setValue(value);
             repaint();

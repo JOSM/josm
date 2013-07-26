@@ -48,6 +48,7 @@ public class ValidateAction extends JosmAction {
                         KeyEvent.VK_V, Shortcut.SHIFT), true);
     }
 
+    @Override
     public void actionPerformed(ActionEvent ev) {
         doValidate(ev, true);
     }

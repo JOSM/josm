@@ -57,6 +57,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
      * event handler for {@link AdjustmentEvent}s
      *
      */
+    @Override
     public void adjustmentValueChanged(AdjustmentEvent e) {
         if (! enabledMap.get(e.getAdjustable()))
             return;
@@ -123,6 +124,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
         // register an item lister with the check box
         //
         view.addItemListener(new ItemListener() {
+            @Override
             public void itemStateChanged(ItemEvent e) {
                 switch(e.getStateChange()) {
                 case ItemEvent.SELECTED:
@@ -141,6 +143,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
 
         observable.addObserver(
                 new Observer() {
+                    @Override
                     public void update(Observable o, Object arg) {
                         boolean sync = isParticipatingInSynchronizedScrolling(adjustable);
                         if (view.isSelected() != sync) {

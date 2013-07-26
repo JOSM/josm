@@ -31,6 +31,7 @@ import org.openstreetmap.josm.tools.GBC;
 public class LafPreference implements SubPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
+        @Override
         public PreferenceSetting createPreferenceSetting() {
             return new LafPreference();
         }
@@ -47,6 +48,7 @@ public class LafPreference implements SubPreferenceSetting {
     private JCheckBox modeless = new JCheckBox(tr("Modeless working (Potlatch style)"));
     private JCheckBox dynamicButtons = new JCheckBox(tr("Dynamic buttons in side menus"));
 
+    @Override
     public void addGui(PreferenceTabbedPane gui) {
         lafCombo = new JosmComboBox(UIManager.getInstalledLookAndFeels());
 
@@ -118,6 +120,7 @@ public class LafPreference implements SubPreferenceSetting {
         gui.getDisplayPreference().addSubTab(this, tr("Look and Feel"), scrollpane);
     }
 
+    @Override
     public boolean ok() {
         boolean mod = false;
         Main.pref.put("draw.splashscreen", showSplashScreen.isSelected());

@@ -329,6 +329,7 @@ public class I18n {
         Locale[] l = new Locale[v.size()];
         l = v.toArray(l);
         Arrays.sort(l, new Comparator<Locale>() {
+            @Override
             public int compare(Locale o1, Locale o2) {
                 return o1.toString().compareTo(o2.toString());
             }

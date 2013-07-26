@@ -46,6 +46,7 @@ public class AboutAction extends JosmAction {
             KeyEvent.VK_F1, Shortcut.SHIFT), true);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         final JTabbedPane about = new JTabbedPane();
 

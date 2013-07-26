@@ -25,6 +25,7 @@ public class SelectionSynchronizer implements ListSelectionListener {
         model.addListSelectionListener(this);
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent e) {
         DefaultListSelectionModel referenceModel = (DefaultListSelectionModel)e.getSource();
         int i = referenceModel.getMinSelectionIndex();

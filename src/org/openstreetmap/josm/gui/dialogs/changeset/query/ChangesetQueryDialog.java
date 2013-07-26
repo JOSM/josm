@@ -175,6 +175,7 @@ public class ChangesetQueryDialog extends JDialog {
             );
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             try {
                 switch(tpQueryPanels.getSelectedIndex()) {
@@ -218,6 +219,7 @@ public class ChangesetQueryDialog extends JDialog {
             setVisible(false);
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             cancel();
         }

@@ -166,6 +166,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
     /* ---------------------------------------------------------------------------- */
     /* interface PropertyChangeListener                                             */
     /* ---------------------------------------------------------------------------- */
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if(!evt.getPropertyName().equals(ChangesetCacheManagerModel.CHANGESET_IN_DETAIL_VIEW_PROP))
             return;
@@ -184,6 +185,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             putValue(SHORT_DESCRIPTION, tr("Download the changeset content from the OSM server"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             if (currentChangeset == null) return;
             ChangesetContentDownloadTask task = new ChangesetContentDownloadTask(ChangesetContentPanel.this,currentChangeset.getId());
@@ -249,6 +251,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             }
 
             Runnable r = new Runnable() {
+                @Override
                 public void run() {
                     try {
                         for (HistoryOsmPrimitive p : primitives) {
@@ -264,6 +267,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                         }
                     } catch (final Exception e) {
                         GuiHelper.runInEDT(new Runnable() {
+                            @Override
                             public void run() {
                                 BugReportExceptionHandler.handleException(e);
                             }
@@ -279,12 +283,14 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             setEnabled(model.hasSelectedPrimitives());
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             Set<HistoryOsmPrimitive> selected = model.getSelectedPrimitives();
             if (selected.isEmpty()) return;
             showHistory(selected);
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
@@ -315,6 +321,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             );
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             if (!isEnabled())
                 return;
@@ -343,10 +350,12 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             setEnabled(model.hasSelectedPrimitives());
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
             updateEnabledState();
         }
@@ -377,6 +386,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             );
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             if (!isEnabled())
                 return;
@@ -406,10 +416,12 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             setEnabled(model.hasSelectedPrimitives());
         }
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
 
+        @Override
         public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
             updateEnabledState();
         }
@@ -446,6 +458,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                 putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "downloadchangesetcontent"));
             }
 
+            @Override
             public void actionPerformed(ActionEvent evt) {
                 if (current == null) return;
                 ChangesetContentDownloadTask task = new ChangesetContentDownloadTask(HeaderPanel.this, current.getId());

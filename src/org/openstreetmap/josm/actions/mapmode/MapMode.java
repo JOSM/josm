@@ -76,6 +76,7 @@ abstract public class MapMode extends JosmAction implements MouseListener, Mouse
     /**
      * Call selectMapMode(this) on the parent mapFrame.
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (Main.isDisplayingMapView()) {
             Main.map.selectMapMode(this);
@@ -109,11 +110,18 @@ abstract public class MapMode extends JosmAction implements MouseListener, Mouse
         }
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {requestFocusInMapView();}
+    @Override
     public void mouseExited(MouseEvent e) {}
+    @Override
     public void mousePressed(MouseEvent e) {requestFocusInMapView();}
+    @Override
     public void mouseClicked(MouseEvent e) {}
+    @Override
     public void mouseEntered(MouseEvent e) {}
+    @Override
     public void mouseMoved(MouseEvent e) {}
+    @Override
     public void mouseDragged(MouseEvent e) {}
 }

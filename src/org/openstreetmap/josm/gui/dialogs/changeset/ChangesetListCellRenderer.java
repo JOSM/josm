@@ -46,6 +46,7 @@ public class ChangesetListCellRenderer extends JLabel implements ListCellRendere
         setText(sb.toString());
     }
 
+    @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
             boolean cellHasFocus) {
         Changeset cs = (Changeset)value;

@@ -388,6 +388,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             setEnabled(true);
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             setCanceled(true);
             setVisible(false);
@@ -403,6 +404,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             setVisible(false);
             pnlTagConflictResolver.rememberPreferences();
@@ -413,6 +415,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                     && pnlRelationMemberConflictResolver.getModel().getNumConflicts() == 0);
         }
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(TagConflictResolverModel.NUM_CONFLICTS_PROP)) {
                 updateEnabledState();
@@ -443,14 +446,17 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             addHierarchyBoundsListener(this);
         }
 
+        @Override
         public void ancestorResized(HierarchyEvent e) {
             setDividerLocation((int) (dividerLocation * getHeight()));
         }
 
+        @Override
         public void ancestorMoved(HierarchyEvent e) {
             // do nothing
         }
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
                 int newVal = (Integer) evt.getNewValue();

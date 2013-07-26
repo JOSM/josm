@@ -54,6 +54,7 @@ public class OsmPrimitiveComparator implements Comparator<OsmPrimitive> {
         return -1;
     }
 
+    @Override
     public int compare(OsmPrimitive a, OsmPrimitive b) {
         if (a.getType().equals(b.getType()))
             return compareName(a, b);
