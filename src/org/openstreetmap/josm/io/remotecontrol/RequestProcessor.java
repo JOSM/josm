@@ -173,7 +173,7 @@ public class RequestProcessor extends Thread {
                 get=in.readLine();
                 if (get==null) break;
                 k++;
-                String h[] = get.split(": ", 2);
+                String[] h = get.split(": ", 2);
                 if (h.length==2) {
                     headers.put(h[0], h[1]);
                 } else break;

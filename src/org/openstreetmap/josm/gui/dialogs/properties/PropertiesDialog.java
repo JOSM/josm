@@ -1135,7 +1135,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         @Override
         public void actionPerformed(ActionEvent ae) {
-            int rows[] = propertyTable.getSelectedRows();
+            int[] rows = propertyTable.getSelectedRows();
             Set<String> values = new TreeSet<String>();
             Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
             if (rows.length == 0 || sel.isEmpty()) return;

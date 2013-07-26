@@ -52,7 +52,7 @@ public abstract class AbstractDownloadTask implements DownloadTask {
         StringBuilder buf = new StringBuilder("<tr><td>");
         buf.append(getTitle());
         buf.append(":</td><td>");
-        String patterns[] = getPatterns();
+        String[] patterns = getPatterns();
         if (patterns.length>0) {
             buf.append("<ul>");
             for (String pattern: patterns) {

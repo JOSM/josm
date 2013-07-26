@@ -441,7 +441,7 @@ public class PluginInformation {
      */
     public boolean matches(String filter) {
         if (filter == null) return true;
-        String words[] = filter.split("\\s+");
+        String[] words = filter.split("\\s+");
         for (String word: words) {
             if (matches(word, name)
                     || matches(word, description)

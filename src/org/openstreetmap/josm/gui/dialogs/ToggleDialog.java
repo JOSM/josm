@@ -389,7 +389,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      * @param visible true, if the components should be visible; false otherwise
      */
     protected void setContentVisible(boolean visible) {
-        Component comps[] = getComponents();
+        Component[] comps = getComponents();
         for(int i=0; i<comps.length; i++) {
             if (comps[i] != titleBar && (!visible || comps[i] != buttonsPanel || buttonHiding != ButtonHiddingType.ALWAYS_HIDDEN)) {
                 comps[i].setVisible(visible);

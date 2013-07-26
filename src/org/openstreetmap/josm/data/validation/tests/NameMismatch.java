@@ -81,7 +81,7 @@ public class NameMismatch extends Test {
         composition of some (not necessarily all) name:* labels.
         Check if this is the case. */
 
-        String split_names[] = name.split(" - ");
+        String[] split_names = name.split(" - ");
         if (split_names.length == 1) {
             /* The name is not composed of multiple parts. Complain. */
             missingTranslation(p);

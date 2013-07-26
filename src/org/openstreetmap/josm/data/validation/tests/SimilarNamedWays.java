@@ -98,7 +98,7 @@ public class SimilarNamedWays extends Test {
      * @return The distance between words
      */
     public int getLevenshteinDistance(String s, String t) {
-        int d[][]; // matrix
+        int[][] d; // matrix
         int n; // length of s
         int m; // length of t
         int i; // iterates through s

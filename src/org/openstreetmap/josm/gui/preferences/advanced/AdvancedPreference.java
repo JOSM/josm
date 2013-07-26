@@ -191,7 +191,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
         };
         JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(!saveFileFlag, !saveFileFlag, title, filter, JFileChooser.FILES_ONLY, "customsettings.lastDirectory");
         if (fc != null) {
-            File sel[] = fc.isMultiSelectionEnabled() ? fc.getSelectedFiles() : (new File[]{fc.getSelectedFile()});
+            File[] sel = fc.isMultiSelectionEnabled() ? fc.getSelectedFiles() : (new File[]{fc.getSelectedFile()});
             if (sel.length==1 && !sel[0].getName().contains(".")) sel[0]=new File(sel[0].getAbsolutePath()+".xml");
             return sel;
         }
@@ -407,7 +407,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
             Setting valueSetting = e.getValue();
             String prefValue = valueSetting.getValue() == null ? "" : valueSetting.getValue().toString();
 
-            String input[] = txtFilter.getText().split("\\s+");
+            String[] input = txtFilter.getText().split("\\s+");
             boolean canHas = true;
 
             // Make 'wmsplugin cache' search for e.g. 'cache.wmsplugin'
