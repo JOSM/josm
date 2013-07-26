@@ -1635,7 +1635,7 @@ public class LayerListDialog extends ToggleDialog {
         if (!Main.isDisplayingMapView())
             return false;
 
-        return Main.map.mapView.getAllLayersAsList().indexOf(l) >= 0;
+        return Main.map.mapView.getAllLayersAsList().contains(l);
     }
 
     public static MultikeyInfo getLayerInfo(Layer l) {
