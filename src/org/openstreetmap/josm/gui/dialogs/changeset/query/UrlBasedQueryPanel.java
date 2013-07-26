@@ -183,7 +183,7 @@ public class UrlBasedQueryPanel extends JPanel {
 
         protected void validate() {
             String value = tfUrl.getText();
-            if (value.trim().equals("")) {
+            if (value.trim().isEmpty()) {
                 feedbackNone();
                 return;
             }

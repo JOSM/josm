@@ -173,9 +173,9 @@ public class RelationMemberConflictResolver extends JPanel {
     public Command buildTagApplyCommands(Collection<? extends OsmPrimitive> primitives) {
         if (!cbTagRelations.isSelected())
             return null;
-        if (tfKey.getText().trim().equals(""))
+        if (tfKey.getText().trim().isEmpty())
             return null;
-        if (tfValue.getText().trim().equals(""))
+        if (tfValue.getText().trim().isEmpty())
             return null;
         if (primitives == null || primitives.isEmpty())
             return null;

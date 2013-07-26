@@ -33,7 +33,7 @@ public class OsmDataSessionImporter implements SessionLayerImporter {
             XPath xpath = xPathFactory.newXPath();
             XPathExpression fileExp = xpath.compile("file/text()");
             String fileStr = (String) fileExp.evaluate(elem, XPathConstants.STRING);
-            if (fileStr == null || fileStr.equals("")) {
+            if (fileStr == null || fileStr.isEmpty()) {
                 throw new IllegalDataException(tr("File name expected for layer no. {0}", support.getLayerIndex()));
             }
 

@@ -225,7 +225,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
 
     @Override
     public boolean stopCellEditing() {
-        if (tfFilename.getText() == null || tfFilename.getText().trim().equals("")) {
+        if (tfFilename.getText() == null || tfFilename.getText().trim().isEmpty()) {
             value = null;
         } else {
             value = new File(tfFilename.getText());

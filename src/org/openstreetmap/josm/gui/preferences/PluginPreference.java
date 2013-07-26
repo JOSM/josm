@@ -440,7 +440,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
     class SearchFieldAdapter implements DocumentListener {
         public void filter() {
             String expr = tfFilter.getText().trim();
-            if (expr.equals("")) {
+            if (expr.isEmpty()) {
                 expr = null;
             }
             model.filterDisplayedPlugins(expr);

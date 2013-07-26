@@ -572,7 +572,7 @@ public class ExtendedDialog extends JDialog {
      * @return true if dialog should not be shown again
      */
     private boolean toggleCheckState(String togglePref) {
-        toggleable = togglePref != null && !togglePref.equals("");
+        toggleable = togglePref != null && !togglePref.isEmpty();
 
         toggleValue = Main.pref.getInteger("message."+togglePref+".value", -1);
         // No identifier given, so return false (= show the dialog)

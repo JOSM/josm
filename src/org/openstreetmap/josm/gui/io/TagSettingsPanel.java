@@ -55,7 +55,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
         if (comment.equals(commentInTag))
             return;
 
-        if (comment.equals("")) {
+        if (comment.isEmpty()) {
             pnlTagEditor.getModel().delete("comment");
             return;
         }

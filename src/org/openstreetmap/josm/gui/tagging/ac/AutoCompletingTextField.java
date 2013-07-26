@@ -149,7 +149,7 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
 
                     @Override
                     public void keyReleased(KeyEvent e) {
-                        if (getText().equals("")) {
+                        if (getText().isEmpty()) {
                             applyFilter("");
                         }
                     }

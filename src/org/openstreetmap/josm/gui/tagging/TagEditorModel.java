@@ -148,7 +148,7 @@ public class TagEditorModel extends AbstractTableModel {
             break;
         case 1:
             String v = (String)value;
-            if (tag.getValueCount() > 1 && ! v.equals("")) {
+            if (tag.getValueCount() > 1 && !v.isEmpty()) {
                 updateTagValue(tag, v);
             } else if (tag.getValueCount() <= 1) {
                 updateTagValue(tag, v);
@@ -429,7 +429,7 @@ public class TagEditorModel extends AbstractTableModel {
 
             // tag name holds an empty key. Don't apply it to the selection.
             //
-            if (tag.getName().trim().equals("") || tag.getValue().trim().equals("")) {
+            if (tag.getName().trim().isEmpty() || tag.getValue().trim().isEmpty()) {
                 continue;
             }
             tags.put(tag.getName().trim(), tag.getValue().trim());
@@ -475,7 +475,7 @@ public class TagEditorModel extends AbstractTableModel {
 
         // tag name holds an empty key. Don't apply it to the selection.
         //
-        if (tag.getName().trim().equals(""))
+        if (tag.getName().trim().isEmpty())
             return null;
 
         String newkey = tag.getName();
@@ -516,7 +516,7 @@ public class TagEditorModel extends AbstractTableModel {
     public List<String> getKeys() {
         ArrayList<String> keys = new ArrayList<String>();
         for (TagModel tag: tags) {
-            if (!tag.getName().trim().equals("")) {
+            if (!tag.getName().trim().isEmpty()) {
                 keys.add(tag.getName());
             }
         }

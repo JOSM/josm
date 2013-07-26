@@ -101,7 +101,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
      */
     public void setPartiallyIdentified(String userName) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(userName, "userName");
-        if (userName.trim().equals(""))
+        if (userName.trim().isEmpty())
             throw new IllegalArgumentException(MessageFormat.format("Expected non-empty value for parameter ''{0}'', got ''{1}''", "userName", userName));
         this.userName = userName;
         userInfo = null;
@@ -119,7 +119,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
      */
     public void setFullyIdentified(String username, UserInfo userinfo) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(username, "username");
-        if (username.trim().equals(""))
+        if (username.trim().isEmpty())
             throw new IllegalArgumentException(tr("Expected non-empty value for parameter ''{0}'', got ''{1}''", "userName", userName));
         CheckParameterUtil.ensureParameterNotNull(userinfo, "userinfo");
         this.userName = username;
@@ -191,7 +191,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     public void initFromPreferences() {
         String userName = CredentialsManager.getInstance().getUsername();
         if (isAnonymous()) {
-            if (userName != null && ! userName.trim().equals("")) {
+            if (userName != null && !userName.trim().isEmpty()) {
                 setPartiallyIdentified(userName);
             }
         } else {
@@ -255,7 +255,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
         } else if (evt.getKey().equals("osm-server.url")) {
             if (!(evt.getNewValue() instanceof StringSetting)) return;
             String newValue = ((StringSetting) evt.getNewValue()).getValue();
-            if (newValue == null || newValue.trim().equals("")) {
+            if (newValue == null || newValue.trim().isEmpty()) {
                 setAnonymous();
             } else if (isFullyIdentified()) {
                 setPartiallyIdentified(getUserName());

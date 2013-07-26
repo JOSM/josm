@@ -96,7 +96,7 @@ public final class TaggingPresetItems {
             if (value.equals(DIFFERENT))
                 return "<b>"+DIFFERENT.replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</b>";
 
-            if (value.equals(""))
+            if (value.isEmpty())
                 return "&nbsp;";
 
             final StringBuilder res = new StringBuilder("<b>");
@@ -116,7 +116,7 @@ public final class TaggingPresetItems {
         }
 
         private Integer parseInteger(String str) {
-            if (str == null || "".equals(str))
+            if (str == null || str.isEmpty())
                 return null;
             try {
                 return Integer.parseInt(str);

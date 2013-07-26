@@ -44,7 +44,7 @@ abstract public class AbstractCredentialsAgent implements CredentialsAgent {
          * file (username=="") and each time after authentication failed
          * (noSuccessWithLastResponse == true).
          */
-        } else if (noSuccessWithLastResponse || username.equals("") || password.equals("")) {
+        } else if (noSuccessWithLastResponse || username.isEmpty() || password.isEmpty()) {
             GuiHelper.runInEDTAndWait(new Runnable() {
                 @Override
                 public void run() {

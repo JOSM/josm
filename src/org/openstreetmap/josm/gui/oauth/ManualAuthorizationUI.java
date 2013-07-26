@@ -182,7 +182,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
 
         @Override
         public boolean isValid() {
-            return ! getComponent().getText().trim().equals("");
+            return !getComponent().getText().trim().isEmpty();
         }
 
         @Override
@@ -202,7 +202,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
 
         @Override
         public boolean isValid() {
-            return ! getComponent().getText().trim().equals("");
+            return !getComponent().getText().trim().isEmpty();
         }
 
         @Override

@@ -603,7 +603,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         public boolean isValid() {
             String value = getComponent().getText().trim();
             try {
-                if (value.equals("")) {
+                if (value.isEmpty()) {
                     tileIndex = 0;
                 } else {
                     tileIndex = Integer.parseInt(value);
