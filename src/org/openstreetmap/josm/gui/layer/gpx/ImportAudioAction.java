@@ -248,7 +248,7 @@ public class ImportAudioAction extends AbstractAction {
                         (startTime - w1.time) / (w2.time - w1.time)));
                 wayPointFromTimeStamp.time = startTime;
                 String name = wavFile.getName();
-                int dot = name.lastIndexOf(".");
+                int dot = name.lastIndexOf('.');
                 if (dot > 0) {
                     name = name.substring(0, dot);
                 }

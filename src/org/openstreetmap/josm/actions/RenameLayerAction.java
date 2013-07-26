@@ -77,7 +77,7 @@ public class RenameLayerAction extends AbstractAction {
             Main.pref.put("layer.rename-file", filerename.isSelected());
             if (filerename.isSelected()) {
                 String newname = nameText;
-                if (newname.indexOf("/") == -1 && newname.indexOf("\\") == -1) {
+                if (newname.indexOf('/') == -1 && newname.indexOf('\\') == -1) {
                     newname = file.getParent() + File.separator + newname;
                 }
                 String oldname = file.getName();

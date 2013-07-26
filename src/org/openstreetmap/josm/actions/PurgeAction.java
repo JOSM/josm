@@ -243,7 +243,7 @@ public class PurgeAction extends JosmAction {
                     return (Long.valueOf(o1.getUniqueId())).compareTo(o2.getUniqueId());
                 }
             });
-            JList list = new JList(toPurgeAdditionally.toArray(new OsmPrimitive[0]));
+            JList list = new JList(toPurgeAdditionally.toArray(new OsmPrimitive[toPurgeAdditionally.size()]));
             /* force selection to be active for all entries */
             list.setCellRenderer(new OsmPrimitivRenderer() {
                 @Override

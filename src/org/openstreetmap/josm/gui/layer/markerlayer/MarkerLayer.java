@@ -251,7 +251,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         components.add(new RenameLayerAction(getAssociatedFile(), this));
         components.add(SeparatorLayerAction.INSTANCE);
         components.add(new LayerListPopup.InfoAction(this));
-        return components.toArray(new Action[0]);
+        return components.toArray(new Action[components.size()]);
     }
 
     public boolean synchronizeAudioMarkers(AudioMarker startMarker) {

@@ -164,7 +164,7 @@ public class MapPaintStyles {
         for(String fileset : prefIconDirs)
         {
             String[] a;
-            if(fileset.indexOf("=") >= 0) {
+            if(fileset.indexOf('=') >= 0) {
                 a = fileset.split("=", 2);
             } else {
                 a = new String[] {"", fileset};
