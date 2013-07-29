@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
+import java.util.Arrays;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Adds an imagery (WMS/TMS) layer. For instance, {@code /imagery?title=...&type=...&url=...}.
@@ -31,6 +33,11 @@ public class ImageryHandler extends RequestHandler {
     @Override
     public String[] getMandatoryParams() {
         return new String[]{"url"};
+    }
+    
+    @Override
+    public String[] getOptionalParams() {
+        return new String[] { "title", "type", "cookies", "min_zoom", "max_zoom"};
     }
 
     @Override
@@ -99,9 +106,22 @@ public class ImageryHandler extends RequestHandler {
         }
         this.args = args;
     }
-
+    
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
         // Nothing to do
+    }
+
+    @Override
+    public String[] getUsageExamples() {
+        final String types = Utils.join("|", Utils.transform(Arrays.asList(ImageryInfo.ImageryType.values()), new Utils.Function<ImageryInfo.ImageryType, String>() {
+            @Override
+            public String apply(ImageryInfo.ImageryType x) {
+                return x.getUrlString();
+            }
+        }));
+        return new String[] { "/imagery?title=osm&type=tms&url=http://tile.openstreetmap.org/%7Bzoom%7D/%7Bx%7D/%7By%7D.png",
+            "/imagery?title=landsat&type=wms&url=http://irs.gis-lab.info/?layers=landsat&SRS=%7Bproj%7D&WIDTH=%7Bwidth%7D&HEIGHT=%7Bheight%7D&BBOX=%7Bbbox%7D",
+            "/imagery?title=...&type={"+types+"}&url=....[&cookies=...][&min_zoom=...][&max_zoom=...]"};
     }
 }

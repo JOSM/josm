@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.net.Socket;
 import java.util.Arrays;
@@ -16,11 +18,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddWayHandler;
+import org.openstreetmap.josm.io.remotecontrol.handler.FeaturesHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.ImageryHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.ImportHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadAndZoomHandler;
@@ -126,6 +131,7 @@ public class RequestProcessor extends Thread {
         addRequestHandlerClass(VersionHandler.command, VersionHandler.class, true);
         addRequestHandlerClass(LoadObjectHandler.command, LoadObjectHandler.class, true);
         addRequestHandlerClass(OpenFileHandler.command, OpenFileHandler.class, true);
+        addRequestHandlerClass(FeaturesHandler.command, FeaturesHandler.class, true);
     }
 
     /**
@@ -203,17 +209,7 @@ public class RequestProcessor extends Thread {
             // find a handler for this command
             Class<? extends RequestHandler> handlerClass = handlers.get(command);
             if (handlerClass == null) {
-                // no handler found
-                StringBuilder usage = new StringBuilder(1024);
-                for (Entry<String, Class<? extends RequestHandler>> handler : handlers.entrySet()) {
-                    String[] mandatory = handler.getValue().newInstance().getMandatoryParams();
-                    usage.append("<li>");
-                    usage.append(handler.getKey());
-                    if (mandatory != null) {
-                        usage.append("<br/>mandatory parameter: ").append(Utils.join(", ", Arrays.asList(mandatory)));
-                    }
-                    usage.append("</li>");
-                }
+                String usage = getUsageAsHtml();
                 String websiteDoc = "http://josm.openstreetmap.de/wiki/Help/Preferences/RemoteControl";
                 String help = "No command specified! The following commands are available:<ul>"
                         + usage.toString()
@@ -363,5 +359,121 @@ public class RequestProcessor extends Thread {
         out.write("Access-Control-Allow-Origin: *\r\n");
         if (endHeaders)
             out.write("\r\n");
+    }
+    
+    public static String getHandlersInfoAsJSON() {
+        StringBuilder r = new StringBuilder();
+        boolean first = true;
+        r.append("[");
+        
+        for (Entry<String, Class<? extends RequestHandler>> p : handlers.entrySet()) {
+            if (first) {
+                first = false;
+            } else {
+                r.append(", ");
+            }
+            r.append(getHanldlerInfoAsJSON(p.getKey()));
+        }
+        r.append("]");
+
+        return r.toString();
+    }
+
+    public static String getHanldlerInfoAsJSON(String cmd) {
+        StringWriter w = new StringWriter();
+        PrintWriter r = new PrintWriter(w);
+        RequestHandler handler = null;
+        try {
+            Class c = handlers.get(cmd);
+            if (c==null) return null;
+            handler = handlers.get(cmd).newInstance();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        if (handler==null) return null;
+
+        r.printf("{ \"request\" : \"%s\"", cmd);
+        r.append(", \"parameters\" : [");
+
+        String params[] = handler.getMandatoryParams();
+        if (params != null) {
+            for (int i = 0; i < params.length; i++) {
+                if (i == 0) {
+                    r.append('\"');
+                } else {
+                    r.append(", \"");
+                }
+                r.append(params[i]).append('\"');
+            }
+        }
+        r.append("], \"optional\" : [");
+        String optional[] = handler.getOptionalParams();
+        if (optional != null) {
+            for (int i = 0; i < optional.length; i++) {
+                if (i == 0) {
+                    r.append('\"');
+                } else {
+                    r.append(", \"");
+                }
+                r.append(optional[i]).append('\"');
+            }
+        }
+        
+        r.append("], \"examples\" : [");
+        String examples[] = handler.getUsageExamples();
+        if (examples != null) {
+            for (int i = 0; i < examples.length; i++) {
+                if (i == 0) {
+                    r.append('\"');
+                } else {
+                    r.append(", \"");
+                }
+                r.append(examples[i]).append('\"');
+            }
+        }
+        r.append("]}");
+        try {
+            return w.toString();
+        } finally {
+            try {
+                w.close();
+            } catch (IOException ex) {
+            }
+        }
+    }
+
+
+    /**
+     * Reports HTML message with the description of all available commands
+     * @return
+     * @throws IllegalAccessException
+     * @throws InstantiationException 
+     */
+    public static String getUsageAsHtml() throws IllegalAccessException, InstantiationException {
+        // no handler found
+        StringBuilder usage = new StringBuilder(1024);
+        for (Entry<String, Class<? extends RequestHandler>> handler : handlers.entrySet()) {
+            RequestHandler sample = handler.getValue().newInstance();
+            String[] mandatory = sample.getMandatoryParams();
+            String[] optional = sample.getOptionalParams();
+            String[] examples = sample.getUsageExamples();
+            usage.append("<li>");
+            usage.append(handler.getKey());
+            if (mandatory != null) {
+                usage.append("<br/>mandatory parameters: ").append(Utils.join(", ", Arrays.asList(mandatory)));
+            }
+            if (optional != null) {
+                usage.append("<br/>optional parameters: ").append(Utils.join(", ", Arrays.asList(optional)));
+            }
+            if (examples != null) {
+                usage.append("<br/>examples: ");
+                for (String ex: examples) {
+                    usage.append("<br/> <a href=\"http://localhost:8111"+ex+"\">"+ex+"</a>");
+                }
+            }
+            usage.append("</li>");
+        }
+        return usage.toString();
     }
 }
