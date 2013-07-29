@@ -6,7 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -105,6 +107,14 @@ public abstract class RequestHandler {
     abstract public PermissionPrefWithDefault getPermissionPref();
 
     abstract public String[] getMandatoryParams();
+    
+    public String[] getOptionalParams() {
+        return null;
+    }
+     
+    public String[] getUsageExamples() {
+        return null;
+    }
 
     /**
      * Check permissions in preferences and display error message
@@ -175,8 +185,8 @@ public abstract class RequestHandler {
             if (req.indexOf('?') != -1) {
                 String query = req.substring(req.indexOf('?') + 1);
                 if (query.indexOf('#') != -1) {
-                    query = query.substring(0, query.indexOf('#'));
-                }
+                            query = query.substring(0, query.indexOf('#'));
+                        }
                 String[] params = query.split("&", -1);
                 for (String param : params) {
                     int eq = param.indexOf('=');
@@ -193,11 +203,10 @@ public abstract class RequestHandler {
 
     void checkMandatoryParams() throws RequestHandlerBadRequestException {
         String[] mandatory = getMandatoryParams();
-        if(mandatory == null) return;
-
+        String[] optional = getOptionalParams();
         List<String> missingKeys = new LinkedList<String>();
         boolean error = false;
-        for (String key : mandatory) {
+        if(mandatory != null) for (String key : mandatory) {
             String value = args.get(key);
             if ((value == null) || (value.length() == 0)) {
                 error = true;
@@ -205,11 +214,20 @@ public abstract class RequestHandler {
                 missingKeys.add(key);
             }
         }
+        HashSet<String> knownParams = new HashSet<String>();
+        if (mandatory != null) Collections.addAll(knownParams, mandatory);
+        if (optional != null) Collections.addAll(knownParams, optional);
+        for (String par: args.keySet()) {
+            if (!knownParams.contains(par)) {
+                Main.warn("Unknown remote control parameter {0}, skipping it", par);
+            }
+        }
         if (error) {
             throw new RequestHandlerBadRequestException(
                     "The following keys are mandatory, but have not been provided: "
                     + Utils.join(", ", missingKeys));
         }
+        
     }
 
     /**

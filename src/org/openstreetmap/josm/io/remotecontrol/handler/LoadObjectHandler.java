@@ -32,6 +32,19 @@ public class LoadObjectHandler extends RequestHandler {
     public String[] getMandatoryParams() {
         return new String[]{"objects"};
     }
+    
+    @Override
+    public String[] getOptionalParams()
+    {
+        return new String[] {"new_layer", "addtags"};
+    }
+
+    @Override
+    public String[] getUsageExamples() {
+        return new String[] {"/load_object?new_layer=true&objects=w106159509",
+            "/load_object?new_layer=true&objects=r2263653&relation_members=true"
+        };
+    }
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException, RequestHandlerBadRequestException {

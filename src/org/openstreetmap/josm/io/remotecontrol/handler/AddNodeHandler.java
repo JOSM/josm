@@ -43,7 +43,21 @@ public class AddNodeHandler extends RequestHandler {
     {
         return new String[] { "lat", "lon" };
     }
+    
+    @Override
+    public String[] getOptionalParams()
+    {
+        return new String[] { "addtags" };
+    }
 
+    @Override
+    public String[] getUsageExamples() {
+        return new String[] {
+            "/add_node?lat=11&lon=22",
+            "/add_node?lon=13.3&lat=53.2&addtags=natural=tree|name=%20%20%20==Great%20Oak==" 
+        };
+    }
+    
     @Override
     public String getPermissionMessage() {
         return tr("Remote Control has been asked to create a new node.") +

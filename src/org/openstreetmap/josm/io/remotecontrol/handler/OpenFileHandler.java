@@ -24,6 +24,16 @@ public class OpenFileHandler extends RequestHandler {
     public String[] getMandatoryParams() {
         return new String[]{"filename"};
     }
+    
+    @Override
+    public String[] getOptionalParams() {
+        return null;
+    }
+
+    @Override
+    public String[] getUsageExamples() {
+        return new String[] {"/open_file?filename=/tmp/test.osm"};
+    }
 
     @Override
     public PermissionPrefWithDefault getPermissionPref() {
