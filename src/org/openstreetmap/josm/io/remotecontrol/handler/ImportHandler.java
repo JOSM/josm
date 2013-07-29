@@ -44,7 +44,17 @@ public class ImportHandler extends RequestHandler {
     public String[] getMandatoryParams() {
         return new String[]{"url"};
     }
+    
+    @Override
+    public String[] getOptionalParams() {
+        return new String[] {"new_layer"};
+    }
 
+    @Override
+    public String[] getUsageExamples() {
+        return new String[] { "/import?urlhttp://josm.openstreetmap.de/browser/josm/trunk/data_nodist/direction-arrows.osm" };
+    }
+    
     @Override
     public String getPermissionMessage() {
         // URL can be any suitable URL giving back OSM data, including OSM API calls, even if calls to the main API

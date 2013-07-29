@@ -42,7 +42,17 @@ public class VersionHandler extends RequestHandler {
     }
 
     @Override
+    public String[] getOptionalParams() {
+        return new String[]{"jsonp"};
+    }
+
+    @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
         // Nothing to do
+    }
+
+    @Override
+    public String[] getUsageExamples() {
+        return new String[] { "/version", "/version?jsonp=test"};
     }
 }
