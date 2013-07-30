@@ -647,7 +647,8 @@ public class Utils {
         boolean leadingWhite = true;
         while (leadingWhite && start < end) {
             char c = str.charAt(start);
-            leadingWhite = (Character.isWhitespace(c) || Character.isSpaceChar(c));
+            // '\u200B' (ZERO WIDTH SPACE character) needs to be handled manually because of change in Unicode 6.0 (Java 7, see #8918)
+            leadingWhite = (Character.isWhitespace(c) || Character.isSpaceChar(c) || c == '\u200B');
             if (leadingWhite) {
                 start++;
             }
@@ -655,7 +656,7 @@ public class Utils {
         boolean trailingWhite = true;
         while (trailingWhite && end > start+1) {
             char c = str.charAt(end-1);
-            trailingWhite = (Character.isWhitespace(c) || Character.isSpaceChar(c));
+            trailingWhite = (Character.isWhitespace(c) || Character.isSpaceChar(c) || c == '\u200B');
             if (trailingWhite) {
                 end--;
             }
