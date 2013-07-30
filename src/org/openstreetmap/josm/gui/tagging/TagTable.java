@@ -14,10 +14,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Collections;
 import java.util.EventObject;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
+import static javax.swing.Action.SHORT_DESCRIPTION;
+import static javax.swing.Action.SMALL_ICON;
 import javax.swing.CellEditor;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComponent;
@@ -31,6 +37,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.text.JTextComponent;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.PasteTagsAction.TagPaster;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 
 import org.openstreetmap.josm.gui.dialogs.relation.RunnableAction;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
@@ -303,11 +313,43 @@ public class TagTable extends JTable  {
         }
     }
 
+     /**
+     * Action to be run when the user wants to paste tags from buffer
+     */
+    class PasteAction extends RunnableAction implements PropertyChangeListener{
+        public PasteAction() {
+            putValue(SMALL_ICON, ImageProvider.get("","pastetags"));
+            putValue(SHORT_DESCRIPTION, tr("Paste tags from buffer"));
+            TagTable.this.addPropertyChangeListener(this);
+            updateEnabledState();
+        }
+
+        @Override
+        public void run() {
+            Relation relation = new Relation();
+            model.applyToPrimitive(relation);
+            TagPaster tagPaster = new TagPaster(Main.pasteBuffer.getDirectlyAdded(), Collections.<OsmPrimitive>singletonList(relation));
+            model.updateTags(tagPaster.execute());
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(TagTable.this.isEnabled());
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            updateEnabledState();
+        }
+    }
+    
     /** the delete action */
     private RunnableAction deleteAction = null;
 
     /** the add action */
     private RunnableAction addAction = null;
+
+    /** the tag paste action */
+    private RunnableAction pasteAction = null;
 
     /**
      *
@@ -319,6 +361,10 @@ public class TagTable extends JTable  {
 
     public RunnableAction getAddAction() {
         return addAction;
+    }
+
+    public RunnableAction getPasteAction() {
+        return pasteAction;
     }
 
     /**
@@ -352,6 +398,8 @@ public class TagTable extends JTable  {
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
         .put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, KeyEvent.CTRL_MASK), "addTag");
         getActionMap().put("addTag", addAction);
+
+        pasteAction = new PasteAction();
 
         // create the table cell editor and set it to key and value columns
         //
