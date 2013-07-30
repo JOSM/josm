@@ -90,7 +90,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
     }
 
     protected String buildDownloadFeedbackMessage() {
-        if (parents.size() == 0) {
+        if (parents.isEmpty()) {
             return trn("Downloading {0} incomplete object",
                     "Downloading {0} incomplete objects",
                     children.size(),

@@ -238,7 +238,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             if (layer != null) {
                 Main.main.addLayer(layer);
 
-                if (! canceled && layer.data.size() > 0) {
+                if (!canceled && !layer.data.isEmpty()) {
                     boolean noGeotagFound = true;
                     for (ImageEntry e : layer.data) {
                         if (e.getPos() != null) {
@@ -632,7 +632,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     }
 
     public void showPreviousPhoto() {
-        if (data != null && data.size() > 0) {
+        if (data != null && !data.isEmpty()) {
             currentPhoto--;
             if (currentPhoto < 0) {
                 currentPhoto = 0;

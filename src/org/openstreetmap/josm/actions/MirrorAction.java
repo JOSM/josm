@@ -50,7 +50,7 @@ public final class MirrorAction extends JosmAction {
             }
         }
 
-        if (nodes.size() == 0) {
+        if (nodes.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Please select at least one node or way."),

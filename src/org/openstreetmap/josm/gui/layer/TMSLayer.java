@@ -1386,7 +1386,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 TileSet ts2 = new TileSet(topLeft2, botRight2, newzoom);
                 // Instantiating large TileSets is expensive.  If there
                 // are no loaded tiles, don't bother even trying.
-                if (ts2.allLoadedTiles().size() == 0) {
+                if (ts2.allLoadedTiles().isEmpty()) {
                     newlyMissedTiles.add(missed);
                     continue;
                 }

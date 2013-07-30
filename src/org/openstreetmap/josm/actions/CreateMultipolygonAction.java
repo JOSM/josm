@@ -265,7 +265,7 @@ public class CreateMultipolygonAction extends JosmAction {
                 }
             }
 
-            if( affectedWays.size() > 0 ) {
+            if(!affectedWays.isEmpty()) {
                 // reset key tag on affected ways
                 commands.add(new ChangePropertyCommand(affectedWays, key, null));
             }

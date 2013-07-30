@@ -214,7 +214,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
         }
         p.add(items, GBC.eol().fill());
-        if (selected.size() == 0 && !supportsRelation()) {
+        if (selected.isEmpty() && !supportsRelation()) {
             GuiHelper.setEnabledRec(items, false);
         }
 
@@ -330,7 +330,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 }
             }
 
-            answer = new PresetDialog(p, title, (ImageIcon) getValue(Action.SMALL_ICON), (sel.size() == 0)).getValue();
+            answer = new PresetDialog(p, title, (ImageIcon) getValue(Action.SMALL_ICON), sel.isEmpty()).getValue();
         }
         if (!showNewRelation && answer == 2)
             return DIALOG_ANSWER_CANCEL;
@@ -349,7 +349,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * @return Cleaned list with suitable OsmPrimitives only
      */
     public Collection<OsmPrimitive> createSelection(Collection<OsmPrimitive> participants) {
-        originalSelectionEmpty = participants.size() == 0;
+        originalSelectionEmpty = participants.isEmpty();
         Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : participants)
         {

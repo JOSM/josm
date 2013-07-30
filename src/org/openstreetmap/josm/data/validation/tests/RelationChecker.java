@@ -108,7 +108,7 @@ public class RelationChecker extends Test {
                 allroles.addAll(r.roles);
             }
         }
-        if (allroles.size() == 0) {
+        if (allroles.isEmpty()) {
             errors.add( new TestError(this, Severity.WARNING, tr("Relation type is unknown"),
                     RELATION_UNKNOWN, n) );
         } else {

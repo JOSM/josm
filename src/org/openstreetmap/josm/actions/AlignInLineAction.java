@@ -113,7 +113,7 @@ public final class AlignInLineAction extends JosmAction {
         //// Decide what to align based on selection:
 
         /// Only ways selected -> Align their nodes.
-        if ((selectedNodes.size() == 0) && (selectedWays.size() == 1)) { // TODO: handle multiple ways
+        if ((selectedNodes.isEmpty()) && (selectedWays.size() == 1)) { // TODO: handle multiple ways
             for (Way way : selectedWays) {
                 nodes.addAll(way.getNodes());
             }

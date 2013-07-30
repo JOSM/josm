@@ -442,7 +442,7 @@ public class Utils {
         for (int i=0; i<size; ++i) {
             T parentless = null;
             for (T key : deps.keySet()) {
-                if (deps.get(key).size() == 0) {
+                if (deps.get(key).isEmpty()) {
                     parentless = key;
                     break;
                 }

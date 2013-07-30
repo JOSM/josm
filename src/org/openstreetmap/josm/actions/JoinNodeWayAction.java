@@ -46,7 +46,7 @@ public class JoinNodeWayAction extends JosmAction {
 
         // If the user has selected some ways, only join the node to these.
         boolean restrictToSelectedWays =
-            getCurrentDataSet().getSelectedWays().size() > 0;
+                !getCurrentDataSet().getSelectedWays().isEmpty();
 
             List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(
                     Main.map.mapView.getPoint(node), OsmPrimitive.isSelectablePredicate);
@@ -73,7 +73,7 @@ public class JoinNodeWayAction extends JosmAction {
 
             for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
                 List<Integer> is = insertPoint.getValue();
-                if (is.size() == 0) {
+                if (is.isEmpty()) {
                     continue;
                 }
 
@@ -87,7 +87,7 @@ public class JoinNodeWayAction extends JosmAction {
                 wnew.setNodes(nodesToAdd);
                 cmds.add(new ChangeCommand(w, wnew));
             }
-            if (cmds.size() == 0) return;
+            if (cmds.isEmpty()) return;
             Main.main.undoRedo.add(new SequenceCommand(tr("Join Node and Line"), cmds));
             Main.map.repaint();
     }
