@@ -107,7 +107,7 @@ public final class OrthogonalizeAction extends JosmAction {
                         rememberMovements.remove(n);
                     }
                 }
-                if (commands.size() > 0) {
+                if (!commands.isEmpty()) {
                     Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize / Undo"), commands));
                     Main.map.repaint();
                 } else throw new InvalidUserInputException();

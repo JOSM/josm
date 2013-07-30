@@ -97,7 +97,7 @@ public final class CreateCircleAction extends JosmAction {
 
         // special case if no single nodes are selected and exactly one way is:
         // then use the way's nodes
-        if ((nodes.size() == 0) && (sel.size() == 1)) {
+        if (nodes.isEmpty() && (sel.size() == 1)) {
             for (OsmPrimitive osm : sel)
                 if (osm instanceof Way) {
                     existingWay = ((Way)osm);

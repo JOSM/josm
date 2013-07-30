@@ -255,7 +255,7 @@ public class MultipolygonCreate {
             PolygonLevel pol = new PolygonLevel(outerWay, level);
 
             //process inner ways
-            if (innerCandidates.size() > 0) {
+            if (!innerCandidates.isEmpty()) {
                 List<PolygonLevel> innerList = this.findOuterWaysRecursive(level + 1, innerCandidates);
                 if (innerList == null) {
                     return null; //intersection found

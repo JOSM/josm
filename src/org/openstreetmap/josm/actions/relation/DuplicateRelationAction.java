@@ -39,7 +39,7 @@ public class DuplicateRelationAction extends AbstractRelationAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || relations.size()==0)
+        if (!isEnabled() || relations.isEmpty())
             return;
         Relation r = relations.iterator().next();
         duplicateRelationAndLaunchEditor(r);

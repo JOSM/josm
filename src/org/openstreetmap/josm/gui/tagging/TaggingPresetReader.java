@@ -100,7 +100,7 @@ public final class TaggingPresetReader {
                 all.add(tp);
                 lastrole = null;
             } else {
-                if (all.size() != 0) {
+                if (!all.isEmpty()) {
                     if (o instanceof TaggingPresetItems.Roles) {
                         all.getLast().data.add((TaggingPresetItem) o);
                         if (all.getLast().roles != null) {

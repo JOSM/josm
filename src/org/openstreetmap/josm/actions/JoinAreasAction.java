@@ -197,7 +197,7 @@ public class JoinAreasAction extends JosmAction {
         }
 
         public boolean hasWays() {
-            return availableWays.size() > 0;
+            return !availableWays.isEmpty();
         }
 
         public WayInPolygon startNewWay(WayInPolygon way) {
@@ -403,7 +403,7 @@ public class JoinAreasAction extends JosmAction {
 
         //find intersection points
         Set<Node> nodes = Geometry.addIntersections(allStartingWays, true, cmds);
-        return nodes.size() > 0;
+        return !nodes.isEmpty();
     }
 
     /**
@@ -453,7 +453,7 @@ public class JoinAreasAction extends JosmAction {
         }
 
         // Don't warn now, because it will really look corrupted
-        boolean warnAboutRelations = relations.size() > 0 && allStartingWays.size() > 1;
+        boolean warnAboutRelations = !relations.isEmpty() && allStartingWays.size() > 1;
 
         ArrayList<WayInPolygon> preparedWays = new ArrayList<WayInPolygon>();
 
@@ -506,7 +506,7 @@ public class JoinAreasAction extends JosmAction {
         commitCommands(marktr("Delete relations"));
 
         // Delete the discarded inner ways
-        if (discardedWays.size() > 0) {
+        if (!discardedWays.isEmpty()) {
             Command deleteCmd = DeleteCommand.delete(Main.map.mapView.getEditLayer(), discardedWays, true);
             if (deleteCmd != null) {
                 cmds.add(deleteCmd);
@@ -922,7 +922,7 @@ public class JoinAreasAction extends JosmAction {
             PolygonLevel polLev = new PolygonLevel(pol, level);
 
             //process inner ways
-            if (innerCandidates.size() > 0) {
+            if (!innerCandidates.isEmpty()) {
                 List<PolygonLevel> innerList = findOuterWaysImpl(level + 1, innerCandidates);
                 result.addAll(innerList);
 

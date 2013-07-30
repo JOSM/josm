@@ -196,7 +196,7 @@ public class SessionWriter {
                 el.setAttribute("opacity", Double.toString(layer.getOpacity()));
             }
             Set<Layer> deps = dependencies.get(layer);
-            if (deps.size() > 0) {
+            if (!deps.isEmpty()) {
                 List<Integer> depsInt = new ArrayList<Integer>();
                 for (Layer depLayer : deps) {
                     int depIndex = layers.indexOf(depLayer);

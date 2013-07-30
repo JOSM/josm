@@ -47,7 +47,7 @@ public class MarkerSessionImporter implements SessionLayerImporter {
 
             GpxLayer gpxLayer = null;
             List<SessionReader.LayerDependency> deps = support.getLayerDependencies();
-            if (deps.size() > 0) {
+            if (!deps.isEmpty()) {
                 Layer layer = deps.iterator().next().getLayer();
                 if (layer instanceof GpxLayer) {
                     gpxLayer = (GpxLayer) layer;

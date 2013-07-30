@@ -231,7 +231,7 @@ public class OsmReader extends AbstractReader {
                 break;
             }
         }
-        if (w.isDeleted() && nodeIds.size() > 0) {
+        if (w.isDeleted() && !nodeIds.isEmpty()) {
             System.out.println(tr("Deleted way {0} contains nodes", w.getUniqueId()));
             nodeIds = new ArrayList<Long>();
         }
@@ -278,7 +278,7 @@ public class OsmReader extends AbstractReader {
                 break;
             }
         }
-        if (r.isDeleted() && members.size() > 0) {
+        if (r.isDeleted() && !members.isEmpty()) {
             System.out.println(tr("Deleted relation {0} contains members", r.getUniqueId()));
             members = new ArrayList<RelationMemberData>();
         }

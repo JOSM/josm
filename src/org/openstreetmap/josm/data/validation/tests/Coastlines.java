@@ -156,7 +156,7 @@ public class Coastlines extends Test {
                     highlight.add(tail);
                 }
 
-                if (highlight.size() > 0) {
+                if (!highlight.isEmpty()) {
                     errors.add(new TestError(this, Severity.ERROR, tr("Unconnected coastline"),
                             UNCONNECTED_COASTLINE, primitives, highlight));
                 }

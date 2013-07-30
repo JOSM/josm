@@ -39,7 +39,7 @@ public class MarkersFromNamedPointsAction extends AbstractAction {
             }
         }
         MarkerLayer ml = new MarkerLayer(namedTrackPoints, tr("Named Trackpoints from {0}", layer.getName()), layer.getAssociatedFile(), layer);
-        if (ml.data.size() > 0) {
+        if (!ml.data.isEmpty()) {
             Main.main.addLayer(ml);
         }
     }

@@ -40,7 +40,7 @@ public class NMEAImporter extends FileImporter {
                     Main.main.addLayer(gpxLayer);
                     if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
                         MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), fileFinal, gpxLayer);
-                        if (ml.data.size() > 0) {
+                        if (!ml.data.isEmpty()) {
                             Main.main.addLayer(ml);
                         }
                     }

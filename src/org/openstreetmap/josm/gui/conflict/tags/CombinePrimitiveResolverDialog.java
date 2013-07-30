@@ -258,7 +258,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         List<Command> cmds = new LinkedList<Command>();
 
         TagCollection allResolutions = getTagConflictResolverModel().getAllResolutions();
-        if (allResolutions.size() > 0) {
+        if (!allResolutions.isEmpty()) {
             cmds.addAll(buildTagChangeCommand(targetPrimitive, allResolutions));
         }
         for(String p : OsmPrimitive.getDiscardableKeys()) {

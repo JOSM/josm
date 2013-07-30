@@ -550,7 +550,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         getSelectionModel().setValueIsAdjusting(false);
         // make the first selected member visible
         //
-        if (selectedIndices.size() > 0) {
+        if (!selectedIndices.isEmpty()) {
             fireMakeMemberVisible(Collections.min(selectedIndices));
         }
     }
@@ -629,7 +629,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             }
         }
         getSelectionModel().setValueIsAdjusting(false);
-        if (getSelectedIndices().size() > 0) {
+        if (!getSelectedIndices().isEmpty()) {
             fireMakeMemberVisible(getSelectedIndices().get(0));
         }
     }

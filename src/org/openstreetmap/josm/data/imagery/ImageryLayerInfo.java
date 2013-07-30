@@ -41,7 +41,7 @@ public class ImageryLayerInfo {
     }
 
     public void load() {
-        boolean addedDefault = layers.size() != 0;
+        boolean addedDefault = !layers.isEmpty();
         List<ImageryPreferenceEntry> entries = Main.pref.getListOfStructs("imagery.entries", null, ImageryPreferenceEntry.class);
         if (entries != null) {
             for (ImageryPreferenceEntry prefEntry : entries) {
@@ -120,8 +120,7 @@ public class ImageryLayerInfo {
         }
 
         Collections.sort(defaultLayers);
-        Main.pref.putCollection("imagery.layers.default", defaultsSave.size() > 0
-                ? defaultsSave : defaults);
+        Main.pref.putCollection("imagery.layers.default", defaultsSave.isEmpty() ? defaults : defaultsSave);
     }
 
     // some additional checks to respect extended URLs in preferences (legacy workaround)

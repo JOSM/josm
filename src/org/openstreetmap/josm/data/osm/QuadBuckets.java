@@ -174,7 +174,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             if (content == null)
                 return false;
             boolean ret = this.content.remove(o);
-            if (this.content.size() == 0) {
+            if (this.content.isEmpty()) {
                 this.content = null;
             }
             if (this.canRemove()) {
@@ -491,7 +491,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         boolean canRemove()
         {
-            if (content != null && content.size() > 0)
+            if (content != null && !content.isEmpty())
                 return false;
             if (this.hasChildren())
                 return false;

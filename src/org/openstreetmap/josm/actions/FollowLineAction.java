@@ -95,7 +95,7 @@ public class FollowLineAction extends JosmAction {
                 continue;
             }
             Set<Node> points = toFollow.getNeighbours(last);
-            if (!points.remove(prev) || (points.size() == 0))
+            if (!points.remove(prev) || points.isEmpty())
                 continue;
             if (points.size() > 1)    // Ambiguous junction?
                 return;
