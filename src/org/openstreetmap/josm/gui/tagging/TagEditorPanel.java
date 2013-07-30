@@ -9,6 +9,7 @@ import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.EnumSet;
+import javax.swing.AbstractAction;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -84,7 +85,16 @@ public class TagEditorPanel extends JPanel {
         pnl.add(btn = new JButton(tagTable.getDeleteAction()));
         btn.setMargin(new Insets(0,0,0,0));
         tagTable.addComponentNotStoppingCellEditing(btn);
+        
+        // paste action
+        pnl.add(btn = new JButton(tagTable.getPasteAction()));
+        btn.setMargin(new Insets(0,0,0,0));
+        tagTable.addComponentNotStoppingCellEditing(btn);
         return pnl;
+    }
+
+    public AbstractAction getPasteAction() {
+        return tagTable.getPasteAction();
     }
 
     /**

@@ -20,6 +20,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -572,6 +573,36 @@ public class TagEditorModel extends AbstractTableModel {
         SelectionStateMemento memento = new SelectionStateMemento();
         fireTableDataChanged();
         memento.apply();
+    }
+
+    /**
+     * Load tags from given list
+     * @param tags - the list
+     */
+    public void updateTags(List<Tag> tags) {
+         if (tags.isEmpty())
+            return;
+
+        Map<String, TagModel> modelTags = new HashMap<String, TagModel>();
+        for (int i=0; i<getRowCount(); i++) {
+            TagModel tagModel = get(i);
+            modelTags.put(tagModel.getName(), tagModel);
+        }
+        for (Tag tag: tags) {
+            TagModel existing = modelTags.get(tag.getKey());
+
+            if (tag.getValue().isEmpty()) {
+                if (existing != null) {
+                    delete(tag.getKey());
+                }
+            } else {
+                if (existing != null) {
+                    updateTagValue(existing, tag.getValue());
+                } else {
+                    add(tag.getKey(), tag.getValue());
+                }
+            }
+        }
     }
 
     /**
