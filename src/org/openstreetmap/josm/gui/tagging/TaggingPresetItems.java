@@ -357,7 +357,7 @@ public final class TaggingPresetItems {
         @Override
         public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             p.add(new JLabel(" "), GBC.eol()); // space
-            if (roles.size() > 0) {
+            if (!roles.isEmpty()) {
                 JPanel proles = new JPanel(new GridBagLayout());
                 proles.add(new JLabel(tr("Available roles")), GBC.std().insets(0, 0, 10, 0));
                 proles.add(new JLabel(tr("role")), GBC.std().insets(0, 0, 10, 0));

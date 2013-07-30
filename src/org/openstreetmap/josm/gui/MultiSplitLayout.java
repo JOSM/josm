@@ -1192,7 +1192,7 @@ public class MultiSplitLayout implements LayoutManager {
 
     private static void addSplitChild(Split parent, Node child) {
         List<Node> children = new ArrayList<Node>(parent.getChildren());
-        if (children.size() == 0) {
+        if (children.isEmpty()) {
             children.add(child);
         }
         else {

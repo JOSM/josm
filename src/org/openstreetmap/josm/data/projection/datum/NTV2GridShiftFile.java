@@ -183,7 +183,7 @@ public class NTV2GridShiftFile implements Serializable {
         NTV2SubGrid[] nullArray = new NTV2SubGrid[0];
         for (int i = 0; i < subGrid.length; i++) {
             ArrayList<NTV2SubGrid> subSubGrids = subGridMap.get(subGrid[i].getSubGridName());
-            if (subSubGrids.size() > 0) {
+            if (!subSubGrids.isEmpty()) {
                 NTV2SubGrid[] subGridArray = subSubGrids.toArray(nullArray);
                 subGrid[i].setSubGridArray(subGridArray);
             }

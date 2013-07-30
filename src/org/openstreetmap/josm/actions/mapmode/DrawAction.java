@@ -516,7 +516,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         wayIsFinished = false;
 
         // don't draw lines if shift is held
-        if (selection.size() > 0 && !shift) {
+        if (!selection.isEmpty() && !shift) {
             Node selectedNode = null;
             Way selectedWay = null;
 
@@ -1233,7 +1233,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         /*
          * Handle special case: Self-Overlapping or closing way
          */
-        if (getCurrentDataSet() != null && getCurrentDataSet().getSelectedWays().size() > 0 && !wayIsFinished && !alt) {
+        if (getCurrentDataSet() != null && !getCurrentDataSet().getSelectedWays().isEmpty() && !wayIsFinished && !alt) {
             Way w = getCurrentDataSet().getSelectedWays().iterator().next();
             for (Node m : w.getNodes()) {
                 if (m.equals(mouseOnExistingNode) || mouseOnExistingWays.contains(w)) {

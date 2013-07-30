@@ -1538,7 +1538,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Set new cursor.
      */
     public void setNewCursor(Cursor cursor, Object reference) {
-        if(Cursors.size() > 0) {
+        if(!Cursors.isEmpty()) {
             CursorInfo l = Cursors.getLast();
             if(l != null && l.cursor == cursor && l.object == reference)
                 return;
@@ -1554,14 +1554,14 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Remove the new cursor and reset to previous
      */
     public void resetCursor(Object reference) {
-        if(Cursors.size() == 0) {
+        if(Cursors.isEmpty()) {
             setCursor(null);
             return;
         }
         CursorInfo l = Cursors.getLast();
         stripCursors(reference);
         if(l != null && l.object == reference) {
-            if(Cursors.size() == 0) {
+            if(Cursors.isEmpty()) {
                 setCursor(null);
             } else {
                 setCursor(Cursors.getLast().cursor);

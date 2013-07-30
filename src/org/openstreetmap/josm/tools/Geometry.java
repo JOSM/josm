@@ -172,7 +172,7 @@ public class Geometry {
                                 }
                             }
                         }
-                        else if (test && intersectionNodes.size() > 0)
+                        else if (test && !intersectionNodes.isEmpty())
                             return intersectionNodes;
                     }
                 }

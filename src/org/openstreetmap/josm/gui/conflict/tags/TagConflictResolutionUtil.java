@@ -38,7 +38,7 @@ public class TagConflictResolutionUtil {
 
         int numNodesWithTags = 0;
         for (OsmPrimitive p: merged) {
-            if (p.getKeys().size() >0) {
+            if (!p.getKeys().isEmpty()) {
                 numNodesWithTags++;
             }
         }

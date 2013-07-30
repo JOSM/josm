@@ -268,7 +268,7 @@ public class WmsCache {
         index.setTileSize(tileSize);
         index.setTotalFileSize(totalFileSize);
         for (ProjectionEntries projectionEntries: entries.values()) {
-            if (projectionEntries.entries.size() > 0) {
+            if (!projectionEntries.entries.isEmpty()) {
                 ProjectionType projectionType = new ProjectionType();
                 projectionType.setName(projectionEntries.projection);
                 projectionType.setCacheDirectory(projectionEntries.cacheDirectory);

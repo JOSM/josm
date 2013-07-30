@@ -469,7 +469,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     data.storageFile));
         }
 
-        if (gpxLst.size() == 0) {
+        if (gpxLst.isEmpty()) {
             gpxLst.add(new GpxDataWrapper(tr("<No GPX track loaded yet>"), null, null));
         }
 

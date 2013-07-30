@@ -182,7 +182,7 @@ public class GpxLayer extends Layer {
             info.append(tr("Description: {0}", data.attr.get(GpxConstants.META_DESC))).append("<br>");
         }
 
-        if (data.tracks.size() > 0) {
+        if (!data.tracks.isEmpty()) {
             info.append("<table><thead align='center'><tr><td colspan='5'>"
                     + trn("{0} track", "{0} tracks", data.tracks.size(), data.tracks.size())
                     + "</td></tr><tr align='center'><td>" + tr("Name") + "</td><td>"

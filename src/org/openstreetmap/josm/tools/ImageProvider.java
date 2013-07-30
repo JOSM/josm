@@ -424,7 +424,7 @@ public class ImageProvider {
                     String full_name = subdir + name + ext;
                     String cache_name = full_name;
                     /* cache separately */
-                    if (dirs != null && dirs.size() > 0) {
+                    if (dirs != null && !dirs.isEmpty()) {
                         cache_name = "id:" + id + ":" + full_name;
                         if(archive != null) {
                             cache_name += ":" + archive.getName();

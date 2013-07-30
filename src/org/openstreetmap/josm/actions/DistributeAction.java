@@ -59,7 +59,7 @@ public final class DistributeAction extends JosmAction {
             }
         // special case if no single nodes are selected and exactly one way is:
         // then use the way's nodes
-        if ((nodes.size() == 0) && (sel.size() == 1)) {
+        if (nodes.isEmpty() && (sel.size() == 1)) {
             for (OsmPrimitive osm : sel)
                 if (osm instanceof Way) {
                     nodes.addAll(((Way)osm).getNodes());
@@ -121,7 +121,7 @@ public final class DistributeAction extends JosmAction {
 
         // Current number of node
         int pos = 0;
-        while (nodes.size() > 0) {
+        while (!nodes.isEmpty()) {
             pos++;
             Node s = null;
 
