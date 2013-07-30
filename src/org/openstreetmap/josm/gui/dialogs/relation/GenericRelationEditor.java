@@ -136,7 +136,7 @@ public class GenericRelationEditor extends RelationEditor  {
 
             @Override
             public void updateTags(List<Tag> tags) {
-                GenericRelationEditor.this.updateTags(tags);
+                tagEditorPanel.getModel().updateTags(tags);
             }
 
             @Override
@@ -215,6 +215,11 @@ public class GenericRelationEditor extends RelationEditor  {
                     }
                 }
         );
+        registerCopyPasteAction(tagEditorPanel.getPasteAction(), 
+                "PASTE_TAGS",
+                Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.CTRL_SHIFT).getKeyStroke());
+        registerCopyPasteAction(new PasteMembersAction(), "PASTE_MEMBERS", Shortcut.getPasteKeyStroke());
+        registerCopyPasteAction(new CopyMembersAction(), "COPY_MEMBERS", Shortcut.getCopyKeyStroke());
 
         tagEditorPanel.setNextFocusComponent(memberTable);
         selectionTable.setFocusable(false);
@@ -425,10 +430,6 @@ public class GenericRelationEditor extends RelationEditor  {
         JPanel pnl3 = new JPanel();
         pnl3.setLayout(new BorderLayout());
         pnl3.add(splitPane, BorderLayout.CENTER);
-
-        new PasteMembersAction();
-        new CopyMembersAction();
-        new PasteTagsAction();
 
         return pnl3;
     }
@@ -693,34 +694,6 @@ public class GenericRelationEditor extends RelationEditor  {
         selectionTable.getInputMap(JComponent.WHEN_FOCUSED).put(shortcut, actionName);
         selectionTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(shortcut, actionName);
         selectionTable.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(shortcut, actionName);
-    }
-
-    protected void updateTags(List<Tag> tags) {
-
-        if (tags.isEmpty())
-            return;
-
-        Map<String, TagModel> modelTags = new HashMap<String, TagModel>();
-        for (int i=0; i<tagEditorPanel.getModel().getRowCount(); i++) {
-            TagModel tagModel = tagEditorPanel.getModel().get(i);
-            modelTags.put(tagModel.getName(), tagModel);
-        }
-        for (Tag tag: tags) {
-            TagModel existing = modelTags.get(tag.getKey());
-
-            if (tag.getValue().isEmpty()) {
-                if (existing != null) {
-                    tagEditorPanel.getModel().delete(tag.getKey());
-                }
-            } else {
-                if (existing != null) {
-                    tagEditorPanel.getModel().updateTagValue(existing, tag.getValue());
-                } else {
-                    tagEditorPanel.getModel().add(tag.getKey(), tag.getValue());
-                }
-            }
-
-        }
     }
 
     static class AddAbortException extends Exception {
@@ -1717,10 +1690,6 @@ public class GenericRelationEditor extends RelationEditor  {
 
     class PasteMembersAction extends AddFromSelectionAction {
 
-        public PasteMembersAction() {
-            registerCopyPasteAction(this, "PASTE_MEMBERS", Shortcut.getPasteKeyStroke());
-        }
-
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
@@ -1764,11 +1733,6 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class CopyMembersAction extends AbstractAction {
-
-        public CopyMembersAction() {
-            registerCopyPasteAction(this, "COPY_MEMBERS", Shortcut.getCopyKeyStroke());
-        }
-
         @Override
         public void actionPerformed(ActionEvent e) {
             Set<OsmPrimitive> primitives = new HashSet<OsmPrimitive>();
@@ -1778,22 +1742,6 @@ public class GenericRelationEditor extends RelationEditor  {
             if (!primitives.isEmpty()) {
                 CopyAction.copy(getLayer(), primitives);
             }
-        }
-
-    }
-
-    class PasteTagsAction extends AbstractAction {
-
-        public PasteTagsAction() {
-            registerCopyPasteAction(this, "PASTE_TAGS", Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.CTRL_SHIFT).getKeyStroke());
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            Relation relation = new Relation();
-            tagEditorPanel.getModel().applyToPrimitive(relation);
-            TagPaster tagPaster = new TagPaster(Main.pasteBuffer.getDirectlyAdded(), Collections.<OsmPrimitive>singletonList(relation));
-            updateTags(tagPaster.execute());
         }
 
     }
