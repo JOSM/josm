@@ -692,7 +692,6 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                             action.actionPerformed(null);
                             // add tags and close window on double-click
                             if (e.getClickCount()>1) {
-                                performTagAdding();
                                 buttonAction(0, null); // emulate OK click and close the dialog
                             }
                             // add tags on Shift-Click
