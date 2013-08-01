@@ -1179,8 +1179,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param use_selected whether to prefer primitives that are currently selected or referred by selected primitives
      */
     public final OsmPrimitive getNearestNodeOrWay(Point p, Predicate<OsmPrimitive> predicate, boolean use_selected) {
-        Collection<OsmPrimitive> sel =
-                use_selected ? getCurrentDataSet().getSelected() : null;
+        Collection<OsmPrimitive> sel;
+        DataSet ds = getCurrentDataSet();
+        if (use_selected && ds!=null) {
+            sel = ds.getSelected();
+        } else {
+            sel = null;
+        }
         OsmPrimitive osm = getNearestNode(p, predicate, use_selected, sel);
 
         if (isPrecedenceNode((Node)osm, p, use_selected)) return osm;
