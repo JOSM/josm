@@ -231,8 +231,13 @@ public class MainMenu extends JMenuBar {
      */
     public final JMenu selectionMenu = addMenu(marktr("Selection"), KeyEvent.VK_N, 6, ht("/Menu/Selection"));
     public final JMenu presetsMenu = addMenu(marktr("Presets"), KeyEvent.VK_P, 7, ht("/Menu/Presets"));
+    /**
+     * submenu in Imagery menu that contains plugin-managed additional imagery layers 
+     * @since 6097
+     */
+    public final JMenu imagerySubMenu = new JMenu(tr("More..."));
     public final ImageryMenu imageryMenu =
-        (ImageryMenu)addMenu(new ImageryMenu(), marktr("Imagery"), KeyEvent.VK_I, 8, ht("/Menu/Imagery"));
+        (ImageryMenu)addMenu(new ImageryMenu(imagerySubMenu), marktr("Imagery"), KeyEvent.VK_I, 8, ht("/Menu/Imagery"));
      /**
      * gpsMenu contains all plugin actions that are related
      * to using GPS data, including opening, uploading and real-time tracking

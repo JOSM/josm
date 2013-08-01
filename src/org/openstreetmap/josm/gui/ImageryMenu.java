@@ -81,7 +81,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
     private JMenuItem offsetMenuItem = singleOffset;
     private Map_Rectifier_WMSmenuAction rectaction = new Map_Rectifier_WMSmenuAction();
 
-    public ImageryMenu() {
+    public ImageryMenu(JMenu subMenu) {
         super(tr("Imagery"));
         setupMenuScroller();
         MapView.addLayerChangeListener(this);
@@ -100,6 +100,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
             public void menuCanceled(MenuEvent e) {
             }
         });
+        MainMenu.add(subMenu, rectaction);
     }
     
     private void setupMenuScroller() {
@@ -162,7 +163,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
         }
 
         addDynamicSeparator();
-        addDynamic(rectaction);
+        addDynamic(Main.main.menu.imagerySubMenu);
     }
 
     private JMenuItem getNewOffsetMenu(){
