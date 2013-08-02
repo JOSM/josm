@@ -85,8 +85,8 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
 
     public class BackgroundProgressMonitor implements ProgressMonitorDialog {
 
-        private String title="";
-        private String customText="";
+        private String title;
+        private String customText;
 
         private void updateText() {
             if (customText != null && !customText.isEmpty()) {

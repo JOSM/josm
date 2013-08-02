@@ -309,7 +309,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                                         true);
                     if (icon != null)
                         setIconImage(icon.getImage());
-                    if (title==null) title="";
                     contentInsets = new Insets(10,5,0,5);
                     if (showNewRelation) {
                         setButtonIcons(new String[] {"ok.png", "dialogs/addrelation.png", "cancel.png" });
