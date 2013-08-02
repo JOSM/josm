@@ -223,7 +223,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
      * @return true if we are currently running on OSX
      */
     public static boolean isPlatformOsx() {
-        return Main.platform != null && Main.platform instanceof PlatformHookOsx;
+        return Main.platform instanceof PlatformHookOsx;
     }
 
     @Override

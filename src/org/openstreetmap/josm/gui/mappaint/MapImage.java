@@ -129,7 +129,7 @@ public class MapImage {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == null || !(obj instanceof BoxProvider))
+            if (!(obj instanceof BoxProvider))
                 return false;
             if (obj instanceof MapImageBoxProvider) {
                 MapImageBoxProvider other = (MapImageBoxProvider) obj;

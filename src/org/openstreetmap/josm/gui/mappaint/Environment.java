@@ -106,7 +106,7 @@ public class Environment {
     }
 
     public boolean hasParentRelation() {
-        return parent != null && parent instanceof Relation;
+        return parent instanceof Relation;
     }
 
     /**
@@ -122,7 +122,7 @@ public class Environment {
         if (getContext().equals(Context.PRIMITIVE))
             return null;
 
-        if (parent != null && parent instanceof Relation)
+        if (parent instanceof Relation)
             return ((Relation) parent).getMember(index).getRole();
         if (child != null && osm instanceof Relation)
             return ((Relation) osm).getMember(index).getRole();
