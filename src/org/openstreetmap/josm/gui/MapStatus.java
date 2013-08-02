@@ -312,7 +312,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
 
                                         // These labels may need to be updated from the outside
                                         // so collect them
-                                        List<JLabel> lbls = new ArrayList<JLabel>();
+                                        List<JLabel> lbls = new ArrayList<JLabel>(osms.size());
                                         for (final OsmPrimitive osm : osms) {
                                             JLabel l = popupBuildPrimitiveLabels(osm);
                                             lbls.add(l);

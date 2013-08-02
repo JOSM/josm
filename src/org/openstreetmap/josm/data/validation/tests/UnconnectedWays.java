@@ -244,7 +244,7 @@ public class UnconnectedWays extends Test {
             }
             LatLon topLeft  = new LatLon(y2+fudge, x1-fudge);
             LatLon botRight = new LatLon(y1-fudge, x2+fudge);
-            List<LatLon> ret = new ArrayList<LatLon>();
+            List<LatLon> ret = new ArrayList<LatLon>(2);
             ret.add(topLeft);
             ret.add(botRight);
             return ret;
