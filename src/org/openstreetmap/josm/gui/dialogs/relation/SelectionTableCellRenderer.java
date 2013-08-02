@@ -44,7 +44,7 @@ public  class SelectionTableCellRenderer extends JLabel implements TableCellRend
         setForeground(UIManager.getColor("Table.foreground"));
         setBorder(null);
         setIcon(null);
-        setToolTipText("");
+        setToolTipText(null);
     }
 
     protected void renderBackground(OsmPrimitive primitive, boolean isSelected) {

@@ -204,7 +204,6 @@ public class LatLonDialog extends ExtendedDialog {
 
     protected void setErrorFeedback(JosmTextField tf, String message) {
         tf.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
-        if (message==null) message="";
         tf.setToolTipText(message);
         tf.setBackground(BG_COLOR_ERROR);
     }
