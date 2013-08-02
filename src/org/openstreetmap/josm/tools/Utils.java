@@ -663,4 +663,31 @@ public class Utils {
         }
         return str.substring(start, end);
     }
+
+    /**
+     * Runs an external command and returns the standard output.
+     * 
+     * The program is expected to execute fast.
+     * 
+     * @param command the command with arguments
+     * @return the output
+     * @throws IOException when there was an error, e.g. command does not exist
+     */
+    public static String execOutput(List<String> command) throws IOException {
+        Process p = new ProcessBuilder(command).start();
+        BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        StringBuilder all = null;
+        String line;
+        while ((line = input.readLine()) != null) {
+            if (all == null) {
+                all = new StringBuilder(line);
+            } else {
+                all.append(line);
+                all.append("\n");
+            }
+        }
+        Utils.close(input);
+        return all.toString();
+    }
+
 }
