@@ -90,13 +90,13 @@ public class ImportAudioAction extends AbstractAction {
                 });
             }
             String names = null;
-            for (int i = 0; i < sel.length; i++) {
+            for (File file : sel) {
                 if (names == null) {
                     names = " (";
                 } else {
                     names += ", ";
                 }
-                names += sel[i].getName();
+                names += file.getName();
             }
             if (names != null) {
                 names += ")";
@@ -106,8 +106,8 @@ public class ImportAudioAction extends AbstractAction {
             MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", layer.getName()) + names, layer.getAssociatedFile(), layer);
             double firstStartTime = sel[0].lastModified() / 1000.0 - AudioUtil.getCalibratedDuration(sel[0]);
             Markers m = new Markers();
-            for (int i = 0; i < sel.length; i++) {
-                importAudio(sel[i], ml, firstStartTime, m);
+            for (File file : sel) {
+                importAudio(file, ml, firstStartTime, m);
             }
             Main.main.addLayer(ml);
             Main.map.repaint();

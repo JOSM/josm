@@ -48,9 +48,9 @@ public class BoundingBoxSelection implements DownloadSelection {
 
     protected void registerBoundingBoxBuilder() {
         BoundingBoxBuilder bboxbuilder = new BoundingBoxBuilder();
-        for (int i = 0;i < latlon.length; i++) {
-            latlon[i].addFocusListener(bboxbuilder);
-            latlon[i].addActionListener(bboxbuilder);
+        for (JosmTextField ll : latlon) {
+            ll.addFocusListener(bboxbuilder);
+            ll.addActionListener(bboxbuilder);
         }
     }
 

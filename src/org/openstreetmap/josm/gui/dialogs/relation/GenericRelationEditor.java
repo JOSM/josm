@@ -25,11 +25,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
@@ -772,14 +769,12 @@ public class GenericRelationEditor extends RelationEditor  {
             if (primitives == null || primitives.isEmpty())
                 return primitives;
             ArrayList<OsmPrimitive> ret = new ArrayList<OsmPrimitive>();
-            Iterator<OsmPrimitive> it = primitives.iterator();
-            while(it.hasNext()) {
-                OsmPrimitive primitive = it.next();
+            for (OsmPrimitive primitive : primitives) {
                 if (primitive instanceof Relation && getRelation() != null && getRelation().equals(primitive)) {
                     warnOfCircularReferences(primitive);
                     continue;
                 }
-                if (isPotentialDuplicate(primitive))  {
+                if (isPotentialDuplicate(primitive)) {
                     if (confirmAddingPrimitive(primitive)) {
                         ret.add(primitive);
                     }

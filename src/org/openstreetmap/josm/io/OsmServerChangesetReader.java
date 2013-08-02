@@ -131,8 +131,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
             monitor.setTicksCount(ids.size());
             List<Changeset> ret = new ArrayList<Changeset>();
             int i=0;
-            for (Iterator<Integer> it = ids.iterator(); it.hasNext(); ) {
-                int id = it.next();
+            for (int id : ids) {
                 if (id <= 0) {
                     continue;
                 }
@@ -142,7 +141,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
                 InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true));
                 if (in == null)
                     return null;
-                monitor.indeterminateSubTask(tr("({0}/{1}) Downloading changeset {2} ...", i,ids.size(), id));
+                monitor.indeterminateSubTask(tr("({0}/{1}) Downloading changeset {2} ...", i, ids.size(), id));
                 List<Changeset> changesets = OsmChangesetParser.parse(in, monitor.createSubTaskMonitor(1, true));
                 if (changesets == null || changesets.isEmpty()) {
                     continue;

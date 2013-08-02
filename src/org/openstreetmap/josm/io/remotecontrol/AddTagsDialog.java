@@ -337,8 +337,8 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         if (trustedSenders.contains(sender)) {
             if (Main.main.getCurrentDataSet() != null) {
                 Collection<OsmPrimitive> s = Main.main.getCurrentDataSet().getSelected();
-                for (int j = 0; j < keyValue.length; j++) {
-                    Main.main.undoRedo.add(new ChangePropertyCommand(s, keyValue[j][0], keyValue[j][1]));
+                for (String[] row : keyValue) {
+                    Main.main.undoRedo.add(new ChangePropertyCommand(s, row[0], row[1]));
                 }
             }
         } else {

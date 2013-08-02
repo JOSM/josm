@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -84,9 +83,7 @@ public class FollowLineAction extends JosmAction {
         if (referrers.size() < 2) return; // There's nothing to follow
 
         Node newPoint = null;
-        Iterator<OsmPrimitive> i = referrers.iterator();
-        while (i.hasNext()) {
-            OsmPrimitive referrer = i.next();
+        for (OsmPrimitive referrer : referrers) {
             if (!referrer.getType().equals(OsmPrimitiveType.WAY)) { // Can't follow points or relations
                 continue;
             }

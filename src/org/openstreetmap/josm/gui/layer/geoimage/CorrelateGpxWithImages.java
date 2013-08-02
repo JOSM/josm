@@ -33,7 +33,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.Vector;
@@ -451,9 +450,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         // Construct the list of loaded GPX tracks
         Collection<Layer> layerLst = Main.map.mapView.getAllLayers();
         GpxDataWrapper defaultItem = null;
-        Iterator<Layer> iterLayer = layerLst.iterator();
-        while (iterLayer.hasNext()) {
-            Layer cur = iterLayer.next();
+        for (Layer cur : layerLst) {
             if (cur instanceof GpxLayer) {
                 GpxLayer curGpx = (GpxLayer) cur;
                 GpxDataWrapper gdw = new GpxDataWrapper(curGpx.getName(), curGpx.data, curGpx.data.storageFile);

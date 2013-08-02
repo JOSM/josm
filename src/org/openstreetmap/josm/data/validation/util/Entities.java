@@ -387,8 +387,8 @@ public class Entities {
                         if(mapNameToValue == null)
                         {
                             mapNameToValue = new HashMap<String, String>();
-                            for (int in = 0; in < ARRAY.length; ++in)
-                                mapNameToValue.put(ARRAY[in][0], ARRAY[in][1]);
+                            for (String[] pair : ARRAY)
+                                mapNameToValue.put(pair[0], pair[1]);
                         }
                         String value = mapNameToValue.get(entityContent);
                         entityValue = (value == null ? -1 : Integer.parseInt(value));

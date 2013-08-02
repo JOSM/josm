@@ -54,8 +54,7 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
         setLayout(new GridBagLayout());
 
         ActionMap am = getActionMap();
-        for(int i=0; i<checkBoxes.length; i++) {
-            final JCheckBox b = checkBoxes[i];
+        for (final JCheckBox b : checkBoxes) {
             add(b, GBC.eol().fill(GBC.HORIZONTAL));
             b.setPreferredSize(new Dimension(b.getPreferredSize().width, 19));
             b.addActionListener(al);

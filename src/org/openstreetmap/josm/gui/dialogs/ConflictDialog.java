@@ -15,7 +15,6 @@ import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -381,9 +380,8 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
                     0,
                     getSize()
             );
-            Iterator<ListDataListener> it = listeners.iterator();
-            while(it.hasNext()) {
-                it.next().contentsChanged(evt);
+            for (ListDataListener listener : listeners) {
+                listener.contentsChanged(evt);
             }
         }
 

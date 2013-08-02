@@ -297,8 +297,8 @@ public class Multipolygon {
                     nodes.addAll(w.getNodes());
                 } else {
                     List<Way> waysToJoin = new ArrayList<Way>();
-                    for (Iterator<Long> it = wayIds.iterator(); it.hasNext(); ) {
-                        Way w = (Way) ds.getPrimitiveById(it.next(), OsmPrimitiveType.WAY);
+                    for (Long wayId : wayIds) {
+                        Way w = (Way) ds.getPrimitiveById(wayId, OsmPrimitiveType.WAY);
                         if (w != null && w.getNodesCount() > 0) { // fix #7173 (empty ways on purge)
                             waysToJoin.add(w);
                         }

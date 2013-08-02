@@ -132,8 +132,7 @@ public class OpenLocationAction extends JosmAction {
      */
     public Collection<DownloadTask> findDownloadTasks(final String url) {
         List<DownloadTask> result = new ArrayList<DownloadTask>();
-        for (int i = 0; i < downloadTasks.size(); i++) {
-            Class<? extends DownloadTask> taskClass = downloadTasks.get(i);
+        for (Class<? extends DownloadTask> taskClass : downloadTasks) {
             if (taskClass != null) {
                 try {
                     DownloadTask task = taskClass.getConstructor().newInstance();

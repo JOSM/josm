@@ -42,8 +42,8 @@ public class FallbackDateParser {
     public FallbackDateParser() {
         // Build a list of candidate date parsers.
         dateParsers = new ArrayList<DateFormat>(formats.length);
-        for (int i = 0; i < formats.length; i++) {
-            dateParsers.add(new SimpleDateFormat(formats[i]));
+        for (String format : formats) {
+            dateParsers.add(new SimpleDateFormat(format));
         }
 
         // We haven't selected a date parser yet.
