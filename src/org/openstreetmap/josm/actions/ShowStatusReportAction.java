@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -84,6 +85,14 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append("\n");
         text.append("Java version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor") + ", " + System.getProperty("java.vm.name"));
         text.append("\n");
+        if (Main.platform.getClass() == PlatformHookUnixoid.class) {
+            String packageDetails = ((PlatformHookUnixoid) Main.platform).getJavaPackageDetails();
+            if (packageDetails != null) {
+                text.append("Java package: ");
+                text.append(packageDetails);
+                text.append("\n");
+            }
+        }
         try {
             final String env_java_home = System.getenv("JAVA_HOME");
             final String env_java_home_alt = Main.platform instanceof PlatformHookWindows ? "%JAVA_HOME%" : "${JAVA_HOME}";

@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * see PlatformHook.java
@@ -87,6 +89,41 @@ public class PlatformHookUnixoid implements PlatformHook {
     public boolean rename(File from, File to)
     {
         return from.renameTo(to);
+    }
+
+    /**
+     * Get the Java package name including detailed version.
+     *
+     * Some Java bugs are specific to a certain security update, so in addition
+     * to the Java version, we also need the exact package version.
+     *
+     * This was originally written for #8921, so only Debian based distributions
+     * are covered at the moment. This can be extended to other distributions
+     * if needed.
+     *
+     * @return The package name and package version if it can be identified, null
+     * otherwise
+     */
+    public String getJavaPackageDetails() {
+        try {
+            String dist = Utils.execOutput(Arrays.asList("lsb_release", "-i", "-s"));
+            if ("Debian".equalsIgnoreCase(dist) || "Ubuntu".equalsIgnoreCase(dist)) {
+                String javaHome = System.getProperty("java.home");
+                if ("/usr/lib/jvm/java-6-openjdk-amd64/jre".equals(javaHome) ||
+                        "/usr/lib/jvm/java-6-openjdk-i386/jre".equals(javaHome) ||
+                        "/usr/lib/jvm/java-6-openjdk/jre".equals(javaHome)) {
+                    String version = Utils.execOutput(Arrays.asList("dpkg-query", "--show", "--showformat", "${Architecture}-${Version}", "openjdk-6-jre"));
+                    return "openjdk-6-jre:" + version;
+                }
+                if ("/usr/lib/jvm/java-7-openjdk-amd64/jre".equals(javaHome) ||
+                        "/usr/lib/jvm/java-7-openjdk-i386/jre".equals(javaHome)) {
+                    String version = Utils.execOutput(Arrays.asList("dpkg-query", "--show", "--showformat", "${Architecture}-${Version}", "openjdk-7-jre"));
+                    return "openjdk-7-jre:" + version;
+                }
+            }
+        } catch (IOException e) {
+        }
+        return null;
     }
 
     protected String buildOSDescription() {
