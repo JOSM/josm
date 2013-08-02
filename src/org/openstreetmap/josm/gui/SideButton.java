@@ -87,6 +87,7 @@ public class SideButton extends JButton implements Destroyable {
         doStyle();
         setActionCommand(name);
         addActionListener(actionListener);
+        if (tooltip==null) tooltip="";
         setToolTipText(tooltip);
         putClientProperty("help", "Dialog/"+property+"/"+name);
     }

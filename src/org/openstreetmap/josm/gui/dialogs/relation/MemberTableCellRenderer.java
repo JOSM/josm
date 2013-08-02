@@ -39,7 +39,7 @@ public abstract class MemberTableCellRenderer extends JLabel implements TableCel
         setForeground(UIManager.getColor("Table.foreground"));
         setBorder(null);
         setIcon(null);
-        setToolTipText(null);
+        setToolTipText("");
     }
 
     protected void renderBackground(MemberTableModel model, OsmPrimitive primitive, boolean isSelected) {

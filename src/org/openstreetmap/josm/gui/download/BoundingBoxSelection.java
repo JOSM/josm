@@ -178,6 +178,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 
     protected void setErrorMessage(JosmTextField tf, String msg) {
         tf.setBorder(errorBorder);
+        if (msg==null) msg="";
         tf.setToolTipText(msg);
     }
 

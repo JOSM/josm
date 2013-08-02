@@ -28,7 +28,7 @@ public class ImageLabel extends JPanel {
         setBackground(backColor);
         add(new JLabel(ImageProvider.get("statusline/"+img+".png")), GBC.std().anchor(GBC.WEST).insets(0,1,1,0));
         add(tf = new JLabel(), GBC.std().fill(GBC.BOTH).anchor(GBC.WEST).insets(2,1,1,0));
-        setToolTipText(tooltip);
+        setToolTipText(tooltip==null ? "" : tooltip);
         this.charCount = charCount;
     }
     
