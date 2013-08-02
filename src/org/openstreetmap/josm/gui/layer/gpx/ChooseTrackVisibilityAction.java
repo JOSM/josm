@@ -82,8 +82,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
                 Component c = super.prepareRenderer(renderer, row, col);
                 if (c instanceof JComponent) {
                     JComponent jc = (JComponent) c;
-                    String val=(String) getValueAt(row, col);
-                    jc.setToolTipText(val==null? "": val);
+                    jc.setToolTipText((String) getValueAt(row, col));
                 }
                 return c;
             }

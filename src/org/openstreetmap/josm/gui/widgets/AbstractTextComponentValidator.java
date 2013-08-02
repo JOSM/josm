@@ -50,7 +50,7 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
             // unnecessary UI updates.
             tc.setBorder(ERROR_BORDER);
             tc.setBackground(ERROR_BACKGROUND);
-            tc.setToolTipText(msg == null ? "" : msg);
+            tc.setToolTipText(msg);
             valid = false;
             this.msg = msg;
         }

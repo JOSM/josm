@@ -684,9 +684,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                     mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scShift.getKeyStroke(), actionShortcutShiftKey);
                     mainPanel.getActionMap().put(actionShortcutShiftKey, actionShift);
                     // Make the tag label clickable and set tooltip to the action description (this displays also the keyboard shortcut)
-                    String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
-                    if (tooltip==null) tooltip="";
-                    tagLabel.setToolTipText(tooltip);
+                    tagLabel.setToolTipText((String) action.getValue(Action.SHORT_DESCRIPTION));
                     tagLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     tagLabel.addMouseListener(new MouseAdapter() {
                         @Override

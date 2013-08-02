@@ -396,14 +396,12 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     class ChunkSizeInputVerifier implements DocumentListener, PropertyChangeListener {
         protected void setErrorFeedback(JosmTextField tf, String message) {
             tf.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
-            if (message==null) message="";
             tf.setToolTipText(message);
             tf.setBackground(BG_COLOR_ERROR);
         }
 
         protected void clearErrorFeedback(JosmTextField tf, String message) {
             tf.setBorder(UIManager.getBorder("TextField.border"));
-            if (message==null) message="";
             tf.setToolTipText(message);
             tf.setBackground(UIManager.getColor("TextField.background"));
         }
