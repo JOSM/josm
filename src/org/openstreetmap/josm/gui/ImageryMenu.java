@@ -163,7 +163,18 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
         }
 
         addDynamicSeparator();
-        addDynamic(Main.main.menu.imagerySubMenu);
+        JMenu subMenu = Main.main.menu.imagerySubMenu;
+        int heightUnrolled = 30*(getItemCount()+subMenu.getItemCount());
+        if (heightUnrolled < Main.panel.getHeight()) {
+            // add all items of submenu if they will fit on screen
+            int n = subMenu.getItemCount();
+            for (int i=0; i<n; i++) {
+                addDynamic(subMenu.getItem(i).getAction());
+            }
+        } else {
+            // or add the submenu itself
+            addDynamic(subMenu);
+        }
     }
 
     private JMenuItem getNewOffsetMenu(){
