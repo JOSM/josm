@@ -9,7 +9,6 @@ import java.io.StringReader;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -150,7 +149,7 @@ public class SearchCompiler {
                         String rangeA1 = rangeA[0].trim();
                         String rangeA2 = rangeA[1].trim();
                         long minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime(); // if min timestap is empty: use lowest possible date
-                        long maxDate = rangeA2.isEmpty() ? new Date().getTime() : DateUtils.fromString(rangeA2).getTime(); // if max timestamp is empty: use "now"
+                        long maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.fromString(rangeA2).getTime(); // if max timestamp is empty: use "now"
                         return new TimestampRange(minDate, maxDate);
                     } else
                         /*

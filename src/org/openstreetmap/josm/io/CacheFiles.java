@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.RandomAccessFile;
 import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
@@ -109,7 +108,7 @@ public class CacheFiles {
 
             // Update last mod time so we don't expire recently used data
             if(updateModTime) {
-                data.setLastModified(new Date().getTime());
+                data.setLastModified(System.currentTimeMillis());
             }
 
             byte[] bytes = new byte[(int) data.length()];
@@ -161,7 +160,7 @@ public class CacheFiles {
             }
             // Update last mod time so we don't expire recently used images
             if(updateModTime) {
-                img.setLastModified(new Date().getTime());
+                img.setLastModified(System.currentTimeMillis());
             }
             return ImageIO.read(img);
         } catch(Exception e) {
@@ -353,6 +352,6 @@ public class CacheFiles {
     private boolean isExpired(File file) {
         if(CacheFiles.EXPIRE_NEVER == this.expire)
             return false;
-        return (file.lastModified() < (new Date().getTime() - expire*1000));
+        return (file.lastModified() < (System.currentTimeMillis() - expire*1000));
     }
 }

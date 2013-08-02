@@ -104,7 +104,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
 
     @Override
     public int compareTo(FileImporter other) {
-        return (new Double(this.getPriority())).compareTo(other.getPriority());
+        return Double.compare(this.getPriority(), other.getPriority());
     }
 
     public static CBZip2InputStream getBZip2InputStream(InputStream in) throws IOException {

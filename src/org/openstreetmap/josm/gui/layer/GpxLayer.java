@@ -121,7 +121,7 @@ public class GpxLayer extends Layer {
     */
     public Date[] getMinMaxTimeForAllTracks() {
         double min=1e100, max=-1e100, t;
-        double now = new Date().getTime()/1000.0;
+        double now = System.currentTimeMillis()/1000.0;
         for (GpxTrack trk: data.tracks) {
             for (GpxTrackSegment seg : trk.getSegments()) {
                 for (WayPoint pnt : seg.getWayPoints()) {
@@ -532,7 +532,7 @@ public class GpxLayer extends Layer {
                 }
                 oldWp = null;
             }
-            double now = new Date().getTime()/1000.0;
+            double now = System.currentTimeMillis()/1000.0;
             if (colored == colorModes.time) {
                 Date[] bounds = getMinMaxTimeForAllTracks();
                 if (bounds!=null) {
