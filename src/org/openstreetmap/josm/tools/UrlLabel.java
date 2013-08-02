@@ -53,7 +53,7 @@ public class UrlLabel extends JLabel implements MouseListener {
         } else {
             setText("<html>" + description + "</html>");
             setCursor(null);
-            setToolTipText(null);
+            setToolTipText("");
         }
     }
 
