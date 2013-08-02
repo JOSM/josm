@@ -1669,11 +1669,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         private double getNearestAngle(double angle) {
             double delta,minDelta=1e5, bestAngle=0.0;
-            for (int i=0; i < snapAngles.length; i++) {
-                delta = getAngleDelta(angle,snapAngles[i]);
+            for (double snapAngle : snapAngles) {
+                delta = getAngleDelta(angle, snapAngle);
                 if (delta < minDelta) {
-                    minDelta=delta;
-                    bestAngle=snapAngles[i];
+                    minDelta = delta;
+                    bestAngle = snapAngle;
                 }
             }
             if (Math.abs(bestAngle-360) < 1e-3) {

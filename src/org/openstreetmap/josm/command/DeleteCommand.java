@@ -394,9 +394,7 @@ public class DeleteCommand extends Command {
 
         // remove the objects from their parent relations
         //
-        Iterator<Relation> iterator = OsmPrimitive.getFilteredSet(OsmPrimitive.getReferrer(primitivesToDelete), Relation.class).iterator();
-        while (iterator.hasNext()) {
-            Relation cur = iterator.next();
+        for (Relation cur : OsmPrimitive.getFilteredSet(OsmPrimitive.getReferrer(primitivesToDelete), Relation.class)) {
             Relation rel = new Relation(cur);
             rel.removeMembersFor(primitivesToDelete);
             cmds.add(new ChangeCommand(cur, rel));

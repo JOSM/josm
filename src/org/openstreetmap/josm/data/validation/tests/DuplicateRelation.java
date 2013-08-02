@@ -84,8 +84,8 @@ public class DuplicateRelation extends Test {
                 tags = r.getKeys();
                 List<Node> wNodes = r.getNodes();
                 coor = new ArrayList<LatLon>(wNodes.size());
-                for (int i = 0; i < wNodes.size(); i++) {
-                    coor.add(wNodes.get(i).getCoor());
+                for (Node wNode : wNodes) {
+                    coor.add(wNode.getCoor());
                 }
             }
             if (src.isRelation()) {
@@ -109,8 +109,8 @@ public class DuplicateRelation extends Test {
          */
         public RelationMembers(List<RelationMember> members) {
             this.members = new ArrayList<RelMember>(members.size());
-            for (int i = 0; i < members.size(); i++) {
-                this.members.add(new RelMember(members.get(i)));
+            for (RelationMember member : members) {
+                this.members.add(new RelMember(member));
             }
         }
 

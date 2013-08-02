@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -134,8 +133,7 @@ public class MapPaintStyles {
             virtualNode.put(tag.getKey(), tag.getValue());
             StyleList styleList = getStyles().generateStyles(virtualNode, 0.5, null, false).a;
             if (styleList != null) {
-                for (Iterator<ElemStyle> it = styleList.iterator(); it.hasNext(); ) {
-                    ElemStyle style = it.next();
+                for (ElemStyle style : styleList) {
                     if (style instanceof NodeElemStyle) {
                         MapImage mapImage = ((NodeElemStyle) style).mapImage;
                         if (mapImage != null) {

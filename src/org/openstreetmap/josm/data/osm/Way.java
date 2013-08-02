@@ -150,8 +150,8 @@ public final class Way extends OsmPrimitive implements IWay {
         if (node == null) return false;
 
         Node[] nodes = this.nodes;
-        for (int i=0; i<nodes.length; i++) {
-            if (nodes[i].equals(node))
+        for (Node n : nodes) {
+            if (n.equals(node))
                 return true;
         }
         return false;

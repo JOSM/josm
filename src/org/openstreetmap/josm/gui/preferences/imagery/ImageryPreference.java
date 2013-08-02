@@ -513,8 +513,9 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
 
                 Set<String> acceptedEulas = new HashSet<String>();
 
-                outer: for (int i = 0; i < lines.length; i++) {
-                    ImageryInfo info = defaultModel.getRow(lines[i]);
+                outer:
+                for (int line : lines) {
+                    ImageryInfo info = defaultModel.getRow(line);
 
                     // Check if an entry with exactly the same values already
                     // exists

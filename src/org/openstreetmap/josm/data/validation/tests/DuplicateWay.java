@@ -192,8 +192,8 @@ public class DuplicateWay extends Test
         }
         // Build the list of lat/lon
         List<LatLon> wLat = new ArrayList<LatLon>(wNodesToUse.size());
-        for (int i=0; i<wNodesToUse.size(); i++) {
-            wLat.add(wNodesToUse.get(i).getCoor());
+        for (Node node : wNodesToUse) {
+            wLat.add(node.getCoor());
         }
         // If this way has not direction-dependant keys, make sure the list is ordered the same for all ways (fix #8015)
         if (!w.hasDirectionKeys()) {

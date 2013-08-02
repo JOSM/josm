@@ -58,9 +58,8 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
     }
 
     protected void fireConflictRemoved() {
-        Iterator<IConflictListener> it = listeners.iterator();
-        while(it.hasNext()) {
-            it.next().onConflictsRemoved(this);
+        for (IConflictListener listener : listeners) {
+            listener.onConflictsRemoved(this);
         }
     }
 
