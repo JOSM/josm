@@ -213,7 +213,7 @@ public class CloseChangesetDialog extends JDialog {
      */
     public Collection<Changeset> getSelectedChangesets() {
         Object [] sel = lstOpenChangesets.getSelectedValues();
-        ArrayList<Changeset> ret = new ArrayList<Changeset>();
+        ArrayList<Changeset> ret = new ArrayList<Changeset>(sel.length);
         for (Object o: sel) {
             ret.add((Changeset)o);
         }

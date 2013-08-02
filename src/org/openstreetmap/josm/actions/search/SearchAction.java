@@ -102,7 +102,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         while (searchHistory.size() > maxsize) {
             searchHistory.removeLast();
         }
-        List<String> savedHistory = new ArrayList<String>();
+        List<String> savedHistory = new ArrayList<String>(searchHistory.size());
         for (SearchSetting item: searchHistory) {
             savedHistory.add(item.writeToString());
         }

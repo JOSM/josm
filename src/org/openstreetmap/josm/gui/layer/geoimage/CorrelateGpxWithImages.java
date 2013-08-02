@@ -289,8 +289,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
             gc.anchor = GridBagConstraints.WEST;
             panelTf.add(new JLabel(tr("I am in the timezone of: ")), gc);
 
-            Vector<String> vtTimezones = new Vector<String>();
             String[] tmp = TimeZone.getAvailableIDs();
+            Vector<String> vtTimezones = new Vector<String>(tmp.length);
 
             for (String tzStr : tmp) {
                 TimeZone tz = TimeZone.getTimeZone(tzStr);

@@ -201,7 +201,7 @@ public class DeleteCommand extends Command {
         if (toDelete.size() == 1)
             return null;
         else {
-            List<PseudoCommand> children = new ArrayList<PseudoCommand>();
+            List<PseudoCommand> children = new ArrayList<PseudoCommand>(toDelete.size());
             for (final OsmPrimitive osm : toDelete) {
                 children.add(new PseudoCommand() {
 
