@@ -251,8 +251,8 @@ public class CoordinateInfoViewer extends JPanel {
         protected void refresh() {
             HistoryOsmPrimitive p = getPrimitive();
             HistoryOsmPrimitive  opposite = getOppositePrimitive();
-            if (p == null || ! ( p instanceof HistoryNode)) return;
-            if (opposite == null || ! (opposite instanceof HistoryNode)) return;
+            if (!(p instanceof HistoryNode)) return;
+            if (!(opposite instanceof HistoryNode)) return;
             HistoryNode node = (HistoryNode)p;
             HistoryNode oppositeNode = (HistoryNode) opposite;
 
@@ -324,8 +324,8 @@ public class CoordinateInfoViewer extends JPanel {
         protected void refresh() {
             HistoryOsmPrimitive p = getPrimitive();
             HistoryOsmPrimitive opposite = getOppositePrimitive();
-            if (p == null || ! ( p instanceof HistoryNode)) return;
-            if (opposite == null || ! (opposite instanceof HistoryNode)) return;
+            if (!(p instanceof HistoryNode)) return;
+            if (!(opposite instanceof HistoryNode)) return;
             HistoryNode node = (HistoryNode) p;
             HistoryNode oppositeNode = (HistoryNode) opposite;
 

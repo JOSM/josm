@@ -68,7 +68,7 @@ public class BoxTextElemStyle extends ElemStyle {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == null || !(obj instanceof BoxProvider))
+            if (!(obj instanceof BoxProvider))
                 return false;
             final BoxProvider other = (BoxProvider) obj;
             BoxProviderResult resultOther = other.get();

@@ -754,11 +754,11 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     /* ---------------------------------------------------------------------- */
     @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        if (oldLayer != null && oldLayer instanceof OsmDataLayer) {
+        if (oldLayer instanceof OsmDataLayer) {
             OsmDataLayer l = (OsmDataLayer)oldLayer;
             l.data.removeDataSetListener(this);
         }
-        if (newLayer == null || ! (newLayer instanceof OsmDataLayer)) {
+        if (!(newLayer instanceof OsmDataLayer)) {
             latest = null;
             fireModelChange();
             return;

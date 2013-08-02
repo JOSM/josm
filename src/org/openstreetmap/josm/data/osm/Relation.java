@@ -280,7 +280,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
     @Override
     public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
-        if (other == null || ! (other instanceof Relation) )
+        if (!(other instanceof Relation))
             return false;
         if (! super.hasEqualSemanticAttributes(other))
             return false;

@@ -266,7 +266,7 @@ public final class Node extends OsmPrimitive implements INode {
 
     @Override
     public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
-        if (other == null || ! (other instanceof Node) )
+        if (!(other instanceof Node))
             return false;
         if (! super.hasEqualSemanticAttributes(other))
             return false;

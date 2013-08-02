@@ -184,7 +184,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
      */
     @Override
     public void layerRemoved(Layer oldLayer) {
-        if (oldLayer == null || ! (oldLayer instanceof OsmDataLayer))
+        if (!(oldLayer instanceof OsmDataLayer))
             return;
         OsmDataLayer dataLayer = (OsmDataLayer)oldLayer;
 

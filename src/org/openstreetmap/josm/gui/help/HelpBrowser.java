@@ -580,7 +580,7 @@ public class HelpBrowser extends JDialog {
         protected String getUrlFragment(HyperlinkEvent e) {
             AttributeSet set = e.getSourceElement().getAttributes();
             Object value = set.getAttribute(Tag.A);
-            if (value == null || ! (value instanceof SimpleAttributeSet)) return null;
+            if (!(value instanceof SimpleAttributeSet)) return null;
             SimpleAttributeSet atts = (SimpleAttributeSet)value;
             value = atts.getAttribute(javax.swing.text.html.HTML.Attribute.HREF);
             if (value == null) return null;
