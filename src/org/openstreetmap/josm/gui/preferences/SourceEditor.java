@@ -1530,7 +1530,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         public boolean put(Collection<? extends SourceEntry> entries) {
-            Collection<Map<String, String>> setting = new ArrayList<Map<String, String>>();
+            Collection<Map<String, String>> setting = new ArrayList<Map<String, String>>(entries.size());
             for (SourceEntry e : entries) {
                 setting.add(serialize(e));
             }

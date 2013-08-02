@@ -227,7 +227,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      * @param layer the layer. May be null.
      */
     protected void initFromLayer(Layer layer) {
-        if (layer == null || ! (layer instanceof OsmDataLayer)) {
+        if (!(layer instanceof OsmDataLayer)) {
             model.setRelations(null);
             return;
         }
@@ -676,7 +676,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     @Override
     public void tagsChanged(TagsChangedEvent event) {
         OsmPrimitive prim = event.getPrimitive();
-        if (prim == null || ! (prim instanceof Relation))
+        if (!(prim instanceof Relation))
             return;
         // trigger a sort of the relation list because the display name may
         // have changed

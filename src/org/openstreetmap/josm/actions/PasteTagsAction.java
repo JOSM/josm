@@ -262,12 +262,13 @@ public final class PasteTagsAction extends JosmAction {
      */
     public static boolean pasteTagsFromText(Collection<OsmPrimitive> selection, String text) {
         Map<String, String> tags = TextTagParser.readTagsFromText(text);
-        List<Command> commands = new ArrayList<Command>();
         if (tags==null || tags.isEmpty()) {
             TextTagParser.showBadBufferMessage(help);
             return false;
         }
         if (!TextTagParser.validateTags(tags)) return false;
+
+        List<Command> commands = new ArrayList<Command>(tags.size());
         String v;
         for (String key: tags.keySet()) {
             v = tags.get(key);

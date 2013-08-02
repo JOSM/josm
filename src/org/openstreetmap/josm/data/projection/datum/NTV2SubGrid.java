@@ -162,9 +162,9 @@ public class NTV2SubGrid implements Cloneable, Serializable {
             if (subGrid == null)
                 return this;
             else {
-                for (int i = 0; i < subGrid.length; i++) {
-                    if (subGrid[i].isCoordWithin(lon, lat))
-                        return subGrid[i].getSubGridForCoord(lon, lat);
+                for (NTV2SubGrid aSubGrid : subGrid) {
+                    if (aSubGrid.isCoordWithin(lon, lat))
+                        return aSubGrid.getSubGridForCoord(lon, lat);
                 }
                 return this;
             }

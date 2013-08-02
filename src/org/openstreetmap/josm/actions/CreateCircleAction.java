@@ -136,7 +136,7 @@ public final class CreateCircleAction extends JosmAction {
             if (a1 < a2) { double at = a1; Node nt = n1; a1 = a2; n1 = n2; a2 = at; n2 = nt; }
 
             // build a way for the circle
-            List<Node> wayToAdd = new ArrayList<Node>();
+            List<Node> wayToAdd = new ArrayList<Node>(numberOfNodesInCircle + 1);
 
             for (int i = 1; i <= numberOfNodesInCircle; i++) {
                 double a = a2 + 2*Math.PI*(1.0 - i/(double)numberOfNodesInCircle); // "1-" to get it clock-wise

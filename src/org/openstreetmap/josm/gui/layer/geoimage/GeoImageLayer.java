@@ -836,7 +836,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     }
 
     public List<ImageEntry> getImages() {
-        List<ImageEntry> copy = new ArrayList<ImageEntry>();
+        List<ImageEntry> copy = new ArrayList<ImageEntry>(data.size());
         for (ImageEntry ie : data) {
             copy.add(ie.clone());
         }

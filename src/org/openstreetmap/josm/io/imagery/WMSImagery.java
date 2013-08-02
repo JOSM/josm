@@ -201,7 +201,7 @@ public class WMSImagery {
     }
 
     private List<LayerDetails> parseLayers(List<Element> children, Set<String> parentCrs) {
-        List<LayerDetails> details = new ArrayList<LayerDetails>();
+        List<LayerDetails> details = new ArrayList<LayerDetails>(children.size());
         for (Element element : children) {
             details.add(parseLayer(element, parentCrs));
         }

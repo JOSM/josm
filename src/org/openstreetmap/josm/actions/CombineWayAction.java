@@ -153,7 +153,7 @@ public class CombineWayAction extends JosmAction {
                 List<Way> unreversedTagWays = new ArrayList<Way>(ways);
                 unreversedTagWays.removeAll(reversedWays);
                 ReverseWayTagCorrector reverseWayTagCorrector = new ReverseWayTagCorrector();
-                List<Way> reversedTagWays = new ArrayList<Way>();
+                List<Way> reversedTagWays = new ArrayList<Way>(reversedWays.size());
                 Collection<Command> changePropertyCommands =  null;
                 for (Way w : reversedWays) {
                     Way wnew = new Way(w);
@@ -496,7 +496,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected Set<Node> getNodes(Stack<NodePair> pairs) {
-            HashSet<Node> nodes = new LinkedHashSet<Node>();
+            HashSet<Node> nodes = new LinkedHashSet<Node>(2*pairs.size());
             for (NodePair pair: pairs) {
                 nodes.add(pair.getA());
                 nodes.add(pair.getB());
@@ -516,7 +516,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected Set<Node> getNodes() {
-            Set<Node> nodes = new LinkedHashSet<Node>();
+            Set<Node> nodes = new LinkedHashSet<Node>(2 * edges.size());
             for (NodePair pair: edges) {
                 nodes.add(pair.getA());
                 nodes.add(pair.getB());

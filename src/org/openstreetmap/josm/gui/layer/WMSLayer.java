@@ -273,10 +273,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         GeorefImage[][] old = images;
         images = new GeorefImage[dax][day];
         if (old != null) {
-            for (int i=0; i<old.length; i++) {
-                for (int k=0; k<old[i].length; k++) {
-                    GeorefImage o = old[i][k];
-                    images[modulo(o.getXIndex(),dax)][modulo(o.getYIndex(),day)] = old[i][k];
+            for (GeorefImage[] row : old) {
+                for (GeorefImage image : row) {
+                    images[modulo(image.getXIndex(), dax)][modulo(image.getYIndex(), day)] = image;
                 }
             }
         }
