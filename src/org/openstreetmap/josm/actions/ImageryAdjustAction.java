@@ -31,7 +31,6 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
-
 public class ImageryAdjustAction extends MapMode implements MouseListener, MouseMotionListener, AWTEventListener{
     static ImageryOffsetDialog offsetDialog;
     static Cursor cursor = ImageProvider.getCursor("normal", "move");
@@ -57,16 +56,20 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         if (!layer.isVisible()) {
             layer.setVisible(true);
         }
-        Main.map.mapView.addMouseListener(this);
-        Main.map.mapView.addMouseMotionListener(this);
         oldDx = layer.getDx();
         oldDy = layer.getDy();
+        addListeners();
+        offsetDialog = new ImageryOffsetDialog();
+        offsetDialog.setVisible(true);
+    }
+    
+    protected void addListeners() {
+        Main.map.mapView.addMouseListener(this);
+        Main.map.mapView.addMouseMotionListener(this);
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
         } catch (SecurityException ex) {
         }
-        offsetDialog = new ImageryOffsetDialog();
-        offsetDialog.setVisible(true);
     }
 
     @Override public void exitMode() {
@@ -76,12 +79,18 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             offsetDialog.setVisible(false);
             offsetDialog = null;
         }
+        removeListeners();
+    }
+    
+    protected void removeListeners() {
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
         } catch (SecurityException ex) {
         }
-        Main.map.mapView.removeMouseListener(this);
-        Main.map.mapView.removeMouseMotionListener(this);
+        if (Main.isDisplayingMapView()) {
+            Main.map.mapView.removeMouseMotionListener(this);
+            Main.map.mapView.removeMouseListener(this);
+        }
     }
 
     @Override
@@ -263,5 +272,13 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
                 Main.map.selectSelectTool(false);
             }
         }
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        removeListeners();
+        this.layer = null;
+        this.oldMapMode = null;
     }
 }

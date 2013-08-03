@@ -228,6 +228,21 @@ public class MainApplication extends Main {
     public static void main(final String[] argArray) {
         I18n.init();
         Main.checkJava6();
+
+        // construct argument table
+        Map<Option, Collection<String>> args = null;
+        try {
+            args = buildCommandLineArgumentMap(argArray);
+        } catch (IllegalArgumentException e) {
+            System.exit(1);
+        }
+        
+        final boolean languageGiven = args.containsKey(Option.LANGUAGE);
+
+        if (languageGiven) {
+            I18n.set(args.get(Option.LANGUAGE).iterator().next());
+        }
+
         Main.pref = new Preferences();
 
         Policy.setPolicy(new Policy() {
@@ -257,29 +272,16 @@ public class MainApplication extends Main {
         // call the really early hook before we do anything else
         Main.platform.preStartupHook();
 
-        // construct argument table
-        Map<Option, Collection<String>> args = null;
-        try {
-            args = buildCommandLineArgumentMap(argArray);
-        } catch (IllegalArgumentException e) {
-            System.exit(1);
-        }
-
         Main.commandLineArgs = argArray;
-
+        
         if (args.containsKey(Option.VERSION)) {
             System.out.println(Version.getInstance().getAgentString());
             System.exit(0);
-        } //else {
-        //    System.out.println(Version.getInstance().getReleaseAttributes());
-        //}
+        }
 
         Main.pref.init(args.containsKey(Option.RESET_PREFERENCES));
 
-        // Check if passed as parameter
-        if (args.containsKey(Option.LANGUAGE)) {
-            I18n.set(args.get(Option.LANGUAGE).iterator().next());
-        } else {
+        if (!languageGiven) {
             I18n.set(Main.pref.get("language", null));
         }
         Main.pref.updateSystemProperties();

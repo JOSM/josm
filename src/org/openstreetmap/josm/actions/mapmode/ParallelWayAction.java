@@ -595,4 +595,10 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
             updateAllPreferences();
         }
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        Main.pref.removePreferenceChangeListener(this);
+    }
 }

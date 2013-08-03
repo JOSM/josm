@@ -209,7 +209,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      */
     public MouseEvent lastMEvent = new MouseEvent(this, 0, 0, 0, 0, 0, 0, false); // In case somebody reads it before first mouse move
 
-    private LinkedList<MapViewPaintable> temporaryLayers = new LinkedList<MapViewPaintable>();
+    private final LinkedList<MapViewPaintable> temporaryLayers = new LinkedList<MapViewPaintable>();
 
     private BufferedImage nonChangedLayersBuffer;
     private BufferedImage offscreenBuffer;
@@ -953,6 +953,12 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         if (mapMover != null) {
             mapMover.destroy();
         }
+        activeLayer = null;
+        changedLayer = null;
+        editLayer = null;
+        layers.clear();
+        nonChangedLayers.clear();
+        temporaryLayers.clear();
     }
 
     @Override
