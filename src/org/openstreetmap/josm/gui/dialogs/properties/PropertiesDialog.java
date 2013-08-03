@@ -1075,19 +1075,21 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                                     conn.disconnect();
                                 } else {
                                     int osize = conn.getContentLength();
-                                    conn.disconnect();
-
-                                    conn = Utils.openHttpConnection(new URI(u.toString()
-                                            .replace("=", "%3D") /* do not URLencode whole string! */
-                                            .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
-                                            ).toURL());
-                                    conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
+                                    if (osize > -1) {
+                                        conn.disconnect();
+    
+                                        conn = Utils.openHttpConnection(new URI(u.toString()
+                                                .replace("=", "%3D") /* do not URLencode whole string! */
+                                                .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
+                                                ).toURL());
+                                        conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
+                                    }
 
                                     /* redirect pages have different content length, but retrieving a "nonredirect"
                                      *  page using index.php and the direct-link method gives slightly different
                                      *  content lengths, so we have to be fuzzy.. (this is UGLY, recode if u know better)
                                      */
-                                    if (Math.abs(conn.getContentLength() - osize) > 200) {
+                                    if (conn.getContentLength() != -1 && osize > -1 && Math.abs(conn.getContentLength() - osize) > 200) {
                                         Main.info("{0} is a mediawiki redirect", u);
                                         conn.disconnect();
                                     } else {
