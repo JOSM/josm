@@ -681,8 +681,8 @@ public class Utils {
             if (all == null) {
                 all = new StringBuilder(line);
             } else {
-                all.append(line);
                 all.append("\n");
+                all.append(line);
             }
         }
         Utils.close(input);
