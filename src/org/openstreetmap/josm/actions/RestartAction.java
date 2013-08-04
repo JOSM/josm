@@ -93,6 +93,11 @@ public class RestartAction extends JosmAction {
                 cmd.add("\"" + System.getProperty("java.class.path") + "\"");
                 cmd.add(mainCommand[0]);
             }
+            // if it's webstart add JNLP file
+            String jnlp = System.getProperty("jnlp.application.href");
+            if (jnlp != null) {
+                cmd.add(jnlp);
+            }
             // finally add program arguments
             cmd.addAll(Arrays.asList(Main.commandLineArgs));
             Main.info("Restart "+cmd);
