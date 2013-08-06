@@ -80,6 +80,7 @@
 			<element name="text" type="tns:text" />
 			<element name="combo" type="tns:combo" />
 			<element name="multiselect" type="tns:multiselect" />
+            <element name="checkgroup" type="tns:checkgroup" />
 			<element name="check" type="tns:check" />
 		</choice>
 	</group>
@@ -187,6 +188,16 @@
 		<attribute name="display-values" use="prohibited" />
 		<anyAttribute processContents="skip" />
 	</complexType>
+
+    <complexType name="checkgroup">
+        <sequence>
+            <choice minOccurs="1" maxOccurs="unbounded">
+                <element name="check" type="tns:check" />
+            </choice>
+        </sequence>
+        <attribute name="columns" type="positiveInteger" />
+        <anyAttribute processContents="skip" />
+    </complexType>
 
 	<complexType name="check">
 		<attribute name="key" type="string" use="required" />

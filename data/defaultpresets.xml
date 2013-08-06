@@ -88,6 +88,9 @@ multiselect: list of values from which zero or more can be selected
   use_last_as_default: true/false/force (default is "false")
   match: none/key/key!/keyvalue (default is "none", see below for more information)
 
+checkgroup: group of checks
+  columns: number of columns
+
 check: checkbox
   key: key to set
   text: fixed label to display
@@ -2426,22 +2429,24 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
                 <combo key="shop" text="With shop" values="yes,convenience,kiosk,no" />
                 <label text="Fuel types:" />
-                <check key="fuel:diesel" text="Diesel" default="off" />
-                <check key="fuel:biodiesel" text="Bio Diesel" default="off" />
-                <check key="fuel:GTL_diesel" text="Diesel (Gas To Liquid - ultimate diesel)" default="off" />
-                <check key="fuel:HGV_diesel" text="Diesel for Heavy Good Vehicles" default="off" />
-                <check key="fuel:octane_80" text="Octane 80" default="off" />
-                <check key="fuel:octane_91" text="Octane 91" default="off" />
-                <check key="fuel:octane_92" text="Octane 92" default="off" />
-                <check key="fuel:octane_95" text="Octane 95" default="off" />
-                <check key="fuel:octane_98" text="Octane 98" default="off" />
-                <check key="fuel:octane_100" text="Octane 100" default="off" />
-                <check key="fuel:e10" text="E10 (10% Ethanol mix)" default="off" />
-                <check key="fuel:e85" text="E85 (85% Ethanol mix)" default="off" />
-                <check key="fuel:lpg" text="LPG (Liquefied petroleum gas)" default="off" />
-                <check key="fuel:cng" text="CNG (Compressed Natural Gas)" default="off" />
-                <check key="fuel:1_25" text="1/25 mix (mofa/moped)" default="off" />
-                <check key="fuel:1_50" text="1/50 mix (mofa/moped)" default="off" />
+                <checkgroup columns="2">
+                    <check key="fuel:diesel" text="Diesel" default="off" />
+                    <check key="fuel:biodiesel" text="Bio Diesel" default="off" />
+                    <check key="fuel:GTL_diesel" text="Diesel (Gas To Liquid - ultimate diesel)" default="off" />
+                    <check key="fuel:HGV_diesel" text="Diesel for Heavy Good Vehicles" default="off" />
+                    <check key="fuel:octane_80" text="Octane 80" default="off" />
+                    <check key="fuel:octane_91" text="Octane 91" default="off" />
+                    <check key="fuel:octane_92" text="Octane 92" default="off" />
+                    <check key="fuel:octane_95" text="Octane 95" default="off" />
+                    <check key="fuel:octane_98" text="Octane 98" default="off" />
+                    <check key="fuel:octane_100" text="Octane 100" default="off" />
+                    <check key="fuel:e10" text="E10 (10% Ethanol mix)" default="off" />
+                    <check key="fuel:e85" text="E85 (85% Ethanol mix)" default="off" />
+                    <check key="fuel:lpg" text="LPG (Liquefied petroleum gas)" default="off" />
+                    <check key="fuel:cng" text="CNG (Compressed Natural Gas)" default="off" />
+                    <check key="fuel:1_25" text="1/25 mix (mofa/moped)" default="off" />
+                    <check key="fuel:1_50" text="1/50 mix (mofa/moped)" default="off" />
+                </checkgroup>
             </optional>
         </item>
         <item name="Charging Station" icon="styles/standard/accommodation/camping/hookup.png" type="node">

@@ -11,9 +11,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.JOptionPane;
-import org.xml.sax.SAXException;
 
+import javax.swing.JOptionPane;
+
+import org.xml.sax.SAXException;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
@@ -57,6 +58,7 @@ public final class TaggingPresetReader {
         parser.mapOnStart("optional", TaggingPresetItems.Optional.class);
         parser.mapOnStart("roles", TaggingPresetItems.Roles.class);
         parser.map("role", TaggingPresetItems.Role.class);
+        parser.map("checkgroup", TaggingPresetItems.CheckGroup.class);
         parser.map("check", TaggingPresetItems.Check.class);
         parser.map("combo", TaggingPresetItems.Combo.class);
         parser.map("multiselect", TaggingPresetItems.MultiSelect.class);
@@ -68,6 +70,7 @@ public final class TaggingPresetReader {
         LinkedList<TaggingPreset> all = new LinkedList<TaggingPreset>();
         TaggingPresetMenu lastmenu = null;
         TaggingPresetItems.Roles lastrole = null;
+        final List<TaggingPresetItems.Check> checks = new LinkedList<TaggingPresetItems.Check>();
         List<TaggingPresetItems.PresetListEntry> listEntries = new LinkedList<TaggingPresetItems.PresetListEntry>();
 
         if (validate) {
@@ -112,9 +115,19 @@ public final class TaggingPresetReader {
                         if (lastrole == null)
                             throw new SAXException(tr("Preset role element without parent"));
                         lastrole.roles.add((TaggingPresetItems.Role) o);
+                    } else if (o instanceof TaggingPresetItems.Check) {
+                        checks.add((TaggingPresetItems.Check) o);
                     } else if (o instanceof TaggingPresetItems.PresetListEntry) {
                         listEntries.add((TaggingPresetItems.PresetListEntry) o);
+                    } else if (o instanceof TaggingPresetItems.CheckGroup) {
+                        all.getLast().data.add((TaggingPresetItem) o);
+                        ((TaggingPresetItems.CheckGroup) o).checks.addAll(checks);
+                        checks.clear();
                     } else {
+                        if (!checks.isEmpty()) {
+                            all.getLast().data.addAll(checks);
+                            checks.clear();
+                        }
                         all.getLast().data.add((TaggingPresetItem) o);
                         if (o instanceof TaggingPresetItems.ComboMultiSelect) {
                             ((TaggingPresetItems.ComboMultiSelect) o).addListEntries(listEntries);
