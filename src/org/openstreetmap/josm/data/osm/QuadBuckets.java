@@ -101,6 +101,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             // a significant performance penalty -- 50% in my
             // testing.  Child access is one of the single
             // hottest code paths in this entire class.
+            @SuppressWarnings("unchecked")
             QBLevel[] result = (QBLevel[]) Array.newInstance(this.getClass(), QuadTiling.TILES_PER_LEVEL);
             result[NW_INDEX] = nw;
             result[NE_INDEX] = ne;

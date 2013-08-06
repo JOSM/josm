@@ -191,10 +191,11 @@ public class PurgeCommand extends Command {
             throw new AssertionError("topo sort algorithm failed (nodes remaining)");
 
         /**
-            * Rest are relations. Do topological sorting on a DAG where each
-            * arrow points from child to parent. (Because it is faster to
-            * loop over getReferrers() than getMembers().)
-            */
+          * Rest are relations. Do topological sorting on a DAG where each
+          * arrow points from child to parent. (Because it is faster to
+          * loop over getReferrers() than getMembers().)
+          */
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         Set<Relation> inR = (Set) in;
         Set<Relation> childlessR = new HashSet<Relation>();
         List<Relation> outR = new ArrayList<Relation>(inR.size());

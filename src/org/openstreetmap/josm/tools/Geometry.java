@@ -48,9 +48,8 @@ public class Geometry {
      */
     public static Set<Node> addIntersections(List<Way> ways, boolean test, List<Command> cmds) {
 
-        //stupid java, cannot instantiate array of generic classes..
-        @SuppressWarnings("unchecked")
         int n = ways.size();
+        @SuppressWarnings("unchecked")
         ArrayList<Node>[] newNodes = new ArrayList[n];
         BBox[] wayBounds = new BBox[n];
         boolean[] changedWays = new boolean[n];
@@ -66,7 +65,7 @@ public class Geometry {
 
         //iterate over all way pairs and introduce the intersections
         Comparator<Node> coordsComparator = new NodePositionComparator();
-        WayLoop: for (int seg1Way = 0; seg1Way < n; seg1Way ++) {
+        for (int seg1Way = 0; seg1Way < n; seg1Way ++) {
             for (int seg2Way = seg1Way; seg2Way < n; seg2Way ++) {
 
                 //do not waste time on bounds that do not intersect
