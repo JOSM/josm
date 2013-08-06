@@ -157,12 +157,14 @@ import org.openstreetmap.josm.tools.WindowGeometry;
         String key = propertyData.getValueAt(row, 0).toString();
         objKey=key;
         
+        @SuppressWarnings("unchecked")
         final EditTagDialog editDialog = new EditTagDialog(key, row, 
                 (Map<String, Integer>) propertyData.getValueAt(row, 1), focusOnKey);
         editDialog.showDialog();
         if (editDialog.getValue() !=1 ) return;
         editDialog.performTagEdit();
     }
+    
     /**
      * If during last editProperty call user changed the key name, this key will be returned
      * Elsewhere, returns null.

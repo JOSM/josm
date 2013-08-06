@@ -87,6 +87,7 @@ public class RelationChecker extends Test {
         Collection<Relation> relations = new LinkedList<Relation>();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void visit(Relation n) {
         LinkedList<Role> allroles = new LinkedList<Role>();
