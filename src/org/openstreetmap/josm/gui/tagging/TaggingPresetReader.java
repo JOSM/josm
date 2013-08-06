@@ -80,6 +80,10 @@ public final class TaggingPresetReader {
         }
         while (parser.hasNext()) {
             Object o = parser.next();
+            if (!(o instanceof TaggingPresetItem) && !checks.isEmpty()) {
+                all.getLast().data.addAll(checks);
+                checks.clear();
+            }
             if (o instanceof TaggingPresetMenu) {
                 TaggingPresetMenu tp = (TaggingPresetMenu) o;
                 if (tp == lastmenu) {
