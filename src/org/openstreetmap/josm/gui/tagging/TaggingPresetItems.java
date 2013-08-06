@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -23,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -34,8 +36,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
-import org.xml.sax.SAXException;
 
+import org.xml.sax.SAXException;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -314,6 +316,16 @@ public final class TaggingPresetItems {
         @Override
         public void addCommands(List<Tag> changedTags) {
         }
+
+        @Override
+        public String toString() {
+            return "Label ["
+                    + (text != null ? "text=" + text + ", " : "")
+                    + (text_context != null ? "text_context=" + text_context
+                            + ", " : "")
+                    + (locale_text != null ? "locale_text=" + locale_text : "")
+                    + "]";
+        }
     }
 
     public static class Link extends TaggingPresetItem {
@@ -390,6 +402,11 @@ public final class TaggingPresetItems {
         @Override
         public void addCommands(List<Tag> changedTags) {
         }
+
+        @Override
+        public String toString() {
+            return "Optional";
+        }
     }
 
     public static class Space extends TaggingPresetItem {
@@ -402,6 +419,11 @@ public final class TaggingPresetItems {
 
         @Override
         public void addCommands(List<Tag> changedTags) {
+        }
+
+        @Override
+        public String toString() {
+            return "Space";
         }
     }
 
@@ -645,6 +667,46 @@ public final class TaggingPresetItems {
         }
     }
 
+    /**
+     * A group of {@link Check}s.
+     * @since 6114
+     */
+    public static class CheckGroup extends TaggingPresetItem {
+        
+        /**
+         * Number of columns (positive integer)
+         */
+        public String columns;
+        
+        /**
+         * List of checkboxes
+         */
+        public final List<Check> checks = new LinkedList<Check>();
+
+        @Override
+        boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+            Integer cols = new Integer(columns);
+            int rows = (int) Math.ceil((double)checks.size()/cols.doubleValue());
+            JPanel panel = new JPanel(new GridLayout(rows, cols));
+            
+            for (Check check : checks) {
+                check.addToPanel(panel, sel);
+            }
+            
+            p.add(panel, GBC.eol());
+            return false;
+        }
+
+        @Override
+        void addCommands(List<Tag> changedTags) {
+        }
+
+        @Override
+        public String toString() {
+            return "CheckGroup [columns=" + columns + "]";
+        }
+    }
+
     public static class Check extends KeyedItem {
 
         public String locale_text;
@@ -733,6 +795,18 @@ public final class TaggingPresetItems {
         @Override
         public Collection<String> getValues() {
             return Arrays.asList(value_on, value_off);
+        }
+
+        @Override
+        public String toString() {
+            return "Check ["
+                    + (locale_text != null ? "locale_text=" + locale_text + ", " : "")
+                    + (value_on != null ? "value_on=" + value_on + ", " : "")
+                    + (value_off != null ? "value_off=" + value_off + ", " : "")
+                    + "default_=" + default_ + ", "
+                    + (check != null ? "check=" + check + ", " : "")
+                    + (initialState != null ? "initialState=" + initialState
+                            + ", " : "") + "def=" + def + "]";
         }
     }
 
