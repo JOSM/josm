@@ -137,7 +137,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     }
 
     protected void notifySuccess(UserInfo userInfo) {
-        HelpAwareOptionPane.showOptionDialog(
+        HelpAwareOptionPane.showMessageDialogInEDT(
                 parent,
                 tr("<html>"
                         + "Successfully used the Access Token ''{0}'' to<br>"
@@ -156,7 +156,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     }
 
     protected void alertFailedAuthentication() {
-        HelpAwareOptionPane.showOptionDialog(
+        HelpAwareOptionPane.showMessageDialogInEDT(
                 parent,
                 tr("<html>"
                         + "Failed to access the OSM server ''{0}''<br>"
@@ -174,7 +174,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     }
 
     protected void alertFailedAuthorisation() {
-        HelpAwareOptionPane.showOptionDialog(
+        HelpAwareOptionPane.showMessageDialogInEDT(
                 parent,
                 tr("<html>"
                         + "The Access Token ''{1}'' is known to the OSM server ''{0}''.<br>"
@@ -192,7 +192,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     }
 
     protected void alertFailedConnection() {
-        HelpAwareOptionPane.showOptionDialog(
+        HelpAwareOptionPane.showMessageDialogInEDT(
                 parent,
                 tr("<html>"
                         + "Failed to retrieve information about the current user"
@@ -211,7 +211,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     }
 
     protected void alertFailedSigning() {
-        HelpAwareOptionPane.showOptionDialog(
+        HelpAwareOptionPane.showMessageDialogInEDT(
                 parent,
                 tr("<html>"
                         + "Failed to sign the request for the OSM server ''{0}'' with the "
@@ -228,7 +228,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     }
 
     protected void alertInternalError() {
-        HelpAwareOptionPane.showOptionDialog(
+        HelpAwareOptionPane.showMessageDialogInEDT(
                 parent,
                 tr("<html>"
                         + "The test failed because the server responded with an internal error.<br>"
