@@ -19,6 +19,7 @@ import java.util.Stack;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.Extensions;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
@@ -30,6 +31,7 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -405,7 +407,7 @@ public class GpxReader implements GpxConstants {
                 }
                 GpxLink link = new GpxLink(url);
                 link.text = urlname;
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings({ "unchecked", "rawtypes" })
                 Collection<GpxLink> links = (Collection) attr.get(META_LINKS);
                 links.add(link);
             }
@@ -454,6 +456,12 @@ public class GpxReader implements GpxConstants {
                 parser.tryToFinish();
                 if (parser.data.isEmpty())
                     throw e;
+                String message = e.getMessage();
+                if (e instanceof SAXParseException) {
+                    SAXParseException spe = ((SAXParseException)e);
+                    message += " " + tr("(at line {0}, column {1})", spe.getLineNumber(), spe.getColumnNumber());
+                }
+                Main.warn(message);
                 return false;
             } else
                 throw e;
@@ -463,6 +471,10 @@ public class GpxReader implements GpxConstants {
         }
     }
 
+    /**
+     * Replies the GPX data.
+     * @return The GPX data
+     */
     public GpxData getGpxData() {
         return gpxData;
     }
