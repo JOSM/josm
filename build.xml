@@ -170,11 +170,11 @@ Build-Date: ${build.tstamp}
         <delete dir="${test.dir}/report"/>
     </target>
     <target name="test-compile" depends="test-init,dist">
-        <javac srcdir="${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/${build.dir}" target="1.5" source="1.5" debug="on" encoding="UTF-8">
+        <javac srcdir="${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/${build.dir}" target="1.6" source="1.6" debug="on" includeantruntime="false" encoding="UTF-8">
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>
-        <javac srcdir="${test.dir}/functional" classpathref="test.classpath" destdir="${test.dir}/${build.dir}" target="1.5" source="1.5" debug="on" encoding="UTF-8">
+        <javac srcdir="${test.dir}/functional" classpathref="test.classpath" destdir="${test.dir}/${build.dir}" target="1.6" source="1.6" debug="on" includeantruntime="false" encoding="UTF-8">
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>
