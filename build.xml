@@ -162,19 +162,19 @@ Build-Date: ${build.tstamp}
         <pathelement path="dist/josm-custom.jar"/>
     </path>
     <target name="test-init">
-        <mkdir dir="${test.dir}/${build.dir}"/>
+        <mkdir dir="${test.dir}/build"/>
         <mkdir dir="${test.dir}/report"/>
     </target>
     <target name="test-clean">
-        <delete dir="${test.dir}/${build.dir}"/>
+        <delete dir="${test.dir}/build"/>
         <delete dir="${test.dir}/report"/>
     </target>
     <target name="test-compile" depends="test-init,dist">
-        <javac srcdir="${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/${build.dir}" target="1.6" source="1.6" debug="on" includeantruntime="false" encoding="UTF-8">
+        <javac srcdir="${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/build" target="1.6" source="1.6" debug="on" includeantruntime="false" encoding="UTF-8">
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>
-        <javac srcdir="${test.dir}/functional" classpathref="test.classpath" destdir="${test.dir}/${build.dir}" target="1.6" source="1.6" debug="on" includeantruntime="false" encoding="UTF-8">
+        <javac srcdir="${test.dir}/functional" classpathref="test.classpath" destdir="${test.dir}/build" target="1.6" source="1.6" debug="on" includeantruntime="false" encoding="UTF-8">
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>
@@ -186,7 +186,7 @@ Build-Date: ${build.tstamp}
 	    <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
             <classpath>
                 <path refid="test.classpath"/>
-                <pathelement path="${test.dir}/${build.dir}"/>
+                <pathelement path="${test.dir}/build"/>
                 <pathelement path="${test.dir}/config"/>
             </classpath>
             <formatter type="plain"/>
