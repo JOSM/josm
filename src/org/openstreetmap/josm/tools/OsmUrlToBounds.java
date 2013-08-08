@@ -27,8 +27,13 @@ public class OsmUrlToBounds {
         if (b != null)
             return b;
         int i = url.indexOf('?');
-        if (i == -1)
-            return null;
+        if (i == -1) {
+            //probably it's a URL following the new scheme?
+            if (url.indexOf('#') >= 0)
+                return parseHashURLs(url);
+            else
+                return null;
+        }
         String[] args = url.substring(i+1).split("&");
         HashMap<String, String> map = new HashMap<String, String>();
         for (String arg : args) {
@@ -67,6 +72,26 @@ public class OsmUrlToBounds {
         } catch (ArrayIndexOutOfBoundsException x) {
             x.printStackTrace();
         }
+        return b;
+    }
+
+    /**
+     * Openstreetmap.org changed it's URL scheme in August 2013, which breaks the URL parsing.
+     * The following function, called by the old parse function if necessary, provides parsing new URLs
+     * the new URLs follow the scheme http://www.openstreetmap.org/#map=18/51.71873/8.76164&layers=CN
+     * @param url
+     * @return
+     */
+    private static Bounds parseHashURLs(String url) {
+        int startIndex = url.indexOf("=");
+        int endIndex = url.indexOf("&");
+        String coordPart = url.substring(startIndex+1, endIndex);
+        System.out.println(coordPart);
+
+        String[] parts = coordPart.split("/");
+        Bounds b = positionToBounds(Double.parseDouble(parts[1]),
+                Double.parseDouble(parts[2]),
+                Integer.parseInt(parts[0]));
         return b;
     }
 
