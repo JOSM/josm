@@ -84,15 +84,22 @@ public class OsmUrlToBounds {
      */
     private static Bounds parseHashURLs(String url) {
         int startIndex = url.indexOf("=");
+        if (startIndex == -1) return null;
         int endIndex = url.indexOf("&");
-        String coordPart = url.substring(startIndex+1, endIndex);
-        System.out.println(coordPart);
-
-        String[] parts = coordPart.split("/");
-        Bounds b = positionToBounds(Double.parseDouble(parts[1]),
-                Double.parseDouble(parts[2]),
-                Integer.parseInt(parts[0]));
-        return b;
+        if (endIndex == -1) endIndex = url.length();
+        try
+        {
+            String coordPart = url.substring(startIndex+1, endIndex);
+            String[] parts = coordPart.split("/");
+            Bounds b = positionToBounds(Double.parseDouble(parts[1]),
+                    Double.parseDouble(parts[2]),
+                    Integer.parseInt(parts[0]));
+            return b;
+        }
+        catch(Exception ex)
+        {
+            return null;
+        }
     }
 
     private static double parseDouble(HashMap<String, String> map, String key) {
