@@ -2,9 +2,9 @@
 package org.openstreetmap.josm.tools;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Iterator;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
@@ -12,7 +12,8 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
-import com.drew.metadata.exif.ExifDirectory;
+import com.drew.metadata.exif.ExifIFD0Directory;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 /**
  * Read out exif file information from a jpeg file
@@ -25,15 +26,14 @@ public class ExifReader {
             Metadata metadata = JpegMetadataReader.readMetadata(filename);
             String dateStr = null;
             OUTER:
-            for (Iterator<Directory> dirIt = metadata.getDirectoryIterator(); dirIt.hasNext();) {
-                for (Iterator<Tag> tagIt = dirIt.next().getTagIterator(); tagIt.hasNext();) {
-                    Tag tag = tagIt.next();
-                    if (tag.getTagType() == ExifDirectory.TAG_DATETIME_ORIGINAL /* 0x9003 */) {
+            for (Directory dirIt : metadata.getDirectories()) {
+                for (Tag tag : dirIt.getTags()) {
+                    if (tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL /* 0x9003 */) {
                         dateStr = tag.getDescription();
                         break OUTER; // prefer this tag
                     }
-                    if (tag.getTagType() == ExifDirectory.TAG_DATETIME /* 0x0132 */ ||
-                        tag.getTagType() == ExifDirectory.TAG_DATETIME_DIGITIZED /* 0x9004 */) {
+                    if (tag.getTagType() == ExifIFD0Directory.TAG_DATETIME /* 0x0132 */ ||
+                        tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_DIGITIZED /* 0x9004 */) {
                         dateStr = tag.getDescription();
                     }
                 }
@@ -54,11 +54,13 @@ public class ExifReader {
         Integer orientation = null;
         try {
             final Metadata metadata = JpegMetadataReader.readMetadata(filename);
-            final Directory dir = metadata.getDirectory(ExifDirectory.class);
-            orientation = dir.getInt(ExifDirectory.TAG_ORIENTATION);
+            final Directory dir = metadata.getDirectory(ExifIFD0Directory.class);
+            orientation = dir.getInt(ExifIFD0Directory.TAG_ORIENTATION);
         } catch (JpegProcessingException e) {
             e.printStackTrace();
         } catch (MetadataException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return orientation;

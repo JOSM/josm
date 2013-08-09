@@ -64,11 +64,12 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.lang.CompoundException;
+import com.drew.lang.GeoLocation;
 import com.drew.lang.Rational;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
-import com.drew.metadata.exif.ExifDirectory;
+import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.GpsDirectory;
 
 public class GeoImageLayer extends Layer implements PropertyChangeListener, JumpToMarkerLayer {
@@ -507,26 +508,34 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
     private static void extractExif(ImageEntry e) {
 
-        double deg;
-        double min, sec;
-        double lon, lat;
-        Metadata metadata = null;
-        Directory dirExif = null, dirGps = null;
+        Metadata metadata;
+        Directory dirExif;
+        GpsDirectory dirGps;
 
         try {
             metadata = JpegMetadataReader.readMetadata(e.getFile());
-            dirExif = metadata.getDirectory(ExifDirectory.class);
+            dirExif = metadata.getDirectory(ExifIFD0Directory.class);
             dirGps = metadata.getDirectory(GpsDirectory.class);
         } catch (CompoundException p) {
+            e.setExifCoor(null);
+            e.setPos(null);
+            return;
+        } catch (IOException p) {
             e.setExifCoor(null);
             e.setPos(null);
             return;
         }
 
         try {
-            int orientation = dirExif.getInt(ExifDirectory.TAG_ORIENTATION);
+            int orientation = dirExif.getInt(ExifIFD0Directory.TAG_ORIENTATION);
             e.setExifOrientation(orientation);
         } catch (MetadataException ex) {
+        }
+
+        if (dirGps == null) {
+            e.setExifCoor(null);
+            e.setPos(null);
+            return;
         }
 
         try {
@@ -540,63 +549,24 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
 
         try {
-            // longitude
-
-            Rational[] components = dirGps.getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
-
-            deg = components[0].doubleValue();
-            min = components[1].doubleValue();
-            sec = components[2].doubleValue();
-
-            if (Double.isNaN(deg) && Double.isNaN(min) && Double.isNaN(sec))
-                throw new IllegalArgumentException();
-
-            lon = (Double.isNaN(deg) ? 0 : deg + (Double.isNaN(min) ? 0 : (min / 60)) + (Double.isNaN(sec) ? 0 : (sec / 3600)));
-
-            if (dirGps.getString(GpsDirectory.TAG_GPS_LONGITUDE_REF).charAt(0) == 'W') {
-                lon = -lon;
-            }
-
-            // latitude
-
-            components = dirGps.getRationalArray(GpsDirectory.TAG_GPS_LATITUDE);
-
-            deg = components[0].doubleValue();
-            min = components[1].doubleValue();
-            sec = components[2].doubleValue();
-
-            if (Double.isNaN(deg) && Double.isNaN(min) && Double.isNaN(sec))
-                throw new IllegalArgumentException();
-
-            lat = (Double.isNaN(deg) ? 0 : deg + (Double.isNaN(min) ? 0 : (min / 60)) + (Double.isNaN(sec) ? 0 : (sec / 3600)));
-
-            if (Double.isNaN(lat))
-                throw new IllegalArgumentException();
-
-            if (dirGps.getString(GpsDirectory.TAG_GPS_LATITUDE_REF).charAt(0) == 'S') {
-                lat = -lat;
-            }
-
-            // Store values
-
-            e.setExifCoor(new LatLon(lat, lon));
-            e.setPos(e.getExifCoor());
-
-        } catch (CompoundException p) {
-            // Try to read lon/lat as double value (Nonstandard, created by some cameras -> #5220)
-            try {
-                Double longitude = dirGps.getDouble(GpsDirectory.TAG_GPS_LONGITUDE);
-                Double latitude = dirGps.getDouble(GpsDirectory.TAG_GPS_LATITUDE);
-                if (longitude == null || latitude == null)
-                    throw new CompoundException("");
-
-                // Store values
-
-                e.setExifCoor(new LatLon(latitude, longitude));
+            GeoLocation location = dirGps.getGeoLocation();
+            if (location != null) {
+                e.setExifCoor(new LatLon(location.getLatitude(), location.getLongitude()));
                 e.setPos(e.getExifCoor());
-            } catch (CompoundException ex) {
-                e.setExifCoor(null);
-                e.setPos(null);
+            } else {
+                // Try to read lon/lat as double value (Nonstandard, created by some cameras -> #5220)
+                try {
+                    Double longitude = dirGps.getDouble(GpsDirectory.TAG_GPS_LONGITUDE);
+                    Double latitude = dirGps.getDouble(GpsDirectory.TAG_GPS_LATITUDE);
+    
+                    // Store values
+    
+                    e.setExifCoor(new LatLon(latitude, longitude));
+                    e.setPos(e.getExifCoor());
+                } catch (CompoundException ex) {
+                    e.setExifCoor(null);
+                    e.setPos(null);
+                }
             }
         } catch (Exception ex) { // (other exceptions, e.g. #5271)
             System.err.println("Error reading EXIF from file: "+ex);

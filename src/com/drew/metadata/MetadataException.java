@@ -1,39 +1,48 @@
 /*
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ * Copyright 2002-2012 Drew Noakes
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   drew@drewnoakes.com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- * Created by dnoakes on 13-Nov-2002 18:10:23 using IntelliJ IDEA.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata;
 
 import com.drew.lang.CompoundException;
+import com.drew.lang.annotations.Nullable;
 
 /**
+ * Base class for all metadata specific exceptions.
  *
+ * @author Drew Noakes http://drewnoakes.com
  */
 public class MetadataException extends CompoundException
 {
-    public MetadataException(String msg)
+    private static final long serialVersionUID = 8612756143363919682L;
+
+    public MetadataException(@Nullable String msg)
     {
         super(msg);
     }
 
-    public MetadataException(Throwable exception)
+    public MetadataException(@Nullable Throwable exception)
     {
         super(exception);
     }
 
-    public MetadataException(String msg, Throwable innerException)
+    public MetadataException(@Nullable String msg, @Nullable Throwable innerException)
     {
         super(msg, innerException);
     }
