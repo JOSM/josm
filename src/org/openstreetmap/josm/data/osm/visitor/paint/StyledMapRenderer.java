@@ -441,6 +441,48 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
+    /**
+     * Displays text at specified position including its halo, if applicable.
+     * 
+     * @param gv Text's glyphs to display. If {@code null}, use text from {@code s} instead.
+     * @param s text to display if {@code gv} is {@code null}
+     * @param x X position
+     * @param y Y position
+     * @param disabled {@code true} if element is disabled (filtered out)
+     * @param text text style to use
+     */
+    private void displayText(GlyphVector gv, String s, int x, int y, boolean disabled, TextElement text) {
+        if (isInactiveMode || disabled) {
+            g.setColor(inactiveColor);
+            if (gv != null) {
+                g.drawGlyphVector(gv, x, y);
+            } else {
+                g.setFont(text.font);
+                g.drawString(s, x, y);
+            }
+        } else if (text.haloRadius != null) {
+            g.setStroke(new BasicStroke(2*text.haloRadius, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+            g.setColor(text.haloColor);
+            if (gv == null) {
+                FontRenderContext frc = g.getFontRenderContext();
+                gv = text.font.createGlyphVector(frc, s);
+            }
+            Shape textOutline = gv.getOutline(x, y);
+            g.draw(textOutline);
+            g.setStroke(new BasicStroke());
+            g.setColor(text.color);
+            g.fill(textOutline);
+        } else {
+            g.setColor(text.color);
+            if (gv != null) {
+                g.drawGlyphVector(gv, x, y);
+            } else {
+                g.setFont(text.font);
+                g.drawString(s, x, y);
+            }
+        }
+    }
+    
     protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, TextElement text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());
@@ -499,16 +541,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             if ((pb.width >= nb.getWidth() && pb.height >= nb.getHeight()) && // quick check
                     area.contains(centeredNBounds) // slow but nice
             ) {
-                if (isInactiveMode || osm.isDisabled()) {
-                    g.setColor(inactiveColor);
-                } else {
-                    g.setColor(text.color);
-                }
                 Font defaultFont = g.getFont();
-                g.setFont (text.font);
-                g.drawString (name,
-                        (int)(centeredNBounds.getMinX() - nb.getMinX()),
-                        (int)(centeredNBounds.getMinY() - nb.getMinY()));
+                int x = (int)(centeredNBounds.getMinX() - nb.getMinX());
+                int y = (int)(centeredNBounds.getMinY() - nb.getMinY());
+                displayText(null, name, x, y, osm.isDisabled(), text);
                 g.setFont(defaultFont);
             }
         }
@@ -587,24 +623,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 y += box.y + box.height + metrics.getAscent() + 2;
             } else throw new AssertionError();
         }
-        if (isInactiveMode || n.isDisabled()) {
-            g.setColor(inactiveColor);
-        } else {
-            g.setColor(text.color);
-        }
-        if (text.haloRadius != null) {
-            g.setStroke(new BasicStroke(2*text.haloRadius, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
-            g.setColor(text.haloColor);
-            FontRenderContext frc = g.getFontRenderContext();
-            GlyphVector gv = text.font.createGlyphVector(frc, s);
-            Shape textOutline = gv.getOutline(x, y);
-            g.draw(textOutline);
-            g.setStroke(new BasicStroke());
-            g.setColor(text.color);
-            g.fill(textOutline);
-        } else {
-            g.drawString(s, x, y);
-        }
+        displayText(null, s, x, y, n.isDisabled(), text);
         g.setFont(defaultFont);
     }
 
@@ -1150,18 +1169,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 gv.setGlyphTransform(i, trfm);
             }
         }
-        if (text.haloRadius != null) {
-            Shape textOutline = gv.getOutline();
-            g.setStroke(new BasicStroke(2*text.haloRadius, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
-            g.setColor(text.haloColor);
-            g.draw(textOutline);
-            g.setStroke(new BasicStroke());
-            g.setColor(text.color);
-            g.fill(textOutline);
-        } else {
-            g.setColor(text.color);
-            g.drawGlyphVector(gv, 0, 0);
-        }
+        displayText(gv, null, 0, 0, way.isDisabled(), text);
     }
 
     /**
