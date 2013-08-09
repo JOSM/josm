@@ -1,28 +1,37 @@
 /*
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ * Copyright 2002-2012 Drew Noakes
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   drew@drewnoakes.com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- * Created by dnoakes on 27-Nov-2002 10:10:47 using IntelliJ IDEA.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 
 /**
+ * Describes tags specific to Casio (type 2) cameras.
+ *
  * A standard TIFF IFD directory but always uses Motorola (Big-Endian) Byte Alignment.
  * Makernote data begins after a 6-byte header: "QVC\x00\x00\x00"
+ *
+ * @author Drew Noakes http://drewnoakes.com
  */
 public class CasioType2MakernoteDirectory extends Directory
 {
@@ -166,39 +175,40 @@ public class CasioType2MakernoteDirectory extends Directory
      */
     public static final int TAG_CASIO_TYPE2_FILTER = 0x3017;
 
-    protected static final HashMap tagNameMap = new HashMap();
+    @NotNull
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        // TODO add names
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_THUMBNAIL_DIMENSIONS), "Thumbnail Dimensions");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_THUMBNAIL_SIZE), "Thumbnail Size");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_THUMBNAIL_OFFSET), "Thumbnail Offset");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_QUALITY_MODE), "Quality Mode");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_IMAGE_SIZE), "Image Size");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_FOCUS_MODE_1), "Focus Mode");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_ISO_SENSITIVITY), "ISO Sensitivity");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_WHITE_BALANCE_1), "White Balance");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_FOCAL_LENGTH), "Focal Length");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_SATURATION), "Saturation");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_CONTRAST), "Contrast");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_SHARPNESS), "Sharpness");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_PRINT_IMAGE_MATCHING_INFO), "Print Image Matching (PIM) Info");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_CASIO_PREVIEW_THUMBNAIL), "Casio Preview Thumbnail");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_WHITE_BALANCE_BIAS), "White Balance Bias");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_WHITE_BALANCE_2), "White Balance");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_OBJECT_DISTANCE), "Object Distance");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_FLASH_DISTANCE), "Flash Distance");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_RECORD_MODE), "Record Mode");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_SELF_TIMER), "Self Timer");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_QUALITY), "Quality");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_FOCUS_MODE_2), "Focus Mode");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_TIME_ZONE), "Time Zone");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_BESTSHOT_MODE), "BestShot Mode");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_CCD_ISO_SENSITIVITY), "CCD ISO Sensitivity");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_COLOUR_MODE), "Colour Mode");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_ENHANCEMENT), "Enhancement");
-        tagNameMap.put(new Integer(TAG_CASIO_TYPE2_FILTER), "Filter");
+        // TODO add missing names
+        _tagNameMap.put(TAG_CASIO_TYPE2_THUMBNAIL_DIMENSIONS, "Thumbnail Dimensions");
+        _tagNameMap.put(TAG_CASIO_TYPE2_THUMBNAIL_SIZE, "Thumbnail Size");
+        _tagNameMap.put(TAG_CASIO_TYPE2_THUMBNAIL_OFFSET, "Thumbnail Offset");
+        _tagNameMap.put(TAG_CASIO_TYPE2_QUALITY_MODE, "Quality Mode");
+        _tagNameMap.put(TAG_CASIO_TYPE2_IMAGE_SIZE, "Image Size");
+        _tagNameMap.put(TAG_CASIO_TYPE2_FOCUS_MODE_1, "Focus Mode");
+        _tagNameMap.put(TAG_CASIO_TYPE2_ISO_SENSITIVITY, "ISO Sensitivity");
+        _tagNameMap.put(TAG_CASIO_TYPE2_WHITE_BALANCE_1, "White Balance");
+        _tagNameMap.put(TAG_CASIO_TYPE2_FOCAL_LENGTH, "Focal Length");
+        _tagNameMap.put(TAG_CASIO_TYPE2_SATURATION, "Saturation");
+        _tagNameMap.put(TAG_CASIO_TYPE2_CONTRAST, "Contrast");
+        _tagNameMap.put(TAG_CASIO_TYPE2_SHARPNESS, "Sharpness");
+        _tagNameMap.put(TAG_CASIO_TYPE2_PRINT_IMAGE_MATCHING_INFO, "Print Image Matching (PIM) Info");
+        _tagNameMap.put(TAG_CASIO_TYPE2_CASIO_PREVIEW_THUMBNAIL, "Casio Preview Thumbnail");
+        _tagNameMap.put(TAG_CASIO_TYPE2_WHITE_BALANCE_BIAS, "White Balance Bias");
+        _tagNameMap.put(TAG_CASIO_TYPE2_WHITE_BALANCE_2, "White Balance");
+        _tagNameMap.put(TAG_CASIO_TYPE2_OBJECT_DISTANCE, "Object Distance");
+        _tagNameMap.put(TAG_CASIO_TYPE2_FLASH_DISTANCE, "Flash Distance");
+        _tagNameMap.put(TAG_CASIO_TYPE2_RECORD_MODE, "Record Mode");
+        _tagNameMap.put(TAG_CASIO_TYPE2_SELF_TIMER, "Self Timer");
+        _tagNameMap.put(TAG_CASIO_TYPE2_QUALITY, "Quality");
+        _tagNameMap.put(TAG_CASIO_TYPE2_FOCUS_MODE_2, "Focus Mode");
+        _tagNameMap.put(TAG_CASIO_TYPE2_TIME_ZONE, "Time Zone");
+        _tagNameMap.put(TAG_CASIO_TYPE2_BESTSHOT_MODE, "BestShot Mode");
+        _tagNameMap.put(TAG_CASIO_TYPE2_CCD_ISO_SENSITIVITY, "CCD ISO Sensitivity");
+        _tagNameMap.put(TAG_CASIO_TYPE2_COLOUR_MODE, "Colour Mode");
+        _tagNameMap.put(TAG_CASIO_TYPE2_ENHANCEMENT, "Enhancement");
+        _tagNameMap.put(TAG_CASIO_TYPE2_FILTER, "Filter");
     }
 
     public CasioType2MakernoteDirectory()
@@ -206,13 +216,15 @@ public class CasioType2MakernoteDirectory extends Directory
         this.setDescriptor(new CasioType2MakernoteDescriptor(this));
     }
 
+    @NotNull
     public String getName()
     {
         return "Casio Makernote";
     }
 
-    protected HashMap getTagNameMap()
+    @NotNull
+    protected HashMap<Integer, String> getTagNameMap()
     {
-        return tagNameMap;
+        return _tagNameMap;
     }
 }

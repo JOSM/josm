@@ -1,37 +1,42 @@
 /*
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ * Copyright 2002-2012 Drew Noakes
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   drew@drewnoakes.com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- * Created by dnoakes on 12-Nov-2002 19:00:03 using IntelliJ IDEA.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata.iptc;
 
-import com.drew.imaging.jpeg.JpegProcessingException;
-import com.drew.imaging.jpeg.JpegSegmentReader;
+import com.drew.lang.BufferBoundsException;
+import com.drew.lang.BufferReader;
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.MetadataReader;
 
-import java.io.File;
-import java.io.InputStream;
 import java.util.Date;
 
 /**
+ * Decodes IPTC binary data, populating a <code>Metadata</code> object with tag values in an <code>IptcDirectory</code>.
  *
+ * @author Drew Noakes http://drewnoakes.com
  */
 public class IptcReader implements MetadataReader
 {
+    // TODO consider breaking the IPTC section up into multiple directories and providing segregation of each IPTC directory
 /*
     public static final int DIRECTORY_IPTC = 2;
 
@@ -45,72 +50,45 @@ public class IptcReader implements MetadataReader
     public static final int DATA_RECORD = 8;
     public static final int POST_DATA_RECORD = 9;
 */
-    /**
-     * The Iptc data segment.
-     */
-    private final byte[] _data;
 
-    /**
-     * Creates a new IptcReader for the specified Jpeg jpegFile.
-     */
-    public IptcReader(File jpegFile) throws JpegProcessingException
+    /** Performs the IPTC data extraction, adding found values to the specified instance of <code>Metadata</code>. */
+    public void extract(@NotNull final BufferReader reader, @NotNull final Metadata metadata)
     {
-        this(new JpegSegmentReader(jpegFile).readSegment(JpegSegmentReader.SEGMENT_APPD));
-    }
+        IptcDirectory directory = metadata.getOrCreateDirectory(IptcDirectory.class);
 
-    /** Creates an IptcReader for a JPEG stream.
-     *
-     * @param is JPEG stream. Stream will be closed.
-     */
-    public IptcReader(InputStream is) throws JpegProcessingException
-    {
-        this(new JpegSegmentReader(is).readSegment(JpegSegmentReader.SEGMENT_APPD));
-    }
-
-    public IptcReader(byte[] data)
-    {
-        _data = data;
-    }
-
-    /**
-     * Performs the Exif data extraction, returning a new instance of <code>Metadata</code>.
-     */
-    public Metadata extract()
-    {
-        return extract(new Metadata());
-    }
-
-    /**
-     * Performs the Exif data extraction, adding found values to the specified
-     * instance of <code>Metadata</code>.
-     */
-    public Metadata extract(Metadata metadata)
-    {
-        if (_data == null) {
-            return metadata;
-        }
-
-        Directory directory = metadata.getDirectory(IptcDirectory.class);
-
-        // find start of data
         int offset = 0;
+
+/*
+        // find start-of-segment marker (potentially need to skip some ASCII photoshop header info)
         try {
-            while (offset < _data.length - 1 && get32Bits(offset) != 0x1c02) {
+            while (offset < data.length - 1 && reader.getUInt16(offset) != 0x1c01 && reader.getUInt16(offset) != 0x1c02)
                 offset++;
-            }
-        } catch (MetadataException e) {
-            directory.addError("Couldn't find start of Iptc data (invalid segment)");
-            return metadata;
+        } catch (BufferBoundsException e) {
+            directory.addError("Couldn't find start of IPTC data (invalid segment)");
+            return;
         }
+*/
 
         // for each tag
-        while (offset < _data.length) {
+        while (offset < reader.getLength()) {
+
             // identifies start of a tag
-            if (_data[offset] != 0x1c) {
+            short startByte;
+            try {
+                startByte = reader.getUInt8(offset);
+            } catch (BufferBoundsException e) {
+                directory.addError("Unable to read starting byte of IPTC tag");
                 break;
             }
+
+            if (startByte != 0x1c) {
+                directory.addError("Invalid start to IPTC tag");
+                break;
+            }
+
             // we need at least five bytes left to read a tag
-            if ((offset + 5) >= _data.length) {
+            if (offset + 5 >= reader.getLength()) {
+                directory.addError("Too few bytes remain for a valid IPTC tag");
                 break;
             }
 
@@ -120,67 +98,55 @@ public class IptcReader implements MetadataReader
             int tagType;
             int tagByteCount;
             try {
-                directoryType = _data[offset++];
-                tagType = _data[offset++];
-                tagByteCount = get32Bits(offset);
-            } catch (MetadataException e) {
-                directory.addError("Iptc data segment ended mid-way through tag descriptor");
-                return metadata;
+                directoryType = reader.getUInt8(offset++);
+                tagType = reader.getUInt8(offset++);
+                tagByteCount = reader.getUInt16(offset);
+                offset += 2;
+            } catch (BufferBoundsException e) {
+                directory.addError("IPTC data segment ended mid-way through tag descriptor");
+                return;
             }
-            offset += 2;
-            if ((offset + tagByteCount) > _data.length) {
-                directory.addError("data for tag extends beyond end of iptc segment");
+
+            if (offset + tagByteCount > reader.getLength()) {
+                directory.addError("Data for tag extends beyond end of IPTC segment");
                 break;
             }
 
-            processTag(directory, directoryType, tagType, offset, tagByteCount);
+            try {
+                processTag(reader, directory, directoryType, tagType, offset, tagByteCount);
+            } catch (BufferBoundsException e) {
+                directory.addError("Error processing IPTC tag");
+                break;
+            }
+
             offset += tagByteCount;
         }
-
-        return metadata;
     }
 
-    /**
-     * Returns an int calculated from two bytes of data at the specified offset (MSB, LSB).
-     * @param offset position within the data buffer to read first byte
-     * @return the 32 bit int value, between 0x0000 and 0xFFFF
-     */
-    private int get32Bits(int offset) throws MetadataException
-    {
-        if (offset >= _data.length) {
-            throw new MetadataException("Attempt to read bytes from outside Iptc data buffer");
-        }
-        return ((_data[offset] & 255) << 8) | (_data[offset + 1] & 255);
-    }
-
-    /**
-     * This method serves as marsheller of objects for dataset. It converts from IPTC
-     * octets to relevant java object.
-     */
-    private void processTag(Directory directory, int directoryType, int tagType, int offset, int tagByteCount)
+    private void processTag(@NotNull BufferReader reader, @NotNull Directory directory, int directoryType, int tagType, int offset, int tagByteCount) throws BufferBoundsException
     {
         int tagIdentifier = tagType | (directoryType << 8);
 
         switch (tagIdentifier) {
-            case IptcDirectory.TAG_RECORD_VERSION:
+            case IptcDirectory.TAG_APPLICATION_RECORD_VERSION:
                 // short
-                short shortValue = (short)((_data[offset] << 8) | _data[offset + 1]);
+                int shortValue = reader.getUInt16(offset);
                 directory.setInt(tagIdentifier, shortValue);
                 return;
             case IptcDirectory.TAG_URGENCY:
                 // byte
-                directory.setInt(tagIdentifier, _data[offset]);
+                directory.setInt(tagIdentifier, reader.getUInt8(offset));
                 return;
             case IptcDirectory.TAG_RELEASE_DATE:
             case IptcDirectory.TAG_DATE_CREATED:
                 // Date object
                 if (tagByteCount >= 8) {
-                    String dateStr = new String(_data, offset, tagByteCount);
+                    String dateStr = reader.getString(offset, tagByteCount);
                     try {
                         int year = Integer.parseInt(dateStr.substring(0, 4));
                         int month = Integer.parseInt(dateStr.substring(4, 6)) - 1;
                         int day = Integer.parseInt(dateStr.substring(6, 8));
-                        Date date = (new java.util.GregorianCalendar(year, month, day)).getTime();
+                        Date date = new java.util.GregorianCalendar(year, month, day).getTime();
                         directory.setDate(tagIdentifier, date);
                         return;
                     } catch (NumberFormatException e) {
@@ -193,28 +159,24 @@ public class IptcReader implements MetadataReader
             default:
                 // fall through
         }
-        // If no special handling by now, treat it as a string
+
+        // If we haven't returned yet, treat it as a string
         String str;
         if (tagByteCount < 1) {
             str = "";
         } else {
-            str = new String(_data, offset, tagByteCount);
+            str = reader.getString(offset, tagByteCount, System.getProperty("file.encoding")); // "ISO-8859-1"
         }
+
         if (directory.containsTag(tagIdentifier)) {
-            String[] oldStrings;
+            // this fancy string[] business avoids using an ArrayList for performance reasons
+            String[] oldStrings = directory.getStringArray(tagIdentifier);
             String[] newStrings;
-            try {
-                oldStrings = directory.getStringArray(tagIdentifier);
-            } catch (MetadataException e) {
-                oldStrings = null;
-            }
             if (oldStrings == null) {
                 newStrings = new String[1];
             } else {
                 newStrings = new String[oldStrings.length + 1];
-                for (int i = 0; i < oldStrings.length; i++) {
-                    newStrings[i] = oldStrings[i];
-                }
+                System.arraycopy(oldStrings, 0, newStrings, 0, oldStrings.length);
             }
             newStrings[newStrings.length - 1] = str;
             directory.setStringArray(tagIdentifier, newStrings);

@@ -1,34 +1,43 @@
 /*
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ * Copyright 2002-2012 Drew Noakes
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   drew@drewnoakes.com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata.exif;
 
-import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string versions of the tags stored in an OlympusMakernoteDirectory.
+ * Provides human-readable string representations of tag values stored in a <code>OlympusMakernoteDirectory</code>.
+ *
+ * @author Drew Noakes http://drewnoakes.com
  */
-public class OlympusMakernoteDescriptor extends TagDescriptor
+public class OlympusMakernoteDescriptor extends TagDescriptor<OlympusMakernoteDirectory>
 {
-    public OlympusMakernoteDescriptor(Directory directory)
+    public OlympusMakernoteDescriptor(@NotNull OlympusMakernoteDirectory directory)
     {
         super(directory);
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDescription(int tagType)
     {
         switch (tagType) {
             case OlympusMakernoteDirectory.TAG_OLYMPUS_SPECIAL_MODE:
@@ -40,14 +49,16 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
             case OlympusMakernoteDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO:
                 return getDigiZoomRatioDescription();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 
-    public String getDigiZoomRatioDescription() throws MetadataException
+    @Nullable
+    public String getDigiZoomRatioDescription()
     {
-        if (!_directory.containsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO)) return null;
-        int value = _directory.getInt(OlympusMakernoteDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO);
+        Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Normal";
@@ -58,10 +69,12 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getMacroModeDescription() throws MetadataException
+    @Nullable
+    public String getMacroModeDescription()
     {
-        if (!_directory.containsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_MACRO_MODE)) return null;
-        int value = _directory.getInt(OlympusMakernoteDirectory.TAG_OLYMPUS_MACRO_MODE);
+        Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_OLYMPUS_MACRO_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 0:
                 return "Normal (no macro)";
@@ -72,10 +85,12 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getJpegQualityDescription() throws MetadataException
+    @Nullable
+    public String getJpegQualityDescription()
     {
-        if (!_directory.containsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_JPEG_QUALITY)) return null;
-        int value = _directory.getInt(OlympusMakernoteDirectory.TAG_OLYMPUS_JPEG_QUALITY);
+        Integer value = _directory.getInteger(OlympusMakernoteDirectory.TAG_OLYMPUS_JPEG_QUALITY);
+        if (value==null)
+            return null;
         switch (value) {
             case 1:
                 return "SQ";
@@ -88,11 +103,15 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getSpecialModeDescription() throws MetadataException
+    @Nullable
+    public String getSpecialModeDescription()
     {
-        if (!_directory.containsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_SPECIAL_MODE)) return null;
         int[] values = _directory.getIntArray(OlympusMakernoteDirectory.TAG_OLYMPUS_SPECIAL_MODE);
-        StringBuffer desc = new StringBuffer();
+        if (values==null)
+            return null;
+        if (values.length < 1)
+            return "";
+        StringBuilder desc = new StringBuilder();
         switch (values[0]) {
             case 0:
                 desc.append("Normal picture taking mode");
@@ -110,13 +129,16 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
                 desc.append("Unknown picture taking mode");
                 break;
         }
+
+        if (values.length < 2)
+            return desc.toString();
         desc.append(" - ");
         switch (values[1]) {
             case 0:
                 desc.append("Unknown sequence number");
                 break;
             case 1:
-                desc.append("1st in a sequnce");
+                desc.append("1st in a sequence");
                 break;
             case 2:
                 desc.append("2nd in a sequence");
@@ -129,6 +151,9 @@ public class OlympusMakernoteDescriptor extends TagDescriptor
                 desc.append("th in a sequence");
                 break;
         }
+        if (values.length < 3)
+            return desc.toString();
+        desc.append(" - ");
         switch (values[2]) {
             case 1:
                 desc.append("Left to right panorama direction");

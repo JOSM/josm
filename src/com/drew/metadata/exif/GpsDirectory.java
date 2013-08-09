@@ -1,27 +1,37 @@
 /*
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ * Copyright 2002-2012 Drew Noakes
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   drew@drewnoakes.com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- * Created by dnoakes on 26-Nov-2002 11:00:52 using IntelliJ IDEA.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.GeoLocation;
+import com.drew.lang.Rational;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 
 /**
+ * Describes Exif tags that contain Global Positioning System (GPS) data.
  *
+ * @author Drew Noakes http://drewnoakes.com
  */
 public class GpsDirectory extends Directory
 {
@@ -80,37 +90,48 @@ public class GpsDirectory extends Directory
     /** Distance to destination GPSDestDistance 26 1A RATIONAL 1 */
     public static final int TAG_GPS_DEST_DISTANCE = 0x001A;
 
-    protected static final HashMap tagNameMap = new HashMap();
+    /** Values of "GPS", "CELLID", "WLAN" or "MANUAL" by the EXIF spec. */
+    public static final int TAG_GPS_PROCESSING_METHOD = 0x001B;
+    public static final int TAG_GPS_AREA_INFORMATION = 0x001C;
+    public static final int TAG_GPS_DATE_STAMP = 0x001D;
+    public static final int TAG_GPS_DIFFERENTIAL = 0x001E;
+
+    @NotNull
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        tagNameMap.put(new Integer(TAG_GPS_VERSION_ID), "GPS Version ID");
-        tagNameMap.put(new Integer(TAG_GPS_LATITUDE_REF), "GPS Latitude Ref");
-        tagNameMap.put(new Integer(TAG_GPS_LATITUDE), "GPS Latitude");
-        tagNameMap.put(new Integer(TAG_GPS_LONGITUDE_REF), "GPS Longitude Ref");
-        tagNameMap.put(new Integer(TAG_GPS_LONGITUDE), "GPS Longitude");
-        tagNameMap.put(new Integer(TAG_GPS_ALTITUDE_REF), "GPS Altitude Ref");
-        tagNameMap.put(new Integer(TAG_GPS_ALTITUDE), "GPS Altitude");
-        tagNameMap.put(new Integer(TAG_GPS_TIME_STAMP), "GPS Time-Stamp");
-        tagNameMap.put(new Integer(TAG_GPS_SATELLITES), "GPS Satellites");
-        tagNameMap.put(new Integer(TAG_GPS_STATUS), "GPS Status");
-        tagNameMap.put(new Integer(TAG_GPS_MEASURE_MODE), "GPS Measure Mode");
-        tagNameMap.put(new Integer(TAG_GPS_DOP), "GPS DOP");
-        tagNameMap.put(new Integer(TAG_GPS_SPEED_REF), "GPS Speed Ref");
-        tagNameMap.put(new Integer(TAG_GPS_SPEED), "GPS Speed");
-        tagNameMap.put(new Integer(TAG_GPS_TRACK_REF), "GPS Track Ref");
-        tagNameMap.put(new Integer(TAG_GPS_TRACK), "GPS Track");
-        tagNameMap.put(new Integer(TAG_GPS_IMG_DIRECTION_REF), "GPS Img Direction Ref");
-        tagNameMap.put(new Integer(TAG_GPS_IMG_DIRECTION_REF), "GPS Img Direction");
-        tagNameMap.put(new Integer(TAG_GPS_MAP_DATUM), "GPS Map Datum");
-        tagNameMap.put(new Integer(TAG_GPS_DEST_LATITUDE_REF), "GPS Dest Latitude Ref");
-        tagNameMap.put(new Integer(TAG_GPS_DEST_LATITUDE), "GPS Dest Latitude");
-        tagNameMap.put(new Integer(TAG_GPS_DEST_LONGITUDE_REF), "GPS Dest Longitude Ref");
-        tagNameMap.put(new Integer(TAG_GPS_DEST_LONGITUDE), "GPS Dest Longitude");
-        tagNameMap.put(new Integer(TAG_GPS_DEST_BEARING_REF), "GPS Dest Bearing Ref");
-        tagNameMap.put(new Integer(TAG_GPS_DEST_BEARING), "GPS Dest Bearing");
-        tagNameMap.put(new Integer(TAG_GPS_DEST_DISTANCE_REF), "GPS Dest Distance Ref");
-        tagNameMap.put(new Integer(TAG_GPS_DEST_DISTANCE), "GPS Dest Distance");
+        _tagNameMap.put(TAG_GPS_VERSION_ID, "GPS Version ID");
+        _tagNameMap.put(TAG_GPS_LATITUDE_REF, "GPS Latitude Ref");
+        _tagNameMap.put(TAG_GPS_LATITUDE, "GPS Latitude");
+        _tagNameMap.put(TAG_GPS_LONGITUDE_REF, "GPS Longitude Ref");
+        _tagNameMap.put(TAG_GPS_LONGITUDE, "GPS Longitude");
+        _tagNameMap.put(TAG_GPS_ALTITUDE_REF, "GPS Altitude Ref");
+        _tagNameMap.put(TAG_GPS_ALTITUDE, "GPS Altitude");
+        _tagNameMap.put(TAG_GPS_TIME_STAMP, "GPS Time-Stamp");
+        _tagNameMap.put(TAG_GPS_SATELLITES, "GPS Satellites");
+        _tagNameMap.put(TAG_GPS_STATUS, "GPS Status");
+        _tagNameMap.put(TAG_GPS_MEASURE_MODE, "GPS Measure Mode");
+        _tagNameMap.put(TAG_GPS_DOP, "GPS DOP");
+        _tagNameMap.put(TAG_GPS_SPEED_REF, "GPS Speed Ref");
+        _tagNameMap.put(TAG_GPS_SPEED, "GPS Speed");
+        _tagNameMap.put(TAG_GPS_TRACK_REF, "GPS Track Ref");
+        _tagNameMap.put(TAG_GPS_TRACK, "GPS Track");
+        _tagNameMap.put(TAG_GPS_IMG_DIRECTION_REF, "GPS Img Direction Ref");
+        _tagNameMap.put(TAG_GPS_IMG_DIRECTION, "GPS Img Direction");
+        _tagNameMap.put(TAG_GPS_MAP_DATUM, "GPS Map Datum");
+        _tagNameMap.put(TAG_GPS_DEST_LATITUDE_REF, "GPS Dest Latitude Ref");
+        _tagNameMap.put(TAG_GPS_DEST_LATITUDE, "GPS Dest Latitude");
+        _tagNameMap.put(TAG_GPS_DEST_LONGITUDE_REF, "GPS Dest Longitude Ref");
+        _tagNameMap.put(TAG_GPS_DEST_LONGITUDE, "GPS Dest Longitude");
+        _tagNameMap.put(TAG_GPS_DEST_BEARING_REF, "GPS Dest Bearing Ref");
+        _tagNameMap.put(TAG_GPS_DEST_BEARING, "GPS Dest Bearing");
+        _tagNameMap.put(TAG_GPS_DEST_DISTANCE_REF, "GPS Dest Distance Ref");
+        _tagNameMap.put(TAG_GPS_DEST_DISTANCE, "GPS Dest Distance");
+        _tagNameMap.put(TAG_GPS_PROCESSING_METHOD, "GPS Processing Method");
+        _tagNameMap.put(TAG_GPS_AREA_INFORMATION, "GPS Area Information");
+        _tagNameMap.put(TAG_GPS_DATE_STAMP, "GPS Date Stamp");
+        _tagNameMap.put(TAG_GPS_DIFFERENTIAL, "GPS Differential");
     }
 
     public GpsDirectory()
@@ -118,13 +139,47 @@ public class GpsDirectory extends Directory
         this.setDescriptor(new GpsDescriptor(this));
     }
 
+    @NotNull
     public String getName()
     {
         return "GPS";
     }
 
-    protected HashMap getTagNameMap()
+    @NotNull
+    protected HashMap<Integer, String> getTagNameMap()
     {
-        return tagNameMap;
+        return _tagNameMap;
+    }
+
+    /**
+     * Parses various tags in an attempt to obtain a single object representing the latitude and longitude
+     * at which this image was captured.
+     *
+     * @return The geographical location of this image, if possible, otherwise null
+     */
+    @Nullable
+    public GeoLocation getGeoLocation()
+    {
+        Rational[] latitudes = getRationalArray(GpsDirectory.TAG_GPS_LATITUDE);
+        Rational[] longitudes = getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
+        String latitudeRef = getString(GpsDirectory.TAG_GPS_LATITUDE_REF);
+        String longitudeRef = getString(GpsDirectory.TAG_GPS_LONGITUDE_REF);
+
+        // Make sure we have the required values
+        if (latitudes == null || latitudes.length != 3)
+            return null;
+        if (longitudes == null || longitudes.length != 3)
+            return null;
+        if (latitudeRef == null || longitudeRef == null)
+            return null;
+
+        Double lat = GeoLocation.degreesMinutesSecondsToDecimal(latitudes[0], latitudes[1], latitudes[2], latitudeRef.equalsIgnoreCase("S"));
+        Double lon = GeoLocation.degreesMinutesSecondsToDecimal(longitudes[0], longitudes[1], longitudes[2], longitudeRef.equalsIgnoreCase("W"));
+
+        // This can return null, in cases where the conversion was not possible
+        if (lat == null || lon == null)
+            return null;
+
+        return new GeoLocation(lat, lon);
     }
 }

@@ -1,37 +1,46 @@
 /*
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ * Copyright 2002-2012 Drew Noakes
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   drew@drewnoakes.com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata.exif;
 
-import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string versions of the tags stored in PentaxMakernoteDirectory.
- *
+ * Provides human-readable string representations of tag values stored in a <code>PentaxMakernoteDirectory</code>.
+ * <p/>
  * Some information about this makernote taken from here:
  * http://www.ozhiker.com/electronics/pjmt/jpeg_info/pentax_mn.html
+ *
+ * @author Drew Noakes http://drewnoakes.com
  */
-public class PentaxMakernoteDescriptor extends TagDescriptor
+public class PentaxMakernoteDescriptor extends TagDescriptor<PentaxMakernoteDirectory>
 {
-    public PentaxMakernoteDescriptor(Directory directory)
+    public PentaxMakernoteDescriptor(@NotNull PentaxMakernoteDirectory directory)
     {
         super(directory);
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDescription(int tagType)
     {
         switch (tagType) 
         {
@@ -58,14 +67,16 @@ public class PentaxMakernoteDescriptor extends TagDescriptor
             case PentaxMakernoteDirectory.TAG_PENTAX_COLOUR:
                 return getColourDescription();
             default:
-                return _directory.getString(tagType);
+                return super.getDescription(tagType);
         }
     }
 
-    public String getColourDescription() throws MetadataException
+    @Nullable
+    public String getColourDescription()
     {
-        if (!_directory.containsTag(PentaxMakernoteDirectory.TAG_PENTAX_COLOUR)) return null;
-        int value = _directory.getInt(PentaxMakernoteDirectory.TAG_PENTAX_COLOUR);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_COLOUR);
+        if (value==null)
+            return null;
         switch (value)
         {
             case 1:  return "Normal";
@@ -75,10 +86,12 @@ public class PentaxMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getIsoSpeedDescription() throws MetadataException
+    @Nullable
+    public String getIsoSpeedDescription()
     {
-        if (!_directory.containsTag(PentaxMakernoteDirectory.TAG_PENTAX_ISO_SPEED)) return null;
-        int value = _directory.getInt(PentaxMakernoteDirectory.TAG_PENTAX_ISO_SPEED);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_ISO_SPEED);
+        if (value==null)
+            return null;
         switch (value)
         {
             // TODO there must be other values which aren't catered for here
@@ -90,10 +103,12 @@ public class PentaxMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getSaturationDescription() throws MetadataException
+    @Nullable
+    public String getSaturationDescription()
     {
-        if (!_directory.containsTag(PentaxMakernoteDirectory.TAG_PENTAX_SATURATION)) return null;
-        int value = _directory.getInt(PentaxMakernoteDirectory.TAG_PENTAX_SATURATION);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_SATURATION);
+        if (value==null)
+            return null;
         switch (value)
         {
             case 0:  return "Normal";
@@ -103,10 +118,12 @@ public class PentaxMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getContrastDescription() throws MetadataException
+    @Nullable
+    public String getContrastDescription()
     {
-        if (!_directory.containsTag(PentaxMakernoteDirectory.TAG_PENTAX_CONTRAST)) return null;
-        int value = _directory.getInt(PentaxMakernoteDirectory.TAG_PENTAX_CONTRAST);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_CONTRAST);
+        if (value==null)
+            return null;
         switch (value)
         {
             case 0:  return "Normal";
@@ -116,10 +133,12 @@ public class PentaxMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getSharpnessDescription() throws MetadataException
+    @Nullable
+    public String getSharpnessDescription()
     {
-        if (!_directory.containsTag(PentaxMakernoteDirectory.TAG_PENTAX_SHARPNESS)) return null;
-        int value = _directory.getInt(PentaxMakernoteDirectory.TAG_PENTAX_SHARPNESS);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_SHARPNESS);
+        if (value==null)
+            return null;
         switch (value)
         {
             case 0:  return "Normal";
@@ -129,19 +148,23 @@ public class PentaxMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getDigitalZoomDescription() throws MetadataException
+    @Nullable
+    public String getDigitalZoomDescription()
     {
-        if (!_directory.containsTag(PentaxMakernoteDirectory.TAG_PENTAX_DIGITAL_ZOOM)) return null;
-        float value = _directory.getFloat(PentaxMakernoteDirectory.TAG_PENTAX_DIGITAL_ZOOM);
+        Float value = _directory.getFloatObject(PentaxMakernoteDirectory.TAG_PENTAX_DIGITAL_ZOOM);
+        if (value==null)
+            return null;
         if (value==0)
             return "Off";
         return Float.toString(value);
     }
 
-    public String getWhiteBalanceDescription() throws MetadataException
+    @Nullable
+    public String getWhiteBalanceDescription()
     {
-        if (!_directory.containsTag(PentaxMakernoteDirectory.TAG_PENTAX_WHITE_BALANCE)) return null;
-        int value = _directory.getInt(PentaxMakernoteDirectory.TAG_PENTAX_WHITE_BALANCE);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_WHITE_BALANCE);
+        if (value==null)
+            return null;
         switch (value)
         {
             case 0:  return "Auto";
@@ -154,10 +177,12 @@ public class PentaxMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getFlashModeDescription() throws MetadataException
+    @Nullable
+    public String getFlashModeDescription()
     {
-        if (!_directory.containsTag(PentaxMakernoteDirectory.TAG_PENTAX_FLASH_MODE)) return null;
-        int value = _directory.getInt(PentaxMakernoteDirectory.TAG_PENTAX_FLASH_MODE);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_FLASH_MODE);
+        if (value==null)
+            return null;
         switch (value)
         {
             case 1:  return "Auto";
@@ -168,10 +193,12 @@ public class PentaxMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getFocusModeDescription() throws MetadataException
+    @Nullable
+    public String getFocusModeDescription()
     {
-        if (!_directory.containsTag(PentaxMakernoteDirectory.TAG_PENTAX_FOCUS_MODE)) return null;
-        int value = _directory.getInt(PentaxMakernoteDirectory.TAG_PENTAX_FOCUS_MODE);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_FOCUS_MODE);
+        if (value==null)
+            return null;
         switch (value)
         {
             case 2:  return "Custom";
@@ -180,10 +207,12 @@ public class PentaxMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getQualityLevelDescription() throws MetadataException
+    @Nullable
+    public String getQualityLevelDescription()
     {
-        if (!_directory.containsTag(PentaxMakernoteDirectory.TAG_PENTAX_QUALITY_LEVEL)) return null;
-        int value = _directory.getInt(PentaxMakernoteDirectory.TAG_PENTAX_QUALITY_LEVEL);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_QUALITY_LEVEL);
+        if (value==null)
+            return null;
         switch (value)
         {
             case 0:  return "Good";
@@ -193,10 +222,12 @@ public class PentaxMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getCaptureModeDescription() throws MetadataException
+    @Nullable
+    public String getCaptureModeDescription()
     {
-        if (!_directory.containsTag(PentaxMakernoteDirectory.TAG_PENTAX_CAPTURE_MODE)) return null;
-        int value = _directory.getInt(PentaxMakernoteDirectory.TAG_PENTAX_CAPTURE_MODE);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PENTAX_CAPTURE_MODE);
+        if (value==null)
+            return null;
         switch (value)
         {
             case 1:  return "Auto";
@@ -208,17 +239,19 @@ public class PentaxMakernoteDescriptor extends TagDescriptor
     }
 
 /*
-    public String getPrintImageMatchingInfoDescription() throws MetadataException
+    public String getPrintImageMatchingInfoDescription()
     {
-        if (!_directory.containsTag(PentaxMakernoteDirectory.TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO)) return null;
         byte[] bytes = _directory.getByteArray(PentaxMakernoteDirectory.TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO);
+        if (bytes==null)
+            return null;
         return "(" + bytes.length + " bytes)";
     }
 
-    public String getMacroModeDescription() throws MetadataException
+    public String getMacroModeDescription()
     {
-        if (!_directory.containsTag(PentaxMakernoteDirectory.TAG_PANASONIC_MACRO_MODE)) return null;
-        int value = _directory.getInt(PentaxMakernoteDirectory.TAG_PANASONIC_MACRO_MODE);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PANASONIC_MACRO_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 1:
                 return "On";
@@ -229,10 +262,11 @@ public class PentaxMakernoteDescriptor extends TagDescriptor
         }
     }
 
-    public String getRecordModeDescription() throws MetadataException
+    public String getRecordModeDescription()
     {
-        if (!_directory.containsTag(PentaxMakernoteDirectory.TAG_PANASONIC_RECORD_MODE)) return null;
-        int value = _directory.getInt(PentaxMakernoteDirectory.TAG_PANASONIC_RECORD_MODE);
+        Integer value = _directory.getInteger(PentaxMakernoteDirectory.TAG_PANASONIC_RECORD_MODE);
+        if (value==null)
+            return null;
         switch (value) {
             case 1:
                 return "Normal";
