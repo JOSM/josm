@@ -573,6 +573,7 @@ public class Utils {
         }
         HttpURLConnection connection = (HttpURLConnection) httpURL.openConnection();
         connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
+        connection.setUseCaches(false);
         return connection;
     }
 
