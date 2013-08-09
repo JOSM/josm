@@ -746,7 +746,7 @@ abstract public class Main {
      * @return {@code true} if JOSM has been closed, {@code false} if the user has cancelled the operation.
      * @since 3378
      */
-    public static boolean exitJosm(boolean exit) {
+    public static boolean exitJosm(boolean exit, int exitCode) {
         if (Main.saveUnsavedModifications()) {
             geometry.remember("gui.geometry");
             if (map != null) {
@@ -761,7 +761,7 @@ abstract public class Main {
                 }
             }
             if (exit) {
-                System.exit(0);
+                System.exit(exitCode);
             }
             return true;
         }
