@@ -64,7 +64,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.lang.CompoundException;
-import com.drew.lang.GeoLocation;
 import com.drew.lang.Rational;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -508,6 +507,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
     private static void extractExif(ImageEntry e) {
 
+        double deg;
+        double min, sec;
+        double lon, lat;
         Metadata metadata;
         Directory dirExif;
         GpsDirectory dirGps;
@@ -549,25 +551,55 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
 
         try {
-            GeoLocation location = dirGps.getGeoLocation();
-            if (location != null) {
-                e.setExifCoor(new LatLon(location.getLatitude(), location.getLongitude()));
-                e.setPos(e.getExifCoor());
+            // longitude
+
+            Rational[] components = dirGps.getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
+            if (components != null) {
+                deg = components[0].doubleValue();
+                min = components[1].doubleValue();
+                sec = components[2].doubleValue();
+
+                if (Double.isNaN(deg) && Double.isNaN(min) && Double.isNaN(sec))
+                    throw new IllegalArgumentException();
+
+                lon = (Double.isNaN(deg) ? 0 : deg + (Double.isNaN(min) ? 0 : (min / 60)) + (Double.isNaN(sec) ? 0 : (sec / 3600)));
+
+                if (dirGps.getString(GpsDirectory.TAG_GPS_LONGITUDE_REF).charAt(0) == 'W') {
+                    lon = -lon;
+                }
             } else {
                 // Try to read lon/lat as double value (Nonstandard, created by some cameras -> #5220)
-                try {
-                    Double longitude = dirGps.getDouble(GpsDirectory.TAG_GPS_LONGITUDE);
-                    Double latitude = dirGps.getDouble(GpsDirectory.TAG_GPS_LATITUDE);
-    
-                    // Store values
-    
-                    e.setExifCoor(new LatLon(latitude, longitude));
-                    e.setPos(e.getExifCoor());
-                } catch (CompoundException ex) {
-                    e.setExifCoor(null);
-                    e.setPos(null);
-                }
+                lon = dirGps.getDouble(GpsDirectory.TAG_GPS_LONGITUDE);
             }
+
+            // latitude
+
+            components = dirGps.getRationalArray(GpsDirectory.TAG_GPS_LATITUDE);
+            if (components != null) {
+                deg = components[0].doubleValue();
+                min = components[1].doubleValue();
+                sec = components[2].doubleValue();
+
+                if (Double.isNaN(deg) && Double.isNaN(min) && Double.isNaN(sec))
+                    throw new IllegalArgumentException();
+
+                lat = (Double.isNaN(deg) ? 0 : deg + (Double.isNaN(min) ? 0 : (min / 60)) + (Double.isNaN(sec) ? 0 : (sec / 3600)));
+
+                if (Double.isNaN(lat))
+                    throw new IllegalArgumentException();
+
+                if (dirGps.getString(GpsDirectory.TAG_GPS_LATITUDE_REF).charAt(0) == 'S') {
+                    lat = -lat;
+                }
+            } else {
+                lat = dirGps.getDouble(GpsDirectory.TAG_GPS_LATITUDE);
+            }
+
+            // Store values
+
+            e.setExifCoor(new LatLon(lat, lon));
+            e.setPos(e.getExifCoor());
+
         } catch (Exception ex) { // (other exceptions, e.g. #5271)
             System.err.println("Error reading EXIF from file: "+ex);
             e.setExifCoor(null);
