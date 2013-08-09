@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -262,12 +263,10 @@ public final class CreateCircleAction extends JosmAction {
             }
 
         } else {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("Please select exactly two or three nodes or one way with exactly two or three nodes."),
-                    tr("Information"),
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            Notification note = new Notification();
+            note.setContent(tr("Please select exactly two or three nodes or one way with exactly two or three nodes."));
+            note.setIcon(JOptionPane.INFORMATION_MESSAGE);
+            note.show();
             return;
         }
 
