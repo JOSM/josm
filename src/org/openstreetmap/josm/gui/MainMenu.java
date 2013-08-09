@@ -480,15 +480,14 @@ public class MainMenu extends JMenuBar {
         fileMenu.addSeparator();
         add(fileMenu, save);
         add(fileMenu, saveAs);
-        if (Main.pref.getBoolean("session")) {
-            sessionMenu.setToolTipText(tr("Save and load the current session (list of layers, etc.)"));
-            sessionMenu.setIcon(ImageProvider.get("session"));
-            sessionSaveAs = new SessionSaveAsAction();
-            sessionLoad = new SessionLoadAction();
-            add(sessionMenu, sessionSaveAs);
-            add(sessionMenu, sessionLoad);
-            fileMenu.add(sessionMenu);
-        }
+        sessionMenu.setToolTipText(tr("Save and load the current session (list of layers, etc.)"));
+        sessionMenu.setIcon(ImageProvider.get("session"));
+        sessionSaveAs = new SessionSaveAsAction();
+        sessionLoad = new SessionLoadAction();
+        add(sessionMenu, sessionSaveAs);
+        add(sessionMenu, sessionLoad);
+        fileMenu.add(sessionMenu);
+        ExpertToggleAction.addVisibilitySwitcher(sessionMenu);
         add(fileMenu, gpxExport, true);
         fileMenu.addSeparator();
         add(fileMenu, download);
