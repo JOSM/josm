@@ -1,38 +1,49 @@
 /*
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ * Copyright 2002-2012 Drew Noakes
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   drew@drewnoakes.com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata.jpeg;
 
-import com.drew.metadata.Directory;
-import com.drew.metadata.MetadataException;
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
 /**
  * Provides human-readable string versions of the tags stored in a JpegDirectory.
  * Thanks to Darrell Silver (www.darrellsilver.com) for the initial version of this class.
+ *
+ * @author Drew Noakes http://drewnoakes.com
  */
-public class JpegDescriptor extends TagDescriptor
+public class JpegDescriptor extends TagDescriptor<JpegDirectory>
 {
-    public JpegDescriptor(Directory directory)
+    public JpegDescriptor(@NotNull JpegDirectory directory)
     {
         super(directory);
     }
 
-    public String getDescription(int tagType) throws MetadataException
+    @Nullable
+    public String getDescription(int tagType)
     {
         switch (tagType)
         {
+            case JpegDirectory.TAG_JPEG_COMPRESSION_TYPE:
+                return getImageCompressionTypeDescription();
             case JpegDirectory.TAG_JPEG_COMPONENT_DATA_1:
                 return getComponentDataDescription(0);
             case JpegDirectory.TAG_JPEG_COMPONENT_DATA_2:
@@ -47,41 +58,80 @@ public class JpegDescriptor extends TagDescriptor
                 return getImageHeightDescription();
             case JpegDirectory.TAG_JPEG_IMAGE_WIDTH:
                 return getImageWidthDescription();
+            default:
+                return super.getDescription(tagType);
         }
-
-        return _directory.getString(tagType);
     }
 
+    @Nullable
+    public String getImageCompressionTypeDescription()
+    {
+        Integer value = _directory.getInteger(JpegDirectory.TAG_JPEG_COMPRESSION_TYPE);
+        if (value==null)
+            return null;
+        // Note there is no 2 or 12
+        switch (value) {
+            case 0: return "Baseline";
+            case 1: return "Extended sequential, Huffman";
+            case 2: return "Progressive, Huffman";
+            case 3: return "Lossless, Huffman";
+            case 5: return "Differential sequential, Huffman";
+            case 6: return "Differential progressive, Huffman";
+            case 7: return "Differential lossless, Huffman";
+            case 8: return "Reserved for JPEG extensions";
+            case 9: return "Extended sequential, arithmetic";
+            case 10: return "Progressive, arithmetic";
+            case 11: return "Lossless, arithmetic";
+            case 13: return "Differential sequential, arithmetic";
+            case 14: return "Differential progressive, arithmetic";
+            case 15: return "Differential lossless, arithmetic";
+            default:
+                return "Unknown type: "+ value;
+        }
+    }
+    @Nullable
     public String getImageWidthDescription()
     {
-        return _directory.getString(JpegDirectory.TAG_JPEG_IMAGE_WIDTH) + " pixels";
+        final String value = _directory.getString(JpegDirectory.TAG_JPEG_IMAGE_WIDTH);
+        if (value==null)
+            return null;
+        return value + " pixels";
     }
 
+    @Nullable
     public String getImageHeightDescription()
     {
-        return _directory.getString(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT) + " pixels";
+        final String value = _directory.getString(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT);
+        if (value==null)
+            return null;
+        return value + " pixels";
     }
 
+    @Nullable
     public String getDataPrecisionDescription()
     {
-        return _directory.getString(JpegDirectory.TAG_JPEG_DATA_PRECISION) + " bits";
+        final String value = _directory.getString(JpegDirectory.TAG_JPEG_DATA_PRECISION);
+        if (value==null)
+            return null;
+        return value + " bits";
     }
 
-    public String getComponentDataDescription(int componentNumber) throws MetadataException
+    @Nullable
+    public String getComponentDataDescription(int componentNumber)
     {
-        JpegComponent component = ((JpegDirectory)_directory).getComponent(componentNumber);
+        JpegComponent value = _directory.getComponent(componentNumber);
 
-        if (component==null)
-            throw new MetadataException("No Jpeg component exists with number " + componentNumber);
+        if (value==null)
+            return null;
 
-        StringBuffer sb = new StringBuffer();
-        sb.append(component.getComponentName());
+        StringBuilder sb = new StringBuilder();
+        sb.append(value.getComponentName());
         sb.append(" component: Quantization table ");
-        sb.append(component.getQuantizationTableNumber());
+        sb.append(value.getQuantizationTableNumber());
         sb.append(", Sampling factors ");
-        sb.append(component.getHorizontalSamplingFactor());
+        sb.append(value.getHorizontalSamplingFactor());
         sb.append(" horiz/");
-        sb.append(component.getVerticalSamplingFactor());
+        sb.append(value.getVerticalSamplingFactor());
         sb.append(" vert");
         return sb.toString();
     }

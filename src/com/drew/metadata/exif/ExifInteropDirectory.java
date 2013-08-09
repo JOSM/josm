@@ -1,27 +1,34 @@
 /*
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ * Copyright 2002-2012 Drew Noakes
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   drew@drewnoakes.com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- * Created by dnoakes on 26-Nov-2002 10:58:13 using IntelliJ IDEA.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata.exif;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 
 /**
+ * Describes Exif interoperability tags.
  *
+ * @author Drew Noakes http://drewnoakes.com
  */
 public class ExifInteropDirectory extends Directory
 {
@@ -31,16 +38,16 @@ public class ExifInteropDirectory extends Directory
     public static final int TAG_RELATED_IMAGE_WIDTH = 0x1001;
     public static final int TAG_RELATED_IMAGE_LENGTH = 0x1002;
 
-    protected static final HashMap tagNameMap;
+    @NotNull
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static
     {
-        tagNameMap = new HashMap();
-        tagNameMap.put(new Integer(TAG_INTEROP_INDEX), "Interoperability Index");
-        tagNameMap.put(new Integer(TAG_INTEROP_VERSION), "Interoperability Version");
-        tagNameMap.put(new Integer(TAG_RELATED_IMAGE_FILE_FORMAT), "Related Image File Format");
-        tagNameMap.put(new Integer(TAG_RELATED_IMAGE_WIDTH), "Related Image Width");
-        tagNameMap.put(new Integer(TAG_RELATED_IMAGE_LENGTH), "Related Image Length");
+        _tagNameMap.put(TAG_INTEROP_INDEX, "Interoperability Index");
+        _tagNameMap.put(TAG_INTEROP_VERSION, "Interoperability Version");
+        _tagNameMap.put(TAG_RELATED_IMAGE_FILE_FORMAT, "Related Image File Format");
+        _tagNameMap.put(TAG_RELATED_IMAGE_WIDTH, "Related Image Width");
+        _tagNameMap.put(TAG_RELATED_IMAGE_LENGTH, "Related Image Length");
     }
 
     public ExifInteropDirectory()
@@ -48,13 +55,15 @@ public class ExifInteropDirectory extends Directory
         this.setDescriptor(new ExifInteropDescriptor(this));
     }
 
+    @NotNull
     public String getName()
     {
         return "Interoperability";
     }
 
-    protected HashMap getTagNameMap()
+    @NotNull
+    protected HashMap<Integer, String> getTagNameMap()
     {
-        return tagNameMap;
+        return _tagNameMap;
     }
 }

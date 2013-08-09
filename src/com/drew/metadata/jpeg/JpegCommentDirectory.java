@@ -1,49 +1,64 @@
 /*
- * This is public domain software - that is, you can do whatever you want
- * with it, and include it software that is licensed under the GNU or the
- * BSD license, or whatever other licence you choose, including proprietary
- * closed source licenses.  I do ask that you leave this header in tact.
+ * Copyright 2002-2012 Drew Noakes
  *
- * If you make modifications to this code that you think would benefit the
- * wider community, please send me a copy and I'll post it on my site.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * If you make use of this code, I'd appreciate hearing about it.
- *   drew@drewnoakes.com
- * Latest version of this software kept at
- *   http://drewnoakes.com/
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- * Created by dnoakes on Oct 10, 2003 using IntelliJ IDEA.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ * More information about this project is available at:
+ *
+ *    http://drewnoakes.com/code/exif/
+ *    http://code.google.com/p/metadata-extractor/
  */
 package com.drew.metadata.jpeg;
 
+import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 
 /**
+ * Describes tags used by a JPEG file comment.
  *
  * @author Drew Noakes http://drewnoakes.com
  */
-public class JpegCommentDirectory extends Directory {
+public class JpegCommentDirectory extends Directory
+{
+    /**
+     * This value does not apply to a particular standard. Rather, this value has been fabricated to maintain
+     * consistency with other directory types.
+     */
+    public static final int TAG_JPEG_COMMENT = 0;
 
-	/** This is in bits/sample, usually 8 (12 and 16 not supported by most software). */
-	public static final int TAG_JPEG_COMMENT = 0;
+    @NotNull
+    protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
-	protected static final HashMap tagNameMap = new HashMap();
+    static {
+        _tagNameMap.put(TAG_JPEG_COMMENT, "Jpeg Comment");
+    }
 
-	static {
-        tagNameMap.put(new Integer(TAG_JPEG_COMMENT), "Jpeg Comment");
-	}
+    public JpegCommentDirectory()
+    {
+        this.setDescriptor(new JpegCommentDescriptor(this));
+    }
 
-    public JpegCommentDirectory() {
-		this.setDescriptor(new JpegCommentDescriptor(this));
-	}
+    @NotNull
+    public String getName()
+    {
+        return "JpegComment";
+    }
 
-	public String getName() {
-		return "JpegComment";
-	}
-
-	protected HashMap getTagNameMap() {
-		return tagNameMap;
-	}
+    @NotNull
+    protected HashMap<Integer, String> getTagNameMap()
+    {
+        return _tagNameMap;
+    }
 }
