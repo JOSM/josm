@@ -83,7 +83,7 @@ public class MainApplication extends Main {
         mainFrame.setIconImages(l);
         mainFrame.addWindowListener(new WindowAdapter(){
             @Override public void windowClosing(final WindowEvent arg0) {
-                Main.exitJosm(true);
+                Main.exitJosm(true, 0);
             }
         });
         mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
