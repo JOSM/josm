@@ -22,21 +22,24 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  *
  */
 public interface Proj {
+    
     /**
-     * A Human readable name of this projection.
+     * Replies a human readable name of this projection.
+     * @return The projection name. must not be null.
      */
     String getName();
 
     /**
-     * The Proj.4 identifier.
+     * Replies the Proj.4 identifier.
      *
-     * (as reported by cs2cs -lp)
-     * If no id exists, return null.
+     * @return The Proj.4 identifier (as reported by cs2cs -lp).
+     * If no id exists, return {@code null}.
      */
     String getProj4Id();
 
     /**
      * Initialize the projection using the provided parameters.
+     * @param params The projection parameters
      *
      * @throws ProjectionConfigurationException in case parameters are not suitable
      */
