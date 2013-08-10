@@ -38,6 +38,10 @@ abstract public class AbstractProjection implements Projection {
         return datum;
     }
 
+    /**
+     * Replies the projection (in the narrow sense)
+     * @return The projection object
+     */
     public final Proj getProj() {
         return proj;
     }

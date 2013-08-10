@@ -27,7 +27,7 @@ import java.io.Serializable;
  * Models the NTv2 Sub Grid within a Grid Shift File
  *
  * @author Peter Yuill
- * Modifified for JOSM :
+ * Modified for JOSM :
  * - removed the RandomAccessFile mode (Pieren)
  * - read grid file by single bytes. Workaround for a bug in some VM not supporting
  *   file reading by group of 4 bytes from a jar file.
@@ -63,7 +63,7 @@ public class NTV2SubGrid implements Cloneable, Serializable {
      * @param in GridShiftFile InputStream
      * @param bigEndian is the file bigEndian?
      * @param loadAccuracy is the node Accuracy data to be loaded?
-     * @throws Exception
+     * @throws IOException
      */
     public NTV2SubGrid(InputStream in, boolean bigEndian, boolean loadAccuracy) throws IOException {
         byte[] b8 = new byte[8];
@@ -288,6 +288,10 @@ public class NTV2SubGrid implements Cloneable, Serializable {
         return subGridName;
     }
 
+    /**
+     * Returns textual details about the sub grid.
+     * @return textual details about the sub grid
+     */
     public String getDetails() {
         StringBuffer buf = new StringBuffer("Sub Grid : ");
         buf.append(subGridName);
@@ -322,14 +326,14 @@ public class NTV2SubGrid implements Cloneable, Serializable {
         NTV2SubGrid clone = null;
         try {
             clone = (NTV2SubGrid)super.clone();
-        } catch (CloneNotSupportedException cnse) {
-        }
-        // Do a deep clone of the sub grids
-        if (subGrid != null) {
-            clone.subGrid = new NTV2SubGrid[subGrid.length];
-            for (int i = 0; i < subGrid.length; i++) {
-                clone.subGrid[i] = (NTV2SubGrid)subGrid[i].clone();
+            // Do a deep clone of the sub grids
+            if (subGrid != null) {
+                clone.subGrid = new NTV2SubGrid[subGrid.length];
+                for (int i = 0; i < subGrid.length; i++) {
+                    clone.subGrid[i] = (NTV2SubGrid)subGrid[i].clone();
+                }
             }
+        } catch (CloneNotSupportedException cnse) {
         }
         return clone;
     }
