@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;

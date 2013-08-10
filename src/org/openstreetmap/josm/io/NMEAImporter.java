@@ -8,10 +8,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -61,11 +63,15 @@ public class NMEAImporter extends FileImporter {
         msg.append(tr("Zero coordinates: {0}", r.getParserZeroCoordinates()));
         msg.append("</html>");
         if (success) {
-            HelpAwareOptionPane.showMessageDialogInEDT(
-                    Main.parent,
-                    msg.toString(),
-                    tr("NMEA import success"),
-                    JOptionPane.INFORMATION_MESSAGE, null);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    new Notification(
+                            "<h3>" + tr("NMEA import success:") + "</h3>" + msg.toString())
+                            .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                            .show();
+                }
+            });
         } else {
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
