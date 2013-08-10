@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
 import org.openstreetmap.josm.data.projection.proj.ClassProjFactory;
 import org.openstreetmap.josm.data.projection.proj.LambertConformalConic;
 import org.openstreetmap.josm.data.projection.proj.LonLat;
+import org.openstreetmap.josm.data.projection.proj.Mercator;
 import org.openstreetmap.josm.data.projection.proj.Proj;
 import org.openstreetmap.josm.data.projection.proj.ProjFactory;
 import org.openstreetmap.josm.data.projection.proj.SwissObliqueMercator;
@@ -61,7 +62,7 @@ public class Projections {
 
     static {
         registerBaseProjection("lonlat", LonLat.class, "core");
-        registerBaseProjection("josm:smerc", org.openstreetmap.josm.data.projection.proj.Mercator.class, "core");
+        registerBaseProjection("josm:smerc", Mercator.class, "core");
         registerBaseProjection("lcc", LambertConformalConic.class, "core");
         registerBaseProjection("somerc", SwissObliqueMercator.class, "core");
         registerBaseProjection("tmerc", TransverseMercator.class, "core");

@@ -78,6 +78,9 @@ public class NTV2GridShiftFile implements Serializable {
     private NTV2SubGrid[] topLevelSubGrid;
     private NTV2SubGrid lastSubGrid;
 
+    /**
+     * Constructs a new {@code NTV2GridShiftFile}.
+     */
     public NTV2GridShiftFile() {
     }
 
@@ -91,7 +94,7 @@ public class NTV2GridShiftFile implements Serializable {
      *
      * @param in Grid Shift File InputStream
      * @param loadAccuracy is Accuracy data to be loaded as well as shift data?
-     * @throws Exception
+     * @throws IOException
      */
     public void loadGridShiftFile(InputStream in, boolean loadAccuracy ) throws IOException {
         byte[] b8 = new byte[8];

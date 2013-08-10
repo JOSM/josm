@@ -1,17 +1,28 @@
 //License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection.proj;
 
-import static java.lang.Math.*;
-
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.asin;
+import static java.lang.Math.atan;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.exp;
+import static java.lang.Math.log;
+import static java.lang.Math.pow;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.tan;
+import static java.lang.Math.toRadians;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
 /**
- * Projection for the SwissGrid CH1903 / L03, see http://de.wikipedia.org/wiki/Swiss_Grid.
+ * Projection for the SwissGrid CH1903 / L03, see http://en.wikipedia.org/wiki/Swiss_coordinate_system.
  *
- * Calculations are based on formula from
+ * Calculations were originally based on simple formula from
  * http://www.swisstopo.admin.ch/internet/swisstopo/en/home/topics/survey/sys/refsys/switzerland.parsysrelated1.37696.downloadList.12749.DownloadFile.tmp/ch1903wgs84en.pdf
  *
  * August 2010 update to this formula (rigorous formulas)
