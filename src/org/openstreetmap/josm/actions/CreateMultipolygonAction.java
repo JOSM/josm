@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -62,7 +63,11 @@ public class CreateMultipolygonAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (Main.main.getEditLayer() == null) {
-            JOptionPane.showMessageDialog(Main.parent, tr("No data loaded."));
+            new Notification(
+                    tr("No data loaded."))
+                    .setIcon(JOptionPane.WARNING_MESSAGE)
+                    .setDuration(Notification.TIME_SHORT)
+                    .show();
             return;
         }
 
@@ -71,7 +76,11 @@ public class CreateMultipolygonAction extends JosmAction {
         if (selectedWays.size() < 1) {
             // Sometimes it make sense creating multipoly of only one way (so it will form outer way)
             // and then splitting the way later (so there are multiple ways forming outer way)
-            JOptionPane.showMessageDialog(Main.parent, tr("You must select at least one way."));
+            new Notification(
+                    tr("You must select at least one way."))
+                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                    .setDuration(Notification.TIME_SHORT)
+                    .show();
             return;
         }
 
@@ -151,7 +160,9 @@ public class CreateMultipolygonAction extends JosmAction {
         String error = pol.makeFromWays(selectedWays);
 
         if (error != null) {
-            JOptionPane.showMessageDialog(Main.parent, error);
+            new Notification(error)
+                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                    .show();
             return null;
         } else {
             return pol;

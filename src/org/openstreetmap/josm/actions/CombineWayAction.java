@@ -33,6 +33,7 @@ import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Pair;
@@ -64,14 +65,11 @@ public class CombineWayAction extends JosmAction {
     }
 
     protected static void warnCombiningImpossible() {
-        String msg = tr("Could not combine ways "
+        String msg = tr("Could not combine ways<br>"
                 + "(They could not be merged into a single string of nodes)");
-        JOptionPane.showMessageDialog(
-                Main.parent,
-                msg,
-                tr("Information"),
-                JOptionPane.INFORMATION_MESSAGE
-        );
+        new Notification(msg)
+                .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                .show();
         return;
     }
 
@@ -197,12 +195,11 @@ public class CombineWayAction extends JosmAction {
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
         Set<Way> selectedWays = OsmPrimitive.getFilteredSet(selection, Way.class);
         if (selectedWays.size() < 2) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("Please select at least two ways to combine."),
-                    tr("Information"),
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            new Notification(
+                    tr("Please select at least two ways to combine."))
+                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                    .setDuration(Notification.TIME_SHORT)
+                    .show();
             return;
         }
         // combine and update gui
