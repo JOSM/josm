@@ -219,8 +219,7 @@ Build-Date: ${build.tstamp}
                     <fileset dir="${src.dir}" includes="org/openstreetmap/"/>
                 </sourcefiles>
             </structure>
-            <!--<xml destfile="${test.dir}/report/jacoco.xml"/>-->
-        	<html destdir="${test.dir}/report/jacoco"/>
+            <html destdir="${test.dir}/report/jacoco"/>
         </jacoco:report>
     </target>
     <target name="dist-optimized" depends="dist">
