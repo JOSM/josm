@@ -7,9 +7,8 @@
 ** This will create 'josm-custom.jar'  in directory 'dist'. See also
 **   https://josm.openstreetmap.de/wiki/CreateBuild
 **
-**
 -->
-<project xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" name="josm" default="dist" basedir=".">
+<project xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" name="josm" default="dist" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">
     <property name="test.dir" location="test"/>
     <property name="src.dir" location="src"/>
     <property name="build.dir" location="build"/>
@@ -29,16 +28,16 @@
     </path>
 
     <!--
-	  ** Used by Eclipse ant builder for updating
-	  ** the REVISION file used by JOSM
-	-->
+      ** Used by Eclipse ant builder for updating
+      ** the REVISION file used by JOSM
+    -->
     <target name="create-revision-eclipse">
         <property name="revision.dir" value="bin"/>
         <antcall target="create-revision"/>
     </target>
     <!--
-	  ** Creates the REVISION file to be included in the distribution
-	  -->
+      ** Creates the REVISION file to be included in the distribution
+    -->
     <target name="create-revision">
         <property name="revision.dir" value="${build.dir}"/>
         <exec append="false" output="REVISION.XML" executable="svn" failifexecutionfails="false">
@@ -168,6 +167,7 @@ Build-Date: ${build.tstamp}
     <target name="test-clean">
         <delete dir="${test.dir}/build"/>
         <delete dir="${test.dir}/report"/>
+        <delete file="${test.dir}/jacoco.exec" />
     </target>
     <target name="test-compile" depends="test-init,dist">
         <javac srcdir="${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/build" target="1.6" source="1.6" debug="on" includeantruntime="false" encoding="UTF-8">
@@ -180,21 +180,24 @@ Build-Date: ${build.tstamp}
         </javac>
     </target>
     <target name="test" depends="test-compile">
-        <junit printsummary="yes">
-            <sysproperty key="josm.home" value="${test.dir}/config/unit-josm.home"/>
-            <sysproperty key="java.awt.headless" value="true"/>
-	    <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
-            <classpath>
-                <path refid="test.classpath"/>
-                <pathelement path="${test.dir}/build"/>
-                <pathelement path="${test.dir}/config"/>
-            </classpath>
-            <formatter type="plain"/>
-            <formatter type="xml"/>
-            <batchtest fork="yes" todir="${test.dir}/report">
-                <fileset dir="${test.dir}/unit" includes="**/*.java"/>
-            </batchtest>
-        </junit>
+        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="tools/jacocoant.jar" />
+        <jacoco:coverage destfile="${test.dir}/jacoco.exec">
+            <junit printsummary="yes" fork="true" forkmode="once">
+                <sysproperty key="josm.home" value="${test.dir}/config/unit-josm.home"/>
+                <sysproperty key="java.awt.headless" value="true"/>
+            <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
+                <classpath>
+                    <path refid="test.classpath"/>
+                    <pathelement path="${test.dir}/build"/>
+                    <pathelement path="${test.dir}/config"/>
+                </classpath>
+                <formatter type="plain"/>
+                <formatter type="xml"/>
+                <batchtest fork="yes" todir="${test.dir}/report">
+                    <fileset dir="${test.dir}/unit" includes="**/*.java"/>
+                </batchtest>
+            </junit>
+        </jacoco:coverage>
     </target>
     <target name="test-html" depends="test" description="Generate HTML test reports">
         <!-- May require additional ant dependencies like ant-trax package -->
@@ -204,6 +207,21 @@ Build-Date: ${build.tstamp}
             </fileset>
             <report todir="${test.dir}/report/html"/>
         </junitreport>
+        <jacoco:report>
+            <executiondata>
+                <file file="${test.dir}/jacoco.exec"/>
+            </executiondata>
+            <structure name="JOSM Test Coverage">
+                <classfiles>
+                    <fileset dir="${build.dir}" includes="org/openstreetmap/"/>
+                </classfiles>
+                <sourcefiles encoding="UTF-8">
+                    <fileset dir="${src.dir}" includes="org/openstreetmap/"/>
+                </sourcefiles>
+            </structure>
+            <!--<xml destfile="${test.dir}/report/jacoco.xml"/>-->
+        	<html destdir="${test.dir}/report/jacoco"/>
+        </jacoco:report>
     </target>
     <target name="dist-optimized" depends="dist">
         <taskdef resource="proguard/ant/task.properties" classpath="tools/proguard.jar"/>
@@ -244,7 +262,7 @@ Build-Date: ${build.tstamp}
 
 		# Disable annoying [proguard] Note: the configuration keeps the entry point '...', but not the descriptor class '...'. This notes should not be a problem as we don't use obfuscation
 		-dontnote
-		</proguard>
+        </proguard>
     </target>
     <target name="check-plugins" depends="dist-optimized">
         <echo message="Check of plugins binary compatibility (needs ant 1.8)"/>
@@ -284,29 +302,29 @@ Build-Date: ${build.tstamp}
                     <replaceregex pattern="^.*;" replace="" flags="gi"/>
                 </tokenfilter>
             </filterchain>
-        </loadresource>	
-	<!-- Delete files that are not in plugin list (like old plugins) -->
-	<loadresource property="file-list">
-	  <propertyresource name="plugins"/>
-	  <filterchain>
-	    <tokenfilter>
-	      <replaceregex pattern="^.*/(.*)$" replace="\1\|" flags=""/>
-            </tokenfilter>
-	    <striplinebreaks/>
-	    <tokenfilter>
-	      <replaceregex pattern="\|$" replace="" flags="gi"/>
-            </tokenfilter>	    
-	  </filterchain>
-	</loadresource>
-	<delete>
-	  <restrict>
-	    <fileset dir="${dir}"/>
-	    <not>
-	      <name regex="${file-list}"/>
-	    </not>
-	  </restrict>
-	</delete>
-	<!-- Download plugins -->
+        </loadresource>
+        <!-- Delete files that are not in plugin list (like old plugins) -->
+        <loadresource property="file-list">
+            <propertyresource name="plugins"/>
+            <filterchain>
+                <tokenfilter>
+                    <replaceregex pattern="^.*/(.*)$" replace="\1\|" flags=""/>
+                </tokenfilter>
+                <striplinebreaks/>
+                <tokenfilter>
+                    <replaceregex pattern="\|$" replace="" flags="gi"/>
+                </tokenfilter>    
+            </filterchain>
+        </loadresource>
+        <delete>
+            <restrict>
+                <fileset dir="${dir}"/>
+                <not>
+                    <name regex="${file-list}"/>
+                </not>
+            </restrict>
+        </delete>
+        <!-- Download plugins -->
         <copy todir="${dir}" flatten="true">
             <resourcelist>
                 <string value="${plugins}"/>
@@ -319,7 +337,7 @@ Build-Date: ${build.tstamp}
                 <fileset file="${java.home}/lib/rt.jar"/>
                 <fileset file="${java.home}/lib/jce.jar"/>
             </path>
-        </as:build-signatures>	
+        </as:build-signatures>
         <as:check-signature signature="${dir}/api.sig">
             <ignore classname="org.jgraph.*"/>
             <ignore classname="com.touchgraph.*"/>
@@ -336,23 +354,23 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="findbugs" depends="dist">
-    	<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="tools/findbugs/findbugs-ant.jar"/>
+        <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="tools/findbugs/findbugs-ant.jar"/>
         <path id="findbugs-classpath">
             <fileset dir="tools/findbugs/">
                 <include name="*.jar"/>
             </fileset>
         </path>
-    	<property name="findbugs-classpath" refid="findbugs-classpath"/>
-      <findbugs output="xml"
+        <property name="findbugs-classpath" refid="findbugs-classpath"/>
+        <findbugs output="xml"
                 outputFile="findbugs-josm.xml"
-      	        classpath="${findbugs-classpath}"
-      	        pluginList=""
-      	        excludeFilter="tools/findbugs/josm-filter.xml"
-      	        effort="max"
-      	        >
-        <sourcePath path="${basedir}/src" />
-        <class location="${basedir}/dist/josm-custom.jar" />
-      </findbugs>
+                classpath="${findbugs-classpath}"
+                pluginList=""
+                excludeFilter="tools/findbugs/josm-filter.xml"
+                effort="max"
+                >
+            <sourcePath path="${basedir}/src" />
+            <class location="${basedir}/dist/josm-custom.jar" />
+        </findbugs>
     </target>
     <target name="run" depends="dist">
         <java jar="dist/josm-custom.jar" fork="true">
