@@ -202,12 +202,10 @@ public final class CreateCircleAction extends JosmAction {
             double sUnder = (x1 - x2)*(y3 - y1) - (y2 - y1)*(x1 - x3);
 
             if (sUnder == 0) {
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("Those nodes are not in a circle. Aborting."),
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE
-                );
+                new Notification(
+                        tr("Those nodes are not in a circle. Aborting."))
+                        .setIcon(JOptionPane.WARNING_MESSAGE)
+                        .show();
                 return;
             }
 
@@ -263,10 +261,11 @@ public final class CreateCircleAction extends JosmAction {
             }
 
         } else {
-            Notification note = new Notification();
-            note.setContent(tr("Please select exactly two or three nodes or one way with exactly two or three nodes."));
-            note.setIcon(JOptionPane.INFORMATION_MESSAGE);
-            note.show();
+            new Notification(
+                    tr("Please select exactly two or three nodes or one way with exactly two or three nodes."))
+                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                    .setDuration(Notification.TIME_LONG)
+                    .show();
             return;
         }
 

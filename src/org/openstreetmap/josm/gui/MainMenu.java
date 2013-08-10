@@ -174,22 +174,22 @@ public class MainMenu extends JMenuBar {
     public final JosmAction splitWay = new SplitWayAction();
     public final JosmAction combineWay = new CombineWayAction();
     public final JosmAction reverseWay = new ReverseWayAction();
+    public final JosmAction simplifyWay = new SimplifyWayAction();
     public final JosmAction alignInCircle = new AlignInCircleAction();
     public final JosmAction alignInLine = new AlignInLineAction();
     public final JosmAction distribute = new DistributeAction();
     public final OrthogonalizeAction ortho = new OrthogonalizeAction();
     public final JosmAction orthoUndo = new Undo();  // action is not shown in the menu. Only triggered by shortcut
     public final JosmAction mirror = new MirrorAction();
+    public final JosmAction followLine = new FollowLineAction();
     public final AddNodeAction addnode = new AddNodeAction();
     public final MoveNodeAction movenode = new MoveNodeAction();
     public final JosmAction createCircle = new CreateCircleAction();
     public final JosmAction mergeNodes = new MergeNodesAction();
     public final JosmAction joinNodeWay = new JoinNodeWayAction();
     public final JosmAction unglueNodes = new UnGlueAction();
-    public final JosmAction simplifyWay = new SimplifyWayAction();
     public final JosmAction joinAreas = new JoinAreasAction();
     public final JosmAction createMultipolygon = new CreateMultipolygonAction();
-    public final JosmAction followLine = new FollowLineAction();
 
     /* Audio menu */
     public final JosmAction audioPlayPause = new AudioPlayPauseAction();

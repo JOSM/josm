@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -40,7 +41,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * If a single node is selected, it will copy that node and remove all tags from the old one
  */
-
 public class UnGlueAction extends JosmAction {
 
     private Node selectedNode;
@@ -67,6 +67,7 @@ public class UnGlueAction extends JosmAction {
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
 
         String errMsg = null;
+        int errorTime = Notification.TIME_DEFAULT;
         if (checkSelection(selection)) {
             if (!checkAndConfirmOutlyingUnglue()) {
                 return;
@@ -84,6 +85,7 @@ public class UnGlueAction extends JosmAction {
                 if (checkForUnglueNode(selection)) {
                     unglueNode(e);
                 } else {
+                    errorTime = Notification.TIME_SHORT;
                     errMsg = tr("This node is not glued to anything else.");
                 }
             } else {
@@ -119,6 +121,7 @@ public class UnGlueAction extends JosmAction {
                 unglueWays2();
             }
         } else {
+            errorTime = Notification.TIME_VERY_LONG;
             errMsg =
                 tr("The current selection cannot be used for unglueing.")+"\n"+
                 "\n"+
@@ -135,11 +138,11 @@ public class UnGlueAction extends JosmAction {
         }
 
         if(errMsg != null) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    errMsg,
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE);
+            new Notification(
+                    errMsg)
+                    .setIcon(JOptionPane.ERROR_MESSAGE)
+                    .setDuration(errorTime)
+                    .show();
         }
 
         selectedNode = null;
@@ -148,8 +151,8 @@ public class UnGlueAction extends JosmAction {
     }
 
     /**
-     * Assumes there is one tagged Node stored in selectedNode that it will try to unglue
-     * (= copy node and remove all tags from the old one. Relations will not be removed)
+     * Assumes there is one tagged Node stored in selectedNode that it will try to unglue.
+     * (i.e. copy node and remove all tags from the old one. Relations will not be removed)
      */
     private void unglueNode(ActionEvent e) {
         LinkedList<Command> cmds = new LinkedList<Command>();

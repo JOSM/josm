@@ -33,6 +33,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -67,13 +68,10 @@ public class MergeNodesAction extends JosmAction {
         if (selectedNodes.size() == 1) {
             List<Node> nearestNodes = Main.map.mapView.getNearestNodes(Main.map.mapView.getPoint(selectedNodes.get(0)), selectedNodes, OsmPrimitive.isUsablePredicate);
             if (nearestNodes.isEmpty()) {
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("Please select at least two nodes to merge or a node that is close to another node."),
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE
-                );
-
+                new Notification(
+                        tr("Please select at least two nodes to merge or one node that is close to another node."))
+                        .setIcon(JOptionPane.WARNING_MESSAGE)
+                        .show();
                 return;
             }
             selectedNodes.addAll(nearestNodes);
