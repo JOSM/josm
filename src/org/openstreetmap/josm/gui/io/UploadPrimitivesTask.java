@@ -37,6 +37,8 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.SAXException;
 
+import org.openstreetmap.josm.gui.Notification;
+
 /**
  * The task for uploading a collection of primitives
  *
@@ -327,8 +329,13 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                 if (changeset != null && changeset.isOpen()) {
                     UploadDialog.getUploadDialog().setSelectedChangesetForNextUpload(changeset);
                 }
-                if (lastException == null)
+                if (lastException == null) {
+                    new Notification(
+                            "<h3>" + tr("Upload successful!") + "</h3>")
+                            .setIcon(ImageProvider.get("misc", "check_large"))
+                            .show();
                     return;
+                }
                 if (lastException instanceof ChangesetClosedException) {
                     ChangesetClosedException e = (ChangesetClosedException)lastException;
                     if (e.getSource().equals(ChangesetClosedException.Source.UPDATE_CHANGESET)) {
