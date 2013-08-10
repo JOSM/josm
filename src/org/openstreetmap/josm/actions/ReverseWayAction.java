@@ -24,6 +24,7 @@ import org.openstreetmap.josm.corrector.UserCancelException;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -79,12 +80,11 @@ public final class ReverseWayAction extends JosmAction {
 
         final Collection<Way> sel = getCurrentDataSet().getSelectedWays();
         if (sel.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("Please select at least one way."),
-                    tr("Information"),
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            new Notification(
+                    tr("Please select at least one way."))
+                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                    .setDuration(Notification.TIME_SHORT)
+                    .show();
             return;
         }
 

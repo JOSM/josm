@@ -7,6 +7,8 @@ import javax.swing.Icon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * A Notification Message similar to a popup window, but without disrupting the
  * user's workflow.
@@ -27,6 +29,27 @@ import javax.swing.UIManager;
 public class Notification {
 
     public final static int DEFAULT_CONTENT_WIDTH = 350;
+
+    // some standard duration values (in milliseconds)
+
+    /**
+     * Very short and very easy to grasp message (3 s).
+     * E.g. "Please select at least one node".
+     */
+    public final static int TIME_SHORT = Main.pref.getInteger("notification-time-short-ms", 3000);
+    /**
+     * Short message of one or two lines (5 s).
+     */
+    public final static int TIME_DEFAULT = Main.pref.getInteger("notification-time-default-ms", 5000);
+    /**
+     * Somewhat longer message (10 s).
+     */
+    public final static int TIME_LONG = Main.pref.getInteger("notification-time-long-ms", 10000);
+    /**
+     * Long text.
+     * (Make sure is still sensible to show as a notification)
+     */
+    public final static int TIME_VERY_LONG = Main.pref.getInteger("notification-time-very_long-ms", 20000);
 
     private Icon icon;
     private int duration;

@@ -41,6 +41,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
@@ -319,14 +320,20 @@ public class JoinAreasAction extends JosmAction {
         LinkedList<Way> ways = new LinkedList<Way>(Main.main.getCurrentDataSet().getSelectedWays());
 
         if (ways.isEmpty()) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Please select at least one closed way that should be joined."));
+            new Notification(
+                    tr("Please select at least one closed way that should be joined."))
+                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                    .show();
             return;
         }
 
         List<Node> allNodes = new ArrayList<Node>();
         for (Way way : ways) {
             if (!way.isClosed()) {
-                JOptionPane.showMessageDialog(Main.parent, tr("One of the selected ways is not closed and therefore cannot be joined."));
+                new Notification(
+                        tr("One of the selected ways is not closed and therefore cannot be joined."))
+                        .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                        .show();
                 return;
             }
 
@@ -354,7 +361,10 @@ public class JoinAreasAction extends JosmAction {
             return;
 
         if (!testJoin(areas)) {
-            JOptionPane.showMessageDialog(Main.parent, tr("No intersection found. Nothing was changed."));
+            new Notification(
+                    tr("No intersection found. Nothing was changed."))
+                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                    .show();
             return;
         }
 
@@ -376,7 +386,10 @@ public class JoinAreasAction extends JosmAction {
                 ds.setSelected(allWays);
                 Main.map.mapView.repaint();
             } else {
-                JOptionPane.showMessageDialog(Main.parent, tr("No intersection found. Nothing was changed."));
+                new Notification(
+                        tr("No intersection found. Nothing was changed."))
+                        .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                        .show();
             }
         }
         catch (UserCancelException exception) {
@@ -517,7 +530,11 @@ public class JoinAreasAction extends JosmAction {
         makeCommitsOneAction(marktr("Joined overlapping areas"));
 
         if (warnAboutRelations) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Some of the ways were part of relations that have been modified. Please verify no errors have been introduced."));
+            new Notification(
+                    tr("Some of the ways were part of relations that have been modified.<br>Please verify no errors have been introduced."))
+                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                    .setDuration(Notification.TIME_LONG)
+                    .show();
         }
 
         result.hasChanges = true;
@@ -1211,7 +1228,10 @@ public class JoinAreasAction extends JosmAction {
             }
 
             if (outerWays.size() > 1) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Sorry. Cannot handle multipolygon relations with multiple outer ways."));
+                new Notification(
+                        tr("Sorry. Cannot handle multipolygon relations with multiple outer ways."))
+                        .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                        .show();
                 return null;
             }
 
@@ -1221,24 +1241,36 @@ public class JoinAreasAction extends JosmAction {
             innerWays.retainAll(selectedWays);
 
             if (processedOuterWays.contains(outerWay)) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Sorry. Cannot handle way that is outer in multiple multipolygon relations."));
+                new Notification(
+                        tr("Sorry. Cannot handle way that is outer in multiple multipolygon relations."))
+                        .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                        .show();
                 return null;
             }
 
             if (processedInnerWays.contains(outerWay)) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Sorry. Cannot handle way that is both inner and outer in multipolygon relations."));
+                new Notification(
+                        tr("Sorry. Cannot handle way that is both inner and outer in multipolygon relations."))
+                        .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                        .show();
                 return null;
             }
 
             for (Way way :innerWays)
             {
                 if (processedOuterWays.contains(way)) {
-                    JOptionPane.showMessageDialog(Main.parent, tr("Sorry. Cannot handle way that is both inner and outer in multipolygon relations."));
+                    new Notification(
+                            tr("Sorry. Cannot handle way that is both inner and outer in multipolygon relations."))
+                            .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                            .show();
                     return null;
                 }
 
                 if (processedInnerWays.contains(way)) {
-                    JOptionPane.showMessageDialog(Main.parent, tr("Sorry. Cannot handle way that is inner in multiple multipolygon relations."));
+                    new Notification(
+                            tr("Sorry. Cannot handle way that is inner in multiple multipolygon relations."))
+                            .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                            .show();
                     return null;
                 }
             }

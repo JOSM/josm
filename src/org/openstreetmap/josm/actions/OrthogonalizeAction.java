@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -113,12 +114,11 @@ public final class OrthogonalizeAction extends JosmAction {
                 } else throw new InvalidUserInputException();
             }
             catch (InvalidUserInputException ex) {
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("Orthogonalize Shape / Undo\n"+
-                        "Please select nodes that were moved by the previous Orthogonalize Shape action!"),
-                        tr("Undo Orthogonalize Shape"),
-                        JOptionPane.INFORMATION_MESSAGE);
+                new Notification(
+                        tr("Orthogonalize Shape / Undo<br>"+
+                        "Please select nodes that were moved by the previous Orthogonalize Shape action!"))
+                        .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                        .show();
             }
         }
     }
@@ -183,20 +183,16 @@ public final class OrthogonalizeAction extends JosmAction {
                     throw new InvalidUserInputException("usage");
             }
         } catch (InvalidUserInputException ex) {
+            String msg;
             if (ex.getMessage().equals("usage")) {
-                ConditionalOptionPaneUtil.showMessageDialog("orthogonalize_usage",
-                        Main.parent,
-                        "<html><h2>" + tr("Usage") + "</h2>" + USAGE + "</html>",
-                        tr("Orthogonalize Shape"),
-                        JOptionPane.INFORMATION_MESSAGE);
+                msg = "<h2>" + tr("Usage") + "</h2>" + USAGE;
+            } else {
+                msg = ex.getMessage() + "<br><hr><h2>" + tr("Usage") + "</h2>" + USAGE;
             }
-            else {
-                ConditionalOptionPaneUtil.showMessageDialog("orthogonalize_error",
-                        Main.parent,
-                        "<html>" + ex.getMessage() + "<br><hr><h2>" + tr("Usage") + "</h2>" + USAGE + "</html>",
-                        tr("Selected Elements cannot be orthogonalized"),
-                        JOptionPane.INFORMATION_MESSAGE);
-            }
+            new Notification(msg)
+                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                    .setDuration(Notification.TIME_VERY_LONG)
+                    .show();
         }
     }
 
