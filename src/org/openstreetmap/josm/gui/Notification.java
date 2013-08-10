@@ -21,8 +21,8 @@ import org.openstreetmap.josm.Main;
  * example:
  * <pre>
  *      Notification note = new Notification("Hi there!");
- *      note.setDuration(4000); // optional
  *      note.setIcon(JOptionPane.INFORMATION_MESSAGE); // optional
+ *      note.setDuration(Notification.TIME_SHORT); // optional
  *      note.show();
  * </pre>
  */
@@ -51,9 +51,10 @@ public class Notification {
      */
     public final static int TIME_VERY_LONG = Main.pref.getInteger("notification-time-very_long-ms", 20000);
 
-    private Icon icon;
-    private int duration;
     private Component content;
+    private int duration;
+    private Icon icon;
+    private String helpTopic;
 
     public Notification() {
         duration = NotificationManager.defaultNotificationTime;
@@ -80,7 +81,8 @@ public class Notification {
     /**
      * Set the notification text. (Convenience method)
      *
-     * @param msg the message String
+     * @param msg the message String. Will be wrapped in &lt;html&gt;, so
+     * you can use &lt;br&gt; and other markup directly.
      *
      * @see #Notification(java.lang.String)
      * @return the current Object, for convenience
@@ -96,6 +98,8 @@ public class Notification {
      * Set the time after which the message is hidden.
      *
      * @param duration the time (in milliseconds)
+     * Preset values {@link #TIME_SHORT}, {@link #TIME_DEFAULT}, {@link #TIME_LONG}
+     * and {@link #TIME_VERY_LONG} can be used.
      * @return the current Object, for convenience
      */
     public Notification setDuration(int duration) {
@@ -140,6 +144,16 @@ public class Notification {
         }
     }
 
+    /**
+     * Display a help button at the bottom of the notification window.
+     * @param helpTopic the help topic
+     * @return the current Object, for convenience
+     */
+    public Notification setHelpTopic(String helpTopic) {
+        this.helpTopic = helpTopic;
+        return this;
+    }
+
     public Component getContent() {
         return content;
     }
@@ -150,6 +164,10 @@ public class Notification {
 
     public Icon getIcon() {
         return icon;
+    }
+
+    public String getHelpTopic() {
+        return helpTopic;
     }
 
     /**

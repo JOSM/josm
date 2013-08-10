@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -44,13 +45,12 @@ public class SimplifyWayAction extends JosmAction {
     }
 
     protected void alertSelectAtLeastOneWay() {
-        HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
-                tr("Please select at least one way to simplify."),
-                tr("Warning"),
-                JOptionPane.WARNING_MESSAGE,
-                HelpUtil.ht("/Action/SimplifyWay#SelectAWayToSimplify")
-                );
+        new Notification(
+                tr("Please select at least one way to simplify."))
+                .setIcon(JOptionPane.WARNING_MESSAGE)
+                .setDuration(Notification.TIME_SHORT)
+                .setHelpTopic(HelpUtil.ht("/Action/SimplifyWay#SelectAWayToSimplify"))
+                .show();
     }
 
     protected boolean confirmSimplifyManyWays(int numWays) {
