@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -22,6 +24,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -34,6 +37,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.help.HelpBrowser;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -186,17 +191,42 @@ class NotificationManager {
             innerPanel.setBackground(c);
         }
 
-        private void build(Notification note) {
-            JButton close = new JButton(new HideAction());
-            close.setPreferredSize(new Dimension(50, 50));
+        private void build(final Notification note) {
+            JButton btnClose = new JButton(new HideAction());
+            btnClose.setPreferredSize(new Dimension(50, 50));
+            btnClose.setMargin(new Insets(0, 0, 1, 1));
+            btnClose.setContentAreaFilled(false);
+            // put it in JToolBar to get a better appearance
             JToolBar tbClose = new JToolBar();
-            close.setMargin(new Insets(0, 0, 1, 1));
-            close.setContentAreaFilled(false);
-
             tbClose.setFloatable(false);
             tbClose.setBorderPainted(false);
             tbClose.setOpaque(false);
-            tbClose.add(close);
+            tbClose.add(btnClose);
+
+            JToolBar tbHelp = null;
+            if (note.getHelpTopic() != null) {
+                JButton btnHelp = new JButton(tr("Help"));
+                btnHelp.setIcon(ImageProvider.get("help"));
+                btnHelp.setToolTipText(tr("Show help information"));
+                HelpUtil.setHelpContext(btnHelp, note.getHelpTopic());
+                btnHelp.addActionListener(new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                HelpBrowser.setUrlForHelpTopic(note.getHelpTopic());
+                            }
+                        });
+                    }
+                });
+                btnHelp.setOpaque(false);
+                tbHelp = new JToolBar();
+                tbHelp.setFloatable(false);
+                tbHelp.setBorderPainted(false);
+                tbHelp.setOpaque(false);
+                tbHelp.add(btnHelp);
+            }
 
             setOpaque(false);
             innerPanel = new RoundedPanel();
@@ -220,14 +250,31 @@ class NotificationManager {
             if (icon != null) {
                 hgroup.addComponent(icon);
             }
-            hgroup.addComponent(content).addComponent(tbClose);
+            if (tbHelp != null) {
+                hgroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                        .addComponent(content)
+                        .addComponent(tbHelp)
+                );
+            } else {
+                hgroup.addComponent(content);
+            }
+            hgroup.addComponent(tbClose);
             GroupLayout.ParallelGroup vgroup = layout.createParallelGroup();
             if (icon != null) {
                 vgroup.addComponent(icon);
             }
-            vgroup.addComponent(content).addComponent(tbClose);
+            vgroup.addComponent(content);
+            vgroup.addComponent(tbClose);
             layout.setHorizontalGroup(hgroup);
-            layout.setVerticalGroup(vgroup);
+
+            if (tbHelp != null) {
+                layout.setVerticalGroup(layout.createSequentialGroup()
+                        .addGroup(vgroup)
+                        .addComponent(tbHelp)
+                );
+            } else {
+                layout.setVerticalGroup(vgroup);
+            }
 
             /*
              * The timer stops when the mouse cursor is above the panel.
