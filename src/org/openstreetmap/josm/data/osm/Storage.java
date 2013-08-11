@@ -111,10 +111,16 @@ public class Storage<T> extends AbstractSet<T> {
     private final boolean safeIterator;
     private boolean arrayCopyNecessary;
 
+    /**
+     * Constructs a new {@code Storage} with default capacity (16).
+     */
     public Storage() {
         this(Storage.<T>defaultHash(), DEFAULT_CAPACITY, false);
     }
 
+    /**
+     * Constructs a new {@code Storage} with given capacity.
+     */
     public Storage(int capacity) {
         this(Storage.<T>defaultHash(), capacity, false);
     }
@@ -439,7 +445,7 @@ public class Storage<T> extends AbstractSet<T> {
         @Override
         public void putAll(Map<? extends K, ? extends T> m) {
             if (m instanceof Storage.FMap) {
-                Storage.this.addAll(((Storage.FMap)m).values());
+                Storage.this.addAll(m.values());
             } else {
                 for (Map.Entry<? extends K, ? extends T> e : m.entrySet()) {
                     put(e.getKey(), e.getValue());
