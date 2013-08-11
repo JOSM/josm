@@ -577,7 +577,7 @@ public final class TaggingPresetItems {
                     bg.add(aibutton);
                     try {
                         // TODO there must be a better way to parse a number like "+3" than this.
-                        final int buttonvalue = ((Number)NumberFormat.getIntegerInstance().parse(ai.replace("+", ""))).intValue();
+                        final int buttonvalue = (NumberFormat.getIntegerInstance().parse(ai.replace("+", ""))).intValue();
                         if (auto_increment_selected == buttonvalue) aibutton.setSelected(true);
                         aibutton.addActionListener(new ActionListener() {
                             @Override

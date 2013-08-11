@@ -50,7 +50,7 @@ public class ExifReader {
         return null;
     }
 
-    @SuppressWarnings("unchecked") public static Integer readOrientation(File filename) throws ParseException {
+    public static Integer readOrientation(File filename) throws ParseException {
         Integer orientation = null;
         try {
             final Metadata metadata = JpegMetadataReader.readMetadata(filename);

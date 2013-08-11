@@ -109,7 +109,7 @@ public class TextTagParser {
         
         private void skipSign() {
             char c;
-            boolean signFound = false;;
+            boolean signFound = false;
             while (pos < n) {
                 c = data.charAt(pos);
                 if (c == '\t' || c == '\n'  || c == ' ') {

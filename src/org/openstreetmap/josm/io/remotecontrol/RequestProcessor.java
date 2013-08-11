@@ -384,7 +384,7 @@ public class RequestProcessor extends Thread {
         PrintWriter r = new PrintWriter(w);
         RequestHandler handler = null;
         try {
-            Class c = handlers.get(cmd);
+            Class<?> c = handlers.get(cmd);
             if (c==null) return null;
             handler = handlers.get(cmd).newInstance();
         } catch (Exception ex) {

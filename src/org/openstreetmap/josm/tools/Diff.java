@@ -815,7 +815,7 @@ public class Diff {
             realindexes = new int[buffered_lines];
 
             for (int i = 0; i < data.length; ++i) {
-                Integer ir = (Integer)h.get(data[i]);
+                Integer ir = h.get(data[i]);
                 if (ir == null) {
                     h.put(data[i],new Integer(equivs[i] = equiv_max++));
                 } else {

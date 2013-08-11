@@ -821,7 +821,7 @@ public class TagChecker extends Test
                 }
                 return noMatch;
             }
-        };
+        }
 
         public String getData(String str) {
             Matcher m = Pattern.compile(" *# *([^#]+) *$").matcher(str);

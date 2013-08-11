@@ -119,7 +119,7 @@ public class FollowLineAction extends JosmAction {
             // from aerial imagery or GPS tracks.
             if (Main.map.mapView.viewportFollowing) {
                 Main.map.mapView.smoothScrollTo(newPoint.getEastNorth());
-            };
+            }
         }
     }
 }

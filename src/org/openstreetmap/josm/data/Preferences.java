@@ -1287,7 +1287,7 @@ public class Preferences {
             public void visit(MapListSetting setting) {
                 changed = putListOfStructs(key, setting.getValue());
             }
-        };
+        }
         PutVisitor putVisitor = new PutVisitor();
         value.visit(putVisitor);
         return putVisitor.changed;
@@ -1668,7 +1668,7 @@ public class Preferences {
         }
     }
 
-    public static boolean isEqual(Setting a, Setting b) {
+    public static boolean isEqual(Setting<?> a, Setting<?> b) {
         if (a==null && b==null) return true;
         if (a==null) return false;
         if (b==null) return false;
@@ -1677,18 +1677,18 @@ public class Preferences {
         if (a instanceof StringSetting)
             return (a.getValue().equals(b.getValue()));
         if (a instanceof ListSetting) {
-            @SuppressWarnings("unchecked") Collection<String> aValue = (Collection) a.getValue();
-            @SuppressWarnings("unchecked") Collection<String> bValue = (Collection) b.getValue();
+            @SuppressWarnings("unchecked") Collection<String> aValue = (Collection<String>) a.getValue();
+            @SuppressWarnings("unchecked") Collection<String> bValue = (Collection<String>) b.getValue();
             return equalCollection(aValue, bValue);
         }
         if (a instanceof ListListSetting) {
-            @SuppressWarnings("unchecked") Collection<Collection<String>> aValue = (Collection) a.getValue();
-            @SuppressWarnings("unchecked") Collection<List<String>> bValue = (Collection) b.getValue();
+            @SuppressWarnings("unchecked") Collection<Collection<String>> aValue = (Collection<Collection<String>>) a.getValue();
+            @SuppressWarnings("unchecked") Collection<List<String>> bValue = (Collection<List<String>>) b.getValue();
             return equalArray(aValue, bValue);
         }
         if (a instanceof MapListSetting) {
-            @SuppressWarnings("unchecked") Collection<Map<String, String>> aValue = (Collection) a.getValue();
-            @SuppressWarnings("unchecked") Collection<Map<String, String>> bValue = (Collection) b.getValue();
+            @SuppressWarnings("unchecked") Collection<Map<String, String>> aValue = (Collection<Map<String, String>>) a.getValue();
+            @SuppressWarnings("unchecked") Collection<Map<String, String>> bValue = (Collection<Map<String, String>>) b.getValue();
             return equalListOfStructs(aValue, bValue);
         }
         return a.equals(b);
