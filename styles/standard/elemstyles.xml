@@ -1257,7 +1257,7 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="power" v="station"/>
+		<condition k="power" v="plant"/>
 		<icon annotate="true" src="misc/landmark/power.png"/>
 		<area colour="power#eeeeee"/>
 	</rule>
@@ -1279,7 +1279,7 @@ For external files the <rules> should have following elements:
 		<area colour="power#eeeeee"/>
 	</rule>
 
-	<!-- power_source is depricated by the wiki, but still in use -->
+	<!-- power_source is deprecated by the wiki, but still in use -->
 	<rule>
 		<condition k="power_source" v="wind"/>
 		<icon annotate="true" src="misc/landmark/power/wind.png"/>
@@ -3882,5 +3882,6 @@ For external files the <rules> should have following elements:
     <!-- waterway=aqueduct -> bridge=aqueduct -->
     <!-- natural=marsh -> natural=wetland -->
     <!-- leisure=zoo -> tourism=zoo -->
+    <!-- power=station -> power=plant or power=sub_station -->
 
 </rules>
