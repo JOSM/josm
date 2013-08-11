@@ -54,7 +54,7 @@ combo: combo box, with multiple choices and possible to enter free form text
                   database values, order and number must be equal to values
   short_descriptions: comma separated list of texts to be displayed below each
                       display_value. (Only if it is not possible to describe
-                      the entry in 2-3 words.) Instead of comma separeted list
+                      the entry in 2-3 words.) Instead of comma separated list
   instead using values, display_values and short_descriptions, the following form is also supported:
     <list_entry value="" display_value="" short_description="" icon="" icon_size=""/>
         icon: location of icon
@@ -2003,8 +2003,8 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="service" text="Service/Type" values="yard,siding,spur" />
                 <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" lenght="5" />
-                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" length="4"/>
+                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" lenght="5" />
+                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
             </optional>
         </item>
         <item name="Narrow Gauge Rail" icon="presets/railway.png" type="way">
@@ -2018,8 +2018,8 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="service" text="Types" values="yard,siding,spur" />
                 <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" length="5" />
-                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" length="4" />
+                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
+                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
             </optional>
         </item>
         <item name="Monorail" icon="presets/railway.png" type="way">
@@ -2033,8 +2033,8 @@ Note that for a match, at least one positive and no negative is required.
             <optional>
                 <combo key="service" text="Types" values="yard,siding,spur" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" length="5" />
-                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" length="4" />
+                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
+                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
             </optional>
         </item>
         <item name="Preserved" icon="presets/rail_preserved.png" type="way">
@@ -2046,8 +2046,8 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="service" text="Types" values="yard,siding,spur" />
                 <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" length="5" />
-                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" length="4" />
+                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
+                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
             </optional>
         </item>
         <item name="Light Rail" icon="presets/rail_light.png" type="way">
@@ -2059,8 +2059,8 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="service" text="Types" values="yard,siding,spur" />
                 <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" length="5" />
-                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" length="4" />
+                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
+                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
             </optional>
         </item>
         <item name="Subway" icon="presets/rail_light.png" type="way">
@@ -2076,8 +2076,8 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="service" text="Types" values="yard,siding,spur" />
                 <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" length="5" />
-                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" length="4" />
+                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
+                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
             </optional>
         </item>
         <item name="Tram" icon="presets/tram.png" type="way">
@@ -2094,8 +2094,8 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="service" text="Types" values="yard,siding,spur" />
                 <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" length="5" />
-                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" length="4" />
+                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
+                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
             </optional>
         </item>
         <item name="Bus Guideway" icon="presets/busway.png" type="way">
@@ -4838,7 +4838,30 @@ Note that for a match, at least one positive and no negative is required.
         </item>
     </group> <!-- Man Made -->
     <group name="Power" icon="presets/power.png">
-        <item name="Power Generator" icon="presets/power.png" type="node,closedway">
+        <item name="Power Plant" icon="presets/power.png" type="closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=plant" />
+            <label text="Edit Power Plant" />
+            <key key="power" value="plant" />
+            <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
+            <text key="ref" text="Reference" />
+            <text key="start_date" text="Start date" />
+            <optional>
+                <label text="Output forms of energy" />
+                <label text="(please add this information to the generators if possible)" />
+                <space />
+                <combo key="plant:output:electricity" text="electricity" values="yes,2 W,3 kW,5 MW,7 GW" />
+                <combo key="plant:output:hot_water" text="hot water" values="yes,2 W,3 kW,5 MW,7 GW" />
+                <combo key="plant:output:hot_air" text="hot air" values="yes,2 W,3 kW,5 MW,7 GW" />
+                <combo key="plant:output:cold_water" text="cold water" values="yes,2 W,3 kW,5 MW,7 GW" />
+                <combo key="plant:output:cold_air" text="cold air" values="yes,2 W,3 kW,5 MW,7 GW" />
+                <combo key="plant:output:compressed_air" text="compressed air" values="yes,2 W,3 kW,5 MW,7 GW" />
+                <combo key="plant:output:steam" text="steam" values="yes,2 W,3 kW,5 MW,7 GW" />
+                <combo key="plant:output:vacuum" text="vacuum" values="yes,2 W,3 kW,5 MW,7 GW" />
+                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
+            </optional>
+        </item>
+        <item name="Power Generator" icon="presets/power.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=generator"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=generator"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=generator"
@@ -4848,8 +4871,75 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Power Generator" />
             <key key="power" value="generator" />
             <text key="name" text="Name" />
-            <combo key="generator:source" text="Source" values="biofuel,biogas,biomass,coal,diesel,gas,gasoline,geothermal,hydro,nuclear,oil,osmotic,solar,tidal,waste,wave,wind" />
-            <combo key="generator:method" text="Method" values="anaerobic_digestion,combustion,dam,fission,fusion,gasification,photovoltaic,pumped-storage,pumping,pyrolysis,run-of-the-river,thermal" />
+            <text key="operator" text="Operator" />
+            <text key="ref" text="Reference" />
+            <text key="start_date" text="Start date" />
+            <combo key="generator:source" text="Source">
+                <list_entry value="biofuel" icon="http://wiki.openstreetmap.org/w/images/6/6b/Bahnpirat-power_source-biofuel.svg" />
+                <list_entry value="biogas" icon="http://wiki.openstreetmap.org/w/images/6/6b/Bahnpirat-power_source-biofuel.svg" />
+                <list_entry value="biomass" icon="http://wiki.openstreetmap.org/w/images/6/6b/Bahnpirat-power_source-biofuel.svg" />
+                <list_entry value="coal" icon="http://wiki.openstreetmap.org/w/images/4/4b/Bahnpirat-power_source-coal.svg" />
+                <list_entry value="diesel" icon="http://wiki.openstreetmap.org/w/images/f/f7/Bahnpirat-power_source-oil.svg" />
+                <list_entry value="gas" icon="http://wiki.openstreetmap.org/w/images/e/e6/Bahnpirat-power_source-gas.svg" />
+                <list_entry value="gasoline" icon="http://wiki.openstreetmap.org/w/images/f/f7/Bahnpirat-power_source-oil.svg" />
+                <list_entry value="geothermal" icon="http://wiki.openstreetmap.org/w/images/e/ed/2020_stBN_powergensource_water.svg" />
+                <list_entry value="hydro" icon="http://wiki.openstreetmap.org/w/images/e/ed/2020_stBN_powergensource_water.svg" />
+                <list_entry value="nuclear" icon="http://wiki.openstreetmap.org/w/images/3/3e/2020_stBN_powergensource_nuclear.svg" />
+                <list_entry value="oil" icon="http://wiki.openstreetmap.org/w/images/f/f7/Bahnpirat-power_source-oil.svg" />
+                <list_entry value="osmotic" icon="http://wiki.openstreetmap.org/w/images/e/ed/2020_stBN_powergensource_water.svg" />
+                <list_entry value="solar" icon="http://wiki.openstreetmap.org/w/images/2/22/2020_stBN_powergensource_sun.svg" />
+                <list_entry value="tidal" icon="http://wiki.openstreetmap.org/w/images/e/ed/2020_stBN_powergensource_water.svg" />
+                <list_entry value="waste" icon="http://wiki.openstreetmap.org/w/images/2/2f/Bahnpirat-power_source-waste.svg" />
+                <list_entry value="wave" icon="http://wiki.openstreetmap.org/w/images/e/ed/2020_stBN_powergensource_water.svg" />
+                <list_entry value="wind" icon="http://wiki.openstreetmap.org/w/images/0/03/2020_stBN_powergensource_wind.svg" />
+            </combo>
+            <combo key="generator:method" text="Method">
+                <list_entry value="anaerobic_digestion" short_description="" /> <!-- Recheck -->
+                <list_entry value="barrage" short_description="tidal" />
+                <list_entry value="combustion" short_description="bio / coal / diesel / gas / gasoline / oil / waste" />
+                <list_entry value="fission" short_description="nuclear" />
+                <list_entry value="fusion" short_description="nuclear" />
+                <list_entry value="gasification" short_description="biomass / waste" />
+                <list_entry value="photovoltaic" short_description="solar" />
+                <list_entry value="pyrolysis" short_description="" /> <!-- Recheck -->
+                <list_entry value="run-of-the-river" short_description="hydro" />
+                <list_entry value="stream" short_description="tidal" />
+                <list_entry value="thermal" short_description="solar" />
+                <list_entry value="water-pumped-storage" short_description="hydro" />
+                <list_entry value="water-storage" short_description="hydro" />
+            </combo>
+            <combo key="generator:type" text="Generator Type"> 
+                <list_entry value="cold-fusion" short_description="nuclear fusion" />
+                <list_entry value="combined_cycle" short_description="gas combustion" />
+                <list_entry value="francis_turbine" short_description="hydro" />
+                <list_entry value="gas_turbine" short_description="biogas, biomass, gas, waste combustion" />
+                <list_entry value="heat_pump" short_description="geothermal" />
+                <list_entry value="horizontal_axis" short_description="tidal steam / wind" />
+                <list_entry value="kaplan_turbine" short_description="hygro run-of-the-river / hydro water-storage / tidal barrage" />
+                <list_entry value="pelton_turbine" short_description="hygro run-of-the-river / hydro water-storage" />
+                <list_entry value="reciprocating_engine" short_description="biofuel, biogas, diesel, gas, gasoline" />
+                <list_entry value="solar_photovoltaic_panel" short_description="solar photovoltaic" />
+                <list_entry value="solar_thermal_collector" short_description="solar thermal" />
+                <list_entry value="steam_generator" short_description="bio, coal, diesel, gas, gasoline, oil, waste combustion" />
+                <list_entry value="steam_turbine" short_description="geothermal / solar thermal / bio, coal, oil, waste combustion" />
+                <list_entry value="stellarator" short_description="nuclear fusion" />
+                <list_entry value="tokamak" short_description="nuclear fusion" />
+                <list_entry value="vertical_axis" short_description="tidal steam / wind" />
+                <list_entry value="BWR-1" display_value="Boiling Water Reactor 1 (BWR-1)" short_description="nuclear fission" />
+                <list_entry value="BWR-2" display_value="Boiling Water Reactor 2 (BWR-2)" short_description="nuclear fission" />
+                <list_entry value="BWR-3" display_value="Boiling Water Reactor 3 (BWR-3)" short_description="nuclear fission" />
+                <list_entry value="BWR-4" display_value="Boiling Water Reactor 4 (BWR-4)" short_description="nuclear fission" />
+                <list_entry value="BWR-5" display_value="Boiling Water Reactor 5 (BWR-5)" short_description="nuclear fission" />
+                <list_entry value="BWR-6" display_value="Boiling Water Reactor 6 (BWR-6)" short_description="nuclear fission" />
+                <list_entry value="CANDU" display_value="CANada Deuterium Uranium reactor (CANDU)" short_description="nuclear fission" />
+                <list_entry value="CPR-1000" display_value="China Pressurized Reactor (CPR-1000)" short_description="nuclear fission" />
+                <list_entry value="EPR" display_value="European Pressurized Reactor (EPR)" short_description="nuclear fission" />
+                <list_entry value="ICF" display_value="Inertial Confinement Fusion (ICF)" short_description="nuclear fusion" />
+                <list_entry value="PWR" display_value="Pressurized water reactor (PWR)" short_description="nuclear fission" />
+                <list_entry value="RBMK-1000" display_value="Reactor Bolshoy Moshchnosti Kanalniy 1000 (RBMK-1000)" short_description="nuclear fission" />
+                <list_entry value="RBMK-1500" display_value="Reactor Bolshoy Moshchnosti Kanalniy 1500 (RBMK-1500)" short_description="nuclear fission" />
+                <list_entry value="VVER" display_value="Vodo-Vodyanoi Energetichesky Reactor (VVER)" short_description="nuclear fission" />
+            </combo>
             <space />
             <label text="Output forms of energy" />
             <combo key="generator:output:electricity" text="electricity" values="yes,2 W,3 kW,5 MW,7 GW" />
@@ -4860,32 +4950,21 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="generator:output:compressed_air" text="compressed air" values="yes,2 W,3 kW,5 MW,7 GW" />
             <combo key="generator:output:steam" text="steam" values="yes,2 W,3 kW,5 MW,7 GW" />
             <combo key="generator:output:vacuum" text="vacuum" values="yes,2 W,3 kW,5 MW,7 GW" />
-            <combo key="generator:output:battery_charging" text="battery charging" values="yes,2 W,3 kW,5 MW,7 GW" />
-        </item>
-        <item name="Power Station" icon="presets/power.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=line"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=line"
-                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:power=line"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=line"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=line"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=line"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=line" />
-            <label text="Edit Power Station" />
-            <key key="power" value="station" />
-            <text key="name" text="Name" />
-            <text key="operator" text="Operator" />
-            <text key="ref" text="Reference" />
+            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
         </item>
         <item name="Power Sub Station" icon="presets/power.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=sub_station"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=sub_station"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=sub_station"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=sub_station"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=sub_station"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=sub_station" />
             <label text="Edit Power Sub Station" />
             <key key="power" value="sub_station" />
             <text key="operator" text="Operator" />
             <text key="ref" text="Line reference" />
+            <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
+            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
         </item>
         <item name="Cable Distribution Cabinet" icon="presets/power.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=cable_distribution_cabinet"
@@ -4895,6 +4974,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="power" value="cable_distribution_cabinet" />
             <text key="operator" text="Operator" />
             <text key="ref" text="Reference" />
+            <combo key="voltage" text="Voltage in Volts (V)" values="600,400,220,110,low" /> <!-- Recheck values -->
         </item>
         <separator/>
         <item name="Power Tower" icon="presets/power_tower.png" type="node">
@@ -4908,7 +4988,10 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=tower" />
             <label text="Edit Power Tower" />
             <key key="power" value="tower" />
+            <text key="operator" text="Operator" />
             <text key="ref" text="Tower reference" />
+            <text key="height" text="Height in meter (m)" />
+            <combo key="material" text="Material" values="metal,plastic,steel,stone,wood" />
         </item>
         <item name="Pole" icon="styles/standard/misc/landmark/power/pole.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=pole"
@@ -4920,17 +5003,25 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=pole" />
             <label text="Edit Power Pole" />
             <key key="power" value="pole" />
+            <text key="operator" text="Operator" />
             <text key="ref" text="Pole reference" />
+            <text key="height" text="Height in meter (m)" />
+            <combo key="material" text="Material" values="metal,plastic,steel,stone,wood" />
         </item>
         <item name="Power Line" icon="presets/power.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=line"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=line" />
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=line"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:power=line"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=line"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=line"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=line"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=line" />
             <label text="Edit Power Line" />
             <combo key="power" text="Line type" values_context="Power Line" values="line,minor_line" default="line" match="keyvalue" />
             <text key="operator" text="Operator" />
             <text key="ref" text="Line reference" />
-            <!-- TODO: voltage values used are a mixture of power lines and railways - needs cleanup -->
-            <combo key="voltage" text="Voltage" values="3000,10000,15000,20000,25000,110000,220000,380000" />
+            <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,750,400,220,110,high,medium,low,750000;200000,110000;20000" />
+            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
             <text key="cables" text="Amount of Cables" />
             <combo key="wires" text="Number of wires (better: conductors) per power cable" values="single,double,triple,quad" />
         </item>
@@ -5829,7 +5920,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="natural" value="tree" />
             <text key="name" text="Name" />
             <text key="type" text="Type" />
-            <text key="height" text="Height" />
+            <text key="height" text="Height in meter (m)" />
             <text key="name:botanical" text="Botanical Name" />
         </item>
         <item name="Wood" icon="presets/landuse.png" type="node,closedway,relation">
