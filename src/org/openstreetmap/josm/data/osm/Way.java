@@ -231,14 +231,14 @@ public final class Way extends OsmPrimitive implements IWay {
     /**
      * Contructs a new {@code Way} from an existing {@code Way}.
      * @param original The original {@code Way} to be identically cloned. Must not be null
-     * @param clearId If true, clears the OSM id as defined by {@link #clearOsmId}. If false, does nothing
+     * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}. If {@code false}, does nothing
      * @since 2410
      */
-    public Way(Way original, boolean clearId) {
+    public Way(Way original, boolean clearMetadata) {
         super(original.getUniqueId(), true);
         cloneFrom(original);
-        if (clearId) {
-            clearOsmId();
+        if (clearMetadata) {
+            clearOsmMetadata();
         }
     }
 
