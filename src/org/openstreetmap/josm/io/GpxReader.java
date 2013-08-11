@@ -408,7 +408,7 @@ public class GpxReader implements GpxConstants {
                 GpxLink link = new GpxLink(url);
                 link.text = urlname;
                 @SuppressWarnings({ "unchecked", "rawtypes" })
-                Collection<GpxLink> links = (Collection) attr.get(META_LINKS);
+                Collection<GpxLink> links = (Collection<GpxLink>) attr.get(META_LINKS);
                 links.add(link);
             }
         }

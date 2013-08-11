@@ -17,7 +17,7 @@ public class LanguageInfo {
         BASELANGUAGE,
         /** The standard english texts */
         ENGLISH
-    };
+    }
 
     /**
      * Replies the wiki language prefix for the given locale. The wiki language

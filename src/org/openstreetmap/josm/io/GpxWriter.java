@@ -81,7 +81,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
         for (String key : WPT_KEYS) {
             if (key.equals(META_LINKS)) {
                 @SuppressWarnings("unchecked")
-                Collection<GpxLink> lValue = obj.getCollection(key);
+                Collection<GpxLink> lValue = (Collection<GpxLink>) obj.getCollection(key);
                 if (lValue != null) {
                     for (GpxLink link : lValue) {
                         gpxLink(link);

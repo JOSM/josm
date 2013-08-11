@@ -850,7 +850,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         @Override public Class<?> getColumnClass(int columnIndex) {
             return String.class;
         }
-    };
+    }
 
     /**
      * Action handling delete button press in properties dialog.

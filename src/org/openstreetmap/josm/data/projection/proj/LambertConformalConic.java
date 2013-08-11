@@ -23,7 +23,7 @@ public class LambertConformalConic implements Proj {
         public Parameters(double latitudeOrigin) {
             this.latitudeOrigin = latitudeOrigin;
         }
-    };
+    }
 
     public static class Parameters1SP extends Parameters {
         public Parameters1SP(double latitudeOrigin) {

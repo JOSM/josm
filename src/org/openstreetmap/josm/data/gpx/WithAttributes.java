@@ -56,9 +56,9 @@ public class WithAttributes implements IWithAttributes, GpxConstants {
      * @since 5502
      */
     @Override
-    public Collection getCollection(String key) {
+    public Collection<?> getCollection(String key) {
         Object value = attr.get(key);
-        return (value instanceof Collection) ? (Collection)value : null;
+        return (value instanceof Collection) ? (Collection<?>)value : null;
     }
 
     /**

@@ -182,16 +182,22 @@ public final class Relation extends OsmPrimitive implements IRelation {
         super(0, false);
     }
 
-    public Relation(Relation clone, boolean clearId) {
+    /**
+     * Constructs an identical clone of the argument.
+     * @param clone The relation to clone
+     * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}. If {@code false}, does nothing
+     */
+    public Relation(Relation clone, boolean clearMetadata) {
         super(clone.getUniqueId(), true);
         cloneFrom(clone);
-        if (clearId) {
-            clearOsmId();
+        if (clearMetadata) {
+            clearOsmMetadata();
         }
     }
 
     /**
      * Create an identical clone of the argument (including the id)
+     * @param clone The relation to clone, including its id
      */
     public Relation(Relation clone) {
         this(clone, false);

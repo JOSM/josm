@@ -346,7 +346,7 @@ public class PluginPreference extends DefaultTabPreferenceSetting {
                                 JOptionPane.INFORMATION_MESSAGE,
                                 null // FIXME: provide help context
                                 );
-                    };
+                    }
                 });
             } catch (Exception e) {
                 e.printStackTrace();
