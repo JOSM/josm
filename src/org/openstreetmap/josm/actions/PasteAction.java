@@ -110,7 +110,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
                 continue;
             }
             PrimitiveData copy = data.makeCopy();
-            copy.clearOsmId();
+            copy.clearOsmMetadata();
             if (data instanceof NodeData) {
                 newNodeIds.put(data.getUniqueId(), copy.getUniqueId());
             } else if (data instanceof WayData) {

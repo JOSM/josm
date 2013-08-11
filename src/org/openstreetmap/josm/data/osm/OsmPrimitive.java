@@ -382,19 +382,20 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     /**
-     * Clears the id and version known to the OSM API. The id and the version is set to 0.
-     * incomplete is set to false. It's preferred to use copy constructor with clearId set to true instead
-     * of calling this method.
+     * Clears the metadata, including id and version known to the OSM API.
+     * The id is a new unique id. The version, changeset and timestamp are set to 0.
+     * incomplete and deleted are set to false. It's preferred to use copy constructor with clearMetadata set to true instead
      *
      * <strong>Caution</strong>: Do not use this method on primitives which are already added to a {@link DataSet}.
      *
      * @throws DataIntegrityProblemException If primitive was already added to the dataset
+     * @since 6140
      */
     @Override
-    public void clearOsmId() {
+    public void clearOsmMetadata() {
         if (dataSet != null)
             throw new DataIntegrityProblemException("Method cannot be called after primitive was added to the dataset");
-        super.clearOsmId();
+        super.clearOsmMetadata();
     }
 
     @Override

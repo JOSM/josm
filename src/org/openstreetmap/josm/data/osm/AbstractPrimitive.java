@@ -199,17 +199,22 @@ public abstract class AbstractPrimitive implements IPrimitive {
     }
 
     /**
-     * Clears the id and version known to the OSM API. The id and the version is set to 0.
-     * incomplete is set to false. It's preferred to use copy constructor with clearId set to true instead
+     * Clears the metadata, including id and version known to the OSM API.
+     * The id is a new unique id. The version, changeset and timestamp are set to 0.
+     * incomplete and deleted are set to false. It's preferred to use copy constructor with clearMetadata set to true instead
      * of calling this method.
+     * @since 6140
      */
-    public void clearOsmId() {
+    public void clearOsmMetadata() {
         // Not part of dataset - no lock necessary
         this.id = generateUniqueId();
         this.version = 0;
         this.user = null;
         this.changesetId = 0; // reset changeset id on a new object
+        this.timestamp = 0;
         this.setIncomplete(false);
+        this.setDeleted(false);
+        this.setVisible(true);
     }
 
     /**
