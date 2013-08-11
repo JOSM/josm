@@ -189,7 +189,7 @@ public class TaggingPresetPreference implements SubPreferenceSetting {
         final private String iconpref = "taggingpreset.icon.sources";
 
         public TaggingPresetSourceEditor() {
-            super(false, "http://josm.openstreetmap.de/presets", presetSourceProviders);
+            super(false, Main.JOSM_WEBSITE+"/presets", presetSourceProviders);
         }
 
         @Override

@@ -84,7 +84,7 @@ public class AboutAction extends JosmAction {
         info.add(new JLabel(tr("Java Version {0}",System.getProperty("java.version"))), GBC.eol().fill(GBC.HORIZONTAL).insets(10,0,0,0));
         info.add(GBC.glue(0,10), GBC.eol());
         info.add(new JLabel(tr("Homepage")), GBC.std().insets(10,0,10,0));
-        info.add(new UrlLabel("http://josm.openstreetmap.de",2), GBC.eol().fill(GBC.HORIZONTAL));
+        info.add(new UrlLabel(Main.JOSM_WEBSITE,2), GBC.eol().fill(GBC.HORIZONTAL));
         info.add(GBC.glue(0,5), GBC.eol());
         info.add(new JLabel(tr("Bug Reports")), GBC.std().insets(10,0,10,0));
         info.add(BugReportExceptionHandler.getBugReportUrlLabel(Utils.strip(ShowStatusReportAction.getReportHeader())), GBC.eol().fill(GBC.HORIZONTAL));

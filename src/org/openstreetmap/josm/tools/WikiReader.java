@@ -22,7 +22,7 @@ public class WikiReader {
     }
 
     public WikiReader() {
-        this.baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
+        this.baseurl = Main.pref.get("help.baseurl", Main.JOSM_WEBSITE);
     }
 
     /**

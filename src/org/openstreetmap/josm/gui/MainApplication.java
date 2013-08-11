@@ -91,7 +91,7 @@ public class MainApplication extends Main {
 
     /**
      * Displays help on the console
-     *
+     * @since 2748
      */
     public static void showHelp() {
         // TODO: put in a platformHook for system that have no console by default
@@ -131,18 +131,38 @@ public class MainApplication extends Main {
                 );
     }
 
+    /**
+     * JOSM command line options.
+     * @see <a href="http://josm.openstreetmap.de/wiki/Help/CommandLineOptions">Help/CommandLineOptions</a>
+     * @since 5279
+     */
     public enum Option {
+        /** --help|-h                                 Show this help */
         HELP(false),
+        /** --version                                 Displays the JOSM version and exits */
         VERSION(false),
+        /** --language=<language>                     Set the language */
         LANGUAGE(true),
+        /** --reset-preferences                       Reset the preferences to default */
         RESET_PREFERENCES(false),
+        /** --load-preferences=<url-to-xml>           Changes preferences according to the XML file */
         LOAD_PREFERENCES(true),
+        /** --set=<key>=<value>                       Set preference key to value */
         SET(true),
+        /** --geometry=widthxheight(+|-)x(+|-)y       Standard unix geometry argument */
         GEOMETRY(true),
+        /** --no-maximize                             Do not launch in maximized mode */
         NO_MAXIMIZE(false),
+        /** --maximize                                Launch in maximized mode */
         MAXIMIZE(false),
+        /** --download=minlat,minlon,maxlat,maxlon    Download the bounding box <br>
+         *  --download=<URL>                          Download the location at the URL (with lat=x&lon=y&zoom=z) <br>
+         *  --download=<filename>                     Open a file (any file type that can be opened with File/Open) */
         DOWNLOAD(true),
+        /** --downloadgps=minlat,minlon,maxlat,maxlon Download the bounding box as raw GPS <br>
+         *  --downloadgps=<URL>                       Download the location at the URL (with lat=x&lon=y&zoom=z) as raw GPS */
         DOWNLOADGPS(true),
+        /** --selection=<searchstring>                Select with the given search */
         SELECTION(true);
 
         private String name;
@@ -153,10 +173,18 @@ public class MainApplication extends Main {
             this.requiresArgument = requiresArgument;
         }
 
+        /**
+         * Replies the option name
+         * @return The option name, in lowercase
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Determines if this option requires an argument.
+         * @return {@code true} if this option requires an argument, {@code false} otherwise
+         */
         public boolean requiresArgument() {
             return requiresArgument;
         }

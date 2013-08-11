@@ -88,7 +88,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
         final private String iconpref = "mappaint.icon.sources";
 
         public MapPaintSourceEditor() {
-            super(true, "http://josm.openstreetmap.de/styles", styleSourceProviders);
+            super(true, Main.JOSM_WEBSITE+"/styles", styleSourceProviders);
         }
 
         @Override

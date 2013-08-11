@@ -26,7 +26,7 @@ public class ImageryLayerInfo {
     static ArrayList<ImageryInfo> defaultLayers = new ArrayList<ImageryInfo>();
 
     private final static String[] DEFAULT_LAYER_SITES = {
-        "http://josm.openstreetmap.de/maps"
+        Main.JOSM_WEBSITE+"/maps"
     };
 
     private ImageryLayerInfo() {
