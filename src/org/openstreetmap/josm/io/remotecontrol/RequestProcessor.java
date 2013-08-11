@@ -23,6 +23,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddWayHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.FeaturesHandler;
@@ -210,7 +212,7 @@ public class RequestProcessor extends Thread {
             Class<? extends RequestHandler> handlerClass = handlers.get(command);
             if (handlerClass == null) {
                 String usage = getUsageAsHtml();
-                String websiteDoc = "http://josm.openstreetmap.de/wiki/Help/Preferences/RemoteControl";
+                String websiteDoc = HelpUtil.getWikiBaseHelpUrl() +"/Help/Preferences/RemoteControl";
                 String help = "No command specified! The following commands are available:<ul>"
                         + usage.toString()
                         + "</ul>" + "See <a href=\""+websiteDoc+"\">"+websiteDoc+"</a> for complete documentation.";

@@ -151,7 +151,7 @@ public final class GettingStarted extends JPanel {
     }
 
     private String fixImageLinks(String s) {
-        Matcher m = Pattern.compile("src=\"http://josm.openstreetmap.de/browser/trunk(/images/.*?\\.png)\\?format=raw\"").matcher(s);
+        Matcher m = Pattern.compile("src=\""+Main.JOSM_WEBSITE+"/browser/trunk(/images/.*?\\.png)\\?format=raw\"").matcher(s);
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
             String im = m.group(1);
