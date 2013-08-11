@@ -147,6 +147,10 @@ public final class TaggingPresetReader {
                     throw new SAXException(tr("Preset sub element without parent"));
             }
         }
+        if (!all.isEmpty() && !checks.isEmpty()) {
+            all.getLast().data.addAll(checks);
+            checks.clear();
+        }
         return all;
     }
     
