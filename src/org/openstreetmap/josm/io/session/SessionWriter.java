@@ -72,8 +72,7 @@ public class SessionWriter {
         Class<? extends SessionLayerExporter> exporterClass = sessionLayerExporters.get(layerClass);
         if (exporterClass == null) return null;
         try {
-            @SuppressWarnings("unchecked")
-            Constructor<? extends SessionLayerExporter> constructor = (Constructor) exporterClass.getConstructor(layerClass);
+            Constructor<? extends SessionLayerExporter> constructor = exporterClass.getConstructor(layerClass);
             return constructor.newInstance(layer);
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -146,7 +146,7 @@ public class Cascade implements Cloneable {
         if (o instanceof float[])
             return (float[]) o;
         if (o instanceof List) {
-            List l = (List) o;
+            List<?> l = (List<?>) o;
             float[] a = new float[l.size()];
             for (int i=0; i<l.size(); ++i) {
                 Float f = toFloat(l.get(i));

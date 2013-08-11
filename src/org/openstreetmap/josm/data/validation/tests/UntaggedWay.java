@@ -49,7 +49,7 @@ public class UntaggedWay extends Test
         NAMED_WAYS.add( "secondary" );
         NAMED_WAYS.add( "tertiary" );
         NAMED_WAYS.add( "residential" );
-        NAMED_WAYS.add( "pedestrian" ); ;
+        NAMED_WAYS.add( "pedestrian" );
     }
 
     /** Whitelist of roles allowed to reference an untagged way */

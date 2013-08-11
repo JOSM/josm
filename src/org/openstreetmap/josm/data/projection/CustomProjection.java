@@ -326,7 +326,7 @@ public class CustomProjection extends AbstractProjection {
     }
 
     public Proj parseProjection(Map<String, String> parameters, Ellipsoid ellps) throws ProjectionConfigurationException {
-        String id = (String) parameters.get(Param.proj.key);
+        String id = parameters.get(Param.proj.key);
         if (id == null) throw new ProjectionConfigurationException(tr("Projection required (+proj=*)"));
 
         Proj proj =  Projections.getBaseProjection(id);

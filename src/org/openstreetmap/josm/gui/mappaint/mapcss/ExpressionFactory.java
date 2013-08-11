@@ -130,7 +130,7 @@ public class ExpressionFactory {
             return Arrays.asList(args);
         }
 
-        public static Object get(List objects, float index) {
+        public static Object get(List<? extends Object> objects, float index) {
             int idx = Math.round(index);
             if (idx >= 0 && idx < objects.size()) {
                 return objects.get(idx);
@@ -138,7 +138,7 @@ public class ExpressionFactory {
             return null;
         }
 
-        public static List split(String sep, String toSplit) {
+        public static List<String> split(String sep, String toSplit) {
             return Arrays.asList(toSplit.split(Pattern.quote(sep), -1));
         }
 
@@ -264,11 +264,10 @@ public class ExpressionFactory {
             return a < b;
         }
 
-        @SuppressWarnings(value = "unchecked")
         public static boolean equal(Object a, Object b) {
             // make sure the casts are done in a meaningful way, so
             // the 2 objects really can be considered equal
-            for (Class klass : new Class[]{Float.class, Boolean.class, Color.class, float[].class, String.class}) {
+            for (Class<?> klass : new Class[]{Float.class, Boolean.class, Color.class, float[].class, String.class}) {
                 Object a2 = Cascade.convertTo(a, klass);
                 Object b2 = Cascade.convertTo(b, klass);
                 if (a2 != null && b2 != null && a2.equals(b2)) {
@@ -316,7 +315,7 @@ public class ExpressionFactory {
             return Pattern.compile(pattern, f).matcher(target).matches();
         }
 
-        public static List regexp_match(String pattern, String target, String flags) {
+        public static List<String> regexp_match(String pattern, String target, String flags) {
             int f = 0;
             if (flags.contains("i")) {
                 f |= Pattern.CASE_INSENSITIVE;
@@ -339,7 +338,7 @@ public class ExpressionFactory {
             }
         }
 
-        public static List regexp_match(String pattern, String target) {
+        public static List<String> regexp_match(String pattern, String target) {
             Matcher m = Pattern.compile(pattern).matcher(target);
             if (m.matches()) {
                 List<String> result = new ArrayList<String>(m.groupCount() + 1);
@@ -479,7 +478,7 @@ public class ExpressionFactory {
 
         @Override
         public Object evaluate(Environment env) {
-            List l = Cascade.convertTo(arg.evaluate(env), List.class);
+            List<?> l = Cascade.convertTo(arg.evaluate(env), List.class);
             if (l != null)
                 return l.size();
             String s = Cascade.convertTo(arg.evaluate(env), String.class);

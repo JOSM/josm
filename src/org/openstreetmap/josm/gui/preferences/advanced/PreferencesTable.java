@@ -116,7 +116,7 @@ public class PreferencesTable extends JTable {
             if (llEditor.getValue() == 1) {
                 List<List<String>> data = llEditor.getData();
                 @SuppressWarnings("unchecked")
-                Collection<Collection<String>> stgValue = (Collection) stg.getValue();
+                Collection<Collection<String>> stgValue = (Collection<Collection<String>>) stg.getValue();
                 if (!Preferences.equalArray(stgValue, data)) {
                     e.setValue(new Preferences.ListListSetting(data));
                     return true;

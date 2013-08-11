@@ -36,7 +36,7 @@ public interface IWithAttributes {
      *         or {@code null} if this map contains no Collection mapping for the key
      * @since 5502
      */
-    Collection getCollection(String key);
+    Collection<?> getCollection(String key);
 
     /**
      * Put a key / value pair as a new attribute.

@@ -150,7 +150,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
                 }
             }
         }
-    };
+    }
 
 
     /**

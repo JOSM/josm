@@ -493,7 +493,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                     {
                         // fixme - not use zoom history here
                         zoomTo(oldCenter.interpolate(finalNewCenter, (i+1) / frames));
-                        try { Thread.sleep(1000 / fps); } catch (InterruptedException ex) { };
+                        try { Thread.sleep(1000 / fps); } catch (InterruptedException ex) { }
                     }
                 }
             }.start();

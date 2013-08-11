@@ -155,7 +155,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
     }
 
     private void updateVisibilityFromTable() {
-        ListSelectionModel s = (ListSelectionModel) table.getSelectionModel();
+        ListSelectionModel s = table.getSelectionModel();
         for (int i = 0; i < layer.trackVisibility.length; i++) {
             layer.trackVisibility[table.convertRowIndexToModel(i)] = s.isSelectedIndex(i);
         }

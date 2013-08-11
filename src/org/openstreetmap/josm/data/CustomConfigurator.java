@@ -1084,10 +1084,10 @@ public class CustomConfigurator {
             listmapMap.putAll(tmpPref.listOfStructsDefaults);
         }
 
-        while (stringMap.values().remove(null)) { };
-        while (listMap.values().remove(null)) { };
-        while (listlistMap.values().remove(null)) { };
-        while (listmapMap.values().remove(null)) { };
+        while (stringMap.values().remove(null)) { }
+        while (listMap.values().remove(null)) { }
+        while (listlistMap.values().remove(null)) { }
+        while (listmapMap.values().remove(null)) { }
 
         stringMap.putAll(tmpPref.properties);
         listMap.putAll(tmpPref.collectionProperties);
