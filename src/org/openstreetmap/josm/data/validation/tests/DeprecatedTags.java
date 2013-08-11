@@ -20,10 +20,17 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Checks and corrects deprecated tags.
+ * @since 4442
+ */
 public class DeprecatedTags extends Test {
 
     private List<DeprecationCheck> checks = new LinkedList<DeprecationCheck>();
 
+    /**
+     * Constructs a new {@code DeprecatedTags} test.
+     */
     public DeprecatedTags() {
         super(tr("Deprecated Tags"), tr("Checks and corrects deprecated tags."));
         checks.add(new DeprecationCheck(2101).
@@ -90,8 +97,27 @@ public class DeprecatedTags extends Test {
         checks.add(new DeprecationCheck(2117).
                 testAndRemove("sport", "gaelic_football").
                 add("sport", "gaelic_games"));
+        // http://wiki.openstreetmap.org/wiki/Tag:power=station
+        // see #8847 / #8961
+        checks.add(new DeprecationCheck(2118).
+                test("power", "station").
+                alternative("power", "plant").
+                alternative("power", "sub_station"));
+        checks.add(new DeprecationCheck(2119).
+                testAndRemove("generator:method", "dam").
+                add("generator:method", "water-storage"));
+        checks.add(new DeprecationCheck(2120).
+                testAndRemove("generator:method", "pumped-storage").
+                add("generator:method", "water-pumped-storage"));
+        checks.add(new DeprecationCheck(2121).
+                testAndRemove("generator:method", "pumping").
+                add("generator:method", "water-pumped-storage"));
     }
 
+    /**
+     * Visiting call for primitives.
+     * @param p The primitive to inspect.
+     */
     public void visit(OsmPrimitive p) {
         for (DeprecationCheck check : checks) {
             if (check.matchesPrimitive(p)) {
@@ -148,11 +174,11 @@ public class DeprecatedTags extends Test {
         DeprecationCheck testAndRemove(String key, String value) {
             return test(key, value).remove(key);
         }
-
+/*
         DeprecationCheck testAndRemove(String key) {
             return test(key).remove(key);
         }
-
+*/
         DeprecationCheck alternative(String key, String value) {
             alternatives.add(new Tag(key, value));
             return this;
