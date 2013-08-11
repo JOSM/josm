@@ -4,6 +4,8 @@ package org.openstreetmap.josm.data.gpx;
 import java.util.Arrays;
 import java.util.List;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * Constants for GPX handling.
  */
@@ -23,7 +25,7 @@ public interface GpxConstants {
     public static final String META_TIME = META_PREFIX + "time";
     public static final String META_EXTENSIONS = META_PREFIX + "extensions";
 
-    public static final String JOSM_EXTENSIONS_NAMESPACE_URI = "http://josm.openstreetmap.de/gpx-extensions-1.0";
+    public static final String JOSM_EXTENSIONS_NAMESPACE_URI = Main.JOSM_WEBSITE + "/gpx-extensions-1.0";
 
     public static List<String> WPT_KEYS = Arrays.asList("ele", "time", "magvar", "geoidheight",
             "name", "cmt", "desc", "src", META_LINKS, "sym", "number", "type",

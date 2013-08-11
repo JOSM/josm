@@ -786,7 +786,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         @Override
         public void actionPerformed(ActionEvent ev) {
             // Delete small files, because they're probably blank tiles.
-            // See https://josm.openstreetmap.de/ticket/2307
+            // See #2307
             cache.cleanSmallFiles(4096);
 
             for (int x = 0; x < dax; ++x) {

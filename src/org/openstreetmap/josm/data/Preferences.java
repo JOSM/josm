@@ -1369,7 +1369,7 @@ public class Preferences {
      * The default plugin site
      */
     private final static String[] DEFAULT_PLUGIN_SITE = {
-    "http://josm.openstreetmap.de/plugin%<?plugins=>"};
+    Main.JOSM_WEBSITE+"/plugin%<?plugins=>"};
 
     /**
      * Replies the collection of plugin site URLs from where plugin lists can be downloaded
@@ -1611,10 +1611,10 @@ public class Preferences {
     public String toXML(boolean nopass) {
         StringBuilder b = new StringBuilder(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<preferences xmlns=\"http://josm.openstreetmap.de/preferences-1.0\" version=\""+
+                "<preferences xmlns=\""+Main.JOSM_WEBSITE+"/preferences-1.0\" version=\""+
                 Version.getInstance().getVersion() + "\">\n");
         SettingToXml toXml = new SettingToXml(b, nopass);
-        Map<String, Setting> settings = new TreeMap<String, Setting>();
+        Map<String, Setting<?>> settings = new TreeMap<String, Setting<?>>();
 
         for (Entry<String, String> e : properties.entrySet()) {
             settings.put(e.getKey(), new StringSetting(e.getValue()));
@@ -1628,7 +1628,7 @@ public class Preferences {
         for (Entry<String, List<Map<String, String>>> e : listOfStructsProperties.entrySet()) {
             settings.put(e.getKey(), new MapListSetting(e.getValue()));
         }
-        for (Entry<String, Setting> e : settings.entrySet()) {
+        for (Entry<String, Setting<?>> e : settings.entrySet()) {
             toXml.setKey(e.getKey());
             e.getValue().visit(toXml);
         }

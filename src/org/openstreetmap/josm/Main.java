@@ -68,6 +68,7 @@ import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent.ViewportData;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -100,6 +101,12 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 abstract public class Main {
 
+    /**
+     * The JOSM website URL.
+     * @since 6143 
+     */
+    public static final String JOSM_WEBSITE = "http://josm.openstreetmap.de";
+    
     /**
      * Replies true if JOSM currently displays a map view. False, if it doesn't, i.e. if
      * it only shows the MOTD panel.
@@ -921,7 +928,7 @@ abstract public class Main {
                                 "You can <ul><li>update your Java (JRE) or</li>"+
                                 "<li>use an earlier (Java 5 compatible) version of JOSM.</li></ul>"+
                                 "More Info:", version)+"</html>");
-                JTextArea link = new JTextArea("http://josm.openstreetmap.de/wiki/Help/SystemRequirements");
+                JTextArea link = new JTextArea(HelpUtil.getWikiBaseHelpUrl()+"/Help/SystemRequirements");
                 link.setEditable(false);
                 link.setBackground(panel.getBackground());
                 JPanel panel = new JPanel(new GridBagLayout());

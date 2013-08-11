@@ -23,7 +23,7 @@ public class HelpUtil {
      * @return the base wiki URL
      */
     static public String getWikiBaseUrl() {
-        return Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
+        return Main.pref.get("help.baseurl", Main.JOSM_WEBSITE);
     }
 
     /**
