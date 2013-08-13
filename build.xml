@@ -184,8 +184,9 @@ Build-Date: ${build.tstamp}
         <jacoco:coverage destfile="${test.dir}/jacoco.exec">
             <junit printsummary="yes" fork="true" forkmode="once">
                 <sysproperty key="josm.home" value="${test.dir}/config/unit-josm.home"/>
+                <sysproperty key="josm.test.data" value="${test.dir}/data"/>
                 <sysproperty key="java.awt.headless" value="true"/>
-            <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
+                <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
                 <classpath>
                     <path refid="test.classpath"/>
                     <pathelement path="${test.dir}/build"/>
