@@ -198,7 +198,7 @@ public final class TaggingPresetReader {
                 System.err.println(source);
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        tr("Error parsing {0}: ", source)+e.getMessage(),
+                        "<html>" + tr("Error parsing {0}: ", source) + "<br><br><table width=600>" + e.getMessage() + "</table></html>",
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
                         );
