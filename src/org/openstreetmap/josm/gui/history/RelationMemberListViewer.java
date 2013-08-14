@@ -13,7 +13,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import org.openstreetmap.josm.data.osm.history.History;
+import org.openstreetmap.josm.gui.util.AdjustmentSynchronizer;
+
 /**
  * RelationMemberListViewer is a UI component which displays the  list of relation members of two
  * version of a {@link org.openstreetmap.josm.data.osm.Relation} in a {@link org.openstreetmap.josm.data.osm.history.History}.

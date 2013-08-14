@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.history;
+package org.openstreetmap.josm.gui.util;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -18,11 +18,10 @@ import javax.swing.JCheckBox;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * Synchronizes scrollbar adjustments between a set of
- * {@link Adjustable}s. Whenever the adjustment of one of
- * the registerd Adjustables is updated the adjustment of
- * the other registered Adjustables is adjusted too.
- *
+ * Synchronizes scrollbar adjustments between a set of {@link Adjustable}s. 
+ * Whenever the adjustment of one of the registered Adjustables is updated 
+ * the adjustment of the other registered Adjustables is adjusted too.
+ * @since 6147
  */
 public class AdjustmentSynchronizer implements AdjustmentListener {
 
@@ -31,6 +30,9 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
 
     private final Observable observable;
 
+    /**
+     * Constructs a new {@code AdjustmentSynchronizer}
+     */
     public AdjustmentSynchronizer() {
         synchronizedAdjustables = new ArrayList<Adjustable>();
         enabledMap = new HashMap<Adjustable, Boolean>();
@@ -38,8 +40,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
     }
 
     /**
-     * registers an {@link Adjustable} for participation in synchronized
-     * scrolling.
+     * Registers an {@link Adjustable} for participation in synchronized scrolling.
      *
      * @param adjustable the adjustable
      */
@@ -54,8 +55,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
     }
 
     /**
-     * event handler for {@link AdjustmentEvent}s
-     *
+     * Event handler for {@link AdjustmentEvent}s
      */
     @Override
     public void adjustmentValueChanged(AdjustmentEvent e) {
@@ -69,8 +69,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
     }
 
     /**
-     * sets whether adjustable participates in adjustment synchronization
-     * or not
+     * Sets whether adjustable participates in adjustment synchronization or not
      *
      * @param adjustable the adjustable
      */
@@ -84,7 +83,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
     }
 
     /**
-     * returns true if an adjustable is participating in synchronized scrolling
+     * Returns true if an adjustable is participating in synchronized scrolling
      *
      * @param adjustable the adjustable
      * @return true, if the adjustable is participating in synchronized scrolling, false otherwise
@@ -98,7 +97,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
     }
 
     /**
-     * wires a {@link JCheckBox} to  the adjustment synchronizer, in such a way  that:
+     * Wires a {@link JCheckBox} to  the adjustment synchronizer, in such a way that:
      * <li>
      *   <ol>state changes in the checkbox control whether the adjustable participates
      *      in synchronized adjustment</ol>
@@ -106,14 +105,12 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
      *      {@link JCheckBox}</ol>
      * </li>
      *
-     *
-     * @param view  the checkbox to control whether an adjustable participates in synchronized
-     *      adjustment
+     * @param view  the checkbox to control whether an adjustable participates in synchronized adjustment
      * @param adjustable the adjustable
      * @exception IllegalArgumentException thrown, if view is null
      * @exception IllegalArgumentException thrown, if adjustable is null
      */
-    protected void adapt(final JCheckBox view, final Adjustable adjustable) throws IllegalStateException {
+    public void adapt(final JCheckBox view, final Adjustable adjustable)  {
         CheckParameterUtil.ensureParameterNotNull(adjustable, "adjustable");
         CheckParameterUtil.ensureParameterNotNull(view, "view");
 
