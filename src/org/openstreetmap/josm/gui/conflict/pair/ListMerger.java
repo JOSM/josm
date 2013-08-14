@@ -4,21 +4,16 @@ package org.openstreetmap.josm.gui.conflict.pair;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.Adjustable;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -42,9 +37,9 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.AdjustmentSynchronizer;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -893,146 +888,6 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         myEntriesTable.unlinkAsListener();
         mergedEntriesTable.unlinkAsListener();
         theirEntriesTable.unlinkAsListener();
-    }
-
-    /**
-     * Synchronizes scrollbar adjustments between a set of
-     * {@link Adjustable}s. Whenever the adjustment of one of
-     * the registerd Adjustables is updated the adjustment of
-     * the other registered Adjustables is adjusted too.
-     *
-     */
-    class AdjustmentSynchronizer implements AdjustmentListener {
-
-        private final  ArrayList<Adjustable> synchronizedAdjustables;
-        private final  HashMap<Adjustable, Boolean> enabledMap;
-
-        private final Observable observable;
-
-        public AdjustmentSynchronizer() {
-            synchronizedAdjustables = new ArrayList<Adjustable>();
-            enabledMap = new HashMap<Adjustable, Boolean>();
-            observable = new Observable();
-        }
-
-        /**
-         * registers an {@link Adjustable} for participation in synchronized
-         * scrolling.
-         *
-         * @param adjustable the adjustable
-         */
-        public void participateInSynchronizedScrolling(Adjustable adjustable) {
-            if (adjustable == null)
-                return;
-            if (synchronizedAdjustables.contains(adjustable))
-                return;
-            synchronizedAdjustables.add(adjustable);
-            setParticipatingInSynchronizedScrolling(adjustable, true);
-            adjustable.addAdjustmentListener(this);
-        }
-
-        /**
-         * event handler for {@link AdjustmentEvent}s
-         *
-         */
-        @Override
-        public void adjustmentValueChanged(AdjustmentEvent e) {
-            if (! enabledMap.get(e.getAdjustable()))
-                return;
-            for (Adjustable a : synchronizedAdjustables) {
-                if (a != e.getAdjustable() && isParticipatingInSynchronizedScrolling(a)) {
-                    a.setValue(e.getValue());
-                }
-            }
-        }
-
-        /**
-         * sets whether adjustable participates in adjustment synchronization
-         * or not
-         *
-         * @param adjustable the adjustable
-         */
-        protected void setParticipatingInSynchronizedScrolling(Adjustable adjustable, boolean isParticipating) {
-            CheckParameterUtil.ensureParameterNotNull(adjustable, "adjustable");
-            if (! synchronizedAdjustables.contains(adjustable))
-                throw new IllegalStateException(tr("Adjustable {0} not registered yet. Cannot set participation in synchronized adjustment.", adjustable));
-
-            enabledMap.put(adjustable, isParticipating);
-            observable.notifyObservers();
-        }
-
-        /**
-         * returns true if an adjustable is participating in synchronized scrolling
-         *
-         * @param adjustable the adjustable
-         * @return true, if the adjustable is participating in synchronized scrolling, false otherwise
-         * @throws IllegalStateException thrown, if adjustable is not registered for synchronized scrolling
-         */
-        protected boolean isParticipatingInSynchronizedScrolling(Adjustable adjustable) throws IllegalStateException {
-            if (! synchronizedAdjustables.contains(adjustable))
-                throw new IllegalStateException(tr("Adjustable {0} not registered yet.", adjustable));
-
-            return enabledMap.get(adjustable);
-        }
-
-        /**
-         * wires a {@link JCheckBox} to  the adjustment synchronizer, in such a way  that:
-         * <li>
-         *   <ol>state changes in the checkbox control whether the adjustable participates
-         *      in synchronized adjustment</ol>
-         *   <ol>state changes in this {@link AdjustmentSynchronizer} are reflected in the
-         *      {@link JCheckBox}</ol>
-         * </li>
-         *
-         *
-         * @param view  the checkbox to control whether an adjustable participates in synchronized
-         *      adjustment
-         * @param adjustable the adjustable
-         * @exception IllegalArgumentException thrown, if view is null
-         * @exception IllegalArgumentException thrown, if adjustable is null
-         */
-        protected void adapt(final JCheckBox view, final Adjustable adjustable) throws IllegalStateException {
-            CheckParameterUtil.ensureParameterNotNull(adjustable, "adjustable");
-            CheckParameterUtil.ensureParameterNotNull(view, "view");
-
-            if (! synchronizedAdjustables.contains(adjustable)) {
-                participateInSynchronizedScrolling(adjustable);
-            }
-
-            // register an item lister with the check box
-            //
-            view.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    switch(e.getStateChange()) {
-                    case ItemEvent.SELECTED:
-                        if (!isParticipatingInSynchronizedScrolling(adjustable)) {
-                            setParticipatingInSynchronizedScrolling(adjustable, true);
-                        }
-                        break;
-                    case ItemEvent.DESELECTED:
-                        if (isParticipatingInSynchronizedScrolling(adjustable)) {
-                            setParticipatingInSynchronizedScrolling(adjustable, false);
-                        }
-                        break;
-                    }
-                }
-            });
-
-            observable.addObserver(
-                    new Observer() {
-                        @Override
-                        public void update(Observable o, Object arg) {
-                            boolean sync = isParticipatingInSynchronizedScrolling(adjustable);
-                            if (view.isSelected() != sync) {
-                                view.setSelected(sync);
-                            }
-                        }
-                    }
-            );
-            setParticipatingInSynchronizedScrolling(adjustable, true);
-            view.setSelected(true);
-        }
     }
 
     protected final <P extends OsmPrimitive> OsmDataLayer findLayerFor(P primitive) {
