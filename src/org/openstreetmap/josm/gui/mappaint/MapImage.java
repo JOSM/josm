@@ -57,6 +57,7 @@ public class MapImage {
                 .setDirs(MapPaintStyles.getIconSourceDirs(source))
                 .setId("mappaint."+source.getPrefName())
                 .setArchive(source.zipIcons)
+                .setInArchiveDir(source.getZipEntryDirName())
                 .setWidth(width)
                 .setHeight(height)
                 .setOptional(true)

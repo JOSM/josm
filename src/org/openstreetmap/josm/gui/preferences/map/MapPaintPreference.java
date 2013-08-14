@@ -40,7 +40,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
 
     private static final List<SourceProvider> styleSourceProviders = new ArrayList<SourceProvider>();
 
-    public static final boolean registerSourceProvider(SourceProvider provider) {
+    public static boolean registerSourceProvider(SourceProvider provider) {
         if (provider != null)
             return styleSourceProviders.add(provider);
         return false;
