@@ -5,11 +5,14 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -87,10 +90,13 @@ public class MapCSSStyleSource extends StyleSource {
             return new ByteArrayInputStream(css.getBytes("UTF-8"));
 
         MirroredInputStream in = new MirroredInputStream(url);
-        InputStream zip = in.getZipEntry("mapcss", "style");
-        if (zip != null) {
-            zipIcons = in.getFile();
-            return zip;
+        if (isZip) {
+            File file = in.getFile();
+            Utils.close(in);
+            ZipFile zipFile = new ZipFile(file);
+            zipIcons = file;
+            ZipEntry zipEntry = zipFile.getEntry(zipEntryPath);
+            return zipFile.getInputStream(zipEntry);
         } else {
             zipIcons = null;
             return in;

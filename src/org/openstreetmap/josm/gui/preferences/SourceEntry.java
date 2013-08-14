@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences;
 
+import static org.openstreetmap.josm.tools.Utils.equal;
+
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.openstreetmap.josm.tools.Utils.equal;
 
 /**
  * A source entry primarily used to save the user's selection of mappaint styles,
@@ -18,6 +18,17 @@ public class SourceEntry {
      *  a local file, http://, or a file from the current jar
      */
     public String url;
+
+    /**
+     * Indicates, that {@link #url} is a zip file and the resource is
+     * inside the zip file.
+     */
+    public boolean isZip;
+
+    /**
+     * If {@link #isZip} is true, denotes the path inside the zip file.
+     */
+    public String zipEntryPath;
 
     /**
      *  Name is used as a namespace for color preferences and (currently) only
@@ -41,15 +52,23 @@ public class SourceEntry {
      */
     public boolean active;
 
-    public SourceEntry(String url, String name, String title, Boolean active) {
+    public SourceEntry(String url, boolean isZip, String zipEntryPath, String name, String title, boolean active) {
         this.url = url;
+        this.isZip = isZip;
+        this.zipEntryPath = equal(zipEntryPath, "") ? null : zipEntryPath;
         this.name = equal(name, "") ? null : name;
         this.title = equal(title, "") ? null : title;
         this.active = active;
     }
 
+    public SourceEntry(String url, String name, String title, Boolean active) {
+        this(url, false, null, name, title, active);
+    }
+
     public SourceEntry(SourceEntry e) {
         this.url = e.url;
+        this.isZip = e.isZip;
+        this.zipEntryPath = e.zipEntryPath;
         this.name = e.name;
         this.title = e.title;
         this.active = e.active;
@@ -61,6 +80,8 @@ public class SourceEntry {
             return false;
         final SourceEntry other = (SourceEntry) obj;
         return equal(other.url, url) &&
+                other.isZip == isZip &&
+                equal(other.zipEntryPath, zipEntryPath) &&
                 equal(other.name, name) &&
                 equal(other.title, title) &&
                 other.active == active;
@@ -70,6 +91,8 @@ public class SourceEntry {
     public int hashCode() {
         int hash = 5;
         hash = 89 * hash + (this.url != null ? this.url.hashCode() : 0);
+        hash = 89 * hash + (this.isZip ? 1 : 0);
+        hash = 89 * hash + (this.zipEntryPath != null ? this.zipEntryPath.hashCode() : 0);
         hash = 89 * hash + (this.name != null ? this.name.hashCode() : 0);
         hash = 89 * hash + (this.title != null ? this.title.hashCode() : 0);
         hash = 89 * hash + (this.active ? 1 : 0);
@@ -131,5 +154,15 @@ public class SourceEntry {
         if (dir == null)
             return null;
         return dir.getPath();
+    }
+
+    /**
+     * Returns the parent directory of the resource inside the zip file.
+     * @return null, if zipEntryPath is null, otherwise the parent directory of
+     * the resource inside the zip file
+     */
+    public String getZipEntryDirName() {
+        if (zipEntryPath == null) return null;
+        return new File(zipEntryPath).getParent().toString();
     }
 }

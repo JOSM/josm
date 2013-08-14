@@ -21,6 +21,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -90,20 +91,43 @@ public class MirroredInputStream extends InputStream {
     }
 
     /**
-     * Replies an input stream for a file in a ZIP-file. Replies a file in the top
-     * level directory of the ZIP file which has an extension <code>extension</code>. If more
-     * than one files have this extension, the last file whose name includes <code>namepart</code>
+     * Looks for a certain entry inside a zip file and returns the entry path.
+     *
+     * Replies a file in the top level directory of the ZIP file which has an
+     * extension <code>extension</code>. If more than one files have this
+     * extension, the last file whose name includes <code>namepart</code>
      * is opened.
      *
      * @param extension  the extension of the file we're looking for
      * @param namepart the name part
-     * @return an input stream. Null if this mirrored input stream doesn't represent a zip file or if
-     * there was no matching file in the ZIP file
+     * @return The zip entry path of the matching file. Null if this mirrored
+     * input stream doesn't represent a zip file or if there was no matching
+     * file in the ZIP file.
      */
+    public String findZipEntryPath(String extension, String namepart) {
+        Pair<String, InputStream> ze = findZipEntryImpl(extension, namepart);
+        if (ze == null) return null;
+        return ze.a;
+    }
+
+    /**
+     * Like {@link #findZipEntryPath}, but returns the corresponding InputStream.
+     */
+    public InputStream findZipEntryInputStream(String extension, String namepart) {
+        Pair<String, InputStream> ze = findZipEntryImpl(extension, namepart);
+        if (ze == null) return null;
+        return ze.b;
+    }
+
+    @Deprecated // use findZipEntryInputStream
     public InputStream getZipEntry(String extension, String namepart) {
+        return findZipEntryInputStream(extension, namepart);
+    }
+
+    private Pair<String, InputStream> findZipEntryImpl(String extension, String namepart) {
         if (file == null)
             return null;
-        InputStream res = null;
+        Pair<String, InputStream> res = null;
         try {
             ZipFile zipFile = new ZipFile(file);
             ZipEntry resentry = null;
@@ -119,7 +143,8 @@ public class MirroredInputStream extends InputStream {
                 }
             }
             if (resentry != null) {
-                res = zipFile.getInputStream(resentry);
+                InputStream is = zipFile.getInputStream(resentry);
+                res = Pair.create(resentry.getName(), is);
             } else {
                 Utils.close(zipFile);
             }

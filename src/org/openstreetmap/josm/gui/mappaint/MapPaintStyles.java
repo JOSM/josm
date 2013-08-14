@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,6 +95,7 @@ public class MapPaintStyles {
                 .setDirs(getIconSourceDirs(ref.source))
                 .setId("mappaint."+namespace)
                 .setArchive(ref.source.zipIcons)
+                .setInArchiveDir(ref.source.getZipEntryDirName())
                 .setWidth(width)
                 .setHeight(height)
                 .setOptional(true).get();
@@ -120,6 +120,7 @@ public class MapPaintStyles {
                 .setDirs(getIconSourceDirs(source))
                 .setId("mappaint."+source.getPrefName())
                 .setArchive(source.zipIcons)
+                .setInArchiveDir(source.getZipEntryDirName())
                 .setOptional(true).get();
     }
 
@@ -210,11 +211,14 @@ public class MapPaintStyles {
         MirroredInputStream in = null;
         try {
             in = new MirroredInputStream(entry.url);
-            InputStream zip = in.getZipEntry("mapcss", "style");
-            if (zip != null)
+            String zipEntryPath = in.findZipEntryPath("mapcss", "style");
+            if (zipEntryPath != null) {
+                entry.isZip = true;
+                entry.zipEntryPath = zipEntryPath;
                 return new MapCSSStyleSource(entry);
-            zip = in.getZipEntry("xml", "style");
-            if (zip != null)
+            }
+            zipEntryPath = in.findZipEntryPath("xml", "style");
+            if (zipEntryPath != null)
                 return new XmlStyleSource(entry);
             if (entry.url.toLowerCase().endsWith(".mapcss"))
                 return new MapCSSStyleSource(entry);
