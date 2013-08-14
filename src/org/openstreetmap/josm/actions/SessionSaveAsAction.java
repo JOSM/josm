@@ -224,4 +224,9 @@ public class SessionSaveAsAction extends DiskAccessAction {
         }
     }
 
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(Main.isDisplayingMapView());
+    }
+
 }
