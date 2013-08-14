@@ -67,9 +67,9 @@ public class GpxTracksSessionExporter implements SessionLayerExporter {
         JLabel lblData = new JLabel(tr("Data:"));
         /* I18n: Refer to a OSM data file in session file */ link = new JRadioButton(tr("local file"));
         link.putClientProperty("actionname", "link");
-        link.setToolTipText(tr("Link to a OSM data file on your local disk."));
+        link.setToolTipText(tr("Link to a GPX file on your local disk."));
         /* I18n: Include OSM data in session file */ include = new JRadioButton(tr("include"));
-        include.setToolTipText(tr("Include OSM data in the .joz session file."));
+        include.setToolTipText(tr("Include GPX data in the .joz session file."));
         include.putClientProperty("actionname", "include");
         ButtonGroup group = new ButtonGroup();
         group.add(link);
@@ -87,7 +87,7 @@ public class GpxTracksSessionExporter implements SessionLayerExporter {
         }
 
         JPanel cardInclude = new JPanel(new GridBagLayout());
-        JLabel lblIncl = new JLabel(tr("OSM data will be included in the session file."));
+        JLabel lblIncl = new JLabel(tr("GPX data will be included in the session file."));
         lblIncl.setFont(lblIncl.getFont().deriveFont(Font.PLAIN));
         cardInclude.add(lblIncl, GBC.eol().fill(GBC.HORIZONTAL));
 
