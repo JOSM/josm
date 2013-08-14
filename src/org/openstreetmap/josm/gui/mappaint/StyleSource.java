@@ -39,7 +39,7 @@ abstract public class StyleSource extends SourceEntry {
     }
 
     public StyleSource(SourceEntry entry) {
-        super(entry.url, entry.name, entry.title, entry.active);
+        super(entry);
     }
 
     abstract public void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed);

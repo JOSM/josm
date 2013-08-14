@@ -93,7 +93,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
     @Override
     public InputStream getSourceInputStream() throws IOException {
         MirroredInputStream in = new MirroredInputStream(url);
-        InputStream zip = in.getZipEntry("xml", "style");
+        InputStream zip = in.findZipEntryInputStream("xml", "style");
         if (zip != null) {
             zipIcons = in.getFile();
             return zip;

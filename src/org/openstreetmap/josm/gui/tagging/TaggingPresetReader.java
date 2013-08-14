@@ -158,7 +158,7 @@ public final class TaggingPresetReader {
         Collection<TaggingPreset> tp;
         MirroredInputStream s = new MirroredInputStream(source);
         try {
-            InputStream zip = s.getZipEntry("xml","preset");
+            InputStream zip = s.findZipEntryInputStream("xml","preset");
             if(zip != null) {
                 zipIcons = s.getFile();
             }

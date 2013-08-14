@@ -92,6 +92,7 @@ public class ImageProvider {
     protected String subdir;
     protected String name;
     protected File archive;
+    protected String inArchiveDir;
     protected int width = -1;
     protected int height = -1;
     protected int maxWidth = -1;
@@ -152,6 +153,18 @@ public class ImageProvider {
      */
     public ImageProvider setArchive(File archive) {
         this.archive = archive;
+        return this;
+    }
+
+    /**
+     * Specify a base path inside the zip file.
+     *
+     * The subdir and name will be relative to this path.
+     *
+     * (optional)
+     */
+    public ImageProvider setInArchiveDir(String inArchiveDir) {
+        this.inArchiveDir = inArchiveDir;
         return this;
     }
 
@@ -437,7 +450,7 @@ public class ImageProvider {
                     switch (place) {
                     case ARCHIVE:
                         if (archive != null) {
-                            ir = getIfAvailableZip(full_name, archive, type);
+                            ir = getIfAvailableZip(full_name, archive, inArchiveDir, type);
                             if (ir != null) {
                                 cache.put(cache_name, ir);
                                 return ir;
@@ -520,12 +533,19 @@ public class ImageProvider {
         return result;
     }
 
-    private static ImageResource getIfAvailableZip(String full_name, File archive, ImageType type) {
+    private static ImageResource getIfAvailableZip(String full_name, File archive, String inArchiveDir, ImageType type) {
         ZipFile zipFile = null;
         try
         {
             zipFile = new ZipFile(archive);
-            ZipEntry entry = zipFile.getEntry(full_name);
+            String entry_name;
+            if (inArchiveDir != null) {
+                File dir = new File(inArchiveDir);
+                entry_name = new File(dir, full_name).getPath();
+            } else {
+                entry_name = full_name;
+            }
+            ZipEntry entry = zipFile.getEntry(entry_name);
             if(entry != null)
             {
                 int size = (int)entry.getSize();
@@ -536,7 +556,7 @@ public class ImageProvider {
                     is = zipFile.getInputStream(entry);
                     switch (type) {
                     case SVG:
-                        URI uri = getSvgUniverse().loadSVG(is, full_name);
+                        URI uri = getSvgUniverse().loadSVG(is, entry_name);
                         SVGDiagram svg = getSvgUniverse().getDiagram(uri);
                         return svg == null ? null : new ImageResource(svg);
                     case OTHER:
