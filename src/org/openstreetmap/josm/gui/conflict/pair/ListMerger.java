@@ -50,7 +50,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * A UI component for resolving conflicts in two lists of entries of type T.
  *
- * @param T  the type of the entries
+ * @param <T>  the type of the entries
  * @see ListMergeModel
  */
 public abstract class ListMerger<T extends PrimitiveId> extends JPanel implements PropertyChangeListener, Observer {
@@ -412,6 +412,10 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         wireActionsToSelectionModels();
     }
 
+    /**
+     * Constructs a new {@code ListMerger}.
+     * @param model
+     */
     public ListMerger(ListMergeModel<T> model) {
         this.model = model;
         model.addObserver(this);
@@ -420,26 +424,34 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     }
 
     /**
-     * Action for copying selected nodes in the list of my nodes to the list of merged
-     * nodes. Inserts the nodes at the beginning of the list of merged nodes.
-     *
+     * Base class of all other Copy* inner classes.
      */
-    class CopyStartLeftAction extends AbstractAction implements ListSelectionListener {
-
-        public CopyStartLeftAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "copystartleft.png");
+    abstract class CopyAction extends AbstractAction implements ListSelectionListener {
+        
+        protected CopyAction(String icon_name, String action_name, String short_description) {
+            ImageIcon icon = ImageProvider.get("dialogs/conflict", icon_name+".png");
             putValue(Action.SMALL_ICON, icon);
             if (icon == null) {
-                putValue(Action.NAME, tr("> top"));
+                putValue(Action.NAME, action_name);
             }
-            putValue(Action.SHORT_DESCRIPTION, tr("Copy my selected nodes to the start of the merged node list"));
+            putValue(Action.SHORT_DESCRIPTION, short_description);
             setEnabled(false);
+        }
+    }
+    
+    /**
+     * Action for copying selected nodes in the list of my nodes to the list of merged
+     * nodes. Inserts the nodes at the beginning of the list of merged nodes.
+     */
+    class CopyStartLeftAction extends CopyAction {
+
+        public CopyStartLeftAction() {
+            super("copystartleft", tr("> top"), tr("Copy my selected nodes to the start of the merged node list"));
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
-            int [] rows = myEntriesTable.getSelectedRows();
-            model.copyMyToTop(rows);
+        public void actionPerformed(ActionEvent e) {
+            model.copyMyToTop(myEntriesTable.getSelectedRows());
         }
 
         @Override
@@ -451,24 +463,16 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     /**
      * Action for copying selected nodes in the list of my nodes to the list of merged
      * nodes. Inserts the nodes at the end of the list of merged nodes.
-     *
      */
-    class CopyEndLeftAction extends AbstractAction implements ListSelectionListener {
+    class CopyEndLeftAction extends CopyAction {
 
         public CopyEndLeftAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "copyendleft.png");
-            putValue(Action.SMALL_ICON, icon);
-            if (icon == null) {
-                putValue(Action.NAME, tr("> bottom"));
-            }
-            putValue(Action.SHORT_DESCRIPTION, tr("Copy my selected elements to the end of the list of merged elements."));
-            setEnabled(false);
+            super("copyendleft", tr("> bottom"), tr("Copy my selected elements to the end of the list of merged elements."));
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
-            int [] rows = myEntriesTable.getSelectedRows();
-            model.copyMyToEnd(rows);
+        public void actionPerformed(ActionEvent e) {
+            model.copyMyToEnd(myEntriesTable.getSelectedRows());
         }
 
         @Override
@@ -480,26 +484,20 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     /**
      * Action for copying selected nodes in the list of my nodes to the list of merged
      * nodes. Inserts the nodes before the first selected row in the list of merged nodes.
-     *
      */
-    class CopyBeforeCurrentLeftAction extends AbstractAction implements ListSelectionListener {
+    class CopyBeforeCurrentLeftAction extends CopyAction {
 
         public CopyBeforeCurrentLeftAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "copybeforecurrentleft.png");
-            putValue(Action.SMALL_ICON, icon);
-            if (icon == null) {
-                putValue(Action.NAME, "> before");
-            }
-            putValue(Action.SHORT_DESCRIPTION, tr("Copy my selected elements before the first selected element in the list of merged elements."));
-            setEnabled(false);
+            super("copybeforecurrentleft", tr("> before"), 
+                    tr("Copy my selected elements before the first selected element in the list of merged elements."));
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
-            int [] myRows = myEntriesTable.getSelectedRows();
+        public void actionPerformed(ActionEvent e) {
             int [] mergedRows = mergedEntriesTable.getSelectedRows();
             if (mergedRows == null || mergedRows.length == 0)
                 return;
+            int [] myRows = myEntriesTable.getSelectedRows();
             int current = mergedRows[0];
             model.copyMyBeforeCurrent(myRows, current);
         }
@@ -508,7 +506,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(
                     !myEntriesTable.getSelectionModel().isSelectionEmpty()
-                    && ! mergedEntriesTable.getSelectionModel().isSelectionEmpty()
+                    && !mergedEntriesTable.getSelectionModel().isSelectionEmpty()
             );
         }
     }
@@ -516,26 +514,20 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     /**
      * Action for copying selected nodes in the list of my nodes to the list of merged
      * nodes. Inserts the nodes after the first selected row in the list of merged nodes.
-     *
      */
-    class CopyAfterCurrentLeftAction extends AbstractAction implements ListSelectionListener {
+    class CopyAfterCurrentLeftAction extends CopyAction {
 
         public CopyAfterCurrentLeftAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "copyaftercurrentleft.png");
-            putValue(Action.SMALL_ICON, icon);
-            if (icon == null) {
-                putValue(Action.NAME, "> after");
-            }
-            putValue(Action.SHORT_DESCRIPTION, tr("Copy my selected elements after the first selected element in the list of merged elements."));
-            setEnabled(false);
+            super("copyaftercurrentleft", tr("> after"), 
+                    tr("Copy my selected elements after the first selected element in the list of merged elements."));
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
-            int [] myRows = myEntriesTable.getSelectedRows();
+        public void actionPerformed(ActionEvent e) {
             int [] mergedRows = mergedEntriesTable.getSelectedRows();
             if (mergedRows == null || mergedRows.length == 0)
                 return;
+            int [] myRows = myEntriesTable.getSelectedRows();
             int current = mergedRows[0];
             model.copyMyAfterCurrent(myRows, current);
         }
@@ -544,27 +536,20 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(
                     !myEntriesTable.getSelectionModel().isSelectionEmpty()
-                    && ! mergedEntriesTable.getSelectionModel().isSelectionEmpty()
+                    && !mergedEntriesTable.getSelectionModel().isSelectionEmpty()
             );
         }
     }
 
-    class CopyStartRightAction extends AbstractAction implements ListSelectionListener {
+    class CopyStartRightAction extends CopyAction {
 
         public CopyStartRightAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "copystartright.png");
-            putValue(Action.SMALL_ICON, icon);
-            if (icon == null) {
-                putValue(Action.NAME, "< top");
-            }
-            putValue(Action.SHORT_DESCRIPTION, tr("Copy their selected element to the start of the list of merged elements."));
-            setEnabled(false);
+            super("copystartright", tr("< top"), tr("Copy their selected element to the start of the list of merged elements."));
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
-            int [] rows = theirEntriesTable.getSelectedRows();
-            model.copyTheirToTop(rows);
+        public void actionPerformed(ActionEvent e) {
+            model.copyTheirToTop(theirEntriesTable.getSelectedRows());
         }
 
         @Override
@@ -573,22 +558,15 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         }
     }
 
-    class CopyEndRightAction extends AbstractAction implements ListSelectionListener {
+    class CopyEndRightAction extends CopyAction {
 
         public CopyEndRightAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "copyendright.png");
-            putValue(Action.SMALL_ICON, icon);
-            if (icon == null) {
-                putValue(Action.NAME, "< bottom");
-            }
-            putValue(Action.SHORT_DESCRIPTION, tr("Copy their selected elements to the end of the list of merged elements."));
-            setEnabled(false);
+            super("copyendright", tr("< bottom"), tr("Copy their selected elements to the end of the list of merged elements."));
         }
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            int [] rows = theirEntriesTable.getSelectedRows();
-            model.copyTheirToEnd(rows);
+            model.copyTheirToEnd(theirEntriesTable.getSelectedRows());
         }
 
         @Override
@@ -597,24 +575,19 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         }
     }
 
-    class CopyBeforeCurrentRightAction extends AbstractAction implements ListSelectionListener {
+    class CopyBeforeCurrentRightAction extends CopyAction {
 
         public CopyBeforeCurrentRightAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "copybeforecurrentright.png");
-            putValue(Action.SMALL_ICON, icon);
-            if (icon == null) {
-                putValue(Action.NAME, "< before");
-            }
-            putValue(Action.SHORT_DESCRIPTION, tr("Copy their selected elements before the first selected element in the list of merged elements."));
-            setEnabled(false);
+            super("copybeforecurrentright", tr("< before"), 
+                    tr("Copy their selected elements before the first selected element in the list of merged elements."));
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
-            int [] myRows = theirEntriesTable.getSelectedRows();
+        public void actionPerformed(ActionEvent e) {
             int [] mergedRows = mergedEntriesTable.getSelectedRows();
             if (mergedRows == null || mergedRows.length == 0)
                 return;
+            int [] myRows = theirEntriesTable.getSelectedRows();
             int current = mergedRows[0];
             model.copyTheirBeforeCurrent(myRows, current);
         }
@@ -623,29 +596,24 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(
                     !theirEntriesTable.getSelectionModel().isSelectionEmpty()
-                    && ! mergedEntriesTable.getSelectionModel().isSelectionEmpty()
+                    && !mergedEntriesTable.getSelectionModel().isSelectionEmpty()
             );
         }
     }
 
-    class CopyAfterCurrentRightAction extends AbstractAction implements ListSelectionListener {
+    class CopyAfterCurrentRightAction extends CopyAction {
 
         public CopyAfterCurrentRightAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "copyaftercurrentright.png");
-            putValue(Action.SMALL_ICON, icon);
-            if (icon == null) {
-                putValue(Action.NAME, "< after");
-            }
-            putValue(Action.SHORT_DESCRIPTION, tr("Copy their selected element after the first selected element in the list of merged elements"));
-            setEnabled(false);
+            super("copyaftercurrentright", tr("< after"), 
+                    tr("Copy their selected element after the first selected element in the list of merged elements"));
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
-            int [] myRows = theirEntriesTable.getSelectedRows();
+        public void actionPerformed(ActionEvent e) {
             int [] mergedRows = mergedEntriesTable.getSelectedRows();
             if (mergedRows == null || mergedRows.length == 0)
                 return;
+            int [] myRows = theirEntriesTable.getSelectedRows();
             int current = mergedRows[0];
             model.copyTheirAfterCurrent(myRows, current);
         }
@@ -654,7 +622,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(
                     !theirEntriesTable.getSelectionModel().isSelectionEmpty()
-                    && ! mergedEntriesTable.getSelectionModel().isSelectionEmpty()
+                    && !mergedEntriesTable.getSelectionModel().isSelectionEmpty()
             );
         }
     }
