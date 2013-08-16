@@ -538,13 +538,12 @@ public class ImageProvider {
         try
         {
             zipFile = new ZipFile(archive);
-            String entry_name;
-            if (inArchiveDir != null) {
-                File dir = new File(inArchiveDir);
-                entry_name = new File(dir, full_name).getPath();
-            } else {
-                entry_name = full_name;
+            if (inArchiveDir == null || inArchiveDir.equals(".")) {
+                inArchiveDir = "";
+            } else if (!inArchiveDir.isEmpty()) {
+                inArchiveDir += "/";
             }
+            String entry_name = inArchiveDir + full_name;
             ZipEntry entry = zipFile.getEntry(entry_name);
             if(entry != null)
             {
