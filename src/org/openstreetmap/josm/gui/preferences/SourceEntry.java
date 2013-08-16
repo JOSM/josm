@@ -158,6 +158,7 @@ public class SourceEntry {
 
     /**
      * Returns the parent directory of the resource inside the zip file.
+     *
      * @return the parent directory of the resource inside the zip file,
      * "." if zipEntryPath is a top level file; null, if zipEntryPath is null
      */
@@ -166,6 +167,10 @@ public class SourceEntry {
         File file = new File(zipEntryPath);
         File dir = file.getParentFile();
         if (dir == null) return ".";
-        return dir.getPath();
+        String path = dir.getPath();
+        if (!"/".equals(File.separator)) {
+            path = path.replace(File.separator, "/");
+        }
+        return path;
     }
 }
