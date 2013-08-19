@@ -41,12 +41,15 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Combines multiple ways into one.
- *
+ * @since 213
  */
 public class CombineWayAction extends JosmAction {
 
     private static final BooleanProperty PROP_REVERSE_WAY = new BooleanProperty("tag-correction.reverse-way", true);
 
+    /**
+     * Constructs a new {@code CombineWayAction}.
+     */
     public CombineWayAction() {
         super(tr("Combine Way"), "combineway", tr("Combine several ways into one."),
                 Shortcut.registerShortcut("tools:combineway", tr("Tool: {0}", tr("Combine Way")), KeyEvent.VK_C, Shortcut.DIRECT), true);
@@ -122,7 +125,8 @@ public class CombineWayAction extends JosmAction {
         List<Way> reversedWays = new LinkedList<Way>();
         List<Way> unreversedWays = new LinkedList<Way>();
         for (Way w: ways) {
-            if ((path.indexOf(w.getNode(0)) + 1) == path.lastIndexOf(w.getNode(1))) {
+            // Treat zero or one-node ways as unreversed as Combine action action is a good way to fix them (see #8971)
+            if (w.getNodesCount() < 2 || (path.indexOf(w.getNode(0)) + 1) == path.lastIndexOf(w.getNode(1))) {
                 unreversedWays.add(w);
             } else {
                 reversedWays.add(w);
@@ -246,28 +250,51 @@ public class CombineWayAction extends JosmAction {
         setEnabled(numWays >= 2);
     }
 
+    /**
+     * A pair of nodes.
+     */
     static public class NodePair {
-        private Node a;
-        private Node b;
+        private final Node a;
+        private final Node b;
+        
+        /**
+         * Constructs a new {@code NodePair}.
+         * @param a The first node
+         * @param b The second node
+         */
         public NodePair(Node a, Node b) {
-            this.a =a;
+            this.a = a;
             this.b = b;
         }
 
+        /**
+         * Constructs a new {@code NodePair}.
+         * @param pair An existing {@code Pair} of nodes
+         */
         public NodePair(Pair<Node,Node> pair) {
-            this.a = pair.a;
-            this.b = pair.b;
+            this(pair.a, pair.b);
         }
 
+        /**
+         * Constructs a new {@code NodePair}.
+         * @param other An existing {@code NodePair}
+         */
         public NodePair(NodePair other) {
-            this.a = other.a;
-            this.b = other.b;
+            this(other.a, other.b);
         }
 
+        /**
+         * Replies the first node.
+         * @return The first node
+         */
         public Node getA() {
             return a;
         }
 
+        /**
+         * Replies the second node
+         * @return The second node
+         */
         public Node getB() {
             return b;
         }
@@ -303,6 +330,11 @@ public class CombineWayAction extends JosmAction {
             .toString();
         }
 
+        /**
+         * Determines if this pair contains the given node.
+         * @param n The node to look for
+         * @return {@code true} if {@code n} is in the pair, {@code false} otherwise
+         */
         public boolean contains(Node n) {
             return a == n || b == n;
         }
@@ -315,6 +347,7 @@ public class CombineWayAction extends JosmAction {
             result = prime * result + ((b == null) ? 0 : b.hashCode());
             return result;
         }
+        
         @Override
         public boolean equals(Object obj) {
             if (this == obj)
@@ -457,6 +490,9 @@ public class CombineWayAction extends JosmAction {
             numUndirectedEges = undirectedEdges.size();
         }
 
+        /**
+         * Constructs a new {@code NodeGraph}.
+         */
         public NodeGraph() {
             edges = new LinkedHashSet<NodePair>();
         }

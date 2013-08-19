@@ -3,12 +3,28 @@ package org.openstreetmap.josm.tools;
 import java.util.ArrayList;
 
 /**
- * A pair.
+ * A pair of objects.
+ * @param <A> Type of first item
+ * @param <B> Type of second item
+ * @since 429
  */
 public final class Pair<A,B> {
+    
+    /**
+     * The first item
+     */
     public A a;
+    
+    /**
+     * The second item
+     */
     public B b;
 
+    /**
+     * Constructs a new {@code Pair}.
+     * @param a The first item
+     * @param b The second item
+     */
     public Pair(A a, B b) {
         this.a = a;
         this.b = b;
@@ -47,7 +63,12 @@ public final class Pair<A,B> {
         return "<"+a+","+b+">";
     }
 
-    /* convenience constructor method */
+    /**
+     * Convenient constructor method 
+     * @param u The first item
+     * @param v The second item
+     * @return The newly created Pair(u,v)
+     */
     public static <U,V> Pair<U,V> create(U u, V v) {
         return new Pair<U,V>(u,v);
     }
