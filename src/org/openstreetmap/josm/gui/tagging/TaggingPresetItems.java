@@ -699,6 +699,9 @@ public final class TaggingPresetItems {
 
         @Override
         void addCommands(List<Tag> changedTags) {
+            for (Check check : checks) {
+                check.addCommands(changedTags);
+            }
         }
 
         @Override
