@@ -1018,6 +1018,7 @@ Note that for a match, at least one positive and no negative is required.
             <optional>
                 <text key="name" text="Name" />
                 <check key="toilets" text="Toilets" default="off" />
+                <check key="drinking_water" text="Drinking Water" default="off" />
             </optional>
         </item>
         <item name="Emergency Phone" icon="presets/telephone.png" type="node">
@@ -4044,11 +4045,16 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=toilets"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=toilets" />
             <key key="amenity" value="toilets" />
-            <text key="description" text="Description" />
-            <combo key="drinking_water" text="Drinking water" values="yes,no" />
-            <combo key="fee" text="Fee" values="yes,no" />
-            <text key="operator" text="Operator" />
-            <combo key="wheelchair" text="Wheelchair" values="no,limited,yes" />
+            <combo key="access"           values="public,permissive,customers" text="Access rights" />
+            <combo key="drinking_water"   values="yes,no" text="Drinking Water" />
+            <combo key="toilets:disposal" values="flush,pitlatrine,chemical,bucket" text="Type" />
+            <optional>
+                <text key="description" text="Description" />
+                <combo key="fee" text="Fee" values="yes,no" />
+                <text key="operator" text="Operator" />
+                <combo key="toilets:position" values="seated,seated;urinal,squat"  text="Position" />
+                <combo key="wheelchair" text="Wheelchair" values="no,limited,yes" />
+            </optional>
         </item>
         <item name="Post Box" icon="styles/standard/service/post_box.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=post_box"
@@ -4172,7 +4178,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=drinking_water" />
             <label text="Edit Source of Potable Water" />
             <key key="amenity" value="drinking_water" />
-            <combo key="indoor" text="Indoor" values="yes,no" />
+            <check key="indoor" text="Indoor" default="off" />
             <optional>
                 <text key="name" text="Name" />
                 <text key="description" text="Description" />
