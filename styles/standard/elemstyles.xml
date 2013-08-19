@@ -3703,6 +3703,16 @@ For external files the <rules> should have following elements:
 		<area colour="building#cb9999" priority="-10000"/>
 	</rule>
 
+    <rule>
+        <condition k="building" v="garage"/>
+        <icon annotate="true" src="misc/landuse/garages.png"/>
+    </rule>
+
+    <rule>
+        <condition k="building" v="garages"/>
+        <icon annotate="true" src="misc/landuse/garages.png"/>
+    </rule>
+
 	<rule>
 		<condition k="building" v="entrance" />
 		<icon annotate="true" src="misc/entrance-yes.png" priority="100"/>
