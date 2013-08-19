@@ -1302,8 +1302,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="barrier" value="fence" />
             <optional>
-<!--                <combo key="fence_type" text="Type" values="barbed_wire,chain_link,electric,roundpole,split_rail,wood" /> -->
-                <combo key="fence_type" text="Type" values="barbed_wire,chain,electric,hedge,pole,split_rail,wood" />
+                <combo key="fence_type" text="Type" values="barbed_wire,chain_link,electric,metal,pole,split_rail,wire,wood" />
                 <text key="height" text="Height (meters)" length="7" />
             </optional>
         </item> <!-- fence -->
