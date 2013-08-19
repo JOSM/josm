@@ -112,6 +112,12 @@ public class DeprecatedTags extends Test {
         checks.add(new DeprecationCheck(2121).
                 testAndRemove("generator:method", "pumping").
                 add("generator:method", "water-pumped-storage"));
+        // http://wiki.openstreetmap.org/wiki/Key:fence_type
+        // see #8962
+        checks.add(new DeprecationCheck(2122).
+                test("fence_type", "chain").
+                alternative("barrier", "chain").
+                alternative("fence_type", "chain_link"));
     }
 
     /**
