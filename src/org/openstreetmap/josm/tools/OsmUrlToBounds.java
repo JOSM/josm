@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -26,13 +27,14 @@ public class OsmUrlToBounds {
         Bounds b = parseShortLink(url);
         if (b != null)
             return b;
-        int i = url.indexOf('?');
+        int i = url.indexOf("#map");
+        if (i >= 0) {
+            // probably it's a URL following the new scheme?
+            return parseHashURLs(url);
+        }
+        i = url.indexOf('?');
         if (i == -1) {
-            //probably it's a URL following the new scheme?
-            if (url.indexOf('#') >= 0)
-                return parseHashURLs(url);
-            else
-                return null;
+            return null;
         }
         String[] args = url.substring(i+1).split("&");
         HashMap<String, String> map = new HashMap<String, String>();
@@ -79,17 +81,17 @@ public class OsmUrlToBounds {
      * Openstreetmap.org changed it's URL scheme in August 2013, which breaks the URL parsing.
      * The following function, called by the old parse function if necessary, provides parsing new URLs
      * the new URLs follow the scheme http://www.openstreetmap.org/#map=18/51.71873/8.76164&layers=CN
-     * @param url
-     * @return
+     * @param url string for parsing
+     * @return Bounds if hashurl, {@code null} otherwise
      */
     private static Bounds parseHashURLs(String url) {
-        int startIndex = url.indexOf("=");
+        int startIndex = url.indexOf("#map=");
         if (startIndex == -1) return null;
-        int endIndex = url.indexOf("&");
+        int endIndex = url.indexOf('&', startIndex);
         if (endIndex == -1) endIndex = url.length();
         try
         {
-            String coordPart = url.substring(startIndex+1, endIndex);
+            String coordPart = url.substring(startIndex+5, endIndex);
             String[] parts = coordPart.split("/");
             Bounds b = positionToBounds(Double.parseDouble(parts[1]),
                     Double.parseDouble(parts[2]),
@@ -180,11 +182,19 @@ public class OsmUrlToBounds {
 
     public static Bounds positionToBounds(final double lat, final double lon, final int zoom) {
         int tileSizeInPixels = 256;
-        int height = Toolkit.getDefaultToolkit().getScreenSize().height;
-        int width = Toolkit.getDefaultToolkit().getScreenSize().width;
-        if (Main.isDisplayingMapView()) {
-            height = Main.map.mapView.getHeight();
-            width = Main.map.mapView.getWidth();
+        int height;
+        int width;
+        try {
+            height = Toolkit.getDefaultToolkit().getScreenSize().height;
+            width = Toolkit.getDefaultToolkit().getScreenSize().width;
+            if (Main.isDisplayingMapView()) {
+                height = Main.map.mapView.getHeight();
+                width = Main.map.mapView.getWidth();
+            }
+        } catch (HeadlessException he) {
+            // in headless mode, when running tests
+            height = 480;
+            width = 640;
         }
         double scale = (1 << zoom) * tileSizeInPixels / (2 * Math.PI * R);
         double deltaX = width / 2.0 / scale;
