@@ -4,14 +4,16 @@
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.awt.Image;
-import java.io.IOException;
-
-import javax.swing.ImageIcon;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 public abstract class AbstractOsmTileSource extends AbstractTMSTileSource {
+    
+    /**
+     * The OSM attribution. Must be always in line with <a href="http://www.openstreetmap.org/copyright/en">http://www.openstreetmap.org/copyright/en</a>
+     */
+    public static final String DEFAULT_OSM_ATTRIBUTION = "\u00a9 OpenStreetMap contributors";
+    
     public AbstractOsmTileSource(String name, String base_url) {
         super(name, base_url);
     }
@@ -27,7 +29,7 @@ public abstract class AbstractOsmTileSource extends AbstractTMSTileSource {
 
     @Override
     public String getAttributionText(int zoom, Coordinate topLeft, Coordinate botRight) {
-        return "\u00a9 OpenStreetMap contributors, CC-BY-SA ";
+        return DEFAULT_OSM_ATTRIBUTION;
     }
 
     @Override

@@ -13,6 +13,6 @@ public class MapQuestOsmTileSource extends AbstractMapQuestTileSource {
     @Override
     public String getAttributionText(int zoom, Coordinate topLeft,
             Coordinate botRight) {
-        return super.getAttributionText(zoom, topLeft, botRight)+"- "+MAPQUEST_ATTRIBUTION;
+        return super.getAttributionText(zoom, topLeft, botRight)+" - "+MAPQUEST_ATTRIBUTION;
     }
 }
