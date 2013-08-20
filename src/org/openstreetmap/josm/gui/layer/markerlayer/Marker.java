@@ -340,11 +340,7 @@ public class Marker implements TemplateEngineDataProvider {
     }
 
     public final void setCoor(LatLon coor) {
-        if(this.coor == null) {
-            this.coor = new CachedLatLon(coor);
-        } else {
-            this.coor.setCoor(coor);
-        }
+        this.coor = new CachedLatLon(coor);
     }
 
     public final LatLon getCoor() {
@@ -352,7 +348,7 @@ public class Marker implements TemplateEngineDataProvider {
     }
 
     public final void setEastNorth(EastNorth eastNorth) {
-        coor.setEastNorth(eastNorth);
+        this.coor = new CachedLatLon(eastNorth);
     }
 
     public final EastNorth getEastNorth() {

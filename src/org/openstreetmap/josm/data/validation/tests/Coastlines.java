@@ -149,10 +149,10 @@ public class Coastlines extends Test {
             if (headWays == 0 || tailWays == 0) {
                 List<OsmPrimitive> highlight = new ArrayList<OsmPrimitive>();
 
-                if (headWays == 0 && (downloadedArea == null || downloadedArea.contains(head.getCoor()))) {
+                if (headWays == 0 && head.getCoor().isIn(downloadedArea)) {
                     highlight.add(head);
                 }
-                if (tailWays == 0 && (downloadedArea == null || downloadedArea.contains(tail.getCoor()))) {
+                if (tailWays == 0 && tail.getCoor().isIn(downloadedArea)) {
                     highlight.add(tail);
                 }
 

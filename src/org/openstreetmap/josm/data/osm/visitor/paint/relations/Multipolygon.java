@@ -17,6 +17,7 @@ import java.util.Set;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -212,7 +213,7 @@ public class Multipolygon {
         private void buildPoly() {
             boolean initial = true;
             for (Node n : nodes) {
-                Point2D p = n.getEastNorth();
+                EastNorth p = n.getEastNorth();
                 if (p != null) {
                     if (initial) {
                         poly.moveTo(p.getX(), p.getY());

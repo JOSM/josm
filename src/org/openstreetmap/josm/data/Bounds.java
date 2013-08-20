@@ -205,7 +205,7 @@ public class Bounds {
         if (crosses180thMeridian()) {
             LatLon result = new LatLon(minLat, minLon-360.0).getCenter(getMax());
             if (result.lon() < -180.0) {
-                result.setLocation(result.lon()+360.0, result.lat());
+                result = new LatLon(result.lat(), result.lon() + 360.0);
             }
             return result;
         } else {

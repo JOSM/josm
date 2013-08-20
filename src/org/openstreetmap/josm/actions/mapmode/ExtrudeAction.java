@@ -683,7 +683,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                 Point p3 = mv.getPoint(newN1en);
                 Point p4 = mv.getPoint(newN2en);
 
-                EastNorth normalUnitVector = getNormalUniVector();
+                Point2D normalUnitVector = getNormalUniVector();
 
                 if (mode == Mode.extrude || mode == Mode.create_new) {
                     g2.setColor(mainColor);
@@ -752,16 +752,16 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         }
     }
 
-    private EastNorth getNormalUniVector() {
-        double fac = 1.0 / activeMoveDirection.en.distance(0,0);
+    private Point2D getNormalUniVector() {
+        double fac = 1.0 / activeMoveDirection.en.length();
         // mult by factor to get unit vector.
-        EastNorth normalUnitVector = new EastNorth(activeMoveDirection.en.getX() * fac, activeMoveDirection.en.getY() * fac);
+        Point2D normalUnitVector = new Point2D.Double(activeMoveDirection.en.getX() * fac, activeMoveDirection.en.getY() * fac);
 
         // Check to see if our new N1 is in a positive direction with respect to the normalUnitVector.
         // Even if the x component is zero, we should still be able to discern using +0.0 and -0.0
         if (newN1en != null && ((newN1en.getX() > initialN1en.getX()) != (normalUnitVector.getX() > -0.0))) {
             // If not, use a sign-flipped version of the normalUnitVector.
-            normalUnitVector = new EastNorth(-normalUnitVector.getX(), -normalUnitVector.getY());
+            normalUnitVector = new Point2D.Double(-normalUnitVector.getX(), -normalUnitVector.getY());
         }
 
         //HACK: swap Y, because the target pixels are top down, but EastNorth is bottom-up.
@@ -770,7 +770,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         return normalUnitVector;
     }
 
-    private void drawAngleSymbol(Graphics2D g2, Point2D center, EastNorth normal, boolean mirror) {
+    private void drawAngleSymbol(Graphics2D g2, Point2D center, Point2D normal, boolean mirror) {
         // EastNorth units per pixel
         double factor = 1.0/g2.getTransform().getScaleX();
         double raoffsetx = symbolSize*factor*normal.getX();
