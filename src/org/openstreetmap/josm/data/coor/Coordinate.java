@@ -13,7 +13,7 @@ import java.io.Serializable;
  * outside of the data package. Routines there should only use LatLon or
  * EastNorth.
  *
- * @author imi
+ * @since 6162
  */
 abstract class Coordinate implements Serializable {
 
@@ -36,6 +36,18 @@ abstract class Coordinate implements Serializable {
 
     public double getY() {
         return y;
+    }
+
+    /**
+     * Returns the square of the euclidean distance from this {@code Coordinate} to a specified {@code Coordinate}.
+     * 
+     * @param coor the specified coordinate to be measured against this {@code Coordinate}
+     * @return the square of the euclidean distance from this {@code Coordinate} to a specified {@code Coordinate}
+     */
+    public double distanceSq(final Coordinate coor) {
+        final double dx = this.x-coor.x;
+        final double dy = this.y-coor.y;
+        return dx*dx + dy*dy;
     }
 
     @Override
