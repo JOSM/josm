@@ -962,7 +962,7 @@ public class Preferences {
         }
         List<List<String>> prop = arrayProperties.get(key);
         if (prop != null) {
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings({ "unchecked", "rawtypes" })
             Collection<Collection<String>> prop_cast = (Collection) prop;
             return prop_cast;
         } else
@@ -973,7 +973,7 @@ public class Preferences {
         putArrayDefault(key, null);
         List<List<String>> prop = arrayProperties.get(key);
         if (prop != null) {
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings({ "unchecked", "rawtypes" })
             Collection<Collection<String>> prop_cast = (Collection) prop;
             return prop_cast;
         } else
@@ -981,7 +981,7 @@ public class Preferences {
     }
 
     public boolean putArray(String key, Collection<Collection<String>> value) {
-        boolean changed = false;
+        //boolean changed = false;
 
         List<List<String>> oldValue = null;
         List<List<String>> valueCopy = null;
