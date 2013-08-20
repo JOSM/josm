@@ -463,6 +463,32 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="width" text="Width (meters)" />
             </optional>
         </item>
+        <item name="Bicycle Road" icon="presets/bicycle_road.svg" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:bicycle_road"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:bicycle_road" />
+            <label text="Edit Bicycle Road" />
+            <space />
+            <key key="bicycle_road" value="yes" />
+            <key key="bicycle" value="designated" />
+            <combo key="highway" text="Highway type" values_context="Highway" values="residential,service,unclassified,path,cycleway" default="residential" />
+            <text key="name" text="Name" />
+            <combo key="vehicle" text="Vehicle access" values="yes,no,destination" default="no" />
+            <text key="maxspeed" text="Max. speed (km/h)" default="30"/>
+            <optional>
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
+                <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
+                <check key="oneway" text="Oneway" default="off" />
+                <check key="oneway:bicycle" text="Oneway for bicycle" default="off" />
+                <check key="bridge" text="Bridge" default="off" />
+                <check key="tunnel" text="Tunnel" default="off" />
+                <check key="cutting" text="Cutting" default="off" />
+                <check key="embankment" text="Embankment" default="off" />
+                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+                <check key="lit" text="Lit" default="off" /> 
+                <text key="width" text="Width (meters)" />
+            </optional>
+        </item>
         <item name="Living Street" icon="presets/living_street.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=living_street"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=living_street"
