@@ -1047,13 +1047,6 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="drinking_water" text="Drinking Water" default="off" />
             </optional>
         </item>
-        <item name="Emergency Phone" icon="presets/telephone.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=phone" 
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=phone"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=phone"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:emergency=phone" />
-            <key key="emergency" value="phone" />
-        </item>
         <separator/>
         <item name="Traffic Signal" icon="presets/traffic-light.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=traffic_signals"
@@ -4071,7 +4064,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=toilets" />
             <key key="amenity" value="toilets" />
             <combo key="access"           values="public,permissive,customers" text="Access rights" />
-            <combo key="drinking_water"   values="yes,no" text="Drinking Water" />
+            <combo key="drinking_water"   values="yes,no,seasonal" text="Drinking Water" />
             <combo key="toilets:disposal" values="flush,pitlatrine,chemical,bucket" text="Type" />
             <optional>
                 <text key="description" text="Description" />
@@ -4107,6 +4100,29 @@ Note that for a match, at least one positive and no negative is required.
             <check key="payment:debit_cards" text="Debit cards" default="off" />
             <check key="payment:credit_cards" text="Credit cards" default="off" />
             <check key="payment:telephone_cards" text="Telephone cards" default="off" />
+        </item>
+        <item name="Emergency Phone" icon="presets/telephone.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=phone" 
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=phone"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=phone"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:emergency=phone" />
+            <key key="emergency" value="phone" />
+        </item>
+        <item name="Automated Defibrillator" icon="presets/aed.svg" type="node">
+            <link    href="http://wiki.openstreetmap.org/wiki/Tag:emergency=aed" 
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=aed"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=aed" />
+            <label text="Edit Automated External Defibrillator" />
+            <key   key="emergency" value="aed" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,limited" />
+            <text  key="operator" text="Operator" /> 
+            <check key="indoor" text="Located inside a building?" default="off" />
+            <!-- lastcheck is in use for aed devices, but not yet well discussed or documented
+            <optional>
+                <text key="lastcheck"      text="Last check date (YYYY-MM-DD)" />
+                <text key="lastcheck:note" text="Last check note" />
+            </optional>
+            -->
         </item>
         <item name="Clock" icon="styles/standard/service/clock.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=clock"
