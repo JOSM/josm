@@ -1,7 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.coor;
 
-import java.awt.geom.Point2D;
 import java.io.Serializable;
 
 /**
@@ -16,10 +15,10 @@ import java.io.Serializable;
  *
  * @author imi
  */
-abstract class Coordinate extends Point2D implements Serializable {
+abstract class Coordinate implements Serializable {
 
-    protected double x;
-    protected double y;
+    protected final double x;
+    protected final double y;
 
     /**
      * Construct the point with latitude / longitude values.
@@ -31,20 +30,12 @@ abstract class Coordinate extends Point2D implements Serializable {
         this.x = x; this.y = y;
     }
 
-    @Override
     public double getX() {
         return x;
     }
 
-    @Override
     public double getY() {
         return y;
-    }
-
-    @Override
-    public void setLocation (double x, double y) {
-        this.x = x;
-        this.y = y;
     }
 
     @Override

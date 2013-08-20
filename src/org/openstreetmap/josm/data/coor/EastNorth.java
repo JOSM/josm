@@ -43,10 +43,39 @@ public class EastNorth extends Coordinate {
         return new EastNorth((this.x + en2.x)/2.0, (this.y + en2.y)/2.0);
     }
 
-    public double distance(EastNorth en2) {
-        return Math.sqrt((this.x-en2.x)*(this.x-en2.x) + (this.y-en2.y)*(this.y-en2.y));
+    /**
+     * Counts euclidean distance between this and other EastNorth.
+     * 
+     * @param en2 other EastNorth
+     * @return distance between this and other EastNorth
+     */
+    public double distance(final EastNorth en2) {
+        final double dx = this.x-en2.x;
+        final double dy = this.y-en2.y;
+        return Math.sqrt(dx*dx + dy*dy);
     }
 
+    /**
+     * Counts square of euclidean distance between this and other EastNorth.
+     * 
+     * @param en2 other EastNorth
+     * @return square of distance between this and other EastNorth
+     */
+    public double distanceSq(final EastNorth en2) {
+        final double dx = this.x-en2.x;
+        final double dy = this.y-en2.y;
+        return dx*dx + dy*dy;
+    }
+
+    /**
+     * Counts length (distance from [0,0]) of this.
+     * 
+     * @return length of this
+     */
+    public double length(){
+        return Math.sqrt(x*x + y*y);
+    }
+    
     /**
      * Returns the heading, in radians, that you have to use to get from
      * this EastNorth to another. Heading is mapped into [0, 2pi)

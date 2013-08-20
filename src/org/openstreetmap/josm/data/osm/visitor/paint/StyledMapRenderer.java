@@ -1341,7 +1341,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         Path2D.Double path = new Path2D.Double();
         boolean initial = true;
         for (Node n : w.getNodes()) {
-            Point2D p = n.getEastNorth();
+            EastNorth p = n.getEastNorth();
             if (p != null) {
                 if (initial) {
                     path.moveTo(p.getX(), p.getY());

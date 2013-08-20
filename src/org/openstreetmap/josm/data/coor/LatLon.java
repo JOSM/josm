@@ -10,6 +10,7 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
+import java.awt.geom.Area;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -221,6 +222,16 @@ public class LatLon extends Coordinate {
     }
 
     /**
+     * Check if this is contained in given area or area is null. 
+     * 
+     * @param a Area
+     * @return <code>true</code> if this is contained in given area or area is null. 
+     */
+    public boolean isIn(Area a) {
+        return a == null || a.contains(x, y);
+    }
+
+    /**
      * Computes the distance between this lat/lon and another point on the earth.
      * Uses Haversine formular.
      * @param other the other point.
@@ -283,6 +294,18 @@ public class LatLon extends Coordinate {
 
     public LatLon getCenter(LatLon ll2) {
         return new LatLon((this.lat() + ll2.lat())/2.0, (this.lon() + ll2.lon())/2.0);
+    }
+
+    /**
+     * Counts euclidean distance between this and other LatLon.
+     * 
+     * @param ll2 other LatLon
+     * @return distance between this and other LatLon
+     */
+   public double distance(final LatLon ll2) {
+        final double dx = this.x-ll2.x;
+        final double dy = this.y-ll2.y;
+        return Math.sqrt(dx*dx + dy*dy);
     }
 
     @Override public String toString() {
