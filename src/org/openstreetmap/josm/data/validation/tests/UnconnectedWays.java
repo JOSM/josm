@@ -292,8 +292,7 @@ public class UnconnectedWays extends Test {
             found_nodes.addAll(endnodes.search(new BBox(bounds.get(0), bounds.get(1))));
 
             for (Node n : found_nodes) {
-                if (!nearby(n, dist) ||
-                        (ds_area != null && !ds_area.contains(n.getCoor()))) {
+                if (!nearby(n, dist) || !n.getCoor().isIn(ds_area)) {
                     continue;
                 }
                 // It is actually very rare for us to find a node

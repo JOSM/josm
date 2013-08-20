@@ -32,18 +32,6 @@ public class CachedLatLon extends LatLon {
         this.eastNorth = eastNorth;
     }
 
-    public final void setCoor(LatLon coor) {
-        setLocation(coor.lon(), coor.lat());
-        proj = null;
-    }
-
-    public final void setEastNorth(EastNorth eastNorth) {
-        proj = Main.getProjection();
-        this.eastNorth = eastNorth;
-        LatLon l = proj.eastNorth2latlon(eastNorth);
-        setLocation(l.lon(), l.lat());
-    }
-
     /**
      * Replies the projected east/north coordinates.
      *
