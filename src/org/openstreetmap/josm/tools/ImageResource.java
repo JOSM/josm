@@ -1,13 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import com.kitfox.svg.SVGDiagram;
-
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+
 import javax.swing.ImageIcon;
+
+import com.kitfox.svg.SVGDiagram;
 
 /**
  * Holds data for one particular image.
@@ -15,17 +16,18 @@ import javax.swing.ImageIcon;
  *
  * In the first case, 'svg' is not null and in the latter case, 'imgCache' has
  * at least one entry for the key DEFAULT_DIMENSION.
+ * @since 4271
  */
 class ImageResource {
 
     /**
      * Caches the image data for resized versions of the same image.
      */
-    private HashMap<Dimension, BufferedImage> imgCache = new HashMap<Dimension, BufferedImage>();
+    private HashMap<Dimension, Image> imgCache = new HashMap<Dimension, Image>();
     private SVGDiagram svg;
     public static final Dimension DEFAULT_DIMENSION = new Dimension(-1, -1);
 
-    public ImageResource(BufferedImage img) {
+    public ImageResource(Image img) {
         CheckParameterUtil.ensureParameterNotNull(img);
         imgCache.put(DEFAULT_DIMENSION, img);
     }
@@ -44,11 +46,12 @@ class ImageResource {
      * @param   dim The requested dimensions. Use (-1,-1) for the original size
      *          and (width, -1) to set the width, but otherwise scale the image
      *          proportionally.
+     * @return ImageIcon object for the image of this resource, scaled according to dim
      */
     public ImageIcon getImageIcon(Dimension dim) {
         if (dim.width < -1 || dim.width == 0 || dim.height < -1 || dim.height == 0)
             throw new IllegalArgumentException();
-        BufferedImage img = imgCache.get(dim);
+        Image img = imgCache.get(dim);
         if (img != null) {
             return new ImageIcon(img);
         }
@@ -60,7 +63,7 @@ class ImageResource {
             imgCache.put(dim, img);
             return new ImageIcon(img);
         } else {
-            BufferedImage base = imgCache.get(DEFAULT_DIMENSION);
+            Image base = imgCache.get(DEFAULT_DIMENSION);
             if (base == null) throw new AssertionError();
 
             int width = dim.width;
@@ -85,6 +88,7 @@ class ImageResource {
      *
      * @param maxSize The maximum size. One of the dimensions (widht or height) can be -1,
      * which means it is not bounded.
+     * @return ImageIcon object for the image of this resource, scaled down if needed, according to maxSize
      */
     public ImageIcon getImageIconBounded(Dimension maxSize) {
         if (maxSize.width < -1 || maxSize.width == 0 || maxSize.height < -1 || maxSize.height == 0)
@@ -95,7 +99,7 @@ class ImageResource {
             realWidth = svg.getWidth();
             realHeight = svg.getHeight();
         } else {
-            BufferedImage base = imgCache.get(DEFAULT_DIMENSION);
+            Image base = imgCache.get(DEFAULT_DIMENSION);
             if (base == null) throw new AssertionError();
             ImageIcon icon = new ImageIcon(base);
             realWidth = icon.getIconWidth();
