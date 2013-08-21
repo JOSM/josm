@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.widgets;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -148,9 +147,9 @@ public class TextContextualPopupMenu extends JPopupMenu {
             JMenuItem mi = new JMenuItem(action);
             mi.setText(label);
             if (iconName != null && Main.pref.getBoolean("text.popupmenu.useicons", true)) {
-                ImageIcon icon = ImageProvider.get(iconName);
+                ImageIcon icon = new ImageProvider(iconName).setWidth(16).get();
                 if (icon != null) {
-                    mi.setIcon(new ImageIcon(icon.getImage().getScaledInstance(16 , 16, Image.SCALE_SMOOTH)));
+                    mi.setIcon(icon);
                 }
             }
             add(mi);

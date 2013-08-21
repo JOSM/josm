@@ -1815,6 +1815,12 @@ For external files the <rules> should have following elements:
 		<area colour="amenity_light#f7efb7"/>
 	</rule>
 
+    <rule>
+        <condition k="emergency" v="aed"/>
+        <icon annotate="true" src="presets/aed.svg"/>
+        <area colour="amenity_light#f7efb7"/>
+    </rule>
+
 	<rule>
 		<condition k="amenity" v="toilets"/>
 		<icon annotate="true" src="service/toilets.png"/>
