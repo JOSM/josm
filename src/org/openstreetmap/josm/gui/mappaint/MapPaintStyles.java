@@ -139,7 +139,7 @@ public class MapPaintStyles {
                         MapImage mapImage = ((NodeElemStyle) style).mapImage;
                         if (mapImage != null) {
                             if (includeDeprecatedIcon || mapImage.name == null || !mapImage.name.equals("misc/deprecated.png")) {
-                                return new ImageIcon(mapImage.getImage());
+                                return new ImageIcon(mapImage.getDisplayedNodeIcon(false));
                             } else {
                                 return null; // Deprecated icon found but not wanted
                             }
