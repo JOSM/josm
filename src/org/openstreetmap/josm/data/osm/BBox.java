@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.QuadTiling;
 import org.openstreetmap.josm.tools.Utils;
 
 public class BBox {
@@ -151,22 +152,6 @@ public class BBox {
         return true;
     }
 
-    /**
-     * Returns a list of all 4 corners of the bbox rectangle.
-     */
-    public List<LatLon> points()  {
-        LatLon p1 = new LatLon(ymin, xmin);
-        LatLon p2 = new LatLon(ymin, xmax);
-        LatLon p3 = new LatLon(ymax, xmin);
-        LatLon p4 = new LatLon(ymax, xmax);
-        List<LatLon> ret = new ArrayList<LatLon>(4);
-        ret.add(p1);
-        ret.add(p2);
-        ret.add(p3);
-        ret.add(p4);
-        return ret;
-    }
-
     public LatLon getTopLeft() {
         return new LatLon(ymax, xmin);
     }
@@ -177,6 +162,25 @@ public class BBox {
 
     public LatLon getCenter() {
         return new LatLon(ymin + (ymax-ymin)/2.0, xmin + (xmax-xmin)/2.0);
+    }
+
+    int getIndex(final int level) {
+
+        int idx1 = QuadTiling.index(ymin, xmin, level);
+
+        final int idx2 = QuadTiling.index(ymin, xmax, level);
+        if (idx1 == -1) idx1 = idx2;
+        else if (idx1 != idx2) return -1;
+
+        final int idx3 = QuadTiling.index(ymax, xmin, level);
+        if (idx1 == -1) idx1 = idx3;
+        else if (idx1 != idx3) return -1;
+
+        final int idx4 = QuadTiling.index(ymax, xmax, level);
+        if (idx1 == -1) idx1 = idx4;
+        else if (idx1 != idx4) return -1;
+
+        return idx1;
     }
 
     @Override
