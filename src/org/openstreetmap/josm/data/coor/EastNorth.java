@@ -44,15 +44,25 @@ public class EastNorth extends Coordinate {
     }
 
     /**
-     * Counts euclidean distance between this and other EastNorth.
+     * Returns the euclidean distance from this {@code EastNorth} to a specified {@code EastNorth}.
      * 
-     * @param en2 other EastNorth
-     * @return distance between this and other EastNorth
+     * @param en the specified coordinate to be measured against this {@code EastNorth}
+     * @return the euclidean distance from this {@code EastNorth} to a specified {@code EastNorth}
+     * @since 6166
      */
-    public double distance(final EastNorth en2) {
-        final double dx = this.x-en2.x;
-        final double dy = this.y-en2.y;
-        return Math.sqrt(dx*dx + dy*dy);
+    public double distance(final EastNorth en) {
+        return super.distance(en);
+    }
+   
+    /**
+     * Returns the square of the euclidean distance from this {@code EastNorth} to a specified {@code EastNorth}.
+     * 
+     * @param en the specified coordinate to be measured against this {@code EastNorth}
+     * @return the square of the euclidean distance from this {@code EastNorth} to a specified {@code EastNorth}
+     * @since 6166
+     */
+    public double distanceSq(final EastNorth en) {
+        return super.distanceSq(en);
     }
 
     /**
