@@ -39,14 +39,52 @@ abstract class Coordinate implements Serializable {
     }
 
     /**
+     * Returns the euclidean distance from this {@code Coordinate} to a specified {@code Coordinate}.
+     * 
+     * @param coor the specified coordinate to be measured against this {@code Coordinate}
+     * @return the euclidean distance from this {@code Coordinate} to a specified {@code Coordinate}
+     * @since 6166
+     */
+    protected final double distance(final Coordinate coor) {
+        return distance(coor.x, coor.y);
+    }
+   
+    /**
+     * Returns the euclidean distance from this {@code Coordinate} to a specified coordinate.
+     * 
+     * @param px the X coordinate of the specified point to be measured against this {@code Coordinate}
+     * @param py the Y coordinate of the specified point to be measured against this {@code Coordinate}
+     * @return the euclidean distance from this {@code Coordinate} to a specified coordinate
+     * @since 6166
+     */
+    public final double distance(final double px, final double py) {
+        final double dx = this.x-px;
+        final double dy = this.y-py;
+        return Math.sqrt(dx*dx + dy*dy);
+    }
+   
+    /**
      * Returns the square of the euclidean distance from this {@code Coordinate} to a specified {@code Coordinate}.
      * 
      * @param coor the specified coordinate to be measured against this {@code Coordinate}
      * @return the square of the euclidean distance from this {@code Coordinate} to a specified {@code Coordinate}
+     * @since 6166
      */
-    public double distanceSq(final Coordinate coor) {
-        final double dx = this.x-coor.x;
-        final double dy = this.y-coor.y;
+    protected final double distanceSq(final Coordinate coor) {
+        return distanceSq(coor.x, coor.y);
+    }
+
+    /**
+     * Returns the square of euclidean distance from this {@code Coordinate} to a specified coordinate.
+     * 
+     * @param px the X coordinate of the specified point to be measured against this {@code Coordinate}
+     * @param py the Y coordinate of the specified point to be measured against this {@code Coordinate}
+     * @return the square of the euclidean distance from this {@code Coordinate} to a specified coordinate
+     * @since 6166
+     */
+    public final double distanceSq(final double px, final double py) {
+        final double dx = this.x-px;
+        final double dy = this.y-py;
         return dx*dx + dy*dy;
     }
 
