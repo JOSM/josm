@@ -8,14 +8,13 @@ public class QuadTiling
 
     public static final int TILES_PER_LEVEL_SHIFT = 2; // Has to be 2. Other parts of QuadBuckets code rely on it
     public static final int TILES_PER_LEVEL = 1<<TILES_PER_LEVEL_SHIFT;
-    static public final int X_PARTS = 360;
-    static public final int X_BIAS = -180;
+    public static final int X_PARTS = 360;
+    public static final int X_BIAS = -180;
 
-    static public final int Y_PARTS = 180;
-    static public final int Y_BIAS = -90;
+    public static final int Y_PARTS = 180;
+    public static final int Y_BIAS = -90;
 
-    public static LatLon tile2LatLon(long quad)
-    {
+    public static LatLon tile2LatLon(long quad) {
         // The world is divided up into X_PARTS,Y_PARTS.
         // The question is how far we move for each bit
         // being set.  In the case of the top level, we
@@ -43,8 +42,8 @@ public class QuadTiling
         y += Y_BIAS;
         return new LatLon(y, x);
     }
-    static long xy2tile(long x, long y)
-    {
+    
+    static long xy2tile(long x, long y) {
         long tile = 0;
         int i;
         for (i = NR_LEVELS-1; i >= 0; i--)
@@ -57,12 +56,12 @@ public class QuadTiling
         }
         return tile;
     }
-    static long coorToTile(LatLon coor)
-    {
+    
+    static long coorToTile(LatLon coor) {
         return quadTile(coor);
     }
-    static long lon2x(double lon)
-    {
+    
+    static long lon2x(double lon) {
         //return Math.round((lon + 180.0) * QuadBuckets.WORLD_PARTS / 360.0)-1;
         long ret = (long)((lon + 180.0) * WORLD_PARTS / 360.0);
         if (ret == WORLD_PARTS) {
@@ -70,8 +69,8 @@ public class QuadTiling
         }
         return ret;
     }
-    static long lat2y(double lat)
-    {
+    
+    static long lat2y(double lat) {
         //return Math.round((lat + 90.0) * QuadBuckets.WORLD_PARTS / 180.0)-1;
         long ret = (long)((lat + 90.0) * WORLD_PARTS / 180.0);
         if (ret == WORLD_PARTS) {
@@ -79,26 +78,48 @@ public class QuadTiling
         }
         return ret;
     }
-    static public long quadTile(LatLon coor)
-    {
-        return xy2tile(lon2x(coor.lon()),
-                lat2y(coor.lat()));
+    
+    public static long quadTile(LatLon coor) {
+        return xy2tile(lon2x(coor.lon()), lat2y(coor.lat()));
     }
-    static public int index(int level, long quad)
-    {
+    
+    public static int index(int level, long quad) {
         long mask = 0x00000003;
         int total_shift = TILES_PER_LEVEL_SHIFT*(NR_LEVELS-level-1);
         return (int)(mask & (quad >> total_shift));
     }
-    static public int index(LatLon coor, int level) {
-        // The nodes that don't return coordinates will all get
-        // stuck in a single tile.  Hopefully there are not too
-        // many of them
+    
+    /**
+     * Returns quad tiling index for given coordinates and level.
+     *
+     * @param coor coordinates
+     * @param level level
+     *
+     * @return quad tiling index for given coordinates and level.
+     * @since 2263
+     */
+    public static int index(LatLon coor, int level) {
+        // The nodes that don't return coordinates will all get stuck in a single tile. 
+        // Hopefully there are not too many of them
         if (coor == null)
             return 0;
 
-        long x = lon2x(coor.lon());
-        long y = lat2y(coor.lat());
+        return index(coor.lat(), coor.lon(), level);
+    }
+
+    /**
+     * Returns quad tiling index for given coordinates and level.
+     *
+     * @param lat latitude
+     * @param lon longitude
+     * @param level level
+     *
+     * @return quad tiling index for given coordinates and level.
+     * @since 6171
+     */
+    public static int index(final double lat, final double lon, final int level) {
+        long x = lon2x(lon);
+        long y = lat2y(lat);
         int shift = NR_LEVELS-level-1;
         return (int)((x >> shift & 1) * 2 + (y >> shift & 1));
     }
