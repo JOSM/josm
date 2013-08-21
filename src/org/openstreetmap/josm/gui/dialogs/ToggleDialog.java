@@ -72,7 +72,7 @@ import org.openstreetmap.josm.tools.WindowGeometry.WindowGeometryException;
  * This class is a toggle dialog that can be turned on and off.
  *
  */
-public class ToggleDialog extends JPanel implements ShowHideButtonListener, Helpful, AWTEventListener {
+public class ToggleDialog extends JPanel implements ShowHideButtonListener, Helpful, AWTEventListener, Destroyable {
 
     public enum ButtonHiddingType {
         ALWAYS_SHOWN, ALWAYS_HIDDEN, DYNAMIC
@@ -397,21 +397,22 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         }
     }
 
+    @Override
     public void destroy() {
         closeDetachedDialog();
         hideNotify();
         Main.main.menu.windowMenu.remove(windowMenuItem);
         Toolkit.getDefaultToolkit().removeAWTEventListener(this);
-        destroyComponents(this);
+        destroyComponents(this, false);
     }
 
-    private void destroyComponents(Component component) {
+    private void destroyComponents(Component component, boolean destroyItself) {
         if (component instanceof Container) {
             for (Component c: ((Container)component).getComponents()) {
-                destroyComponents(c);
+                destroyComponents(c, true);
             }
         }
-        if (component instanceof Destroyable) {
+        if (destroyItself && component instanceof Destroyable) {
             ((Destroyable) component).destroy();
         }
     }
