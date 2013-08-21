@@ -56,18 +56,6 @@ public class EastNorth extends Coordinate {
     }
 
     /**
-     * Counts square of euclidean distance between this and other EastNorth.
-     * 
-     * @param en2 other EastNorth
-     * @return square of distance between this and other EastNorth
-     */
-    public double distanceSq(final EastNorth en2) {
-        final double dx = this.x-en2.x;
-        final double dy = this.y-en2.y;
-        return dx*dx + dy*dy;
-    }
-
-    /**
      * Counts length (distance from [0,0]) of this.
      * 
      * @return length of this
