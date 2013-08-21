@@ -15,6 +15,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
@@ -50,6 +52,26 @@ abstract public class Command extends PseudoCommand {
         @Override
         public void visit(Relation e) {
             orig.put(e, e.save());
+        }
+    }
+
+    /**
+     * Small helper for holding the interesting part of the old data state of the objects.
+     */
+    public static class OldNodeState {
+
+        final LatLon latlon;
+        final EastNorth eastNorth; // cached EastNorth to be used for applying exact displacement
+        final boolean modified;
+
+        /**
+         * Constructs a new {@code OldNodeState} for the given node.
+         * @param node The node whose state has to be remembered
+         */
+        public OldNodeState(Node node){
+            latlon = node.getCoor();
+            eastNorth = node.getEastNorth();
+            modified = node.isModified();
         }
     }
 

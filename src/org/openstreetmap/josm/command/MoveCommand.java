@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -47,19 +48,9 @@ public class MoveCommand extends Command {
     private double backupY;
 
     /**
-     * Small helper for holding the interesting part of the old data state of the
-     * objects.
-     */
-    public static class OldState {
-        LatLon latlon;
-        EastNorth en; // cached EastNorth to be used for applying exact displacenment
-        boolean modified;
-    }
-
-    /**
      * List of all old states of the objects.
      */
-    private List<OldState> oldState = new LinkedList<OldState>();
+    private List<OldNodeState> oldState = new LinkedList<OldNodeState>();
 
     public MoveCommand(OsmPrimitive osm, double x, double y) {
         this(Collections.singleton(osm), x, y);
@@ -84,23 +75,19 @@ public class MoveCommand extends Command {
         this.y = y;
         this.nodes = AllNodesVisitor.getAllNodes(objects);
         for (Node n : this.nodes) {
-            OldState os = new OldState();
-            os.latlon = new LatLon(n.getCoor());
-            os.en = n.getEastNorth();
-            os.modified = n.isModified();
-            oldState.add(os);
+            oldState.add(new OldNodeState(n));
         }
     }
 
-     public MoveCommand(Collection<OsmPrimitive> objects, EastNorth start, EastNorth end) {
-         this(objects, end.getX()-start.getX(), end.getY()-start.getY());
-         startEN =  start;
-     }
+    public MoveCommand(Collection<OsmPrimitive> objects, EastNorth start, EastNorth end) {
+        this(objects, end.getX()-start.getX(), end.getY()-start.getY());
+        startEN =  start;
+    }
 
-     public MoveCommand(OsmPrimitive p, EastNorth start, EastNorth end) {
-         this(Collections.singleton(p), end.getX()-start.getX(), end.getY()-start.getY());
-         startEN =  start;
-     }
+    public MoveCommand(OsmPrimitive p, EastNorth start, EastNorth end) {
+        this(Collections.singleton(p), end.getX()-start.getX(), end.getY()-start.getY());
+        startEN =  start;
+    }
 
     /**
      * Move the same set of objects again by the specified vector. The vectors
@@ -134,13 +121,13 @@ public class MoveCommand extends Command {
         updateCoordinates();
     }
 
-     /**
+    /**
      * Changes base point of movement
      * @param newDraggedStartPoint - new starting point after movement (where user clicks to start new drag)
      */
     public void changeStartPoint(EastNorth newDraggedStartPoint) {
         startEN = new EastNorth(newDraggedStartPoint.getX()-x, newDraggedStartPoint.getY()-y);
-     }
+    }
 
     /**
      * Save curent displacement to restore in case of some problems
@@ -160,10 +147,10 @@ public class MoveCommand extends Command {
     }
 
     private void updateCoordinates() {
-        Iterator<OldState> it = oldState.iterator();
+        Iterator<OldNodeState> it = oldState.iterator();
         for (Node n : nodes) {
-            OldState os = it.next();
-            n.setEastNorth(os.en.add(x, y));
+            OldNodeState os = it.next();
+            n.setEastNorth(os.eastNorth.add(x, y));
         }
     }
 
@@ -182,9 +169,9 @@ public class MoveCommand extends Command {
     }
 
     @Override public void undoCommand() {
-        Iterator<OldState> it = oldState.iterator();
+        Iterator<OldNodeState> it = oldState.iterator();
         for (Node n : nodes) {
-            OldState os = it.next();
+            OldNodeState os = it.next();
             n.setCoor(os.latlon);
             n.setModified(os.modified);
         }
