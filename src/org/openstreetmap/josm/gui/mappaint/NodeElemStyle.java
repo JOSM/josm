@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 
@@ -18,14 +19,18 @@ import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.BoxProvider;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.SimpleBoxProvider;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
  * applies for Nodes and turn restriction relations
  */
 public class NodeElemStyle extends ElemStyle implements StyleKeys {
-    public MapImage mapImage;
-    public Symbol symbol;
+    public final MapImage mapImage;
+    public final Symbol symbol;
+    
+    private Image enabledNodeIcon;
+    private Image disabledNodeIcon;
 
     public enum SymbolShape { SQUARE, CIRCLE, TRIANGLE, PENTAGON, HEXAGON, HEPTAGON, OCTAGON, NONAGON, DECAGON }
 
@@ -229,13 +234,35 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         return new Symbol(shape, Math.round(size), stroke, strokeColor, fillColor);
     }
 
+    private Image getRealNodeIcon(final Image image) {
+        final int maxSize = 16;
+        // Scale down large (.svg) images to 16x16 pixels if no size is explicitely specified
+        if ((mapImage.width  == -1 && image.getWidth(null) > maxSize) 
+         || (mapImage.height == -1 && image.getHeight(null) > maxSize)) {
+            return ImageProvider.createBoundedImage(image, maxSize);
+        } else {
+            return image;
+        }
+    }
+    
     @Override
     public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings settings, StyledMapRenderer painter, boolean selected, boolean member) {
         if (primitive instanceof Node) {
             Node n = (Node) primitive;
             if (mapImage != null && painter.isShowIcons()) {
-                painter.drawNodeIcon(n, (painter.isInactiveMode() || n.isDisabled()) ? mapImage.getDisabled() : mapImage.getImage(),
-                        Utils.color_int2float(mapImage.alpha), selected, member);
+                final Image nodeIcon;
+                if (painter.isInactiveMode() || n.isDisabled()) {
+                    if (disabledNodeIcon == null) {
+                        disabledNodeIcon = getRealNodeIcon(mapImage.getDisabled());
+                    }
+                    nodeIcon = disabledNodeIcon;
+                } else {
+                    if (enabledNodeIcon == null) {
+                        enabledNodeIcon = getRealNodeIcon(mapImage.getImage());
+                    }
+                    nodeIcon = enabledNodeIcon;
+                }
+                painter.drawNodeIcon(n, nodeIcon, Utils.color_int2float(mapImage.alpha), selected, member);
             } else if (symbol != null) {
                 Color fillColor = symbol.fillColor;
                 if (fillColor != null) {

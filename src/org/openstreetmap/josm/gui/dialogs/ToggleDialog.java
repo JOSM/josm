@@ -12,7 +12,6 @@ import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
@@ -32,7 +31,6 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -461,9 +459,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             add(lblMinimized);
 
             // scale down the dialog icon
-            ImageIcon inIcon = ImageProvider.get("dialogs", iconName);
-            ImageIcon smallIcon = new ImageIcon(inIcon.getImage().getScaledInstance(16 , 16, Image.SCALE_SMOOTH));
-            lblTitle = new JLabel("",smallIcon, JLabel.TRAILING);
+            lblTitle = new JLabel("", new ImageProvider("dialogs", iconName).setWidth(16).get(), JLabel.TRAILING);
             lblTitle.setIconTextGap(8);
 
             JPanel conceal = new JPanel();
@@ -499,9 +495,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
             // show the pref button if applicable
             if (preferenceClass != null) {
-                inIcon = ImageProvider.get("preference");
-                smallIcon = new ImageIcon(inIcon.getImage().getScaledInstance(16 , 16, Image.SCALE_SMOOTH));
-                JButton pref = new JButton(smallIcon);
+                JButton pref = new JButton(new ImageProvider("preference").setWidth(16).get());
                 pref.setToolTipText(tr("Open preferences for this panel"));
                 pref.setBorder(BorderFactory.createEmptyBorder());
                 pref.addActionListener(
