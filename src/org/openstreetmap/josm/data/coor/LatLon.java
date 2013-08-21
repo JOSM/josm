@@ -27,7 +27,6 @@ import org.openstreetmap.josm.data.Bounds;
  */
 public class LatLon extends Coordinate {
 
-
     /**
      * Minimum difference in location to not be represented as the same position.
      * The API returns 7 decimals.
@@ -297,17 +296,27 @@ public class LatLon extends Coordinate {
     }
 
     /**
-     * Counts euclidean distance between this and other LatLon.
+     * Returns the euclidean distance from this {@code LatLon} to a specified {@code LatLon}.
      * 
-     * @param ll2 other LatLon
-     * @return distance between this and other LatLon
+     * @param ll the specified coordinate to be measured against this {@code LatLon}
+     * @return the euclidean distance from this {@code LatLon} to a specified {@code LatLon}
+     * @since 6166
      */
-   public double distance(final LatLon ll2) {
-        final double dx = this.x-ll2.x;
-        final double dy = this.y-ll2.y;
-        return Math.sqrt(dx*dx + dy*dy);
+    public double distance(final LatLon ll) {
+        return super.distance(ll);
     }
-
+   
+    /**
+     * Returns the square of the euclidean distance from this {@code LatLon} to a specified {@code LatLon}.
+     * 
+     * @param ll the specified coordinate to be measured against this {@code LatLon}
+     * @return the square of the euclidean distance from this {@code LatLon} to a specified {@code LatLon}
+     * @since 6166
+     */
+    public double distanceSq(final LatLon ll) {
+        return super.distanceSq(ll);
+    }
+    
     @Override public String toString() {
         return "LatLon[lat="+lat()+",lon="+lon()+"]";
     }
