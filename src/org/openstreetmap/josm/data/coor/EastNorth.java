@@ -129,4 +129,9 @@ public class EastNorth extends Coordinate {
     public boolean equalsEpsilon(EastNorth other, double e) {
         return (Math.abs(x - other.x) < e && Math.abs(y - other.y) < e);
     }
+
+    @Override
+    public EastNorth clone() {
+        return new EastNorth(x, y);
+    }
 }

@@ -394,4 +394,9 @@ public class LatLon extends Coordinate {
             return false;
         return true;
     }
+
+    @Override
+    protected LatLon clone() {
+        return new LatLon(x, y);
+    }
 }

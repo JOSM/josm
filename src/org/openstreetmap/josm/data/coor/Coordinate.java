@@ -15,7 +15,7 @@ import java.io.Serializable;
  *
  * @since 6162
  */
-abstract class Coordinate implements Serializable {
+abstract class Coordinate implements Cloneable, Serializable {
 
     protected final double x;
     protected final double y;
