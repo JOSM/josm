@@ -8,7 +8,7 @@ package org.openstreetmap.josm.data.coor;
  *
  * @author Imi
  */
-public class EastNorth extends Coordinate implements Cloneable {
+public class EastNorth extends Coordinate {
 
     public EastNorth(double east, double north) {
         super(east,north);
@@ -36,7 +36,7 @@ public class EastNorth extends Coordinate implements Cloneable {
 
     public EastNorth interpolate(EastNorth en2, double proportion) {
         return new EastNorth(this.x + proportion * (en2.x - this.x),
-            this.y + proportion * (en2.y - this.y));
+                this.y + proportion * (en2.y - this.y));
     }
 
     public EastNorth getCenter(EastNorth en2) {
@@ -53,7 +53,7 @@ public class EastNorth extends Coordinate implements Cloneable {
     public double distance(final EastNorth en) {
         return super.distance(en);
     }
-   
+
     /**
      * Returns the square of the euclidean distance from this {@code EastNorth} to a specified {@code EastNorth}.
      * 
@@ -73,7 +73,7 @@ public class EastNorth extends Coordinate implements Cloneable {
     public double length(){
         return Math.sqrt(x*x + y*y);
     }
-    
+
     /**
      * Returns the heading, in radians, that you have to use to get from
      * this EastNorth to another. Heading is mapped into [0, 2pi)
@@ -83,7 +83,9 @@ public class EastNorth extends Coordinate implements Cloneable {
      */
     public double heading(EastNorth other) {
         double hd = Math.atan2(other.east() - east(), other.north() - north());
-        if(hd < 0) hd = 2 * Math.PI + hd;
+        if(hd < 0) {
+            hd = 2 * Math.PI + hd;
+        }
         return hd;
     }
 
@@ -128,10 +130,5 @@ public class EastNorth extends Coordinate implements Cloneable {
      */
     public boolean equalsEpsilon(EastNorth other, double e) {
         return (Math.abs(x - other.x) < e && Math.abs(y - other.y) < e);
-    }
-
-    @Override
-    public EastNorth clone() throws CloneNotSupportedException {
-        return (EastNorth) super.clone();
     }
 }

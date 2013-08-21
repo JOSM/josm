@@ -25,7 +25,7 @@ import org.openstreetmap.josm.data.Bounds;
  *
  * @author Imi
  */
-public class LatLon extends Coordinate implements Cloneable {
+public class LatLon extends Coordinate {
 
     /**
      * Minimum difference in location to not be represented as the same position.
@@ -157,7 +157,7 @@ public class LatLon extends Coordinate implements Cloneable {
         super(lon, lat);
     }
 
-    public LatLon(LatLon coor) {
+    protected LatLon(LatLon coor) {
         super(coor.lon(), coor.lat());
     }
 
@@ -221,10 +221,10 @@ public class LatLon extends Coordinate implements Cloneable {
     }
 
     /**
-     * Check if this is contained in given area or area is null. 
+     * Check if this is contained in given area or area is null.
      * 
      * @param a Area
-     * @return <code>true</code> if this is contained in given area or area is null. 
+     * @return <code>true</code> if this is contained in given area or area is null.
      */
     public boolean isIn(Area a) {
         return a == null || a.contains(x, y);
@@ -305,7 +305,7 @@ public class LatLon extends Coordinate implements Cloneable {
     public double distance(final LatLon ll) {
         return super.distance(ll);
     }
-   
+
     /**
      * Returns the square of the euclidean distance from this {@code LatLon} to a specified {@code LatLon}.
      * 
@@ -316,7 +316,7 @@ public class LatLon extends Coordinate implements Cloneable {
     public double distanceSq(final LatLon ll) {
         return super.distanceSq(ll);
     }
-    
+
     @Override public String toString() {
         return "LatLon[lat="+lat()+",lon="+lon()+"]";
     }
@@ -393,10 +393,5 @@ public class LatLon extends Coordinate implements Cloneable {
         if (java.lang.Double.doubleToLongBits(y) != java.lang.Double.doubleToLongBits(other.y))
             return false;
         return true;
-    }
-
-    @Override
-    public LatLon clone() throws CloneNotSupportedException {
-        return (LatLon) super.clone();
     }
 }
