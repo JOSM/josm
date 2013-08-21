@@ -15,7 +15,7 @@ import java.io.Serializable;
  *
  * @since 6162
  */
-abstract class Coordinate implements Cloneable, Serializable {
+abstract class Coordinate implements Serializable {
 
     protected final double x;
     protected final double y;
@@ -104,7 +104,7 @@ abstract class Coordinate implements Cloneable, Serializable {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (getClass() != obj.getClass())
+        if (obj == null || getClass() != obj.getClass())
             return false;
         Coordinate other = (Coordinate) obj;
         if (java.lang.Double.doubleToLongBits(x) != java.lang.Double.doubleToLongBits(other.x))

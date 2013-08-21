@@ -25,7 +25,7 @@ import org.openstreetmap.josm.data.Bounds;
  *
  * @author Imi
  */
-public class LatLon extends Coordinate {
+public class LatLon extends Coordinate implements Cloneable {
 
     /**
      * Minimum difference in location to not be represented as the same position.
@@ -396,7 +396,7 @@ public class LatLon extends Coordinate {
     }
 
     @Override
-    public LatLon clone() {
-        return new LatLon(x, y);
+    public LatLon clone() throws CloneNotSupportedException {
+        return (LatLon) super.clone();
     }
 }

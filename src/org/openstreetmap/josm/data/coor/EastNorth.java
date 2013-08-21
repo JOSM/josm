@@ -8,7 +8,7 @@ package org.openstreetmap.josm.data.coor;
  *
  * @author Imi
  */
-public class EastNorth extends Coordinate {
+public class EastNorth extends Coordinate implements Cloneable {
 
     public EastNorth(double east, double north) {
         super(east,north);
@@ -131,7 +131,7 @@ public class EastNorth extends Coordinate {
     }
 
     @Override
-    public EastNorth clone() {
-        return new EastNorth(x, y);
+    public EastNorth clone() throws CloneNotSupportedException {
+        return (EastNorth) super.clone();
     }
 }
