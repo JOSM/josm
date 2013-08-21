@@ -19,7 +19,6 @@ import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.BoxProvider;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.SimpleBoxProvider;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -234,17 +233,6 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         return new Symbol(shape, Math.round(size), stroke, strokeColor, fillColor);
     }
 
-    private Image getRealNodeIcon(final Image image) {
-        final int maxSize = 16;
-        // Scale down large (.svg) images to 16x16 pixels if no size is explicitely specified
-        if ((mapImage.width  == -1 && image.getWidth(null) > maxSize) 
-         || (mapImage.height == -1 && image.getHeight(null) > maxSize)) {
-            return ImageProvider.createBoundedImage(image, maxSize);
-        } else {
-            return image;
-        }
-    }
-    
     @Override
     public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings settings, StyledMapRenderer painter, boolean selected, boolean member) {
         if (primitive instanceof Node) {
@@ -253,12 +241,12 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
                 final Image nodeIcon;
                 if (painter.isInactiveMode() || n.isDisabled()) {
                     if (disabledNodeIcon == null) {
-                        disabledNodeIcon = getRealNodeIcon(mapImage.getDisabled());
+                        disabledNodeIcon = mapImage.getDisplayedNodeIcon(true);
                     }
                     nodeIcon = disabledNodeIcon;
                 } else {
                     if (enabledNodeIcon == null) {
-                        enabledNodeIcon = getRealNodeIcon(mapImage.getImage());
+                        enabledNodeIcon = mapImage.getDisplayedNodeIcon(false);
                     }
                     nodeIcon = enabledNodeIcon;
                 }

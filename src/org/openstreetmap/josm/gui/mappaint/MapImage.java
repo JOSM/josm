@@ -149,6 +149,24 @@ public class MapImage {
     public BoxProvider getBoxProvider() {
         return new MapImageBoxProvider();
     }
+    
+    /**
+     * Returns the really displayed node icon for this {@code MapImage}.
+     * @param disabled {@code} true to request disabled version, {@code false} for the standard version
+     * @return The scaled down version to 16x16 pixels if the image size exceeds it and no size has been explicitely specified
+     * @since 6174
+     */
+    public Image getDisplayedNodeIcon(boolean disabled) {
+        final int maxSize = 16;
+        final Image image = disabled ? getDisabled() : getImage();
+        // Scale down large (.svg) images to 16x16 pixels if no size is explicitely specified
+        if ((width  == -1 && image.getWidth(null) > maxSize) 
+         || (height == -1 && image.getHeight(null) > maxSize)) {
+            return ImageProvider.createBoundedImage(image, maxSize);
+        } else {
+            return image;
+        }
+    }
 
     @Override
     public boolean equals(Object obj) {
