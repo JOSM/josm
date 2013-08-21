@@ -1,5 +1,4 @@
 // License: GPL. See LICENSE file for details.
-
 package org.openstreetmap.josm.gui.dialogs;
 
 import java.awt.Dimension;
@@ -10,13 +9,14 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import org.openstreetmap.josm.gui.MultiSplitPane;
 import org.openstreetmap.josm.gui.MultiSplitLayout.Divider;
 import org.openstreetmap.josm.gui.MultiSplitLayout.Leaf;
 import org.openstreetmap.josm.gui.MultiSplitLayout.Node;
 import org.openstreetmap.josm.gui.MultiSplitLayout.Split;
+import org.openstreetmap.josm.gui.MultiSplitPane;
+import org.openstreetmap.josm.tools.Destroyable;
 
-public class DialogsPanel extends JPanel {
+public class DialogsPanel extends JPanel implements Destroyable {
     protected List<ToggleDialog> allDialogs = new ArrayList<ToggleDialog>();
     protected MultiSplitPane mSpltPane = new MultiSplitPane();
     final protected int DIVIDER_SIZE = 5;
@@ -291,6 +291,7 @@ public class DialogsPanel extends JPanel {
         }
     }
 
+    @Override
     public void destroy() {
         for (ToggleDialog t : allDialogs) {
             t.destroy();

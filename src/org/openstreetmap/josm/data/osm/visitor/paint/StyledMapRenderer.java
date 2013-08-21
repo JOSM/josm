@@ -5,6 +5,7 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -28,9 +29,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.swing.AbstractButton;
 import javax.swing.FocusManager;
-import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -903,11 +904,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     }
 
     public void drawRestriction(Image img, Point pVia, double vx, double vx2, double vy, double vy2, double angle, boolean selected) {
-        /* rotate image with direction last node in from to */
-        Image rotatedImg = ImageProvider.createRotatedImage(null , img, angle);
-
-        /* scale down image to 16*16 pixels */
-        Image smallImg = new ImageIcon(rotatedImg.getScaledInstance(16 , 16, Image.SCALE_SMOOTH)).getImage();
+        // rotate image with direction last node in from to, and scale down image to 16*16 pixels
+        Image smallImg = ImageProvider.createRotatedImage(img, angle, new Dimension(16, 16));
         int w = smallImg.getWidth(null), h=smallImg.getHeight(null);
         g.drawImage(smallImg, (int)(pVia.x+vx+vx2)-w/2, (int)(pVia.y+vy+vy2)-h/2, nc);
 

@@ -3,7 +3,6 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -82,9 +81,14 @@ public class ImageProvider {
         NORTHWEST, NORTHEAST, SOUTHWEST, SOUTHEAST
     }
 
+    /**
+     * Supported image types
+     */
     public static enum ImageType {
-        SVG,    // scalable vector graphics
-        OTHER   // everything else, e.g. png, gif (must be supported by Java)
+        /** Scalable vector graphics */
+        SVG,
+        /** Everything else, e.g. png, gif (must be supported by Java) */
+        OTHER
     }
 
     protected Collection<String> dirs;
@@ -106,15 +110,21 @@ public class ImageProvider {
     /**
      * The icon cache
      */
-    private static Map<String, ImageResource> cache = new HashMap<String, ImageResource>();
+    private static final Map<String, ImageResource> cache = new HashMap<String, ImageResource>();
 
-    private final static ExecutorService imageFetcher = Executors.newSingleThreadExecutor();
+    /**
+     * Caches the image data for rotated versions of the same image.
+     */
+    private static final Map<Image, Map<Long, ImageResource>> rotateCache = new HashMap<Image, Map<Long, ImageResource>>();
+
+    private static final ExecutorService imageFetcher = Executors.newSingleThreadExecutor();
 
     public interface ImageCallback {
         void finished(ImageIcon result);
     }
 
     /**
+     * Constructs a new {@code ImageProvider} from a filename in a given directory.
      * @param subdir    subdirectory the image lies in
      * @param name      the name of the image. If it does not end with '.png' or '.svg',
      *                  both extensions are tried.
@@ -124,12 +134,19 @@ public class ImageProvider {
         this.name = name;
     }
 
+    /**
+     * Constructs a new {@code ImageProvider} from a filename.
+     * @param name      the name of the image. If it does not end with '.png' or '.svg',
+     *                  both extensions are tried.
+     */
     public ImageProvider(String name) {
         this.name = name;
     }
 
     /**
      * Directories to look for the image.
+     * @param dirs The directories to look for.
+     * @return the current object, for convenience
      */
     public ImageProvider setDirs(Collection<String> dirs) {
         this.dirs = dirs;
@@ -140,6 +157,7 @@ public class ImageProvider {
      * Set an id used for caching.
      * If name starts with <tt>http://</tt> Id is not used for the cache.
      * (A URL is unique anyway.)
+     * @return the current object, for convenience
      */
     public ImageProvider setId(String id) {
         this.id = id;
@@ -150,6 +168,7 @@ public class ImageProvider {
      * Specify a zip file where the image is located.
      *
      * (optional)
+     * @return the current object, for convenience
      */
     public ImageProvider setArchive(File archive) {
         this.archive = archive;
@@ -162,6 +181,7 @@ public class ImageProvider {
      * The subdir and name will be relative to this path.
      *
      * (optional)
+     * @return the current object, for convenience
      */
     public ImageProvider setInArchiveDir(String inArchiveDir) {
         this.inArchiveDir = inArchiveDir;
@@ -174,6 +194,7 @@ public class ImageProvider {
      * If not specified, the original size of the image is used.
      * The width part of the dimension can be -1. Then it will only set the height but
      * keep the aspect ratio. (And the other way around.)
+     * @return the current object, for convenience
      */
     public ImageProvider setSize(Dimension size) {
         this.width = size.width;
@@ -183,6 +204,7 @@ public class ImageProvider {
 
     /**
      * @see #setSize
+     * @return the current object, for convenience
      */
     public ImageProvider setWidth(int width) {
         this.width = width;
@@ -191,6 +213,7 @@ public class ImageProvider {
 
     /**
      * @see #setSize
+     * @return the current object, for convenience
      */
     public ImageProvider setHeight(int height) {
         this.height = height;
@@ -204,6 +227,7 @@ public class ImageProvider {
      * The given width or height can be -1 which means this direction is not bounded.
      *
      * 'size' and 'maxSize' are not compatible, you should set only one of them.
+     * @return the current object, for convenience
      */
     public ImageProvider setMaxSize(Dimension maxSize) {
         this.maxWidth = maxSize.width;
@@ -213,6 +237,7 @@ public class ImageProvider {
 
     /**
      * Convenience method, see {@link #setMaxSize(Dimension)}.
+     * @return the current object, for convenience
      */
     public ImageProvider setMaxSize(int maxSize) {
         return this.setMaxSize(new Dimension(maxSize, maxSize));
@@ -220,6 +245,7 @@ public class ImageProvider {
 
     /**
      * @see #setMaxSize
+     * @return the current object, for convenience
      */
     public ImageProvider setMaxWidth(int maxWidth) {
         this.maxWidth = maxWidth;
@@ -228,6 +254,7 @@ public class ImageProvider {
 
     /**
      * @see #setMaxSize
+     * @return the current object, for convenience
      */
     public ImageProvider setMaxHeight(int maxHeight) {
         this.maxHeight = maxHeight;
@@ -252,6 +279,7 @@ public class ImageProvider {
      * Suppresses warning on the command line in case the image cannot be found.
      *
      * In combination with setOptional(true);
+     * @return the current object, for convenience
      */
     public ImageProvider setSuppressWarnings(boolean suppressWarnings) {
         this.suppressWarnings = suppressWarnings;
@@ -260,6 +288,7 @@ public class ImageProvider {
 
     /**
      * Add a collection of additional class loaders to search image for.
+     * @return the current object, for convenience
      */
     public ImageProvider setAdditionalClassLoaders(Collection<ClassLoader> additionalClassLoaders) {
         this.additionalClassLoaders = additionalClassLoaders;
@@ -388,8 +417,6 @@ public class ImageProvider {
                 }
             } catch (UnsupportedEncodingException ex) {
                 throw new RuntimeException(ex.getMessage(), ex);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex.getMessage(), ex);
             }
 
             ImageType type = name.toLowerCase().endsWith(".svg") ? ImageType.SVG : ImageType.OTHER;
@@ -481,8 +508,9 @@ public class ImageProvider {
     }
 
     private static ImageResource getIfAvailableHttp(String url, ImageType type) {
+        MirroredInputStream is = null;
         try {
-            MirroredInputStream is = new MirroredInputStream(url,
+            is = new MirroredInputStream(url,
                     new File(Main.pref.getCacheDirectory(), "images").getPath());
             switch (type) {
             case SVG:
@@ -500,6 +528,8 @@ public class ImageProvider {
             }
         } catch (IOException e) {
             return null;
+        } finally {
+            Utils.close(is);
         }
     }
 
@@ -790,62 +820,107 @@ public class ImageProvider {
     /**
      * Creates a rotated version of the input image.
      *
-     * @param c The component to get properties useful for painting, e.g. the foreground or
-     * background color.
      * @param img the image to be rotated.
      * @param rotatedAngle the rotated angle, in degree, clockwise. It could be any double but we
-     * will mod it with 360 before using it.
+     * will mod it with 360 before using it. More over for caching performance, it will be rounded to 
+     * an entire value between 0 and 360.
      *
      * @return the image after rotating.
+     * @since 6172
      */
-    public static Image createRotatedImage(Component c, Image img, double rotatedAngle) {
-        // convert rotatedAngle to a value from 0 to 360
-        double originalAngle = rotatedAngle % 360;
+    public static Image createRotatedImage(Image img, double rotatedAngle) {
+        return createRotatedImage(img, rotatedAngle, ImageResource.DEFAULT_DIMENSION);
+    }
+    
+    /**
+     * Creates a rotated version of the input image, scaled to the given dimension.
+     *
+     * @param img the image to be rotated.
+     * @param rotatedAngle the rotated angle, in degree, clockwise. It could be any double but we
+     * will mod it with 360 before using it. More over for caching performance, it will be rounded to 
+     * an entire value between 0 and 360.
+     * @param dimension The requested dimensions. Use (-1,-1) for the original size
+     * and (width, -1) to set the width, but otherwise scale the image proportionally.
+     * @return the image after rotating and scaling.
+     * @since 6172
+     */
+    public static Image createRotatedImage(Image img, double rotatedAngle, Dimension dimension) {
+        CheckParameterUtil.ensureParameterNotNull(img, "img");
+        
+        // convert rotatedAngle to an integer value from 0 to 360
+        Long originalAngle = Math.round(rotatedAngle % 360);
         if (rotatedAngle != 0 && originalAngle == 0) {
-            originalAngle = 360.0;
+            originalAngle = 360L;
         }
+        
+        ImageResource imageResource = null;
 
-        // convert originalAngle to a value from 0 to 90
-        double angle = originalAngle % 90;
-        if (originalAngle != 0.0 && angle == 0.0) {
-            angle = 90.0;
+        synchronized (rotateCache) {
+            Map<Long, ImageResource> cacheByAngle = rotateCache.get(img);
+            if (cacheByAngle == null) {
+                rotateCache.put(img, cacheByAngle = new HashMap<Long, ImageResource>());
+            }
+            
+            imageResource = cacheByAngle.get(originalAngle);
+            
+            if (imageResource == null) {
+                // convert originalAngle to a value from 0 to 90
+                double angle = originalAngle % 90;
+                if (originalAngle != 0.0 && angle == 0.0) {
+                    angle = 90.0;
+                }
+        
+                double radian = Math.toRadians(angle);
+        
+                new ImageIcon(img); // load completely
+                int iw = img.getWidth(null);
+                int ih = img.getHeight(null);
+                int w;
+                int h;
+        
+                if ((originalAngle >= 0 && originalAngle <= 90) || (originalAngle > 180 && originalAngle <= 270)) {
+                    w = (int) (iw * Math.sin(DEGREE_90 - radian) + ih * Math.sin(radian));
+                    h = (int) (iw * Math.sin(radian) + ih * Math.sin(DEGREE_90 - radian));
+                } else {
+                    w = (int) (ih * Math.sin(DEGREE_90 - radian) + iw * Math.sin(radian));
+                    h = (int) (ih * Math.sin(radian) + iw * Math.sin(DEGREE_90 - radian));
+                }
+                Image image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+                cacheByAngle.put(originalAngle, imageResource = new ImageResource(image));
+                Graphics g = image.getGraphics();
+                Graphics2D g2d = (Graphics2D) g.create();
+        
+                // calculate the center of the icon.
+                int cx = iw / 2;
+                int cy = ih / 2;
+        
+                // move the graphics center point to the center of the icon.
+                g2d.translate(w / 2, h / 2);
+        
+                // rotate the graphics about the center point of the icon
+                g2d.rotate(Math.toRadians(originalAngle));
+        
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                g2d.drawImage(img, -cx, -cy, null);
+        
+                g2d.dispose();
+                new ImageIcon(image); // load completely
+            }
+            return imageResource.getImageIcon(dimension).getImage();
         }
-
-        double radian = Math.toRadians(angle);
-
-        new ImageIcon(img); // load completely
-        int iw = img.getWidth(null);
-        int ih = img.getHeight(null);
-        int w;
-        int h;
-
-        if ((originalAngle >= 0 && originalAngle <= 90) || (originalAngle > 180 && originalAngle <= 270)) {
-            w = (int) (iw * Math.sin(DEGREE_90 - radian) + ih * Math.sin(radian));
-            h = (int) (iw * Math.sin(radian) + ih * Math.sin(DEGREE_90 - radian));
-        } else {
-            w = (int) (ih * Math.sin(DEGREE_90 - radian) + iw * Math.sin(radian));
-            h = (int) (ih * Math.sin(radian) + iw * Math.sin(DEGREE_90 - radian));
-        }
-        BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = image.getGraphics();
-        Graphics2D g2d = (Graphics2D) g.create();
-
-        // calculate the center of the icon.
-        int cx = iw / 2;
-        int cy = ih / 2;
-
-        // move the graphics center point to the center of the icon.
-        g2d.translate(w / 2, h / 2);
-
-        // rotate the graphics about the center point of the icon
-        g2d.rotate(Math.toRadians(originalAngle));
-
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        g2d.drawImage(img, -cx, -cy, c);
-
-        g2d.dispose();
-        new ImageIcon(image); // load completely
-        return image;
+    }
+    
+    /**
+     * Creates a scaled down version of the input image to fit maximum dimensions. (Keeps aspect ratio)
+     *
+     * @param img the image to be scaled down.
+     * @param maxSize the maximum size in pixels (both for width and height) 
+     *
+     * @return the image after scaling.
+     * @since 6172
+     */
+    public static Image createBoundedImage(Image img, int maxSize) {
+        return new ImageResource(img).getImageIconBounded(new Dimension(maxSize, maxSize)).getImage();
     }
 
     /**
@@ -885,7 +960,7 @@ public class ImageProvider {
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = img.createGraphics();
         g.setClip(0, 0, width, height);
-        if (scaleX != null) {
+        if (scaleX != null && scaleY != null) {
             g.scale(scaleX, scaleY);
         }
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
