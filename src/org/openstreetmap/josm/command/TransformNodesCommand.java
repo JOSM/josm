@@ -11,7 +11,6 @@ import java.util.Map;
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
@@ -29,31 +28,18 @@ public abstract class TransformNodesCommand extends Command {
      */
     protected Collection<Node> nodes = new LinkedList<Node>();
 
-    /**
-     * Small helper for holding the interesting part of the old data state of the
-     * nodes.
-     */
-    public static class OldState {
-        LatLon latlon;
-        EastNorth eastNorth;
-        boolean modified;
-    }
 
     /**
      * List of all old states of the nodes.
      */
-    protected Map<Node, OldState> oldStates = new HashMap<Node, OldState>();
+    protected Map<Node, OldNodeState> oldStates = new HashMap<Node, OldNodeState>();
 
     /**
      * Stores the state of the nodes before the command.
      */
     protected void storeOldState() {
         for (Node n : this.nodes) {
-            OldState os = new OldState();
-            os.latlon = new LatLon(n.getCoor());
-            os.eastNorth = n.getEastNorth();
-            os.modified = n.isModified();
-            oldStates.put(n, os);
+            oldStates.put(n, new OldNodeState(n));
         }
     }
 
@@ -106,7 +92,7 @@ public abstract class TransformNodesCommand extends Command {
     @Override
     public void undoCommand() {
         for (Node n : nodes) {
-            OldState os = oldStates.get(n);
+            OldNodeState os = oldStates.get(n);
             n.setCoor(os.latlon);
             n.setModified(os.modified);
         }
