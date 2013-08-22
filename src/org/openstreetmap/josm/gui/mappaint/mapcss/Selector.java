@@ -107,7 +107,7 @@ public interface Selector {
                 for (int i=0; i<w.getNodesCount(); i++) {
                     Node n = w.getNode(i);
                     if (n.equals(e.osm)) {
-                        if (link.matches(e.withParent(w).withIndex(i).withLinkContext())) {
+                        if (link.matches(e.withParentAndIndexAndLinkContext(w, i))) {
                             e.parent = w;
                             e.index = i;
                             return;
@@ -129,7 +129,7 @@ public interface Selector {
                 for (int i=0; i < r.getMembersCount(); i++) {
                     RelationMember m = r.getMember(i);
                     if (m.getMember().equals(e.osm)) {
-                        if (link.matches(e.withParent(r).withIndex(i).withLinkContext())) {
+                        if (link.matches(e.withParentAndIndexAndLinkContext(r, i))) {
                             e.parent = r;
                             e.index = i;
                             return;
@@ -155,7 +155,7 @@ public interface Selector {
                     for (int i=0; i<wayNodes.size(); i++) {
                         Node n = wayNodes.get(i);
                         if (left.matches(e.withPrimitive(n))) {
-                            if (link.matches(e.withChild(n).withIndex(i).withLinkContext())) {
+                            if (link.matches(e.withChildAndIndexAndLinkContext(n, i))) {
                                 e.child = n;
                                 e.index = i;
                                 return true;
@@ -168,7 +168,7 @@ public interface Selector {
                     for (int i=0; i<members.size(); i++) {
                         OsmPrimitive member = members.get(i).getMember();
                         if (left.matches(e.withPrimitive(member))) {
-                            if (link.matches(e.withChild(member).withIndex(i).withLinkContext())) {
+                            if (link.matches(e.withChildAndIndexAndLinkContext(member, i))) {
                                 e.child = member;
                                 e.index = i;
                                 return true;

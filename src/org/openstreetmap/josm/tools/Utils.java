@@ -400,6 +400,8 @@ public class Utils {
         return toHexString(byteDigest);
     }
 
+    private static final char[] HEX_ARRAY = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+
     /**
      * Converts a byte array to a string of hexadecimal characters.
      * Preserves leading zeros, so the size of the output string is always twice
@@ -408,12 +410,21 @@ public class Utils {
      * @return hexadecimal representation
      */
     public static String toHexString(byte[] bytes) {
-        char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j=0; j<bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j*2] = hexArray[v/16];
-            hexChars[j*2 + 1] = hexArray[v%16];
+
+        if (bytes == null) {
+            return "";
+        }
+
+        final int len = bytes.length;
+        if (len == 0) {
+            return "";
+        }
+
+        char[] hexChars = new char[len * 2];
+        for (int i = 0, j = 0; i < len; i++) {
+            final int v = bytes[i];
+            hexChars[j++] = HEX_ARRAY[(v & 0xf0) >> 4];
+            hexChars[j++] = HEX_ARRAY[v & 0xf];
         }
         return new String(hexChars);
     }
