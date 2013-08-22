@@ -1400,11 +1400,11 @@ Note that for a match, at least one positive and no negative is required.
         <separator/>
 
         <!-- *** access *** -->
-        <item name="Entrance" icon="styles/standard/vehicle/entrance.png" type="node">
+        <item name="Entrance (barrier opening)" icon="styles/standard/vehicle/entrance.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=entrance"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=entrance"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=entrance" />
-            <label text="Edit Entrance" />
+            <label text="Edit Entrance (barrier opening)" />
             <space />
             <key key="barrier" value="entrance" />
             <label text="Allowed traffic:" />
@@ -4678,6 +4678,18 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Residential Building" />
             <combo key="building" text="Building" values="residential,apartments,house,hut,terrace,detached,roof" default="residential" match="keyvalue" />
             <text key="name" text="Name" />
+        </item>
+        <item name="Entrance" icon="styles/standard/misc/entrance-yes.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:entrance"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:entrance"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:entrance"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:entrance"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:entrance"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:entrance" />
+            <label text="Edit Entrance" />
+            <combo key="entrance" text="Entrance" values="yes,main,service,exit,emergency" default="yes" match="key" />
+            <combo key="access" text="Access" values="yes,delivery,private,no" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" />
         </item>
         <item name="Tower" icon="presets/tower.png" type="node,closedway">
             <label text="Edit Tower" />

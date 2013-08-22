@@ -118,6 +118,11 @@ public class DeprecatedTags extends Test {
                 test("fence_type", "chain").
                 alternative("barrier", "chain").
                 alternative("fence_type", "chain_link"));
+        // http://wiki.openstreetmap.org/wiki/Key:entrance
+        // see #9000
+        checks.add(new DeprecationCheck(2123).
+                test("building", "entrance").
+                alternative("entrance"));
     }
 
     /**
