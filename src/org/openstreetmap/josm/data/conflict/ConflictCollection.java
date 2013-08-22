@@ -36,17 +36,28 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
     private final List<Conflict<? extends OsmPrimitive>> conflicts;
     private CopyOnWriteArrayList<IConflictListener> listeners;
 
+    /**
+     * Constructs a new {@code ConflictCollection}.
+     */
     public ConflictCollection() {
-        conflicts = new ArrayList<Conflict<?>>();
+        conflicts = new ArrayList<Conflict<? extends OsmPrimitive>>();
         listeners = new CopyOnWriteArrayList<IConflictListener>();
     }
 
+    /**
+     * Adds the specified conflict listener, if not already present.
+     * @param listener The conflict listener to add
+     */
     public void addConflictListener(IConflictListener listener) {
         if (listener != null) {
             listeners.addIfAbsent(listener);
         }
     }
 
+    /**
+     * Removes the specified conflict listener.
+     * @param listener The conflict listener to remove
+     */
     public void removeConflictListener(IConflictListener listener) {
         listeners.remove(listener);
     }

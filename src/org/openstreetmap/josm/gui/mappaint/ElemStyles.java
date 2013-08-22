@@ -235,6 +235,7 @@ public class ElemStyles {
                     for (ElemStyle s : p.a) {
                         if (s.isProperLineStyle() || s instanceof AreaElemStyle) {
                             hasIndependentElemStyle = true;
+                            break;
                         }
                     }
                     if (!hasIndependentElemStyle && !multipolygon.getOuterWays().isEmpty()) {
