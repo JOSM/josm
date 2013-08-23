@@ -35,6 +35,12 @@ public class LatLon extends Coordinate {
     public static final double MAX_SERVER_INV_PRECISION = 1e7;
     public static final int    MAX_SERVER_DIGITS = 7;
 
+    /**
+     * The (0,0) coordinates.
+     * @since 6178
+     */
+    public static final LatLon ZERO = new LatLon(0, 0);
+    
     private static DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
     private static DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
     private static DecimalFormat cDmMinuteFormatter = new DecimalFormat("00.000");
