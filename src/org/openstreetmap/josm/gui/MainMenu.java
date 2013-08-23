@@ -123,51 +123,88 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class MainMenu extends JMenuBar {
 
     /* File menu */
+    /** File -> New Layer **/
     public final NewAction newAction = new NewAction();
+    /** File -> Open... **/
     public final OpenFileAction openFile = new OpenFileAction();
+    /** File -> Open Recent > **/
     public final RecentlyOpenedFilesMenu recentlyOpened = new RecentlyOpenedFilesMenu();
+    /** File -> Open Location... **/
     public final OpenLocationAction openLocation = new OpenLocationAction();
-    public final JosmAction save = SaveAction.getInstance();
-    public final JosmAction saveAs = SaveAsAction.getInstance();
-    public JosmAction sessionLoad;
-    public JosmAction sessionSaveAs;
-    public final JosmAction gpxExport = new GpxExportAction();
+    /** File -> Save **/
+    public final SaveAction save = SaveAction.getInstance();
+    /** File -> Save As... **/
+    public final SaveAsAction saveAs = SaveAsAction.getInstance();
+    /** File -> Session > Load Session **/
+    public SessionLoadAction sessionLoad;
+    /** File -> Session > Save Session As... **/
+    public SessionSaveAsAction sessionSaveAs;
+    /** File -> Export to GPX... **/
+    public final GpxExportAction gpxExport = new GpxExportAction();
+    /** File -> Download from OSM... **/
     public final DownloadAction download = new DownloadAction();
+    /** File -> Download object... **/
     public final DownloadPrimitiveAction downloadPrimitive = new DownloadPrimitiveAction();
+    /** File -> Download parent ways/relations... **/
     public final DownloadReferrersAction downloadReferrers = new DownloadReferrersAction();
+    /** File -> Close open changesets... **/
     public final CloseChangesetAction closeChangesetAction = new CloseChangesetAction();
+    /** File -> Update data **/
     public final JosmAction update = new UpdateDataAction();
+    /** File -> Update selection **/
     public final JosmAction updateSelection = new UpdateSelectionAction();
+    /** File -> Update modified **/
     public final JosmAction updateModified = new UpdateModifiedAction();
+    /** File -> Upload data **/
     public final JosmAction upload = new UploadAction();
+    /** File -> Upload selection **/
     public final JosmAction uploadSelection = new UploadSelectionAction();
-    public final JosmAction restart = new RestartAction();
-    public final JosmAction exit = new ExitAction();
+    /** File -> Restart **/
+    public final RestartAction restart = new RestartAction();
+    /** File -> Exit **/
+    public final ExitAction exit = new ExitAction();
 
     /* Edit menu */
+    /** Edit -> Undo... */
     public final UndoAction undo = new UndoAction();
+    /** Edit -> Redo */
     public final RedoAction redo = new RedoAction();
-    public final JosmAction copy = new CopyAction();
+    /** Edit -> Copy */
+    public final CopyAction copy = new CopyAction();
+    /** Edit -> Copy Coordinates */
     public final JosmAction copyCoordinates = new CopyCoordinatesAction();
+    /** Edit -> Paste */
     public final PasteAction paste = new PasteAction();
-    public final JosmAction pasteTags = new PasteTagsAction();
-    public final JosmAction duplicate = new DuplicateAction();
-    public final JosmAction delete = new DeleteAction();
+    /** Edit -> Paste Tags */
+    public final PasteTagsAction pasteTags = new PasteTagsAction();
+    /** Edit -> Duplicate */
+    public final DuplicateAction duplicate = new DuplicateAction();
+    /** Edit -> Delete */
+    public final DeleteAction delete = new DeleteAction();
+    /** Edit -> Purge... */
     public final JosmAction purge = new PurgeAction();
-    public final JosmAction merge = new MergeLayerAction();
-    public final JosmAction mergeSelected = new MergeSelectionAction();
-    public final JosmAction selectAll = new SelectAllAction();
-    public final JosmAction unselectAll = new UnselectAllAction();
-    public final JosmAction search = new SearchAction();
-    public final JosmAction preferences = new PreferencesAction();
+    /** Edit -> Merge layer */
+    public final MergeLayerAction merge = new MergeLayerAction();
+    /** Edit -> Merge selection */
+    public final MergeSelectionAction mergeSelected = new MergeSelectionAction();
+    /** Edit -> Search... */
+    public final SearchAction search = new SearchAction();
+    /** Edit -> Preferences */
+    public final PreferencesAction preferences = new PreferencesAction();
 
     /* View menu */
+    /** View -> Wireframe View */
     public final WireframeToggleAction wireFrameToggleAction = new WireframeToggleAction();
     public final JosmAction toggleGPXLines = new ToggleGPXLinesAction();
+    /** View -> Advanced info */
     public final InfoAction info = new InfoAction();
+    /** View -> Advanced info (web) */
     public final InfoWebAction infoweb = new InfoWebAction();
+    /** View -> History */
     public final HistoryInfoAction historyinfo = new HistoryInfoAction();
+    /** View -> History (web) */
     public final HistoryInfoWebAction historyinfoweb = new HistoryInfoWebAction();
+    /** View -> "Zoom to"... actions */
     public final Map<String, AutoScaleAction> autoScaleActions = new HashMap<String, AutoScaleAction>();
 
     /* Tools menu */
@@ -191,6 +228,12 @@ public class MainMenu extends JMenuBar {
     public final JosmAction joinAreas = new JoinAreasAction();
     public final JosmAction createMultipolygon = new CreateMultipolygonAction();
 
+    /* Selection menu */
+    /** Selection -> Select All */
+    public final SelectAllAction selectAll = new SelectAllAction();
+    /** Selection -> Unselect All */
+    public final UnselectAllAction unselectAll = new UnselectAllAction();
+
     /* Audio menu */
     public final JosmAction audioPlayPause = new AudioPlayPauseAction();
     public final JosmAction audioNext = new AudioNextAction();
@@ -200,14 +243,33 @@ public class MainMenu extends JMenuBar {
     public final JosmAction audioFaster = new AudioFasterAction();
     public final JosmAction audioSlower = new AudioSlowerAction();
 
+    /* Windows Menu */
+    /** Windows -> Changeset Manager */
+    public final ChangesetManagerToggleAction changesetManager = new ChangesetManagerToggleAction();
+    
     /* Help menu */
+    /** Help -> Help */
     public final HelpAction help = new HelpAction();
-    public final JosmAction about = new AboutAction();
-    public final JosmAction statusreport = new ShowStatusReportAction();
+    /** Help -> About */
+    public final AboutAction about = new AboutAction();
+    /** Help -> Show Status Report */
+    public final ShowStatusReportAction statusreport = new ShowStatusReportAction();
 
+    /**
+     * fileMenu contains I/O actions
+     */
     public final JMenu fileMenu = addMenu(marktr("File"), KeyEvent.VK_F, 0, ht("/Menu/File"));
-    public final JMenu sessionMenu = new JMenu(tr("Session")); // submenu of the file menu
+    /**
+     * sessionMenu is a submenu of File menu containing all session actions
+     */
+    public final JMenu sessionMenu = new JMenu(tr("Session"));
+    /**
+     * editMenu contains editing actions
+     */
     public final JMenu editMenu = addMenu(marktr("Edit"), KeyEvent.VK_E, 1, ht("/Menu/Edit"));
+    /**
+     * viewMenu contains display actions (zoom, map styles, etc.)
+     */
     public final JMenu viewMenu = addMenu(marktr("View"), KeyEvent.VK_V, 2, ht("/Menu/View"));
     /**
      * toolsMenu contains different geometry manipulation actions from JOSM core (most used)
@@ -225,20 +287,25 @@ public class MainMenu extends JMenuBar {
      * @since 6082 
      */    
     public final JMenu dataMenu = addMenu(marktr("Data"), KeyEvent.VK_D, 5, ht("/Menu/Data"));
-     /**
+    /**
      * selectionMenu contains all actions related to selecting different objects
      * @since 6082 (moved from Utilsplugin2)
      */
     public final JMenu selectionMenu = addMenu(marktr("Selection"), KeyEvent.VK_N, 6, ht("/Menu/Selection"));
+    /**
+     * presetsMenu contains presets actions (search, presets tree)
+     */
     public final JMenu presetsMenu = addMenu(marktr("Presets"), KeyEvent.VK_P, 7, ht("/Menu/Presets"));
     /**
      * submenu in Imagery menu that contains plugin-managed additional imagery layers 
      * @since 6097
      */
     public final JMenu imagerySubMenu = new JMenu(tr("More..."));
-    public final ImageryMenu imageryMenu =
-        (ImageryMenu)addMenu(new ImageryMenu(imagerySubMenu), marktr("Imagery"), KeyEvent.VK_I, 8, ht("/Menu/Imagery"));
-     /**
+    /**
+     * imageryMenu contains all imagery-related actions
+     */
+    public final ImageryMenu imageryMenu = addMenu(new ImageryMenu(imagerySubMenu), marktr("Imagery"), KeyEvent.VK_I, 8, ht("/Menu/Imagery"));
+    /**
      * gpsMenu contains all plugin actions that are related
      * to using GPS data, including opening, uploading and real-time tracking
      * @since 6082 
@@ -252,7 +319,13 @@ public class MainMenu extends JMenuBar {
     public final JMenu windowMenu = addMenu(marktr("Windows"), KeyEvent.VK_W, 10, ht("/Menu/Windows"));
     public static enum WINDOW_MENU_GROUP { ALWAYS, TOGGLE_DIALOG, VOLATILE }
 
+    /**
+     * audioMenu contains all audio-related actions. Be careful, this menu is not guaranteed to be displayed at all
+     */
     public JMenu audioMenu = null;
+    /**
+     * helpMenu contains JOSM general actions (Help, About, etc.)
+     */
     public final JMenu helpMenu = addMenu(marktr("Help"), KeyEvent.VK_H, 11, ht("/Menu/Help"));
 
     private final int defaultMenuPos = 11;
@@ -394,6 +467,7 @@ public class MainMenu extends JMenuBar {
      * @param action the action that should get a menu item
      * @param group the item should be added to. Groups are split by a separator.
      *        0 is the first group, -1 will add the item to the end.
+     * @return The created menu item
      */
     public static <E extends Enum<E>> JMenuItem add(JMenu menu, JosmAction action, Enum<E> group) {
         if (action.getShortcut().getAutomatic())
@@ -415,6 +489,7 @@ public class MainMenu extends JMenuBar {
      * @param group the item should be added to. Groups are split by a separator. Use
      *        one of the enums that are defined for some of the menus to tell in which
      *        group the item should go.
+     * @return The created menu item
      */
     public static <E extends Enum<E>> JCheckBoxMenuItem addWithCheckbox(JMenu menu, JosmAction action, Enum<E> group) {
         int i = getInsertionIndexForGroup(menu, group.ordinal());
@@ -458,7 +533,7 @@ public class MainMenu extends JMenuBar {
         return addMenu(menu, name, mnemonicKey, position, relativeHelpTopic);
     }
 
-    public JMenu addMenu(JMenu menu, String name, int mnemonicKey, int position, String relativeHelpTopic) {
+    public <T extends JMenu> T addMenu(T menu, String name, int mnemonicKey, int position, String relativeHelpTopic) {
         Shortcut.registerShortcut("menu:" + name, tr("Menu: {0}", tr(name)), mnemonicKey,
                 Shortcut.MNEMONIC).setMnemonic(menu);
         add(menu, position);
@@ -466,6 +541,9 @@ public class MainMenu extends JMenuBar {
         return menu;
     }
 
+    /**
+     * Constructs a new {@code MainMenu}.
+     */
     public MainMenu() {
         JMenuItem current;
         
@@ -613,10 +691,9 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, createMultipolygon);
 
         // -- changeset manager toggle action
-        ChangesetManagerToggleAction changesetManagerToggleAction = new ChangesetManagerToggleAction();
-        final JCheckBoxMenuItem mi = MainMenu.addWithCheckbox(windowMenu, changesetManagerToggleAction,
+        final JCheckBoxMenuItem mi = MainMenu.addWithCheckbox(windowMenu, changesetManager,
                 MainMenu.WINDOW_MENU_GROUP.ALWAYS);
-        changesetManagerToggleAction.addButtonModel(mi.getModel());
+        changesetManager.addButtonModel(mi.getModel());
 
         if (!Main.pref.getBoolean("audio.menuinvisible", false)) {
             showAudioMenu(true);
