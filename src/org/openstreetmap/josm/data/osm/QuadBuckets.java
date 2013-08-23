@@ -42,7 +42,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         private List<T> content;
         // child order by index is sw, nw, se, ne
         private QBLevel<T> nw, ne, sw, se;
-        private boolean hasChild;
 
         private final QuadBuckets<T> buckets;
 
@@ -51,25 +50,21 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             case NE_INDEX:
                 if (ne == null) {
                     ne = new QBLevel<T>(this, index, buckets);
-                    hasChild = true;
                 }
                 return ne;
             case NW_INDEX:
                 if (nw == null) {
                     nw = new QBLevel<T>(this, index, buckets);
-                    hasChild = true;
                 }
                 return nw;
             case SE_INDEX:
                 if (se == null) {
                     se = new QBLevel<T>(this, index, buckets);
-                    hasChild = true;
                 }
                 return se;
             case SW_INDEX:
                 if (sw == null) {
                     sw = new QBLevel<T>(this, index, buckets);
-                    hasChild = true;
                 }
                 return sw;
             default:
@@ -220,7 +215,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         }
 
         boolean hasChildren() {
-            return hasChild;
+            return nw != null || ne != null || sw != null || se != null;
         }
 
         QBLevel<T> next_sibling() {
