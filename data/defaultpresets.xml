@@ -1707,6 +1707,14 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
         </item>
+        <item name="Wadi" icon="presets/waterway.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=wadi" />
+            <label text="Edit Wadi" />
+            <space />
+            <key key="waterway" value="wadi" />
+            <text key="name" text="Name" />
+            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
+        </item>
         <item name="Canal" icon="presets/waterway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=canal"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:waterway=canal"
