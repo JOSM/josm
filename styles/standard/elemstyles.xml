@@ -830,6 +830,12 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
+    <rule>
+        <condition k="waterway" v="wadi"/>
+        <line width="2" realwidth="2" colour="water#0000ff" dashed="true"/>
+        <icon annotate="true" src="misc/deprecated.png"/>
+    </rule>
+
 	<rule>
 		<condition k="waterway" v="stream"/>
 		<line width="1" realwidth="1" colour="stream#6600cc"/>
