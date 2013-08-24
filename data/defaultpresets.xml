@@ -678,6 +678,7 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="emergency" text="Emergency vehicles" values="yes,official,designated,destination,permissive,private,no" match="keyvalue" />
             <combo key="hov" text="High-occupancy vehicles (hov)" values="yes,official,designated,destination,permissive,private,no" match="key" />
             <combo key="psv" text="Public Service Vehicles (psv)" values="yes,official,designated,destination,permissive,private,no" match="key" />
+            <combo key="tourist_bus" text="Tourist buses" values="yes,no" match="key" />
             <text key="maxspeed" text="Max. speed (km/h)" />
             <text key="minspeed" text="Min. speed (km/h)" match="key" />
             <text key="maxweight" text="Max. weight (tonnes)" match="key" />
