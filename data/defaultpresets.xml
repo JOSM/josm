@@ -818,7 +818,7 @@ Note that for a match, at least one positive and no negative is required.
                     <list_entry value="difficult_alpine_hiking" display_value="T6 - hazardous alpine trail with climbing" short_description="climbing up to second grade. Often very exposed, precarious jagged rocks, glacier with danger to slip and fall" />
                 </combo>
                 <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" />
-                <combo key="trail_visibility" text="Visibility" values="excellent,good,intermediate,bad,horrible,no" />
+                <combo key="trail_visibility" text="Visibility" values="excellent,good,intermediate,bad,horrible,no" values_context="trail_visibility" />
                 <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,no" />
                 <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,no" />
                 <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" />
@@ -2190,7 +2190,7 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="supervised" text="Supervised" default="off" />
                 <check key="crossing:light" text="Traffic lights" default="off" />
                 <check key="crossing:bell" text="Sound signals" default="off" />
-                <combo key="crossing:barrier" text="Barrier" values="yes,no,half,full,double_half" />
+                <combo key="crossing:barrier" text="Barrier" values="yes,no,half,full,double_half" values_context="crossing:barrier" />
             </optional>
         </item>
         <item name="Crossing" icon="presets/crossing.png" type="node">
@@ -2209,7 +2209,7 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="supervised" text="Supervised" default="off" />
                 <check key="crossing:light" text="Traffic lights" default="off" />
                 <check key="crossing:bell" text="Sound signals" default="off" />
-                <combo key="crossing:barrier" text="Barrier" values="yes,no,half,full,double_half" />
+                <combo key="crossing:barrier" text="Barrier" values="yes,no,half,full,double_half" values_context="crossing:barrier" />
             </optional>
         </item>
         <item name="Turntable" icon="presets/turntable.png" type="node,closedway">
@@ -4224,7 +4224,7 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Hunting Stand" icon="presets/hunting_stand.png" type="node">
             <label text="Edit Hunting Stand" />
             <key key="amenity" value="hunting_stand" />
-            <combo key="height" text="Height" values="low,half,full,5,10,15,20" />
+            <combo key="height" text="Height" values="low,half,full,5,10,15,20" values_context="height" />
             <combo key="shelter" text="Shelter" values="yes,no,unknown" />
             <combo key="hide" text="Hide" values="yes,no,unknown" />
             <combo key="lock" text="Lock" values="yes,no,unknown" />
@@ -4436,7 +4436,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="sport" value="skiing" />
             <text key="name" text="Name" />
             <combo key="piste:type" text="Piste type" values="downhill,nordic,skitour,snow_park" />
-            <combo key="piste:difficulty" text="Difficulty" values="novice,easy,intermediate,advanced,expert,freeride" />
+            <combo key="piste:difficulty" text="Difficulty" values="novice,easy,intermediate,advanced,expert,freeride" values_context="piste:difficulty" />
             <combo key="piste:grooming" text="Grooming" values="classic,mogul,skating,classic;skating,scooter,backcountry" />
         </item>
         <item name="Shooting" icon="presets/range.png" type="node,closedway">
