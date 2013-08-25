@@ -70,6 +70,8 @@
 
 	<complexType name="optional">
 		<group ref="tns:optional_elements" maxOccurs="unbounded" />
+        <attribute name="text" type="string" />
+        <attribute name="text_context" type="string" />
 	</complexType>
 
 	<group name="optional_elements">
