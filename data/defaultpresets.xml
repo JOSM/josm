@@ -1055,13 +1055,15 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=traffic_signals"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:highway=traffic_signals"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=traffic_signals" />
+            <label text="Edit Traffic Signal" />
+            <space />
             <key key="highway" value="traffic_signals" />
-            <optional>
+            <optional text="Optional crossing attributes:">
                  <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" />
-                 <check key="horse" text="Cross on horseback" default="off" />
-                 <check key="bicycle" text="Cross by bicycle" default="off" />
-                 <check key="supervised" text="Crossing attendant" default="off" />
                  <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
+                 <check key="supervised" text="Crossing attendant" default="off" />
+                 <check key="bicycle" text="Cross by bicycle" default="off" />
+                 <check key="horse" text="Cross on horseback" default="off" />
             </optional>
         </item>
         <item name="Stop" icon="presets/Stop.png" type="node">
@@ -1078,6 +1080,8 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:highway=mini_roundabout"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=mini_roundabout" />
             <key key="highway" value="mini_roundabout" />
+            <label text="Edit Mini-Roundabout" />
+            <space />
             <combo key="direction" text="Direction" values="clockwise" />
         </item>
         <item name="Pedestrian Crossing" icon="styles/standard/vehicle/zebra_crossing.png" type="node">
@@ -1088,13 +1092,14 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:crossing"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:crossing"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:crossing" />
-            <label text="Edit Crossing" />
+            <label text="Edit Pedestrian Crossing" />
+            <space />
             <key key="highway" value="crossing" />
-            <combo key="crossing" text="Type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" />
+            <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" />
+            <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
+            <check key="supervised" text="Crossing attendant" default="off" />
             <check key="bicycle" text="Cross by bicycle" default="off" />
             <check key="horse" text="Cross on horseback" default="off" />
-            <check key="supervised" text="Crossing attendant" default="off" />
-            <combo key="crossing_ref" text="Type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
         </item>
         <item name="Traffic Calming" icon="presets/chicane.png" type="node,way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"
@@ -1106,6 +1111,7 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming"/>
             <label text="Edit Traffic Calming" />
+            <space />
             <combo key="traffic_calming" text="Type" values="yes,bump,chicane,choker,cushion,hump,island,rumble_strip,table" match="key" />
         </item>
         <item name="Passing Place" icon="presets/passingplace.png" type="node">

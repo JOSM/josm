@@ -294,59 +294,80 @@ public final class TaggingPresetItems {
         }
     }
 
-    public static class Label extends TaggingPresetItem {
+    /**
+     * A tagging preset item displaying a localizable text.
+     * @since 6190
+     */
+    public static abstract class TaggingPresetTextItem extends TaggingPresetItem {
 
+        /**
+         * The text to display
+         */
         public String text;
+        
+        /**
+         * The context used for translating {@link #text}
+         */
         public String text_context;
+        
+        /**
+         * The localized version of {@link #text}
+         */
         public String locale_text;
 
-        @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
-            if (locale_text == null) {
-                if (text_context != null) {
-                    locale_text = trc(text_context, fixPresetString(text));
-                } else {
-                    locale_text = tr(fixPresetString(text));
-                }
-            }
-            p.add(new JLabel(locale_text), GBC.eol());
-            return false;
-        }
-
-        @Override
-        public void addCommands(List<Tag> changedTags) {
-        }
-
-        @Override
-        public String toString() {
-            return "Label ["
-                    + (text != null ? "text=" + text + ", " : "")
-                    + (text_context != null ? "text_context=" + text_context
-                            + ", " : "")
-                    + (locale_text != null ? "locale_text=" + locale_text : "")
-                    + "]";
-        }
-    }
-
-    public static class Link extends TaggingPresetItem {
-
-        public String href;
-        public String text;
-        public String text_context;
-        public String locale_text;
-        public String locale_href;
-
-        @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        protected final void initializeLocaleText(String defaultText) {
             if (locale_text == null) {
                 if (text == null) {
-                    locale_text = tr("More information about this feature");
+                    locale_text = defaultText;
                 } else if (text_context != null) {
                     locale_text = trc(text_context, fixPresetString(text));
                 } else {
                     locale_text = tr(fixPresetString(text));
                 }
             }
+        }
+
+        @Override
+        void addCommands(List<Tag> changedTags) {
+        }
+
+        protected String fieldsToString() {
+            return (text != null ? "text=" + text + ", " : "")
+                    + (text_context != null ? "text_context=" + text_context + ", " : "")
+                    + (locale_text != null ? "locale_text=" + locale_text : "");
+        }
+        
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + " [" + fieldsToString() + "]";
+        }
+    }
+
+    public static class Label extends TaggingPresetTextItem {
+
+        @Override
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+            initializeLocaleText(null);
+            p.add(new JLabel(locale_text), GBC.eol());
+            return false;
+        }
+    }
+
+    public static class Link extends TaggingPresetTextItem {
+
+        /**
+         * The link to display
+         */
+        public String href;
+        
+        /**
+         * The localized version of {@link #href}
+         */
+        public String locale_href;
+
+        @Override
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+            initializeLocaleText(tr("More information about this feature"));
             String url = locale_href;
             if (url == null) {
                 url = href;
@@ -358,7 +379,10 @@ public final class TaggingPresetItems {
         }
 
         @Override
-        public void addCommands(List<Tag> changedTags) {
+        protected String fieldsToString() {
+            return super.fieldsToString()
+                    + (href != null ? "href=" + href + ", " : "")
+                    + (locale_href != null ? "locale_href=" + locale_href + ", " : "");
         }
     }
     
@@ -388,24 +412,16 @@ public final class TaggingPresetItems {
         }
     }
 
-    public static class Optional extends TaggingPresetItem {
+    public static class Optional extends TaggingPresetTextItem {
 
         // TODO: Draw a box around optional stuff
         @Override
         public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+            initializeLocaleText(tr("Optional Attributes:"));
             p.add(new JLabel(" "), GBC.eol()); // space
-            p.add(new JLabel(tr("Optional Attributes:")), GBC.eol());
+            p.add(new JLabel(locale_text), GBC.eol());
             p.add(new JLabel(" "), GBC.eol()); // space
             return false;
-        }
-
-        @Override
-        public void addCommands(List<Tag> changedTags) {
-        }
-
-        @Override
-        public String toString() {
-            return "Optional";
         }
     }
 
