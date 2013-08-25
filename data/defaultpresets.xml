@@ -6092,6 +6092,18 @@ Note that for a match, at least one positive and no negative is required.
             <key key="landuse" value="meadow" />
             <text key="name" text="Name" />
         </item>
+        <item name="Orchard" icon="presets/landuse.png" type="closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=orchard"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=orchard"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:landuse=orchard"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=orchard"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=orchard"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=orchard" />
+            <label text="Edit Orchard Landuse" />
+            <space />
+            <key key="landuse" value="orchard" />
+            <text key="name" text="Name" />
+        </item>
         <item name="Vineyard" icon="presets/fruits.png" type="node,closedway,relation">
             <label text="Edit Vineyard Landuse" />
             <space />
