@@ -18,11 +18,22 @@ item:
   name_template: define custom formatting for OSM primitives
                  see http://josm.openstreetmap.de/wiki/NameTemplate
 
+group: a group of items (same syntax as "item")
+
 link: link to the relating map features website
   href: the URL
 
 label: simple static text label
   text: the text to display
+
+space: empty line
+
+optional: optional tags, short for "label" plus "space"
+  text: the text to display (defaults to "Optional Attributes:")
+
+separator: separator line in menus
+
+item_separator: horizontal separator line between items (in window)
 
 key: fixed key/value pair to be set
   key: key to set
