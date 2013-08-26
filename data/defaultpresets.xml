@@ -970,7 +970,7 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="embankment" text="Embankment" default="off" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="lit" text="Lit" default="off" /> 
-                <check key="passing_places" text="Passing Places" default="off" />
+                <check key="bicycle" text="Bicycle" default="off" />
                 <text key="width" text="Width (meters)" />
             </optional>
         </item>
