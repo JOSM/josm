@@ -970,7 +970,7 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="embankment" text="Embankment" default="off" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="lit" text="Lit" default="off" /> 
-                <check key="passing_places" text="Passing Places" default="off" />
+                <check key="bicycle" text="Bicycle" default="off" />
                 <text key="width" text="Width (meters)" />
             </optional>
         </item>
@@ -3786,7 +3786,7 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="type" text="Type" values="audio,video" />
             <text key="phone" text="Phone Number" />
             <text key="website" text="Website" />                          
-        </item>        
+        </item>
     </group> <!-- Culture -->
     <group name="Public Building" icon="presets/townhall.png">
         <item name="Public Building" icon="styles/standard/service.png" type="node,closedway,relation">
@@ -4276,7 +4276,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <label text="select sport:" />
             <space />
-            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" />
+            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" values_context="sport" />
         </item>
         <item name="Sports Centre" icon="presets/sports_centre.png" type="node,closedway">
             <label text="Edit Sports Centre" />
@@ -4285,7 +4285,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <label text="select sport:" />
             <space />
-            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" />
+            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" values_context="sport" />
         </item>
         <item name="Pitch" icon="presets/pitch.png" type="node,closedway">
             <label text="Edit Pitch" />
@@ -4294,7 +4294,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <label text="select sport:" />
             <space />
-            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,table_tennis,tennis" />
+            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,table_tennis,tennis" values_context="sport" />
         </item>
         <item name="Racetrack" icon="presets/stadium.png" type="node,way,closedway,relation">
             <label text="Edit Racetrack" />
@@ -4303,7 +4303,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <label text="select sport:" />
             <space />
-            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,table_tennis,tennis" />
+            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,table_tennis,tennis" values_context="sport" />
         </item>
         <item name="Golf Course" icon="presets/golf.png" type="node,closedway">
             <label text="Edit Golf Course" />
@@ -4410,7 +4410,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=skating"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:sport=skating" />
             <label text="Edit Skating" />
-            <key key="sport" value="skating" />
+            <key key="sport" value="skating" values_context="sport" />
             <text key="name" text="Name" />
             <combo key="leisure" text="type" values="ice_rink,pitch,sports_centre,stadium" default="ice_rink" />
         </item>
@@ -4437,7 +4437,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="piste:type" text="Piste type" values="downhill,nordic,skitour,snow_park" />
             <combo key="piste:difficulty" text="Difficulty" values="novice,easy,intermediate,advanced,expert,freeride" values_context="piste:difficulty" />
-            <combo key="piste:grooming" text="Grooming" values="classic,mogul,skating,classic;skating,scooter,backcountry" />
+            <combo key="piste:grooming" text="Grooming" values="classic,mogul,skating,classic;skating,scooter,backcountry" values_context="piste:grooming" />
         </item>
         <item name="Shooting" icon="presets/range.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=shooting"
@@ -4681,7 +4681,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <label text="Edit Building" />
-            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,farm,transportation,greenhouse,office,university" default="yes" match="keyvalue" />
+            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,farm,transportation,greenhouse,office,university,hospital,warehouse,retail" default="yes" match="keyvalue" />
             <text key="name" text="Name" />
         </item>
         <item name="Residential Building" icon="styles/standard/misc/landmark/building.png" type="node,closedway,relation">
