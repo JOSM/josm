@@ -24,8 +24,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmApiException;
@@ -249,21 +249,22 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      * @param e  the exception
      */
     protected void handleUploadConflict(OsmApiException e) {
-        String pattern = "Version mismatch: Provided (\\d+), server had: (\\d+) of (\\S+) (\\d+)";
-        Pattern p = Pattern.compile(pattern);
-        Matcher m = p.matcher(e.getErrorHeader());
-        if (m.matches()) {
-            handleUploadConflictForKnownConflict(OsmPrimitiveType.from(m.group(3)), Long.parseLong(m.group(4)), m.group(2),m.group(1));
-            return;
+        final String errorHeader = e.getErrorHeader();
+        if (errorHeader != null) {
+            Pattern p = Pattern.compile("Version mismatch: Provided (\\d+), server had: (\\d+) of (\\S+) (\\d+)");
+            Matcher m = p.matcher(errorHeader);
+            if (m.matches()) {
+                handleUploadConflictForKnownConflict(OsmPrimitiveType.from(m.group(3)), Long.parseLong(m.group(4)), m.group(2),m.group(1));
+                return;
+            }
+            p = Pattern.compile("The changeset (\\d+) was closed at (.*)");
+            m = p.matcher(errorHeader);
+            if (m.matches()) {
+                handleUploadConflictForClosedChangeset(Long.parseLong(m.group(1)), DateUtils.fromString(m.group(2)));
+                return;
+            }
         }
-        pattern ="The changeset (\\d+) was closed at (.*)";
-        p = Pattern.compile(pattern);
-        m = p.matcher(e.getErrorHeader());
-        if (m.matches()) {
-            handleUploadConflictForClosedChangeset(Long.parseLong(m.group(1)), DateUtils.fromString(m.group(2)));
-            return;
-        }
-        System.out.println(tr("Warning: error header \"{0}\" did not match with an expected pattern", e.getErrorHeader()));
+        System.out.println(tr("Warning: error header \"{0}\" did not match with an expected pattern", errorHeader));
         handleUploadConflictForUnknownConflict();
     }
 
