@@ -6573,8 +6573,8 @@ Note that for a match, at least one positive and no negative is required.
             <roles>
                 <role key="across" text="ways supported by (on top of) the bridge" requisite="optional" type="way" />
                 <role key="under" text="ways passing under the bridge" requisite="optional" type="way" />
-                <role key="outline" text="way forming the outline footprint" requisite="optional" count="1" type="closedway" />
-                <role key="edge" text="nodes forming the outline" requisite="optional" type="node" />
+                <role key="outline" text="way forming the outline footprint" requisite="optional" count="1" type="closedway,relation" />
+                <role key="edge" text="edge ways parallel to 'across'" requisite="optional" type="way" />
             </roles>
         </item>
         <item name="Tunnel" icon="presets/tunnel.png" type="relation">
@@ -6588,8 +6588,8 @@ Note that for a match, at least one positive and no negative is required.
             <text key="operator" text="Operator" />
             <roles>
                 <role key="through" text="ways passing through the tunnel" requisite="required" type="way" />
-                <role key="outline" text="way forming the outline footprint" requisite="optional" count="1" type="closedway" />
-                <role key="edge" text="nodes forming the outline" requisite="optional" type="node" />
+                <role key="outline" text="way forming the outline footprint" requisite="optional" count="1" type="closedway,relation" />
+                <role key="edge" text="edge ways parallel to 'through'" requisite="optional" type="way" />
             </roles>
         </item>
     </group> <!-- Relations -->
