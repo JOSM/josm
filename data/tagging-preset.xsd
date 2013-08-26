@@ -84,6 +84,7 @@
 			<element name="multiselect" type="tns:multiselect" />
             <element name="checkgroup" type="tns:checkgroup" />
 			<element name="check" type="tns:check" />
+			<element name="item_separator" type="tns:separator" />
 		</choice>
 	</group>
 

@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -14,15 +16,13 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import org.xml.sax.SAXException;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlObjectParser;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
+import org.xml.sax.SAXException;
 
 /**
  * The tagging presets reader.
@@ -66,6 +66,7 @@ public final class TaggingPresetReader {
         parser.map("space", TaggingPresetItems.Space.class);
         parser.map("key", TaggingPresetItems.Key.class);
         parser.map("list_entry", TaggingPresetItems.PresetListEntry.class);
+        parser.map("item_separator", TaggingPresetItems.ItemSeparator.class);
         
         LinkedList<TaggingPreset> all = new LinkedList<TaggingPreset>();
         TaggingPresetMenu lastmenu = null;

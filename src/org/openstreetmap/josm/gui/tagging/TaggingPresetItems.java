@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -33,11 +36,11 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 
-import org.xml.sax.SAXException;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -50,13 +53,11 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.GBC;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trc;
+import org.xml.sax.SAXException;
 
 /**
  * Class that contains all subtypes of TaggingPresetItem, static supplementary data, types and methods
@@ -443,6 +444,27 @@ public final class TaggingPresetItems {
         }
     }
 
+    /**
+     * Class used to represent a {@link JSeparator} inside tagging preset window.
+     * @since 6198
+     */
+    public static class ItemSeparator extends TaggingPresetItem {
+
+        @Override
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+            p.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 5));
+            return false;
+        }
+
+        @Override
+        public void addCommands(List<Tag> changedTags) {
+        }
+
+        @Override
+        public String toString() {
+            return "ItemSeparator";
+        }
+    }
 
     public static abstract class KeyedItem extends TaggingPresetItem {
 
@@ -702,7 +724,7 @@ public final class TaggingPresetItems {
         @Override
         boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             Integer cols = new Integer(columns);
-            int rows = (int) Math.ceil((double)checks.size()/cols.doubleValue());
+            int rows = (int) Math.ceil(checks.size()/cols.doubleValue());
             JPanel panel = new JPanel(new GridLayout(rows, cols));
             
             for (Check check : checks) {
