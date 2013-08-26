@@ -4,7 +4,9 @@ package org.openstreetmap.josm.gui.tagging;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.JPanel;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
@@ -29,8 +31,19 @@ public abstract class TaggingPresetItem {
         field.setAutoCompletionList(list);
     }
 
+    /**
+     * Called by {@link TaggingPreset#createPanel} during tagging preset panel creation.
+     * All components defining this tagging preset item must be added to given panel.
+     * @param p The panel where components must be added
+     * @param sel The related selected OSM primitives
+     * @return {@code true} if this item adds semantic tagging elements, {@code false} otherwise.
+     */
     abstract boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel);
 
+    /**
+     * Adds the new tags to apply to selected OSM primitives when the preset holding this item is applied.
+     * @param changedTags The list of changed tags to modify if needed
+     */
     abstract void addCommands(List<Tag> changedTags);
 
     boolean requestFocusInWindow() {
