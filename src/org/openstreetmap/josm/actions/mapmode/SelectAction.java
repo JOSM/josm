@@ -816,7 +816,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     }
 
     /**
-     * Merges the selected nodes to the one closest to the given mouse position iff the control
+     * Merges the selected nodes to the one closest to the given mouse position if the control
      * key is pressed. If there is no such node, no action will be done and no error will be
      * reported. If there is, it will execute the merge and add it to the undo buffer.
      */
