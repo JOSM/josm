@@ -27,7 +27,6 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
@@ -49,9 +48,14 @@ import org.openstreetmap.josm.tools.Shortcut;
  * However we use the location of the node that was selected *last*.
  * The "surviving" node will be moved to that location if it is
  * different from the last selected node.
+ * 
+ * @since 422
  */
 public class MergeNodesAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code MergeNodesAction}.
+     */
     public MergeNodesAction() {
         super(tr("Merge Nodes"), "mergenodes", tr("Merge nodes into the oldest one."),
                 Shortcut.registerShortcut("tools:mergenodes", tr("Tool: {0}", tr("Merge Nodes")), KeyEvent.VK_M, Shortcut.DIRECT), true);
@@ -246,13 +250,26 @@ public class MergeNodesAction extends JosmAction {
         return cmds;
     }
 
+    /**
+     * Merges the nodes in {@code nodes} at the specified node's location. Uses the dataset
+     * managed by {@code layer} as reference.
+     * @param layer layer the reference data layer. Must not be null
+     * @param nodes the collection of nodes. Ignored if null
+     * @param targetLocationNode this node's location will be used for the target node
+     * @throws IllegalArgumentException thrown if {@code layer} is null
+     */
     public static void doMergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetLocationNode) {
         if (nodes == null) {
             return;
         }
         Set<Node> allNodes = new HashSet<Node>(nodes);
         allNodes.add(targetLocationNode);
-        Node target = selectTargetNode(allNodes);
+        Node target;
+        if (nodes.contains(targetLocationNode) && !targetLocationNode.isNew()) {
+            target = targetLocationNode; // keep existing targetLocationNode as target to avoid unnecessary changes (see #2447)
+        } else {
+            target = selectTargetNode(allNodes);
+        }
 
         Command cmd = mergeNodes(layer, nodes, target, targetLocationNode);
         if (cmd != null) {
@@ -261,6 +278,16 @@ public class MergeNodesAction extends JosmAction {
         }
     }
 
+    /**
+     * Merges the nodes in {@code nodes} at the specified node's location. Uses the dataset
+     * managed by {@code layer} as reference.
+     *
+     * @param layer layer the reference data layer. Must not be null.
+     * @param nodes the collection of nodes. Ignored if null.
+     * @param targetLocationNode this node's location will be used for the targetNode.
+     * @return The command necessary to run in order to perform action, or {@code null} if there is nothing to do
+     * @throws IllegalArgumentException thrown if {@code layer} is null
+     */
     public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetLocationNode) {
         if (nodes == null) {
             return null;
@@ -278,6 +305,7 @@ public class MergeNodesAction extends JosmAction {
      * @param nodes the collection of nodes. Ignored if null.
      * @param targetNode the target node the collection of nodes is merged to. Must not be null.
      * @param targetLocationNode this node's location will be used for the targetNode.
+     * @return The command necessary to run in order to perform action, or {@code null} if there is nothing to do
      * @throws IllegalArgumentException thrown if layer is null
      */
     public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode, Node targetLocationNode) {
@@ -286,8 +314,6 @@ public class MergeNodesAction extends JosmAction {
         if (nodes == null) {
             return null;
         }
-
-        Set<RelationToChildReference> relationToNodeReferences = RelationToChildReference.getRelationToChildReferences(nodes);
 
         try {
             TagCollection nodeTags = TagCollection.unionOfAllPrimitives(nodes);
