@@ -116,8 +116,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             LatLon bottom_left = this.coor();
             double lat = bottom_left.lat() + parent.height() / 2;
             double lon = bottom_left.lon() + parent.width() / 2;
-            LatLon top_right = new LatLon(lat, lon);
-            return new BBox(bottom_left, top_right);
+            return new BBox(bottom_left.lon(), bottom_left.lat(), lon, lat);
         }
 
         QBLevel<T> findBucket(BBox bbox) {

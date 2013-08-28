@@ -49,18 +49,14 @@ public class OsmUrlToBounds {
             if (map.containsKey("bbox")) {
                 String[] bbox = map.get("bbox").split(",");
                 b = new Bounds(
-                        new LatLon(Double.parseDouble(bbox[1]), Double.parseDouble(bbox[0])),
-                        new LatLon(Double.parseDouble(bbox[3]), Double.parseDouble(bbox[2])));
+                        Double.parseDouble(bbox[1]), Double.parseDouble(bbox[0]),
+                        Double.parseDouble(bbox[3]), Double.parseDouble(bbox[2]));
             } else if (map.containsKey("minlat")) {
-                String s = map.get("minlat");
-                Double minlat = Double.parseDouble(s);
-                s = map.get("minlon");
-                Double minlon = Double.parseDouble(s);
-                s = map.get("maxlat");
-                Double maxlat = Double.parseDouble(s);
-                s = map.get("maxlon");
-                Double maxlon = Double.parseDouble(s);
-                b = new Bounds(new LatLon(minlat, minlon), new LatLon(maxlat, maxlon));
+                double minlat = Double.parseDouble(map.get("minlat"));
+                double minlon = Double.parseDouble(map.get("minlon"));
+                double maxlat = Double.parseDouble(map.get("maxlat"));
+                double maxlon = Double.parseDouble(map.get("maxlon"));
+                b = new Bounds(minlat, minlon, maxlat, maxlon);
             } else {
                 String z = map.get("zoom");
                 b = positionToBounds(parseDouble(map, "lat"),
@@ -233,9 +229,9 @@ public class OsmUrlToBounds {
      */
     static public int getZoom(Bounds b) {
         // convert to mercator (for calculation of zoom only)
-        double latMin = Math.log(Math.tan(Math.PI/4.0+b.getMin().lat()/180.0*Math.PI/2.0))*180.0/Math.PI;
-        double latMax = Math.log(Math.tan(Math.PI/4.0+b.getMax().lat()/180.0*Math.PI/2.0))*180.0/Math.PI;
-        double size = Math.max(Math.abs(latMax-latMin), Math.abs(b.getMax().lon()-b.getMin().lon()));
+        double latMin = Math.log(Math.tan(Math.PI/4.0+b.getMinLat()/180.0*Math.PI/2.0))*180.0/Math.PI;
+        double latMax = Math.log(Math.tan(Math.PI/4.0+b.getMaxLat()/180.0*Math.PI/2.0))*180.0/Math.PI;
+        double size = Math.max(Math.abs(latMax-latMin), Math.abs(b.getMaxLon()-b.getMinLon()));
         int zoom = 0;
         while (zoom <= 20) {
             if (size >= 180) {

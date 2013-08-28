@@ -123,8 +123,8 @@ public class CustomProjection extends AbstractProjection {
             datum = WGS84Datum.INSTANCE;
             proj = new Mercator();
             bounds = new Bounds(
-                    new LatLon(-85.05112877980659, -180.0),
-                    new LatLon(85.05112877980659, 180.0), true);
+                    -85.05112877980659, -180.0,
+                    85.05112877980659, 180.0, true);
         } else {
             Map<String, String> parameters = parseParameterList(pref);
             ellps = parseEllipsoid(parameters);

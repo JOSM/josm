@@ -162,10 +162,10 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     public void writeDataSources(DataSet ds) {
         for (DataSource s : ds.dataSources) {
             out.println("  <bounds minlat='"
-                    + s.bounds.getMin().lat()+"' minlon='"
-                    + s.bounds.getMin().lon()+"' maxlat='"
-                    + s.bounds.getMax().lat()+"' maxlon='"
-                    + s.bounds.getMax().lon()
+                    + s.bounds.getMinLat()+"' minlon='"
+                    + s.bounds.getMinLon()+"' maxlat='"
+                    + s.bounds.getMaxLat()+"' maxlon='"
+                    + s.bounds.getMaxLon()
                     +"' origin='"+XmlWriter.encode(s.origin)+"' />");
         }
     }

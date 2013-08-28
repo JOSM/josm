@@ -80,7 +80,7 @@ public class DatasetConsistencyTest {
             if (!n.isIncomplete() && !n.isDeleted()) {
                 LatLon c = n.getCoor();
                 if (c != null) {
-                    BBox box = new BBox(new LatLon(c.lat() - 0.0001, c.lon() - 0.0001), new LatLon(c.lat() + 0.0001, c.lon() + 0.0001));
+                    BBox box = c.toBBox(0.0001);
                     if (!dataSet.searchNodes(box).contains(n)) {
                         printError("SEARCH NODES", "%s not found using Dataset.searchNodes()", n);
                     }

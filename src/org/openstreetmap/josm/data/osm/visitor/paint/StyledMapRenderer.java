@@ -1403,7 +1403,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     @Override
     public void render(final DataSet data, boolean renderVirtualNodes, Bounds bounds) {
         //long start = System.currentTimeMillis();
-        BBox bbox = new BBox(bounds);
+        BBox bbox = bounds.toBBox();
         getSettings(renderVirtualNodes);
 
         boolean drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10000000);
