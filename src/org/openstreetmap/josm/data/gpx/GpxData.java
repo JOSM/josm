@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.gpx;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import org.openstreetmap.josm.Main;
@@ -237,4 +238,87 @@ public class GpxData extends WithAttributes {
         best.time = bestTime;
         return best;
     }
+
+    /**
+     * Iterate over all track segments and over all routes.
+     *
+     * @param trackVisibility An array indicating which tracks should be
+     * included in the iteration. Can be null, then all tracks are included.
+     * @return an Iterable object, which iterates over all track segments and
+     * over all routes
+     */
+    public Iterable<Collection<WayPoint>> getLinesIterable(final boolean[] trackVisibility) {
+        return new Iterable<Collection<WayPoint>>() {
+            @Override
+            public Iterator<Collection<WayPoint>> iterator() {
+                return new LinesIterator(GpxData.this, trackVisibility);
+            }
+        };
+    }
+    
+    /**
+     * Iterates over all track segments and then over all routes.
+     */
+    public static class LinesIterator implements Iterator<Collection<WayPoint>> {
+
+        private Iterator<GpxTrack> itTracks;
+        private int idxTracks;
+        private Iterator<GpxTrackSegment> itTrackSegments;
+        private Iterator<GpxRoute> itRoutes;
+
+        private Collection<WayPoint> next;
+        private boolean[] trackVisibility;
+
+        public LinesIterator(GpxData data, boolean[] trackVisibility) {
+            itTracks = data.tracks.iterator();
+            idxTracks = -1;
+            itRoutes = data.routes.iterator();
+            this.trackVisibility = trackVisibility;
+            next = getNext();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return next != null;
+        }
+
+        @Override
+        public Collection<WayPoint> next() {
+            Collection<WayPoint> current = next;
+            next = getNext();
+            return current;
+        }
+
+        private Collection<WayPoint> getNext() {
+            if (itTracks != null) {
+                if (itTrackSegments != null && itTrackSegments.hasNext()) {
+                    return itTrackSegments.next().getWayPoints();
+                } else {
+                    while (itTracks.hasNext()) {
+                        GpxTrack nxtTrack = itTracks.next();
+                        idxTracks++;
+                        if (trackVisibility != null && !trackVisibility[idxTracks])
+                            continue;
+                        itTrackSegments = nxtTrack.getSegments().iterator();
+                        if (itTrackSegments.hasNext()) {
+                            return itTrackSegments.next().getWayPoints();
+                        }
+                    }
+                    // if we get here, all the Tracks are finished; Continue with
+                    // Routes
+                    itTracks = null;
+                }
+            }
+            if (itRoutes.hasNext()) {
+                return itRoutes.next().routePoints;
+            }
+            return null;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
+    
 }

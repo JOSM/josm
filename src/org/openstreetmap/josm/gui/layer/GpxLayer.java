@@ -16,6 +16,7 @@ import java.awt.Stroke;
 import java.io.File;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -488,43 +489,39 @@ public class GpxLayer extends Layer {
             WayPoint oldWp = null;
             if (colorModeDynamic) {
                 if (colored == colorModes.velocity) {
-                    for (GpxTrack trk : data.tracks) {
-                        for (GpxTrackSegment segment : trk.getSegments()) {
-                            if(!forceLines) {
-                                oldWp = null;
+                    for (Collection<WayPoint> segment : data.getLinesIterable(null)) {
+                        if(!forceLines) {
+                            oldWp = null;
+                        }
+                        for (WayPoint trkPnt : segment) {
+                            LatLon c = trkPnt.getCoor();
+                            if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
+                                continue;
                             }
-                            for (WayPoint trkPnt : segment.getWayPoints()) {
-                                LatLon c = trkPnt.getCoor();
-                                if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
-                                    continue;
+                            if (oldWp != null && trkPnt.time > oldWp.time) {
+                                double vel = c.greatCircleDistance(oldWp.getCoor())
+                                        / (trkPnt.time - oldWp.time);
+                                if(vel > maxval) {
+                                    maxval = vel;
                                 }
-                                if (oldWp != null && trkPnt.time > oldWp.time) {
-                                    double vel = c.greatCircleDistance(oldWp.getCoor())
-                                            / (trkPnt.time - oldWp.time);
-                                    if(vel > maxval) {
-                                        maxval = vel;
-                                    }
-                                    if(vel < minval) {
-                                        minval = vel;
-                                    }
+                                if(vel < minval) {
+                                    minval = vel;
                                 }
-                                oldWp = trkPnt;
                             }
+                            oldWp = trkPnt;
                         }
                     }
                 } else if (colored == colorModes.dilution) {
-                    for (GpxTrack trk : data.tracks) {
-                        for (GpxTrackSegment segment : trk.getSegments()) {
-                            for (WayPoint trkPnt : segment.getWayPoints()) {
-                                Object val = trkPnt.attr.get("hdop");
-                                if (val != null) {
-                                    double hdop = ((Float) val).doubleValue();
-                                    if(hdop > maxval) {
-                                        maxval = hdop;
-                                    }
-                                    if(hdop < minval) {
-                                        minval = hdop;
-                                    }
+                    for (Collection<WayPoint> segment : data.getLinesIterable(null)) {
+                        for (WayPoint trkPnt : segment) {
+                            Object val = trkPnt.attr.get("hdop");
+                            if (val != null) {
+                                double hdop = ((Float) val).doubleValue();
+                                if(hdop > maxval) {
+                                    maxval = hdop;
+                                }
+                                if(hdop < minval) {
+                                    minval = hdop;
                                 }
                             }
                         }
@@ -543,72 +540,70 @@ public class GpxLayer extends Layer {
                 }
             }
 
-            for (GpxTrack trk : data.tracks) {
-                for (GpxTrackSegment segment : trk.getSegments()) {
-                    if (!forceLines) { // don't draw lines between segments, unless forced to
-                        oldWp = null;
+            for (Collection<WayPoint> segment : data.getLinesIterable(null)) {
+                if (!forceLines) { // don't draw lines between segments, unless forced to
+                    oldWp = null;
+                }
+                for (WayPoint trkPnt : segment) {
+                    LatLon c = trkPnt.getCoor();
+                    if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
+                        continue;
                     }
-                    for (WayPoint trkPnt : segment.getWayPoints()) {
-                        LatLon c = trkPnt.getCoor();
-                        if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
-                            continue;
-                        }
-                        trkPnt.customColoring = neutralColor;
-                        if(colored == colorModes.dilution && trkPnt.attr.get("hdop") != null) {
-                            float hdop = ((Float) trkPnt.attr.get("hdop")).floatValue();
-                            int hdoplvl =(int) Math.round(colorModeDynamic ? ((hdop-minval)*255/(maxval-minval))
-                                    : (hdop <= 0 ? 0 : hdop * hdopfactor));
-                            // High hdop is bad, but high values in colors are green.
-                            // Therefore inverse the logic
-                            int hdopcolor = 255 - (hdoplvl > 255 ? 255 : hdoplvl);
-                            trkPnt.customColoring = colors[hdopcolor];
-                        }
-                        if (oldWp != null) {
-                            double dist = c.greatCircleDistance(oldWp.getCoor());
-                            boolean noDraw=false;
-                            switch (colored) {
-                            case velocity:
-                                double dtime = trkPnt.time - oldWp.time;
-                                if(dtime > 0) {
-                                    float vel = (float) (dist / dtime);
-                                    int velColor =(int) Math.round(colorModeDynamic ? ((vel-minval)*255/(maxval-minval))
-                                            : (vel <= 0 ? 0 : vel / colorTracksTune * 255));
-                                    trkPnt.customColoring = colors[Math.max(0, Math.min(velColor, 255))];
-                                } else {
-                                    trkPnt.customColoring = colors[255];
-                                }
-                                break;
-                            case direction:
-                                double dirColor = oldWp.getCoor().heading(trkPnt.getCoor()) / (2.0 * Math.PI) * 256;
-                                // Bad case first
-                                if (dirColor != dirColor || dirColor < 0.0 || dirColor >= 256.0) {
-                                    trkPnt.customColoring = colors_cyclic[0];
-                                } else {
-                                    trkPnt.customColoring = colors_cyclic[(int) (dirColor)];
-                                }
-                                break;
-                            case time:
-                                double t=trkPnt.time;
-                                if (t>0 && t<=now){ // skip bad timestamps
-                                    int tColor = (int) Math.round((t-minval)*255/(maxval-minval));
-                                    trkPnt.customColoring = colors[tColor];
-                                } else {
-                                    trkPnt.customColoring = neutralColor;
-                                }
-                                break;
-                            }
-
-                            if (!noDraw && (maxLineLength == -1 || dist <= maxLineLength)) {
-                                trkPnt.drawLine = true;
-                                trkPnt.dir = (int) oldWp.getCoor().heading(trkPnt.getCoor());
+                    trkPnt.customColoring = neutralColor;
+                    if(colored == colorModes.dilution && trkPnt.attr.get("hdop") != null) {
+                        float hdop = ((Float) trkPnt.attr.get("hdop")).floatValue();
+                        int hdoplvl =(int) Math.round(colorModeDynamic ? ((hdop-minval)*255/(maxval-minval))
+                                : (hdop <= 0 ? 0 : hdop * hdopfactor));
+                        // High hdop is bad, but high values in colors are green.
+                        // Therefore inverse the logic
+                        int hdopcolor = 255 - (hdoplvl > 255 ? 255 : hdoplvl);
+                        trkPnt.customColoring = colors[hdopcolor];
+                    }
+                    if (oldWp != null) {
+                        double dist = c.greatCircleDistance(oldWp.getCoor());
+                        boolean noDraw=false;
+                        switch (colored) {
+                        case velocity:
+                            double dtime = trkPnt.time - oldWp.time;
+                            if(dtime > 0) {
+                                float vel = (float) (dist / dtime);
+                                int velColor =(int) Math.round(colorModeDynamic ? ((vel-minval)*255/(maxval-minval))
+                                        : (vel <= 0 ? 0 : vel / colorTracksTune * 255));
+                                trkPnt.customColoring = colors[Math.max(0, Math.min(velColor, 255))];
                             } else {
-                                trkPnt.drawLine = false;
+                                trkPnt.customColoring = colors[255];
                             }
-                        } else { // make sure we reset outdated data
+                            break;
+                        case direction:
+                            double dirColor = oldWp.getCoor().heading(trkPnt.getCoor()) / (2.0 * Math.PI) * 256;
+                            // Bad case first
+                            if (dirColor != dirColor || dirColor < 0.0 || dirColor >= 256.0) {
+                                trkPnt.customColoring = colors_cyclic[0];
+                            } else {
+                                trkPnt.customColoring = colors_cyclic[(int) (dirColor)];
+                            }
+                            break;
+                        case time:
+                            double t=trkPnt.time;
+                            if (t>0 && t<=now){ // skip bad timestamps
+                                int tColor = (int) Math.round((t-minval)*255/(maxval-minval));
+                                trkPnt.customColoring = colors[tColor];
+                            } else {
+                                trkPnt.customColoring = neutralColor;
+                            }
+                            break;
+                        }
+
+                        if (!noDraw && (maxLineLength == -1 || dist <= maxLineLength)) {
+                            trkPnt.drawLine = true;
+                            trkPnt.dir = (int) oldWp.getCoor().heading(trkPnt.getCoor());
+                        } else {
                             trkPnt.drawLine = false;
                         }
-                        oldWp = trkPnt;
+                    } else { // make sure we reset outdated data
+                        trkPnt.drawLine = false;
                     }
+                    oldWp = trkPnt;
                 }
             }
             computeCacheInSync = true;
@@ -618,36 +613,30 @@ public class GpxLayer extends Layer {
         WayPoint last = null;
         int i = 0;
         ensureTrackVisibilityLength();
-        for (GpxTrack trk: data.tracks) {
-            // hide tracks that were de-selected in ChooseTrackVisibilityAction
-            if(!trackVisibility[i++]) {
-                continue;
-            }
+        for (Collection<WayPoint> segment : data.getLinesIterable(trackVisibility)) {
 
-            for (GpxTrackSegment trkSeg: trk.getSegments()) {
-                for(WayPoint pt : trkSeg.getWayPoints())
-                {
-                    Bounds b = new Bounds(pt.getCoor());
-                    // last should never be null when this is true!
-                    if(pt.drawLine) {
-                        b.extend(last.getCoor());
-                    }
-                    if(b.intersects(box))
-                    {
-                        if(last != null && (visibleSegments.isEmpty()
-                                || visibleSegments.getLast() != last)) {
-                            if(last.drawLine) {
-                                WayPoint l = new WayPoint(last);
-                                l.drawLine = false;
-                                visibleSegments.add(l);
-                            } else {
-                                visibleSegments.add(last);
-                            }
-                        }
-                        visibleSegments.add(pt);
-                    }
-                    last = pt;
+            for(WayPoint pt : segment)
+            {
+                Bounds b = new Bounds(pt.getCoor());
+                // last should never be null when this is true!
+                if(pt.drawLine) {
+                    b.extend(last.getCoor());
                 }
+                if(b.intersects(box))
+                {
+                    if(last != null && (visibleSegments.isEmpty()
+                            || visibleSegments.getLast() != last)) {
+                        if(last.drawLine) {
+                            WayPoint l = new WayPoint(last);
+                            l.drawLine = false;
+                            visibleSegments.add(l);
+                        } else {
+                            visibleSegments.add(last);
+                        }
+                    }
+                    visibleSegments.add(pt);
+                }
+                last = pt;
             }
         }
         if(visibleSegments.isEmpty())
