@@ -114,19 +114,10 @@ public class BBox {
      * Extends this bbox to include the point (x, y)
      */
     public void add(double x, double y) {
-        
-        if (x < xmin) {
-            xmin = x;
-        } else if (x > xmax) {
-            xmax = x;
-        }
-        
-        if (y < ymin) {
-            ymin = y;
-        } else if (y > ymax) {
-            ymax = y;
-        }
-
+        xmin = Math.min(xmin, x);
+        xmax = Math.max(xmax, x);
+        ymin = Math.min(ymin, y);
+        ymax = Math.max(ymax, y);
         sanity();
     }
 
