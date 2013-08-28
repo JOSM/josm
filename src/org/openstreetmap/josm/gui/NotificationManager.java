@@ -112,7 +112,7 @@ class NotificationManager {
         int x, y;
         JFrame parentWindow = (JFrame) Main.parent;
         Dimension size = currentNotificationPanel.getPreferredSize();
-        if (Main.isDisplayingMapView()) {
+        if (Main.isDisplayingMapView() && Main.map.mapView.getHeight() > 0) {
             MapView mv = Main.map.mapView;
             Point mapViewPos = SwingUtilities.convertPoint(mv.getParent(), mv.getX(), mv.getY(), Main.parent);
             x = mapViewPos.x + MARGIN;
