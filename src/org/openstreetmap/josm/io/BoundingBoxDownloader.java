@@ -25,10 +25,10 @@ public class BoundingBoxDownloader extends OsmServerReader {
     protected final boolean crosses180th;
 
     public BoundingBoxDownloader(Bounds downloadArea) {
-        this.lat1 = downloadArea.getMin().lat();
-        this.lon1 = downloadArea.getMin().lon();
-        this.lat2 = downloadArea.getMax().lat();
-        this.lon2 = downloadArea.getMax().lon();
+        this.lat1 = downloadArea.getMinLat();
+        this.lon1 = downloadArea.getMinLon();
+        this.lat2 = downloadArea.getMaxLat();
+        this.lon2 = downloadArea.getMaxLon();
         this.crosses180th = downloadArea.crosses180thMeridian();
     }
 

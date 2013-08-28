@@ -158,7 +158,7 @@ public class LoadAndZoomHandler extends RequestHandler
             });
         }
 
-        final Bounds bbox = new Bounds(new LatLon(minlat, minlon), new LatLon(maxlat, maxlon));
+        final Bounds bbox = new Bounds(minlat, minlon, maxlat, maxlon);
         if (args.containsKey("select") && PermissionPrefWithDefault.CHANGE_SELECTION.isAllowed()) {
             // select objects after downloading, zoom to selection.
             GuiHelper.executeByMainWorkerInEDT(new Runnable() {

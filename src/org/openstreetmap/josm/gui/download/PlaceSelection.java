@@ -241,8 +241,8 @@ public class PlaceSelection implements DownloadSelection {
                     currentResult.lon = Double.parseDouble(atts.getValue("lon"));
                     String[] bbox = atts.getValue("boundingbox").split(",");
                     currentResult.bounds = new Bounds(
-                            new LatLon(Double.parseDouble(bbox[0]), Double.parseDouble(bbox[2])),
-                            new LatLon(Double.parseDouble(bbox[1]), Double.parseDouble(bbox[3])));
+                            Double.parseDouble(bbox[0]), Double.parseDouble(bbox[2]),
+                            Double.parseDouble(bbox[1]), Double.parseDouble(bbox[3]));
                     data.add(currentResult);
                 }
             } catch (NumberFormatException x) {

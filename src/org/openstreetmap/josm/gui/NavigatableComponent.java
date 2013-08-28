@@ -200,9 +200,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     private EastNorth calculateDefaultCenter() {
         Bounds b = Main.getProjection().getWorldBoundsLatLon();
-        double lat = (b.getMax().lat() + b.getMin().lat())/2;
-        double lon = (b.getMax().lon() + b.getMin().lon())/2;
-
+        double lat = (b.getMaxLat() + b.getMinLat())/2;
+        double lon = (b.getMaxLon() + b.getMinLon())/2;
+        // FIXME is it correct? b.getCenter() makes some adjustments... 
         return Main.getProjection().latlon2eastNorth(new LatLon(lat, lon));
     }
 
@@ -400,25 +400,25 @@ public class NavigatableComponent extends JComponent implements Helpful {
         boolean changed = false;
         double lat = cl.lat();
         double lon = cl.lon();
-        if(lat < b.getMin().lat()) {changed = true; lat = b.getMin().lat(); }
-        else if(lat > b.getMax().lat()) {changed = true; lat = b.getMax().lat(); }
-        if(lon < b.getMin().lon()) {changed = true; lon = b.getMin().lon(); }
-        else if(lon > b.getMax().lon()) {changed = true; lon = b.getMax().lon(); }
+        if(lat < b.getMinLat()) {changed = true; lat = b.getMinLat(); }
+        else if(lat > b.getMaxLat()) {changed = true; lat = b.getMaxLat(); }
+        if(lon < b.getMinLon()) {changed = true; lon = b.getMinLon(); }
+        else if(lon > b.getMaxLon()) {changed = true; lon = b.getMaxLon(); }
         if(changed) {
             newCenter = Projections.project(new LatLon(lat,lon));
         }
         int width = getWidth()/2;
         int height = getHeight()/2;
-        LatLon l1 = new LatLon(b.getMin().lat(), lon);
-        LatLon l2 = new LatLon(b.getMax().lat(), lon);
+        LatLon l1 = new LatLon(b.getMinLat(), lon);
+        LatLon l2 = new LatLon(b.getMaxLat(), lon);
         EastNorth e1 = getProjection().latlon2eastNorth(l1);
         EastNorth e2 = getProjection().latlon2eastNorth(l2);
         double d = e2.north() - e1.north();
         if(d < height*newScale)
         {
             double newScaleH = d/height;
-            e1 = getProjection().latlon2eastNorth(new LatLon(lat, b.getMin().lon()));
-            e2 = getProjection().latlon2eastNorth(new LatLon(lat, b.getMax().lon()));
+            e1 = getProjection().latlon2eastNorth(new LatLon(lat, b.getMinLon()));
+            e2 = getProjection().latlon2eastNorth(new LatLon(lat, b.getMaxLon()));
             d = e2.east() - e1.east();
             if(d < width*newScale) {
                 newScale = Math.max(newScaleH, d/width);

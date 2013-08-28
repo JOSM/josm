@@ -215,8 +215,8 @@ public class LatLon extends Coordinate {
      */
     public boolean isOutSideWorld() {
         Bounds b = Main.getProjection().getWorldBoundsLatLon();
-        return lat() < b.getMin().lat() || lat() > b.getMax().lat() ||
-                lon() < b.getMin().lon() || lon() > b.getMax().lon();
+        return lat() < b.getMinLat() || lat() > b.getMaxLat() ||
+                lon() < b.getMinLon() || lon() > b.getMaxLon();
     }
 
     /**

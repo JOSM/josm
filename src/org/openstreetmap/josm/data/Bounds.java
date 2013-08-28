@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -26,8 +27,48 @@ public class Bounds {
         return new LatLon(minLat, minLon);
     }
 
+    /**
+     * Returns min latitude of bounds. Efficient shortcut for {@code getMin().lat()}.
+     * 
+     * @return min latitude of bounds.
+     * @since 6203
+     */
+    public double getMinLat() {
+        return minLat;
+    }
+
+    /**
+     * Returns min longitude of bounds. Efficient shortcut for {@code getMin().lon()}.
+     * 
+     * @return min longitude of bounds.
+     * @since 6203
+     */
+    public double getMinLon() {
+        return minLon;
+    }
+
     public LatLon getMax() {
         return new LatLon(maxLat, maxLon);
+    }
+
+    /**
+     * Returns max latitude of bounds. Efficient shortcut for {@code getMax().lat()}.
+     * 
+     * @return max latitude of bounds.
+     * @since 6203
+     */
+    public double getMaxLat() {
+        return maxLat;
+    }
+
+    /**
+     * Returns max longitude of bounds. Efficient shortcut for {@code getMax().lon()}.
+     * 
+     * @return max longitude of bounds.
+     * @since 6203
+     */
+    public double getMaxLon() {
+        return maxLon;
     }
 
     public enum ParseMethod {
@@ -36,7 +77,7 @@ public class Bounds {
     }
 
     /**
-     * Construct bounds out of two points
+     * Construct bounds out of two points. Coords will be rounded.
      */
     public Bounds(LatLon min, LatLon max) {
         this(min.lat(), min.lon(), max.lat(), max.lon());
@@ -50,14 +91,34 @@ public class Bounds {
         this(b, true);
     }
 
+    /**
+     * Single point Bounds defined by lat/lon {@code b}.
+     * Coordinates will be rounded to osm precision if {@code roundToOsmPrecision} is true.
+     * 
+     * @param b lat/lon of given point.
+     * @param roundToOsmPrecision defines if lat/lon will be rounded.
+     */
     public Bounds(LatLon b, boolean roundToOsmPrecision) {
+        this(b.lat(), b.lon(), roundToOsmPrecision);
+    }
+    
+    /**
+     * Single point Bounds defined by point [lat,lon].
+     * Coordinates will be rounded to osm precision if {@code roundToOsmPrecision} is true.
+     * 
+     * @param lat latitude of given point.
+     * @param lon longitude of given point.
+     * @param roundToOsmPrecision defines if lat/lon will be rounded.
+     * @since 6203
+     */
+    public Bounds(double lat, double lon, boolean roundToOsmPrecision) {
         // Do not call this(b, b) to avoid GPX performance issue (see #7028) until roundToOsmPrecision() is improved
         if (roundToOsmPrecision) {
-            this.minLat = LatLon.roundToOsmPrecision(b.lat());
-            this.minLon = LatLon.roundToOsmPrecision(b.lon());
+            this.minLat = LatLon.roundToOsmPrecision(lat);
+            this.minLon = LatLon.roundToOsmPrecision(lon);
         } else {
-            this.minLat = b.lat();
-            this.minLon = b.lon();
+            this.minLat = lat;
+            this.minLon = lon;
         }
         this.maxLat = this.minLat;
         this.maxLon = this.minLon;
@@ -152,8 +213,12 @@ public class Bounds {
         return roundToOsmPrecision ? LatLon.roundToOsmPrecision(value) : value;
     }
 
-    public Bounds(Bounds other) {
-        this(other.getMin(), other.getMax());
+    /**
+     * Creates new {@code Bounds} from an existing one.
+     * @param other The bounds to copy
+     */
+    public Bounds(final Bounds other) {
+        this(other.minLat, other.minLon, other.maxLat, other.maxLon);
     }
 
     public Bounds(Rectangle2D rect) {
@@ -185,6 +250,16 @@ public class Bounds {
         this.maxLon = LatLon.roundToOsmPrecision(LatLon.toIntervalLon(center.lon() + lonExtent / 2));
     }
 
+    /**
+     * Creates BBox with same coordinates.
+     * 
+     * @return BBox with same coordinates.
+     * @since 6203
+     */
+    public BBox toBBox() {
+        return new BBox(minLon, minLat, maxLon, maxLat);
+    }
+    
     @Override public String toString() {
         return "Bounds["+minLat+","+minLon+","+maxLat+","+maxLon+"]";
     }
@@ -202,52 +277,67 @@ public class Bounds {
      */
     public LatLon getCenter()
     {
-        if (crosses180thMeridian()) {
-            LatLon result = new LatLon(minLat, minLon-360.0).getCenter(getMax());
-            if (result.lon() < -180.0) {
-                result = new LatLon(result.lat(), result.lon() + 360.0);
+        if (crosses180thMeridian()) {            
+            double lat = (minLat + maxLat) / 2;
+            double lon = (minLon + maxLon - 360.0) / 2;
+            if (lon < -180.0){
+                lon += 360.0;
             }
-            return result;
+            return new LatLon(lat, lon);
         } else {
-            return getMin().getCenter(getMax());
+            return new LatLon((minLat + maxLat) / 2, (minLon + maxLon) / 2);
         }
     }
 
     /**
      * Extend the bounds if necessary to include the given point.
+     * @param ll The point to include into these bounds
      */
     public void extend(LatLon ll) {
-        if (ll.lat() < minLat) {
-            minLat = LatLon.roundToOsmPrecision(ll.lat());
+        extend(ll.lat(), ll.lon());
+    }
+    
+    /**
+     * Extend the bounds if necessary to include the given point [lat,lon].
+     * Good to use if you know coordinates to avoid creation of LatLon object.
+     * @param lat Latitude of point to include into these bounds
+     * @param lon Longitude of point to include into these bounds
+     * @since 6203
+     */
+    public void extend(final double lat, final double lon) {
+        if (lat < minLat) {
+            minLat = LatLon.roundToOsmPrecision(lat);
         }
-        if (ll.lat() > maxLat) {
-            maxLat = LatLon.roundToOsmPrecision(ll.lat());
+        if (lat > maxLat) {
+            maxLat = LatLon.roundToOsmPrecision(lat);
         }
         if (crosses180thMeridian()) {
-            if (ll.lon() > maxLon && ll.lon() < minLon) {
-                if (Math.abs(ll.lon() - minLon) <= Math.abs(ll.lon() - maxLon)) {
-                    minLon = LatLon.roundToOsmPrecision(ll.lon());
+            if (lon > maxLon && lon < minLon) {
+                if (Math.abs(lon - minLon) <= Math.abs(lon - maxLon)) {
+                    minLon = LatLon.roundToOsmPrecision(lon);
                 } else {
-                    maxLon = LatLon.roundToOsmPrecision(ll.lon());
+                    maxLon = LatLon.roundToOsmPrecision(lon);
                 }
             }
         } else {
-            if (ll.lon() < minLon) {
-                minLon = LatLon.roundToOsmPrecision(ll.lon());
+            if (lon < minLon) {
+                minLon = LatLon.roundToOsmPrecision(lon);
             }
-            if (ll.lon() > maxLon) {
-                maxLon = LatLon.roundToOsmPrecision(ll.lon());
+            if (lon > maxLon) {
+                maxLon = LatLon.roundToOsmPrecision(lon);
             }
         }
     }
 
     public void extend(Bounds b) {
-        extend(b.getMin());
-        extend(b.getMax());
+        extend(b.minLat, b.minLon);
+        extend(b.maxLat, b.maxLon);
     }
 
     /**
-     * Is the given point within this bounds?
+     * Determines if the given point {@code ll} is within these bounds.
+     * @param ll The lat/lon to check
+     * @return {@code true} if {@code ll} is within these bounds, {@code false} otherwise
      */
     public boolean contains(LatLon ll) {
         if (ll.lat() < minLat || ll.lat() > maxLat)
@@ -323,7 +413,7 @@ public class Bounds {
      * @return true, if this bounds are <em>collapsed</em>
      */
     public boolean isCollapsed() {
-        return getMin().equals(getMax());
+        return (minLat == maxLat) && (minLon == maxLon);
     }
 
     public boolean isOutOfTheWorld() {

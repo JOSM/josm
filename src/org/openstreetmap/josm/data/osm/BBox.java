@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.Arrays;
 
-import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.QuadTiling;
 import org.openstreetmap.josm.tools.Utils;
@@ -15,16 +14,35 @@ public class BBox {
     private double ymin = Double.POSITIVE_INFINITY;
     private double ymax = Double.NEGATIVE_INFINITY;
 
-    public BBox(Bounds bounds) {
-        add(bounds.getMin());
-        add(bounds.getMax());
+    /**
+     * Constructs a new {@code BBox} defined by a single point.
+     * 
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @since 6203
+     */
+    public BBox(final double x, final double y) {
+        xmax = xmin = x;
+        ymax = ymin = y;
+        sanity();
     }
 
+    /**
+     * Constructs a new {@code BBox} defined by points <code>a</code> and <code>b</code>.
+     * Result is minimal BBox containing both points.
+     * 
+     * @param a 
+     * @param b
+     */
     public BBox(LatLon a, LatLon b) {
-        add(a);
-        add(b);
+        this(a.lon(), a.lat(), b.lon(), b.lat());
     }
 
+    /**
+     * Constructs a new {@code BBox} from another one.
+     * 
+     * @param copy the BBox to copy
+     */
     public BBox(BBox copy) {
         this.xmin = copy.xmin;
         this.xmax = copy.xmax;
@@ -33,10 +51,23 @@ public class BBox {
     }
 
     public BBox(double a_x, double a_y, double b_x, double b_y)  {
-        xmin = Math.min(a_x, b_x);
-        xmax = Math.max(a_x, b_x);
-        ymin = Math.min(a_y, b_y);
-        ymax = Math.max(a_y, b_y);
+        
+        if (a_x > b_x) {
+            xmax = a_x;
+            xmin = b_x;
+        } else {
+            xmax = b_x;
+            xmin = a_x;
+        }
+        
+        if (a_y > b_y) {
+            ymax = a_y;
+            ymin = b_y;
+        } else {
+            ymax = b_y;
+            ymin = a_y;
+        }
+        
         sanity();
     }
 
@@ -83,16 +114,28 @@ public class BBox {
      * Extends this bbox to include the point (x, y)
      */
     public void add(double x, double y) {
-        xmin = Math.min(xmin, x);
-        xmax = Math.max(xmax, x);
-        ymin = Math.min(ymin, y);
-        ymax = Math.max(ymax, y);
+        
+        if (x < xmin) {
+            xmin = x;
+        } else if (x > xmax) {
+            xmax = x;
+        }
+        
+        if (y < ymin) {
+            ymin = y;
+        } else if (y > ymax) {
+            ymax = y;
+        }
+
         sanity();
     }
 
     public void add(BBox box) {
-        add(box.getTopLeft());
-        add(box.getBottomRight());
+        xmin = Math.min(xmin, box.xmin);
+        xmax = Math.max(xmax, box.xmax);
+        ymin = Math.min(ymin, box.ymin);
+        ymax = Math.max(ymax, box.ymax);
+        sanity();
     }
 
     public void addPrimitive(OsmPrimitive primitive, double extraSpace) {
@@ -150,12 +193,56 @@ public class BBox {
         return true;
     }
 
+    /**
+     * Returns the top-left point.
+     * @return The top-left point
+     */
     public LatLon getTopLeft() {
         return new LatLon(ymax, xmin);
     }
 
+    /**
+     * Returns the latitude of top-left point.
+     * @return The latitude of top-left point
+     * @since 6203
+     */
+    public double getTopLeftLat() {
+        return ymax;
+    }
+
+    /**
+     * Returns the longitude of top-left point.
+     * @return The longitude of top-left point
+     * @since 6203
+     */
+    public double getTopLeftLon() {
+        return xmin;
+    }
+
+    /**
+     * Returns the bottom-right point.
+     * @return The bottom-right point
+     */
     public LatLon getBottomRight() {
         return new LatLon(ymin, xmax);
+    }
+
+    /**
+     * Returns the latitude of bottom-right point.
+     * @return The latitude of bottom-right point
+     * @since 6203
+     */
+    public double getBottomRightLat() {
+        return ymin;
+    }
+
+    /**
+     * Returns the longitude of bottom-right point.
+     * @return The longitude of bottom-right point
+     * @since 6203
+     */
+    public double getBottomRightLon() {
+        return xmax;
     }
 
     public LatLon getCenter() {
