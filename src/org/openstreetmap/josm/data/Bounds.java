@@ -413,7 +413,8 @@ public class Bounds {
      * @return true, if this bounds are <em>collapsed</em>
      */
     public boolean isCollapsed() {
-        return (minLat == maxLat) && (minLon == maxLon);
+        return Double.doubleToLongBits(minLat) == Double.doubleToLongBits(maxLat) 
+            && Double.doubleToLongBits(minLon) == Double.doubleToLongBits(maxLon);
     }
 
     public boolean isOutOfTheWorld() {
