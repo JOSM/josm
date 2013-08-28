@@ -152,8 +152,8 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         if (bbox == null) return;
 
         // calc the screen coordinates for the new selection rectangle
-        MapMarkerDot xmin_ymin = new MapMarkerDot(bbox.getMin().lat(), bbox.getMin().lon());
-        MapMarkerDot xmax_ymax = new MapMarkerDot(bbox.getMax().lat(), bbox.getMax().lon());
+        MapMarkerDot xmin_ymin = new MapMarkerDot(bbox.getMinLat(), bbox.getMinLon());
+        MapMarkerDot xmax_ymax = new MapMarkerDot(bbox.getMaxLat(), bbox.getMaxLon());
 
         Vector<MapMarker> marker = new Vector<MapMarker>(2);
         marker.add(xmin_ymin);
@@ -341,12 +341,12 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             TileBounds tb = new TileBounds();
             tb.zoomLevel = (Integer) spZoomLevel.getValue();
             tb.min = new Point(
-                    Math.max(0,lonToTileX(tb.zoomLevel, bbox.getMin().lon())),
-                    Math.max(0,latToTileY(tb.zoomLevel, bbox.getMax().lat()-.00001))
+                    Math.max(0,lonToTileX(tb.zoomLevel, bbox.getMinLon())),
+                    Math.max(0,latToTileY(tb.zoomLevel, bbox.getMaxLat() - 0.00001))
             );
             tb.max = new Point(
-                    Math.max(0,lonToTileX(tb.zoomLevel, bbox.getMax().lon())),
-                    Math.max(0,latToTileY(tb.zoomLevel, bbox.getMin().lat()-.00001))
+                    Math.max(0,lonToTileX(tb.zoomLevel, bbox.getMaxLon())),
+                    Math.max(0,latToTileY(tb.zoomLevel, bbox.getMinLat() - 0.00001))
             );
             doFireTileBoundChanged = false;
             setTileBounds(tb);
@@ -681,10 +681,10 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
                 min = null;
                 max = null;
             } else {
-                int y1 = OsmMercator.LatToY(bbox.getMin().lat(), MAX_ZOOM);
-                int y2 = OsmMercator.LatToY(bbox.getMax().lat(), MAX_ZOOM);
-                int x1 = OsmMercator.LonToX(bbox.getMin().lon(), MAX_ZOOM);
-                int x2 = OsmMercator.LonToX(bbox.getMax().lon(), MAX_ZOOM);
+                int y1 = OsmMercator.LatToY(bbox.getMinLat(), MAX_ZOOM);
+                int y2 = OsmMercator.LatToY(bbox.getMaxLat(), MAX_ZOOM);
+                int x1 = OsmMercator.LonToX(bbox.getMinLon(), MAX_ZOOM);
+                int x2 = OsmMercator.LonToX(bbox.getMaxLon(), MAX_ZOOM);
 
                 min = new Point(Math.min(x1, x2), Math.min(y1, y2));
                 max = new Point(Math.max(x1, x2), Math.max(y1, y2));

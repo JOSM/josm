@@ -352,8 +352,8 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
      */
     @Override
     public void setBoundingBox(Bounds bbox) {
-        if (bbox == null || (bbox.getMin().lat() == 0.0 && bbox.getMin().lon() == 0.0
-                && bbox.getMax().lat() == 0.0 && bbox.getMax().lon() == 0.0)) {
+        if (bbox == null || (bbox.getMinLat() == 0.0 && bbox.getMinLon() == 0.0
+                && bbox.getMaxLat() == 0.0 && bbox.getMaxLon() == 0.0)) {
             this.bbox = null;
             iSelectionRectStart = null;
             iSelectionRectEnd = null;
@@ -362,15 +362,15 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         }
 
         this.bbox = bbox;
-        double minLon = bbox.getMin().lon();
-        double maxLon = bbox.getMax().lon();
+        double minLon = bbox.getMinLon();
+        double maxLon = bbox.getMaxLon();
 
         if (bbox.crosses180thMeridian()) {
             minLon -= 360.0;
         }
 
-        int y1 = OsmMercator.LatToY(bbox.getMin().lat(), MAX_ZOOM);
-        int y2 = OsmMercator.LatToY(bbox.getMax().lat(), MAX_ZOOM);
+        int y1 = OsmMercator.LatToY(bbox.getMinLat(), MAX_ZOOM);
+        int y2 = OsmMercator.LatToY(bbox.getMaxLat(), MAX_ZOOM);
         int x1 = OsmMercator.LonToX(minLon, MAX_ZOOM);
         int x2 = OsmMercator.LonToX(maxLon, MAX_ZOOM);
 
@@ -378,8 +378,8 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         iSelectionRectEnd = new Point(Math.max(x1, x2), Math.max(y1, y2));
 
         // calc the screen coordinates for the new selection rectangle
-        MapMarkerDot xmin_ymin = new MapMarkerDot(bbox.getMin().lat(), bbox.getMin().lon());
-        MapMarkerDot xmax_ymax = new MapMarkerDot(bbox.getMax().lat(), bbox.getMax().lon());
+        MapMarkerDot xmin_ymin = new MapMarkerDot(bbox.getMinLat(), bbox.getMinLon());
+        MapMarkerDot xmax_ymax = new MapMarkerDot(bbox.getMaxLat(), bbox.getMaxLon());
 
         Vector<MapMarker> marker = new Vector<MapMarker>(2);
         marker.add(xmin_ymin);

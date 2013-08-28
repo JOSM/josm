@@ -156,7 +156,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
     @SuppressWarnings("unchecked")
     @Override
     public void render(DataSet data, boolean virtual, Bounds bounds) {
-        BBox bbox = new BBox(bounds);
+        BBox bbox = bounds.toBBox();
         this.ds = data;
         getSettings(virtual);
 

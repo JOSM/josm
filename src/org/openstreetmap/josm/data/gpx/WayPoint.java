@@ -50,8 +50,8 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      * We "inline" lat/lon, rather than usinga LatLon internally => reduces memory overhead. Relevant
      * because a lot of GPX waypoints are created when GPS tracks are downloaded from the OSM server.
      */
-    private double lat = 0;
-    private double lon = 0;
+    private final double lat;
+    private final double lon;
 
     /*
      * internal cache of projected coordinates

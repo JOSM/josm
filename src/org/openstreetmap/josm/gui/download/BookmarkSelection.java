@@ -22,7 +22,6 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.gui.BookmarkList;
 import org.openstreetmap.josm.gui.BookmarkList.Bookmark;
 import org.openstreetmap.josm.gui.JMultilineLabel;
@@ -153,7 +152,7 @@ public class BookmarkSelection implements DownloadSelection {
             lblCurrentDownloadArea.setText(tr("<html>There is currently no download area selected.</html>"));
         } else {
             lblCurrentDownloadArea.setText(tr("<html><strong>Current download area</strong> (minlon, minlat, maxlon, maxlat): </html>"));
-            bboxDisplay.setText(new BBox(currentArea).toStringCSV(","));
+            bboxDisplay.setText(currentArea.toBBox().toStringCSV(","));
         }
     }
 

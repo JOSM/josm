@@ -156,8 +156,8 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
 
         Bounds bounds = data.recalculateBounds();
         if (bounds != null) {
-            String b = "minlat=\"" + bounds.getMin().lat() + "\" minlon=\"" + bounds.getMin().lon() +
-            "\" maxlat=\"" + bounds.getMax().lat() + "\" maxlon=\"" + bounds.getMax().lon() + "\"" ;
+            String b = "minlat=\"" + bounds.getMinLat() + "\" minlon=\"" + bounds.getMinLon() +
+            "\" maxlat=\"" + bounds.getMaxLat() + "\" maxlon=\"" + bounds.getMaxLon() + "\"" ;
             inline("bounds", b);
         }
 

@@ -126,8 +126,8 @@ public class JumpToAction extends JosmAction {
         if(!url.hasFocus()) return;
         Bounds b = OsmUrlToBounds.parse(url.getText());
         if (b != null) {
-            lat.setText(Double.toString((b.getMin().lat() + b.getMax().lat())/2));
-            lon.setText(Double.toString((b.getMin().lon() + b.getMax().lon())/2));
+            lat.setText(Double.toString((b.getMinLat() + b.getMaxLat())/2));
+            lon.setText(Double.toString((b.getMinLon() + b.getMaxLon())/2));
 
             int zoomLvl = 16;
             String[] args = url.getText().substring(url.getText().indexOf('?')+1).split("&");

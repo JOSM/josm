@@ -398,8 +398,8 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
                         if (defaultTable.getSelectionModel().isSelectedIndex(i)) {
                             if (!mapRectangles.containsKey(i)) {
                                 // Add new map rectangle
-                                Coordinate topLeft = new Coordinate(bounds.getMax().lat(), bounds.getMin().lon());
-                                Coordinate bottomRight = new Coordinate(bounds.getMin().lat(), bounds.getMax().lon());
+                                Coordinate topLeft = new Coordinate(bounds.getMaxLat(), bounds.getMinLon());
+                                Coordinate bottomRight = new Coordinate(bounds.getMinLat(), bounds.getMaxLon());
                                 MapRectangle rectangle = new MapRectangleImpl(topLeft, bottomRight);
                                 mapRectangles.put(i, rectangle);
                                 defaultMap.addMapRectangle(rectangle);

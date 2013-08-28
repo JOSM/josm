@@ -183,10 +183,10 @@ public class BookmarkList extends JList {
             Bookmark b = (Bookmark)o;
             array[0] = b.getName();
             Bounds area = b.getArea();
-            array[1] = String.valueOf(area.getMin().lat());
-            array[2] = String.valueOf(area.getMin().lon());
-            array[3] = String.valueOf(area.getMax().lat());
-            array[4] = String.valueOf(area.getMax().lon());
+            array[1] = String.valueOf(area.getMinLat());
+            array[2] = String.valueOf(area.getMinLon());
+            array[3] = String.valueOf(area.getMaxLat());
+            array[4] = String.valueOf(area.getMaxLon());
             coll.add(Arrays.asList(array));
         }
         Main.pref.putArray("bookmarks", coll);
@@ -216,10 +216,10 @@ public class BookmarkList extends JList {
             Bounds area = b.getArea();
             StringBuffer sb = new StringBuffer();
             sb.append("<html>min[latitude,longitude]=<strong>[")
-            .append(area.getMin().lat()).append(",").append(area.getMin().lon()).append("]</strong>")
+            .append(area.getMinLat()).append(",").append(area.getMinLon()).append("]</strong>")
             .append("<br>")
             .append("max[latitude,longitude]=<strong>[")
-            .append(area.getMax().lat()).append(",").append(area.getMax().lon()).append("]</strong>")
+            .append(area.getMaxLat()).append(",").append(area.getMaxLon()).append("]</strong>")
             .append("</html>");
             return sb.toString();
 
