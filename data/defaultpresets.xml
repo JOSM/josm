@@ -4420,8 +4420,8 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Skating" icon="presets/skating.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=skating"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:sport=skating" />
-            <label text="Edit Skating" />
-            <key key="sport" value="skating" values_context="sport" />
+            <label text="Edit Skating" text_context="sport" />
+            <key key="sport" value="skating" />
             <text key="name" text="Name" />
             <combo key="leisure" text="type" values="ice_rink,pitch,sports_centre,stadium" default="ice_rink" />
         </item>

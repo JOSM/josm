@@ -63,4 +63,15 @@ public class TaggingPresetReaderTest {
         Assert.assertTrue("Entry is not checkbox", item instanceof TaggingPresetItems.Check);
     }
 
+    /**
+     * Validate internal presets
+     * See #9027
+     */
+    @Test
+    public void readDefaulPresets() throws SAXException, IOException {
+        String presetfile = "resource://data/defaultpresets.xml";
+        final Collection<TaggingPreset> presets = TaggingPresetReader.readAll(presetfile, true);
+        Assert.assertTrue("Default presets are empty", presets.size()>0);
+    }
+    
 }

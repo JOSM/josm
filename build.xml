@@ -61,7 +61,15 @@ Is-Local-Build: true
 Build-Date: ${build.tstamp}
 </echo>
     </target>
-    <target name="dist" depends="compile,create-revision">
+    <target name="check-schemas">
+        <schemavalidate file="data/defaultpresets.xml" >
+            <schema namespace="http://josm.openstreetmap.de/tagging-preset-1.0" file="data/tagging-preset.xsd" />
+        </schemavalidate>
+        <schemavalidate file="styles/standard/elemstyles.xml" >
+            <schema namespace="http://josm.openstreetmap.de/mappaint-style-1.0" file="data/mappaint-style.xsd" />
+        </schemavalidate>
+    </target>
+    <target name="dist" depends="compile,create-revision,check-schemas">
         <exec append="false" output="REVISION" executable="svn" failifexecutionfails="false">
             <env key="LANG" value="C"/>
             <arg value="info"/>
