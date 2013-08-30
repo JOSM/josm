@@ -20,6 +20,9 @@
  */
 package com.drew.metadata.exif;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.drew.lang.BufferBoundsException;
 import com.drew.lang.BufferReader;
 import com.drew.lang.Rational;
@@ -27,9 +30,6 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataReader;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Decodes Exif binary data, populating a {@link Metadata} object with tag values in {@link ExifSubIFDDirectory},
@@ -233,7 +233,7 @@ public class ExifReader implements MetadataReader
                 // This error suggests that we are processing at an incorrect index and will generate
                 // rubbish until we go out of bounds (which may be a while).  Exit now.
                 directory.addError("Invalid TIFF tag format code: " + formatCode);
-                return;
+                continue; // JOSM patch to fix #9030
             }
 
             // 4 bytes dictate the number of components in this tag's data
