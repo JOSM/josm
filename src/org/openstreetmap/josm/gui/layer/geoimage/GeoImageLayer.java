@@ -64,13 +64,15 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.lang.CompoundException;
-import com.drew.lang.Rational;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.GpsDirectory;
 
+/**
+ * Layer displaying geottaged pictures.
+ */
 public class GeoImageLayer extends Layer implements PropertyChangeListener, JumpToMarkerLayer {
 
     List<ImageEntry> data;
@@ -262,8 +264,12 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         Main.worker.execute(loader);
     }
 
+    /**
+     * Constructs a new {@code GeoImageLayer}.
+     * @param data The list of images to display
+     * @param gpxLayer The associated GPX layer
+     */
     public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer) {
-
         super(tr("Geotagged Images"));
 
         Collections.sort(data);
@@ -498,18 +504,13 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
     }
 
-    /*
-     * Extract gps from image exif
+    /**
+     * Extract GPS metadata from image EXIF
      *
-     * If successful, fills in the LatLon and EastNorth attributes of passed in
-     * image;
+     * If successful, fills in the LatLon and EastNorth attributes of passed in image
      */
-
     private static void extractExif(ImageEntry e) {
 
-        double deg;
-        double min, sec;
-        double lon, lat;
         Metadata metadata;
         Directory dirExif;
         GpsDirectory dirGps;
@@ -541,7 +542,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
 
         try {
-            double ele=dirGps.getDouble(GpsDirectory.TAG_GPS_ALTITUDE);
+            double ele = dirGps.getDouble(GpsDirectory.TAG_GPS_ALTITUDE);
             int d = dirGps.getInt(GpsDirectory.TAG_GPS_ALTITUDE_REF);
             if (d == 1) {
                 ele *= -1;
@@ -551,53 +552,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
 
         try {
-            // longitude
-
-            Rational[] components = dirGps.getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
-            if (components != null) {
-                deg = components[0].doubleValue();
-                min = components[1].doubleValue();
-                sec = components[2].doubleValue();
-
-                if (Double.isNaN(deg) && Double.isNaN(min) && Double.isNaN(sec))
-                    throw new IllegalArgumentException();
-
-                lon = (Double.isNaN(deg) ? 0 : deg + (Double.isNaN(min) ? 0 : (min / 60)) + (Double.isNaN(sec) ? 0 : (sec / 3600)));
-
-                if (dirGps.getString(GpsDirectory.TAG_GPS_LONGITUDE_REF).charAt(0) == 'W') {
-                    lon = -lon;
-                }
-            } else {
-                // Try to read lon/lat as double value (Nonstandard, created by some cameras -> #5220)
-                lon = dirGps.getDouble(GpsDirectory.TAG_GPS_LONGITUDE);
-            }
-
-            // latitude
-
-            components = dirGps.getRationalArray(GpsDirectory.TAG_GPS_LATITUDE);
-            if (components != null) {
-                deg = components[0].doubleValue();
-                min = components[1].doubleValue();
-                sec = components[2].doubleValue();
-
-                if (Double.isNaN(deg) && Double.isNaN(min) && Double.isNaN(sec))
-                    throw new IllegalArgumentException();
-
-                lat = (Double.isNaN(deg) ? 0 : deg + (Double.isNaN(min) ? 0 : (min / 60)) + (Double.isNaN(sec) ? 0 : (sec / 3600)));
-
-                if (Double.isNaN(lat))
-                    throw new IllegalArgumentException();
-
-                if (dirGps.getString(GpsDirectory.TAG_GPS_LATITUDE_REF).charAt(0) == 'S') {
-                    lat = -lat;
-                }
-            } else {
-                lat = dirGps.getDouble(GpsDirectory.TAG_GPS_LATITUDE);
-            }
-
-            // Store values
-
-            e.setExifCoor(new LatLon(lat, lon));
+            LatLon latlon = ExifReader.readLatLon(dirGps);
+            e.setExifCoor(latlon);
             e.setPos(e.getExifCoor());
 
         } catch (Exception ex) { // (other exceptions, e.g. #5271)
@@ -606,12 +562,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             e.setPos(null);
         }
 
-        // compass direction value
-
-        Rational direction = null;
-
         try {
-            direction = dirGps.getRational(GpsDirectory.TAG_GPS_IMG_DIRECTION);
+            Double direction = ExifReader.readDirection(dirGps);
             if (direction != null) {
                 e.setExifImgDir(direction.doubleValue());
             }
@@ -845,6 +797,10 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         return copy;
     }
 
+    /**
+     * Returns the associated GPX layer.
+     * @return The associated GPX layer
+     */
     public GpxLayer getGpxLayer() {
         return gpxLayer;
     }
