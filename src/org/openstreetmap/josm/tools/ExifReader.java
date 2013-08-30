@@ -6,22 +6,33 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.openstreetmap.josm.data.coor.LatLon;
+
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.lang.Rational;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.exif.GpsDirectory;
 
 /**
- * Read out exif file information from a jpeg file
+ * Read out EXIF information from a JPEG file
  * @author Imi
+ * @since 99
  */
 public class ExifReader {
 
-    @SuppressWarnings("unchecked") public static Date readTime(File filename) throws ParseException {
+    /**
+     * Returns the date/time from the given JPEG file.
+     * @param filename The JPEG file to read
+     * @return The date/time read in the EXIF section, or {@code null} if not found
+     * @throws ParseException if {@link DateParser#parse} fails to parse date/time
+     */
+    public static Date readTime(File filename) throws ParseException {
         try {
             Metadata metadata = JpegMetadataReader.readMetadata(filename);
             String dateStr = null;
@@ -50,12 +61,26 @@ public class ExifReader {
         return null;
     }
 
-    public static Integer readOrientation(File filename) throws ParseException {
-        Integer orientation = null;
+    /**
+     * Returns the image orientation of the given JPEG file.
+     * @param filename The JPEG file to read
+     * @return The image orientation as an {@code int}. Default value is 1. Possible values are listed in EXIF spec as follows:<br>
+     * <ul>1. The 0th row is at the visual top of the image, and the 0th column is the visual left-hand side.</ul>
+     * <ul>2. The 0th row is at the visual top of the image, and the 0th column is the visual right-hand side.</ul>
+     * <ul>3. The 0th row is at the visual bottom of the image, and the 0th column is the visual right-hand side.</ul>
+     * <ul>4. The 0th row is at the visual bottom of the image, and the 0th column is the visual left-hand side.</ul>
+     * <ul>5. The 0th row is the visual left-hand side of the image, and the 0th column is the visual top.</ul>
+     * <ul>6. The 0th row is the visual right-hand side of the image, and the 0th column is the visual top.</ul>
+     * <ul>7. The 0th row is the visual right-hand side of the image, and the 0th column is the visual bottom.</ul>
+     * <ul>8. The 0th row is the visual left-hand side of the image, and the 0th column is the visual bottom.</ul>
+     * @see <a href="http://www.impulseadventure.com/photo/exif-orientation.html">http://www.impulseadventure.com/photo/exif-orientation.html</a>
+     * @see <a href="http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto">http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto</a>
+     */
+    public static Integer readOrientation(File filename) {
         try {
             final Metadata metadata = JpegMetadataReader.readMetadata(filename);
             final Directory dir = metadata.getDirectory(ExifIFD0Directory.class);
-            orientation = dir.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+            return dir.getInt(ExifIFD0Directory.TAG_ORIENTATION);
         } catch (JpegProcessingException e) {
             e.printStackTrace();
         } catch (MetadataException e) {
@@ -63,7 +88,101 @@ public class ExifReader {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return orientation;
+        return null;
     }
 
+    /**
+     * Returns the geolocation of the given JPEG file.
+     * @param filename The JPEG file to read
+     * @return The lat/lon read in the EXIF section, or {@code null} if not found
+     * @since 6209
+     */
+    public static LatLon readLatLon(File filename) {
+        try {
+            final Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            final GpsDirectory dirGps = metadata.getDirectory(GpsDirectory.class);
+            return readLatLon(dirGps);
+        } catch (JpegProcessingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MetadataException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Returns the geolocation of the given EXIF GPS directory.
+     * @param dirGps The EXIF GPS directory
+     * @return The lat/lon read in the EXIF section, or {@code null} if {@code dirGps} is null
+     * @throws MetadataException 
+     * @since 6209
+     */
+    public static LatLon readLatLon(GpsDirectory dirGps) throws MetadataException {
+        if (dirGps != null) {
+            double lat = readAxis(dirGps, GpsDirectory.TAG_GPS_LATITUDE, GpsDirectory.TAG_GPS_LATITUDE_REF, 'S');
+            double lon = readAxis(dirGps, GpsDirectory.TAG_GPS_LONGITUDE, GpsDirectory.TAG_GPS_LONGITUDE_REF, 'W');
+            return new LatLon(lat, lon);
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the direction of the given JPEG file.
+     * @param filename The JPEG file to read
+     * @return The direction of the image when it was captures (in degrees between 0.0 and 359.99), or {@code null} if missing or if {@code dirGps} is null
+     * @since 6209
+     */
+    public static Double readDirection(File filename) {
+        try {
+            final Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            final GpsDirectory dirGps = metadata.getDirectory(GpsDirectory.class);
+            return readDirection(dirGps);
+        } catch (JpegProcessingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the direction of the given EXIF GPS directory.
+     * @param dirGps The EXIF GPS directory
+     * @return The direction of the image when it was captures (in degrees between 0.0 and 359.99), or {@code null} if missing or if {@code dirGps} is null
+     * @since 6209
+     */
+    public static Double readDirection(GpsDirectory dirGps) {
+        if (dirGps != null) {
+            Rational direction = dirGps.getRational(GpsDirectory.TAG_GPS_IMG_DIRECTION);
+            if (direction != null) {
+                return direction.doubleValue();
+            }
+        }
+        return null;
+    }
+
+    private static double readAxis(GpsDirectory dirGps, int gpsTag, int gpsTagRef, char cRef) throws MetadataException  {
+        double value;
+        Rational[] components = dirGps.getRationalArray(gpsTag);
+        if (components != null) {
+            double deg = components[0].doubleValue();
+            double min = components[1].doubleValue();
+            double sec = components[2].doubleValue();
+   
+            if (Double.isNaN(deg) && Double.isNaN(min) && Double.isNaN(sec))
+                throw new IllegalArgumentException();
+   
+            value = (Double.isNaN(deg) ? 0 : deg + (Double.isNaN(min) ? 0 : (min / 60)) + (Double.isNaN(sec) ? 0 : (sec / 3600)));
+   
+            if (dirGps.getString(gpsTagRef).charAt(0) == cRef) {
+                value = -value;
+            }
+        } else {
+            // Try to read lon/lat as double value (Nonstandard, created by some cameras -> #5220)
+            value = dirGps.getDouble(gpsTag);
+        }
+        return value;
+    }
 }
