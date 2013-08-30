@@ -1,10 +1,23 @@
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
+/**
+ * OSM Tile source.
+ */
 public class OsmTileSource {
 
+    /**
+     * The default "Mapnik" OSM tile source URL
+     */
     public static final String MAP_MAPNIK = "http://tile.openstreetmap.org";
 
+    /**
+     * The default "Mapnik" OSM tile source.
+     */
     public static class Mapnik extends AbstractOsmTileSource {
+        
+        /**
+         * Constructs a new {@code "Mapnik"} tile source.
+         */
         public Mapnik() {
             super("Mapnik", MAP_MAPNIK);
         }
@@ -14,6 +27,9 @@ public class OsmTileSource {
         }
     }
 
+    /**
+     * The "Cycle Map" OSM tile source.
+     */
     public static class CycleMap extends AbstractOsmTileSource {
 
         private static final String PATTERN = "http://%s.tile.opencyclemap.org/cycle";
@@ -22,6 +38,9 @@ public class OsmTileSource {
 
         private int SERVER_NUM = 0;
 
+        /**
+         * Constructs a new {@code CycleMap} tile source.
+         */
         public CycleMap() {
             super("OSM Cycle Map", PATTERN);
         }
@@ -35,7 +54,7 @@ public class OsmTileSource {
 
         @Override
         public int getMaxZoom() {
-            return 17;
+            return 18;
         }
 
         public TileUpdate getTileUpdate() {

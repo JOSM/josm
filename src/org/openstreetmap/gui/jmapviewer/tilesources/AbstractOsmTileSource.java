@@ -1,12 +1,12 @@
-/**
- * 
- */
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.awt.Image;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 
+/**
+ * Abstract clas for OSM Tile sources
+ */
 public abstract class AbstractOsmTileSource extends AbstractTMSTileSource {
     
     /**
@@ -14,12 +14,17 @@ public abstract class AbstractOsmTileSource extends AbstractTMSTileSource {
      */
     public static final String DEFAULT_OSM_ATTRIBUTION = "\u00a9 OpenStreetMap contributors";
     
+    /**
+     * Constructs a new OSM tile source
+     * @param name Source name as displayed in GUI
+     * @param base_url Source URL
+     */
     public AbstractOsmTileSource(String name, String base_url) {
         super(name, base_url);
     }
 
     public int getMaxZoom() {
-        return 18;
+        return 19;
     }
 
     @Override
