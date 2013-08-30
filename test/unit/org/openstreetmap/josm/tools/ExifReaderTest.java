@@ -57,8 +57,8 @@ public class ExifReaderTest {
     public void testReadLatLon() {
         LatLon latlon = ExifReader.readLatLon(sampleFile);
         assertNotNull(latlon);
-        assertEquals("51°46'43,0\"", LatLon.dms(latlon.lat()));
-        assertEquals("8°21'56,3\"", LatLon.dms(latlon.lon()));
+        assertEquals("51Â°46'43,0\"", LatLon.dms(latlon.lat()));
+        assertEquals("8Â°21'56,3\"", LatLon.dms(latlon.lon()));
     }
 
     /**
