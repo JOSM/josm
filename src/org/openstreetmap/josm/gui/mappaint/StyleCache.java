@@ -13,7 +13,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Caches styles for a single primitive.
- * Splits the range of possible scale values (0 < scale < +Infinity) into multiple
+ * Splits the range of possible scale values (0 &lt; scale &lt; +Infinity) into multiple
  * subranges, for each scale range it keeps a list of styles.
  * Immutable class, equals & hashCode is required (the same for StyleList, ElemStyle
  * and its subclasses).
@@ -141,6 +141,11 @@ public class StyleCache {
         return s.intern();
     }
 
+    // this exception type is for debugging #8997 and can later be replaced
+    // by AssertionError
+    public static class RangeViolatedError extends Error {
+    }
+
     /**
      * ASCII-art explanation:
      *
@@ -158,7 +163,7 @@ public class StyleCache {
         }
         if (bd.get(i) == lower) {
             if (upper > bd.get(i+1))
-                throw new AssertionError("the new range must be within a single subrange");
+                throw new RangeViolatedError();
             if (data.get(i) != null)
                 throw new AssertionError("the new range must be within a subrange that has no data");
 

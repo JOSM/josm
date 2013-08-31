@@ -112,7 +112,12 @@ public class ElemStyles {
             }
         }
         StyleCache style = osm.mappaintStyle != null ? osm.mappaintStyle : StyleCache.EMPTY_STYLECACHE;
-        osm.mappaintStyle = style.put(p.a, p.b);
+        try {
+            osm.mappaintStyle = style.put(p.a, p.b);
+        } catch (StyleCache.RangeViolatedError e) {
+            throw new AssertionError("Range violated. object: " + osm.getPrimitiveId() + ", current style: "+osm.mappaintStyle
+                    + ", scale: " + scale + ", new stylelist: " + p.a + ", new range: " + p.b);
+        }
         osm.mappaintCacheIdx = cacheIdx;
         return p;
     }
