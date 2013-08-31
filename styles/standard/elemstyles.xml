@@ -780,30 +780,35 @@ For external files the <rules> should have following elements:
 <!-- tracktype tags -->
 
 	<rule>
+		<condition k="highway" v="track"/>
 		<condition k="tracktype" v="grade1"/>
 		<line width="1" realwidth="3" dashed="2" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
 	<rule>
+		<condition k="highway" v="track"/>
 		<condition k="tracktype" v="grade2"/>
 		<line width="1" realwidth="3" dashed="4" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
 	<rule>
+		<condition k="highway" v="track"/>
 		<condition k="tracktype" v="grade3"/>
 		<line width="1" realwidth="3" dashed="6" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
 	<rule>
+		<condition k="highway" v="track"/>
 		<condition k="tracktype" v="grade4"/>
 		<line width="1" realwidth="3" dashed="8" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
 	<rule>
+		<condition k="highway" v="track"/>
 		<condition k="tracktype" v="grade5"/>
 		<line width="1" realwidth="3" dashed="10" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
