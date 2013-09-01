@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,8 +58,9 @@ public class ExifReaderTest {
     public void testReadLatLon() {
         LatLon latlon = ExifReader.readLatLon(sampleFile);
         assertNotNull(latlon);
-        assertEquals("51°46'43,0\"", LatLon.dms(latlon.lat()));
-        assertEquals("8°21'56,3\"", LatLon.dms(latlon.lon()));
+        DecimalFormat f = new DecimalFormat("00.0");
+        assertEquals("51°46'"+f.format(43.0)+"\"", LatLon.dms(latlon.lat()));
+        assertEquals("8°21'"+f.format(56.3)+"\"", LatLon.dms(latlon.lon()));
     }
 
     /**
