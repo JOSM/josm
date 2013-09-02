@@ -17,8 +17,15 @@ import javax.swing.table.TableCellRenderer;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.User;
 
+/**
+ * The cell renderer for the changeset table
+ * @since 2689
+ */
 public class ChangesetCacheTableCellRenderer extends JLabel implements TableCellRenderer{
 
+    /**
+     * Constructs a new {@code ChangesetCacheTableCellRenderer}.
+     */
     public ChangesetCacheTableCellRenderer() {
         setOpaque(true);
     }

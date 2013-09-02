@@ -8,64 +8,48 @@ import javax.swing.table.TableColumn;
 
 /**
  * The column model for the changeset table
- *
+ * @since 2689
  */
 public class ChangesetCacheTableColumnModel extends DefaultTableColumnModel {
 
-    protected void createColumns() {
-        TableColumn col = null;
-        ChangesetCacheTableCellRenderer renderer = new ChangesetCacheTableCellRenderer();
-
-        // column 0 - Id
-        col = new TableColumn(0);
-        col.setHeaderValue(tr("ID"));
+    private final ChangesetCacheTableCellRenderer renderer = new ChangesetCacheTableCellRenderer();
+    
+    protected void createColumn(int modelIndex, String headerValue, int preferredWidth, int width) {
+        TableColumn col = new TableColumn(modelIndex);
+        col.setHeaderValue(headerValue);
         col.setResizable(true);
-        col.setWidth(20);
-        col.setPreferredWidth(20);
-        col.setCellRenderer(renderer);
-        addColumn(col);
-
-        // column 1 - Upload comment
-        col = new TableColumn(1);
-        col.setHeaderValue(tr("Comment"));
-        col.setResizable(true);
-        col.setPreferredWidth(200);
-        col.setCellRenderer(renderer);
-        addColumn(col);
-
-        // column 2 - Open
-        col = new TableColumn(2);
-        col.setHeaderValue(tr("Open"));
-        col.setResizable(true);
-        col.setPreferredWidth(50);
-        col.setCellRenderer(renderer);
-        addColumn(col);
-
-        // column 3 - User
-        col = new TableColumn(3);
-        col.setHeaderValue(tr("User"));
-        col.setResizable(true);
-        col.setPreferredWidth(50);
-        col.setCellRenderer(renderer);
-        addColumn(col);
-
-        // column 4 - Created at
-        col = new TableColumn(4);
-        col.setHeaderValue(tr("Created at"));
-        col.setResizable(true);
-        col.setPreferredWidth(100);
-        col.setCellRenderer(renderer);
-        addColumn(col);
-
-        // column 5 - Closed at
-        col = new TableColumn(4);
-        col.setHeaderValue(tr("Closed at"));
-        col.setResizable(true);
-        col.setPreferredWidth(100);
+        if (width > -1) {
+            col.setWidth(width);
+        }
+        col.setPreferredWidth(preferredWidth);
         col.setCellRenderer(renderer);
         addColumn(col);
     }
+    
+    protected void createColumns() {
 
+        // column 0 - Id
+        createColumn(0, tr("ID"), 20, 20);
+
+        // column 1 - Upload comment
+        createColumn(1, tr("Comment"), 200, -1);
+
+        // column 2 - Open
+        createColumn(2, tr("Open"), 50, -1);
+
+        // column 3 - User
+        createColumn(3, tr("User"), 50, -1);
+
+        // column 4 - Created at
+        createColumn(4, tr("Created at"), 100, -1);
+
+        // column 5 - Closed at
+        createColumn(5, tr("Closed at"), 100, -1);
+    }
+
+    /**
+     * Creates a new {@code ChangesetCacheTableColumnModel}.
+     */
     public ChangesetCacheTableColumnModel() {
         createColumns();
     }
