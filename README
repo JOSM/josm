@@ -16,8 +16,8 @@ How to get Java Runtime Environment
 -----------------------------------
 You need JRE Version 1.6 (also called Java 6), or later.
 
-Microsoft Windows users should visit http://www.java.com
-and download the latest Java executable for Windows systems.
+Microsoft Windows and Apple Mac OS X users should visit http://www.java.com
+and download the latest Java executable for their system.
 
 Linux users should visit http://www.oracle.com/technetwork/java/index.html
 There is a Linux binary installer, which you must execute from a console, or
@@ -101,14 +101,18 @@ This is an overview of the files and directories in the JOSM code repository:
 - sytles_nodist/            files needed for map style maintenance
     - potlatch2/README      infos on how to update the Potlatch 2 style from upstream sources
 - test/                     automated software tests
+    - data/                 resources used for some tests
     - functional/           functional tests (source code)
     - lib/                  libraries needed for (some of) the tests
+    - performance/          performance tests (source code)
     - unit/                 unit tests (source code)
 - tools/                    libraries and tools that help in the development process
-    - animal-sniffer-ant-tasks-1.7.jar
+    - animal-sniffer-ant-tasks-1.8.jar
                             TODO: what is this?
+    - appbundler-1.0ea.jar  used to build Mac OS X package for Oracle Java 7
     - findbugs/             libs and config files for findbugs (automatically detects common bugs and potential
                             problems in source code); can be launched as an ant target in build.xml
+    - jacocoant.jar         used to include coverage data into JUnit test reports 
     - javacc.jar            used in the build process to generate some .java files from a javacc source file
                             (src/org/openstreetmap/josm/gui/mappaint/mapcss/MapCSSParser.jj)
     - proguard.jar          optimize final binary jar - see build.xml (not used in production so far)
