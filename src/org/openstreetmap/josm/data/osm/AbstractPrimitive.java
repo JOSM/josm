@@ -266,7 +266,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
         if (isNew() && changesetId > 0)
             throw new IllegalStateException(tr("Cannot assign a changesetId > 0 to a new primitive. Value of changesetId is {0}", changesetId));
 
-        int old = this.changesetId;
         this.changesetId = changesetId;
     }
 
@@ -715,7 +714,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * Tests whether this primitive contains a tag consisting of {@code key} and any of {@code values}.
      * @param key the key forming the tag.
      * @param values one or many values forming the tag.
-     * @return true iff primitive contains a tag consisting of {@code key} and any of {@code values}.
+     * @return true if primitive contains a tag consisting of {@code key} and any of {@code values}.
      */
     public boolean hasTag(String key, String... values) {
         return hasTag(key, Arrays.asList(values));

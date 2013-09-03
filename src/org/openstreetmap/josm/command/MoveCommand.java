@@ -150,7 +150,9 @@ public class MoveCommand extends Command {
         Iterator<OldNodeState> it = oldState.iterator();
         for (Node n : nodes) {
             OldNodeState os = it.next();
-            n.setEastNorth(os.eastNorth.add(x, y));
+            if (os.eastNorth != null) {
+                n.setEastNorth(os.eastNorth.add(x, y));
+            }
         }
     }
 
@@ -159,11 +161,11 @@ public class MoveCommand extends Command {
             // in case #3892 happens again
             if (n == null)
                 throw new AssertionError("null detected in node list");
-            if (n.getEastNorth() == null)
-                throw new AssertionError("null coordinates detected in node list");
-
-            n.setEastNorth(n.getEastNorth().add(x, y));
-            n.setModified(true);
+            EastNorth en = n.getEastNorth();
+            if (en != null) {
+                n.setEastNorth(en.add(x, y));
+                n.setModified(true);
+            }
         }
         return true;
     }
