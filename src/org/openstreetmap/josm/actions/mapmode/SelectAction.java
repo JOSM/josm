@@ -36,6 +36,7 @@ import org.openstreetmap.josm.command.RotateCommand;
 import org.openstreetmap.josm.command.ScaleCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -697,7 +698,8 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                         c = new MoveCommand(selection, startEN, currentEN));
             }
             for (Node n : affectedNodes) {
-                if (n.getCoor().isOutSideWorld()) {
+                LatLon ll = n.getCoor();
+                if (ll != null && ll.isOutSideWorld()) {
                     // Revert move
                     ((MoveCommand) c).resetToCheckpoint();
                     getCurrentDataSet().endUpdate();
