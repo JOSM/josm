@@ -3015,6 +3015,12 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="natural" v="tree_row"/>
+		<icon src="misc/no_icon.png"/>
+		<line width="2" colour="woodarea#008000"/>
+	</rule>
+	
+	<rule>
 		<condition k="natural" v="wood"/>
 		<icon src="misc/landmark/trees.png"/>
 		<area colour="woodarea#008000"/>
@@ -3720,15 +3726,15 @@ For external files the <rules> should have following elements:
 		<area colour="building#cb9999" priority="-10000"/>
 	</rule>
 
-    <rule>
-        <condition k="building" v="garage"/>
-        <icon annotate="true" src="misc/landuse/garages.png"/>
-    </rule>
+	<rule>
+		<condition k="building" v="garage"/>
+		<icon annotate="true" src="misc/landuse/garages.png"/>
+	</rule>
 
-    <rule>
-        <condition k="building" v="garages"/>
-        <icon annotate="true" src="misc/landuse/garages.png"/>
-    </rule>
+	<rule>
+		<condition k="building" v="garages"/>
+		<icon annotate="true" src="misc/landuse/garages.png"/>
+	</rule>
 
 	<rule>
 		<condition k="building" v="entrance" />
@@ -3853,7 +3859,7 @@ For external files the <rules> should have following elements:
 		<condition k="train" v="yes"/>
 		<icon annotate="true" src="transport/railway_station.png"  priority="10" />
 		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
-        <area colour="service#809bc0" closed="true" />
+		<area colour="service#809bc0" closed="true" />
 	</rule>
 
 	<rule>
@@ -3861,7 +3867,7 @@ For external files the <rules> should have following elements:
 		<condition k="tram" v="yes"/>
 		<icon annotate="true" src="transport/railway_station.png"  priority="8" />
 		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
-        <area colour="service#809bc0" closed="true" />
+		<area colour="service#809bc0" closed="true" />
 	</rule>
 
 	<rule>
@@ -3869,7 +3875,7 @@ For external files the <rules> should have following elements:
 		<condition k="ferry" v="yes"/>
 		<icon annotate="true" src="transport/ferry.png"  priority="7" />
 		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
-        <area colour="service#809bc0" closed="true" />
+		<area colour="service#809bc0" closed="true" />
 	</rule>
 
 	<rule>
@@ -3877,7 +3883,7 @@ For external files the <rules> should have following elements:
 		<condition k="aerial" v="yes"/>
 		<icon annotate="true" src="transport/aerialway/station.png"  priority="6" />
 		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
-        <area colour="service#809bc0" closed="true" />
+		<area colour="service#809bc0" closed="true" />
 	</rule>
 
 	<rule>
@@ -3885,14 +3891,14 @@ For external files the <rules> should have following elements:
 		<condition k="bus" v="yes"/>
 		<icon annotate="true" src="transport/bus_small.png"  priority="4" />
 		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
-        <area colour="service#809bc0" closed="true" />
+		<area colour="service#809bc0" closed="true" />
 	</rule>
 
 	<rule>
 		<condition k="public_transport" v="platform"/>
 		<icon annotate="true" src="transport/bus_small.png" priority="-10"/>
 		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/>
-        <area colour="service#809bc0" closed="true" />
+		<area colour="service#809bc0" closed="true" />
 	</rule>
 
 <!--"deprecated" tags -->
