@@ -102,7 +102,7 @@ Build-Date: ${build.tstamp}
             <!-- <zipfileset src="lib/signpost-core-1.2.1.1.jar"/> -->
         </jar>
     </target>
-	<!-- Compatibility Mac OS X target for Java 6 (incompatible with new on for Java 7, see #8654, #9035) -->
+    <!-- Compatibility Mac OS X target for Java 6 (incompatible with new on for Java 7, see #8654, #9035) -->
     <target name="distmac" depends="dist">
         <!-- modify MacOS X Info.plist file to hold the SVN version number -->
         <copy file="macosx/JOSM.app/Contents/Info.plist" todir="build"/>
@@ -116,18 +116,19 @@ Build-Date: ${build.tstamp}
             <zipfileset dir="macosx" includes="JOSM.app/Contents/MacOS/JOSM" filemode="755"/>
         </zip>
     </target>
-	<!-- New Mac OS X target for Java 7 -->
+    <!-- New Mac OS X target for Java 7 -->
     <target name="distmac7" depends="dist">
-    	<!-- Using https://bitbucket.org/infinitekind/appbundler to create mac application bundle -->
-    	<taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="tools/appbundler-1.0ea.jar"/>
-    	<!-- create MacOS X application bundle -->
+        <!-- Using https://bitbucket.org/infinitekind/appbundler to create mac application bundle -->
+        <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="tools/appbundler-1.0ea.jar"/>
+        <!-- create MacOS X application bundle -->
         <bundleapp outputdirectory="dist" name="JOSM" displayname="JOSM" executablename="JOSM" identifier="org.openstreetmap.josm"
                    mainclassname="org.openstreetmap.josm.gui.MainApplication"
+                   copyright="JOSM, and all its integral parts, are released under the GNU General Public License v2 or later"
                    applicationCategory="public.app-category.utilities"
                    shortversion="${version.entry.commit.revision} SVN"
                    version="${version.entry.commit.revision} SVN"
                    icon="macosx/JOSM.app/Contents/Resources/JOSM.icns"
-                   highResolutionCapable="false">
+                   highResolutionCapable="true">
 
             <arch name="x86_64"/>
             <arch name="i386"/>
@@ -146,13 +147,22 @@ Build-Date: ${build.tstamp}
             <option value="-Dcom.apple.mrj.application.apple.menu.about.name=JOSM"/>
             <option value="-Dcom.apple.smallTabs=true"/>
         </bundleapp>
-
+        
+        <!-- appbundler lacks the possibility of defining our own keys or using a template, so update the .plist manually -->
+        <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask" classpath="tools/xmltask.jar"/>
+        
+        <xmltask source="dist/JOSM.app/Contents/Info.plist" dest="dist/JOSM.app/Contents/Info.plist" indent="false">
+            <insert position="before" path="/plist/dict/key[1]"><![CDATA[<key>CFBundleAllowMixedLocalizations</key>
+<string>true</string>
+]]></insert>
+        </xmltask>
+        
         <!-- create ZIP file with MacOS X application bundle -->
         <zip destfile="dist/josm-custom-macosx-java7.zip" update="true">
             <zipfileset dir="build" includes="CONTRIBUTION README LICENSE"/>
             <zipfileset dir="dist" includes="JOSM.app/**/*" filemode="755" />
         </zip>
-	</target>
+    </target>
     <target name="javacc" depends="init" unless="javacc.notRequired">
         <mkdir dir="${mapcss.dir}/parsergen"/>
         <exec append="false" executable="java" failifexecutionfails="true">
