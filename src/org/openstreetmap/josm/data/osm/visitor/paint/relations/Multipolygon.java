@@ -4,7 +4,6 @@ package org.openstreetmap.josm.data.osm.visitor.paint.relations;
 import java.awt.geom.Path2D;
 import java.awt.geom.Path2D.Double;
 import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -296,7 +295,7 @@ public class Multipolygon {
                 } else if (wayIds.size() == 1) {
                     Way w = (Way) ds.getPrimitiveById(wayIds.iterator().next(), OsmPrimitiveType.WAY);
                     nodes.addAll(w.getNodes());
-                } else {
+                } else if (!wayIds.isEmpty()) {
                     List<Way> waysToJoin = new ArrayList<Way>();
                     for (Long wayId : wayIds) {
                         Way w = (Way) ds.getPrimitiveById(wayId, OsmPrimitiveType.WAY);
@@ -304,7 +303,9 @@ public class Multipolygon {
                             waysToJoin.add(w);
                         }
                     }
-                    nodes.addAll(joinWays(waysToJoin).iterator().next().getNodes());
+                    if (!waysToJoin.isEmpty()) {
+                        nodes.addAll(joinWays(waysToJoin).iterator().next().getNodes());
+                    }
                 }
                 resetPoly();
             }
