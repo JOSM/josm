@@ -23,7 +23,6 @@ import java.io.Reader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EventObject;
 import java.util.List;
 import java.util.TooManyListenersException;
 
@@ -469,49 +468,6 @@ public class FileDrop
         public abstract void filesDropped( File[] files );
 
     }   // end inner-interface Listener
-
-    /* ********  I N N E R   C L A S S  ******** */
-
-    /**
-     * This is the event that is passed to the
-     * {@link FileDrop.Listener#filesDropped filesDropped(...)} method in
-     * your {@link FileDrop.Listener} when files are dropped onto
-     * a registered drop target.
-     *
-     * <p>I'm releasing this code into the Public Domain. Enjoy.</p>
-     *
-     * @author  Robert Harder
-     * @author  rob@iharder.net
-     * @version 1.2
-     */
-    public static class Event extends EventObject {
-
-        private File[] files;
-
-        /**
-         * Constructs an {@link Event} with the array
-         * of files that were dropped and the
-         * {@link FileDrop} that initiated the event.
-         *
-         * @param files The array of files that were dropped
-         * @param source The event source
-         */
-        public Event( File[] files, Object source ) {
-            super( source );
-            this.files = files;
-        }   // end constructor
-
-        /**
-         * Returns an array of files that were dropped on a
-         * registered drop target.
-         *
-         * @return array of files that were dropped
-         */
-        public File[] getFiles() {
-            return files;
-        }   // end getFiles
-
-    }   // end inner class Event
 
     /* ********  I N N E R   C L A S S  ******** */
 

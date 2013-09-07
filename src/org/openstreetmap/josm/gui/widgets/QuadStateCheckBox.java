@@ -1,5 +1,5 @@
 // License: GPL. Copyright 2008 by Frederik Ramm and others
-package org.openstreetmap.josm.gui;
+package org.openstreetmap.josm.gui.widgets;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -20,16 +20,41 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ActionMapUIResource;
 
+import org.openstreetmap.josm.tools.Utils;
+
+/**
+ * A four-state checkbox. The states are enumerated in {@link State}.
+ * @since 591
+ */
 public class QuadStateCheckBox extends JCheckBox {
 
-    public enum State { NOT_SELECTED, SELECTED, UNSET, PARTIAL }
+    /**
+     * The 4 possible states of this checkbox.
+     */
+    public enum State {
+        /** Not selected: the property is explicitly switched off */
+        NOT_SELECTED,
+        /** Selected: the property is explicitly switched on */
+        SELECTED,
+        /** Unset: do not set this property on the selected objects */
+        UNSET,
+        /** Partial: different selected objects have different values, do not change */
+        PARTIAL
+    }
 
     private final QuadStateDecorator model;
     private State[] allowed;
 
+    /**
+     * Constructs a new {@code QuadStateCheckBox}.
+     * @param text the text of the check box
+     * @param icon the Icon image to display
+     * @param initial The initial state
+     * @param allowed The allowed states
+     */
     public QuadStateCheckBox(String text, Icon icon, State initial, State[] allowed) {
         super(text, icon);
-        this.allowed = allowed;
+        this.allowed = Utils.copyArray(allowed);
         // Add a listener for when the mouse is pressed
         super.addMouseListener(new MouseAdapter() {
             @Override public void mousePressed(MouseEvent e) {
@@ -53,20 +78,38 @@ public class QuadStateCheckBox extends JCheckBox {
         setModel(model);
         setState(initial);
     }
+    
+    /**
+     * Constructs a new {@code QuadStateCheckBox}.
+     * @param text the text of the check box
+     * @param initial The initial state
+     * @param allowed The allowed states
+     */
     public QuadStateCheckBox(String text, State initial, State[] allowed) {
         this(text, null, initial, allowed);
     }
 
     /** Do not let anyone add mouse listeners */
     @Override public void addMouseListener(MouseListener l) { }
+    
     /**
      * Set the new state.
+     * @param state The new state
      */
-    public void setState(State state) { model.setState(state); }
-    /** Return the current state, which is determined by the
-     * selection status of the model. */
-    public State getState() { return model.getState(); }
-    @Override public void setSelected(boolean b) {
+    public void setState(State state) {
+        model.setState(state);
+    }
+    
+    /** 
+     * Return the current state, which is determined by the selection status of the model. 
+     * @return The current state 
+     */
+    public State getState() {
+        return model.getState();
+    }
+    
+    @Override
+    public void setSelected(boolean b) {
         if (b) {
             setState(State.SELECTED);
         } else {
@@ -76,9 +119,11 @@ public class QuadStateCheckBox extends JCheckBox {
 
     private class QuadStateDecorator implements ButtonModel {
         private final ButtonModel other;
+        
         private QuadStateDecorator(ButtonModel other) {
             this.other = other;
         }
+        
         private void setState(State state) {
             if (state == State.NOT_SELECTED) {
                 other.setArmed(false);
@@ -102,6 +147,7 @@ public class QuadStateCheckBox extends JCheckBox {
                 setToolTipText(tr("unset: do not set this property on the selected objects"));
             }
         }
+        
         /**
          * The current state is embedded in the selection / armed
          * state of the model.
@@ -138,8 +184,7 @@ public class QuadStateCheckBox extends JCheckBox {
         @Override public void setArmed(boolean b) { }
         @Override public void setSelected(boolean b) { }
         @Override public void setPressed(boolean b) { }
-        /** We disable focusing on the component when it is not
-         * enabled. */
+        /** We disable focusing on the component when it is not enabled. */
         @Override public void setEnabled(boolean b) {
             setFocusable(b);
             other.setEnabled(b);
