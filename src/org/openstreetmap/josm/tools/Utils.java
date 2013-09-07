@@ -29,6 +29,7 @@ import java.text.MessageFormat;
 import java.util.AbstractCollection;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -240,6 +241,19 @@ public class Utils {
         return new Color(255 - clr.getRed(), 255 - clr.getGreen(), 255 - clr.getBlue(), clr.getAlpha());
     }
 
+    /**
+     * Copies the given array. Unlike {@link Arrays#copyOf}, this method is null-safe.
+     * @param array The array to copy
+     * @return A copy of the original array, or {@code null} if {@code array} is null
+     * @since 6221
+     */
+    public static <T> T[] copyArray(T[] array) {
+        if (array != null) {
+            return Arrays.copyOf(array, array.length);
+        }
+        return null;
+    }
+    
     /**
      * Simple file copy function that will overwrite the target file.<br/>
      * Taken from <a href="http://www.rgagnon.com/javadetails/java-0064.html">this article</a> (CC-NC-BY-SA)
