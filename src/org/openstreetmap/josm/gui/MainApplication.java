@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
+import gnu.getopt.Getopt;
+import gnu.getopt.LongOpt;
 
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -27,9 +29,6 @@ import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
-
-import gnu.getopt.Getopt;
-import gnu.getopt.LongOpt;
 
 import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
 import org.openstreetmap.josm.Main;
@@ -300,7 +299,7 @@ public class MainApplication extends Main {
         // call the really early hook before we do anything else
         Main.platform.preStartupHook();
 
-        Main.commandLineArgs = argArray;
+        Main.commandLineArgs = Utils.copyArray(argArray);
         
         if (args.containsKey(Option.VERSION)) {
             System.out.println(Version.getInstance().getAgentString());
