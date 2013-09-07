@@ -10,14 +10,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.ButtonModel;
-
 import org.openstreetmap.josm.Main;
 
-public class ExpertToggleAction extends JosmAction {
-
-    private final List<ButtonModel> buttonModels = new ArrayList<ButtonModel>();
-    private boolean selected;
+/**
+ * This action toggles the Expert mode.
+ * @since 4840
+ */
+public class ExpertToggleAction extends ToggleAction {
 
     public interface ExpertModeChangeListener {
         void expertChanged(boolean isExpert);
@@ -117,61 +116,46 @@ public class ExpertToggleAction extends JosmAction {
         }
     }
 
+    /**
+     * Constructs a new {@code ExpertToggleAction}.
+     */
     public ExpertToggleAction() {
-        super(
-                tr("Expert Mode"),
-                "expert",
-                tr("Enable/disable expert mode"),
-                null,
-                false /* register toolbar */
+        super(tr("Expert Mode"),
+              "expert",
+              tr("Enable/disable expert mode"),
+              null,
+              false /* register toolbar */
         );
         putValue("toolbar", "expertmode");
         Main.toolbar.register(this);
-        selected = Main.pref.getBoolean("expert", false);
+        setSelected(Main.pref.getBoolean("expert", false));
         notifySelectedState();
-    }
-
-    public void addButtonModel(ButtonModel model) {
-        if (model != null && !buttonModels.contains(model)) {
-            buttonModels.add(model);
-            model.setSelected(selected);
-        }
-    }
-
-    public void removeButtonModel(ButtonModel model) {
-        if (model != null && buttonModels.contains(model)) {
-            buttonModels.remove(model);
-        }
     }
 
     protected void notifySelectedState() {
-        for (ButtonModel model: buttonModels) {
-            if (model.isSelected() != selected) {
-                model.setSelected(selected);
-            }
-        }
-        fireExpertModeChanged(selected);
-    }
-
-    protected void toggleSelectedState() {
-        selected = !selected;
-        Main.pref.put("expert", selected);
-        notifySelectedState();
+        super.notifySelectedState();
+        fireExpertModeChanged(isSelected());
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState();
+        Main.pref.put("expert", isSelected());
+        notifySelectedState();
     }
 
-    public boolean isSelected() {
-        return selected;
-    }
-
+    /**
+     * Replies the unique instance of this action.
+     * @return The unique instance of this action
+     */
     public static ExpertToggleAction getInstance() {
         return INSTANCE;
     }
 
+    /**
+     * Determines if expert mode is enabled.
+     * @return {@code true} if expert mode is enabled, {@code false} otherwise.
+     */
     public static boolean isExpert() {
         return INSTANCE.isSelected();
     }
