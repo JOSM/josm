@@ -15,7 +15,6 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ButtonModel;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
@@ -24,58 +23,47 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public class FullscreenToggleAction extends JosmAction {
-    private final List<ButtonModel> buttonModels = new ArrayList<ButtonModel>();
-    private boolean selected;
+/**
+ * This class toggles the full-screen mode.
+ * @since 2533
+ */
+public class FullscreenToggleAction extends ToggleAction {
     private GraphicsDevice gd;
     private Rectangle prevBounds;
 
+    /**
+     * Constructs a new {@code FullscreenToggleAction}.
+     */
     public FullscreenToggleAction() {
-        super(
-                tr("Fullscreen view"),
-                null, /* no icon */
-                tr("Toggle fullscreen view"),
-                Shortcut.registerShortcut("menu:view:fullscreen", tr("Toggle fullscreen view"),KeyEvent.VK_F11, Shortcut.DIRECT),
-                false /* register */
+        super(tr("Fullscreen view"),
+              null, /* no icon */
+              tr("Toggle fullscreen view"),
+              Shortcut.registerShortcut("menu:view:fullscreen", tr("Toggle fullscreen view"),KeyEvent.VK_F11, Shortcut.DIRECT),
+              false /* register */
         );
         putValue("help", ht("/Action/FullscreenView"));
         putValue("toolbar", "fullscreen");
         Main.toolbar.register(this);
         gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        selected = Main.pref.getBoolean("draw.fullscreen", false);
+        setSelected(Main.pref.getBoolean("draw.fullscreen", false));
         notifySelectedState();
     }
 
-    public void addButtonModel(ButtonModel model) {
-        if (model != null && !buttonModels.contains(model)) {
-            buttonModels.add(model);
-        }
-    }
-
-    public void removeButtonModel(ButtonModel model) {
-        if (model != null && buttonModels.contains(model)) {
-            buttonModels.remove(model);
-        }
-    }
-
-    protected void notifySelectedState() {
-        for (ButtonModel model: buttonModels) {
-            if (model.isSelected() != selected) {
-                model.setSelected(selected);
-            }
-        }
-    }
-
-    protected void toggleSelectedState() {
-        selected = !selected;
-        Main.pref.put("draw.fullscreen", selected);
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        toggleSelectedState();
+        Main.pref.put("draw.fullscreen", isSelected());
         notifySelectedState();
         setMode();
     }
 
+    /**
+     * To call if this action must be initially run at JOSM startup.
+     */
     public void initial() {
-        if(selected)
+        if (isSelected()) {
             setMode();
+        }
     }
 
     protected void setMode() {
@@ -88,6 +76,8 @@ public class FullscreenToggleAction extends JosmAction {
                 visibleWindows.add(w);
             }
         }
+        
+        boolean selected = isSelected();
 
         frame.dispose();
         frame.setUndecorated(selected);
@@ -118,10 +108,5 @@ public class FullscreenToggleAction extends JosmAction {
 
         // Free F10 key to allow it to be used by plugins, even after full screen (see #7502)
         frame.getJMenuBar().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "none");
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        toggleSelectedState();
     }
 }
