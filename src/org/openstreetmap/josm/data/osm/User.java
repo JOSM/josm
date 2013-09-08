@@ -38,6 +38,7 @@ public class User {
      * Creates a local user with the given name
      *
      * @param name the name
+     * @return a new local user with the given name
      */
     public static User createLocalUser(String name) {
         for(long i = -1; i >= uidCounter.get(); --i)
@@ -56,6 +57,7 @@ public class User {
      *
      * @param uid  the user id
      * @param name the name
+     * @return a new OSM user with the given name and uid
      */
     public static User createOsmUser(long uid, String name) {
         User user = userMap.get(uid);
@@ -106,6 +108,10 @@ public class User {
         return ret;
     }
 
+    /**
+     * Replies the anonymous user
+     * @return The anonymous user
+     */
     public static User getAnonymous() {
         return anonymous;
     }
@@ -174,10 +180,18 @@ public class User {
         }
     }
 
+    /**
+     * Determines if this user is known to OSM
+     * @return {@code true} if this user is known to OSM, {@code false} otherwise
+     */
     public boolean isOsmUser() {
         return uid > 0;
     }
 
+    /**
+     * Determines if this user is local
+     * @return {@code true} if this user is local, {@code false} otherwise
+     */
     public boolean isLocalUser() {
         return uid < 0;
     }
@@ -204,9 +218,9 @@ public class User {
     @Override
     public String toString() {
         StringBuffer s = new StringBuffer();
-        s.append("id:"+uid);
+        s.append("id:").append(uid);
         if (names.size() == 1) {
-            s.append(" name:"+getName());
+            s.append(" name:").append(getName());
         }
         else if (names.size() > 1) {
             s.append(String.format(" %d names:%s", names.size(), getName()));

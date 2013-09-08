@@ -187,10 +187,11 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
 
         @Override
         public boolean evaluate(OsmPrimitive p) {
-            if (hds.getHistory(p.getPrimitiveId()) == null)
+            History h = hds.getHistory(p.getPrimitiveId());
+            if (h == null)
                 // reload if the history is not in the cache yet
                 return true;
-            else if (!p.isNew() && hds.getHistory(p.getPrimitiveId()).getByVersion(p.getUniqueId()) == null)
+            else if (!p.isNew() && h.getByVersion(p.getUniqueId()) == null)
                 // reload if the history object of the selected object is not in the cache yet
                 return true;
             else

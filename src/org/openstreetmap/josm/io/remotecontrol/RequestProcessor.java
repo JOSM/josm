@@ -18,12 +18,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddWayHandler;
@@ -77,6 +74,7 @@ public class RequestProcessor extends Thread {
 
     /**
      * Spawns a new thread for the request
+     * @param request The request to process
      */
     public static void processRequest(Socket request) {
         RequestProcessor processor = new RequestProcessor(request);
@@ -213,8 +211,7 @@ public class RequestProcessor extends Thread {
             if (handlerClass == null) {
                 String usage = getUsageAsHtml();
                 String websiteDoc = HelpUtil.getWikiBaseHelpUrl() +"/Help/Preferences/RemoteControl";
-                String help = "No command specified! The following commands are available:<ul>"
-                        + usage.toString()
+                String help = "No command specified! The following commands are available:<ul>" + usage
                         + "</ul>" + "See <a href=\""+websiteDoc+"\">"+websiteDoc+"</a> for complete documentation.";
                 sendBadRequest(out, help);
             } else {
@@ -448,7 +445,7 @@ public class RequestProcessor extends Thread {
 
     /**
      * Reports HTML message with the description of all available commands
-     * @return
+     * @return HTML message with the description of all available commands
      * @throws IllegalAccessException
      * @throws InstantiationException 
      */
