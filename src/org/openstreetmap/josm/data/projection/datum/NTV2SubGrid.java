@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import org.openstreetmap.josm.tools.Utils;
+
 /**
  * Models the NTv2 Sub Grid within a Grid Shift File
  *
@@ -215,7 +217,6 @@ public class NTV2SubGrid implements Cloneable, Serializable {
      * <p>This method is thread safe for both memory based and file based node data.
      * @param gs GridShift object containing the coordinate to shift and the shift values
      * @return the GridShift object supplied, with values updated.
-     * @throws IOException
      */
     public NTV2GridShift interpolateGridShift(NTV2GridShift gs) {
         int lonIndex = (int)((gs.getLonPositiveWestSeconds() - minLon) / lonInterval);
@@ -280,7 +281,7 @@ public class NTV2SubGrid implements Cloneable, Serializable {
      * @param subGrid
      */
     public void setSubGridArray(NTV2SubGrid[] subGrid) {
-        this.subGrid = subGrid;
+        this.subGrid = Utils.copyArray(subGrid);
     }
 
     @Override
@@ -368,5 +369,4 @@ public class NTV2SubGrid implements Cloneable, Serializable {
     public double getMinLon() {
         return minLon;
     }
-
 }

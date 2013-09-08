@@ -255,6 +255,19 @@ public class Utils {
     }
     
     /**
+     * Copies the given array. Unlike {@link Arrays#copyOf}, this method is null-safe.
+     * @param array The array to copy
+     * @return A copy of the original array, or {@code null} if {@code array} is null
+     * @since 6222
+     */
+    public static char[] copyArray(char[] array) {
+        if (array != null) {
+            return Arrays.copyOf(array, array.length);
+        }
+        return null;
+    }
+    
+    /**
      * Simple file copy function that will overwrite the target file.<br/>
      * Taken from <a href="http://www.rgagnon.com/javadetails/java-0064.html">this article</a> (CC-NC-BY-SA)
      * @param in The source file
@@ -714,5 +727,4 @@ public class Utils {
         Utils.close(input);
         return all.toString();
     }
-
 }

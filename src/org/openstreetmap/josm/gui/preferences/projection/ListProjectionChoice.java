@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A projection choice, that offers a list of projections in a combo-box.
@@ -23,7 +24,7 @@ abstract public class ListProjectionChoice extends AbstractProjectionChoice {
     protected String label;
 
     /**
-     * Constructor
+     * Constructs a new {@code ListProjectionChoice}.
      *
      * @param name the display name
      * @param id the unique id for this ProjectionChoice
@@ -33,11 +34,18 @@ abstract public class ListProjectionChoice extends AbstractProjectionChoice {
      */
     public ListProjectionChoice(String name, String id, Object[] entries, String label, int defaultIndex) {
         super(name, id);
-        this.entries = entries;
+        this.entries = Utils.copyArray(entries);
         this.label = label;
         this.defaultIndex = defaultIndex;
     }
 
+    /**
+     * Constructs a new {@code ListProjectionChoice}.
+     * @param name the display name
+     * @param id the unique id for this ProjectionChoice
+     * @param entries the list of display entries for the combo-box
+     * @param label a label shown left to the combo-box
+     */
     public ListProjectionChoice(String name, String id, Object[] entries, String label) {
         this(name, id, entries, label, 0);
     }

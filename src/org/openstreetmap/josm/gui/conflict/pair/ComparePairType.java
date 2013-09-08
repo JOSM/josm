@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.gui.conflict.pair.ListRole.MY_ENTRIES;
 import static org.openstreetmap.josm.gui.conflict.pair.ListRole.THEIR_ENTRIES;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.tools.Utils;
+
 /**
  * Enumeration of the possible comparison pairs
  *
@@ -32,7 +34,7 @@ public enum ComparePairType {
 
     ComparePairType(String displayName, ListRole[] participatingRoles) {
         this.displayName = displayName;
-        this.participatingRoles = participatingRoles;
+        this.participatingRoles = Utils.copyArray(participatingRoles);
     }
 
     /**
