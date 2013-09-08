@@ -7,6 +7,25 @@ package org.openstreetmap.josm.tools;
 
 /*
  * $Log: Diff.java,v $
+ * Revision 1.15  2013/04/01 16:27:31  stuart
+ * Fix DiffPrint unified format with test cases.
+ * Begin porting some diff-2.7 features.
+ *
+ * Revision 1.14  2010/03/03 21:21:25  stuart
+ * Test new direct equivalence API
+ *
+ * Revision 1.13  2009/12/07 17:43:17  stuart
+ * Compute equiv_max for int[] ctor
+ *
+ * Revision 1.12  2009/12/07 17:34:46  stuart
+ * Ctor with int[].
+ *
+ * Revision 1.11  2009/11/15 01:11:54  stuart
+ * Diff doesn't need to be generic
+ *
+ * Revision 1.10  2009/11/15 00:54:03  stuart
+ * Update to Java 5 containers
+ *
  * Revision 1.7  2009/01/19 03:05:26  stuart
  * Fix StackOverflow bug with heuristic on reported by Jimmy Han.
  *
@@ -27,7 +46,8 @@ package org.openstreetmap.josm.tools;
  *
  */
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 /** A class to compare vectors of objects.  The result of comparison
     is a list of <code>change</code> objects which form an
@@ -75,9 +95,8 @@ public class Diff {
       an edit script, if desired.
      */
     public Diff(Object[] a,Object[] b) {
-        Hashtable<Object, Integer> h = new Hashtable<Object, Integer>(a.length + b.length);
-        filevec[0] = new file_data(a,h);
-        filevec[1] = new file_data(b,h);
+        Map<Object,Integer> h = new HashMap<Object,Integer>(a.length + b.length);
+        filevec = new file_data[] { new file_data(a,h),new file_data(b,h) };
     }
 
     /** 1 more than the maximum equivalence value used for this or its
@@ -103,7 +122,7 @@ public class Diff {
                    along the given diagonal in the backward
                    search of the edit matrix. */
     private int fdiagoff, bdiagoff;
-    private final file_data[] filevec = new file_data[2];
+    private final file_data[] filevec;
     private int cost;
     /** Snakes bigger than this are considered "big". */
     private static final int SNAKE_LIMIT = 20;
@@ -349,9 +368,9 @@ public class Diff {
 
             if (c == 1)
                 /* This should be impossible, because it implies that
-           one of the two subsequences is empty,
-           and that case was handled above without calling `diag'.
-           Let's verify that this is true.  */
+                   one of the two subsequences is empty,
+                   and that case was handled above without calling `diag'.
+                   Let's verify that this is true.  */
                 throw new IllegalArgumentException("Empty subsequence");
             else
             {
@@ -557,6 +576,8 @@ public class Diff {
         public final int line0;
         /** Line number of 1st inserted line.  */
         public final int line1;
+        /** Change is ignorable. */
+        public boolean ignore;
 
         /** Cons an additional entry onto the front of an edit script OLD.
        LINE0 and LINE1 are the first affected lines in the two files (origin 0).
@@ -571,7 +592,11 @@ public class Diff {
             this.inserted = inserted;
             this.deleted = deleted;
             this.link = old;
-            //System.err.println(line0+","+line1+","+inserted+","+deleted);
+        }
+
+        public String toString() {
+            String s = String.format("%d -%d +%d %d",line0,deleted,inserted,line1);
+            return (link != null) ? s = s + '\n' + link : s;
         }
     }
 
@@ -686,7 +711,7 @@ public class Diff {
                     int provisional = 0;
 
                     /* Find end of this run of discardable lines.
-           Count how many are provisionally discardable.  */
+                       Count how many are provisionally discardable.  */
                     for (j = i; j < end; j++)
                     {
                         if (discards[j] == 0) {
@@ -722,16 +747,16 @@ public class Diff {
                         int tem = length / 4;
 
                         /* MINIMUM is approximate square root of LENGTH/4.
-               A subrun of two or more provisionals can stand
-               when LENGTH is at least 16.
-               A subrun of 4 or more can stand when LENGTH >= 64.  */
+                           A subrun of two or more provisionals can stand
+                           when LENGTH is at least 16.
+                           A subrun of 4 or more can stand when LENGTH >= 64.  */
                         while ((tem = tem >> 2) > 0) {
                             minimum *= 2;
                         }
                         minimum++;
 
                         /* Cancel any subrun of MINIMUM or more provisionals
-               within the larger run.  */
+                           within the larger run.  */
                         for (j = 0, consec = 0; j < length; j++)
                             if (discards[i + j] != 2) {
                                 consec = 0;
@@ -743,9 +768,9 @@ public class Diff {
                             }
 
                         /* Scan from beginning of run
-               until we find 3 or more nonprovisionals in a row
-               or until the first nonprovisional at least 8 lines in.
-               Until that point, cancel any provisionals.  */
+                           until we find 3 or more nonprovisionals in a row
+                           or until the first nonprovisional at least 8 lines in.
+                           Until that point, cancel any provisionals.  */
                         for (j = 0, consec = 0; j < length; j++)
                         {
                             if (j >= 8 && discards[i + j] == 1) {
@@ -807,17 +832,20 @@ public class Diff {
             nondiscarded_lines = j;
         }
 
-        file_data(Object[] data,Hashtable<Object, Integer> h) {
+        file_data(int[] data) {
             buffered_lines = data.length;
-
-            equivs = new int[buffered_lines];
+            equivs = data;
             undiscarded = new int[buffered_lines];
             realindexes = new int[buffered_lines];
-
+        }
+        
+        file_data(Object[] data,Map<Object,Integer> h) {
+            this(new int[data.length]);
+            // FIXME: diff 2.7 removes common prefix and common suffix
             for (int i = 0; i < data.length; ++i) {
                 Integer ir = h.get(data[i]);
                 if (ir == null) {
-                    h.put(data[i],new Integer(equivs[i] = equiv_max++));
+                    h.put(data[i],equivs[i] = equiv_max++);
                 } else {
                     equivs[i] = ir.intValue();
                 }
@@ -851,13 +879,13 @@ public class Diff {
                 int start, end, other_start;
 
                 /* Scan forwards to find beginning of another run of changes.
-         Also keep track of the corresponding point in the other file.  */
+                   Also keep track of the corresponding point in the other file.  */
 
                 while (i < i_end && !changed[1+i])
                 {
                     while (other_changed[1+j++]) {
                         /* Non-corresponding lines in the other file
-               will count as the preceding batch of changes.  */
+                           will count as the preceding batch of changes.  */
                         other_preceding = j;
                     }
                     i++;
@@ -916,25 +944,28 @@ public class Diff {
         /** Number of elements (lines) in this file. */
         final int buffered_lines;
 
+        /** Number of common prefix elements. */
+        final int prefix_lines = 0;
+
         /** Vector, indexed by line number, containing an equivalence code for
-       each line.  It is this vector that is actually compared with that
-       of another file to generate differences. */
+           each line.  It is this vector that is actually compared with that
+           of another file to generate differences. */
         private final int[]     equivs;
 
         /** Vector, like the previous one except that
-       the elements for discarded lines have been squeezed out.  */
+           the elements for discarded lines have been squeezed out.  */
         final int[]    undiscarded;
 
         /** Vector mapping virtual line numbers (not counting discarded lines)
-       to real ones (counting those lines).  Both are origin-0.  */
+           to real ones (counting those lines).  Both are origin-0.  */
         final int[]    realindexes;
 
         /** Total number of nondiscarded lines. */
         int         nondiscarded_lines;
 
         /** Array, indexed by real origin-1 line number,
-       containing true for a line that is an insertion or a deletion.
-       The results of comparison are stored here.  */
+           containing true for a line that is an insertion or a deletion.
+           The results of comparison are stored here.  */
         boolean[]       changed_flag;
 
     }
