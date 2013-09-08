@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.auth;
 
+import org.openstreetmap.josm.tools.Utils;
+
 /**
  * CredentialsAgentResponse represents the response from {@link CredentialsAgent#getCredentials(java.net.Authenticator.RequestorType, String, boolean)}.
  *
@@ -41,7 +43,7 @@ public class CredentialsAgentResponse {
      * @param password The password in plain text
      */
     public void setPassword(char[] password) {
-        this.password = password;
+        this.password = Utils.copyArray(password);
     }
     /**
      * Determines if authentication request has been canceled by user
