@@ -20,8 +20,11 @@ public class LatLonTest {
             100.12, 100.123, 100.1234, 100.12345, 100.123456, 100.1234567
            };
     
+    /**
+     * Test of {@link LatLon#roundToOsmPrecisionStrict}
+     */
     @Test
-    public void roundingTests() {
+    public void testRoundToOsmPrecisionStrict() {
         
         for (double value : sampleValues) {
             assertEquals(LatLon.roundToOsmPrecisionStrict(value), value, 0);
@@ -73,8 +76,11 @@ public class LatLonTest {
         assertEquals(LatLon.roundToOsmPrecisionStrict(99.9999999),  99.9999999, 0);
     }
     
+    /**
+     * Test of {@link LatLon#toIntervalLon}
+     */
     @Test
-    public void toIntervalLonTests() {
+    public void testToIntervalLon() {
         assertEquals(-180.0, LatLon.toIntervalLon(-180.0), 0);
         assertEquals(0.0, LatLon.toIntervalLon(0.0), 0);
         assertEquals(180.0, LatLon.toIntervalLon(180.0), 0);
@@ -93,5 +99,29 @@ public class LatLonTest {
 
         assertEquals(-179.0, LatLon.toIntervalLon(541.0), 0);
         assertEquals(179.0, LatLon.toIntervalLon(-541.0), 0);
+    }
+
+    /**
+     * Test of {@link LatLon#equals}
+     */
+    @Test
+    public void testEquals() {
+        for (int i = 1; i < sampleValues.length; i++) {
+            LatLon a = new LatLon(sampleValues[i-1], sampleValues[i]);
+            LatLon b = new LatLon(sampleValues[i-1], sampleValues[i]);
+            assertEquals(a, b);
+        }
+    }
+
+    /**
+     * Test of {@link LatLon#hashCode}
+     */
+    @Test
+    public void testHashCode() {
+        for (int i = 1; i < sampleValues.length; i++) {
+            LatLon a = new LatLon(sampleValues[i-1], sampleValues[i]);
+            LatLon b = new LatLon(sampleValues[i-1], sampleValues[i]);
+            assertEquals(a.hashCode(), b.hashCode());
+        }
     }
 }
