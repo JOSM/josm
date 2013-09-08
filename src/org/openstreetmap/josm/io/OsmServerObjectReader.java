@@ -128,7 +128,7 @@ public class OsmServerObjectReader extends OsmServerReader {
             if (full && ! id.getType().equals(OsmPrimitiveType.NODE)) {
                 sb.append("/full");
             } else if (version > 0) {
-                sb.append("/"+version);
+                sb.append("/").append(version);
             }
 
             in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true));

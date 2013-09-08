@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.TimeZone;
@@ -72,13 +73,13 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.GpxReader;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.PrimaryDateParser;
 import org.xml.sax.SAXException;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /** This class displays the window to select the GPX file and the offset (timezone + delta).
  * Then it correlates the images of the layer with that GPX file.
@@ -880,7 +881,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             final JLabel lblTimezone = new JLabel();
             final JSlider sldTimezone = new JSlider(-24, 24, 0);
             sldTimezone.setPaintLabels(true);
-            Hashtable<Integer,JLabel> labelTable = new Hashtable<Integer, JLabel>();
+            Dictionary<Integer,JLabel> labelTable = new Hashtable<Integer, JLabel>();
             labelTable.put(-24, new JLabel("-12:00"));
             labelTable.put(-12, new JLabel( "-6:00"));
             labelTable.put(  0, new JLabel(  "0:00"));

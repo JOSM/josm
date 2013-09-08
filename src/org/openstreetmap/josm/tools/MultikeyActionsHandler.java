@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.MultikeyShortcutAction.MultikeyInfo;
 public class MultikeyActionsHandler {
 
     private static final long DIALOG_DELAY = 1000;
-    private static final String STATUS_BAR_ID = new String("multikeyShortcut");
+    private static final String STATUS_BAR_ID = "multikeyShortcut";
 
     private Map<MultikeyShortcutAction, MyAction> myActions = new HashMap<MultikeyShortcutAction,MyAction>();
 
@@ -119,6 +119,10 @@ public class MultikeyActionsHandler {
 
     private static MultikeyActionsHandler instance;
 
+    /**
+     * Replies the unique instance of this class.
+     * @return The unique instance of this class
+     */
     public static MultikeyActionsHandler getInstance() {
         if (instance == null) {
             instance = new MultikeyActionsHandler();
@@ -202,15 +206,22 @@ public class MultikeyActionsHandler {
         });
     }
 
+    /**
+     * Registers an action and its shortcut
+     * @param action The action to add
+     */
     public void addAction(MultikeyShortcutAction action) {
-        if(action.getMultikeyShortcut() != null) {
+        if (action.getMultikeyShortcut() != null) {
             MyAction myAction = new MyAction(action);
             myActions.put(action, myAction);
             Main.registerActionShortcut(myAction, myAction.shortcut);
         }
     }
 
-    // unregister action and its shortcut completely
+    /**
+     * Unregisters an action and its shortcut completely
+     * @param action The action to remove
+     */
     public void removeAction(MultikeyShortcutAction action) {
         MyAction a = myActions.get(action);
         if (a!=null) {

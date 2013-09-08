@@ -37,12 +37,12 @@ public class LanguageInfo {
         if(type == LocaleType.BASELANGUAGE) {
             if(code.matches("[^_]+_[^_]+")) {
                 code = code.substring(0,2);
-                if(code == "en")
+                if ("en".equals(code))
                     return null;
             } else {
                 return null;
             }
-        } else if(type == LocaleType.DEFAULTNOTENGLISH && code == "en")
+        } else if(type == LocaleType.DEFAULTNOTENGLISH && "en".equals(code))
             return null;
         return code.substring(0,1).toUpperCase() + code.substring(1) + ":";
     }
