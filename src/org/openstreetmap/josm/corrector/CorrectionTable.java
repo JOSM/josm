@@ -9,7 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-public abstract class CorrectionTable<TM extends CorrectionTableModel<?>>
+public abstract class CorrectionTable<T extends CorrectionTableModel<?>>
         extends JTable {
 
     private static final int MAX_VISIBLE_LINES = 10;
@@ -33,7 +33,7 @@ public abstract class CorrectionTable<TM extends CorrectionTableModel<?>>
 
     private static BoldRenderer boldRenderer = null;
 
-    protected CorrectionTable(TM correctionTableModel) {
+    protected CorrectionTable(T correctionTableModel) {
         super(correctionTableModel);
 
         final int correctionsSize = correctionTableModel.getCorrections().size();
@@ -57,8 +57,8 @@ public abstract class CorrectionTable<TM extends CorrectionTableModel<?>>
     }
 
     @SuppressWarnings("unchecked")
-    public TM getCorrectionTableModel() {
-        return (TM)getModel();
+    public T getCorrectionTableModel() {
+        return (T)getModel();
     }
 
 }

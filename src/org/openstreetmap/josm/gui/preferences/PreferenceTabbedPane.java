@@ -200,7 +200,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         selectTabBy(new TabIdentifier(){
             @Override
             public boolean identify(TabPreferenceSetting tps, Object name) {
-                return name != null && tps != null && tps.getIconName() != null && tps.getIconName().equals(name);
+                return name != null && tps != null && tps.getIconName() != null && name.equals(tps.getIconName());
             }}, name);
     }
 
