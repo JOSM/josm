@@ -149,7 +149,7 @@ public class Storage<T> extends AbstractSet<T> {
      * @param ha
      * @param capacity
      * @param safeIterator If set to false, you must not modify the Storage
-     *          while iterating over it. If set to true, you can savely
+     *          while iterating over it. If set to true, you can safely
      *          modify, but the read-only iteration will happen on a copy
      *          of the unmodified Storage.
      *          This is similar to CopyOnWriteArrayList.
