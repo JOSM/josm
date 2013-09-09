@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -87,7 +86,10 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
 
         // default to paste in center of map (pasted via menu or cursor not in MapView)
         EastNorth mPosition = Main.map.mapView.getCenter();
-        if((e.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0) {
+        // We previously checked for modifier to know if the action has been trigerred via shortcut or via menu
+        // But this does not work if the shortcut is changed to a single key (see #9055)
+        // Observed behaviour: getActionCommand() returns Action.NAME when triggered via menu, but shortcut text when triggered with it
+        if (!getValue(NAME).equals(e.getActionCommand())) {
             final Point mp = MouseInfo.getPointerInfo().getLocation();
             final Point tl = Main.map.mapView.getLocationOnScreen();
             final Point pos = new Point(mp.x-tl.x, mp.y-tl.y);
