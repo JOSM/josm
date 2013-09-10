@@ -286,7 +286,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
                 if (!matches(o, this.bbox())) {
                     o.getBBox().getIndex(level);
                     o.getBBox().getIndex(level - 1);
-                    int nr = 0;
                     abort("\nobject " + o + " does not belong in node at level: " + level + " bbox: " + this.bbox());
                 }
             }

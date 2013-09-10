@@ -183,7 +183,7 @@ public class PluginInformation {
         }
         if(s != null) {
             try {
-                URL url = new URL(s);
+                new URL(s);
             } catch (MalformedURLException e) {
                 System.out.println(tr("Invalid URL ''{0}'' in plugin {1}", s, name));
                 s = null;
