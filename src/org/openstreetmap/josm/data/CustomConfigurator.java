@@ -135,7 +135,7 @@ public class CustomConfigurator {
         File fOut = new File(dir, path);
         DownloadFileTask downloadFileTask = new DownloadFileTask(Main.parent, address, fOut, mkdir, unzip);
 
-        Future f = Main.worker.submit(downloadFileTask);
+        Main.worker.submit(downloadFileTask);
         log("Info: downloading file from %s to %s in background ", parentDir, fOut.getAbsolutePath());
         if (unzip) log("and unpacking it"); else log("");
 

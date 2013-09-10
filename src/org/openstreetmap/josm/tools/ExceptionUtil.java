@@ -127,7 +127,6 @@ public class ExceptionUtil {
      */
     public static String explainPreconditionFailed(OsmApiException e) {
         e.printStackTrace();
-        String msg = e.getErrorHeader();
         Pair<OsmPrimitive, Collection<OsmPrimitive>> conflict = parsePreconditionFailed(e.getErrorHeader());
         if (conflict != null) {
             OsmPrimitive firstRefs = conflict.b.iterator().next();

@@ -1050,7 +1050,6 @@ public class Preferences {
     }
 
     public boolean putListOfStructs(String key, Collection<Map<String, String>> value) {
-        boolean changed = false;
 
         List<Map<String, String>> oldValue;
         List<Map<String, String>> valueCopy = null;
