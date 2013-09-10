@@ -550,7 +550,7 @@ public final class TaggingPresetItems {
             AutoCompletingTextField textField = new AutoCompletingTextField();
             initAutoCompletionField(textField, key);
             if (length != null && !length.isEmpty()) {
-                textField.setMaxChars(new Integer(length));
+                textField.setMaxChars(Integer.valueOf(length));
             }
             if (usage.unused()){
                 if (auto_increment_selected != 0  && auto_increment != null) {
@@ -723,7 +723,7 @@ public final class TaggingPresetItems {
 
         @Override
         boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
-            Integer cols = new Integer(columns);
+            Integer cols = Integer.valueOf(columns);
             int rows = (int) Math.ceil(checks.size()/cols.doubleValue());
             JPanel panel = new JPanel(new GridLayout(rows, cols));
             
@@ -1162,7 +1162,7 @@ public final class TaggingPresetItems {
             AutoCompletingTextField tf = new AutoCompletingTextField();
             initAutoCompletionField(tf, key);
             if (length != null && !length.isEmpty()) {
-                tf.setMaxChars(new Integer(length));
+                tf.setMaxChars(Integer.valueOf(length));
             }
             AutoCompletionList acList = tf.getAutoCompletionList();
             if (acList != null) {

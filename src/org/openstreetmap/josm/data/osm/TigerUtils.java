@@ -27,7 +27,7 @@ public class TigerUtils {
 
     public static Object tagObj(String name) {
         if (tagIsInt(name))
-            return new Integer(name);
+            return Integer.valueOf(name);
         return name;
     }
 
