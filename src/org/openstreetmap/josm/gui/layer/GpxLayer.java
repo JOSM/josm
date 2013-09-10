@@ -611,7 +611,6 @@ public class GpxLayer extends Layer {
 
         LinkedList<WayPoint> visibleSegments = new LinkedList<WayPoint>();
         WayPoint last = null;
-        int i = 0;
         ensureTrackVisibilityLength();
         for (Collection<WayPoint> segment : data.getLinesIterable(trackVisibility)) {
 

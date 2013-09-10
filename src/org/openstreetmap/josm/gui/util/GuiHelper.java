@@ -188,7 +188,6 @@ public class GuiHelper {
         }
         if (s.length>1) {
             float[] dash= new float[s.length-1];
-            boolean error = false;
             float sumAbs = 0;
             try {
                 for (int i=0; i<s.length-1; i++) {

@@ -86,7 +86,7 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
     public static final NodeElemStyle SIMPLE_NODE_ELEMSTYLE;
     static {
         MultiCascade mc = new MultiCascade();
-        Cascade c = mc.getOrCreateCascade("default");
+        mc.getOrCreateCascade("default");
         SIMPLE_NODE_ELEMSTYLE = create(new Environment(null, mc, "default", null), 4.1f, true);
         if (SIMPLE_NODE_ELEMSTYLE == null) throw new AssertionError();
     }
