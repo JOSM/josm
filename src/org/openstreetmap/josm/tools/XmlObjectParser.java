@@ -172,9 +172,7 @@ public class XmlObjectParser implements Iterable<Object> {
         }
 
         private void setValue(Entry entry, String fieldName, String value) throws SAXException {
-            if (entry == null) {
-                throw new NullPointerException("entry cannot be null");
-            }
+            CheckParameterUtil.ensureParameterNotNull(entry, "entry");
             if (fieldName.equals("class") || fieldName.equals("default") || fieldName.equals("throw") || fieldName.equals("new") || fieldName.equals("null")) {
                 fieldName += "_";
             }
