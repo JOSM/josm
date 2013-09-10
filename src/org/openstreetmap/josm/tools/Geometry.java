@@ -653,12 +653,16 @@ public class Geometry {
         return result;
     }
 
+    /**
+     * Compute the centroid of nodes
+     * @param nodes Nodes for which the centroid is wanted
+     * @return the centroid of nodes
+     */
     public static EastNorth getCentroid(List<Node> nodes) {
-        // Compute the centroid of nodes
 
-        BigDecimal area = new BigDecimal(0);
-        BigDecimal north = new BigDecimal(0);
-        BigDecimal east = new BigDecimal(0);
+        BigDecimal area = BigDecimal.ZERO;
+        BigDecimal north = BigDecimal.ZERO;
+        BigDecimal east = BigDecimal.ZERO;
 
         // See http://en.wikipedia.org/w/index.php?title=Centroid&oldid=294224857#Centroid_of_polygon for the equation used here
         for (int i = 0; i < nodes.size(); i++) {
