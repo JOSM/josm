@@ -817,9 +817,7 @@ public class GpxLayer extends Layer {
         final boolean[] back = trackVisibility.clone();
         final int m = Math.min(l, back.length);
         trackVisibility = new boolean[l];
-        for(int i=0; i < m; i++) {
-            trackVisibility[i] = back[i];
-        }
+        System.arraycopy(back, 0, trackVisibility, 0, m);
         for(int i=m; i < l; i++) {
             trackVisibility[i] = true;
         }
