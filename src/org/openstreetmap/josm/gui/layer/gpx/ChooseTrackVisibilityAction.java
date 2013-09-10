@@ -46,6 +46,10 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
     DateFilterPanel dateFilter;
     JTable table;
 
+    /**
+     * Constructs a new {@code ChooseTrackVisibilityAction}.
+     * @param layer The associated GPX layer
+     */
     public ChooseTrackVisibilityAction(final GpxLayer layer) {
         super(tr("Choose visible tracks"), ImageProvider.get("dialogs/filter"));
         this.layer = layer;
@@ -216,9 +220,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         int v = ed.getValue();
         // cancel for unknown buttons and copy back original settings
         if (v != 1 && v != 2) {
-            for (int i = 0; i < layer.trackVisibility.length; i++) {
-                layer.trackVisibility[i] = trackVisibilityBackup[i];
-            }
+            System.arraycopy(trackVisibilityBackup, 0, layer.trackVisibility, 0, layer.trackVisibility.length);
             Main.map.repaint();
             return;
         }

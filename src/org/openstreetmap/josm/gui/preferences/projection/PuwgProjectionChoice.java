@@ -23,6 +23,9 @@ public class PuwgProjectionChoice extends ListProjectionChoice {
         tr("PUWG 2000 Zone {0} (Poland)", 8)
     };
 
+    /**
+     * Constructs a new {@code PuwgProjectionChoice}.
+     */
     public PuwgProjectionChoice() {
         super(tr("PUWG (Poland)"), "core:puwg", NAMES, tr("PUWG Zone"));
     }
@@ -41,9 +44,7 @@ public class PuwgProjectionChoice extends ListProjectionChoice {
     @Override
     public String[] allCodes() {
         String[] zones = new String[CODES.length];
-        for (int idx = 0; idx < CODES.length; idx++) {
-            zones[idx] = CODES[idx];
-        }
+        System.arraycopy(CODES, 0, zones, 0, CODES.length);
         return zones;
     }
 
