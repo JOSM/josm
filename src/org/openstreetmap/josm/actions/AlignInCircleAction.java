@@ -37,6 +37,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public final class AlignInCircleAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code AlignInCircleAction}.
+     */
     public AlignInCircleAction() {
         super(tr("Align Nodes in Circle"), "aligncircle", tr("Move the selected nodes into a circle."),
                 Shortcut.registerShortcut("tools:aligncircle", tr("Tool: {0}", tr("Align Nodes in Circle")),
@@ -150,8 +153,8 @@ public final class AlignInCircleAction extends JosmAction {
         if (ways.size() != 1) {
             // First calculate the average point
 
-            BigDecimal east = new BigDecimal(0);
-            BigDecimal north = new BigDecimal(0);
+            BigDecimal east = BigDecimal.ZERO;
+            BigDecimal north = BigDecimal.ZERO;
 
             for (Node n : nodes) {
                 BigDecimal x = new BigDecimal(n.getEastNorth().east());
