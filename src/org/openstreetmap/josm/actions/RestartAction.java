@@ -90,11 +90,16 @@ public class RestartAction extends JosmAction {
             }
             // program main and program arguments (be careful a sun property. might not be supported by all JVM)
             String[] mainCommand = System.getProperty("sun.java.command").split(" ");
+            // look for a .jar in all chunks to support paths with spaces (fix #9077)
+            String jarPath = mainCommand[0];
+            for (int i = 1; i < mainCommand.length && !jarPath.endsWith(".jar"); i++) {
+                jarPath += " " + mainCommand[i];
+            }
             // program main is a jar
-            if (mainCommand[0].endsWith(".jar")) {
+            if (jarPath.endsWith(".jar")) {
                 // if it's a jar, add -jar mainJar
                 cmd.add("-jar");
-                cmd.add(new File(mainCommand[0]).getPath());
+                cmd.add(new File(jarPath).getPath());
             } else {
                 // else it's a .class, add the classpath and mainClass
                 cmd.add("-cp");
