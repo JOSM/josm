@@ -29,8 +29,10 @@ public class ElemStyles {
     private boolean defaultNodes, defaultLines;
     private int defaultNodesIdx, defaultLinesIdx;
 
-    public ElemStyles()
-    {
+    /**
+     * Constructs a new {@code ElemStyles}.
+     */
+    public ElemStyles() {
         styleSources = new ArrayList<StyleSource>();
     }
 
@@ -115,8 +117,10 @@ public class ElemStyles {
         try {
             osm.mappaintStyle = style.put(p.a, p.b);
         } catch (StyleCache.RangeViolatedError e) {
-            throw new AssertionError("Range violated. object: " + osm.getPrimitiveId() + ", current style: "+osm.mappaintStyle
+            AssertionError error = new AssertionError("Range violated. object: " + osm.getPrimitiveId() + ", current style: "+osm.mappaintStyle
                     + ", scale: " + scale + ", new stylelist: " + p.a + ", new range: " + p.b);
+            error.initCause(e);
+            throw error;
         }
         osm.mappaintCacheIdx = cacheIdx;
         return p;
