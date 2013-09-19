@@ -944,9 +944,6 @@ public class Diff {
         /** Number of elements (lines) in this file. */
         final int buffered_lines;
 
-        /** Number of common prefix elements. */
-        final int prefix_lines = 0;
-
         /** Vector, indexed by line number, containing an equivalence code for
            each line.  It is this vector that is actually compared with that
            of another file to generate differences. */

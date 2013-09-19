@@ -123,10 +123,10 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             if (!hasChildren())
                 return this;
             else {
-                int index = bbox.getIndex(level);
-                if (index == -1)
+                int idx = bbox.getIndex(level);
+                if (idx == -1)
                     return this;
-                return getChild(index).findBucket(bbox);
+                return getChild(idx).findBucket(bbox);
             }
         }
 
@@ -159,11 +159,11 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             content = null;
 
             for (T o : tmpcontent) {
-                int index = o.getBBox().getIndex(level);
-                if (index == -1) {
+                int idx = o.getBBox().getIndex(level);
+                if (idx == -1) {
                     __add_content(o);
                 } else {
-                    getChild(index).doAdd(o);
+                    getChild(idx).doAdd(o);
                 }
             }
             isLeaf = false; // It's not enough to check children because all items could end up in this level (index == -1)
