@@ -36,7 +36,7 @@ public class DeprecatedTags extends Test {
         checks.add(new DeprecationCheck(2101).
                 testAndRemove("barrier", "wire_fence").
                 add("barrier", "fence").
-                add("fence_type", "chain"));
+                add("fence_type", "chain_link"));
         checks.add(new DeprecationCheck(2102).
                 testAndRemove("barrier", "wood_fence").
                 add("barrier", "fence").
