@@ -115,9 +115,9 @@ public class ImageProvider {
     /**
      * Caches the image data for rotated versions of the same image.
      */
-    private static final Map<Image, Map<Long, ImageResource>> rotateCache = new HashMap<Image, Map<Long, ImageResource>>();
+    private static final Map<Image, Map<Long, ImageResource>> ROTATE_CACHE = new HashMap<Image, Map<Long, ImageResource>>();
 
-    private static final ExecutorService imageFetcher = Executors.newSingleThreadExecutor();
+    private static final ExecutorService IMAGE_FETCHER = Executors.newSingleThreadExecutor();
 
     public interface ImageCallback {
         void finished(ImageIcon result);
@@ -338,7 +338,7 @@ public class ImageProvider {
                     callback.finished(result);
                 }
             };
-            imageFetcher.submit(fetch);
+            IMAGE_FETCHER.submit(fetch);
         } else {
             ImageIcon result = get();
             callback.finished(result);
@@ -855,10 +855,10 @@ public class ImageProvider {
         
         ImageResource imageResource = null;
 
-        synchronized (rotateCache) {
-            Map<Long, ImageResource> cacheByAngle = rotateCache.get(img);
+        synchronized (ROTATE_CACHE) {
+            Map<Long, ImageResource> cacheByAngle = ROTATE_CACHE.get(img);
             if (cacheByAngle == null) {
-                rotateCache.put(img, cacheByAngle = new HashMap<Long, ImageResource>());
+                ROTATE_CACHE.put(img, cacheByAngle = new HashMap<Long, ImageResource>());
             }
             
             imageResource = cacheByAngle.get(originalAngle);

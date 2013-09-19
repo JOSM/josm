@@ -981,8 +981,6 @@ public class Preferences {
     }
 
     public boolean putArray(String key, Collection<Collection<String>> value) {
-        //boolean changed = false;
-
         List<List<String>> oldValue = null;
         List<List<String>> valueCopy = null;
 
