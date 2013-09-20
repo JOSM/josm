@@ -41,18 +41,16 @@ public class UnconnectedWays extends Test {
     protected static final int UNCONNECTED_WAYS = 1301;
     protected static final String PREFIX = ValidatorPreference.PREFIX + "." + UnconnectedWays.class.getSimpleName();
 
-    Set<MyWaySegment> ways;
-    QuadBuckets<Node> endnodes; // nodes at end of way
-    QuadBuckets<Node> endnodes_highway; // nodes at end of way
-    QuadBuckets<Node> middlenodes; // nodes in middle of way
-    Set<Node> othernodes; // nodes appearing at least twice
-    //NodeSearchCache nodecache;
-    QuadBuckets<Node> nodecache;
-    Area ds_area;
-    DataSet ds;
+    private Set<MyWaySegment> ways;
+    private QuadBuckets<Node> endnodes; // nodes at end of way
+    private QuadBuckets<Node> endnodes_highway; // nodes at end of way
+    private QuadBuckets<Node> middlenodes; // nodes in middle of way
+    private Set<Node> othernodes; // nodes appearing at least twice
+    private Area dsArea;
+    private DataSet ds;
 
-    double mindist;
-    double minmiddledist;
+    private double mindist;
+    private double minmiddledist;
 
     /**
      * Constructor
@@ -73,15 +71,14 @@ public class UnconnectedWays extends Test {
         mindist = Main.pref.getDouble(PREFIX + ".node_way_distance", 10.0);
         minmiddledist = Main.pref.getDouble(PREFIX + ".way_way_distance", 0.0);
         this.ds = Main.main.getCurrentDataSet();
-        this.ds_area = ds.getDataSourceArea();
+        this.dsArea = ds.getDataSourceArea();
     }
 
     @Override
     public void endTest() {
         Map<Node, Way> map = new HashMap<Node, Way>();
         for (int iter = 0; iter < 1; iter++) {
-            Collection<MyWaySegment> tmp_ways = ways;
-            for (MyWaySegment s : tmp_ways) {
+            for (MyWaySegment s : ways) {
                 Collection<Node> nearbyNodes = s.nearbyNodes(mindist);
                 for (Node en : nearbyNodes) {
                     if (en == null || !s.highway || !endnodes_highway.contains(en)) {
@@ -144,8 +141,6 @@ public class UnconnectedWays extends Test {
                     map.put(en, s.w);
                 }
             }
-            //System.out.println("p3 elapsed: " + (System.currentTimeMillis()-last));
-            //last = System.currentTimeMillis();
             for (Map.Entry<Node, Way> error : map.entrySet()) {
                 errors.add(new TestError(this, Severity.OTHER,
                         tr("Way node near other way"),
@@ -164,8 +159,6 @@ public class UnconnectedWays extends Test {
                     map.put(en, s.w);
                 }
             }
-            //System.out.println("p4 elapsed: " + (System.currentTimeMillis()-last));
-            //last = System.currentTimeMillis();
             for (Map.Entry<Node, Way> error : map.entrySet()) {
                 errors.add(new TestError(this, Severity.OTHER,
                         tr("Connected way end node near other way"),
@@ -177,8 +170,6 @@ public class UnconnectedWays extends Test {
         ways = null;
         endnodes = null;
         super.endTest();
-        //System.out.println("p99 elapsed: " + (System.currentTimeMillis()-last));
-        //last = System.currentTimeMillis();
     }
 
     private class MyWaySegment {
@@ -255,15 +246,12 @@ public class UnconnectedWays extends Test {
             // away that we looked for last time, the cached
             // result is no good
             if (dist > nearbyNodeCacheDist) {
-                //if (nearbyNodeCacheDist != -1)
-                //    System.out.println("destroyed MyWaySegment nearby node cache:" + dist + " > " +  nearbyNodeCacheDist);
                 nearbyNodeCache = null;
             }
             if (nearbyNodeCache != null) {
                 // If we've cached an aread greater than the
                 // one now being asked for...
                 if (nearbyNodeCacheDist > dist) {
-                    //System.out.println("had to trim MyWaySegment nearby node cache.");
                     // Used the cached result and trim out
                     // the nodes that are not in the smaller
                     // area, but keep the old larger cache.
@@ -292,7 +280,7 @@ public class UnconnectedWays extends Test {
             found_nodes.addAll(endnodes.search(new BBox(bounds.get(0), bounds.get(1))));
 
             for (Node n : found_nodes) {
-                if (!nearby(n, dist) || !n.getCoor().isIn(ds_area)) {
+                if (!nearby(n, dist) || !n.getCoor().isIn(dsArea)) {
                     continue;
                 }
                 // It is actually very rare for us to find a node

@@ -24,12 +24,19 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
 import org.openstreetmap.josm.tools.Predicate;
 
+/**
+ * Checks for building areas inside of buildings
+ * @since 4409
+ */
 public class BuildingInBuilding extends Test {
 
     protected static final int BUILDING_INSIDE_BUILDING = 2001;
-    protected List<OsmPrimitive> primitivesToCheck = new LinkedList<OsmPrimitive>();
-    protected QuadBuckets<Way> index = new QuadBuckets<Way>();
+    private final List<OsmPrimitive> primitivesToCheck = new LinkedList<OsmPrimitive>();
+    private final QuadBuckets<Way> index = new QuadBuckets<Way>();
 
+    /**
+     * Constructs a new {@code BuildingInBuilding} test.
+     */
     public BuildingInBuilding() {
         super(tr("Building inside building"), tr("Checks for building areas inside of buildings."));
     }
@@ -66,8 +73,8 @@ public class BuildingInBuilding extends Test {
     }
 
     protected class MultiPolygonMembers {
-        public final Set<Way> outers = new HashSet<Way>();
-        public final Set<Way> inners = new HashSet<Way>();
+        private final Set<Way> outers = new HashSet<Way>();
+        private final Set<Way> inners = new HashSet<Way>();
         public MultiPolygonMembers(Relation multiPolygon) {
             for (RelationMember m : multiPolygon.getMembers()) {
                 if (m.getType().equals(OsmPrimitiveType.WAY)) {
@@ -143,10 +150,8 @@ public class BuildingInBuilding extends Test {
                     } else {
                         // Else, test if w is inside one of the multipolygons
                         for (OsmPrimitive bmp : buildingMultiPolygons) {
-                            if (bmp instanceof Relation) {
-                                if (isWayInsideMultiPolygon(w, (Relation) bmp)) {
-                                    return true;
-                                }
+                            if (bmp instanceof Relation && isWayInsideMultiPolygon(w, (Relation) bmp)) {
+                                return true;
                             }
                         }
                         return false;

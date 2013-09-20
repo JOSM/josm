@@ -13,7 +13,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
  * Checks for nodes with uninteresting tags that are in no way
@@ -39,11 +38,6 @@ public class UntaggedNode extends Test {
     }
 
     @Override
-    public void startTest(ProgressMonitor monitor) {
-        super.startTest(monitor);
-    }
-
-    @Override
     public void visit(Collection<OsmPrimitive> selection) {
         for (OsmPrimitive p : selection) {
             if (p.isUsable() && p instanceof Node) {
@@ -54,10 +48,11 @@ public class UntaggedNode extends Test {
 
     @Override
     public void visit(Node n) {
-        if(n.isUsable() && !n.isTagged() && n.getReferrers().isEmpty()) {
+        if (n.isUsable() && !n.isTagged() && n.getReferrers().isEmpty()) {
+            String errorMessage = tr("Unconnected nodes without physical tags");
             if (!n.hasKeys()) {
                 String msg = marktr("No tags");
-                errors.add(new TestError(this, Severity.WARNING, tr("Unconnected nodes without physical tags"), tr(msg), msg, UNTAGGED_NODE_BLANK, n));
+                errors.add(new TestError(this, Severity.WARNING, errorMessage, tr(msg), msg, UNTAGGED_NODE_BLANK, n));
                 return;
             }
             for (Map.Entry<String, String> tag : n.getKeys().entrySet()) {
@@ -65,8 +60,7 @@ public class UntaggedNode extends Test {
                 if (contains(tag, "fixme") || contains(tag, "FIXME")) {
                     /* translation note: don't translate quoted words */
                     String msg = marktr("Has tag containing ''fixme'' or ''FIXME''");
-                    errors.add(new TestError(this, Severity.WARNING, tr("Unconnected nodes without physical tags"),
-                            tr(msg), msg, UNTAGGED_NODE_FIXME, n));
+                    errors.add(new TestError(this, Severity.WARNING, errorMessage, tr(msg), msg, UNTAGGED_NODE_FIXME, n));
                     return;
                 }
 
@@ -90,14 +84,12 @@ public class UntaggedNode extends Test {
                     code = UNTAGGED_NODE_SOURCE;
                 }
                 if (msg != null) {
-                    errors.add(new TestError(this, Severity.WARNING, tr("Unconnected nodes without physical tags"),
-                            tr(msg), msg, code, n));
+                    errors.add(new TestError(this, Severity.WARNING, errorMessage, tr(msg), msg, code, n));
                     return;
                 }
             }
             // Does not happen, but just to be sure. Maybe definition of uninteresting tags changes in future.
-            errors.add(new TestError(this, Severity.WARNING, tr("Unconnected nodes without physical tags"),
-                    tr("Other"), "Other", UNTAGGED_NODE_OTHER, n));
+            errors.add(new TestError(this, Severity.WARNING, errorMessage, tr("Other"), "Other", UNTAGGED_NODE_OTHER, n));
         }
     }
 

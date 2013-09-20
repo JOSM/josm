@@ -19,7 +19,6 @@ import org.openstreetmap.josm.tools.Geometry;
 public class WronglyOrderedWays extends Test {
 
     protected static final int WRONGLY_ORDERED_COAST = 1001;
-    //protected static int WRONGLY_ORDERED_WATER = 1002;
     protected static final int WRONGLY_ORDERED_LAND  = 1003;
 
     /**
@@ -41,8 +40,6 @@ public class WronglyOrderedWays extends Test {
             return;
         else if ("coastline".equals(natural) && Geometry.isClockwise(w)) {
             reportError(w, tr("Reversed coastline: land not on left side"), WRONGLY_ORDERED_COAST);
-            /*} else if ("water".equals(natural) && !Geometry.isClockwise(w)) {
-            reportError(w, tr("Reversed water: land not on left side"), WRONGLY_ORDERED_WATER);*/
         } else if ("land".equals(natural) && Geometry.isClockwise(w)) {
             reportError(w, tr("Reversed land: land not on left side"), WRONGLY_ORDERED_LAND);
         } else
