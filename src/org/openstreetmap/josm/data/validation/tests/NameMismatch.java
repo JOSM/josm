@@ -32,6 +32,9 @@ public class NameMismatch extends Test {
     protected static final int NAME_MISSING = 1501;
     protected static final int NAME_TRANSLATION_MISSING = 1502;
 
+    /**
+     * Constructs a new {@code NameMismatch} test.
+     */
     public NameMismatch() {
         super(tr("Missing name:* translation"),
             tr("This test finds multilingual objects whose ''name'' attribute is not equal to some ''name:*'' attribute and not a composition of ''name:*'' attributes, e.g., Italia - Italien - Italy."));
@@ -58,9 +61,9 @@ public class NameMismatch extends Test {
 
         for (Entry<String, String> entry : p.getKeys().entrySet()) {
             if (entry.getKey().startsWith("name:")) {
-                String name_s = entry.getValue();
-                if (name_s != null) {
-                    names.add(name_s);
+                String n = entry.getValue();
+                if (n != null) {
+                    names.add(n);
                 }
             }
         }
@@ -73,23 +76,23 @@ public class NameMismatch extends Test {
             errors.add(new TestError(this, Severity.OTHER,
                     tr("A name is missing, even though name:* exists."),
                     NAME_MISSING, p));
-        return;
-    }
+            return;
+        }
 
         if (names.contains(name)) return;
         /* If name is not equal to one of the name:*, it should be a
         composition of some (not necessarily all) name:* labels.
         Check if this is the case. */
 
-        String[] split_names = name.split(" - ");
-        if (split_names.length == 1) {
+        String[] splitNames = name.split(" - ");
+        if (splitNames.length == 1) {
             /* The name is not composed of multiple parts. Complain. */
             missingTranslation(p);
             return;
         }
 
         /* Check that each part corresponds to a translated name:*. */
-        for (String n : split_names) {
+        for (String n : splitNames) {
             if (!names.contains(n)) {
                 missingTranslation(p);
                 return;

@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.Pair;
 public class OverlappingWays extends Test {
 
     /** Bag of all way segments */
-    MultiMap<Pair<Node,Node>, WaySegment> nodePairs;
+    private MultiMap<Pair<Node,Node>, WaySegment> nodePairs;
 
     protected static final int OVERLAPPING_HIGHWAY = 101;
     protected static final int OVERLAPPING_RAILWAY = 102;
@@ -55,14 +55,14 @@ public class OverlappingWays extends Test {
 
     @Override
     public void endTest() {
-        Map<List<Way>, Set<WaySegment>> ways_seen = new HashMap<List<Way>, Set<WaySegment>>(500);
+        Map<List<Way>, Set<WaySegment>> seenWays = new HashMap<List<Way>, Set<WaySegment>>(500);
 
         for (Set<WaySegment> duplicated : nodePairs.values()) {
             int ways = duplicated.size();
 
             if (ways > 1) {
                 List<OsmPrimitive> prims = new ArrayList<OsmPrimitive>();
-                List<Way> current_ways = new ArrayList<Way>();
+                List<Way> currentWays = new ArrayList<Way>();
                 Collection<WaySegment> highlight;
                 int highway = 0;
                 int railway = 0;
@@ -88,13 +88,13 @@ public class OverlappingWays extends Test {
                     }
 
                     prims.add(ws.way);
-                    current_ways.add(ws.way);
+                    currentWays.add(ws.way);
                 }
                 /* These ways not seen before
                  * If two or more of the overlapping ways are
                  * highways or railways mark a separate error
                  */
-                if ((highlight = ways_seen.get(current_ways)) == null) {
+                if ((highlight = seenWays.get(currentWays)) == null) {
                     String errortype;
                     int type;
 
@@ -127,7 +127,7 @@ public class OverlappingWays extends Test {
                     errors.add(new TestError(this,
                             type < OVERLAPPING_HIGHWAY_AREA ? Severity.WARNING : Severity.OTHER,
                                     errortype, type, prims, duplicated));
-                    ways_seen.put(current_ways, duplicated);
+                    seenWays.put(currentWays, duplicated);
                 } else { /* way seen, mark highlight layer only */
                     for (WaySegment ws : duplicated) {
                         highlight.add(ws);

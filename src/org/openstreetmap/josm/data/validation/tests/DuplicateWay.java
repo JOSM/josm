@@ -31,19 +31,19 @@ import org.openstreetmap.josm.tools.MultiMap;
 /**
  * Tests if there are duplicate ways
  */
-public class DuplicateWay extends Test
-{
+public class DuplicateWay extends Test {
 
     /**
       * Class to store a way reduced to coordinates and keys. Essentially this is used to call the
       * <code>equals{}</code> function.
       */
     private static class WayPair {
-        public List<LatLon> coor;
-        public Map<String, String> keys;
-        public WayPair(List<LatLon> _coor, Map<String, String> _keys) {
-            coor=_coor;
-            keys=_keys;
+        private final List<LatLon> coor;
+        private final Map<String, String> keys;
+        
+        public WayPair(List<LatLon> coor, Map<String, String> keys) {
+            this.coor = coor;
+            this.keys = keys;
         }
 
         @Override
@@ -65,9 +65,9 @@ public class DuplicateWay extends Test
       * <code>equals{}</code> function.
       */
     private static class WayPairNoTags {
-        public List<LatLon> coor;
-        public WayPairNoTags(List<LatLon> _coor) {
-            coor=_coor;
+        private final List<LatLon> coor;
+        public WayPairNoTags(List<LatLon> coor) {
+            this.coor = coor;
         }
         @Override
         public int hashCode() {
@@ -241,11 +241,9 @@ public class DuplicateWay extends Test
         // Only one way will be kept - the one with lowest positive ID, if such exist
         // or one "at random" if no such exists. Rest of the ways will be deleted
         for (Way w: ways) {
-            if (!w.isNew()) {
-                if (idToKeep == 0 || w.getId() < idToKeep) {
-                    idToKeep = w.getId();
-                    wayToKeep = w;
-                }
+            if (!w.isNew() && (idToKeep == 0 || w.getId() < idToKeep)) {
+                idToKeep = w.getId();
+                wayToKeep = w;
             }
         }
 

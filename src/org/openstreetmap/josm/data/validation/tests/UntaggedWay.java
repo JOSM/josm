@@ -78,26 +78,24 @@ public class UntaggedWay extends Test
         Map<String, String> tags = w.getKeys();
         if (!tags.isEmpty()) {
             String highway = tags.get("highway");
-            if (highway != null && NAMED_WAYS.contains(highway)) {
-                if (!tags.containsKey("name") && !tags.containsKey("ref")) {
-                    boolean isRoundabout = false;
-                    boolean hasName = false;
-                    for (String key : w.keySet()) {
-                        hasName = key.startsWith("name:") || key.endsWith("_name") || key.endsWith("_ref");
-                        if (hasName) {
-                            break;
-                        }
-                        if (key.equals("junction")) {
-                            isRoundabout = w.get("junction").equals("roundabout");
-                            break;
-                        }
+            if (highway != null && NAMED_WAYS.contains(highway) && !tags.containsKey("name") && !tags.containsKey("ref")) {
+                boolean isRoundabout = false;
+                boolean hasName = false;
+                for (String key : w.keySet()) {
+                    hasName = key.startsWith("name:") || key.endsWith("_name") || key.endsWith("_ref");
+                    if (hasName) {
+                        break;
                     }
+                    if (key.equals("junction")) {
+                        isRoundabout = w.get("junction").equals("roundabout");
+                        break;
+                    }
+                }
 
-                    if (!hasName && !isRoundabout) {
-                        errors.add(new TestError(this, Severity.WARNING, tr("Unnamed ways"), UNNAMED_WAY, w));
-                    } else if (isRoundabout) {
-                        errors.add(new TestError(this, Severity.WARNING, tr("Unnamed junction"), UNNAMED_JUNCTION, w));
-                    }
+                if (!hasName && !isRoundabout) {
+                    errors.add(new TestError(this, Severity.WARNING, tr("Unnamed ways"), UNNAMED_WAY, w));
+                } else if (isRoundabout) {
+                    errors.add(new TestError(this, Severity.WARNING, tr("Unnamed junction"), UNNAMED_JUNCTION, w));
                 }
             }
         }
@@ -126,7 +124,7 @@ public class UntaggedWay extends Test
                 for (RelationMember m : r.getMembers()) {
                     if (r.isMultipolygon() || WHITELIST.contains(m.getRole())) {
                         OsmPrimitive member = m.getMember();
-                        if (member != null && member instanceof Way && member.isUsable() && !member.isTagged()) {
+                        if (member instanceof Way && member.isUsable() && !member.isTagged()) {
                             waysUsedInRelations.add((Way)member);
                         }
                     }

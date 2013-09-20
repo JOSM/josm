@@ -50,18 +50,18 @@ public class DuplicateRelation extends Test {
         private List<LatLon> coor;
 
         /** ID of the relation member in case it is a {@link Relation} */
-        private long rel_id;
+        private long relId;
 
         @Override
         public int hashCode() {
-            return role.hashCode()+(int)rel_id+tags.hashCode()+type.hashCode()+coor.hashCode();
+            return role.hashCode()+(int)relId+tags.hashCode()+type.hashCode()+coor.hashCode();
         }
 
         @Override
         public boolean equals(Object obj) {
             if (!(obj instanceof RelMember)) return false;
             RelMember rm = (RelMember) obj;
-            return rm.role.equals(role) && rm.type.equals(type) && rm.rel_id==rel_id && rm.tags.equals(tags) && rm.coor.equals(coor);
+            return rm.role.equals(role) && rm.type.equals(type) && rm.relId==relId && rm.tags.equals(tags) && rm.coor.equals(coor);
         }
 
         /** Extract and store relation information based on the relation member
@@ -70,7 +70,7 @@ public class DuplicateRelation extends Test {
         public RelMember(RelationMember src) {
             role = src.getRole();
             type = src.getType();
-            rel_id = 0;
+            relId = 0;
             coor = new ArrayList<LatLon>();
 
             if (src.isNode()) {
@@ -91,7 +91,7 @@ public class DuplicateRelation extends Test {
             if (src.isRelation()) {
                 Relation r = src.getRelation();
                 tags = r.getKeys();
-                rel_id = r.getId();
+                relId = r.getId();
                 coor = new ArrayList<LatLon>();
             }
         }
@@ -102,7 +102,7 @@ public class DuplicateRelation extends Test {
      */
     private class RelationMembers {
         /** List of member objects of the relation */
-        public List<RelMember> members;
+        private List<RelMember> members;
 
         /** Store relation information
          * @param members The list of relation members
@@ -132,9 +132,9 @@ public class DuplicateRelation extends Test {
      */
     private class RelationPair {
         /** Member objects of the relation */
-        public RelationMembers members;
+        private RelationMembers members;
         /** Tags of the relation */
-        public Map<String, String> keys;
+        private Map<String, String> keys;
 
         /** Store relation information
          * @param members The list of relation members
@@ -165,13 +165,13 @@ public class DuplicateRelation extends Test {
     protected static final int SAME_RELATION = 1902;
 
     /** MultiMap of all relations */
-    MultiMap<RelationPair, OsmPrimitive> relations;
+    private MultiMap<RelationPair, OsmPrimitive> relations;
 
     /** MultiMap of all relations, regardless of keys */
-    MultiMap<List<RelationMember>, OsmPrimitive> relations_nokeys;
+    private MultiMap<List<RelationMember>, OsmPrimitive> relations_nokeys;
 
     /** List of keys without useful information */
-    Collection<String> ignoreKeys = new HashSet<String>(OsmPrimitive.getUninterestingKeys());
+    private Collection<String> ignoreKeys = new HashSet<String>(OsmPrimitive.getUninterestingKeys());
 
     /**
      * Default constructor
@@ -228,39 +228,37 @@ public class DuplicateRelation extends Test {
     public Command fixError(TestError testError) {
         if (testError.getCode() == SAME_RELATION) return null;
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        HashSet<Relation> rel_fix = new HashSet<Relation>();
+        HashSet<Relation> relFix = new HashSet<Relation>();
 
         for (OsmPrimitive osm : sel)
             if (osm instanceof Relation && !osm.isDeleted()) {
-                rel_fix.add((Relation)osm);
+                relFix.add((Relation)osm);
             }
 
-        if( rel_fix.size() < 2 )
+        if (relFix.size() < 2)
             return null;
 
         long idToKeep = 0;
-        Relation relationToKeep = rel_fix.iterator().next();
+        Relation relationToKeep = relFix.iterator().next();
         // Only one relation will be kept - the one with lowest positive ID, if such exist
         // or one "at random" if no such exists. Rest of the relations will be deleted
-        for (Relation w: rel_fix) {
-            if (!w.isNew()) {
-                if (idToKeep == 0 || w.getId() < idToKeep) {
-                    idToKeep = w.getId();
-                    relationToKeep = w;
-                }
+        for (Relation w: relFix) {
+            if (!w.isNew() && (idToKeep == 0 || w.getId() < idToKeep)) {
+                idToKeep = w.getId();
+                relationToKeep = w;
             }
         }
 
         // Find the relation that is member of one or more relations. (If any)
         Relation relationWithRelations = null;
-        List<Relation> rel_ref = null;
-        for (Relation w : rel_fix) {
+        List<Relation> relRef = null;
+        for (Relation w : relFix) {
             List<Relation> rel = OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class);
             if (!rel.isEmpty()) {
                 if (relationWithRelations != null)
                     throw new AssertionError("Cannot fix duplicate relations: More than one relation is member of another relation.");
                 relationWithRelations = w;
-                rel_ref = rel;
+                relRef = rel;
             }
         }
 
@@ -268,7 +266,7 @@ public class DuplicateRelation extends Test {
 
         // Fix relations.
         if (relationWithRelations != null && relationToKeep != relationWithRelations) {
-            for (Relation rel : rel_ref) {
+            for (Relation rel : relRef) {
                 Relation newRel = new Relation(rel);
                 for (int i = 0; i < newRel.getMembers().size(); ++i) {
                     RelationMember m = newRel.getMember(i);
@@ -281,8 +279,8 @@ public class DuplicateRelation extends Test {
         }
 
         //Delete all relations in the list
-        rel_fix.remove(relationToKeep);
-        commands.add(new DeleteCommand(rel_fix));
+        relFix.remove(relationToKeep);
+        commands.add(new DeleteCommand(relFix));
         return new SequenceCommand(tr("Delete duplicate relations"), commands);
     }
 

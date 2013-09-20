@@ -154,10 +154,10 @@ public class DeprecatedTags extends Test {
 
     private static class DeprecationCheck {
 
-        int code;
-        List<Tag> test = new LinkedList<Tag>();
-        List<Tag> change = new LinkedList<Tag>();
-        List<Tag> alternatives = new LinkedList<Tag>();
+        private int code;
+        private final List<Tag> test = new LinkedList<Tag>();
+        private final List<Tag> change = new LinkedList<Tag>();
+        private final List<Tag> alternatives = new LinkedList<Tag>();
 
         public DeprecationCheck(int code) {
             this.code = code;
@@ -229,10 +229,10 @@ public class DeprecatedTags extends Test {
 
     private class DeprecationError extends TestError {
 
-        OsmPrimitive p;
-        DeprecationCheck check;
+        private OsmPrimitive p;
+        private DeprecationCheck check;
 
-        DeprecationError(OsmPrimitive p, DeprecationCheck check) {
+        public DeprecationError(OsmPrimitive p, DeprecationCheck check) {
             super(DeprecatedTags.this, Severity.WARNING, check.getDescription(), check.code, p);
             this.p = p;
             this.check = check;
