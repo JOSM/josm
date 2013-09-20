@@ -26,6 +26,9 @@ public class NodesDuplicatingWayTags extends Test {
 
     protected static final int NODE_DUPING_PARENT_WAY_TAGS = 2401;
 
+    /**
+     * Constructs a new {@code NodesDuplicatingWayTags} test.
+     */
     public NodesDuplicatingWayTags() {
         super(tr("Nodes duplicating way tags"),
                 tr("Checks for nodes that have the same tags as their parent way."));

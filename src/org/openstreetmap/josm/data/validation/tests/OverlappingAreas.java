@@ -17,11 +17,18 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Checks if areas overlap.
+ * @since 4448
+ */
 public class OverlappingAreas extends Test {
 
     protected static final int OVERLAPPING_AREAS = 2201;
     protected QuadBuckets<Way> index = new QuadBuckets<Way>();
 
+    /**
+     * Constructs a new {@code OverlappingAreas} test.
+     */
     public OverlappingAreas() {
         super(tr("Overlapping Areas"), tr("This test checks if areas overlap."));
     }

@@ -152,6 +152,12 @@ public class DuplicateNode extends Test {
         potentialDuplicates = null;
     }
 
+    /**
+     * Returns the list of "duplicate nodes" errors for the given selection of node and parent test
+     * @param parentTest The parent test of returned errors
+     * @param nodes The nodes selction to look into
+     * @return the list of "duplicate nodes" errors
+     */
     public List<TestError> buildTestErrors(Test parentTest, List<Node> nodes) {
         List<TestError> errors = new ArrayList<TestError>();
 
