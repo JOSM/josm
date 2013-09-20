@@ -17,6 +17,10 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 
+/**
+ * Checks if turnrestrictions are valid
+ * @since 3669
+ */
 public class TurnrestrictionTest extends Test {
 
     protected static final int NO_VIA = 1801;
@@ -35,6 +39,9 @@ public class TurnrestrictionTest extends Test {
     protected static final int UNCONNECTED_VIA = 1814;
     protected static final int SUPERFLUOUS = 1815;
 
+    /**
+     * Constructs a new {@code TurnrestrictionTest}.
+     */
     public TurnrestrictionTest() {
         super(tr("Turnrestrictions"), tr("This test checks if turnrestrictions are valid"));
     }

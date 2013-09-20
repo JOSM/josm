@@ -82,7 +82,6 @@ public class RelationChecker extends Test {
         private int total = 0;
         private Collection<Node> nodes = new LinkedList<Node>();
         private Collection<Way> ways = new LinkedList<Way>();
-        private Collection<Way> closedways = new LinkedList<Way>();
         private Collection<Way> openways = new LinkedList<Way>();
         private Collection<Relation> relations = new LinkedList<Relation>();
     }
@@ -128,9 +127,7 @@ public class RelationChecker extends Test {
                     ri.relations.add(m.getRelation());
                 } else if(m.isWay()) {
                     ri.ways.add(m.getWay());
-                    if (m.getWay().isClosed()) {
-                        ri.closedways.add(m.getWay());
-                    } else {
+                    if (!m.getWay().isClosed()) {
                         ri.openways.add(m.getWay());
                     }
                 }
