@@ -28,6 +28,10 @@ import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 
+/**
+ * Checks if multipolygons are valid
+ * @since 3669
+ */
 public class MultipolygonTest extends Test {
 
     protected static final int WRONG_MEMBER_TYPE = 1601;
@@ -46,15 +50,16 @@ public class MultipolygonTest extends Test {
 
     private final List<List<Node>> nonClosedWays = new ArrayList<List<Node>>();
 
-    private final double SCALE = 1.0; // arbitrary scale - we could test every possible scale, but this should suffice
-
+    /**
+     * Constructs a new {@code MultipolygonTest}.
+     */
     public MultipolygonTest() {
         super(tr("Multipolygon"),
                 tr("This test checks if multipolygons are valid."));
     }
 
     @Override
-    public void initialize() throws Exception {
+    public void initialize() {
         styles = MapPaintStyles.getStyles();
     }
 

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
@@ -31,11 +32,11 @@ public class CrossingWays extends Test {
     protected static final int CROSSING_WAYS = 601;
 
     /** All way segments, grouped by cells */
-    Map<Point2D,List<ExtendedSegment>> cellSegments;
+    private Map<Point2D,List<ExtendedSegment>> cellSegments;
     /** The already detected errors */
-    HashSet<WaySegment> errorSegments;
+    private Set<WaySegment> errorSegments;
     /** The already detected ways in error */
-    Map<List<Way>, List<WaySegment>> ways_seen;
+    private Map<List<Way>, List<WaySegment>> seenWays;
 
     /**
      * Constructor
@@ -50,7 +51,7 @@ public class CrossingWays extends Test {
         super.startTest(monitor);
         cellSegments = new HashMap<Point2D,List<ExtendedSegment>>(1000);
         errorSegments = new HashSet<WaySegment>();
-        ways_seen = new HashMap<List<Way>, List<WaySegment>>(50);
+        seenWays = new HashMap<List<Way>, List<WaySegment>>(50);
     }
 
     @Override
@@ -58,7 +59,7 @@ public class CrossingWays extends Test {
         super.endTest();
         cellSegments = null;
         errorSegments = null;
-        ways_seen = null;
+        seenWays = null;
     }
 
     @Override
@@ -89,8 +90,7 @@ public class CrossingWays extends Test {
         for (int i = 0; i < nodesSize - 1; i++) {
             WaySegment ws = new WaySegment(w, i);
             ExtendedSegment es1 = new ExtendedSegment(ws, layer1, railway1, isCoastline1, waterway1);
-            List<List<ExtendedSegment>> cellSegments = getSegments(es1.n1, es1.n2);
-            for (List<ExtendedSegment> segments : cellSegments) {
+            for (List<ExtendedSegment> segments : getSegments(es1.n1, es1.n2)) {
                 for (ExtendedSegment es2 : segments) {
                     List<Way> prims;
                     List<WaySegment> highlight;
@@ -129,7 +129,7 @@ public class CrossingWays extends Test {
                     }
 
                     prims = Arrays.asList(es1.ws.way, es2.ws.way);
-                    if ((highlight = ways_seen.get(prims)) == null) {
+                    if ((highlight = seenWays.get(prims)) == null) {
                         highlight = new ArrayList<WaySegment>();
                         highlight.add(es1.ws);
                         highlight.add(es2.ws);
@@ -151,7 +151,7 @@ public class CrossingWays extends Test {
                                 CROSSING_WAYS,
                                 prims,
                                 highlight));
-                        ways_seen.put(prims, highlight);
+                        seenWays.put(prims, highlight);
                     } else {
                         highlight.add(es1.ws);
                         highlight.add(es2.ws);
@@ -186,24 +186,23 @@ public class CrossingWays extends Test {
 
     /**
      * A way segment with some additional information
-     * @author frsantos
      */
     public static class ExtendedSegment {
-        public Node n1, n2;
+        private Node n1, n2;
 
-        public WaySegment ws;
+        private WaySegment ws;
 
         /** The layer */
-        public String layer;
+        private String layer;
 
         /** The railway type */
-        public String railway;
+        private String railway;
 
         /** The waterway type */
-        public String waterway;
+        private String waterway;
 
         /** The coastline type */
-        public boolean coastline;
+        private boolean coastline;
 
         /**
          * Constructor

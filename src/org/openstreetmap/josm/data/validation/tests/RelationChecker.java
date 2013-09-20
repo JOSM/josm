@@ -58,7 +58,7 @@ public class RelationChecker extends Test {
         initializePresets();
     }
 
-    static Collection<TaggingPreset> relationpresets = new LinkedList<TaggingPreset>();
+    private static Collection<TaggingPreset> relationpresets = new LinkedList<TaggingPreset>();
 
     /**
      * Reads the presets data.
@@ -78,13 +78,13 @@ public class RelationChecker extends Test {
         }
     }
 
-    public static class RoleInfo {
-        int total = 0;
-        Collection<Node> nodes = new LinkedList<Node>();
-        Collection<Way> ways = new LinkedList<Way>();
-        Collection<Way> closedways = new LinkedList<Way>();
-        Collection<Way> openways = new LinkedList<Way>();
-        Collection<Relation> relations = new LinkedList<Relation>();
+    private static class RoleInfo {
+        private int total = 0;
+        private Collection<Node> nodes = new LinkedList<Node>();
+        private Collection<Way> ways = new LinkedList<Way>();
+        private Collection<Way> closedways = new LinkedList<Way>();
+        private Collection<Way> openways = new LinkedList<Way>();
+        private Collection<Relation> relations = new LinkedList<Relation>();
     }
 
     @SuppressWarnings("unchecked")
@@ -144,6 +144,7 @@ public class RelationChecker extends Test {
                         RELATION_EMPTY, n) );
             } else {
                 LinkedList<String> done = new LinkedList<String>();
+                String errorMessage = tr("Role verification problem");
                 for (Role r : allroles) {
                     done.add(r.key);
                     String keyname = r.key;
@@ -156,16 +157,16 @@ public class RelationChecker extends Test {
                     if (count != vc) {
                         if (count == 0) {
                             String s = marktr("Role {0} missing");
-                            errors.add(new TestError(this, Severity.WARNING, tr("Role verification problem"),
+                            errors.add(new TestError(this, Severity.WARNING, errorMessage,
                                     tr(s, keyname), MessageFormat.format(s, keyname), ROLE_MISSING, n));
                         }
                         else if (vc > count) {
                             String s = marktr("Number of {0} roles too low ({1})");
-                            errors.add(new TestError(this, Severity.WARNING, tr("Role verification problem"),
+                            errors.add(new TestError(this, Severity.WARNING, errorMessage,
                                     tr(s, keyname, count), MessageFormat.format(s, keyname, count), LOW_COUNT, n));
                         } else {
                             String s = marktr("Number of {0} roles too high ({1})");
-                            errors.add(new TestError(this, Severity.WARNING, tr("Role verification problem"),
+                            errors.add(new TestError(this, Severity.WARNING, errorMessage,
                                     tr(s, keyname, count), MessageFormat.format(s, keyname, count), HIGH_COUNT, n));
                         }
                     }
@@ -195,7 +196,7 @@ public class RelationChecker extends Test {
                             String s = marktr("Member for role {0} of wrong type");
                             LinkedList<OsmPrimitive> highlight = new LinkedList<OsmPrimitive>(wrongTypes);
                             highlight.addFirst(n);
-                            errors.add(new TestError(this, Severity.WARNING, tr("Role verification problem"),
+                            errors.add(new TestError(this, Severity.WARNING, errorMessage,
                                     tr(s, keyname), MessageFormat.format(s, keyname), WRONG_TYPE,
                                     highlight, wrongTypes));
                         }
@@ -205,11 +206,11 @@ public class RelationChecker extends Test {
                     if (!done.contains(key)) {
                         if (key.length() > 0) {
                             String s = marktr("Role {0} unknown");
-                            errors.add(new TestError(this, Severity.WARNING, tr("Role verification problem"),
+                            errors.add(new TestError(this, Severity.WARNING, errorMessage,
                                     tr(s, key), MessageFormat.format(s, key), ROLE_UNKNOWN, n));
                         } else {
                             String s = marktr("Empty role found");
-                            errors.add(new TestError(this, Severity.WARNING, tr("Role verification problem"),
+                            errors.add(new TestError(this, Severity.WARNING, errorMessage,
                                     tr(s), s, ROLE_EMPTY, n));
                         }
                     }
@@ -218,9 +219,6 @@ public class RelationChecker extends Test {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.openstreetmap.josm.data.validation.Test#fixError(org.openstreetmap.josm.data.validation.TestError)
-     */
     @Override
     public Command fixError(TestError testError) {
         if (isFixable(testError)) {
@@ -229,9 +227,6 @@ public class RelationChecker extends Test {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.openstreetmap.josm.data.validation.Test#isFixable(org.openstreetmap.josm.data.validation.TestError)
-     */
     @Override
     public boolean isFixable(TestError testError) {
         Collection<? extends OsmPrimitive> primitives = testError.getPrimitives();

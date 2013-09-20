@@ -53,8 +53,8 @@ public class Addresses extends Test {
         public AddressError(int code, Collection<OsmPrimitive> collection, String message) {
             this(code, collection, message, null, null);
         }
-        public AddressError(int code, Collection<OsmPrimitive> collection, String message, String description, String description_en) {
-            super(Addresses.this, Severity.WARNING, message, description, description_en, code, collection);
+        public AddressError(int code, Collection<OsmPrimitive> collection, String message, String description, String englishDescription) {
+            super(Addresses.this, Severity.WARNING, message, description, englishDescription, code, collection);
         }
     }
 
@@ -145,12 +145,12 @@ public class Addresses extends Test {
                 }
             }
             // Report duplicate house numbers
-            String description_en = marktr("House number ''{0}'' duplicated");
+            String englishDescription = marktr("House number ''{0}'' duplicated");
             for (String key : map.keySet()) {
                 List<OsmPrimitive> list = map.get(key);
                 if (list.size() > 1) {
                     errors.add(new AddressError(DUPLICATE_HOUSE_NUMBER, list,
-                            tr("Duplicate house numbers"), tr(description_en, key), description_en));
+                            tr("Duplicate house numbers"), tr(englishDescription, key), englishDescription));
                 }
             }
             // Report wrong street names

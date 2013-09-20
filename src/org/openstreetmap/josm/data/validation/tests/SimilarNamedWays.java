@@ -30,9 +30,9 @@ public class SimilarNamedWays extends Test {
     protected static final int SIMILAR_NAMED = 701;
 
     /** All ways, grouped by cells */
-    Map<Point2D,List<Way>> cellWays;
+    private Map<Point2D,List<Way>> cellWays;
     /** The already detected errors */
-    MultiMap<Way, Way> errorWays;
+    private MultiMap<Way, Way> errorWays;
 
     /**
      * Constructor

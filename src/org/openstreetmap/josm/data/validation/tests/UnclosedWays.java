@@ -14,7 +14,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
  * Check area type ways for errors
@@ -28,16 +27,6 @@ public class UnclosedWays extends Test {
      */
     public UnclosedWays() {
         super(tr("Unclosed Ways"), tr("This tests if ways which should be circular are closed."));
-    }
-
-    @Override
-    public void startTest(ProgressMonitor monitor) {
-        super.startTest(monitor);
-    }
-
-    @Override
-    public void endTest() {
-        super.endTest();
     }
 
     private String type;

@@ -38,12 +38,15 @@ public class PowerLines extends Test {
     public static final Collection<String> POWER_STATION_TAGS = Arrays.asList("station", "sub_station", "plant", "generator");
     public static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator");
     
-    protected final Map<Way, String> towerPoleTagMap = new HashMap<Way, String>();
+    private final Map<Way, String> towerPoleTagMap = new HashMap<Way, String>();
     
-    protected final List<PowerLineError> potentialErrors = new ArrayList<PowerLineError>();
+    private final List<PowerLineError> potentialErrors = new ArrayList<PowerLineError>();
 
-    protected final List<OsmPrimitive> powerStations = new ArrayList<OsmPrimitive>();
+    private final List<OsmPrimitive> powerStations = new ArrayList<OsmPrimitive>();
 
+    /**
+     * Constructs a new {@code PowerLines} test.
+     */
     public PowerLines() {
         super(tr("Power lines"), tr("Checks for nodes in power lines that do not have a power=tower/pole tag."));
     }
@@ -181,7 +184,7 @@ public class PowerLines extends Test {
     }
     
     protected class PowerLineError extends TestError {
-        public final Way line;
+        private final Way line;
         public PowerLineError(Node n, Way line) {
             super(PowerLines.this, Severity.WARNING, 
                     tr("Missing power tower/pole within power line"), POWER_LINES, n);
