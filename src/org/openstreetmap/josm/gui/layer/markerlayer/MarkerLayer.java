@@ -14,7 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -273,17 +274,23 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         // apply adjustment to all subsequent audio markers in the layer
         double adjustment = AudioPlayer.position() - startMarker.offset; // in seconds
         boolean seenStart = false;
-        URL url = startMarker.url();
-        for (Marker m : data) {
-            if (m == startMarker) {
-                seenStart = true;
-            }
-            if (seenStart) {
-                AudioMarker ma = (AudioMarker) m; // it must be an AudioMarker
-                if (ma.url().equals(url)) {
-                    ma.adjustOffset(adjustment);
+        try {
+            URI uri = startMarker.url().toURI();
+            for (Marker m : data) {
+                if (m == startMarker) {
+                    seenStart = true;
+                }
+                if (seenStart && m instanceof AudioMarker) {
+                    AudioMarker ma = (AudioMarker) m;
+                    // Do not ever call URL.equals but use URI.equals instead to avoid Internet connection
+                    // See http://michaelscharf.blogspot.fr/2006/11/javaneturlequals-and-hashcode-make.html for details
+                    if (ma.url().toURI().equals(uri)) {
+                        ma.adjustOffset(adjustment);
+                    }
                 }
             }
+        } catch (URISyntaxException e) {
+            Main.warn("URISyntaxException: "+e.getMessage());
         }
         return true;
     }
