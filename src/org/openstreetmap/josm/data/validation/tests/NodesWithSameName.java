@@ -15,11 +15,18 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
+/**
+ * Finds nodes that have the same name (might be duplicates)
+ * @since 3669
+ */
 public class NodesWithSameName extends Test {
     protected static final int SAME_NAME = 801;
 
     private Map<String, List<Node>> namesToNodes;
 
+    /**
+     * Constructs a new {@code NodesWithSameName} test.
+     */
     public NodesWithSameName() {
         super(tr("Nodes with same name"),
                 tr("This test finds nodes that have the same name (might be duplicates)."));

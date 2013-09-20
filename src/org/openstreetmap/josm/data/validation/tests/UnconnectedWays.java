@@ -20,7 +20,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.QuadBuckets;
@@ -47,7 +46,6 @@ public class UnconnectedWays extends Test {
     private QuadBuckets<Node> middlenodes; // nodes in middle of way
     private Set<Node> othernodes; // nodes appearing at least twice
     private Area dsArea;
-    private DataSet ds;
 
     private double mindist;
     private double minmiddledist;
@@ -70,8 +68,7 @@ public class UnconnectedWays extends Test {
         othernodes = new HashSet<Node>();
         mindist = Main.pref.getDouble(PREFIX + ".node_way_distance", 10.0);
         minmiddledist = Main.pref.getDouble(PREFIX + ".way_way_distance", 0.0);
-        this.ds = Main.main.getCurrentDataSet();
-        this.dsArea = ds.getDataSourceArea();
+        this.dsArea = Main.main.getCurrentDataSet().getDataSourceArea();
     }
 
     @Override

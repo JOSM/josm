@@ -19,6 +19,9 @@ public class SelfIntersectingWay extends Test {
 
     protected static final int SELF_INTERSECT = 401;
 
+    /**
+     * Constructs a new {@code SelfIntersectingWay} test.
+     */
     public SelfIntersectingWay() {
         super(tr("Self-intersecting ways"),
                 tr("This test checks for ways " +

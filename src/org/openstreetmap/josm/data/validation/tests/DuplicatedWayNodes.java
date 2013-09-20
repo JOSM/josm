@@ -14,9 +14,16 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 
+/**
+ * Checks for ways with identical consecutive nodes.
+ * @since 3669
+ */
 public class DuplicatedWayNodes extends Test {
     protected static final int DUPLICATE_WAY_NODE = 501;
 
+    /**
+     * Constructs a new {@code DuplicatedWayNodes} test.
+     */
     public DuplicatedWayNodes() {
         super(tr("Duplicated way nodes"),
                 tr("Checks for ways with identical consecutive nodes."));

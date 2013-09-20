@@ -15,8 +15,15 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 
+/**
+ * Checks for ways connected to areas.
+ * @since 4682
+ */
 public class WayConnectedToArea extends Test {
 
+    /**
+     * Constructs a new {@code WayConnectedToArea} test.
+     */
     public WayConnectedToArea() {
         super(tr("Way connected to Area"), tr("Checks for ways connected to areas."));
     }
