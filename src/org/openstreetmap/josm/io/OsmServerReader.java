@@ -33,6 +33,12 @@ public abstract class OsmServerReader extends OsmConnection {
     private OsmApi api = OsmApi.getOsmApi();
     private boolean doAuthenticate = false;
     protected boolean gpxParsedProperly;
+    
+    protected enum Compression {
+        NONE,
+        BZIP2,
+        GZIP
+    }
 
     /**
      * Open a connection to the given url and return a reader on the input stream
@@ -161,28 +167,81 @@ public abstract class OsmServerReader extends OsmConnection {
         return stream;
     }
 
+    /**
+     * Download OSM files from somewhere
+     * @param progressMonitor The progress monitor
+     * @return The corresponding dataset
+     * @throws OsmTransferException if any error occurs 
+     */
     public abstract DataSet parseOsm(final ProgressMonitor progressMonitor) throws OsmTransferException;
 
+    /**
+     * Download OSM Change files from somewhere
+     * @param progressMonitor The progress monitor
+     * @return The corresponding dataset
+     * @throws OsmTransferException if any error occurs 
+     */
     public DataSet parseOsmChange(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
     }
 
+    /**
+     * Download BZip2-compressed OSM Change files from somewhere
+     * @param progressMonitor The progress monitor
+     * @return The corresponding dataset
+     * @throws OsmTransferException if any error occurs 
+     */
     public DataSet parseOsmChangeBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
     }
 
+    /**
+     * Download GZip-compressed OSM Change files from somewhere
+     * @param progressMonitor The progress monitor
+     * @return The corresponding dataset
+     * @throws OsmTransferException if any error occurs 
+     */
     public DataSet parseOsmChangeGzip(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
     }
 
+    /**
+     * Retrieve raw gps waypoints from the server API.
+     * @param progressMonitor The progress monitor
+     * @return The corresponding GPX tracks
+     * @throws OsmTransferException if any error occurs
+     */
     public GpxData parseRawGps(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
     }
 
+    /**
+     * Retrieve BZip2-compressed GPX files from somewhere.
+     * @param progressMonitor The progress monitor
+     * @return The corresponding GPX tracks
+     * @throws OsmTransferException if any error occurs
+     * @since 6244
+     */
+    public GpxData parseRawGpsBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return null;
+    }
+
+    /**
+     * Download BZip2-compressed OSM files from somewhere
+     * @param progressMonitor The progress monitor
+     * @return The corresponding dataset
+     * @throws OsmTransferException if any error occurs 
+     */
     public DataSet parseOsmBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
     }
 
+    /**
+     * Download GZip-compressed OSM files from somewhere
+     * @param progressMonitor The progress monitor
+     * @return The corresponding dataset
+     * @throws OsmTransferException if any error occurs 
+     */
     public DataSet parseOsmGzip(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
     }

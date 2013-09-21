@@ -26,6 +26,7 @@ import org.openstreetmap.josm.io.GpxImporter.GpxImporterData;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.xml.sax.SAXException;
 
 /**
@@ -35,7 +36,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
 
     private DownloadTask downloadTask;
 
-    private static final String PATTERN_TRACE_ID = "http://.*openstreetmap.org/trace/\\p{Digit}+/data";
+    private static final String PATTERN_TRACE_ID = "http://.*(osm|openstreetmap).org/trace/\\p{Digit}+/data";
 
     private static final String PATTERN_TRACKPOINTS_BBOX = "http://.*/api/0.6/trackpoints\\?bbox=.*,.*,.*,.*";
 
@@ -57,7 +58,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
     @Override
     public Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
         downloadTask = new DownloadTask(newLayer,
-                new BoundingBoxDownloader(downloadArea), progressMonitor);
+                new BoundingBoxDownloader(downloadArea), progressMonitor, false);
         // We need submit instead of execute so we can wait for it to finish and get the error
         // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
         return Main.worker.submit(downloadTask);
@@ -65,9 +66,10 @@ public class DownloadGpsTask extends AbstractDownloadTask {
 
     @Override
     public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
-        if (url != null && (url.matches(PATTERN_TRACE_ID) || url.matches(PATTERN_EXTERNAL_GPX_SCRIPT) || url.matches(PATTERN_EXTERNAL_GPX_FILE))) {
+        CheckParameterUtil.ensureParameterNotNull(url, "url");
+        if (url.matches(PATTERN_TRACE_ID) || url.matches(PATTERN_EXTERNAL_GPX_SCRIPT) || url.matches(PATTERN_EXTERNAL_GPX_FILE)) {
             downloadTask = new DownloadTask(newLayer,
-                    new OsmServerLocationReader(url), progressMonitor);
+                    new OsmServerLocationReader(url), progressMonitor, url.matches(PATTERN_TRACE_ID));
             // Extract .gpx filename from URL to set the new layer name
             Matcher matcher = Pattern.compile(PATTERN_EXTERNAL_GPX_FILE).matcher(url);
             newLayerName = matcher.matches() ? matcher.group(1) : null;
@@ -75,7 +77,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
             // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
             return Main.worker.submit(downloadTask);
 
-        } else if (url != null && url.matches(PATTERN_TRACKPOINTS_BBOX)) {
+        } else if (url.matches(PATTERN_TRACKPOINTS_BBOX)) {
             String[] table = url.split("\\?|=|&");
             for (int i = 0; i<table.length; i++) {
                 if (table[i].equals("bbox") && i<table.length-1 )
@@ -96,18 +98,25 @@ public class DownloadGpsTask extends AbstractDownloadTask {
         private OsmServerReader reader;
         private GpxData rawData;
         private final boolean newLayer;
+        private final boolean compressed;
 
-        public DownloadTask(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor) {
+        public DownloadTask(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor, boolean compressed) {
             super(tr("Downloading GPS data"));
             this.reader = reader;
             this.newLayer = newLayer;
+            this.compressed = compressed;
         }
 
         @Override public void realRun() throws IOException, SAXException, OsmTransferException {
             try {
                 if (isCanceled())
                     return;
-                rawData = reader.parseRawGps(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+                ProgressMonitor subMonitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
+                if (compressed) {
+                    rawData = reader.parseRawGpsBzip2(subMonitor);
+                } else {
+                    rawData = reader.parseRawGps(subMonitor);
+                }
             } catch(Exception e) {
                 if (isCanceled())
                     return;
