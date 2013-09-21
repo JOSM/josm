@@ -67,7 +67,7 @@ public class OAuthParameters {
         parameters.setRequestTokenUrl(DEFAULT_REQUEST_TOKEN_URL);
         parameters.setAccessTokenUrl(DEFAULT_ACCESS_TOKEN_URL);
         parameters.setAuthoriseUrl(DEFAULT_AUTHORISE_URL);
-        if(!apiUrl.equals(OsmApi.DEFAULT_API_URL)) {
+        if (!OsmApi.DEFAULT_API_URL.equals(apiUrl)) {
             try {
                 String host = new URL(apiUrl).getHost();
                 if (host.endsWith("dev.openstreetmap.org")) {
