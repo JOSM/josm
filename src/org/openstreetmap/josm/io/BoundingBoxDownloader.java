@@ -13,6 +13,10 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
+/**
+ * Read content from OSM server for a given bounding box
+ * @since 627
+ */
 public class BoundingBoxDownloader extends OsmServerReader {
 
     /**
@@ -24,6 +28,10 @@ public class BoundingBoxDownloader extends OsmServerReader {
     protected final double lon2;
     protected final boolean crosses180th;
 
+    /**
+     * Constructs a new {@code BoundingBoxDownloader}.
+     * @param downloadArea The area to download
+     */
     public BoundingBoxDownloader(Bounds downloadArea) {
         this.lat1 = downloadArea.getMinLat();
         this.lon1 = downloadArea.getMinLon();
@@ -59,12 +67,6 @@ public class BoundingBoxDownloader extends OsmServerReader {
         return result;
     }
 
-    /**
-     * Retrieve raw gps waypoints from the server API.
-     * @return A list of all primitives retrieved. Currently, the list of lists
-     *      contain only one list, since the server cannot distinguish between
-     *      ways.
-     */
     @Override
     public GpxData parseRawGps(ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask("", 1);
@@ -105,10 +107,6 @@ public class BoundingBoxDownloader extends OsmServerReader {
         return "map?bbox=" + lon1 + "," + lat1 + "," + lon2 + "," + lat2;
     }
 
-    /**
-     * Read the data from the osm server address.
-     * @return A data set containing all data retrieved from that url
-     */
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask(tr("Contacting OSM Server..."), 10);
