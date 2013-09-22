@@ -84,8 +84,8 @@ public class SessionReader {
         return importer;
     }
 
-    private File sessionFile;
-    private boolean zip; /* true, if session file is a .joz file; false if it is a .jos file */
+    private URI sessionFileURI;
+    private boolean zip; // true, if session file is a .joz file; false if it is a .jos file
     private ZipFile zipFile;
     private List<Layer> layers = new ArrayList<Layer>();
     private List<Runnable> postLoadTasks = new ArrayList<Runnable>();
@@ -207,14 +207,14 @@ public class SessionReader {
                             if (uri.getPath().startsWith("../")) {
                                 // relative to session file - "../" step out of the archive
                                 String relPath = uri.getPath().substring(3);
-                                return new File(sessionFile.toURI().resolve(relPath));
+                                return new File(sessionFileURI.resolve(relPath));
                             } else {
                                 // file inside zip archive
                                 inZipPath = uriStr;
                                 return null;
                             }
                         } else
-                            return new File(sessionFile.toURI().resolve(uri));
+                            return new File(sessionFileURI.resolve(uri));
                     }
                 } else
                     throw new IOException(tr("Unsupported scheme ''{0}'' in URI ''{1}''.", uri.getScheme(), uriStr));
@@ -224,7 +224,8 @@ public class SessionReader {
         }
 
         /**
-         * Returns true if we are reading from a .joz file.
+         * Determines if we are reading from a .joz file.
+         * @return {@code true} if we are reading from a .joz file, {@code false} otherwise
          */
         public boolean isZip() {
             return zip;
@@ -277,7 +278,7 @@ public class SessionReader {
         }
     }
 
-    private void error(String msg) throws IllegalDataException {
+    private static void error(String msg) throws IllegalDataException {
         throw new IllegalDataException(msg);
     }
 
@@ -529,27 +530,13 @@ public class SessionReader {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
-        this.sessionFile = sessionFile;
-        this.zip = zip;
 
         InputStream josIS = null;
 
         if (zip) {
             try {
                 zipFile = new ZipFile(sessionFile);
-                ZipEntry josEntry = null;
-                Enumeration<? extends ZipEntry> entries = zipFile.entries();
-                while (entries.hasMoreElements()) {
-                    ZipEntry entry = entries.nextElement();
-                    if (entry.getName().toLowerCase().endsWith(".jos")) {
-                        josEntry = entry;
-                        break;
-                    }
-                }
-                if (josEntry == null) {
-                    error(tr("expected .jos file inside .joz archive"));
-                }
-                josIS = zipFile.getInputStream(josEntry);
+                josIS = getZipInputStream(zipFile);
             } catch (ZipException ze) {
                 throw new IOException(ze);
             }
@@ -561,6 +548,30 @@ public class SessionReader {
             }
         }
 
+        loadSession(josIS, sessionFile.toURI(), zip, progressMonitor);
+    }
+
+    private static InputStream getZipInputStream(ZipFile zipFile) throws ZipException, IOException, IllegalDataException {
+        ZipEntry josEntry = null;
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            if (entry.getName().toLowerCase().endsWith(".jos")) {
+                josEntry = entry;
+                break;
+            }
+        }
+        if (josEntry == null) {
+            error(tr("expected .jos file inside .joz archive"));
+        }
+        return zipFile.getInputStream(josEntry);
+    }
+
+    private void loadSession(InputStream josIS, URI sessionFileURI, boolean zip, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
+        
+        this.sessionFileURI = sessionFileURI;
+        this.zip = zip;
+        
         try {
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             builderFactory.setValidating(false);
@@ -580,5 +591,4 @@ public class SessionReader {
         if (els.getLength() == 0) return null;
         return (Element) els.item(0);
     }
-
 }

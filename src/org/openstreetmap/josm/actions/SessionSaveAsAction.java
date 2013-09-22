@@ -41,6 +41,10 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * Saves a JOSM session
+ * @since 4685
+ */
 public class SessionSaveAsAction extends DiskAccessAction {
 
     private List<Layer> layers;
@@ -49,6 +53,9 @@ public class SessionSaveAsAction extends DiskAccessAction {
 
     private boolean zipRequired;
 
+    /**
+     * Constructs a new {@code SessionSaveAsAction}.
+     */
     public SessionSaveAsAction() {
         super(tr("Save Session As..."), "save_as", tr("Save the current session to a new file."), null, true, "save_as-session", true);
         putValue("help", ht("/Action/SessionSaveAs"));
@@ -133,8 +140,14 @@ public class SessionSaveAsAction extends DiskAccessAction {
         }
     }
 
+    /**
+     * The "Save Session" dialog
+     */
     public class SessionSaveAsDialog extends ExtendedDialog {
 
+        /**
+         * Constructs a new {@code SessionSaveAsDialog}.
+         */
         public SessionSaveAsDialog() {
             super(Main.parent, tr("Save Session"), new String[] {tr("Save As"), tr("Cancel")});
             initialize();
@@ -228,5 +241,4 @@ public class SessionSaveAsAction extends DiskAccessAction {
     protected void updateEnabledState() {
         setEnabled(Main.isDisplayingMapView());
     }
-
 }
